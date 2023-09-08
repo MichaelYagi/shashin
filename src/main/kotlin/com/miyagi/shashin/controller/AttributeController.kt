@@ -160,7 +160,8 @@ class AttributeController: ResponseEntityExceptionHandler() {
     @ModelAttribute
     @Transactional
     fun addAttributes(model: Model, request: HttpServletRequest, response: HttpServletResponse, authentication: Authentication?) {
-        val timingOne = Date()
+        val totalTimingStart = Date()
+        var timingStart = Date()
         val logger: Logger = Logger.getLogger(AttributeController::class.simpleName)
 
         val browserDetails = request.getHeader("User-Agent")
@@ -194,10 +195,17 @@ class AttributeController: ResponseEntityExceptionHandler() {
         logger.log(Level.INFO,"Browser Name: $browser")
         model["agentName"] = browser.lowercase()
 
+        var timingEnd = Date()
+        var diff: Long = timingEnd.time - timingStart.time
+
+        var processingTime = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
+        logger.log(Level.INFO, "AttributeController - browser processing time: $processingTime")
+
         model["userRole"] = userRole
         model["adminRole"] = adminRole
         model["settings"] = Settings()
         model["activeProfile"] = ""
+        model["faceRecogServicesAvailable"] = false
 
         if (environment != null && environment.activeProfiles.isNotEmpty()) {
             val profile = environment.activeProfiles[0]
@@ -205,6 +213,8 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 model["activeProfile"] = capitalize(profile)
             }
         }
+
+        timingStart = Date()
 
         var queryLimit = queryLimitProperty
         var searchHistoryLimit = searchHistoryLimitProperty
@@ -214,12 +224,20 @@ class AttributeController: ResponseEntityExceptionHandler() {
             queryLimit = settings.getQueryLimit()!!
             searchHistoryLimit = settings.getSearchHistoryLimit()!!
 
-            if (request.requestURI.toString() != "/settings") {
+            if (request.requestURI.toString() != "/settings" &&
+                request.requestURI.toString() != "/users/login" &&
+                request.requestURI.toString() != "/users/logout"
+            ) {
                 model["objectRecogEnabled"] = settings.getObjectDetection() as Boolean
-                model["faceRecogServicesAvailable"] = FileUtils.checkCompreFaceConnection(
-                    settings.getCompreFaceServer(),
-                    settings.getCompreFaceKey()
-                )
+
+                if (request.session.getAttribute("ComprefaceConnection") == null) {
+                    model["faceRecogServicesAvailable"] = FileUtils.checkCompreFaceConnection(
+                        settings.getCompreFaceServer(),
+                        settings.getCompreFaceKey()
+                    )
+                } else {
+                    model["faceRecogServicesAvailable"] = request.session.getAttribute("ComprefaceConnection") as Boolean
+                }
             }
 
             model["settings"] = settings
@@ -242,8 +260,15 @@ class AttributeController: ResponseEntityExceptionHandler() {
             settingsObj.setCreatedAt(getCurrentTimestamp())
             settingsObj.setModifiedAt(getCurrentTimestamp())
             model["settings"] = settingsObj
-            model["faceRecogServicesAvailable"] =
-                FileUtils.checkCompreFaceConnection(settingsObj.getCompreFaceServer(), settingsObj.getCompreFaceKey())
+
+            if (request.session.getAttribute("ComprefaceConnection") == null) {
+                model["faceRecogServicesAvailable"] = FileUtils.checkCompreFaceConnection(
+                    settingsObj.getCompreFaceServer(),
+                    settingsObj.getCompreFaceKey()
+                )
+            } else {
+                model["faceRecogServicesAvailable"] = request.session.getAttribute("ComprefaceConnection") as Boolean
+            }
         }
         model["searchHistoryLimit"] = searchHistoryLimit
         model["queryLimit"] = queryLimit
@@ -268,9 +293,15 @@ class AttributeController: ResponseEntityExceptionHandler() {
             null,
             "random string generated from AttributeController"
         )
-//        val requestAttributes = RequestContextHolder.currentRequestAttributes()
-//        val attributes = requestAttributes as ServletRequestAttributes
-//        val request = attributes.request
+
+        timingEnd = Date()
+        diff = timingEnd.time - timingStart.time
+
+        processingTime = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
+        logger.log(Level.INFO, "AttributeController - setting processing time: $processingTime")
+
+        timingStart = Date()
+
         var currentUser: User?
 
         if (!request.getHeader("X-API-KEY").isNullOrBlank()) {
@@ -292,7 +323,13 @@ class AttributeController: ResponseEntityExceptionHandler() {
             for (authority in authorities) {
                 model["authority"] = authority.authority
             }
-            currentUser = userRepository.findByUsername(authentication.name)
+
+            if (request.session.getAttribute("CurrentUser") == null) {
+                currentUser = userRepository.findByUsername(authentication.name)
+                request.session.setAttribute("CurrentUser",currentUser)
+            } else {
+                currentUser = request.session.getAttribute("CurrentUser") as User
+            }
 
             if (currentUser == null || currentUser.getIsAuthorized() == false) {
                 SecurityContextHolder.clearContext()
@@ -317,6 +354,14 @@ class AttributeController: ResponseEntityExceptionHandler() {
             }
         }
 
+        timingEnd = Date()
+        diff = timingEnd.time - timingStart.time
+
+        processingTime = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
+        logger.log(Level.INFO, "AttributeController - current user processing time: $processingTime")
+
+        timingStart = Date()
+
         var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
         if (request.scheme == "https") {
             baseUrlBuilder = baseUrlBuilder.scheme("https")
@@ -337,11 +382,17 @@ class AttributeController: ResponseEntityExceptionHandler() {
         model["msg"] = "Response status not set. Defaulting to status fail."
         model["status"] = ApiResponse.FAIL.status
 
-        val timingTwo = Date()
-        val diff: Long = timingTwo.time - timingOne.time
+        timingEnd = Date()
+        diff = timingEnd.time - timingStart.time
 
-        val processingTime = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
-        logger.log(Level.INFO, "AttributeController processing time: $processingTime")
+        processingTime = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
+        logger.log(Level.INFO, "AttributeController - base builder processing time: $processingTime")
+
+        val totalTimingEnd = Date()
+        diff = totalTimingEnd.time - totalTimingStart.time
+
+        processingTime = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
+        logger.log(Level.INFO, "AttributeController total processing time: $processingTime")
     }
 
     private fun getOperatingSystemInfo(): String {

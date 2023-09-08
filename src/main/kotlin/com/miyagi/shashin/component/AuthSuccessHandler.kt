@@ -10,6 +10,7 @@ import com.miyagi.shashin.model.Useragent
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.service.CustomUserDetailsService
 import com.miyagi.shashin.util.DatabaseUtil
+import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import nl.basjes.parse.useragent.UserAgentAnalyzer
@@ -70,10 +71,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
     var customUserDetailsService: CustomUserDetailsService? = null
 
     @Autowired
-    var persistentLoginsRepository: PersistentLoginsRepository? = null
-
-    @Autowired
-    var persistentLoginsExpiryRepository: PersistentLoginsExpiryRepository? = null
+    private var settingsRepository: SettingsRepository? = null
 
     @Autowired
     var useragentRepository: UseragentRepository? = null
@@ -124,6 +122,8 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                 var isAuthorized = true
                 val user = userRepository?.findByUsername(authentication.name)
                 if (user != null && user.getId() > 0) {
+                    request.session.setAttribute("CurrentUser",user)
+
                     userId = user.getId()
                     if (user.getIsAuthorized() == false) {
                         user.setModifiedAt(getCurrentTimestamp())
@@ -147,6 +147,16 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                         notifyLogin(user)
 //                        checkLatestAppVersion(user)
 
+                        // Check compreface connection
+                        val settings = settingsRepository?.findFirstByOrderByIdAsc()
+                        request.session.setAttribute("ComprefaceConnection", false)
+                        if (settings != null) {
+                            val compreFaceConnection = FileUtils.checkCompreFaceConnection(
+                                settings.getCompreFaceServer(),
+                                settings.getCompreFaceKey()
+                            )
+                            request.session.setAttribute("ComprefaceConnection", compreFaceConnection)
+                        }
 
                         if (this.profile != "test" && this.persistentTokenRepository != null) {
                             val rememberMeServices =

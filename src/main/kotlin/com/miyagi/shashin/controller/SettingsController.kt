@@ -224,7 +224,7 @@ class SettingsController {
 
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/settings"], method = [RequestMethod.GET])
-    fun getSettings(model: Model, @ModelAttribute("settings") settings: Settings): String {
+    fun getSettings(model: Model, @ModelAttribute("settings") settings: Settings, request: HttpServletRequest): String {
         val mediaDirectories = mediaDirRepository?.findByExclude(false)
         val mediaExcludeDirectories = mediaDirRepository?.findByExclude(true)
 
@@ -284,6 +284,8 @@ class SettingsController {
             model["faceRecogAvailableStatusColor"] = "green"
             model["faceRecogAvailableStatusText"] = "Connected to CompreFace server"
         }
+
+        request.session.setAttribute("ComprefaceConnection",faceRecogServicesAvailable)
 
         model["timeScheduleList"] = TextUtils.timeSchedules()
         model["currentTimezone"] = ZoneId.systemDefault()
@@ -482,9 +484,7 @@ class SettingsController {
             model["currentTimezone"] = ZoneId.systemDefault()
             model["scheduledTime"] = scheduledTime as String
 
-            model["faceRecogServicesAvailable"] = FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(),
-                settings.getCompreFaceKey()
-            )
+            model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
 
             model["faceRecogAvailableStatusIcon"] = "bi-x-circle"
             model["faceRecogAvailableStatusColor"] = "red"
@@ -500,6 +500,7 @@ class SettingsController {
             }
 
             model["objectRecogEnabled"] = settings.getObjectDetection() as Boolean
+            request.session.setAttribute("ComprefaceConnection", faceRecogServicesAvailable)
         }
 
         if (statusMessage.isBlank() && model.getAttribute("alertClass") == "alert-success") {

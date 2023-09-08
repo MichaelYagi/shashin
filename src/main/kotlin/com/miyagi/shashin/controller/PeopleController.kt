@@ -138,7 +138,7 @@ class PeopleController {
     @RequestMapping(value = ["/matches/start"], method = [RequestMethod.POST], produces = ["application/json"])
     @Secured("ROLE_ADMIN")
     @ResponseBody
-    fun startPredictions(model: Model,@RequestParam cancelScan: Boolean): String {
+    fun startPredictions(model: Model,@RequestParam cancelScan: Boolean, request: HttpServletRequest): String {
         val settings = model.getAttribute("settings") as Settings
 
         if (cancelScan) {
@@ -160,11 +160,16 @@ class PeopleController {
 
                 // Object and person recognition
                 if (threadFile != null) {
-                    if (FileUtils.checkCompreFaceConnection(
+                    val faceRecogServicesAvailable = if (request.session.getAttribute("ComprefaceConnection") == null) {
+                        FileUtils.checkCompreFaceConnection(
                             settings.getCompreFaceServer(),
                             settings.getCompreFaceKey()
                         )
-                    ) {
+                    } else {
+                        request.session.getAttribute("ComprefaceConnection") as Boolean
+                    }
+
+                    if (faceRecogServicesAvailable) {
                         FileUtils.subjectRecognizer(
                             metadataRepository,
                             recognitionLabelRepository,
@@ -223,7 +228,7 @@ class PeopleController {
 
     @GetMapping("/person/matches/{personId}")
     @Secured("ROLE_ADMIN")
-    fun getPredictions(model: Model, @PathVariable personId: Int): String {
+    fun getPredictions(model: Model, @PathVariable personId: Int, request: HttpServletRequest): String {
         val module = "matches"
         model["message"] = "There are no photos."
         model["lowMatchResults"] = mutableListOf<Metadata>()
@@ -271,7 +276,7 @@ class PeopleController {
         }
 
         val subject = recognitionLabel?.get()?.getName()
-        val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, subject, 0, 9999)
+        val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, request, subject, 0, 9999)
         if (!subjectCompreFaceJsonStr.isNullOrBlank()) {
             val jsonObj = mapper.readTree(subjectCompreFaceJsonStr)
             val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
@@ -333,7 +338,7 @@ class PeopleController {
     @RequestMapping(value = ["/person/compreface/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @Secured("ROLE_ADMIN")
     @ResponseBody
-    fun deleteCompreFaceGetImages(model: Model, @RequestBody requestBody: JsonNode): String {
+    fun deleteCompreFaceGetImages(model: Model, @RequestBody requestBody: JsonNode, request: HttpServletRequest): String {
         val imageMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
         resp["responseData"] = mutableMapOf<String, Any?>()
@@ -345,7 +350,7 @@ class PeopleController {
             val imageIdsString = imageMap["imageIds"].toString()
 
             val settings = model.getAttribute("settings") as Settings
-            if (imageIdsString.isNotBlank() && FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
+            if (imageIdsString.isNotBlank() && request.session.getAttribute("ComprefaceConnection") as Boolean) {
                 val webClient = WebClient.create(settings.getCompreFaceServer()!!)
 
                 try {
@@ -392,10 +397,10 @@ class PeopleController {
 
     @GetMapping("/person/compreface/{personId}")
     @Secured("ROLE_ADMIN")
-    fun getCompreFaceGetImages(model: Model, @PathVariable personId: Int): String {
+    fun getCompreFaceGetImages(model: Model, @PathVariable personId: Int, request: HttpServletRequest): String {
         val module = "compreface"
         val page = 0
-        val response = buildCompreFace(model,personId,page)
+        val response = buildCompreFace(model,request,personId,page)
         val counts = HashMap<String,Int>()
         counts["compreface"] = 0
         counts["person"] = 0
@@ -414,7 +419,7 @@ class PeopleController {
             response["personInfo"] = recognitionLabel.get()
             subject = recognitionLabel.get().getName()
         }
-        val allSubjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, subject, 0, 9999)
+        val allSubjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, request,  subject, 0, 9999)
         if (!allSubjectCompreFaceJsonStr.isNullOrBlank()) {
             val jsonObj = mapper.readTree(allSubjectCompreFaceJsonStr)
             val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
@@ -469,7 +474,7 @@ class PeopleController {
         var response = mutableMapOf<String, Any?>()
 
         if (model.getAttribute("currentUser") != "") {
-            response = buildCompreFace(model,personId,page)
+            response = buildCompreFace(model,request,personId,page)
             response["msg"] = ""
             response["status"] = ApiResponse.SUCCESS.status
 
@@ -484,7 +489,7 @@ class PeopleController {
         return mapper.writeValueAsString(response)
     }
 
-    private fun buildCompreFace(model: Model, personId: Int, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
+    private fun buildCompreFace(model: Model, request: HttpServletRequest, personId: Int, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         response["message"] = "There are no photos."
@@ -502,7 +507,7 @@ class PeopleController {
             response["personInfo"] = recognitionLabel.get()
             val subject = recognitionLabel.get().getName()
 
-            val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, subject, page, size)
+            val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, request, subject, page, size)
             if (!subjectCompreFaceJsonStr.isNullOrBlank()) {
                 val jsonObj = mapper.readTree(subjectCompreFaceJsonStr)
                 val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
@@ -542,11 +547,20 @@ class PeopleController {
         return response
     }
 
-    private fun getCompreFaceJsonForSubject(model: Model, subject: String?, page: Int, queryLimit: Int): String? {
+    private fun getCompreFaceJsonForSubject(model: Model, request: HttpServletRequest, subject: String?, page: Int, queryLimit: Int): String? {
         var subjectCompreFaceJsonStr: String? = null
         val settings = model.getAttribute("settings") as Settings
 
-        if (FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
+        val faceRecogServicesAvailable = if (request.session.getAttribute("ComprefaceConnection") == null) {
+            FileUtils.checkCompreFaceConnection(
+                settings.getCompreFaceServer(),
+                settings.getCompreFaceKey()
+            )
+        } else {
+            request.session.getAttribute("ComprefaceConnection") as Boolean
+        }
+
+        if (faceRecogServicesAvailable) {
             val webClient = WebClient.create(settings.getCompreFaceServer()!!)
             try {
                 subjectCompreFaceJsonStr = webClient.get()
@@ -638,10 +652,10 @@ class PeopleController {
 
     @RequestMapping(value = ["/person/{personId}"], method = [RequestMethod.GET])
     @Secured("ROLE_ADMIN", "ROLE_USER")
-    fun getPerson(model: Model, @PathVariable personId: Int): String {
+    fun getPerson(model: Model, @PathVariable personId: Int,request: HttpServletRequest): String {
         val module = "person"
         val page = 0
-        val response = buildPersonAlbum(model,personId,page)
+        val response = buildPersonAlbum(model,request,personId,page)
         for ((k, v) in response) {
             model[k] = v!!
         }
@@ -707,10 +721,10 @@ class PeopleController {
     @RequestMapping(value = ["/person/{personId}/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getPagedPerson(model: Model, request: HttpServletRequest, @PathVariable personId: Int, @PathVariable page: Int): String {
-        return mapper.writeValueAsString(buildPersonAlbum(model,personId,page))
+        return mapper.writeValueAsString(buildPersonAlbum(model,request,personId,page))
     }
 
-    private fun buildPersonAlbum(model: Model,personId: Int,page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
+    private fun buildPersonAlbum(model: Model,request: HttpServletRequest,personId: Int,page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         response["message"] = "There are no photos."
@@ -781,7 +795,7 @@ class PeopleController {
                 }
 
                 val subject = recognitionLabel?.get()?.getName()
-                val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, subject, 0, 9999)
+                val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, request, subject, 0, 9999)
                 if (!subjectCompreFaceJsonStr.isNullOrBlank()) {
                     val jsonObj = mapper.readTree(subjectCompreFaceJsonStr)
                     val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
