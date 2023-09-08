@@ -262,11 +262,14 @@ class AttributeController: ResponseEntityExceptionHandler() {
             model["settings"] = settingsObj
 
             if (request.session.getAttribute("ComprefaceConnection") == null) {
+                logger.log(Level.INFO, "AttributeController - CompreFaceConnection network check")
+
                 model["faceRecogServicesAvailable"] = FileUtils.checkCompreFaceConnection(
                     settingsObj.getCompreFaceServer(),
                     settingsObj.getCompreFaceKey()
                 )
             } else {
+                logger.log(Level.INFO, "AttributeController - CompreFaceConnection attribute check")
                 model["faceRecogServicesAvailable"] = request.session.getAttribute("ComprefaceConnection") as Boolean
             }
         }
