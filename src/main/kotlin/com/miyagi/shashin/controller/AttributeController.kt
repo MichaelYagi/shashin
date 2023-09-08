@@ -231,11 +231,13 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 model["objectRecogEnabled"] = settings.getObjectDetection() as Boolean
 
                 if (request.session.getAttribute("ComprefaceConnection") == null) {
+                    logger.log(Level.INFO, "AttributeController - CompreFaceConnection network check")
                     model["faceRecogServicesAvailable"] = FileUtils.checkCompreFaceConnection(
                         settings.getCompreFaceServer(),
                         settings.getCompreFaceKey()
                     )
                 } else {
+                    logger.log(Level.INFO, "AttributeController - CompreFaceConnection attribute check")
                     model["faceRecogServicesAvailable"] = request.session.getAttribute("ComprefaceConnection") as Boolean
                 }
             }
@@ -262,14 +264,14 @@ class AttributeController: ResponseEntityExceptionHandler() {
             model["settings"] = settingsObj
 
             if (request.session.getAttribute("ComprefaceConnection") == null) {
-                logger.log(Level.INFO, "AttributeController - CompreFaceConnection network check")
+                logger.log(Level.INFO, "AttributeController - Setting initialized and CompreFaceConnection network check")
 
                 model["faceRecogServicesAvailable"] = FileUtils.checkCompreFaceConnection(
                     settingsObj.getCompreFaceServer(),
                     settingsObj.getCompreFaceKey()
                 )
             } else {
-                logger.log(Level.INFO, "AttributeController - CompreFaceConnection attribute check")
+                logger.log(Level.INFO, "AttributeController - Setting initialized and CompreFaceConnection attribute check")
                 model["faceRecogServicesAvailable"] = request.session.getAttribute("ComprefaceConnection") as Boolean
             }
         }
