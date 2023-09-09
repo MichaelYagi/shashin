@@ -37,7 +37,7 @@
     <link rel="stylesheet" href="/css/lg-zoom.min.css">
     <link rel="stylesheet" href="/css/lg-rotate.min.css">
     <link rel="stylesheet" href="/css/lg-fullscreen.min.css">
-    <title th:text="${metadataObj.title}"></title>
+    <title th:text="${metadataObj.title + ' - ' + @environment.getProperty('app.build.properties.name')}"></title>
 </head>
 <body>
 <div id="photo" style="display: none;">

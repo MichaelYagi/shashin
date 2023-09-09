@@ -39,7 +39,7 @@
     <link rel="stylesheet" href="/css/lg-rotate.min.css">
     <link rel="stylesheet" href="/css/lg-video.min.css">
     <link rel="stylesheet" href="/css/lg-relative-caption.min.css">
-    <title th:text="${metadataObj.title}"></title>
+    <title th:text="${metadataObj.title + ' - ' + @environment.getProperty('app.build.properties.name')}"></title>
 </head>
 <body>
 <div id="video" style="display: none;">
