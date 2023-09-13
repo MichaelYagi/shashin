@@ -77,7 +77,7 @@ class GalleryTemplates {
         ${($.inArray("isVideo", overlays) !== -1) ?
             `
             <span class="overlayIconBackground"><span id="duration${id}">${data.duration}</span>&nbsp;
-                <span id="video${id}" class="bi-camera-video overlayIcon"></span>
+                <span id="video${id}" class="bi-camera-video overlayIcon" title="video"></span>
             </span>
             <br>
             ` : ''
@@ -85,14 +85,14 @@ class GalleryTemplates {
         
         ${($.inArray("isPan", overlays) !== -1) ?
             `
-            <span id="panorama${id}" class="bi-aspect-ratio overlayIcon overlayIconBackground"></span>
+            <span id="panorama${id}" class="bi-aspect-ratio overlayIcon overlayIconBackground" title="panorama"></span>
             <br>
             ` : ''
         }
         
         ${($.inArray("isGif", overlays) !== -1) ?
             `
-            <span id="gif${id}" class="bi-layers overlayIcon overlayIconBackground"></span>
+            <span id="gif${id}" class="bi-layers overlayIcon overlayIconBackground" title="gif"></span>
             <br>
             ` : ''
         }
