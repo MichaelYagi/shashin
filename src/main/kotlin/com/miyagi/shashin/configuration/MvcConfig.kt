@@ -5,9 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.FileSystemResource
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.springframework.web.servlet.resource.PathResourceResolver
+import org.springframework.web.util.UrlPathHelper
 import java.nio.file.Paths
 
 @Configuration
@@ -33,5 +35,11 @@ class MvcConfig : WebMvcConfigurer {
             .setCachePeriod(3600)
             .resourceChain(true)
             .addResolver(PathResourceResolver())
+    }
+
+    override fun configurePathMatch(configurer: PathMatchConfigurer) {
+        val urlPathHelper = UrlPathHelper()
+        urlPathHelper.isUrlDecode = false
+        configurer.setUrlPathHelper(urlPathHelper)
     }
 }
