@@ -164,7 +164,7 @@ class TimelineTemplates {
             data-download-url="${(metadata.type.indexOf("video") >= 0) ? encodeURI(metadata.videoUrl) : encodeURI(metadata.thumbnailUrlOriginal)}/download"
             data-metadataid="${metadata.id}"
             ${(metadata.type.indexOf("video") >= 0) ? `data-video="${Util.encodeHtml(mediaContent.video)}"` : `data-src="${encodeURI(metadata.thumbnailUrlOriginal)}"`}
-            ${(metadata.description != null) ? `data-sub-html="${metadata.description}"` : ''}
+            ${(metadata.description != null) ? `data-sub-html="${Util.encodeHtml(metadata.description)}"` : ''}
     
             ${(metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
             metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) ?

@@ -485,6 +485,37 @@ class Util {
         $("#container_"+id).remove();
     }
 
+    static reinitLightGalleryInstance() {
+        if (shashin && shashin.getLightGallery() !== null) {
+            const closeTimeout = shashin.getLightGallery().closeGallery(true);
+            setTimeout(() => {
+                if (shashin.getLightGallery() !== null) {
+                    shashin.getLightGallery().destroyModules(true);
+                    shashin.getLightGallery().invalidateItems();
+                    $(window).off(`.lg.global${shashin.getLightGallery().lgId}`);
+                    shashin.getLightGallery().LGel.off('.lg');
+                    // https://github.com/sachinchoolur/lightGallery/blob/383d51852657ab44bb8697748c570cf110723f97/src/lightgallery.ts#L2396
+                    // Hack because lg.destroy() errors out
+                    // when photos appear slower than destroy called, then there's an error
+                    try {
+                        shashin.getLightGallery().$container.remove();
+                    } catch (e) {
+                        shashin.printMessageToConsole("Error removing lightGallery instance: "+e.message);
+                    }
+
+                    shashin.lg = null;
+
+                    setTimeout(() => {
+                        shashin.setLightGallery({"selector":".mediaLink",plugins:[lgMetadataDetail],metadataDetail:true,metadataDetailFunc:shashin.openInfoSidebar});
+                        $(".bi-play-circle").css("visibility", "visible");
+                        $(".bi-play-btn").css("visibility", "visible");
+                        $(".mediaLink").bind('click');
+                    }, 500);
+                }
+            }, closeTimeout);
+        }
+    }
+
     static activateDarkModeListener() {
         const dmCookieName = "shashindmcookie";
         const darkModeCookie = Util.getCookie(dmCookieName);
