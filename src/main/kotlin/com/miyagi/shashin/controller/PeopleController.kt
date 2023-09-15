@@ -161,16 +161,10 @@ class PeopleController {
                 // Object and person recognition
                 if (threadFile != null) {
 
-                    val faceRecogServicesAvailable: Boolean
-                    if (request.session.getAttribute("ComprefaceConnection") == null) {
-                        faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
-                            settings.getCompreFaceServer(),
-                            settings.getCompreFaceKey()
-                        )
-                        request.session.setAttribute("ComprefaceConnection", faceRecogServicesAvailable)
-                    } else {
-                        faceRecogServicesAvailable = request.session.getAttribute("ComprefaceConnection") as Boolean
-                    }
+                    val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+                        settings.getCompreFaceServer(),
+                        settings.getCompreFaceKey()
+                    )
 
                     if (faceRecogServicesAvailable) {
                         FileUtils.subjectRecognizer(
@@ -353,7 +347,12 @@ class PeopleController {
             val imageIdsString = imageMap["imageIds"].toString()
 
             val settings = model.getAttribute("settings") as Settings
-            if (imageIdsString.isNotBlank() && request.session.getAttribute("ComprefaceConnection") as Boolean) {
+            val compreFaceConnection = FileUtils.checkCompreFaceConnection(
+                settings.getCompreFaceServer(),
+                settings.getCompreFaceKey()
+            )
+
+            if (imageIdsString.isNotBlank() && compreFaceConnection) {
                 val webClient = WebClient.create(settings.getCompreFaceServer()!!)
 
                 try {
@@ -554,16 +553,10 @@ class PeopleController {
         var subjectCompreFaceJsonStr: String? = null
         val settings = model.getAttribute("settings") as Settings
 
-        val faceRecogServicesAvailable: Boolean
-        if (request.session.getAttribute("ComprefaceConnection") == null) {
-            faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
-                settings.getCompreFaceServer(),
-                settings.getCompreFaceKey()
-            )
-            request.session.setAttribute("ComprefaceConnection", faceRecogServicesAvailable)
-        } else {
-            faceRecogServicesAvailable = request.session.getAttribute("ComprefaceConnection") as Boolean
-        }
+        val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+            settings.getCompreFaceServer(),
+            settings.getCompreFaceKey()
+        )
 
         if (faceRecogServicesAvailable) {
             val webClient = WebClient.create(settings.getCompreFaceServer()!!)
