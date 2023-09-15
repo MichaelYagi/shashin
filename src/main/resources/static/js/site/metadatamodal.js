@@ -294,9 +294,9 @@ $("#saveMetadata").on("click", async function (e) {
                     Util.setMetadataLocalStorage();
                 }
 
-                if (typeof timelineSettings !== "undefined" && dateGalleryRemoved === false && captionUpdated === true) {
+                if (typeof Util !== "undefined" && dateGalleryRemoved === false && captionUpdated === true) {
                     // Refresh gallery if caption updated
-                    timelineSettings.reinitLightGalleryInstance();
+                    Util.reinitLightGalleryInstance();
                 }
 
                 // If not timeline or map
