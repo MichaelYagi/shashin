@@ -291,7 +291,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
             var available = false
 
             if (!compreFaceKey.isNullOrBlank() && !compreFaceServer.isNullOrBlank()) {
-                val requestProperties: Map<String, String> = mapOf("x-api-key" to compreFaceKey!!)
+                val requestProperties: Map<String, String> = mapOf("x-api-key" to compreFaceKey)
                 available = pingURL(compreFaceServer + "api/v1/recognition/subjects/", requestProperties, 1000)
             }
 

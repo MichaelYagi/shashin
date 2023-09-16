@@ -273,7 +273,7 @@ class PeopleController {
         }
 
         val subject = recognitionLabel?.get()?.getName()
-        val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, request, subject, 0, 9999)
+        val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, subject, 0, 9999)
         if (!subjectCompreFaceJsonStr.isNullOrBlank()) {
             val jsonObj = mapper.readTree(subjectCompreFaceJsonStr)
             val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
@@ -421,7 +421,7 @@ class PeopleController {
             response["personInfo"] = recognitionLabel.get()
             subject = recognitionLabel.get().getName()
         }
-        val allSubjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, request,  subject, 0, 9999)
+        val allSubjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, subject, 0, 9999)
         if (!allSubjectCompreFaceJsonStr.isNullOrBlank()) {
             val jsonObj = mapper.readTree(allSubjectCompreFaceJsonStr)
             val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
@@ -509,7 +509,7 @@ class PeopleController {
             response["personInfo"] = recognitionLabel.get()
             val subject = recognitionLabel.get().getName()
 
-            val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, request, subject, page, size)
+            val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, subject, page, size)
             if (!subjectCompreFaceJsonStr.isNullOrBlank()) {
                 val jsonObj = mapper.readTree(subjectCompreFaceJsonStr)
                 val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
@@ -549,7 +549,7 @@ class PeopleController {
         return response
     }
 
-    private fun getCompreFaceJsonForSubject(model: Model, request: HttpServletRequest, subject: String?, page: Int, queryLimit: Int): String? {
+    private fun getCompreFaceJsonForSubject(model: Model, subject: String?, page: Int, queryLimit: Int): String? {
         var subjectCompreFaceJsonStr: String? = null
         val settings = model.getAttribute("settings") as Settings
 
@@ -793,7 +793,7 @@ class PeopleController {
                 }
 
                 val subject = recognitionLabel?.get()?.getName()
-                val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, request, subject, 0, 9999)
+                val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, subject, 0, 9999)
                 if (!subjectCompreFaceJsonStr.isNullOrBlank()) {
                     val jsonObj = mapper.readTree(subjectCompreFaceJsonStr)
                     val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
