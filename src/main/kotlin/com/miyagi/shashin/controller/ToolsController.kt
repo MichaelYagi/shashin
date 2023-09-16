@@ -185,7 +185,10 @@ class ToolsController {
         // If enabled - status fail if not available
         val settings = model.getAttribute("settings") as Settings?
         if (settings != null && settings.getCompreFaceKey() != "" && settings.getCompreFaceServer() != "") {
-            val faceRecogServicesAvailable = model.getAttribute("faceRecogServicesAvailable").toString().toBoolean()
+            val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+                settings.getCompreFaceServer(),
+                settings.getCompreFaceKey()
+            )
             if (faceRecogServicesAvailable) {
                 model["faceRecogAvailable"] = "OK"
             } else {
