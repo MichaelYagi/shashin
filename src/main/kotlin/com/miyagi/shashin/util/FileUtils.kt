@@ -29,6 +29,7 @@ import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.file.Files
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -262,16 +263,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
             }
         }
 
-        /**
-         * Pings a HTTP URL. This effectively sends a HEAD request and returns `true` if the response code is in
-         * the 200-399 range.
-         * @param url The HTTP URL to be pinged.
-         * @param timeout The timeout in millis for both the connection timeout and the response read timeout. Note that
-         * the total timeout is effectively two times the given timeout.
-         * @return `true` if the given HTTP URL has returned response code 200-399 on a HEAD request within the
-         * given timeout, otherwise `false`.
-         */
-        fun pingURL(url: String, timeout: Int): Boolean {
+        fun pingURL(url: String, requestProperties: Map<String,String>? = null, timeoutInMS: Int = 0): Boolean {
             var urlcopy = url
             urlcopy = urlcopy.replaceFirst(
                 "^https".toRegex(),
@@ -279,9 +271,14 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
             ) // Otherwise an exception may be thrown on invalid SSL certificates.
             return try {
                 val connection: HttpURLConnection = URL(urlcopy).openConnection() as HttpURLConnection
-                connection.connectTimeout = timeout
-                connection.readTimeout = timeout
+                connection.connectTimeout = timeoutInMS
+                connection.readTimeout = timeoutInMS
                 connection.requestMethod = "HEAD"
+                if (requestProperties != null) {
+                    for (requestProperty in requestProperties) {
+                        connection.setRequestProperty(requestProperty.key, requestProperty.value)
+                    }
+                }
                 val responseCode: Int = connection.responseCode
                 responseCode in 200..399
             } catch (exception: IOException) {
@@ -290,23 +287,19 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
         }
 
         fun checkCompreFaceConnection(compreFaceServer: String?, compreFaceKey: String?): Boolean {
+            val timingStart = Date()
             var available = false
+
             if (!compreFaceKey.isNullOrBlank() && !compreFaceServer.isNullOrBlank()) {
-                var compreFaceResponse: ResponseEntity<String>?
-                try {
-                    val webClient = WebClient.create(compreFaceServer)
-                    compreFaceResponse = webClient.get()
-                        .uri("api/v1/recognition/subjects/")
-                        .header("x-api-key", compreFaceKey)
-                        .retrieve()
-                        .toEntity(String::class.java)
-                        .block()
-                    available =
-                        compreFaceResponse != null && compreFaceResponse.statusCode.toString().lowercase() == "200 ok"
-                } catch (e: Exception) {
-                    available = false
-                }
+                val requestProperties: Map<String, String> = mapOf("x-api-key" to compreFaceKey!!)
+                available = pingURL(compreFaceServer + "api/v1/recognition/subjects/", requestProperties, 1000)
             }
+
+            val timingEnd = Date()
+            val diff: Long = timingEnd.time - timingStart.time
+
+            val processingTime = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
+            logger.log(Level.INFO, "checkCompreFaceConnection - processing time: $processingTime")
 
             return available
         }
