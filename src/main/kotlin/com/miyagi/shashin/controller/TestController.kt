@@ -92,9 +92,6 @@ class TestController {
             }
         }
 
-        println(request.session.getAttribute("ComprefaceConnection"))
-
-
         return "test"
     }
 

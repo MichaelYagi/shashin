@@ -285,8 +285,6 @@ class SettingsController {
             model["faceRecogAvailableStatusText"] = "Connected to CompreFace server"
         }
 
-        request.session.setAttribute("ComprefaceConnection",faceRecogServicesAvailable)
-
         model["timeScheduleList"] = TextUtils.timeSchedules()
         model["currentTimezone"] = ZoneId.systemDefault()
         val scheduledTime = settings.getScheduledTime()
@@ -500,7 +498,6 @@ class SettingsController {
             }
 
             model["objectRecogEnabled"] = settings.getObjectDetection() as Boolean
-            request.session.setAttribute("ComprefaceConnection", faceRecogServicesAvailable)
         }
 
         if (statusMessage.isBlank() && model.getAttribute("alertClass") == "alert-success") {
@@ -546,6 +543,16 @@ class SettingsController {
             model["users"] = users
         }
 
+        val settings = settingsRepository?.findFirstByOrderByIdAsc()
+
+        model["objectRecogEnabled"] = settings?.getObjectDetection() as Boolean
+
+        val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+            settings.getCompreFaceServer(),
+            settings.getCompreFaceKey()
+        )
+        model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
+
         model["msg"] = ""
         model["status"] = ApiResponse.SUCCESS.status
         model["message"] = ""
@@ -582,7 +589,10 @@ class SettingsController {
 
                 // Cleanup CompreFace subjects
                 val settings = model.getAttribute("settings") as Settings
-                val faceRecogServicesAvailable = model.getAttribute("faceRecogServicesAvailable").toString().toBoolean()
+                val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+                    settings.getCompreFaceServer(),
+                    settings.getCompreFaceKey()
+                )
 
                 if (faceRecogServicesAvailable) {
                     val webClient = WebClient.create(settings.getCompreFaceServer()!!)
@@ -771,6 +781,17 @@ class SettingsController {
         if (request.getParameter("lines") != null && isNumber(request.getParameter("lines"))) {
             lineLimit = request.getParameter("lines").toString().toInt()
         }
+
+        val settings = settingsRepository?.findFirstByOrderByIdAsc()
+
+        model["objectRecogEnabled"] = settings?.getObjectDetection() as Boolean
+
+        val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+            settings.getCompreFaceServer(),
+            settings.getCompreFaceKey()
+        )
+        model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
+
         val module = "logs"
         model["msg"] = ""
         model["status"] = ApiResponse.SUCCESS.status
@@ -839,6 +860,16 @@ class SettingsController {
     @Secured("ROLE_ADMIN")
     @GetMapping("/settings/match")
     fun getMatchScan(model: Model): String {
+        val settings = settingsRepository?.findFirstByOrderByIdAsc()
+
+        model["objectRecogEnabled"] = settings?.getObjectDetection() as Boolean
+
+        val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+            settings.getCompreFaceServer(),
+            settings.getCompreFaceKey()
+        )
+        model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
+
         val module = "match"
         model["msg"] = ""
         model["status"] = ApiResponse.SUCCESS.status
@@ -852,6 +883,16 @@ class SettingsController {
     @Secured("ROLE_ADMIN")
     @GetMapping("/settings/scan")
     fun getScan(model: Model): String {
+        val settings = settingsRepository?.findFirstByOrderByIdAsc()
+
+        model["objectRecogEnabled"] = settings?.getObjectDetection() as Boolean
+
+        val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+            settings.getCompreFaceServer(),
+            settings.getCompreFaceKey()
+        )
+        model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
+
         val module = "scan"
         model["msg"] = ""
         model["status"] = ApiResponse.SUCCESS.status
@@ -902,6 +943,16 @@ class SettingsController {
     @Secured("ROLE_ADMIN")
     @GetMapping("/settings/snapshot")
     fun getSnapshot(model: Model): String {
+        val settings = settingsRepository?.findFirstByOrderByIdAsc()
+
+        model["objectRecogEnabled"] = settings?.getObjectDetection() as Boolean
+
+        val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+            settings.getCompreFaceServer(),
+            settings.getCompreFaceKey()
+        )
+        model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
+
         val module = "snapshot"
         model["msg"] = ""
         model["status"] = ApiResponse.SUCCESS.status
@@ -1405,6 +1456,13 @@ class SettingsController {
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
         val sidecarDir = rootPath + relativeSidecarDir
         var threadFileContent = FileUtils.readThreadFile("shashinscan")
+
+        val settings = settingsRepository?.findFirstByOrderByIdAsc()
+        val compreFaceServerConnected = FileUtils.checkCompreFaceConnection(
+            settings?.getCompreFaceServer(),
+            settings?.getCompreFaceKey()
+        )
+
 //        var msg: String
 
         if ((shouldStop.get() && (!FileUtils.checkThreadFileAlive("shashinscan") || (threadFileContent != null && threadFileContent == "Scan Cancelled") || (threadFileContent != null && threadFileContent == "Scan Complete"))) || (!shouldStop.get() && !FileUtils.checkThreadFileAlive("shashinscan"))) {
@@ -1450,7 +1508,6 @@ class SettingsController {
 
                             if (metadataList != null) {
                                 var deleteCount = 0
-                                val settings = settingsRepository?.findFirstByOrderByIdAsc()
 
                                 for (metadata in metadataList) {
                                     if (shouldStop.get()) {
@@ -1636,31 +1693,24 @@ class SettingsController {
                                                 // Delete tagged people
                                                 val recognitionLabelPhotos =
                                                     recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
-                                                if (settings != null) {
-                                                    if (FileUtils.checkCompreFaceConnection(
-                                                            settings.getCompreFaceServer(),
-                                                            settings.getCompreFaceKey()
-                                                        )
-                                                    ) {
-                                                        val webClient =
-                                                            WebClient.create(settings.getCompreFaceServer()!!)
-                                                        if (recognitionLabelPhotos != null) {
-                                                            for (recognitionLabelPhoto in recognitionLabelPhotos) {
-                                                                if (recognitionLabelPhoto.getCompreFaceImageId() != null && recognitionLabelPhoto.getCompreFaceImageId()!!
-                                                                        .isNotBlank()
-                                                                ) {
-                                                                    try {
-                                                                        webClient.delete()
-                                                                            .uri("api/v1/recognition/faces/${recognitionLabelPhoto.getCompreFaceImageId()}")
-                                                                            .header(
-                                                                                "x-api-key",
-                                                                                settings.getCompreFaceKey()
-                                                                            )
-                                                                            .retrieve()
-                                                                            .bodyToMono(String::class.java)
-                                                                            .block()
-                                                                    } catch (e: Exception) {
-                                                                    }
+                                                if (settings != null && compreFaceServerConnected) {
+                                                    val webClient = WebClient.create(settings.getCompreFaceServer()!!)
+                                                    if (recognitionLabelPhotos != null) {
+                                                        for (recognitionLabelPhoto in recognitionLabelPhotos) {
+                                                            if (recognitionLabelPhoto.getCompreFaceImageId() != null && recognitionLabelPhoto.getCompreFaceImageId()!!
+                                                                    .isNotBlank()
+                                                            ) {
+                                                                try {
+                                                                    webClient.delete()
+                                                                        .uri("api/v1/recognition/faces/${recognitionLabelPhoto.getCompreFaceImageId()}")
+                                                                        .header(
+                                                                            "x-api-key",
+                                                                            settings.getCompreFaceKey()
+                                                                        )
+                                                                        .retrieve()
+                                                                        .bodyToMono(String::class.java)
+                                                                        .block()
+                                                                } catch (e: Exception) {
                                                                 }
                                                             }
                                                         }
@@ -1706,13 +1756,8 @@ class SettingsController {
 
                             // Scan for new files
                             if (!shouldStop.get()) {
-                                val settings = settingsRepository?.findFirstByOrderByIdAsc()
                                 var webClient: WebClient? = null
-                                if (settings != null && FileUtils.checkCompreFaceConnection(
-                                        settings.getCompreFaceServer(),
-                                        settings.getCompreFaceKey()
-                                    )
-                                ) {
+                                if (settings != null && compreFaceServerConnected) {
                                     webClient = WebClient.create(settings.getCompreFaceServer()!!)
                                 }
 
@@ -1741,7 +1786,8 @@ class SettingsController {
                                             settings,
                                             criteria,
                                             webClient,
-                                            recognitionLabelPhotoLabels
+                                            recognitionLabelPhotoLabels,
+                                            compreFaceServerConnected
                                         )
                                     }
                                 }
@@ -1826,7 +1872,7 @@ class SettingsController {
         logger.log(Level.INFO, "shashinscan thread file deleted")
     }
 
-    private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, settings: Settings?, criteria: Criteria<Image, DetectedObjects>?, webClient: WebClient?, recognitionLabelPhotoLabels:  MutableIterable<RecognitionLabelId>?) {
+    private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, settings: Settings?, criteria: Criteria<Image, DetectedObjects>?, webClient: WebClient?, recognitionLabelPhotoLabels: MutableIterable<RecognitionLabelId>?, compreFaceServerConnected: Boolean) {
         val f = File(dirPath)
         val files = f.listFiles()
 
@@ -1875,7 +1921,7 @@ class SettingsController {
                                         try {
                                             metadataRepository?.save(metadataObj)
 
-                                            if (settings != null && webClient != null && FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
+                                            if (settings != null && webClient != null && compreFaceServerConnected) {
                                                 try {
                                                     // Have at least 3 people tagged
                                                     val compreFaceTagAllow = 3
@@ -2118,7 +2164,7 @@ class SettingsController {
                 }
 
                 if (file.isDirectory) {
-                    getFile(file.absolutePath, threadFile, sidecarDir, rootDir, mediaExcludeDirs, settings, criteria, webClient, recognitionLabelPhotoLabels)
+                    getFile(file.absolutePath, threadFile, sidecarDir, rootDir, mediaExcludeDirs, settings, criteria, webClient, recognitionLabelPhotoLabels, compreFaceServerConnected)
                 }
             }
         }
