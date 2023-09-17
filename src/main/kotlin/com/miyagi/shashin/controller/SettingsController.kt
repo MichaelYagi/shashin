@@ -873,7 +873,7 @@ class SettingsController {
         val module = "match"
         model["msg"] = ""
         model["status"] = ApiResponse.SUCCESS.status
-        model["message"] = "Click scan to start finding people"
+        model["message"] = "Click scan to start finding people and identifying objects"
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
