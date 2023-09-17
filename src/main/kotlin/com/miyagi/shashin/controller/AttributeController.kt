@@ -223,27 +223,6 @@ class AttributeController: ResponseEntityExceptionHandler() {
         if (settings != null) {
             queryLimit = settings.getQueryLimit()!!
             searchHistoryLimit = settings.getSearchHistoryLimit()!!
-
-            if (request.requestURI.toString() != "/settings" &&
-                request.requestURI.toString() != "/users/login" &&
-                request.requestURI.toString() != "/users/logout"
-            ) {
-                model["objectRecogEnabled"] = settings.getObjectDetection() as Boolean
-
-                if (request.session.getAttribute("ComprefaceConnection") == null) {
-                    logger.log(Level.INFO, "AttributeController - CompreFaceConnection network check")
-                    val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
-                        settings.getCompreFaceServer(),
-                        settings.getCompreFaceKey()
-                    )
-                    model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
-                    request.session.setAttribute("ComprefaceConnection", faceRecogServicesAvailable)
-                } else {
-                    logger.log(Level.INFO, "AttributeController - CompreFaceConnection attribute check")
-                    model["faceRecogServicesAvailable"] = request.session.getAttribute("ComprefaceConnection") as Boolean
-                }
-            }
-
             model["settings"] = settings
         } else {
             val settingsObj = Settings()
@@ -264,20 +243,6 @@ class AttributeController: ResponseEntityExceptionHandler() {
             settingsObj.setCreatedAt(getCurrentTimestamp())
             settingsObj.setModifiedAt(getCurrentTimestamp())
             model["settings"] = settingsObj
-
-            if (request.session.getAttribute("ComprefaceConnection") == null) {
-                logger.log(Level.INFO, "AttributeController - Setting initialized and CompreFaceConnection network check")
-
-                val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
-                    settingsObj.getCompreFaceServer(),
-                    settingsObj.getCompreFaceKey()
-                )
-                model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
-                request.session.setAttribute("ComprefaceConnection", faceRecogServicesAvailable)
-            } else {
-                logger.log(Level.INFO, "AttributeController - Setting initialized and CompreFaceConnection attribute check")
-                model["faceRecogServicesAvailable"] = request.session.getAttribute("ComprefaceConnection") as Boolean
-            }
         }
         model["searchHistoryLimit"] = searchHistoryLimit
         model["queryLimit"] = queryLimit

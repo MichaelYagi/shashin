@@ -147,17 +147,6 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                         notifyLogin(user)
 //                        checkLatestAppVersion(user)
 
-                        // Check compreface connection
-                        val settings = settingsRepository?.findFirstByOrderByIdAsc()
-                        request.session.setAttribute("ComprefaceConnection", false)
-                        if (settings != null) {
-                            val compreFaceConnection = FileUtils.checkCompreFaceConnection(
-                                settings.getCompreFaceServer(),
-                                settings.getCompreFaceKey()
-                            )
-                            request.session.setAttribute("ComprefaceConnection", compreFaceConnection)
-                        }
-
                         if (this.profile != "test" && this.persistentTokenRepository != null) {
                             val rememberMeServices =
                                 PersistentTokenBasedRememberMeServices(

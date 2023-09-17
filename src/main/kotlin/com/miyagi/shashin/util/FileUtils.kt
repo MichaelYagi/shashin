@@ -613,6 +613,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
 
             if (testImages != null && distinctLabelRecords != null && distinctLabelRecords.count() > 0) {
                 val mapper = ObjectMapper()
+                val webClient = WebClient.create(settings.getCompreFaceServer()!!)
 
                 for (testImage in testImages) {
 
@@ -630,7 +631,6 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                         faceFsr
                     )
 
-                    val webClient = WebClient.create(settings.getCompreFaceServer()!!)
                     var response: String? = null
 
                     try {
