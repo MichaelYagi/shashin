@@ -13,7 +13,7 @@ class Settings {
             os = data["os"];
         }
         const seperator = (os.toLowerCase().indexOf('windows') !== -1 ? "\\" : "/");
-        $("#selectFolder").hide();
+        // $("#selectFolder").hide();
 
         $("#selectFolder").on("click", function (e) {
             e.preventDefault();
@@ -91,13 +91,16 @@ class Settings {
 
         async function selectPath(e) {
             e.preventDefault();
-            const selectedPath = $("#selectedPath").val() === "Select Folder" ? "" : $("#selectedPath").val().trim();
-            if (selectedPath.length > 0) {
-                $("#selectFolder").show();
-            } else {
-                $("#selectFolder").hide();
-            }
-            $("#selectedPathInput").val(selectedPath);
+            const selectedPath = $("#selectedPath").val().trim();
+
+            // const selectedPath = $("#selectedPath").val() === "Select Folder" ? "" : $("#selectedPath").val().trim();
+            // if (selectedPath.length > 0) {
+            //     $("#selectFolder").show();
+            // } else {
+            //     $("#selectFolder").hide();
+            // }
+
+            $("#selectedPathInput").val($("#selectedPath").val().trim());
 
             const listText = $(e.target).text();
 
