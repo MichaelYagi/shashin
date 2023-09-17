@@ -463,20 +463,7 @@ class SettingsController {
             settingsRepository?.save(settings)
             model["settings"] = settings
 
-            var faceRecogServicesAvailable = false
-            var compreFaceResponse: ResponseEntity<String>?
-            try {
-                val webClient = WebClient.create(settings.getCompreFaceServer()!!)
-                compreFaceResponse = webClient.get()
-                    .uri("api/v1/recognition/subjects/")
-                    .header("x-api-key", settings.getCompreFaceKey())
-                    .retrieve()
-                    .toEntity(String::class.java)
-                    .block()
-                faceRecogServicesAvailable = compreFaceResponse != null && compreFaceResponse.statusCode.toString().lowercase() == "200 ok"
-            } catch (e: Exception) {
-                logger.log(Level.INFO, "Error CompreFace connection: " + e.localizedMessage)
-            }
+            val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())
 
             model["timeScheduleList"] = TextUtils.timeSchedules()
             model["currentTimezone"] = ZoneId.systemDefault()
