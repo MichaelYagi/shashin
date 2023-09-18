@@ -48,7 +48,7 @@ async function showMap(mapdata) {
     if (qslat !== null && qslng !== null && qslat !== '' && qslng !== '') {
         if (true === isValidQsLatLon(qslat,qslng)) {
             initialCoord = [qslng, qslat];
-            initialZoom = 20;
+            initialZoom = 17;
             startDateField.val("");
         } else {
             shashin.showToastMessage("Validation error", "Invalid lat/lng format.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
@@ -62,7 +62,7 @@ async function showMap(mapdata) {
 
             if (true === isValidQsLatLon(qslat, qslng)) {
                 initialCoord = [qslng, qslat];
-                initialZoom = 20;
+                initialZoom = 17;
                 startDateField.val("");
             } else {
                 shashin.showToastMessage("Validation error", "Invalid lat/lng format.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
@@ -72,7 +72,7 @@ async function showMap(mapdata) {
         }
     } else if (Util.localStorageAvailable() === true && "lat" in localStorage && "lng" in localStorage) {
         initialCoord = [localStorage.getItem("lng"), localStorage.getItem("lat")];
-        initialZoom = 20;
+        initialZoom = 17;
         startDateField.val("");
         localStorage.removeItem('lat');
         localStorage.removeItem('lng');
@@ -84,7 +84,7 @@ async function showMap(mapdata) {
             const lslng = latlngArr[1].trim();
 
             initialCoord = [lslat, lslng];
-            initialZoom = 20;
+            initialZoom = 17;
             startDateField.val("");
             localStorage.removeItem('latlng');
         }
