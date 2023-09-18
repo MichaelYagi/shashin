@@ -12,6 +12,7 @@
     shashin.contextMenu = null;
     shashin.tempVector = null;
     shashin.downloadInstance = null;
+    shashin.initialMapZoom = 17;
 
     function fixContentHeight() {
         if ($("div[data-role='dialog']").is(":visible")) {
@@ -797,7 +798,7 @@
 
             const recenterCoordinates = function (obj) {
                 shashin.map.getView().setCenter(ol.proj.fromLonLat([metadata.lng, metadata.lat]));
-                shashin.map.getView().setZoom(17);
+                shashin.map.getView().setZoom(shashin.initialMapZoom);
             };
 
             shashin.contextMenu = new ContextMenu({
@@ -883,7 +884,7 @@
             }
 
             shashin.map.getView().setCenter(ol.proj.fromLonLat([metadata.lng, metadata.lat]));
-            shashin.map.getView().setZoom(17);
+            shashin.map.getView().setZoom(shashin.initialMapZoom);
 
             shashin.feature = new ol.Feature({
                 geometry: new ol.geom.Point(ol.proj.fromLonLat([metadata.lng, metadata.lat])),
