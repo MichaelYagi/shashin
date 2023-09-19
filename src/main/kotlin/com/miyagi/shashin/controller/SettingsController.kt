@@ -287,7 +287,7 @@ class SettingsController {
         model["currentTimezone"] = ZoneId.systemDefault()
         val scheduledTime = settings.getScheduledTime()
         model["scheduledTime"] = scheduledTime as String
-        model["objectRecogEnabled"] = settings.getObjectDetection() as Boolean
+        model["objectRecogEnabled"] = settings.getObjectDetection()!!
 
         model["msg"] = ""
         model["status"] = ApiResponse.SUCCESS.status
@@ -482,7 +482,7 @@ class SettingsController {
                 model["faceRecogAvailableStatusText"] = "Connected to CompreFace server"
             }
 
-            model["objectRecogEnabled"] = settings.getObjectDetection() as Boolean
+            model["objectRecogEnabled"] = settings.getObjectDetection()!!
         }
 
         if (statusMessage.isBlank() && model.getAttribute("alertClass") == "alert-success") {
@@ -530,7 +530,7 @@ class SettingsController {
 
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
 
-        model["objectRecogEnabled"] = settings?.getObjectDetection() as Boolean
+        model["objectRecogEnabled"] = settings?.getObjectDetection()!!
 
         val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
             settings.getCompreFaceServer(),
@@ -769,7 +769,7 @@ class SettingsController {
 
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
 
-        model["objectRecogEnabled"] = settings?.getObjectDetection() as Boolean
+        model["objectRecogEnabled"] = settings?.getObjectDetection()!!
 
         val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
             settings.getCompreFaceServer(),
@@ -847,7 +847,7 @@ class SettingsController {
     fun getMatchScan(model: Model): String {
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
 
-        model["objectRecogEnabled"] = settings?.getObjectDetection() as Boolean
+        model["objectRecogEnabled"] = settings?.getObjectDetection()!!
 
         val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
             settings.getCompreFaceServer(),
@@ -930,7 +930,7 @@ class SettingsController {
     fun getSnapshot(model: Model): String {
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
 
-        model["objectRecogEnabled"] = settings?.getObjectDetection() as Boolean
+        model["objectRecogEnabled"] = settings?.getObjectDetection()!!
 
         val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
             settings.getCompreFaceServer(),

@@ -402,7 +402,7 @@ class PeopleController {
     fun getCompreFaceGetImages(model: Model, @PathVariable personId: Int, request: HttpServletRequest): String {
         val module = "compreface"
         val page = 0
-        val response = buildCompreFace(model,request,personId,page)
+        val response = buildCompreFace(model,personId,page)
         val counts = HashMap<String,Int>()
         counts["compreface"] = 0
         counts["person"] = 0
@@ -476,7 +476,7 @@ class PeopleController {
         var response = mutableMapOf<String, Any?>()
 
         if (model.getAttribute("currentUser") != "") {
-            response = buildCompreFace(model,request,personId,page)
+            response = buildCompreFace(model,personId,page)
             response["msg"] = ""
             response["status"] = ApiResponse.SUCCESS.status
 
@@ -491,7 +491,7 @@ class PeopleController {
         return mapper.writeValueAsString(response)
     }
 
-    private fun buildCompreFace(model: Model, request: HttpServletRequest, personId: Int, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
+    private fun buildCompreFace(model: Model, personId: Int, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         response["message"] = "There are no photos."
@@ -653,7 +653,7 @@ class PeopleController {
     fun getPerson(model: Model, @PathVariable personId: Int,request: HttpServletRequest): String {
         val module = "person"
         val page = 0
-        val response = buildPersonAlbum(model,request,personId,page)
+        val response = buildPersonAlbum(model,personId,page)
         for ((k, v) in response) {
             model[k] = v!!
         }
@@ -719,10 +719,10 @@ class PeopleController {
     @RequestMapping(value = ["/person/{personId}/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getPagedPerson(model: Model, request: HttpServletRequest, @PathVariable personId: Int, @PathVariable page: Int): String {
-        return mapper.writeValueAsString(buildPersonAlbum(model,request,personId,page))
+        return mapper.writeValueAsString(buildPersonAlbum(model,personId,page))
     }
 
-    private fun buildPersonAlbum(model: Model,request: HttpServletRequest,personId: Int,page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
+    private fun buildPersonAlbum(model: Model,personId: Int,page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         response["message"] = "There are no photos."
