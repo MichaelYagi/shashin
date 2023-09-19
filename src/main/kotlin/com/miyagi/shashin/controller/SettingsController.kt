@@ -870,7 +870,7 @@ class SettingsController {
     fun getScan(model: Model): String {
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
 
-        model["objectRecogEnabled"] = settings?.getObjectDetection() as Boolean
+        model["objectRecogEnabled"] = settings?.getObjectDetection()!!
 
         val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
             settings.getCompreFaceServer(),
