@@ -410,7 +410,7 @@ class SettingsController {
             model["alertClass"] = "alert-warning"
         }
 
-        val settings = settingsRepository?.findFirstByOrderByIdAsc()
+        val settings = model.getAttribute("settings") as Settings?
 
         settings?.setCompreFaceServer(compreFaceServer)
         settings?.setCompreFaceKey(compreFaceKey)
@@ -528,7 +528,7 @@ class SettingsController {
             model["users"] = users
         }
 
-        val settings = settingsRepository?.findFirstByOrderByIdAsc()
+        val settings = model.getAttribute("settings") as Settings?
 
         model["objectRecogEnabled"] = settings?.getObjectDetection()!!
 
@@ -767,7 +767,7 @@ class SettingsController {
             lineLimit = request.getParameter("lines").toString().toInt()
         }
 
-        val settings = settingsRepository?.findFirstByOrderByIdAsc()
+        val settings = model.getAttribute("settings") as Settings?
 
         model["objectRecogEnabled"] = settings?.getObjectDetection()!!
 
@@ -845,7 +845,7 @@ class SettingsController {
     @Secured("ROLE_ADMIN")
     @GetMapping("/settings/match")
     fun getMatchScan(model: Model): String {
-        val settings = settingsRepository?.findFirstByOrderByIdAsc()
+        val settings = model.getAttribute("settings") as Settings?
 
         model["objectRecogEnabled"] = settings?.getObjectDetection()!!
 
@@ -868,7 +868,7 @@ class SettingsController {
     @Secured("ROLE_ADMIN")
     @GetMapping("/settings/scan")
     fun getScan(model: Model): String {
-        val settings = settingsRepository?.findFirstByOrderByIdAsc()
+        val settings = model.getAttribute("settings") as Settings?
 
         model["objectRecogEnabled"] = settings?.getObjectDetection()!!
 
@@ -928,7 +928,7 @@ class SettingsController {
     @Secured("ROLE_ADMIN")
     @GetMapping("/settings/snapshot")
     fun getSnapshot(model: Model): String {
-        val settings = settingsRepository?.findFirstByOrderByIdAsc()
+        val settings = model.getAttribute("settings") as Settings?
 
         model["objectRecogEnabled"] = settings?.getObjectDetection()!!
 
