@@ -95,16 +95,17 @@ class RssFeedView : AbstractRssFeedView() {
                                         var albumName = ""
                                         if (metadata.getPlaceName() != null && metadata.getPlaceName() != "") {
                                             val placeArray = metadata.getPlaceName()!!.split(";")
-                                            place = placeArray[0]
+                                            place = placeArray[0] + " - "
                                         }
                                         if (metadata.getDescription() != null && metadata.getDescription() != "") {
-                                            metadataDescription = metadata.getDescription()!!
+                                            metadataDescription = metadata.getDescription()!! + " - "
                                         }
                                         if (album?.getName() != null && album.getName() != "") {
-                                            albumName = album.getName()!!
+                                            albumName = album.getName()!! + " - "
                                         }
                                         val descVal = "$albumName $metadataDescription $place"
-                                        description.value = descVal.trim()
+
+                                        description.value = descVal.dropLast(3).trim()
                                         entry.description = description
                                         entry.link = "$baseUrl/api/v1/image/${metadata.getId()}"
                                         entry.uri = "$baseUrl/api/v1/image/${metadata.getId()}"
