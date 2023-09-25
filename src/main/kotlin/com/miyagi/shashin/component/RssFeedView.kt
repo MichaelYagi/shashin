@@ -80,7 +80,7 @@ class RssFeedView : AbstractRssFeedView() {
                 val randomAlbums = albumRepository?.findRandomAlbumsByUser(currentUser.getId())
                 if (randomAlbums != null && randomAlbums.count() > 0) {
                     for (randomAlbum in randomAlbums) {
-                        if (randomAlbum.getIsShared() == 1) {
+//                        if (randomAlbum.getIsShared() == 1) {
                             val albumPhotos = albumPhotoRepository?.findImagesByAlbumId(randomAlbum.getAlbumId()!!, 100)
                             if (albumPhotos != null) {
                                 for (albumPhoto in albumPhotos) {
@@ -115,7 +115,7 @@ class RssFeedView : AbstractRssFeedView() {
                                     }
                                 }
                             }
-                        }
+//                        }
                     }
                 }
             }
