@@ -86,11 +86,13 @@ class RssFeedView : AbstractRssFeedView() {
                                 for (albumPhoto in albumPhotos) {
                                     val metadata = metadataRepository?.findByMetadataId(albumPhoto?.getMetadataId()!!)
                                     if (metadata != null) {
+                                        val album = albumRepository?.findAlbumById(albumPhoto?.getAlbumId())
                                         val entry = Item()
                                         entry.title = metadata.getTitle()
                                         val description = Description()
                                         var place = ""
                                         var metadataDescription = ""
+                                        var albumName = ""
                                         if (metadata.getPlaceName() != null && metadata.getPlaceName() != "") {
                                             val placeArray = metadata.getPlaceName()!!.split(";")
                                             place = placeArray[0]
@@ -98,7 +100,10 @@ class RssFeedView : AbstractRssFeedView() {
                                         if (metadata.getDescription() != null && metadata.getDescription() != "") {
                                             metadataDescription = metadata.getDescription()!!
                                         }
-                                        val descVal = "$metadataDescription $place"
+                                        if (album?.getName() != null && album.getName() != "") {
+                                            albumName = album.getName()!!
+                                        }
+                                        val descVal = "$albumName $metadataDescription $place"
                                         description.value = descVal.trim()
                                         entry.description = description
                                         entry.link = "$baseUrl/api/v1/image/${metadata.getId()}"
