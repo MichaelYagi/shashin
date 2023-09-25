@@ -4,17 +4,19 @@ import com.miyagi.shashin.repository.AlbumPhotoRepository
 import com.miyagi.shashin.repository.AlbumRepository
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.UserRepository
-import com.rometools.rome.feed.rss.Channel
-import com.rometools.rome.feed.rss.Description
-import com.rometools.rome.feed.rss.Guid
-import com.rometools.rome.feed.rss.Item
+import com.rometools.rome.feed.rss.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import org.springframework.web.servlet.view.feed.AbstractRssFeedView
+import java.awt.image.BufferedImage
+import java.net.URL
+import java.nio.file.Files
+import javax.imageio.ImageIO
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+import kotlin.io.path.Path
 
 
 @Component
@@ -38,6 +40,7 @@ class RssFeedView : AbstractRssFeedView() {
     override fun buildFeedMetadata(model: MutableMap<String, Any>, feed: Channel, request: HttpServletRequest) {
         feed.title = "$appName RSS Feed"
         feed.description = "$appName images"
+        feed.feedType = "rss_2.0"
 
         if (model.containsKey("apiKey")) {
             val apiKey = model["apiKey"] as String?
@@ -51,7 +54,11 @@ class RssFeedView : AbstractRssFeedView() {
         if (request.scheme == "https") {
             baseUrlBuilder = baseUrlBuilder.scheme("https")
         }
-        feed.link = baseUrlBuilder.build().toUriString()
+        var apiKey = ""
+        if (model.containsKey("apiKey")) {
+            apiKey = model["apiKey"] as String
+        }
+        feed.link = "${baseUrlBuilder.build().toUriString()}/$apiKey/rss"
     }
 
     override fun buildFeedItems(
@@ -98,6 +105,11 @@ class RssFeedView : AbstractRssFeedView() {
                                     val guid = Guid()
                                     guid.value = "$baseUrl/api/v1/image/${metadata.getId()}"
                                     entry.guid = guid
+                                    val enc = Enclosure()
+                                    enc.url = "$baseUrl/api/v1/image/${metadata.getId()}"
+                                    enc.type = metadata.getType()
+                                    enc.length = Files.size(Path(metadata.getPath()!!))
+                                    entry.enclosures = mutableListOf(enc)
                                     rssList.add(entry)
                                 }
                             }
