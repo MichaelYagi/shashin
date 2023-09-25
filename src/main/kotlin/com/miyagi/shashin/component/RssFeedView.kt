@@ -80,37 +80,39 @@ class RssFeedView : AbstractRssFeedView() {
                 val randomAlbums = albumRepository?.findRandomAlbumsByUser(currentUser.getId())
                 if (randomAlbums != null && randomAlbums.count() > 0) {
                     for (randomAlbum in randomAlbums) {
-                        val albumPhotos = albumPhotoRepository?.findImagesByAlbumId(randomAlbum.getAlbumId()!!,100)
-                        if (albumPhotos != null) {
-                            for (albumPhoto in albumPhotos) {
-                                val metadata = metadataRepository?.findByMetadataId(albumPhoto?.getMetadataId()!!)
-                                if (metadata != null) {
-                                    val entry = Item()
-                                    entry.title = metadata.getTitle()
-                                    val description = Description()
-                                    var place = ""
-                                    var metadataDescription = ""
-                                    if (metadata.getPlaceName() != null && metadata.getPlaceName() != "") {
-                                        val placeArray = metadata.getPlaceName()!!.split(";")
-                                        place = placeArray[0]
+                        if (randomAlbum.getIsShared() == 1) {
+                            val albumPhotos = albumPhotoRepository?.findImagesByAlbumId(randomAlbum.getAlbumId()!!, 100)
+                            if (albumPhotos != null) {
+                                for (albumPhoto in albumPhotos) {
+                                    val metadata = metadataRepository?.findByMetadataId(albumPhoto?.getMetadataId()!!)
+                                    if (metadata != null) {
+                                        val entry = Item()
+                                        entry.title = metadata.getTitle()
+                                        val description = Description()
+                                        var place = ""
+                                        var metadataDescription = ""
+                                        if (metadata.getPlaceName() != null && metadata.getPlaceName() != "") {
+                                            val placeArray = metadata.getPlaceName()!!.split(";")
+                                            place = placeArray[0]
+                                        }
+                                        if (metadata.getDescription() != null && metadata.getDescription() != "") {
+                                            metadataDescription = metadata.getDescription()!!
+                                        }
+                                        val descVal = "$metadataDescription $place"
+                                        description.value = descVal.trim()
+                                        entry.description = description
+                                        entry.link = "$baseUrl/api/v1/image/${metadata.getId()}"
+                                        entry.uri = "$baseUrl/api/v1/image/${metadata.getId()}"
+                                        val guid = Guid()
+                                        guid.value = "$baseUrl/api/v1/image/${metadata.getId()}"
+                                        entry.guid = guid
+                                        val enc = Enclosure()
+                                        enc.url = "$baseUrl/api/v1/image/${metadata.getId()}"
+                                        enc.type = metadata.getType()
+                                        enc.length = Files.size(Path(metadata.getPath()!!))
+                                        entry.enclosures = mutableListOf(enc)
+                                        rssList.add(entry)
                                     }
-                                    if (metadata.getDescription() != null && metadata.getDescription() != "") {
-                                        metadataDescription = metadata.getDescription()!!
-                                    }
-                                    val descVal = "$metadataDescription $place"
-                                    description.value = descVal.trim()
-                                    entry.description = description
-                                    entry.link = "$baseUrl/api/v1/image/${metadata.getId()}"
-                                    entry.uri = "$baseUrl/api/v1/image/${metadata.getId()}"
-                                    val guid = Guid()
-                                    guid.value = "$baseUrl/api/v1/image/${metadata.getId()}"
-                                    entry.guid = guid
-                                    val enc = Enclosure()
-                                    enc.url = "$baseUrl/api/v1/image/${metadata.getId()}"
-                                    enc.type = metadata.getType()
-                                    enc.length = Files.size(Path(metadata.getPath()!!))
-                                    entry.enclosures = mutableListOf(enc)
-                                    rssList.add(entry)
                                 }
                             }
                         }
