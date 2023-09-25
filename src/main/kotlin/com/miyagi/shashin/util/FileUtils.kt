@@ -292,7 +292,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
 
             if (!compreFaceKey.isNullOrBlank() && !compreFaceServer.isNullOrBlank()) {
                 val requestProperties: Map<String, String> = mapOf("x-api-key" to compreFaceKey)
-                available = pingURL(compreFaceServer + "api/v1/recognition/subjects/", requestProperties, 1000)
+                available = pingURL(compreFaceServer + "api/v1/recognition/faces?page=1&size=1&subject=1", requestProperties, 1000)
             }
 
             val timingEnd = Date()
