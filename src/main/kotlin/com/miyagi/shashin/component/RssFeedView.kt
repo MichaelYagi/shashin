@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import org.springframework.web.servlet.view.feed.AbstractRssFeedView
-import java.time.Instant
-import java.util.*
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -98,7 +96,7 @@ class RssFeedView : AbstractRssFeedView() {
                                     entry.link = "$baseUrl/api/v1/image/${metadata.getId()}"
                                     entry.uri = "$baseUrl/api/v1/image/${metadata.getId()}"
                                     val guid = Guid()
-                                    guid.value = metadata.getId()
+                                    guid.value = "$baseUrl/api/v1/image/${metadata.getId()}"
                                     entry.guid = guid
                                     rssList.add(entry)
                                 }
