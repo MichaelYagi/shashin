@@ -32,6 +32,7 @@ import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.bind.support.SessionStatus
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.text.SimpleDateFormat
@@ -232,15 +233,24 @@ class UserController {
 
     @GetMapping("/users/apikey")
     @Secured("ROLE_ADMIN","ROLE_USER")
-    fun getApiKey(model: Model): String {
+    fun getApiKey(model: Model, request: HttpServletRequest): String {
         model["message"] = ""
         model["user"] = User()
         model["alertClass"] = ""
+        model["rssFeedLink"] = ""
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
             model["user"] = currentUserObj
+
+            var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
+            if (request.scheme == "https") {
+                baseUrlBuilder = baseUrlBuilder.scheme("https")
+            }
+            val baseUrl = baseUrlBuilder.build().toUriString()
+            model["rssFeedLink"] = "$baseUrl/${currentUserObj.getApikey()}/rss"
         }
+
 
         val module = "apikey"
         model["msg"] = ""
