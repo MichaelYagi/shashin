@@ -31,7 +31,7 @@
                         <div id="msg"></div>
                     </div>
                 </div>
-                <p>RSS feed <a th:href="${rssFeedLink}" th:text="${rssFeedLink}" target="_blank"></a></p>
+                <p>RSS feed <a id="rssFeedLink" th:href="${rssFeedLink}" th:text="${rssFeedLink}" target="_blank"></a></p>
                 <p>View API documentaion <a href="/articles/endpoints">here</a>.</p>
             </div>
 
@@ -112,10 +112,17 @@
         if (currentApikey !== null && currentApikey !== "") {
             const http = new Http("apikey update");
             const json = {currentApikey: currentApikey};
+            const version = Util.getMetadataLocalStorage();
 
-            let data = await http.ajax("post", "/users/apikey/update", JSON.stringify(json));
-            if (data.hasOwnProperty("updatedApikey") && data["updatedApikey"] !== "") {
+            let data = await http.ajax("post", "/users/apikey/update"+(version === "" ? "" : "?v=" + version), JSON.stringify(json));
+            if (data.hasOwnProperty("updatedApikey") && data["updatedApikey"] !== "" &&
+                data.hasOwnProperty("rssFeedLink") && data["rssFeedLink"] !== "") {
+                Util.setMetadataLocalStorage();
                 $("#apikey").val(data["updatedApikey"]);
+
+                console.log(data)
+                $("#rssFeedLink").text(data["rssFeedLink"]);
+                $("#rssFeedLink").attr("href", data["rssFeedLink"]);
             } else {
                 shashin.showToastMessage("Operation failed", "Could not regenerate API key", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
                 // $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Could not regenerate API key</div>");
