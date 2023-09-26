@@ -264,13 +264,14 @@ class UserController {
     @RequestMapping(value = ["/users/apikey/update"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_ADMIN","ROLE_USER")
-    fun postWebUpdateApikey(model: Model, redirectAttributes: RedirectAttributes, @RequestBody requestBody: JsonNode): String {
+    fun postWebUpdateApikey(model: Model, request: HttpServletRequest, redirectAttributes: RedirectAttributes, @RequestBody requestBody: JsonNode): String {
         val apikeyMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
         val response = mutableMapOf<String, Any?>()
         response["msg"] = "Could not update API key"
         response["message"] = "Could not update API key"
         response["status"] = ApiResponse.FAIL.status
         response["updatedApikey"] = ""
+        response["rssFeedLink"] = ""
 
         if (apikeyMap.containsKey("currentApikey")) {
             val currentApikey = apikeyMap["currentApikey"]
@@ -283,6 +284,16 @@ class UserController {
                     val updatedApikey = TextUtils.generateUUID(currentUserObj.getUsername(),System.currentTimeMillis().toString(),"",0.0,0,"","API key generated from UserController").toString()
                     updatedUserObj.get().setApikey(updatedApikey)
                     userRepository?.save(updatedUserObj.get())
+
+                    request.session.setAttribute("CurrentUser", updatedUserObj.get())
+                    model["currentUser"] = updatedUserObj.get()
+
+                    var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
+                    if (request.scheme == "https") {
+                        baseUrlBuilder = baseUrlBuilder.scheme("https")
+                    }
+                    val baseUrl = baseUrlBuilder.build().toUriString()
+                    response["rssFeedLink"] = "$baseUrl/${updatedUserObj.get().getApikey()}/rss"
 
                     response["updatedApikey"] = updatedApikey
                     response["msg"] = ""
