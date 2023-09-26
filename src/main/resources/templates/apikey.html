@@ -112,15 +112,12 @@
         if (currentApikey !== null && currentApikey !== "") {
             const http = new Http("apikey update");
             const json = {currentApikey: currentApikey};
-            const version = Util.getMetadataLocalStorage();
 
-            let data = await http.ajax("post", "/users/apikey/update"+(version === "" ? "" : "?v=" + version), JSON.stringify(json));
+            let data = await http.ajax("post", "/users/apikey/update", JSON.stringify(json));
             if (data.hasOwnProperty("updatedApikey") && data["updatedApikey"] !== "" &&
                 data.hasOwnProperty("rssFeedLink") && data["rssFeedLink"] !== "") {
-                Util.setMetadataLocalStorage();
                 $("#apikey").val(data["updatedApikey"]);
 
-                console.log(data)
                 $("#rssFeedLink").text(data["rssFeedLink"]);
                 $("#rssFeedLink").attr("href", data["rssFeedLink"]);
             } else {
