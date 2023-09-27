@@ -28,7 +28,7 @@
     icon = bootstrap icon
     iconColor = CSS color
     delay = in ms
-    target = default liveToast, or one of liveToast1,liveToast2,liveToast3,liveToast4
+    target = default defaultToastTarget, or one of toastTarget1,toastTarget2,toastTarget3,toastTarget4
     autohide = boolean
     */
     shashin.showToastMessage = function(title, message, options) {
@@ -43,7 +43,7 @@
         let delay = 5000;
 
         if (options === undefined || options === null) {
-            target = "liveToast";
+            target = "defaultToastTarget";
             autohide = true;
         } else {
             if (options.hasOwnProperty("icon")) {
@@ -58,7 +58,7 @@
             if (options.hasOwnProperty("target")) {
                 target = options["target"];
             } else {
-                target = "liveToast";
+                target = "defaultToastTarget";
             }
             if (options.hasOwnProperty("autohide")) {
                 autohide = options["autohide"];
@@ -67,28 +67,28 @@
             }
         }
 
-        if (target === "liveToast1") {
+        if (target === "toastTarget1") {
             titleField = $("#toastTitle1");
             messageField = $("#toastMessage1");
             iconField = $("#toastIcon1");
             spacerField = $("#toastSpacer1");
-        } else if (target === "liveToast2") {
+        } else if (target === "toastTarget2") {
             titleField = $("#toastTitle2");
             messageField = $("#toastMessage2");
             iconField = $("#toastIcon2");
             spacerField = $("#toastSpacer2");
-        } else if (target === "liveToast3") {
+        } else if (target === "toastTarget3") {
             titleField = $("#toastTitle3");
             messageField = $("#toastMessage3");
             iconField = $("#toastIcon3");
             spacerField = $("#toastSpacer3");
-        } else if (target === "liveToast4") {
+        } else if (target === "toastTarget4") {
             titleField = $("#toastTitle4");
             messageField = $("#toastMessage4");
             iconField = $("#toastIcon4");
             spacerField = $("#toastSpacer4");
         } else {
-            target = "liveToast";
+            target = "defaultToastTarget";
             titleField = $("#toastTitle");
             messageField = $("#toastMessage");
             iconField = $("#toastIcon");
