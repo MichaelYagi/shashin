@@ -69,6 +69,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "users\\/update",
             "users\\/apikey",
             "rss",
+            "atom",
             "test"
         )
 
@@ -96,7 +97,8 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "/api/v1/thumbnails/**","/api/v1/image/**","/api/v1/video/**","/api/v1/profile/**",
             "/image/**",
             "/video/**",
-            "/**/rss"
+            "/**/rss",
+            "/**/atom"
         )
 
         var adminList = arrayOf(
