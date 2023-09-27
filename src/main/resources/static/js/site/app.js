@@ -13,6 +13,11 @@
     shashin.tempVector = null;
     shashin.downloadInstance = null;
     shashin.initialMapZoom = 17;
+    shashin.toastDefaultTarget = "defaultToastTarget";
+    shashin.toastTarget1 = "toastTarget1";
+    shashin.toastTarget2 = "toastTarget2";
+    shashin.toastTarget3 = "toastTarget3";
+    shashin.toastTarget4 = "toastTarget4";
 
     function fixContentHeight() {
         if ($("div[data-role='dialog']").is(":visible")) {
@@ -43,7 +48,7 @@
         let delay = 5000;
 
         if (options === undefined || options === null) {
-            target = "defaultToastTarget";
+            target = shashin.toastDefaultTarget;
             autohide = true;
         } else {
             if (options.hasOwnProperty("icon")) {
@@ -58,7 +63,7 @@
             if (options.hasOwnProperty("target")) {
                 target = options["target"];
             } else {
-                target = "defaultToastTarget";
+                target = shashin.toastDefaultTarget;
             }
             if (options.hasOwnProperty("autohide")) {
                 autohide = options["autohide"];
@@ -67,28 +72,28 @@
             }
         }
 
-        if (target === "toastTarget1") {
+        if (target === shashin.toastTarget1) {
             titleField = $("#toastTitle1");
             messageField = $("#toastMessage1");
             iconField = $("#toastIcon1");
             spacerField = $("#toastSpacer1");
-        } else if (target === "toastTarget2") {
+        } else if (target === shashin.toastTarget2) {
             titleField = $("#toastTitle2");
             messageField = $("#toastMessage2");
             iconField = $("#toastIcon2");
             spacerField = $("#toastSpacer2");
-        } else if (target === "toastTarget3") {
+        } else if (target === shashin.toastTarget3) {
             titleField = $("#toastTitle3");
             messageField = $("#toastMessage3");
             iconField = $("#toastIcon3");
             spacerField = $("#toastSpacer3");
-        } else if (target === "toastTarget4") {
+        } else if (target === shashin.toastTarget4) {
             titleField = $("#toastTitle4");
             messageField = $("#toastMessage4");
             iconField = $("#toastIcon4");
             spacerField = $("#toastSpacer4");
         } else {
-            target = "defaultToastTarget";
+            target = shashin.toastDefaultTarget;
             titleField = $("#toastTitle");
             messageField = $("#toastMessage");
             iconField = $("#toastIcon");
