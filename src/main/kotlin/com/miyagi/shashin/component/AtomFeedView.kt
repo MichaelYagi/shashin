@@ -4,21 +4,16 @@ import com.miyagi.shashin.repository.AlbumPhotoRepository
 import com.miyagi.shashin.repository.AlbumRepository
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.UserRepository
-import com.rometools.rome.feed.atom.Content
-import com.rometools.rome.feed.atom.Entry
-import com.rometools.rome.feed.atom.Feed
-import com.rometools.rome.feed.atom.Link
-import com.rometools.rome.feed.rss.Enclosure
-import com.rometools.rome.feed.rss.Guid
+import com.miyagi.shashin.util.TextUtils
+import com.rometools.rome.feed.atom.*
 import com.rometools.rome.feed.synd.SyndPerson
-import com.rometools.rome.feed.synd.SyndPersonImpl
-import org.jdom2.filter.Filters.document
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import org.springframework.web.servlet.view.feed.AbstractAtomFeedView
 import java.nio.file.Files
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -74,7 +69,8 @@ class AtomFeedView : AbstractAtomFeedView() {
         link.rel = "self"
         link.title = "$appName ATOM feed URL"
 
-        feed.alternateLinks = listOf(link);
+        feed.alternateLinks = listOf(link)
+        feed.id = "${baseUrlBuilder.build().toUriString()}/$apiKey/atom"
         feed.updated = Date()
     }
 
@@ -107,7 +103,7 @@ class AtomFeedView : AbstractAtomFeedView() {
                                         val album = albumRepository?.findAlbumById(albumPhoto?.getAlbumId())
 
                                         val entry = Entry()
-                                        entry.id = metadata.getId()
+                                        entry.id = "$baseUrl/api/v1/image/${metadata.getId()}"
                                         entry.title = metadata.getTitle()
 
                                         var place = ""
@@ -131,7 +127,17 @@ class AtomFeedView : AbstractAtomFeedView() {
 
                                         val link = Link()
                                         link.href = "$baseUrl/api/v1/image/${metadata.getId()}"
+                                        link.rel = "enclosure"
+                                        link.type = metadata.getType()
+                                        link.length = Files.size(Path(metadata.getPath()!!))
                                         entry.alternateLinks = listOf(link)
+                                        val author: SyndPerson = Person()
+                                        author.name = metadata.getId()
+                                        entry.authors = listOf(author)
+                                        entry.alternateLinks = listOf(link)
+                                        val pattern = "EEE, MMM d, yyyy  'at' h:mm aa";
+                                        val simpleDateFormat = SimpleDateFormat(pattern)
+                                        entry.updated = simpleDateFormat.parse(TextUtils.formatToLongDateWithTime((metadata.getCreatedAt()!!)))
 
                                         atomList.add(entry)
                                     }
