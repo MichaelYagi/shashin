@@ -5,7 +5,7 @@
 <!-- For live toast messages, use shashin.showToastMessage() to display toast messages -->
 <div class="position-fixed bottom-0 start-50 translate-middle-x" style="z-index: 999999">
     <div class="toast-container">
-        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div id="defaultToastTarget" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
                 <span id="toastIcon"></span><span id="toastSpacer"></span>
                 <strong id="toastTitle" class="me-auto"></strong>
@@ -14,7 +14,7 @@
             <div id="toastMessage" class="toast-body"></div>
         </div>
 
-        <div id="liveToast1" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div id="toastTarget1" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
                 <span id="toastIcon1"></span><span id="toastSpacer1"></span>
                 <strong id="toastTitle1" class="me-auto"></strong>
@@ -23,7 +23,7 @@
             <div id="toastMessage1" class="toast-body"></div>
         </div>
 
-        <div id="liveToast2" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div id="toastTarget2" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
                 <span id="toastIcon2"></span><span id="toastSpacer2"></span>
                 <strong id="toastTitle2" class="me-auto"></strong>
@@ -32,7 +32,7 @@
             <div id="toastMessage2" class="toast-body"></div>
         </div>
 
-        <div id="liveToast3" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div id="toastTarget3" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
                 <span id="toastIcon3"></span><span id="toastSpacer3"></span>
                 <strong id="toastTitle3" class="me-auto"></strong>
@@ -41,7 +41,7 @@
             <div id="toastMessage3" class="toast-body"></div>
         </div>
 
-        <div id="liveToast4" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div id="toastTarget4" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
                 <span id="toastIcon4"></span><span id="toastSpacer4"></span>
                 <strong id="toastTitle4" class="me-auto"></strong>
@@ -253,35 +253,35 @@
             }
 
             // Clear live toast message on close
-            $('#liveToast').on('hidden.bs.toast', function () {
+            $('#defaultToastTarget').on('hidden.bs.toast', function () {
                 $("#toastIcon").removeClass();
                 $("#toastIcon").removeAttr('style');
                 $("#toastTitle").text("");
                 $("#toastMessage").text("");
             });
 
-            $('#liveToast1').on('hidden.bs.toast', function () {
+            $('#toastTarget1').on('hidden.bs.toast', function () {
                 $("#toastIcon1").removeClass();
                 $("#toastIcon1").removeAttr('style');
                 $("#toastTitle1").text("");
                 $("#toastMessage1").text("");
             });
 
-            $('#liveToast2').on('hidden.bs.toast', function () {
+            $('#toastTarget2').on('hidden.bs.toast', function () {
                 $("#toastIcon2").removeClass();
                 $("#toastIcon2").removeAttr('style');
                 $("#toastTitle2").text("");
                 $("#toastMessage2").text("");
             });
 
-            $('#liveToast3').on('hidden.bs.toast', function () {
+            $('#toastTarget3').on('hidden.bs.toast', function () {
                 $("#toastIcon3").removeClass();
                 $("#toastIcon3").removeAttr('style');
                 $("#toastTitle3").text("");
                 $("#toastMessage3").text("");
             });
 
-            $('#liveToast4').on('hidden.bs.toast', function () {
+            $('#toastTarget4').on('hidden.bs.toast', function () {
                 $("#toastIcon4").removeClass();
                 $("#toastIcon4").removeAttr('style');
                 $("#toastTitle4").text("");
