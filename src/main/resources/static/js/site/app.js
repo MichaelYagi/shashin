@@ -28,7 +28,7 @@
     icon = bootstrap icon
     iconColor = CSS color
     delay = in ms
-    target = default liveToast1, or one of liveToast1,liveToast2,liveToast3,liveToast4
+    target = default liveToast, or one of liveToast1,liveToast2,liveToast3,liveToast4
     autohide = boolean
     */
     shashin.showToastMessage = function(title, message, options) {
