@@ -1,5 +1,6 @@
 package com.miyagi.shashin.controller
 
+import com.miyagi.shashin.component.AtomFeedView
 import com.miyagi.shashin.component.RssFeedView
 import com.miyagi.shashin.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,16 +11,24 @@ import org.springframework.web.servlet.View
 
 
 @Controller
-class RssFeedController {
+class RssAtomFeedController {
 
     @Autowired
-    private val view: RssFeedView? = null
+    private val rssview: RssFeedView? = null
+
+    @Autowired
+    private val atomview: AtomFeedView? = null
 
     @Autowired
     var userRepository: UserRepository? = null
 
     @GetMapping("/{apiKey}/rss")
-    fun getFeed(@PathVariable apiKey: String): View? {
-        return view
+    fun getRssFeed(@PathVariable apiKey: String): View? {
+        return rssview
+    }
+
+    @GetMapping("/{apiKey}/atom")
+    fun getAtomFeed(@PathVariable apiKey: String): View? {
+        return atomview
     }
 }
