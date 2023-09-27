@@ -4,12 +4,20 @@ import com.miyagi.shashin.repository.AlbumPhotoRepository
 import com.miyagi.shashin.repository.AlbumRepository
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.UserRepository
-import com.rometools.rome.feed.rss.*
+import com.rometools.rome.feed.atom.Content
+import com.rometools.rome.feed.atom.Entry
+import com.rometools.rome.feed.atom.Feed
+import com.rometools.rome.feed.atom.Link
+import com.rometools.rome.feed.rss.Enclosure
+import com.rometools.rome.feed.rss.Guid
+import com.rometools.rome.feed.synd.SyndPerson
+import com.rometools.rome.feed.synd.SyndPersonImpl
+import org.jdom2.filter.Filters.document
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
-import org.springframework.web.servlet.view.feed.AbstractRssFeedView
+import org.springframework.web.servlet.view.feed.AbstractAtomFeedView
 import java.nio.file.Files
 import java.util.*
 import javax.servlet.http.HttpServletRequest
@@ -18,7 +26,7 @@ import kotlin.io.path.Path
 
 
 @Component
-class RssFeedView : AbstractRssFeedView() {
+class AtomFeedView : AbstractAtomFeedView() {
 
     @Value("\${app.build.properties.name}")
     private val appName: String? = null
@@ -35,18 +43,22 @@ class RssFeedView : AbstractRssFeedView() {
     @Autowired
     var metadataRepository: MetadataRepository? = null
 
-    override fun buildFeedMetadata(model: MutableMap<String, Any>, feed: Channel, request: HttpServletRequest) {
-        feed.title = "$appName RSS Feed"
-        feed.description = "$appName images"
-        feed.feedType = "rss_2.0"
+    override fun buildFeedMetadata(model: MutableMap<String, Any>, feed: Feed, request: HttpServletRequest) {
+        val content = Content()
+        content.value = "$appName images"
+
+        feed.title = "$appName ATOM Feed"
+        feed.feedType = "atom_1.0"
 
         if (model.containsKey("apiKey")) {
             val apiKey = model["apiKey"] as String?
             val currentUser = userRepository?.findByApikey(apiKey)
             if (currentUser != null) {
-                feed.description = "${currentUser.getUsername()} $appName images"
+                content.value = "${currentUser.getUsername()} $appName images"
             }
         }
+
+        feed.subtitle = content
 
         var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
         if (request.scheme == "https") {
@@ -56,16 +68,23 @@ class RssFeedView : AbstractRssFeedView() {
         if (model.containsKey("apiKey")) {
             apiKey = model["apiKey"] as String
         }
-        feed.link = "${baseUrlBuilder.build().toUriString()}/$apiKey/rss"
-        feed.lastBuildDate = Date()
+
+        val link = Link()
+        link.href = "${baseUrlBuilder.build().toUriString()}/$apiKey/atom"
+        link.rel = "self"
+        link.title = "$appName ATOM feed URL"
+
+        feed.alternateLinks = listOf(link);
+        feed.updated = Date()
     }
 
-    override fun buildFeedItems(
-        model: Map<String, Any>,
-        request: HttpServletRequest, response: HttpServletResponse
-    ): List<Item> {
+    override fun buildFeedEntries(
+        model: MutableMap<String, Any>,
+        request: HttpServletRequest,
+        response: HttpServletResponse
+    ): List<Entry> {
 
-        val rssList = mutableListOf<Item>()
+        val atomList = mutableListOf<Entry>()
         var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
         if (request.scheme == "https") {
             baseUrlBuilder = baseUrlBuilder.scheme("https")
@@ -86,9 +105,11 @@ class RssFeedView : AbstractRssFeedView() {
                                     val metadata = metadataRepository?.findByMetadataId(albumPhoto?.getMetadataId()!!)
                                     if (metadata != null) {
                                         val album = albumRepository?.findAlbumById(albumPhoto?.getAlbumId())
-                                        val entry = Item()
+
+                                        val entry = Entry()
+                                        entry.id = metadata.getId()
                                         entry.title = metadata.getTitle()
-                                        val description = Description()
+
                                         var place = ""
                                         var metadataDescription = ""
                                         var albumName = ""
@@ -104,19 +125,15 @@ class RssFeedView : AbstractRssFeedView() {
                                         }
                                         val descVal = "$albumName$metadataDescription$place"
 
-                                        description.value = descVal.dropLast(3)
-                                        entry.description = description
-                                        entry.link = "$baseUrl/api/v1/image/${metadata.getId()}"
-                                        entry.uri = "$baseUrl/api/v1/image/${metadata.getId()}"
-                                        val guid = Guid()
-                                        guid.value = "$baseUrl/api/v1/image/${metadata.getId()}"
-                                        entry.guid = guid
-                                        val enc = Enclosure()
-                                        enc.url = "$baseUrl/api/v1/image/${metadata.getId()}"
-                                        enc.type = metadata.getType()
-                                        enc.length = Files.size(Path(metadata.getPath()!!))
-                                        entry.enclosures = mutableListOf(enc)
-                                        rssList.add(entry)
+                                        val content = Content()
+                                        content.value = descVal.dropLast(3)
+                                        entry.summary = content
+
+                                        val link = Link()
+                                        link.href = "$baseUrl/api/v1/image/${metadata.getId()}"
+                                        entry.alternateLinks = listOf(link)
+
+                                        atomList.add(entry)
                                     }
                                 }
                             }
@@ -126,6 +143,7 @@ class RssFeedView : AbstractRssFeedView() {
             }
         }
 
-        return rssList.toList()
+        return atomList
     }
+
 }
