@@ -32,6 +32,7 @@
                     </div>
                 </div>
                 <p>RSS feed <a id="rssFeedLink" th:href="${rssFeedLink}" th:text="${rssFeedLink}" target="_blank"></a></p>
+                <p>RSS feed <a id="atomFeedLink" th:href="${atomFeedLink}" th:text="${atomFeedLink}" target="_blank"></a></p>
                 <p>View API documentaion <a href="/articles/endpoints">here</a>.</p>
             </div>
 
@@ -120,6 +121,9 @@
 
                 $("#rssFeedLink").text(data["rssFeedLink"]);
                 $("#rssFeedLink").attr("href", data["rssFeedLink"]);
+
+                $("#atomFeedLink").text(data["atomFeedLink"]);
+                $("#atomFeedLink").attr("href", data["atomFeedLink"]);
             } else {
                 shashin.showToastMessage("Operation failed", "Could not regenerate API key", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
                 // $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Could not regenerate API key</div>");

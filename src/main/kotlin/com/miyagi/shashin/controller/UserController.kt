@@ -238,6 +238,7 @@ class UserController {
         model["user"] = User()
         model["alertClass"] = ""
         model["rssFeedLink"] = ""
+        model["atomFeedLink"] = ""
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -249,6 +250,7 @@ class UserController {
             }
             val baseUrl = baseUrlBuilder.build().toUriString()
             model["rssFeedLink"] = "$baseUrl/${currentUserObj.getApikey()}/rss"
+            model["atomFeedLink"] = "$baseUrl/${currentUserObj.getApikey()}/atom"
         }
 
 
@@ -272,6 +274,7 @@ class UserController {
         response["status"] = ApiResponse.FAIL.status
         response["updatedApikey"] = ""
         response["rssFeedLink"] = ""
+        response["atomFeedLink"] = ""
 
         if (apikeyMap.containsKey("currentApikey")) {
             val currentApikey = apikeyMap["currentApikey"]
@@ -294,6 +297,7 @@ class UserController {
                     }
                     val baseUrl = baseUrlBuilder.build().toUriString()
                     response["rssFeedLink"] = "$baseUrl/${updatedUserObj.get().getApikey()}/rss"
+                    response["atomFeedLink"] = "$baseUrl/${updatedUserObj.get().getApikey()}/atom"
 
                     response["updatedApikey"] = updatedApikey
                     response["msg"] = ""
