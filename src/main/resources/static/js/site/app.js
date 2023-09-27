@@ -23,6 +23,14 @@
         }
     }
 
+    /*
+    options:
+    icon = bootstrap icon
+    iconColor = CSS color
+    delay = in ms
+    target = default liveToast1, or one of liveToast1,liveToast2,liveToast3,liveToast4
+    autohide = boolean
+    */
     shashin.showToastMessage = function(title, message, options) {
         let titleField = null;
         let messageField = null;
@@ -32,6 +40,7 @@
         let iconColor = null;
         let target = null;
         let autohide = null;
+        let delay = 5000;
 
         if (options === undefined || options === null) {
             target = "liveToast";
@@ -42,6 +51,9 @@
             }
             if (options.hasOwnProperty("iconColor")) {
                 iconColor = options["iconColor"];
+            }
+            if (options.hasOwnProperty("delay")) {
+                delay = options["delay"];
             }
             if (options.hasOwnProperty("target")) {
                 target = options["target"];
@@ -104,6 +116,8 @@
         if (autohide === false) {
             $("#"+target).attr("data-bs-autohide", autohide);
         }
+
+        $("#"+target).attr("data-bs-delay", delay);
 
         const toastLiveExample = document.getElementById(target);
         const toast = new bootstrap.Toast(toastLiveExample);
