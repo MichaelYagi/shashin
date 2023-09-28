@@ -120,9 +120,9 @@
 
         if (autohide === false) {
             $("#"+target).attr("data-bs-autohide", autohide);
+        } else {
+            $("#" + target).attr("data-bs-delay", delay);
         }
-
-        $("#"+target).attr("data-bs-delay", delay);
 
         const toastLiveExample = document.getElementById(target);
         const toast = new bootstrap.Toast(toastLiveExample);
