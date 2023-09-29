@@ -118,8 +118,12 @@
             spacerField.html("&nbsp;");
         }
 
-        if (autohide === false) {
-            $("#"+target).attr("data-bs-autohide", autohide);
+        if (autohide === false || autohide === true) {
+            $("#" + target).attr("data-bs-autohide", autohide);
+
+            if (autohide === true) {
+                $("#"+target).attr("data-bs-delay", delay);
+            }
         } else {
             $("#"+target).attr("data-bs-delay", delay);
         }
