@@ -272,8 +272,13 @@ class PeopleController {
             }
         }
 
+        val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+            settings.getCompreFaceServer(),
+            settings.getCompreFaceKey()
+        )
+        model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
         val subject = recognitionLabel?.get()?.getName()
-        val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, subject, 0, 9999)
+        val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, faceRecogServicesAvailable, subject, 0, 9999)
         if (!subjectCompreFaceJsonStr.isNullOrBlank()) {
             val jsonObj = mapper.readTree(subjectCompreFaceJsonStr)
             val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
@@ -421,7 +426,12 @@ class PeopleController {
             response["personInfo"] = recognitionLabel.get()
             subject = recognitionLabel.get().getName()
         }
-        val allSubjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, subject, 0, 9999)
+        val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+            settings.getCompreFaceServer(),
+            settings.getCompreFaceKey()
+        )
+        model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
+        val allSubjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, faceRecogServicesAvailable, subject, 0, 9999)
         if (!allSubjectCompreFaceJsonStr.isNullOrBlank()) {
             val jsonObj = mapper.readTree(allSubjectCompreFaceJsonStr)
             val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
@@ -509,7 +519,11 @@ class PeopleController {
             response["personInfo"] = recognitionLabel.get()
             val subject = recognitionLabel.get().getName()
 
-            val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, subject, page, size)
+            val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+                settings.getCompreFaceServer(),
+                settings.getCompreFaceKey()
+            )
+            val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, faceRecogServicesAvailable, subject, page, size)
             if (!subjectCompreFaceJsonStr.isNullOrBlank()) {
                 val jsonObj = mapper.readTree(subjectCompreFaceJsonStr)
                 val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
@@ -549,14 +563,9 @@ class PeopleController {
         return response
     }
 
-    private fun getCompreFaceJsonForSubject(model: Model, subject: String?, page: Int, queryLimit: Int): String? {
+    private fun getCompreFaceJsonForSubject(model: Model, faceRecogServicesAvailable: Boolean, subject: String?, page: Int, queryLimit: Int): String? {
         var subjectCompreFaceJsonStr: String? = null
         val settings = model.getAttribute("settings") as Settings
-
-        val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
-            settings.getCompreFaceServer(),
-            settings.getCompreFaceKey()
-        )
 
         if (faceRecogServicesAvailable) {
             val webClient = WebClient.create(settings.getCompreFaceServer()!!)
@@ -739,6 +748,7 @@ class PeopleController {
         counts["compreface"] = 0
         response["counts"] = counts
         response["canEdit"] = model.getAttribute("authority") == adminRole
+        response["faceRecogServicesAvailable"] = false
 
         response["msg"] = "Could not get results"
         response["status"] = ApiResponse.FAIL.status
@@ -792,8 +802,13 @@ class PeopleController {
                     counts["person"] = 0
                 }
 
+                val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+                    settings.getCompreFaceServer(),
+                    settings.getCompreFaceKey()
+                )
+                response["faceRecogServicesAvailable"] = faceRecogServicesAvailable
                 val subject = recognitionLabel?.get()?.getName()
-                val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, subject, 0, 9999)
+                val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, faceRecogServicesAvailable, subject, 0, 9999)
                 if (!subjectCompreFaceJsonStr.isNullOrBlank()) {
                     val jsonObj = mapper.readTree(subjectCompreFaceJsonStr)
                     val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
