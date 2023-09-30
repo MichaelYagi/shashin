@@ -1827,10 +1827,9 @@ class TimelineController: BaseController() {
 
         response["allAlbumList"] = mutableListOf<Album>()
         response["allRecognitionLabels"] = mutableListOf<RecognitionLabel>()
-        val albumArray = mutableListOf<String>()
-        response["albumList"] = albumArray
         val labelArray = mutableListOf<String>()
         response["taggedPeopleList"] = labelArray
+        response["albumMap"] = mutableMapOf<Int, String>()
 
         val emptyJson = "{}"
         val mapper = ObjectMapper()
@@ -1850,15 +1849,6 @@ class TimelineController: BaseController() {
                 }
             }
             response["taggedPeopleList"] = labelArray
-
-            val albumPhotos = albumPhotoRepository.findAlbumPhotoByMetadataId(id)
-            if (albumPhotos != null) {
-                for (albumPhoto in albumPhotos) {
-                    val album = albumRepository.findById(albumPhoto!!.getAlbumId()!!)
-                    albumArray.add(album.get().getName()!!)
-                }
-            }
-            response["albumList"] = albumArray
 
             val currentUserObj = model.getAttribute("currentUser") as User?
             response["albumMap"] = getAlbumMapForUser(currentUserObj, id)
