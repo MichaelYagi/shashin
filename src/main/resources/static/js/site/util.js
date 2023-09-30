@@ -676,6 +676,7 @@ class Util {
         $(".coordinatesDetails").text("");
         $(".locationDetails").html("");
         $(".locationTypeDetails").html("");
+        $(".albumsDetails").html("");
 
         $(".pathLabel").hide();
         $(".descriptionLabel").hide();
@@ -702,6 +703,7 @@ class Util {
         $(".locationLabel").hide();
         $(".locationTypeLabel").hide();
         $(".metadataIdLabel").hide();
+        $(".albumsLabel").hide();
 
         $(".linkCopyStatus").css("visibility","hidden");
 
@@ -761,7 +763,19 @@ class Util {
             $(".descriptionLabel").show();
             $(".descriptionDetails").text(metadata.description);
         }
-        if (metadata.keywords != null && metadata.keywords.length > 0) {
+        if (metadata.hasOwnProperty("albumMap") && Object.keys(metadata.albumMap).length > 0) {
+            $(".albumsLabel").show();
+            let albumHtml = "";
+            const albumMap = metadata.albumMap;
+            $.each(albumMap , function( key, value ) {
+                albumHtml += "<a href='/album/"+key+"' target='_blank'>"+value+"</a>, ";
+            });
+            if (albumHtml.length > 0) {
+                albumHtml = albumHtml.slice(0,-2);
+            }
+            $(".albumsDetails").html(albumHtml);
+        }
+        if (metadata.hasOwnProperty("keywords") && metadata.keywords != null && metadata.keywords.length > 0) {
             $(".keywordsLabel").show();
             let keywordHtml = "";
             const keywordArray = metadata.keywords;

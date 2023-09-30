@@ -250,9 +250,13 @@
         const data = await http.ajax("get", "/metadata/"+metadataId+(version === "" ? "" : "?v=" + version));
 
         let metadata = {};
-        if (data.hasOwnProperty("metadata") && data.hasOwnProperty("keywordList")) {
+        metadata["keywords"] = [];
+        metadata["albumMap"] = {};
+
+        if (data.hasOwnProperty("metadata") && data.hasOwnProperty("keywordList") && data.hasOwnProperty("albumMap")) {
             metadata = data["metadata"];
             metadata["keywords"] = data["keywordList"];
+            metadata["albumMap"] = data["albumMap"];
         }
 
         return metadata;
@@ -265,11 +269,17 @@
                 data.hasOwnProperty("albumList") &&
                 data.hasOwnProperty("keywordList") &&
                 data.hasOwnProperty("allRecognitionLabels") &&
-                data.hasOwnProperty("allAlbumList")) {
+                data.hasOwnProperty("allAlbumList") &&
+                data.hasOwnProperty("albumMap")) {
+
                 const metadata = data["metadata"];
+
                 const taggedPeopleArray = data["taggedPeopleList"];
                 const albumListArray = data["albumList"];
                 const keywordList = data["keywordList"];
+                metadata["keywords"] = keywordList;
+                metadata["albumMap"] = data["albumMap"];
+
                 const recognitionLabels = data["allRecognitionLabels"];
                 const allAlbumList = data["allAlbumList"];
                 let index;
