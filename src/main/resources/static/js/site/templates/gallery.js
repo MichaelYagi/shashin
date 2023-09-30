@@ -51,7 +51,7 @@ class GalleryTemplates {
             `
                 $("#infoModalEdit${metadata.id}").on("click", function (e) {
                     e.preventDefault();
-                    shashin.openInfoModal("${metadata.id}");
+                    shashin.openEditMetadataModal("${metadata.id}");
                 })
                 `
             :
