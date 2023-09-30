@@ -266,7 +266,6 @@
         shashin.getTimelineMetadata(metadataId).then(async function (data) {
             if (data.hasOwnProperty("metadata") &&
                 data.hasOwnProperty("taggedPeopleList") &&
-                data.hasOwnProperty("albumList") &&
                 data.hasOwnProperty("keywordList") &&
                 data.hasOwnProperty("allRecognitionLabels") &&
                 data.hasOwnProperty("allAlbumList") &&
@@ -275,10 +274,11 @@
                 const metadata = data["metadata"];
 
                 const taggedPeopleArray = data["taggedPeopleList"];
-                const albumListArray = data["albumList"];
+
                 const keywordList = data["keywordList"];
                 metadata["keywords"] = keywordList;
-                metadata["albumMap"] = data["albumMap"];
+                const albumMap = data["albumMap"];
+                metadata["albumMap"] = albumMap;
 
                 const recognitionLabels = data["allRecognitionLabels"];
                 const allAlbumList = data["allAlbumList"];
@@ -399,9 +399,6 @@
                 }
                 if (recognitionLabels !== null && recognitionLabels.length > 0) {
                     let html = ModalTemplates.PersonModalDropdownHead({metadata: metadata});
-                    // '<div class="input-group-append dropdown" id="recognitionLabelInput">\n' +
-                    // '           <button class="btn btn-outline-secondary dropdown-toggle" id="tagpeopledropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
-                    // '           <div class="dropdown-menu" id="recognitionLabelsList">\n';
 
                     for (index in recognitionLabels) {
                         const recognitionLabel = recognitionLabels[index];
@@ -416,14 +413,8 @@
                             recognitionLabel: recognitionLabel,
                             checkedString: checkedString
                         });
-                        // '           <button class="dropdown-item" type="button">\n' +
-                        // '               <input type="checkbox" class="recognitionLabel" value="' + recognitionLabel.name + '" name="recognitionLabel' + metadata.id + '[]" id="' + metadata.id + '-' + recognitionLabel.id + '"' + checkedString + '>\n' +
-                        // '               <label for="' + metadata.id + '-' + recognitionLabel.id + '" id="label-' + metadata.id + '-' + recognitionLabel.id + '">' + Util.escapeHtml(recognitionLabel.name) + '</label>\n' +
-                        // '           </button>\n';
                     }
                     html += ModalTemplates.PersonModalDropdownFooter();
-                    // '   </div>\n' +
-                    // '</div>\n';
 
                     $(html).insertAfter($("#labelIdData"));
                     $("#tagpeopledropdown" + metadata.id).on("click", function (e) {
@@ -435,11 +426,12 @@
                     });
                 }
 
+                const albumListArray = [];
                 let albumListString = "";
-                for (index in albumListArray) {
-                    const album = albumListArray[index];
-                    albumListString += album + ",";
-                }
+                $.each(albumMap , function( key, value ) {
+                    albumListString += value + ",";
+                    albumListArray.push(value);
+                });
 
                 albumListString = albumListString.replace(/,\s*$/, "");
                 albumListString = albumListString.trim();
@@ -458,9 +450,6 @@
 
                 if (allAlbumList !== null && allAlbumList.length > 0) {
                     let html = ModalTemplates.AlbumModalDropdownHeader({metadata: metadata});
-                    // '<div class="input-group-append dropdown" id="albumListInput">\n' +
-                    // '   <button class="btn btn-outline-secondary dropdown-toggle" id="albumdropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
-                    // '   <div class="dropdown-menu" id="albumsList">\n';
 
                     for (index in allAlbumList) {
                         const eachAlbum = allAlbumList[index];
@@ -475,14 +464,8 @@
                             album: eachAlbum,
                             checkedString: checkedString
                         });
-                        // '   <button class="dropdown-item" type="button">\n' +
-                        // '       <input type="checkbox" class="album" value="' + eachAlbum.name + '" name="album' + metadata.id + '[]" id="' + metadata.id + '-' + eachAlbum.id + '"' + checkedString + '>\n' +
-                        // '       <label for="' + metadata.id + '-' + eachAlbum.id + '" id="album-' + metadata.id + '-' + eachAlbum.id + '">' + Util.escapeHtml(eachAlbum.name) + '</label>\n' +
-                        // '   </button>\n';
                     }
                     html += ModalTemplates.AlbumModalDropdownFooter();
-                    // '</div>\n' +
-                    // '</div>\n';
 
                     $(html).insertAfter($("#albumNameData"))
                     $("#albumdropdown" + metadata.id).on("click", function (e) {
@@ -493,10 +476,6 @@
                         metadataModal.populateAlbum(metadata.id);
                     });
                 }
-
-                // if (isObject === true) {
-                //     $("#isobject")[0].checked = true;
-                // }
 
                 if ($("#hidden").length > 0 && metadata.hidden !== null && metadata.hidden === true) {
                     $("#hidden")[0].checked = true;
@@ -955,27 +934,6 @@
             $("#mapTabMessage").text("No map data");
             $("#mapTabMessage").css("display","block");
         }
-    }
-
-    shashin.openInfoModal = function(metadataId) {
-        shashin.openEditMetadataModal(metadataId);
-
-        // shashin.getMetadata(metadataId).then(function (metadata) {
-        //     $("#infoModalTitle").text(metadata.title);
-        //     $("#currentfilename").val(metadata.fileName);
-        //     $("#currentlat").val(metadata.lat);
-        //     $("#currentlng").val(metadata.lng);
-        //     $("#metadataId").val(metadata.id);
-        //
-        //     if (metadata.thumbnailUrlCentered !== null) {
-        //         $("#propInfoModalThumbnail").html(TimelineTemplates.HeaderThumbnail({metadata:metadata}));
-        //     }
-        //
-        //     Util.populateDetailsInfo(metadata,"propInfoModal");
-        //
-        //     // Open modal window
-        //     $("#propInfoModal").modal('show');
-        // });
     }
 
     shashin.openInfoSidebar = function(metadataId) {
