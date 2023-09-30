@@ -1721,6 +1721,8 @@ class TimelineController: BaseController() {
         }
         response["keywordList"] = keywordArray
 
+        response["albumMap"] = mutableMapOf<Int, String>()
+
         val emptyJson = "{}"
         val mapper = ObjectMapper()
         response["metadata"] = mapper.readTree(emptyJson)
@@ -1728,6 +1730,9 @@ class TimelineController: BaseController() {
         val metadataRecord = metadataRepository.findById(id)
         if (metadataRecord.isPresent) {
             response["metadata"] = metadataRecord.get()
+
+            val currentUserObj = model.getAttribute("currentUser") as User?
+            response["albumMap"] = getAlbumMapForUser(currentUserObj, id)
         }
 
         val favoritesMap = HashMap<String, HashMap<String, Any>>()
@@ -1855,6 +1860,9 @@ class TimelineController: BaseController() {
             }
             response["albumList"] = albumArray
 
+            val currentUserObj = model.getAttribute("currentUser") as User?
+            response["albumMap"] = getAlbumMapForUser(currentUserObj, id)
+
             val keywordArray = mutableListOf<String>()
             val keywords = keywordRepository.findKeywordsByMetadataId(id)
             for (keyword in keywords) {
@@ -1877,6 +1885,27 @@ class TimelineController: BaseController() {
         response["status"] = ApiResponse.SUCCESS.status
 
         return mapper.writeValueAsString(response)
+    }
+
+    private fun getAlbumMapForUser(currentUserObj: User?, metadataId: String?): MutableMap<Int, String> {
+        val albumMap = mutableMapOf<Int, String>()
+
+        if (currentUserObj != null && metadataId != null) {
+            val albumPhotos = if (currentUserObj.getAuthority() == "ROLE_ADMIN") {
+                albumPhotoRepository.findAlbumPhotoByMetadataId(metadataId)
+            } else {
+                albumPhotoRepository.findAlbumPhotoByUserIdAndMetadataId(currentUserObj.getId(), metadataId)
+            }
+
+            if (albumPhotos != null) {
+                for (albumPhoto in albumPhotos) {
+                    val album = albumRepository.findById(albumPhoto!!.getAlbumId()!!)
+                    albumMap[album.get().getId()] = album.get().getName()!!
+                }
+            }
+        }
+
+        return albumMap
     }
 
     @RouterOperation(

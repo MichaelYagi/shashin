@@ -28,6 +28,8 @@ interface AlbumPhotoRepository : CrudRepository<AlbumPhoto?, Int?> {
     fun findFirstByAlbumId(@Param("albumId") albumId: Int): AlbumPhoto?
     fun findFirstByOrderByIdAsc(): AlbumPhoto?
     fun findAlbumPhotoByMetadataId(metadataId: String?): MutableIterable<AlbumPhoto?>?
+    @Query("SELECT DISTINCT ap.* FROM albumphoto ap INNER JOIN useralbum ua ON ua.album_id = ap.album_id INNER JOIN album a ON ap.album_id = a.id WHERE ap.metadata_id = :metadataId AND ua.user_id = :userId", nativeQuery = true)
+    fun findAlbumPhotoByUserIdAndMetadataId(@Param("userId") userId: Int, metadataId: String?): MutableIterable<AlbumPhoto?>?
     fun deleteByMetadataIdAndAlbumId(metadataId: String?, albumId: Int?): Long?
     fun deleteByAlbumId(albumId: Int?): Long?
     fun deleteByMetadataId(metadataId: String?): Long?
