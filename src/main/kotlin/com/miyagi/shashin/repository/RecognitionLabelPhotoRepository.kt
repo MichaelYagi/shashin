@@ -25,12 +25,8 @@ interface RecognitionLabelPhotoRepository : CrudRepository<RecognitionLabelPhoto
 
     fun findByMetadataId(metadataId: String): MutableIterable<RecognitionLabelPhoto>
 
-    fun deleteByCompreFaceImageId(compreFaceImageId: String): Int
-
     fun findByCompreFaceImageId(compreFaceImageId: String): RecognitionLabelPhoto?
 
     fun findByRecognitionLabelIdAndMetadataId(recognitionLabelId: Int,metadataId: String): RecognitionLabelPhoto?
 
-    @Query("SELECT COUNT(*) FROM recognitionlabelphoto WHERE recognition_label_id = :recognitionLabelId AND metadata_id = :metadataId", nativeQuery = true)
-    fun countDistinctLabelIdAndMetadataId(recognitionLabelId: Int,metadataId: String): Int
 }

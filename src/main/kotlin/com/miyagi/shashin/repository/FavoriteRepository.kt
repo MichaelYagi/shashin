@@ -14,7 +14,6 @@ interface FavoriteRepository : CrudRepository<Favorite?, Int?> {
     fun findByMetadataIdAndUserId(metdataId: String?, userId: Int?): Favorite?
     @Query("SELECT f.* FROM favorite f INNER JOIN metadata m on m.id = f.metadata_id WHERE f.user_id = :userId ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC LIMIT :offset, :limit", nativeQuery = true)
     fun findAllByUserIdAndOffsetAndLimit(@Param("userId") userId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Favorite?>?
-    fun findAllByUserId(userId: Int?): MutableIterable<Favorite?>?
     fun findAllByMetadataId(metadataId: String?): MutableIterable<Favorite?>?
     @Query("SELECT f.id,f.metadata_id as metadataId,f.user_id as userId,f.created_at as createdAt,f.modified_at as modifiedAt,(SELECT COUNT(*) FROM favorite f2 WHERE f.metadata_id = f2.metadata_id) AS count FROM favorite f WHERE f.metadata_id IN :metadataIds", nativeQuery = true)
     fun countByMetadataIdIn(metadataIds: List<String>): MutableIterable<FavoriteCount>
