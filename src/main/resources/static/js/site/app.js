@@ -550,11 +550,11 @@
                         source.splice(keywordIndex, 1);
                     }
                 });
-                const terms = shashin.autocompleteSplit(this.value);
+                const terms = shashin.autocompleteSplit(this.value.trim());
                 // remove the current input
                 terms.pop();
                 // add the selected item
-                terms.push(ui.item.value);
+                terms.push(ui.item.value.trim());
 
                 if (true === commaDelimited) {
                     // add placeholder to get the comma-and-space at the end
