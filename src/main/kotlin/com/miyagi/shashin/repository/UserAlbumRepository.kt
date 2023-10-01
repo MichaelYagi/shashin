@@ -12,7 +12,6 @@ import javax.transaction.Transactional
 interface UserAlbumRepository : CrudRepository<UserAlbum?, Int?> {
     fun countByUserIdAndAlbumId(userId: Int?, albumId: Int?): Int?
     fun countByAlbumId(albumId: Int?): Int?
-
     @Query("SELECT ua.* FROM useralbum ua INNER JOIN album a ON a.id = ua.album_id WHERE ua.user_id = :userId ORDER BY name COLLATE NOCASE ASC LIMIT :offset, :limit", nativeQuery = true)
     fun findAllByUserIdAndOffsetAndLimit(@Param("userId") userId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<UserAlbum?>?
     @Query("SELECT ua.* FROM useralbum ua INNER JOIN album a ON a.id = ua.album_id GROUP BY ua.album_id ORDER BY name COLLATE NOCASE ASC LIMIT :offset, :limit", nativeQuery = true)

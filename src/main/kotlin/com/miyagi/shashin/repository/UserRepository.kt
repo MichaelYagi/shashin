@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface UserRepository : CrudRepository<User?, Int?> {
     fun findAll(sort: Sort?): MutableIterable<User?>?
-    fun findAllByIsAuthorizedTrue(): MutableIterable<User>
     fun findByUsername(username: String?): User?
     fun findById(userId: Int?): User?
     fun findByApikey(apikey: String?): User?

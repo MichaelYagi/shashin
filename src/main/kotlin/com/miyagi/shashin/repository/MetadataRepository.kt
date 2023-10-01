@@ -13,14 +13,6 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    fun findByMetadataId(@Param("metadataId") metadataId: String): Metadata?
 
    @Cacheable(value = ["allAlbumMetadataWithCoordinates"], key = "{#userId}")
-   @Query("SELECT DISTINCT * FROM metadata m LEFT JOIN albumphoto ap ON m.id = ap.metadata_id LEFT JOIN useralbum ua ON ap.album_id = ua.album_id LEFT JOIN album a ON a.id = ua.album_id WHERE m.hidden = false AND ua.user_id = :userId AND m.lat IS NOT NULL AND m.lat != \"\" AND m.lng IS NOT NULL AND m.lng != \"\"", nativeQuery = true)
-   fun findByAlbumMetadataByUserIdWithCoordinates(@Param("userId") userId: Int): MutableIterable<Metadata>
-
-   @Cacheable(value = ["allMetadataWithCoordinates"])
-   @Query("SELECT * FROM metadata WHERE hidden = false AND lat IS NOT NULL AND lat != \"\" AND lng IS NOT NULL AND lng != \"\" ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
-   fun findTimelineAllWithCoordinates(): MutableIterable<Metadata>
-
-   @Cacheable(value = ["allAlbumMetadataWithCoordinates"], key = "{#userId}")
    @Query("SELECT DISTINCT m.id, m.type, m.lat, m.lng, m.year, m.month, m.day, m.thumbnail_url_original as thumbnailUrlOriginal, m.video_url as videoUrl, m.map_marker_url as mapMarkerUrl FROM metadata m LEFT JOIN albumphoto ap ON m.id = ap.metadata_id LEFT JOIN useralbum ua ON ap.album_id = ua.album_id LEFT JOIN album a ON a.id = ua.album_id WHERE m.hidden = false AND ua.user_id = :userId AND m.lat IS NOT NULL AND m.lat != \"\" AND m.lng IS NOT NULL AND m.lng != \"\"", nativeQuery = true)
    fun findByAlbumMetadataByUserIdForMap(@Param("userId") userId: Int): MutableIterable<MapData>
 
@@ -62,12 +54,6 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    @Query("SELECT * FROM metadata WHERE hidden = true ORDER BY modified_at DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllByHiddenAndOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = false AND DATE(added_at ) = (SELECT DATE(added_at) FROM metadata ORDER BY added_at DESC LIMIT 1) ORDER BY added_at DESC LIMIT :offset, :limit", nativeQuery = true)
-   fun findRecentByTypeOffsetAndLimit(@Param("type") type: String,@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
-
-   @Query("SELECT * FROM metadata WHERE hidden = false AND DATE(added_at ) = (SELECT DATE(added_at) FROM metadata ORDER BY added_at DESC LIMIT 1) ORDER BY added_at DESC LIMIT :offset, :limit", nativeQuery = true)
-   fun findMostRecentByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
-
    @Query("SELECT * FROM metadata WHERE hidden = false ORDER BY modified_at DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findModifiedByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
@@ -85,8 +71,6 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
 
    @Query("SELECT place_name FROM metadata WHERE year = :year AND month = :month AND day = :day AND hidden = false ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findTimelinePlaceByDate(year: Int?, month: Int?, day: Int?): MutableIterable<String?>?
-   @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = false ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
-   fun findTimelineAllByType(@Param("type") type: String): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = false ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllByTypeOffsetAndLimit(@Param("type") type: String,@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
@@ -117,12 +101,6 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    @Query("SELECT DISTINCT m.* FROM metadata m WHERE m.id NOT IN (SELECT metadata_id FROM recognitionlabelphoto) AND m.hidden = false ORDER BY RANDOM() LIMIT 0, :matchScanLimit",nativeQuery = true)
    fun findNonMatched(@Param("matchScanLimit") matchScanLimit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT DISTINCT m.id as metadataId,m.type,m.path,m.thumbnail_path_small as thumbnailPathSmall,rlp.recognition_label_id as recognitionLabelId,rl.name as recognitionLabelName FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON rlp.metadata_id = m.id LEFT JOIN recognitionlabel rl ON rlp.recognition_label_id = rl.id WHERE m.hidden = false AND rlp.id IN (SELECT rlp2.id FROM recognitionlabelphoto rlp2 WHERE rlp.recognition_label_id = rlp2.recognition_label_id LIMIT :trainingDataLimit) AND rlp.confidence >= 0.0 AND rlp.confidence <= :recognitionConfidenceThreshold ORDER BY rlp.recognition_label_id, RANDOM()",nativeQuery = true)
-   fun findTrainingData(@Param("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String, @Param("trainingDataLimit") trainingDataLimit: Int): MutableIterable<TrainingData>
-
-   @Query("SELECT m.folder, m.thumbnail_url_centered as thumbnailUrlCentered, (SELECT COUNT(*) FROM metadata m1 WHERE m1.folder = m.folder AND m1.hidden = false) as count FROM metadata m WHERE m.hidden = false GROUP BY m.folder ORDER BY m.folder DESC", nativeQuery = true)
-   fun findFolders(): MutableIterable<Folder?>?
-
    @Query("SELECT m.folder, m.thumbnail_url_centered as thumbnailUrlCentered, (SELECT COUNT(*) FROM metadata m1 WHERE m1.folder = m.folder AND m1.hidden = false) as count FROM metadata m WHERE m.hidden = false GROUP BY m.folder ORDER BY m.folder DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findFoldersOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Folder?>?
 
@@ -131,9 +109,6 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
 
    @Query("SELECT * FROM metadata WHERE id IN :metadataIds", nativeQuery = true)
    fun findAllByMetadataIds(metadataIds: Array<String>): MutableIterable<Metadata>
-
-   @Query("SELECT MAX(thumbnail_small_width) AS maxWidth FROM metadata", nativeQuery = true)
-   fun findMaxThumbnailWidth(): Int
 
    @Query("SELECT year, month, COUNT(*) as count FROM metadata group by year, month order by year DESC, month DESC", nativeQuery = true)
    fun countByYearAndMonth(): MutableIterable<MetadataYearMonthCount>
