@@ -137,6 +137,9 @@
                                     <input type="checkbox" name="hidden" id="hidden">
                                     <label class="form-check-label" for="hidden">Remove Photo</label>
                                 </div>
+                                <div class="col-sm">
+                                    <a href="#" id="rescanMetadata" title="Rescan Metadata"><span class="bi-upc-scan" style="font-size: 1rem;"></span></a>
+                                </div>
                             </div>
                             <br>
                             <div class="row">
@@ -171,6 +174,22 @@
                 <th:block th:if="${authority == 'ROLE_USER'}">
                 <button id="metadataModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </th:block>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="rescanMetadataConfirmation" tabindex="-1" role="dialog" aria-labelledby="rescanMetadata" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rescanMetadataModalLabel">Rescan Metadata</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">Are you sure you want to rescan metadata? Some data you have manually changed will be lost!</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="confirmRescanMetadata">Confirm</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>

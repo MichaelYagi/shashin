@@ -42,6 +42,19 @@
 
 }( window.metadataBatchModal = window.metadataBatchModal || {}, jQuery ));
 
+$("#rescanBatchMetadata").on("click", function (e) {
+    e.preventDefault();
+    $("#rescanBatchMetadataConfirmation").modal('show');
+});
+
+$("#confirmRescanBatchMetadata").on("click", function (e) {
+    e.preventDefault();
+
+    const metadataIds = JSON.parse($("#batchMetadataIds").val());
+
+    Util.rescanMetadata(metadataIds)
+});
+
 $("#saveBatchMetadata").on("click", async function (e) {
     e.preventDefault();
 

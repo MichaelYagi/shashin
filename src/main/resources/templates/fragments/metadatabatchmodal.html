@@ -143,6 +143,9 @@
                             <input type="checkbox" name="batchhidden" id="batchhidden">
                             <label class="form-check-label" for="batchhidden">Remove Photos</label>
                         </div>
+                        <div class="col-sm">
+                            <a href="#" id="rescanBatchMetadata" title="Rescan Metadata"><span class="bi-upc-scan" style="font-size: 1rem;"></span></a>
+                        </div>
                     </div>
                     <br>
                     <div class="form-group row">
@@ -157,6 +160,22 @@
                 <div id="metadataBatchModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
                 <button type="button" class="btn btn-primary" id="saveBatchMetadata">Save</button>
                 <button id="metadataBatchModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="rescanBatchMetadataConfirmation" tabindex="-1" role="dialog" aria-labelledby="rescanBatchMetadata" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rescanBatchMetadataModalLabel">Rescan Metadata</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">Are you sure you want to rescan metadata? Some data you have manually changed will be lost!</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="confirmRescanBatchMetadata">Confirm</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>

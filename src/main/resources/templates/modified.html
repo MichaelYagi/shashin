@@ -73,7 +73,7 @@
             <div th:replace="fragments/metadatabatchmodal :: metadatabatchmodal(${recognitionLabels},${allAlbumList})"></div>
             <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                 const httpModified = new Http("modified");
-                httpRecent.ajax("get", "/browse/album/list").then(function (data) {
+                httpModified.ajax("get", "/browse/album/list").then(function (data) {
                     if (data.hasOwnProperty("albumList") === true) {
                         const albumList = data["albumList"];
 

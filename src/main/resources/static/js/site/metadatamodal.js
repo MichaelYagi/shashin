@@ -47,6 +47,21 @@
 
 }( window.metadataModal = window.metadataModal || {}, jQuery ));
 
+$("#rescanMetadata").on("click", function (e) {
+    e.preventDefault();
+    $("#rescanMetadataConfirmation").modal('show');
+});
+
+$("#confirmRescanMetadata").on("click", function (e) {
+    e.preventDefault();
+
+    const metadataId = $("#metadataId").val();
+    const metadataIdArray = [];
+    metadataIdArray.push(metadataId);
+
+    Util.rescanMetadata(metadataIdArray)
+});
+
 $("#saveMetadata").on("click", async function (e) {
     e.preventDefault();
     $("#metadataModalMsg").html("");

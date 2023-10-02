@@ -209,18 +209,29 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
             return jsonWriter.writeValueAsString(obj)
         }
 
-        fun convertExifToJsonNode(folder: String, fileName: String, relativeSidecarDir: String): JsonNode? {
+        fun getExifFile(folder: String, fileName: String, relativeSidecarDir: String): File? {
             // metadata/<folder>/<fileName>.exif.yaml
-            val json: String
-            var jsonNode: JsonNode? = null
-            val mapper = ObjectMapper()
-
             val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
             val sidecarDir = rootPath + relativeSidecarDir
             val exifFilePath = sidecarDir.dropLast(1) + "/metadata" + folder + "/" + fileName + ".exif.yaml"
             val exifFile = File(exifFilePath)
 
             if (exifFile.exists()) {
+                return exifFile
+            }
+
+            return null
+        }
+
+        fun convertExifToJsonNode(folder: String, fileName: String, relativeSidecarDir: String): JsonNode? {
+            // metadata/<folder>/<fileName>.exif.yaml
+            val json: String
+            var jsonNode: JsonNode? = null
+            val mapper = ObjectMapper()
+
+            val exifFile = getExifFile(folder, fileName, relativeSidecarDir)
+
+            if (exifFile != null && exifFile.exists()) {
                 val content = Files.readString(exifFile.toPath())
                 json = convertYamlToJson(content)
 
