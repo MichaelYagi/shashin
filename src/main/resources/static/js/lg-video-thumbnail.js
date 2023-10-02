@@ -24,7 +24,7 @@
             var e = "";
 
             if (this.settings.videoThumbnail) {
-                e = '<button type="button" aria-label="Use As Thumbnail" title="Use As Thumbnail" class="bi-bounding-box-circles lg-icon" style="font-size: 1rem;display: none"></button>',
+                e = '<button type="button" aria-label="Capture Thumbnail" title="Capture Thumbnail" class="bi-bounding-box-circles lg-icon" style="font-size: 1rem;display: none"></button>',
                     this.core.$toolbar.append(e),
                     this.videoThumbnail()
             }
