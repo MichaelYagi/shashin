@@ -2082,6 +2082,9 @@ class TimelineController: BaseController() {
                         resp["status"] = ApiResponse.FAIL.status
                         return mapper.writeValueAsString(resp)
                     }
+
+                    metadata.setModifiedAt(getCurrentTimestamp())
+                    metadataRepository.save(metadata)
                 }
 
                 resp["msg"] = "Saved!"
