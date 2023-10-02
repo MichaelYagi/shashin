@@ -59,7 +59,7 @@ $("#confirmRescanMetadata").on("click", function (e) {
     const metadataIdArray = [];
     metadataIdArray.push(metadataId);
 
-    Util.rescanMetadata(metadataIdArray)
+    Util.rescanMetadata(metadataIdArray,"propMetadata");
 });
 
 $("#saveMetadata").on("click", async function (e) {
@@ -352,7 +352,7 @@ $("#saveMetadata").on("click", async function (e) {
 });
 
 // Clear message on modal close
-$('#propTimelineModal').on('hide.bs.modal', function () {
+$('#propMetadata').on('hide.bs.modal', function () {
     if (shashin.map !== null) {
         // Set map target to null and reset
         shashin.map.setTarget(null);
@@ -373,7 +373,7 @@ $('#propTimelineModal').on('hide.bs.modal', function () {
 });
 
 // Clear message on input editing
-$('#propTimelineModal').find(':input').bind('keypress', function() {
+$('#propMetadata').find(':input').bind('keypress', function() {
     $("#metadataModalStatus").attr("class","spinner-grow me-auto");
     $("#metadataModalStatus").css("visibility","hidden");
     $("#metadataModalMsg").html("");
@@ -397,23 +397,23 @@ $("#refreshTakenDate").on("click", function (e) {
 $("#detailsTabLink").on("click", function (e) {
     e.preventDefault();
 
-    const propTimelineModal = document.getElementById('propTimelineModal');
-    const modal = bootstrap.Modal.getInstance(propTimelineModal);
+    const propMetadataModal = document.getElementById('propMetadata');
+    const modal = bootstrap.Modal.getInstance(propMetadataModal);
     modal.handleUpdate();
     $("#metadataModalMsg").html("");
     $("#saveMetadata").prop('disabled', true);
 
     const metadataId = $("#metadataId").val();
     shashin.getMetadata(metadataId).then(function (metadataObj) {
-        Util.populateDetailsInfo(metadataObj, "propTimelineModal");
+        Util.populateDetailsInfo(metadataObj, "propMetadata");
     });
 });
 
 $("#mapTabLink").on("click", function (e) {
     e.preventDefault();
 
-    const propTimelineModal = document.getElementById('propTimelineModal');
-    const modal = bootstrap.Modal.getInstance(propTimelineModal);
+    const propMetadataModal = document.getElementById('propMetadata');
+    const modal = bootstrap.Modal.getInstance(propMetadataModal);
     modal.handleUpdate();
     $("#metadataModalMsg").html("");
     $("#saveMetadata").prop('disabled', true);
@@ -430,8 +430,8 @@ $("#mapTabLink").on("click", function (e) {
 $("#exifTabLink").on("click", async function (e) {
     e.preventDefault();
 
-    const propTimelineModal = document.getElementById('propTimelineModal');
-    const modal = bootstrap.Modal.getInstance(propTimelineModal);
+    const propMetadataModal = document.getElementById('propMetadata');
+    const modal = bootstrap.Modal.getInstance(propMetadataModal);
     modal.handleUpdate();
     $("#exifInfo").val("");
     $("#saveMetadata").prop('disabled', true);
@@ -451,8 +451,8 @@ $("#exifTabLink").on("click", async function (e) {
 $("#generalTabLink").on("click", function (e) {
     e.preventDefault();
 
-    const propTimelineModal = document.getElementById('propTimelineModal');
-    const modal = bootstrap.Modal.getInstance(propTimelineModal);
+    const propMetadataModal = document.getElementById('propMetadata');
+    const modal = bootstrap.Modal.getInstance(propMetadataModal);
     modal.handleUpdate();
     $("#saveMetadata").prop('disabled', false);
 });
