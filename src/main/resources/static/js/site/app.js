@@ -137,6 +137,7 @@
         const mediaContent = {};
 
         mediaContent.func = shashin.openInfoSidebar;
+        mediaContent.vtfunc = shashin.processVideoThumbnail;
         mediaContent.args = metadata.id;
 
         if (metadata.type.includes("video")) {
@@ -577,6 +578,7 @@
         $.each($(mediaElement), function() {
             const mediaContent = {};
             mediaContent.func = shashin.openInfoSidebar;
+            mediaContent.vtfunc = shashin.processVideoThumbnail;
             mediaContent.args = "";
             try {
                 mediaContent.args = $(this).attr("tag");
@@ -934,6 +936,40 @@
             $("#mapTabMessage").text("No map data");
             $("#mapTabMessage").css("display","block");
         }
+    }
+
+    shashin.processVideoThumbnail = function(metadataId) {
+        shashin.getMetadata(metadataId).then(function (data) {
+            let metadata = data;
+
+            if (metadata.type.indexOf("video") !== -1) {
+                let canvas = document.createElement('canvas');
+                let video = $(".lg-video-object").first()[0];
+
+                canvas.width = metadata.originalImageWidth;
+                canvas.height = metadata.originalImageHeight;
+
+                let ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                let image = canvas.toDataURL('image/jpeg');
+
+                ///metadata/update/videothumbs
+                const http = new Http("update video metadata");
+                const version = Util.getMetadataLocalStorage();
+                const json = {
+                    metadataId: metadataId,
+                    base64Data: image
+                }
+                http.ajax("post", "/metadata/update/videothumbs"+(version === "" ? "" : "?v=" + version), JSON.stringify(json)).then(function(data) {
+                    if (data.hasOwnProperty("msg") && data.hasOwnProperty("status")) {
+                        // Refresh image
+                        $("#image"+metadataId).attr("src",$("#image"+metadataId).attr("src")+"?"+(new Date().getTime()));
+                        shashin.showToastMessage("Thumbnail image updated", "Thumbnails have been updated.", {icon:"bi-info-circle", iconColor:"#777777"});
+                    }
+                });
+            }
+        });
     }
 
     shashin.openInfoSidebar = function(metadataId) {

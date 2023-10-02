@@ -7,11 +7,20 @@
     albumSettings.init = async function (albumId, mediaTypeFilter, activePage, albumMetadataList) {
         albumSettings.http = new Http(activePage);
 
-        let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery', {
-            dynamic: true,
-            plugins: [lgMetadataDetail],
-            metadataDetail: true
-        }, '.mediaLink');
+        const lgConfig = {
+            dynamic:true,
+            plugins:[]
+        };
+        if (typeof lgMetadataDetail !== "undefined") {
+            lgConfig.plugins.push(lgMetadataDetail);
+            lgConfig["metadataDetail"] = true;
+        }
+        if (typeof lgVideoThumbnail !== "undefined") {
+            lgConfig.plugins.push(lgVideoThumbnail);
+            lgConfig["videoThumbnail"] = true;
+        }
+
+        let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery', lgConfig, '.mediaLink');
 
         shashin.setVideoWidth($("#infinite-scroll-gallery")[0]);
 

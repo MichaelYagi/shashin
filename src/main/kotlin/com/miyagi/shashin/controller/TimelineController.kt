@@ -13,9 +13,12 @@ import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
+import com.miyagi.shashin.util.ImageProcessing
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import io.swagger.v3.oas.annotations.Operation
+import net.coobird.thumbnailator.Thumbnails
+import net.coobird.thumbnailator.geometry.Positions
 import net.iakovlev.timeshape.TimeZoneEngine
 import org.apache.commons.text.StringEscapeUtils
 import org.springdoc.core.annotations.RouterOperation
@@ -30,8 +33,11 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import java.awt.image.BufferedImage
+import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileInputStream
+import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.time.LocalDateTime
@@ -41,6 +47,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
+import javax.imageio.ImageIO
 import javax.servlet.http.HttpServletResponse
 import javax.transaction.Transactional
 import kotlin.io.path.Path
@@ -1994,6 +2001,97 @@ class TimelineController: BaseController() {
         }
 
         return null
+    }
+
+    @RequestMapping(value = ["/metadata/update/videothumbs"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
+    fun updateVideoThumbs(model: Model, @RequestBody requestBody: JsonNode): String? {
+        val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+
+        if (metadataMap.containsKey("metadataId") &&
+            metadataMap.containsKey("base64Data")
+        ) {
+            val metadataId = metadataMap["metadataId"] as String
+            val base64Data = metadataMap["base64Data"] as String
+
+            val metadataObj = metadataRepository.findById(metadataId)
+
+            if (metadataObj.isPresent) {
+                val metadata = metadataObj.get()
+                val imageBytes = FileUtils.parseBase64(base64Data)
+                if (imageBytes != null) {
+                    var tempFile = File(System.getProperty("java.io.tmpdir")+"/temp.jpg")
+
+                    val img = ImageIO.read(ByteArrayInputStream(imageBytes))
+
+                    // Small thumbnail
+                    Thumbnails.of(img)
+                        .size(metadata.getThumbnailSmallWidth()!!, metadata.getThumbnailSmallHeight()!!)
+                        .outputQuality(1.0)
+                        .toFile(tempFile)
+
+                    var scaledImage: BufferedImage?
+                    try {
+                        scaledImage = ImageProcessing.sharpenAndBrightenImage(ImageIO.read(tempFile))
+                        tempFile.delete()
+                        ImageIO.write(scaledImage, "jpg", File(metadata.getThumbnailPathSmall()))
+                    } catch (e: IOException) {
+                        logger.log(Level.WARNING, "Could not read file: " + metadata.getThumbnailPathSmall())
+                        resp["msg"] = "Could not save"
+                        resp["status"] = ApiResponse.FAIL.status
+                        return mapper.writeValueAsString(resp)
+                    }
+
+                    // Centered
+                    tempFile = File(System.getProperty("java.io.tmpdir")+"/temp.jpg")
+                    Thumbnails.of(img)
+                        .crop(Positions.CENTER)
+                        .size(209, 209)
+                        .outputQuality(1.0)
+                        .toFile(tempFile)
+
+                    try {
+                        scaledImage = ImageProcessing.sharpenAndBrightenImage(ImageIO.read(tempFile))
+                        tempFile.delete()
+                        ImageIO.write(scaledImage, "jpg", File(metadata.getThumbnailPathCentered()))
+                    } catch (e: IOException) {
+                        logger.log(Level.WARNING, "Could not read file: " + metadata.getThumbnailPathCentered())
+                        resp["msg"] = "Could not save"
+                        resp["status"] = ApiResponse.FAIL.status
+                        return mapper.writeValueAsString(resp)
+                    }
+
+                    // Map marker
+                    tempFile = File(System.getProperty("java.io.tmpdir")+"/temp.jpg")
+                    Thumbnails.of(img)
+                        .crop(Positions.CENTER)
+                        .size(45, 45)
+                        .outputQuality(1.0)
+                        .toFile(tempFile)
+
+                    try {
+                        scaledImage = ImageIO.read(tempFile)
+                        scaledImage = ImageProcessing.sharpenAndBrightenImage(scaledImage)
+                        scaledImage = ImageProcessing.borderImage(scaledImage)
+                        tempFile.delete()
+                        ImageIO.write(scaledImage, "jpg", File(metadata.getMapMarkerPath()))
+                    } catch (e: IOException) {
+                        logger.log(Level.WARNING, "Could not read file: " + metadata.getMapMarkerPath())
+                        resp["msg"] = "Could not save"
+                        resp["status"] = ApiResponse.FAIL.status
+                        return mapper.writeValueAsString(resp)
+                    }
+                }
+
+                resp["msg"] = "Saved!"
+                resp["status"] = ApiResponse.SUCCESS.status
+                return mapper.writeValueAsString(resp)
+            }
+        }
+        resp["msg"] = "Could not save"
+        resp["status"] = ApiResponse.FAIL.status
+        return mapper.writeValueAsString(resp)
     }
 
     private fun processAlbum(albumNameRaw: String, currentUserObj: User?, metadataObj: Metadata?): Int {

@@ -351,29 +351,31 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         )
     }
 
-    private fun sharpenAndBrightenImage(bufferedImage: BufferedImage): BufferedImage {
+    companion object {
+        fun sharpenAndBrightenImage(bufferedImage: BufferedImage): BufferedImage {
 //        -0.15f, -0.15f, -0.15f,
 //        -0.15f, 2.2f, -0.15f,
 //        -0.15f, -0.15f, -0.15f
-        val fnums = -0.05f
-        val kernel = Kernel(
-            3, 3, floatArrayOf(
-                fnums, fnums, fnums,
-                fnums, 1.42f, fnums,
-                fnums, fnums, fnums
+            val fnums = -0.05f
+            val kernel = Kernel(
+                3, 3, floatArrayOf(
+                    fnums, fnums, fnums,
+                    fnums, 1.42f, fnums,
+                    fnums, fnums, fnums
+                )
             )
-        )
 
-        val op: BufferedImageOp = ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null)
-        return op.filter(bufferedImage, null)
-    }
+            val op: BufferedImageOp = ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null)
+            return op.filter(bufferedImage, null)
+        }
 
-    private fun borderImage(bufferedImage: BufferedImage): BufferedImage {
-        val g: Graphics2D = bufferedImage.graphics as Graphics2D
-        g.stroke = BasicStroke(4f)
-        g.color = Color.WHITE
-        g.drawRect(0, 0, bufferedImage.width, bufferedImage.height)
+        fun borderImage(bufferedImage: BufferedImage): BufferedImage {
+            val g: Graphics2D = bufferedImage.graphics as Graphics2D
+            g.stroke = BasicStroke(4f)
+            g.color = Color.WHITE
+            g.drawRect(0, 0, bufferedImage.width, bufferedImage.height)
 
-        return bufferedImage
+            return bufferedImage
+        }
     }
 }
