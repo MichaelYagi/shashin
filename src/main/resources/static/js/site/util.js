@@ -173,6 +173,7 @@ class Util {
                     window.top.location = window.top.location;
                 } else if (metadataIdArray.length === 1 && metadataKeys.length === 1 && metadataIdArray[0] === metadataKeys[0]) {
                     const rescannedMetadata = metadataMap[metadataKeys[0]];
+                    let takenDateUpdated = false;
                     $("#title").val("");
                     if (rescannedMetadata["title"] !== null) {
                         $("#title").val(rescannedMetadata["title"]);
@@ -196,14 +197,20 @@ class Util {
                     $("#yearTaken").val("");
                     if (rescannedMetadata["year"] !== null) {
                         $("#yearTaken").val(rescannedMetadata["year"]);
+                        Util.setMetadataLocalStorage();
+                        takenDateUpdated = true;
                     }
                     $("#monthTaken").val("");
                     if (rescannedMetadata["month"] !== null) {
                         $("#monthTaken").val(rescannedMetadata["month"]);
+                        Util.setMetadataLocalStorage();
+                        takenDateUpdated = true;
                     }
                     $("#dayTaken").val("");
                     if (rescannedMetadata["day"] !== null) {
                         $("#dayTaken").val(rescannedMetadata["day"]);
+                        Util.setMetadataLocalStorage();
+                        takenDateUpdated = true;
                     }
                     $("#timeTaken").val("");
                     if (rescannedMetadata["time"] !== null) {
@@ -216,6 +223,23 @@ class Util {
                     $("#latlng").val("");
                     if (rescannedMetadata["lat"] !== null && rescannedMetadata["lng"] !== null) {
                         $("#latlng").val(rescannedMetadata["lat"]+","+rescannedMetadata["lng"]);
+                        $("#mapTabLink").show();
+                        Util.setMetadataLocalStorage();
+                    } else {
+                        $("#mapTabLink").hide();
+                    }
+                    if (takenDateUpdated === true) {
+                        const dateGalleryRemoved = shashin.removeThumbnail(rescannedMetadata.id);
+                        timelineSettings.refreshTimeline($("#mediaTypeFilter").val()).then(function (data) {
+                            // If a date section was removed refresh the timeline
+                            if (dateGalleryRemoved === true) {
+                                Util.setMetadataLocalStorage();
+                                const elements = Util.elementsInViewport($(".scrollspy"));
+                                let firstElementId = $(elements[0]).attr("id");
+                                let firstVisibleId = firstElementId.indexOf("tail_") === -1 ? firstElementId : firstElementId.substring(5, firstElementId.length);
+                                timelineSettings.jumpFromTimelineToc(e, firstVisibleId, $("#mediaTypeFilter").val());
+                            }
+                        });
                     }
                 }
             }
