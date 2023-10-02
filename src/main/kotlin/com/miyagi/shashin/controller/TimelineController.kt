@@ -762,6 +762,7 @@ class TimelineController: BaseController() {
 
                         if (exifFile != null && exifFile.exists()) {
                             if (exifFile.delete()) {
+                                // Re-process metadata
                                 val metadataProcessing = MetadataProcessing(
                                     apiVersion!!,
                                     File(metadata.getPath()),
@@ -770,7 +771,25 @@ class TimelineController: BaseController() {
                                     geocodeUrl!!
                                 )
                                 metadata = metadataProcessing.populateMetadata()
+
+                                // Re-process thumbnails
+                                val centeredTnFile = File(metadata.getThumbnailPathCentered())
+                                if (centeredTnFile.exists()) {
+                                    centeredTnFile.delete()
+                                }
+                                val mapTnFile = File(metadata.getMapMarkerPath())
+                                if (mapTnFile.exists()) {
+                                    mapTnFile.delete()
+                                }
+                                val smallTnFile = File(metadata.getThumbnailPathSmall())
+                                if (smallTnFile.exists()) {
+                                    smallTnFile.delete()
+                                }
+                                val imageProcessing = ImageProcessing(apiVersion, File(metadata.getPath()), sidecarDir, metadata)
+                                metadata = imageProcessing.createThumbnails()!!
+
                                 if (metadata.getId().isNotEmpty()) {
+
                                     if (metadata.getId() != metadataId) {
                                         metadata.setId(metadataId)
                                     }

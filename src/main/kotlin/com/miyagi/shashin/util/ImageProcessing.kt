@@ -175,6 +175,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     _metadataObj?.setThumbnailSmallWidth(scaledImage.width)
                     _metadataObj?.setThumbnailPathSmall(thumbnailFileStr)
                     _metadataObj?.setThumbnailUrlSmall("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_" + FileUtils.thumbnailHeight() + "." + extension)
+                    logger.log(Level.INFO, "Small thumbnail created: " + file.path)
                 } catch (e: IOException) {
                     logger.log(Level.WARNING, "Could not read file: " + tnFile.path)
                 }
@@ -198,6 +199,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     ImageIO.write(scaledImage, "jpg", tnFile)
                     _metadataObj?.setThumbnailPathCentered(thumbnailFileStr)
                     _metadataObj?.setThumbnailUrlCentered("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_centered." + extension)
+                    logger.log(Level.INFO, "Centered thumbnail created: " + file.path)
                 } catch (e: IOException) {
                     logger.log(Level.WARNING, "Could not read file: " + tnFile.path)
                 }
@@ -223,6 +225,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     ImageIO.write(scaledImage, "jpg", tnFile)
                     _metadataObj?.setMapMarkerPath(thumbnailFileStr)
                     _metadataObj?.setMapMarkerUrl("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_mapmarker." + extension)
+                    logger.log(Level.INFO, "Map thumbnail created: " + file.path)
                 } catch (e: IOException) {
                     logger.log(Level.WARNING, "Could not read file: " + tnFile.path)
                 }
