@@ -454,7 +454,7 @@ class MetadataProcessing() {
             }
 
             if (originalPixelHeight != null && originalPixelWidth != null) {
-                if (rotation == 90 || rotation == 270) {
+                if (rotation == 90 || rotation == 270 || rotation == -90 || rotation == -270) {
                     this.metadataObj.setOriginalImageWidth(originalPixelHeight)
                     this.metadataObj.setOriginalImageHeight(originalPixelWidth)
                 } else {

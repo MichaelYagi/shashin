@@ -2025,17 +2025,9 @@ class TimelineController: BaseController() {
 
                     val img = ImageIO.read(ByteArrayInputStream(imageBytes))
 
-                    var thumbnailHeight = metadata.getThumbnailSmallHeight()
-                    var thumbnailWidth = metadata.getThumbnailSmallWidth()
-                    if ((img.height > 0 && img.height != metadata.getThumbnailSmallHeight()) ||
-                        (img.width > 0 && img.width != metadata.getThumbnailSmallWidth())) {
-                        thumbnailHeight = img.height
-                        thumbnailWidth = img.width
-                    }
-
                     // Small thumbnail
                     Thumbnails.of(img)
-                        .size(thumbnailWidth!!, thumbnailHeight!!)
+                        .size(metadata.getThumbnailSmallWidth()!!, metadata.getThumbnailSmallHeight()!!)
                         .outputQuality(1.0)
                         .toFile(tempFile)
 
