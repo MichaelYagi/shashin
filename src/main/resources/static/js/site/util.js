@@ -162,8 +162,61 @@ class Util {
                 }
                 Util.setMetadataLocalStorage();
 
+                let metadataMap = {};
+                let metadataKeys = [];
+                if (data.hasOwnProperty("metadataMap")) {
+                    metadataMap = data["metadataMap"];
+                    metadataKeys = Array.from(Object.keys(metadataMap));
+                }
+
                 if (activePage !== "timeline") {
                     window.top.location = window.top.location;
+                } else if (metadataIdArray.length === 1 && metadataKeys.length === 1 && metadataIdArray[0] === metadataKeys[0]) {
+                    const rescannedMetadata = metadataMap[metadataKeys[0]];
+                    $("#title").val("");
+                    if (rescannedMetadata["title"] !== null) {
+                        $("#title").val(rescannedMetadata["title"]);
+                    }
+                    $("#camera").val("");
+                    if (rescannedMetadata["camera"] !== null) {
+                        $("#camera").val(rescannedMetadata["camera"]);
+                    }
+                    $("#lens").val("");
+                    if (rescannedMetadata["lens"] !== null) {
+                        $("#lens").val(rescannedMetadata["lens"]);
+                    }
+                    $("#description").val("");
+                    if (rescannedMetadata["description"] !== null) {
+                        $("#description").val(rescannedMetadata["description"]);
+                    }
+                    $("#duration").val("");
+                    if (rescannedMetadata["duration"] !== null) {
+                        $("#duration").val(rescannedMetadata["duration"]);
+                    }
+                    $("#yearTaken").val("");
+                    if (rescannedMetadata["year"] !== null) {
+                        $("#yearTaken").val(rescannedMetadata["year"]);
+                    }
+                    $("#monthTaken").val("");
+                    if (rescannedMetadata["month"] !== null) {
+                        $("#monthTaken").val(rescannedMetadata["month"]);
+                    }
+                    $("#dayTaken").val("");
+                    if (rescannedMetadata["day"] !== null) {
+                        $("#dayTaken").val(rescannedMetadata["day"]);
+                    }
+                    $("#timeTaken").val("");
+                    if (rescannedMetadata["time"] !== null) {
+                        $("#timeTaken").val(rescannedMetadata["time"]);
+                    }
+                    $("#offsetTaken").val("");
+                    if (rescannedMetadata["timeZone"] !== null) {
+                        $("#offsetTaken").val(rescannedMetadata["timeZone"]);
+                    }
+                    $("#latlng").val("");
+                    if (rescannedMetadata["lat"] !== null && rescannedMetadata["lng"] !== null) {
+                        $("#latlng").val(rescannedMetadata["lat"]+","+rescannedMetadata["lng"]);
+                    }
                 }
             }
         });
