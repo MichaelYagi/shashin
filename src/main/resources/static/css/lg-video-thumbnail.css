@@ -1,0 +1,7 @@
+.lg-video-thumbnail:after {
+    content: "\e20c"
+}
+
+.lg-video-thumbnail-on .lg-video-thumbnail:after {
+    content: "\e20d"
+}

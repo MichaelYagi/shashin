@@ -1,5 +1,5 @@
 ! function(e, l) {
-    "object" == typeof exports && "undefined" != typeof module ? module.exports = l() : "function" == typeof define && define.amd ? define(l) : (e = "undefined" != typeof globalThis ? globalThis : e || self).lgMetadataDetail = l()
+    "object" == typeof exports && "undefined" != typeof module ? module.exports = l() : "function" == typeof define && define.amd ? define(l) : (e = "undefined" != typeof globalThis ? globalThis : e || self).lgVideoThumbnail = l()
 }(this, (function() {
     "use strict";
     var e = function() {
@@ -11,7 +11,7 @@
             }).apply(this, arguments)
         },
         l = {
-            metadataDetail: !0
+            videoThumbnail: !0
         };
     return function() {
         function n(n, t) {
@@ -22,23 +22,32 @@
         }
         return n.prototype.init = function() {
             var e = "";
-            if (this.settings.metadataDetail) {
-                e = '<button type="button" aria-label="View Photo Details" title="View Photo Details" class="bi-info-circle lg-icon" style="font-size: 1rem;"></button>',
+
+            if (this.settings.videoThumbnail) {
+                e = '<button type="button" aria-label="Use As Thumbnail" title="Use As Thumbnail" class="bi-bounding-box-circles lg-icon" style="font-size: 1rem;display: none"></button>',
                     this.core.$toolbar.append(e),
-                    this.metadataDetail()
+                    this.videoThumbnail()
             }
 
+            this.core.LGel.on('lgHasVideo.video', () => {
+                $(".bi-bounding-box-circles.lg-icon").css("display", "block");
+            })
+
+            this.core.LGel.on('lgBeforeOpen', () => {
+                $(".bi-bounding-box-circles.lg-icon").css("display", "none");
+            })
+
             this.core.outer
-                .find('.bi-info-circle')
+                .find('.bi-bounding-box-circles')
                 .first()
                 .on('click.lg', () => {
                     let currentDynamicEl = this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("func") ? this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
                     if (currentDynamicEl.hasOwnProperty("func")) {
                         $("#metadataId").val(currentDynamicEl.args);
-                        currentDynamicEl.func(currentDynamicEl.args);
+                        currentDynamicEl.vtfunc(currentDynamicEl.args);
                     } else if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag")) {
                         //console.log($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag"))
-                        const fn = this.settings.metadataDetailFunc;
+                        const fn = this.settings.videoThumbnailFunc;
                         let id = "";
                         try {
                             id = $($(".thumbnail-bl")[this.core.index]).children('a').attr("tag");
@@ -50,8 +59,9 @@
                     }
                 });
         },
-            n.prototype.metadataDetail = function() {
-                // Edit metadata detail
+            n.prototype.videoThumbnail = function(e) {
+
+                // Edit video thumbnail
                 return ""
             },
             n.prototype.destroy = function() {},

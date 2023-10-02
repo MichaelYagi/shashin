@@ -8,7 +8,19 @@ class Folder {
         this.activePage = activePage;
         this.folderName = folderName;
         this.eol = false;
-        this.mediaContentList = shashin.initLightGallery('scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail],metadataDetail:true},'.mediaLink');
+        const lgConfig = {
+            dynamic:true,
+            plugins:[]
+        };
+        if (typeof lgMetadataDetail !== "undefined") {
+            lgConfig.plugins.push(lgMetadataDetail);
+            lgConfig["metadataDetail"] = true;
+        }
+        if (typeof lgVideoThumbnail !== "undefined") {
+            lgConfig.plugins.push(lgVideoThumbnail);
+            lgConfig["videoThumbnail"] = true;
+        }
+        this.mediaContentList = shashin.initLightGallery('scroll-gallery',lgConfig,'.mediaLink');
     }
 
     async init() {

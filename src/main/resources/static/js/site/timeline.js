@@ -52,7 +52,22 @@
         }
 
         shashin.setLightGalleryElement('infinite-scroll-gallery');
-        shashin.setLightGallery({"selector":".mediaLink",plugins:[lgMetadataDetail],metadataDetail:true,metadataDetailFunc:shashin.openInfoSidebar});
+
+        const lgConfig = {
+            "selector":".mediaLink",
+            plugins:[]
+        };
+        if (typeof lgMetadataDetail !== "undefined") {
+            lgConfig.plugins.push(lgMetadataDetail);
+            lgConfig["metadataDetail"] = true;
+            lgConfig["metadataDetailFunc"] = shashin.openInfoSidebar;
+        }
+        if (typeof lgVideoThumbnail !== "undefined") {
+            lgConfig.plugins.push(lgVideoThumbnail);
+            lgConfig["videoThumbnail"] = true;
+            lgConfig["videoThumbnailFunc"] = shashin.processVideoThumbnail;
+        }
+        shashin.setLightGallery(lgConfig);
 
         let topScroll = true;
         let topOfPage = true;
@@ -1267,6 +1282,7 @@
 
         const mediaContent = {};
         mediaContent.func = shashin.openInfoSidebar;
+        mediaContent.vtfunc = shashin.processVideoThumbnail;
         mediaContent.args = metadata.id;
         mediaContent.thumb = encodeURI(metadata.thumbnailUrlSmall);
 

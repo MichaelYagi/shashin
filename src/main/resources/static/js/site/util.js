@@ -506,7 +506,22 @@ class Util {
                     shashin.lg = null;
 
                     setTimeout(() => {
-                        shashin.setLightGallery({"selector":".mediaLink",plugins:[lgMetadataDetail],metadataDetail:true,metadataDetailFunc:shashin.openInfoSidebar});
+                        const lgConfig = {
+                            "selector":".mediaLink",
+                            plugins:[]
+                        };
+                        if (typeof lgMetadataDetail !== "undefined") {
+                            lgConfig.plugins.push(lgMetadataDetail);
+                            lgConfig["metadataDetail"] = true;
+                            lgConfig["metadataDetailFunc"] = shashin.openInfoSidebar;
+                        }
+                        if (typeof lgVideoThumbnail !== "undefined") {
+                            lgConfig.plugins.push(lgVideoThumbnail);
+                            lgConfig["videoThumbnail"] = true;
+                            lgConfig["videoThumbnailFunc"] = shashin.processVideoThumbnail;
+                        }
+                        shashin.setLightGallery(lgConfig);
+
                         $(".bi-play-circle").css("visibility", "visible");
                         $(".bi-play-btn").css("visibility", "visible");
                         $(".mediaLink").bind('click');
