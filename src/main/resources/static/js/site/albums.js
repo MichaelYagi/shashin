@@ -113,7 +113,8 @@ class Albums {
                         let album = data["album"];
 
                         $("#albumName").text(album["name"]);
-                        $("#albumCoverThumb").attr("src", album["coverUrl"]);
+                        const version = Util.getMetadataLocalStorage();
+                        $("#albumCoverThumb").attr("src", album["coverUrl"]+(version === "" ? "" : "?v=" + version));
                         $("#fullShareLinkContainer").css("display", "none");
                         $("#fullShareLink").text("");
                         $("#shareLink").val("");
@@ -171,7 +172,8 @@ class Albums {
                     let album = data["album"];
                     $("#albumNameEdit").text(album["name"]);
                     $("#albumEditName").val(album["name"]);
-                    $("#albumCoverEditThumb").attr("src", album["coverUrl"]);
+                    const version = Util.getMetadataLocalStorage();
+                    $("#albumCoverEditThumb").attr("src", album["coverUrl"]+(version === "" ? "" : "?v=" + version));
 
                     $("#propeditalbums").modal('show');
 
@@ -190,7 +192,8 @@ class Albums {
                         let album = data["album"];
 
                         $("#albumNameTrash").text(album["name"]);
-                        $("#albumCoverTrashThumb").attr("src", album["coverUrl"]);
+                        const version = Util.getMetadataLocalStorage();
+                        $("#albumCoverTrashThumb").attr("src", album["coverUrl"]+(version === "" ? "" : "?v=" + version));
 
                         $("#proptrashalbums").modal('show');
 
@@ -211,7 +214,8 @@ class Albums {
                 let album = data["album"];
 
                 $("#albumNameComments").text(album["name"]);
-                $("#albumCoverCommentThumb").attr("src", album["coverUrl"]);
+                const version = Util.getMetadataLocalStorage();
+                $("#albumCoverCommentThumb").attr("src", album["coverUrl"]+(version === "" ? "" : "?v=" + version));
 
                 let albumCommentsList = await http.ajax("get", "/albumcomments/"+albumId);
 

@@ -965,7 +965,8 @@
                     if (data.hasOwnProperty("msg") && data.hasOwnProperty("status")) {
                         // Refresh image
                         Util.setMetadataLocalStorage();
-                        $("#image"+metadataId).attr("src",$("#image"+metadataId).attr("src")+"?"+(new Date().getTime()));
+                        const version = Util.getMetadataLocalStorage();
+                        $("#image"+metadataId).attr("src",$("#image"+metadataId).attr("src")+(version === "" ? "" : "?v=" + version));
                         shashin.showToastMessage("Thumbnail image updated", "Thumbnails have been updated.", {icon:"bi-info-circle", iconColor:"#777777"});
                     } else {
                         shashin.showToastMessage("Could not update thumbnail", "Could not update thumbnails", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});

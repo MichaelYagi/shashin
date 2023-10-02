@@ -1268,7 +1268,8 @@
         }
 
         if ($("#image" + metadata.id).length === 1) {
-            $("#image" + metadata.id).attr("src", encodeURI(metadata.thumbnailUrlSmall));
+            const version = Util.getMetadataLocalStorage();
+            $("#image" + metadata.id).attr("src", encodeURI(metadata.thumbnailUrlSmall)+(version === "" ? "" : "?v=" + version));
             $("#image" + metadata.id).css("background-color", "lightgray");
         }
 
