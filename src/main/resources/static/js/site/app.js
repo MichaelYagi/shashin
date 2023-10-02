@@ -290,8 +290,8 @@
                 const lensList = $('#lensesString').val();
 
                 // Clear modal data
-                $('#propTimelineModal').find(':input').val('');
-                $("#propTimelineModalThumbnail").html("");
+                $('#propMetadata').find(':input').val('');
+                $("#propMetadataModalThumbnail").html("");
                 if ($("#isobject").length > 0) {
                     $("#isobject")[0].checked = false;
                 }
@@ -312,7 +312,7 @@
                 $("#videoduration").css("display","none");
 
                 if (metadata.thumbnailUrlCentered !== null) {
-                    $("#propTimelineModalThumbnail").html(TimelineTemplates.HeaderThumbnail({metadata: metadata, version: Util.getMetadataLocalStorage()}));
+                    $("#propMetadataModalThumbnail").html(TimelineTemplates.HeaderThumbnail({metadata: metadata, version: Util.getMetadataLocalStorage()}));
                 }
 
                 if (metadata.title !== null) {
@@ -483,7 +483,7 @@
                 }
 
                 $("#albumDetailRow").remove();
-                Util.populateDetailsInfo(metadata, "propTimelineModal");
+                Util.populateDetailsInfo(metadata, "propMetadata");
 
                 if ($("#keywordsString").length > 0) {
                     const keywordAvailableList = $($("#keywordsString").val().split(",")).not($("#keywords").val().split(",")).get().filter(function (v) {
@@ -507,7 +507,7 @@
                 }
 
                 // Open modal window
-                $("#propTimelineModal").modal('show');
+                $("#propMetadata").modal('show');
             }
         });
     }
@@ -785,8 +785,8 @@
 
                     let clipboard = null;
 
-                    if ($("#propTimelineModal").length > 0) {
-                        clipboard = new ClipboardJS('#tempClipboardMapId', {container: document.getElementById("propTimelineModal")});
+                    if ($("#propMetadata").length > 0) {
+                        clipboard = new ClipboardJS('#tempClipboardMapId', {container: document.getElementById("propMetadataModal")});
                     } else if ($("#propInfoModal").length > 0) {
                         clipboard = new ClipboardJS('#tempClipboardMapId', {container: document.getElementById("propInfoModal")});
                     }

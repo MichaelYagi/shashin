@@ -139,12 +139,24 @@ class Util {
         }
     }
 
-    static rescanMetadata(metadataIdArray) {
+    static rescanMetadata(metadataIdArray, modalId) {
         const activePage = $("#activePage").val();
         const http = new Http("rescan batch metadata");
         const version = Util.getMetadataLocalStorage();
         const json = {
             metadataIdList: metadataIdArray
+        }
+
+        if (modalId === "propMetadata") {
+            $("#metadataModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
+            $("#metadataModalStatus").css("visibility", "visible");
+            $("#metadataModalStatus").attr("title", "");
+            $("#metadataModalCancel").prop('disabled', true);
+        } else if ("propBatchMetadata") {
+            $("#metadataBatchModalCancel").prop("disabled", true);
+            $("#metadataBatchModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
+            $("#metadataBatchModalStatus").css("visibility", "visible");
+            $("#metadataBatchModalStatus").attr("title", "");
         }
 
         http.ajax("post", "/metadata/rescan" + (version === "" ? "" : "?v=" + version), JSON.stringify(json)).then(function (data) {
@@ -154,11 +166,29 @@ class Util {
                         icon: "bi-info-circle",
                         iconColor: "#777777"
                     });
+
+                    if (modalId === "propMetadata") {
+                        $("#metadataModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+                        $("#metadataModalCancel").prop('disabled', false);
+                    } else if (modalId === "propBatchMetadata") {
+                        $("#metadataBatchModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+                        $("#metadataBatchModalCancel").prop("disabled", false);
+                    }
                 } else {
                     shashin.showToastMessage("Error Rescanning Metadata", "There was an error rescanning metadata!", {
                         icon:"bi-exclamation-triangle",
                         iconColor:"#FF0000"}
                     );
+
+                    if (modalId === "propMetadata") {
+                        $("#metadataModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                        $("#metadataModalStatus").attr("title", shashin.modalStatusFailMessage());
+                        $("#metadataModalCancel").prop('disabled', false);
+                    } else if (modalId === "propBatchMetadata") {
+                        $("#metadataBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                        $("#metadataBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
+                        $("#metadataBatchModalCancel").prop("disabled", false);
+                    }
                 }
                 Util.setMetadataLocalStorage();
 
@@ -764,8 +794,8 @@ class Util {
         if (typeof containerModalId === "undefined" || containerModalId.length === 0) {
             if ($("#propInfoModal").length > 0) {
                 containerModalId = "propInfoModal";
-            } else if ($("#propTimelineModal").length > 0) {
-                containerModalId = "propTimelineModal";
+            } else if ($("#propMetadata").length > 0) {
+                containerModalId = "propMetadata";
             } else if ($("#propInfoSidebar").length > 0) {
                 containerModalId = "propInfoSidebar";
             } else if ($("#propMetadataLocation").length > 0) {

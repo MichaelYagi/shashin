@@ -52,7 +52,7 @@ $("#confirmRescanBatchMetadata").on("click", function (e) {
 
     const metadataIds = JSON.parse($("#batchMetadataIds").val());
 
-    Util.rescanMetadata(metadataIds)
+    Util.rescanMetadata(metadataIds, "propBatchMetadata");
 });
 
 $("#saveBatchMetadata").on("click", async function (e) {
