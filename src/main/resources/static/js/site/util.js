@@ -139,6 +139,36 @@ class Util {
         }
     }
 
+    static rescanMetadata(metadataIdArray) {
+        const activePage = $("#activePage").val();
+        const http = new Http("rescan batch metadata");
+        const version = Util.getMetadataLocalStorage();
+        const json = {
+            metadataIdList: metadataIdArray
+        }
+
+        http.ajax("post", "/metadata/rescan" + (version === "" ? "" : "?v=" + version), JSON.stringify(json)).then(function (data) {
+            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                if (data["status"] === "success") {
+                    shashin.showToastMessage("Metadata Rescanned", "Metadata successfully rescanned!", {
+                        icon: "bi-info-circle",
+                        iconColor: "#777777"
+                    });
+                } else {
+                    shashin.showToastMessage("Error Rescanning Metadata", "There was an error rescanning metadata!", {
+                        icon:"bi-exclamation-triangle",
+                        iconColor:"#FF0000"}
+                    );
+                }
+                Util.setMetadataLocalStorage();
+
+                if (activePage !== "timeline") {
+                    window.top.location = window.top.location;
+                }
+            }
+        });
+    }
+
     static getMetadataLocalStorage(date) {
         let version = "";
         if (typeof date !== "undefined") {

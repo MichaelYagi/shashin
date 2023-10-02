@@ -200,6 +200,11 @@ class MetadataProcessing() {
                                     if (tag.tagName == "Date/Time Original") {
                                         takenTagged = true
                                     }
+
+                                    logger.log(
+                                        Level.INFO,
+                                        "Dates set for " + file.name
+                                    )
                                 }
                             }
                             "Modification Time", "File Modified Date" -> {
@@ -244,10 +249,18 @@ class MetadataProcessing() {
 
                                 if (date != null) {
                                     this.metadataObj.setModifiedAt(destFormat.format(date))
+                                    logger.log(
+                                        Level.INFO,
+                                        "Modification dates set for " + file.name
+                                    )
                                 }
                             }
                             "Detected MIME Type" -> {
                                 this.metadataObj.setType(tag.description)
+                                logger.log(
+                                    Level.INFO,
+                                    "Type set for " + file.name
+                                )
                             }
                             "Expected File Name Extension" -> {
                                 this.metadataObj.setExpectedExtension(tag.description)
@@ -307,6 +320,10 @@ class MetadataProcessing() {
                                 lat = latDecimal
                                 if (latDecimal != "0.0") {
                                     this.metadataObj.setLat(latDecimal)
+                                    logger.log(
+                                        Level.INFO,
+                                        "Lat set for " + file.name
+                                    )
                                 } else {
                                     lat = null
                                 }
@@ -332,12 +349,20 @@ class MetadataProcessing() {
                                 lng = lngDecimal
                                 if (lngDecimal != "0.0") {
                                     this.metadataObj.setLng(lngDecimal)
+                                    logger.log(
+                                        Level.INFO,
+                                        "Lng set for " + file.name
+                                    )
                                 } else {
                                     lng = null
                                 }
                             }
                             "ISO Speed Ratings" -> {
                                 this.metadataObj.setIso(tag.description.toInt())
+                                logger.log(
+                                    Level.INFO,
+                                    "ISO set for " + file.name
+                                )
                             }
                             "Compression Type" -> {
                                 this.metadataObj.setCompressionType(tag.description)
@@ -420,6 +445,10 @@ class MetadataProcessing() {
                 }
                 if (camera.isNotBlank()) {
                     this.metadataObj.setCamera(camera.trim())
+                    logger.log(
+                        Level.INFO,
+                        "Camera set for " + file.name
+                    )
                 }
             }
             if (this.metadataObj.getLens().isNullOrBlank() && (!lensMake.isNullOrBlank() || !lensModel.isNullOrBlank())) {
@@ -432,6 +461,10 @@ class MetadataProcessing() {
                 }
                 if (lens.isNotBlank()) {
                     this.metadataObj.setLens(lens.trim())
+                    logger.log(
+                        Level.INFO,
+                        "Lens set for " + file.name
+                    )
                 }
             }
 
@@ -450,6 +483,10 @@ class MetadataProcessing() {
                     val zdt: ZonedDateTime = dt.atZone(zone)
                     val offset = zdt.offset
                     this.metadataObj.setTimeZone(offset.toString())
+                    logger.log(
+                        Level.INFO,
+                        "Place set for " + file.name
+                    )
                 }
             }
 
@@ -461,6 +498,10 @@ class MetadataProcessing() {
                     this.metadataObj.setOriginalImageWidth(originalPixelWidth)
                     this.metadataObj.setOriginalImageHeight(originalPixelHeight)
                 }
+                logger.log(
+                    Level.INFO,
+                    "Width/height set for " + file.name
+                )
             }
         } catch (e: Exception) {
             logger.log(

@@ -11,10 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
-import com.miyagi.shashin.util.ApiResponse
-import com.miyagi.shashin.util.FileUtils
-import com.miyagi.shashin.util.ImageProcessing
-import com.miyagi.shashin.util.TextUtils
+import com.miyagi.shashin.util.*
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import io.swagger.v3.oas.annotations.Operation
 import net.coobird.thumbnailator.Thumbnails
@@ -26,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
+import org.springframework.core.io.FileSystemResource
 import org.springframework.core.io.InputStreamResource
 import org.springframework.http.*
 import org.springframework.security.access.annotation.Secured
@@ -97,6 +95,9 @@ class TimelineController: BaseController() {
 
     @Value("\${app.endpoint.url.geocode}")
     private var geocodeUrl: String? = null
+
+    @Value("\${app.api.version}")
+    private var apiVersion: String? = null
 
     @Value("\${app.sidecar.path}")
     private var relativeSidecarDir: String? = null
@@ -733,6 +734,72 @@ class TimelineController: BaseController() {
         }
 
         return response
+    }
+
+    @RequestMapping(value = ["/metadata/rescan"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
+    fun rescanMetadata(model: Model, @RequestBody requestBody: JsonNode): String? {
+//        println(requestBody)
+        val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+
+        if (metadataMap.containsKey("metadataIdList")) {
+            val metadataIdArray = metadataMap["metadataIdList"] as ArrayList<String>?
+            if (!metadataIdArray.isNullOrEmpty()) {
+                var errorDetected = false
+                for (metadataId in metadataIdArray) {
+                    val metadataObj = metadataRepository.findById(metadataId)
+
+                    if (metadataObj.isPresent) {
+                        var metadata = metadataObj.get()
+
+                        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+                        val sidecarDir = rootPath + relativeSidecarDir
+
+                        val exifFile = FileUtils.getExifFile(metadata.getFolder()!!, metadata.getFileName()!!, relativeSidecarDir!!)
+
+                        if (exifFile != null && exifFile.exists()) {
+                            if (exifFile.delete()) {
+                                val metadataProcessing = MetadataProcessing(
+                                    apiVersion!!,
+                                    File(metadata.getPath()),
+                                    sidecarDir,
+                                    metadata,
+                                    geocodeUrl!!
+                                )
+                                metadata = metadataProcessing.populateMetadata()
+                                if (metadata.getId().isNotEmpty()) {
+                                    if (metadata.getId() != metadataId) {
+                                        metadata.setId(metadataId)
+                                    }
+                                    metadataRepository.save(metadata)
+                                } else {
+                                    logger.log(
+                                        Level.WARNING,
+                                        "Could not rescan data for " + metadata.getPath()
+                                    )
+                                    errorDetected = true
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return if (errorDetected) {
+                    resp["msg"] = "Some data not saved"
+                    resp["status"] = ApiResponse.WARN.status
+                    mapper.writeValueAsString(resp)
+                } else {
+                    resp["msg"] = "Saved!"
+                    resp["status"] = ApiResponse.SUCCESS.status
+                    mapper.writeValueAsString(resp)
+                }
+            }
+        }
+
+        resp["msg"] = "Could not save"
+        resp["status"] = ApiResponse.FAIL.status
+        return mapper.writeValueAsString(resp)
     }
 
     @RequestMapping(value = ["/metadata/remove/{metadataId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
