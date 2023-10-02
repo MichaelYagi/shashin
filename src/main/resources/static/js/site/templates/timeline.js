@@ -31,12 +31,12 @@ class TimelineTemplates {
         <a href="/map?lat=${metadata.lat}&lng=${metadata.lng}${queryParamDates}" target="_blank" style="text-decoration: none;"><span class="bi-geo-alt-fill" style="font-size:1.0rem;"></span>${placeNameDisplayName}</a>&nbsp;<a href="https://www.google.com/maps/search/?api=1&query=${metadata.lat}%2C${metadata.lng}" target="_blank" class="bi-google" style="text-decoration: none;"></a>
     `};
 
-    static HeaderThumbnail({metadata}) { return `
-        <img loading="lazy" src="${encodeURI(metadata.thumbnailUrlCentered)}" height="100" width="100">
+    static HeaderThumbnail({metadata,version}) { return `
+        <img loading="lazy" src="${encodeURI(metadata.thumbnailUrlCentered)+(version === "" ? "" : "?v=" + version)}" height="100" width="100">
     `};
 
-    static BatchHeaderThumbnail({thumbnailImage, title}) { return `
-        <img loading="lazy" src="${thumbnailImage}" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="${title}">
+    static BatchHeaderThumbnail({thumbnailImage, title, version}) { return `
+        <img loading="lazy" src="${thumbnailImage+(version === "" ? "" : "?v=" + version)}" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="${title}">
     `};
 
     static TimelinePreLoadGalleryHeader({metadata, placeNameHeaders, listHtml}) { return `

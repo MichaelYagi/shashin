@@ -312,7 +312,7 @@
                 $("#videoduration").css("display","none");
 
                 if (metadata.thumbnailUrlCentered !== null) {
-                    $("#propTimelineModalThumbnail").html(TimelineTemplates.HeaderThumbnail({metadata: metadata}));
+                    $("#propTimelineModalThumbnail").html(TimelineTemplates.HeaderThumbnail({metadata: metadata, version: Util.getMetadataLocalStorage()}));
                 }
 
                 if (metadata.title !== null) {
@@ -988,7 +988,7 @@
             $("#metadataId").val(metadata.id);
 
             if (metadata.thumbnailUrlCentered !== null) {
-                $("#propInfoSidebarThumbnail").html(TimelineTemplates.HeaderThumbnail({metadata:metadata}));
+                $("#propInfoSidebarThumbnail").html(TimelineTemplates.HeaderThumbnail({metadata:metadata, version: Util.getMetadataLocalStorage()}));
             }
 
             Util.populateDetailsInfo(metadata, "propInfoSidebar");
@@ -1840,7 +1840,7 @@
             $('.bi-circle-fill').each(function(i, obj) {
                 const metadataId = obj.id.substring(6, obj.id.length);
                 metadataIdList.push(metadataId);
-                thumbnailList += TimelineTemplates.BatchHeaderThumbnail({thumbnailImage:$("#thumbnailCentered"+metadataId).val(),title:$("#filename"+metadataId).val().trim()});
+                thumbnailList += TimelineTemplates.BatchHeaderThumbnail({thumbnailImage:$("#thumbnailCentered"+metadataId).val(),title:$("#filename"+metadataId).val().trim(), version: Util.getMetadataLocalStorage()});
             });
 
             $("#batchMetadataIds").val(JSON.stringify(metadataIdList));
