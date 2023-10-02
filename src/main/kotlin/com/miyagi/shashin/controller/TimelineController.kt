@@ -742,11 +742,13 @@ class TimelineController: BaseController() {
     fun rescanMetadata(model: Model, @RequestBody requestBody: JsonNode): String? {
 //        println(requestBody)
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        val retMap = mutableMapOf<String,Metadata>()
 
         if (metadataMap.containsKey("metadataIdList")) {
             val metadataIdArray = metadataMap["metadataIdList"] as ArrayList<String>?
             if (!metadataIdArray.isNullOrEmpty()) {
                 var errorDetected = false
+
                 for (metadataId in metadataIdArray) {
                     val metadataObj = metadataRepository.findById(metadataId)
 
@@ -773,6 +775,7 @@ class TimelineController: BaseController() {
                                         metadata.setId(metadataId)
                                     }
                                     metadataRepository.save(metadata)
+                                    retMap[metadataId] = metadata
                                 } else {
                                     logger.log(
                                         Level.WARNING,
@@ -788,15 +791,18 @@ class TimelineController: BaseController() {
                 return if (errorDetected) {
                     resp["msg"] = "Some data not saved"
                     resp["status"] = ApiResponse.WARN.status
+                    resp["metadataMap"] = retMap
                     mapper.writeValueAsString(resp)
                 } else {
                     resp["msg"] = "Saved!"
                     resp["status"] = ApiResponse.SUCCESS.status
+                    resp["metadataMap"] = retMap
                     mapper.writeValueAsString(resp)
                 }
             }
         }
 
+        resp["metadataMap"] = retMap
         resp["msg"] = "Could not save"
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
