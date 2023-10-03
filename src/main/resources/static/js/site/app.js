@@ -299,6 +299,11 @@
                     $("#hidden")[0].checked = false;
                 }
 
+                $("#saveTimelineModalForm :input").prop("disabled", false);
+                if ($("#rescan").length > 0) {
+                    $("#rescan")[0].checked = false;
+                }
+
                 $("#metadataId").val(metadata.id);
                 $("#albumList").val("");
                 $("#peopleList").val("");
