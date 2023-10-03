@@ -736,7 +736,7 @@ class TimelineController: BaseController() {
         return response
     }
 
-    @RequestMapping(value = ["/metadata/rescan", "/api/v1/metdata/rescan"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/metadata/rescan", "/api/v1/metadata/rescan"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     fun rescanMetadata(model: Model, @RequestBody requestBody: JsonNode): String? {
