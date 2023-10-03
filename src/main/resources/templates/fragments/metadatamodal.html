@@ -131,22 +131,26 @@
                                     </div>
                                 </div>
                             </div>
-                            <hr>
-                            <div class="form-group row">
-                                <div class="col-sm">
-                                    <input type="checkbox" name="hidden" id="hidden">
-                                    <label class="form-check-label" for="hidden">Remove Photo</label>
-                                </div>
-                                <div class="col-sm">
-                                    <a href="#" id="rescanMetadata" title="Rescan Metadata"><span class="bi-upc-scan" style="font-size: 1rem;"></span></a>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="row">
-                                <div class="col-sm">
-                                    <span id="metadataModalMsg"></span>
+                            <button class="btn btn-secondary col-12 mt-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMetadata" aria-expanded="false" aria-controls="collapseMetadata">
+                                More
+                            </button>
+                            <div class="collapse mt-3" id="collapseMetadata">
+                                <div class="form-group row">
+                                    <div class="col-sm">
+                                        <input type="checkbox" name="hidden" id="hidden">
+                                        <label class="form-check-label" for="hidden">Remove Photo</label>
+                                    </div>
+                                    <div class="col-sm">
+                                        <a href="#" id="rescanMetadata" title="Rescan Thumbnails and Metadata">Rescan Thumbnails and Metadata</a>
+                                    </div>
                                 </div>
                             </div>
+<!--                            <br>-->
+<!--                            <div class="row">-->
+<!--                                <div class="col-sm">-->
+<!--                                    <span id="metadataModalMsg"></span>-->
+<!--                                </div>-->
+<!--                            </div>-->
                         </form>
                     </div>
                     </th:block>

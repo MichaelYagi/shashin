@@ -137,22 +137,26 @@
                             </div>
                         </div>
                     </div>
-                    <hr>
-                    <div class="form-group row">
-                        <div class="col-sm">
-                            <input type="checkbox" name="batchhidden" id="batchhidden">
-                            <label class="form-check-label" for="batchhidden">Remove Photos</label>
-                        </div>
-                        <div class="col-sm">
-                            <a href="#" id="rescanBatchMetadata" title="Rescan Metadata"><span class="bi-upc-scan" style="font-size: 1rem;"></span></a>
-                        </div>
-                    </div>
-                    <br>
-                    <div class="form-group row">
-                        <div class="col-sm">
-                            <span id="msgBatchMetadata"></span>
+                    <button class="btn btn-secondary col-12 mt-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBatchMetadata" aria-expanded="false" aria-controls="collapseBatchMetadata">
+                        More
+                    </button>
+                    <div class="collapse mt-3" id="collapseBatchMetadata">
+                        <div class="form-group row">
+                            <div class="col-sm">
+                                <input type="checkbox" name="batchhidden" id="batchhidden">
+                                <label class="form-check-label" for="batchhidden">Remove Photos</label>
+                            </div>
+                            <div class="col-sm">
+                                <a href="#" id="rescanBatchMetadata" title="Rescan Thumbnails and Metadata">Rescan Thumbnails and Metadata</a>
+                            </div>
                         </div>
                     </div>
+<!--                    <br>-->
+<!--                    <div class="form-group row">-->
+<!--                        <div class="col-sm">-->
+<!--                            <span id="msgBatchMetadata"></span>-->
+<!--                        </div>-->
+<!--                    </div>-->
                 </form>
 
             </div>
