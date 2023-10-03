@@ -125,7 +125,8 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "api/v1/exif/metadata/**",
             "api/v1/folders",
             "api/v1/all/album/delete",
-            "api/v1/keywords"
+            "api/v1/keywords",
+            "api/v1/metadata/rescan"
         )
 
         val allRoleList = arrayOf(
