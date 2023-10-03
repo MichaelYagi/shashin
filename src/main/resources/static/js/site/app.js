@@ -791,7 +791,7 @@
                     let clipboard = null;
 
                     if ($("#propMetadata").length > 0) {
-                        clipboard = new ClipboardJS('#tempClipboardMapId', {container: document.getElementById("propMetadataModal")});
+                        clipboard = new ClipboardJS('#tempClipboardMapId', {container: document.getElementById("propMetadata")});
                     } else if ($("#propInfoModal").length > 0) {
                         clipboard = new ClipboardJS('#tempClipboardMapId', {container: document.getElementById("propInfoModal")});
                     }
