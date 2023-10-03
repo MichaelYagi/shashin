@@ -152,8 +152,10 @@ class Util {
             $("#metadataModalStatus").css("visibility", "visible");
             $("#metadataModalStatus").attr("title", "");
             $("#metadataModalCancel").prop('disabled', true);
-        } else if ("propBatchMetadata") {
+            $("#saveMetadata").prop("disabled", true);
+        } else if (modalId === "propBatchMetadata") {
             $("#metadataBatchModalCancel").prop("disabled", true);
+            $("#saveBatchMetadata").prop("disabled", true);
             $("#metadataBatchModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
             $("#metadataBatchModalStatus").css("visibility", "visible");
             $("#metadataBatchModalStatus").attr("title", "");
@@ -170,9 +172,11 @@ class Util {
                     if (modalId === "propMetadata") {
                         $("#metadataModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                         $("#metadataModalCancel").prop('disabled', false);
+                        $("#saveMetadata").prop("disabled", false);
                     } else if (modalId === "propBatchMetadata") {
                         $("#metadataBatchModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                         $("#metadataBatchModalCancel").prop("disabled", false);
+                        $("#saveBatchMetadata").prop("disabled", false);
                     }
                 } else {
                     shashin.showToastMessage("Error Rescanning Metadata", "There was an error rescanning metadata!", {
@@ -184,10 +188,12 @@ class Util {
                         $("#metadataModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                         $("#metadataModalStatus").attr("title", shashin.modalStatusFailMessage());
                         $("#metadataModalCancel").prop('disabled', false);
+                        $("#saveMetadata").prop("disabled", false);
                     } else if (modalId === "propBatchMetadata") {
                         $("#metadataBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                         $("#metadataBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
                         $("#metadataBatchModalCancel").prop("disabled", false);
+                        $("#saveBatchMetadata").prop("disabled", false);
                     }
                 }
                 Util.setMetadataLocalStorage();
@@ -267,7 +273,7 @@ class Util {
                                 const elements = Util.elementsInViewport($(".scrollspy"));
                                 let firstElementId = $(elements[0]).attr("id");
                                 let firstVisibleId = firstElementId.indexOf("tail_") === -1 ? firstElementId : firstElementId.substring(5, firstElementId.length);
-                                timelineSettings.jumpFromTimelineToc(e, firstVisibleId, $("#mediaTypeFilter").val());
+                                timelineSettings.jumpFromTimelineToc(event, firstVisibleId, $("#mediaTypeFilter").val());
                             }
                         });
                     }

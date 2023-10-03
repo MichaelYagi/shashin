@@ -141,16 +141,11 @@
                                         <label class="form-check-label" for="hidden">Remove Photo</label>
                                     </div>
                                     <div class="col-sm">
-                                        <a href="#" id="rescanMetadata" title="Rescan Thumbnails and Metadata">Rescan Thumbnails and Metadata</a>
+                                        <input type="checkbox" name="rescan" id="rescan">
+                                        <label class="form-check-label" for="rescan">Rescan Thumbnails and Metadata</label>
                                     </div>
                                 </div>
                             </div>
-<!--                            <br>-->
-<!--                            <div class="row">-->
-<!--                                <div class="col-sm">-->
-<!--                                    <span id="metadataModalMsg"></span>-->
-<!--                                </div>-->
-<!--                            </div>-->
                         </form>
                     </div>
                     </th:block>
@@ -193,7 +188,7 @@
             <div class="modal-body">Are you sure you want to rescan metadata? Some data you have manually changed may be lost!</div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="confirmRescanMetadata">Confirm</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelRescanMetadata">Cancel</button>
             </div>
         </div>
     </div>

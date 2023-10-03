@@ -47,11 +47,6 @@
 
 }( window.metadataModal = window.metadataModal || {}, jQuery ));
 
-$("#rescanMetadata").on("click", function (e) {
-    e.preventDefault();
-    $("#rescanMetadataConfirmation").modal('show');
-});
-
 $("#confirmRescanMetadata").on("click", function (e) {
     e.preventDefault();
 
@@ -62,13 +57,24 @@ $("#confirmRescanMetadata").on("click", function (e) {
     Util.rescanMetadata(metadataIdArray,"propMetadata");
 });
 
+$("#rescan").on("click", async function (e) {
+    if ($("#rescan").prop("checked")) {
+        $("#saveTimelineModalForm :input").prop("disabled", true);
+        $("#rescan").prop("disabled", false);
+    } else {
+        $("#saveTimelineModalForm :input").prop("disabled", false);
+    }
+});
+
 $("#saveMetadata").on("click", async function (e) {
     e.preventDefault();
+
     $("#metadataModalMsg").html("");
     $("#metadataModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
     $("#metadataModalStatus").css("visibility", "visible");
     $("#metadataModalStatus").attr("title", "");
     $("#metadataModalCancel").prop('disabled', true);
+
     const metadataId = $("#metadataId").val();
     let prevPeople = $("#peopleList").val();
     let prevAlbums = $("#albumList").val();
@@ -111,7 +117,9 @@ $("#saveMetadata").on("click", async function (e) {
         prevPlaceName = metadataObj.placeName;
     });
 
-    if (Util.validateMetadataInputs(
+    if ($("#rescan").prop("checked")) {
+        $("#rescanMetadataConfirmation").modal('show');
+    } else if (Util.validateMetadataInputs(
         $("#dayTaken").val(),
         $("#monthTaken").val(),
         $("#yearTaken").val(),
@@ -299,7 +307,7 @@ $("#saveMetadata").on("click", async function (e) {
                             const elements = Util.elementsInViewport($(".scrollspy"));
                             let firstElementId = $(elements[0]).attr("id");
                             let firstVisibleId = firstElementId.indexOf("tail_") === -1 ? firstElementId : firstElementId.substring(5, firstElementId.length);
-                            timelineSettings.jumpFromTimelineToc(e, firstVisibleId, $("#mediaTypeFilter").val());
+                            timelineSettings.jumpFromTimelineToc(event, firstVisibleId, $("#mediaTypeFilter").val());
                         }
                     });
                 }
@@ -363,6 +371,7 @@ $('#propMetadata').on('hide.bs.modal', function () {
     $("#metadataModalStatus").css("visibility","hidden");
     $("#metadataModalMsg").html("");
     $("#saveMetadata").prop('disabled', false);
+
     if ($("#generalTabLink").length > 0) {
         const tab = new bootstrap.Tab($("#generalTabLink"));
         tab.show();
@@ -370,6 +379,12 @@ $('#propMetadata').on('hide.bs.modal', function () {
         const tab = new bootstrap.Tab($("#detailsTabLink"));
         tab.show();
     }
+});
+
+$('#rescanMetadataConfirmation').on('hide.bs.modal', function () {
+    $("#metadataModalCancel").prop('disabled', false);
+    $("#saveMetadata").prop('disabled', false);
+    $("#metadataModalStatus").removeClass('bi-x-circle').removeClass('bi-check-circle').removeClass('spinner-grow');
 });
 
 // Clear message on input editing

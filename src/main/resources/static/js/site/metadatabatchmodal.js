@@ -42,9 +42,13 @@
 
 }( window.metadataBatchModal = window.metadataBatchModal || {}, jQuery ));
 
-$("#rescanBatchMetadata").on("click", function (e) {
-    e.preventDefault();
-    $("#rescanBatchMetadataConfirmation").modal('show');
+$("#batchrescan").on("click", async function (e) {
+    if ($("#batchrescan").prop("checked")) {
+        $("#saveBatchData :input").prop("disabled", true);
+        $("#batchrescan").prop("disabled", false);
+    } else {
+        $("#saveBatchData :input").prop("disabled", false);
+    }
 });
 
 $("#confirmRescanBatchMetadata").on("click", function (e) {
@@ -84,7 +88,9 @@ $("#saveBatchMetadata").on("click", async function (e) {
         }
     }
 
-    if (Util.validateMetadataInputs(
+    if ($("#batchrescan").prop("checked")) {
+        $("#rescanBatchMetadataConfirmation").modal('show');
+    } else if (Util.validateMetadataInputs(
         $("#dayTakenBatchData").val(),
         $("#monthTakenBatchData").val(),
         $("#yearTakenBatchData").val(),
@@ -232,6 +238,12 @@ $("#saveBatchMetadata").on("click", async function (e) {
     return false;
 });
 
+$('#rescanBatchMetadataConfirmation').on('hide.bs.modal', function () {
+    $("#metadataBatchModalCancel").prop("disabled", false);
+    $("#saveBatchMetadata").prop("disabled", false);
+    $("#metadataBatchModalStatus").removeClass('bi-x-circle').removeClass('bi-check-circle').removeClass('spinner-grow');
+});
+
 $('#propAddAlbum').on('hide.bs.modal', function () {
     $("#albumNameInput").val("");
     $("#albumResponseMsg").html("");
@@ -268,6 +280,8 @@ $('#propBatchMetadata').on('hide.bs.modal', function () {
     $('#cameraBatchData').val('');
     $('#lensBatchData').val('');
     $('#offsetTakenBatchData').val('');
+    $("#saveBatchData :input").prop("disabled", false);
+    $("#batchrescan")[0].checked = false;
     metadataBatchModal.closeBatchTagPeopleDropdown();
     metadataBatchModal.closeBatchTagAlbumDropdown();
     shashin.clearTimelineSelection();
