@@ -975,14 +975,14 @@
                         const version = Util.getMetadataLocalStorage();
                         $("#image"+metadataId).attr("src",$("#image"+metadataId).attr("src")+(version === "" ? "" : "?v=" + version));
                         shashin.showToastMessage("Thumbnail image updated", "Thumbnails have been updated.", {icon:"bi-info-circle", iconColor:"#777777", delay: 2000});
-                        $(".lg-current").animate({backgroundColor: 'transparent'}, 2000);
+                        $(".lg-current").animate({backgroundColor: "transparent"}, 2000);
                     } else {
                         shashin.showToastMessage("Could not update thumbnail", "Could not update thumbnails", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
-                        $(".lg-current").css("background-color", "");
+                        $(".lg-current").css("background-color", "transparent");
                     }
                 });
             } else {
-                $(".lg-current").css("background-color", "");
+                $(".lg-current").css("background-color", "transparent");
             }
         });
     }
