@@ -44,8 +44,19 @@
 
 $("#batchrescan").on("click", async function (e) {
     if ($("#batchrescan").prop("checked")) {
+        $("#batchhidden").prop("checked", false);
         $("#saveBatchData :input").prop("disabled", true);
         $("#batchrescan").prop("disabled", false);
+    } else {
+        $("#saveBatchData :input").prop("disabled", false);
+    }
+});
+
+$("#batchhidden").on("click", async function (e) {
+    if ($("#batchhidden").prop("checked")) {
+        $("#batchrescan").prop("checked", false);
+        $("#saveBatchData :input").prop("disabled", true);
+        $("#batchhidden").prop("disabled", false);
     } else {
         $("#saveBatchData :input").prop("disabled", false);
     }

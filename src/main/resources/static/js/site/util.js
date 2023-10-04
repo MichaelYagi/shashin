@@ -143,6 +143,15 @@ class Util {
         const activePage = $("#activePage").val();
         const http = new Http("rescan batch metadata");
         const version = Util.getMetadataLocalStorage();
+
+        let originalMetadata = {};
+        if (metadataIdArray.length === 1) {
+            const metadataId = metadataIdArray[0];
+            shashin.getMetadata(metadataId).then(function (metadataObj) {
+                originalMetadata = metadataObj;
+            });
+        }
+
         const json = {
             metadataIdList: metadataIdArray
         }
@@ -209,7 +218,7 @@ class Util {
                     window.top.location = window.top.location;
                 } else if (metadataIdArray.length === 1 && metadataKeys.length === 1 && metadataIdArray[0] === metadataKeys[0]) {
                     const rescannedMetadata = metadataMap[metadataKeys[0]];
-                    let takenDateUpdated = false;
+
                     $("#title").val("");
                     if (rescannedMetadata["title"] !== null) {
                         $("#title").val(rescannedMetadata["title"]);
@@ -234,18 +243,23 @@ class Util {
                     if (rescannedMetadata["year"] !== null) {
                         $("#yearTaken").val(rescannedMetadata["year"]);
                         Util.setMetadataLocalStorage();
-                        takenDateUpdated = true;
                     }
                     $("#monthTaken").val("");
                     if (rescannedMetadata["month"] !== null) {
                         $("#monthTaken").val(rescannedMetadata["month"]);
                         Util.setMetadataLocalStorage();
-                        takenDateUpdated = true;
                     }
                     $("#dayTaken").val("");
                     if (rescannedMetadata["day"] !== null) {
                         $("#dayTaken").val(rescannedMetadata["day"]);
                         Util.setMetadataLocalStorage();
+                    }
+                    let takenDateUpdated = false;
+                    if ($.isEmptyObject(originalMetadata) === false &&
+                        (parseInt(originalMetadata.year) !== parseInt(rescannedMetadata.year) ||
+                        parseInt(originalMetadata.month) !== parseInt(rescannedMetadata.month) ||
+                        parseInt(originalMetadata.day) !== parseInt(rescannedMetadata.day)))
+                    {
                         takenDateUpdated = true;
                     }
                     $("#timeTaken").val("");

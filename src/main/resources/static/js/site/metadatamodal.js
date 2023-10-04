@@ -59,8 +59,19 @@ $("#confirmRescanMetadata").on("click", function (e) {
 
 $("#rescan").on("click", async function (e) {
     if ($("#rescan").prop("checked")) {
+        $("#hidden").prop("checked", false);
         $("#saveTimelineModalForm :input").prop("disabled", true);
         $("#rescan").prop("disabled", false);
+    } else {
+        $("#saveTimelineModalForm :input").prop("disabled", false);
+    }
+});
+
+$("#hidden").on("click", async function (e) {
+    if ($("#hidden").prop("checked")) {
+        $("#rescan").prop("checked", false);
+        $("#saveTimelineModalForm :input").prop("disabled", true);
+        $("#hidden").prop("disabled", false);
     } else {
         $("#saveTimelineModalForm :input").prop("disabled", false);
     }
