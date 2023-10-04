@@ -947,6 +947,9 @@
         shashin.getMetadata(metadataId).then(function (data) {
             let metadata = data;
 
+            $(".lg-video-cont").css("transition", "0s");
+            $(".lg-video-cont").css("background-color", "#FFFFFF");
+
             if (metadata.type.indexOf("video") !== -1) {
                 let canvas = document.createElement('canvas');
                 let video = $(".lg-video-object").first()[0];
@@ -968,15 +971,26 @@
                 }
                 http.ajax("post", "/metadata/update/videothumbs"+(version === "" ? "" : "?v=" + version), JSON.stringify(json)).then(function(data) {
                     if (data.hasOwnProperty("msg") && data.hasOwnProperty("status")) {
+                        setTimeout(function() {
+                            $(".lg-video-cont").css("transition", "4s");
+                            $(".lg-video-cont").css("background-color", "");
+                        }, 1000);
+
                         // Refresh image
                         Util.setMetadataLocalStorage();
                         const version = Util.getMetadataLocalStorage();
                         $("#image"+metadataId).attr("src",$("#image"+metadataId).attr("src")+(version === "" ? "" : "?v=" + version));
                         shashin.showToastMessage("Thumbnail image updated", "Thumbnails have been updated.", {icon:"bi-info-circle", iconColor:"#777777"});
+                        $(".lg-video-cont").css("transition", "0s");
                     } else {
                         shashin.showToastMessage("Could not update thumbnail", "Could not update thumbnails", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+                        $(".lg-video-cont").css("background-color", "");
+                        $(".lg-video-cont").css("transition", "0s");
                     }
                 });
+            } else {
+                $(".lg-video-cont").css("background-color", "");
+                $(".lg-video-cont").css("transition", "0s");
             }
         });
     }
