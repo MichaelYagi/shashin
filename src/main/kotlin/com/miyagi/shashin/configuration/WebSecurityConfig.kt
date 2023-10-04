@@ -110,6 +110,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "timeline/**",
             "users/delete",
             "albums/add",
+            "rescan/metadata",
             "api/v1/update/**",
             "api/v1/folders",
             "api/v1/folders/**",
@@ -126,7 +127,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "api/v1/folders",
             "api/v1/all/album/delete",
             "api/v1/keywords",
-            "api/v1/metadata/rescan"
+            "api/v1/rescan/metadata"
         )
 
         val allRoleList = arrayOf(
