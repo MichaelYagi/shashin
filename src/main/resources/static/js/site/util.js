@@ -170,7 +170,7 @@ class Util {
             $("#metadataBatchModalStatus").attr("title", "");
         }
 
-        http.ajax("post", "/metadata/rescan" + (version === "" ? "" : "?v=" + version), JSON.stringify(json)).then(function (data) {
+        http.ajax("post", "/rescan/metadata" + (version === "" ? "" : "?v=" + version), JSON.stringify(json)).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 if (data["status"] === "success") {
                     shashin.showToastMessage("Metadata Rescanned", "Metadata successfully rescanned!", {
