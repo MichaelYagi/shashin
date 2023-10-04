@@ -282,6 +282,7 @@ $('#propBatchMetadata').on('hide.bs.modal', function () {
     $('#offsetTakenBatchData').val('');
     $("#saveBatchData :input").prop("disabled", false);
     $("#batchrescan")[0].checked = false;
+    $("#collapseBatchMetadata").collapse("hide");
     metadataBatchModal.closeBatchTagPeopleDropdown();
     metadataBatchModal.closeBatchTagAlbumDropdown();
     shashin.clearTimelineSelection();

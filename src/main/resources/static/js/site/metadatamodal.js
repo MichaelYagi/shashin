@@ -367,6 +367,7 @@ $('#propMetadata').on('hide.bs.modal', function () {
         shashin.map = null;
     }
 
+    $("#collapseMetadata").collapse("hide");
     $("#metadataModalStatus").attr("class","spinner-grow me-auto");
     $("#metadataModalStatus").css("visibility","hidden");
     $("#metadataModalMsg").html("");
