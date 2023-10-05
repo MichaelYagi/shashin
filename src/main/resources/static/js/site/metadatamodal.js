@@ -228,8 +228,24 @@ $("#saveMetadata").on("click", async function (e) {
                 const metadataObj = {};
                 let dateGalleryRemoved = false;
 
+                let mediaContentList = [];
                 if (captionUpdated === true) {
-                    $("#mediaLink" + metadataId).attr("data-sub-html", $("#description").val());
+                    const updatedDescription = $("#description").val();
+                    $("#mediaLink" + metadataId).attr("data-sub-html", updatedDescription);
+                    mediaContentList = shashin.getLightGallery().galleryItems;
+                    if (mediaContentList.length > 0) {
+                        for (let i=0;i<=mediaContentList.length;i++) {
+                            let mediaContent = mediaContentList[i];
+                            if (mediaContent && mediaContent.hasOwnProperty("args") && mediaContent["args"] === metadataId) {
+                                mediaContent["subHtml"] = updatedDescription;
+                                if (updatedDescription.trim().length === 0) {
+                                    delete mediaContent["subHtml"];
+                                }
+                                mediaContentList[i] = mediaContent;
+                                break;
+                            }
+                        }
+                    }
                 }
 
                 const latlngArray = $("#latlng").val().split(",");
@@ -330,7 +346,11 @@ $("#saveMetadata").on("click", async function (e) {
 
                 if (typeof Util !== "undefined" && dateGalleryRemoved === false && captionUpdated === true) {
                     // Refresh gallery if caption updated
-                    Util.reinitLightGalleryInstance(activePage);
+                    const options = {
+                        mediaContentList: mediaContentList,
+                        activePage: activePage
+                    }
+                    Util.reinitLightGalleryInstance(options);
                 }
 
                 // If not timeline or map

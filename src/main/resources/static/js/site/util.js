@@ -642,9 +642,14 @@ class Util {
         $("#container_"+id).remove();
     }
 
-    static reinitLightGalleryInstance(activePage) {
+    static reinitLightGalleryInstance(options) {
         if (shashin && shashin.getLightGallery() !== null) {
+
             let mediaContentList = shashin.getLightGallery().galleryItems;
+            if (options !== undefined && options.hasOwnProperty("mediaContentList")) {
+                mediaContentList = options["mediaContentList"];
+            }
+
             const closeTimeout = shashin.getLightGallery().closeGallery(true);
             setTimeout(() => {
                 if (shashin.getLightGallery() !== null) {
@@ -680,7 +685,9 @@ class Util {
                         }
                         shashin.setLightGallery(lgConfig);
 
-                        if (activePage !== undefined && activePage !== "timeline" && mediaContentList.length > 0) {
+                        if (options !== undefined && options.hasOwnProperty("activePage") &&
+                            options["activePage"] !== "timeline" && mediaContentList.length > 0)
+                        {
                             shashin.getLightGallery().refresh(mediaContentList);
                         }
 
