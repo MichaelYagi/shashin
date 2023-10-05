@@ -736,6 +736,38 @@ class TimelineController: BaseController() {
         return response
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "rescanMetadata",
+            description = "<strong>Rescan thumbnails and metadata.</strong><br>" +
+                    "<pre><code>" +
+                    "curl -X POST \"http://127.0.0.1:6624/api/v1/rescan/metadata\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>metadataIdList</td><td>body param</td><td>array</td><td>required</td><td>A list of metadata IDs to rescan</td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"metadataMap\": {\n" +
+                    "           &lt;metadata_id&gt;: &lt;metadata&gt;\n" +
+                    "    }\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>metadataMap.&lt;metadata_id&gt;</td><td>string</td><td>Metadata ID</td></tr>" +
+                    "<tr><td>metadataMap.&lt;metadata_id&gt;.&lt;metadata&gt;</td><td>object</td><td>A <a href=\"#\" data-bs-toggle=\"modal\" data-bs-target=\"#propMetadataDocs\">Metadata</a> object</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
     @RequestMapping(value = ["/rescan/metadata", "/api/v1/rescan/metdata"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
