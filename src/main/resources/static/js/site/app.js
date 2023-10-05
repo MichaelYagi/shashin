@@ -957,32 +957,54 @@
                 canvas.height = metadata.originalImageHeight;
 
                 let ctx = canvas.getContext('2d');
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                let image = "";
 
-                let image = canvas.toDataURL('image/jpeg');
-
-                ///metadata/update/videothumbs
-                const http = new Http("update video metadata");
-                const version = Util.getMetadataLocalStorage();
-                const json = {
-                    metadataId: metadataId,
-                    base64Data: image
+                try {
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    image = canvas.toDataURL('image/jpeg');
+                } catch (e) {
+                    shashin.printMessageToConsole("Error capturing thumbnail: " + e);
                 }
-                http.ajax("post", "/metadata/update/videothumbs"+(version === "" ? "" : "?v=" + version), JSON.stringify(json)).then(function(data) {
-                    if (data.hasOwnProperty("msg") && data.hasOwnProperty("status")) {
-                        // Refresh image
-                        Util.setMetadataLocalStorage();
-                        const version = Util.getMetadataLocalStorage();
-                        $("#image"+metadataId).attr("src",$("#image"+metadataId).attr("src")+(version === "" ? "" : "?v=" + version));
-                        shashin.showToastMessage("Thumbnail image updated", "Thumbnails have been updated.", {icon:"bi-info-circle", iconColor:"#777777", delay: 2000});
-                        $(".lg-current").animate({backgroundColor: "transparent"}, 2000);
-                    } else {
-                        shashin.showToastMessage("Could not update thumbnail", "Could not update thumbnails", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
-                        $(".lg-current").css("background-color", "transparent");
+
+                if (image.length > 0) {
+                    const http = new Http("update video metadata");
+                    const version = Util.getMetadataLocalStorage();
+                    const json = {
+                        metadataId: metadataId,
+                        base64Data: image
                     }
-                });
+                    http.ajax("post", "/metadata/update/videothumbs" + (version === "" ? "" : "?v=" + version), JSON.stringify(json)).then(function (data) {
+                        if (data.hasOwnProperty("msg") && data.hasOwnProperty("status")) {
+                            // Refresh image
+                            Util.setMetadataLocalStorage();
+                            const version = Util.getMetadataLocalStorage();
+                            $("#image" + metadataId).attr("src", $("#image" + metadataId).attr("src") + (version === "" ? "" : "?v=" + version));
+                            shashin.showToastMessage("Thumbnail image updated", "Thumbnails have been updated.", {
+                                icon: "bi-info-circle",
+                                iconColor: "#777777",
+                                delay: 2000
+                            });
+                            $(".lg-current").animate({backgroundColor: "transparent"}, 2000);
+                        } else {
+                            shashin.showToastMessage("Could not update thumbnail", "Could not update thumbnails", {
+                                icon: "bi-exclamation-triangle",
+                                iconColor: "#FF0000"
+                            });
+                            $(".lg-current").css("background-color", "transparent");
+                        }
+                    });
+                } else {
+                    shashin.showToastMessage("Could not update thumbnails", "Could not update thumbnails. Failed to capture image.", {
+                        icon: "bi-exclamation-triangle",
+                        iconColor: "#FF0000"
+                    });
+                }
             } else {
                 $(".lg-current").css("background-color", "transparent");
+                shashin.showToastMessage("Could not update thumbnails", "Could not update thumbnails. "+metadata.fileName+" not a video.", {
+                    icon: "bi-exclamation-triangle",
+                    iconColor: "#FF0000"
+                });
             }
         });
     }
