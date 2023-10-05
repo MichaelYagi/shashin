@@ -642,8 +642,9 @@ class Util {
         $("#container_"+id).remove();
     }
 
-    static reinitLightGalleryInstance() {
+    static reinitLightGalleryInstance(activePage) {
         if (shashin && shashin.getLightGallery() !== null) {
+            let mediaContentList = shashin.getLightGallery().galleryItems;
             const closeTimeout = shashin.getLightGallery().closeGallery(true);
             setTimeout(() => {
                 if (shashin.getLightGallery() !== null) {
@@ -678,6 +679,10 @@ class Util {
                             lgConfig["videoThumbnailFunc"] = shashin.processVideoThumbnail;
                         }
                         shashin.setLightGallery(lgConfig);
+
+                        if (activePage !== undefined && activePage !== "timeline" && mediaContentList.length > 0) {
+                            shashin.getLightGallery().refresh(mediaContentList);
+                        }
 
                         $(".bi-play-circle").css("visibility", "visible");
                         $(".bi-play-btn").css("visibility", "visible");

@@ -328,11 +328,10 @@ $("#saveMetadata").on("click", async function (e) {
                     Util.setMetadataLocalStorage();
                 }
 
-                // This is causing issues with info modal not activating
-                // if (typeof Util !== "undefined" && dateGalleryRemoved === false && captionUpdated === true) {
-                //     // Refresh gallery if caption updated
-                //     Util.reinitLightGalleryInstance();
-                // }
+                if (typeof Util !== "undefined" && dateGalleryRemoved === false && captionUpdated === true) {
+                    // Refresh gallery if caption updated
+                    Util.reinitLightGalleryInstance(activePage);
+                }
 
                 // If not timeline or map
                 if (activePage !== "timeline" && activePage !== "map") {
