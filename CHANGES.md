@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - Facial recognition using CompreFace
 - Object recognition
-- Interface to manage training images on CompreFace server
+- Interface to manage training images from CompreFace server
 - API management endpoint and interface
 - Profile photos 
 - Custom context menu in map views
