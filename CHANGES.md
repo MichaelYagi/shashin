@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [2.3.0] - 2023-06-18
+## [2.3.0] - 2023-10-04
 ### Added
 
 - Facial recognition using CompreFace
