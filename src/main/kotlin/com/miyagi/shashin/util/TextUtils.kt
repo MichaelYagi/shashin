@@ -164,8 +164,12 @@ class TextUtils {
             return readUrl(geoLookupUrl)
         }
 
-        fun getPlaceNamesForDate(year: Int, month: Int, day: Int, metadataRepository:MetadataRepository): MutableList<String> {
-            val placeList = metadataRepository.findTimelinePlaceByDate(year, month, day)
+        fun getPlaceNamesForDate(year: Int, month: Int, day: Int, metadataRepository:MetadataRepository, type: String = "all"): MutableList<String> {
+            val placeList = if (type == "all") {
+                metadataRepository.findTimelinePlaceByDate(year, month, day)
+            } else {
+                metadataRepository.findTimelinePlaceByDateAndType(year, month, day, type)
+            }
             var placeNameHeaders = mutableListOf<String>()
             val processedPlaceNameArray = mutableListOf<String>()
             if (placeList != null) {
