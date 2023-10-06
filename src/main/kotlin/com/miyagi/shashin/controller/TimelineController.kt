@@ -703,7 +703,7 @@ class TimelineController: BaseController() {
 
                 var placeNames = mutableListOf<String>()
                 if (year != null && month != null && day != null) {
-                    placeNames = TextUtils.getPlaceNamesForDate(year, month, day, metadataRepository)
+                    placeNames = TextUtils.getPlaceNamesForDate(year, month, day, metadataRepository, mediaTypeFilter)
                     val metadataDates = getMetadataDates(mediaTypeFilter)
                     val dates = metadataDates["metadataDates"] as MutableList<MetadataDate>
                     for (i in 0 until dates.size) {
@@ -714,7 +714,8 @@ class TimelineController: BaseController() {
                                     dates[i - 1].getYear()!!,
                                     dates[i - 1].getMonth()!!,
                                     dates[i - 1].getDay()!!,
-                                    metadataRepository
+                                    metadataRepository,
+                                    mediaTypeFilter
                                 )
                             }
 
