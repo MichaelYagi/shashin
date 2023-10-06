@@ -240,7 +240,7 @@
 
             $("#commentcontainer" + commentId).hide();
             $("#textareacontainer" + commentId).show();
-            const commentText = $("#commentcontent" + commentId).text();
+            const commentText = $("#commentcontent" + commentId).html();
             $("#textareacontainer" + commentId).html('<textarea class="form-control" id="commenttext' + commentId + '" rows="2">' + commentText + '</textarea>');
         }
     }
@@ -299,7 +299,7 @@
                         let commentId = data["commentId"];
 
                         // Update comment
-                        $("#commentcontent" + commentId).text(updatedComment);
+                        $("#commentcontent" + commentId).html(updatedComment);
 
                         $("#saveCommentMetadata" + metadata.id).show();
                         $("#dismissModalCommentMetadata" + metadata.id).show();
