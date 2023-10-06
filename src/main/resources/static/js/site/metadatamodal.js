@@ -85,6 +85,7 @@ $("#saveMetadata").on("click", async function (e) {
     $("#metadataModalStatus").css("visibility", "visible");
     $("#metadataModalStatus").attr("title", "");
     $("#metadataModalCancel").prop('disabled', true);
+    $("#saveMetadata").prop('disabled', true);
 
     const metadataId = $("#metadataId").val();
     let prevPeople = $("#peopleList").val();
@@ -380,13 +381,16 @@ $("#saveMetadata").on("click", async function (e) {
                 $("#metadataModalStatus").attr("title", shashin.modalStatusFailMessage());
                 $("#metadataModalCancel").prop('disabled', false);
             }
+            $("#saveMetadata").prop('disabled', false);
         } else {
             $("#metadataModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
             $("#metadataModalStatus").attr("title", shashin.modalStatusFailMessage());
             $("#metadataModalCancel").prop('disabled', false);
+            $("#saveMetadata").prop('disabled', false);
         }
     } else {
         $("#metadataModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+        $("#saveMetadata").prop('disabled', false);
     }
 });
 
