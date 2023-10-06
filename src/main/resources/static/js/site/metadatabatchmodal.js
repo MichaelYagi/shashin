@@ -74,6 +74,7 @@ $("#saveBatchMetadata").on("click", async function (e) {
     e.preventDefault();
 
     $("#metadataBatchModalCancel").prop("disabled", true);
+    $("saveBatchMetadata").prop("disabled", true);
     $("#msgBatchMetadata").html("");
     $("#metadataBatchModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
     $("#metadataBatchModalStatus").css("visibility", "visible");
@@ -242,8 +243,10 @@ $("#saveBatchMetadata").on("click", async function (e) {
             $("#metadataBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
             $("#metadataBatchModalCancel").prop("disabled", false);
         }
+        $("saveBatchMetadata").prop("disabled", false);
     } else {
         $("#metadataBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+        $("saveBatchMetadata").prop("disabled", false);
     }
 
     return false;
