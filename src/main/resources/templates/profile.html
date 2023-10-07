@@ -61,6 +61,8 @@
     let userId = /*[[${user.id}]]*/ 0;
     /*]]>*/
 
+    let randomString = Util.getMetadataLocalStorage();
+
     let croppieObject = null;
 
     if (profileUrl === null || profileUrl === "") {
@@ -152,6 +154,7 @@
                         http.ajax("post", "/users/profile", JSON.stringify(json)).then(function (data) {
                             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                                 if (data.hasOwnProperty("imageUrl") && data["imageUrl"] !== "") {
+                                    randomString = data["randomString"];
                                     profileUrl = data["imageUrl"];
                                     $("#profileImage").attr("src", profileUrl + '?' + data["randomString"]);
                                     $("#profileImage").css("display", "inline-block");
@@ -185,7 +188,7 @@
                 $("#profilePictureEdit").css("visibility", "visible");
                 $("#removeProfile").css("display", "block");
             }
-            $("#profilePictureEdit").attr('src', profileUrl);
+            $("#profilePictureEdit").attr('src', profileUrl + '?' + randomString);
             $("#saveProfile").css("display", "none");
             $("#cancelProfile").css("display", "none");
         }
