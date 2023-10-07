@@ -163,15 +163,18 @@ class Util {
             $("#metadataModalStatus").attr("title", "");
             $("#metadataModalCancel").prop('disabled', true);
             $("#saveMetadata").prop("disabled", true);
+
+            // Specify static for a backdrop which doesn’t close the modal when clicked
             propMetadataModal = bootstrap.Modal.getInstance(document.getElementById('propMetadata'));
             propMetadataModal._config.backdrop = 'static';
             propMetadataModal._config.keyboard = false;
         } else if (modalId === "propBatchMetadata") {
-            $("#metadataBatchModalCancel").prop("disabled", true);
-            $("#saveBatchMetadata").prop("disabled", true);
             $("#metadataBatchModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
             $("#metadataBatchModalStatus").css("visibility", "visible");
             $("#metadataBatchModalStatus").attr("title", "");
+            $("#metadataBatchModalCancel").prop("disabled", true);
+            $("#saveBatchMetadata").prop("disabled", true);
+
             propMetadataModal = bootstrap.Modal.getInstance(document.getElementById('propBatchMetadata'));
             propMetadataModal._config.backdrop = 'static';
             propMetadataModal._config.keyboard = false;
@@ -301,6 +304,7 @@ class Util {
                 }
             }
             if (propMetadataModal !== null) {
+                // Default states
                 propMetadataModal._config.backdrop = true;
                 propMetadataModal._config.keyboard = true;
             }
