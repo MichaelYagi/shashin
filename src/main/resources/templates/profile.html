@@ -177,6 +177,17 @@
             }
 
             reader.readAsDataURL(input.files[0]);
+        } else {
+            if (profileUrl === null || profileUrl === "" || profileUrl === "#") {
+                $("#profilePictureEdit").css("visibility", "hidden");
+                $("#removeProfile").css("display", "none");
+            } else {
+                $("#profilePictureEdit").css("visibility", "visible");
+                $("#removeProfile").css("display", "block");
+            }
+            $("#profilePictureEdit").attr('src', profileUrl);
+            $("#saveProfile").css("display", "none");
+            $("#cancelProfile").css("display", "none");
         }
     }
 </script>
