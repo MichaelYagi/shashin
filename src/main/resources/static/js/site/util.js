@@ -156,18 +156,25 @@ class Util {
             metadataIdList: metadataIdArray
         }
 
+        let propMetadataModal = null;
         if (modalId === "propMetadata") {
             $("#metadataModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
             $("#metadataModalStatus").css("visibility", "visible");
             $("#metadataModalStatus").attr("title", "");
             $("#metadataModalCancel").prop('disabled', true);
             $("#saveMetadata").prop("disabled", true);
+            propMetadataModal = bootstrap.Modal.getInstance(document.getElementById('propMetadata'));
+            propMetadataModal._config.backdrop = 'static';
+            propMetadataModal._config.keyboard = false;
         } else if (modalId === "propBatchMetadata") {
             $("#metadataBatchModalCancel").prop("disabled", true);
             $("#saveBatchMetadata").prop("disabled", true);
             $("#metadataBatchModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
             $("#metadataBatchModalStatus").css("visibility", "visible");
             $("#metadataBatchModalStatus").attr("title", "");
+            propMetadataModal = bootstrap.Modal.getInstance(document.getElementById('propBatchMetadata'));
+            propMetadataModal._config.backdrop = 'static';
+            propMetadataModal._config.keyboard = false;
         }
 
         http.ajax("post", "/rescan/metadata" + (version === "" ? "" : "?v=" + version), JSON.stringify(json)).then(function (data) {
@@ -292,6 +299,10 @@ class Util {
                         });
                     }
                 }
+            }
+            if (propMetadataModal !== null) {
+                propMetadataModal._config.backdrop = true;
+                propMetadataModal._config.keyboard = true;
             }
         });
     }
