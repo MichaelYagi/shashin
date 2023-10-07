@@ -79,10 +79,10 @@ $("#saveBatchMetadata").on("click", async function (e) {
     $("#metadataBatchModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
     $("#metadataBatchModalStatus").css("visibility", "visible");
     $("#metadataBatchModalStatus").attr("title", "");
-    $('#propBatchMetadata').modal({
-        backdrop: 'static',
-        keyboard: false
-    });
+
+    const propBatchMetadataModal = bootstrap.Modal.getInstance(document.getElementById('propBatchMetadata'));
+    propBatchMetadataModal._config.backdrop = 'static';
+    propBatchMetadataModal._config.keyboard = false;
 
     metadataBatchModal.closeBatchTagPeopleDropdown();
     metadataBatchModal.closeBatchTagAlbumDropdown();
@@ -250,17 +250,13 @@ $("#saveBatchMetadata").on("click", async function (e) {
             $("#metadataBatchModalCancel").prop("disabled", false);
         }
         $("saveBatchMetadata").prop("disabled", false);
-        $('#propBatchMetadata').modal({
-            backdrop: true,
-            keyboard: true
-        });
+        propBatchMetadataModal._config.backdrop = true;
+        propBatchMetadataModal._config.keyboard = true;
     } else {
         $("#metadataBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
         $("saveBatchMetadata").prop("disabled", false);
-        $('#propBatchMetadata').modal({
-            backdrop: true,
-            keyboard: true
-        });
+        propBatchMetadataModal._config.backdrop = true;
+        propBatchMetadataModal._config.keyboard = true;
     }
 
     return false;

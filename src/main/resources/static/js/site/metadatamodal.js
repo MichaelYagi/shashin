@@ -87,10 +87,9 @@ $("#saveMetadata").on("click", async function (e) {
     $("#metadataModalCancel").prop('disabled', true);
     $("#saveMetadata").prop('disabled', true);
 
-    $('#propMetadata').modal({
-        backdrop: 'static',
-        keyboard: false
-    });
+    const propMetadataModal = bootstrap.Modal.getInstance(document.getElementById('propMetadata'));
+    propMetadataModal._config.backdrop = 'static';
+    propMetadataModal._config.keyboard = false;
 
     const metadataId = $("#metadataId").val();
     let prevPeople = $("#peopleList").val();
@@ -392,18 +391,14 @@ $("#saveMetadata").on("click", async function (e) {
             $("#metadataModalStatus").attr("title", shashin.modalStatusFailMessage());
             $("#metadataModalCancel").prop('disabled', false);
             $("#saveMetadata").prop('disabled', false);
-            $('#propMetadata').modal({
-                backdrop: true,
-                keyboard: true
-            });
         }
+        propMetadataModal._config.backdrop = true;
+        propMetadataModal._config.keyboard = true;
     } else {
         $("#metadataModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
         $("#saveMetadata").prop('disabled', false);
-        $('#propMetadata').modal({
-            backdrop: true,
-            keyboard: true
-        });
+        propMetadataModal._config.backdrop = true;
+        propMetadataModal._config.keyboard = true;
     }
 });
 
