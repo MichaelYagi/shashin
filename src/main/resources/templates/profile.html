@@ -182,6 +182,7 @@
 
             reader.readAsDataURL(input.files[0]);
         } else {
+            // File dialog cancel pressed
             if (profileUrl === null || profileUrl === "" || profileUrl === "#") {
                 $("#profilePictureEdit").css("visibility", "hidden");
                 $("#removeProfile").css("display", "none");
