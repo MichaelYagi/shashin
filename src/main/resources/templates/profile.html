@@ -17,7 +17,7 @@
                 <div class="col-lg-4">
                     <div class="input-group mb-2">
                         <input type="file" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" class="form-control" id="chooseProfilePhoto" name="chooseProfilePhoto" aria-describedby="chooseProfilePhoto" aria-label="Upload">
-                        <button type="button" class="btn btn-primary" id="removeProfile" th:style="${'display: '+{user.profile==null or user.profile==''?'none;':'block;'}}">Remove</button>
+                        <button type="button" class="btn btn-primary" id="removeProfile" th:style="${'display: '+{user.profile==null or user.profile==''?'none;':'block;'}}">Remove Profile Picture</button>
                         <button type="button" class="btn btn-primary" id="saveProfile" style="display: none;">Save</button>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <a id="cancelProfile" href="#" class="mt-2" style="display: none;float:right;">Cancel</a>
@@ -75,6 +75,7 @@
         http.ajax("post", "/users/profile/delete", JSON.stringify(json)).then(function (data) {
             if (data.hasOwnProperty("status") && data["status"] === "success" && data.hasOwnProperty("msg")) {
                 shashin.showToastMessage("Profile deleted", data["msg"], {icon:"bi-info-circle", iconColor:"#777777"});
+                profileUrl = "#";
                 $("#profilePictureEdit").attr('src', "#");
                 $("#profilePictureEdit").css("visibility", "hidden");
                 $("#profileImage").attr('src', "#");
@@ -184,11 +185,17 @@
             if (profileUrl === null || profileUrl === "" || profileUrl === "#") {
                 $("#profilePictureEdit").css("visibility", "hidden");
                 $("#removeProfile").css("display", "none");
+
+                $("#profilePictureEdit").attr('src', "#");
+                $("#profileImage").attr('src', "#");
+                $("#profileImage").css("display", "none");
+                $("#profileImagePlaceholder").css("display", "");
+                $("#removeProfile").css("display", "none");
             } else {
                 $("#profilePictureEdit").css("visibility", "visible");
                 $("#removeProfile").css("display", "block");
+                $("#profilePictureEdit").attr('src', profileUrl + '?' + randomString);
             }
-            $("#profilePictureEdit").attr('src', profileUrl + '?' + randomString);
             $("#saveProfile").css("display", "none");
             $("#cancelProfile").css("display", "none");
         }
