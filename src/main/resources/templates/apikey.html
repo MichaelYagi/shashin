@@ -11,24 +11,19 @@
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})"
                  class="col-sm p-3 min-vh-100"></div>
-            <div class="row image-group-padding">
-                <h2 class="form-signin-heading">Manage API key</h2>
 
-                <div class="col-12 mt-lg-4">
+            <h2>Manage API key</h2>
+
+            <div class="row mt-4">
+                <div class="col-lg-4">
                     <div class="input-group mb-3">
-                        <span data-clipboard-target="#apikey" class="input-group-prepend"><button id="copyapikey"
-                                                                                                  data-clipboard-target="#apikey"
-                                                                                                  class="btn btn-outline-secondary"
-                                                                                                  type="button"
-                                                                                                  title="Copy API key"><span
-                                id="apikeycopyicon" class="bi-clipboard-plus"
-                                style="font-size: 1rem;"></span></button></span>
-                        <input id="apikey" type="text" class="form-control" aria-label="API key"
-                               th:data-clipboard-text="${user.apikey}" th:value="${user.apikey}" readonly>
-                        <span class="input-group-append"><button id="updateapikey" class="btn btn-outline-secondary"
-                                                                 type="button" title="Update API key"><span class="bi-arrow-clockwise"
-                                                                                     style="font-size: 1rem;"></span></button></span>
-                        <div id="msg"></div>
+                        <button id="copyapikey" data-clipboard-target="#apikey" class="btn btn-secondary" type="button" title="Copy API key">
+                            <span id="apikeycopyicon" class="bi-clipboard-plus" style="font-size: 1rem;"></span>
+                        </button>
+                        <input id="apikey" type="text" class="form-control" aria-label="API key" th:data-clipboard-text="${user.apikey}" th:value="${user.apikey}" readonly>
+                        <button id="updateapikey" class="btn btn-danger" type="button" title="Update API key">
+                            <span class="bi-arrow-clockwise" style="font-size: 1rem;"></span>
+                        </button>
                     </div>
                 </div>
                 <p>RSS feed <a id="rssFeedLink" th:href="${rssFeedLink}" th:text="${rssFeedLink}" target="_blank"></a></p>
