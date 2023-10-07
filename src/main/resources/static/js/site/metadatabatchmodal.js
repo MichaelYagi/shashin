@@ -79,8 +79,14 @@ $("#saveBatchMetadata").on("click", async function (e) {
     $("#metadataBatchModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
     $("#metadataBatchModalStatus").css("visibility", "visible");
     $("#metadataBatchModalStatus").attr("title", "");
+    $('#propBatchMetadata').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
+
     metadataBatchModal.closeBatchTagPeopleDropdown();
     metadataBatchModal.closeBatchTagAlbumDropdown();
+
     const activePage = $("#activePage").val();
     const markedHidden = $("#batchhidden").prop("checked");
     const albumInputVal = $("#albumNameInput").val();
@@ -244,9 +250,17 @@ $("#saveBatchMetadata").on("click", async function (e) {
             $("#metadataBatchModalCancel").prop("disabled", false);
         }
         $("saveBatchMetadata").prop("disabled", false);
+        $('#propBatchMetadata').modal({
+            backdrop: true,
+            keyboard: true
+        });
     } else {
         $("#metadataBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
         $("saveBatchMetadata").prop("disabled", false);
+        $('#propBatchMetadata').modal({
+            backdrop: true,
+            keyboard: true
+        });
     }
 
     return false;
