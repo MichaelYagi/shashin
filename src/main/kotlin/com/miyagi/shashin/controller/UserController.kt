@@ -231,6 +231,50 @@ class UserController {
         return mapper.writeValueAsString(response)
     }
 
+    @RequestMapping(value = ["/users/profile/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    @Secured("ROLE_ADMIN","ROLE_USER")
+    fun postDeleteProfile(model: Model, redirectAttributes: RedirectAttributes, @RequestBody requestBody: JsonNode): String {
+        val requestMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
+        val response = mutableMapOf<String, Any?>()
+        response["randomString"] = TextUtils.generateUUID(getCurrentTimestamp(),null,null,null,null,null,"random string generated from UserController")
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null) {
+
+            if (requestMap.containsKey("userId")) {
+                val userId = requestMap["userId"]?.toInt()
+
+                if (userId != null && userId > 0 && currentUserObj.getId() == userId) {
+                    val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+                    val sidecarDir = rootPath + relativeSidecarDir
+
+                    val uuidFromUsername = TextUtils.generateUUID(currentUserObj.getUsername(),null,null,null,null,null,"user UUID generated from UserController")
+
+                    val extension = "png"
+                    val profileDirectory = sidecarDir.dropLast(1) + "/profile"
+                    val profileFileStr = "$profileDirectory/$uuidFromUsername.$extension"
+                    if (File(profileFileStr).exists()) {
+                        File(profileFileStr).delete()
+                        currentUserObj.setProfile(null)
+                        userRepository?.save(currentUserObj)
+
+                        response["msg"] = "Profile picture deleted"
+                        response["message"] = "Profile picture deleted"
+                        response["status"] = ApiResponse.SUCCESS.status
+                        return mapper.writeValueAsString(response)
+                    }
+                }
+            }
+        }
+
+        response["msg"] = "Could not delete profile picture"
+        response["message"] = "Could not delete profile picture"
+        response["status"] = ApiResponse.FAIL.status
+
+        return mapper.writeValueAsString(response)
+    }
+
     @GetMapping("/users/apikey")
     @Secured("ROLE_ADMIN","ROLE_USER")
     fun getApiKey(model: Model, request: HttpServletRequest): String {
