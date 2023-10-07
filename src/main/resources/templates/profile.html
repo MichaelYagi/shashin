@@ -17,10 +17,10 @@
                 <div class="col-lg-4">
                     <div class="input-group mb-2">
                         <input type="file" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" class="form-control" id="chooseProfilePhoto" name="chooseProfilePhoto" aria-describedby="chooseProfilePhoto" aria-label="Upload">
-                        <button type="button" class="btn btn-primary" id="removeProfile" th:style="${'display: '+{user.profile==null or user.profile==''?'none;':'block;'}}">Remove Profile Picture</button>
-                        <button type="button" class="btn btn-primary" id="saveProfile" style="display: none;">Save</button>
+                        <button type="button" class="btn btn-secondary rounded-end" id="removeProfile" th:style="${'display: '+{user.profile==null or user.profile==''?'none;':'block;'}}">Remove Profile Picture</button>
+                        <button type="button" class="btn btn-secondary rounded-end" id="saveProfile" style="display: none;">Save</button>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <a id="cancelProfile" href="#" class="mt-2" style="display: none;float:right;">Cancel</a>
+                        <button type="button" id="cancelProfile" class="btn btn-secondary rounded" style="display: none;float:right;">Cancel</button>
                     </div>
 
                     <img id="profilePictureEdit" th:src="${user.profile==null or user.profile==''?'#':user.profile + '?' + randomString}" th:style="${'float: left; max-height: 200px; visibility: ' + {user.profile==null or user.profile==''?'hidden;':'visible;'}}" />
