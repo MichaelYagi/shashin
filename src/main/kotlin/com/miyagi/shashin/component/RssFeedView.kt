@@ -126,6 +126,6 @@ class RssFeedView : AbstractRssFeedView() {
             }
         }
 
-        return rssList.toList()
+        return rssList.shuffled()
     }
 }

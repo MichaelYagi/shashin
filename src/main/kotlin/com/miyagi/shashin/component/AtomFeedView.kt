@@ -149,7 +149,7 @@ class AtomFeedView : AbstractAtomFeedView() {
             }
         }
 
-        return atomList
+        return atomList.shuffled()
     }
 
 }
