@@ -13,11 +13,26 @@
     shashin.tempVector = null;
     shashin.downloadInstance = null;
     shashin.initialMapZoom = 17;
-    shashin.toastDefaultTarget = "defaultToastTarget";
-    shashin.toastTarget1 = "toastTarget1";
-    shashin.toastTarget2 = "toastTarget2";
-    shashin.toastTarget3 = "toastTarget3";
-    shashin.toastTarget4 = "toastTarget4";
+    shashin.toast = {};
+    shashin.toast.target = {};
+    shashin.toast.target.default = "defaultToastTarget";
+    shashin.toast.target.one = "toastTarget1";
+    shashin.toast.target.two = "toastTarget2";
+    shashin.toast.target.three = "toastTarget3";
+    shashin.toast.target.four = "toastTarget4";
+    shashin.toast.placement = {};
+    shashin.toast.placement.top = {};
+    shashin.toast.placement.middle = {};
+    shashin.toast.placement.bottom = {};
+    shashin.toast.placement.top.left = "top_left";
+    shashin.toast.placement.top.center = "top_center";
+    shashin.toast.placement.top.right = "top_right";
+    shashin.toast.placement.middle.left = "middle_left";
+    shashin.toast.placement.middle.center = "middle_center";
+    shashin.toast.placement.middle.right = "middle_right";
+    shashin.toast.placement.bottom.left = "bottom_left";
+    shashin.toast.placement.bottom.center = "bottom_center";
+    shashin.toast.placement.bottom.right = "bottom_right";
 
     function fixContentHeight() {
         if ($("div[data-role='dialog']").is(":visible")) {
@@ -46,11 +61,70 @@
         let target = null;
         let autohide = null;
         let delay = 5000;
+        let placement = shashin.toast.placement.bottom.center;
 
         if (options === undefined || options === null) {
-            target = shashin.toastDefaultTarget;
+            target = shashin.toast.target.default;
             autohide = true;
         } else {
+            if (options.hasOwnProperty("placement")) {
+                placement = options["placement"];
+                if (placement === shashin.toast.placement.top.left ||
+                    placement === shashin.toast.placement.top.center ||
+                    placement === shashin.toast.placement.top.right ||
+                    placement === shashin.toast.placement.middle.left ||
+                    placement === shashin.toast.placement.middle.center ||
+                    placement === shashin.toast.placement.middle.right ||
+                    placement === shashin.toast.placement.bottom.left ||
+                    placement === shashin.toast.placement.bottom.center ||
+                    placement === shashin.toast.placement.bottom.right
+                ) {
+                    $("#toastContainer")
+                        .removeClass("top-0")
+                        .removeClass("top-50")
+                        .removeClass("bottom-0")
+                        .removeClass("start-0")
+                        .removeClass("start-50")
+                        .removeClass("end-0")
+                        .removeClass("translate-middle-x")
+                        .removeClass("translate-middle-y")
+                        .removeClass("translate-middle");
+
+                    switch (placement) {
+                        case shashin.toast.placement.top.left:
+                            $("#toastContainer").addClass("top-0").addClass("start-0");
+                            break;
+                        case shashin.toast.placement.top.center:
+                            $("#toastContainer").addClass("top-0").addClass("start-50").addClass("translate-middle-x");
+                            break;
+                        case shashin.toast.placement.top.right:
+                            $("#toastContainer").addClass("top-0").addClass("end-0");
+                            break;
+                        case shashin.toast.placement.middle.left:
+                            $("#toastContainer").addClass("top-50").addClass("start-0").addClass("translate-middle-y");
+                            break;
+                        case shashin.toast.placement.middle.center:
+                            $("#toastContainer").addClass("top-50").addClass("start-50").addClass("translate-middle");
+                            break;
+                        case shashin.toast.placement.middle.right:
+                            $("#toastContainer").addClass("top-50").addClass("end-0").addClass("translate-middle-y");
+                            break;
+                        case shashin.toast.placement.bottom.left:
+                            $("#toastContainer").addClass("bottom-0").addClass("start-0");
+                            break;
+                        case shashin.toast.placement.bottom.center:
+                            $("#toastContainer").addClass("bottom-0").addClass("start-50").addClass("translate-middle-x");
+                            break;
+                        case shashin.toast.placement.bottom.right:
+                            $("#toastContainer").addClass("bottom-0").addClass("end-0");
+                            break;
+                        default:
+                            $("#toastContainer").addClass("bottom-0").addClass("start-50").addClass("translate-middle-x");
+                    }
+                }
+            } else {
+                $("#toastContainer").addClass("bottom-0").addClass("start-50").addClass("translate-middle-x");
+            }
             if (options.hasOwnProperty("icon")) {
                 icon = options["icon"];
             }
@@ -63,7 +137,7 @@
             if (options.hasOwnProperty("target")) {
                 target = options["target"];
             } else {
-                target = shashin.toastDefaultTarget;
+                target = shashin.toast.target.default;
             }
             if (options.hasOwnProperty("autohide")) {
                 autohide = options["autohide"];
@@ -72,28 +146,28 @@
             }
         }
 
-        if (target === shashin.toastTarget1) {
+        if (target === shashin.toast.target.one) {
             titleField = $("#toastTitle1");
             messageField = $("#toastMessage1");
             iconField = $("#toastIcon1");
             spacerField = $("#toastSpacer1");
-        } else if (target === shashin.toastTarget2) {
+        } else if (target === shashin.toast.target.two) {
             titleField = $("#toastTitle2");
             messageField = $("#toastMessage2");
             iconField = $("#toastIcon2");
             spacerField = $("#toastSpacer2");
-        } else if (target === shashin.toastTarget3) {
+        } else if (target === shashin.toast.target.three) {
             titleField = $("#toastTitle3");
             messageField = $("#toastMessage3");
             iconField = $("#toastIcon3");
             spacerField = $("#toastSpacer3");
-        } else if (target === shashin.toastTarget4) {
+        } else if (target === shashin.toast.target.four) {
             titleField = $("#toastTitle4");
             messageField = $("#toastMessage4");
             iconField = $("#toastIcon4");
             spacerField = $("#toastSpacer4");
         } else {
-            target = shashin.toastDefaultTarget;
+            target = shashin.toast.target.default;
             titleField = $("#toastTitle");
             messageField = $("#toastMessage");
             iconField = $("#toastIcon");
