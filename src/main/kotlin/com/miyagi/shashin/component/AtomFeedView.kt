@@ -95,7 +95,7 @@ class AtomFeedView : AbstractAtomFeedView() {
                 if (randomAlbums != null && randomAlbums.count() > 0) {
                     for (randomAlbum in randomAlbums) {
                         if (randomAlbum.getIsShared() == 1) {
-                            val albumPhotos = albumPhotoRepository?.findImagesByAlbumId(randomAlbum.getAlbumId()!!, 100)
+                            val albumPhotos = albumPhotoRepository?.findImagesByAlbumId(randomAlbum.getAlbumId()!!, 20)
                             if (albumPhotos != null) {
                                 for (albumPhoto in albumPhotos) {
                                     val metadata = metadataRepository?.findByMetadataId(albumPhoto?.getMetadataId()!!)
