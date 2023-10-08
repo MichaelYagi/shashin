@@ -1,14 +1,11 @@
 package com.miyagi.shashin.util
 
-import ai.djl.Application
-import ai.djl.engine.Engine
 import ai.djl.modality.Classifications
 import ai.djl.modality.cv.Image
 import ai.djl.modality.cv.ImageFactory
 import ai.djl.modality.cv.output.DetectedObjects
 import ai.djl.repository.zoo.Criteria
 import ai.djl.repository.zoo.ModelZoo
-import ai.djl.training.util.ProgressBar
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -24,7 +21,6 @@ import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
-import java.awt.image.BufferedImage
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
@@ -33,14 +29,12 @@ import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
 import java.util.logging.Logger
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
-import javax.imageio.ImageIO
 import javax.xml.bind.DatatypeConverter.parseBase64Binary
-import kotlin.io.path.Path
+
 
 @Suppress("UNCHECKED_CAST")
 @Component
@@ -274,7 +268,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
             }
         }
 
-        fun pingURL(url: String, requestProperties: Map<String,String>? = null, timeoutInMS: Int = 0): Boolean {
+        fun pingURL(url: String, requestProperties: Map<String,String>? = null, timeoutInMS: Int = 0, requestMethod: String = "HEAD", jsonInputString: String = "", getResponse: Boolean = false): Boolean {
             var urlcopy = url
             urlcopy = urlcopy.replaceFirst(
                 "^https".toRegex(),
@@ -284,15 +278,42 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                 val connection: HttpURLConnection = URL(urlcopy).openConnection() as HttpURLConnection
                 connection.connectTimeout = timeoutInMS
                 connection.readTimeout = timeoutInMS
-                connection.requestMethod = "HEAD"
+                connection.requestMethod = requestMethod
+
                 if (requestProperties != null) {
                     for (requestProperty in requestProperties) {
                         connection.setRequestProperty(requestProperty.key, requestProperty.value)
                     }
                 }
+
+                if (jsonInputString.isNotEmpty()) {
+                    connection.setDoOutput(true)
+                    val os: OutputStream = connection.outputStream
+                    os.write(jsonInputString.toByteArray())
+                    os.flush()
+                    os.close()
+                }
+
+                if (getResponse) {
+                    var response = ""
+                    BufferedReader(
+                        InputStreamReader(connection.getInputStream(), "utf-8")
+                    ).use { br ->
+                        val responseBuilder = StringBuilder()
+                        var responseLine: String? = null
+                        while (br.readLine().also { responseLine = it } != null) {
+                            responseBuilder.append(responseLine!!.trim { it <= ' ' })
+                        }
+                        response = responseBuilder.toString()
+                    }
+                    logger.log(Level.INFO, "pingURL - response: $response")
+                }
+
                 val responseCode: Int = connection.responseCode
+
                 responseCode in 200..399
             } catch (exception: IOException) {
+                logger.log(Level.WARNING, "pingURL - exception for $urlcopy: ${exception.message}")
                 false
             }
         }
