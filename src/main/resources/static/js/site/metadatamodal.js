@@ -237,17 +237,19 @@ $("#saveMetadata").on("click", async function (e) {
                 if (captionUpdated === true) {
                     const updatedDescription = $("#description").val();
                     $("#mediaLink" + metadataId).attr("data-sub-html", updatedDescription);
-                    mediaContentList = shashin.getLightGallery().galleryItems;
-                    if (mediaContentList.length > 0) {
-                        for (let i=0;i<=mediaContentList.length;i++) {
-                            let mediaContent = mediaContentList[i];
-                            if (mediaContent && mediaContent.hasOwnProperty("args") && mediaContent["args"] === metadataId) {
-                                mediaContent["subHtml"] = updatedDescription;
-                                if (updatedDescription.trim().length === 0) {
-                                    delete mediaContent["subHtml"];
+                    if (shashin.getLightGallery() !== null) {
+                        mediaContentList = shashin.getLightGallery().galleryItems;
+                        if (mediaContentList.length > 0) {
+                            for (let i = 0; i <= mediaContentList.length; i++) {
+                                let mediaContent = mediaContentList[i];
+                                if (mediaContent && mediaContent.hasOwnProperty("args") && mediaContent["args"] === metadataId) {
+                                    mediaContent["subHtml"] = updatedDescription;
+                                    if (updatedDescription.trim().length === 0) {
+                                        delete mediaContent["subHtml"];
+                                    }
+                                    mediaContentList[i] = mediaContent;
+                                    break;
                                 }
-                                mediaContentList[i] = mediaContent;
-                                break;
                             }
                         }
                     }
