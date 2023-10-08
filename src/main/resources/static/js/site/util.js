@@ -1078,7 +1078,7 @@ class Util {
                     shashin.showToastMessage("Link copied", "Metadata ID copied to clipboard!", {
                         icon: "bi-info-circle",
                         iconColor: "#777777",
-                        target: shashin.toastTarget1
+                        target: shashin.toast.target.one
                     });
                 });
 
@@ -1087,7 +1087,7 @@ class Util {
                     shashin.showToastMessage("Could not copy metadata ID", "Could not copy metadata ID. " + e, {
                         icon: "bi-exclamation-triangle",
                         iconColor: "#FF0000",
-                        target: shashin.toastTarget1
+                        target: shashin.toast.target.one
                     });
                 });
             });
