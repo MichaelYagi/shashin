@@ -70,7 +70,8 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "users\\/apikey",
             "rss",
             "atom",
-            "test"
+            "test",
+            "slideshow"
         )
 
         var publicList = arrayOf(
@@ -134,6 +135,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "comments/**",
             "albums",
             "favorites",
+            "slideshow",
             "map/**",
             "search/**",
             "api/v1/album/**/page/**",

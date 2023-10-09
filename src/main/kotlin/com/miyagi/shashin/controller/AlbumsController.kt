@@ -12,6 +12,11 @@ import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import com.miyagi.shashin.util.TextUtils.Companion.returnForbiddenError
+import com.rometools.rome.feed.atom.Content
+import com.rometools.rome.feed.atom.Entry
+import com.rometools.rome.feed.atom.Link
+import com.rometools.rome.feed.atom.Person
+import com.rometools.rome.feed.synd.SyndPerson
 import io.swagger.v3.oas.annotations.Operation
 import org.apache.commons.text.StringEscapeUtils
 import org.bytedeco.javacpp.presets.opencv_core.Str
@@ -32,14 +37,17 @@ import java.io.File
 import java.io.FileInputStream
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
+import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import javax.transaction.Transactional
 import kotlin.collections.HashMap
+import kotlin.io.path.Path
 import kotlin.io.path.isDirectory
 
 @Suppress("UNCHECKED_CAST")
@@ -1496,5 +1504,43 @@ class AlbumsController: BaseController() {
         resp["msg"] = "Could not save"
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
+    }
+
+    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @RequestMapping(value = ["/slideshow"], method = [RequestMethod.GET])
+    fun getSlideShow(model: Model, request: HttpServletRequest): String {
+        val module = "slideshow"
+
+        val metadataList = mutableListOf<Metadata>()
+        val currentUser = model.getAttribute("currentUser") as User?
+
+        if (currentUser != null) {
+            val randomAlbums = albumRepository?.findRandomAlbumsByUser(currentUser.getId())
+            if (randomAlbums != null && randomAlbums.count() > 0) {
+                for (randomAlbum in randomAlbums) {
+                    if (randomAlbum.getIsShared() == 1) {
+                        val albumPhotos = albumPhotoRepository?.findImagesByAlbumId(randomAlbum.getAlbumId()!!, 1000)
+                        if (albumPhotos != null) {
+                            for (albumPhoto in albumPhotos) {
+                                val metadata = metadataRepository?.findByMetadataId(albumPhoto?.getMetadataId()!!)
+                                if (metadata != null) {
+                                    metadataList.add(metadata)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (metadataList.size > 100) {
+            metadataList.shuffled().slice(0..100)
+        }
+
+        model["metadataList"] = metadataList
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
     }
 }

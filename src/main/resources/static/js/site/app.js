@@ -1356,6 +1356,7 @@
             plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen, lgRotate, lgCastMedia],
             videojs: false,
             hideBarsDelay: 5000,
+            showBarsAfter: 5000,
             allowMediaOverlap: true,
             counter: false,
             preload: "auto",
