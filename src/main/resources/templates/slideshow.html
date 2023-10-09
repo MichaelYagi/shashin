@@ -54,6 +54,9 @@
                     </div>
 
                 </th:block>
+                <th:block th:unless="${not #lists.isEmpty(metadataList)}">
+                    <p>No images to show</p>
+                </th:block>
             </div>
 
             <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>
