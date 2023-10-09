@@ -97,7 +97,14 @@
 
         // Autoplay gallery
         if ($(".mediaLink").length > 0) {
-            lg.openGallery(0);
+            $(".mediaLink").on("click", function() {
+                lg.openGallery(0);
+                const e = document.documentElement;
+                e.requestFullscreen ? e.requestFullscreen() : e.msRequestFullscreen ? e.msRequestFullscreen() : e.mozRequestFullScreen ? e.mozRequestFullScreen() : e.webkitRequestFullscreen && e.webkitRequestFullscreen()
+            });
+
+            // This doesn't work, needs to be user initiated
+            // $(".mediaLink").click();
         }
     });
 </script>
