@@ -15,7 +15,7 @@
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},${counts},${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
 
             <h1>Slideshow</h1>
-            <small class="me-3"><a href="/albums"><span class="bi-arrow-return-left" style="font-size: 1rem;text-decoration: none !important;color: #777777;" title="Go back"></span></a></small>
+            <small class="me-3"><a href="/albums"><span class="bi-arrow-return-left" style="font-size: 1rem;text-decoration: none !important;color: #777777;" title="Go back"></span></a></small> Click any photo to start slideshow
 
             <div class="mt-3" id="infinite-scroll-gallery">
                 <th:block th:if="${not #lists.isEmpty(metadataList)}">
