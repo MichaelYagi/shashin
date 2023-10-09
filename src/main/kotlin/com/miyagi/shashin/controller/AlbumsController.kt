@@ -1533,8 +1533,11 @@ class AlbumsController: BaseController() {
             }
         }
 
+        metadataList.shuffled()
+
         if (metadataList.size > 100) {
-            metadataList.shuffled().slice(0..100)
+
+            metadataList.slice(0..100)
         }
 
         model["metadataList"] = metadataList
