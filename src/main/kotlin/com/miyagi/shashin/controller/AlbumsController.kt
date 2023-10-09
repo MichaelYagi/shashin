@@ -1535,8 +1535,8 @@ class AlbumsController: BaseController() {
 
         metadataList = metadataList.shuffled() as MutableList<Metadata>
 
-        if (metadataList.size > 100) {
-            metadataList = metadataList.slice(0..100).toMutableList()
+        if (metadataList.size > 300) {
+            metadataList = metadataList.slice(0..300).toMutableList()
         }
 
         model["metadataList"] = metadataList
