@@ -1511,7 +1511,7 @@ class AlbumsController: BaseController() {
     fun getSlideShow(model: Model, request: HttpServletRequest): String {
         val module = "slideshow"
 
-        val metadataList = mutableListOf<Metadata>()
+        var metadataList = mutableListOf<Metadata>()
         val currentUser = model.getAttribute("currentUser") as User?
 
         if (currentUser != null) {
@@ -1533,11 +1533,10 @@ class AlbumsController: BaseController() {
             }
         }
 
-        metadataList.shuffled()
-        metadataList.shuffled()
+        metadataList = metadataList.shuffled() as MutableList<Metadata>
 
         if (metadataList.size > 100) {
-            metadataList.slice(0..100)
+            metadataList = metadataList.slice(0..100).toMutableList()
         }
 
         model["metadataList"] = metadataList
