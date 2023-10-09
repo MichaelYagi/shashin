@@ -1534,9 +1534,9 @@ class AlbumsController: BaseController() {
         }
 
         metadataList.shuffled()
+        metadataList.shuffled()
 
         if (metadataList.size > 100) {
-
             metadataList.slice(0..100)
         }
 
