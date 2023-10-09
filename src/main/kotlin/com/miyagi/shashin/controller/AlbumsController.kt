@@ -1515,14 +1515,14 @@ class AlbumsController: BaseController() {
         val currentUser = model.getAttribute("currentUser") as User?
 
         if (currentUser != null) {
-            val randomAlbums = albumRepository?.findRandomAlbumsByUser(currentUser.getId())
-            if (randomAlbums != null && randomAlbums.count() > 0) {
+            val randomAlbums = albumRepository.findRandomAlbumsByUser(currentUser.getId())
+            if (randomAlbums.count() > 0) {
                 for (randomAlbum in randomAlbums) {
                     if (randomAlbum.getIsShared() == 1) {
-                        val albumPhotos = albumPhotoRepository?.findImagesByAlbumId(randomAlbum.getAlbumId()!!, 1000)
+                        val albumPhotos = albumPhotoRepository.findImagesByAlbumId(randomAlbum.getAlbumId()!!, 1000)
                         if (albumPhotos != null) {
                             for (albumPhoto in albumPhotos) {
-                                val metadata = metadataRepository?.findByMetadataId(albumPhoto?.getMetadataId()!!)
+                                val metadata = metadataRepository.findByMetadataId(albumPhoto?.getMetadataId()!!)
                                 if (metadata != null) {
                                     metadataList.add(metadata)
                                 }

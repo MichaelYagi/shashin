@@ -300,7 +300,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                         InputStreamReader(connection.getInputStream(), "utf-8")
                     ).use { br ->
                         val responseBuilder = StringBuilder()
-                        var responseLine: String? = null
+                        var responseLine: String?
                         while (br.readLine().also { responseLine = it } != null) {
                             responseBuilder.append(responseLine!!.trim { it <= ' ' })
                         }
