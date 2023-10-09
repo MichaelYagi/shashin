@@ -37,10 +37,6 @@
                                 /*<![CDATA[*/
                                 shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'matches');
                                 $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000");
-                                $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").on("click", function(e) {
-                                    e.preventDefault();
-                                    shashin.openEditMetadataModal(/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000");
-                                });
                                 /*]]>*/
                             </script>
 
@@ -71,15 +67,15 @@
         /*]]>*/
 
         const $infiniteScrollGallery = document.getElementById('infinite-scroll-gallery');
-        let lg = null;
 
         $infiniteScrollGallery.addEventListener('lgSlideItemLoad', function(e) {
-            if ($(".lg-show-autoplay").length === 0 && lg !== null) {
+            if ($(".lg-show-autoplay").length === 0 && shashin.lg !== null) {
                 $(".lg-autoplay-button.lg-icon")[0].click();
             }
         });
 
-        lg = lightGallery($infiniteScrollGallery, {
+        shashin.setLightGalleryElement('infinite-scroll-gallery');
+        const lgConfig = {
             plugins: [lgRelativeCaption, lgCastMedia, lgFullscreen, lgAutoplay],
             preload: "auto",
             autoplay: true,
@@ -95,14 +91,39 @@
             fullScreen: true,
             selector: ".mediaLink",
             licenseKey: Util.lgApiKey()
+        };
+        shashin.lg = lightGallery(shashin.getLightGalleryElement(), lgConfig);
+
+        let mediaContentList = [];
+        $.each($('.mediaLink'), function() {
+            const mediaContent = {};
+            mediaContent.func = shashin.openInfoSidebar;
+            mediaContent.args = "";
+            try {
+                mediaContent.args = $(this).attr("tag");
+            } catch(e) {}
+            let subHtmlAttr = $(this).attr("data-sub-html");
+            if (typeof subHtmlAttr !== 'undefined' && subHtmlAttr !== false) {
+                mediaContent.subHtml = subHtmlAttr;
+            }
+            if ($(this).attr("data-src")) {
+                mediaContent.src = $(this).attr("data-src");
+                mediaContent.downloadUrl = $(this).attr("data-src")+"/download";
+            } else if ($(this).attr("data-video")) {
+                mediaContent.video = $(this).attr("data-video");
+                mediaContent.downloadUrl = $(this).attr("data-video")+"/download";
+            }
+            mediaContentList.push(mediaContent);
         });
+
+        shashin.initMediaContent(mediaContentList);
 
         shashin.mouseMoveListener();
         Util.checkErrorImage();
 
         // Autoplay gallery
-        if ($(".mediaLink").length > 0) {
-            lg.openGallery(0);
+        if ($(".mediaLink").length > 0 && shashin.lg !== null) {
+            shashin.lg.openGallery(0);
         }
     });
 </script>
