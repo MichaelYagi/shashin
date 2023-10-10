@@ -302,8 +302,10 @@ class AlbumsController: BaseController() {
         response["albumsList"] =  mutableListOf<Album>()
         response["userAlbums"] = mutableListOf<UserAlbum>()
         response["userCount"] = 0
+        response["totalImageCount"] = 0
         response["albumsCommentsMap"] = mutableMapOf<Int, ArrayList<HashMap<String, Any>>>()
         var showControls = false
+        var totalImageCount = 0
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -340,6 +342,7 @@ class AlbumsController: BaseController() {
                         if (albumPhotoCount == null) {
                             albumPhotoCount = 0
                         }
+                        totalImageCount += albumPhotoCount
                         albumVideoCount = albumPhotoRepository.countVideosByAlbumId(userAlbum.getAlbumId()!!)
                         if (albumVideoCount == null) {
                             albumVideoCount = 0
@@ -396,6 +399,7 @@ class AlbumsController: BaseController() {
             }
         }
 
+        response["totalImageCount"] = totalImageCount
         response["showControls"] = showControls
         response["msg"] = "Success!"
         response["status"] = ApiResponse.SUCCESS.status
