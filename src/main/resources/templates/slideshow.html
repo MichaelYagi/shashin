@@ -59,6 +59,11 @@
                 </th:block>
             </div>
 
+            <!-- Back to top button -->
+            <button type="button" class="btn btn-primary btn-floating btn-lg" id="btn-back-to-top">
+                <i class="bi-arrow-up-circle"></i>
+            </button>
+
             <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>
         </main>
     </div>
@@ -102,9 +107,6 @@
             licenseKey: Util.lgApiKey()
         });
 
-        shashin.mouseMoveListener();
-        Util.checkErrorImage();
-
         // Autoplay gallery
         if ($(".mediaLink").length > 0) {
             $("#playSlideshow").on("click", function() {
@@ -122,6 +124,10 @@
             const tab = new bootstrap.Tab($("#detailsTabLink"));
             tab.show();
         });
+
+        shashin.activateScrollToTop();
+        shashin.mouseMoveListener();
+        Util.checkErrorImage();
     });
 </script>
 </body>
