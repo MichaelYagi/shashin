@@ -1107,7 +1107,7 @@ class Util {
                 page = "/player"
             }
 
-            $(".shareUrlDetails").html("<a class='bi-download' href='" + relativeShareLink + "/download' title='Download photo' style='font-size: 1rem;padding-right: 20px;'></a><a href='#' class='copyLink bi-clipboard-plus sharecopy' data-clipboard-text='" + shareUrl + page + "' title='Copy share link' style='font-size: 1rem;' id='shareCopyLink'></a><br><a href='" + relativeShareLink.replace('/api/v1','') + page + "' target='_blank'>View share Link</a>");
+            $(".shareUrlDetails").html("<a class='bi-download' href='" + relativeShareLink + "/download' title='Download photo' style='font-size: 1rem;padding-right: 20px;'></a><a href='#' class='copyLink bi-clipboard-plus sharecopy' data-clipboard-text='" + shareUrl + page + "' title='Copy share link' style='font-size: 1rem;' id='shareCopyLink'></a><br><a href='" + relativeShareLink.replace('/api/v1','') + page + "' target='_blank'>View "+((metadata.videoUrl != null) ? 'video':'image')+"</a>");
 
             $(".sharecopy").on("click", function (e) {
                 e.preventDefault();
