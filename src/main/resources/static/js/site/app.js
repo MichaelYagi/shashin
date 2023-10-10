@@ -1359,7 +1359,6 @@
             showBarsAfter: 5000,
             allowMediaOverlap: true,
             counter: false,
-            preload: 1,
             castMedia: true,
             fullScreen: true,
             download: true,
