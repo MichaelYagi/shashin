@@ -5,6 +5,8 @@
 
 <div th:replace="fragments/topnav :: topnav(${currentUser},${activePage},'')"></div>
 
+<div th:replace="fragments/metadatamodal :: metadatamodal(${currentUser})"></div>
+
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
     <div class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})"></div>
@@ -26,6 +28,8 @@
                                 <input type="hidden" th:name="'filename'+${metadata.id}" th:id="'filename'+${metadata.id}" th:value="${metadata.fileName}">
                                 <input type="hidden" th:name="'thumbnailCentered'+${metadata.id}" th:id="'thumbnailCentered'+${metadata.id}" th:value="${metadata.thumbnailUrlCentered}">
 
+                                <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, null, null, null, null)"></div>
+
                                 <div th:replace="fragments/centeredoverlay :: centeredoverlay(${metadata},null,${iterStat.index})"></div>
                             </div>
 
@@ -35,6 +39,10 @@
                                 /*<![CDATA[*/
                                 shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'matches');
                                 $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000");
+                                $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").on("click", function(e) {
+                                    e.preventDefault();
+                                    shashin.openEditMetadataModal(/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000");
+                                });
                                 /*]]>*/
                             </script>
 
@@ -104,6 +112,12 @@
             // Fullscreen doesn't work, needs to be user initiated
             // $(".mediaLink").click();
         }
+
+        $('#propMetadata').on('show.bs.modal', function () {
+            $("#generalTabLink").hide();
+            const tab = new bootstrap.Tab($("#detailsTabLink"));
+            tab.show();
+        });
     });
 </script>
 </body>
