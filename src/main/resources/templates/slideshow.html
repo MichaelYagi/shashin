@@ -15,7 +15,7 @@
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},${counts},${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
 
             <h1>Slideshow</h1>
-            <small class="me-3"><a href="/albums"><span class="bi-arrow-return-left" style="font-size: 1rem;text-decoration: none !important;color: #777777;" title="Go back"></span></a></small> Click any photo to start slideshow
+            <small class="me-3"><a href="/albums"><span class="bi-arrow-return-left" style="font-size: 1rem;text-decoration: none !important;color: #777777;" title="Go back"></span></a></small> <button class="btn btn-secondary" type="button" id="playSlideshow">Play Slideshow</button>
 
             <div class="mt-3" id="infinite-scroll-gallery">
                 <th:block th:if="${not #lists.isEmpty(metadataList)}">
@@ -28,9 +28,13 @@
                                 <input type="hidden" th:name="'filename'+${metadata.id}" th:id="'filename'+${metadata.id}" th:value="${metadata.fileName}">
                                 <input type="hidden" th:name="'thumbnailCentered'+${metadata.id}" th:id="'thumbnailCentered'+${metadata.id}" th:value="${metadata.thumbnailUrlCentered}">
 
-                                <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, null, null, null, null)"></div>
+                                <span class="mediaLink" th:id="'mediaLink'+${metadata.id}"
+                                   th:data-download-url="${metadata.thumbnailUrlOriginal + '/download'}"
+                                   th:data-sub-html="${metadata.description}"
+                                   th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}">
+                                </span>
 
-                                <div th:replace="fragments/centeredoverlay :: centeredoverlay(${metadata},null,${iterStat.index})"></div>
+                                <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, null, null, null, null)"></div>
                             </div>
 
                             <span th:id="'slideshow'+${metadata.id}" style="width:0;height:0;padding:0"></span>
@@ -103,7 +107,7 @@
 
         // Autoplay gallery
         if ($(".mediaLink").length > 0) {
-            $(".mediaLink").on("click", function() {
+            $("#playSlideshow").on("click", function() {
                 lg.openGallery(0);
                 const e = document.documentElement;
                 e.requestFullscreen ? e.requestFullscreen() : e.msRequestFullscreen ? e.msRequestFullscreen() : e.mozRequestFullScreen ? e.mozRequestFullScreen() : e.webkitRequestFullscreen && e.webkitRequestFullscreen()
