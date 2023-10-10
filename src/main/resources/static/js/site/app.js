@@ -1365,6 +1365,7 @@
             zoomFromOrigin: true,
             // videoMaxSize: "7680-4320",
             speed: 0,
+            preload: 0,
             autoplayFirstVideo: false,
             gotoNextSlideOnVideoEnd: false,
             rotate: true,
