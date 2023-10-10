@@ -113,6 +113,7 @@
                 lg.openGallery(0);
                 const e = document.documentElement;
                 e.requestFullscreen ? e.requestFullscreen() : e.msRequestFullscreen ? e.msRequestFullscreen() : e.mozRequestFullScreen ? e.mozRequestFullScreen() : e.webkitRequestFullscreen && e.webkitRequestFullscreen()
+                $(".lg-toolbar").delay(5000).fadeOut(500);
             });
 
             // Fullscreen doesn't work, needs to be user initiated
