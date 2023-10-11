@@ -1523,7 +1523,7 @@ class AlbumsController: BaseController() {
             if (randomAlbums.count() > 0) {
                 for (randomAlbum in randomAlbums) {
                     if (randomAlbum.getIsShared() == 1) {
-                        val albumPhotos = albumPhotoRepository.findImagesByAlbumId(randomAlbum.getAlbumId()!!, 1000)
+                        val albumPhotos = albumPhotoRepository.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, 1000)
                         if (albumPhotos != null) {
                             for (albumPhoto in albumPhotos) {
                                 val metadata = metadataRepository.findByMetadataId(albumPhoto?.getMetadataId()!!)
