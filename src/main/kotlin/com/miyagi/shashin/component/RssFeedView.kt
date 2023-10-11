@@ -80,7 +80,7 @@ class RssFeedView : AbstractRssFeedView() {
                 if (randomAlbums != null && randomAlbums.count() > 0) {
                     for (randomAlbum in randomAlbums) {
                         if (randomAlbum.getIsShared() == 1) {
-                            val albumPhotos = albumPhotoRepository?.findImagesByAlbumId(randomAlbum.getAlbumId()!!, 20)
+                            val albumPhotos = albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, 20)
                             if (albumPhotos != null) {
                                 for (albumPhoto in albumPhotos) {
                                     val metadata = metadataRepository?.findByMetadataId(albumPhoto?.getMetadataId()!!)
