@@ -17,7 +17,7 @@
             <h1>Slideshow</h1>
             <small class="me-3"><a href="/albums"><span class="bi-arrow-return-left" style="font-size: 1rem;text-decoration: none !important;color: #777777;" title="Go back"></span></a></small> <th:block th:if="${not #lists.isEmpty(metadataList)}"><button class="btn btn-secondary" type="button" id="playSlideshow">Play Slideshow</button></th:block>
 
-            <div class="mt-3" id="infinite-scroll-gallery">
+            <div class="mt-5" id="infinite-scroll-gallery">
                 <th:block th:if="${not #lists.isEmpty(metadataList)}">
                     <div class="row image-group-padding">
                         <th:block th:each="metadata, iterStat: ${metadataList}">
