@@ -30,7 +30,10 @@
             }
 
             this.core.LGel.on('lgHasVideo.video', () => {
-                if ($(".lg-video-play-button").length === 0) {
+                if ($(".lg-video-play-button").length === 0 ||
+                    ((this.settings.hasOwnProperty("autoplayFirstVideo") && this.settings.autoplayFirstVideo === true) &&
+                    (this.settings.hasOwnProperty("autoplayVideoOnSlide") && this.settings.autoplayVideoOnSlide === true))
+                ) {
                     $(".bi-bounding-box-circles.lg-icon").css("display", "block");
                 } else {
                     $(".lg-video-play-button").on('click', function () {
