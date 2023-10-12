@@ -56,6 +56,7 @@
             this.core.LGel.on('lgBeforeSlide', (e) => {
                 $(".bi-bounding-box-circles.lg-icon").css("display", "none");
 
+                // Show screenshot button when changing slides
                 if ($(".lg-outer").length > 0) {
                     const lgOuterId = $($(".lg-outer")[0]).attr("id");
                     if (lgOuterId !== undefined) {
@@ -68,7 +69,6 @@
                             if (lgItemEl.length > 0 && lgItemEl.children().find('video')[0] !== undefined) {
                                 const video = lgItemEl.children().find('video')[0];
                                 if (video.paused || video.ended || !!(video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2)) {
-                                    console.log("shoing ss")
                                     $(".bi-bounding-box-circles.lg-icon").css("display", "block");
                                 }
                             }
