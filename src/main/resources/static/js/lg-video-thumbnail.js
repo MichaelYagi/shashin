@@ -36,7 +36,7 @@
                 ) {
                     $(".bi-bounding-box-circles.lg-icon").css("display", "block");
                 } else if (event.detail.hasPoster === true) {
-                    this.core.LGel.on('lgPosterClick', (event) => {
+                    this.core.LGel.on('lgPosterClick', () => {
                         $(".bi-bounding-box-circles.lg-icon").css("display", "block");
                     });
                 }
