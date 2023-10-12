@@ -29,14 +29,14 @@
                     this.videoThumbnail()
             }
 
-            this.core.LGel.on('lgHasVideo.video', () => {
-                if ($(".lg-video-play-button").length === 0 ||
+            this.core.LGel.on('lgHasVideo', (event) => {
+                if (event.detail.hasPoster === false ||
                     ((this.settings.hasOwnProperty("autoplayFirstVideo") && this.settings.autoplayFirstVideo === true) &&
                     (this.settings.hasOwnProperty("autoplayVideoOnSlide") && this.settings.autoplayVideoOnSlide === true))
                 ) {
                     $(".bi-bounding-box-circles.lg-icon").css("display", "block");
-                } else {
-                    $(".lg-video-play-button").on('click', function () {
+                } else if (event.detail.hasPoster === true) {
+                    this.core.LGel.on('lgPosterClick', (event) => {
                         $(".bi-bounding-box-circles.lg-icon").css("display", "block");
                     });
                 }
