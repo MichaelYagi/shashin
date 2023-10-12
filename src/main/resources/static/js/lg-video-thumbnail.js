@@ -30,7 +30,13 @@
             }
 
             this.core.LGel.on('lgHasVideo.video', () => {
-                $(".bi-bounding-box-circles.lg-icon").css("display", "block");
+                if ($(".lg-video-play-button").length === 0) {
+                    $(".bi-bounding-box-circles.lg-icon").css("display", "block");
+                } else {
+                    $(".lg-video-play-button").on('click', function () {
+                        $(".bi-bounding-box-circles.lg-icon").css("display", "block");
+                    });
+                }
             })
 
             this.core.LGel.on('lgBeforeOpen', () => {
