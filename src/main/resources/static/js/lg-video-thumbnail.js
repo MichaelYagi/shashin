@@ -30,6 +30,9 @@
             }
 
             this.core.LGel.on('lgHasVideo', (event) => {
+                // Video thumbnail icon
+                $(".bi-bounding-box-circles.lg-icon").css("display", "none");
+
                 if (event.detail.hasPoster === false ||
                     ((this.settings.hasOwnProperty("autoplayFirstVideo") && this.settings.autoplayFirstVideo === true) &&
                     (this.settings.hasOwnProperty("autoplayVideoOnSlide") && this.settings.autoplayVideoOnSlide === true))
@@ -40,11 +43,39 @@
                         $(".bi-bounding-box-circles.lg-icon").css("display", "block");
                     });
                 }
-            })
+            });
 
-            this.core.LGel.on('lgBeforeOpen', () => {
+            this.core.LGel.on('lgBeforeOpen', (e) => {
                 $(".bi-bounding-box-circles.lg-icon").css("display", "none");
-            })
+            });
+
+            this.core.LGel.on('lgAfterClose', () => {
+                $(".bi-bounding-box-circles.lg-icon").css("display", "none");
+            });
+
+            this.core.LGel.on('lgBeforeSlide', (e) => {
+                $(".bi-bounding-box-circles.lg-icon").css("display", "none");
+
+                if ($(".lg-outer").length > 0) {
+                    const lgOuterId = $($(".lg-outer")[0]).attr("id");
+                    if (lgOuterId !== undefined) {
+                        const lgOuterIdArray = lgOuterId.split("-");
+                        if (lgOuterIdArray.length > 0) {
+                            const lgOuterIdValue = lgOuterIdArray[lgOuterIdArray.length - 1];
+                            const lgItemId = "lg-item-" + lgOuterIdValue + "-" + e.detail.index;
+                            const lgItemEl = $("#" + lgItemId);
+
+                            if (lgItemEl.length > 0 && lgItemEl.children().find('video')[0] !== undefined) {
+                                const video = lgItemEl.children().find('video')[0];
+                                if (video.paused || video.ended || !!(video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2)) {
+                                    console.log("shoing ss")
+                                    $(".bi-bounding-box-circles.lg-icon").css("display", "block");
+                                }
+                            }
+                        }
+                    }
+                }
+            });
 
             this.core.outer
                 .find('.bi-bounding-box-circles')
