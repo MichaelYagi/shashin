@@ -325,6 +325,9 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 if (currentUser.getDarkMode() == null) {
                     currentUser.setDarkMode(false)
                 }
+                if (currentUser.getAutoplayVideo() == null) {
+                    currentUser.setAutoplayVideo(false)
+                }
                 if (!currentUser.getApikey().isNullOrBlank()) {
                     model["apikey"] = currentUser.getApikey()!!
                 }
