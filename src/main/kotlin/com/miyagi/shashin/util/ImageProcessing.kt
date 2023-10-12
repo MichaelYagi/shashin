@@ -121,7 +121,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             // Raw file to image conversion
             var thumbnailFileStr: String
             var tnFile: File?
-            if (FileUtils.isRaw(file.extension.lowercase())) {
+            if (FileUtils.isRaw(file.extension.lowercase()) || supportedVideoFormats.contains(file.extension.lowercase())) {
                 thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_original." + extension
                 tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
                 if (tnFile != null) {

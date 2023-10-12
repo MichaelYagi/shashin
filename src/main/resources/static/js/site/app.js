@@ -671,6 +671,7 @@
                 mediaContent.downloadUrl = $(this).attr("data-src")+"/download";
             } else if ($(this).attr("data-video")) {
                 mediaContent.video = $(this).attr("data-video");
+                mediaContent.poster = $(this).attr("data-poster");
                 mediaContent.downloadUrl = $(this).attr("data-video")+"/download";
             }
             mediaContentList.push(mediaContent);

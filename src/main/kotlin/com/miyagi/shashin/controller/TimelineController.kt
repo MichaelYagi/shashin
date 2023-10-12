@@ -818,6 +818,14 @@ class TimelineController: BaseController() {
                                 if (smallTnFile.exists()) {
                                     smallTnFile.delete()
                                 }
+                                if (metadata.getType()!!.contains("video")) {
+                                    val originalTnFile =
+                                        File(metadata.getThumbnailPathCentered()?.replace("_centered.", "_original."))
+                                    if (originalTnFile.exists()) {
+                                        originalTnFile.delete()
+                                    }
+                                }
+
                                 val imageProcessing = ImageProcessing(apiVersion, File(metadata.getPath()), sidecarDir, metadata)
                                 metadata = imageProcessing.createThumbnails()!!
 
@@ -2149,6 +2157,26 @@ class TimelineController: BaseController() {
                     var tempFile = File(System.getProperty("java.io.tmpdir")+"/temp.jpg")
 
                     val img = ImageIO.read(ByteArrayInputStream(imageBytes))
+
+                    // Original Size thumbnail
+                    Thumbnails.of(img)
+                        .size(metadata.getOriginalImageWidth()!!, metadata.getOriginalImageHeight()!!)
+                        .outputQuality(0.9)
+                        .toFile(tempFile)
+
+                    try {
+                        val thumbnailFileStr = metadata.getThumbnailPathCentered()!!.replace("_centered.", "_original.")
+                        ImageIO.write(ImageIO.read(tempFile), "jpg", File(thumbnailFileStr))
+                        tempFile.delete()
+                        if (metadata.getThumbnailUrlOriginal() == null || metadata.getThumbnailUrlOriginal() == "") {
+                            metadata.setThumbnailUrlOriginal("/api/$apiVersion/thumbnails${metadata.getFolder()}/${metadata.getFileName()}_original.jpg")
+                        }
+                    } catch (e: IOException) {
+                        logger.log(Level.WARNING, "Could not read file: " + metadata.getThumbnailPathSmall())
+                        resp["msg"] = "Could not save"
+                        resp["status"] = ApiResponse.FAIL.status
+                        return mapper.writeValueAsString(resp)
+                    }
 
                     // Small thumbnail
                     Thumbnails.of(img)
