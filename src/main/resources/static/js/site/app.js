@@ -6,7 +6,8 @@
     shashin.infiniteScrollGallery = null;
     shashin.lg = null;
     shashin.ajaxRetries = 3;
-    shashin.darkMode = true;
+    shashin.darkMode = false;
+    shashin.autoplayVideo = false;
     shashin.lgSubHtmlTimeout = null;
     shashin.nonce = "";
     shashin.contextMenu = null;
@@ -1353,6 +1354,8 @@
     }
 
     shashin.getLightGalleryConfigs = function(additionalConfigs) {
+        shashin.autoplayVideo = $("#autoplayVideoSwitch").is(':checked');
+
         const configs = {
             plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen, lgRotate, lgCastMedia],
             videojs: false,
@@ -1376,6 +1379,11 @@
             flipHorizontal: true,
             flipVertical: false,
             licenseKey: Util.lgApiKey()
+        }
+
+        if (shashin.autoplayVideo === false) {
+            configs.autoplayFirstVideo = false;
+            configs.autoplayVideoOnSlide = false;
         }
 
         for (const key in additionalConfigs) {

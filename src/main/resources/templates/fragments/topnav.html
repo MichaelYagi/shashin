@@ -55,6 +55,7 @@
 <header class="py-2 mb-1 border-bottom shadow">
     <div class="container-fluid align-items-center d-flex">
         <div class="flex-shrink-0">
+            <input type="hidden" id="activePage" th:value="${activePage}">
             <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-toggle="offcanvas" data-bs-placement="bottom" href="#offcanvasMenu" aria-controls="offcanvasMenu" title="Show Menu">
                 <span id="sidebarMenuDrawer" th:class="'bi-list placeholder position-relative'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;">
                 </span>
@@ -205,6 +206,12 @@
                         <label class="form-check-label" for="darkModeSwitch">Dark mode</label>
                     </div>
                 </div>
+                <div class="dropdown-item">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="autoplayVideoSwitch" th:checked="${currentUser.autoplayVideo}">
+                        <label class="form-check-label" for="autoplayVideoSwitch">Autoplay videos</label>
+                    </div>
+                </div>
                 <a class="dropdown-item" href="/users/logout">Sign out</a>
                 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                     $("#darkModeSwitch").change(async function () {
@@ -221,6 +228,21 @@
                                 html.hide();
                                 Util.darkModeToggle(darkMode);
                                 html.show();
+                            }
+                        }
+                    });
+
+                    $("#autoplayVideoSwitch").change(async function () {
+                        const activePage = $("#activePage").val();
+                        const autoplayVideo = this.checked;
+                        shashin.autoplayVideo = autoplayVideo;
+                        const http = new Http("autoplay video");
+                        const json = {autoplayVideo: autoplayVideo};
+                        const data = await http.ajax("post", "/users/autoplayvideo", JSON.stringify(json));
+
+                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                            if (data["status"] === "success" && activePage !== "timeline") {
+                                window.location.reload();
                             }
                         }
                     });
