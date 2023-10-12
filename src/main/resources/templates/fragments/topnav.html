@@ -242,9 +242,19 @@
 
                         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                             if (data["status"] === "success") {
-                                if (activePage !== "timeline") {
+                                if (activePage === "recent" ||
+                                    activePage === "modified" ||
+                                    activePage === "taken" ||
+                                    activePage === "folder" ||
+                                    activePage === "album" ||
+                                    activePage === "person" ||
+                                    activePage === "matches" ||
+                                    activePage === "favorites" ||
+                                    activePage === "map" ||
+                                    activePage === "trash"
+                                ) {
                                     window.location.reload();
-                                } else {
+                                } else if (activePage === "timeline") {
                                     Util.reinitLightGalleryInstance();
                                 }
                             }
