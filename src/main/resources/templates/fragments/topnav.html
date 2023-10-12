@@ -241,8 +241,12 @@
                         const data = await http.ajax("post", "/users/autoplayvideo", JSON.stringify(json));
 
                         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                            if (data["status"] === "success" && activePage !== "timeline") {
-                                window.location.reload();
+                            if (data["status"] === "success") {
+                                if (activePage !== "timeline") {
+                                    window.location.reload();
+                                } else {
+                                    Util.reinitLightGalleryInstance();
+                                }
                             }
                         }
                     });
