@@ -31,6 +31,7 @@
                     // console.log(additionalMediaContentList)
                     albumSettings.page++;
                     mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
+                    Util.reinitLightGalleryInstance();
                 });
 
                 shashin.setVideoWidth($("#infinite-scroll-gallery")[0]);

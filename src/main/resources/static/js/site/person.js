@@ -91,6 +91,7 @@ class Person {
                 // console.log(additionalMediaContentList)
                 this.page++;
                 this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+                Util.reinitLightGalleryInstance();
                 shashin.setVideoWidth($("#infinite-scroll-gallery")[0]);
             }.bind(this));
         }
