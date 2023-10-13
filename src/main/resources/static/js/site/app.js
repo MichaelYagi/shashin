@@ -224,6 +224,7 @@
                     "autoplay": true
                 }
             };
+            mediaContent.lgSize = metadata.originalImageWidth+"-"+metadata.originalImageHeight;
             mediaContent.downloadUrl = encodeURI(metadata.videoUrl) + "/download";
         } else {
             mediaContent.src = metadata.thumbnailUrlOriginal;
@@ -673,6 +674,7 @@
             } else if ($(this).attr("data-video")) {
                 mediaContent.video = $(this).attr("data-video");
                 mediaContent.poster = $(this).attr("data-poster");
+                mediaContent.lgSize = $(this).attr("data-lg-size");
                 mediaContent.downloadUrl = $(this).attr("data-video")+"/download";
             }
             mediaContentList.push(mediaContent);
