@@ -141,14 +141,14 @@ class GalleryTemplates {
         <div class="thumbnail-bl" id="tnbl${metadata.id}">
             ${($.inArray("isEditControls", overlays) !== -1) ?
             `
-            <a href="#" id="metadataModalEdit${metadata.id}" data-bs-target="#propTimelinModal">
+            <a href="#" id="metadataModalEdit${metadata.id}" data-bs-target="#propTimelinModal" tag="${metadata.id}">
                 <span class="${data.editIcon}" style="font-size: 1rem;color: lightgray;"></span>
             </a>
             ` : ''}
         
             ${($.inArray("isInfo", overlays) !== -1) ?
             `
-            <a href="#" id="infoModalEdit${metadata.id}">
+            <a href="#" id="infoModalEdit${metadata.id}" tag="${metadata.id}">
                 <span class="${(metadata.lat !== null && metadata.lng !== null) ? `bi-info-circle` : `bi-info-square`}" style="font-size: 1rem;color: lightgray;"></span>
             </a>
             ` : ''}
