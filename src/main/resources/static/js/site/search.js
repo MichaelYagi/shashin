@@ -89,7 +89,8 @@ class Search {
                     mediaContentList.push(shashin.getMediaContent(metadata));
 
                     const appendClass = "appendSearchPhotos";
-                    $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData})).insertAfter($("."+appendClass).last());
+                    const uuid = uuidv4();
+                    $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid})).insertAfter($("."+appendClass).last());
                 }
 
                 $("#spinner").css("display", "none");

@@ -103,7 +103,8 @@ class Taken {
                     mediaContentList.push(shashin.getMediaContent(metadata));
 
                     const appendClass = "appendTakenPhotos";
-                    $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData})).insertBefore($("."+appendClass).last());
+                    const uuid = uuidv4();
+                    $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid})).insertBefore($("."+appendClass).last());
                 }
 
                 this.rendering = false;

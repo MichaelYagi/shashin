@@ -1301,7 +1301,7 @@
         }
 
         if ($("#mediaLink" + metadata.id).length === 0) {
-            $("#tncentered" + metadata.id).append(TimelineTemplates.TimelineGalleryCenterOverlay({metadata:metadata,mediaContent:mediaContent}));
+            $("#tncentered" + metadata.id).append(TimelineTemplates.TimelineGalleryCenterOverlay({metadata:metadata,mediaContent:mediaContent,uuid:Util.getMetadataLocalStorage()}));
         }
 
         if ($("#metadataModalEdit" + metadata.id).length === 0) {
