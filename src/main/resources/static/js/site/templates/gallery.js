@@ -186,6 +186,7 @@ class GalleryTemplates {
             <a class="mediaLink" id="mediaLink${id}" data-download-url="${encodeURI(data.metadata.videoUrl)}/download" 
                 ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}
                 data-poster="${(data.metadata.thumbnailUrlOriginal === null || data.metadata.thumbnailUrlOriginal === "") ? data.metadata.thumbnailUrlSmall : data.metadata.thumbnailUrlOriginal}"
+                data-lg-size="${(data.metadata.originalImageWidth === null || data.metadata.originalImageWidth === "") ? `${data.metadata.thumbnailSmallWidth}-${data.metadata.thumbnailSmallHeight}` : `${data.metadata.originalImageWidth}-${data.metadata.originalImageHeight}`}"
                 data-video=\'{"source": [{"src":"${data.metadata.videoUrl}", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true, "autoplay": true}}\'>
                 <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>
             </a>
