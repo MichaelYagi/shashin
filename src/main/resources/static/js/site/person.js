@@ -140,7 +140,8 @@ class Person {
                             mediaContentList.push(shashin.getMediaContent(metadata));
 
                             const appendClass = "appendPersonPhotos";
-                            $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData})).insertBefore($("."+appendClass).last()).ready(function () {
+                            const uuid = uuidv4();
+                            $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid})).insertBefore($("."+appendClass).last()).ready(function () {
                                 // Call JS and modal
                                 // personModalSettings.renderPersonModal(metadata, recognitionLabels, labelPhotoMap[metadata.id]["labels"]);
                             });

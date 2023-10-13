@@ -158,13 +158,13 @@ class TimelineTemplates {
         </a>
     `};
 
-    static TimelineGalleryCenterOverlay({metadata, mediaContent}) { return `
+    static TimelineGalleryCenterOverlay({metadata, mediaContent, uuid}) { return `
         <a class="mediaLink" 
             id="mediaLink${metadata.id}"
             data-download-url="${(metadata.type.indexOf("video") >= 0) ? encodeURI(metadata.videoUrl) : encodeURI(metadata.thumbnailUrlOriginal)}/download"
             data-metadataid="${metadata.id}"
             data-lg-size="${(metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? `${metadata.thumbnailSmallWidth}-${metadata.thumbnailSmallHeight}` : `${metadata.originalImageWidth}-${metadata.originalImageHeight}`}"
-            ${(metadata.type.indexOf("video") >= 0) ? `data-video="${Util.encodeHtml(mediaContent.video)}" data-poster="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? Util.encodeHtml(metadata.thumbnailUrlSmall) : Util.encodeHtml(metadata.thumbnailUrlOriginal)}"` : `data-src="${encodeURI(metadata.thumbnailUrlOriginal)}"`}
+            ${(metadata.type.indexOf("video") >= 0) ? `data-video="${Util.encodeHtml(mediaContent.video)}" data-poster="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? Util.encodeHtml(metadata.thumbnailUrlSmall) : Util.encodeHtml(metadata.thumbnailUrlOriginal)}?v=${uuid}"` : `data-src="${encodeURI(metadata.thumbnailUrlOriginal)}"`}
             ${(metadata.description != null) ? `data-sub-html="${Util.encodeHtml(metadata.description)}"` : ''}
     
             ${(metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&

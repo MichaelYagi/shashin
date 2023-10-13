@@ -1,9 +1,9 @@
 class GalleryTemplates {
-    static PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData}) { return `
+    static PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid}) { return `
         ${(typeof dateHeadingObj === "undefined" || dateHeadingObj === null) ? '' : `<section class="dateSection" id="${dateHeadingObj.heading}"><div class="mb-3">${(activePage === "trash") ? `<span class="text-muted">Removed </span>` : ''}${(activePage === "recent") ? `<span class="text-muted">Added </span>` : ''}${(activePage === "taken") ? `<span class="text-muted">Taken </span>` : ''}${(activePage === "modified") ? `<span class="text-muted">Modified </span>` : ''}<strong>${dateHeadingObj.display}</strong>&nbsp;${dateHeadingObj.hasOwnProperty("placename")?dateHeadingObj.placename:''}</div></section>`}
         <div id="photoThumbnailContainer${metadata.id}" class="photo-thumbnail-container photo-thumbnail" style="width:${metadata.thumbnailSmallWidth}px;height:${metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
             <a class="lightGalleryIndexAnchor" name="lightGalleryIndex${currentMediaLinkIndex}"></a>
-            <img loading="lazy" src="${encodeURI(metadata.thumbnailUrlSmall)}" class="photo-thumbnail-image" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
+            <img loading="lazy" src="${encodeURI(metadata.thumbnailUrlSmall)}?v=${uuid}" class="photo-thumbnail-image" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
             <input type="hidden" name="filename${metadata.id}" id="filename${metadata.id}" value="${metadata.fileName}">
             <input type="hidden" name="thumbnailCentered${metadata.id}" id="thumbnailCentered${metadata.id}" value="${encodeURI(metadata.thumbnailUrlCentered)}">
     
@@ -34,7 +34,8 @@ class GalleryTemplates {
             ${(overlayData.hasOwnProperty("data") && overlayData["data"].hasOwnProperty("overlayFlags") && overlayData["data"]["overlayFlags"].hasOwnProperty("renderCenter") && overlayData["data"]["overlayFlags"]["renderCenter"] === true) ? GalleryTemplates.getCenteredOverlay({
             id: metadata.id,
             overlays: overlayData.overlays,
-            data: overlayData.data
+            data: overlayData.data,
+            uuid: uuid
         }) : ''}
             
         </div>
@@ -178,14 +179,14 @@ class GalleryTemplates {
         </div>
     `};
 
-    static getCenteredOverlay({id, overlays, data}) { return `
+    static getCenteredOverlay({id, overlays, data, uuid}) { return `
         <div class="thumbnail-centered" id="tncentered${id}">
     
             ${($.inArray("isVideo", overlays) !== -1) ?
             `
             <a class="mediaLink" id="mediaLink${id}" data-download-url="${encodeURI(data.metadata.videoUrl)}/download" 
                 ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}
-                data-poster="${(data.metadata.thumbnailUrlOriginal === null || data.metadata.thumbnailUrlOriginal === "") ? data.metadata.thumbnailUrlSmall : data.metadata.thumbnailUrlOriginal}"
+                data-poster="${(data.metadata.thumbnailUrlOriginal === null || data.metadata.thumbnailUrlOriginal === "") ? data.metadata.thumbnailUrlSmall : data.metadata.thumbnailUrlOriginal}?v=${uuid}"
                 data-lg-size="${(data.metadata.originalImageWidth === null || data.metadata.originalImageWidth === "") ? `${data.metadata.thumbnailSmallWidth}-${data.metadata.thumbnailSmallHeight}` : `${data.metadata.originalImageWidth}-${data.metadata.originalImageHeight}`}"
                 data-video=\'{"source": [{"src":"${data.metadata.videoUrl}", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true, "autoplay": true}}\'>
                 <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>
