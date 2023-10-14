@@ -916,21 +916,21 @@ class TimelineController: BaseController() {
                                             }
                                             logger.log(Level.INFO, "Updated album records for: " + metadataCopy.getId())
 
-                                            // Transfer tagged people
+                                            // Delete tagged people
                                             val recognitionLabelPhotosList = mutableListOf(RecognitionLabelPhoto())
                                             val recognitionLabelPhotos =
                                                 recognitionLabelPhotoRepository?.findByMetadataId(metadataId)
                                             if (recognitionLabelPhotos != null) {
                                                 for (recognitionLabelPhoto in recognitionLabelPhotos) {
-                                                    recognitionLabelPhoto.setRecognitionLabelId(recognitionLabelPhoto.getRecognitionLabelId())
-                                                    recognitionLabelPhoto.setMetadataId(metadataCopy.getId())
                                                     recognitionLabelPhotosList.add(recognitionLabelPhoto)
                                                 }
                                             }
                                             if (recognitionLabelPhotosList.size > 0) {
-                                                recognitionLabelPhotoRepository?.saveAll(recognitionLabelPhotosList)
+                                                recognitionLabelPhotoRepository?.deleteAll(recognitionLabelPhotosList)
                                             }
-                                            logger.log(Level.INFO, "Updated tagged people records for: " + metadataCopy.getId())
+
+                                            logger.log(Level.INFO, "Deleted tagged people records for: " + metadataCopy.getId())
+
 
                                             metadataRepository.delete(metadataToDelete)
                                             logger.log(
