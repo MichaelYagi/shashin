@@ -226,7 +226,7 @@ class Util {
 
                 if (activePage !== "timeline") {
                     window.top.location = window.top.location;
-                } else if (metadataIdArray.length === 1 && metadataKeys.length === 1 && metadataIdArray[0] === metadataKeys[0]) {
+                } else if (metadataIdArray.length === 1 && metadataKeys.length === 1) {
                     // If single value, update fields in timeline view
                     const rescannedMetadata = metadataMap[metadataKeys[0]];
                     let takenDateUpdated = false;
