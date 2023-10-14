@@ -99,6 +99,10 @@
 
                         if (typeof fn === 'function' && id.length > 0) {
                             fn(id);
+                        } else {
+                            if (shashin) {
+                                shashin.showToastMessage("Could not capture screenshot", "Could not capture screenshot. Tag or function not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+                            }
                         }
                     } else if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("tag")) {
                         //console.log($($(".thumbnail-centered")[this.core.index]).children('a').attr("tag"))
@@ -114,6 +118,10 @@
 
                         if (typeof fn === 'function' && id.length > 0) {
                             fn(id);
+                        } else {
+                            if (shashin) {
+                                shashin.showToastMessage("Could not capture screenshot", "Could not capture screenshot. Tag or function not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+                            }
                         }
                     } else {
                         if (shashin) {
