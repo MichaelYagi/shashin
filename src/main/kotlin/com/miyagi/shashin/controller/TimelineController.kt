@@ -9,6 +9,7 @@ import ai.djl.training.util.ProgressBar
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.gson.Gson
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.*
@@ -830,10 +831,11 @@ class TimelineController: BaseController() {
                                 metadata = imageProcessing.createThumbnails()!!
 
                                 if (metadata.getId().isNotEmpty()) {
-                                    val _metadataCopy = metadata
-                                    metadataRepository.save(_metadataCopy)
+                                    val stringMetadata = Gson().toJson(metadata, Metadata::class.java)
+                                    val metadataCopy = Gson().fromJson(stringMetadata, Metadata::class.java)
+                                    metadataRepository.save(metadataCopy)
 
-                                    if (_metadataCopy.getId() != metadataId) {
+                                    if (metadataCopy.getId() != metadataId) {
                                         val metadataToDelete = metadataRepository.findByMetadataId(metadataId)
                                         if (metadataToDelete != null) {
                                             metadataRepository.delete(metadataToDelete)
