@@ -45,8 +45,8 @@
 <div id="video" style="display: none;">
     <a
         th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadataObj.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: &quot;auto&quot;, &quot;controls&quot;: true, &quot;autoplay&quot;: true}}'}"
-        th:data-lg-size="${(metadata.originalImageWidth == null || metadata.originalImageWidth == '') ? (metadata.thumbnailSmallWidth+'-'+metadata.thumbnailSmallHeight) : (metadata.originalImageWidth+'-'+metadata.originalImageHeight)}"
-        th:data-poster="${(metadata.thumbnailUrlOriginal == null || metadata.thumbnailUrlOriginal == '') ? metadata.thumbnailUrlSmall : metadata.thumbnailUrlOriginal}"
+        th:data-lg-size="${(metadataObj.originalImageWidth == null || metadataObj.originalImageWidth == '') ? (metadataObj.thumbnailSmallWidth+'-'+metadataObj.thumbnailSmallHeight) : (metadataObj.originalImageWidth+'-'+metadataObj.originalImageHeight)}"
+        th:data-poster="${(metadataObj.thumbnailUrlOriginal == null || metadataObj.thumbnailUrlOriginal == '') ? metadataObj.thumbnailUrlSmall : metadataObj.thumbnailUrlOriginal}"
         th:data-sub-html="${metadataObj.description}"
         th:data-download-url="${metadataObj.videoUrl + '/download'}"
     >
