@@ -231,7 +231,7 @@ class Util {
                     const rescannedMetadata = metadataMap[metadataKeys[0]];
                     let takenDateUpdated = false;
 
-                    if (rescannedMetadata["id"] !== metadataIdArray[0]["id"]) {
+                    if (rescannedMetadata["id"] !== metadataIdArray[0]) {
                         takenDateUpdated = true;
                         Util.setMetadataLocalStorage();
                     }
@@ -295,7 +295,7 @@ class Util {
                         $("#mapTabLink").hide();
                     }
                     if (takenDateUpdated === true) {
-                        const dateGalleryRemoved = shashin.removeThumbnail((rescannedMetadata["id"] !== metadataIdArray[0]["id"]) ? metadataIdArray[0]["id"] : rescannedMetadata.id);
+                        const dateGalleryRemoved = shashin.removeThumbnail((rescannedMetadata["id"] !== metadataIdArray[0]) ? metadataIdArray[0] : rescannedMetadata.id);
                         timelineSettings.refreshTimeline($("#mediaTypeFilter").val()).then(function (data) {
                             // If a date section was removed refresh the timeline
                             if (dateGalleryRemoved === true) {
