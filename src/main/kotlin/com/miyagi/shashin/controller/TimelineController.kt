@@ -840,6 +840,10 @@ class TimelineController: BaseController() {
                                         val metadataToDelete = metadataRepository.findByMetadataId(metadataId)
                                         if (metadataToDelete != null) {
                                             metadataRepository.delete(metadataToDelete)
+                                            logger.log(
+                                                Level.WARNING,
+                                                "UUID changed to "+metadataCopy.getId()+", deleting old record "+metadataId+" for " + metadata.getPath()
+                                            )
                                         }
                                     }
 
