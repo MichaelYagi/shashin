@@ -32,4 +32,5 @@ interface AlbumPhotoRepository : CrudRepository<AlbumPhoto?, Int?> {
     fun deleteByMetadataIdAndAlbumId(metadataId: String?, albumId: Int?): Long?
     fun deleteByAlbumId(albumId: Int?): Long?
     fun deleteByMetadataId(metadataId: String?): Long?
+    fun findAllByMetadataId(metadataId: String?): MutableIterable<AlbumPhoto?>?
 }

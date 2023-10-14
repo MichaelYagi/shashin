@@ -32,6 +32,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.reactive.function.client.WebClient
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
 import java.io.File
@@ -836,9 +837,100 @@ class TimelineController: BaseController() {
                                 if (metadataCopy.getId().isNotEmpty()) {
                                     metadataRepository.save(metadataCopy)
 
+                                    // Something was updated that changed the UUID, tradelete the old record
                                     if (metadataCopy.getId() != metadataId) {
                                         val metadataToDelete = metadataRepository.findByMetadataId(metadataId)
                                         if (metadataToDelete != null) {
+
+                                            // Transfer comments
+                                            val albumPhotoComments = mutableListOf(AlbumPhotoComment())
+                                            val albumPhotoCommentList =
+                                                albumPhotoCommentRepository.findByMetadataId(metadataId)
+                                            if (albumPhotoCommentList != null) {
+                                                for (albumPhotoComment in albumPhotoCommentList) {
+                                                    if (albumPhotoComment != null) {
+                                                        albumPhotoComment.setMetadataId(metadataCopy.getId())
+                                                        albumPhotoComments.add(albumPhotoComment)
+                                                    }
+                                                }
+                                            }
+                                            if (albumPhotoComments.size > 0) {
+                                                albumPhotoCommentRepository.saveAll(albumPhotoComments)
+                                            }
+                                            logger.log(
+                                                Level.INFO,
+                                                "Updated comment records for: " + metadataCopy.getId()
+                                            )
+
+                                            // Transfer favorites
+                                            val favoritesList = mutableListOf(Favorite())
+                                            val favorites = favoriteRepository.findAllByMetadataId(metadataId)
+                                            if (favorites != null) {
+                                                for (favorite in favorites) {
+                                                    if (favorite != null) {
+                                                        favorite.setMetadataId(metadataCopy.getId())
+                                                        favoritesList.add(favorite)
+                                                    }
+                                                }
+                                            }
+                                            if (favoritesList.size > 0) {
+                                                favoriteRepository.saveAll(favoritesList)
+                                            }
+                                            logger.log(
+                                                Level.INFO,
+                                                "Updated favorite records for: " + metadataCopy.getId()
+                                            )
+
+                                            // Transfer from keywords
+                                            val keywordsList = mutableListOf(KeywordPhoto())
+                                            val keywords = keywordPhotoRepository.findAllByMetadataId(metadataId)
+                                            if (keywords != null) {
+                                                for (keywordObj in keywords) {
+                                                    if (keywordObj != null) {
+                                                        keywordObj.setMetadataId(metadataCopy.getId())
+                                                        keywordsList.add(keywordObj)
+                                                    }
+                                                }
+                                            }
+                                            if (keywordsList.size > 0) {
+                                                keywordPhotoRepository.saveAll(keywordsList)
+                                            }
+                                            logger.log(
+                                                Level.INFO,
+                                                "Updated keywords records for: " + metadataCopy.getId()
+                                            )
+
+                                            // Transfer from album
+                                            val albumsList = mutableListOf(AlbumPhoto())
+                                            val albums = albumPhotoRepository.findAllByMetadataId(metadataId)
+                                            if (albums != null) {
+                                                for (album in albums) {
+                                                    if (album != null) {
+                                                        album.setMetadataId(metadataCopy.getId())
+                                                        albumsList.add(album)
+                                                    }
+                                                }
+                                            }
+                                            if (albumsList.size > 0) {
+                                                albumPhotoRepository.saveAll(albumsList)
+                                            }
+                                            logger.log(Level.INFO, "Updated album records for: " + metadataCopy.getId())
+
+                                            // Transfer tagged people
+                                            val recognitionLabelPhotosList = mutableListOf(RecognitionLabelPhoto())
+                                            val recognitionLabelPhotos =
+                                                recognitionLabelPhotoRepository?.findByMetadataId(metadataId)
+                                            if (recognitionLabelPhotos != null) {
+                                                for (recognitionLabelPhoto in recognitionLabelPhotos) {
+                                                    recognitionLabelPhoto.setMetadataId(metadataCopy.getId())
+                                                    recognitionLabelPhotosList.add(recognitionLabelPhoto)
+                                                }
+                                            }
+                                            if (recognitionLabelPhotosList.size > 0) {
+                                                recognitionLabelPhotoRepository?.saveAll(recognitionLabelPhotosList)
+                                            }
+                                            logger.log(Level.INFO, "Updated tagged people records for: " + metadataCopy.getId())
+
                                             metadataRepository.delete(metadataToDelete)
                                             logger.log(
                                                 Level.WARNING,

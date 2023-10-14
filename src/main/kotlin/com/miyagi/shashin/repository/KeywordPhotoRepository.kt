@@ -12,4 +12,5 @@ interface KeywordPhotoRepository : CrudRepository<KeywordPhoto?, Int?> {
     fun countByKeywordIdAndMetadataId(keywordId: Int, metadataId: String): Int
     fun countByKeywordId(keywordId: Int): Int
     fun deleteAllByMetadataId(metadataId: String): Long?
+    fun findAllByMetadataId(metadataId: String): MutableIterable<KeywordPhoto?>?
 }
