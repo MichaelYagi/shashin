@@ -830,11 +830,15 @@ class TimelineController: BaseController() {
                                 metadata = imageProcessing.createThumbnails()!!
 
                                 if (metadata.getId().isNotEmpty()) {
+                                    metadataRepository.save(metadata)
 
                                     if (metadata.getId() != metadataId) {
-                                        metadata.setId(metadataId)
+                                        val metadataToDelete = metadataRepository.findByMetadataId(metadataId)
+                                        if (metadataToDelete != null) {
+                                            metadataRepository.delete(metadataToDelete)
+                                        }
                                     }
-                                    metadataRepository.save(metadata)
+
                                     retMap[metadataId] = metadata
                                 } else {
                                     logger.log(
