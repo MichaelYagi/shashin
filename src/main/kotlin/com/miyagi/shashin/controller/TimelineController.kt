@@ -787,52 +787,53 @@ class TimelineController: BaseController() {
                     val metadataObj = metadataRepository.findById(metadataId)
 
                     if (metadataObj.isPresent) {
-                        var metadata = metadataObj.get()
+                        val metadata = metadataObj.get()
+
+                        val stringMetadata = Gson().toJson(metadata, Metadata::class.java)
+                        var metadataCopy = Gson().fromJson(stringMetadata, Metadata::class.java)
 
                         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
                         val sidecarDir = rootPath + relativeSidecarDir
 
-                        val exifFile = FileUtils.getExifFile(metadata.getFolder()!!, metadata.getFileName()!!, relativeSidecarDir!!)
+                        val exifFile = FileUtils.getExifFile(metadataCopy.getFolder()!!, metadataCopy.getFileName()!!, relativeSidecarDir!!)
 
                         if (exifFile != null && exifFile.exists()) {
                             if (exifFile.delete()) {
                                 // Re-process metadata
                                 val metadataProcessing = MetadataProcessing(
                                     apiVersion!!,
-                                    File(metadata.getPath()),
+                                    File(metadataCopy.getPath()),
                                     sidecarDir,
-                                    metadata,
+                                    metadataCopy,
                                     geocodeUrl!!
                                 )
-                                metadata = metadataProcessing.populateMetadata()
+                                metadataCopy = metadataProcessing.populateMetadata()
 
                                 // Re-process thumbnails
-                                val centeredTnFile = File(metadata.getThumbnailPathCentered())
+                                val centeredTnFile = File(metadataCopy.getThumbnailPathCentered())
                                 if (centeredTnFile.exists()) {
                                     centeredTnFile.delete()
                                 }
-                                val mapTnFile = File(metadata.getMapMarkerPath())
+                                val mapTnFile = File(metadataCopy.getMapMarkerPath())
                                 if (mapTnFile.exists()) {
                                     mapTnFile.delete()
                                 }
-                                val smallTnFile = File(metadata.getThumbnailPathSmall())
+                                val smallTnFile = File(metadataCopy.getThumbnailPathSmall())
                                 if (smallTnFile.exists()) {
                                     smallTnFile.delete()
                                 }
-                                if (metadata.getType()!!.contains("video")) {
+                                if (metadataCopy.getType()!!.contains("video")) {
                                     val originalTnFile =
-                                        File(metadata.getThumbnailPathCentered()?.replace("_centered.", "_original."))
+                                        File(metadataCopy.getThumbnailPathCentered()?.replace("_centered.", "_original."))
                                     if (originalTnFile.exists()) {
                                         originalTnFile.delete()
                                     }
                                 }
 
-                                val imageProcessing = ImageProcessing(apiVersion, File(metadata.getPath()), sidecarDir, metadata)
-                                metadata = imageProcessing.createThumbnails()!!
+                                val imageProcessing = ImageProcessing(apiVersion, File(metadataCopy.getPath()), sidecarDir, metadataCopy)
+                                metadataCopy = imageProcessing.createThumbnails()!!
 
-                                if (metadata.getId().isNotEmpty()) {
-                                    val stringMetadata = Gson().toJson(metadata, Metadata::class.java)
-                                    val metadataCopy = Gson().fromJson(stringMetadata, Metadata::class.java)
+                                if (metadataCopy.getId().isNotEmpty()) {
                                     metadataRepository.save(metadataCopy)
 
                                     if (metadataCopy.getId() != metadataId) {
