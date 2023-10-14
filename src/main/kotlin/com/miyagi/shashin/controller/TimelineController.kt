@@ -917,14 +917,20 @@ class TimelineController: BaseController() {
                                             logger.log(Level.INFO, "Updated album records for: " + metadataCopy.getId())
 
                                             // Transfer tagged people
+                                            val recognitionLabelPhotosList = mutableListOf(RecognitionLabelPhoto())
                                             val recognitionLabelPhotos =
                                                 recognitionLabelPhotoRepository?.findByMetadataId(metadataId)
                                             if (recognitionLabelPhotos != null) {
                                                 for (recognitionLabelPhoto in recognitionLabelPhotos) {
-                                                    recognitionLabelPhotoRepository?.delete(recognitionLabelPhoto)
+                                                    recognitionLabelPhoto.setConfidence(recognitionLabelPhoto.getConfidence())
+                                                    recognitionLabelPhoto.setMetadataId(metadataCopy.getId())
+                                                    recognitionLabelPhotosList.add(recognitionLabelPhoto)
                                                 }
                                             }
-                                            logger.log(Level.INFO, "Deleted tagged people records for: " + metadataCopy.getId())
+                                            if (recognitionLabelPhotosList.size > 0) {
+                                                recognitionLabelPhotoRepository?.saveAll(recognitionLabelPhotosList)
+                                            }
+                                            logger.log(Level.INFO, "Updated tagged people records for: " + metadataCopy.getId())
 
                                             metadataRepository.delete(metadataToDelete)
                                             logger.log(
