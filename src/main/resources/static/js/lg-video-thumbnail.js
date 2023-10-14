@@ -91,10 +91,33 @@
                         let id = "";
                         try {
                             id = $($(".thumbnail-bl")[this.core.index]).children('a').attr("tag");
-                        } catch (e) {}
+                        } catch (e) {
+                            if (shashin) {
+                                shashin.showToastMessage("Could not capture screenshot", "Could not capture screenshot. " + e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+                            }
+                        }
 
-                        if(typeof fn === 'function' && id.length > 0) {
+                        if (typeof fn === 'function' && id.length > 0) {
                             fn(id);
+                        }
+                    } else if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("tag")) {
+                        //console.log($($(".thumbnail-centered")[this.core.index]).children('a').attr("tag"))
+                        const fn = this.settings.videoThumbnailFunc;
+                        let id = "";
+                        try {
+                            id = $($(".thumbnail-centered")[this.core.index]).children('a').attr("tag");
+                        } catch (e) {
+                            if (shashin) {
+                                shashin.showToastMessage("Could not capture screenshot", "Could not capture screenshot. " + e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+                            }
+                        }
+
+                        if (typeof fn === 'function' && id.length > 0) {
+                            fn(id);
+                        }
+                    } else {
+                        if (shashin) {
+                            shashin.showToastMessage("Could not capture screenshot", "Could not capture screenshot. Tag or function not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
                         }
                     }
                 });
