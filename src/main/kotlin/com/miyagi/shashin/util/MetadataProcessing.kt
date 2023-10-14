@@ -144,7 +144,7 @@ class MetadataProcessing() {
                                     }
                                 }
                             }
-                            "Date/Time", "Creation Time", "Date/Time Digitized", "Date/Time Original" -> {
+                            "Creation Date", "Date/Time", "Creation Time", "Date/Time Digitized", "Date/Time Original" -> {
                                 // Sometimes created time is incorrect for mp4 files
                                 if (mp4VideoCreationTime) {
                                     continue
@@ -179,7 +179,14 @@ class MetadataProcessing() {
                                                     SimpleDateFormat("EEE. MMM. dd HH:mm:ss XXX yyyy", Locale.ENGLISH)
                                                 date = sourceDateFormat.parse(tag.description)
                                             } catch (e: Exception) {
-                                                // Do nothing
+                                                try {
+                                                    // Sun. Jul. 25 14:34:09 -07:00 2021
+                                                    val sourceDateFormat =
+                                                        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.ENGLISH)
+                                                    date = sourceDateFormat.parse(tag.description)
+                                                } catch (e: Exception) {
+                                                    // Do nothing
+                                                }
                                             }
                                         }
                                     }
