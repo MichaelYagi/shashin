@@ -940,7 +940,7 @@ class TimelineController: BaseController() {
                                         }
                                     }
 
-                                    retMap[metadataId] = metadata
+                                    retMap[metadataCopy.getId()] = metadataCopy
                                 } else {
                                     logger.log(
                                         Level.WARNING,

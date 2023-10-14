@@ -229,6 +229,12 @@ class Util {
                 } else if (metadataIdArray.length === 1 && metadataKeys.length === 1 && metadataIdArray[0] === metadataKeys[0]) {
                     // If single value, update fields in timeline view
                     const rescannedMetadata = metadataMap[metadataKeys[0]];
+                    let takenDateUpdated = false;
+
+                    if (rescannedMetadata["id"] !== metadataIdArray[0]["id"]) {
+                        takenDateUpdated = true;
+                        Util.setMetadataLocalStorage();
+                    }
 
                     $("#title").val("");
                     if (rescannedMetadata["title"] !== null) {
@@ -265,7 +271,6 @@ class Util {
                         $("#dayTaken").val(rescannedMetadata["day"]);
                         Util.setMetadataLocalStorage();
                     }
-                    let takenDateUpdated = false;
                     if ($.isEmptyObject(originalMetadata) === false &&
                         (parseInt(originalMetadata.year) !== parseInt(rescannedMetadata.year) ||
                         parseInt(originalMetadata.month) !== parseInt(rescannedMetadata.month) ||
@@ -290,7 +295,7 @@ class Util {
                         $("#mapTabLink").hide();
                     }
                     if (takenDateUpdated === true) {
-                        const dateGalleryRemoved = shashin.removeThumbnail(rescannedMetadata.id);
+                        const dateGalleryRemoved = shashin.removeThumbnail((rescannedMetadata["id"] !== metadataIdArray[0]["id"]) ? metadataIdArray[0]["id"] : rescannedMetadata.id);
                         timelineSettings.refreshTimeline($("#mediaTypeFilter").val()).then(function (data) {
                             // If a date section was removed refresh the timeline
                             if (dateGalleryRemoved === true) {
