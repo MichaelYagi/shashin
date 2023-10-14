@@ -31,23 +31,28 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
         // Check rotation
         var rotation = 0
+        val fileMetadata = ImageMetadataReader.readMetadata(file)
+        var jpegImageWidth = false
+        var jpegImageHeight = false
+        var rotationFromExif = false
+        var originalPixelWidth: Int? = null
+        var originalPixelHeight: Int? = null
         try {
-            val fileMetadata = ImageMetadataReader.readMetadata(file)
-            var jpegImageWidth = false
-            var jpegImageHeight = false
             for (directory in fileMetadata.directories) {
                 for (tag in directory.tags) {
                     when (tag.tagName) {
                         "Orientation", "Rotation" -> {
-                            if ((tag.description.contains("Rotate") && ((!jpegImageHeight && !jpegImageWidth) || directory.name == "Exif IFD0")) || directory.name == "MP4") {
+                            if ((tag.description.contains("Rotate") && ((!jpegImageHeight && !jpegImageWidth) || directory.name == "Exif IFD0")) || directory.name == "MP4" || directory.name == "QuickTime") {
                                 val digit = tag.description.filter { it.isDigit() }
-
                                 if (TextUtils.isInteger(digit)) {
                                     rotation = digit.toInt()
+                                    rotationFromExif = true
                                 }
                             }
                         }
                         "Exif Image Height", "Height", "Image Height" -> {
+                            val heightValue = tag.description.filter { it.isDigit() }
+
                             if (jpegImageHeight) {
                                 continue
                             }
@@ -55,14 +60,32 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                             if (directory.name == "JPEG" && tag.tagName == "Image Height") {
                                 jpegImageHeight = true
                             }
+
+                            if (jpegImageHeight) {
+                                continue
+                            }
+
+                            if (directory.name == "JPEG" && tag.tagName == "Image Height") {
+                                jpegImageHeight = true
+                            }
+
+                            if ((originalPixelHeight == null && heightValue != "")  || (originalPixelHeight != null && heightValue.toInt() > originalPixelHeight)) {
+                                originalPixelHeight = heightValue.toInt()
+                            }
                         }
                         "Exif Image Width", "Width", "Image Width" -> {
+                            val widthValue = tag.description.filter { it.isDigit() }
+
                             if (jpegImageWidth) {
                                 continue
                             }
 
                             if (directory.name == "JPEG" && tag.tagName == "Image Width") {
                                 jpegImageWidth = true
+                            }
+
+                            if ((originalPixelWidth == null && widthValue != "") || (originalPixelWidth != null && widthValue.toInt() > originalPixelWidth)) {
+                                originalPixelWidth = widthValue.toInt()
                             }
                         }
                     }
@@ -106,12 +129,24 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             }
         } else if (supportedVideoFormats.contains(file.extension.lowercase())) {
             // Grab screen shot
-            img = grabScreenshot(file)
-            if (img != null && _metadataObj?.getOriginalImageWidth() == null && _metadataObj?.getOriginalImageHeight() == null) {
-                _metadataObj?.setOriginalImageWidth(img.width)
-                _metadataObj?.setOriginalImageHeight(img.height)
-            }
+            img = getVideoScreenshot(file)
 //            _metadataObj?.setVideoUrl("/api/$apiVersion/original/video$fileRootDir/" + file.name)
+        }
+
+        if (supportedVideoFormats.contains(file.extension.lowercase()) && !rotationFromExif && rotation == 0) {
+            rotation = getVideoRotation(file)?.toInt() ?: 0
+        }
+
+        if (img != null &&
+            _metadataObj?.getOriginalImageWidth() == null && _metadataObj?.getOriginalImageHeight() == null &&
+            originalPixelHeight != null && originalPixelWidth != null) {
+            if (rotation == 90 || rotation == 270 || rotation == -90 || rotation == -270) {
+                _metadataObj?.setOriginalImageWidth(originalPixelHeight)
+                _metadataObj?.setOriginalImageHeight(originalPixelWidth)
+            } else {
+                _metadataObj?.setOriginalImageWidth(originalPixelWidth)
+                _metadataObj?.setOriginalImageHeight(originalPixelHeight)
+            }
         }
 
         // Create thumbnails
@@ -238,7 +273,26 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         return _metadataObj
     }
 
-    private fun grabScreenshot(file: File): BufferedImage? {
+    private fun getVideoRotation(file: File): Double? {
+        try {
+            val frameGrabber = FFmpegFrameGrabber(file.path)
+            frameGrabber.start()
+
+            val rotationStr = frameGrabber.getVideoMetadata("rotate")
+            frameGrabber.stop()
+
+            if (!rotationStr.isNullOrBlank()) {
+                return rotationStr.toDouble()
+            }
+        } catch (e: IOException) {
+            logger.log(Level.WARNING, "Could not get rotation for video " + file.name + ": " + e.message)
+            return null
+        }
+
+        return null
+    }
+    
+    private fun getVideoScreenshot(file: File): BufferedImage? {
         try {
             val frameGrabber = FFmpegFrameGrabber(file.path)
             frameGrabber.start()

@@ -136,7 +136,7 @@ class MetadataProcessing() {
 
                         when (tag.tagName) {
                             "Orientation", "Rotation" -> {
-                                if ((tag.description.contains("Rotate") && ((!jpegImageHeight && !jpegImageWidth) || directory.name == "Exif IFD0")) || directory.name == "MP4") {
+                                if ((tag.description.contains("Rotate") && ((!jpegImageHeight && !jpegImageWidth) || directory.name == "Exif IFD0")) || directory.name == "MP4" || directory.name == "QuickTime") {
                                     val digit = tag.description.filter { it.isDigit() }
 
                                     if (TextUtils.isInteger(digit)) {
