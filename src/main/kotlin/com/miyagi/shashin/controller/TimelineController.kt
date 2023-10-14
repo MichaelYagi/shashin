@@ -922,8 +922,12 @@ class TimelineController: BaseController() {
                                                 recognitionLabelPhotoRepository?.findByMetadataId(metadataId)
                                             if (recognitionLabelPhotos != null) {
                                                 for (recognitionLabelPhoto in recognitionLabelPhotos) {
-                                                    recognitionLabelPhoto.setMetadataId(metadataCopy.getId())
-                                                    recognitionLabelPhotosList.add(recognitionLabelPhoto)
+                                                    if (recognitionLabelPhoto.getConfidence() == null) {
+                                                        recognitionLabelPhotoRepository?.delete(recognitionLabelPhoto)
+                                                    } else {
+                                                        recognitionLabelPhoto.setMetadataId(metadataCopy.getId())
+                                                        recognitionLabelPhotosList.add(recognitionLabelPhoto)
+                                                    }
                                                 }
                                             }
                                             if (recognitionLabelPhotosList.size > 0) {
