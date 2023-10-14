@@ -917,23 +917,14 @@ class TimelineController: BaseController() {
                                             logger.log(Level.INFO, "Updated album records for: " + metadataCopy.getId())
 
                                             // Transfer tagged people
-                                            val recognitionLabelPhotosList = mutableListOf(RecognitionLabelPhoto())
                                             val recognitionLabelPhotos =
                                                 recognitionLabelPhotoRepository?.findByMetadataId(metadataId)
                                             if (recognitionLabelPhotos != null) {
                                                 for (recognitionLabelPhoto in recognitionLabelPhotos) {
-                                                    if (recognitionLabelPhoto.getConfidence() == null) {
-                                                        recognitionLabelPhotoRepository?.delete(recognitionLabelPhoto)
-                                                    } else {
-                                                        recognitionLabelPhoto.setMetadataId(metadataCopy.getId())
-                                                        recognitionLabelPhotosList.add(recognitionLabelPhoto)
-                                                    }
+                                                    recognitionLabelPhotoRepository?.delete(recognitionLabelPhoto)
                                                 }
                                             }
-                                            if (recognitionLabelPhotosList.size > 0) {
-                                                recognitionLabelPhotoRepository?.saveAll(recognitionLabelPhotosList)
-                                            }
-                                            logger.log(Level.INFO, "Updated tagged people records for: " + metadataCopy.getId())
+                                            logger.log(Level.INFO, "Deleted tagged people records for: " + metadataCopy.getId())
 
                                             metadataRepository.delete(metadataToDelete)
                                             logger.log(
