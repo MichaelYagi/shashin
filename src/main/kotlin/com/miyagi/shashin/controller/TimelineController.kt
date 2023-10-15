@@ -834,7 +834,7 @@ class TimelineController: BaseController() {
                                 val imageProcessing = ImageProcessing(apiVersion, File(metadataCopy.getPath()), sidecarDir, metadataCopy)
                                 metadataCopy = imageProcessing.createThumbnails()!!
 
-                                if (metadataCopy.getId().isNotEmpty()) {
+                                if (metadataCopy.getId().isNotEmpty() && metadataCopy.getThumbnailSmallWidth() != null && metadataCopy.getThumbnailSmallHeight() != null && metadataCopy.getThumbnailUrlSmall() != null) {
                                     metadataRepository.save(metadataCopy)
 
                                     // Something was updated that changed the UUID, tradelete the old record

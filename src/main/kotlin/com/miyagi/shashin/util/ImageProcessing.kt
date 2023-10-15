@@ -31,7 +31,17 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
         // Check rotation
         var rotation = 0
-        val fileMetadata = ImageMetadataReader.readMetadata(file)
+        var fileMetadata: com.drew.metadata.Metadata
+        try {
+            fileMetadata = ImageMetadataReader.readMetadata(file)
+        } catch (e: Exception) {
+            logger.log(
+                Level.WARNING,
+                "Error reading Metadata for " + file.name + ": " + e.message
+            )
+
+            return _metadataObj
+        }
         var jpegImageWidth = false
         var jpegImageHeight = false
         var rotationFromExif = false
