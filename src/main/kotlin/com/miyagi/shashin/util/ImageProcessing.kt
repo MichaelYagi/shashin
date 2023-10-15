@@ -36,7 +36,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             fileMetadata = ImageMetadataReader.readMetadata(file)
         } catch (e: Exception) {
             logger.log(
-                Level.WARNING,
+                Level.SEVERE,
                 "Error reading Metadata for " + file.name + ": " + e.message
             )
 
