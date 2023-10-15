@@ -22,8 +22,6 @@
 
         let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery', lgConfig, '.mediaLink');
 
-        shashin.setVideoWidth($("#infinite-scroll-gallery")[0]);
-
         async function loadNextPage() {
             if (albumSettings.rendering === false) {
                 // console.log(albumSettings.page)
@@ -33,8 +31,6 @@
                     mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
                     Util.reinitLightGalleryInstance();
                 });
-
-                shashin.setVideoWidth($("#infinite-scroll-gallery")[0]);
             }
         }
 

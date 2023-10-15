@@ -1,3 +1,8 @@
+/**
+ * MY - Added Dec 6 2021
+ * - Created this module to cast media using castjs
+ */
+
 ! function(e, l) {
     "object" == typeof exports && "undefined" != typeof module ? module.exports = l() : "function" == typeof define && define.amd ? define(l) : (e = "undefined" != typeof globalThis ? globalThis : e || self).lgCastMedia = l()
 }(this, (function() {
