@@ -24,9 +24,6 @@ class Favorites {
 
     async init() {
         shashin.pageLoader(await this.loadNextPage.bind(this), ".appendMetadataPhotos", this.metadataList);
-
-        shashin.setVideoWidth($("#infinite-scroll-gallery")[0]);
-
         shashin.mouseMoveListener();
     }
 
@@ -38,7 +35,6 @@ class Favorites {
                 this.page++;
                 this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
                 Util.reinitLightGalleryInstance();
-                shashin.setVideoWidth($("#infinite-scroll-gallery")[0]);
             }.bind(this));
         }
     }

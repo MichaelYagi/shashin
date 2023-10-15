@@ -1,3 +1,8 @@
+/**
+ * MY - Added Oct 1 2023
+ * - Created this module to capture video thumbnails
+ */
+
 ! function(e, l) {
     "object" == typeof exports && "undefined" != typeof module ? module.exports = l() : "function" == typeof define && define.amd ? define(l) : (e = "undefined" != typeof globalThis ? globalThis : e || self).lgVideoThumbnail = l()
 }(this, (function() {

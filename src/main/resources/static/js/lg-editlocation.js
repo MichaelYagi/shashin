@@ -1,3 +1,8 @@
+/**
+ * MY - Added Sept 13 2021
+ * - Created this module to edit lat/lng location
+ */
+
 ! function(e, l) {
     "object" == typeof exports && "undefined" != typeof module ? module.exports = l() : "function" == typeof define && define.amd ? define(l) : (e = "undefined" != typeof globalThis ? globalThis : e || self).lgEditLocation = l()
 }(this, (function() {

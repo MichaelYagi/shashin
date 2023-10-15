@@ -25,7 +25,6 @@ class Folder {
 
     async init() {
         shashin.pageLoader(await this.loadNextPage.bind(this), ".appendFolderPhotos", this.metadataList);
-        shashin.setVideoWidth($("#scroll-gallery")[0]);
         shashin.mouseMoveListener();
     }
 
@@ -37,7 +36,6 @@ class Folder {
                 this.page++;
                 this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
                 Util.reinitLightGalleryInstance();
-                shashin.setVideoWidth($("#scroll-gallery")[0]);
             }.bind(this));
         }
     }
