@@ -11,6 +11,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Full screen fixes and enhancements
+
 ## [2.3.0] - 2023-10-04
 ### Added
 
