@@ -14,15 +14,15 @@
                 <ul class="nav nav-tabs">
                     <th:block th:if="${authority == 'ROLE_ADMIN' and activePage != 'trash'}">
                     <li class="nav-item">
-                        <a class="nav-link show active" data-bs-toggle="tab" id="generalTabLink" href="#generalTab">General</a>
+                        <a class="nav-link show active" data-bs-toggle="tab" id="generalTabLink" href="#generalTab">Update</a>
                     </li>
                     </th:block>
                     <li class="nav-item">
-                        <a th:class="'nav-link'+${(authority == 'ROLE_USER' or activePage == 'trash') ? ' show active':''}" data-bs-toggle="tab" id="detailsTabLink" href="#detailsTab">Details</a>
+                        <a th:class="'nav-link'+${(authority == 'ROLE_USER' or activePage == 'trash') ? ' show active':''}" data-bs-toggle="tab" id="detailsTabLink" href="#detailsTab">Info</a>
                     </li>
                     <th:block th:if="${authority == 'ROLE_ADMIN'}">
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" id="exifTabLink" href="#exifTab">EXIF data</a>
+                        <a class="nav-link" data-bs-toggle="tab" id="exifTabLink" href="#exifTab">EXIF</a>
                     </li>
                     </th:block>
                     <li class="nav-item">
