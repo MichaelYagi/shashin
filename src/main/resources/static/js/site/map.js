@@ -399,20 +399,25 @@ async function showMap(mapdata) {
 
         const features = feature.get('features');
         const size = features.length;
-        const thisStyle = new ol.style.Style({
+
+        let style = {
             image: new ol.style.Circle({
                 radius: feature.get('radius'),
                 fill: new ol.style.Fill({
                     color: [0, 77, 255, Math.min(0.8, 0.4 + size / maxFeatureCount)],
                 }),
-            }),
-            text: new ol.style.Text({
+            })
+        };
+        if (size > 2) {
+            style["text"] = new ol.style.Text({
                 text: size.toString(),
                 fill: textFill,
                 stroke: textStroke,
                 scale: 1.5
-            }),
-        });
+            });
+        }
+
+        const thisStyle = new ol.style.Style(style);
 
         if (showMarkersCheckbox.prop("checked") === true) {
             if (size > 1) {
@@ -771,6 +776,8 @@ async function showMap(mapdata) {
         endDateField.val("");
         videoOnlyCheckbox.prop("checked", false);
         showMarkersCheckbox.prop("checked", false);
+
+        startDateField.val(initialStartDate);
 
         setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
     });
