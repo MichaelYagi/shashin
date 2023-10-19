@@ -33,7 +33,8 @@ class Trash {
                 // console.log(additionalMediaContentList)
                 this.page++;
                 this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
-                Util.reinitLightGalleryInstance();
+                // Reinit gallery -- removing, major performance hit when calling this
+                //Util.reinitLightGalleryInstance();
             }.bind(this));
         }
     }
