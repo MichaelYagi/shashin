@@ -29,37 +29,37 @@
             var e = "";
 
             if (this.settings.videoThumbnail) {
-                e = '<button type="button" aria-label="Capture Thumbnail" title="Capture Thumbnail" class="bi-bounding-box-circles lg-icon" style="font-size: 1rem;display: none"></button>',
+                e = '<button type="button" aria-label="Capture Thumbnail" title="Capture Thumbnail" class="bi-lightning lg-icon" style="font-size: 1rem;display: none"></button>',
                     this.core.$toolbar.append(e),
                     this.videoThumbnail()
             }
 
             this.core.LGel.on('lgHasVideo', (event) => {
                 // Video thumbnail icon
-                $(".bi-bounding-box-circles.lg-icon").css("display", "none");
+                $(".bi-lightning.lg-icon").css("display", "none");
 
                 if (event.detail.hasPoster === false ||
                     ((this.settings.hasOwnProperty("autoplayFirstVideo") && this.settings.autoplayFirstVideo === true) &&
                     (this.settings.hasOwnProperty("autoplayVideoOnSlide") && this.settings.autoplayVideoOnSlide === true))
                 ) {
-                    $(".bi-bounding-box-circles.lg-icon").css("display", "block");
+                    $(".bi-lightning.lg-icon").css("display", "block");
                 } else if (event.detail.hasPoster === true) {
                     this.core.LGel.on('lgPosterClick', () => {
-                        $(".bi-bounding-box-circles.lg-icon").css("display", "block");
+                        $(".bi-lightning.lg-icon").css("display", "block");
                     });
                 }
             });
 
             this.core.LGel.on('lgBeforeOpen', (e) => {
-                $(".bi-bounding-box-circles.lg-icon").css("display", "none");
+                $(".bi-lightning.lg-icon").css("display", "none");
             });
 
             this.core.LGel.on('lgAfterClose', () => {
-                $(".bi-bounding-box-circles.lg-icon").css("display", "none");
+                $(".bi-lightning.lg-icon").css("display", "none");
             });
 
             this.core.LGel.on('lgBeforeSlide', (e) => {
-                $(".bi-bounding-box-circles.lg-icon").css("display", "none");
+                $(".bi-lightning.lg-icon").css("display", "none");
 
                 // Show screenshot button when changing slides
                 if ($(".lg-outer").length > 0) {
@@ -74,7 +74,7 @@
                             if (lgItemEl.length > 0 && lgItemEl.children().find('video')[0] !== undefined) {
                                 const video = lgItemEl.children().find('video')[0];
                                 if (video.paused || video.ended || !!(video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2)) {
-                                    $(".bi-bounding-box-circles.lg-icon").css("display", "block");
+                                    $(".bi-lightning.lg-icon").css("display", "block");
                                 }
                             }
                         }
@@ -83,7 +83,7 @@
             });
 
             this.core.outer
-                .find('.bi-bounding-box-circles')
+                .find('.bi-lightning')
                 .first()
                 .on('click.lg', () => {
                     let currentDynamicEl = this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("func") ? this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
