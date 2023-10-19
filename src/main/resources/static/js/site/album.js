@@ -29,7 +29,8 @@
                     // console.log(additionalMediaContentList)
                     albumSettings.page++;
                     mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
-                    Util.reinitLightGalleryInstance();
+                    // Reinit gallery -- removing, major performance hit when calling this
+                    //Util.reinitLightGalleryInstance();
                 });
             }
         }
