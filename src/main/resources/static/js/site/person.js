@@ -90,8 +90,16 @@ class Person {
                 // console.log(additionalMediaContentList)
                 this.page++;
                 this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
-                // Reinit gallery -- removing, major performance hit when calling this
-                //Util.reinitLightGalleryInstance();
+                setTimeout(() => {
+                    for (let index in additionalMediaContentList) {
+                        const additionalMediaContent = additionalMediaContentList[index];
+                        if (additionalMediaContent.hasOwnProperty("video")) {
+                            // major performance hit when pages get longer
+                            Util.reinitLightGalleryInstance();
+                            break;
+                        }
+                    }
+                }, 0);
             }.bind(this));
         }
     }
