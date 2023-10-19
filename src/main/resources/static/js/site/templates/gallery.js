@@ -183,24 +183,24 @@ class GalleryTemplates {
         <div class="thumbnail-centered" id="tncentered${id}">
     
             ${($.inArray("isVideo", overlays) !== -1) ?
-            `
-            <a class="mediaLink" id="mediaLink${id}" data-download-url="${encodeURI(data.metadata.videoUrl)}/download" 
-                ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}
-                data-poster="${(data.metadata.thumbnailUrlOriginal === null || data.metadata.thumbnailUrlOriginal === "") ? data.metadata.thumbnailUrlSmall : data.metadata.thumbnailUrlOriginal}?v=${uuid}"
-                data-lg-size="${(data.metadata.originalImageWidth === null || data.metadata.originalImageWidth === "") ? `${data.metadata.thumbnailSmallWidth}-${data.metadata.thumbnailSmallHeight}` : `${data.metadata.originalImageWidth}-${data.metadata.originalImageHeight}`}"
-                data-video=\'{"source": [{"src":"${data.metadata.videoUrl}", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true, "autoplay": true}}\'>
-                <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>
-            </a>
-            `
-            :
-            `
-            <a class="mediaLink" id="mediaLink${id}" data-src="${data.metadata.thumbnailUrlOriginal}" href="${data.metadata.thumbnailUrlOriginal}"
-                data-download-url="${encodeURI(data.metadata.thumbnailUrlOriginal)}/download"
-                ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}>
-                <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
-            </a>
-            `
-        }
+                `
+                <a class="mediaLink" id="mediaLink${id}" data-download-url="${encodeURI(data.metadata.videoUrl)}/download" 
+                    ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}
+                    data-poster="${(data.metadata.thumbnailUrlOriginal === null || data.metadata.thumbnailUrlOriginal === "") ? data.metadata.thumbnailUrlSmall : data.metadata.thumbnailUrlOriginal}?v=${uuid}"
+                    data-lg-size="${(data.metadata.originalImageWidth === null || data.metadata.originalImageWidth === "") ? `${data.metadata.thumbnailSmallWidth}-${data.metadata.thumbnailSmallHeight}` : `${data.metadata.originalImageWidth}-${data.metadata.originalImageHeight}`}"
+                    data-video=\'{"source": [{"src":"${data.metadata.videoUrl}", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true, "autoplay": true}}\'>
+                    <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>
+                </a>
+                `
+                :
+                `
+                <a class="mediaLink" id="mediaLink${id}" data-src="${data.metadata.thumbnailUrlOriginal}" href="${data.metadata.thumbnailUrlOriginal}"
+                    data-download-url="${encodeURI(data.metadata.thumbnailUrlOriginal)}/download"
+                    ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}>
+                    <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
+                </a>
+                `
+            }
     
             <script type="text/javascript"${(shashin.nonce.length > 0 ? ` nonce="${shashin.nonce}"` : '')}>
                 $("#mediaLink${id}").on("click", function (e) {
