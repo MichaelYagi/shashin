@@ -27,39 +27,40 @@
         }
         return n.prototype.init = function() {
             var e = "";
+            var captureIcon = "bi-lightning";
 
             if (this.settings.videoThumbnail) {
-                e = '<button type="button" aria-label="Capture Thumbnail" title="Capture Thumbnail" class="bi-lightning lg-icon" style="font-size: 1rem;display: none"></button>',
+                e = '<button type="button" aria-label="Capture Thumbnail" title="Capture Thumbnail" class="'+captureIcon+' lg-icon" style="font-size: 1rem;display: none"></button>',
                     this.core.$toolbar.append(e),
                     this.videoThumbnail()
             }
 
             this.core.LGel.on('lgHasVideo', (event) => {
                 // Video thumbnail icon
-                $(".bi-lightning.lg-icon").css("display", "none");
+                $("."+captureIcon+".lg-icon").css("display", "none");
 
                 if (event.detail.hasPoster === false ||
                     ((this.settings.hasOwnProperty("autoplayFirstVideo") && this.settings.autoplayFirstVideo === true) &&
                     (this.settings.hasOwnProperty("autoplayVideoOnSlide") && this.settings.autoplayVideoOnSlide === true))
                 ) {
-                    $(".bi-lightning.lg-icon").css("display", "block");
+                    $("."+captureIcon+".lg-icon").css("display", "block");
                 } else if (event.detail.hasPoster === true) {
                     this.core.LGel.on('lgPosterClick', () => {
-                        $(".bi-lightning.lg-icon").css("display", "block");
+                        $("."+captureIcon+".lg-icon").css("display", "block");
                     });
                 }
             });
 
             this.core.LGel.on('lgBeforeOpen', (e) => {
-                $(".bi-lightning.lg-icon").css("display", "none");
+                $("."+captureIcon+".lg-icon").css("display", "none");
             });
 
             this.core.LGel.on('lgAfterClose', () => {
-                $(".bi-lightning.lg-icon").css("display", "none");
+                $("."+captureIcon+".lg-icon").css("display", "none");
             });
 
             this.core.LGel.on('lgBeforeSlide', (e) => {
-                $(".bi-lightning.lg-icon").css("display", "none");
+                $("."+captureIcon+".lg-icon").css("display", "none");
 
                 // Show screenshot button when changing slides
                 if ($(".lg-outer").length > 0) {
@@ -74,7 +75,7 @@
                             if (lgItemEl.length > 0 && lgItemEl.children().find('video')[0] !== undefined) {
                                 const video = lgItemEl.children().find('video')[0];
                                 if (video.paused || video.ended || !!(video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2)) {
-                                    $(".bi-lightning.lg-icon").css("display", "block");
+                                    $("."+captureIcon+".lg-icon").css("display", "block");
                                 }
                             }
                         }
@@ -83,7 +84,7 @@
             });
 
             this.core.outer
-                .find('.bi-lightning')
+                .find('.'+captureIcon)
                 .first()
                 .on('click.lg', () => {
                     let currentDynamicEl = this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("func") ? this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
