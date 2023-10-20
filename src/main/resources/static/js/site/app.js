@@ -1172,7 +1172,7 @@
 
     shashin.addToMetadataIdList = function (metadataId) {
         if ($("#multiSelectMetadataIds").length > 0) {
-            const metadataIdArray = shashin.getMetdataIdList();
+            const metadataIdArray = shashin.getMetadataIdList();
             if (metadataIdArray.indexOf(metadataId) === -1) {
                 metadataIdArray.push(metadataId);
                 $("#multiSelectMetadataIds").val(JSON.stringify(metadataIdArray));
@@ -1182,7 +1182,7 @@
 
     shashin.removeFromMetadataIdList = function (metadataId) {
         if ($("#multiSelectMetadataIds").length > 0) {
-            const metadataIdArray = shashin.getMetdataIdList();
+            const metadataIdArray = shashin.getMetadataIdList();
             const index = metadataIdArray.indexOf(metadataId);
             if (index > -1) {
                 metadataIdArray.splice(index, 1);
@@ -1191,7 +1191,7 @@
         }
     }
 
-    shashin.getMetdataIdList = function() {
+    shashin.getMetadataIdList = function() {
         if ($("#multiSelectMetadataIds").length > 0) {
             return JSON.parse($("#multiSelectMetadataIds").val());
         }
@@ -1211,8 +1211,8 @@
                 span.addClass('spinner-grow').removeClass('bi-download');
             }
 
-            let metadataIdList = shashin.getMetdataIdList();
-            if (shashin.getMetdataIdList().length === 0) {
+            let metadataIdList = shashin.getMetadataIdList();
+            if (shashin.getMetadataIdList().length === 0) {
                 $('.bi-circle-fill').each(function (i, obj) {
                     metadataIdList.push(obj.id.substring(6, obj.id.length));
                 });
@@ -1430,7 +1430,7 @@
     }
 
     shashin.imageHover = function (_this, metadataId) {
-        const metadataIdArray = shashin.getMetdataIdList();
+        const metadataIdArray = shashin.getMetadataIdList();
         const index = metadataIdArray.indexOf(metadataId);
 
         $(_this).css("opacity", 0.3);
@@ -1453,7 +1453,7 @@
         const opaque = 0.3
         const transparent = 1.0
 
-        let metadataIdArray = shashin.getMetdataIdList();
+        let metadataIdArray = shashin.getMetadataIdList();
         shashin.printMessageToConsole("shashin.setPhotoOverlays for "+metadata.id);
         shashin.printMessageToConsole(metadataIdArray);
         // Track already selected
@@ -1497,7 +1497,7 @@
                 shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
             }
 
-            metadataIdArray = shashin.getMetdataIdList();
+            metadataIdArray = shashin.getMetadataIdList();
 
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $("#appSearch").hide();
@@ -1532,7 +1532,7 @@
                 }
             }
 
-            const metadataList = shashin.getMetdataIdList();
+            const metadataList = shashin.getMetadataIdList();
             let timelineSelectCount = $('.bi-circle-fill').length;
             if (metadataList.length > 0) {
                 timelineSelectCount = metadataList.length;
@@ -1573,7 +1573,7 @@
                 }
             }
 
-            metadataIdArray = shashin.getMetdataIdList();
+            metadataIdArray = shashin.getMetadataIdList();
 
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $("#appSearch").hide();
@@ -1626,7 +1626,7 @@
                 shashin.imageHover(this, metadata.id);
             }
         }, function () {
-            metadataIdArray = shashin.getMetdataIdList();
+            metadataIdArray = shashin.getMetadataIdList();
             const index = metadataIdArray.indexOf(metadata.id);
 
             if ($("#tlicon" + metadata.id).attr("class") !== "bi-circle-fill" && index <= -1) {
@@ -1657,7 +1657,7 @@
             $('#currentmonth').val(metadata.month === null ? "" : metadata.month);
             $('#currentday').val(metadata.day === null ? "" : metadata.day);
             $('#currentfilename').val(metadata.fileName === null ? "" : metadata.fileName);
-            metadataIdArray = shashin.getMetdataIdList();
+            metadataIdArray = shashin.getMetadataIdList();
 
             let hoverColor = "white";
             if (shashin.darkMode === true) {
@@ -1689,7 +1689,7 @@
         });
 
         $("#tntl" + metadata.id).hover(function () {
-            metadataIdArray = shashin.getMetdataIdList();
+            metadataIdArray = shashin.getMetadataIdList();
             const index = metadataIdArray.indexOf(metadata.id);
             if ($("#tlicon" + metadata.id).attr("class") !== "bi-circle-fill" && index <= -1) {
                 $(this).show();
@@ -1719,7 +1719,7 @@
         });
 
         $("#tnbl" + metadata.id).hover(function () {
-            metadataIdArray = shashin.getMetdataIdList();
+            metadataIdArray = shashin.getMetadataIdList();
             $(this).show();
             $(this).siblings(".thumbnail-tl").show();
             $(this).siblings(".thumbnail-centered").show();
@@ -1742,7 +1742,7 @@
         });
 
         $("#tnbr" + metadata.id).hover(function () {
-            metadataIdArray = shashin.getMetdataIdList();
+            metadataIdArray = shashin.getMetadataIdList();
             $(this).show();
             $(this).siblings(".thumbnail-tl").show();
             $(this).siblings(".thumbnail-centered").show();
@@ -1765,7 +1765,7 @@
         });
 
         $("#tntr" + metadata.id).hover(function () {
-            metadataIdArray = shashin.getMetdataIdList();
+            metadataIdArray = shashin.getMetadataIdList();
             $(this).show();
             $(this).siblings(".thumbnail-tl").show();
             $(this).siblings(".thumbnail-centered").show();

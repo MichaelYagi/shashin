@@ -2,7 +2,7 @@ $("#appToolsBatchEdit").on("click", function(e) {
     e.preventDefault();
 
     let thumbnailList = "";
-    let metadataIdArray = shashin.getMetdataIdList();
+    let metadataIdArray = shashin.getMetadataIdList();
     let metadataFilenamesArray = shashin.getMetadataFilenamesList();
     let metadataThumbnailsArray = shashin.getMetadataThumbnailsList();
     for (let index in metadataThumbnailsArray) {
@@ -82,7 +82,7 @@ $("#appToolsAddAlbum").on("click", function(e) {
     if (thumbnailList !== "") {
         $("#editAlbumPhotosNamesModalLabel").html(thumbnailList);
     }
-    let metadataIdList = shashin.getMetdataIdList();
+    let metadataIdList = shashin.getMetadataIdList();
     $("#albumMetadataIds").val(JSON.stringify(metadataIdList));
     $("#propAddAlbum").modal('show');
 });
