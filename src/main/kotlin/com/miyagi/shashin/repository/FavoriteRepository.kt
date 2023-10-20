@@ -11,7 +11,7 @@ import javax.transaction.Transactional
 @Transactional
 @Repository
 interface FavoriteRepository : CrudRepository<Favorite?, Int?> {
-    fun findByMetadataIdAndUserId(metdataId: String?, userId: Int?): Favorite?
+    fun findByMetadataIdAndUserId(metadataId: String?, userId: Int?): Favorite?
     @Query("SELECT f.* FROM favorite f INNER JOIN metadata m on m.id = f.metadata_id WHERE f.user_id = :userId ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC LIMIT :offset, :limit", nativeQuery = true)
     fun findAllByUserIdAndOffsetAndLimit(@Param("userId") userId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Favorite?>?
     fun findAllByMetadataId(metadataId: String?): MutableIterable<Favorite?>?
