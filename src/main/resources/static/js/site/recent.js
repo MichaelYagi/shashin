@@ -42,7 +42,7 @@ class Recent {
                         break;
                     }
                 }
-            }, 150);
+            }, 2000);
         }, false);
     }
 

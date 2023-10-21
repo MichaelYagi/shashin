@@ -42,7 +42,7 @@ class Taken {
                         break;
                     }
                 }
-            }, 150);
+            }, 2000);
         }, false);
     }
 
