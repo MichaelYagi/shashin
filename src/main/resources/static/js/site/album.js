@@ -31,7 +31,7 @@
                     mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
 
                     if (albumSettings.eol) {
-                        setTimeout(() => {Util.reinitLightGalleryInstance({timeoutValue:0,mediaContentList:additionalMediaContentList,activePage:this.activePage});}, 0);
+                        setTimeout(() => {Util.reinitLightGalleryInstance({timeoutValue:0,mediaContentList:additionalMediaContentList,refreshContent:true});}, 0);
                     }
                 });
             }

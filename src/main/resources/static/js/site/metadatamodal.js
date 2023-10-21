@@ -352,10 +352,14 @@ $("#saveMetadata").on("click", async function (e) {
                 }
 
                 if (typeof Util !== "undefined" && dateGalleryRemoved === false && captionUpdated === true) {
+                    let refreshContent = true;
+                    if (activePage === "timeline") {
+                        refreshContent = false;
+                    }
                     // Refresh gallery if caption updated
                     const options = {
                         mediaContentList: mediaContentList,
-                        activePage: activePage
+                        refreshContent:refreshContent
                     }
                     Util.reinitLightGalleryInstance(options);
                 }
