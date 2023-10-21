@@ -29,32 +29,16 @@
                     // console.log(additionalMediaContentList)
                     albumSettings.page++;
                     mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
+
+                    if (albumSettings.eol) {
+                        setTimeout(() => {Util.reinitLightGalleryInstance({timeoutValue:0,mediaContentList:additionalMediaContentList,activePage:this.activePage});}, 0);
+                    }
                 });
             }
         }
 
         shashin.pageLoader(await loadNextPage, ".appendAlbumPhotos", albumMetadataList);
-
         shashin.mouseMoveListener();
-
-        let timer = null;
-        document.getElementById("container").addEventListener('scroll', function() {
-            if(timer !== null) {
-                clearTimeout(timer);
-            }
-            timer = setTimeout(function() {
-                // do something
-                let mediaContentList = shashin.getLightGallery().galleryItems;
-                for (let index in mediaContentList) {
-                    const mediaContent = mediaContentList[index];
-                    if (mediaContent.hasOwnProperty("video")) {
-                        // major performance hit when pages get longer
-                        Util.reinitLightGalleryInstance({timeoutValue:0});
-                        break;
-                    }
-                }
-            }, 2000);
-        }, false);
     }
 
     albumSettings.openAlbumModal = function (e,metadataId) {
