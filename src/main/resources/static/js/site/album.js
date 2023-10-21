@@ -29,16 +29,6 @@
                     // console.log(additionalMediaContentList)
                     albumSettings.page++;
                     mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
-                    setTimeout(() => {
-                        for (let index in additionalMediaContentList) {
-                            const additionalMediaContent = additionalMediaContentList[index];
-                            if (additionalMediaContent.hasOwnProperty("video")) {
-                                // major performance hit when pages get longer
-                                Util.reinitLightGalleryInstance();
-                                break;
-                            }
-                        }
-                    }, 0);
                 });
             }
         }
@@ -46,6 +36,25 @@
         shashin.pageLoader(await loadNextPage, ".appendAlbumPhotos", albumMetadataList);
 
         shashin.mouseMoveListener();
+
+        let timer = null;
+        document.getElementById("container").addEventListener('scroll', function() {
+            if(timer !== null) {
+                clearTimeout(timer);
+            }
+            timer = setTimeout(function() {
+                // do something
+                let mediaContentList = shashin.getLightGallery().galleryItems;
+                for (let index in mediaContentList) {
+                    const mediaContent = mediaContentList[index];
+                    if (mediaContent.hasOwnProperty("video")) {
+                        // major performance hit when pages get longer
+                        Util.reinitLightGalleryInstance({timeoutValue:0});
+                        break;
+                    }
+                }
+            }, 150);
+        }, false);
     }
 
     albumSettings.openAlbumModal = function (e,metadataId) {

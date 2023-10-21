@@ -26,6 +26,25 @@ class Folder {
     async init() {
         shashin.pageLoader(await this.loadNextPage.bind(this), ".appendFolderPhotos", this.metadataList);
         shashin.mouseMoveListener();
+
+        let timer = null;
+        document.getElementById("container").addEventListener('scroll', function() {
+            if(timer !== null) {
+                clearTimeout(timer);
+            }
+            timer = setTimeout(function() {
+                // do something
+                let mediaContentList = shashin.getLightGallery().galleryItems;
+                for (let index in mediaContentList) {
+                    const mediaContent = mediaContentList[index];
+                    if (mediaContent.hasOwnProperty("video")) {
+                        // major performance hit when pages get longer
+                        Util.reinitLightGalleryInstance({timeoutValue:0});
+                        break;
+                    }
+                }
+            }, 150);
+        }, false);
     }
 
     async loadNextPage() {
@@ -35,16 +54,6 @@ class Folder {
                 // console.log(additionalMediaContentList)
                 this.page++;
                 this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
-                setTimeout(() => {
-                    for (let index in additionalMediaContentList) {
-                        const additionalMediaContent = additionalMediaContentList[index];
-                        if (additionalMediaContent.hasOwnProperty("video")) {
-                            // major performance hit when pages get longer
-                            Util.reinitLightGalleryInstance();
-                            break;
-                        }
-                    }
-                }, 0);
             }.bind(this));
         }
     }

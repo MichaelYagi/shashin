@@ -649,28 +649,42 @@ class Util {
     }
 
     static reinitLightGalleryInstance(options) {
-        if (shashin && shashin.getLightGallery() !== null) {
+        let timeoutValue = 500;
+        if (options === undefined || options === null) {
+            options = {};
+        }
 
-            let mediaContentList = shashin.getLightGallery().galleryItems;
-            if (options !== undefined && options.hasOwnProperty("mediaContentList")) {
+        if (options.hasOwnProperty("timeoutValue")) {
+            timeoutValue = options["timeoutValue"];
+        }
+
+        if (shashin && shashin.getLightGallery() !== null) {
+            let mediaContentList = [];
+            if (options.hasOwnProperty("mediaContentList")) {
                 mediaContentList = options["mediaContentList"];
+            } else {
+                mediaContentList = shashin.getLightGallery().galleryItems;
             }
 
             const closeTimeout = shashin.getLightGallery().closeGallery(true);
             setTimeout(() => {
                 if (shashin.getLightGallery() !== null) {
-                    shashin.getLightGallery().destroyModules(true);
-                    shashin.getLightGallery().invalidateItems();
-                    $(window).off(`.lg.global${shashin.getLightGallery().lgId}`);
-                    shashin.getLightGallery().LGel.off('.lg');
-                    // https://github.com/sachinchoolur/lightGallery/blob/383d51852657ab44bb8697748c570cf110723f97/src/lightgallery.ts#L2396
-                    // Hack because lg.destroy() errors out
-                    // when photos appear slower than destroy called, then there's an error
-                    try {
-                        shashin.getLightGallery().$container.remove();
-                    } catch (e) {
-                        shashin.printMessageToConsole("Error removing lightGallery instance: "+e.message);
-                    }
+                    // if (options.hasOwnProperty("activePage") && options["activePage"] !== "timeline") {
+                        shashin.getLightGallery().destroy();
+                    // } else {
+                    //     shashin.getLightGallery().destroyModules(true);
+                    //     shashin.getLightGallery().invalidateItems();
+                    //     $(window).off(`.lg.global${shashin.getLightGallery().lgId}`);
+                    //     shashin.getLightGallery().LGel.off('.lg');
+                    //     // https://github.com/sachinchoolur/lightGallery/blob/383d51852657ab44bb8697748c570cf110723f97/src/lightgallery.ts#L2396
+                    //     // Hack because lg.destroy() errors out
+                    //     // when photos appear slower than destroy called, then there's an error
+                    //     try {
+                    //         shashin.getLightGallery().$container.remove();
+                    //     } catch (e) {
+                    //         shashin.printMessageToConsole("Error removing lightGallery instance: " + e.message);
+                    //     }
+                    // }
 
                     shashin.lg = null;
 
@@ -691,16 +705,14 @@ class Util {
                         }
                         shashin.setLightGallery(lgConfig);
 
-                        if (options !== undefined && options.hasOwnProperty("activePage") &&
-                            options["activePage"] !== "timeline" && mediaContentList.length > 0)
-                        {
+                        if (options.hasOwnProperty("activePage") && options["activePage"] !== "timeline" && mediaContentList.length > 0) {
                             shashin.getLightGallery().refresh(mediaContentList);
                         }
 
                         $(".bi-play-circle").css("visibility", "visible");
                         $(".bi-play-btn").css("visibility", "visible");
                         $(".mediaLink").bind('click');
-                    }, 500);
+                    }, timeoutValue);
                 }
             }, closeTimeout);
         }
