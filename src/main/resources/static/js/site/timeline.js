@@ -136,9 +136,13 @@
 
             timelineSettings.rescanElements();
 
-            setTimeout(() => {
-                Util.reinitLightGalleryInstance();
-            }, 500);
+            // setTimeout(() => {
+            //     Util.reinitLightGalleryInstance();
+            // }, 500);
+
+            if (shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null) {
+                shashin.getLightGallery().refresh();
+            }
         });
 
         // Scroll event handler
