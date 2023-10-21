@@ -37,7 +37,7 @@ class Recent {
                 this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
 
                 if (this.eol) {
-                    setTimeout(() => {Util.reinitLightGalleryInstance({timeoutValue:0,mediaContentList:additionalMediaContentList,activePage:this.activePage});}, 0);
+                    setTimeout(() => {Util.reinitLightGalleryInstance({timeoutValue:0,mediaContentList:additionalMediaContentList,refreshContent:true});}, 0);
                 }
             }.bind(this));
         }
