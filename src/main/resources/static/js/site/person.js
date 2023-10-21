@@ -44,7 +44,7 @@ class Person {
                         break;
                     }
                 }
-            }, 150);
+            }, 2000);
         }, false);
 
         $('#savePersonModal').on("click", async function (e) {

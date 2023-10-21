@@ -42,7 +42,7 @@ class Favorites {
                         break;
                     }
                 }
-            }, 150);
+            }, 2000);
         }, false);
     }
 

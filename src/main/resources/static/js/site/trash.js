@@ -40,7 +40,7 @@ class Trash {
                         break;
                     }
                 }
-            }, 150);
+            }, 2000);
         }, false);
     }
 

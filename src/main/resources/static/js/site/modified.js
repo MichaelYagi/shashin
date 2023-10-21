@@ -42,7 +42,7 @@ class Modified {
                         break;
                     }
                 }
-            }, 150);
+            }, 2000);
         }, false);
     }
 
