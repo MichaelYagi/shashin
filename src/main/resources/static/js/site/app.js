@@ -225,7 +225,7 @@
                 }
             };
             mediaContent.lgSize = metadata.originalImageWidth+"-"+metadata.originalImageHeight;
-            mediaContent.poster = (null === metadata.thumbnailUrlOriginal || "" === metadata.thumbnailUrlOriginal) ? metadata.thumbnailUrlSmall : metadata.thumbnailUrlOriginal;
+            mediaContent.poster = ((null === metadata.thumbnailUrlOriginal || "" === metadata.thumbnailUrlOriginal) ? metadata.thumbnailUrlSmall : metadata.thumbnailUrlOriginal) + "?v=" + Util.getMetadataLocalStorage();
             mediaContent.downloadUrl = encodeURI(metadata.videoUrl) + "/download";
         } else {
             mediaContent.src = metadata.thumbnailUrlOriginal;
