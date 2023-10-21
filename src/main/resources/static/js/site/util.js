@@ -689,8 +689,13 @@ class Util {
                     shashin.lg = null;
 
                     setTimeout(() => {
+                        let selector = ".mediaLink";
+                        if (options.hasOwnProperty("selector") && options["selector"] !== "") {
+                            selector = options["selector"];
+                        }
+
                         const lgConfig = {
-                            "selector":".mediaLink",
+                            "selector":selector,
                             plugins:[]
                         };
                         if (typeof lgMetadataDetail !== "undefined") {
@@ -703,9 +708,10 @@ class Util {
                             lgConfig["videoThumbnail"] = true;
                             lgConfig["videoThumbnailFunc"] = shashin.processVideoThumbnail;
                         }
+
                         shashin.setLightGallery(lgConfig);
 
-                        if (options.hasOwnProperty("activePage") && options["activePage"] !== "timeline" && mediaContentList.length > 0) {
+                        if (options.hasOwnProperty("activePage") && options["activePage"] !== "timeline" && mediaContentList.length > 0 && shashin.getLightGallery() !== null) {
                             shashin.getLightGallery().refresh(mediaContentList);
                         }
 

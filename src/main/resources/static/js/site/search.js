@@ -31,25 +31,6 @@ class Search {
     async init() {
         shashin.pageLoader(await this.loadNextPage.bind(this), ".appendSearchPhotos", this.metadataSearchList);
         shashin.mouseMoveListener();
-
-        let timer = null;
-        document.getElementById("container").addEventListener('scroll', function() {
-            if(timer !== null) {
-                clearTimeout(timer);
-            }
-            timer = setTimeout(function() {
-                // do something
-                let mediaContentList = shashin.getLightGallery().galleryItems;
-                for (let index in mediaContentList) {
-                    const mediaContent = mediaContentList[index];
-                    if (mediaContent.hasOwnProperty("video")) {
-                        // major performance hit when pages get longer
-                        Util.reinitLightGalleryInstance({timeoutValue:0});
-                        break;
-                    }
-                }
-            }, 2000);
-        }, false);
     }
 
     async loadNextPage() {
@@ -59,6 +40,10 @@ class Search {
                 // console.log(additionalMediaContentList)
                 this.page++;
                 this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+
+                if (this.eol) {
+                    setTimeout(() => {Util.reinitLightGalleryInstance({timeoutValue:0,mediaContentList:additionalMediaContentList,activePage:this.activePage});}, 0);
+                }
             }.bind(this));
         }
     }
