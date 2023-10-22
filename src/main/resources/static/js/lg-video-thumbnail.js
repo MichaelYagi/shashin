@@ -30,7 +30,8 @@
             var captureIcon = "bi-lightning";
 
             if (this.settings.videoThumbnail) {
-                e = '<button type="button" aria-label="Capture Thumbnail" title="Capture Thumbnail" class="'+captureIcon+' lg-icon" style="font-size: 1rem;display: none"></button>',
+                e = '<button type="button" aria-label="Capture Thumbnail" title="Capture Thumbnail" id="captureThumbnail" class="'+captureIcon+' lg-icon" style="font-size: 1rem;display: none"></button>' +
+                    '<div class="spinner-border spinner-border-sm float-end mt-3 me-3" role="status" id="captureThumbnailSpinner"></div>',
                     this.core.$toolbar.append(e),
                     this.videoThumbnail()
             }
@@ -88,6 +89,10 @@
                 .first()
                 .on('click.lg', () => {
                     let currentDynamicEl = this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("func") ? this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
+
+                    $("#captureThumbnail").hide();
+                    $("#captureThumbnailSpinner").show();
+
                     if (currentDynamicEl.hasOwnProperty("func")) {
                         $("#metadataId").val(currentDynamicEl.args);
                         currentDynamicEl.vtfunc(currentDynamicEl.args);
@@ -101,6 +106,8 @@
                             if (shashin) {
                                 shashin.showToastMessage("Could not capture screenshot", "Could not capture screenshot. " + e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
                             }
+                            $("#captureThumbnail").show();
+                            $("#captureThumbnailSpinner").hide();
                         }
 
                         if (typeof fn === 'function' && id.length > 0) {
@@ -109,6 +116,8 @@
                             if (shashin) {
                                 shashin.showToastMessage("Could not capture screenshot", "Could not capture screenshot. Tag or function not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
                             }
+                            $("#captureThumbnail").show();
+                            $("#captureThumbnailSpinner").hide();
                         }
                     } else if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("tag")) {
                         //console.log($($(".thumbnail-centered")[this.core.index]).children('a').attr("tag"))
@@ -120,6 +129,8 @@
                             if (shashin) {
                                 shashin.showToastMessage("Could not capture screenshot", "Could not capture screenshot. " + e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
                             }
+                            $("#captureThumbnail").show();
+                            $("#captureThumbnailSpinner").hide();
                         }
 
                         if (typeof fn === 'function' && id.length > 0) {
@@ -128,15 +139,21 @@
                             if (shashin) {
                                 shashin.showToastMessage("Could not capture screenshot", "Could not capture screenshot. Tag or function not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
                             }
+                            $("#captureThumbnail").show();
+                            $("#captureThumbnailSpinner").hide();
                         }
                     } else {
                         if (shashin) {
                             shashin.showToastMessage("Could not capture screenshot", "Could not capture screenshot. Tag or function not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
                         }
+                        $("#captureThumbnail").show();
+                        $("#captureThumbnailSpinner").hide();
                     }
                 });
         },
             n.prototype.videoThumbnail = function(e) {
+                $("#captureThumbnail").show();
+                $("#captureThumbnailSpinner").hide();
 
                 // Edit video thumbnail
                 return ""

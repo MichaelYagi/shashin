@@ -1071,12 +1071,16 @@
                             });
                             $(".lg-current").css("background-color", "transparent");
                         }
+                        $("#captureThumbnail").show();
+                        $("#captureThumbnailSpinner").hide();
                     });
                 } else {
                     shashin.showToastMessage("Could not update thumbnails", "Could not update thumbnails. Failed to capture image.", {
                         icon: "bi-exclamation-triangle",
                         iconColor: "#FF0000"
                     });
+                    $("#captureThumbnail").show();
+                    $("#captureThumbnailSpinner").hide();
                 }
             } else {
                 $(".lg-current").css("background-color", "transparent");
@@ -1084,6 +1088,8 @@
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000"
                 });
+                $("#captureThumbnail").show();
+                $("#captureThumbnailSpinner").hide();
             }
         });
     }
