@@ -314,6 +314,10 @@ class Util {
                 propMetadataModal._config.backdrop = true;
                 propMetadataModal._config.keyboard = true;
             }
+
+            if (shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null) {
+                shashin.getLightGallery().refresh();
+            }
         });
     }
 
