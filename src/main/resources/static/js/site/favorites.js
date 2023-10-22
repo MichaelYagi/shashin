@@ -63,8 +63,6 @@ class Favorites {
                         const mediaLinkLength = $(".mediaLink").length;
                         const appendClass = "appendMetadataPhotos";
 
-                        $('<span id="emptyContainer" style="display: block;height: 11705px;"></span>').insertBefore($("."+appendClass).last());
-
                         for (const index in metadataList) {
                             const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                             const metadata = metadataList[index];
@@ -92,7 +90,6 @@ class Favorites {
                             $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid})).insertBefore($("."+appendClass).last());
                         }
 
-                        $("#emptyContainer").remove();
                         this.rendering = false;
                         $("#spinner").css("display", "none");
                     } else {
