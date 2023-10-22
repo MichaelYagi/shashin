@@ -1664,8 +1664,8 @@
             if (shashin.darkMode === true) {
                 hoverColor = "slategray";
             }
-            $('.bi-play-circle').css("color", hoverColor);
             $('.bi-play-btn').css("color", hoverColor);
+            $('.bi-play-circle').css("color", hoverColor);
             $(this).show();
             $(this).siblings(".thumbnail-tl").show();
             $(this).siblings(".thumbnail-bl").show();
@@ -1679,8 +1679,8 @@
                 $('.thumbnail-br').hide();
             }
         }, function () {
-            $('.bi-play-circle').css("color", "lightgray");
             $('.bi-play-btn').css("color", "lightgray");
+            $('.bi-play-circle').css("color", "lightgray");
             $(this).hide();
             $(this).siblings(".thumbnail-tl").hide();
             $(this).siblings(".thumbnail-bl").hide();

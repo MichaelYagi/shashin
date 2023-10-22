@@ -292,8 +292,8 @@
         const lastDate = timelineDates[timelineDates.length-1].year + "-" + timelineDates[timelineDates.length-1].month + "-" + timelineDates[timelineDates.length-1].day;
 
         if (prevElements === null || (elements.length > 0 && Util.arraysEqual(elements, prevElements) === false) || (Util.elementsInViewport($("#"+lastDate)).length === 0 && closeToFooter() === true && Util.atEndOfPage($("#container")[0]))) {
-            $(".bi-play-circle").css("visibility", "hidden");
             $(".bi-play-btn").css("visibility", "hidden");
+            $(".bi-play-circle").css("visibility", "hidden");
             $(".mediaLink").unbind('click');
             reinitGalleryFlag = false;
 

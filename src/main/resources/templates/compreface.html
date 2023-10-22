@@ -128,8 +128,8 @@
                                     if (shashin.darkMode === true) {
                                         hoverColor = "slategray";
                                     }
-                                    $('.bi-play-circle').css("color", hoverColor);
                                     $('.bi-play-btn').css("color", hoverColor);
+                                    $('.bi-play-circle').css("color", hoverColor);
                                     $(this).show();
                                     $(this).siblings(".thumbnail-tl").show();
                                     $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
@@ -137,8 +137,8 @@
                                         $('.thumbnail-centered').hide();
                                     }
                                 }, function () {
-                                    $('.bi-play-circle').css("color", "lightgray");
                                     $('.bi-play-btn').css("color", "lightgray");
+                                    $('.bi-play-circle').css("color", "lightgray");
                                     $(this).hide();
                                     $(this).siblings(".thumbnail-tl").hide();
                                     $(this).siblings(".photo-thumbnail-image").css("opacity", transparent);
@@ -192,7 +192,7 @@
                                 <div th:replace="fragments/topleftoverlay :: topleftoverlay(${faceObj.image_id})"></div>
                                 <th:block th:if="${faceObj.metadata_date != null and faceObj.metadata_date != ''}">
                                     <div class="thumbnail-centered" th:id="${'tncentered'+faceObj.image_id}">
-                                        <a th:href="${'/timeline#'+faceObj.metadata_date}" target="_blank"><span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span></a>
+                                        <a th:href="${'/timeline#'+faceObj.metadata_date}" target="_blank"><span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span></a>
                                     </div>
                                     <div class="thumbnail-tr" th:id="${'tntr'+faceObj.image_id}">
                                         <span th:id="${'timelineviewable'+faceObj.image_id}" class="bi-calendar overlayIcon overlayIconBackground"></span>
