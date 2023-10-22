@@ -64,6 +64,9 @@ class Search {
 
             if (metadataList !== null && metadataList.length > 0) {
                 const mediaLinkLength = $(".mediaLink").length;
+                const appendClass = "appendSearchPhotos";
+
+                $('<span id="emptyContainer" style="display: block;height: 11705px;"></span>').insertBefore($("."+appendClass).last());
 
                 for (const index in metadataList) {
                     const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
@@ -89,11 +92,11 @@ class Search {
 
                     mediaContentList.push(shashin.getMediaContent(metadata));
 
-                    const appendClass = "appendSearchPhotos";
                     const uuid = uuidv4();
                     $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid})).insertAfter($("."+appendClass).last());
                 }
 
+                $("#emptyContainer").remove();
                 $("#spinner").css("display", "none");
                 this.rendering = false;
             } else {
