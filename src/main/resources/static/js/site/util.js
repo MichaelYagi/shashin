@@ -728,8 +728,8 @@ class Util {
                             shashin.getLightGallery().refresh(mediaContentList);
                         }
 
-                        $(".bi-play-circle").css("visibility", "visible");
                         $(".bi-play-btn").css("visibility", "visible");
+                        $(".bi-play-circle").css("visibility", "visible");
                         $(".mediaLink").bind('click');
                     }, timeoutValue);
                 }
