@@ -92,6 +92,8 @@
 
                     $("#captureThumbnail").hide();
                     $("#captureThumbnailSpinner").show();
+                    $("#captureThumbnail").prop( "disabled", true);
+                    $("#captureThumbnailSpinner").prop( "disabled", true);
 
                     if (currentDynamicEl.hasOwnProperty("func")) {
                         $("#metadataId").val(currentDynamicEl.args);
@@ -108,6 +110,8 @@
                             }
                             $("#captureThumbnail").show();
                             $("#captureThumbnailSpinner").hide();
+                            $("#captureThumbnail").prop( "disabled", false);
+                            $("#captureThumbnailSpinner").prop( "disabled", false);
                         }
 
                         if (typeof fn === 'function' && id.length > 0) {
@@ -118,6 +122,8 @@
                             }
                             $("#captureThumbnail").show();
                             $("#captureThumbnailSpinner").hide();
+                            $("#captureThumbnail").prop( "disabled", false);
+                            $("#captureThumbnailSpinner").prop( "disabled", false);
                         }
                     } else if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("tag")) {
                         //console.log($($(".thumbnail-centered")[this.core.index]).children('a').attr("tag"))
@@ -131,6 +137,8 @@
                             }
                             $("#captureThumbnail").show();
                             $("#captureThumbnailSpinner").hide();
+                            $("#captureThumbnail").prop( "disabled", false);
+                            $("#captureThumbnailSpinner").prop( "disabled", false);
                         }
 
                         if (typeof fn === 'function' && id.length > 0) {
@@ -141,6 +149,8 @@
                             }
                             $("#captureThumbnail").show();
                             $("#captureThumbnailSpinner").hide();
+                            $("#captureThumbnail").prop( "disabled", false);
+                            $("#captureThumbnailSpinner").prop( "disabled", false);
                         }
                     } else {
                         if (shashin) {
@@ -148,11 +158,12 @@
                         }
                         $("#captureThumbnail").show();
                         $("#captureThumbnailSpinner").hide();
+                        $("#captureThumbnail").prop( "disabled", false);
+                        $("#captureThumbnailSpinner").prop( "disabled", false);
                     }
                 });
         },
             n.prototype.videoThumbnail = function(e) {
-                $("#captureThumbnail").show();
                 $("#captureThumbnailSpinner").hide();
 
                 // Edit video thumbnail

@@ -1073,6 +1073,8 @@
                         }
                         $("#captureThumbnail").show();
                         $("#captureThumbnailSpinner").hide();
+                        $("#captureThumbnail").prop( "disabled", false);
+                        $("#captureThumbnailSpinner").prop( "disabled", false);
                     });
                 } else {
                     shashin.showToastMessage("Could not update thumbnails", "Could not update thumbnails. Failed to capture image.", {
@@ -1081,6 +1083,8 @@
                     });
                     $("#captureThumbnail").show();
                     $("#captureThumbnailSpinner").hide();
+                    $("#captureThumbnail").prop( "disabled", false);
+                    $("#captureThumbnailSpinner").prop( "disabled", false);
                 }
             } else {
                 $(".lg-current").css("background-color", "transparent");
@@ -1090,6 +1094,8 @@
                 });
                 $("#captureThumbnail").show();
                 $("#captureThumbnailSpinner").hide();
+                $("#captureThumbnail").prop( "disabled", false);
+                $("#captureThumbnailSpinner").prop( "disabled", false);
             }
 
             if (shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null) {
