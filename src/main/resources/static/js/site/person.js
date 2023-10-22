@@ -121,8 +121,6 @@ class Person {
                         const mediaLinkLength = $(".mediaLink").length;
                         const appendClass = "appendPersonPhotos";
 
-                        $('<span id="emptyContainer" style="display: block;height: 11705px;"></span>').insertBefore($("."+appendClass).last());
-
                         for (const index in metadataList) {
                             const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                             const metadata = metadataList[index];
@@ -151,7 +149,6 @@ class Person {
                             });
                         }
 
-                        $("#emptyContainer").remove();
                         $("#spinner").css("display","none");
                         this.rendering = false;
                     } else {

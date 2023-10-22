@@ -102,8 +102,6 @@
                         const mediaLinkLength = $(".mediaLink").length;
                         const appendClass = "appendAlbumPhotos";
 
-                        $('<span id="emptyContainer" style="display: block;height: 11705px;"></span>').insertBefore($("."+appendClass).last());
-
                         for (const index in albumMetadataList) {
                             const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                             const metadata = albumMetadataList[index];
@@ -147,7 +145,6 @@
                             });
                         }
 
-                        $("#emptyContainer").remove();
                         $("#spinner").css("display","none");
                         albumSettings.rendering = false;
                     } else {
