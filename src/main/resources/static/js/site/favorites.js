@@ -61,6 +61,9 @@ class Favorites {
 
                     if (metadataList.length > 0) {
                         const mediaLinkLength = $(".mediaLink").length;
+                        const appendClass = "appendMetadataPhotos";
+
+                        $('<span id="emptyContainer" style="display: block;height: 11705px;"></span>').insertBefore($("."+appendClass).last());
 
                         for (const index in metadataList) {
                             const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
@@ -85,11 +88,11 @@ class Favorites {
                             const overlayData = shashin.getOverlayData(metadata, {cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,overlayFlags});
                             mediaContentList.push(shashin.getMediaContent(metadata));
 
-                            const appendClass = "appendMetadataPhotos";
                             const uuid = uuidv4();
                             $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid})).insertBefore($("."+appendClass).last());
                         }
 
+                        $("#emptyContainer").remove();
                         this.rendering = false;
                         $("#spinner").css("display", "none");
                     } else {

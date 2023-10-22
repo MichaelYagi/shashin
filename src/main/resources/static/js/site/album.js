@@ -100,6 +100,9 @@
 
                     if (albumMetadataList.length > 0) {
                         const mediaLinkLength = $(".mediaLink").length;
+                        const appendClass = "appendAlbumPhotos";
+
+                        $('<span id="emptyContainer" style="display: block;height: 11705px;"></span>').insertBefore($("."+appendClass).last());
 
                         for (const index in albumMetadataList) {
                             const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
@@ -136,7 +139,6 @@
                             mediaContentList.push(shashin.getMediaContent(metadata));
 
                             // Append HTML
-                            const appendClass = "appendAlbumPhotos"; //"albummodal" + metadata.id;
                             const uuid = uuidv4();
                             $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid})).insertBefore($("."+appendClass).last()).ready(function () {
                                 // Call JS and modal
@@ -145,6 +147,7 @@
                             });
                         }
 
+                        $("#emptyContainer").remove();
                         $("#spinner").css("display","none");
                         albumSettings.rendering = false;
                     } else {

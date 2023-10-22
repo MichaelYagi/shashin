@@ -119,6 +119,10 @@ class Person {
 
                     if (metadataList.length > 0) {
                         const mediaLinkLength = $(".mediaLink").length;
+                        const appendClass = "appendPersonPhotos";
+
+                        $('<span id="emptyContainer" style="display: block;height: 11705px;"></span>').insertBefore($("."+appendClass).last());
+
                         for (const index in metadataList) {
                             const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                             const metadata = metadataList[index];
@@ -140,7 +144,6 @@ class Person {
 
                             mediaContentList.push(shashin.getMediaContent(metadata));
 
-                            const appendClass = "appendPersonPhotos";
                             const uuid = uuidv4();
                             $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid})).insertBefore($("."+appendClass).last()).ready(function () {
                                 // Call JS and modal
@@ -148,6 +151,7 @@ class Person {
                             });
                         }
 
+                        $("#emptyContainer").remove();
                         $("#spinner").css("display","none");
                         this.rendering = false;
                     } else {
