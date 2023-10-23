@@ -1072,8 +1072,11 @@ class Util {
             $(".resolutionLabel").show();
             $(".resolutionDetails").text(metadata.originalImageWidth+"x"+metadata.originalImageHeight);
         }
-        if (metadata.year !== null && metadata.month !== null && metadata.day !== null) {
-            let takenDate = metadata.year + '-' + metadata.month + '-' + metadata.day;
+        if (metadata.year !== undefined && metadata.month !== undefined && metadata.day !== undefined &&
+            metadata.year !== null && metadata.month !== null && metadata.day !== null) {
+            let month = (metadata.month.toString().length === 1 && metadata.month < 10) ? "0"+metadata.month : metadata.month;
+            let day = (metadata.day.toString().length === 1 && metadata.day < 10) ? "0"+metadata.day : metadata.day;
+            let takenDate = metadata.year + '-' + month + '-' + day;
             let takenDetails = takenDate;
             if (metadata.time !== null && metadata.time !== "") {
                 takenDetails += ' ' + metadata.time;
