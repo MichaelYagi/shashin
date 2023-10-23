@@ -1023,6 +1023,8 @@
     }
 
     shashin.processVideoThumbnail = function(metadataId) {
+        const mediaContentList = shashin.getLightGallery().galleryItems;
+
         shashin.getMetadata(metadataId).then(function (data) {
             let metadata = data;
 
@@ -1063,6 +1065,11 @@
                                 iconColor: "#777777",
                                 delay: 2000
                             });
+
+                            if (shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null && mediaContentList.length > 0) {
+                                shashin.getLightGallery().refresh(mediaContentList);
+                            }
+
                             $(".lg-current").animate({backgroundColor: "transparent"}, 2000);
                         } else {
                             shashin.showToastMessage("Could not update thumbnail", "Could not update thumbnails", {
