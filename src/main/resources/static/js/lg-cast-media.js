@@ -116,7 +116,7 @@
 
                             if (metadata.videoUrl !== null) {
                                 try {
-                                    cjsMetadata["poster"] = baseUrl + metadata.thumbnailUrlSmall;
+                                    cjsMetadata["poster"] = baseUrl + ((metadata.thumbnailUrlOriginal !== undefined && metadata.thumbnailUrlOriginal !== null) ? metadata.thumbnailUrlOriginal : metadata.thumbnailUrlSmall);
 
                                     cjs.cast(baseUrl + metadata.videoUrl, cjsMetadata);
                                 } catch(e) {

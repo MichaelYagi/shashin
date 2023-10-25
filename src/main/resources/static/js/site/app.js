@@ -1055,7 +1055,7 @@
                         base64Data: image
                     }
                     http.ajax("post", "/metadata/update/videothumbs" + (version === "" ? "" : "?v=" + version), JSON.stringify(json)).then(function (data) {
-                        if (data.hasOwnProperty("msg") && data.hasOwnProperty("status")) {
+                        if (data.hasOwnProperty("msg") && data.hasOwnProperty("status") && data.hasOwnProperty("posterUrl")) {
                             // Refresh image
                             Util.setMetadataLocalStorage();
                             const version = Util.getMetadataLocalStorage();
@@ -1067,6 +1067,18 @@
                             });
 
                             if (shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null && mediaContentList.length > 0) {
+                                for (let index in mediaContentList) {
+                                    const mediaContent = mediaContentList[index];
+
+                                    if (mediaContent.hasOwnProperty("video") &&
+                                        mediaContent.hasOwnProperty("downloadUrl") &&
+                                        mediaContent.hasOwnProperty("poster") &&
+                                        mediaContent.downloadUrl.includes(metadataId)
+                                    ) {
+                                        mediaContentList[index].poster = data["posterUrl"];
+                                        break;
+                                    }
+                                }
                                 shashin.getLightGallery().refresh(mediaContentList);
                             }
 
