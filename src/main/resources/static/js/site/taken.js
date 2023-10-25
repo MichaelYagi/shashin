@@ -1,9 +1,10 @@
 class Taken {
 
-    constructor(metadataList, activePage) {
+    constructor(metadataList, mediaTypeFilter, activePage) {
         this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
+        this.mediaTypeFilter = mediaTypeFilter;
         this.metadataList = metadataList;
         this.activePage = activePage;
         this.eol = false;
@@ -30,7 +31,7 @@ class Taken {
     async loadNextPage() {
         if (this.rendering === false) {
             // console.log(this.page)
-            this.updateTaken(this.page, this.activePage).then(function (additionalMediaContentList) {
+            this.updateTaken(this.page, this.activePage, this.mediaTypeFilter).then(function (additionalMediaContentList) {
                 // console.log(additionalMediaContentList)
                 this.page++;
                 this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
@@ -42,14 +43,14 @@ class Taken {
         }
     }
 
-    async updateTaken(nextPage,activePage) {
+    async updateTaken(nextPage,activePage,mediaTypeFilter) {
         this.rendering = true;
 
         let data = null
 
         if (false === this.eol) {
             $("#spinner").css("display", "block");
-            data = await this.http.ajax("get", "/taken/" + nextPage);
+            data = await this.http.ajax("get", "/taken/mediatype/" + mediaTypeFilter + "/page/" + nextPage);
         }
 
         const mediaContentList = [];
