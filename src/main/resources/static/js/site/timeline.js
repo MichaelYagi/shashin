@@ -24,10 +24,10 @@
     }
 
     const closeToFooter = function() {
-        let distanceToFooterThreshold = -100;
-        if (Util.isMobile() || Util.getOS() === "Android" || Util.getOS() === "iOS") {
-            distanceToFooterThreshold = -500;
-        }
+        let distanceToFooterThreshold = -500;
+        // if (Util.isMobile() || Util.getOS() === "Android" || Util.getOS() === "iOS") {
+        //     distanceToFooterThreshold = -500;
+        // }
         return (timelineSettings.distanceToFooter === 9999 || (timelineSettings.distanceToFooter > distanceToFooterThreshold && timelineSettings.distanceToFooter < 1) || Util.elementsInViewport($("#subfooter")).length > 0);
     }
 
