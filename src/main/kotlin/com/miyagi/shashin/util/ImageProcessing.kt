@@ -169,8 +169,12 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             if (FileUtils.isRaw(file.extension.lowercase()) || supportedVideoFormats.contains(file.extension.lowercase())) {
                 thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_original." + extension
                 tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
-                if (tnFile != null) {
-                    ImageIO.write(sharpenAndBrightenImage(img), extension, tnFile)
+                if (tnFile != null && _metadataObj != null) {
+                    val imgCopy = img
+                    Thumbnails.of(imgCopy)
+                        .size(_metadataObj.getOriginalImageWidth()!!, _metadataObj.getOriginalImageHeight()!!)
+                        .outputQuality(0.4)
+                        .toFile(tnFile)
                 }
                 _metadataObj?.setThumbnailUrlOriginal("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_original." + extension)
             }

@@ -2266,7 +2266,7 @@ class TimelineController: BaseController() {
                     // Original Size thumbnail
                     Thumbnails.of(img)
                         .size(metadata.getOriginalImageWidth()!!, metadata.getOriginalImageHeight()!!)
-                        .outputQuality(0.9)
+                        .outputQuality(0.4)
                         .toFile(tempFile)
 
                     try {
