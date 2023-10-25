@@ -17,7 +17,7 @@
                 <div class="col-lg-4">
                     <div class="input-group mb-2">
                         <input type="file" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" class="form-control" id="chooseProfilePhoto" name="chooseProfilePhoto" aria-describedby="chooseProfilePhoto" aria-label="Upload">
-                        <button type="button" class="btn btn-danger rounded-end" id="removeProfile" th:style="${'display: '+{user.profile==null or user.profile==''?'none;':'block;'}}">Remove Profile Picture</button>
+                        <button type="button" class="btn btn-danger rounded-end" id="removeProfile" th:style="${'display: '+{user.profile==null or user.profile==''?'none;':'block;'}}">Delete Profile Picture</button>
                         <button type="button" class="btn btn-secondary rounded-end" id="saveProfile" style="display: none;">Save</button>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <button type="button" id="cancelProfile" class="btn btn-secondary rounded" style="display: none;float:right;">Cancel</button>
@@ -42,10 +42,10 @@
     <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="removeProfileConfirmationModalLabel">Remove Profile Picture</h5>
+                <h5 class="modal-title" id="removeProfileConfirmationModalLabel">Delete Profile Picture</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">Are you sure you want to remove your profile picture?</div>
+            <div class="modal-body">Are you sure you want to delete your profile picture?</div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="removeProfileConfirmation">Confirm</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
