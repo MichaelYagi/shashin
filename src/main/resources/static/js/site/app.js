@@ -1071,8 +1071,8 @@
                                     const mediaContent = mediaContentList[index];
 
                                     if (mediaContent.hasOwnProperty("video") &&
+                                        // mediaContent.hasOwnProperty("poster") &&
                                         mediaContent.hasOwnProperty("downloadUrl") &&
-                                        mediaContent.hasOwnProperty("poster") &&
                                         mediaContent.downloadUrl.includes(metadataId)
                                     ) {
                                         mediaContentList[index].poster = data["posterUrl"];
