@@ -2278,6 +2278,7 @@ class TimelineController: BaseController() {
                         }
                     } catch (e: IOException) {
                         logger.log(Level.WARNING, "Could not read file: " + metadata.getThumbnailPathSmall())
+                        resp["posterUrl"] = metadata.getThumbnailUrlSmall()
                         resp["msg"] = "Could not save"
                         resp["status"] = ApiResponse.FAIL.status
                         return mapper.writeValueAsString(resp)
@@ -2296,6 +2297,7 @@ class TimelineController: BaseController() {
                         ImageIO.write(scaledImage, "jpg", File(metadata.getThumbnailPathSmall()))
                     } catch (e: IOException) {
                         logger.log(Level.WARNING, "Could not read file: " + metadata.getThumbnailPathSmall())
+                        resp["posterUrl"] = metadata.getThumbnailUrlSmall()
                         resp["msg"] = "Could not save"
                         resp["status"] = ApiResponse.FAIL.status
                         return mapper.writeValueAsString(resp)
@@ -2315,6 +2317,7 @@ class TimelineController: BaseController() {
                         ImageIO.write(scaledImage, "jpg", File(metadata.getThumbnailPathCentered()))
                     } catch (e: IOException) {
                         logger.log(Level.WARNING, "Could not read file: " + metadata.getThumbnailPathCentered())
+                        resp["posterUrl"] = metadata.getThumbnailUrlSmall()
                         resp["msg"] = "Could not save"
                         resp["status"] = ApiResponse.FAIL.status
                         return mapper.writeValueAsString(resp)
@@ -2336,6 +2339,7 @@ class TimelineController: BaseController() {
                         ImageIO.write(scaledImage, "jpg", File(metadata.getMapMarkerPath()))
                     } catch (e: IOException) {
                         logger.log(Level.WARNING, "Could not read file: " + metadata.getMapMarkerPath())
+                        resp["posterUrl"] = metadata.getThumbnailUrlSmall()
                         resp["msg"] = "Could not save"
                         resp["status"] = ApiResponse.FAIL.status
                         return mapper.writeValueAsString(resp)
@@ -2345,11 +2349,14 @@ class TimelineController: BaseController() {
                     metadataRepository.save(metadata)
                 }
 
+                resp["posterUrl"] = metadata.getThumbnailUrlOriginal()
                 resp["msg"] = "Saved!"
                 resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
             }
         }
+
+        resp["posterUrl"] = ""
         resp["msg"] = "Could not save"
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
