@@ -48,11 +48,11 @@ class BrowseController: BaseController() {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
-    @RequestMapping(value = ["/recent"], method = [RequestMethod.GET])
-    fun getRecentlyAdded(model: Model): String {
+    @RequestMapping(value = ["/recent","/recent/{mediaType}"], method = [RequestMethod.GET])
+    fun getRecentlyAdded(model: Model,@PathVariable(required = false) mediaType: String?): String {
         val module = "recent"
 
-        buildInitialPage(module,model)
+        buildInitialPage(module,model,mediaType)
 
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -145,10 +145,10 @@ class BrowseController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/recent/{page}","/api/v1/recent/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/recent/{page}","/recent/mediatype/{mediaType}/page/{page}","/api/v1/recent/{page}","/api/v1/recent/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    fun getPagedRecent(model: Model, request: HttpServletRequest, @PathVariable page: Int): String {
-        return mapper.writeValueAsString(buildBrowseRecord("recent",model,page))
+    fun getPagedRecent(model: Model, request: HttpServletRequest, @PathVariable page: Int,@PathVariable(required = false) mediaType: String?): String {
+        return mapper.writeValueAsString(buildBrowseRecord("recent",model,page, model.getAttribute("queryLimit").toString().toInt(), mediaType))
     }
 
     @RouterOperation(
@@ -236,17 +236,17 @@ class BrowseController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/api/v1/recent"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/recent", "/api/v1/recent/{mediaType}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    fun getPagedRecent(model: Model, request: HttpServletRequest, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>): String {
-        return mapper.writeValueAsString(buildBrowseRecord("recent", model, page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt())))
+    fun getPagedRecent(model: Model, request: HttpServletRequest, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>, @PathVariable(required = false) mediaType: String?): String {
+        return mapper.writeValueAsString(buildBrowseRecord("recent", model, page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt()), mediaType))
     }
 
-    @RequestMapping(value = ["/taken"], method = [RequestMethod.GET])
-    fun getTaken(model: Model): String {
+    @RequestMapping(value = ["/taken","/taken/{mediaType}"], method = [RequestMethod.GET])
+    fun getTaken(model: Model,@PathVariable(required = false) mediaType: String?): String {
         val module = "taken"
 
-        buildInitialPage(module,model)
+        buildInitialPage(module,model,mediaType)
 
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -254,17 +254,17 @@ class BrowseController: BaseController() {
         return module
     }
 
-    @RequestMapping(value = ["/taken/{page}","/api/v1/taken/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/taken/{page}","/taken/mediatype/{mediaType}/page/{page}","/api/v1/taken/{page}", "/api/v1/taken/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    fun getPagedTaken(model: Model, request: HttpServletRequest, @PathVariable page: Int): String {
-        return mapper.writeValueAsString(buildBrowseRecord("taken",model,page))
+    fun getPagedTaken(model: Model, request: HttpServletRequest, @PathVariable page: Int, @PathVariable(required = false) mediaType: String?): String {
+        return mapper.writeValueAsString(buildBrowseRecord("taken",model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType))
     }
 
-    @RequestMapping(value = ["/modified"], method = [RequestMethod.GET])
-    fun getModified(model: Model): String {
+    @RequestMapping(value = ["/modified","/modified/{mediaType}"], method = [RequestMethod.GET])
+    fun getModified(model: Model,@PathVariable(required = false) mediaType: String?): String {
         val module = "modified"
 
-        buildInitialPage(module,model)
+        buildInitialPage(module,model,mediaType)
 
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -357,10 +357,10 @@ class BrowseController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/modified/{page}","/api/v1/modified/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/modified/{page}","/modified/mediatype/{mediaType}/page/{page}","/api/v1/modified/{page}","/api/v1/modified/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    fun getPagedModified(model: Model, request: HttpServletRequest, @PathVariable page: Int): String {
-        return mapper.writeValueAsString(buildBrowseRecord("modified",model,page))
+    fun getPagedModified(model: Model, request: HttpServletRequest, @PathVariable page: Int,@PathVariable(required = false) mediaType: String?): String {
+        return mapper.writeValueAsString(buildBrowseRecord("modified",model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType))
     }
 
     @RouterOperation(
@@ -448,10 +448,10 @@ class BrowseController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/api/v1/modified"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/modified","/api/v1/modified/{mediaType}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    fun getPagedSizeModified(model: Model, request: HttpServletRequest, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>): String {
-        return mapper.writeValueAsString(buildBrowseRecord("modified", model ,page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt())))
+    fun getPagedSizeModified(model: Model, request: HttpServletRequest, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>, @PathVariable(required = false) mediaType: String?): String {
+        return mapper.writeValueAsString(buildBrowseRecord("modified", model ,page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt()), mediaType))
     }
 
     @RequestMapping(value = ["/metadata/list/{module}/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
@@ -515,7 +515,7 @@ class BrowseController: BaseController() {
         return mapper.writeValueAsString(response)
     }
 
-    private fun buildBrowseRecord(module: String, model: Model, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
+    private fun buildBrowseRecord(module: String, model: Model, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt(), mediaTypeFilter: String?): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
         response["message"] = "There are no photos. Please setup directories to scan in Settings and index media in Media Indexing."
         response["metadataList"] = mutableListOf<Metadata>()
@@ -530,6 +530,14 @@ class BrowseController: BaseController() {
         response["msg"] = "Could not get results"
         response["status"] = ApiResponse.FAIL.status
 
+        var mediaType = mediaTypeFilter
+
+        if (mediaTypeFilter.isNullOrEmpty()) {
+            mediaType = "all"
+        }
+
+        response["mediaTypeFilter"] = mediaType
+
         if (model.getAttribute("currentUser") != "") {
             val currentUserObj = model.getAttribute("currentUser") as User?
             val pageValue = page*size
@@ -537,21 +545,43 @@ class BrowseController: BaseController() {
             val favoritesMap = HashMap<String, HashMap<String, Any>>()
 
             var metadataList = mutableListOf<Metadata>()
-            if (module == "recent") {
-                metadataList = metadataRepository.findRecentByOffsetAndLimit(
-                    pageValue,
-                    size
-                ).toMutableList()
-            } else if (module == "modified") {
-                metadataList = metadataRepository.findModifiedByOffsetAndLimit(
-                    pageValue,
-                    size
-                ).toMutableList()
-            } else if (module == "taken") {
-                metadataList = metadataRepository.findTakenByOffsetAndLimit(
-                    pageValue,
-                    size
-                ).toMutableList()
+            if (mediaType == "all") {
+                if (module == "recent") {
+                    metadataList = metadataRepository.findRecentByOffsetAndLimit(
+                        pageValue,
+                        size
+                    ).toMutableList()
+                } else if (module == "modified") {
+                    metadataList = metadataRepository.findModifiedByOffsetAndLimit(
+                        pageValue,
+                        size
+                    ).toMutableList()
+                } else if (module == "taken") {
+                    metadataList = metadataRepository.findTakenByOffsetAndLimit(
+                        pageValue,
+                        size
+                    ).toMutableList()
+                }
+            } else {
+                if (module == "recent") {
+                    metadataList = metadataRepository.findRecentByMediaTypeAndOffsetAndLimit(
+                        pageValue,
+                        mediaType!!,
+                        size
+                    ).toMutableList()
+                } else if (module == "modified") {
+                    metadataList = metadataRepository.findModifiedByMediaTypeAndOffsetAndLimit(
+                        pageValue,
+                        mediaType!!,
+                        size
+                    ).toMutableList()
+                } else if (module == "taken") {
+                    metadataList = metadataRepository.findTakenByMediaTypeAndOffsetAndLimit(
+                        pageValue,
+                        mediaType!!,
+                        size
+                    ).toMutableList()
+                }
             }
 
             if (metadataList.isNotEmpty()) {
@@ -664,9 +694,9 @@ class BrowseController: BaseController() {
         return model
     }
 
-    private fun buildInitialPage(module: String, model: Model): Model {
+    private fun buildInitialPage(module: String, model: Model, mediaTypeFilter: String?): Model {
         val page = 0
-        val response = buildBrowseRecord(module,model,page)
+        val response = buildBrowseRecord(module,model,page,model.getAttribute("queryLimit").toString().toInt(),mediaTypeFilter)
         for ((k, v) in response) {
             model[k] = v!!
         }

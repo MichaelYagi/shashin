@@ -1,9 +1,10 @@
 class Recent {
 
-    constructor(metadataList, activePage) {
+    constructor(metadataList, mediaTypeFilter, activePage) {
         this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
+        this.mediaTypeFilter = mediaTypeFilter;
         this.metadataList = metadataList;
         this.activePage = activePage;
         this.eol = false;
@@ -30,7 +31,7 @@ class Recent {
     async loadNextPage() {
         if (this.rendering === false) {
             // console.log(this.page)
-            this.updateRecent(this.page, this.activePage).then(function (additionalMediaContentList) {
+            this.updateRecent(this.page, this.activePage, this.mediaTypeFilter).then(function (additionalMediaContentList) {
                 // console.log(additionalMediaContentList)
                 this.page++;
 
@@ -43,14 +44,14 @@ class Recent {
         }
     }
 
-    async updateRecent(nextPage,activePage) {
+    async updateRecent(nextPage,activePage,mediaTypeFilter) {
         this.rendering = true;
 
         let data = null
 
         if (false === this.eol) {
             $("#spinner").css("display", "block");
-            data = await this.http.ajax("get", "/recent/" + nextPage);
+            data = await this.http.ajax("get", "/recent/mediatype/" + mediaTypeFilter + "/page/" + nextPage);
         }
 
         const mediaContentList = [];
