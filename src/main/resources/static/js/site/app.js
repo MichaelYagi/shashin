@@ -1022,7 +1022,7 @@
         }
     }
 
-    shashin.processVideoThumbnail = function(metadataId) {
+    shashin.processVideoThumbnail = function(metadataId, lightGalleryId, lightGalleryIndex) {
         const mediaContentList = shashin.getLightGallery().galleryItems;
 
         shashin.getMetadata(metadataId).then(function (data) {
@@ -1032,7 +1032,8 @@
 
             if (metadata.type.indexOf("video") !== -1) {
                 let canvas = document.createElement('canvas');
-                let video = $(".lg-video-object").first()[0];
+                $(canvas).attr("id", "videoCanvas");
+                let video = $("#lg-item-"+lightGalleryId+"-"+lightGalleryIndex).find(".lg-video-object")[0];
 
                 canvas.width = metadata.originalImageWidth;
                 canvas.height = metadata.originalImageHeight;
@@ -1046,6 +1047,8 @@
                 } catch (e) {
                     shashin.printMessageToConsole("Error capturing thumbnail: " + e);
                 }
+
+                $(canvas).remove();
 
                 if (image.length > 0) {
                     const http = new Http("update video metadata");
@@ -1067,22 +1070,20 @@
                             });
 
                             if (shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null && mediaContentList.length > 0) {
-                                for (let index in mediaContentList) {
-                                    const mediaContent = mediaContentList[index];
+                                const mediaContent = mediaContentList[lightGalleryIndex];
 
-                                    if (mediaContent.hasOwnProperty("video") &&
-                                        // mediaContent.hasOwnProperty("poster") &&
-                                        mediaContent.hasOwnProperty("downloadUrl") &&
-                                        mediaContent.downloadUrl.includes(metadataId)
-                                    ) {
-                                        mediaContentList[index].poster = data["posterUrl"];
-                                        const mediaLinkId = "#mediaLink"+metadataId;
-                                        if ($(mediaLinkId).length > 0) {
-                                            $(mediaLinkId).attr("data-poster", data["posterUrl"]+"?v="+Util.getMetadataLocalStorage());
-                                        }
-                                        break;
+                                if (mediaContent.hasOwnProperty("video") &&
+                                    // mediaContent.hasOwnProperty("poster") &&
+                                    mediaContent.hasOwnProperty("downloadUrl") &&
+                                    mediaContent.downloadUrl.includes(metadataId)
+                                ) {
+                                    mediaContentList[lightGalleryIndex].poster = data["posterUrl"];
+                                    const mediaLinkId = "#mediaLink"+metadataId;
+                                    if ($(mediaLinkId).length > 0) {
+                                        $(mediaLinkId).attr("data-poster", data["posterUrl"]+"?v="+Util.getMetadataLocalStorage());
                                     }
                                 }
+
                                 shashin.getLightGallery().refresh(mediaContentList);
                             }
 
