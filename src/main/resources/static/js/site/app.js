@@ -1033,17 +1033,23 @@
             if (metadata.type.indexOf("video") !== -1) {
                 let canvas = document.createElement('canvas');
                 $(canvas).attr("id", "videoCanvas");
-                let video = $("#lg-item-"+lightGalleryId+"-"+lightGalleryIndex).find(".lg-video-object")[0];
 
-                canvas.width = metadata.originalImageWidth;
-                canvas.height = metadata.originalImageHeight;
+                let video = null;
+                if ($("#lg-item-"+lightGalleryId+"-"+lightGalleryIndex).length > 0) {
+                    video = $("#lg-item-" + lightGalleryId + "-" + lightGalleryIndex).find(".lg-video-object")[0];
+                }
 
-                let ctx = canvas.getContext('2d');
                 let image = "";
 
                 try {
-                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                    image = canvas.toDataURL('image/jpeg');
+                    if (video !== null && $(video).length > 0) {
+                        canvas.width = metadata.originalImageWidth;
+                        canvas.height = metadata.originalImageHeight;
+
+                        let ctx = canvas.getContext('2d');
+                        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                        image = canvas.toDataURL('image/jpeg');
+                    }
                 } catch (e) {
                     shashin.printMessageToConsole("Error capturing thumbnail: " + e);
                 }
