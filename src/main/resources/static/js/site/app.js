@@ -1076,6 +1076,10 @@
                                         mediaContent.downloadUrl.includes(metadataId)
                                     ) {
                                         mediaContentList[index].poster = data["posterUrl"];
+                                        const mediaLinkId = "#mediaLink"+metadataId;
+                                        if ($(mediaLinkId).length > 0) {
+                                            $(mediaLinkId).attr("data-poster", data["posterUrl"]+"?v="+Util.getMetadataLocalStorage());
+                                        }
                                         break;
                                     }
                                 }
