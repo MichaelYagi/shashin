@@ -97,7 +97,7 @@
 
                     if (currentDynamicEl.hasOwnProperty("func")) {
                         $("#metadataId").val(currentDynamicEl.args);
-                        currentDynamicEl.vtfunc(currentDynamicEl.args);
+                        currentDynamicEl.vtfunc(currentDynamicEl.args, this.core.lgId, this.core.index);
                     } else if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag")) {
                         //console.log($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag"))
                         const fn = this.settings.videoThumbnailFunc;
@@ -115,7 +115,7 @@
                         }
 
                         if (typeof fn === 'function' && id.length > 0) {
-                            fn(id);
+                            fn(id, this.core.lgId, this.core.index);
                         } else {
                             if (shashin) {
                                 shashin.showToastMessage("Could not capture screenshot", "Could not capture screenshot. Tag or function not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
@@ -142,7 +142,7 @@
                         }
 
                         if (typeof fn === 'function' && id.length > 0) {
-                            fn(id);
+                            fn(id, this.core.lgId, this.core.index);
                         } else {
                             if (shashin) {
                                 shashin.showToastMessage("Could not capture screenshot", "Could not capture screenshot. Tag or function not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
