@@ -511,7 +511,6 @@ async function showMap(mapdata) {
     });
 
     const lightGalleryConfigs = shashin.getLightGalleryConfigs();
-    // lightGalleryConfigs["plugins"].push(lgEditLocation);
     lightGalleryConfigs["plugins"].push(lgMetadataDetail);
     // lightGalleryConfigs["plugins"].push(lgCastMedia);
     lightGalleryConfigs["controls"] = true;
