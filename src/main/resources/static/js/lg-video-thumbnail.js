@@ -7,25 +7,32 @@
     "object" == typeof exports && "undefined" != typeof module ? module.exports = l() : "function" == typeof define && define.amd ? define(l) : (e = "undefined" != typeof globalThis ? globalThis : e || self).lgVideoThumbnail = l()
 }(this, (function() {
     "use strict";
-    var e = function() {
-            return (e = Object.assign || function(e) {
-                for (var l, n = 1, t = arguments.length; n < t; n++)
-                    for (var c in l = arguments[n])
-                        Object.prototype.hasOwnProperty.call(l, c) && (e[c] = l[c]);
-                return e
-            }).apply(this, arguments)
-        },
-        l = {
-            videoThumbnail: !0
+    var __assign = function() {
+        __assign = Object.assign || function __assign(t) {
+            for (var s, i = 1, n = arguments.length; i < n; i++) {
+                s = arguments[i];
+                for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+            }
+            return t;
         };
-    return function() {
-        function n(n, t) {
-            return this.core = n,
-                this.$LG = t,
-                this.settings = e(e({}, l), this.core.settings),
-                this
+        return __assign.apply(this, arguments);
+    };
+
+    var videoThumbnailSettings= {
+        videoThumbnail: !0
+    };
+
+    return (function() {
+        function VideoThumbnail(instance, $LG) {
+            // get lightGallery core plugin instance
+            this.core = instance;
+            this.$LG = $LG;
+            // extend module default settings with lightGallery core settings
+            this.settings = __assign(__assign({}, videoThumbnailSettings), this.core.settings);
+            return this;
         }
-        return n.prototype.init = function() {
+
+        VideoThumbnail.prototype.init = function () {
             var e = "";
             var captureIcon = "bi-lightning";
 
@@ -162,14 +169,17 @@
                         $("#captureThumbnailSpinner").prop( "disabled", false);
                     }
                 });
-        },
-            n.prototype.videoThumbnail = function(e) {
-                $("#captureThumbnailSpinner").hide();
+        }
 
-                // Edit video thumbnail
-                return ""
-            },
-            n.prototype.destroy = function() {},
-            n
-    }()
+        VideoThumbnail.prototype.videoThumbnail = function (e) {
+            $("#captureThumbnailSpinner").hide();
+
+            // Edit video thumbnail
+            return ""
+        }
+
+        VideoThumbnail.prototype.destroy = function() {}
+
+        return VideoThumbnail;
+    }());
 }));
