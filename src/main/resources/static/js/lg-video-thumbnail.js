@@ -11,7 +11,7 @@
     } else {
         (_window = "undefined" != typeof globalThis ? globalThis : _window || self).lgVideoThumbnail = moduleFunction();
     }
-}(this, (function() {
+} (this, (function() {
     "use strict";
     let __assign = function () {
         __assign = Object.assign || function __assign(t) {
