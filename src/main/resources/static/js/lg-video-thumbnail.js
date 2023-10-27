@@ -25,7 +25,7 @@
     };
 
     const videoThumbnailSettings = {
-        videoThumbnail: !0
+        videoThumbnail: true
     };
 
     return (function() {
