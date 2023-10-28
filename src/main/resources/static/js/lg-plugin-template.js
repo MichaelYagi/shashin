@@ -6,6 +6,7 @@
  *   licenseKey: 'your_license_key',
  *   speed: 500,
  *   pluginSettingAttribute: true,
+ *   pluginFunctionName: someFunction
  *   // ... other settings
  * });
  */
@@ -77,6 +78,28 @@
                 .first()
                 .on('click.lg', () => {
                     alert("This is a template for setting up a plugin!");
+
+                    // Get current slide
+                    let currentDynamicEl = (this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("pluginFunctionName")) ?
+                        this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
+
+                    // Optionally get a function and args and execute
+                    if (currentDynamicEl.hasOwnProperty("pluginFunctionName")) {
+                        $("#metadataId").val(currentDynamicEl.args);
+                        // Execute function
+                        currentDynamicEl.pluginFunctionName(currentDynamicEl.args, this.core.lgId, this.core.index);
+                    } else if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag") && this.settings.hasOwnProperty("pluginFunc")) {
+                        const fn = this.settings.pluginFunc;
+                        let id = "";
+                        try {
+                            id = $($(".thumbnail-bl")[this.core.index]).children('a').attr("tag");
+                        } catch (e) {}
+
+                        // Execute function
+                        if (typeof fn === 'function' && id.length > 0) {
+                            fn(id, this.core.lgId, this.core.index);
+                        }
+                    }
                 });
         }
 

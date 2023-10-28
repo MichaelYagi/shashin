@@ -97,7 +97,7 @@
                 .find('.'+captureIcon)
                 .first()
                 .on('click.lg', () => {
-                    let currentDynamicEl = (this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("func")) ?
+                    let currentDynamicEl = (this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("vtfunc")) ?
                         this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
 
                     $("#captureThumbnail").hide();
@@ -105,10 +105,10 @@
                     $("#captureThumbnail").prop( "disabled", true);
                     $("#captureThumbnailSpinner").prop( "disabled", true);
 
-                    if (currentDynamicEl.hasOwnProperty("func")) {
+                    if (currentDynamicEl.hasOwnProperty("vtfunc")) {
                         $("#metadataId").val(currentDynamicEl.args);
                         currentDynamicEl.vtfunc(currentDynamicEl.args, this.core.lgId, this.core.index);
-                    } else if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag")) {
+                    } else if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag") && this.settings.hasOwnProperty("videoThumbnailFunc")) {
                         //console.log($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag"))
                         const fn = this.settings.videoThumbnailFunc;
                         let id = "";
@@ -135,7 +135,7 @@
                             $("#captureThumbnail").prop( "disabled", false);
                             $("#captureThumbnailSpinner").prop( "disabled", false);
                         }
-                    } else if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("tag")) {
+                    } else if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("tag") && this.settings.hasOwnProperty("videoThumbnailFunc")) {
                         //console.log($($(".thumbnail-centered")[this.core.index]).children('a').attr("tag"))
                         const fn = this.settings.videoThumbnailFunc;
                         let id = "";
