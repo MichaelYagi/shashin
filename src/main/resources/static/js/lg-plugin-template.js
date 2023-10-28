@@ -88,7 +88,7 @@
                         $("#metadataId").val(currentDynamicEl.args);
                         // Execute function
                         currentDynamicEl.pluginFunctionName(currentDynamicEl.args, this.core.lgId, this.core.index);
-                    } else if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag") && this.settings.hasOwnProperty("pluginFunc")) {
+                    } else {
                         const fn = this.settings.pluginFunc;
                         let metadataId = "";
 
@@ -99,17 +99,19 @@
                             metadataId = $($(".thumbnail-bl")[this.core.index]).children('a').attr("data-metadataid");
                         }
 
-                        if (metadataId.length === 0 && $($(".thumbnail-bl")[this.core.index])) {
-                            if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag") !== undefined) {
-                                metadataId = $($(".thumbnail-bl")[this.core.index]).children('a').attr("tag");
-                            } else if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("data-metadataid") !== undefined) {
-                                metadataId = $($(".thumbnail-bl")[this.core.index]).children('a').attr("data-metadataid");
+                        if (metadataId.length === 0 && $($(".thumbnail-centered")[this.core.index])) {
+                            if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("tag") !== undefined) {
+                                metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("tag");
+                            } else if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid") !== undefined) {
+                                metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid");
                             }
                         }
 
                         // Execute function
                         if (typeof fn === 'function' && metadataId.length > 0) {
                             fn(metadataId, this.core.lgId, this.core.index);
+                        } else {
+                            console.log("Could not execute function");
                         }
                     }
                 });
