@@ -83,21 +83,24 @@
                     let currentDynamicEl = (this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("pluginFunctionName")) ?
                         this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
 
-                    // Optionally get a function and args and execute
-                    if (currentDynamicEl.hasOwnProperty("pluginFunctionName")) {
+                    // Optionally get a function and args and execute when creating lg items dynamically
+                    if (currentDynamicEl.hasOwnProperty("pluginFunctionName") && currentDynamicEl.hasOwnProperty("args")) {
                         $("#metadataId").val(currentDynamicEl.args);
                         // Execute function
                         currentDynamicEl.pluginFunctionName(currentDynamicEl.args, this.core.lgId, this.core.index);
                     } else if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag") && this.settings.hasOwnProperty("pluginFunc")) {
                         const fn = this.settings.pluginFunc;
-                        let id = "";
-                        try {
-                            id = $($(".thumbnail-bl")[this.core.index]).children('a').attr("tag");
-                        } catch (e) {}
+                        let metadataId = "";
+
+                        if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag") !== undefined) {
+                            metadataId = $($(".thumbnail-bl")[this.core.index]).children('a').attr("tag");
+                        } else if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("data-metadataid") !== undefined) {
+                            metadataId = $($(".thumbnail-bl")[this.core.index]).children('a').attr("data-metadataid");
+                        }
 
                         // Execute function
-                        if (typeof fn === 'function' && id.length > 0) {
-                            fn(id, this.core.lgId, this.core.index);
+                        if (typeof fn === 'function' && metadataId.length > 0) {
+                            fn(metadataId, this.core.lgId, this.core.index);
                         }
                     }
                 });

@@ -32,52 +32,42 @@
                 .find('.bi-info-circle')
                 .first()
                 .on('click.lg', () => {
-                    let currentDynamicEl = this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("func") ?
+                    let currentDynamicEl = this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("infofun") ?
                         this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
 
-                    if (currentDynamicEl.hasOwnProperty("func")) {
+                    if (currentDynamicEl.hasOwnProperty("infofun") && currentDynamicEl.hasOwnProperty("args")) {
                         $("#metadataId").val(currentDynamicEl.args);
-                        currentDynamicEl.func(currentDynamicEl.args);
-                    } else if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag") && this.settings.hasOwnProperty("metadataDetailFunc")) {
-                        const fn = this.settings.metadataDetailFunc;
-                        let id = "";
-                        try {
-                            id = $($(".thumbnail-bl")[this.core.index]).children('a').attr("tag");
-                        } catch (e) {
-                            if (shashin) {
-                                shashin.showToastMessage("Could not get media details", "Could not get media details. " + e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
-                            }
-                        }
-
-                        if (typeof fn === 'function' && id.length > 0) {
-                            fn(id);
-                        } else {
-                            if (shashin) {
-                                shashin.showToastMessage("Could not get media details", "Could not get media details. Tag or function not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
-                            }
-                        }
-                    } else if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("tag") && this.settings.hasOwnProperty("metadataDetailFunc")) {
-                        //console.log($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag"))
-                        const fn = this.settings.metadataDetailFunc;
-                        let id = "";
-                        try {
-                            id = $($(".thumbnail-centered")[this.core.index]).children('a').attr("tag");
-                        } catch (e) {
-                            if (shashin) {
-                                shashin.showToastMessage("Could not get media details", "Could not get media details. " + e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
-                            }
-                        }
-
-                        if (typeof fn === 'function' && id.length > 0) {
-                            fn(id);
-                        } else {
-                            if (shashin) {
-                                shashin.showToastMessage("Could not get media details", "Could not get media details. Tag or function not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
-                            }
-                        }
+                        currentDynamicEl.infofun(currentDynamicEl.args);
                     } else {
-                        if (shashin) {
+                        const fn = this.settings.metadataDetailFunc;
+                        let metadataId = "";
+
+                        if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag") && this.settings.hasOwnProperty("metadataDetailFunc")) {
+                            if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag") !== undefined) {
+                                metadataId = $($(".thumbnail-bl")[this.core.index]).children('a').attr("tag");
+                            } else if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("data-metadataid") !== undefined) {
+                                metadataId = $($(".thumbnail-bl")[this.core.index]).children('a').attr("data-metadataid");
+                            }
+                        }
+
+                        if (metadataId.length === 0 && $($(".thumbnail-centered")[this.core.index]).children('a').attr("tag") && this.settings.hasOwnProperty("metadataDetailFunc")) {
+                            if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("tag") !== undefined) {
+                                metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("tag");
+                            } else if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid") !== undefined) {
+                                metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid");
+                            }
+                        }
+
+                        if (metadataId.length === 0 && shashin) {
                             shashin.showToastMessage("Could not get media details", "Could not get media details. Tag or function not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+                        }
+
+                        if (typeof fn === 'function' && metadataId.length > 0) {
+                            fn(metadataId);
+                        } else {
+                            if (shashin) {
+                                shashin.showToastMessage("Could not get media details", "Could not get media details. Tag or function not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+                            }
                         }
                     }
                 });

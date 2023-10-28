@@ -72,32 +72,41 @@
                             $("#chromecasting").addClass('bi-cast').removeClass('bi-stop-circle');
                             cjs.disconnect();
                         } else {
+                            let metadataId = "";
+                            let currentDynamicEl = this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("args") ?
+                                this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
 
-                            let metadataId = null;
-                            let currentDynamicEl = this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("func") ? this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
-
-                            if (currentDynamicEl.hasOwnProperty("func")) {
+                            if (currentDynamicEl.hasOwnProperty("args")) {
                                 $("#metadataId").val(currentDynamicEl.args);
                                 metadataId = currentDynamicEl.args;
-                            } else if ($($(".thumbnail-bl")[this.core.index])) {
-                                //console.log($($(".thumbnail-bl")[this.core.index]))
-                                let toArgObj = "";
-                                try {
-                                    toArgObj = $($(".thumbnail-bl")[this.core.index]).attr("id").substring(4);
-                                } catch (e) {
+                            } else {
+                                if ($($(".thumbnail-centered")[this.core.index])) {
+                                    if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("tag") !== undefined) {
+                                        metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("tag");
+                                    } else if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid") !== undefined) {
+                                        metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid");
+                                    }
                                 }
-                                metadataId = toArgObj;
-                            }
 
-                            if (metadataId !== null && $.isArray(metadataId) === true && metadataId.length > 0) {
-                                metadataId = metadataId[0];
+                                if (metadataId.length === 0 && $($(".thumbnail-bl")[this.core.index])) {
+                                    if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag") !== undefined) {
+                                        metadataId = $($(".thumbnail-bl")[this.core.index]).children('a').attr("tag");
+                                    } else if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("data-metadataid") !== undefined) {
+                                        metadataId = $($(".thumbnail-bl")[this.core.index]).children('a').attr("data-metadataid");
+                                    }
+                                }
                             }
 
                             if (shashin &&
-                                /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(metadataId)) {
+                                /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(metadataId)
+                            ) {
                                 shashin.getMetadata(metadataId).then(function (metadata) {
                                     castMetadataMedia(metadata, cjs);
                                 });
+                            } else {
+                                if (shashin) {
+                                    shashin.showToastMessage("Could not get cast", "Could not cast. Metadata ID not valid", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+                                }
                             }
                         }
                     }
