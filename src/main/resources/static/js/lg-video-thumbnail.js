@@ -97,7 +97,7 @@
                 .find('.'+captureIcon)
                 .first()
                 .on('click.lg', () => {
-                    let currentDynamicEl = (this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("vtfunc")) ?
+                    let currentDynamicEl = (this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("vtfun")) ?
                         this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
 
                     $("#captureThumbnail").hide();
@@ -105,71 +105,53 @@
                     $("#captureThumbnail").prop( "disabled", true);
                     $("#captureThumbnailSpinner").prop( "disabled", true);
 
-                    if (currentDynamicEl.hasOwnProperty("vtfunc")) {
+                    if (currentDynamicEl.hasOwnProperty("vtfun") && currentDynamicEl.hasOwnProperty("args")) {
                         $("#metadataId").val(currentDynamicEl.args);
-                        currentDynamicEl.vtfunc(currentDynamicEl.args, this.core.lgId, this.core.index);
-                    } else if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag") && this.settings.hasOwnProperty("videoThumbnailFunc")) {
-                        //console.log($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag"))
-                        const fn = this.settings.videoThumbnailFunc;
-                        let id = "";
-                        try {
-                            id = $($(".thumbnail-bl")[this.core.index]).children('a').attr("tag");
-                        } catch (e) {
-                            if (shashin) {
-                                shashin.showToastMessage("Could not capture screenshot", "Could not capture screenshot. " + e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
-                            }
-                            $("#captureThumbnail").show();
-                            $("#captureThumbnailSpinner").hide();
-                            $("#captureThumbnail").prop( "disabled", false);
-                            $("#captureThumbnailSpinner").prop( "disabled", false);
-                        }
-
-                        if (typeof fn === 'function' && id.length > 0) {
-                            fn(id, this.core.lgId, this.core.index);
-                        } else {
-                            if (shashin) {
-                                shashin.showToastMessage("Could not capture screenshot", "Could not capture screenshot. Tag or function not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
-                            }
-                            $("#captureThumbnail").show();
-                            $("#captureThumbnailSpinner").hide();
-                            $("#captureThumbnail").prop( "disabled", false);
-                            $("#captureThumbnailSpinner").prop( "disabled", false);
-                        }
-                    } else if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("tag") && this.settings.hasOwnProperty("videoThumbnailFunc")) {
-                        //console.log($($(".thumbnail-centered")[this.core.index]).children('a').attr("tag"))
-                        const fn = this.settings.videoThumbnailFunc;
-                        let id = "";
-                        try {
-                            id = $($(".thumbnail-centered")[this.core.index]).children('a').attr("tag");
-                        } catch (e) {
-                            if (shashin) {
-                                shashin.showToastMessage("Could not capture screenshot", "Could not capture screenshot. " + e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
-                            }
-                            $("#captureThumbnail").show();
-                            $("#captureThumbnailSpinner").hide();
-                            $("#captureThumbnail").prop( "disabled", false);
-                            $("#captureThumbnailSpinner").prop( "disabled", false);
-                        }
-
-                        if (typeof fn === 'function' && id.length > 0) {
-                            fn(id, this.core.lgId, this.core.index);
-                        } else {
-                            if (shashin) {
-                                shashin.showToastMessage("Could not capture screenshot", "Could not capture screenshot. Tag or function not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
-                            }
-                            $("#captureThumbnail").show();
-                            $("#captureThumbnailSpinner").hide();
-                            $("#captureThumbnail").prop( "disabled", false);
-                            $("#captureThumbnailSpinner").prop( "disabled", false);
-                        }
+                        currentDynamicEl.vtfun(currentDynamicEl.args, this.core.lgId, this.core.index);
                     } else {
-                        if (shashin) {
-                            shashin.showToastMessage("Could not capture screenshot", "Could not capture screenshot. Tag or function not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+                        const fn = this.settings.videoThumbnailFunc;
+                        let metadataId = "";
+
+                        if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag") && this.settings.hasOwnProperty("videoThumbnailFunc")) {
+                            if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag") !== undefined) {
+                                metadataId = $($(".thumbnail-bl")[this.core.index]).children('a').attr("tag");
+                            } else if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("data-metadataid") !== undefined) {
+                                metadataId = $($(".thumbnail-bl")[this.core.index]).children('a').attr("data-metadataid");
+                            }
                         }
-                        $("#captureThumbnail").show();
-                        $("#captureThumbnailSpinner").hide();
-                        $("#captureThumbnail").prop( "disabled", false);
-                        $("#captureThumbnailSpinner").prop( "disabled", false);
+
+                        if (metadataId.length === 0 && $($(".thumbnail-centered")[this.core.index]).children('a').attr("tag") && this.settings.hasOwnProperty("videoThumbnailFunc")) {
+                            if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("tag") !== undefined) {
+                                metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("tag");
+                            } else if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid") !== undefined) {
+                                metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid");
+                            }
+                        }
+
+                        if (metadataId.length === 0) {
+                            if (shashin) {
+                                shashin.showToastMessage("Could not capture screenshot", "Could not capture screenshot. Tag or function not found", {
+                                    icon: "bi-exclamation-triangle",
+                                    iconColor: "#FF0000"
+                                });
+                            }
+                            $("#captureThumbnail").show();
+                            $("#captureThumbnailSpinner").hide();
+                            $("#captureThumbnail").prop( "disabled", false);
+                            $("#captureThumbnailSpinner").prop( "disabled", false);
+                        }
+
+                        if (typeof fn === 'function' && metadataId.length > 0) {
+                            fn(metadataId, this.core.lgId, this.core.index);
+                        } else {
+                            if (shashin) {
+                                shashin.showToastMessage("Could not capture screenshot", "Could not capture screenshot. Tag or function not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+                            }
+                            $("#captureThumbnail").show();
+                            $("#captureThumbnailSpinner").hide();
+                            $("#captureThumbnail").prop( "disabled", false);
+                            $("#captureThumbnailSpinner").prop( "disabled", false);
+                        }
                     }
                 });
         }
