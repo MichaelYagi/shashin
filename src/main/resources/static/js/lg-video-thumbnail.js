@@ -3,13 +3,15 @@
  * - Created this module to capture video thumbnails
  */
 
-! function(_window, moduleFunction) {
+! function(_window, pluginFunction) {
+    let pluginName = "lgVideoThumbnail";
+
     if ("object" == typeof exports && "undefined" != typeof module) {
         module.exports = l();
     } else if ("function" == typeof define && define.amd) {
-        define(moduleFunction);
+        define(pluginFunction);
     } else {
-        (_window = "undefined" != typeof globalThis ? globalThis : _window || self).lgVideoThumbnail = moduleFunction();
+        (_window = "undefined" != typeof globalThis ? globalThis : _window || self)[pluginName] = pluginFunction();
     }
 } (this, (function() {
     "use strict";
@@ -39,14 +41,13 @@
         }
 
         VideoThumbnail.prototype.init = function () {
-            let videoThumbnail = "";
             const captureIcon = "bi-lightning";
 
             if (this.settings.videoThumbnail) {
-                videoThumbnail = '<button type="button" aria-label="Capture Thumbnail" title="Capture Thumbnail" id="captureThumbnail" class="'+captureIcon+' lg-icon" style="font-size: 1rem;display: none"></button>' +
+                const videoThumbnailMenuItem = '<button type="button" aria-label="Capture Thumbnail" title="Capture Thumbnail" id="captureThumbnail" class="'+captureIcon+' lg-icon" style="font-size: 1rem;display: none"></button>' +
                     '<div class="spinner-border spinner-border-sm float-end mt-3 me-3" role="status" id="captureThumbnailSpinner"></div>';
 
-                this.core.$toolbar.append(videoThumbnail);
+                this.core.$toolbar.append(videoThumbnailMenuItem);
 
                 this.videoThumbnail();
             }
