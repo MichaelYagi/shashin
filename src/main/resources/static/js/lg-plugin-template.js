@@ -1,6 +1,13 @@
 /**
  * MY - Added Oct 28 2023
  * - Plugin template
+ * lightGallery(document.getElementById('lightgallery'), {
+ *   plugins: [lgPluginName],
+ *   licenseKey: 'your_license_key',
+ *   speed: 500,
+ *   pluginSettingAttribute: true,
+ *   // ... other settings
+ * });
  */
 
 ! function(_window, pluginFunction) {
@@ -69,7 +76,7 @@
                 .find('.'+menuIcon)
                 .first()
                 .on('click.lg', () => {
-                    console.log("This is a template for setting up a plugin!");
+                    alert("This is a template for setting up a plugin!");
                 });
         }
 
