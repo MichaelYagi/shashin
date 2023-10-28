@@ -32,12 +32,13 @@
                 .find('.bi-info-circle')
                 .first()
                 .on('click.lg', () => {
-                    let currentDynamicEl = this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("func") ? this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
+                    let currentDynamicEl = this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("func") ?
+                        this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
+
                     if (currentDynamicEl.hasOwnProperty("func")) {
                         $("#metadataId").val(currentDynamicEl.args);
                         currentDynamicEl.func(currentDynamicEl.args);
-                    } else if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag")) {
-                        //console.log($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag"))
+                    } else if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag") && this.settings.hasOwnProperty("metadataDetailFunc")) {
                         const fn = this.settings.metadataDetailFunc;
                         let id = "";
                         try {
@@ -55,7 +56,7 @@
                                 shashin.showToastMessage("Could not get media details", "Could not get media details. Tag or function not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
                             }
                         }
-                    } else if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("tag")) {
+                    } else if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("tag") && this.settings.hasOwnProperty("metadataDetailFunc")) {
                         //console.log($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag"))
                         const fn = this.settings.metadataDetailFunc;
                         let id = "";
