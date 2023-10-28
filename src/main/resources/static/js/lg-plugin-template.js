@@ -1,6 +1,6 @@
 /**
  * MY - Added Oct 28 2023
- * - Plugin template
+ * - Working Plugin template
  * lightGallery(document.getElementById('lightgallery'), {
  *   plugins: [lgPluginName],
  *   licenseKey: 'your_license_key',
