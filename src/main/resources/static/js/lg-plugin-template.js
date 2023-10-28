@@ -92,10 +92,19 @@
                         const fn = this.settings.pluginFunc;
                         let metadataId = "";
 
+                        // Get the metadataId from different sources
                         if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag") !== undefined) {
                             metadataId = $($(".thumbnail-bl")[this.core.index]).children('a').attr("tag");
                         } else if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("data-metadataid") !== undefined) {
                             metadataId = $($(".thumbnail-bl")[this.core.index]).children('a').attr("data-metadataid");
+                        }
+
+                        if (metadataId.length === 0 && $($(".thumbnail-bl")[this.core.index])) {
+                            if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag") !== undefined) {
+                                metadataId = $($(".thumbnail-bl")[this.core.index]).children('a').attr("tag");
+                            } else if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("data-metadataid") !== undefined) {
+                                metadataId = $($(".thumbnail-bl")[this.core.index]).children('a').attr("data-metadataid");
+                            }
                         }
 
                         // Execute function
