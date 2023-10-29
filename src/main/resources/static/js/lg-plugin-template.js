@@ -83,11 +83,17 @@
                     let currentDynamicEl = (this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("pluginFunctionName")) ?
                         this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
 
+                    let error = false;
+
                     // Optionally get a function and args and execute when creating lg items dynamically
                     if (currentDynamicEl.hasOwnProperty("pluginFunctionName") && currentDynamicEl.hasOwnProperty("args")) {
-                        $("#metadataId").val(currentDynamicEl.args);
-                        // Execute function
-                        currentDynamicEl.pluginFunctionName(currentDynamicEl.args, this.core.lgId, this.core.index);
+                        if (currentDynamicEl.args.length > 0 && typeof currentDynamicEl.pluginFunctionName === 'function') {
+                            $("#metadataId").val(currentDynamicEl.args);
+                            // Execute function
+                            currentDynamicEl.pluginFunctionName(currentDynamicEl.args, this.core.lgId, this.core.index);
+                        } else {
+                            error = true;
+                        }
                     } else {
                         let functionName = "pluginFun";
                         let fn = null;
@@ -103,8 +109,12 @@
                         if (typeof fn === 'function' && metadataId.length > 0) {
                             fn(metadataId, this.core.lgId, this.core.index);
                         } else {
-                            console.log("Could not execute function");
+                            error = true;
                         }
+                    }
+
+                    if (error === true && shashin) {
+                        console.log("Could not execute function");
                     }
                 });
         }

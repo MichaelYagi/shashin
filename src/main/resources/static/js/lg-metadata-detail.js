@@ -35,9 +35,15 @@
                     let currentDynamicEl = this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("infofun") ?
                         this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
 
+                    let error = false;
+
                     if (currentDynamicEl.hasOwnProperty("infofun") && currentDynamicEl.hasOwnProperty("args")) {
-                        $("#metadataId").val(currentDynamicEl.args);
-                        currentDynamicEl.infofun(currentDynamicEl.args);
+                        if (currentDynamicEl.args.length > 0 && typeof currentDynamicEl.infofun === 'function') {
+                            $("#metadataId").val(currentDynamicEl.args);
+                            currentDynamicEl.infofun(currentDynamicEl.args);
+                        } else {
+                            error = true;
+                        }
                     } else {
                         let functionName = "metadataDetailFun";
                         let fn = null;
@@ -51,10 +57,12 @@
                         if (typeof fn === 'function' && metadataId.length > 0) {
                             fn(metadataId);
                         } else {
-                            if (shashin) {
-                                shashin.showToastMessage("Could not get media details", "Could not get media details. Tag or function not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
-                            }
+                            error = true;
                         }
+                    }
+
+                    if (error === true && shashin) {
+                        shashin.showToastMessage("Could not get media details", "Could not capture screenshot. Function or metadata ID not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
                     }
                 });
         },

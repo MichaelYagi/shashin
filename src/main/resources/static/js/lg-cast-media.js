@@ -116,7 +116,9 @@
                                     cjs.cast(baseUrl + metadata.videoUrl, cjsMetadata);
                                 } catch(e) {
                                     // Error
-                                    shashin.printMessageToConsole("Castjs could not cast video "+metadata.videoUrl+": "+e.message);
+                                    if (shashin) {
+                                        shashin.showToastMessage("Could not cast", "Castjs could not cast video "+metadata.videoUrl+": "+e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+                                    }
                                     // console.log(e)
                                     $("#chromecasting").css({"display": "none", "font-size": "1rem"});
                                 }
@@ -125,7 +127,9 @@
                                     cjs.cast(baseUrl + metadata.thumbnailUrlOriginal + ".jpg", cjsMetadata);
                                 } catch(e) {
                                     // Error
-                                    shashin.printMessageToConsole("Castjs could not cast image "+metadata.thumbnailUrlOriginal+": "+e.message);
+                                    if (shashin) {
+                                        shashin.showToastMessage("Could not cast", "Castjs could not cast video "+metadata.videoUrl+": "+e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+                                    }
                                     $("#chromecasting").css({"display": "none", "font-size": "1rem"});
                                 }
                             }

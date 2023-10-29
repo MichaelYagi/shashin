@@ -105,9 +105,15 @@
                     $("#captureThumbnail").prop( "disabled", true);
                     $("#captureThumbnailSpinner").prop( "disabled", true);
 
+                    let error = false;
+
                     if (currentDynamicEl.hasOwnProperty("vtfun") && currentDynamicEl.hasOwnProperty("args")) {
-                        $("#metadataId").val(currentDynamicEl.args);
-                        currentDynamicEl.vtfun(currentDynamicEl.args, this.core.lgId, this.core.index);
+                        if (currentDynamicEl.args.length > 0 && typeof currentDynamicEl.vtfun === 'function') {
+                            $("#metadataId").val(currentDynamicEl.args);
+                            currentDynamicEl.vtfun(currentDynamicEl.args, this.core.lgId, this.core.index);
+                        } else {
+                            error = true;
+                        }
                     } else {
                         let functionName = "videoThumbnailFun";
                         let fn = null;
@@ -121,14 +127,18 @@
                         if (typeof fn === 'function' && metadataId.length > 0) {
                             fn(metadataId, this.core.lgId, this.core.index);
                         } else {
-                            if (shashin) {
-                                shashin.showToastMessage("Could not capture screenshot", "Could not capture screenshot. Tag or function not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
-                            }
-                            $("#captureThumbnail").show();
-                            $("#captureThumbnailSpinner").hide();
-                            $("#captureThumbnail").prop( "disabled", false);
-                            $("#captureThumbnailSpinner").prop( "disabled", false);
+                            error = true;
                         }
+                    }
+
+                    if (error === true) {
+                        if (shashin) {
+                            shashin.showToastMessage("Could not capture screenshot", "Could not capture screenshot. Function or metadata ID not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+                        }
+                        $("#captureThumbnail").show();
+                        $("#captureThumbnailSpinner").hide();
+                        $("#captureThumbnail").prop( "disabled", false);
+                        $("#captureThumbnailSpinner").prop( "disabled", false);
                     }
                 });
         }
