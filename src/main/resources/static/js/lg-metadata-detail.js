@@ -48,10 +48,6 @@
                             fn = this.settings[functionName];
                         }
 
-                        if (metadataId.length === 0 && shashin) {
-                            shashin.showToastMessage("Could not get media details", "Could not get media details. Tag or function not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
-                        }
-
                         if (typeof fn === 'function' && metadataId.length > 0) {
                             fn(metadataId);
                         } else {
