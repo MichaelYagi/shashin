@@ -40,7 +40,7 @@
 
                                 <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, null, null, null, null)"></div>
 
-                                <div th:replace="fragments/centeredoverlay :: centeredoverlay(${metadata},'shashin.openGallery',${iterStat.index})"></div>
+                                <div th:replace="fragments/centeredoverlay :: centeredoverlay(${metadata},${activePage},'shashin.openGallery',${iterStat.index})"></div>
 
                             </div>
 
