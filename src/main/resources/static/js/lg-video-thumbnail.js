@@ -109,7 +109,7 @@
                         $("#metadataId").val(currentDynamicEl.args);
                         currentDynamicEl.vtfun(currentDynamicEl.args, this.core.lgId, this.core.index);
                     } else {
-                        let functionName = "videoThumbnailFunc";
+                        let functionName = "videoThumbnailFun";
                         let fn = null;
                         let metadataId = "";
 

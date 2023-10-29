@@ -39,7 +39,7 @@
                         $("#metadataId").val(currentDynamicEl.args);
                         currentDynamicEl.infofun(currentDynamicEl.args);
                     } else {
-                        let functionName = "metadataDetailFunc";
+                        let functionName = "metadataDetailFun";
                         let fn = null;
                         let metadataId = "";
 
