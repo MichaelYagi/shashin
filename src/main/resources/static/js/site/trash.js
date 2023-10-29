@@ -13,12 +13,12 @@ class Trash {
         if (typeof lgMetadataDetail !== "undefined") {
             lgConfig.plugins.push(lgMetadataDetail);
             lgConfig["metadataDetail"] = true;
-            lgConfig["metadataDetailFunc"] = shashin.openInfoSidebar;
+            lgConfig["metadataDetailFun"] = shashin.openInfoSidebar;
         }
         if (typeof lgVideoThumbnail !== "undefined") {
             lgConfig.plugins.push(lgVideoThumbnail);
             lgConfig["videoThumbnail"] = true;
-            lgConfig["videoThumbnailFunc"] = shashin.processVideoThumbnail;
+            lgConfig["videoThumbnailFun"] = shashin.processVideoThumbnail;
         }
         this.mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',lgConfig,'.mediaLink');
     }

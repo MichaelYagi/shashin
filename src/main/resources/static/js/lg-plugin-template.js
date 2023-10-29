@@ -89,7 +89,7 @@
                         // Execute function
                         currentDynamicEl.pluginFunctionName(currentDynamicEl.args, this.core.lgId, this.core.index);
                     } else {
-                        let functionName = "pluginFunc";
+                        let functionName = "pluginFun";
                         let fn = null;
                         let metadataId = "";
 
