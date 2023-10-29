@@ -93,18 +93,8 @@
                         let metadataId = "";
 
                         // Get the metadataId from different sources
-                        if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag") !== undefined) {
-                            metadataId = $($(".thumbnail-bl")[this.core.index]).children('a').attr("tag");
-                        } else if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("data-metadataid") !== undefined) {
-                            metadataId = $($(".thumbnail-bl")[this.core.index]).children('a').attr("data-metadataid");
-                        }
-
-                        if (metadataId.length === 0 && $($(".thumbnail-centered")[this.core.index])) {
-                            if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("tag") !== undefined) {
-                                metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("tag");
-                            } else if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid") !== undefined) {
-                                metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid");
-                            }
+                        if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid") && this.settings.hasOwnProperty("videoThumbnailFunc")) {
+                            metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid");
                         }
 
                         // Execute function

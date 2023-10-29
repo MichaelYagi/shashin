@@ -112,20 +112,8 @@
                         const fn = this.settings.videoThumbnailFunc;
                         let metadataId = "";
 
-                        if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag") && this.settings.hasOwnProperty("videoThumbnailFunc")) {
-                            if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag") !== undefined) {
-                                metadataId = $($(".thumbnail-bl")[this.core.index]).children('a').attr("tag");
-                            } else if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("data-metadataid") !== undefined) {
-                                metadataId = $($(".thumbnail-bl")[this.core.index]).children('a').attr("data-metadataid");
-                            }
-                        }
-
-                        if (metadataId.length === 0 && $($(".thumbnail-centered")[this.core.index]).children('a').attr("tag") && this.settings.hasOwnProperty("videoThumbnailFunc")) {
-                            if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("tag") !== undefined) {
-                                metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("tag");
-                            } else if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid") !== undefined) {
-                                metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid");
-                            }
+                        if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid") && this.settings.hasOwnProperty("videoThumbnailFunc")) {
+                            metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid");
                         }
 
                         if (metadataId.length === 0) {

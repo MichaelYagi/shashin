@@ -35,7 +35,8 @@ class GalleryTemplates {
             id: metadata.id,
             overlays: overlayData.overlays,
             data: overlayData.data,
-            uuid: uuid
+            uuid: uuid,
+            activePage: activePage
         }) : ''}
             
         </div>
@@ -141,21 +142,21 @@ class GalleryTemplates {
     static getBottomLeftOverlay({metadata, overlays, data}) { return `
         <div class="thumbnail-bl" id="tnbl${metadata.id}">
             ${($.inArray("isEditControls", overlays) !== -1) ?
-            `
+        `
             <a href="#" id="metadataModalEdit${metadata.id}" data-bs-target="#propTimelinModal" tag="${metadata.id}">
                 <span class="${data.editIcon}" style="font-size: 1rem;color: lightgray;"></span>
             </a>
             ` : ''}
         
             ${($.inArray("isInfo", overlays) !== -1) ?
-            `
+        `
             <a href="#" id="infoModalEdit${metadata.id}" tag="${metadata.id}">
                 <span class="${(metadata.lat !== null && metadata.lng !== null) ? `bi-info-circle` : `bi-info-square`}" style="font-size: 1rem;color: lightgray;"></span>
             </a>
             ` : ''}
             
             ${($.inArray("isBlOnClickFunction", overlays) !== -1) ?
-            `
+        `
             <br>
             <a href="#" id="${data.onClickIdPrefix}${metadata.id}">
                 <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
@@ -170,7 +171,7 @@ class GalleryTemplates {
             ` : ''}
             
             ${($.inArray("isOnClickIdPrefix", overlays) !== -1) ?
-            `
+        `
             <br>
             <a href="#" data-bs-toggle="modal" data-bs-target="#${data.onClickIdPrefix}${metadata.id}">
                 <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
@@ -179,25 +180,27 @@ class GalleryTemplates {
         </div>
     `};
 
-    static getCenteredOverlay({id, overlays, data, uuid}) { return `
+    static getCenteredOverlay({id, overlays, data, uuid, activePage}) { return `
         <div class="thumbnail-centered" id="tncentered${id}">
     
             ${($.inArray("isVideo", overlays) !== -1) ?
                 `
                 <a class="mediaLink" id="mediaLink${id}" data-download-url="${encodeURI(data.metadata.videoUrl)}/download" 
                     ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}
+                    data-metadataid="${data.metadata.id}"
                     data-poster="${(data.metadata.thumbnailUrlOriginal === null || data.metadata.thumbnailUrlOriginal === "") ? data.metadata.thumbnailUrlSmall : data.metadata.thumbnailUrlOriginal}?v=${uuid}"
                     data-lg-size="${(data.metadata.originalImageWidth === null || data.metadata.originalImageWidth === "") ? `${data.metadata.thumbnailSmallWidth}-${data.metadata.thumbnailSmallHeight}` : `${data.metadata.originalImageWidth}-${data.metadata.originalImageHeight}`}"
                     data-video=\'{"source": [{"src":"${data.metadata.videoUrl}", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true, "autoplay": true}}\'>
-                    <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
+                    ${(activePage !== "slideshow" ? `<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>` : '')}
                 </a>
                 `
                 :
                 `
                 <a class="mediaLink" id="mediaLink${id}" data-src="${data.metadata.thumbnailUrlOriginal}" href="${data.metadata.thumbnailUrlOriginal}"
                     data-download-url="${encodeURI(data.metadata.thumbnailUrlOriginal)}/download"
+                    data-metadataid="${data.metadata.id}"
                     ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}>
-                    <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>
+                    ${(activePage !== "slideshow" ? `<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>` : '')}
                 </a>
                 `
             }

@@ -214,6 +214,7 @@
         mediaContent.infofun = shashin.openInfoSidebar;
         mediaContent.vtfun = shashin.processVideoThumbnail;
         mediaContent.args = metadata.id;
+        mediaContent.metadataId = metadata.id;
 
         if (metadata.type.includes("video")) {
             mediaContent.video = {
@@ -678,6 +679,7 @@
                 mediaContent.lgSize = $(this).attr("data-lg-size");
                 mediaContent.downloadUrl = $(this).attr("data-video")+"/download";
             }
+            mediaContent.metadataid = $(this).attr("data-metadataid");;
             mediaContentList.push(mediaContent);
         });
 
