@@ -234,6 +234,7 @@
             $(".photo-thumbnail-image").mousemove(function () {
                 if (hovered === false && timelineSettings.enableScrollSpy === true) {
                     scrollByN(1);
+                    scrollByN(1);
                     hovered = true;
                 }
             });
