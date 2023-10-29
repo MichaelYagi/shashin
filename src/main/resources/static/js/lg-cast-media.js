@@ -129,6 +129,10 @@
                                     $("#chromecasting").css({"display": "none", "font-size": "1rem"});
                                 }
                             }
+
+                            cjs.on('disconnect', () => {
+                                $("#chromecasting").addClass('bi-cast').removeClass('bi-stop-circle');
+                            });
                         }
                     }
                 });
