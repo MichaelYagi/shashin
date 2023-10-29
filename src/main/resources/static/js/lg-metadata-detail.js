@@ -43,8 +43,8 @@
                         let fn = null;
                         let metadataId = "";
 
-                        if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid") && this.settings.hasOwnProperty(functionName)) {
-                            metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid");
+                        if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadata-id") && this.settings.hasOwnProperty(functionName)) {
+                            metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadata-id");
                             fn = this.settings[functionName];
                         }
 

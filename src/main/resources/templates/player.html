@@ -48,7 +48,7 @@
         th:data-lg-size="${(metadataObj.originalImageWidth == null || metadataObj.originalImageWidth == '') ? (metadataObj.thumbnailSmallWidth+'-'+metadataObj.thumbnailSmallHeight) : (metadataObj.originalImageWidth+'-'+metadataObj.originalImageHeight)}"
         th:data-poster="${(metadataObj.thumbnailUrlOriginal == null || metadataObj.thumbnailUrlOriginal == '') ? metadataObj.thumbnailUrlSmall : metadataObj.thumbnailUrlOriginal}"
         th:data-sub-html="${metadataObj.description}"
-        th:data-metadataid="${metadataObj.id}"
+        th:data-metadata-id="${metadataObj.id}"
         th:data-download-url="${metadataObj.videoUrl + '/download'}"
     >
         <img id="photoImage" th:src="${metadataObj.thumbnailUrlSmall}" />

@@ -679,7 +679,7 @@
                 mediaContent.lgSize = $(this).attr("data-lg-size");
                 mediaContent.downloadUrl = $(this).attr("data-video")+"/download";
             }
-            mediaContent.metadataid = $(this).attr("data-metadataid");;
+            mediaContent.metadataId = $(this).attr("data-metadata-id");
             mediaContentList.push(mediaContent);
         });
 

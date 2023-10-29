@@ -43,7 +43,7 @@
 <div id="photo" style="display: none;">
     <a th:href="${metadataObj.thumbnailUrlOriginal}"
        th:data-sub-html="${metadataObj.description}"
-       th:data-metadataid="${metadataObj.id}"
+       th:data-metadata-id="${metadataObj.id}"
        th:data-download-url="${metadataObj.thumbnailUrlOriginal + '/download'}">
         <img id="photoImage" th:src="${metadataObj.thumbnailUrlSmall}" />
     </a>
