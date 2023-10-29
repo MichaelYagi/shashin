@@ -118,19 +118,6 @@
                             fn = this.settings[functionName];
                         }
 
-                        if (metadataId.length === 0) {
-                            if (shashin) {
-                                shashin.showToastMessage("Could not capture screenshot", "Could not capture screenshot. Tag or function not found", {
-                                    icon: "bi-exclamation-triangle",
-                                    iconColor: "#FF0000"
-                                });
-                            }
-                            $("#captureThumbnail").show();
-                            $("#captureThumbnailSpinner").hide();
-                            $("#captureThumbnail").prop( "disabled", false);
-                            $("#captureThumbnailSpinner").prop( "disabled", false);
-                        }
-
                         if (typeof fn === 'function' && metadataId.length > 0) {
                             fn(metadataId, this.core.lgId, this.core.index);
                         } else {
