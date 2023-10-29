@@ -79,7 +79,7 @@
                             if (currentDynamicEl.hasOwnProperty("args")) {
                                 $("#metadataId").val(currentDynamicEl.args);
                                 metadataId = currentDynamicEl.args;
-                            } else if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid") && this.settings.hasOwnProperty("videoThumbnailFunc")) {
+                            } else if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid")) {
                                 metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid");
                             }
 

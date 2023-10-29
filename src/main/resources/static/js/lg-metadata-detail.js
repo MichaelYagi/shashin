@@ -39,11 +39,13 @@
                         $("#metadataId").val(currentDynamicEl.args);
                         currentDynamicEl.infofun(currentDynamicEl.args);
                     } else {
-                        const fn = this.settings.metadataDetailFunc;
+                        let functionName = "metadataDetailFunc";
+                        let fn = null;
                         let metadataId = "";
 
-                        if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid") && this.settings.hasOwnProperty("videoThumbnailFunc")) {
+                        if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid") && this.settings.hasOwnProperty(functionName)) {
                             metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid");
+                            fn = this.settings[functionName];
                         }
 
                         if (metadataId.length === 0 && shashin) {

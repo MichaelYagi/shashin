@@ -109,11 +109,13 @@
                         $("#metadataId").val(currentDynamicEl.args);
                         currentDynamicEl.vtfun(currentDynamicEl.args, this.core.lgId, this.core.index);
                     } else {
-                        const fn = this.settings.videoThumbnailFunc;
+                        let functionName = "videoThumbnailFunc";
+                        let fn = null;
                         let metadataId = "";
 
-                        if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid") && this.settings.hasOwnProperty("videoThumbnailFunc")) {
+                        if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid") && this.settings.hasOwnProperty(functionName)) {
                             metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid");
+                            fn = this.settings[functionName];
                         }
 
                         if (metadataId.length === 0) {
