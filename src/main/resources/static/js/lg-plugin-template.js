@@ -89,12 +89,14 @@
                         // Execute function
                         currentDynamicEl.pluginFunctionName(currentDynamicEl.args, this.core.lgId, this.core.index);
                     } else {
-                        const fn = this.settings.pluginFunc;
+                        let functionName = "pluginFunc";
+                        let fn = null;
                         let metadataId = "";
 
-                        // Get the metadataId from different sources
-                        if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid") && this.settings.hasOwnProperty("videoThumbnailFunc")) {
+                        // Get the metadataId and set the function variable
+                        if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid") && this.settings.hasOwnProperty(functionName)) {
                             metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadataid");
+                            fn = this.settings[functionName];
                         }
 
                         // Execute function
