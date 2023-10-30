@@ -32,24 +32,12 @@
                 .find('.bi-info-circle')
                 .first()
                 .on('click.lg', () => {
-                    const functionName = "metadataDetailFun";
-                    let fn = null;
-                    let metadataId = "";
+                    const funObject = Util.getLgFunction(this, "metadataDetailFun");
 
-                    let currentDynamicEl = this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty(functionName) ?
-                        this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
-
-                    if (currentDynamicEl.hasOwnProperty(functionName) && currentDynamicEl.hasOwnProperty("args")) {
-                        metadataId = currentDynamicEl.args;
-                        fn = currentDynamicEl[functionName];
-                    } else if (currentDynamicEl.hasOwnProperty("metadataId") && this.settings.hasOwnProperty(functionName)) {
-                        metadataId = currentDynamicEl.metadataId;
-                        fn = this.settings[functionName];
-                    }
-
-                    if (typeof fn === 'function' && metadataId.length > 0) {
-                        $("#metadataId").val(metadataId);
-                        fn(metadataId);
+                    // Execute function
+                    if (typeof funObject.fn === 'function' && funObject.args !== null && funObject.args.length > 0) {
+                        $("#metadataId").val(funObject.args);
+                        funObject.fn(funObject.args);
                     } else if (shashin) {
                         shashin.showToastMessage("Could not get media details", "Could not get media details. Function or metadata ID not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
                     }

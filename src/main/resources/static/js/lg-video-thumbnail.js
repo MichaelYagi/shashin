@@ -97,29 +97,17 @@
                 .find('.'+captureIcon)
                 .first()
                 .on('click.lg', () => {
-                    const functionName = "videoThumbnailFun";
-                    let fn = null;
-                    let metadataId = "";
-
-                    let currentDynamicEl = (this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty(functionName)) ?
-                        this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
-
                     $("#captureThumbnail").hide();
                     $("#captureThumbnailSpinner").show();
                     $("#captureThumbnail").prop( "disabled", true);
                     $("#captureThumbnailSpinner").prop( "disabled", true);
 
-                    if (currentDynamicEl.hasOwnProperty(functionName) && currentDynamicEl.hasOwnProperty("args")) {
-                        metadataId = currentDynamicEl.args;
-                        fn = currentDynamicEl[functionName];
-                    } else if (currentDynamicEl.hasOwnProperty("metadataId") && this.settings.hasOwnProperty(functionName)) {
-                        metadataId = currentDynamicEl.metadataId;
-                        fn = this.settings[functionName];
-                    }
+                    const funObject = Util.getLgFunction(this, "videoThumbnailFun");
 
-                    if (typeof fn === 'function' && metadataId.length > 0) {
-                        $("#metadataId").val(currentDynamicEl.args);
-                        fn(metadataId, this.core.lgId, this.core.index);
+                    // Execute function
+                    if (typeof funObject.fn === 'function' && funObject.args !== null && funObject.args.length > 0) {
+                        $("#metadataId").val(funObject.args);
+                        funObject.fn(funObject.args, this.core.lgId, this.core.index);
                     } else {
                         if (shashin) {
                             shashin.showToastMessage("Could not capture screenshot", "Could not capture screenshot. Function or metadata ID not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
