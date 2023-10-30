@@ -84,15 +84,14 @@
                         this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
 
                     let error = false;
-                    const dynamicFunctionName = "pnFun";
-                    const settingsFunctionName = "pluginNameFunction";
+                    const functionName = "pluginFunctionName";
 
                     // Optionally get a function and args and execute when creating lg items dynamically
-                    if (currentDynamicEl.hasOwnProperty(dynamicFunctionName) && currentDynamicEl.hasOwnProperty("args")) {
-                        if (currentDynamicEl.args.length > 0 && typeof currentDynamicEl[dynamicFunctionName] === 'function') {
+                    if (currentDynamicEl.hasOwnProperty(functionName) && currentDynamicEl.hasOwnProperty("args")) {
+                        if (currentDynamicEl.args.length > 0 && typeof currentDynamicEl[functionName] === 'function') {
                             $("#metadataId").val(currentDynamicEl.args);
                             // Execute function
-                            currentDynamicEl[dynamicFunctionName](currentDynamicEl.args, this.core.lgId, this.core.index);
+                            currentDynamicEl[functionName](currentDynamicEl.args, this.core.lgId, this.core.index);
                         } else {
                             error = true;
                         }
@@ -101,9 +100,9 @@
                         let metadataId = "";
 
                         // Get the metadataId and set the function variable
-                        if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadata-id") && this.settings.hasOwnProperty(settingsFunctionName)) {
+                        if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadata-id") && this.settings.hasOwnProperty(functionName)) {
                             metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadata-id");
-                            fn = this.settings[settingsFunctionName];
+                            fn = this.settings[functionName];
                         }
 
                         // Execute function
