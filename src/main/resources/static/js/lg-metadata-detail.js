@@ -62,7 +62,7 @@
                     }
 
                     if (error === true && shashin) {
-                        shashin.showToastMessage("Could not get media details", "Could not capture screenshot. Function or metadata ID not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+                        shashin.showToastMessage("Could not get media details", "Could not get media details. Function or metadata ID not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
                     }
                 });
         },
