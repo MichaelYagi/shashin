@@ -79,27 +79,12 @@
                 .on('click.lg', () => {
                     alert("This is a template for setting up a plugin!");
 
-                    const functionName = "pluginFunctionName";
-                    let fn = null;
-                    let metadataId = "";
-
-                    // Get current slide
-                    let currentDynamicEl = (this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty(functionName)) ?
-                        this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
-
-                    // Optionally get a function and args and execute when creating lg items dynamically
-                    if (currentDynamicEl.hasOwnProperty(functionName) && currentDynamicEl.hasOwnProperty("args")) {
-                        metadataId = currentDynamicEl.args;
-                        fn = currentDynamicEl[functionName];
-                    } else if (currentDynamicEl.hasOwnProperty("metadataId") && this.settings.hasOwnProperty(functionName)) { // Get the metadataId and set the function variable
-                        metadataId = currentDynamicEl.metadataId;
-                        fn = this.settings[functionName];
-                    }
+                    const funObject = Util.getLgFunction(this, "pluginFunctionName");
 
                     // Execute function
-                    if (typeof fn === 'function' && metadataId.length > 0) {
-                        $("#metadataId").val(metadataId);
-                        fn(metadataId, this.core.lgId, this.core.index);
+                    if (typeof funObject.fn === 'function' && funObject.args !== null && funObject.args.length > 0) {
+                        $("#metadataId").val(funObject.args);
+                        funObject.fn(funObject.args, this.core.lgId, this.core.index);
                     } else if (shashin) {
                         shashin.showToastMessage("Could not execute function", "Could not execute function. Function or metadata ID not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
                     }

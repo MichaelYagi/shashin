@@ -844,6 +844,32 @@ class Util {
         // $("#container_" + id).outerHeight(true);
     }
 
+    static getLgFunction(that, functionName) {
+        let args = null;
+        let fn = null;
+
+        if (that.hasOwnProperty("settings") && that.hasOwnProperty("core")) {
+            // Get current slide
+            let currentDynamicEl = (that.settings.dynamicEl[that.core.index] && that.settings.dynamicEl[that.core.index].hasOwnProperty(functionName)) ?
+                that.settings.dynamicEl[that.core.index] : that.core.galleryItems[that.core.index];
+
+            // Optionally get a function and args and execute when creating lg items dynamically
+            if (currentDynamicEl.hasOwnProperty(functionName) && currentDynamicEl.hasOwnProperty("args")) {
+                args = currentDynamicEl.args;
+                fn = currentDynamicEl[functionName];
+            } else if (currentDynamicEl.hasOwnProperty("metadataId") && that.settings.hasOwnProperty(functionName)) { // Get the metadataId and set the function variable
+                args = currentDynamicEl.metadataId;
+                fn = that.settings[functionName];
+            }
+        }
+
+        if (typeof fn === 'function' && args !== null && (args.length > 0 || Object.keys(args).length > 0)) {
+            return {fn: fn, args: args};
+        } else {
+            return {fn: null, args: null};
+        }
+    }
+
     static getBatchData(batchObj) {
         const jsonData = {};
         jsonData.batchMetadataIds = batchObj.hasOwnProperty("batchMetadataIds") ? JSON.parse(batchObj["batchMetadataIds"]) : null;
