@@ -32,11 +32,11 @@
                 .find('.bi-info-circle')
                 .first()
                 .on('click.lg', () => {
-                    let currentDynamicEl = this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("mdFun") ?
-                        this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
-
-                    let error = false;
                     const functionName = "metadataDetailFun";
+                    let error = false;
+
+                    let currentDynamicEl = this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty(functionName) ?
+                        this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
 
                     if (currentDynamicEl.hasOwnProperty(functionName) && currentDynamicEl.hasOwnProperty("args")) {
                         if (currentDynamicEl.args.length > 0 && typeof currentDynamicEl[functionName] === 'function') {
@@ -49,8 +49,8 @@
                         let fn = null;
                         let metadataId = "";
 
-                        if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadata-id") && this.settings.hasOwnProperty(functionName)) {
-                            metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadata-id");
+                        if (currentDynamicEl.hasOwnProperty("metadataId") && this.settings.hasOwnProperty(functionName)) {
+                            metadataId = currentDynamicEl.metadataId;
                             fn = this.settings[functionName];
                         }
 

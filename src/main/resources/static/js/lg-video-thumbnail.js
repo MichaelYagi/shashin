@@ -97,16 +97,16 @@
                 .find('.'+captureIcon)
                 .first()
                 .on('click.lg', () => {
-                    let currentDynamicEl = (this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("vtFun")) ?
+                    let error = false;
+                    const functionName = "videoThumbnailFun";
+
+                    let currentDynamicEl = (this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty(functionName)) ?
                         this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
 
                     $("#captureThumbnail").hide();
                     $("#captureThumbnailSpinner").show();
                     $("#captureThumbnail").prop( "disabled", true);
                     $("#captureThumbnailSpinner").prop( "disabled", true);
-
-                    let error = false;
-                    const functionName = "videoThumbnailFun";
 
                     if (currentDynamicEl.hasOwnProperty(functionName) && currentDynamicEl.hasOwnProperty("args")) {
                         if (currentDynamicEl.args.length > 0 && typeof currentDynamicEl[functionName] === 'function') {
@@ -119,8 +119,8 @@
                         let fn = null;
                         let metadataId = "";
 
-                        if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadata-id") && this.settings.hasOwnProperty(functionName)) {
-                            metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadata-id");
+                        if (currentDynamicEl.hasOwnProperty("metadataId") && this.settings.hasOwnProperty(functionName)) {
+                            metadataId = currentDynamicEl.metadataId;
                             fn = this.settings[functionName];
                         }
 

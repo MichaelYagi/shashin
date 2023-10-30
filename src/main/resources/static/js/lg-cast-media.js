@@ -79,8 +79,8 @@
                             if (currentDynamicEl.hasOwnProperty("args")) {
                                 $("#metadataId").val(currentDynamicEl.args);
                                 metadataId = currentDynamicEl.args;
-                            } else if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadata-id")) {
-                                metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadata-id");
+                            } else if (currentDynamicEl.hasOwnProperty("metadataId")) {
+                                metadataId = currentDynamicEl.metadataId;
                             }
 
                             if (shashin &&
