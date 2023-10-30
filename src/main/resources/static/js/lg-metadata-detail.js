@@ -32,15 +32,15 @@
                 .find('.bi-info-circle')
                 .first()
                 .on('click.lg', () => {
-                    let currentDynamicEl = this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("infofun") ?
+                    let currentDynamicEl = this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("infoFun") ?
                         this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
 
                     let error = false;
 
-                    if (currentDynamicEl.hasOwnProperty("infofun") && currentDynamicEl.hasOwnProperty("args")) {
-                        if (currentDynamicEl.args.length > 0 && typeof currentDynamicEl.infofun === 'function') {
+                    if (currentDynamicEl.hasOwnProperty("infoFun") && currentDynamicEl.hasOwnProperty("args")) {
+                        if (currentDynamicEl.args.length > 0 && typeof currentDynamicEl.infoFun === 'function') {
                             $("#metadataId").val(currentDynamicEl.args);
-                            currentDynamicEl.infofun(currentDynamicEl.args);
+                            currentDynamicEl.infoFun(currentDynamicEl.args);
                         } else {
                             error = true;
                         }

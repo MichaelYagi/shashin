@@ -97,7 +97,7 @@
                 .find('.'+captureIcon)
                 .first()
                 .on('click.lg', () => {
-                    let currentDynamicEl = (this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("vtfun")) ?
+                    let currentDynamicEl = (this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("vtFun")) ?
                         this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
 
                     $("#captureThumbnail").hide();
@@ -107,10 +107,10 @@
 
                     let error = false;
 
-                    if (currentDynamicEl.hasOwnProperty("vtfun") && currentDynamicEl.hasOwnProperty("args")) {
-                        if (currentDynamicEl.args.length > 0 && typeof currentDynamicEl.vtfun === 'function') {
+                    if (currentDynamicEl.hasOwnProperty("vtFun") && currentDynamicEl.hasOwnProperty("args")) {
+                        if (currentDynamicEl.args.length > 0 && typeof currentDynamicEl.vtFun === 'function') {
                             $("#metadataId").val(currentDynamicEl.args);
-                            currentDynamicEl.vtfun(currentDynamicEl.args, this.core.lgId, this.core.index);
+                            currentDynamicEl.vtFun(currentDynamicEl.args, this.core.lgId, this.core.index);
                         } else {
                             error = true;
                         }
