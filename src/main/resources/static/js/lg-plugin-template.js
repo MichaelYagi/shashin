@@ -79,12 +79,12 @@
                 .on('click.lg', () => {
                     alert("This is a template for setting up a plugin!");
 
-                    // Get current slide
-                    let currentDynamicEl = (this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("pluginFunctionName")) ?
-                        this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
-
                     let error = false;
                     const functionName = "pluginFunctionName";
+
+                    // Get current slide
+                    let currentDynamicEl = (this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty(functionName)) ?
+                        this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
 
                     // Optionally get a function and args and execute when creating lg items dynamically
                     if (currentDynamicEl.hasOwnProperty(functionName) && currentDynamicEl.hasOwnProperty("args")) {
@@ -100,8 +100,8 @@
                         let metadataId = "";
 
                         // Get the metadataId and set the function variable
-                        if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadata-id") && this.settings.hasOwnProperty(functionName)) {
-                            metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadata-id");
+                        if (currentDynamicEl.hasOwnProperty("metadataId") && this.settings.hasOwnProperty(functionName)) {
+                            metadataId = currentDynamicEl.metadataId;
                             fn = this.settings[functionName];
                         }
 
