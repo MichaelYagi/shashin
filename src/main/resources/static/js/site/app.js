@@ -211,8 +211,8 @@
     shashin.getMediaContent = function(metadata) {
         const mediaContent = {};
 
-        mediaContent.infoFun = shashin.openInfoSidebar;
-        mediaContent.vtFun = shashin.processVideoThumbnail;
+        mediaContent.metadataDetailFun = shashin.openInfoSidebar;
+        mediaContent.videoThumbnailFun = shashin.processVideoThumbnail;
         mediaContent.args = metadata.id;
         mediaContent.metadataId = metadata.id;
 
@@ -660,8 +660,8 @@
         let mediaContentList = [];
         $.each($(mediaElement), function() {
             const mediaContent = {};
-            mediaContent.infoFun = shashin.openInfoSidebar;
-            mediaContent.vtFun = shashin.processVideoThumbnail;
+            mediaContent.metadataDetailFun = shashin.openInfoSidebar;
+            mediaContent.videoThumbnailFun = shashin.processVideoThumbnail;
             mediaContent.args = "";
             try {
                 mediaContent.args = $(this).attr("tag");

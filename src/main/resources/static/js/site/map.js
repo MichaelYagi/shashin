@@ -454,7 +454,7 @@ async function showMap(mapdata) {
                 const featureProperties = originalFeatures[i].getProperties();
 
                 const mediaContent = {
-                    infoFun: editLocation,
+                    metadataDetailFun: editLocation,
                     args: [
                         featureProperties["metadataId"]
                     ]

@@ -32,17 +32,16 @@
                 .find('.bi-info-circle')
                 .first()
                 .on('click.lg', () => {
-                    let currentDynamicEl = this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("infoFun") ?
+                    let currentDynamicEl = this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("mdFun") ?
                         this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
 
                     let error = false;
-                    const dynamicFunctionName = "infoFun";
-                    const settingsFunctionName = "metadataDetailFun";
+                    const functionName = "metadataDetailFun";
 
-                    if (currentDynamicEl.hasOwnProperty(dynamicFunctionName) && currentDynamicEl.hasOwnProperty("args")) {
-                        if (currentDynamicEl.args.length > 0 && typeof currentDynamicEl[dynamicFunctionName] === 'function') {
+                    if (currentDynamicEl.hasOwnProperty(functionName) && currentDynamicEl.hasOwnProperty("args")) {
+                        if (currentDynamicEl.args.length > 0 && typeof currentDynamicEl[functionName] === 'function') {
                             $("#metadataId").val(currentDynamicEl.args);
-                            currentDynamicEl[dynamicFunctionName](currentDynamicEl.args);
+                            currentDynamicEl[functionName](currentDynamicEl.args);
                         } else {
                             error = true;
                         }
@@ -50,9 +49,9 @@
                         let fn = null;
                         let metadataId = "";
 
-                        if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadata-id") && this.settings.hasOwnProperty(settingsFunctionName)) {
+                        if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadata-id") && this.settings.hasOwnProperty(functionName)) {
                             metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadata-id");
-                            fn = this.settings[settingsFunctionName];
+                            fn = this.settings[functionName];
                         }
 
                         if (typeof fn === 'function' && metadataId.length > 0) {

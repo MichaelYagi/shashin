@@ -1286,8 +1286,8 @@
         }
 
         const mediaContent = {};
-        mediaContent.infoFun = shashin.openInfoSidebar;
-        mediaContent.vtFun = shashin.processVideoThumbnail;
+        mediaContent.metadataDetailFun = shashin.openInfoSidebar;
+        mediaContent.videoThumbnailFun = shashin.processVideoThumbnail;
         mediaContent.args = metadata.id;
         mediaContent.thumb = encodeURI(metadata.thumbnailUrlSmall);
 
