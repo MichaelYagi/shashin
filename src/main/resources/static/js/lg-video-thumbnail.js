@@ -106,22 +106,23 @@
                     $("#captureThumbnailSpinner").prop( "disabled", true);
 
                     let error = false;
+                    const dynamicFunctionName = "vtFun";
+                    const settingsFunctionName = "videoThumbnailFun";
 
-                    if (currentDynamicEl.hasOwnProperty("vtFun") && currentDynamicEl.hasOwnProperty("args")) {
-                        if (currentDynamicEl.args.length > 0 && typeof currentDynamicEl.vtFun === 'function') {
+                    if (currentDynamicEl.hasOwnProperty(dynamicFunctionName) && currentDynamicEl.hasOwnProperty("args")) {
+                        if (currentDynamicEl.args.length > 0 && typeof currentDynamicEl[dynamicFunctionName] === 'function') {
                             $("#metadataId").val(currentDynamicEl.args);
-                            currentDynamicEl.vtFun(currentDynamicEl.args, this.core.lgId, this.core.index);
+                            currentDynamicEl[dynamicFunctionName](currentDynamicEl.args, this.core.lgId, this.core.index);
                         } else {
                             error = true;
                         }
                     } else {
-                        let functionName = "videoThumbnailFun";
                         let fn = null;
                         let metadataId = "";
 
-                        if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadata-id") && this.settings.hasOwnProperty(functionName)) {
+                        if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadata-id") && this.settings.hasOwnProperty(settingsFunctionName)) {
                             metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadata-id");
-                            fn = this.settings[functionName];
+                            fn = this.settings[settingsFunctionName];
                         }
 
                         if (typeof fn === 'function' && metadataId.length > 0) {
