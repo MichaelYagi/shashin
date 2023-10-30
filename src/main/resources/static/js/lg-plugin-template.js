@@ -84,25 +84,26 @@
                         this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
 
                     let error = false;
+                    const dynamicFunctionName = "pluginFunctionName";
+                    const settingsFunctionName = "pluginFun";
 
                     // Optionally get a function and args and execute when creating lg items dynamically
-                    if (currentDynamicEl.hasOwnProperty("pluginFunctionName") && currentDynamicEl.hasOwnProperty("args")) {
-                        if (currentDynamicEl.args.length > 0 && typeof currentDynamicEl.pluginFunctionName === 'function') {
+                    if (currentDynamicEl.hasOwnProperty(dynamicFunctionName) && currentDynamicEl.hasOwnProperty("args")) {
+                        if (currentDynamicEl.args.length > 0 && typeof currentDynamicEl[dynamicFunctionName] === 'function') {
                             $("#metadataId").val(currentDynamicEl.args);
                             // Execute function
-                            currentDynamicEl.pluginFunctionName(currentDynamicEl.args, this.core.lgId, this.core.index);
+                            currentDynamicEl[dynamicFunctionName](currentDynamicEl.args, this.core.lgId, this.core.index);
                         } else {
                             error = true;
                         }
                     } else {
-                        let functionName = "pluginFun";
                         let fn = null;
                         let metadataId = "";
 
                         // Get the metadataId and set the function variable
-                        if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadata-id") && this.settings.hasOwnProperty(functionName)) {
+                        if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadata-id") && this.settings.hasOwnProperty(settingsFunctionName)) {
                             metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadata-id");
-                            fn = this.settings[functionName];
+                            fn = this.settings[settingsFunctionName];
                         }
 
                         // Execute function

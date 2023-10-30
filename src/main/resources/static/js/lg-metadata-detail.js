@@ -36,22 +36,23 @@
                         this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
 
                     let error = false;
+                    const dynamicFunctionName = "infoFun";
+                    const settingsFunctionName = "metadataDetailFun";
 
-                    if (currentDynamicEl.hasOwnProperty("infoFun") && currentDynamicEl.hasOwnProperty("args")) {
-                        if (currentDynamicEl.args.length > 0 && typeof currentDynamicEl.infoFun === 'function') {
+                    if (currentDynamicEl.hasOwnProperty(dynamicFunctionName) && currentDynamicEl.hasOwnProperty("args")) {
+                        if (currentDynamicEl.args.length > 0 && typeof currentDynamicEl[dynamicFunctionName] === 'function') {
                             $("#metadataId").val(currentDynamicEl.args);
-                            currentDynamicEl.infoFun(currentDynamicEl.args);
+                            currentDynamicEl[dynamicFunctionName](currentDynamicEl.args);
                         } else {
                             error = true;
                         }
                     } else {
-                        let functionName = "metadataDetailFun";
                         let fn = null;
                         let metadataId = "";
 
-                        if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadata-id") && this.settings.hasOwnProperty(functionName)) {
+                        if ($($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadata-id") && this.settings.hasOwnProperty(settingsFunctionName)) {
                             metadataId = $($(".thumbnail-centered")[this.core.index]).children('a').attr("data-metadata-id");
-                            fn = this.settings[functionName];
+                            fn = this.settings[settingsFunctionName];
                         }
 
                         if (typeof fn === 'function' && metadataId.length > 0) {
