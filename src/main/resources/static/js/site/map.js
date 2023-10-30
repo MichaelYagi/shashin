@@ -454,7 +454,7 @@ async function showMap(mapdata) {
                 const featureProperties = originalFeatures[i].getProperties();
 
                 const mediaContent = {
-                    func: editLocation,
+                    infofun: editLocation,
                     args: [
                         featureProperties["metadataId"]
                     ]
@@ -475,6 +475,7 @@ async function showMap(mapdata) {
                     }
                     mediaContent.downloadUrl = encodeURI(featureProperties.videoUrl) + "/download";
                 }
+                mediaContent.metadataId = featureProperties.metadataId;
                 mediaContent.subHtml = featureProperties.description;
                 mediaContentList.push(mediaContent);
             }
