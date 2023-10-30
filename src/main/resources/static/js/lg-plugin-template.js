@@ -84,8 +84,8 @@
                         this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
 
                     let error = false;
-                    const dynamicFunctionName = "pluginFunctionName";
-                    const settingsFunctionName = "pluginFun";
+                    const dynamicFunctionName = "pnFun";
+                    const settingsFunctionName = "pluginNameFunction";
 
                     // Optionally get a function and args and execute when creating lg items dynamically
                     if (currentDynamicEl.hasOwnProperty(dynamicFunctionName) && currentDynamicEl.hasOwnProperty("args")) {
