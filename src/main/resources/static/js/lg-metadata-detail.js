@@ -33,35 +33,24 @@
                 .first()
                 .on('click.lg', () => {
                     const functionName = "metadataDetailFun";
-                    let error = false;
+                    let fn = null;
+                    let metadataId = "";
 
                     let currentDynamicEl = this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty(functionName) ?
                         this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
 
                     if (currentDynamicEl.hasOwnProperty(functionName) && currentDynamicEl.hasOwnProperty("args")) {
-                        if (currentDynamicEl.args.length > 0 && typeof currentDynamicEl[functionName] === 'function') {
-                            $("#metadataId").val(currentDynamicEl.args);
-                            currentDynamicEl[functionName](currentDynamicEl.args);
-                        } else {
-                            error = true;
-                        }
-                    } else {
-                        let fn = null;
-                        let metadataId = "";
-
-                        if (currentDynamicEl.hasOwnProperty("metadataId") && this.settings.hasOwnProperty(functionName)) {
-                            metadataId = currentDynamicEl.metadataId;
-                            fn = this.settings[functionName];
-                        }
-
-                        if (typeof fn === 'function' && metadataId.length > 0) {
-                            fn(metadataId);
-                        } else {
-                            error = true;
-                        }
+                        metadataId = currentDynamicEl.args;
+                        fn = currentDynamicEl[functionName];
+                    } else if (currentDynamicEl.hasOwnProperty("metadataId") && this.settings.hasOwnProperty(functionName)) {
+                        metadataId = currentDynamicEl.metadataId;
+                        fn = this.settings[functionName];
                     }
 
-                    if (error === true && shashin) {
+                    if (typeof fn === 'function' && metadataId.length > 0) {
+                        $("#metadataId").val(metadataId);
+                        fn(metadataId);
+                    } else if (shashin) {
                         shashin.showToastMessage("Could not get media details", "Could not get media details. Function or metadata ID not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
                     }
                 });

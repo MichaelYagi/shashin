@@ -73,11 +73,11 @@
                             cjs.disconnect();
                         } else {
                             let metadataId = "";
+
                             let currentDynamicEl = this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("args") ?
                                 this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
 
                             if (currentDynamicEl.hasOwnProperty("args")) {
-                                $("#metadataId").val(currentDynamicEl.args);
                                 metadataId = currentDynamicEl.args;
                             } else if (currentDynamicEl.hasOwnProperty("metadataId")) {
                                 metadataId = currentDynamicEl.metadataId;
@@ -86,6 +86,7 @@
                             if (shashin &&
                                 /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(metadataId)
                             ) {
+                                $("#metadataId").val(metadataId);
                                 shashin.getMetadata(metadataId).then(function (metadata) {
                                     castMetadataMedia(metadata, cjs);
                                 });

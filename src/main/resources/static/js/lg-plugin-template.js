@@ -79,8 +79,9 @@
                 .on('click.lg', () => {
                     alert("This is a template for setting up a plugin!");
 
-                    let error = false;
                     const functionName = "pluginFunctionName";
+                    let fn = null;
+                    let metadataId = "";
 
                     // Get current slide
                     let currentDynamicEl = (this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty(functionName)) ?
@@ -88,32 +89,18 @@
 
                     // Optionally get a function and args and execute when creating lg items dynamically
                     if (currentDynamicEl.hasOwnProperty(functionName) && currentDynamicEl.hasOwnProperty("args")) {
-                        if (currentDynamicEl.args.length > 0 && typeof currentDynamicEl[functionName] === 'function') {
-                            $("#metadataId").val(currentDynamicEl.args);
-                            // Execute function
-                            currentDynamicEl[functionName](currentDynamicEl.args, this.core.lgId, this.core.index);
-                        } else {
-                            error = true;
-                        }
-                    } else {
-                        let fn = null;
-                        let metadataId = "";
-
-                        // Get the metadataId and set the function variable
-                        if (currentDynamicEl.hasOwnProperty("metadataId") && this.settings.hasOwnProperty(functionName)) {
-                            metadataId = currentDynamicEl.metadataId;
-                            fn = this.settings[functionName];
-                        }
-
-                        // Execute function
-                        if (typeof fn === 'function' && metadataId.length > 0) {
-                            fn(metadataId, this.core.lgId, this.core.index);
-                        } else {
-                            error = true;
-                        }
+                        metadataId = currentDynamicEl.args;
+                        fn = currentDynamicEl[functionName];
+                    } else if (currentDynamicEl.hasOwnProperty("metadataId") && this.settings.hasOwnProperty(functionName)) { // Get the metadataId and set the function variable
+                        metadataId = currentDynamicEl.metadataId;
+                        fn = this.settings[functionName];
                     }
 
-                    if (error === true && shashin) {
+                    // Execute function
+                    if (typeof fn === 'function' && metadataId.length > 0) {
+                        $("#metadataId").val(metadataId);
+                        fn(metadataId, this.core.lgId, this.core.index);
+                    } else if (shashin) {
                         console.log("Could not execute function");
                     }
                 });
