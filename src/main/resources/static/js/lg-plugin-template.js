@@ -101,7 +101,7 @@
                         $("#metadataId").val(metadataId);
                         fn(metadataId, this.core.lgId, this.core.index);
                     } else if (shashin) {
-                        console.log("Could not execute function");
+                        shashin.showToastMessage("Could not execute function", "Could not execute function. Function or metadata ID not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
                     }
                 });
         }
