@@ -78,7 +78,7 @@ class GalleryTemplates {
 
         ${($.inArray("isVideo", overlays) !== -1) ?
             `
-            <span class="overlayIconBackground"><span id="duration${id}">${data.duration}</span>&nbsp;
+            <span class="overlayIconBackground"><span id="duration${id}">${data.duration}</span>
                 <span id="video${id}" class="bi-camera-video overlayIcon" title="video"></span>
             </span>
             <br>
