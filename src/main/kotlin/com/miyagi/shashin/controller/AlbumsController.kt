@@ -1521,7 +1521,7 @@ class AlbumsController: BaseController() {
                                 val metadata = metadataRepository.findByMetadataId(albumPhoto?.getMetadataId()!!)
                                 val albumId = albumRepository.findById(albumPhoto.getAlbumId()!!)
                                 if (metadata != null) {
-                                    val date = outputFormat.format(sdf.parse(metadata.getYear().toString()+"-"+metadata.getMonth().toString()+"-"+metadata.getDay().toString()))
+                                    val date = outputFormat.format(sdf.parse(metadata.getYear().toString()+"-"+metadata.getMonth().toString()+"-"+metadata.getDay().toString())).replace(".","")
                                     var placeNameFormatted = ""
                                     if (metadata.getPlaceName() != null) {
                                         val placeNameArray = metadata.getPlaceName()!!.split(";")
