@@ -1505,7 +1505,6 @@ class AlbumsController: BaseController() {
         val module = "slideshow"
 
         var metadataList = mutableListOf<Metadata>()
-        var descriptionList = mutableListOf<String>()
         val currentUser = model.getAttribute("currentUser") as User?
 
         if (currentUser != null) {
@@ -1529,7 +1528,7 @@ class AlbumsController: BaseController() {
                                         placeNameFormatted = placeNameArray[0]
                                     }
                                     val slideshowDescription = ((if (metadata.getDescription() != null) ("<h4>" + metadata.getDescription() + "</h4>") else "") + "<p>" + date + (if (placeNameFormatted == "") "" else ", $placeNameFormatted") + " &bull; " + albumId.get().getName() + "</p>")
-                                    descriptionList.add(slideshowDescription)
+                                    metadata.setFreeFormString(slideshowDescription)
                                     metadataList.add(metadata)
                                 }
                             }
@@ -1542,11 +1541,9 @@ class AlbumsController: BaseController() {
         metadataList = metadataList.shuffled() as MutableList<Metadata>
 
         if (metadataList.size > 300) {
-            descriptionList = descriptionList.slice(0..300).toMutableList()
             metadataList = metadataList.slice(0..300).toMutableList()
         }
 
-        model["descriptionList"] = descriptionList
         model["metadataList"] = metadataList
         model["activePage"] = module
         model["activeSidebar"] = module
