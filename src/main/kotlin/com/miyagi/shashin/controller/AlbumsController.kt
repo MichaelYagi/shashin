@@ -3,8 +3,6 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
@@ -12,42 +10,33 @@ import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import com.miyagi.shashin.util.TextUtils.Companion.returnForbiddenError
-import com.rometools.rome.feed.atom.Content
-import com.rometools.rome.feed.atom.Entry
-import com.rometools.rome.feed.atom.Link
-import com.rometools.rome.feed.atom.Person
-import com.rometools.rome.feed.synd.SyndPerson
 import io.swagger.v3.oas.annotations.Operation
 import org.apache.commons.text.StringEscapeUtils
-import org.bytedeco.javacpp.presets.opencv_core.Str
 import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.InputStreamResource
-import org.springframework.http.*
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseCookie
+import org.springframework.http.ResponseEntity
 import org.springframework.security.access.annotation.Secured
-import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.server.ResponseStatusException
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.io.File
 import java.io.FileInputStream
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import javax.transaction.Transactional
-import kotlin.collections.HashMap
-import kotlin.io.path.Path
 import kotlin.io.path.isDirectory
 
 @Suppress("UNCHECKED_CAST")
@@ -1521,13 +1510,24 @@ class AlbumsController: BaseController() {
         if (currentUser != null) {
             val randomAlbums = albumRepository.findRandomAlbumsByUser(currentUser.getId())
             if (randomAlbums.count() > 0) {
+                val sdf = SimpleDateFormat("yyyy-M-d")
+                val outputFormat = SimpleDateFormat("EEE, MMM d, yyyy")
+
                 for (randomAlbum in randomAlbums) {
                     if (randomAlbum.getIsShared() == 1) {
                         val albumPhotos = albumPhotoRepository.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, 1000)
                         if (albumPhotos != null) {
                             for (albumPhoto in albumPhotos) {
                                 val metadata = metadataRepository.findByMetadataId(albumPhoto?.getMetadataId()!!)
+                                val albumId = albumRepository.findById(albumPhoto.getAlbumId()!!)
                                 if (metadata != null) {
+                                    val date = outputFormat.format(sdf.parse(metadata.getYear().toString()+"-"+metadata.getMonth().toString()+"-"+metadata.getDay().toString()))
+                                    var placeNameFormatted = ""
+                                    if (metadata.getPlaceName() != null) {
+                                        val placeNameArray = metadata.getPlaceName()!!.split(";")
+                                        placeNameFormatted = placeNameArray[0]
+                                    }
+                                    metadata.setDescription(date + (if (placeNameFormatted == "") "" else ", $placeNameFormatted") + " &bull; " + albumId.get().getName())
                                     metadataList.add(metadata)
                                 }
                             }
