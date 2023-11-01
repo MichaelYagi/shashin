@@ -281,7 +281,7 @@ class Albums {
                     if (attempts === 0) {
                         // $("#albumsMessage").html("&nbsp;").animate({opacity: 0}, 5000);
                     } else {
-                        shashin.showToastMessage("Album downloaded", "<strong>File name</strong> " + tokenCookieValue + " <strong>File size</strong> " + Util.formatBytes(tokenCookieSize), {icon:"bi-info-circle", iconColor:"#777777"});
+                        shashin.showToastMessage("Album download", "<strong>File name</strong> " + tokenCookieValue + " <strong>File size</strong> " + Util.formatBytes(tokenCookieSize), {icon:"bi-info-circle", iconColor:"#777777"});
                         // $("#albumsMessage").html("<strong>File name</strong> " + tokenCookieValue + " <strong>File size</strong> " + Util.formatBytes(tokenCookieSize)).animate({opacity: 0}, 10000);
                         $("#download" + albumId).attr("href", downloadLocation);
                         Util.deleteCookie(tokenName, "/");

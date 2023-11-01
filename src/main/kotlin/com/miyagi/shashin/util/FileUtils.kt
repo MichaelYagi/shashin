@@ -245,7 +245,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
         fun zipFolder(toZipFolder: File, fileName: String): File? {
             val dtf = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
             val now = LocalDateTime.now()
-            val zipFile = File(toZipFolder.parent, java.lang.String.format("%s.zip", fileName + "_" + dtf.format(now)))
+            val zipFile = File(toZipFolder.parent, java.lang.String.format("%s.zip", fileName.replace("\\s".toRegex(), "_").lowercase() + "_" + dtf.format(now)))
             return try {
                 val out = ZipOutputStream(FileOutputStream(zipFile))
                 zipSubFolder(out, toZipFolder, toZipFolder.path.length)
