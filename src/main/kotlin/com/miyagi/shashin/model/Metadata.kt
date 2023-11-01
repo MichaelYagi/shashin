@@ -51,6 +51,7 @@ class Metadata {
     private var createdAt: String? = null
     private var modifiedAt: String? = null
     private var lastAccessedAt: String? = null
+    private var freeFormString: String? = null
 
     // Without a default constructor, Jackson will throw an exception
     fun Metadata() {}
@@ -313,6 +314,14 @@ class Metadata {
     }
     fun getLastAccessedAt(): String? {
         return this.lastAccessedAt
+    }
+
+    fun setFreeFormString(freeFormString: String) {
+        this.freeFormString = freeFormString
+    }
+
+    fun getFreeFormString(): String? {
+        return this.freeFormString
     }
 
     override fun toString(): String {
