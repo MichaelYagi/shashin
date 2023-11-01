@@ -1112,7 +1112,7 @@ class Util {
 
             if (Util.isSafari() === false) {
                 $(".timelineLink").show();
-                $(".timelineLink").html("<a href='/timeline#" + takenDate + "' target='_blank'>View in timeline</a>");
+                $(".timelineLink").html("<a href='/timeline#" + metadata.year + '-' + metadata.month + '-' + metadata.day + "' target='_blank'>View in timeline</a>");
             }
         }
         if (metadata.timeZone != null) {
