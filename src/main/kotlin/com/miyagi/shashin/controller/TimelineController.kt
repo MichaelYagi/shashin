@@ -361,6 +361,10 @@ class TimelineController: BaseController() {
                             "favorite" to (favoriteCount.getUserId() == currentUserObj?.getId()),
                             "count" to favoriteCount.getCount() as Any
                         )
+
+                        if (favoriteCount.getUserId() == currentUserObj?.getId()) {
+                            break
+                        }
                     }
                 }
 
@@ -696,6 +700,10 @@ class TimelineController: BaseController() {
                                     "favorite" to (favoriteCount.getUserId() == currentUserObj?.getId()),
                                     "count" to favoriteCount.getCount() as Any
                                 )
+
+                                if (favoriteCount.getUserId() == currentUserObj?.getId()) {
+                                    break
+                                }
                             }
                         }
 
@@ -1991,6 +1999,10 @@ class TimelineController: BaseController() {
                     "favorite" to (favoriteCount.getUserId() == currentUserObj?.getId()),
                     "count" to favoriteCount.getCount() as Any
                 )
+
+                if (favoriteCount.getUserId() == currentUserObj?.getId()) {
+                    break
+                }
             }
         }
         response["favorites"] = favoritesMap
