@@ -396,7 +396,7 @@ class UserController {
 
         for (user in users) {
             if (user != null && newUser != null) {
-                if (user.getUsername() == newUser.getUsername()) {
+                if (user.getUsername()?.lowercase() == newUser.getUsername()?.lowercase()) {
                     logger.log(Level.INFO, "Already registered user: $newUser")
                     model["message"] = "User already exists"
                     return module

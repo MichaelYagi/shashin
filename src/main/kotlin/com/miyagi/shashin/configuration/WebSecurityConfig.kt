@@ -269,10 +269,10 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .dataSource(dataSource)
                 .passwordEncoder(passwordEncoder())
                 .usersByUsernameQuery(
-                    "SELECT username, password, TRUE from user where username = ?"
+                    "SELECT username, password, TRUE from user where lower(username) = lower(?)"
                 )
                 .authoritiesByUsernameQuery(
-                    "SELECT username, authority from user where username = ?"
+                    "SELECT username, authority from user where lower(username) = lower(?)"
                 )
         }
 
