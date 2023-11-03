@@ -695,11 +695,11 @@
                 Util.isInViewport($("#tail_" + element.id)) === false &&
                 Util.isInViewport($("#container_" + element.id)) === false &&
                 Util.elementsInViewport($(".photo-thumbnail-image.thumbnailTag_" + element.id)).length === 0
-                &&
-                ((Util.isSafari() === false && Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) ||
-                    ((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && (Util.getDateObject(lastVisibleId) > Util.getDateObject(element.id) || Util.getDateObject(firstVisibleId) < Util.getDateObject(element.id))) ||
-                        (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && Util.getDateObject(firstVisibleId) < Util.getDateObject(element.id)))
-                )
+                // &&
+                // ((Util.isSafari() === false && Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) ||
+                //     ((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && (Util.getDateObject(lastVisibleId) > Util.getDateObject(element.id) || Util.getDateObject(firstVisibleId) < Util.getDateObject(element.id))) ||
+                //         (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && Util.getDateObject(firstVisibleId) < Util.getDateObject(element.id)))
+                // )
                 // &&
                 // ((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && element.id !== $(section[section.length-1]).attr("id")) ||
                 //     (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && element.id !== ignoreTimelineDate))
@@ -708,15 +708,23 @@
                     section.css('visibility', 'hidden');
                 }
 
-                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
-                    removeHeight += Util.getDateGalleryHeight(element.id);
+                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down &&
+                    Util.isInViewport($("#br" + element.id)) === false &&
+                    Util.isInViewport($("#row" + element.id)) === false &&
+                    Util.isInViewport($("#tail_" + element.id)) === false &&
+                    Util.isInViewport($("#container_" + element.id)) === false &&
+                    Util.isInViewport($("#amp_" + element.id)) === false
+                ) {
+                    // removeHeight += Util.getDateGalleryHeight(element.id);
                     Util.removeDateGallery(element.id);
                     removedElements.push(element.id);
-                } else if (Util.getDateObject(firstVisibleId) < Util.getDateObject(element.id)) {
-                    topHeight += $("#container_"+element.id).outerHeight(true) + $("#amp_"+element.id).outerHeight(true);
-                    Util.removeDateGallery(element.id);
-                } else if (Util.getDateObject(lastVisibleId) > Util.getDateObject(element.id)) {
-                    Util.removeDateGallery(element.id);
+                } else if (Util.isInViewport($("#br" + element.id)) === false &&
+                    Util.isInViewport($("#row" + element.id)) === false &&
+                    Util.isInViewport($("#tail_" + element.id)) === false &&
+                    Util.isInViewport($("#container_" + element.id)) === false &&
+                    Util.isInViewport($("#amp_" + element.id)) === false
+                ) {
+                    Util.removeDateGallery(element.id)
                 }
             }
         });
