@@ -715,7 +715,7 @@
                     Util.isInViewport($("#container_" + element.id)) === false &&
                     Util.isInViewport($("#amp_" + element.id)) === false
                 ) {
-                    // removeHeight += Util.getDateGalleryHeight(element.id);
+                    removeHeight += Util.getDateGalleryHeight(element.id);
                     Util.removeDateGallery(element.id);
                     removedElements.push(element.id);
                 } else if (Util.isInViewport($("#br" + element.id)) === false &&
