@@ -292,7 +292,11 @@
         const timelineDates = timelineSettings.timelineDates;
         const lastDate = timelineDates[timelineDates.length-1].year + "-" + timelineDates[timelineDates.length-1].month + "-" + timelineDates[timelineDates.length-1].day;
 
-        if (prevElements === null || (elements.length > 0 && Util.arraysEqual(elements, prevElements) === false) || (Util.elementsInViewport($("#"+lastDate)).length === 0 && closeToFooter() === true && Util.atEndOfPage($("#container")[0]))) {
+        if (prevElements === null ||
+            (elements.length > 0 && Util.arraysEqual(elements, prevElements) === false && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) ||
+            (elements.length > 0 && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) ||
+            (Util.elementsInViewport($("#"+lastDate)).length === 0 && closeToFooter() === true && Util.atEndOfPage($("#container")[0]))
+        ) {
             $(".bi-play-btn").css("visibility", "hidden");
             $(".bi-play-circle").css("visibility", "hidden");
             $(".mediaLink").unbind('click');
@@ -356,7 +360,7 @@
                 });
 
                 // Scrolling behavior different on Chrome iOS
-                if (timelineSettings.isScrolling === true && (Util.isSafari() === false || Util.isFirefox() === false) && !(Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                if (((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && timelineSettings.isScrolling === false) || timelineSettings.isScrolling === true) && (Util.isSafari() === false || Util.isFirefox() === false) && !(Util.getOS() === "iOS" && Util.isChrome() === true)) {
                     timelineSettings.renderThumbnails(elements, mediaTypeFilter, timelineDates).then(function (msg) {
                         if (msg === timelineSettings.success) {
                             // Set TOC active element
@@ -688,7 +692,7 @@
 
         const removedElements = [];
         section.each(function (index, element) {
-            if (timelineSettings.isScrolling === true &&
+            if (((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && timelineSettings.isScrolling === false) || timelineSettings.isScrolling === true) &&
                 Util.isInViewport($("#" + element.id)) === false &&
                 Util.isInViewport($("#br" + element.id)) === false &&
                 Util.isInViewport($("#row" + element.id)) === false &&
@@ -718,11 +722,13 @@
                     // removeHeight += Util.getDateGalleryHeight(element.id);
                     Util.removeDateGallery(element.id);
                     removedElements.push(element.id);
-                } else if (Util.isInViewport($("#br" + element.id)) === false &&
-                    Util.isInViewport($("#row" + element.id)) === false &&
-                    Util.isInViewport($("#tail_" + element.id)) === false &&
-                    Util.isInViewport($("#container_" + element.id)) === false &&
-                    Util.isInViewport($("#amp_" + element.id)) === false
+                }
+                else if (section[index+1] !== undefined &&
+                    Util.isInViewport($("#br" + section[index+1].id)) === false &&
+                    Util.isInViewport($("#row" + section[index+1].id)) === false &&
+                    Util.isInViewport($("#tail_" + section[index+1].id)) === false &&
+                    Util.isInViewport($("#container_" + section[index+1].id)) === false &&
+                    Util.isInViewport($("#amp_" + section[index+1].id)) === false
                 ) {
                     Util.removeDateGallery(element.id)
                 }
@@ -1009,28 +1015,28 @@
                     const dateObj = new Date(timelineDateObj.month + "/" + timelineDateObj.day + "/" + timelineDateObj.year)
                     if (i === 0 || i === dateList.length-1 || (i < dateList.length && dateList[i + 1].year !== timelineDateObj.year)) {
                         // if ($('#sliderLabel' + dateObj.getFullYear()).length === 0) {
-                            // Label for year
-                            const el = $('<span class="badge rounded-pill bg-secondary yearLabel" id="sliderLabel' + dateObj.getFullYear() + '" style="background-color: slategray">' + dateObj.getFullYear() + '</span>').css({
-                                'width': '35px',
-                                'right': '15px',
-                                'font-size': 'xx-small',
-                                'position': 'absolute',
-                                'z-index': '2',
-                                'top': (tickTop - sliderOffset) + '%'
-                            });
+                        // Label for year
+                        const el = $('<span class="badge rounded-pill bg-secondary yearLabel" id="sliderLabel' + dateObj.getFullYear() + '" style="background-color: slategray">' + dateObj.getFullYear() + '</span>').css({
+                            'width': '35px',
+                            'right': '15px',
+                            'font-size': 'xx-small',
+                            'position': 'absolute',
+                            'z-index': '2',
+                            'top': (tickTop - sliderOffset) + '%'
+                        });
 
-                            $("#dateSlider").append(el);
-                            setTimeout(function () {
-                                if (prevEl !== null && Util.isOverlap($("#" + prevEl.attr("id")), $("#" + el.attr("id"))) === true) {
-                                    $("#" + el.attr("id")).hide();
+                        $("#dateSlider").append(el);
+                        setTimeout(function () {
+                            if (prevEl !== null && Util.isOverlap($("#" + prevEl.attr("id")), $("#" + el.attr("id"))) === true) {
+                                $("#" + el.attr("id")).hide();
 
-                                    if (prevTickEl !== null && Util.isOverlap($("#" + prevTickEl.attr("id")), $("#" + el.attr("id"))) === true) {
-                                        $("#" + prevTickEl.attr("id")).hide();
-                                    }
-                                } else {
-                                    prevEl = el;
+                                if (prevTickEl !== null && Util.isOverlap($("#" + prevTickEl.attr("id")), $("#" + el.attr("id"))) === true) {
+                                    $("#" + prevTickEl.attr("id")).hide();
                                 }
-                            }, 0);
+                            } else {
+                                prevEl = el;
+                            }
+                        }, 0);
                         // }
                     } else if (i > 0 && (dateList[i - 1].year !== timelineDateObj.year || dateList[i - 1].month !== timelineDateObj.month)) {
                         if ($('#tickLabel' + timelineDateObj.year + '-' + timelineDateObj.month).length === 0) {
@@ -1466,14 +1472,14 @@
                                     '<section class="scrollspy" id="'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
                                     '<div class="mb-3"><strong class="dateHeading p-1">'+Util.getDateString(metadataList[0].year, metadataList[0].month, metadataList[0].day)+'</strong>';
 
-                                    if (placeNameHeaders.length === 1) {
-                                        internalHtml += '<span class="text-muted"><a class="link-unstyled" href="/search?term='+placeNameHeaders[0]+'" target="_blank">'+placeNameHeaders[0]+'</a></span>';
-                                    } else if (placeNameHeaders.length > 1) {
-                                        internalHtml += '<span class="text-muted"><div class="dropdown" style="display: inline-block;"><a class="dropdown-toggle link-unstyled" data-bs-toggle="dropdown" href="#">'+placeNameHeaders[0]+'</a>\n' +
-                                            '    <ul class="dropdown-menu">\n';
-                                        internalHtml += listHtml;
-                                        internalHtml += '    </ul></div></span>';
-                                    }
+                                if (placeNameHeaders.length === 1) {
+                                    internalHtml += '<span class="text-muted"><a class="link-unstyled" href="/search?term='+placeNameHeaders[0]+'" target="_blank">'+placeNameHeaders[0]+'</a></span>';
+                                } else if (placeNameHeaders.length > 1) {
+                                    internalHtml += '<span class="text-muted"><div class="dropdown" style="display: inline-block;"><a class="dropdown-toggle link-unstyled" data-bs-toggle="dropdown" href="#">'+placeNameHeaders[0]+'</a>\n' +
+                                        '    <ul class="dropdown-menu">\n';
+                                    internalHtml += listHtml;
+                                    internalHtml += '    </ul></div></span>';
+                                }
 
                                 internalHtml += '</div></section>' +
                                     '<div class="row image-group-padding" id="row'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
