@@ -80,7 +80,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val username = this.driver!!.findElement(By.id("username"))
         val password = this.driver!!.findElement(By.id("password"))
         val rememberMe = this.driver!!.findElement(By.id("remember-me"))
-        val login = this.driver!!.findElement(By.tagName("button"))
+        val login = this.driver!!.findElement(By.id("submit-loginreg"))
         rememberMe.click()
         username.sendKeys("testadmin")
         password.sendKeys("testadmin")
@@ -172,7 +172,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         //Share album with testuser
         WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class=\"card\"][1]")))
 
-        val albumCard = this.driver!!.findElement(By.xpath("//div[@class=\"card\"][1]"))
+        val albumCard = this.driver!!.findElement(By.xpath("//div[@class=\"card\"][2]"))
         val albumLink = albumCard.findElement(By.xpath("./a[1]"))
         val albumIdentifier = albumLink.getAttribute("id")
         albumId = albumIdentifier.substringAfter("album").toInt()
@@ -286,7 +286,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val username = this.driver!!.findElement(By.id("username"))
         val password = this.driver!!.findElement(By.id("password"))
         val rememberMe = this.driver!!.findElement(By.id("remember-me"))
-        val login = this.driver!!.findElement(By.tagName("button"))
+        val login = this.driver!!.findElement(By.id("submit-loginreg"))
         rememberMe.click()
         username.sendKeys("testuser")
         password.sendKeys("testuser")
