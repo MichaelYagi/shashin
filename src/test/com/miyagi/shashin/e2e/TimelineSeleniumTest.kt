@@ -77,7 +77,7 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         val username = this.driver!!.findElement(By.id("username"))
         val password = this.driver!!.findElement(By.id("password"))
         val rememberMe = this.driver!!.findElement(By.id("remember-me"))
-        val login = this.driver!!.findElement(By.tagName("button"))
+        val login = this.driver!!.findElement(By.id("submit-loginreg"))
         rememberMe.click()
         username.sendKeys("testadmin")
         password.sendKeys("testadmin")
