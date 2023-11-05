@@ -22,21 +22,24 @@
                 </div>
             </th:block>
             <h2 class="form-signin-heading"><th:block th:text="'Please ' + ${#strings.capitalize(activePage)}"></th:block></h2>
-            <div class="input-group mb-3">
+            <div class="input-group mb-2">
                 <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
             </div>
-            <div class="input-group mb-2">
-                <input type="password" id="password" name="password" class="form-control rounded-start" placeholder="Password" required>
+            <div class="input-group">
+                <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
                 <button class="btn btn-outline-secondary" type="button" id="unhidepassword" style="max-height: 46px;"><span id="unhidepasswordicon" class="bi-eye"></span></button>
             </div>
             <th:block th:if="${activePage == 'login'}">
-            <p class="float-start">
+            <div class="input-group">
                 <input type="checkbox" id="remember-me" name="remember-me" class="form-check-inline">
                 <label class="form-check-label" for="remember-me">Remember me</label>
-            </p>
+            </div>
             </th:block>
 
-            <button class="btn btn-lg btn-primary btn-block form-control" type="submit"><th:block th:text="${#strings.capitalize(activePage)}"></th:block></button>
+            <div class="input-group mt-2">
+                <button class="btn btn-lg btn-primary btn-block form-control" type="submit"><th:block th:text="${#strings.capitalize(activePage)}"></th:block></button>
+            </div>
+
             <div class="row">
                 <div class="col text-start">
                     <th:block th:if="${activePage == 'login'}">
@@ -61,14 +64,6 @@
 
 <script type="text/javascript" th:nonce="${cspNonce}">
     Util.activateDarkModeListener();
-
-    // $("#passwordForm").on("submit", function (e) {
-    //     e.preventDefault();
-    //
-    //     if (validateFields() === true) {
-    //         this.submit();
-    //     }
-    // });
 
     $("#unhidepassword").on("click", function (e) {
         e.preventDefault();
