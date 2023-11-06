@@ -691,7 +691,10 @@
         const section = $('section');
 
         const removedElements = [];
+        const sectionArray = [];
         section.each(function (index, element) {
+            sectionArray.push(element);
+
             if (((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && timelineSettings.isScrolling === false) || timelineSettings.isScrolling === true) &&
                 Util.isInViewport($("#" + element.id)) === false &&
                 Util.isInViewport($("#br" + element.id)) === false &&
@@ -722,6 +725,7 @@
                     // removeHeight += Util.getDateGalleryHeight(element.id);
                     Util.removeDateGallery(element.id);
                     removedElements.push(element.id);
+                    sectionArray.pop(element);
                 }
                 else if (section[index+1] !== undefined &&
                     Util.isInViewport($("#br" + section[index+1].id)) === false &&
@@ -731,6 +735,7 @@
                     Util.isInViewport($("#amp_" + section[index+1].id)) === false
                 ) {
                     Util.removeDateGallery(element.id)
+                    sectionArray.pop(element);
                 }
             }
         });
@@ -745,8 +750,11 @@
         section.css('visibility', 'visible');
 
         // Get list of visible elements
-        const firstVisibleContainer = $('section').length > 0 ? $('section')[0] : null;
-        const lastVisibleContainer = $('section').length > 0 ? $('section')[$('section').length-1] : null;
+        // const firstVisibleContainer = $('section').length > 0 ? $('section')[0] : null;
+        // const lastVisibleContainer = $('section').length > 0 ? $('section')[$('section').length-1] : null;
+
+        const firstVisibleContainer = sectionArray.length > 0 ? sectionArray[0] : null;
+        const lastVisibleContainer = sectionArray.length > 0 ? sectionArray[sectionArray.length-1] : null;
 
         if (timelineSettings.isScrolling === true &&
             firstVisibleContainer !== null) {
