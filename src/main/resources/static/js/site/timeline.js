@@ -725,7 +725,7 @@
                     // removeHeight += Util.getDateGalleryHeight(element.id);
                     Util.removeDateGallery(element.id);
                     removedElements.push(element.id);
-                    sectionArray.pop(element);
+                    sectionArray.pop();
                 }
                 else if (section[index+1] !== undefined &&
                     Util.isInViewport($("#br" + section[index+1].id)) === false &&
@@ -735,7 +735,7 @@
                     Util.isInViewport($("#amp_" + section[index+1].id)) === false
                 ) {
                     Util.removeDateGallery(element.id)
-                    sectionArray.pop(element);
+                    sectionArray.pop();
                 }
             }
         });
