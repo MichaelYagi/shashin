@@ -652,11 +652,23 @@
         return timelineSettings.successMidMsg;
     }
 
-    timelineSettings.renderThumbnails = async function(elements,mediaTypeFilter,timelineDates) {
+    timelineSettings.renderThumbnails = async function(elements,mediaTypeFilter,timelineDates,initiatedFromToc) {
+        if (initiatedFromToc === undefined) {
+            initiatedFromToc = false;
+        }
+
         timelineSettings.enableScrollSpy = false;
 
         if ($(".attachMetadataPhotos").last().text() !== "EOL") {
             $("#spinner_bottom").css("display", "block");
+        } else if (initiatedFromToc === false && $(".attachMetadataPhotos").last().text() === "EOL" && Util.isInViewport($(".attachMetadataPhotos").last()) === true) {
+            timelineSettings.enableScrollSpy = true;
+
+            if (timelineSettings.initialized === false) {
+                timelineSettings.initialized = true;
+            }
+
+            return timelineSettings.success;
         }
 
         let firstElementId = $(elements[0]).attr("id");
@@ -1112,6 +1124,18 @@
         timelineSettings.heightCounter = 0;
         timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
         timelineSettings.enableScrollSpy = false;
+        const timelineDates = timelineSettings.timelineDates;
+
+        const anchorArray = anchor.split("-");
+        // check if last date and change to media close to end
+        if (timelineDates.length > 2 &&
+            parseInt(anchorArray[0]) === timelineDates[timelineDates.length-1].year &&
+            parseInt(anchorArray[1]) === timelineDates[timelineDates.length-1].month &&
+            parseInt(anchorArray[2]) === timelineDates[timelineDates.length-1].day
+        )
+        {
+            anchor = timelineDates[timelineDates.length-3].year + "-" + timelineDates[timelineDates.length-3].month + "-" + timelineDates[timelineDates.length-3].day;
+        }
 
         shashin.printMessageToConsole("jumpFromTimelineToc anchor:" + anchor);
         shashin.printMessageToConsole("jumpFromTimelineToc mediaTypeFilter:" + mediaTypeFilter);
@@ -1120,15 +1144,13 @@
             Util.removeDateGallery(element.id);
         });
 
-        const timelineDates = timelineSettings.timelineDates;
-
         const msg = await timelineSettings.updateTimeline(anchor, mediaTypeFilter, "new", null);
         if (msg === timelineSettings.success && $("#" + anchor).length === 1) {
             await timelineSettings.attachAssociatedMetadata(anchor, mediaTypeFilter);
             const saveState = timelineSettings.isScrolling;
             timelineSettings.isScrolling = true;
             const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
-            await timelineSettings.renderThumbnails(elementsInViewport, mediaTypeFilter, timelineDates);
+            await timelineSettings.renderThumbnails(elementsInViewport, mediaTypeFilter, timelineDates, true);
             timelineSettings.isScrolling = saveState;
         }
 
