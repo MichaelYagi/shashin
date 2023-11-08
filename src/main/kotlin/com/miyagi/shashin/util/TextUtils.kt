@@ -400,22 +400,27 @@ class TextUtils {
             val timeValidate = "(\\d{2}:\\d{2}:\\d{2})".toRegex()
 
             if (day != null && !(day in 1..31)) {
+                logger.log(Level.WARNING, "Invalid day")
                 return false
             }
 
             if (month != null && !(month in 1..12)) {
+                logger.log(Level.WARNING, "Invalid month")
                 return false
             }
 
             if (year != null && !(year in 1826..Calendar.getInstance().get(Calendar.YEAR))) {
+                logger.log(Level.WARNING, "Invalid year")
                 return false
             }
 
             if (time != null && time != "" && !time.matches(timeValidate)) {
+                logger.log(Level.WARNING, "Invalid time")
                 return false
             }
 
             if (offset != null && offset != "" && !(offset in timeOffsets())) {
+                logger.log(Level.WARNING, "Invalid offset")
                 return false
             }
 
@@ -424,6 +429,7 @@ class TextUtils {
                 val isValidWithHour = "([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?".toRegex().matches(duration);
 
                 if (!isValidWithoutHour && !isValidWithHour) {
+                    logger.log(Level.WARNING, "Invalid duration")
                     return false
                 }
             }
