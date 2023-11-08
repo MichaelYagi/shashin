@@ -396,6 +396,41 @@ class TextUtils {
             return escaped
         }
 
+        fun metadataInputValidation(day: Int?, month: Int?, year: Int?, time: String?, offset: String?, duration: String?): Boolean {
+            val timeValidate = "(\\d{2}:\\d{2}:\\d{2})".toRegex()
+
+            if (day != null && !(day in 1..31)) {
+                return false
+            }
+
+            if (month != null && !(month in 1..12)) {
+                return false
+            }
+
+            if (year != null && !(year in 1826..Calendar.getInstance().get(Calendar.YEAR))) {
+                return false
+            }
+
+            if (time != null && time != "" && !time.matches(timeValidate)) {
+                return false
+            }
+
+            if (offset != null && offset != "" && !(offset in timeOffsets())) {
+                return false
+            }
+
+            if (duration != null && duration != "") {
+                val isValidWithoutHour = "([1-5]?[0-9])(:[0-5][0-9])?".toRegex().matches(duration);
+                val isValidWithHour = "([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?".toRegex().matches(duration);
+
+                if (!isValidWithoutHour && !isValidWithHour) {
+                    return false
+                }
+            }
+
+            return true
+        }
+
         fun returnForbiddenError(response: HttpServletResponse): String {
             val jsonResponseMap = mutableMapOf<String, Any>()
             jsonResponseMap["msg"] = "Access is denied"

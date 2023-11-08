@@ -462,6 +462,7 @@ $("#refreshTakenDate").on("click", function (e) {
 $("#detailsTabLink").on("click", function (e) {
     e.preventDefault();
 
+    $("#yearTaken").attr("max", new Date().getFullYear());
     const propMetadataModal = document.getElementById('propMetadata');
     const modal = bootstrap.Modal.getInstance(propMetadataModal);
     modal.handleUpdate();
