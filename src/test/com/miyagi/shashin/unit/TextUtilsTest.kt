@@ -16,7 +16,13 @@ class TextUtilsTest {
         valid = TextUtils.metadataInputValidation(null, null, null, null, null, null)
         Assertions.assertTrue(valid)
 
+        valid = TextUtils.metadataInputValidation(null, null, null, "", "", "")
+        Assertions.assertTrue(valid)
+
         valid = TextUtils.metadataInputValidation(1, null, 2000, null, "-07:00", null)
+        Assertions.assertTrue(valid)
+
+        valid = TextUtils.metadataInputValidation(1, null, 2000, "", "-07:00", "")
         Assertions.assertTrue(valid)
 
         valid = TextUtils.metadataInputValidation(32, 1, 2000, "01:00:00", "-07:00", "0:01")
@@ -35,6 +41,9 @@ class TextUtilsTest {
         Assertions.assertFalse(valid)
 
         valid = TextUtils.metadataInputValidation(1, 1, 2000, "01:00:00", "-07:00", "0:90")
+        Assertions.assertFalse(valid)
+
+        valid = TextUtils.metadataInputValidation(32, 1, 2000, "mumbo", "jumbo", "tothemax")
         Assertions.assertFalse(valid)
     }
 }
