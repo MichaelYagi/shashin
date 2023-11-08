@@ -10,6 +10,7 @@ $("#appToolsBatchEdit").on("click", function(e) {
         thumbnailList += '<img loading="lazy" src="'+metadataThumnailUrl+'" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="'+metadataFilenamesArray[index]+'">';
     }
 
+    $("#yearTakenBatchData ").attr("max", new Date().getFullYear());
     $("#batchMetadataIds").val(JSON.stringify(metadataIdArray));
     $("#batchisobject")[0].checked = false;
     $("#batchhidden")[0].checked = false;

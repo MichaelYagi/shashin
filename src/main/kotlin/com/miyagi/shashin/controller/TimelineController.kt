@@ -1178,7 +1178,15 @@ class TimelineController: BaseController() {
 
             val metadataObj = metadataRepository.findById(metadataId)
 
-            if (metadataObj.isPresent) {
+            if (TextUtils.metadataInputValidation(
+                    metadataMap["day"].toString().toInt(),
+                    metadataMap["month"].toString().toInt(),
+                    metadataMap["year"].toString().toInt(),
+                    metadataMap["time"].toString(),
+                    metadataMap["offset"].toString(),
+                    metadataMap["duration"].toString()) &&
+                metadataObj.isPresent)
+            {
 
                 val currentUserObj = model.getAttribute("currentUser") as User?
 
@@ -1645,7 +1653,15 @@ class TimelineController: BaseController() {
         val isObject = batchMetadataMap.batchisobject == "on"
         val isHidden = batchMetadataMap.batchhidden == "on"
 
-        if (!idArray.isNullOrEmpty()) {
+        if (TextUtils.metadataInputValidation(
+                dayTaken,
+                monthTaken,
+                yearTaken,
+                null,
+                offset,
+                null) &&
+            !idArray.isNullOrEmpty())
+        {
             resp["msg"] = "Saved!"
             resp["status"] = ApiResponse.SUCCESS.status
 

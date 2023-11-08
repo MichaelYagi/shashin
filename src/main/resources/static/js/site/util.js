@@ -479,26 +479,25 @@ class Util {
         if (offset === null ) {
             offset = "";
         }
-        const dayValidate = "([1-9]|[12]\d|3[01])";
-        const monthValidate = "^(0?[1-9]|1[012])$";
+
         const timeValidate = "^(\\d{2}:\\d{2}:\\d{2})$";
         const offsetValidate = "^([+-±](?:2[0-3]|[01][0-9]):[0-5][0-9])$";
 
         let msg = "";
-        if (day !== "" && !day.match(dayValidate)) {
-            msg = "Enter Valid Day";
+        if (day !== "" && !(parseInt(day) >= 1 && parseInt(day) <= 31)) {
+            msg = "Enter Valid Day. Format: 1-31";
         }
 
-        if (month !== "" && !month.match(monthValidate)) {
-            msg = "Enter Valid Month";
+        if (month !== "" && !(parseInt(month) >= 1 && parseInt(month) <= 12)) {
+            msg = "Enter Valid Month. Format: 1-12";
         }
 
         if (year !== "" && !(+year >= 1826 && +year <= new Date().getFullYear())) {
-            msg = "Enter Valid Year";
+            msg = "Enter Valid Year. Format: 1826-" + (new Date().getFullYear());
         }
 
         if (time !== "" && !time.match(timeValidate)) {
-            msg = "Enter Valid Time";
+            msg = "Enter Valid Time. Format: HH:MM:SS";
         }
 
         if (offset !== "" && !offset.match(offsetValidate)) {
@@ -510,7 +509,7 @@ class Util {
             const latlngArr = latlng.split(",");
 
             if (latlngArr.length !== 2 || latlng.split(".").length !== 3 || !Util.isNumericString(latlngArr[0]) || !Util.isNumericString(latlngArr[1])) {
-                msg = "Enter Valid Latitude/Longitude";
+                msg = "Enter Valid Latitude/Longitude. Format: lat,lng";
             }
         }
 
@@ -519,7 +518,7 @@ class Util {
             const isValidWithHour = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(duration);
 
             if (isValidWithoutHour === false && isValidWithHour === false) {
-                msg = "Enter Valid Duration";
+                msg = "Enter Valid Duration. Format: 0:00/00:00:00";
             }
         }
 
