@@ -3,7 +3,6 @@ package com.miyagi.shashin.unit
 import com.miyagi.shashin.util.TextUtils
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 
 @ActiveProfiles("test")
