@@ -46,4 +46,71 @@ class TextUtilsTest {
         valid = TextUtils.metadataInputValidation(32, 1, 2000, "mumbo", "jumbo", "tothemax")
         Assertions.assertFalse(valid)
     }
+
+    @Test
+    fun formatToLongDateTest() {
+        var longDate = TextUtils.formatToLongDate("2023-11-9 01:00:00")
+        Assertions.assertEquals("Thu, Nov 9, 2023", longDate)
+
+        longDate = TextUtils.formatToLongDate("2023-11-9")
+        Assertions.assertEquals("", longDate)
+    }
+
+    @Test
+    fun formatToLongDateWithTimeTest() {
+        var longDateWithTime = TextUtils.formatToLongDateWithTime("2023-11-9 01:00:00")
+        Assertions.assertEquals("Thu, Nov 9, 2023 at 1:00 AM", longDateWithTime)
+
+        longDateWithTime = TextUtils.formatToLongDate("2023-11-9")
+        Assertions.assertEquals("", longDateWithTime)
+    }
+
+    @Test
+    fun capitalizedTest() {
+        var str = TextUtils.capitalized("asdf")
+        Assertions.assertEquals("Asdf", str)
+
+        str = TextUtils.capitalized("")
+        Assertions.assertEquals("", str)
+
+        str = TextUtils.capitalized(null)
+        Assertions.assertEquals("", str)
+    }
+
+    @Test
+    fun convertDecimalToFractionTest() {
+        var fraction = TextUtils.convertDecimalToFraction(0.9)
+        Assertions.assertEquals("9/10", fraction)
+
+        fraction = TextUtils.convertDecimalToFraction(0.3333333)
+        Assertions.assertEquals("1/3", fraction)
+
+        fraction = TextUtils.convertDecimalToFraction(0.5)
+        Assertions.assertEquals("1/2", fraction)
+
+        fraction = TextUtils.convertDecimalToFraction(0.0)
+        Assertions.assertEquals("0/1", fraction)
+    }
+
+    @Test
+    fun getCurrentTimestampTest() {
+        val ts = TextUtils.getCurrentTimestamp()
+        // yyyy-MM-dd HH:mm:ss
+        Assertions.assertTrue(ts.matches("^\\d{4}\\-(0?[1-9]|1[012])\\-(0?[1-9]|[12][0-9]|3[01]) (?:(?:([01]?\\d|2[0-3]):)?([0-5]?\\d):)?([0-5]?\\d)\$".toRegex()))
+    }
+
+    @Test
+    fun doUtcTimeConversionTest() {
+        var timeConversion = TextUtils.doUtcTimeZoneConversion("4:00", true)
+        Assertions.assertEquals("12:00", timeConversion)
+
+        timeConversion = TextUtils.doUtcTimeZoneConversion("4:00", false)
+        Assertions.assertEquals("20:00", timeConversion)
+
+        timeConversion = TextUtils.doUtcTimeZoneConversion(null, true)
+        Assertions.assertEquals("", timeConversion)
+
+        timeConversion = TextUtils.doUtcTimeZoneConversion("", true)
+        Assertions.assertEquals("", timeConversion)
+    }
 }
