@@ -286,10 +286,13 @@ async function showMap(mapdata) {
 
                     const iconFeature = new ol.Feature({
                         geometry: new ol.geom.Point(ol.proj.transform([data["lng"], data["lat"]], 'EPSG:4326', 'EPSG:900913')),
+                        thumbnailUrlSmall: data["thumbnailUrlSmall"],
                         thumbnailUrlOriginal: data["thumbnailUrlOriginal"],
                         mapMarkerUrl: data["mapMarkerUrl"],
                         mapMarkerIcon: mapMarkerIcon,
                         videoUrl: data["videoUrl"],
+                        originalImageWidth: data["originalImageWidth"],
+                        originalImageHeight: data["originalImageHeight"],
                         metadataId: data["id"],
                         lat: data["lat"],
                         lng: data["lng"],
@@ -473,6 +476,9 @@ async function showMap(mapdata) {
                             "id": featureProperties.metadataId
                         }
                     }
+
+                    mediaContent.poster= ((featureProperties.thumbnailUrlOriginal === null || featureProperties.thumbnailUrlOriginal === "") ? featureProperties.thumbnailUrlSmall : featureProperties.thumbnailUrlOriginal) + "?v=" + Util.getMetadataLocalStorage();
+                    mediaContent.lgSize = featureProperties.originalImageWidth+"-"+featureProperties.originalImageHeight;
                     mediaContent.downloadUrl = encodeURI(featureProperties.videoUrl) + "/download";
                 }
                 mediaContent.metadataId = featureProperties.metadataId;
