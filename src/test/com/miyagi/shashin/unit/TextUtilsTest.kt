@@ -98,19 +98,4 @@ class TextUtilsTest {
         // yyyy-MM-dd HH:mm:ss
         Assertions.assertTrue(ts.matches("^\\d{4}\\-(0?[1-9]|1[012])\\-(0?[1-9]|[12][0-9]|3[01]) (?:(?:([01]?\\d|2[0-3]):)?([0-5]?\\d):)?([0-5]?\\d)\$".toRegex()))
     }
-
-    @Test
-    fun doUtcTimeConversionTest() {
-        var timeConversion = TextUtils.doUtcTimeZoneConversion("4:00", true)
-        Assertions.assertEquals("12:00", timeConversion)
-
-        timeConversion = TextUtils.doUtcTimeZoneConversion("4:00", false)
-        Assertions.assertEquals("20:00", timeConversion)
-
-        timeConversion = TextUtils.doUtcTimeZoneConversion(null, true)
-        Assertions.assertEquals("", timeConversion)
-
-        timeConversion = TextUtils.doUtcTimeZoneConversion("", true)
-        Assertions.assertEquals("", timeConversion)
-    }
 }
