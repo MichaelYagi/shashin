@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
-<ul class="nav nav-tabs" th:fragment="browse(activePage)">
+<ul class="nav nav-tabs nav-fill" th:fragment="browse(activePage)">
     <li class="nav-item">
         <a th:attr="class='nav-link' + ${activePage=='recent' ? ' active' : ''}" href="/recent">Recently Added</a>
     </li>
