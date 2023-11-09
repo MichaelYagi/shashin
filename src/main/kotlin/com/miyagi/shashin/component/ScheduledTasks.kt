@@ -40,7 +40,7 @@ class CronProperties {
 
         if (settings != null) {
             val scheduledTimeSetting = settings.getScheduledTime()
-            val scheduledTimeSettingGmt = TextUtils.doTimeConversion(scheduledTimeSetting!!, true)
+            val scheduledTimeSettingGmt = TextUtils.doUtcTimeZoneConversion(scheduledTimeSetting!!, true)
             val scheduledTimeSettingArray = scheduledTimeSettingGmt.split(":")
             hourSetting = scheduledTimeSettingArray[0]
             if (hourSetting.first() == '0') {
@@ -48,7 +48,7 @@ class CronProperties {
             }
 
             if (scheduledTime != null) {
-                val scheduledTimePropertyGmt = TextUtils.doTimeConversion(scheduledTime, true)
+                val scheduledTimePropertyGmt = TextUtils.doUtcTimeZoneConversion(scheduledTime, true)
                 val scheduledTimePropArray = scheduledTimePropertyGmt.split(":")
                 hourProperty = scheduledTimePropArray[0]
                 if (hourProperty.first() == '0') {

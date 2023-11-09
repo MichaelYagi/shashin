@@ -90,20 +90,36 @@ class TextUtils {
         }
 
         fun formatToLongDate(oldDate: String): String {
-            val sdf = SimpleDateFormat(getCommonDateFormat())
-            val newSdf = SimpleDateFormat("EEE, MMM d, yyyy")
-            val temp = sdf.parse(oldDate)
-            return newSdf.format(temp)
+            var formattedDate = ""
+            try {
+                val sdf = SimpleDateFormat(getCommonDateFormat())
+                val newSdf = SimpleDateFormat("EEE, MMM d, yyyy")
+                val temp = sdf.parse(oldDate)
+                formattedDate = newSdf.format(temp)
+            } catch (e: Exception) {
+                logger.log(Level.WARNING, "Could not format date $oldDate. ${e.message}")
+            }
+            return formattedDate
         }
 
         fun formatToLongDateWithTime(oldDate: String): String {
-            val sdf = SimpleDateFormat(getCommonDateFormat())
-            val newSdf = SimpleDateFormat("EEE, MMM d, yyyy  'at' h:mm aa")
-            val temp = sdf.parse(oldDate)
-            return newSdf.format(temp)
+            var formattedDate = ""
+            try {
+                val sdf = SimpleDateFormat(getCommonDateFormat())
+                val newSdf = SimpleDateFormat("EEE, MMM d, yyyy 'at' h:mm aa")
+                val temp = sdf.parse(oldDate)
+                formattedDate = newSdf.format(temp)
+            } catch (e: Exception) {
+                logger.log(Level.WARNING, "Could not format date $oldDate. ${e.message}")
+            }
+            return formattedDate
         }
 
-        fun capitalized(str: String): String {
+        fun capitalized(str: String?): String {
+            if (str == null) {
+                return ""
+            }
+
             return str.replaceFirstChar {
                 if (it.isLowerCase())
                     it.titlecase(Locale.getDefault())
@@ -357,7 +373,7 @@ class TextUtils {
             )
         }
 
-        fun doTimeConversion(time: String?, type: Boolean): String {
+        fun doUtcTimeZoneConversion(time: String?, type: Boolean): String {
             if (time != null) {
                 val timeArray = time.split(':')
                 var hour: String
