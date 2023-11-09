@@ -5,7 +5,10 @@ interface MapData {
     fun getType(): String?
     fun getLat(): String?
     fun getLng(): String?
+    fun getThumbnailUrlSmall(): String?
     fun getThumbnailUrlOriginal(): String?
+    fun getOriginalImageWidth(): Int?
+    fun getOriginalImageHeight(): Int?
     fun getVideoUrl(): String?
     fun getMapMarkerUrl(): String?
     fun getYear(): Int?
