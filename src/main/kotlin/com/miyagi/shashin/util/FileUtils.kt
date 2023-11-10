@@ -620,9 +620,12 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
         }
 
         fun parseBase64(url: String): ByteArray? {
-            val base64Image = url.split(",")[1]
-            if (!base64Image.isNullOrBlank()) {
-                return parseBase64Binary(base64Image)
+            val base64ImageArray = url.split(",")
+            if (base64ImageArray.size > 1) {
+                val base64Image = base64ImageArray[1];
+                if (base64Image.isNotBlank()) {
+                    return parseBase64Binary(base64Image)
+                }
             }
 
             return null
