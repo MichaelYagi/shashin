@@ -437,20 +437,22 @@ async function showMap(mapdata) {
 
     let clicked = false;
     function selectStyleFunction(feature) {
-        // Return first map marker
-        const styles = [
-            new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: feature.get('radius'),
-                    fill: invisibleFill,
-                }),
-            }),
-        ];
-        const originalFeatures = feature.get('features');
-        let originalFeature = originalFeatures[originalFeatures.length - 1];
-        styles.push(originalFeature.getProperties()["mapMarkerIcon"]);
+        let styles = [];
 
         if (clicked === true) {
+            // Return first map marker
+            styles = [
+                new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: feature.get('radius'),
+                        fill: invisibleFill,
+                    }),
+                }),
+            ];
+            const originalFeatures = feature.get('features');
+            let originalFeature = originalFeatures[originalFeatures.length - 1];
+            styles.push(originalFeature.getProperties()["mapMarkerIcon"]);
+
             // Show gallery for each cluster
             const mediaContentList = [];
             for (let i = originalFeatures.length - 1; i >= 0; --i) {
