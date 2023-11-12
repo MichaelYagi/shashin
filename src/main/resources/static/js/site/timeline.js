@@ -507,7 +507,9 @@
         });
 
         // Smooth scrolling when element is removed for non chrome browsers
-        if ((Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && topHeight > 0) {
+        if ((Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true))
+            //&& timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && topHeight > 0
+        ) {
             $("#container").scrollTop(tempScrollTop - topHeight);
         }
 
