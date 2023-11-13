@@ -517,7 +517,7 @@ class BrowseController: BaseController() {
 
     private fun buildBrowseRecord(module: String, model: Model, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt(), mediaTypeFilter: String?): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
-        response["message"] = "There are no photos. Please setup directories to scan in Settings and index media in Media Indexing."
+        response["message"] = "Nothing to see here."
         response["metadataList"] = mutableListOf<Metadata>()
         response["favorites"] = mutableMapOf<String, Any>()
         response["albumList"] = mutableListOf<Album>()
@@ -727,8 +727,8 @@ class BrowseController: BaseController() {
         response["status"] = ApiResponse.FAIL.status
 
         val module = "folders"
-        response["msg"] = "There are no folders."
-        response["message"] = "There are no folders."
+        response["msg"] = "Nothing to see here."
+        response["message"] = "Nothing to see here."
         response["foldersList"] = mutableListOf<Folder>()
 
         val currentUserObj = model.getAttribute("currentUser") as User?
@@ -1046,7 +1046,7 @@ class BrowseController: BaseController() {
 
     private fun buildFolder(model: Model, folder: String, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
-        response["message"] = "There are no photos. Please setup directories to scan in Settings and index media in Media Indexing."
+        response["message"] = "Nothing to see here."
         response["metadataList"] = mutableListOf<Metadata>()
         response["favorites"] = mutableMapOf<String, Any>()
         response["albumList"] = mutableListOf<Album>()
