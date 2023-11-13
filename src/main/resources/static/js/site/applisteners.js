@@ -163,12 +163,17 @@ $("#albumAppToolsRestore").on("click", async function (e) {
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
             if (data["status"] === "success") {
-                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                window.top.location = window.top.location
+                shashin.showToastMessage("Success!", "Media restored", {
+                    icon: "bi-info-circle",
+                    iconColor: "#777777"
+                });
+
+                $('#'+shashin.toast.target.default).on('hidden.bs.toast', function () {
+                    location.replace(location.href.split('#')[0]);
+                });
             } else {
-                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                shashin.showToastMessage("Could not restore media", data["msg"], {icon: "bi-exclamation-triangle", iconColor: "#FF0000"});
             }
-            $("#trashMessage").html(message);
         }
     }
 
