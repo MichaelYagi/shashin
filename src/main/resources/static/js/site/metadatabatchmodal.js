@@ -47,6 +47,7 @@ $("#batchrescan").on("click", async function (e) {
         $("#batchhidden").prop("checked", false);
         $("#saveBatchData :input").prop("disabled", true);
         $("#batchrescan").prop("disabled", false);
+        $("#batchMetadataIds").prop("disabled", false);
     } else {
         $("#saveBatchData :input").prop("disabled", false);
     }
@@ -57,6 +58,7 @@ $("#batchhidden").on("click", async function (e) {
         $("#batchrescan").prop("checked", false);
         $("#saveBatchData :input").prop("disabled", true);
         $("#batchhidden").prop("disabled", false);
+        $("#batchMetadataIds").prop("disabled", false);
     } else {
         $("#saveBatchData :input").prop("disabled", false);
     }
