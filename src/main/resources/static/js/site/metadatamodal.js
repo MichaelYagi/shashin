@@ -62,6 +62,7 @@ $("#rescan").on("click", async function (e) {
         $("#hidden").prop("checked", false);
         $("#saveTimelineModalForm :input").prop("disabled", true);
         $("#rescan").prop("disabled", false);
+        $("#metadataId").prop("disabled", false);
     } else {
         $("#saveTimelineModalForm :input").prop("disabled", false);
     }
@@ -72,6 +73,7 @@ $("#hidden").on("click", async function (e) {
         $("#rescan").prop("checked", false);
         $("#saveTimelineModalForm :input").prop("disabled", true);
         $("#hidden").prop("disabled", false);
+        $("#metadataId").prop("disabled", false);
     } else {
         $("#saveTimelineModalForm :input").prop("disabled", false);
     }
