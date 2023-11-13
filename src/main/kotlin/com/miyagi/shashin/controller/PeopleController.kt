@@ -227,7 +227,7 @@ class PeopleController {
     @Secured("ROLE_ADMIN")
     fun getPredictions(model: Model, @PathVariable personId: Int, request: HttpServletRequest): String {
         val module = "matches"
-        model["message"] = "There are no photos."
+        model["message"] = "Nothing to see here."
         model["lowMatchResults"] = mutableListOf<Metadata>()
         model["recognitionLabels"] = mutableListOf<RecognitionLabel>()
         model["allAlbumList"] = mutableListOf<Album>()
@@ -504,7 +504,7 @@ class PeopleController {
     private fun buildCompreFace(model: Model, personId: Int, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
-        response["message"] = "There are no photos."
+        response["message"] = "Nothing to see here."
         response["parameter"] = personId
         response["resultList"] = mutableListOf<MutableMap<String, String>>()
 
@@ -618,7 +618,7 @@ class PeopleController {
     @Secured("ROLE_ADMIN", "ROLE_USER")
     fun getPeople(model: Model): String {
         val module = "people"
-        model["message"] = "There are no people tagged."
+        model["message"] = "Nothing to see here."
         model["peopleList"] = mutableListOf<MetadataPeople>()
         val counts = HashMap<Int,Int>()
         model["counts"] = counts
@@ -734,7 +734,7 @@ class PeopleController {
     private fun buildPersonAlbum(model: Model,personId: Int,page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
-        response["message"] = "There are no photos."
+        response["message"] = "Nothing to see here."
         response["metadataList"] = mutableListOf<Metadata>()
         response["labelPhotoMap"] = mutableMapOf<String, Any>()
         response["personInfo"] = RecognitionLabel()

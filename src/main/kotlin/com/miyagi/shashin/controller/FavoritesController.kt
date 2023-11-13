@@ -118,7 +118,7 @@ class FavoritesController: BaseController() {
         response["activePage"] = module
         response["activeSidebar"] = module
         response["titleDescriptor"] = TextUtils.capitalized(module)
-        response["message"] = "There are no favorites."
+        response["message"] = "Nothing to see here."
         response["metadataList"] = mutableListOf<Metadata>()
         response["keywordMap"] = mutableMapOf<String, String>()
 

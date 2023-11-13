@@ -274,7 +274,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         }
 
         val msgEl = this.driver!!.findElement(By.id("msg"))
-        Assertions.assertEquals("There are no albums.",msgEl.text)
+        Assertions.assertEquals("Nothing to see here.",msgEl.text)
     }
 
     @Test

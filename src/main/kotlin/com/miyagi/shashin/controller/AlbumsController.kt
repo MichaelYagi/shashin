@@ -287,7 +287,7 @@ class AlbumsController: BaseController() {
         val response = mutableMapOf<String, Any?>()
 
         val module = "albums"
-        response["message"] = "There are no albums."
+        response["message"] = "Nothing to see here."
         response["albumsList"] =  mutableListOf<Album>()
         response["userAlbums"] = mutableListOf<UserAlbum>()
         response["userCount"] = 0
