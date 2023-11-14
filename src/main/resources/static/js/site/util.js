@@ -289,10 +289,10 @@ class Util {
                     $("#latlng").val("");
                     if (rescannedMetadata["lat"] !== null && rescannedMetadata["lng"] !== null) {
                         $("#latlng").val(rescannedMetadata["lat"]+","+rescannedMetadata["lng"]);
-                        $("#mapTabLink").show();
+                        $("#mapTabNav").show();
                         Util.setMetadataLocalStorage();
                     } else {
-                        $("#mapTabLink").hide();
+                        $("#mapTabNav").hide();
                     }
                     if (takenDateUpdated === true) {
                         const dateGalleryRemoved = shashin.removeThumbnail((rescannedMetadata["id"] !== metadataIdArray[0]) ? metadataIdArray[0] : rescannedMetadata.id);
