@@ -133,9 +133,9 @@
             }
 
             if (Util.isMobile() === false && $("#dateSliderWrapper:not(:hover)").length > 0) {
-                setTimeout(() => {
+                // setTimeout(() => {
                     $("#dateSlider").hide(timelineSettings.scrollBar.fadeOutTime);
-                }, 2000);
+                // }, 2000);
             }
 
             timelineSettings.rescanElements();
