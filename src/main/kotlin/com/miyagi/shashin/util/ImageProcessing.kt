@@ -147,6 +147,11 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             rotation = getVideoRotation(file)?.toInt() ?: 0
         }
 
+        if ((originalPixelHeight == null || originalPixelWidth == null) && img != null) {
+            originalPixelHeight = img.height
+            originalPixelWidth = img.width
+        }
+
         if (img != null &&
             _metadataObj?.getOriginalImageWidth() == null && _metadataObj?.getOriginalImageHeight() == null &&
             originalPixelHeight != null && originalPixelWidth != null) {
@@ -185,6 +190,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
             if (tnFile != null) {
                 val tempFile = File(System.getProperty("java.io.tmpdir")+"/temp.jpg")
+                // If panorama dimensions
                 if (img.width > img.height * 2) {
                     if (file.extension.lowercase() == "gif") {
                         Thumbnails.of(img)
