@@ -2313,10 +2313,19 @@ class TimelineController: BaseController() {
                     }
 
                     // Small thumbnail
-                    Thumbnails.of(img)
-                        .size(metadata.getThumbnailSmallWidth()!!, metadata.getThumbnailSmallHeight()!!)
-                        .outputQuality(1.0)
-                        .toFile(tempFile)
+                    // If panorama
+                    if (img.width > img.height * 2) {
+                        Thumbnails.of(img)
+                            .crop(Positions.CENTER)
+                            .size(FileUtils.thumbnailHeight(), FileUtils.thumbnailHeight())
+                            .outputQuality(1.0)
+                            .toFile(tempFile)
+                    } else {
+                        Thumbnails.of(img)
+                            .height(FileUtils.thumbnailHeight())
+                            .outputQuality(1.0)
+                            .toFile(tempFile)
+                    }
 
                     var scaledImage: BufferedImage?
                     try {
