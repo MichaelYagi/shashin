@@ -203,9 +203,59 @@
             $("#"+target).attr("data-bs-delay", delay);
         }
 
-        const toastLiveExample = document.getElementById(target);
-        const toast = new bootstrap.Toast(toastLiveExample);
+        const toastLive = document.getElementById(target);
+        const toast = new bootstrap.Toast(toastLive);
         toast.show();
+    }
+
+    shashin.closeToastMessage = function (options) {
+        let target = null;
+
+        if (options === undefined || options === null) {
+            target = shashin.toast.target.default;
+            let toastLive = document.getElementById(target);
+            let toast = new bootstrap.Toast(toastLive);
+            toast.hide();
+
+            target = shashin.toast.target.one;
+            toastLive = document.getElementById(target);
+            toast = new bootstrap.Toast(toastLive);
+            toast.hide();
+
+            target = shashin.toast.target.two;
+            toastLive = document.getElementById(target);
+            toast = new bootstrap.Toast(toastLive);
+            toast.hide();
+
+            target = shashin.toast.target.three;
+            toastLive = document.getElementById(target);
+            toast = new bootstrap.Toast(toastLive);
+            toast.hide();
+
+            target = shashin.toast.target.four;
+            toastLive = document.getElementById(target);
+            toast = new bootstrap.Toast(toastLive);
+            toast.hide();
+        } else if (options.hasOwnProperty("target")) {
+            target = options.target;
+
+            if (target !== shashin.toast.target.default &&
+                target !== shashin.toast.target.one &&
+                target !== shashin.toast.target.two &&
+                target !== shashin.toast.target.three &&
+                target !== shashin.toast.target.four) {
+                target = shashin.toast.target.default;
+            }
+
+            const toastLive = document.getElementById(target);
+            const toast = new bootstrap.Toast(toastLive);
+            toast.hide();
+        } else {
+            target = shashin.toast.target.default;
+            const toastLive = document.getElementById(target);
+            const toast = new bootstrap.Toast(toastLive);
+            toast.hide();
+        }
     }
 
     shashin.getMediaContent = function(metadata) {
