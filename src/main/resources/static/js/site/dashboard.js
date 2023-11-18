@@ -527,15 +527,15 @@ class Dashboard {
             }, function(e) {
                 if (counter > 0) {
                     shashin.printMessageToConsole("Oops, something went wrong! " + e.toString() + ". Probably already scanning.");
+                    window.top.location = window.top.location
                 } else {
                     shashin.printMessageToConsole("Oops, something went wrong! " + e.toString() + ". Click the Scan button once, to proceed with indexing.");
+                    window.top.location = window.top.location
                 }
 
                 if (counter < 10) {
                     counter = 0;
                     scanRefresh();
-                } else {
-                    window.top.location = window.top.location
                 }
 
                 counter++;

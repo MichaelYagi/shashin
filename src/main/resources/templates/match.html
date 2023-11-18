@@ -106,15 +106,15 @@
                 // showMessage("Socket connection error: " + e.toString())
                 if (counter > 0) {
                     showMessage("Oops, something went wrong! " + e.toString() + ". Probably already scanning.");
+                    window.top.location = window.top.location
                 } else {
                     showMessage("Oops, something went wrong! " + e.toString() + ". Click the Scan button once, to proceed with indexing.");
+                    window.top.location = window.top.location
                 }
 
                 if (counter < 10) {
                     counter = 0;
                     matchRefresh();
-                } else {
-                    window.top.location = window.top.location
                 }
 
                 scanInProgress = false;
