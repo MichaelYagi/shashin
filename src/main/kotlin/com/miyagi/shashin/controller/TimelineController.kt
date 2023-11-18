@@ -2284,105 +2284,17 @@ class TimelineController: BaseController() {
             val metadataObj = metadataRepository.findById(metadataId)
 
             if (metadataObj.isPresent) {
-                val metadata = metadataObj.get()
+                var metadata = metadataObj.get()
                 val imageBytes = FileUtils.parseBase64(base64Data)
                 if (imageBytes != null) {
-                    var tempFile = File(System.getProperty("java.io.tmpdir")+"/temp.jpg")
-
                     val img = ImageIO.read(ByteArrayInputStream(imageBytes))
 
-                    // Original Size thumbnail
-                    Thumbnails.of(img)
-                        .size(metadata.getOriginalImageWidth()!!, metadata.getOriginalImageHeight()!!)
-                        .outputQuality(0.4)
-                        .toFile(tempFile)
-
-                    try {
-                        val thumbnailFileStr = metadata.getThumbnailPathCentered()!!.replace("_centered.", "_original.")
-                        ImageIO.write(ImageIO.read(tempFile), "jpg", File(thumbnailFileStr))
-                        tempFile.delete()
-                        if (metadata.getThumbnailUrlOriginal() == null || metadata.getThumbnailUrlOriginal() == "") {
-                            metadata.setThumbnailUrlOriginal("/api/$apiVersion/thumbnails${metadata.getFolder()}/${metadata.getFileName()}_original.jpg")
-                        }
-                    } catch (e: IOException) {
-                        logger.log(Level.WARNING, "Could not read file: " + metadata.getThumbnailPathSmall())
-                        resp["posterUrl"] = metadata.getThumbnailUrlSmall()
-                        resp["msg"] = "Could not save"
-                        resp["status"] = ApiResponse.FAIL.status
-                        return mapper.writeValueAsString(resp)
-                    }
-
-                    // Small thumbnail
-                    // If panorama
-                    if (img.width > img.height * 2) {
-                        Thumbnails.of(img)
-                            .crop(Positions.CENTER)
-                            .size(FileUtils.thumbnailHeight(), FileUtils.thumbnailHeight())
-                            .outputQuality(1.0)
-                            .toFile(tempFile)
-                    } else {
-                        Thumbnails.of(img)
-                            .height(FileUtils.thumbnailHeight())
-                            .outputQuality(1.0)
-                            .toFile(tempFile)
-                    }
-
-                    var scaledImage: BufferedImage?
-                    try {
-                        scaledImage = ImageProcessing.sharpenAndBrightenImage(ImageIO.read(tempFile))
-                        tempFile.delete()
-                        ImageIO.write(scaledImage, "jpg", File(metadata.getThumbnailPathSmall()))
-                    } catch (e: IOException) {
-                        logger.log(Level.WARNING, "Could not read file: " + metadata.getThumbnailPathSmall())
-                        resp["posterUrl"] = metadata.getThumbnailUrlSmall()
-                        resp["msg"] = "Could not save"
-                        resp["status"] = ApiResponse.FAIL.status
-                        return mapper.writeValueAsString(resp)
-                    }
-
-                    // Centered
-                    tempFile = File(System.getProperty("java.io.tmpdir")+"/temp.jpg")
-                    Thumbnails.of(img)
-                        .crop(Positions.CENTER)
-                        .size(209, 209)
-                        .outputQuality(1.0)
-                        .toFile(tempFile)
-
-                    try {
-                        scaledImage = ImageProcessing.sharpenAndBrightenImage(ImageIO.read(tempFile))
-                        tempFile.delete()
-                        ImageIO.write(scaledImage, "jpg", File(metadata.getThumbnailPathCentered()))
-                    } catch (e: IOException) {
-                        logger.log(Level.WARNING, "Could not read file: " + metadata.getThumbnailPathCentered())
-                        resp["posterUrl"] = metadata.getThumbnailUrlSmall()
-                        resp["msg"] = "Could not save"
-                        resp["status"] = ApiResponse.FAIL.status
-                        return mapper.writeValueAsString(resp)
-                    }
-
-                    // Map marker
-                    tempFile = File(System.getProperty("java.io.tmpdir")+"/temp.jpg")
-                    Thumbnails.of(img)
-                        .crop(Positions.CENTER)
-                        .size(45, 45)
-                        .outputQuality(1.0)
-                        .toFile(tempFile)
-
-                    try {
-                        scaledImage = ImageIO.read(tempFile)
-                        scaledImage = ImageProcessing.sharpenAndBrightenImage(scaledImage)
-                        scaledImage = ImageProcessing.borderImage(scaledImage)
-                        tempFile.delete()
-                        ImageIO.write(scaledImage, "jpg", File(metadata.getMapMarkerPath()))
-                    } catch (e: IOException) {
-                        logger.log(Level.WARNING, "Could not read file: " + metadata.getMapMarkerPath())
-                        resp["posterUrl"] = metadata.getThumbnailUrlSmall()
-                        resp["msg"] = "Could not save"
-                        resp["status"] = ApiResponse.FAIL.status
-                        return mapper.writeValueAsString(resp)
-                    }
-
+                    val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+                    val sidecarDir = rootPath + relativeSidecarDir
+                    val imageProcessing = ImageProcessing(apiVersion, File(metadata.getFolder()+"/"+metadata.getFileName()), sidecarDir, metadata)
+                    metadata = imageProcessing.setThumbnails(img, metadata, true, "jpg")
                     metadata.setModifiedAt(getCurrentTimestamp())
+
                     metadataRepository.save(metadata)
                 }
 

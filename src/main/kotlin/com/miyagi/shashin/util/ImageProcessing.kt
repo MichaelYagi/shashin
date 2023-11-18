@@ -109,8 +109,6 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             )
         }
 
-        val thumbnailDirectory = sidecarDir.dropLast(1) + "/thumbnails"
-
         // Map path to sidecar file
         val fileRootDir: String = FileUtils.getRootDir(file)
         val supportedImageFormats = FileUtils.allowableImageFiles()
@@ -165,31 +163,46 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         }
 
         // Create thumbnails
-        if (img != null) {
-            _metadataObj?.setFolder(fileRootDir)
+        if (img != null && _metadataObj != null) {
+            _metadataObj.setFolder(fileRootDir)
+
+            _metadataObj = setThumbnails(img, _metadataObj, (FileUtils.isRaw(file.extension.lowercase()) || supportedVideoFormats.contains(file.extension.lowercase())), extension)
+        } else {
+            logger.log(Level.WARNING, "File not supported: " + file.name)
+            _metadataObj = null
+        }
+
+        return _metadataObj
+    }
+
+    fun setThumbnails(img: BufferedImage, metadataObj: Metadata, isRawOrVideo: Boolean, extension: String): Metadata {
+        if (file.exists()) {
+            val thumbnailDirectory = sidecarDir.dropLast(1) + "/thumbnails"
+            val fileRootDir: String = FileUtils.getRootDir(file)
 
             // Raw file to image conversion
             var thumbnailFileStr: String
             var tnFile: File?
-            if (FileUtils.isRaw(file.extension.lowercase()) || supportedVideoFormats.contains(file.extension.lowercase())) {
+            if (isRawOrVideo) {
                 thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_original." + extension
                 tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
-                if (tnFile != null && _metadataObj != null) {
+                if (tnFile != null) {
                     val imgCopy = img
                     Thumbnails.of(imgCopy)
-                        .size(_metadataObj.getOriginalImageWidth()!!, _metadataObj.getOriginalImageHeight()!!)
+                        .size(metadataObj.getOriginalImageWidth()!!, metadataObj.getOriginalImageHeight()!!)
                         .outputQuality(0.4)
                         .toFile(tnFile)
                 }
-                _metadataObj?.setThumbnailUrlOriginal("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_original." + extension)
+                metadataObj.setThumbnailUrlOriginal("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_original." + extension)
             }
 
             // Gallery thumbnails
-            thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_" + FileUtils.thumbnailHeight() + "." + extension
+            thumbnailFileStr =
+                thumbnailDirectory + fileRootDir + "/" + file.name + "_" + FileUtils.thumbnailHeight() + "." + extension
             tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
 
             if (tnFile != null) {
-                val tempFile = File(System.getProperty("java.io.tmpdir")+"/temp.jpg")
+                val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp.jpg")
                 // If panorama dimensions
                 if (img.width > img.height * 2) {
                     if (file.extension.lowercase() == "gif") {
@@ -226,10 +239,10 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     scaledImage = sharpenAndBrightenImage(ImageIO.read(tempFile))
                     tempFile.delete()
                     ImageIO.write(scaledImage, "jpg", tnFile)
-                    _metadataObj?.setThumbnailSmallHeight(scaledImage.height)
-                    _metadataObj?.setThumbnailSmallWidth(scaledImage.width)
-                    _metadataObj?.setThumbnailPathSmall(thumbnailFileStr)
-                    _metadataObj?.setThumbnailUrlSmall("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_" + FileUtils.thumbnailHeight() + "." + extension)
+                    metadataObj.setThumbnailSmallHeight(scaledImage.height)
+                    metadataObj.setThumbnailSmallWidth(scaledImage.width)
+                    metadataObj.setThumbnailPathSmall(thumbnailFileStr)
+                    metadataObj.setThumbnailUrlSmall("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_" + FileUtils.thumbnailHeight() + "." + extension)
                     logger.log(Level.INFO, "Small thumbnail created: " + file.path)
                 } catch (e: IOException) {
                     logger.log(Level.WARNING, "Could not read file: " + tnFile.path)
@@ -240,7 +253,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_centered." + extension
             tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
             if (tnFile != null) {
-                val tempFile = File(System.getProperty("java.io.tmpdir")+"/temp.jpg")
+                val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp.jpg")
                 Thumbnails.of(img)
                     .crop(Positions.CENTER)
                     .size(209, 209)
@@ -252,8 +265,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     scaledImage = sharpenAndBrightenImage(ImageIO.read(tempFile))
                     tempFile.delete()
                     ImageIO.write(scaledImage, "jpg", tnFile)
-                    _metadataObj?.setThumbnailPathCentered(thumbnailFileStr)
-                    _metadataObj?.setThumbnailUrlCentered("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_centered." + extension)
+                    metadataObj.setThumbnailPathCentered(thumbnailFileStr)
+                    metadataObj.setThumbnailUrlCentered("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_centered." + extension)
                     logger.log(Level.INFO, "Centered thumbnail created: " + file.path)
                 } catch (e: IOException) {
                     logger.log(Level.WARNING, "Could not read file: " + tnFile.path)
@@ -264,7 +277,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_mapmarker." + extension
             tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
             if (tnFile != null) {
-                val tempFile = File(System.getProperty("java.io.tmpdir")+"/temp.jpg")
+                val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp.jpg")
                 Thumbnails.of(img)
                     .crop(Positions.CENTER)
                     .size(45, 45)
@@ -278,19 +291,18 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     scaledImage = borderImage(scaledImage)
                     tempFile.delete()
                     ImageIO.write(scaledImage, "jpg", tnFile)
-                    _metadataObj?.setMapMarkerPath(thumbnailFileStr)
-                    _metadataObj?.setMapMarkerUrl("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_mapmarker." + extension)
+                    metadataObj.setMapMarkerPath(thumbnailFileStr)
+                    metadataObj.setMapMarkerUrl("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_mapmarker." + extension)
                     logger.log(Level.INFO, "Map thumbnail created: " + file.path)
                 } catch (e: IOException) {
                     logger.log(Level.WARNING, "Could not read file: " + tnFile.path)
                 }
             }
         } else {
-            logger.log(Level.WARNING, "File not supported: " + file.name)
-            _metadataObj = null
+            logger.log(Level.WARNING, "File " + file.path + " does not exist.")
         }
 
-        return _metadataObj
+        return metadataObj
     }
 
     private fun getVideoRotation(file: File): Double? {
