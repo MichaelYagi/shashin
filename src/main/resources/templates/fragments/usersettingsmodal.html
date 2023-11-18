@@ -51,7 +51,10 @@
             </div>
             <div class="modal-body">
                 <form method="post" th:id="'resetPassword'+${user.id}">
-                    <input type="password" th:id="'password'+${user.id}" th:name="'password'+${user.id}" class="form-control" placeholder="Reset Password">
+                    <div class="input-group">
+                        <input type="password" th:id="'password'+${user.id}" th:name="'password'+${user.id}" class="form-control" placeholder="Reset Password">
+                        <button class="btn btn-outline-secondary" type="button" th:id="'unhidepassword'+${user.id}" style="max-height: 46px;"><span th:id="'unhidepasswordicon'+${user.id}" class="bi-eye"></span></button>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -61,6 +64,21 @@
             </div>
             <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
                 /*<![CDATA[*/
+                $("#unhidepassword[[${user.id}]]").on("click", function (e) {
+                    e.preventDefault();
+                    changeTypes($("#password[[${user.id}]]"), $("#unhidepasswordicon[[${user.id}]]"));
+                });
+
+                function changeTypes(elem, icon) {
+                    if (elem.attr("type") === "password") {
+                        elem.prop("type", "text");
+                        icon.removeClass("bi-eye").addClass("bi-eye-slash");
+                    } else {
+                        elem.prop("type", "password");
+                        icon.removeClass("bi-eye-slash").addClass("bi-eye");
+                    }
+                }
+
                 $("#resetPasswordUser[[${user.id}]]").on("click", async function (e) {
                     e.preventDefault();
 
