@@ -2291,8 +2291,8 @@ class TimelineController: BaseController() {
 
                     val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
                     val sidecarDir = rootPath + relativeSidecarDir
-                    val imageProcessing = ImageProcessing(apiVersion, File(metadata.getFolder()+"/"+metadata.getFileName()), sidecarDir, metadata)
-                    metadata = imageProcessing.setThumbnails(img, metadata, true, "jpg")
+                    val imageProcessing = ImageProcessing(apiVersion, File(metadata.getPath()), sidecarDir, metadata)
+                    metadata = imageProcessing.setThumbnails(img, metadata, true, "jpg", true)
                     metadata.setModifiedAt(getCurrentTimestamp())
 
                     metadataRepository.save(metadata)

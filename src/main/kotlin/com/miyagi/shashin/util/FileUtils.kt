@@ -76,7 +76,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
             return false
         }
 
-        fun createFile(filePath: String, fileName: String, type: String): File? {
+        fun createFile(filePath: String, fileName: String, type: String, overwriteThumbnails: Boolean = false): File? {
             try {
                 // Create directory if dne
                 val someFileDir = File(filePath)
@@ -87,6 +87,9 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                 val someFile = File(fileName)
                 if (someFile.createNewFile()) {
                     logger.log(Level.INFO, type + " created: " + someFile.name)
+                    return someFile
+                } else if (overwriteThumbnails) {
+                    logger.log(Level.INFO, type + " overwriting: " + someFile.name)
                     return someFile
                 } else {
                     logger.log(Level.INFO, type + " already exists: " + someFile.name)
