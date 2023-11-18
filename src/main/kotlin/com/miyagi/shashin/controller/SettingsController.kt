@@ -231,7 +231,7 @@ class SettingsController {
         model["mediaDirList"] = ""
         model["mediaExcludeDirList"] = ""
         model["settings"] = ""
-        model["alertClass"] = ""
+        model["status"] = "success"
 
         var dirDneString = ""
         if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") && mediaDirectories != null && mediaExcludeDirectories != null) {
@@ -257,8 +257,8 @@ class SettingsController {
             }
 
             if (dirDneString.isNotBlank()) {
-                dirDneString = "Cannot find "+dirDneString.dropLast(1)
-                model["alertClass"] = "alert-warning"
+                dirDneString = "Could not find directory:  "+dirDneString.dropLast(1)
+                model["status"] = "warning"
             }
 
             model.addAttribute("settings", settings)
@@ -290,11 +290,11 @@ class SettingsController {
         model["objectRecogEnabled"] = settings.getObjectDetection()!!
 
         model["msg"] = ""
-        model["status"] = ApiResponse.SUCCESS.status
+        model["statusMessage"] = dirDneString
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
-        model["message"] = dirDneString
+        model["message"] = ""
 
         return module
     }
@@ -334,7 +334,7 @@ class SettingsController {
             mediaExcludeDirs = mediaExcludeDirList.trim().split(",").map { it.trim() }
         }
 
-        model["alertClass"] = "alert-success"
+        model["status"] = "success"
         var statusMessage = ""
 
         var dirDneString = ""
@@ -406,8 +406,8 @@ class SettingsController {
         }
 
         if (dirDneString.isNotBlank()) {
-            statusMessage = "Cannot find "+dirDneString.dropLast(1)
-            model["alertClass"] = "alert-warning"
+            statusMessage = "Could not find directory: "+dirDneString.dropLast(1)
+            model["status"] = "warning"
         }
 
         val settings = model.getAttribute("settings") as Settings?
@@ -485,7 +485,7 @@ class SettingsController {
             model["objectRecogEnabled"] = settings.getObjectDetection()!!
         }
 
-        if (statusMessage.isBlank() && model.getAttribute("alertClass") == "alert-success") {
+        if (statusMessage.isBlank() && model.getAttribute("status") == "success") {
             statusMessage = "Settings saved"
         }
 
