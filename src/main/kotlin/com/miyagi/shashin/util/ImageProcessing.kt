@@ -201,36 +201,23 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
             if (tnFile != null) {
                 val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp.jpg")
+
+                val thumbnails = Thumbnails.of(img)
+                    .outputQuality(1.0)
+                if (file.extension.lowercase() == "gif") {
+                    thumbnails
+                        .imageType(BufferedImage.TYPE_INT_ARGB)
+                }
                 // If panorama dimensions
                 if (img.width > img.height * 2) {
-                    if (file.extension.lowercase() == "gif") {
-                        Thumbnails.of(img)
-                            .imageType(BufferedImage.TYPE_INT_ARGB)
-                            .crop(Positions.CENTER)
-                            .size(FileUtils.thumbnailHeight(), FileUtils.thumbnailHeight())
-                            .outputQuality(1.0)
-                            .toFile(tempFile)
-                    } else {
-                        Thumbnails.of(img)
-                            .crop(Positions.CENTER)
-                            .size(FileUtils.thumbnailHeight(), FileUtils.thumbnailHeight())
-                            .outputQuality(1.0)
-                            .toFile(tempFile)
-                    }
+                    thumbnails
+                        .crop(Positions.CENTER)
+                        .size(FileUtils.thumbnailHeight(), FileUtils.thumbnailHeight())
                 } else {
-                    if (file.extension.lowercase() == "gif") {
-                        Thumbnails.of(img)
-                            .height(FileUtils.thumbnailHeight())
-                            .imageType(BufferedImage.TYPE_INT_ARGB)
-                            .outputQuality(1.0)
-                            .toFile(tempFile)
-                    } else {
-                        Thumbnails.of(img)
-                            .height(FileUtils.thumbnailHeight())
-                            .outputQuality(1.0)
-                            .toFile(tempFile)
-                    }
+                    thumbnails
+                        .height(FileUtils.thumbnailHeight())
                 }
+                thumbnails.toFile(tempFile)
 
                 val scaledImage: BufferedImage?
                 try {
