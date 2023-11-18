@@ -79,6 +79,11 @@
                     }
                 }
 
+                $("#propresetpassworduser[[${user.id}]]").on("hide.bs.modal", function (e) {
+                    $("#unhidepasswordicon[[${user.id}]]").removeClass("bi-eye-slash").addClass("bi-eye");
+                    $("#password[[${user.id}]]").prop("type", "password");
+                });
+
                 $("#resetPasswordUser[[${user.id}]]").on("click", async function (e) {
                     e.preventDefault();
 
@@ -102,7 +107,11 @@
                         if (data["status"] === "success") {
                             $("#resetPasswordUserStatus[[${user.id}]]").addClass('bi-check-circle').removeClass('spinner-grow');
                             $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', false);
-                            window.location.replace("/settings/users");
+                            $("#unhidepasswordicon[[${user.id}]]").removeClass("bi-eye-slash").addClass("bi-eye");
+                            $("#password[[${user.id}]]").prop("type", "password");
+                            $("#propresetpassworduser[[${user.id}]]").modal('hide');
+                            shashin.showToastMessage("Password reset", "Password successfully reset", {icon:"bi-info-circle", iconColor:"#777777", autohide: false});
+                            // window.location.replace("/settings/users");
                         } else {
                             $("#resetPasswordUserStatus[[${user.id}]]").addClass('bi-x-circle').removeClass('spinner-grow');
                             $("#resetPasswordUserStatus[[${user.id}]]").attr("title", shashin.modalStatusFailMessage());
