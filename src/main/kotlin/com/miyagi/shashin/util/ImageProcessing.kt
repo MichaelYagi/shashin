@@ -175,7 +175,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         return _metadataObj
     }
 
-    fun setThumbnails(img: BufferedImage, metadataObj: Metadata, isRawOrVideo: Boolean, extension: String): Metadata {
+    fun setThumbnails(img: BufferedImage, metadataObj: Metadata, isRawOrVideo: Boolean, extension: String, overwriteThumbnails: Boolean = false): Metadata {
         if (file.exists()) {
             val thumbnailDirectory = sidecarDir.dropLast(1) + "/thumbnails"
             val fileRootDir: String = FileUtils.getRootDir(file)
@@ -185,7 +185,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             var tnFile: File?
             if (isRawOrVideo) {
                 thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_original." + extension
-                tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
+                tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail", overwriteThumbnails)
                 if (tnFile != null) {
                     val imgCopy = img
                     Thumbnails.of(imgCopy)
@@ -199,7 +199,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             // Gallery thumbnails
             thumbnailFileStr =
                 thumbnailDirectory + fileRootDir + "/" + file.name + "_" + FileUtils.thumbnailHeight() + "." + extension
-            tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
+            tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail", overwriteThumbnails)
 
             if (tnFile != null) {
                 val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp.jpg")
@@ -251,7 +251,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
             // Square image thumbnail
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_centered." + extension
-            tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
+            tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail", overwriteThumbnails)
             if (tnFile != null) {
                 val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp.jpg")
                 Thumbnails.of(img)
@@ -275,7 +275,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
             // Map marker thumbnail
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_mapmarker." + extension
-            tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
+            tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail", overwriteThumbnails)
             if (tnFile != null) {
                 val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp.jpg")
                 Thumbnails.of(img)
