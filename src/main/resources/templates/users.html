@@ -111,6 +111,11 @@
     shashin.nonce = /*[[${cspNonce}]]*/ '';
     /*]]>*/
 
+    // If click anywhere on page, hide toast message
+    $(document).on("click", function() {
+        shashin.closeToastMessage();
+    });
+
     const promise = $.ajax({
         type: 'get',
         url: "/notifications/markread/users",
