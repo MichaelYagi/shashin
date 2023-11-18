@@ -145,25 +145,23 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             rotation = getVideoRotation(file)?.toInt() ?: 0
         }
 
-        if ((originalPixelHeight == null || originalPixelWidth == null) && img != null) {
-            originalPixelHeight = img.height
-            originalPixelWidth = img.width
-        }
-
-        if (img != null &&
-            _metadataObj?.getOriginalImageWidth() == null && _metadataObj?.getOriginalImageHeight() == null &&
-            originalPixelHeight != null && originalPixelWidth != null) {
-            if (rotation == 90 || rotation == 270 || rotation == -90 || rotation == -270) {
-                _metadataObj?.setOriginalImageWidth(originalPixelHeight)
-                _metadataObj?.setOriginalImageHeight(originalPixelWidth)
-            } else {
-                _metadataObj?.setOriginalImageWidth(originalPixelWidth)
-                _metadataObj?.setOriginalImageHeight(originalPixelHeight)
-            }
-        }
-
         // Create thumbnails
         if (img != null && _metadataObj != null) {
+            if (originalPixelHeight == null || originalPixelWidth == null) {
+                originalPixelHeight = img.height
+                originalPixelWidth = img.width
+            }
+
+            if (_metadataObj.getOriginalImageWidth() == null && _metadataObj.getOriginalImageHeight() == null) {
+                if (rotation == 90 || rotation == 270 || rotation == -90 || rotation == -270) {
+                    _metadataObj.setOriginalImageWidth(originalPixelHeight)
+                    _metadataObj.setOriginalImageHeight(originalPixelWidth)
+                } else {
+                    _metadataObj.setOriginalImageWidth(originalPixelWidth)
+                    _metadataObj.setOriginalImageHeight(originalPixelHeight)
+                }
+            }
+
             _metadataObj.setFolder(fileRootDir)
 
             _metadataObj = setThumbnails(img, _metadataObj, (FileUtils.isRaw(file.extension.lowercase()) || supportedVideoFormats.contains(file.extension.lowercase())), extension)
