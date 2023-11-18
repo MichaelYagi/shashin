@@ -502,7 +502,6 @@ class SettingsController {
 
         val module = "settings"
         model["msg"] = ""
-        model["status"] = ApiResponse.SUCCESS.status
         model["message"] = ""
         model["mediaDirList"] = mediaDirList.trim()
         model["mediaExcludeDirList"] = mediaExcludeDirList.trim()
