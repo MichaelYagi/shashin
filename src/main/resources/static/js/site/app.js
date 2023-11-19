@@ -361,10 +361,11 @@
         return metadata;
     }
 
-    shashin.getTimelineMetadata = async function(metadataId) {
+    // Get metadata with albums,tagged people and keywords
+    shashin.getCompleteMetadata = async function(metadataId) {
         const http = new Http("get timeline metadata");
         const version = Util.getMetadataLocalStorage();
-        const data = await http.ajax("get", "/timeline/metadata/"+metadataId+(version === "" ? "" : "?v=" + version));
+        const data = await http.ajax("get", "/complete/metadata/"+metadataId+(version === "" ? "" : "?v=" + version));
 
         let ret = {};
         if (data.hasOwnProperty("metadata")) {
@@ -374,6 +375,7 @@
         return ret;
     }
 
+    // Get just the metadata with all keywords and albums
     shashin.getMetadata = async function(metadataId) {
         const http = new Http("get metadata");
         const version = Util.getMetadataLocalStorage();
@@ -393,7 +395,7 @@
     }
 
     shashin.openEditMetadataModal = function (metadataId) {
-        shashin.getTimelineMetadata(metadataId).then(async function (data) {
+        shashin.getCompleteMetadata(metadataId).then(async function (data) {
             if (data.hasOwnProperty("metadata") &&
                 data.hasOwnProperty("taggedPeopleList") &&
                 data.hasOwnProperty("keywordList") &&
