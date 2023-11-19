@@ -363,7 +363,8 @@
 
     shashin.getTimelineMetadata = async function(metadataId) {
         const http = new Http("get timeline metadata");
-        const data = await http.ajax("get", "/timeline/metadata/"+metadataId);
+        const version = Util.getMetadataLocalStorage();
+        const data = await http.ajax("get", "/timeline/metadata/"+metadataId+(version === "" ? "" : "?v=" + version));
 
         let ret = {};
         if (data.hasOwnProperty("metadata")) {
