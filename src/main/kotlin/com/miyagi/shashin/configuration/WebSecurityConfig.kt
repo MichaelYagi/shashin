@@ -109,6 +109,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "settings/scan",
             "timeline",
             "timeline/**",
+            "complete/metadata/**",
             "users/delete",
             "albums/add",
             "rescan/metadata",
@@ -149,7 +150,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "api/v1/users/self",
             "api/v1/comment/**",
             "api/v1/favorites/**",
-            "/api/v1/timeline/metadata/**"
+            "api/v1/complete/metadata/**"
         )
     }
 
