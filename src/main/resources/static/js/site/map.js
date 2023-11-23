@@ -479,7 +479,7 @@ async function showMap(mapdata) {
                         }
                     }
 
-                    mediaContent.poster = ((featureProperties.thumbnailUrlOriginal === null || featureProperties.thumbnailUrlOriginal === "") ? featureProperties.thumbnailUrlSmall : featureProperties.thumbnailUrlOriginal) + "?v=" + Util.getMetadataLocalStorage();
+                    mediaContent.poster = ((featureProperties.thumbnailUrlOriginal === null || featureProperties.thumbnailUrlOriginal === "") ? featureProperties.thumbnailUrlSmall : encodeURI(featureProperties.thumbnailUrlOriginal)) + "?v=" + Util.getMetadataLocalStorage();
                     mediaContent.lgSize = featureProperties.originalImageWidth+"-"+featureProperties.originalImageHeight;
                     mediaContent.downloadUrl = encodeURI(featureProperties.videoUrl) + "/download";
                 }
