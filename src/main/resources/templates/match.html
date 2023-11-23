@@ -12,7 +12,7 @@
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
             <span class="bi-info-circle" style="font-size: 1rem;color: blue;"></span> This is experimental! There should be at least 3 distinct people already tagged before scanning, and should be a single subject in each of the photos. Object detection needs to be enabled in settings to detect objects.<br>
             <button class="btn btn-primary" id="matchAction">Scan For Matches</button>
-            <button class="btn btn-danger" id="cancelThread">Cancel</button>
+            <button class="btn btn-danger" id="stopScan">Stop</button>
             <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>
         </main>
     </div>
@@ -35,7 +35,7 @@
 
             let posting = $.post(
                 "/matches/start",
-                {"cancelScan": false}
+                {"stopScan": false}
             );
 
             posting.done(function(data) {
@@ -47,12 +47,12 @@
             });
         });
 
-        $("#cancelThread").on("click", function(e) {
+        $("#stopScan").on("click", function(e) {
             e.preventDefault();
 
             let posting = $.post(
                 "/matches/start",
-                {"cancelScan": true}
+                {"stopScan": true}
             );
 
             posting.done(function(data) {

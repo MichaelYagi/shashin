@@ -138,10 +138,10 @@ class PeopleController {
     @RequestMapping(value = ["/matches/start"], method = [RequestMethod.POST], produces = ["application/json"])
     @Secured("ROLE_ADMIN")
     @ResponseBody
-    fun startPredictions(model: Model,@RequestParam cancelScan: Boolean, request: HttpServletRequest): String {
+    fun startPredictions(model: Model,@RequestParam stopScan: Boolean, request: HttpServletRequest): String {
         val settings = model.getAttribute("settings") as Settings
 
-        if (cancelScan) {
+        if (stopScan) {
             shouldStop.set(true)
         }
 
