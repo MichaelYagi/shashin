@@ -2039,7 +2039,7 @@ class TimelineController: BaseController() {
             operationId = "getTimelineMetadata",
             description = "<strong>Get media info for a timeline view.</strong><br>" +
                     "<pre><code>" +
-                    "curl -X GET \"http://127.0.0.1:6624/api/v1/timeline/metadata/{id}\" \\\n" +
+                    "curl -X GET \"http://127.0.0.1:6624/api/v1/complete/metadata/{id}\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "</code></pre>" +
@@ -2092,7 +2092,7 @@ class TimelineController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/api/v1/timeline/metadata/{id}","/timeline/metadata/{id}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/complete/metadata/{id}","/complete/metadata/{id}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_ADMIN","ROLE_USER")
     fun getTimelineMetadata(model: Model, @PathVariable(required = true) id: String): String {
