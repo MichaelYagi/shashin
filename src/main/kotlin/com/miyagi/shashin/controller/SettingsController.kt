@@ -896,7 +896,7 @@ class SettingsController {
         model: Model,
         @RequestParam submit: String,
         @RequestParam deleteThread: Boolean,
-        @RequestParam cancelScan: Boolean,
+        @RequestParam stopScan: Boolean,
         @RequestParam reindexFiles: Boolean
     ): String {
         resp["msg"] = "Nothing to see here"
@@ -908,7 +908,7 @@ class SettingsController {
             resp["msg"] = "Thread file manually deleted"
         }
 
-        if (cancelScan) {
+        if (stopScan) {
             shouldStop.set(true)
 //            deleteThreadScan()
 //            resp["msg"] = "Scan Cancelled"
