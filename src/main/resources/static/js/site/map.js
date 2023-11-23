@@ -282,7 +282,7 @@ async function showMap(mapdata) {
                             anchorXUnits: 'fraction',
                             anchorYUnits: 'pixels',
                             opacity: 1.0,
-                            src: encodeURI(data["mapMarkerUrl"])+ (version === "" ? "" : "?v=" + version)
+                            src: encodeURI(data["mapMarkerUrl"]) + (version === "" ? "" : "?v=" + version)
                         }))
                     });
 
