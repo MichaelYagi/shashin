@@ -132,7 +132,7 @@
         /*]]>*/
 
         const http = new Http(activePage);
-        http.ajax("get", "/metadata/list/"+activePage+"/0?folder="+folderName).then(function (data) {
+        http.ajax("get", "/metadata/list/"+activePage+"/0?folder="+encodeURI(folderName)).then(function (data) {
             if (data.hasOwnProperty("metadataList") === true) {
                 const metadataList = data["metadataList"];
                 const folderInstance = new Folder(metadataList, activePage, folderName);
