@@ -1,6 +1,7 @@
 async function showMap(mapdata) {
     let qslat = Util.getParameterByName("lat");
     let qslng = Util.getParameterByName("lng");
+    let version = Util.getMetadataLocalStorage();
     const qslatlng = Util.getParameterByName("latlng");
     // Must be format yyyy-mm-dd
     const qssd = Util.getParameterByName("sd");
@@ -234,6 +235,7 @@ async function showMap(mapdata) {
     }
 
     function setLayer(startDate, endDate, videoOnly) {
+        version = Util.getMetadataLocalStorage();
         map.removeLayer(vectorLayer);
         const iconFeatures = [];
 
@@ -280,7 +282,7 @@ async function showMap(mapdata) {
                             anchorXUnits: 'fraction',
                             anchorYUnits: 'pixels',
                             opacity: 1.0,
-                            src: encodeURI(data["mapMarkerUrl"])
+                            src: encodeURI(data["mapMarkerUrl"])+ (version === "" ? "" : "?v=" + version)
                         }))
                     });
 
