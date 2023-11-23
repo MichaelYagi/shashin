@@ -166,7 +166,7 @@ class SettingsController {
             if (!FileUtils.checkThreadFileAlive("shashinscan")) {
                 msg = "Scan Complete"
                 if (shouldStop.get()) {
-                    msg = "Scan Cancelled"
+                    msg = "Scan Stopped"
                 }
             } else {
                 val threadFileContent = FileUtils.readThreadFile("shashinscan")
@@ -910,11 +910,6 @@ class SettingsController {
 
         if (stopScan) {
             shouldStop.set(true)
-//            deleteThreadScan()
-//            resp["msg"] = "Scan Cancelled"
-//            logger.log(Level.INFO, "Scan Cancelled, throwing exception")
-//            // Kill it with fire since it's a recursive process
-//            throw Exception("Cancelling media scan and killing it with fire!")
         }
 
         if (submit == "Scan") {
@@ -1449,7 +1444,7 @@ class SettingsController {
 
 //        var msg: String
 
-        if ((shouldStop.get() && (!FileUtils.checkThreadFileAlive("shashinscan") || (threadFileContent != null && threadFileContent == "Scan Cancelled") || (threadFileContent != null && threadFileContent == "Scan Complete"))) || (!shouldStop.get() && !FileUtils.checkThreadFileAlive("shashinscan"))) {
+        if ((shouldStop.get() && (!FileUtils.checkThreadFileAlive("shashinscan") || (threadFileContent != null && threadFileContent == "Scan Stopped") || (threadFileContent != null && threadFileContent == "Scan Complete"))) || (!shouldStop.get() && !FileUtils.checkThreadFileAlive("shashinscan"))) {
             shouldStop.set(false)
             if (threadFileContent != null) {
                 deleteThreadScan()
@@ -1495,7 +1490,7 @@ class SettingsController {
 
                                 for (metadata in metadataList) {
                                     if (shouldStop.get()) {
-                                        FileUtils.writeToThreadFileAndLogMessage("Scan Cancelled", threadFile)
+                                        FileUtils.writeToThreadFileAndLogMessage("Scan Stopped", threadFile)
                                         break
                                     }
                                     if (metadata != null) {
@@ -1780,7 +1775,7 @@ class SettingsController {
                             }
 
                             if (shouldStop.get()) {
-                                logger.log(Level.INFO, "Scan Cancelled")
+                                logger.log(Level.INFO, "Scan Stopped")
                             } else {
                                 logger.log(Level.INFO, "Scan Complete")
                             }
@@ -1867,7 +1862,7 @@ class SettingsController {
                 var threadText = file.path + " ALREADY SCANNED"
 
                 if (shouldStop.get()) {
-                    threadText = "Scan Cancelled"
+                    threadText = "Scan Stopped"
                     FileUtils.writeToThreadFileAndLogMessage(threadText, threadFile)
                     break
                 }
