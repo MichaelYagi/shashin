@@ -276,7 +276,7 @@
                 }
             };
             mediaContent.lgSize = metadata.originalImageWidth+"-"+metadata.originalImageHeight;
-            mediaContent.poster = ((null === metadata.thumbnailUrlOriginal || "" === metadata.thumbnailUrlOriginal) ? metadata.thumbnailUrlSmall : metadata.thumbnailUrlOriginal) + "?v=" + Util.getMetadataLocalStorage();
+            mediaContent.poster = ((null === metadata.thumbnailUrlOriginal || "" === metadata.thumbnailUrlOriginal) ? metadata.thumbnailUrlSmall : encodeURI(metadata.thumbnailUrlOriginal)) + "?v=" + Util.getMetadataLocalStorage();
             mediaContent.downloadUrl = encodeURI(metadata.videoUrl) + "/download";
         } else {
             mediaContent.src = metadata.thumbnailUrlOriginal;
@@ -1139,7 +1139,7 @@
                                     mediaContentList[lightGalleryIndex].poster = data["posterUrl"];
                                     const mediaLinkId = "#mediaLink"+metadataId;
                                     if ($(mediaLinkId).length > 0) {
-                                        $(mediaLinkId).attr("data-poster", data["posterUrl"]+"?v="+Util.getMetadataLocalStorage());
+                                        $(mediaLinkId).attr("data-poster", encodeURI(data["posterUrl"])+"?v="+Util.getMetadataLocalStorage());
                                     }
                                 }
 
