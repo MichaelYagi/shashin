@@ -7,7 +7,7 @@
     shashin.lg = null;
     shashin.ajaxRetries = 3;
     shashin.darkMode = false;
-    shashin.showPlacement = false;
+    shashin.showPlacename = false;
     shashin.autoplayVideo = false;
     shashin.lgSubHtmlTimeout = null;
     shashin.nonce = "";
@@ -950,39 +950,6 @@
                 }
             };
 
-            const copyPlacename = function (obj) {
-                console.log(obj)
-
-                const placeName = obj.data;
-                if (placeName.length > 1) {
-
-                    const tempText = document.createElement("input");
-                    tempText.value = placeName;
-                    tempText.type = "hidden";
-                    tempText.id = "tempClipboardMapId";
-                    tempText.setAttribute('data-clipboard-text', placeName);
-                    document.body.appendChild(tempText);
-                    tempText.select();
-
-                    const clipboard = new ClipboardJS('#tempClipboardMapId');
-
-                    $("#tempClipboardMapId").on( "click", function () {
-
-                        clipboard.on('success', function(e) {
-                            shashin.showToastMessage("Place name copied to clipboard", e.text + " copied to clipboard", {icon:"bi-info-circle", iconColor:"#777777"});
-                        });
-
-                        clipboard.on('error', function(e) {
-                            shashin.showToastMessage("Could not copy place name", placeName + " could not be copied: " + e, {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
-                        });
-                    });
-                    $("#tempClipboardMapId").trigger( "click" );
-
-                    $("#tempClipboardMapId").remove();
-                    clipboard.destroy();
-                }
-            };
-
             const recenterCoordinates = function (obj) {
                 shashin.map.getView().setCenter(ol.proj.fromLonLat([metadata.lng, metadata.lat]));
                 shashin.map.getView().setZoom(shashin.initialMapZoom);
@@ -1094,7 +1061,7 @@
                         lng: coordArray[0]
                     };
 
-                    if (shashin.showPlacement === true) {
+                    if (shashin.showPlacename === true) {
                         http.ajax("post", "/placedata", JSON.stringify(json)).then(function (data) {
                             showContextMenu(evt, coordArray, data);
                         });

@@ -241,7 +241,7 @@
                     $("#showPlacenameSwitch").change(async function () {
                         const activePage = $("#activePage").val();
                         const showPlacename = this.checked;
-                        shashin.showPlacement = showPlacename;
+                        shashin.showPlacename = showPlacename;
                         const http = new Http("show placename");
                         const json = {showPlacename: showPlacename};
                         const data = await http.ajax("post", "/users/showplacename", JSON.stringify(json));
@@ -313,7 +313,8 @@
 
         $(document).ready(async function () {
             /*<![CDATA[*/
-            shashin.darkMode = /*[[${currentUser.darkMode}]]*/ true;
+            shashin.darkMode = /*[[${currentUser.darkMode}]]*/ false;
+            shashin.showPlacename = /*[[${currentUser.showPlacename}]]*/ false;
             const userId = /*[[${currentUser.id}]]*/ 0;
             /*]]>*/
 

@@ -580,11 +580,11 @@ class UserController {
         resp["msg"] = "Placename not toggled"
 
         if (userMap.containsKey("showPlacename")) {
-            val placename = userMap["showPlacename"].toBoolean()
+            val showPlacename = userMap["showPlacename"].toBoolean()
 
             val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
-                currentUserObj.setShowPlacename(placename)
+                currentUserObj.setShowPlacename(showPlacename)
                 userRepository?.save(currentUserObj)
                 resp["status"] = ApiResponse.SUCCESS.status
                 resp["msg"] = "Placename toggled"
