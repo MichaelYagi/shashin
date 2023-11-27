@@ -1015,6 +1015,9 @@
                             placeJson = JSON.parse(data["placedata"]);
                         }
 
+                        shashin.printMessageToConsole("Placedata:");
+                        shashin.printMessageToConsole(placeJson);
+
                         // Clear all previous coordinates
                         shashin.map.getLayers().forEach(layer => {
                             if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinates") {

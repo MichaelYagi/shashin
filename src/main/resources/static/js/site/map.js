@@ -680,6 +680,9 @@ async function showMap(mapdata) {
                     placeJson = JSON.parse(data["placedata"]);
                 }
 
+                shashin.printMessageToConsole("Placedata:");
+                shashin.printMessageToConsole(placeJson);
+
                 map.getLayers().forEach(layer => {
                     if (layer && layer.getProperties().hasOwnProperty("name") && (layer.getProperties()["name"] === "tempCoordinates" || layer.getProperties()["name"] === "tempQpCoordinates")) {
                         map.removeLayer(layer);
