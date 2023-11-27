@@ -328,6 +328,9 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 if (currentUser.getAutoplayVideo() == null) {
                     currentUser.setAutoplayVideo(false)
                 }
+                if (currentUser.getShowPlacename() == null) {
+                    currentUser.setShowPlacename(false)
+                }
                 if (!currentUser.getApikey().isNullOrBlank()) {
                     model["apikey"] = currentUser.getApikey()!!
                 }

@@ -663,6 +663,47 @@ async function showMap(mapdata) {
             }
         });
     });
+
+    function showContextMenu(evt, coordArray, data) {
+        let placeJson = {};
+        if (data.hasOwnProperty("msg") && data.hasOwnProperty("status") && data.hasOwnProperty("placedata") && data["status"] === "success") {
+            placeJson = JSON.parse(data["placedata"]);
+        }
+
+        shashin.printMessageToConsole("Placedata:");
+        shashin.printMessageToConsole(placeJson);
+
+        map.getLayers().forEach(layer => {
+            if (layer && layer.getProperties().hasOwnProperty("name") && (layer.getProperties()["name"] === "tempCoordinates" || layer.getProperties()["name"] === "tempQpCoordinates")) {
+                map.removeLayer(layer);
+            }
+        });
+
+        renderMarker('tempCoordinates', coordArray[1], coordArray[0], "grey");
+
+        const copyText = coordArray[1] + "," + coordArray[0];
+        contextmenu.updatePosition([evt.pixel[0], evt.pixel[1] + 12]);
+        const contextValueArray = [];
+
+        if (placeJson.hasOwnProperty("name") && placeJson["name"] !== null && placeJson["name"] !== "") {
+            contextValueArray.push(
+                {
+                    text: "<strong>" + placeJson["name"] + "</strong>",
+                    classname: "ol-ctx-menu-separator" // Make unselectable text
+                },
+                "-"
+            );
+        }
+
+        contextValueArray.push({
+            text: copyText,
+            callback: copyCoordinates
+        });
+
+        contextmenu.extend(contextValueArray);
+    }
+
+
     contextmenu.on('open', function (evt) {
         const coordArray = ol.proj.toLonLat(evt.coordinate);
         const http = new Http("get place data");
@@ -674,44 +715,13 @@ async function showMap(mapdata) {
                 lng: coordArray[0]
             };
 
-            http.ajax("post", "/placedata", JSON.stringify(json)).then(function (data) {
-                let placeJson = {};
-                if (data.hasOwnProperty("msg") && data.hasOwnProperty("status") && data.hasOwnProperty("placedata") && data["status"] === "success") {
-                    placeJson = JSON.parse(data["placedata"]);
-                }
-
-                shashin.printMessageToConsole("Placedata:");
-                shashin.printMessageToConsole(placeJson);
-
-                map.getLayers().forEach(layer => {
-                    if (layer && layer.getProperties().hasOwnProperty("name") && (layer.getProperties()["name"] === "tempCoordinates" || layer.getProperties()["name"] === "tempQpCoordinates")) {
-                        map.removeLayer(layer);
-                    }
+            if (shashin.showPlacement === true) {
+                http.ajax("post", "/placedata", JSON.stringify(json)).then(function (data) {
+                    showContextMenu(evt, coordArray, data);
                 });
-
-                renderMarker('tempCoordinates', coordArray[1], coordArray[0], "grey");
-
-                const copyText = coordArray[1] + "," + coordArray[0];
-                contextmenu.updatePosition([evt.pixel[0], evt.pixel[1] + 12]);
-                const contextValueArray = [];
-
-                if (placeJson.hasOwnProperty("name") && placeJson["name"] !== null && placeJson["name"] !== "") {
-                    contextValueArray.push(
-                        {
-                            text: "<strong>"+placeJson["name"]+"</strong>",
-                            classname: "ol-ctx-menu-separator" // Make unselectable text
-                        },
-                        "-"
-                    );
-                }
-
-                contextValueArray.push({
-                    text: copyText,
-                    callback: copyCoordinates
-                });
-
-                contextmenu.extend(contextValueArray);
-            });
+            } else {
+                showContextMenu(evt, coordArray, {});
+            }
         }
     });
     map.addControl(contextmenu);
