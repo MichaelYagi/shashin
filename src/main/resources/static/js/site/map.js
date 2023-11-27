@@ -690,15 +690,23 @@ async function showMap(mapdata) {
 
                 const copyText = coordArray[1] + "," + coordArray[0];
                 contextmenu.updatePosition([evt.pixel[0], evt.pixel[1] + 12]);
-                const contextValueArray = [
-                    {
-                        text: copyText,
-                        callback: copyCoordinates
-                    }
-                ];
+                const contextValueArray = [];
+
                 if (placeJson.hasOwnProperty("name") && placeJson["name"] !== null && placeJson["name"] !== "") {
-                    contextValueArray.push({text: placeJson["name"], data: placeJson["name"], callback: copyPlacename});
+                    contextValueArray.push(
+                        {
+                            text: "<strong>"+placeJson["name"]+"</strong>",
+                            classname: "ol-ctx-menu-separator" // Make unselectable text
+                        },
+                        "-"
+                    );
                 }
+
+                contextValueArray.push({
+                    text: copyText,
+                    callback: copyCoordinates
+                });
+
                 contextmenu.extend(contextValueArray);
             });
         }

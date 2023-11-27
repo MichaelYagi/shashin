@@ -1063,24 +1063,24 @@
                         // Create menu for context menu
                         const copyText = coordArray[1] + "," + coordArray[0];
                         shashin.contextMenu.updatePosition([evt.pixel[0], evt.pixel[1] + 12]);
-                        const contextValueArray = [
-                            {
-                                text: copyText, // Copy coordinates from context menu
-                                callback: copyCoordinates
-                            }
-                        ];
+
+                        const contextValueArray = [];
 
                         if (placeJson.hasOwnProperty("name") && placeJson["name"] !== null && placeJson["name"] !== "") {
                             contextValueArray.push(
                                 {
-                                    text: placeJson["name"],
-                                    data: placeJson["name"],
-                                    callback: copyPlacename
-                                }
+                                    text: "<strong>"+placeJson["name"]+"</strong>",
+                                    classname: "ol-ctx-menu-separator" // Make unselectable text
+                                },
+                                "-"
                             );
                         }
 
                         contextValueArray.push(
+                            {
+                                text: copyText, // Copy coordinates from context menu
+                                callback: copyCoordinates
+                            },
                             {
                                 text: "Recenter", // Recenter map to media location
                                 callback: recenterCoordinates
