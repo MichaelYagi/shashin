@@ -666,6 +666,7 @@ async function showMap(mapdata) {
     contextmenu.on('open', function (evt) {
         const coordArray = ol.proj.toLonLat(evt.coordinate);
         const http = new Http("get place data");
+        contextmenu.clear();
 
         if (coordArray.length > 1) {
             const json = {
@@ -688,7 +689,6 @@ async function showMap(mapdata) {
                 renderMarker('tempCoordinates', coordArray[1], coordArray[0], "grey");
 
                 const copyText = coordArray[1] + "," + coordArray[0];
-                contextmenu.clear();
                 contextmenu.updatePosition([evt.pixel[0], evt.pixel[1] + 12]);
                 const contextValueArray = [
                     {
