@@ -999,6 +999,7 @@
                 });
             });
             shashin.contextMenu.on('open', function (evt) {
+                shashin.contextMenu.clear();
                 const coordArray = ol.proj.toLonLat(evt.coordinate);
                 const http = new Http("get place data");
 
@@ -1061,7 +1062,6 @@
 
                         // Create menu for context menu
                         const copyText = coordArray[1] + "," + coordArray[0];
-                        shashin.contextMenu.clear();
                         shashin.contextMenu.updatePosition([evt.pixel[0], evt.pixel[1] + 12]);
                         const contextValueArray = [
                             {
