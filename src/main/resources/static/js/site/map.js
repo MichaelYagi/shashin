@@ -619,6 +619,39 @@ async function showMap(mapdata) {
         }
     };
 
+    const copyPlacename = function (obj) {
+        console.log(obj)
+
+        const placeName = obj.data;
+        if (placeName.length > 1) {
+
+            const tempText = document.createElement("input");
+            tempText.value = placeName;
+            tempText.type = "hidden";
+            tempText.id = "tempClipboardMapId";
+            tempText.setAttribute('data-clipboard-text', placeName);
+            document.body.appendChild(tempText);
+            tempText.select();
+
+            const clipboard = new ClipboardJS('#tempClipboardMapId');
+
+            $("#tempClipboardMapId").on( "click", function () {
+
+                clipboard.on('success', function(e) {
+                    shashin.showToastMessage("Place name copied to clipboard", e.text + " copied to clipboard", {icon:"bi-info-circle", iconColor:"#777777"});
+                });
+
+                clipboard.on('error', function(e) {
+                    shashin.showToastMessage("Could not copy place name", placeName + " could not be copied: " + e, {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+                });
+            });
+            $("#tempClipboardMapId").trigger( "click" );
+
+            $("#tempClipboardMapId").remove();
+            clipboard.destroy();
+        }
+    };
+
     const contextmenu = new ContextMenu({
         width: 300,
         defaultItems: false // defaultItems are (for now) Zoom In/Zoom Out
@@ -632,25 +665,42 @@ async function showMap(mapdata) {
     });
     contextmenu.on('open', function (evt) {
         const coordArray = ol.proj.toLonLat(evt.coordinate);
+        const http = new Http("get place data");
 
         if (coordArray.length > 1) {
-            map.getLayers().forEach(layer => {
-                if (layer && layer.getProperties().hasOwnProperty("name") && (layer.getProperties()["name"] === "tempCoordinates" || layer.getProperties()["name"] === "tempQpCoordinates")) {
-                    map.removeLayer(layer);
+            const json = {
+                lat: coordArray[1],
+                lng: coordArray[0]
+            };
+
+            http.ajax("post", "/placedata", JSON.stringify(json)).then(function (data) {
+                let placeJson = {};
+                if (data.hasOwnProperty("msg") && data.hasOwnProperty("status") && data.hasOwnProperty("placedata") && data["status"] === "success") {
+                    placeJson = JSON.parse(data["placedata"]);
                 }
+
+                map.getLayers().forEach(layer => {
+                    if (layer && layer.getProperties().hasOwnProperty("name") && (layer.getProperties()["name"] === "tempCoordinates" || layer.getProperties()["name"] === "tempQpCoordinates")) {
+                        map.removeLayer(layer);
+                    }
+                });
+
+                renderMarker('tempCoordinates', coordArray[1], coordArray[0], "grey");
+
+                const copyText = coordArray[1] + "," + coordArray[0];
+                contextmenu.clear();
+                contextmenu.updatePosition([evt.pixel[0], evt.pixel[1] + 12]);
+                const contextValueArray = [
+                    {
+                        text: copyText,
+                        callback: copyCoordinates
+                    }
+                ];
+                if (placeJson.hasOwnProperty("name") && placeJson["name"] !== null && placeJson["name"] !== "") {
+                    contextValueArray.push({text: placeJson["name"], data: placeJson["name"], callback: copyPlacename});
+                }
+                contextmenu.extend(contextValueArray);
             });
-
-            renderMarker('tempCoordinates',coordArray[1],coordArray[0],"grey");
-
-            const copyText = coordArray[1] + "," + coordArray[0];
-            contextmenu.clear();
-            contextmenu.updatePosition([evt.pixel[0], evt.pixel[1]+12]);
-            contextmenu.extend([
-                {
-                    text: copyText,
-                    callback: copyCoordinates
-                }
-            ]);
         }
     });
     map.addControl(contextmenu);
