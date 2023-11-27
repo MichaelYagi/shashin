@@ -949,6 +949,39 @@
                 }
             };
 
+            const copyPlacename = function (obj) {
+                console.log(obj)
+
+                const placeName = obj.data;
+                if (placeName.length > 1) {
+
+                    const tempText = document.createElement("input");
+                    tempText.value = placeName;
+                    tempText.type = "hidden";
+                    tempText.id = "tempClipboardMapId";
+                    tempText.setAttribute('data-clipboard-text', placeName);
+                    document.body.appendChild(tempText);
+                    tempText.select();
+
+                    const clipboard = new ClipboardJS('#tempClipboardMapId');
+
+                    $("#tempClipboardMapId").on( "click", function () {
+
+                        clipboard.on('success', function(e) {
+                            shashin.showToastMessage("Place name copied to clipboard", e.text + " copied to clipboard", {icon:"bi-info-circle", iconColor:"#777777"});
+                        });
+
+                        clipboard.on('error', function(e) {
+                            shashin.showToastMessage("Could not copy place name", placeName + " could not be copied: " + e, {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+                        });
+                    });
+                    $("#tempClipboardMapId").trigger( "click" );
+
+                    $("#tempClipboardMapId").remove();
+                    clipboard.destroy();
+                }
+            };
+
             const recenterCoordinates = function (obj) {
                 shashin.map.getView().setCenter(ol.proj.fromLonLat([metadata.lng, metadata.lat]));
                 shashin.map.getView().setZoom(shashin.initialMapZoom);
@@ -967,66 +1000,95 @@
             });
             shashin.contextMenu.on('open', function (evt) {
                 const coordArray = ol.proj.toLonLat(evt.coordinate);
+                const http = new Http("get place data");
+
                 if (coordArray.length > 1) {
-                    // Clear all previous coordinates
-                    shashin.map.getLayers().forEach(layer => {
-                        if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinates") {
-                            shashin.map.removeLayer(layer);
+                    const json = {
+                        lat: coordArray[1],
+                        lng: coordArray[0]
+                    };
+
+                    http.ajax("post", "/placedata", JSON.stringify(json)).then(function (data) {
+                        let placeJson = {};
+                        if (data.hasOwnProperty("msg") && data.hasOwnProperty("status") && data.hasOwnProperty("placedata") && data["status"] === "success") {
+                            placeJson = JSON.parse(data["placedata"]);
                         }
-                    });
 
-                    // Create icon for temp coordinate
-                    const feature = new ol.Feature({
-                        geometry: new ol.geom.Point(ol.proj.fromLonLat(coordArray)),
-                        name: 'tempMarker'
-                    });
+                        // Clear all previous coordinates
+                        shashin.map.getLayers().forEach(layer => {
+                            if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinates") {
+                                shashin.map.removeLayer(layer);
+                            }
+                        });
 
-                    const iconSize = 25;
-                    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + iconSize + '" height="' + iconSize + '" fill="currentColor" class="bi bi-geo-alt-fill" style="color: grey;" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg>';
-                    const icon = 'data:image/svg+xml;utf8,' + svg;
+                        // Create icon for temp coordinate
+                        const feature = new ol.Feature({
+                            geometry: new ol.geom.Point(ol.proj.fromLonLat(coordArray)),
+                            name: 'tempMarker'
+                        });
 
-                    const styleIcon = new ol.style.Style({
-                        image: new ol.style.Icon({
-                            opacity: 1,
-                            src: icon,
-                            anchor: [0.5, iconSize],
-                            anchorXUnits: 'fraction',
-                            anchorYUnits: 'pixels',
-                            anchorOrigin: 'top-left',
-                            offset: [0, 0]
-                        })
-                    });
+                        const iconSize = 25;
+                        const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + iconSize + '" height="' + iconSize + '" fill="currentColor" class="bi bi-geo-alt-fill" style="color: grey;" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg>';
+                        const icon = 'data:image/svg+xml;utf8,' + svg;
 
-                    feature.setStyle(styleIcon);
-                    feature.setId("tempCoordinates");
+                        const styleIcon = new ol.style.Style({
+                            image: new ol.style.Icon({
+                                opacity: 1,
+                                src: icon,
+                                anchor: [0.5, iconSize],
+                                anchorXUnits: 'fraction',
+                                anchorYUnits: 'pixels',
+                                anchorOrigin: 'top-left',
+                                offset: [0, 0]
+                            })
+                        });
 
-                    shashin.tempVector = new ol.source.Vector({
-                        features: [feature]
-                    });
+                        feature.setStyle(styleIcon);
+                        feature.setId("tempCoordinates");
 
-                    const layer = new ol.layer.Vector({
-                        source: shashin.tempVector
-                    });
-                    layer.set('name', 'tempCoordinates')
-                    shashin.map.addLayer(layer);
+                        shashin.tempVector = new ol.source.Vector({
+                            features: [feature]
+                        });
 
-                    feature.setStyle(styleIcon);
-                    layer.getSource().addFeature(feature);
+                        const layer = new ol.layer.Vector({
+                            source: shashin.tempVector
+                        });
+                        layer.set('name', 'tempCoordinates')
+                        shashin.map.addLayer(layer);
 
-                    // Create menu for context menu
-                    const copyText = coordArray[1] + "," + coordArray[0];
-                    shashin.contextMenu.clear();
-                    shashin.contextMenu.updatePosition([evt.pixel[0], evt.pixel[1]+12]);
-                    shashin.contextMenu.extend([
-                        {
-                            text: copyText, // Copy coordinates from context menu
-                            callback: copyCoordinates
-                        },
-                        {
-                            text: "Recenter", // Recenter map to media location
-                            callback: recenterCoordinates
+                        feature.setStyle(styleIcon);
+                        layer.getSource().addFeature(feature);
+
+                        // Create menu for context menu
+                        const copyText = coordArray[1] + "," + coordArray[0];
+                        shashin.contextMenu.clear();
+                        shashin.contextMenu.updatePosition([evt.pixel[0], evt.pixel[1] + 12]);
+                        const contextValueArray = [
+                            {
+                                text: copyText, // Copy coordinates from context menu
+                                callback: copyCoordinates
+                            }
+                        ];
+
+                        if (placeJson.hasOwnProperty("name") && placeJson["name"] !== null && placeJson["name"] !== "") {
+                            contextValueArray.push(
+                                {
+                                    text: placeJson["name"],
+                                    data: placeJson["name"],
+                                    callback: copyPlacename
+                                }
+                            );
                         }
-                    ]);
+
+                        contextValueArray.push(
+                            {
+                                text: "Recenter", // Recenter map to media location
+                                callback: recenterCoordinates
+                            }
+                        );
+
+                        shashin.contextMenu.extend(contextValueArray);
+                    });
                 }
             });
 

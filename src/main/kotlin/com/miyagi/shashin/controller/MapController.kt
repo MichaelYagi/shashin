@@ -1,5 +1,7 @@
 package com.miyagi.shashin.controller
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.MapData
 import com.miyagi.shashin.model.User
@@ -9,16 +11,14 @@ import com.miyagi.shashin.util.TextUtils
 import io.swagger.v3.oas.annotations.Operation
 import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.CacheControl
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.*
 import java.util.concurrent.TimeUnit
 
 @Controller
@@ -26,6 +26,9 @@ class MapController {
 
     @Autowired
     private val metadataRepository: MetadataRepository? = null
+
+    @Value("\${app.endpoint.url.geocode}")
+    private lateinit var geocodeUrl: String
 
     val mapper = ObjectMapper()
 
@@ -113,5 +116,30 @@ class MapController {
             .ok()
             .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
             .body(json)
+    }
+
+    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @RequestMapping(value = ["/api/v1/placedata", "/placedata"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun getPlaceData(model: Model, @RequestBody requestBody: JsonNode): String {
+        val response = mutableMapOf<String, Any?>()
+        val coordinateMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
+        response["msg"] = ""
+        response["status"] = ApiResponse.FAIL.status
+        response["placedata"] = "{}"
+
+        if (coordinateMap.containsKey("lat") && coordinateMap.containsKey("lng")) {
+            val lat = coordinateMap["lat"].toString()
+            val lng = coordinateMap["lng"].toString()
+            val geoDataJson = TextUtils.getGeoData(geocodeUrl, lat, lng)
+
+            if (geoDataJson != null && geoDataJson != "") {
+                response["placedata"] = geoDataJson
+                response["msg"] = "Success"
+                response["status"] = ApiResponse.SUCCESS.status
+            }
+        }
+
+        return mapper.writeValueAsString(response)
     }
 }
