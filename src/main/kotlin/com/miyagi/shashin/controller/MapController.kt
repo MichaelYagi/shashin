@@ -123,12 +123,13 @@ class MapController {
     @ResponseBody
     fun getPlaceData(model: Model, @RequestBody requestBody: JsonNode): String {
         val response = mutableMapOf<String, Any?>()
+        val currentUserObj = model.getAttribute("currentUser") as User?
         val coordinateMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
         response["msg"] = ""
         response["status"] = ApiResponse.FAIL.status
         response["placedata"] = "{}"
 
-        if (coordinateMap.containsKey("lat") && coordinateMap.containsKey("lng")) {
+        if (currentUserObj != null && coordinateMap.containsKey("lat") && coordinateMap.containsKey("lng") && currentUserObj.getShowPlacename()!!) {
             val lat = coordinateMap["lat"].toString()
             val lng = coordinateMap["lng"].toString()
             val geoDataJson = TextUtils.getGeoData(geocodeUrl, lat, lng)

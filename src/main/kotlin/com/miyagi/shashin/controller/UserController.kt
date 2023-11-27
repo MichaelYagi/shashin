@@ -570,6 +570,30 @@ class UserController {
         return mapper.writeValueAsString(resp)
     }
 
+    @RequestMapping(value = ["/users/showplacename"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    @Secured("ROLE_ADMIN","ROLE_USER")
+    fun toggleShowPlacename(model: Model, @RequestBody requestBody: JsonNode): String? {
+        val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
+
+        resp["status"] = ApiResponse.FAIL.status
+        resp["msg"] = "Placename not toggled"
+
+        if (userMap.containsKey("showPlacename")) {
+            val placename = userMap["showPlacename"].toBoolean()
+
+            val currentUserObj = model.getAttribute("currentUser") as User?
+            if (currentUserObj != null) {
+                currentUserObj.setShowPlacename(placename)
+                userRepository?.save(currentUserObj)
+                resp["status"] = ApiResponse.SUCCESS.status
+                resp["msg"] = "Placename toggled"
+            }
+        }
+
+        return mapper.writeValueAsString(resp)
+    }
+
     @RouterOperation(
         operation =
         Operation(

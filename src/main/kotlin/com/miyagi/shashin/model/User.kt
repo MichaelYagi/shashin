@@ -24,6 +24,8 @@ class User {
     private var darkMode: Boolean? = false
     @NotBlank
     private var autoplayVideo: Boolean? = false
+    @NotBlank
+    private var showPlacename: Boolean? = false
     private var profile: String? = null
     private var authority: String? = null
     private var createdAt: String? = null
@@ -127,6 +129,14 @@ class User {
         this.autoplayVideo = autoplayVideo
     }
 
+    fun getShowPlacename(): Boolean? {
+        return this.showPlacename
+    }
+
+    fun setShowPlacename(showPlacename: Boolean?) {
+        this.showPlacename = showPlacename
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is User) return false
@@ -149,6 +159,7 @@ class User {
         map["isAuthorized"] = this.isAuthorized
         map["darkMode"] = this.darkMode
         map["autoplayVideo"] = this.autoplayVideo
+        map["showPlacename"] = this.showPlacename
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {
