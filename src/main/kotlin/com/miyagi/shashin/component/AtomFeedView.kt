@@ -135,7 +135,7 @@ class AtomFeedView : AbstractAtomFeedView() {
                                         author.name = metadata.getId()
                                         entry.authors = listOf(author)
                                         entry.alternateLinks = listOf(link)
-                                        val pattern = "EEE, MMM d, yyyy  'at' h:mm aa";
+                                        val pattern = "EEE, MMM d, yyyy 'at' h:mm a";
                                         val simpleDateFormat = SimpleDateFormat(pattern)
                                         entry.updated = simpleDateFormat.parse(TextUtils.formatToLongDateWithTime((metadata.getCreatedAt()!!)))
 
