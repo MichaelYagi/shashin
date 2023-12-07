@@ -1649,7 +1649,7 @@
                     if (view === "album") {
                         $("#albumTools").hide();
                     }
-                } else if (view === "timeline" || view === "recent" || view === "modified" || view === "taken" || view === "folder") {
+                } else if (view === "timeline" || view === "recent" || view === "modified" || view === "taken" || view === "folder" || view === "search") {
                     $("#timelineAppTools").show();
                     if (view === "timeline") {
                         $("#timelineTools").hide();
@@ -1725,7 +1725,7 @@
                     if (view === "album") {
                         $("#albumTools").hide();
                     }
-                } else if (view === "timeline" || view === "recent" || view === "modified" || view === "taken" || view === "folder") {
+                } else if (view === "timeline" || view === "recent" || view === "modified" || view === "taken" || view === "folder" || view === "search") {
                     $("#timelineAppTools").show();
                     if (view === "timeline") {
                         $("#timelineTools").hide();
