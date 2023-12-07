@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest
 
 @Controller
 @Secured("ROLE_ADMIN","ROLE_USER")
-class SearchController {
+class SearchController: BaseController() {
 
     @Autowired
     private val searchRepository: SearchRepository? = null
@@ -50,6 +50,8 @@ class SearchController {
             term = request.getParameter("term").toString()
         }
         val response = buildSearchData(model,term,0)
+
+        getAllAttributeData(model)
 
         model["term"] = response["term"]!!
         model["metadataSearchList"] = response["metadataSearchList"]!!

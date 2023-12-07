@@ -30,6 +30,18 @@ class ArticlesController {
         return module
     }
 
+    @RequestMapping(value = ["/articles/devnotes"], method = [RequestMethod.GET])
+    fun getDevnotes(model: Model, request: HttpServletRequest): String {
+        val module = "articles/devnotes"
+
+        val moduleArray = module.split("/")
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(moduleArray[moduleArray.size-1])
+
+        return module
+    }
+
     @RequestMapping(value = ["articles/endpoints"], method = [RequestMethod.GET])
     fun getEndpoints(model: Model, request: HttpServletRequest): String {
         val module = "articles/endpoints"
