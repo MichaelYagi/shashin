@@ -75,7 +75,7 @@ class Search {
                     let dateHeadingObj = null;
                     const overlayFlags = {};
                     overlayFlags.renderTopRight = true;
-                    overlayFlags.renderTopLeft = false;
+                    overlayFlags.renderTopLeft = true;
                     overlayFlags.renderBottomLeft = true;
                     overlayFlags.renderCenter = true;
 
