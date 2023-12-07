@@ -1,0 +1,26 @@
+<html xmlns:th="http://www.thymeleaf.org" th:include="layouts/articles :: page(title=${titleDescriptor},activePage=${activePage})">
+<head></head>
+<body>
+<!-- /articles/devnotes -->
+<section th:fragment="content">
+    <div class="col-11 col-md-10 col-xl-9">
+        <h1>Devnotes</h1>
+
+        <h2>Multi-select editing</h2>
+        <ul>
+            <li>See Search module as an example</li>
+            <li>You must add tag <code>&lt;div th:replace="fragments/metadatabatchmodal :: metadatabatchmodal(${recognitionLabels},${allAlbumList})"&gt;&lt;/div></code> in order to access the multi-select modal dialog</li>
+            <li>For each metadata, you should add hidden inputs to show proper headings in the modal dialog:
+                <ul>
+                    <li><code>&lt;input type="hidden" th:name="'filename'+${metadata.id}" th:id="'filename'+${metadata.id}" th:value="${metadata.fileName}"&gt;</code>
+                    <li><code>&lt;input type="hidden" th:name="'thumbnailCentered'+${metadata.id}" th:id="'thumbnailCentered'+${metadata.id}" th:value="${metadata.thumbnailUrlCentered}"&gt;</code>
+                </ul>
+            </li>
+            <li>In the controller, it must extend <code>BaseController</code> and in the controller, call <code>getAllAttributeData(model)</code> in order to prefill album and people dropdowns</li>
+        </ul>
+
+        <p>Report issues <a href="mailto:myagi.developer@gmail.com" target="_blank">here</a>!</p>
+    </div>
+</section>
+</body>
+</html>
