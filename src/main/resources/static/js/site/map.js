@@ -732,6 +732,18 @@ async function showMap(mapdata) {
         });
     });
 
+    // Close gallery on browser/mobile back button
+    $dynamicGallery.addEventListener('lgAfterOpen', function () {
+        if (window.history && window.history.pushState) {
+            window.history.pushState('forward', null, "");
+
+            $(window).on('popstate', function() {
+                dynamicGallery.closeGallery();
+            });
+
+        }
+    });
+
     checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))
     setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
 
