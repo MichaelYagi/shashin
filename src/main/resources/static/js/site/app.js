@@ -1468,9 +1468,22 @@
         }
     };
 
+    // Close gallery on browser/mobile back button
     shashin.setLightGallery = function (additionalConfigs) {
         let configs = shashin.getLightGalleryConfigs(additionalConfigs);
         shashin.lg = lightGallery(shashin.getLightGalleryElement(), configs);
+
+        if (shashin.getLightGalleryElement() !== null) {
+            shashin.getLightGalleryElement().addEventListener('lgAfterOpen', function () {
+                if (window.history && window.history.pushState) {
+                    window.history.pushState('forward', null, "");
+
+                    $(window).on('popstate', function () {
+                        shashin.lg.closeGallery();
+                    });
+                }
+            });
+        }
     }
 
     shashin.mouseMoveListener = function () {
