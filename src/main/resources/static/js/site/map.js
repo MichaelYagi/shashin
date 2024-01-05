@@ -601,7 +601,7 @@ async function showMap(mapdata) {
         $("#tempClipboardMapId").on( "click", function () {
 
             clipboard.on('success', function(e) {
-                shashin.showToastMessage("Coordinates copied to " + msgType, e.text + " copied to " + msgType, {icon:"bi-info-circle", iconColor:"#777777"});
+                shashin.showToastMessage(msgType + "copied to clipboard", e.text + " copied to clipboard", {icon:"bi-info-circle", iconColor:"#777777"});
             });
 
             clipboard.on('error', function(e) {

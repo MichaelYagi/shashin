@@ -919,22 +919,36 @@
                 document.body.appendChild(tempText);
                 tempText.select();
 
-                const clipboard = new ClipboardJS('#tempClipboardMapId');
+                let clipboard = null;
 
-                $("#tempClipboardMapId").on( "click", function () {
+                if ($("#propMetadata").length > 0) {
+                    clipboard = new ClipboardJS('#tempClipboardMapId', {container: document.getElementById("propMetadata")});
+                } else if ($("#propInfoModal").length > 0) {
+                    clipboard = new ClipboardJS('#tempClipboardMapId', {container: document.getElementById("propInfoModal")});
+                }
 
-                    clipboard.on('success', function(e) {
-                        shashin.showToastMessage("Coordinates copied to " + msgType, e.text + " copied to " + msgType, {icon:"bi-info-circle", iconColor:"#777777"});
+                if (clipboard !== null) {
+                    $("#tempClipboardMapId").on("click", function () {
+
+                        clipboard.on('success', function (e) {
+                            shashin.showToastMessage(msgType + "copied to clipboard", e.text + " copied to clipboard", {
+                                icon: "bi-info-circle",
+                                iconColor: "#777777"
+                            });
+                        });
+
+                        clipboard.on('error', function (e) {
+                            shashin.showToastMessage("Could not copy " + msgType, copyText + " could not be copied: " + e, {
+                                icon: "bi-exclamation-triangle",
+                                iconColor: "#FF0000"
+                            });
+                        });
                     });
+                    $("#tempClipboardMapId").trigger("click");
 
-                    clipboard.on('error', function(e) {
-                        shashin.showToastMessage("Could not copy " + msgType, copyText + " could not be copied: " + e, {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
-                    });
-                });
-                $("#tempClipboardMapId").trigger( "click" );
-
-                $("#tempClipboardMapId").remove();
-                clipboard.destroy();
+                    $("#tempClipboardMapId").remove();
+                    clipboard.destroy();
+                }
             }
 
             const copyPlacename = function (obj) {
