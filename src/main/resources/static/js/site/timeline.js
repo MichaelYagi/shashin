@@ -255,6 +255,8 @@
 
             });
         }, 3000);
+
+        shashin.closeGalleryOnBack();
     }
 
     timelineSettings.rescanElements = function () {

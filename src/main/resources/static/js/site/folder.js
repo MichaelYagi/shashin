@@ -28,6 +28,7 @@ class Folder {
     async init() {
         shashin.pageLoader(await this.loadNextPage.bind(this), ".appendFolderPhotos", this.metadataList);
         shashin.mouseMoveListener();
+        shashin.closeGalleryOnBack();
     }
 
     async loadNextPage() {

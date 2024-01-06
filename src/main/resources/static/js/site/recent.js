@@ -28,6 +28,7 @@ class Recent {
     async init() {
         shashin.pageLoader(await this.loadNextPage.bind(this), ".appendRecentPhotos", this.metadataList);
         shashin.mouseMoveListener();
+        shashin.closeGalleryOnBack();
     }
 
     async loadNextPage() {

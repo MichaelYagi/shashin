@@ -1472,15 +1472,23 @@
     shashin.setLightGallery = function (additionalConfigs) {
         let configs = shashin.getLightGalleryConfigs(additionalConfigs);
         shashin.lg = lightGallery(shashin.getLightGalleryElement(), configs);
+    }
 
+    // Close gallery on clicking browser back button
+    shashin.closeGalleryOnBack = function () {
         if (shashin.getLightGalleryElement() !== null) {
             shashin.getLightGalleryElement().addEventListener('lgAfterOpen', function () {
+
                 if (window.history && window.history.pushState) {
                     window.history.pushState('forward', null, "");
 
-                    $(window).on('popstate', function () {
-                        shashin.lg.closeGallery();
-                    });
+                    function popStateListener(event) {
+                        if ($(".lg-show").length > 0) {
+                            shashin.lg.closeGallery();
+                        }
+                    }
+
+                    $(window).on('popstate', popStateListener);
                 }
             });
         }

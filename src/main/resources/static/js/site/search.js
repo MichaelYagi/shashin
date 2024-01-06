@@ -33,6 +33,7 @@ class Search {
     async init() {
         shashin.pageLoader(await this.loadNextPage.bind(this), ".appendSearchPhotos", this.metadataSearchList);
         shashin.mouseMoveListener();
+        shashin.closeGalleryOnBack();
     }
 
     async loadNextPage() {
