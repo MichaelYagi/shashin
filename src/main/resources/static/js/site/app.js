@@ -1475,22 +1475,38 @@
     }
 
     // Close gallery on clicking browser back button
-    shashin.closeGalleryOnBack = function () {
-        if (shashin.getLightGalleryElement() !== null) {
-            shashin.getLightGalleryElement().addEventListener('lgAfterOpen', function () {
+    shashin.closeGalleryOnBack = function (options) {
+        let galleryElement = shashin.getLightGalleryElement();
+        let lg = shashin.lg;
 
-                if (window.history && window.history.pushState) {
-                    window.history.pushState('forward', null, "");
+        if (options && options.hasOwnProperty("lg") && options.lg !== null && options.hasOwnProperty("galleryElement") && options.galleryElement !== null) {
+            galleryElement = options.galleryElement;
+            lg = options.lg;
+        }
 
-                    function popStateListener(event) {
-                        if ($(".lg-show").length > 0) {
-                            shashin.lg.closeGallery();
-                        }
-                    }
+        if (galleryElement !== null && lg !== null && window.history && window.history.pushState) {
+            let backPressed = false;
 
-                    $(window).on('popstate', popStateListener);
-                }
+            galleryElement.addEventListener('lgAfterOpen', function () {
+                window.history.pushState({}, null, "");
+
+                $(window).on('popstate', popStateListener);
             });
+
+            galleryElement.addEventListener('lgBeforeClose', function () {
+                if (false === backPressed) {
+                    window.history.back();
+                }
+
+                backPressed = false;
+            });
+
+            function popStateListener(event) {
+                backPressed = true;
+                if ($(".lg-show").length > 0) {
+                    lg.closeGallery();
+                }
+            }
         }
     }
 

@@ -93,20 +93,7 @@
         shashin.matchingListeners();
         shashin.mouseMoveListener();
         Util.checkErrorImage();
-
-        $infiniteScrollGallery.addEventListener('lgAfterOpen', function () {
-            if (window.history && window.history.pushState) {
-                window.history.pushState('forward', null, "");
-
-                function popStateListener(event) {
-                    if ($(".lg-show").length > 0) {
-                        lg.closeGallery();
-                    }
-                }
-
-                $(window).on('popstate', popStateListener);
-            }
-        });
+        shashin.closeGalleryOnBack({lg: lg, galleryElement: $infiniteScrollGallery});
     });
 </script>
 </body>
