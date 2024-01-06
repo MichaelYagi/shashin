@@ -1477,14 +1477,12 @@
     // Close gallery on clicking browser back button
     shashin.closeGalleryOnBack = function (options) {
         let galleryElement = shashin.getLightGalleryElement();
-        let lg = shashin.lg;
 
-        if (options && options.hasOwnProperty("lg") && options.lg !== null && options.hasOwnProperty("galleryElement") && options.galleryElement !== null) {
+        if (options && options.hasOwnProperty("galleryElement") && options.galleryElement !== null) {
             galleryElement = options.galleryElement;
-            lg = options.lg;
         }
 
-        if (galleryElement !== null && lg !== null && window.history && window.history.pushState) {
+        if (galleryElement !== null && window.history && window.history.pushState) {
             let backPressed = false;
 
             galleryElement.addEventListener('lgAfterOpen', function () {
@@ -1504,7 +1502,7 @@
             function popStateListener(event) {
                 backPressed = true;
                 if ($(".lg-show").length > 0) {
-                    lg.closeGallery();
+                    $(".lg-close").click();
                 }
             }
         }
