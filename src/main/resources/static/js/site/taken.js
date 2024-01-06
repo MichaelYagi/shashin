@@ -28,6 +28,7 @@ class Taken {
     async init() {
         shashin.pageLoader(await this.loadNextPage.bind(this), ".appendTakenPhotos", this.metadataList);
         shashin.mouseMoveListener();
+        shashin.closeGalleryOnBack();
     }
 
     async loadNextPage() {

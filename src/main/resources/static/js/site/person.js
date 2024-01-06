@@ -29,6 +29,7 @@ class Person {
         shashin.pageLoader(await this.loadNextPage.bind(this), ".appendPersonPhotos", this.metadataList);
         shashin.matchingListeners();
         shashin.mouseMoveListener();
+        shashin.closeGalleryOnBack();
 
         $('#savePersonModal').on("click", async function (e) {
 

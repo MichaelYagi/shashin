@@ -41,6 +41,7 @@
 
         shashin.pageLoader(await loadNextPage, ".appendAlbumPhotos", albumMetadataList);
         shashin.mouseMoveListener();
+        shashin.closeGalleryOnBack();
     }
 
     albumSettings.openAlbumModal = function (e,metadataId) {
