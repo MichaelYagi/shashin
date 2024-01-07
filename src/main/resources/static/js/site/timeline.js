@@ -256,7 +256,9 @@
             });
         }, 3000);
 
-        shashin.closeGalleryOnBack();
+        if (false === Util.isMobile()) {
+            shashin.closeGalleryOnBack();
+        }
     }
 
     timelineSettings.rescanElements = function () {
