@@ -1476,38 +1476,40 @@
 
     // Close gallery on clicking browser back button
     shashin.closeGalleryOnBack = function (options) {
-        if (false === Util.isMobile()) {
-            let galleryElement = shashin.getLightGalleryElement();
-            let lg = shashin.getLightGallery();
+        let galleryElement = shashin.getLightGalleryElement();
+        let lg = shashin.getLightGallery();
 
-            if (options &&
-                options.hasOwnProperty("galleryElement") && options.galleryElement !== null &&
-                options.hasOwnProperty("lg") && options.lg !== null
-            ) {
-                galleryElement = options.galleryElement;
-                lg = options.lg;
-            }
+        if (options &&
+            options.hasOwnProperty("galleryElement") && options.galleryElement !== null &&
+            options.hasOwnProperty("lg") && options.lg !== null
+        ) {
+            galleryElement = options.galleryElement;
+            lg = options.lg;
+        }
 
-            if (galleryElement !== null && window.history && window.history.pushState) {
-                let backPressed = false;
+        if (galleryElement !== null && window.history && window.history.pushState) {
+            let backPressed = false;
 
-                galleryElement.addEventListener('lgAfterOpen', function () {
-                    window.history.pushState({}, null, "");
+            galleryElement.addEventListener('lgAfterOpen', function () {
+                window.history.pushState({}, null, "");
 
-                    $(window).on('popstate', popStateListener);
-                });
+                $(window).on('popstate', popStateListener);
+            });
 
-                galleryElement.addEventListener('lgBeforeClose', function () {
-                    if (false === backPressed) {
-                        window.history.back();
-                    }
+            // galleryElement.addEventListener('lgBeforeClose', function () {
+            //     if (false === backPressed) {
+            //         window.history.back();
+            //     }
+            //
+            //     backPressed = false;
+            // });
 
-                    backPressed = false;
-                });
-
-                function popStateListener(event) {
-                    backPressed = true;
-                    if ($(".lg-show").length > 0) {
+            function popStateListener(event) {
+                backPressed = true;
+                if ($(".lg-show").length > 0) {
+                    if (true === Util.isMobile()) {
+                        lg.closeGallery();
+                    } else {
                         $(".lg-close").click();
                     }
                 }
