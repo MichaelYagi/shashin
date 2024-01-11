@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.repository.MetadataRepository
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
+import org.springframework.web.context.request.RequestContextHolder
+import org.springframework.web.context.request.ServletRequestAttributes
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
@@ -15,6 +17,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
+import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 
@@ -465,6 +468,36 @@ class TextUtils {
             response.contentType = "application/json"
             response.status = HttpStatus.FORBIDDEN.value()
             return mapper.writeValueAsString(jsonResponseMap)
+        }
+
+        private val IP_HEADER_CANDIDATES = arrayOf(
+            "X-Forwarded-For",
+            "Proxy-Client-IP",
+            "WL-Proxy-Client-IP",
+            "HTTP_X_FORWARDED_FOR",
+            "HTTP_X_FORWARDED",
+            "HTTP_X_CLUSTER_CLIENT_IP",
+            "HTTP_CLIENT_IP",
+            "HTTP_FORWARDED_FOR",
+            "HTTP_FORWARDED",
+            "HTTP_VIA",
+            "REMOTE_ADDR"
+        )
+
+        fun getClientIp(request: HttpServletRequest?): String {
+            if (request == null) {
+                return "0.0.0.0"
+            }
+
+            for (header in IP_HEADER_CANDIDATES) {
+                val ipList = request.getHeader(header)
+                if (ipList != null && ipList.isNotEmpty() && !"unknown".equals(ipList, ignoreCase = true)) {
+                    val ip = ipList.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
+                    return ip
+                }
+            }
+
+            return request.remoteAddr
         }
 
         private fun readUrl(urlString: String): String? {
