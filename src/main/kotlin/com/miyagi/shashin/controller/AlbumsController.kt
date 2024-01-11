@@ -873,7 +873,7 @@ class AlbumsController: BaseController() {
                 notificationObj.setCreatedAt(getCurrentTimestamp())
                 notificationObj.setModifiedAt(getCurrentTimestamp())
                 notificationObj.setRead(false)
-                notificationObj.setMessage("IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> viewed shared album '<a href='/share/$shareLink/album/$albumId' target='_blank'>${album?.getName()}</a>'")
+                notificationObj.setMessage("IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> viewed shared album '<a href='/share/$shareLink/album/$albumId' target='_blank'>${album?.getName()}</a>' at ${sdtf.format(Date())}")
                 notificationObjList.add(notificationObj)
             }
             if (notificationObjList.isNotEmpty()) {
