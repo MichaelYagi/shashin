@@ -25,12 +25,15 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.context.request.RequestContextHolder
+import org.springframework.web.context.request.ServletRequestAttributes
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.io.File
 import java.io.FileInputStream
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.text.SimpleDateFormat
+import java.time.ZoneId
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -38,6 +41,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import javax.transaction.Transactional
 import kotlin.io.path.isDirectory
+
 
 @Suppress("UNCHECKED_CAST")
 @Controller
@@ -849,11 +853,33 @@ class AlbumsController: BaseController() {
     }
 
     @RequestMapping(value = ["/share/{shareLink}/album/{albumId}"], method = [RequestMethod.GET])
-    fun getAnonymousShareAlbum(model: Model, @PathVariable shareLink: String, @PathVariable albumId: Int): String? {
+    fun getAnonymousShareAlbum(model: Model, request: HttpServletRequest, @PathVariable shareLink: String, @PathVariable albumId: Int): String? {
         val module = "share"
 
         val queryLimit = model.getAttribute("queryLimit").toString().toInt()
         val response = buildShareData(albumId,shareLink, queryLimit, 0)
+
+        val userIp = TextUtils.getClientIp(request)
+        val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
+        val album = response["album"] as Album?
+
+        if (admins != null) {
+            val notificationObjList = mutableListOf<Notification>()
+            val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+            sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+            for (admin in admins) {
+                val notificationObj = Notification()
+                notificationObj.setUserId(admin.getId())
+                notificationObj.setCreatedAt(getCurrentTimestamp())
+                notificationObj.setModifiedAt(getCurrentTimestamp())
+                notificationObj.setRead(false)
+                notificationObj.setMessage("IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> viewed shared album '<a href='/share/$shareLink/album/$albumId' target='_blank'>${album?.getName()}</a>'")
+                notificationObjList.add(notificationObj)
+            }
+            if (notificationObjList.isNotEmpty()) {
+                notificationRepository.saveAll(notificationObjList)
+            }
+        }
 
         model["album"] = response["album"]!!
         model["albumMetadataList"] = response["albumMetadataList"]!!
@@ -861,8 +887,6 @@ class AlbumsController: BaseController() {
         model["message"] = response["message"]!!
         model["msg"] = response["msg"]!!
         model["status"] = response["status"]!!
-
-        val album = response["album"] as Album?
 
         model["activePage"] = module
         model["activeSidebar"] = module
