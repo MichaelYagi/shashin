@@ -10,6 +10,7 @@ import com.miyagi.shashin.controller.TimelineController
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.FileUtils.Companion.subjectRecognizer
+import com.miyagi.shashin.util.ImageProcessing
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -148,7 +149,7 @@ class ScheduledTasks {
                         for (withoutKeyword in withoutKeywords) {
                             val metadataWithoutKeywordsObj = metadataRepository?.findById(withoutKeyword.getId())?.get()
 
-                            FileUtils.objectRecognizer(
+                            ImageProcessing.objectRecognizer(
                                 keywordRepository!!,
                                 keywordPhotoRepository!!,
                                 metadataRepository!!,

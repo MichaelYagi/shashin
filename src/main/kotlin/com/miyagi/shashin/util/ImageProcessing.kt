@@ -1,11 +1,32 @@
 package com.miyagi.shashin.util
 
+import ai.djl.modality.Classifications
+import ai.djl.modality.cv.Image
+import ai.djl.modality.cv.ImageFactory
+import ai.djl.modality.cv.output.DetectedObjects
+import ai.djl.repository.zoo.Criteria
+import ai.djl.repository.zoo.ModelZoo
 import com.drew.imaging.ImageMetadataReader
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.model.Keyword
+import com.miyagi.shashin.model.KeywordPhoto
 import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.model.Settings
+import com.miyagi.shashin.repository.KeywordPhotoRepository
+import com.miyagi.shashin.repository.KeywordRepository
+import com.miyagi.shashin.repository.MetadataRepository
 import net.coobird.thumbnailator.Thumbnails
 import net.coobird.thumbnailator.geometry.Positions
 import org.bytedeco.javacv.FFmpegFrameGrabber
 import org.bytedeco.javacv.Java2DFrameConverter
+import org.springframework.core.io.FileSystemResource
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.http.client.MultipartBodyBuilder
+import org.springframework.web.reactive.function.BodyInserters
+import org.springframework.web.reactive.function.client.WebClient
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Graphics2D
@@ -17,6 +38,7 @@ import java.awt.image.ConvolveOp
 import java.awt.image.Kernel
 import java.io.File
 import java.io.IOException
+import java.util.ArrayList
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
@@ -426,6 +448,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
     }
 
     companion object {
+        private var logger: Logger = Logger.getLogger(FileUtils::class.simpleName)
+
         fun sharpenAndBrightenImage(bufferedImage: BufferedImage): BufferedImage {
 //        -0.15f, -0.15f, -0.15f,
 //        -0.15f, 2.2f, -0.15f,
@@ -450,6 +474,328 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             g.drawRect(0, 0, bufferedImage.width, bufferedImage.height)
 
             return bufferedImage
+        }
+
+        private fun saveObject(objSubject: String?, metadataObj: Metadata, keywordRepository: KeywordRepository, keywordPhotoRepository: KeywordPhotoRepository, metadataRepository: MetadataRepository) {
+            var keywordObj =
+                keywordRepository.findByKeywordIgnoreCase(objSubject)
+            if (keywordObj == null) {
+                keywordObj = Keyword()
+                keywordObj.setKeyword(objSubject)
+                keywordObj.setCreatedAt(TextUtils.getCurrentTimestamp())
+                keywordObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                keywordRepository.save(keywordObj)
+            }
+
+            val keywordPhotoCount =
+                keywordPhotoRepository.countByKeywordIdAndMetadataId(
+                    keywordObj.getId(),
+                    metadataObj.getId()
+                )
+            if (keywordPhotoCount == 0) {
+                val keywordPhotoObj = KeywordPhoto()
+                keywordPhotoObj.setKeywordId(keywordObj.getId())
+                keywordPhotoObj.setMetadataId(metadataObj.getId())
+                keywordPhotoObj.setCreatedAt(TextUtils.getCurrentTimestamp())
+                keywordPhotoObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                keywordPhotoRepository.save(keywordPhotoObj)
+                metadataObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                metadataRepository.save(metadataObj)
+            }
+        }
+
+        fun objectRecognizer(keywordRepository: KeywordRepository, keywordPhotoRepository: KeywordPhotoRepository, metadataRepository: MetadataRepository, metadataObj: Metadata, criteria: Criteria<Image, DetectedObjects>, settings: Settings, threadFile: File?, shouldStop: Boolean?): List<String> {
+            val keywordArray = mutableListOf<String>()
+            val unidentifiedStr = "unidentified objects"
+
+            try {
+                val file = if (metadataObj.getType()?.contains("video", ignoreCase = true)!!) {
+                    File(metadataObj.getThumbnailPathSmall())
+                } else {
+                    File(metadataObj.getPath())
+                }
+
+                // Object recognition
+                val img = ImageFactory.getInstance().fromFile(file.toPath())
+
+                ModelZoo.loadModel(criteria).use { objmodel ->
+                    objmodel.newPredictor().use { predictor ->
+                        try {
+                            val detection = predictor.predict(img)
+                            val numOfObjects = detection.numberOfObjects
+                            if (numOfObjects > 0) {
+                                for (i in 0..numOfObjects) {
+                                    if (shouldStop != null && shouldStop) {
+                                        break
+                                    }
+
+                                    val objProbability =
+                                        detection.item<Classifications.Classification?>(i).probability
+                                    val objSubject =
+                                        detection.item<Classifications.Classification?>(i).className
+
+                                    val threshold =
+                                        settings.getObjectRecognitionConfidenceThreshold().toString().toDouble()
+
+                                    if (objSubject.trim() != "person" && objProbability >= threshold
+                                    ) {
+                                        saveObject(
+                                            objSubject,
+                                            metadataObj,
+                                            keywordRepository,
+                                            keywordPhotoRepository,
+                                            metadataRepository
+                                        )
+                                        keywordArray.add(objSubject)
+
+                                        if (threadFile != null) {
+                                            FileUtils.writeToThreadFileAndLogMessage(
+                                                "Objects saved for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability,
+                                                threadFile
+                                            )
+                                        }
+
+                                        logger.log(
+                                            Level.INFO,
+                                            "Objects saved for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability
+                                        )
+                                    } else {
+                                        if (threadFile != null) {
+                                            FileUtils.writeToThreadFileAndLogMessage(
+                                                "Objects identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability,
+                                                threadFile
+                                            )
+                                        }
+
+                                        logger.log(
+                                            Level.INFO,
+                                            "Objects not saved but identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability
+                                        )
+                                    }
+                                }
+
+                                if (keywordArray.size == 0 && !keywordArray.contains(unidentifiedStr)) {
+                                    keywordArray.add(unidentifiedStr)
+                                    saveObject(
+                                        unidentifiedStr,
+                                        metadataObj,
+                                        keywordRepository,
+                                        keywordPhotoRepository,
+                                        metadataRepository
+                                    )
+                                }
+                            } else {
+                                if (keywordArray.size == 0 && !keywordArray.contains(unidentifiedStr)) {
+                                    keywordArray.add(unidentifiedStr)
+                                    saveObject(
+                                        unidentifiedStr,
+                                        metadataObj,
+                                        keywordRepository,
+                                        keywordPhotoRepository,
+                                        metadataRepository
+                                    )
+                                }
+                            }
+                        } catch (e: Exception) {
+                            if (keywordArray.size == 0 && !keywordArray.contains(unidentifiedStr)) {
+                                keywordArray.add(unidentifiedStr)
+                                saveObject(
+                                    unidentifiedStr,
+                                    metadataObj,
+                                    keywordRepository,
+                                    keywordPhotoRepository,
+                                    metadataRepository
+                                )
+                            }
+
+                            logger.log(
+                                Level.INFO,
+                                "Could not identify objects for " + metadataObj.getThumbnailUrlSmall()
+                            )
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                logger.log(
+                    Level.INFO,
+                    "Object recognition could not process file for " + metadataObj.getPath()!! + " error " + e.message
+                )
+            }
+
+            return keywordArray.distinct()
+        }
+
+        fun buildPersonUpload(settings: Settings, personName: String?, metadata: Metadata?, compreFaceImageIdMap: MutableMap<String, Any?>): MutableMap<String, Any?> {
+            val mapper = ObjectMapper()
+            val uploadresponse = mutableMapOf<String, Any?>()
+            uploadresponse["responseData"] = mutableMapOf<String, Any?>()
+            uploadresponse["similarity"] = 0.0
+
+            uploadresponse["msg"] = ""
+            uploadresponse["status"] = ApiResponse.FAIL.status
+
+            if (FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
+                var response: String?
+
+                if (!personName.isNullOrBlank() && !metadata?.getId().isNullOrBlank()) {
+
+                    val webClient = WebClient.create(settings.getCompreFaceServer()!!)
+
+                    val recognizedObj = mapper.writeValueAsString(buildPersonRecognition(settings, metadata))
+
+                    val jsonRespObj = mapper.readTree(recognizedObj)
+                    var subjectObj: JsonNode
+                    var subject = ""
+                    var similarity = 0.0
+                    if (jsonRespObj.has("recognizeData") && jsonRespObj["recognizeData"].has(0)) {
+                        subjectObj = jsonRespObj["recognizeData"].get(0)
+                        if (subjectObj.has("subject")) {
+                            subject = subjectObj["subject"].textValue();
+                            similarity = subjectObj["similarity"].asDouble()
+                        }
+                    }
+                    uploadresponse["similarity"] = similarity
+
+                    // This means the person has been relabeled
+                    if (subject != "" && personName != subject) {
+                        similarity = 0.0
+
+                        val compreFaceImageId =
+                            compreFaceImageIdMap[subject.filterNot { it.isWhitespace() } + "-" + metadata?.getId()]
+
+                        try {
+                            if (compreFaceImageId != null && compreFaceImageId.toString().isNotEmpty()) {
+                                webClient.delete()
+                                    .uri("api/v1/recognition/faces/$compreFaceImageId")
+                                    .header("x-api-key", settings.getCompreFaceKey())
+                                    .retrieve()
+                                    .bodyToMono(String::class.java)
+                                    .block()
+                            }
+                        } catch (e: Exception) {
+                            logger.log(
+                                Level.WARNING,
+                                "Error deleting CompreFace ID ${compreFaceImageId} for ${metadata?.getId()}: " + e.localizedMessage
+                            )
+//                            val errorResponse =
+//                                e.localizedMessage.replace("<EOL>", "").replace("400 : ", "").replace("\\s".toRegex(), "")
+                        }
+                    }
+
+                    // Uploaded faces
+                    if (similarity != 1.0 && (similarity <= 0.0 || similarity >= settings.getRecognitionConfidenceThreshold().toString().toDouble())) {
+                        try {
+                            if (metadata != null) {
+                                val builder = MultipartBodyBuilder()
+                                builder.part("file", FileSystemResource(metadata.getThumbnailPathSmall()!!))
+
+                                response = webClient.post()
+                                    .uri("api/v1/recognition/faces?subject=${personName}")
+                                    .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA.toString())
+                                    .header("x-api-key", settings.getCompreFaceKey())
+                                    .body(BodyInserters.fromMultipartData(builder.build()))
+                                    .retrieve()
+                                    .bodyToMono(String::class.java)
+                                    .block()
+
+                                val jsonObj = mapper.readTree(response)
+
+                                logger.log(
+                                    Level.INFO,
+                                    "Face $personName for ${metadata.getId()} uploaded: " + response
+                                )
+
+                                uploadresponse["responseData"] = jsonObj
+
+                                uploadresponse["msg"] = ""
+                                uploadresponse["status"] = ApiResponse.SUCCESS.status
+                            } else {
+                                response = "Metadata not found."
+                                uploadresponse["responseData"] = response
+                            }
+                        } catch (e: Exception) {
+                            logger.log(
+                                Level.WARNING,
+                                "Error uploading face $personName for ${metadata?.getId()}: " + e.localizedMessage
+                            )
+                            val errorResponse =
+                                e.localizedMessage.replace("<EOL>", "").replace("400 : ", "").replace("\\s".toRegex(), "")
+                            uploadresponse["responseData"] = errorResponse
+                        }
+                    } else {
+                        logger.log(
+                            Level.INFO,
+                            "Not processed - Similarity: $similarity, Threshold: ${settings.getRecognitionConfidenceThreshold().toString().toDouble()}"
+                        )
+                        uploadresponse["msg"] = "Not processed - Similarity: $similarity, Threshold: ${settings.getRecognitionConfidenceThreshold().toString().toDouble()}"
+                        uploadresponse["status"] = ApiResponse.FAIL.status
+                    }
+                } else {
+                    logger.log(
+                        Level.WARNING,
+                        "Person name or metadata ID blank"
+                    )
+                    uploadresponse["msg"] = "Person name or metadata ID blank"
+                    uploadresponse["status"] = ApiResponse.FAIL.status
+                }
+            }
+
+            return uploadresponse
+        }
+
+        fun buildPersonRecognition(settings: Settings, metadata: Metadata?): MutableMap<String, Any?> {
+            val mapper = ObjectMapper()
+            val recogresponse = mutableMapOf<String, Any?>()
+
+            recogresponse["recognizeData"] = mutableMapOf<String, Any?>()
+            recogresponse["msg"] = ""
+            recogresponse["status"] = ApiResponse.FAIL.status
+
+            if (FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
+
+                var response: String?
+
+                if (metadata !== null) {
+                    // Recognizing faces
+
+                    try {
+                        val webClient = WebClient.create(settings.getCompreFaceServer()!!)
+
+                        val builder = MultipartBodyBuilder()
+                        builder.part("file", FileSystemResource(metadata.getThumbnailPathSmall()!!))
+
+                        response = webClient.post()
+                            .uri("api/v1/recognition/recognize")
+                            .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA.toString())
+                            .header("x-api-key", settings.getCompreFaceKey())
+                            .body(BodyInserters.fromMultipartData(builder.build()))
+                            .retrieve()
+                            .bodyToMono(String::class.java)
+                            .block()
+
+                        val jsonObj = mapper.readTree(response)
+                        val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, ArrayList<Map<String, Any>>>>() {})
+                        val resultList = resultMap["result"] as ArrayList<Map<String, Any>>
+                        var subjects: ArrayList<Map<String, Any>>? = null
+                        if (resultList.isNotEmpty() && resultList[0].containsKey("subjects")) {
+                            subjects = resultList[0]["subjects"] as ArrayList<Map<String, Any>>
+                        }
+                        recogresponse["recognizeData"] = subjects
+                        recogresponse["msg"] = ""
+                        recogresponse["status"] = ApiResponse.SUCCESS.status
+
+                    } catch (e: Exception) {
+                        val errorResponse =
+                            e.localizedMessage.replace("<EOL>", "").replace("400 : ", "").replace("\\s".toRegex(), "")
+                        recogresponse["recognizeData"] = errorResponse
+                    }
+                } else {
+                    recogresponse["msg"] = "Metadata ID blank"
+                    recogresponse["status"] = ApiResponse.FAIL.status
+                }
+            }
+
+            return recogresponse
         }
     }
 }

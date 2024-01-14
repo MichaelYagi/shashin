@@ -1385,7 +1385,7 @@ class TimelineController: BaseController() {
                             .optFilter("backbone", "resnet50")
                             .optProgress(ProgressBar())
                             .build()
-                        val keywordArray = FileUtils.objectRecognizer(keywordRepository, keywordPhotoRepository, metadataRepository, metadataObj.get(), criteria, settings, null, null)
+                        val keywordArray = ImageProcessing.objectRecognizer(keywordRepository, keywordPhotoRepository, metadataRepository, metadataObj.get(), criteria, settings, null, null)
                         if (!keywordArray.isNullOrEmpty()) {
                             resp["keywordsIdentified"] = keywordArray.joinToString(",")
                         }
@@ -2447,7 +2447,7 @@ class TimelineController: BaseController() {
 
                 for (recognitionLabel in recognitionLabelArray) {
                     if (!recognitionLabel.trim().isNullOrBlank() && recognitionLabel.trim() != "null") {
-                        val uploadResp = mapper.writeValueAsString(FileUtils.buildPersonUpload(settings, recognitionLabel, metadataObj, compreFaceImageIdMap))
+                        val uploadResp = mapper.writeValueAsString(ImageProcessing.buildPersonUpload(settings, recognitionLabel, metadataObj, compreFaceImageIdMap))
                         val jsonRespObj = mapper.readTree(uploadResp)
 
                         var compreFaceImageId: String? = null

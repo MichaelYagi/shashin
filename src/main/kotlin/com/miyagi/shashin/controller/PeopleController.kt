@@ -15,6 +15,7 @@ import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
+import com.miyagi.shashin.util.ImageProcessing
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.apache.commons.text.StringEscapeUtils
@@ -197,7 +198,7 @@ class PeopleController {
                                 val metadataWithoutKeywordsObj =
                                     metadataRepository?.findById(withoutKeyword.getId())?.get()
 
-                                FileUtils.objectRecognizer(
+                                ImageProcessing.objectRecognizer(
                                     keywordRepository!!,
                                     keywordPhotoRepository!!,
                                     metadataRepository!!,
@@ -920,7 +921,7 @@ class PeopleController {
                                 metadataId
                             )
                         if (recognitionLabelPhotoCount == 0) {
-                            val uploadResp = mapper.writeValueAsString(FileUtils.buildPersonUpload(model.getAttribute("settings") as Settings, recognitionLabelString.trim(), metadata?.get(), compreFaceImageIdMap))
+                            val uploadResp = mapper.writeValueAsString(ImageProcessing.buildPersonUpload(model.getAttribute("settings") as Settings, recognitionLabelString.trim(), metadata?.get(), compreFaceImageIdMap))
                             val jsonRespObj = mapper.readTree(uploadResp)
 
                             var compreFaceImageId: String? = null
@@ -1039,7 +1040,7 @@ class PeopleController {
             val metadataId = personMap["metadataId"].toString()
             val metadata = metadataRepository?.findById(metadataId)
             val compreFaceImageIdMap = mutableMapOf<String, Any?>()
-            return mapper.writeValueAsString(FileUtils.buildPersonUpload(model.getAttribute("settings") as Settings, personName, metadata?.get(), compreFaceImageIdMap))
+            return mapper.writeValueAsString(ImageProcessing.buildPersonUpload(model.getAttribute("settings") as Settings, personName, metadata?.get(), compreFaceImageIdMap))
         }
 
         return mapper.writeValueAsString(resp)
@@ -1054,6 +1055,6 @@ class PeopleController {
         resp["status"] = ApiResponse.FAIL.status
 
         val metadata = metadataRepository?.findByMetadataId(metadataId)
-        return mapper.writeValueAsString(FileUtils.buildPersonRecognition(model.getAttribute("settings") as Settings, metadata))
+        return mapper.writeValueAsString(ImageProcessing.buildPersonRecognition(model.getAttribute("settings") as Settings, metadata))
     }
 }

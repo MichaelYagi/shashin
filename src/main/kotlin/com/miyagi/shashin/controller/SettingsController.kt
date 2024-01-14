@@ -2097,7 +2097,7 @@ class SettingsController {
                                             }
 
                                             if (settings?.getObjectDetection() == true && criteria != null) {
-                                                FileUtils.objectRecognizer(
+                                                ImageProcessing.objectRecognizer(
                                                     keywordRepository!!,
                                                     keywordPhotoRepository!!,
                                                     metadataRepository!!,
