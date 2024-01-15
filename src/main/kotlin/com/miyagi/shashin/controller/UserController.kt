@@ -10,12 +10,10 @@ import com.miyagi.shashin.repository.PersistentLoginsExpiryRepository
 import com.miyagi.shashin.repository.PersistentLoginsRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.ApiResponse
-import com.miyagi.shashin.util.DatabaseUtil
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import io.swagger.v3.oas.annotations.Operation
-import org.apache.commons.text.StringEscapeUtils
 import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value

@@ -264,7 +264,7 @@ class SettingsController {
             model.addAttribute("settings", settings)
         }
 
-        val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+        val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
             settings.getCompreFaceServer(),
             settings.getCompreFaceKey()
         )
@@ -461,7 +461,7 @@ class SettingsController {
             settingsRepository?.save(settings)
             model["settings"] = settings
 
-            val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())
+            val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())
 
             model["timeScheduleList"] = TextUtils.timeSchedules()
             model["currentTimezone"] = ZoneId.systemDefault()
@@ -531,7 +531,7 @@ class SettingsController {
 
         model["objectRecogEnabled"] = settings?.getObjectDetection()!!
 
-        val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+        val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
             settings.getCompreFaceServer(),
             settings.getCompreFaceKey()
         )
@@ -573,7 +573,7 @@ class SettingsController {
 
                 // Cleanup CompreFace subjects
                 val settings = model.getAttribute("settings") as Settings
-                val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+                val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
                     settings.getCompreFaceServer(),
                     settings.getCompreFaceKey()
                 )
@@ -770,7 +770,7 @@ class SettingsController {
 
         model["objectRecogEnabled"] = settings?.getObjectDetection()!!
 
-        val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+        val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
             settings.getCompreFaceServer(),
             settings.getCompreFaceKey()
         )
@@ -848,7 +848,7 @@ class SettingsController {
 
         model["objectRecogEnabled"] = settings?.getObjectDetection()!!
 
-        val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+        val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
             settings.getCompreFaceServer(),
             settings.getCompreFaceKey()
         )
@@ -871,7 +871,7 @@ class SettingsController {
 
         model["objectRecogEnabled"] = settings?.getObjectDetection()!!
 
-        val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+        val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
             settings.getCompreFaceServer(),
             settings.getCompreFaceKey()
         )
@@ -926,7 +926,7 @@ class SettingsController {
 
         model["objectRecogEnabled"] = settings?.getObjectDetection()!!
 
-        val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+        val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
             settings.getCompreFaceServer(),
             settings.getCompreFaceKey()
         )
@@ -1049,7 +1049,7 @@ class SettingsController {
             }
 
             // Backup the database
-            val dbBackupFile = DatabaseUtil.backup(dataSourceUrl)
+            val dbBackupFile = DatabaseUtils.backup(dataSourceUrl)
             var dbBackupName = ""
             if (dbBackupFile == null) {
                 logger.log(
@@ -1180,8 +1180,8 @@ class SettingsController {
 
                 if (importDatabaseOnly) {
                     if (tempEntryName.startsWith("database/") || entry.name.startsWith("database\\")) {
-                        DatabaseUtil.backup(dataSourceUrl)
-                        if (DatabaseUtil.import(dataSourceUrl, stream)) {
+                        DatabaseUtils.backup(dataSourceUrl)
+                        if (DatabaseUtils.import(dataSourceUrl, stream)) {
                             logger.log(
                                 Level.INFO,
                                 "Database : $dataSourceUrl imported."
@@ -1437,7 +1437,7 @@ class SettingsController {
         var threadFileContent = FileUtils.readThreadFile("shashinscan")
 
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
-        val compreFaceServerConnected = FileUtils.checkCompreFaceConnection(
+        val compreFaceServerConnected = NetworkUtils.checkCompreFaceConnection(
             settings?.getCompreFaceServer(),
             settings?.getCompreFaceKey()
         )

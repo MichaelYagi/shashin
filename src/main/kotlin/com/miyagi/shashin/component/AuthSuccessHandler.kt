@@ -4,13 +4,10 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.configuration.MultiSecurityConfig
 import com.miyagi.shashin.model.Notification
-import com.miyagi.shashin.model.PersistentLoginsExpiry
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.model.Useragent
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.service.CustomUserDetailsService
-import com.miyagi.shashin.util.DatabaseUtil
-import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import nl.basjes.parse.useragent.UserAgentAnalyzer
