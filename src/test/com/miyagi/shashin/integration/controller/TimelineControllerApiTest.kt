@@ -2,6 +2,7 @@ package com.miyagi.shashin.controller
 
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.util.ApiResponse
 import org.hamcrest.CoreMatchers.containsString
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -105,6 +106,6 @@ class TimelineControllerApiTest {
         //println(response.andReturn().response.contentAsString)
         response
             .andExpect(status().isOk)
-            .andExpect(content().string(containsString("success")))
+            .andExpect(content().string(containsString(ApiResponse.SUCCESS.status)))
     }
 }
