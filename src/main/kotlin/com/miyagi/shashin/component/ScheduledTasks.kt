@@ -9,8 +9,9 @@ import ai.djl.training.util.ProgressBar
 import com.miyagi.shashin.controller.TimelineController
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.FileUtils
-import com.miyagi.shashin.util.FileUtils.Companion.subjectRecognizer
+import com.miyagi.shashin.util.ImageProcessing.Companion.subjectRecognizer
 import com.miyagi.shashin.util.ImageProcessing
+import com.miyagi.shashin.util.NetworkUtils
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -116,7 +117,7 @@ class ScheduledTasks {
                 // Object and person recognition
 
                 // Start subject matching
-                if (FileUtils.checkCompreFaceConnection(
+                if (NetworkUtils.checkCompreFaceConnection(
                         settings.getCompreFaceServer(),
                         settings.getCompreFaceKey()
                     )

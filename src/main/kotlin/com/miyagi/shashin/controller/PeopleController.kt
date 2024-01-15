@@ -13,10 +13,7 @@ import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
-import com.miyagi.shashin.util.ApiResponse
-import com.miyagi.shashin.util.FileUtils
-import com.miyagi.shashin.util.ImageProcessing
-import com.miyagi.shashin.util.TextUtils
+import com.miyagi.shashin.util.*
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.apache.commons.text.StringEscapeUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -162,13 +159,13 @@ class PeopleController {
                 // Object and person recognition
                 if (threadFile != null) {
 
-                    val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+                    val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
                         settings.getCompreFaceServer(),
                         settings.getCompreFaceKey()
                     )
 
                     if (faceRecogServicesAvailable) {
-                        FileUtils.subjectRecognizer(
+                        ImageProcessing.subjectRecognizer(
                             metadataRepository,
                             recognitionLabelRepository,
                             recognitionLabelPhotoRepository,
@@ -273,7 +270,7 @@ class PeopleController {
             }
         }
 
-        val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+        val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
             settings.getCompreFaceServer(),
             settings.getCompreFaceKey()
         )
@@ -353,7 +350,7 @@ class PeopleController {
             val imageIdsString = imageMap["imageIds"].toString()
 
             val settings = model.getAttribute("settings") as Settings
-            val compreFaceConnection = FileUtils.checkCompreFaceConnection(
+            val compreFaceConnection = NetworkUtils.checkCompreFaceConnection(
                 settings.getCompreFaceServer(),
                 settings.getCompreFaceKey()
             )
@@ -427,7 +424,7 @@ class PeopleController {
             response["personInfo"] = recognitionLabel.get()
             subject = recognitionLabel.get().getName()
         }
-        val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+        val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
             settings.getCompreFaceServer(),
             settings.getCompreFaceKey()
         )
@@ -520,7 +517,7 @@ class PeopleController {
             response["personInfo"] = recognitionLabel.get()
             val subject = recognitionLabel.get().getName()
 
-            val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+            val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
                 settings.getCompreFaceServer(),
                 settings.getCompreFaceKey()
             )
@@ -803,7 +800,7 @@ class PeopleController {
                     counts["person"] = 0
                 }
 
-                val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+                val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
                     settings.getCompreFaceServer(),
                     settings.getCompreFaceKey()
                 )

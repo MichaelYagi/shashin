@@ -5,6 +5,7 @@ import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.PersistentLoginsRepository
 import com.miyagi.shashin.util.FileUtils
+import com.miyagi.shashin.util.NetworkUtils
 import com.sun.management.OperatingSystemMXBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -174,7 +175,7 @@ class ToolsController {
         @Suppress("DEPRECATION")
         model["systemCpuLoadPercentDouble"] = (osMXBean.systemCpuLoad * 100).toInt()
         model["os"] = System.getProperty("os.name") + " v" + System.getProperty("os.version") + " " + System.getProperty("os.arch")
-        val reachable: Boolean = FileUtils.checkNominatimConnection(geocodeUrl+"status.php?format=json")
+        val reachable: Boolean = NetworkUtils.checkNominatimConnection(geocodeUrl+"status.php?format=json")
         if (reachable) {
             model["geocoderServicesAvailable"] = "OK"
         } else {
@@ -185,7 +186,7 @@ class ToolsController {
         // If enabled - status fail if not available
         val settings = model.getAttribute("settings") as Settings?
         if (settings != null && settings.getCompreFaceKey() != "" && settings.getCompreFaceServer() != "") {
-            val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+            val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
                 settings.getCompreFaceServer(),
                 settings.getCompreFaceKey()
             )

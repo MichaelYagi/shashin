@@ -8,38 +8,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
-object DatabaseUtil {
-    fun cleanupPersistence(persistentLoginsExpiryRepository: PersistentLoginsExpiryRepository?, persistentLoginsRepository: PersistentLoginsRepository?) {
-        val persistentLoginsExpiryList = persistentLoginsExpiryRepository?.findAll()
-        if (persistentLoginsExpiryList != null && persistentLoginsExpiryList.count() > 0) {
-            for (persistentLoginsExpiryObj in persistentLoginsExpiryList) {
-                val series = persistentLoginsExpiryObj?.getSeries()
-
-                if (series != null) {
-                    val persistentLoginsCount = persistentLoginsRepository?.countPersistentLoginsBySeries(series)
-                    if (persistentLoginsCount != null && persistentLoginsCount == 0) {
-                        persistentLoginsExpiryRepository.deleteBySeries(series)
-                    }
-                }
-
-                var seriesDeleted = false
-                if (persistentLoginsExpiryObj != null && System.currentTimeMillis() > persistentLoginsExpiryObj.getExpiry()!!) {
-                    // delete entry in repos
-                    persistentLoginsRepository?.deleteBySeries(series.toString())
-                    persistentLoginsExpiryRepository.deleteBySeries(series.toString())
-                    seriesDeleted = true
-                }
-
-                if (!seriesDeleted) {
-                    val persistentLoginsCount = persistentLoginsRepository?.countPersistentLoginsBySeries(series.toString())
-                    if (persistentLoginsCount != null && persistentLoginsCount == 0) {
-                        persistentLoginsExpiryRepository.deleteBySeries(series.toString())
-                    }
-                }
-            }
-        }
-    }
-
+object DatabaseUtils {
     @Throws(IOException::class, InterruptedException::class)
     fun backup(fullDbName: String?): File? {
         var backupDbFile: File? = null
@@ -111,7 +80,7 @@ object DatabaseUtil {
     }
 
     @Throws(IOException::class)
-    fun copyInputStreamToFile(inputStream: InputStream, file: File?) {
+    private fun copyInputStreamToFile(inputStream: InputStream, file: File?) {
 
         // append = false
         FileOutputStream(file, false).use { outputStream ->

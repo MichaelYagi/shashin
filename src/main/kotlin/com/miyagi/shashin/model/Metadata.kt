@@ -316,7 +316,7 @@ class Metadata {
         return this.lastAccessedAt
     }
 
-    fun setFreeFormString(freeFormString: String) {
+    fun setFreeFormString(freeFormString: String?) {
         this.freeFormString = freeFormString
     }
 
