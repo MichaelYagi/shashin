@@ -5,7 +5,7 @@ class Util {
     }
 
     static getFullDateCreated() {
-        return "2021/8/9";
+        return Util.getDateObject("2021-8-9");
     }
 
     static lgApiKey() {
