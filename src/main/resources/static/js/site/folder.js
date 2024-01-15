@@ -57,7 +57,7 @@ class Folder {
         }
 
         const mediaContentList = [];
-        if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data["status"] === "success") {
+        if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data["status"] === shashin.apiResponse.SUCCESS) {
             const metadataList = data["metadataList"];
 
             if (metadataList !== null && metadataList.length > 0) {

@@ -107,7 +107,7 @@ $("#albumAppToolsRemoveAlbum").on("click", async function (e) {
                 window.location.replace(data["msg"]);
             } else {
                 let message = "Error";
-                if (data["status"] === "success") {
+                if (data["status"] === shashin.apiResponse.SUCCESS) {
                     message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                     window.top.location = window.top.location
                 } else {
@@ -134,7 +134,7 @@ $("#albumAppToolsRemoveFavorites").on("click", async function (e) {
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
-            if (data["status"] === "success") {
+            if (data["status"] === shashin.apiResponse.SUCCESS) {
                 message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                 location.reload();
             } else {
@@ -162,7 +162,7 @@ $("#albumAppToolsRestore").on("click", async function (e) {
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
-            if (data["status"] === "success") {
+            if (data["status"] === shashin.apiResponse.SUCCESS) {
                 shashin.showToastMessage("Success!", "Media restored", {
                     icon: "bi-info-circle",
                     iconColor: "#777777"

@@ -7,7 +7,7 @@
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId") && data.hasOwnProperty("commentCount")) {
             let commentId = data["commentId"];
             let commentCount = data["commentCount"];
-            if (data["status"] === "success") {
+            if (data["status"] === shashin.apiResponse.SUCCESS) {
                 // Delete comment
                 $("#comment" + commentId).remove();
                 $("#commentcount" + albumId).text(commentCount);
@@ -63,7 +63,7 @@
 
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
-                if (data["status"] === "success") {
+                if (data["status"] === shashin.apiResponse.SUCCESS) {
                     message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                     window.top.location = window.top.location
                 } else {
@@ -109,7 +109,7 @@
             });
 
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                if (data["status"] === "success") {
+                if (data["status"] === shashin.apiResponse.SUCCESS) {
                     $("#albumName").text(albumName);
                     $("#albumNameEdit").text(albumName);
                     $("#albumName" + albumId).text(albumName);
@@ -220,7 +220,7 @@
             });
 
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                if (data["status"] === "success") {
+                if (data["status"] === shashin.apiResponse.SUCCESS) {
                     $("#albumsModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                     $("#cancelUserShare").prop('disabled', false);
                 } else {
@@ -339,7 +339,7 @@
                     let userProfile = data["userProfile"];
                     let createdAt = data["createdAt"]; //dateFormat(new Date(data["createdAt"]), "ddd, mmm d, yyyy 'at' h:mm TT");
 
-                    if (data["status"] === "success") {
+                    if (data["status"] === shashin.apiResponse.SUCCESS) {
                         $("#commentcount" + albumId).text(commentCount);
 
                         // Insert comment at top of list

@@ -135,7 +135,7 @@ class Settings {
 
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
-                if (data["status"] === "success") {
+                if (data["status"] === shashin.apiResponse.SUCCESS) {
                     shashin.showToastMessage("Content deleted", data["msg"], {icon:"bi-info-circle", iconColor:"#777777", autohide: false});
                     $("#propDeleteContent").modal('hide');
                     // message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';

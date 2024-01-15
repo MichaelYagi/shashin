@@ -643,7 +643,7 @@ async function showMap(mapdata) {
 
     function showContextMenu(evt, coordArray, data) {
         let placeJson = {};
-        if (data.hasOwnProperty("msg") && data.hasOwnProperty("status") && data.hasOwnProperty("placedata") && data["status"] === "success") {
+        if (data.hasOwnProperty("msg") && data.hasOwnProperty("status") && data.hasOwnProperty("placedata") && data["status"] === shashin.apiResponse.SUCCESS) {
             placeJson = JSON.parse(data["placedata"]);
         }
 

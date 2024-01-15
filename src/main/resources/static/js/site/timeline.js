@@ -1451,7 +1451,7 @@
 
     timelineSettings.createEmptyContainer = async function(date, attachToId, height) {
         $("#msgTimeline").html("");
-        let ret = "fail";
+        let ret = shashin.apiResponse.FAIL;
         const dateArray = date.split("-");
 
         if (dateArray.length > 0) {
@@ -1481,7 +1481,7 @@
 
         return await $.ajax(ajaxParams)
             .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating timeline")}).then(function (data) {
-                let ret = "fail";
+                let ret = shashin.apiResponse.FAIL;
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                     let message = "Error";
                     if (data["status"] === timelineSettings.success) {
@@ -1648,7 +1648,7 @@
                     } else {
                         message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                         $("#msgTimeline").html(message);
-                        ret = "fail";
+                        ret = shashin.apiResponse.FAIL;
                     }
                 }
 

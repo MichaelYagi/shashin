@@ -35,6 +35,10 @@
     shashin.toast.placement.bottom.left = "bottom_left";
     shashin.toast.placement.bottom.center = "bottom_center";
     shashin.toast.placement.bottom.right = "bottom_right";
+    shashin.apiResponse = {};
+    shashin.apiResponse.SUCCESS = "success";
+    shashin.apiResponse.WARN = "warn";
+    shashin.apiResponse.FAIL = "fail";
 
     function fixContentHeight() {
         if ($("div[data-role='dialog']").is(":visible")) {
@@ -985,7 +989,7 @@
 
             function showContextMenu(evt, coordArray, data) {
                 let placeJson = {};
-                if (data.hasOwnProperty("msg") && data.hasOwnProperty("status") && data.hasOwnProperty("placedata") && data["status"] === "success") {
+                if (data.hasOwnProperty("msg") && data.hasOwnProperty("status") && data.hasOwnProperty("placedata") && data["status"] === shashin.apiResponse.SUCCESS) {
                     placeJson = JSON.parse(data["placedata"]);
                 }
 

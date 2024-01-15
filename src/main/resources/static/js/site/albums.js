@@ -41,7 +41,7 @@ class Albums {
             data = await this.http.ajax("get", "/" + activePage + "/" + nextPage);
         }
 
-        if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("albumsList") && data["status"] === "success") {
+        if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("albumsList") && data["status"] === shashin.apiResponse.SUCCESS) {
             const albumsList = data["albumsList"];
 
             if (albumsList !== null && albumsList.length > 0) {
@@ -109,7 +109,7 @@ class Albums {
                 let data = await http.ajax("get", "/album/" + albumId + "/page/0");
 
                 if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("album")) {
-                    if (data["status"] === "success") {
+                    if (data["status"] === shashin.apiResponse.SUCCESS) {
                         let album = data["album"];
 
                         $("#albumName").text(album["name"]);
@@ -168,7 +168,7 @@ class Albums {
                 let http = new Http("sharealbums");
                 let data = await http.ajax("get", "/album/" + albumId + "/page/0");
 
-                if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("album") && data["status"] === "success") {
+                if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("album") && data["status"] === shashin.apiResponse.SUCCESS) {
                     let album = data["album"];
                     $("#albumNameEdit").text(album["name"]);
                     $("#albumEditName").val(album["name"]);
@@ -188,7 +188,7 @@ class Albums {
                 let data = await http.ajax("get", "/album/" + albumId + "/page/0");
 
                 if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("album")) {
-                    if (data["status"] === "success") {
+                    if (data["status"] === shashin.apiResponse.SUCCESS) {
                         let album = data["album"];
 
                         $("#albumNameTrash").text(album["name"]);
@@ -210,7 +210,7 @@ class Albums {
             let data = await http.ajax("get", "/album/" + albumId + "/page/0");
             let currentUserId = $("#currentUserId").val();
 
-            if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("album") && data["status"] === "success") {
+            if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("album") && data["status"] === shashin.apiResponse.SUCCESS) {
                 let album = data["album"];
 
                 $("#albumNameComments").text(album["name"]);

@@ -182,7 +182,7 @@ class Util {
 
         http.ajax("post", "/rescan/metadata" + (version === "" ? "" : "?v=" + version), JSON.stringify(json)).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                if (data["status"] === "success") {
+                if (data["status"] === shashin.apiResponse.SUCCESS) {
                     shashin.showToastMessage("Metadata Rescanned", "Metadata successfully rescanned!", {
                         icon: "bi-info-circle",
                         iconColor: "#777777"
