@@ -50,7 +50,7 @@ class ShareAlbum {
 
         if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
-            if (data["status"] === "success") {
+            if (data["status"] === shashin.apiResponse.SUCCESS) {
                 if (data.hasOwnProperty("albumMetadataList")) {
                     const albumMetadataList = data["albumMetadataList"];
                     const mediaLinkLength = $(".mediaLink").length;

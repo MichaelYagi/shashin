@@ -215,7 +215,7 @@ $("#saveMetadata").on("click", async function (e) {
         }
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-            if (data["status"] === "success") {
+            if (data["status"] === shashin.apiResponse.SUCCESS) {
                 if (data.hasOwnProperty("keywords") && data["keywords"] !== "") {
                     $("#keywordsString").val(data["keywords"]);
                     $("#keywordsBatchString").val(data["keywords"]);

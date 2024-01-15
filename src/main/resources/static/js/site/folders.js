@@ -32,7 +32,7 @@ class Folders {
             data = await this.http.ajax("get", "/" + activePage + "/" + nextPage);
         }
 
-        if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("foldersList") && data["status"] === "success") {
+        if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("foldersList") && data["status"] === shashin.apiResponse.SUCCESS) {
             const foldersList = data["foldersList"];
 
             if (foldersList !== null && foldersList.length > 0) {

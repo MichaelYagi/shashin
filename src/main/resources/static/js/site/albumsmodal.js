@@ -42,7 +42,7 @@
                 $("#copyLink").attr("data-clipboard-text", fullShareLink);
             }
 
-            if (data["status"] === "success" && $("#shareLink").val() === relativeShareUrlData) {
+            if (data["status"] === shashin.apiResponse.SUCCESS && $("#shareLink").val() === relativeShareUrlData) {
                 $("#albumsModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
             } else {
                 $("#albumsModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');

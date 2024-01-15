@@ -62,7 +62,7 @@ class Search {
         }
 
         const mediaContentList = [];
-        if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("metadataSearchList") && data["status"] === "success") {
+        if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("metadataSearchList") && data["status"] === shashin.apiResponse.SUCCESS) {
             const metadataList = data["metadataSearchList"];
 
             if (metadataList !== null && metadataList.length > 0) {

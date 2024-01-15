@@ -62,7 +62,7 @@ class Person {
                     window.top.location = window.top.location
                     $("#personMessage").html('<div class="alert alert-success" role="alert">' + data["msg"] + '</div>');
                 } else {
-                    if (data["status"] === "success") {
+                    if (data["status"] === shashin.apiResponse.SUCCESS) {
                         $("#personModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                         $("#personModalCancel").prop('disabled', false);
                     } else {
@@ -114,7 +114,7 @@ class Person {
         const mediaContentList = [];
         if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
-            if (data["status"] === "success") {
+            if (data["status"] === shashin.apiResponse.SUCCESS) {
                 if (data.hasOwnProperty("metadataList")) {
                     const metadataList = data["metadataList"];
                     const recognitionLabels = data["recognitionLabels"];

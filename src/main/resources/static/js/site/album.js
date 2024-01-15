@@ -82,7 +82,7 @@
 
         if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
-            if (data["status"] === "success") {
+            if (data["status"] === shashin.apiResponse.SUCCESS) {
                 if (data.hasOwnProperty("album") &&
                     data.hasOwnProperty("albumMetadataList") &&
                     data.hasOwnProperty("albumPhotoCommentsMap") &&
@@ -214,7 +214,7 @@
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
             let commentId = data["commentId"];
-            if (data["status"] === "success") {
+            if (data["status"] === shashin.apiResponse.SUCCESS) {
                 // Delete comment
                 $("#comment" + commentId).remove();
                 let currentCount = parseInt($("#brcommentcount" + metadataId).text());

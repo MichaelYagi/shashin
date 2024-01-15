@@ -30,7 +30,7 @@ $(document).ready(function () {
                 window.top.location = window.top.location
                 $("#albumMessage").html('<div class="alert alert-success" role="alert">' + data["msg"] + '</div>');
             } else {
-                if (data["status"] === "success") {
+                if (data["status"] === shashin.apiResponse.SUCCESS) {
                     $("#albumsModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                     $("#albumsModalCancel").prop('disabled', false);
                 } else {
