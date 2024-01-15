@@ -1,31 +1,14 @@
 package com.miyagi.shashin.util
 
-import ai.djl.modality.Classifications
-import ai.djl.modality.cv.Image
-import ai.djl.modality.cv.ImageFactory
-import ai.djl.modality.cv.output.DetectedObjects
-import ai.djl.repository.zoo.Criteria
-import ai.djl.repository.zoo.ModelZoo
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
-import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
-import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.BodyInserters
-import org.springframework.web.reactive.function.client.WebClient
 import java.io.*
-import java.net.HttpURLConnection
-import java.net.URL
 import java.nio.file.Files
-import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -35,15 +18,10 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import javax.xml.bind.DatatypeConverter.parseBase64Binary
 
-
-@Suppress("UNCHECKED_CAST")
 @Component
 class FileUtils(private val metadataRepository: MetadataRepository) {
     companion object {
         private var logger: Logger = Logger.getLogger(FileUtils::class.simpleName)
-
-        @Value("\${app.sidecar.path}")
-        private var relativeSidecarDir: String? = null
 
         fun thumbnailHeight(): Int {
             return 225

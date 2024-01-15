@@ -1,7 +1,5 @@
 package com.miyagi.shashin.util
 
-import com.miyagi.shashin.repository.PersistentLoginsExpiryRepository
-import com.miyagi.shashin.repository.PersistentLoginsRepository
 import org.springframework.core.io.FileSystemResource
 import java.io.*
 import java.time.LocalDateTime

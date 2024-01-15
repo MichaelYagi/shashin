@@ -38,7 +38,7 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
 
-
+@Suppress("UNCHECKED_CAST")
 class ImageProcessing(private var apiVersion: String?, private var file: File, private var sidecarDir: String, private var metadataObj: Metadata?) {
 
     private var logger: Logger = Logger.getLogger(ImageProcessing::class.simpleName)
