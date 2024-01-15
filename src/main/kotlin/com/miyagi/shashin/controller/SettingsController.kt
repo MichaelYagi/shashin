@@ -231,7 +231,7 @@ class SettingsController {
         model["mediaDirList"] = ""
         model["mediaExcludeDirList"] = ""
         model["settings"] = ""
-        model["status"] = "success"
+        model["status"] = ApiResponse.SUCCESS.status
 
         var dirDneString = ""
         if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") && mediaDirectories != null && mediaExcludeDirectories != null) {
@@ -334,7 +334,7 @@ class SettingsController {
             mediaExcludeDirs = mediaExcludeDirList.trim().split(",").map { it.trim() }
         }
 
-        model["status"] = "success"
+        model["status"] = ApiResponse.SUCCESS.status
         var statusMessage = ""
 
         var dirDneString = ""
@@ -485,7 +485,7 @@ class SettingsController {
             model["objectRecogEnabled"] = settings.getObjectDetection()!!
         }
 
-        if (statusMessage.isBlank() && model.getAttribute("status") == "success") {
+        if (statusMessage.isBlank() && model.getAttribute("status") == ApiResponse.SUCCESS.status) {
             statusMessage = "Settings saved"
         }
 

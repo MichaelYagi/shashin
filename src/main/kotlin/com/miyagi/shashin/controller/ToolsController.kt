@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.PersistentLoginsRepository
-import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.NetworkUtils
 import com.sun.management.OperatingSystemMXBean
 import org.springframework.beans.factory.annotation.Autowired
