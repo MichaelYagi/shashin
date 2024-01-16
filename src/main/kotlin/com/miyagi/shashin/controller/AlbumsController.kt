@@ -860,25 +860,23 @@ class AlbumsController: BaseController() {
         val response = buildShareData(albumId,shareLink, queryLimit, 0)
 
         val userIp = TextUtils.getClientIp(request)
-        val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
+        val admins = userRepository.findAllByAuthorityEquals(adminRole!!)
         val album = response["album"] as Album?
 
-        if (admins != null) {
-            val notificationObjList = mutableListOf<Notification>()
-            val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
-            sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
-            for (admin in admins) {
-                val notificationObj = Notification()
-                notificationObj.setUserId(admin.getId())
-                notificationObj.setCreatedAt(getCurrentTimestamp())
-                notificationObj.setModifiedAt(getCurrentTimestamp())
-                notificationObj.setRead(false)
-                notificationObj.setMessage("IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> viewed shared album '<a href='/share/$shareLink/album/$albumId' target='_blank'>${album?.getName()}</a>' at ${sdtf.format(Date())}")
-                notificationObjList.add(notificationObj)
-            }
-            if (notificationObjList.isNotEmpty()) {
-                notificationRepository.saveAll(notificationObjList)
-            }
+        val notificationObjList = mutableListOf<Notification>()
+        val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+        sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+        for (admin in admins) {
+            val notificationObj = Notification()
+            notificationObj.setUserId(admin.getId())
+            notificationObj.setCreatedAt(getCurrentTimestamp())
+            notificationObj.setModifiedAt(getCurrentTimestamp())
+            notificationObj.setRead(false)
+            notificationObj.setMessage("IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> viewed shared album '<a href='/share/$shareLink/album/$albumId' target='_blank'>${album?.getName()}</a>' at ${sdtf.format(Date())}")
+            notificationObjList.add(notificationObj)
+        }
+        if (notificationObjList.isNotEmpty()) {
+            notificationRepository.saveAll(notificationObjList)
         }
 
         model["album"] = response["album"]!!
