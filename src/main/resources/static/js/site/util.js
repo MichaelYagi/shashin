@@ -4,8 +4,8 @@ class Util {
         return 2021;
     }
 
-    static getFullDateCreated() {
-        return "2021-8-9";
+    static getEpochCreated() {
+        return 1628560260000;
     }
 
     static lgApiKey() {
