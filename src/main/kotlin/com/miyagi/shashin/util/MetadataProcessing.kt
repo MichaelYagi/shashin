@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.repository.*
 import net.iakovlev.timeshape.TimeZoneEngine
 import org.apache.commons.lang3.StringUtils
 import java.io.File
@@ -578,5 +579,54 @@ class MetadataProcessing() {
         }
 
         return duration
+    }
+
+    companion object {
+        fun deleteAlbumPhoto(metadataRepository: MetadataRepository, albumRepository: AlbumRepository, albumPhotoRepository: AlbumPhotoRepository, metadataId: String, albumId: Int): Int? {
+            albumPhotoRepository.deleteByMetadataIdAndAlbumId(metadataId, albumId)
+            val count = albumPhotoRepository.countByAlbumId(albumId)
+            if (count != null && count.toInt() > 0) {
+                var metadataObj = metadataRepository.findById(metadataId)
+                val coverAlbumUrl = metadataObj.get().getThumbnailUrlCentered()
+                val album = albumRepository.findById(albumId)
+                if (album.isPresent && album.get().getCoverUrl() == coverAlbumUrl) {
+                    // Use the first photo in album
+                    val albumPhoto = albumPhotoRepository.findFirstByAlbumId(albumId)
+                    if (albumPhoto != null) {
+                        metadataObj = metadataRepository.findById(albumPhoto.getMetadataId().toString())
+                        album.get().setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
+                        albumRepository.save(album.get())
+                    }
+                }
+            }
+
+            return count
+        }
+
+        fun deleteAlbum(albumRepository: AlbumRepository, albumPhotoRepository: AlbumPhotoRepository, userAlbumRepository: UserAlbumRepository, commentRepository: CommentRepository, albumPhotoCommentRepository: AlbumPhotoCommentRepository, albumCommentRepository: AlbumCommentRepository, albumId: Int): Int? {
+            val count = albumPhotoRepository.countByAlbumId(albumId)
+            if (count != null && count.toInt() == 0) {
+                userAlbumRepository.deleteByAlbumId(albumId)
+                albumRepository.deleteById(albumId)
+                // Delete comments
+                val albumComments = albumCommentRepository.findAllByAlbumId(albumId)
+                if (albumComments != null) {
+                    val commentIdList = ArrayList<Int>()
+                    for (albumComment in albumComments) {
+                        if (albumComment != null && albumComment.getCommentId() !in commentIdList) {
+                            commentIdList.add(albumComment.getCommentId()!!)
+                        }
+                    }
+
+                    if (commentIdList.isNotEmpty()) {
+                        commentRepository.deleteAllById(commentIdList)
+                        albumCommentRepository.deleteByAlbumId(albumId)
+                        albumPhotoCommentRepository.deleteByAlbumId(albumId)
+                    }
+                }
+            }
+
+            return count
+        }
     }
 }

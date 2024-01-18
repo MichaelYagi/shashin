@@ -7,6 +7,7 @@ import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
+import com.miyagi.shashin.util.MetadataProcessing
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import com.miyagi.shashin.util.TextUtils.Companion.returnForbiddenError
@@ -651,45 +652,20 @@ class AlbumsController: BaseController() {
             val albumId = batchMetadataMap["albumId"].toString().toInt()
 
             for (metadataId in idArray) {
-                albumPhotoRepository.deleteByMetadataIdAndAlbumId(metadataId, albumId)
-                val count = albumPhotoRepository.countByAlbumId(albumId)
-                if (count != null && count.toInt() > 0) {
-                    var metadataObj = metadataRepository.findById(metadataId)
-                    val coverAlbumUrl = metadataObj.get().getThumbnailUrlCentered()
-                    val album = albumRepository.findById(albumId)
-                    if (album.isPresent && album.get().getCoverUrl() == coverAlbumUrl) {
-                        // Use the first photo in album
-                        val albumPhoto = albumPhotoRepository.findFirstByAlbumId(albumId)
-                        if (albumPhoto != null) {
-                            metadataObj = metadataRepository.findById(albumPhoto.getMetadataId().toString())
-                            album.get().setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
-                            albumRepository.save(album.get())
-                        }
-                    }
-                }
+                MetadataProcessing.deleteAlbumPhoto(metadataRepository, albumRepository, albumPhotoRepository, metadataId, albumId)
             }
 
-            val count = albumPhotoRepository.countByAlbumId(albumId)
+            val count = MetadataProcessing.deleteAlbum(
+                albumRepository,
+                albumPhotoRepository,
+                userAlbumRepository,
+                commentRepository,
+                albumPhotoCommentRepository,
+                albumCommentRepository,
+                albumId
+            )
+
             if (count != null && count.toInt() == 0) {
-                userAlbumRepository.deleteByAlbumId(albumId)
-                albumRepository.deleteById(albumId)
-                // Delete comments
-                val albumComments = albumCommentRepository.findAllByAlbumId(albumId)
-                if (albumComments != null) {
-                    val commentIdList = ArrayList<Int>()
-                    for (albumComment in albumComments) {
-                        if (albumComment != null && albumComment.getCommentId() !in commentIdList) {
-                            commentIdList.add(albumComment.getCommentId()!!)
-                        }
-                    }
-
-                    if (commentIdList.count() > 0) {
-                        commentRepository.deleteAllById(commentIdList)
-                        albumCommentRepository.deleteByAlbumId(albumId)
-                        albumPhotoCommentRepository.deleteByAlbumId(albumId)
-                    }
-                }
-
                 resp["msg"] = "/albums"
                 resp["status"] = "redirect"
                 return mapper.writeValueAsString(resp)
