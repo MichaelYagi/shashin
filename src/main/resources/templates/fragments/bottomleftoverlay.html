@@ -3,19 +3,10 @@
 <body th:fragment="bottomleftoverlay(metadata, targetPrefix, onclickIdPrefix, onclickFunctionCall, editClass)">
 
 <div class="thumbnail-bl" th:id="${'tnbl'+metadata.id}">
-    <a href="#" th:id="${'infoModalEdit'+metadata.id}">
-    <th:block th:if="${metadata.lat != null and metadata.lng != null}">
-        <span class="bi-info-circle" style="font-size: 1rem;color: lightgray;"></span>
-    </th:block>
-    <th:block th:unless="${metadata.lat != null and metadata.lng != null}">
-        <span class="bi-info-square" style="font-size: 1rem;color: lightgray;"></span>
-    </th:block>
-    </a>
     <th:block th:if="${onclickFunctionCall != null or targetPrefix != null}">
-        <br>
         <th:block th:if="${onclickFunctionCall != null}">
             <a href="#" th:id="${onclickIdPrefix+metadata.id}" th:class="${editClass}">
-                <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
+                <span class="bi-journal-album" style="font-size: 1rem;color: lightgray;"></span>
             </a>
             <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                 /*<![CDATA[*/
@@ -38,7 +29,16 @@
                 <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
             </a>
         </th:block>
+        <br>
     </th:block>
+    <a href="#" th:id="${'infoModalEdit'+metadata.id}">
+        <th:block th:if="${metadata.lat != null and metadata.lng != null}">
+            <span class="bi-info-circle" style="font-size: 1rem;color: lightgray;"></span>
+        </th:block>
+        <th:block th:unless="${metadata.lat != null and metadata.lng != null}">
+            <span class="bi-info-square" style="font-size: 1rem;color: lightgray;"></span>
+        </th:block>
+    </a>
 </div>
 
 </body>

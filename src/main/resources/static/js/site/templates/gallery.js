@@ -141,25 +141,11 @@ class GalleryTemplates {
 
     static getBottomLeftOverlay({metadata, overlays, data}) { return `
         <div class="thumbnail-bl" id="tnbl${metadata.id}">
-            ${($.inArray("isEditControls", overlays) !== -1) ?
-        `
-            <a href="#" id="metadataModalEdit${metadata.id}" data-bs-target="#propTimelinModal" tag="${metadata.id}">
-                <span class="${data.editIcon}" style="font-size: 1rem;color: lightgray;"></span>
-            </a>
-            ` : ''}
-        
-            ${($.inArray("isInfo", overlays) !== -1) ?
-        `
-            <a href="#" id="infoModalEdit${metadata.id}" tag="${metadata.id}">
-                <span class="${(metadata.lat !== null && metadata.lng !== null) ? `bi-info-circle` : `bi-info-square`}" style="font-size: 1rem;color: lightgray;"></span>
-            </a>
-            ` : ''}
-            
             ${($.inArray("isBlOnClickFunction", overlays) !== -1) ?
         `
             <br>
             <a href="#" id="${data.onClickIdPrefix}${metadata.id}">
-                <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
+                <span class="bi-journal-album" style="font-size: 1rem;color: lightgray;"></span>
             </a>
     
             <script type="text/javascript"${(shashin.nonce.length > 0 ? ' nonce="' + shashin.nonce + '"' : '')}>
@@ -175,6 +161,21 @@ class GalleryTemplates {
             <br>
             <a href="#" data-bs-toggle="modal" data-bs-target="#${data.onClickIdPrefix}${metadata.id}">
                 <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
+            </a>
+            ` : ''}
+            
+            ${($.inArray("isInfo", overlays) !== -1) ?
+        `
+            <br>
+            <a href="#" id="infoModalEdit${metadata.id}" tag="${metadata.id}">
+                <span class="${(metadata.lat !== null && metadata.lng !== null) ? `bi-info-circle` : `bi-info-square`}" style="font-size: 1rem;color: lightgray;"></span>
+            </a>
+            ` : ''}
+            
+            ${($.inArray("isEditControls", overlays) !== -1) ?
+        `
+            <a href="#" id="metadataModalEdit${metadata.id}" data-bs-target="#propTimelinModal" tag="${metadata.id}">
+                <span class="${data.editIcon}" style="font-size: 1rem;color: lightgray;"></span>
             </a>
             ` : ''}
         </div>
