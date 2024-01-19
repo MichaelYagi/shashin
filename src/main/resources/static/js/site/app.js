@@ -541,6 +541,7 @@
                 }
                 if (recognitionLabels !== null && recognitionLabels.length > 0) {
                     let html = ModalTemplates.PersonModalDropdownHead({metadata: metadata});
+                    const recognitionLabelNames = [];
 
                     for (index in recognitionLabels) {
                         const recognitionLabel = recognitionLabels[index];
@@ -555,6 +556,8 @@
                             recognitionLabel: recognitionLabel,
                             checkedString: checkedString
                         });
+
+                        recognitionLabelNames.push(recognitionLabel.name);
                     }
                     html += ModalTemplates.PersonModalDropdownFooter();
 
@@ -566,6 +569,8 @@
                     $(".recognitionLabel").on("click", function (e) {
                         metadataModal.populateLabel(metadata.id);
                     });
+
+                    shashin.createAutocomplete("#tagpeople", recognitionLabelNames, false);
                 }
 
                 const albumListArray = [];
@@ -592,6 +597,7 @@
 
                 if (allAlbumList !== null && allAlbumList.length > 0) {
                     let html = ModalTemplates.AlbumModalDropdownHeader({metadata: metadata});
+                    const albumNames = [];
 
                     for (index in allAlbumList) {
                         const eachAlbum = allAlbumList[index];
@@ -606,6 +612,8 @@
                             album: eachAlbum,
                             checkedString: checkedString
                         });
+
+                        albumNames.push(eachAlbum.name);
                     }
                     html += ModalTemplates.AlbumModalDropdownFooter();
 
@@ -617,6 +625,8 @@
                     $(".album").on("click", function (e) {
                         metadataModal.populateAlbum(metadata.id);
                     });
+
+                    shashin.createAutocomplete("#albumnames", albumNames, false);
                 }
 
                 if ($("#hidden").length > 0 && metadata.hidden !== null && metadata.hidden === true) {
@@ -2241,6 +2251,7 @@
         if (data.hasOwnProperty("allAlbumList") && data["allAlbumList"].length > 0) {
             let renderAlbumList = false;
             const albumList = data["allAlbumList"];
+            const albumNames = [];
 
             let batchHtml =
                 '<input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="'+albumInputVal+'">\n' +
@@ -2260,6 +2271,8 @@
                     '    <input type="checkbox" class="album" id="album'+album.id+'" value="'+Util.escapeHtml(album.name)+'" name="albums[]">\n' +
                     '    <label for="'+album.id+'">'+Util.escapeHtml(album.name)+'</label>\n' +
                     '</button>\n';
+
+                albumNames.push(Util.escapeHtml(album.name));
             }
 
             batchHtml +=
@@ -2267,6 +2280,8 @@
                 '</div>\n';
 
             if (true === renderAlbumList) {
+                shashin.createAutocomplete("#albumNameInput", albumNames, false);
+
                 $("#albumListForModal").html(batchHtml);
                 $(".album").on("click", function (e) {
                     metadataBatchModal.populateBatchAlbum();
@@ -2287,6 +2302,7 @@
         if (data.hasOwnProperty("recognitionLabels") && data["recognitionLabels"].length > 0) {
             let renderRecognitionLabels = false;
             const recognitionLabels = data["recognitionLabels"];
+            const recognitionLabelNames = [];
 
             let batchHtml =
                 '       <input type="text" class="form-control" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="'+subjectInputVal+'">\n' +
@@ -2307,6 +2323,8 @@
                         '               <input type="checkbox" class="recognitionLabel" id="recognitionLabel' + recognitionLabel.id + '" value="' + Util.escapeHtml(recognitionLabel.name) + '" name="recognitionLabel[]">\n' +
                         '               <label for="recognitionLabel' + recognitionLabel.id + '">' + Util.escapeHtml(recognitionLabel.name) + '</label>\n' +
                         '           </button>'
+
+                    recognitionLabelNames.push(recognitionLabel.name);
                 }
             }
             batchHtml +=
@@ -2314,6 +2332,8 @@
                 '</div>\n';
 
             if (true === renderRecognitionLabels) {
+                shashin.createAutocomplete("#tagBatchDataInput", recognitionLabelNames, false);
+
                 $("#batchLabelIds").html(batchHtml);
                 $("#tagBatchDataInput").on("focus", function (e) {
                     e.preventDefault();

@@ -27,6 +27,20 @@ $("#appToolsBatchEdit").on("click", function(e) {
     const lensList = $("#lensesBatchString").val().split(",");
     shashin.createAutocomplete("#lensBatchData", lensList, false);
 
+    const albumcheckedBoxes = $('input[name="albums[]"]');
+    const albumNames = [];
+    albumcheckedBoxes.each(function() {
+        albumNames.push($(this).val().replace(/ +(?= )/g,'').trim());
+    });
+    shashin.createAutocomplete("#albumNameInput", albumNames, false);
+
+    const peoplecheckedBoxes = $('input[name="recognitionLabel[]"]');
+    const peopleNames = [];
+    peoplecheckedBoxes.each(function() {
+        peopleNames.push($(this).val().replace(/ +(?= )/g,'').trim());
+    });
+    shashin.createAutocomplete("#tagBatchDataInput", peopleNames, false);
+
     $("#propBatchMetadata").modal('show');
 });
 
