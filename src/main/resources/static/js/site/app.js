@@ -718,6 +718,9 @@
                 }
                 return false;
             }
+        }).focus(function () {
+            // Show dropdown on focus
+            $(this).autocomplete("search");
         });
     }
 
