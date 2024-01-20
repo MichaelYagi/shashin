@@ -2272,7 +2272,7 @@
                 batchHtml +=
                     '<button class="dropdown-item" type="button">\n' +
                     '    <input type="checkbox" class="album" id="album'+album.id+'" value="'+Util.escapeHtml(album.name)+'" name="albums[]">\n' +
-                    '    <label for="'+album.id+'">'+Util.escapeHtml(album.name)+'</label>\n' +
+                    '    <label for="album'+album.id+'">'+Util.escapeHtml(album.name)+'</label>\n' +
                     '</button>\n';
 
                 albumNames.push(Util.escapeHtml(album.name));
