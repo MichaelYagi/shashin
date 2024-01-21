@@ -571,7 +571,7 @@
                     });
 
                     shashin.createAutocomplete("#tagpeople", recognitionLabelNames, false);
-                    shashin.synchCheckboxInputs("#tagpeople", "recognitionLabel"+metadataId);
+                    shashin.syncCheckboxInputs("#tagpeople", "recognitionLabel"+metadataId);
                 }
 
                 const albumListArray = [];
@@ -628,7 +628,7 @@
                     });
 
                     shashin.createAutocomplete("#albumnames", albumNames, false);
-                    shashin.synchCheckboxInputs("#albumnames", "album"+metadataId);
+                    shashin.syncCheckboxInputs("#albumnames", "album"+metadataId);
                 }
 
                 if ($("#hidden").length > 0 && metadata.hidden !== null && metadata.hidden === true) {
@@ -665,7 +665,7 @@
         });
     }
 
-    shashin.synchCheckboxInputs = function(inputEl, checkboxElName) {
+    shashin.syncCheckboxInputs = function(inputEl, checkboxElName) {
         $(inputEl).on( "blur", function(e) {
             const terms = shashin.autocompleteSplit(this.value.trim());
             const checkBoxes = $('input[name="'+checkboxElName+'[]"]');
@@ -2301,7 +2301,7 @@
 
             if (true === renderAlbumList) {
                 shashin.createAutocomplete("#albumNameInput", albumNames, false);
-                shashin.synchCheckboxInputs("#albumNameInput", "albums");
+                shashin.syncCheckboxInputs("#albumNameInput", "albums");
 
                 $("#albumListForModal").html(batchHtml);
                 $(".album").on("click", function (e) {
@@ -2354,7 +2354,7 @@
 
             if (true === renderRecognitionLabels) {
                 shashin.createAutocomplete("#tagBatchDataInput", recognitionLabelNames, false);
-                shashin.synchCheckboxInputs("#tagBatchDataInput", "recognitionLabel");
+                shashin.syncCheckboxInputs("#tagBatchDataInput", "recognitionLabel");
 
                 $("#batchLabelIds").html(batchHtml);
                 $("#tagBatchDataInput").on("focus", function (e) {
