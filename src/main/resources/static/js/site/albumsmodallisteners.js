@@ -146,12 +146,35 @@
 
         $("#clearLink").on("click", function (e) {
             e.preventDefault();
-            albumsModalSettings.updateShareLink(baseUrl, albumId, "clear");
+
+            const action = "clear";
+            $("#shareConfirmationModalTitle").text(action.charAt(0).toUpperCase() + action.slice(1));
+            $("#shareConfirmationModalAction").text(action);
+            $("#shareConfirmationAction").val(action);
+            $("#shareConfirmationModal").modal('show');
         });
 
         $("#generateLink").on("click", function (e) {
             e.preventDefault();
-            albumsModalSettings.updateShareLink(baseUrl, albumId, "generate");
+
+            const action = "generate";
+            $("#shareConfirmationModalTitle").text(action.charAt(0).toUpperCase() + action.slice(1));
+            $("#shareConfirmationModalAction").text(action);
+            $("#shareConfirmationAction").val(action);
+            $("#shareConfirmationModal").modal('show');
+        });
+
+        $("#shareConfirmation").on("click", function (e) {
+            e.preventDefault();
+
+            const action = $("#shareConfirmationAction").val();
+            if (action !== null && action.length > 0) {
+                if (action === "clear") {
+                    albumsModalSettings.updateShareLink(baseUrl, albumId, "clear");
+                } else if (action === "generate") {
+                    albumsModalSettings.updateShareLink(baseUrl, albumId, "generate");
+                }
+            }
         });
 
         $("#copyLink").on("click", function (e) {
