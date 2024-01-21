@@ -145,23 +145,30 @@
         }
 
         $("#clearLink").on("click", function (e) {
-            e.preventDefault();
+            if ($("#shareLink").val() !== "") {
+                e.preventDefault()
+                $("#shareConfirmationModalInfo").text(" Share link for this album will be lost!");
 
-            const action = "clear";
-            $("#shareConfirmationModalTitle").text(action.charAt(0).toUpperCase() + action.slice(1));
-            $("#shareConfirmationModalAction").text(action);
-            $("#shareConfirmationAction").val(action);
-            $("#shareConfirmationModal").modal('show');
+                const action = "clear";
+                $("#shareConfirmationModalTitle").text(action.charAt(0).toUpperCase() + action.slice(1));
+                $("#shareConfirmationModalAction").text(action);
+                $("#shareConfirmationAction").val(action);
+                $("#shareConfirmationModal").modal('show');
+            }
         });
 
         $("#generateLink").on("click", function (e) {
             e.preventDefault();
+            $("#shareConfirmationModalInfo").text("");
 
             const action = "generate";
             $("#shareConfirmationModalTitle").text(action.charAt(0).toUpperCase() + action.slice(1));
             $("#shareConfirmationModalAction").text(action);
             $("#shareConfirmationAction").val(action);
             $("#shareConfirmationModal").modal('show');
+            if ($("#shareLink").val() !== "") {
+                $("#shareConfirmationModalInfo").text(" Previous share links for this album will be lost!");
+            }
         });
 
         $("#shareConfirmation").on("click", function (e) {
