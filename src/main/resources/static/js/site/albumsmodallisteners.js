@@ -147,7 +147,7 @@
         $("#clearLink").on("click", function (e) {
             if ($("#shareLink").val() !== "") {
                 e.preventDefault()
-                $("#shareConfirmationModalInfo").text(" Share link for this album will be lost!");
+                $("#shareConfirmationModalInfo").show();
 
                 const action = "clear";
                 $("#shareConfirmationModalTitle").text(action.charAt(0).toUpperCase() + action.slice(1));
@@ -159,7 +159,7 @@
 
         $("#generateLink").on("click", function (e) {
             e.preventDefault();
-            $("#shareConfirmationModalInfo").text("");
+            $("#shareConfirmationModalInfo").hide();
 
             const action = "generate";
             $("#shareConfirmationModalTitle").text(action.charAt(0).toUpperCase() + action.slice(1));
@@ -167,7 +167,8 @@
             $("#shareConfirmationAction").val(action);
             $("#shareConfirmationModal").modal('show');
             if ($("#shareLink").val() !== "") {
-                $("#shareConfirmationModalInfo").text(" Previous share links for this album will be lost!");
+                $("#shareConfirmationModalInfo").show();
+                $("#shareConfirmationModalAction").text("re" + action);
             }
         });
 
