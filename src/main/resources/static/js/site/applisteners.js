@@ -33,6 +33,7 @@ $("#appToolsBatchEdit").on("click", function(e) {
         albumNames.push($(this).val().replace(/ +(?= )/g,'').trim());
     });
     shashin.createAutocomplete("#albumNameInput", albumNames, false);
+    shashin.validateCheckboxInputs("#albumNameInput", "albums");
 
     const peoplecheckedBoxes = $('input[name="recognitionLabel[]"]');
     const peopleNames = [];
@@ -40,6 +41,7 @@ $("#appToolsBatchEdit").on("click", function(e) {
         peopleNames.push($(this).val().replace(/ +(?= )/g,'').trim());
     });
     shashin.createAutocomplete("#tagBatchDataInput", peopleNames, false);
+    shashin.validateCheckboxInputs("#tagBatchDataInput", "recognitionLabel");
 
     $("#propBatchMetadata").modal('show');
 });
