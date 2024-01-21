@@ -571,6 +571,7 @@
                     });
 
                     shashin.createAutocomplete("#tagpeople", recognitionLabelNames, false);
+                    shashin.validateCheckboxInputs("#tagpeople", "recognitionLabel"+metadataId);
                 }
 
                 const albumListArray = [];
@@ -627,6 +628,7 @@
                     });
 
                     shashin.createAutocomplete("#albumnames", albumNames, false);
+                    shashin.validateCheckboxInputs("#albumnames", "album"+metadataId);
                 }
 
                 if ($("#hidden").length > 0 && metadata.hidden !== null && metadata.hidden === true) {
@@ -660,6 +662,21 @@
                 // Open modal window
                 $("#propMetadata").modal('show');
             }
+        });
+    }
+
+    shashin.validateCheckboxInputs = function(inputEl, checkboxElName) {
+        $(inputEl).on( "blur", function(e) {
+            const terms = shashin.autocompleteSplit(this.value.trim());
+            const checkBoxes = $('input[name="'+checkboxElName+'[]"]');
+
+            checkBoxes.each(function() {
+                if ($.inArray($(this).val(), terms) !== -1) {
+                    $(this).prop("checked", true);
+                } else {
+                    $(this).prop("checked", false);
+                }
+            });
         });
     }
 
