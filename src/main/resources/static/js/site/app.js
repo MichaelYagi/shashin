@@ -571,7 +571,7 @@
                     });
 
                     shashin.createAutocomplete("#tagpeople", recognitionLabelNames, false);
-                    shashin.validateCheckboxInputs("#tagpeople", "recognitionLabel"+metadataId);
+                    shashin.synchCheckboxInputs("#tagpeople", "recognitionLabel"+metadataId);
                 }
 
                 const albumListArray = [];
@@ -628,7 +628,7 @@
                     });
 
                     shashin.createAutocomplete("#albumnames", albumNames, false);
-                    shashin.validateCheckboxInputs("#albumnames", "album"+metadataId);
+                    shashin.synchCheckboxInputs("#albumnames", "album"+metadataId);
                 }
 
                 if ($("#hidden").length > 0 && metadata.hidden !== null && metadata.hidden === true) {
@@ -665,7 +665,7 @@
         });
     }
 
-    shashin.validateCheckboxInputs = function(inputEl, checkboxElName) {
+    shashin.synchCheckboxInputs = function(inputEl, checkboxElName) {
         $(inputEl).on( "blur", function(e) {
             const terms = shashin.autocompleteSplit(this.value.trim());
             const checkBoxes = $('input[name="'+checkboxElName+'[]"]');
