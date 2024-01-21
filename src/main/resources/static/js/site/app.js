@@ -2301,6 +2301,7 @@
 
             if (true === renderAlbumList) {
                 shashin.createAutocomplete("#albumNameInput", albumNames, false);
+                shashin.synchCheckboxInputs("#albumNameInput", "albums");
 
                 $("#albumListForModal").html(batchHtml);
                 $(".album").on("click", function (e) {
@@ -2353,6 +2354,7 @@
 
             if (true === renderRecognitionLabels) {
                 shashin.createAutocomplete("#tagBatchDataInput", recognitionLabelNames, false);
+                shashin.synchCheckboxInputs("#tagBatchDataInput", "recognitionLabel");
 
                 $("#batchLabelIds").html(batchHtml);
                 $("#tagBatchDataInput").on("focus", function (e) {
