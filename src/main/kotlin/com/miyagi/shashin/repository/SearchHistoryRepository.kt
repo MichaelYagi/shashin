@@ -8,10 +8,11 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface SearchHistoryRepository : CrudRepository<SearchHistory?, Int?> {
-    @Query("SELECT * FROM searchhistory WHERE user_id = :userId ORDER BY created_at DESC LIMIT :limit", nativeQuery = true)
+    @Query("SELECT * FROM searchhistory WHERE user_id = :userId ORDER BY modified_at DESC LIMIT :limit", nativeQuery = true)
     fun findTopNByUserIdOrderByCreatedAtDesc(@Param("userId") userId: Int, @Param("limit") limit: Int): MutableIterable<SearchHistory>?
     @Query("SELECT * FROM searchhistory WHERE user_id = :userId ORDER BY id ASC LIMIT :limit", nativeQuery = true)
     fun findTopNByUserIdOrderByIdDesc(@Param("userId") userId: Int, @Param("limit") limit: Int): MutableIterable<SearchHistory>?
     fun countByUserIdAndTermIgnoreCase(userId: Int, term: String): Int
     fun countByUserId(userId: Int): Int
+    fun findDistinctByUserIdAndTerm(@Param("userId") userId: Int, term: String): SearchHistory?
 }
