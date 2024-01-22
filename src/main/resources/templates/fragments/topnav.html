@@ -101,10 +101,6 @@
                             }
                         })
 
-                        const submitSearch = function() {
-                            $("#appSearchSubmit").click();
-                        }
-
                         const http = new Http("search history");
                         const data = await http.ajax("get", "/search/history");
 
@@ -121,7 +117,9 @@
                                         }
 
                                         /*<![CDATA[*/
-                                        shashin.createAutocomplete("#appSearchInput", searchHistoryData, false, /*[[${searchHistoryLimit}]]*/15, submitSearch);
+                                        shashin.createAutocomplete("#appSearchInput", searchHistoryData, false, /*[[${searchHistoryLimit}]]*/15, function () {
+                                            $("#appSearchSubmit").click();
+                                        });
                                         /*]]>*/
                                     }
                                 }
