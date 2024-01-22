@@ -204,7 +204,6 @@ class SearchController: BaseController() {
                         searchHistory =
                             searchHistoryRepository?.findDistinctByUserIdAndTerm(currentUserObj.getId(), term)
                         searchHistory?.setModifiedAt(TextUtils.getCurrentTimestamp())
-
                     }
 
                     if (searchHistory != null) {
