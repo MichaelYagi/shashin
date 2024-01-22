@@ -91,7 +91,7 @@
         <div class="flex-grow-1 d-flex align-items-center">
             <form id="appSearch" class="w-100" action="/search" method="post">
                 <input id="appSearchInput" name="appSearchInput" class="form-control" type="search" placeholder="Search" aria-label="Search" th:value="${term}">
-                <input type="submit" style="position: absolute; left: -9999px"/>
+                <input type="submit" id="appSearchSubmit" style="position: absolute; left: -9999px"/>
                 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                     $(document).ready(async function () {
                         $("#appSearch").on("submit", function (e) {
@@ -100,6 +100,10 @@
                                 e.preventDefault();
                             }
                         })
+
+                        const submitSearch = function() {
+                            $("#appSearchSubmit").click();
+                        }
 
                         const http = new Http("search history");
                         const data = await http.ajax("get", "/search/history");
@@ -117,7 +121,7 @@
                                         }
 
                                         /*<![CDATA[*/
-                                        shashin.createAutocomplete("#appSearchInput", searchHistoryData, false, /*[[${searchHistoryLimit}]]*/15);
+                                        shashin.createAutocomplete("#appSearchInput", searchHistoryData, false, /*[[${searchHistoryLimit}]]*/15, submitSearch);
                                         /*]]>*/
                                     }
                                 }

@@ -680,7 +680,7 @@
         });
     }
 
-    shashin.createAutocomplete = function(inputEl, source, commaDelimited, resultLimit) {
+    shashin.createAutocomplete = function(inputEl, source, commaDelimited, resultLimit, functionOnSelect) {
 
         $(inputEl).autocomplete({
             minLength: 0,
@@ -733,6 +733,11 @@
                 } else {
                     this.value = terms;
                 }
+
+                if (functionOnSelect !== undefined && typeof functionOnSelect === 'function') {
+                    functionOnSelect();
+                }
+
                 return false;
             }
         }).focus(function () {
