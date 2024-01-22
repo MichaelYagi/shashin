@@ -64,6 +64,7 @@ class Search {
         const mediaContentList = [];
         if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("metadataSearchList") && data["status"] === shashin.apiResponse.SUCCESS) {
             const metadataList = data["metadataSearchList"];
+            const favoritesMap = data["favorites"];
 
             if (metadataList !== null && metadataList.length > 0) {
                 const mediaLinkLength = $(".mediaLink").length;
@@ -79,6 +80,10 @@ class Search {
                     overlayFlags.renderTopLeft = true;
                     overlayFlags.renderBottomLeft = true;
                     overlayFlags.renderCenter = true;
+                    overlayFlags.renderBottomRight = true;
+
+                    const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
+                    const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
 
                     const dateHeadingCount = $(".dateSection").length;
                     const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
@@ -89,12 +94,15 @@ class Search {
                         dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
                     }
 
-                    const overlayData = shashin.getOverlayData(metadata,{cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,overlayFlags});
+                    const overlayData = shashin.getOverlayData(metadata,{cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,favoriteCount:favoriteCount,favoriteIcon:favoriteIcon,overlayFlags});
 
                     mediaContentList.push(shashin.getMediaContent(metadata));
 
                     const uuid = uuidv4();
-                    $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid})).insertAfter($("."+appendClass).last());
+                    $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid})).insertAfter($("."+appendClass).last()).ready(function () {
+                        // Call JS and modal
+                        shashin.updateFavorites("#favorite","#brfavoriteicon","#briconcount",metadata.id);
+                    });
                 }
 
                 $("#spinner").css("display", "none");

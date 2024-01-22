@@ -1315,7 +1315,7 @@ class AlbumsController: BaseController() {
                                     if (favorite != null) {
                                         favoritesMap[albumPhoto.getMetadataId().toString()] = hashMapOf(
                                             "favorite" to (favorite.getUserId() == currentUserObj.getId()),
-                                            "count" to favoriteRepository.countAllByMetadataId(albumPhoto.getMetadataId().toString())
+                                            "count" to favoriteRepository.countAllByMetadataId(albumPhoto.getMetadataId().toString()) as Any
                                         )
 
                                         if (favorite.getUserId() == currentUserObj.getId()) {
