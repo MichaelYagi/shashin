@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.SearchHistory
 import com.miyagi.shashin.model.User
+import com.miyagi.shashin.repository.FavoriteRepository
 import com.miyagi.shashin.repository.KeywordRepository
 import com.miyagi.shashin.repository.SearchHistoryRepository
 import com.miyagi.shashin.repository.SearchRepository
@@ -38,6 +39,9 @@ class SearchController: BaseController() {
     @Autowired
     private val keywordRepository: KeywordRepository? = null
 
+    @Autowired
+    private val favoriteRepository: FavoriteRepository? = null
+
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
@@ -54,6 +58,7 @@ class SearchController: BaseController() {
         getAllAttributeData(model)
 
         model["term"] = response["term"]!!
+        model["favorites"] = response["favorites"]!!
         model["metadataSearchList"] = response["metadataSearchList"]!!
         model["status"] = response["status"]!!
 
@@ -81,27 +86,56 @@ class SearchController: BaseController() {
         response["term"] = ""
         response["metadataSearchList"] = mutableListOf<Metadata>()
         response["keywordMap"] = mutableMapOf<String, String>()
+        response["favorites"] = mutableMapOf<String, String>()
+        val currentUserObj = model.getAttribute("currentUser") as User?
 
         if (!term.isNullOrBlank()) {
             response["term"] = term
+
+            val favoritesMap = HashMap<String, HashMap<String, Any>>()
+
             val queryLimit = model.getAttribute("queryLimit").toString().toInt()
             val pageValue = page*queryLimit
+            var metadataList: MutableIterable<Metadata>? = null
             if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
-                val metadataList = searchRepository?.findMetadataBySearchTerm(term,pageValue,queryLimit)
+                metadataList = searchRepository?.findMetadataBySearchTerm(term,pageValue,queryLimit)
                 response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
             } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
-                val currentUserObj = model.getAttribute("currentUser") as User?
                 if (currentUserObj != null) {
-                    val metadataList = searchRepository?.findMetadataBySearchTermAndUserId(term,currentUserObj.getId(),pageValue,queryLimit)
+                    metadataList = searchRepository?.findMetadataBySearchTermAndUserId(term,currentUserObj.getId(),pageValue,queryLimit)
                     response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
                 }
             }
+
+            if (metadataList != null) {
+                for (metadata in metadataList) {
+                    val favorites = favoriteRepository!!.findAllByMetadataId(metadata.getId())
+                    if (favorites != null) {
+                        for (favorite in favorites) {
+                            if (favorite != null) {
+                                val favCount = favoriteRepository.countAllByMetadataId(metadata.getId())
+
+                                favoritesMap[metadata.getId()] = hashMapOf(
+                                    "favorite" to (favorite.getUserId() == currentUserObj?.getId()),
+                                    "count" to favCount
+                                )
+
+                                if (favorite.getUserId() == currentUserObj?.getId()) {
+                                    break
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
             val keywordMap = mutableMapOf<String, String>()
             for (keywordGroup in keywordList) {
                 keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
             }
             response["keywordMap"] = keywordMap
+            response["favorites"] = favoritesMap
         }
 
         response["status"] = ApiResponse.SUCCESS.status
