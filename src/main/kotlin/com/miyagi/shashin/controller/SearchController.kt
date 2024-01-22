@@ -193,20 +193,29 @@ class SearchController: BaseController() {
                 val searchTermCount = searchHistoryRepository?.countByUserIdAndTermIgnoreCase(currentUserObj.getId(), term.lowercase())
                 if (term.isNotBlank()) {
                     val searchHistoryCount = searchHistoryRepository?.countByUserId(currentUserObj.getId())
+                    val searchHistory: SearchHistory?
                     if (searchTermCount == 0) {
-                        val searchHistory = SearchHistory()
+                        searchHistory = SearchHistory()
                         searchHistory.setTerm(term)
                         searchHistory.setUserId(currentUserObj.getId())
                         searchHistory.setCreatedAt(TextUtils.getCurrentTimestamp())
                         searchHistory.setModifiedAt(TextUtils.getCurrentTimestamp())
+                    } else {
+                        searchHistory =
+                            searchHistoryRepository?.findDistinctByUserIdAndTerm(currentUserObj.getId(), term)
+                        searchHistory?.setModifiedAt(TextUtils.getCurrentTimestamp())
+
+                    }
+
+                    if (searchHistory != null) {
                         searchHistoryRepository?.save(searchHistory)
                     }
 
                     val searchHistoryLimit = model.getAttribute("searchHistoryLimit").toString().toInt()
                     if (searchHistoryCount != null && searchHistoryCount > searchHistoryLimit) {
-                        val searchHistory = searchHistoryRepository?.findTopNByUserIdOrderByIdDesc(currentUserObj.getId(), 1)
-                        if (searchHistory != null && searchHistory.count() > 0) {
-                            searchHistoryRepository?.deleteById(searchHistory.last().getId())
+                        val searchHistoryRefresh = searchHistoryRepository?.findTopNByUserIdOrderByIdDesc(currentUserObj.getId(), 1)
+                        if (searchHistoryRefresh != null && searchHistoryRefresh.count() > 0) {
+                            searchHistoryRepository?.deleteById(searchHistoryRefresh.last().getId())
                         }
                     }
 
