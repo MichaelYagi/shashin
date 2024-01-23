@@ -374,29 +374,35 @@ class AlbumsController: BaseController() {
                     response["albumsList"] = albums
                     response["albumsCommentsMap"] = albumsCommentsMap
 
-                    val userCount = userRepository.count()
-                    if (userCount > 1 && currentUserObj.getAuthority()!! == "ROLE_ADMIN") {
-                        response["userAlbums"] = userAlbumRepository.findAllByOrderByUserIdAsc()!!
-                        response["userCount"] = userCount
-                        val sharedAlbumsList = ArrayList<HashMap<String, Any>>()
-                        val sharedAlbumsAlbumMap = HashMap<Int, Int>()
+                    if (currentUserObj.getAuthority()!! == "ROLE_ADMIN") {
+                        val userCount = userRepository.count()
 
-                        val sharedAlbums = userRepository.findUserBySharedAlbum(currentUserObj.getId())
-                        for (sharedAlbum in sharedAlbums) {
-                            val sharedAlbumsMap = HashMap<String, Any>()
-                            sharedAlbumsMap["userId"] = sharedAlbum.getUserId().toString().toInt()
-                            sharedAlbumsMap["albumId"] = sharedAlbum.getAlbumId().toString().toInt()
-                            sharedAlbumsMap["username"] = sharedAlbum.getUsername().toString()
-                            sharedAlbumsMap["isShared"] = sharedAlbum.getIsShared().toString().toInt()
-                            if (!sharedAlbumsAlbumMap.containsKey(sharedAlbum.getAlbumId().toString().toInt()) && sharedAlbum.getIsShared().toString().toInt() == 1) {
-                                sharedAlbumsAlbumMap[sharedAlbum.getAlbumId().toString().toInt()] =
-                                    sharedAlbum.getIsShared().toString().toInt()
+                        if (userCount > 1) {
+                            response["userAlbums"] = userAlbumRepository.findAllByOrderByUserIdAsc()!!
+                            response["userCount"] = userCount
+                            val sharedAlbumsList = ArrayList<HashMap<String, Any>>()
+                            val sharedAlbumsAlbumMap = HashMap<Int, Int>()
+
+                            val sharedAlbums = userRepository.findUserBySharedAlbum(currentUserObj.getId())
+                            for (sharedAlbum in sharedAlbums) {
+                                val sharedAlbumsMap = HashMap<String, Any>()
+                                sharedAlbumsMap["userId"] = sharedAlbum.getUserId().toString().toInt()
+                                sharedAlbumsMap["albumId"] = sharedAlbum.getAlbumId().toString().toInt()
+                                sharedAlbumsMap["username"] = sharedAlbum.getUsername().toString()
+                                sharedAlbumsMap["isShared"] = sharedAlbum.getIsShared().toString().toInt()
+                                if (!sharedAlbumsAlbumMap.containsKey(
+                                        sharedAlbum.getAlbumId().toString().toInt()
+                                    ) && sharedAlbum.getIsShared().toString().toInt() == 1
+                                ) {
+                                    sharedAlbumsAlbumMap[sharedAlbum.getAlbumId().toString().toInt()] =
+                                        sharedAlbum.getIsShared().toString().toInt()
+                                }
+
+                                sharedAlbumsList.add(sharedAlbumsMap)
                             }
-
-                            sharedAlbumsList.add(sharedAlbumsMap)
+                            response["sharedAlbums"] = sharedAlbumsList
+                            response["sharedAlbumsMap"] = sharedAlbumsAlbumMap
                         }
-                        response["sharedAlbums"] = sharedAlbumsList
-                        response["sharedAlbumsMap"] = sharedAlbumsAlbumMap
                     }
                     response["message"] = ""
                 }
