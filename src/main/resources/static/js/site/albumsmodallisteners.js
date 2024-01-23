@@ -231,16 +231,24 @@
             $("#albumsModalStatus").css("visibility", "visible");
             $("#albumsModalStatus").attr("title", "");
             $("#cancelUserShare").prop('disabled', true);
+            $("#userShare"+albumId).css('display', 'none');
 
             let userShareMap = {};
+            let albumShared = false;
             $('input[name^="userShare' + albumId + '"]').each(function () {
                 let checkboxId = $(this).attr('id');
                 let isChecked = $(this).prop("checked");
+                if (true === isChecked) {
+                    albumShared = true;
+                }
 
                 let checkboxIdArray = checkboxId.split("-");
                 let userId = checkboxIdArray[1];
                 userShareMap[userId] = isChecked
             });
+            if (true === albumShared) {
+                $("#userShare"+albumId).css('display', 'inline-block');
+            }
 
             const http = new Http("share album");
             let json = {albumId: albumId, userShareMap: JSON.stringify(userShareMap)}
