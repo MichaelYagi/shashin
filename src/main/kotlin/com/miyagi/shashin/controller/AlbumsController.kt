@@ -375,7 +375,7 @@ class AlbumsController: BaseController() {
                     response["albumsCommentsMap"] = albumsCommentsMap
 
                     val userCount = userRepository.count()
-                    if (userCount > 1) {
+                    if (userCount > 1 && currentUserObj.getAuthority()!! == "ROLE_ADMIN") {
                         response["userAlbums"] = userAlbumRepository.findAllByOrderByUserIdAsc()!!
                         response["userCount"] = userCount
                         val sharedAlbumsList = ArrayList<HashMap<String, Any>>()
