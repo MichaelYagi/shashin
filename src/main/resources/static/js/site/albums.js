@@ -43,6 +43,7 @@ class Albums {
 
         if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("albumsList") && data["status"] === shashin.apiResponse.SUCCESS) {
             const albumsList = data["albumsList"];
+            const sharedAlbumMap = data["sharedAlbumsMap"];
 
             if (albumsList !== null && albumsList.length > 0) {
 
@@ -72,7 +73,7 @@ class Albums {
                         html += '&nbsp;&nbsp;&nbsp;<a href="#" id="trash'+album.id+'" title="Delete album"><span class="bi-trash"></span></a>';
                     }
 
-                    html += '<p class="card-text"><small class="text-muted">'+album.albumPhotoCount + (album.albumPhotoCount === 1 ? ' photo':' photos') + '&nbsp;&nbsp;&nbsp;&nbsp;' + album.albumVideoCount + (album.albumVideoCount === 1 ? ' video':' videos')+'</small></p>';
+                    html += '<p class="card-text"><small class="text-muted">'+album.albumPhotoCount + (album.albumPhotoCount === 1 ? ' photo':' photos') + '&nbsp;&nbsp;&nbsp;&nbsp;' + album.albumVideoCount + (album.albumVideoCount === 1 ? ' video':' videos')+'</small>&nbsp;&nbsp;&nbsp;&nbsp;<span id="userShare'+album.id+'" title="Shared with user" style="'+(sharedAlbumMap.hasOwnProperty(album.id) ? "display: inline-block" : "display: none") +'"><span class="bi-person-up"></span></span></p>';
                     html += '</div></div>';
 
                     html += '<script type="text/javascript" nonce="'+cspNonce+'">Albums.setAlbumsEventListeners('+album.id+', "'+baseUrl+'", '+showControls+', "'+cspNonce+'");<\/script>';
@@ -102,6 +103,7 @@ class Albums {
     static setAlbumsEventListeners(albumId, baseUrl, showControls, cspNonce) {
 
         if (true === showControls) {
+
             $("#share" + albumId).on("click", async function (e) {
                 e.preventDefault();
 
