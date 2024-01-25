@@ -145,7 +145,7 @@ class GalleryTemplates {
         `
             <br>
             <a href="#" id="${data.onClickIdPrefix}${metadata.id}">
-                <span class="bi-journal-album" style="font-size: 1rem;color: lightgray;"></span>
+                <span class="bi-journal-album" style="font-size: 1rem;color: lightgray;" title="Set as album cover"></span>
             </a>
     
             <script type="text/javascript"${(shashin.nonce.length > 0 ? ' nonce="' + shashin.nonce + '"' : '')}>
@@ -168,7 +168,7 @@ class GalleryTemplates {
         `
             <br>
             <a href="#" id="infoModalEdit${metadata.id}" tag="${metadata.id}">
-                <span class="${(metadata.lat !== null && metadata.lng !== null) ? `bi-info-circle` : `bi-info-square`}" style="font-size: 1rem;color: lightgray;"></span>
+                <span class="${(metadata.lat !== null && metadata.lng !== null) ? `bi-info-circle` : `bi-info-square`}" style="font-size: 1rem;color: lightgray;" title="Set as album cover"></span>
             </a>
             ` : ''}
             
