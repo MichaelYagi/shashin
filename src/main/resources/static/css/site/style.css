@@ -77,6 +77,10 @@ body {
   text-transform: uppercase;
 }
 
+.context-text-wrap {
+  text-wrap: wrap !important;
+}
+
 .sidebar-right {
   position: fixed;
   display: block;

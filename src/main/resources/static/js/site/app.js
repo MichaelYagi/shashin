@@ -1086,6 +1086,7 @@
                     const contextItem = {
                         text: "<strong>" + placeJson["name"] + "</strong>",
                         // classname: "ol-ctx-menu-separator" // Make unselectable text
+                        classname: "context-text-wrap",
                         callback: copyPlacename
                     }
                     contextItem.data = { placename: placeJson["name"] };
