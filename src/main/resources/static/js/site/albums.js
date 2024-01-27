@@ -20,9 +20,11 @@ class Albums {
     async loadNextPage() {
         if (this.rendering === false) {
             // console.log(this.page)
-            this.updateAlbums(this.page, this.activePage).then(function(data) {
-                this.page++;
-            }.bind(this));
+            setTimeout(function () {
+                this.updateAlbums(this.page, this.activePage).then(function(data) {
+                    this.page++;
+                }.bind(this));
+            }.bind(this), 0);
         }
     }
 
