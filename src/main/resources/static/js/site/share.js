@@ -21,11 +21,13 @@ class ShareAlbum {
     async loadNextPage() {
         if (this.albumId > 0 && this.rendering === false) {
             // console.log(this.page)
-            this.updateAlbum(this.albumId, this.page, this.activePage).then(function (additionalMediaContentList) {
-                // console.log(additionalMediaContentList)
-                this.page++;
-                this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
-            }.bind(this));
+            setTimeout(function () {
+                this.updateAlbum(this.albumId, this.page, this.activePage).then(function (additionalMediaContentList) {
+                    // console.log(additionalMediaContentList)
+                    this.page++;
+                    this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+                }.bind(this));
+            }.bind(this), 0);
         }
 
         return parseInt($("#currentPage").val());

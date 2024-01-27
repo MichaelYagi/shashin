@@ -34,15 +34,17 @@ class Folder {
     async loadNextPage() {
         if (this.rendering === false) {
             // console.log(this.page)
-            this.updateRecent(this.page, this.folderName, this.activePage).then(function (additionalMediaContentList) {
-                // console.log(additionalMediaContentList)
-                this.page++;
-                this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+            setTimeout(function () {
+                this.updateRecent(this.page, this.folderName, this.activePage).then(function (additionalMediaContentList) {
+                    // console.log(additionalMediaContentList)
+                    this.page++;
+                    this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
 
-                if (this.eol) {
-                    setTimeout(() => {Util.reinitLightGalleryInstance({timeoutValue:0,mediaContentList:additionalMediaContentList,refreshContent:true});}, 0);
-                }
-            }.bind(this));
+                    if (this.eol) {
+                        setTimeout(() => {Util.reinitLightGalleryInstance({timeoutValue:0,mediaContentList:additionalMediaContentList,refreshContent:true});}, 0);
+                    }
+                }.bind(this));
+            }.bind(this), 0);
         }
     }
 
