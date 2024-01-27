@@ -118,21 +118,21 @@ class GalleryTemplates {
 
     static getBottomRightOverlay({id, overlays, data}) { return `
         <div class="thumbnail-br" id="tnbr${id}">
-            ${($.inArray("isFavorites", overlays) !== -1) ?
-            `
-            <a href="#" id="favorite${id}" class="text-decoration-none">
-                <span class="overlayIconBackground">
-                    <span id="briconcount${id}">${data.favoriteCount}</span>&nbsp;<span class="${data.favoriteIcon} overlayIcon" id="brfavoriteicon${id}"></span>
-                </span>
-            </a>
-            ` : ''}
-            
             ${($.inArray("isComments", overlays) !== -1) ?
             `
-            <br>
+            
             <a href="#" data-bs-toggle="modal" data-bs-target="#propalbumphotocomment${id}" class="overlayCommentIconBackground overlayCommentText">
                 <span id="brcommentcount${id}">${data.albumPhotoCommentsMap.hasOwnProperty(id) ? data.albumPhotoCommentsMap[id].length : `0`}</span> 
                 <span id="bricon${id}" class="bi-chat-square position-relative overlayCommentIcon">
+                </span>
+            </a>
+            ` : ''}
+            ${($.inArray("isFavorites", overlays) !== -1) ?
+            `
+            <br>
+            <a href="#" id="favorite${id}" class="text-decoration-none">
+                <span class="overlayIconBackground">
+                    <span id="briconcount${id}">${data.favoriteCount}</span>&nbsp;<span class="${data.favoriteIcon} overlayIcon" id="brfavoriteicon${id}"></span>
                 </span>
             </a>
             ` : ''}
