@@ -1491,7 +1491,7 @@ class AlbumsController: BaseController() {
             if (postAlbumId == albumId && albumName.isNotEmpty()) {
                 val foundAlbumRecord = albumRepository.findAlbumByNameIgnoreCase(albumName)
 
-                return if (foundAlbumRecord == null) {
+                return if (foundAlbumRecord == null || foundAlbumRecord.getId() == albumId) {
                     val albumObj = albumRepository.findById(albumId).get()
                     albumObj.setName(albumName)
                     albumRepository.save(albumObj)
