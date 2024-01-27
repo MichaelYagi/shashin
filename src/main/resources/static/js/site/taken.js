@@ -34,17 +34,15 @@ class Taken {
     async loadNextPage() {
         if (this.rendering === false) {
             // console.log(this.page)
-            setTimeout(function () {
-                this.updateTaken(this.page, this.activePage, this.mediaTypeFilter).then(function (additionalMediaContentList) {
-                    // console.log(additionalMediaContentList)
-                    this.page++;
-                    this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+            this.updateTaken(this.page, this.activePage, this.mediaTypeFilter).then(function (additionalMediaContentList) {
+                // console.log(additionalMediaContentList)
+                this.page++;
+                this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
 
-                    if (this.eol) {
-                        setTimeout(() => {Util.reinitLightGalleryInstance({timeoutValue:0,mediaContentList:additionalMediaContentList,refreshContent:true});}, 0);
-                    }
-                }.bind(this));
-            }.bind(this), 0);
+                if (this.eol) {
+                    setTimeout(() => {Util.reinitLightGalleryInstance({timeoutValue:0,mediaContentList:additionalMediaContentList,refreshContent:true});}, 0);
+                }
+            }.bind(this));
         }
     }
 

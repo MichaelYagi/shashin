@@ -27,17 +27,15 @@
         async function loadNextPage() {
             if (albumSettings.rendering === false) {
                 // console.log(albumSettings.page)
-                setTimeout(function () {
-                    albumSettings.getPagedAlbum(albumId, mediaTypeFilter, albumSettings.page, activePage).then(function (additionalMediaContentList) {
-                        // console.log(additionalMediaContentList)
-                        albumSettings.page++;
-                        mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
+                albumSettings.getPagedAlbum(albumId, mediaTypeFilter, albumSettings.page, activePage).then(function (additionalMediaContentList) {
+                    // console.log(additionalMediaContentList)
+                    albumSettings.page++;
+                    mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
 
-                        if (albumSettings.eol) {
-                            setTimeout(() => {Util.reinitLightGalleryInstance({timeoutValue:0,mediaContentList:additionalMediaContentList,refreshContent:true});}, 0);
-                        }
-                    });
-                }, 0);
+                    if (albumSettings.eol) {
+                        setTimeout(() => {Util.reinitLightGalleryInstance({timeoutValue:0,mediaContentList:additionalMediaContentList,refreshContent:true});}, 0);
+                    }
+                });
             }
         }
 
