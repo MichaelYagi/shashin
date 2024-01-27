@@ -86,44 +86,69 @@
             await editAlbum();
         });
 
-        // $(document).keypress(async function (e) {
-        //     const key = e.which;
-        //     if(key === 13) {
-        //         await editAlbum();
-        //     }
-        // });
+        $("#editAlbumsModal").on("keypress", async function (e) {
+            const albumName = $("#albumEditName").val();
+            const originalAlbumName = $("#originalAlbumName").val();
+
+            if (e.key === "Enter" && originalAlbumName.trim() !== albumName.trim()) {
+                e.preventDefault();
+                await editAlbum();
+            }
+        });
+
+        $("#albumEditName").on("keyup", async function (e) {
+            const albumName = $("#albumEditName").val();
+            const originalAlbumName = $("#originalAlbumName").val();
+
+            if (originalAlbumName.trim() !== albumName.trim() && albumName.trim() !== "") {
+                $("#editAlbum").prop('disabled', false);
+            } else {
+                $("#editAlbum").prop('disabled', true);
+            }
+        });
 
         async function editAlbum() {
-            $("#editAlbumNameStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-            $("#editAlbumNameStatus").css("visibility", "visible");
-            $("#editAlbumNameStatus").attr("title", "");
-            $("#cancelAlbum").prop('disabled', true);
-
-            const http = new Http("edit album");
             const albumName = $("#albumEditName").val();
-            let json = {albumId: albumId, albumName: Util.htmlDecode(albumName)}
-            const data = await http.ajax("post", "/album/updatename/" + albumId, JSON.stringify(json), function () {
-                $("#editAlbumNameStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
-                $("#editAlbumNameStatus").attr("title", shashin.modalStatusFailMessage());
-                $("#cancelAlbum").prop('disabled', false);
-            });
+            const originalAlbumName = $("#originalAlbumName").val();
 
-            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                if (data["status"] === shashin.apiResponse.SUCCESS) {
-                    $("#albumName").text(albumName);
-                    $("#albumNameEdit").text(albumName);
-                    $("#albumName" + albumId).text(albumName);
-                    $("#editAlbumNameStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+            if (originalAlbumName.trim() !== albumName.trim() && albumName.trim() !== "") {
+                $("#editAlbumNameStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
+                $("#editAlbumNameStatus").css("visibility", "visible");
+                $("#editAlbumNameStatus").attr("title", "");
+                $("#cancelAlbum").prop('disabled', true);
+
+                const http = new Http("edit album");
+
+                let json = {albumId: albumId, albumName: Util.htmlDecode(albumName)}
+                const data = await http.ajax("post", "/album/updatename/" + albumId, JSON.stringify(json), function () {
+                    $("#editAlbumNameStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
+                    $("#editAlbumNameStatus").attr("title", shashin.modalStatusFailMessage());
+                    $("#cancelAlbum").prop('disabled', false);
+                });
+
+                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                    if (data["status"] === shashin.apiResponse.SUCCESS) {
+                        $("#albumName").text(albumName);
+                        $("#albumNameEdit").text(albumName);
+                        $("#albumName" + albumId).text(albumName);
+                        $("#editAlbumNameStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+                    } else {
+                        shashin.showToastMessage("Could not edit album", data["msg"], {
+                            icon: "bi-exclamation-triangle",
+                            iconColor: "#FF0000"
+                        });
+                        $("#editAlbumNameStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                        $("#editAlbumNameStatus").attr("title", data["msg"]);
+                    }
                 } else {
-                    shashin.showToastMessage("Could not edit album", data["msg"], {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
-                    $("#editAlbumNameStatus").addClass('bi-x-circle').removeClass('spinner-grow');
-                    $("#editAlbumNameStatus").attr("title", data["msg"]);
+                    shashin.showToastMessage("Could not edit album", "Something went wrong", {
+                        icon: "bi-exclamation-triangle",
+                        iconColor: "#FF0000"
+                    });
                 }
-            } else {
-                shashin.showToastMessage("Could not edit album", "Something went wrong", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
-            }
 
-            $("#cancelAlbum").prop('disabled', false);
+                $("#cancelAlbum").prop('disabled', false);
+            }
         }
     }
 

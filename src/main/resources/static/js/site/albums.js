@@ -166,6 +166,7 @@ class Albums {
                 $("#editAlbumNameStatus").addClass('spinner-grow').removeClass('bi-check-circle').removeClass('bi-x-circle');
                 $("#editAlbumNameStatus").css("visibility","hidden");
                 $("#albumEditName").val("");
+                $("#originalAlbumName").val("");
 
                 let http = new Http("sharealbums");
                 let data = await http.ajax("get", "/album/" + albumId + "/page/0");
@@ -174,8 +175,10 @@ class Albums {
                     let album = data["album"];
                     $("#albumNameEdit").text(album["name"]);
                     $("#albumEditName").val(album["name"]);
+                    $("#originalAlbumName").val(album["name"]);
                     const version = Util.getMetadataLocalStorage();
                     $("#albumCoverEditThumb").attr("src", album["coverUrl"]+(version === "" ? "" : "?v=" + version));
+                    $("#editAlbum").prop('disabled', true);
 
                     $("#propeditalbums").modal('show');
 
