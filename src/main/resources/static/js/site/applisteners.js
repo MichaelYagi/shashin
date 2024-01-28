@@ -166,6 +166,13 @@ $("#albumAppToolsRemoveFavorites").on("click", async function (e) {
 $("#albumAppToolsRestore").on("click", async function (e) {
     e.preventDefault();
 
+    $("#albumAppToolsRestoreIcon").removeClass("bi-arrow-repeat").addClass("spinner-border spinner-border-sm");
+    $("#albumAppToolsRestoreIcon").css({
+        "width": "1.5rem",
+        "height": "1.5rem",
+        "font-size": ""
+    });
+
     let metadataIdList = [];
     $('.bi-circle-fill').each(function (i, obj) {
         metadataIdList.push(obj.id.substring(6, obj.id.length));
@@ -185,10 +192,23 @@ $("#albumAppToolsRestore").on("click", async function (e) {
                 });
 
                 $('#'+shashin.toast.target.default).on('hidden.bs.toast', function () {
+                    $("#albumAppToolsRestoreIcon").removeClass("spinner-border spinner-border-sm").addClass("bi-arrow-repeat");
+                    $("#albumAppToolsRestoreIcon").css({
+                        "width": "",
+                        "height": "",
+                        "font-size": "1.5rem"
+                    });
                     location.replace(location.href.split('#')[0]);
                 });
             } else {
                 shashin.showToastMessage("Could not restore media", data["msg"], {icon: "bi-exclamation-triangle", iconColor: "#FF0000"});
+
+                $("#albumAppToolsRestoreIcon").removeClass("spinner-border spinner-border-sm").addClass("bi-arrow-repeat");
+                $("#albumAppToolsRestoreIcon").css({
+                    "width": "",
+                    "height": "",
+                    "font-size": "1.5rem"
+                });
             }
         }
     }
