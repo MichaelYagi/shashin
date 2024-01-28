@@ -3,8 +3,10 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.model.Album
 import com.miyagi.shashin.model.MapData
 import com.miyagi.shashin.model.User
+import com.miyagi.shashin.repository.AlbumRepository
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.TextUtils
@@ -27,6 +29,9 @@ class MapController {
     @Autowired
     private val metadataRepository: MetadataRepository? = null
 
+    @Autowired
+    private val albumRepository: AlbumRepository? = null
+
     @Value("\${app.endpoint.url.geocode}")
     private lateinit var geocodeUrl: String
 
@@ -37,16 +42,25 @@ class MapController {
         val module = "map"
         model["message"] = ""
         model["showControls"] = false
+        model["albums"] = mutableListOf<Album>()
 
         val currentUserObj = model.getAttribute("currentUser") as User?
+
+        var albums: MutableIterable<Album>? = null
 
         // If ROLE_ADMIN get lat lng for timeline
         if (currentUserObj != null) {
             if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
                 model["showControls"] = true
+                albums = albumRepository?.findAllWithLocationOrderByAlbumName()
+            } else {
+                albums = albumRepository?.findAllWithLocationOrderByAlbumNameAndUserId(currentUserObj.getId())
             }
         }
 
+        if (albums != null) {
+            model["albums"] = albums
+        }
         model["msg"] = ""
         model["status"] = ApiResponse.SUCCESS.status
         model["activePage"] = module
@@ -105,6 +119,35 @@ class MapController {
                 response["mapdata"] = metadataRepository!!.findTimelineAllForMap()
             } else {
                 response["mapdata"] = metadataRepository!!.findByAlbumMetadataByUserIdForMap(currentUserObj.getId())
+            }
+
+            response["msg"] = ""
+            response["status"] = ApiResponse.SUCCESS.status
+        }
+
+        val json = mapper.writeValueAsString(response)
+        return ResponseEntity
+            .ok()
+            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+            .body(json)
+    }
+
+    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @RequestMapping(value = ["/album/mapdata/{id}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun getAlbumMapData(model: Model, @PathVariable(required = true) id: Int): ResponseEntity<String> {
+        val response = mutableMapOf<String, Any?>()
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        response["albummapdata"] = mutableListOf<String>()
+        response["msg"] = "Not logged in"
+        response["status"] = ApiResponse.SUCCESS.status
+
+        // If ROLE_ADMIN get lat lng for timeline
+        if (currentUserObj != null) {
+            if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
+                response["albummapdata"] = albumRepository?.findMetadataIdsByAlbumId(id)
+            } else {
+                response["albummapdata"] = albumRepository?.findMetadataIdsByAlbumIdAndUserId(id, currentUserObj.getId())
             }
 
             response["msg"] = ""

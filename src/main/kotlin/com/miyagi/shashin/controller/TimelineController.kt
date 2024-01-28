@@ -2113,7 +2113,7 @@ class TimelineController: BaseController() {
             }
 
             val allAlbumList = albumRepository.findAllOrderByAlbumName()
-            if (allAlbumList.count() > 0) {
+            if (allAlbumList != null && allAlbumList.count() > 0) {
                 response["allAlbumList"] = allAlbumList
             }
         }
