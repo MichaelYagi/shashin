@@ -764,21 +764,22 @@ async function showMap(mapdata) {
     //     setLayerInputs(e);
     // });
 
-    // $("#albumSelect").on("change", function(e) {
-    //     if ($(this).val() !== "0") {
-    //         const albumId = $(this).val();
-    //         // Query metadata in album with lat/lng
-    //         const http = new Http("get album data");
-    //
-    //         http.ajax("get", "/album/mapdata/"+albumId).then(function (data) {
-    //             if (data.hasOwnProperty("albummapdata")) {
-    //                 startDateField.val("");
-    //                 endDateField.val("");
-    //                 setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"), data["albummapdata"]);
-    //             }
-    //         });
-    //     }
-    // });
+    $("#albumSelect").on("change", function(e) {
+        if ($(this).val() !== "0") {
+            startDateField.val("");
+            endDateField.val("");
+
+            // const albumId = $(this).val();
+            // // Query metadata in album with lat/lng
+            // const http = new Http("get album data");
+            //
+            // http.ajax("get", "/album/mapdata/"+albumId).then(function (data) {
+            //     if (data.hasOwnProperty("albummapdata")) {
+            //         setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"), data["albummapdata"]);
+            //     }
+            // });
+        }
+    });
 
     // get all date input fields
     let allDateInputs = document.querySelectorAll('[type="date"]');
