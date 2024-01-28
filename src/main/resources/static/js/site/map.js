@@ -7,6 +7,8 @@ async function showMap(mapdata) {
     const qssd = Util.getParameterByName("sd");
     const qsed = Util.getParameterByName("ed");
     const qsvo = Util.getParameterByName("vo");
+    // Media type filter
+    const qsmtf = Util.getParameterByName("mtf");
 
     const videoOnlyCheckbox = $("#videoOnlyInput");
     const showMarkersCheckbox = $("#showMarkersInput");
@@ -242,9 +244,13 @@ async function showMap(mapdata) {
         for (let index in mapdata) {
             const data = mapdata[index];
 
-            if (videoOnly === true && data["type"].includes("video") === false) {
+            if ((videoOnly === true && data["type"].includes("video") === false) || (qsmtf !== null && qsmtf !== "" && data["type"].includes(qsmtf) === false)) {
                 continue;
             }
+
+            // if (qsmtf !== null && qsmtf !== "" && data["type"].includes(qsmtf) === false) {
+            //     continue;
+            // }
 
             if (metadataList !== undefined && metadataList.length > 0 && $.inArray(data["id"], metadataList) === -1) {
                 continue;
