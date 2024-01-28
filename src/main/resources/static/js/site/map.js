@@ -234,7 +234,7 @@ async function showMap(mapdata) {
         return true;
     }
 
-    function setLayer(startDate, endDate, videoOnly) {
+    function setLayer(startDate, endDate, videoOnly, metadataList) {
         version = Util.getMetadataLocalStorage();
         map.removeLayer(vectorLayer);
         const iconFeatures = [];
@@ -243,6 +243,10 @@ async function showMap(mapdata) {
             const data = mapdata[index];
 
             if (videoOnly === true && data["type"].includes("video") === false) {
+                continue;
+            }
+
+            if (metadataList !== undefined && metadataList.length > 0 && $.inArray(data["id"], metadataList) === -1) {
                 continue;
             }
 
@@ -752,13 +756,29 @@ async function showMap(mapdata) {
         setLayerInputs(e);
     });
 
-    $("#videoOnlyInput").on("change", function(e) {
-        setLayerInputs(e);
-    });
+    // $("#videoOnlyInput").on("change", function(e) {
+    //     setLayerInputs(e);
+    // });
+    //
+    // $("#showMarkersInput").on("change", function(e) {
+    //     setLayerInputs(e);
+    // });
 
-    $("#showMarkersInput").on("change", function(e) {
-        setLayerInputs(e);
-    });
+    // $("#albumSelect").on("change", function(e) {
+    //     if ($(this).val() !== "0") {
+    //         const albumId = $(this).val();
+    //         // Query metadata in album with lat/lng
+    //         const http = new Http("get album data");
+    //
+    //         http.ajax("get", "/album/mapdata/"+albumId).then(function (data) {
+    //             if (data.hasOwnProperty("albummapdata")) {
+    //                 startDateField.val("");
+    //                 endDateField.val("");
+    //                 setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"), data["albummapdata"]);
+    //             }
+    //         });
+    //     }
+    // });
 
     // get all date input fields
     let allDateInputs = document.querySelectorAll('[type="date"]');
@@ -794,8 +814,20 @@ async function showMap(mapdata) {
         // Validate fields
         if (true === checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))) {
             initialZoom = map.getView().getZoom();
-            // Filter results
-            setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
+            if ($("#albumSelect").length > 0 && $("#albumSelect").val() !== "0") {
+                const albumId = $($("#albumSelect")).val();
+                // Query metadata in album with lat/lng
+                const http = new Http("get album map data");
+
+                http.ajax("get", "/album/mapdata/"+albumId).then(function (data) {
+                    if (data.hasOwnProperty("albummapdata")) {
+                        setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"), data["albummapdata"]);
+                    }
+                });
+            } else {
+                // Filter results
+                setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
+            }
         }
     }
 

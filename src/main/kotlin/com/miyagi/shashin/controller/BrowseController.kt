@@ -506,7 +506,7 @@ class BrowseController: BaseController() {
         response["albumList"] = mutableListOf<Album>()
 
         val albumList = albumRepository.findAllOrderByAlbumName()
-        if (albumList.count() > 0) {
+        if (albumList != null && albumList.count() > 0) {
             response["albumList"] = albumList
             response["msg"] = "Results"
             response["status"] = ApiResponse.SUCCESS.status
@@ -664,7 +664,7 @@ class BrowseController: BaseController() {
                 response["keywordMap"] = keywordMap
 
                 val albumList = albumRepository.findAllOrderByAlbumName()
-                if (albumList.count() > 0) {
+                if (albumList != null && albumList.count() > 0) {
                     response["albumList"] = albumList
                 }
 
@@ -1145,7 +1145,7 @@ class BrowseController: BaseController() {
                 response["keywordMap"] = keywordMap
 
                 val albumList = albumRepository.findAllOrderByAlbumName()
-                if (albumList.count() > 0) {
+                if (albumList != null && albumList.count() > 0) {
                     response["albumList"] = albumList
                 }
 

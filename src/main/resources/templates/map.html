@@ -32,6 +32,17 @@
         <input class="form-control" type="date" id="endDateInput">
     </div>
 
+    <th:block th:if="${not #lists.isEmpty(albums)}">
+        <div class="d-inline-flex align-items-center col">
+            <select class="form-select" id="albumSelect">
+                <option selected value="0">Albums</option>
+                <th:block th:each="album, iterStat: ${albums}">
+                    <option th:value="${album.id}" th:text="${album.name}"></option>
+                </th:block>
+            </select>
+        </div>
+    </th:block>
+
     <div class="col">
         <button class="form-control" id="dateInputButton">Filter</button>
     </div>
