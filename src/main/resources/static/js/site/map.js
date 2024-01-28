@@ -756,7 +756,7 @@ async function showMap(mapdata) {
 
     $("#filterMap").on("click", function(e) {
         setLayerInputs(e);
-        shashin.showToastMessage("Filter applied", "Filter applied", {icon:"bi-info-circle", iconColor:"#777777"});
+        shashin.showToastMessage("Filter applied", "Filter applied", {icon:"bi-info-circle", iconColor:"#777777", delay: 3000});
     });
 
     // $("#videoOnlyInput").on("change", function(e) {
@@ -894,7 +894,7 @@ async function showMap(mapdata) {
         }
 
         setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
-        shashin.showToastMessage("Map reset", "Map reset", {icon:"bi-info-circle", iconColor:"#777777"});
+        shashin.showToastMessage("Map reset", "Map reset", {icon:"bi-info-circle", iconColor:"#777777", delay: 3000});
     });
 
     map.on("pointermove", function (evt) {
