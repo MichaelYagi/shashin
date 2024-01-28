@@ -315,7 +315,7 @@ async function showMap(mapdata) {
                 }
             }
 
-            const currentProgress = (index + 1) / mapdata.length * 100;
+            const currentProgress = (parseInt(index) + 1) / mapdata.length * 100;
             progressBar.attr("aria-valuenow", currentProgress.toString());
             const width = currentProgress.toString() + "%";
             progressBar.css("width", width);
