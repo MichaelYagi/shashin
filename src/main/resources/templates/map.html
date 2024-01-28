@@ -35,7 +35,7 @@
     <th:block th:if="${not #lists.isEmpty(albums)}">
         <div class="d-inline-flex align-items-center col">
             <select class="form-select" id="albumSelect">
-                <option selected value="0">Albums</option>
+                <option selected value="0">Select Album</option>
                 <th:block th:each="album, iterStat: ${albums}">
                     <option th:value="${album.id}" th:text="${album.name}"></option>
                 </th:block>
