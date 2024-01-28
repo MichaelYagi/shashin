@@ -15,6 +15,7 @@ async function showMap(mapdata) {
     const startDateField = $("#startDateInput");
     const endDateField = $("#endDateInput");
     const dateInputs = $("#dateInputs");
+    const progressBarWrapper = $("#progressBarWrapper");
     const progressBar = $("#progressBar");
 
     shashin.mouseMoveListener();
@@ -241,7 +242,7 @@ async function showMap(mapdata) {
         map.removeLayer(vectorLayer);
         const iconFeatures = [];
 
-        $("#progressBarWrapper").css("visibility", "visible");
+        progressBarWrapper.css("visibility", "visible");
 
         for (let index in mapdata) {
             const data = mapdata[index];
@@ -321,7 +322,7 @@ async function showMap(mapdata) {
             shashin.printMessageToConsole("currentProgress for map: "+currentProgress.toString());
         }
 
-        $("#progressBarWrapper").css("visibility", "hidden");
+        progressBarWrapper.css("visibility", "hidden");
 
         if (iconFeatures.length > 0) {
 
