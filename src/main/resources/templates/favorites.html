@@ -94,13 +94,14 @@
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         const activePage = /*[[${activePage}]]*/ 'favorites';
+        const mediaTypeFilter = /*[[${mediaTypeFilter}]]*/ 'all';
         /*]]>*/
 
         const http = new Http(activePage);
         http.ajax("get", "/favorites/metadata/list/0").then(function (data) {
             if (data.hasOwnProperty("metadataList") === true) {
                 const metadataList = data["metadataList"];
-                const favoritesInstance = new Favorites(metadataList, activePage);
+                const favoritesInstance = new Favorites(metadataList, mediaTypeFilter, activePage);
                 favoritesInstance.init();
                 Util.checkErrorImage();
             }

@@ -52,9 +52,9 @@ class FavoritesController: BaseController() {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
 
-    @GetMapping("/favorites")
-    fun getFavorites(model: Model): String {
-        val response = buildFavorites(model,0)
+    @RequestMapping(value = ["/favorites", "/favorites/{mediaType}"], method = [RequestMethod.GET])
+    fun getFavorites(model: Model,@PathVariable(required = false) mediaType: String?): String {
+        val response = buildFavorites(model,0,model.getAttribute("queryLimit").toString().toInt(),mediaType)
         for ((k, v) in response) {
             model[k] = v!!
         }
@@ -105,13 +105,13 @@ class FavoritesController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/favorites/{page}","api/v1/favorites/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/favorites/{page}","/favorites/mediatype/{mediaType}/page/{page}","/api/v1/favorites/{page}","/api/v1/favorites/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    fun getPagedFavorites(model: Model, @PathVariable page: Int): String {
-        return mapper.writeValueAsString(buildFavorites(model,page))
+    fun getPagedFavorites(model: Model, @PathVariable page: Int, @RequestParam size: Optional<Int>,@PathVariable(required = false) mediaType: String?): String {
+        return mapper.writeValueAsString(buildFavorites(model,page,size.orElse(model.getAttribute("queryLimit").toString().toInt()),mediaType))
     }
 
-    private fun buildFavorites(model: Model, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
+    private fun buildFavorites(model: Model, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt(), mediaTypeFilter: String?): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         val module = "favorites"
@@ -120,11 +120,29 @@ class FavoritesController: BaseController() {
         response["titleDescriptor"] = TextUtils.capitalized(module)
         response["message"] = "Nothing to see here."
         response["metadataList"] = mutableListOf<Metadata>()
+        response["mediaTypeFilter"] = "all"
         response["keywordMap"] = mutableMapOf<String, String>()
+
+        var mediaType = mediaTypeFilter
+
+        if (mediaTypeFilter.isNullOrEmpty()) {
+            mediaType = "all"
+        }
+
+        response["mediaTypeFilter"] = mediaType
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
-            val favoriteList = favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(),(page*size), size)
+            val favoriteList: MutableIterable<Favorite?>?
+
+            if (mediaType == "all") {
+                favoriteList =
+                    favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(), (page * size), size)
+            } else {
+                favoriteList =
+                    favoriteRepository.findAllByUserIdAndMediaTypeAndOffsetAndLimit(currentUserObj.getId(), mediaType!!, (page * size), size)
+            }
+
             if (favoriteList != null && favoriteList.count() > 0) {
                 val metadataList = ArrayList<Metadata>()
                 model["message"] = ""
