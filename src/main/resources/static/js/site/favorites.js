@@ -1,10 +1,11 @@
 class Favorites {
 
-    constructor(metadataList, activePage) {
+    constructor(metadataList, mediaTypeFilter, activePage) {
         this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
         this.metadataList = metadataList;
+        this.mediaTypeFilter = mediaTypeFilter;
         this.activePage = activePage;
         this.eol = false;
         const lgConfig = {
@@ -33,7 +34,7 @@ class Favorites {
     async loadNextPage() {
         if (this.rendering === false) {
             // console.log(this.page)
-            this.updateFavorites(this.page, this.activePage).then(function (additionalMediaContentList) {
+            this.updateFavorites(this.page, this.activePage, this.mediaTypeFilter).then(function (additionalMediaContentList) {
                 // console.log(additionalMediaContentList)
                 this.page++;
                 this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
@@ -45,14 +46,14 @@ class Favorites {
         }
     }
 
-    async updateFavorites(nextPage,activePage) {
+    async updateFavorites(nextPage,activePage,mediaTypeFilter) {
         this.rendering = true;
 
         let data = null
 
         if (false === this.eol) {
             $("#spinner").css("display", "block");
-            data = await this.http.ajax("get", "/favorites/" + nextPage);
+            data = await this.http.ajax("get", "/favorites/mediatype/" + mediaTypeFilter + "/page/" + nextPage);
         }
 
         const mediaContentList = [];
