@@ -248,10 +248,6 @@ async function showMap(mapdata) {
                 continue;
             }
 
-            // if (qsmtf !== null && qsmtf !== "" && data["type"].includes(qsmtf) === false) {
-            //     continue;
-            // }
-
             if (metadataList !== undefined && metadataList.length > 0 && $.inArray(data["id"], metadataList) === -1) {
                 continue;
             }
@@ -758,8 +754,9 @@ async function showMap(mapdata) {
     checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))
     setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
 
-    $("#dateInputButton").on("click", function(e) {
+    $("#filterMap").on("click", function(e) {
         setLayerInputs(e);
+        shashin.showToastMessage("Filter applied", "Filter applied", {icon:"bi-info-circle", iconColor:"#777777"});
     });
 
     // $("#videoOnlyInput").on("change", function(e) {
@@ -822,7 +819,7 @@ async function showMap(mapdata) {
         if (true === checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))) {
             initialZoom = map.getView().getZoom();
             if ($("#albumSelect").length > 0 && $("#albumSelect").val() !== "0") {
-                const albumId = $($("#albumSelect")).val();
+                const albumId = $("#albumSelect").val();
                 // Query metadata in album with lat/lng
                 const http = new Http("get album map data");
 
@@ -882,7 +879,7 @@ async function showMap(mapdata) {
         }
     }
 
-    $("#clearDateInputsButton").on("click", function(e) {
+    $("#resetMap").on("click", function(e) {
         e.preventDefault();
 
         startDateField.val("");
@@ -892,7 +889,12 @@ async function showMap(mapdata) {
 
         startDateField.val(initialStartDate);
 
+        if ($("#albumSelect").length > 0) {
+            $("#albumSelect").val("0");
+        }
+
         setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
+        shashin.showToastMessage("Map reset", "Map reset", {icon:"bi-info-circle", iconColor:"#777777"});
     });
 
     map.on("pointermove", function (evt) {
