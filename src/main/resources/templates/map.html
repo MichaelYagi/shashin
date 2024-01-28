@@ -6,7 +6,7 @@
 <div th:replace="fragments/topnav :: topnav(${currentUser},${activePage},'')"></div>
 
 <script type="text/javascript" th:nonce="${cspNonce}">
-    $("#progressBarWrapper").css("visibility","visible");
+    $("#progressBarWrapper").css("display","block");
     $("#progressBar").attr("aria-valuenow","100");
     $("#progressBar").css("width","100%");
 </script>

@@ -241,6 +241,8 @@ async function showMap(mapdata) {
         map.removeLayer(vectorLayer);
         const iconFeatures = [];
 
+        $("#progressBarWrapper").css("display", "block");
+
         for (let index in mapdata) {
             const data = mapdata[index];
 
@@ -319,7 +321,7 @@ async function showMap(mapdata) {
             shashin.printMessageToConsole("currentProgress for map: "+currentProgress.toString());
         }
 
-        $("#progressBarWrapper").css("visibility", "hidden");
+        $("#progressBarWrapper").css("display", "none");
 
         if (iconFeatures.length > 0) {
 
