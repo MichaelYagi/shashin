@@ -247,6 +247,12 @@ async function showMap(mapdata) {
         for (let index in mapdata) {
             const data = mapdata[index];
 
+            const currentProgress = (parseInt(index) + 1) / mapdata.length * 100;
+            progressBar.attr("aria-valuenow", currentProgress.toString());
+            const width = currentProgress.toString() + "%";
+            progressBar.css("width", width);
+            shashin.printMessageToConsole("currentProgress for map: "+currentProgress.toString());
+
             if ((videoOnly === true && data["type"].includes("video") === false) || (qsmtf !== null && qsmtf !== "" && data["type"].includes(qsmtf) === false)) {
                 continue;
             }
@@ -314,14 +320,10 @@ async function showMap(mapdata) {
                     iconFeatures.push(iconFeature);
                 }
             }
-
-            const currentProgress = (parseInt(index) + 1) / mapdata.length * 100;
-            progressBar.attr("aria-valuenow", currentProgress.toString());
-            const width = currentProgress.toString() + "%";
-            progressBar.css("width", width);
-            shashin.printMessageToConsole("currentProgress for map: "+currentProgress.toString());
         }
 
+        progressBar.attr("aria-valuenow", 0);
+        progressBar.css("width", "0%");
         progressBarWrapper.css("visibility", "hidden");
 
         if (iconFeatures.length > 0) {
