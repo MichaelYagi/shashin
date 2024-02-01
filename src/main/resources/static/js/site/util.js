@@ -908,7 +908,6 @@ class Util {
         // Clear data
         $(".descriptionDetails").text("");
         $(".pathDetails").text("");
-        $(".timelineLink").html("");
         $(".typeDetails").text("");
         $(".isoDetails").text("");
         $(".compressionDetails").text("");
@@ -927,6 +926,7 @@ class Util {
         $(".keywordsDetails").html("");
         $(".resolutionDetails").text("");
         $(".shareUrlDetails").html("");
+        $(".shareUrlDetailsA").html("");
         $(".coordinatesDetails").text("");
         $(".locationDetails").html("");
         $(".locationTypeDetails").html("");
@@ -1101,6 +1101,7 @@ class Util {
             $(".resolutionLabel").show();
             $(".resolutionDetails").text(metadata.originalImageWidth+"x"+metadata.originalImageHeight);
         }
+        let timeLinkHtml = "";
         if (metadata.year !== undefined && metadata.month !== undefined && metadata.day !== undefined &&
             metadata.year !== null && metadata.month !== null && metadata.day !== null) {
             let month = (metadata.month.toString().length === 1 && metadata.month < 10) ? "0"+metadata.month : metadata.month;
@@ -1114,8 +1115,7 @@ class Util {
             $(".manualTakenAtDetails").text(takenDetails);
 
             if (Util.isSafari() === false) {
-                $(".timelineLink").show();
-                $(".timelineLink").html("<a href='/timeline#" + metadata.year + '-' + metadata.month + '-' + metadata.day + "' target='_blank'>View in timeline</a>");
+                timeLinkHtml = "&nbsp;&nbsp;&nbsp;<a class='bi-binoculars' style='font-size: 1rem;' href='/timeline#" + metadata.year + '-' + metadata.month + '-' + metadata.day + "' target='_blank'></a>";
             }
         }
         if (metadata.timeZone != null) {
@@ -1164,7 +1164,13 @@ class Util {
                 page = "/player"
             }
 
-            $(".shareUrlDetails").html("<a class='bi-download' href='" + relativeShareLink + "/download' title='Download photo' style='font-size: 1rem;padding-right: 20px;'></a><a href='#' class='copyLink bi-clipboard-plus sharecopy' data-clipboard-text='" + shareUrl + page + "' title='Copy share link' style='font-size: 1rem;' id='shareCopyLink'></a><br><a href='" + relativeShareLink.replace('/api/v1','') + page + "' target='_blank'>View "+((metadata.videoUrl != null) ? 'video':'image')+"</a>");
+            let shareDetailsHtml = "<a class='bi-download' href='" + relativeShareLink + "/download' title='Download photo' style='font-size: 1rem;'></a>&nbsp;&nbsp;&nbsp;<a href='#' class='copyLink bi-clipboard-plus sharecopy' data-clipboard-text='" + shareUrl + page + "' title='Copy share link' style='font-size: 1rem;' id='shareCopyLink'></a>&nbsp;&nbsp;&nbsp;<a class='"+((metadata.videoUrl != null) ? "bi-camera-video":"bi-file-image")+"' style='font-size: 1rem;' href='" + relativeShareLink.replace('/api/v1','') + page + "' title='View "+((metadata.videoUrl != null) ? "video":"image")+"' target='_blank'></a>";
+            if ($(".shareUrlDetailsA").length > 0) {
+                shareDetailsHtml += timeLinkHtml;
+                $(".shareUrlDetailsA").html(shareDetailsHtml);
+            } else {
+                $(".shareUrlDetails").html(shareDetailsHtml);
+            }
 
             $(".sharecopy").on("click", function (e) {
                 e.preventDefault();
