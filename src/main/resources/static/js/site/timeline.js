@@ -43,6 +43,16 @@
         }
     }
 
+    const renderInitPage = function(mediaTypeFilter) {
+        const firstElem = $('.scrollspy')[0];
+        const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
+
+        timelineSettings.attachAssociatedMetadata(firstElem.id, mediaTypeFilter);
+        timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
+        timelineSettings.setScrollSpyActive($(firstElem));
+        Util.reinitLightGalleryInstance();
+    }
+
     timelineSettings.init = function(mediaTypeFilter, metadataDates, metadataYearMonthCount) {
         timelineSettings.timelineDates = metadataDates;
         timelineSettings.metadataYearMonthCount = metadataYearMonthCount;
@@ -90,16 +100,21 @@
         }
 
         // Jump to date
-        if (hash.length > 0 && $("#offcanvas_"+hash).length > 0) {
-            timelineSettings.jumpFromTimelineToc(null, hash, mediaTypeFilter);
-        } else if ($('.scrollspy').length > 0) {
-            const firstElem = $('.scrollspy')[0];
-            const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
+        if (hash.length > 0) {
+            if ($("#offcanvas_"+hash).length > 0) {
+                timelineSettings.jumpFromTimelineToc(null, hash, mediaTypeFilter);
+            } else if ($('.scrollspy').length > 0) {
+                history.pushState("", document.title, window.location.pathname + window.location.search);
 
-            timelineSettings.attachAssociatedMetadata(firstElem.id, mediaTypeFilter);
-            timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
-            timelineSettings.setScrollSpyActive($(firstElem));
-            Util.reinitLightGalleryInstance();
+                shashin.showToastMessage(hash+ " not found", "Could not find date " +hash+ " on timeline.", {
+                    icon: "bi-exclamation-triangle",
+                    iconColor: "#FF0000"
+                });
+
+                renderInitPage(mediaTypeFilter);
+            }
+        } else if ($('.scrollspy').length > 0) {
+            renderInitPage(mediaTypeFilter);
         } else {
             timelineSettings.enableScrollSpy = false;
         }
