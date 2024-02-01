@@ -182,7 +182,7 @@ class PeopleController {
                             shouldStop.get()
                         )
 
-                        val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
+                        val admins = userRepository?.findAllByAuthorityEquals(adminRole)
                         if (admins != null) {
                             val notificationObjList = mutableListOf<Notification>()
                             val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
