@@ -151,6 +151,8 @@ class SettingsController {
 
     private var scanCount: Int = 0
 
+    private var recognitionCount: Int = 0
+
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
@@ -1431,6 +1433,7 @@ class SettingsController {
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     fun scanMediaDirectories(reindexFiles: Boolean): String {
         scanCount = 0
+        recognitionCount = 0
         val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
         val sidecarDir = rootPath + relativeSidecarDir
@@ -1782,17 +1785,22 @@ class SettingsController {
 
                             // Delete thread file
                             if (threadFile.delete()) {
+                                val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+
                                 if (scanCount > 0) {
                                     // Set notification for scanCount and date and link to /recent
-                                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
-                                    val msg =
-                                        "Scan complete for <a href='/recent' target='_blank'>$scanCount images/videos</a> at " + sdtf.format(
-                                            Date()
-                                        ) + "."
+
+                                    var msg =
+                                        "Scan complete for <a href='/recent' target='_blank'>$scanCount images/videos</a>"
+                                    if (recognitionCount > 0) {
+                                        msg += " and $recognitionCount people recognized"
+                                    }
+                                    msg += " at ${sdtf.format(Date())}."
+
                                     if (admins != null) {
                                         val notificationObjList = mutableListOf<Notification>()
                                         for (admin in admins) {
-                                            val notificationObj = Notification()
+                                            var notificationObj = Notification()
                                             notificationObj.setUserId(admin.getId())
                                             notificationObj.setCreatedAt(getCurrentTimestamp())
                                             notificationObj.setModifiedAt(getCurrentTimestamp())
@@ -2075,6 +2083,8 @@ class SettingsController {
                                                                                         getCurrentTimestamp()
                                                                                     )
                                                                                     metadataRepository?.save(metadataObj)
+
+                                                                                    recognitionCount++
                                                                                 }
                                                                             }
                                                                         }

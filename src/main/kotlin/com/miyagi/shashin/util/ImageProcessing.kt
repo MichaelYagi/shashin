@@ -793,10 +793,11 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             return recogresponse
         }
 
-        fun subjectRecognizer(metadataRepository: MetadataRepository?, recognitionLabelRepository: RecognitionLabelRepository?, recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?, settings: Settings, threadFile: File?, shouldStop: Boolean?) {
+        fun subjectRecognizer(metadataRepository: MetadataRepository?, recognitionLabelRepository: RecognitionLabelRepository?, recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?, settings: Settings, threadFile: File?, shouldStop: Boolean?): Int {
             // Scan records of photos that haven't been scanned in a separate thread
             val testImages = metadataRepository?.findNonMatched(settings.getMatchScanLimit()!!)
             val distinctLabelRecords = recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
+            var recognitionCount = 0
 
             if (testImages != null && distinctLabelRecords != null && distinctLabelRecords.count() > 0) {
                 val mapper = ObjectMapper()
@@ -994,6 +995,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                                                             threadFile
                                                         )
                                                     }
+
+                                                    recognitionCount++
                                                 }
                                             } else {
                                                 logger.log(
@@ -1014,6 +1017,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     }
                 }
             }
+
+            return recognitionCount
         }
     }
 }
