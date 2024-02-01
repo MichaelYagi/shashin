@@ -37,6 +37,8 @@ import org.springframework.web.socket.messaging.SessionSubscribeEvent
 import java.io.*
 import java.net.URL
 import java.net.URLConnection
+import java.text.SimpleDateFormat
+import java.time.ZoneId
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
@@ -65,6 +67,12 @@ class PeopleController {
 
     @Autowired
     private val keywordPhotoRepository: KeywordPhotoRepository? = null
+
+    @Autowired
+    private val notificationRepository: NotificationRepository? = null
+
+    @Autowired
+    private var userRepository: UserRepository? = null
 
     @Value("\${app.role.admin}")
     private lateinit var adminRole: String
@@ -165,7 +173,7 @@ class PeopleController {
                     )
 
                     if (faceRecogServicesAvailable) {
-                        ImageProcessing.subjectRecognizer(
+                        val recognitionCount = ImageProcessing.subjectRecognizer(
                             metadataRepository,
                             recognitionLabelRepository,
                             recognitionLabelPhotoRepository,
@@ -173,6 +181,25 @@ class PeopleController {
                             threadFile,
                             shouldStop.get()
                         )
+
+                        val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
+                        if (admins != null) {
+                            val notificationObjList = mutableListOf<Notification>()
+                            val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                            sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                            for (admin in admins) {
+                                val notificationObj = Notification()
+                                notificationObj.setUserId(admin.getId())
+                                notificationObj.setCreatedAt(getCurrentTimestamp())
+                                notificationObj.setModifiedAt(getCurrentTimestamp())
+                                notificationObj.setRead(false)
+                                notificationObj.setMessage("$recognitionCount faces recognized during match indexing at ${sdtf.format(Date())}.")
+                                notificationObjList.add(notificationObj)
+                            }
+                            if (notificationObjList.isNotEmpty()) {
+                                notificationRepository?.saveAll(notificationObjList)
+                            }
+                        }
                     }
 
                     if (settings.getObjectDetection() == true) {

@@ -7,6 +7,7 @@ import ai.djl.modality.cv.output.DetectedObjects
 import ai.djl.repository.zoo.Criteria
 import ai.djl.training.util.ProgressBar
 import com.miyagi.shashin.controller.TimelineController
+import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.ImageProcessing.Companion.subjectRecognizer
@@ -101,6 +102,15 @@ class ScheduledTasks {
     @Autowired
     private var keywordPhotoRepository: KeywordPhotoRepository? = null
 
+    @Autowired
+    private var notificationRepository: NotificationRepository? = null
+
+    @Autowired
+    private var userRepository: UserRepository? = null
+
+    @Value("\${app.role.admin}")
+    private var adminRole: String? = null
+
     @Scheduled(cron = "#{cronProperties.expression()}", zone="GMT")
     fun scanSubjectsAndObjectsJob() {
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
@@ -126,7 +136,25 @@ class ScheduledTasks {
                         Level.INFO,
                         "Scheduled scanning for facial recognition started at " + TextUtils.getCurrentTimestamp()
                     )
-                    subjectRecognizer(metadataRepository, recognitionLabelRepository, recognitionLabelPhotoRepository, settings, null, null)
+                    val recognitionCount = subjectRecognizer(metadataRepository, recognitionLabelRepository, recognitionLabelPhotoRepository, settings, null, null)
+                    val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
+                    if (admins != null) {
+                        val notificationObjList = mutableListOf<Notification>()
+                        val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                        sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                        for (admin in admins) {
+                            val notificationObj = Notification()
+                            notificationObj.setUserId(admin.getId())
+                            notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
+                            notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                            notificationObj.setRead(false)
+                            notificationObj.setMessage("$recognitionCount faces recognized during scheduled scanning at ${sdtf.format(Date())}.")
+                            notificationObjList.add(notificationObj)
+                        }
+                        if (notificationObjList.isNotEmpty()) {
+                            notificationRepository?.saveAll(notificationObjList)
+                        }
+                    }
                 }
 
                 // Start object recognition
