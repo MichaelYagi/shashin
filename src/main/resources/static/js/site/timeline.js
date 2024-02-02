@@ -106,7 +106,8 @@
             } else if ($('.scrollspy').length > 0) {
                 history.pushState("", document.title, window.location.pathname + window.location.search);
 
-                shashin.showToastMessage(hash+ " not found", "Could not find date " +hash+ " on timeline.", {
+                const dateArray = hash.split("-");
+                shashin.showToastMessage(hash+ " not found", "Could not find date " +Util.getDateString(dateArray[0],dateArray[1],dateArray[2])+ " on timeline.", {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000"
                 });
