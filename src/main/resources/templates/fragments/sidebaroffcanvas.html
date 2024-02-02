@@ -23,7 +23,7 @@
                     </li>
                 </th:block>
                 <li class="nav-item">
-                    <a th:attr="class='nav-link list-group-item list-group-item-action rounded' + ${activeSidebar=='recent' or activeSidebar=='modified' or activeSidebar=='folders' or activeSidebar=='folder' or activeSidebar=='taken' ? ' active' : ''}" href="/recent">
+                    <a th:attr="class='nav-link list-group-item list-group-item-action rounded' + ${activeSidebar=='recent' or activeSidebar=='modified' or activeSidebar=='folders' or activeSidebar=='folder' or activeSidebar=='taken' or activeSidebar=='trash' ? ' active' : ''}" href="/recent">
                         <span class="bi-folder" style="font-size: 1rem;"></span> Browse
                     </a>
                 </li>
@@ -64,11 +64,11 @@
                         <span class="bi-speedometer" style="font-size: 1rem;"></span> Dashboard
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a th:attr="class='nav-link list-group-item list-group-item-action rounded' + ${activeSidebar=='trash' ? ' active' : ''}" href="/trash">
-                        <span class="bi-trash" style="font-size: 1rem;"></span> Trash
-                    </a>
-                </li>
+<!--                <li class="nav-item">-->
+<!--                    <a th:attr="class='nav-link list-group-item list-group-item-action rounded' + ${activeSidebar=='trash' ? ' active' : ''}" href="/trash">-->
+<!--                        <span class="bi-trash" style="font-size: 1rem;"></span> Trash-->
+<!--                    </a>-->
+<!--                </li>-->
             </th:block>
         </ul>
     </div>
