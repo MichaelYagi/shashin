@@ -2427,6 +2427,8 @@ class TimelineController: BaseController() {
                 }
 
                 val compreFaceImageIdMap = mutableMapOf<String, Any?>()
+                val recognitionLabelList = mutableListOf<RecognitionLabel>()
+                val recognitionLabelPhotoList = mutableListOf<RecognitionLabelPhoto>()
 
                 for (recognitionLabel in recognitionLabelArray) {
                     if (!recognitionLabel.trim().isNullOrBlank() && recognitionLabel.trim() != "null") {
@@ -2450,7 +2452,8 @@ class TimelineController: BaseController() {
                             recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
                             recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
                             recognitionLabelObj.setCoverUrl(metadataObj.getThumbnailUrlCentered())
-                            recognitionLabelRepository?.save(recognitionLabelObj)
+                            //recognitionLabelRepository?.save(recognitionLabelObj)
+                            recognitionLabelList.add(recognitionLabelObj)
                         } else {
                             recognitionLabelObj = recognitionLabelRecord
                         }
@@ -2465,9 +2468,18 @@ class TimelineController: BaseController() {
                             recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
                             recognitionLabelPhotoObj.setConfidence("0.0")
                             recognitionLabelPhotoObj.setCompreFaceImageId(compreFaceImageId)
-                            recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
+                            //recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
+                            recognitionLabelPhotoList.add(recognitionLabelPhotoObj)
                         }
                     }
+                }
+
+                if (recognitionLabelList.isNotEmpty()) {
+                    recognitionLabelRepository?.saveAll(recognitionLabelList)
+                }
+
+                if (recognitionLabelPhotoList.isNotEmpty()) {
+                    recognitionLabelPhotoRepository?.saveAll(recognitionLabelPhotoList)
                 }
             } else if (isObject) {
                 recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
