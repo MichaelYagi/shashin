@@ -1719,7 +1719,6 @@ class TimelineController: BaseController() {
                 val metadataObj: Optional<Metadata?> = metadataRepository.findById(id)
                 if (metadataObj.isPresent) {
                     val metadata = metadataObj.get()
-                    metadata.setModifiedAt(getCurrentTimestamp())
 
                     if (isHidden) {
                         metadata.setHidden(true)
