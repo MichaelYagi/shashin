@@ -1203,6 +1203,7 @@ class TimelineController: BaseController() {
 
                 if (metadataMap["albumnames"].toString().trim() != "") {
                     val albumsArray = metadataMap["albumnames"].toString().split(",")
+                    val albumPhotoList: ArrayList<AlbumPhoto> = ArrayList()
 
                     for (albumNameRaw in albumsArray) {
 
@@ -1217,7 +1218,7 @@ class TimelineController: BaseController() {
                                 albumPhotoObj.setAlbumId(albumId)
                                 albumPhotoObj.setCreatedAt(getCurrentTimestamp())
                                 albumPhotoObj.setModifiedAt(getCurrentTimestamp())
-                                albumPhotoRepository.save(albumPhotoObj)
+                                albumPhotoList.add(albumPhotoObj)
                             }
 
                             if (currentAlbumIdList.contains(albumId)) {
@@ -1226,6 +1227,10 @@ class TimelineController: BaseController() {
                                 currentAlbumIdList.removeAt(indexToRemove)
                             }
                         }
+                    }
+
+                    if (albumPhotoList.isNotEmpty()) {
+                        albumPhotoRepository.saveAll(albumPhotoList)
                     }
                 }
 
@@ -1683,6 +1688,7 @@ class TimelineController: BaseController() {
             }
 
             val metadataList: ArrayList<Metadata> = ArrayList()
+            val albumPhotoList: ArrayList<AlbumPhoto> = ArrayList()
 
             // Process keyword and lat/lng data
             var lat: String? = null
@@ -1738,7 +1744,7 @@ class TimelineController: BaseController() {
                                     albumPhotoObj.setAlbumId(albumId)
                                     albumPhotoObj.setCreatedAt(getCurrentTimestamp())
                                     albumPhotoObj.setModifiedAt(getCurrentTimestamp())
-                                    albumPhotoRepository.save(albumPhotoObj)
+                                    albumPhotoList.add(albumPhotoObj)
                                 }
                             }
                         }
@@ -1798,6 +1804,10 @@ class TimelineController: BaseController() {
             val keywordIdsToDelete = keywordRepository.findAllOrphanedKeywordIds()
             if (keywordIdsToDelete.count() > 0) {
                 keywordRepository.deleteAllById(keywordIdsToDelete)
+            }
+
+            if (albumPhotoList.isNotEmpty()) {
+                albumPhotoRepository.saveAll(albumPhotoList)
             }
 
             if (metadataList.isNotEmpty()) {

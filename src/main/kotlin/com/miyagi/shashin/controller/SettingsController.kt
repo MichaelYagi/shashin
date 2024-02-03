@@ -1270,7 +1270,7 @@ class SettingsController {
             if (!importDatabaseOnly) {
                 saveImportedFavorites(favoriteList)
 
-                val albumPhotoListInsert = mutableListOf<AlbumPhoto>()
+                val albumPhotoListInsert: ArrayList<AlbumPhoto> = ArrayList()
 
                 if (albumList.isNotEmpty() && albumPhotoList.isNotEmpty()) {
                     for (albumPhoto in albumPhotoList) {
@@ -1344,7 +1344,6 @@ class SettingsController {
                                         albumPhotoObj.setMetadataId(albumPhoto.getMetadataId())
                                         albumPhotoObj.setCreatedAt(getCurrentTimestamp())
                                         albumPhotoObj.setModifiedAt(getCurrentTimestamp())
-//                                    albumPhotoRepository?.save(albumPhotoObj)
                                         albumPhotoListInsert.add(albumPhotoObj)
                                     }
                                 }
@@ -1353,7 +1352,7 @@ class SettingsController {
                     }
                 }
 
-                if (albumPhotoListInsert.size > 0) {
+                if (albumPhotoListInsert.isNotEmpty()) {
                     albumPhotoRepository?.saveAll(albumPhotoListInsert)
                 }
 
