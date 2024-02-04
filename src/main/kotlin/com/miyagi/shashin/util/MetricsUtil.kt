@@ -27,6 +27,9 @@ class MetricsUtil {
         if (lmodule != "") {
             module = lmodule
         }
+        if (counter == 0) {
+            logger.log(Level.INFO, "Start recording metrics$lmodule.")
+        }
         startTime = System.currentTimeMillis()
         counter++
     }
@@ -47,7 +50,11 @@ class MetricsUtil {
             elapsedTime = endTime!! - startTime!!
             totalElapsedTime += elapsedTime
 
-            logger.log(Level.INFO, "Elapsed time${logMessage}was $elapsedTime ms.")
+            if (elapsedTime > slaMS!!) {
+                logger.log(Level.WARNING, "Elapsed time${logMessage}was $elapsedTime ms.")
+            } else {
+                logger.log(Level.INFO, "Elapsed time${logMessage}was $elapsedTime ms.")
+            }
 
             if (counter > 1) {
                 logger.log(Level.INFO, "$counter calls for this instance elapsed time: $totalElapsedTime ms.")
