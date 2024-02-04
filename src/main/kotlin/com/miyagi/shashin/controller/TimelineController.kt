@@ -1151,6 +1151,7 @@ class TimelineController: BaseController() {
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     fun updateMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String, response: HttpServletResponse): String? {
 //        println(requestBody)
+
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
         if (metadataMap.containsKey("id") &&
@@ -1187,6 +1188,8 @@ class TimelineController: BaseController() {
                     metadataMap["duration"].toString()) &&
                 metadataObj.isPresent)
             {
+                val metricsUtil = MetricsUtil()
+                metricsUtil.start("Metadata Update")
 
                 val currentUserObj = model.getAttribute("currentUser") as User?
 
@@ -1412,6 +1415,8 @@ class TimelineController: BaseController() {
                 for ((k, v) in attrResponse) {
                     resp[k] = v
                 }
+
+                metricsUtil.end()
 
                 return mapper.writeValueAsString(resp)
             } else {
@@ -1641,8 +1646,9 @@ class TimelineController: BaseController() {
                 null) &&
             !idArray.isNullOrEmpty())
         {
-            resp["msg"] = "Saved!"
-            resp["status"] = ApiResponse.SUCCESS.status
+
+            val metricsUtil = MetricsUtil()
+            metricsUtil.start("Batch Metadata Update")
 
             val settings = model.getAttribute("settings") as Settings
 
@@ -1819,8 +1825,14 @@ class TimelineController: BaseController() {
                     resp[k] = v
                 }
 
+                metricsUtil.end()
+                resp["msg"] = "Saved!"
+                resp["status"] = ApiResponse.SUCCESS.status
+
                 return mapper.writeValueAsString(resp)
             }
+
+            metricsUtil.end()
         }
         logger.log(Level.WARNING, "Updating batch metadata failed. Could not save.")
         resp["msg"] = "Could not save"
