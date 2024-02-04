@@ -1189,8 +1189,8 @@ class TimelineController: BaseController() {
                 metadataObj.isPresent)
             {
                 val metricsUtil = MetricsUtil()
-                metricsUtil.start("Metadata Update")
 
+                metricsUtil.start("Metadata Update - Process albums")
                 val currentUserObj = model.getAttribute("currentUser") as User?
 
                 // Process albums
@@ -1254,7 +1254,9 @@ class TimelineController: BaseController() {
                         }
                     }
                 }
+                metricsUtil.end()
 
+                metricsUtil.start("Metadata Update - Process people")
                 // Process tagged people
                 val taggedPeople = metadataMap["tagpeople"].toString()
                 if (taggedPeople.isBlank()) {
@@ -1268,7 +1270,9 @@ class TimelineController: BaseController() {
                     )
                 }
                 cleanupOrphanedSubjects()
+                metricsUtil.end()
 
+                metricsUtil.start("Metadata Update")
                 if (metadataMap["title"].toString().trim() == "") {
                     metadataObj.get().setTitle(metadataObj.get().getFileName())
                 } else if (metadataObj.get().getTitle() != metadataMap["title"].toString().trim()) {
@@ -1346,7 +1350,9 @@ class TimelineController: BaseController() {
                 } else if (metadataObj.get().getTimeZone() != metadataMap["offset"].toString()) {
                     metadataObj.get().setTimeZone(StringEscapeUtils.escapeHtml4(metadataMap["offset"].toString()))
                 }
+                metricsUtil.end()
 
+                metricsUtil.start("Metadata Update - Process keywords")
                 keywordPhotoRepository.deleteAllByMetadataId(metadataId)
                 if (metadataMap["keywords"].toString().isNotBlank()) {
                     var keywords = metadataMap["keywords"].toString().trim()
@@ -1378,7 +1384,9 @@ class TimelineController: BaseController() {
                 if (keywordIdsToDelete.count() > 0) {
                     keywordRepository.deleteAllById(keywordIdsToDelete)
                 }
+                metricsUtil.end()
 
+                metricsUtil.start("Metadata Update - Process location")
                 if (metadataMap["latlng"].toString() == "") {
                     metadataObj.get().setLat(null)
                     metadataObj.get().setLng(null)
@@ -1406,8 +1414,10 @@ class TimelineController: BaseController() {
                         }
                     }
                 }
+                metricsUtil.end()
 
                 // Update record
+                metricsUtil.start("Metadata Update - Update record")
                 metadataObj.get().setModifiedAt(getCurrentTimestamp())
                 metadataRepository.save(metadataObj.get())
 
