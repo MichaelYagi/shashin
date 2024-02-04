@@ -40,7 +40,7 @@ class MetricsUtil {
 
     fun end() {
         if (slaMS == null) {
-            slaMS = 200
+            slaMS = 300
         }
 
         endTime = System.currentTimeMillis()
