@@ -1366,17 +1366,19 @@ class TimelineController: BaseController() {
                     val keywordCount = keywordPhotoRepository.countByMetadataId(metadataId)
 
                     if ((metadataMap["keywords"].toString().isBlank() || keywordCount == 0) && settings.getObjectDetection() == true) {
-                        val criteria: Criteria<Image, DetectedObjects> = Criteria.builder()
-                            .optApplication(Application.CV.OBJECT_DETECTION)
-                            .setTypes(Image::class.java, DetectedObjects::class.java)
-                            .optEngine(Engine.getDefaultEngineName())
-                            .optFilter("backbone", "resnet50")
-                            .optProgress(ProgressBar())
-                            .build()
-                        val keywordArray = ImageProcessing.objectRecognizer(keywordRepository, keywordPhotoRepository, metadataRepository, metadataObj.get(), criteria, settings, null, null)
-                        if (!keywordArray.isNullOrEmpty()) {
-                            resp["keywordsIdentified"] = keywordArray.joinToString(",")
-                        }
+                        Thread {
+                            val criteria: Criteria<Image, DetectedObjects> = Criteria.builder()
+                                .optApplication(Application.CV.OBJECT_DETECTION)
+                                .setTypes(Image::class.java, DetectedObjects::class.java)
+                                .optEngine(Engine.getDefaultEngineName())
+                                .optFilter("backbone", "resnet50")
+                                .optProgress(ProgressBar())
+                                .build()
+                            val keywordArray = ImageProcessing.objectRecognizer(keywordRepository, keywordPhotoRepository, metadataRepository, metadataObj.get(), criteria, settings, null, null)
+                            if (!keywordArray.isNullOrEmpty()) {
+                                resp["keywordsIdentified"] = keywordArray.joinToString(",")
+                            }
+                        }.start()
                     }
                 }
 
@@ -1423,10 +1425,12 @@ class TimelineController: BaseController() {
                 metricsUtil.end()
 
                 metricsUtil.start("Metadata Update - Getting attributes")
-                val attrResponse = getAllAttributeData(model)
-                for ((k, v) in attrResponse) {
-                    resp[k] = v
-                }
+                Thread {
+                    val attrResponse = getAllAttributeData(model)
+                    for ((k, v) in attrResponse) {
+                        resp[k] = v
+                    }
+                }.start()
                 metricsUtil.end()
 
                 return mapper.writeValueAsString(resp)
