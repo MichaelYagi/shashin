@@ -24,7 +24,9 @@ class MetricsUtil {
     private var slaMS: Long? = null
 
     fun start(lmodule: String = "") {
-        module = lmodule
+        if (lmodule != "") {
+            module = lmodule
+        }
         startTime = System.currentTimeMillis()
         counter++
     }
