@@ -1272,18 +1272,22 @@ class TimelineController: BaseController() {
                 cleanupOrphanedSubjects()
                 metricsUtil.end()
 
-                metricsUtil.start("Metadata Update")
+                metricsUtil.start("Metadata Update - attributes")
                 if (metadataMap["title"].toString().trim() == "") {
                     metadataObj.get().setTitle(metadataObj.get().getFileName())
                 } else if (metadataObj.get().getTitle() != metadataMap["title"].toString().trim()) {
                     metadataObj.get().setTitle(metadataMap["title"].toString().trim())
                 }
+                metricsUtil.end()
+                metricsUtil.start("Metadata Update - description")
                 if (metadataMap["description"].toString().trim() == "") {
                     metadataObj.get().setDescription(null)
                 } else if (metadataObj.get().getDescription() != metadataMap["description"].toString().trim()) {
                     metadataObj.get()
                         .setDescription(metadataMap["description"].toString().trim())
                 }
+                metricsUtil.end()
+                metricsUtil.start("Metadata Update - camera")
                 if (metadataMap["camera"].toString().trim() != "") {
                     var camera = metadataMap["camera"].toString().trim()
                     val cameraTypes = metadataRepository.findByCameraTypeAlphabetical()
@@ -1300,6 +1304,8 @@ class TimelineController: BaseController() {
                 } else {
                     metadataObj.get().setCamera(null)
                 }
+                metricsUtil.end()
+                metricsUtil.start("Metadata Update - lens")
                 if (metadataMap["lens"].toString().trim() != "") {
                     var lens = metadataMap["lens"].toString().trim()
                     val lensTypes = metadataRepository.findByLensTypeAlphabetical()
@@ -1316,6 +1322,8 @@ class TimelineController: BaseController() {
                 } else {
                     metadataObj.get().setLens(null)
                 }
+                metricsUtil.end()
+                metricsUtil.start("Metadata Update - duration")
                 if (metadataObj.get().getType()?.contains("video")!! &&
                     metadataMap["duration"].toString().trim() != "" && metadataMap["duration"].toString().trim() != "0:00" &&
                     metadataMap["duration"].toString().trim() != "00:00" && metadataMap["duration"].toString().trim() != "0:00:00" &&
@@ -1325,26 +1333,36 @@ class TimelineController: BaseController() {
                 } else {
                     metadataObj.get().setDuration(null)
                 }
+                metricsUtil.end()
+                metricsUtil.start("Metadata Update - year")
                 if (metadataMap["year"].toString() == "") {
                     metadataObj.get().setYear(null)
                 } else if (metadataObj.get().getYear() != metadataMap["year"].toString().toInt()) {
                     metadataObj.get().setYear(StringEscapeUtils.escapeHtml4(metadataMap["year"].toString()).toInt())
                 }
+                metricsUtil.end()
+                metricsUtil.start("Metadata Update - month")
                 if (metadataMap["month"].toString() == "") {
                     metadataObj.get().setMonth(null)
                 } else if (metadataObj.get().getMonth() != metadataMap["month"].toString().toInt()) {
                     metadataObj.get().setMonth(StringEscapeUtils.escapeHtml4(metadataMap["month"].toString()).toInt())
                 }
+                metricsUtil.end()
+                metricsUtil.start("Metadata Update - day")
                 if (metadataMap["day"].toString() == "") {
                     metadataObj.get().setDay(null)
                 } else if (metadataObj.get().getDay() != metadataMap["day"].toString().toInt()) {
                     metadataObj.get().setDay(StringEscapeUtils.escapeHtml4(metadataMap["day"].toString()).toInt())
                 }
+                metricsUtil.end()
+                metricsUtil.start("Metadata Update - time")
                 if (metadataMap["time"].toString() == "") {
                     metadataObj.get().setTime(null)
                 } else if (metadataObj.get().getTime() != metadataMap["time"].toString()) {
                     metadataObj.get().setTime(StringEscapeUtils.escapeHtml4(metadataMap["time"].toString()))
                 }
+                metricsUtil.end()
+                metricsUtil.start("Metadata Update - offset")
                 if (metadataMap["offset"].toString() == "") {
                     metadataObj.get().setTimeZone(null)
                 } else if (metadataObj.get().getTimeZone() != metadataMap["offset"].toString()) {
