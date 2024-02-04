@@ -52,11 +52,11 @@ class MetricsUtil {
             }
 
             if (elapsedTime > slaMS!!) {
-                logger.log(Level.WARNING, "The elapsed time${logMessage}is over the SLA threshold of $slaMS ms.")
+                logger.log(Level.WARNING, "The elapsed time ${elapsedTime}${logMessage}is over the SLA threshold of $slaMS ms.")
             }
 
             if (counter > 1 && totalElapsedTime > slaMS!!) {
-                logger.log(Level.WARNING, "The total elapsed time${logMessage}is over the SLA threshold of $slaMS ms.")
+                logger.log(Level.WARNING, "The total elapsed time ${totalElapsedTime}${logMessage}is over the SLA threshold of $slaMS ms.")
             }
 
         } else {
