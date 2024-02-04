@@ -54,14 +54,14 @@ class MetricsUtil {
             elapsedTime = endTime!! - startTime!!
             totalElapsedTime += elapsedTime
 
+            if (counter > 1) {
+                logger.log(Level.INFO, "$counter calls for this instance elapsed time: $totalElapsedTime ms.")
+            }
+
             if (elapsedTime > slaMS!!) {
                 logger.log(Level.WARNING, "Elapsed time${logMessage}was $elapsedTime ms.")
             } else {
                 logger.log(Level.INFO, "Elapsed time${logMessage}was $elapsedTime ms.")
-            }
-
-            if (counter > 1) {
-                logger.log(Level.INFO, "$counter calls for this instance elapsed time: $totalElapsedTime ms.")
             }
 
             if (elapsedTime > slaMS!!) {

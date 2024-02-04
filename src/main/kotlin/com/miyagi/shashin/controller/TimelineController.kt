@@ -1420,12 +1420,13 @@ class TimelineController: BaseController() {
                 metricsUtil.start("Metadata Update - Update record")
                 metadataObj.get().setModifiedAt(getCurrentTimestamp())
                 metadataRepository.save(metadataObj.get())
+                metricsUtil.end()
 
+                metricsUtil.start("Metadata Update - Getting attributes")
                 val attrResponse = getAllAttributeData(model)
                 for ((k, v) in attrResponse) {
                     resp[k] = v
                 }
-
                 metricsUtil.end()
 
                 return mapper.writeValueAsString(resp)
