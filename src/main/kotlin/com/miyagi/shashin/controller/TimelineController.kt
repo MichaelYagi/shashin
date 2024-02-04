@@ -1289,36 +1289,40 @@ class TimelineController: BaseController() {
                 metricsUtil.end()
                 metricsUtil.start("Metadata Update - camera")
                 if (metadataMap["camera"].toString().trim() != "") {
-                    var camera = metadataMap["camera"].toString().trim()
-                    val cameraTypes = metadataRepository.findByCameraTypeAlphabetical()
-                    for (cameraType in cameraTypes) {
-                        if (camera.trim().lowercase() == cameraType.trim().lowercase()) {
-                            camera = cameraType
-                            break
-                        }
-                    }
+                    val camera = metadataMap["camera"].toString().trim()
+                    metadataObj.get().setCamera(camera)
 
-                    if (metadataObj.get().getCamera() != camera) {
-                        metadataObj.get().setCamera(camera)
-                    }
+//                    val cameraTypes = metadataRepository.findByCameraTypeAlphabetical()
+//                    for (cameraType in cameraTypes) {
+//                        if (camera.trim().lowercase() == cameraType.trim().lowercase()) {
+//                            camera = cameraType
+//                            break
+//                        }
+//                    }
+//
+//                    if (metadataObj.get().getCamera() != camera) {
+//                        metadataObj.get().setCamera(camera)
+//                    }
                 } else {
                     metadataObj.get().setCamera(null)
                 }
                 metricsUtil.end()
                 metricsUtil.start("Metadata Update - lens")
                 if (metadataMap["lens"].toString().trim() != "") {
-                    var lens = metadataMap["lens"].toString().trim()
-                    val lensTypes = metadataRepository.findByLensTypeAlphabetical()
-                    for (lensType in lensTypes) {
-                        if (lens.trim().lowercase() == lensType.trim().lowercase()) {
-                            lens = lensType
-                            break
-                        }
-                    }
+                    val lens = metadataMap["lens"].toString().trim()
+                    metadataObj.get().setLens(lens)
 
-                    if (metadataObj.get().getLens() != lens) {
-                        metadataObj.get().setLens(lens)
-                    }
+//                    val lensTypes = metadataRepository.findByLensTypeAlphabetical()
+//                    for (lensType in lensTypes) {
+//                        if (lens.trim().lowercase() == lensType.trim().lowercase()) {
+//                            lens = lensType
+//                            break
+//                        }
+//                    }
+//
+//                    if (metadataObj.get().getLens() != lens) {
+//                        metadataObj.get().setLens(lens)
+//                    }
                 } else {
                     metadataObj.get().setLens(null)
                 }
@@ -1706,25 +1710,25 @@ class TimelineController: BaseController() {
                 }
             }
 
-            if (camera != null && camera.trim().isNotBlank()) {
-                val cameraTypes = metadataRepository.findByCameraTypeAlphabetical()
-                for (cameraType in cameraTypes) {
-                    if (camera!!.trim().lowercase() == cameraType.trim().lowercase()) {
-                        camera = cameraType.trim()
-                        break
-                    }
-                }
-            }
-
-            if (lens != null && lens.trim().isNotBlank()) {
-                val lensTypes = metadataRepository.findByLensTypeAlphabetical()
-                for (lensType in lensTypes) {
-                    if (lens!!.trim().lowercase() == lensType.trim().lowercase()) {
-                        lens = lensType.trim()
-                        break
-                    }
-                }
-            }
+//            if (camera != null && camera.trim().isNotBlank()) {
+//                val cameraTypes = metadataRepository.findByCameraTypeAlphabetical()
+//                for (cameraType in cameraTypes) {
+//                    if (camera!!.trim().lowercase() == cameraType.trim().lowercase()) {
+//                        camera = cameraType.trim()
+//                        break
+//                    }
+//                }
+//            }
+//
+//            if (lens != null && lens.trim().isNotBlank()) {
+//                val lensTypes = metadataRepository.findByLensTypeAlphabetical()
+//                for (lensType in lensTypes) {
+//                    if (lens!!.trim().lowercase() == lensType.trim().lowercase()) {
+//                        lens = lensType.trim()
+//                        break
+//                    }
+//                }
+//            }
 
             val metadataList: ArrayList<Metadata> = ArrayList()
             val albumPhotoList: ArrayList<AlbumPhoto> = ArrayList()
