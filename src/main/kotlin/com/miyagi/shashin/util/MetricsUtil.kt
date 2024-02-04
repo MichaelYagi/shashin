@@ -27,8 +27,12 @@ class MetricsUtil {
         if (lmodule != "") {
             module = lmodule
         }
+        var logMessage = " "
+        if (module != "") {
+            logMessage = " for $module "
+        }
         if (counter == 0) {
-            logger.log(Level.INFO, "Start recording metrics$lmodule.")
+            logger.log(Level.INFO, "START METRICS recording$logMessage.")
         }
         startTime = System.currentTimeMillis()
         counter++
