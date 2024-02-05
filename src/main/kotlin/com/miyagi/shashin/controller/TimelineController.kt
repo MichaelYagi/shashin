@@ -1424,17 +1424,21 @@ class TimelineController: BaseController() {
                         val newlng = latlngArray[1].trim()
 
                         if (metadataObj.get().getLat() != newlat || metadataObj.get().getLng() != newlng) {
-                            val coordinateMap = processCoordinates(metadataMap["latlng"].toString())
-                            if (coordinateMap["lat"] != null && coordinateMap["lng"] != null) {
-                                metadataObj.get().setLat(coordinateMap["lat"])
-                                metadataObj.get().setLng(coordinateMap["lng"])
-                            }
-                            if (coordinateMap["place"] != null) {
-                                metadataObj.get().setPlaceName(coordinateMap["place"])
-                            }
-                            if (coordinateMap["timezone"] != null) {
-                                metadataObj.get().setTimeZone(coordinateMap["timezone"])
-                            }
+                            Thread {
+                                val coordinateMap = processCoordinates(metadataMap["latlng"].toString())
+                                if (coordinateMap["lat"] != null && coordinateMap["lng"] != null) {
+                                    metadataObj.get().setLat(coordinateMap["lat"])
+                                    metadataObj.get().setLng(coordinateMap["lng"])
+                                }
+                                if (coordinateMap["place"] != null) {
+                                    metadataObj.get().setPlaceName(coordinateMap["place"])
+                                }
+                                if (coordinateMap["timezone"] != null) {
+                                    metadataObj.get().setTimeZone(coordinateMap["timezone"])
+                                }
+
+                                metadataRepository.save(metadataObj.get())
+                            }.start()
                         }
                     }
                 }
