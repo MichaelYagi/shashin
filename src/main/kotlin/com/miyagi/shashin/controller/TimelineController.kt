@@ -1750,18 +1750,45 @@ class TimelineController: BaseController() {
             var timezone: String? = null
 
             if (latlng != null && latlng != "") {
-                val coordinateMap = processCoordinates(latlng)
-                lat = coordinateMap["lat"]
-                lng = coordinateMap["lng"]
-                place = coordinateMap["place"]
-                timezone = coordinateMap["timezone"]
+                Thread {
+                    val coordinateMap = processCoordinates(latlng)
+                    lat = coordinateMap["lat"]
+                    lng = coordinateMap["lng"]
+                    place = coordinateMap["place"]
+                    timezone = coordinateMap["timezone"]
 
-                if (!latlng.isNullOrEmpty() && (lat == null || lng == null)) {
-                    logger.log(Level.WARNING, "Updating batch metadata failed. Could not save due to invalid latlng.")
-                    resp["msg"] = "Could not save. Invalid latlng."
-                    resp["status"] = ApiResponse.FAIL.status
-                    return mapper.writeValueAsString(resp)
-                }
+                    if (latlng.isNotEmpty() && (lat == null || lng == null)) {
+                        logger.log(Level.WARNING, "Could not save location due to invalid latlng.")
+                    } else {
+                        val metadataLocationList = mutableListOf<Metadata>()
+                        for (idVal in idArray) {
+                            val id = StringEscapeUtils.escapeHtml4(idVal)
+                            val metadataObj: Optional<Metadata?> = metadataRepository.findById(id)
+                            if (metadataObj.isPresent) {
+                                val metadata = metadataObj.get()
+
+                                if (metadata.getLat() != lat || metadata.getLng() != lng) {
+                                    metadata.setLat(lat)
+                                    metadata.setLng(lng)
+
+                                    if (place != null) {
+                                        metadata.setPlaceName(place)
+                                    }
+
+                                    if (timezone != null) {
+                                        metadata.setTimeZone(timezone)
+                                    }
+
+                                    metadataLocationList.add(metadata)
+                                }
+                            }
+                        }
+
+                        if (metadataLocationList.size > 0) {
+                            metadataRepository.saveAll(metadataLocationList)
+                        }
+                    }
+                }.start()
             }
 
             var keywordList = mutableListOf<String>()
@@ -1828,18 +1855,18 @@ class TimelineController: BaseController() {
                             metadata.setTimeZone(offset)
                         }
 
-                        if (lat != null && lng != null && (metadata.getLat() != lat || metadata.getLng() != lng)) {
-                            metadata.setLat(lat)
-                            metadata.setLng(lng)
-
-                            if (place != null) {
-                                metadata.setPlaceName(place)
-                            }
-
-                            if (timezone != null) {
-                                metadata.setTimeZone(timezone)
-                            }
-                        }
+//                        if (lat != null && lng != null && (metadata.getLat() != lat || metadata.getLng() != lng)) {
+//                            metadata.setLat(lat)
+//                            metadata.setLng(lng)
+//
+//                            if (place != null) {
+//                                metadata.setPlaceName(place)
+//                            }
+//
+//                            if (timezone != null) {
+//                                metadata.setTimeZone(timezone)
+//                            }
+//                        }
 
                         if (keywordList.isNotEmpty()) {
                             keywordPhotoRepository.deleteAllByMetadataId(metadata.getId())
