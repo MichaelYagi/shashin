@@ -1410,6 +1410,8 @@ class TimelineController: BaseController() {
                 }
                 metricsUtil.end()
 
+                var setAndSave = false
+
                 metricsUtil.start("Metadata Update - Process location")
                 if (metadataMap["latlng"].toString() == "") {
                     metadataObj.get().setLat(null)
@@ -1424,6 +1426,7 @@ class TimelineController: BaseController() {
                         val newlng = latlngArray[1].trim()
 
                         if (metadataObj.get().getLat() != newlat || metadataObj.get().getLng() != newlng) {
+                            setAndSave = true
                             Thread {
                                 val coordinateMap = processCoordinates(metadataMap["latlng"].toString())
                                 if (coordinateMap["lat"] != null && coordinateMap["lng"] != null) {
@@ -1437,6 +1440,7 @@ class TimelineController: BaseController() {
                                     metadataObj.get().setTimeZone(coordinateMap["timezone"])
                                 }
 
+                                metadataObj.get().setModifiedAt(getCurrentTimestamp())
                                 metadataRepository.save(metadataObj.get())
                             }.start()
                         }
@@ -1445,10 +1449,12 @@ class TimelineController: BaseController() {
                 metricsUtil.end()
 
                 // Update record
-                metricsUtil.start("Metadata Update - Update record")
-                metadataObj.get().setModifiedAt(getCurrentTimestamp())
-                metadataRepository.save(metadataObj.get())
-                metricsUtil.end()
+                if (!setAndSave) {
+                    metricsUtil.start("Metadata Update - Update record")
+                    metadataObj.get().setModifiedAt(getCurrentTimestamp())
+                    metadataRepository.save(metadataObj.get())
+                    metricsUtil.end()
+                }
 
                 metricsUtil.start("Metadata Update - Getting attributes")
                 Thread {
