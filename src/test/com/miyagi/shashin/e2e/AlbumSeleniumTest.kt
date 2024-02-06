@@ -190,6 +190,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("albumsModalStatus")))
     }
 
+    // TODO: Fix this test
 //    @Test
 //    @Throws(Exception::class)
 //    fun shouldViewInAlbumAsAdmin() {
