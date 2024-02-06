@@ -48,7 +48,7 @@ import javax.servlet.http.HttpSession
 
 @Suppress("UNCHECKED_CAST")
 @Controller
-class PeopleController {
+class PeopleController: BaseController() {
 
     @Autowired
     private var metadataRepository: MetadataRepository? = null
@@ -348,6 +348,8 @@ class PeopleController {
             }
             model["keywordMap"] = keywordMap
         }
+
+        getAllAttributeData(model)
 
         model["msg"] = ""
         model["status"] = ApiResponse.SUCCESS.status
@@ -691,6 +693,8 @@ class PeopleController {
         for ((k, v) in response) {
             model[k] = v!!
         }
+
+        getAllAttributeData(model)
 
         // val person = mapper.convertValue(response["personInfo"], object : TypeReference<Map<String, Any>>() {})
 
