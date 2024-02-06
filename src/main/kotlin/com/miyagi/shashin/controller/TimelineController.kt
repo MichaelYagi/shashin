@@ -1744,18 +1744,13 @@ class TimelineController: BaseController() {
             val albumPhotoList: ArrayList<AlbumPhoto> = ArrayList()
 
             // Process keyword and lat/lng data
-            var lat: String? = null
-            var lng: String? = null
-            var place: String? = null
-            var timezone: String? = null
-
             if (latlng != null && latlng != "") {
                 Thread {
                     val coordinateMap = processCoordinates(latlng)
-                    lat = coordinateMap["lat"]
-                    lng = coordinateMap["lng"]
-                    place = coordinateMap["place"]
-                    timezone = coordinateMap["timezone"]
+                    val lat = coordinateMap["lat"]
+                    val lng = coordinateMap["lng"]
+                    val place = coordinateMap["place"]
+                    val timezone = coordinateMap["timezone"]
 
                     if (latlng.isNotEmpty() && (lat == null || lng == null)) {
                         logger.log(Level.WARNING, "Could not save location due to invalid latlng.")
