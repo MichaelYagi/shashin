@@ -2204,6 +2204,28 @@
             const keywordAvailableList = $("#keywordsBatchString").length > 0 ? $("#keywordsBatchString").val().split(",") : [];
             shashin.createAutocomplete("#keywordsBatchData", keywordAvailableList, true, 10);
 
+            const cameraList = $("#camerasBatchString").val().split(",");
+            shashin.createAutocomplete("#cameraBatchData", cameraList, false);
+
+            const lensList = $("#lensesBatchString").val().split(",");
+            shashin.createAutocomplete("#lensBatchData", lensList, false);
+
+            const albumcheckedBoxes = $('input[name="albums[]"]');
+            const albumNames = [];
+            albumcheckedBoxes.each(function() {
+                albumNames.push($(this).val().replace(/ +(?= )/g,'').trim());
+            });
+            shashin.createAutocomplete("#albumNameInput", albumNames, false);
+            shashin.syncCheckboxInputs("#albumNameInput", "albums");
+
+            const peoplecheckedBoxes = $('input[name="recognitionLabel[]"]');
+            const peopleNames = [];
+            peoplecheckedBoxes.each(function() {
+                peopleNames.push($(this).val().replace(/ +(?= )/g,'').trim());
+            });
+            shashin.createAutocomplete("#tagBatchDataInput", peopleNames, false);
+            shashin.syncCheckboxInputs("#tagBatchDataInput", "recognitionLabel");
+
             $("#propBatchMetadata").modal('show');
         });
     }
