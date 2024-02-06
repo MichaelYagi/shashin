@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.concurrent.TimeUnit
 
 @Controller
-class MapController {
+class MapController: BaseController() {
 
     @Autowired
     private val metadataRepository: MetadataRepository? = null
@@ -57,6 +57,8 @@ class MapController {
                 albums = albumRepository?.findAllWithLocationOrderByAlbumNameAndUserId(currentUserObj.getId())
             }
         }
+
+        getAllAttributeData(model)
 
         if (albums != null) {
             model["albums"] = albums
