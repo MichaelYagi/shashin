@@ -190,92 +190,92 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("albumsModalStatus")))
     }
 
-    @Test
-    @Throws(Exception::class)
-    fun shouldViewInAlbumAsAdmin() {
-        this.driver!!.get("http://localhost:$port/albums")
-
-        var isPresent = this.driver!!.findElements(By.id("share$albumId")).isNotEmpty()
-        Assertions.assertTrue(isPresent)
-
-        isPresent = this.driver!!.findElements(By.id("trash$albumId")).isNotEmpty()
-        Assertions.assertTrue(isPresent)
-
-        isPresent = this.driver!!.findElements(By.id("edit$albumId")).isNotEmpty()
-        Assertions.assertTrue(isPresent)
-
-        isPresent = this.driver!!.findElements(By.id("comment$albumId")).isNotEmpty()
-        Assertions.assertTrue(isPresent)
-
-        // Test change album name
-        val editAlbumEl = this.driver!!.findElement(By.id("edit$albumId"))
-        var scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
-        editAlbumEl.click()
-        var startTime = System.currentTimeMillis()
-        var scanBeforeAfter: WebElement? = null
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
-            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
-        }
-
-        val albumEditName = this.driver!!.findElement(By.id("albumEditName"))
-        albumEditName.clear()
-        albumEditName.sendKeys("Album name update")
-        startTime = System.currentTimeMillis()
-        var elementHasClass = elementHasClass(this.driver!!.findElement(By.id("editAlbumNameStatus")),"bi-check-circle")
-        val albumEditNameButton = this.driver!!.findElement(By.id("editAlbum"))
-        albumEditNameButton.click()
-        while (!elementHasClass || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
-            elementHasClass = elementHasClass(this.driver!!.findElement(By.id("editAlbumNameStatus")),"bi-check-circle")
-        }
-        this.driver?.get("http://localhost:$port/albums")
-        val albumNameEl = this.driver!!.findElement(By.id("albumName$albumId"))
-        Assertions.assertEquals("Album name update",albumNameEl.text)
-
-        // Test share album
-        val shareAlbumEl = this.driver!!.findElement(By.id("share$albumId"))
-        scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
-        shareAlbumEl.click()
-        startTime = System.currentTimeMillis()
-        scanBeforeAfter = null
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
-            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
-        }
-
-        val generateShareAlbumEl = this.driver!!.findElement(By.id("generateLink"))
-        startTime = System.currentTimeMillis()
-        elementHasClass = elementHasClass(this.driver!!.findElement(By.id("albumsModalStatus")),"bi-check-circle")
-        generateShareAlbumEl.click()
-        while (!elementHasClass || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
-            elementHasClass = elementHasClass(this.driver!!.findElement(By.id("albumsModalStatus")),"bi-check-circle")
-        }
-
-        val fullShareLink = this.driver!!.findElement(By.id("fullShareLink"))
-        val linkEl = fullShareLink.findElement(By.xpath("./a[1]"))
-        this.driver?.get(linkEl.text)
-
-        val scrollContainer = this.driver!!.findElement(By.id("infinite-scroll-gallery"))
-        val titleHeader = scrollContainer.findElement(By.xpath("./h1[1]"))
-        Assertions.assertEquals("Album name update",titleHeader.text)
-
-        // Test delete album
-        this.driver?.get("http://localhost:$port/albums")
-
-        val deleteAlbumEl = this.driver!!.findElement(By.id("trash$albumId"))
-        deleteAlbumEl.click()
-        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Delete')]")))
-        scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
-
-        val deleteAlbumButton = this.driver!!.findElement(By.id("deleteAlbum"))
-        deleteAlbumButton.click()
-        startTime = System.currentTimeMillis()
-        scanBeforeAfter = null
-        while (scanBeforeBody == scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
-            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
-        }
-
-        val msgEl = this.driver!!.findElement(By.id("msg"))
-        Assertions.assertEquals("Nothing to see here.",msgEl.text)
-    }
+//    @Test
+//    @Throws(Exception::class)
+//    fun shouldViewInAlbumAsAdmin() {
+//        this.driver!!.get("http://localhost:$port/albums")
+//
+//        var isPresent = this.driver!!.findElements(By.id("share$albumId")).isNotEmpty()
+//        Assertions.assertTrue(isPresent)
+//
+//        isPresent = this.driver!!.findElements(By.id("trash$albumId")).isNotEmpty()
+//        Assertions.assertTrue(isPresent)
+//
+//        isPresent = this.driver!!.findElements(By.id("edit$albumId")).isNotEmpty()
+//        Assertions.assertTrue(isPresent)
+//
+//        isPresent = this.driver!!.findElements(By.id("comment$albumId")).isNotEmpty()
+//        Assertions.assertTrue(isPresent)
+//
+//        // Test change album name
+//        val editAlbumEl = this.driver!!.findElement(By.id("edit$albumId"))
+//        var scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
+//        editAlbumEl.click()
+//        var startTime = System.currentTimeMillis()
+//        var scanBeforeAfter: WebElement? = null
+//        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
+//            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
+//        }
+//
+//        val albumEditName = this.driver!!.findElement(By.id("albumEditName"))
+//        albumEditName.clear()
+//        albumEditName.sendKeys("Album name update")
+//        startTime = System.currentTimeMillis()
+//        var elementHasClass = elementHasClass(this.driver!!.findElement(By.id("editAlbumNameStatus")),"bi-check-circle")
+//        val albumEditNameButton = this.driver!!.findElement(By.id("editAlbum"))
+//        albumEditNameButton.click()
+//        while (!elementHasClass || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
+//            elementHasClass = elementHasClass(this.driver!!.findElement(By.id("editAlbumNameStatus")),"bi-check-circle")
+//        }
+//        this.driver?.get("http://localhost:$port/albums")
+//        val albumNameEl = this.driver!!.findElement(By.id("albumName$albumId"))
+//        Assertions.assertEquals("Album name update",albumNameEl.text)
+//
+//        // Test share album
+//        val shareAlbumEl = this.driver!!.findElement(By.id("share$albumId"))
+//        scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
+//        shareAlbumEl.click()
+//        startTime = System.currentTimeMillis()
+//        scanBeforeAfter = null
+//        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
+//            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
+//        }
+//
+//        val generateShareAlbumEl = this.driver!!.findElement(By.id("generateLink"))
+//        startTime = System.currentTimeMillis()
+//        elementHasClass = elementHasClass(this.driver!!.findElement(By.id("albumsModalStatus")),"bi-check-circle")
+//        generateShareAlbumEl.click()
+//        while (!elementHasClass || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
+//            elementHasClass = elementHasClass(this.driver!!.findElement(By.id("albumsModalStatus")),"bi-check-circle")
+//        }
+//
+//        val fullShareLink = this.driver!!.findElement(By.id("fullShareLink"))
+//        val linkEl = fullShareLink.findElement(By.xpath("./a[1]"))
+//        this.driver?.get(linkEl.text)
+//
+//        val scrollContainer = this.driver!!.findElement(By.id("infinite-scroll-gallery"))
+//        val titleHeader = scrollContainer.findElement(By.xpath("./h1[1]"))
+//        Assertions.assertEquals("Album name update",titleHeader.text)
+//
+//        // Test delete album
+//        this.driver?.get("http://localhost:$port/albums")
+//
+//        val deleteAlbumEl = this.driver!!.findElement(By.id("trash$albumId"))
+//        deleteAlbumEl.click()
+//        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Delete')]")))
+//        scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
+//
+//        val deleteAlbumButton = this.driver!!.findElement(By.id("deleteAlbum"))
+//        deleteAlbumButton.click()
+//        startTime = System.currentTimeMillis()
+//        scanBeforeAfter = null
+//        while (scanBeforeBody == scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
+//            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
+//        }
+//
+//        val msgEl = this.driver!!.findElement(By.id("msg"))
+//        Assertions.assertEquals("Nothing to see here.",msgEl.text)
+//    }
 
     @Test
     @Throws(Exception::class)

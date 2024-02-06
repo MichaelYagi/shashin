@@ -79,6 +79,7 @@
             $("#editAlbum").off();
 
             $("#propeditalbums").off();
+            $("#originalAlbumName").val("");
         });
 
         $("#editAlbum").on("click", async function (e) {
@@ -132,6 +133,8 @@
                         $("#albumNameEdit").text(albumName);
                         $("#albumName" + albumId).text(albumName);
                         $("#editAlbumNameStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+                        $("#editAlbum").prop('disabled', true);
+                        $("#originalAlbumName").val(albumName);
                     } else {
                         shashin.showToastMessage("Could not edit album", data["msg"], {
                             icon: "bi-exclamation-triangle",
