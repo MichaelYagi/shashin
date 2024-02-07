@@ -18,7 +18,6 @@
             <input type="hidden" id="currentPerson" th:value="${personInfo.name}">
 
             <h1 th:inline="text">[[${personInfo.name}]]</h1>
-            <small><a href="/people"><span class="bi-arrow-return-left" style="font-size: 1rem;text-decoration: none !important;color: #777777;" title="Go back"></span></a></small>
             <div class="mt-2" id="comprefaceMessage"></div>
 
             <div id="infinite-scroll-gallery" class="row">
@@ -52,9 +51,11 @@
 
                                     if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
                                         $("#appSearch").hide();
+                                        $("#timelineTools").hide();
                                         $("#comprefaceAppTools").show();
                                     } else {
                                         $("#appSearch").show();
+                                        $("#timelineTools").show();
                                         $("#timelineAppTools").hide();
                                         $("#albumAppTools").hide();
                                         $("#matchesAppTools").hide();
@@ -87,9 +88,11 @@
 
                                     if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
                                         $("#appSearch").hide();
+                                        $("#timelineTools").hide();
                                         $("#comprefaceAppTools").show();
                                     } else {
                                         $("#appSearch").show();
+                                        $("#timelineTools").show();
                                         $("#timelineAppTools").hide();
                                         $("#albumAppTools").hide();
                                         $("#matchesAppTools").hide();

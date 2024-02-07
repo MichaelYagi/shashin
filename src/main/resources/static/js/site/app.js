@@ -1755,11 +1755,12 @@
                     }
                 } else if (view === "timeline" || view === "recent" || view === "modified" || view === "taken" || view === "folder" || view === "search") {
                     $("#timelineAppTools").show();
-                    if (view === "timeline") {
+                    if (view === "timeline" || view === "folder") {
                         $("#timelineTools").hide();
                     }
-                } else if (view === "matches" || view === "person") {
+                } else if (view === "matches" || view === "person" || view === "compreface") {
                     $("#matchesAppTools").show();
+                    $("#timelineTools").hide();
                 }
 
                 // Hide all center and bottom left icons
@@ -1772,7 +1773,7 @@
                 $("#timelineAppTools").hide();
                 $("#albumAppTools").hide();
                 $("#matchesAppTools").hide();
-                if (view === "timeline") {
+                if (view === "timeline" || view === "folder" || view === "matches" || view === "person" || view === "compreface") {
                     $("#timelineTools").show();
                 } else if (view === "album") {
                     $("#albumTools").show();
@@ -1831,11 +1832,12 @@
                     }
                 } else if (view === "timeline" || view === "recent" || view === "modified" || view === "taken" || view === "folder" || view === "search") {
                     $("#timelineAppTools").show();
-                    if (view === "timeline") {
+                    if (view === "timeline" || view === "folder") {
                         $("#timelineTools").hide();
                     }
-                } else if (view === "matches" || view === "person") {
+                } else if (view === "matches" || view === "person" || view === "compreface") {
                     $("#matchesAppTools").show();
+                    $("#timelineTools").hide();
                 }
 
                 // Hide all center and bottom left icons
@@ -1847,7 +1849,7 @@
                 $("#appSearch").show();
                 //$('.thumbnail-br').show();
                 $("#timelineAppTools").hide();
-                if (view === "timeline") {
+                if (view === "timeline" || view === "folder" || view === "matches" || view === "person" || view === "compreface") {
                     $("#timelineTools").show();
                 } else if (view === "album") {
                     $("#albumTools").show();
