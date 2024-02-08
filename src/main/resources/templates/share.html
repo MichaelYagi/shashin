@@ -34,6 +34,19 @@
                                 <div th:replace="fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight},${metadata.expectedExtension},false)"></div>
 
                                 <div th:replace="fragments/centeredoverlay :: centeredoverlay(${metadata},${activePage},'shashin.openGallery',${iterStat.index})"></div>
+
+                                <div class="thumbnail-bl" th:id="${'tnbl'+metadata.id}">
+                                    <th:block th:if="${metadata.type.contains('video')}">
+                                        <a th:href="'/api/v1/video/'+${metadata.id}+'/download'" th:id="${'download'+metadata.id}">
+                                            <span class="bi-download" style="font-size: 1rem;color: lightgray;"></span>
+                                        </a>
+                                    </th:block>
+                                    <th:block th:unless="${metadata.type.contains('video')}">
+                                        <a th:href="'/api/v1/image/'+${metadata.id}+'/download'" th:id="${'download'+metadata.id}">
+                                            <span class="bi-download" style="font-size: 1rem;color: lightgray;"></span>
+                                        </a>
+                                    </th:block>
+                                </div>
                             </div>
 
                             <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">

@@ -6,6 +6,14 @@ class GalleryTemplates {
             <img loading="lazy" src="${encodeURI(metadata.thumbnailUrlSmall)}?v=${uuid}" class="photo-thumbnail-image" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
             <input type="hidden" name="filename${metadata.id}" id="filename${metadata.id}" value="${metadata.fileName}">
             <input type="hidden" name="thumbnailCentered${metadata.id}" id="thumbnailCentered${metadata.id}" value="${encodeURI(metadata.thumbnailUrlCentered)}">
+            
+            ${(activePage === "share")?
+            `<div class="thumbnail-bl" id="tnbl${metadata.id}">
+                <a href="/api/v1${(metadata.type.includes("video") ? `/video/` : `/image/`)}${metadata.id}/download" id="download${metadata.id}">
+                    <span class="bi-download" style="font-size: 1rem;color: lightgray;"></span>
+                </a>
+            </div>`
+            :''}
     
             ${(overlayData.hasOwnProperty("data") && overlayData["data"].hasOwnProperty("overlayFlags") && overlayData["data"]["overlayFlags"].hasOwnProperty("renderTopRight") && overlayData["data"]["overlayFlags"]["renderTopRight"] === true) ? GalleryTemplates.getTopRightOverlay({
             id: metadata.id,
