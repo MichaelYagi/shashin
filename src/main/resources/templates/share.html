@@ -12,7 +12,7 @@
                  class="col-sm p-3 min-vh-100"></div>
             <div id="infinite-scroll-gallery">
                 <th:block th:if="${not #lists.isEmpty(albumMetadataList)}">
-                    <h1 th:utext="${album.name + '&nbsp;&lt;form method=&quot;post&quot; action=&quot;/album/download/' + album.id + '&quot; style=&quot;display&colon; inline-block&semi;white-space&colon; nowrap&semi;&quot;&gt;&lt;button class=&quot;bi-download link-button-lightmode&quot; style=&quot;font-size: 2rem;&quot; type=&quot;submit&quot; name=&quot;download&quot; value=&quot;1&quot; title=&quot;Download share album photos (download videos individually)&quot;&gt;&lt;/button&gt;&lt;/form&gt;'}"></h1>
+                    <h1 th:utext="${album.name + '&nbsp;&lt;form method=&quot;post&quot; action=&quot;/album/download/' + album.id + '&quot; style=&quot;display&colon; inline-block&semi;white-space&colon; nowrap&semi;&quot;&gt;&lt;button class=&quot;bi-download link-button-lightmode&quot; style=&quot;font-size: 2rem;color: lightgray;&quot; type=&quot;submit&quot; name=&quot;download&quot; value=&quot;1&quot; title=&quot;Download share album photos (download videos individually)&quot;&gt;&lt;/button&gt;&lt;/form&gt;'}"></h1>
                     <span id="albumId" style="display: none" th:text="${album.id}"></span>
 
                     <div class="row image-group-padding">
