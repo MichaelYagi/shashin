@@ -1478,6 +1478,81 @@ class AlbumsController: BaseController() {
         return null
     }
 
+    @PostMapping("/download/share/{shareLink}/album/{albumId}")
+    fun postShareAlbumDownload(model: Model, @RequestParam download: Int, @PathVariable shareLink: String, @PathVariable albumId: Int, response: HttpServletResponse): ResponseEntity<InputStreamResource>? {
+        if (albumId > 0 && download == albumId) {
+
+            // Get album photos
+            val albumPhotos = albumPhotoRepository.findAllByAlbumId(albumId)
+            val albumObj = albumRepository.findById(albumId)
+            if (albumPhotos != null && albumObj.isPresent && albumObj.get().getShareUrl() == shareLink) {
+                val tempExportBaseDir = Files.createTempDirectory(albumId.toString())
+
+                for (albumPhoto in albumPhotos) {
+                    if (albumPhoto != null) {
+                        val metadata = metadataRepository.findById(albumPhoto.getMetadataId()!!)
+                        if (!metadata.get().getType()?.contains("video", ignoreCase = true)!!) {
+                            val tempFile = File(metadata.get().getPath())
+                            if (tempFile.exists()) {
+                                val tempFileTo =
+                                    File(tempExportBaseDir.toString() + "/" + metadata.get().getFileName())
+                                Files.copy(
+                                    tempFile.toPath(),
+                                    tempFileTo.toPath(),
+                                    StandardCopyOption.REPLACE_EXISTING
+                                )
+                            } else {
+                                logger.log(
+                                    Level.INFO,
+                                    "Exporting album photo. File does not exist: " + tempFile.absolutePath
+                                )
+                            }
+                        } else {
+                            logger.log(
+                                Level.INFO,
+                                "Ignoring album video: " + metadata.get().getPath()
+                            )
+                        }
+                    }
+                }
+
+                if (tempExportBaseDir.isDirectory() && tempExportBaseDir.toList().isNotEmpty()) {
+                    val tempDir = tempExportBaseDir.toFile()
+                    val outputZipFile = FileUtils.zipFolder(tempDir, albumObj.get().getName()!!)
+                    FileUtils.deleteDirectory(tempDir)
+
+                    if (outputZipFile != null) {
+                        outputZipFile.deleteOnExit()
+
+                        val resource = InputStreamResource(FileInputStream(outputZipFile))
+                        val contentLength = outputZipFile.length()
+
+                        val headers = HttpHeaders()
+                        headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("ShashinAlbumName",
+                            outputZipFile.name.replace("\\s".toRegex(), "_").lowercase(Locale.getDefault())
+                        ).path("/").build().toString())
+                        headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("ShashinAlbumSize",contentLength.toString()).path("/").build().toString())
+                        headers.add(
+                            HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=" + outputZipFile.name
+                        )
+                        headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
+                        headers.add("Pragma", "no-cache")
+                        headers.add("Expires", "0")
+
+                        return ResponseEntity.ok()
+                            .headers(headers)
+                            .contentLength(contentLength)
+                            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                            .body(resource)
+                    }
+                }
+            }
+        }
+
+        return null
+    }
+
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/album/updatename/{albumId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
