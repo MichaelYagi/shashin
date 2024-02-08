@@ -80,6 +80,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "/articles/**",
             "/health",
             "/features",
+            "/download/share/**/album/**",
             "/share/**",
             "/css/**",
             "/js/**",
