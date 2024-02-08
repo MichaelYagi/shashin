@@ -117,12 +117,11 @@ class ShareAlbum {
 
         $("#downloadFormContainer").html('<form method="post" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 2rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="download" value="' + albumId + '" title="Download share album photos (download videos individually)"></button></form>');
 
-        $("#download"+this.albumId).on("click", function() {
+        $("#download"+albumId).on("click", function() {
             let downloadTimer;
             const tokenName = "ShashinShareAlbumName";
             const tokenSize = "ShashinShareAlbumSize";
             const configuredAttempts = 120;
-            const downloadLocation = $("#download"+this.albumId).attr("href");
 
             shashin.showToastMessage("Downloading share album", "Downloading share album \""+albumName+"\". Downloading photos only.", {icon:"bi-info-circle", iconColor:"#777777"});
             setTimeout(function () { $("#download"+albumId).removeAttr("href") }, 0);
@@ -140,7 +139,6 @@ class ShareAlbum {
                         // $("#albumsMessage").html("&nbsp;").animate({opacity: 0}, 5000);
                     } else {
                         shashin.showToastMessage("Share album download", "<strong>File name</strong> " + tokenCookieValue + " <strong>File size</strong> " + Util.formatBytes(tokenCookieSize), {icon:"bi-info-circle", iconColor:"#777777"});
-                        $("#download" + albumId).attr("href", downloadLocation);
                         Util.deleteCookie(tokenName, "/");
                         Util.deleteCookie(tokenSize, "/");
                         window.clearInterval(downloadTimer);
