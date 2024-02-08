@@ -5,6 +5,56 @@
 
 <div class="py-1 mb-1 container-fluid align-items-center d-flex flex-shrink-0"></div>
 
+<!-- For live toast messages, use shashin.showToastMessage() to display toast messages -->
+<div class="position-fixed bottom-0 start-50 translate-middle-x" id="toastContainer" style="z-index: 999999">
+    <div class="toast-container">
+        <div id="defaultToastTarget" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <span id="toastIcon"></span><span id="toastSpacer"></span>
+                <strong id="toastTitle" class="me-auto"></strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div id="toastMessage" class="toast-body"></div>
+        </div>
+
+        <div id="toastTarget1" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <span id="toastIcon1"></span><span id="toastSpacer1"></span>
+                <strong id="toastTitle1" class="me-auto"></strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div id="toastMessage1" class="toast-body"></div>
+        </div>
+
+        <div id="toastTarget2" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <span id="toastIcon2"></span><span id="toastSpacer2"></span>
+                <strong id="toastTitle2" class="me-auto"></strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div id="toastMessage2" class="toast-body"></div>
+        </div>
+
+        <div id="toastTarget3" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <span id="toastIcon3"></span><span id="toastSpacer3"></span>
+                <strong id="toastTitle3" class="me-auto"></strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div id="toastMessage3" class="toast-body"></div>
+        </div>
+
+        <div id="toastTarget4" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <span id="toastIcon4"></span><span id="toastSpacer4"></span>
+                <strong id="toastTitle4" class="me-auto"></strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div id="toastMessage4" class="toast-body"></div>
+        </div>
+    </div>
+</div>
+
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
     <div class="row flex-grow-sm-1 flex-grow-0">
         <main role="main" class="col overflow-auto h-100">
@@ -12,7 +62,7 @@
                  class="col-sm p-3 min-vh-100"></div>
             <div id="infinite-scroll-gallery">
                 <th:block th:if="${not #lists.isEmpty(albumMetadataList)}">
-                    <h1 th:utext="${album.name + '&nbsp;&lt;form method=&quot;post&quot; action=&quot;/download/share/' + shareLink + '/album/' + album.id + '&quot; style=&quot;display&colon; inline-block&semi;white-space&colon; nowrap&semi;&quot;&gt;&lt;button class=&quot;bi-download link-button-lightmode&quot; style=&quot;font-size: 2rem;color: #0d6efd;&quot; type=&quot;submit&quot; name=&quot;download&quot; value=&quot;' + album.id + '&quot; title=&quot;Download share album photos (download videos individually)&quot;&gt;&lt;/button&gt;&lt;/form&gt;'}"></h1>
+                    <h1 th:utext="${'&lt;span id=&quot;albumName&quot;&gt;'+album.name + '&lt;/span&gt;&nbsp;&lt;span id=&quot;downloadFormContainer&quot;&gt;&lt;/span&gt;'}"></h1>
                     <span id="albumId" style="display: none" th:text="${album.id}"></span>
 
                     <div class="row image-group-padding">
@@ -87,14 +137,20 @@
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         const shareLink = /*[[${shareLink}]]*/ '';
+        const albumName = /*[[${album.name}]]*/ '';
         const activePage = /*[[${activePage}]]*/ 'share';
         const albumId = /*[[${album.id}]]*/ 0;
-        const albumMetadataList = /*[[${albumMetadataList}]]*/ '[]';
         /*]]>*/
 
-        const shareAlbumInstance = new ShareAlbum(shareLink, activePage, albumId, albumMetadataList);
-        shareAlbumInstance.init();
-        Util.checkErrorImage();
+        const http = new Http(activePage);
+        http.ajax("get", "/share/"+shareLink+"/album/"+albumId+"/0").then(function (data) {
+            if (data.hasOwnProperty("albumMetadataList") === true) {
+                const albumMetadataList = data["albumMetadataList"];
+                const shareAlbumInstance = new ShareAlbum(shareLink, activePage, albumId, albumName, albumMetadataList);
+                shareAlbumInstance.init();
+                Util.checkErrorImage();
+            }
+        });
     });
 </script>
 </body>
