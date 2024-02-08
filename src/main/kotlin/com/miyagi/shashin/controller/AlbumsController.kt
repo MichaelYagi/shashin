@@ -1528,10 +1528,10 @@ class AlbumsController: BaseController() {
                         val contentLength = outputZipFile.length()
 
                         val headers = HttpHeaders()
-                        headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("ShashinAlbumName",
+                        headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("ShashinShareAlbumName",
                             outputZipFile.name.replace("\\s".toRegex(), "_").lowercase(Locale.getDefault())
                         ).path("/").build().toString())
-                        headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("ShashinAlbumSize",contentLength.toString()).path("/").build().toString())
+                        headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("ShashinShareAlbumSize",contentLength.toString()).path("/").build().toString())
                         headers.add(
                             HttpHeaders.CONTENT_DISPOSITION,
                             "attachment; filename=" + outputZipFile.name
