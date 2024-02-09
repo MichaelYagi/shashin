@@ -1802,9 +1802,9 @@
                     const shareLink = $("#shareLink").val();
 
                     if (metadataList.length > 0) {
-                        $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 2rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="downloadArray" value=\''+JSON.stringify(metadataList)+'\' title="Download selected media"></button></form>');
+                        $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 1.5rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="downloadArray" value=\''+JSON.stringify(metadataList)+'\' title="Download selected media"></button></form>');
                     } else {
-                        $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 2rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="download" value="' + albumId + '" title="Download all photos"></button></form>');
+                        $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 1.5rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="download" value="' + albumId + '" title="Download all photos"></button></form>');
                     }
 
                     $("#download"+albumId).on("click", function() {
@@ -1904,9 +1904,9 @@
                     const shareLink = $("#shareLink").val();
 
                     if (metadataIdArray.length > 0) {
-                        $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 2rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="downloadArray" value=\''+JSON.stringify(metadataIdArray)+'\' title="Download selected media"></button></form>');
+                        $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 1.5rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="downloadArray" value=\''+JSON.stringify(metadataIdArray)+'\' title="Download selected media"></button></form>');
                     } else {
-                        $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 2rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="download" value="' + albumId + '" title="Download all photos"></button></form>');
+                        $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 1.5rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="download" value="' + albumId + '" title="Download all photos"></button></form>');
                     }
 
                     $("#download"+albumId).on("click", function() {
