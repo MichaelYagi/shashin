@@ -62,9 +62,10 @@
                  class="col-sm p-3 min-vh-100"></div>
             <div id="infinite-scroll-gallery">
                 <th:block th:if="${not #lists.isEmpty(albumMetadataList)}">
-                    <h1 th:utext="${'&lt;span id=&quot;albumName&quot;&gt;'+album.name + '&lt;/span&gt;&nbsp;&lt;span id=&quot;downloadFormContainer&quot;&gt;&lt;/span&gt;&lt;button class=&quot;bi-x-circle link-button-lightmode&quot; style=&quot;font-size: 2rem;color: #0d6efd;display: none;&quot; title=&quot;Cancel multi select&quot; id=&quot;clearMultiSelect&quot;&gt;&lt;/button&gt;&nbsp;&lt;span style=&quot;font-size: 1rem;&quot; id=&quot;albumNumberSelected&quot;&gt;&lt;/span&gt;'}"></h1>
-                    <span id="albumId" style="display: none" th:text="${album.id}"></span>
-                    <span id="shareLink" style="display: none" th:text="${shareLink}"></span>
+                    <h1 th:utext="${'&lt;span id=&quot;albumNameTitle&quot;&gt;'+album.name + '&lt;/span&gt;&nbsp;&lt;span id=&quot;downloadFormContainer&quot;&gt;&lt;/span&gt;&lt;button class=&quot;bi-x-circle link-button-lightmode&quot; style=&quot;font-size: 2rem;color: #0d6efd;display: none;&quot; title=&quot;Cancel multi select&quot; id=&quot;clearMultiSelect&quot;&gt;&lt;/button&gt;&nbsp;&lt;span style=&quot;font-size: 1rem;&quot; id=&quot;albumNumberSelected&quot;&gt;&lt;/span&gt;'}"></h1>
+                    <input id="albumId" type="hidden" th:value="${album.id}">
+                    <input id="albumName" type="hidden" th:value="${album.name}">
+                    <input id="shareLink" type="hidden" th:value="${shareLink}">
 
                     <div class="row image-group-padding">
                         <th:block th:each="metadata, iterStat: ${albumMetadataList}">
@@ -140,7 +141,6 @@
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         const shareLink = /*[[${shareLink}]]*/ '';
-        const albumName = /*[[${album.name}]]*/ '';
         const activePage = /*[[${activePage}]]*/ 'share';
         const albumId = /*[[${album.id}]]*/ 0;
         /*]]>*/
@@ -149,7 +149,7 @@
         http.ajax("get", "/share/"+shareLink+"/album/"+albumId+"/0").then(function (data) {
             if (data.hasOwnProperty("albumMetadataList") === true) {
                 const albumMetadataList = data["albumMetadataList"];
-                const shareAlbumInstance = new ShareAlbum(shareLink, activePage, albumId, albumName, albumMetadataList);
+                const shareAlbumInstance = new ShareAlbum(shareLink, activePage, albumId, albumMetadataList);
                 shareAlbumInstance.init();
                 Util.checkErrorImage();
             }

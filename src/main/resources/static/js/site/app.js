@@ -1796,6 +1796,20 @@
                 if ($('.bi-circle-fill').length > 0) {
                     $("#clearMultiSelect").show();
                     $("#albumNumberSelected").show();
+
+                    const albumId = $("#albumId").val();
+                    const albumName = $("#albumName").val();
+                    const shareLink = $("#shareLink").val();
+
+                    if (metadataList.length > 0) {
+                        $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 2rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="downloadArray" value=\''+JSON.stringify(metadataList)+'\' title="Download selected media"></button></form>');
+                    } else {
+                        $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 2rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="download" value="' + albumId + '" title="Download all photos"></button></form>');
+                    }
+
+                    $("#download"+albumId).on("click", function() {
+                        trackShareDownload(albumId,albumName);
+                    });
                 } else {
                     $("#clearMultiSelect").hide();
                     $("#albumNumberSelected").hide();
@@ -1884,6 +1898,20 @@
                 if ($('.bi-circle-fill').length > 0) {
                     $("#clearMultiSelect").show();
                     $("#albumNumberSelected").show();
+
+                    const albumId = $("#albumId").val();
+                    const albumName = $("#albumName").val();
+                    const shareLink = $("#shareLink").val();
+
+                    if (metadataIdArray.length > 0) {
+                        $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 2rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="downloadArray" value=\''+JSON.stringify(metadataIdArray)+'\' title="Download selected media"></button></form>');
+                    } else {
+                        $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 2rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="download" value="' + albumId + '" title="Download all photos"></button></form>');
+                    }
+
+                    $("#download"+albumId).on("click", function() {
+                        trackShareDownload(albumId,albumName);
+                    });
                 } else {
                     $("#clearMultiSelect").hide();
                     $("#albumNumberSelected").hide();
@@ -2058,6 +2086,44 @@
                 $(this).siblings(".photo-thumbnail-image").css("opacity", transparent);
             }
         });
+
+        function trackShareDownload(albumId,albumName) {
+            let downloadTimer;
+            const tokenName = "ShashinShareAlbumName";
+            const tokenSize = "ShashinShareAlbumSize";
+            const configuredAttempts = 120;
+
+            shashin.showToastMessage("Downloading share album", "Downloading share album \""+albumName+"\". Downloading photos only.", {icon:"bi-info-circle", iconColor:"#777777"});
+            setTimeout(function () { $("#download"+albumId).removeAttr("href") }, 0);
+            Util.setCookie(tokenName, "", "/");
+            Util.setCookie(tokenSize, "", "/");
+
+            let attempts = configuredAttempts;
+
+            downloadTimer = setInterval( function() {
+                const tokenCookieValue = Util.getCookie(tokenName);
+                const tokenCookieSize = Util.getCookie(tokenSize);
+
+                if ((tokenCookieValue !== "" && tokenCookieSize !== "") || attempts === 0) {
+                    if (attempts === 0) {
+                        // $("#albumsMessage").html("&nbsp;").animate({opacity: 0}, 5000);
+                    } else {
+                        shashin.showToastMessage("Share album download", "<strong>File name</strong> " + tokenCookieValue + " <strong>File size</strong> " + Util.formatBytes(tokenCookieSize), {icon:"bi-info-circle", iconColor:"#777777"});
+                        Util.deleteCookie(tokenName, "/");
+                        Util.deleteCookie(tokenSize, "/");
+                        window.clearInterval(downloadTimer);
+                    }
+                }
+
+                attempts--;
+            }, 1000);
+
+            $("#multiSelectMetadataIds").val("[]");
+            shashin.clearAlbumSelection();
+            $("#albumNumberSelected").hide();
+            $("#clearMultiSelect").hide();
+            $("#downloadWrapper").attr("href", "");
+        }
     }
 
     shashin.getOverlayData = function(metadata, args) {
