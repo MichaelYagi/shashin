@@ -1479,19 +1479,50 @@ class AlbumsController: BaseController() {
     }
 
     @PostMapping("/download/share/{shareLink}/album/{albumId}")
-    fun postShareAlbumDownload(model: Model, @RequestParam download: Int, @PathVariable shareLink: String, @PathVariable albumId: Int, response: HttpServletResponse): ResponseEntity<InputStreamResource>? {
-        if (albumId > 0 && download == albumId) {
+    fun postShareAlbumDownload(model: Model, @RequestParam download: Optional<Int>, @RequestParam downloadArray: Optional<String>, @PathVariable shareLink: String, @PathVariable albumId: Int, response: HttpServletResponse): ResponseEntity<InputStreamResource>? {
+        if (albumId > 0 && (download.isPresent && download.get() == albumId) || (downloadArray.isPresent && downloadArray.get() != "")) {
 
             // Get album photos
             val albumPhotos = albumPhotoRepository.findAllByAlbumId(albumId)
             val albumObj = albumRepository.findById(albumId)
+
             if (albumPhotos != null && albumObj.isPresent && albumObj.get().getShareUrl() == shareLink) {
                 val tempExportBaseDir = Files.createTempDirectory(albumId.toString())
 
-                for (albumPhoto in albumPhotos) {
-                    if (albumPhoto != null) {
-                        val metadata = metadataRepository.findById(albumPhoto.getMetadataId()!!)
-                        if (!metadata.get().getType()?.contains("video", ignoreCase = true)!!) {
+                if (download.isPresent && download.get() == albumId) {
+                    for (albumPhoto in albumPhotos) {
+                        if (albumPhoto != null) {
+                            val metadata = metadataRepository.findById(albumPhoto.getMetadataId()!!)
+                            if (!metadata.get().getType()?.contains("video", ignoreCase = true)!!) {
+                                val tempFile = File(metadata.get().getPath())
+                                if (tempFile.exists()) {
+                                    val tempFileTo =
+                                        File(tempExportBaseDir.toString() + "/" + metadata.get().getFileName())
+                                    Files.copy(
+                                        tempFile.toPath(),
+                                        tempFileTo.toPath(),
+                                        StandardCopyOption.REPLACE_EXISTING
+                                    )
+                                } else {
+                                    logger.log(
+                                        Level.INFO,
+                                        "Exporting album photo. File does not exist: " + tempFile.absolutePath
+                                    )
+                                }
+                            } else {
+                                logger.log(
+                                    Level.INFO,
+                                    "Ignoring album video: " + metadata.get().getPath()
+                                )
+                            }
+                        }
+                    }
+                } else if (downloadArray.isPresent && downloadArray.get() != "") {
+                    val metadataIdArray: Array<String>? = mapper.readValue(downloadArray.get(), object : TypeReference<Array<String>>() {})
+
+                    if (metadataIdArray != null) {
+                        for (metadataId in metadataIdArray) {
+                            val metadata = metadataRepository.findById(metadataId)
                             val tempFile = File(metadata.get().getPath())
                             if (tempFile.exists()) {
                                 val tempFileTo =
@@ -1507,11 +1538,6 @@ class AlbumsController: BaseController() {
                                     "Exporting album photo. File does not exist: " + tempFile.absolutePath
                                 )
                             }
-                        } else {
-                            logger.log(
-                                Level.INFO,
-                                "Ignoring album video: " + metadata.get().getPath()
-                            )
                         }
                     }
                 }

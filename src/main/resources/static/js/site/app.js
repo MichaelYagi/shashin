@@ -1785,11 +1785,22 @@
             if (metadataList.length > 0) {
                 timelineSelectCount = metadataList.length;
             }
-            $("#timelineNumberSelected").text(timelineSelectCount+" Selected");
-            $("#matchesNumberSelected").text($('.bi-circle-fill').length+" Selected");
-            $("#favoritesNumberSelected").text($('.bi-circle-fill').length+" Selected");
-            $("#trashNumberSelected").text($('.bi-circle-fill').length+" Selected");
-            $("#albumNumberSelected").text($('.bi-circle-fill').length+" Selected");
+
+            $("#timelineNumberSelected").text(timelineSelectCount + " Selected");
+            $("#matchesNumberSelected").text($('.bi-circle-fill').length + " Selected");
+            $("#favoritesNumberSelected").text($('.bi-circle-fill').length + " Selected");
+            $("#trashNumberSelected").text($('.bi-circle-fill').length + " Selected");
+            $("#albumNumberSelected").text($('.bi-circle-fill').length + " Selected");
+
+            if (view === "share") {
+                if ($('.bi-circle-fill').length > 0) {
+                    $("#clearMultiSelect").show();
+                    $("#albumNumberSelected").show();
+                } else {
+                    $("#clearMultiSelect").hide();
+                    $("#albumNumberSelected").hide();
+                }
+            }
         });
 
         $("#image" + metadata.id).on("click", function (e) {
@@ -1862,11 +1873,22 @@
             if (metadataIdArray.length > 0) {
                 timelineSelectCount = metadataIdArray.length;
             }
+
             $("#timelineNumberSelected").text(timelineSelectCount+" Selected");
             $("#matchesNumberSelected").text($('.bi-circle-fill').length+" Selected");
             $("#favoritesNumberSelected").text($('.bi-circle-fill').length+" Selected");
             $("#trashNumberSelected").text($('.bi-circle-fill').length+" Selected");
             $("#albumNumberSelected").text($('.bi-circle-fill').length+" Selected");
+
+            if (view === "share") {
+                if ($('.bi-circle-fill').length > 0) {
+                    $("#clearMultiSelect").show();
+                    $("#albumNumberSelected").show();
+                } else {
+                    $("#clearMultiSelect").hide();
+                    $("#albumNumberSelected").hide();
+                }
+            }
         });
 
         $("#image" + metadata.id).hover(function () {

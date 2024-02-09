@@ -17,7 +17,7 @@ class ShareAlbum {
         shashin.pageLoader(await this.loadNextPage.bind(this), ".appendAlbumPhotos", this.albumMetadataList);
         shashin.mouseMoveListener();
         shashin.closeGalleryOnBack();
-        this.renderDownload();
+        await this.renderDownload();
     }
 
     async loadNextPage() {
@@ -64,7 +64,7 @@ class ShareAlbum {
                         let dateHeadingObj = null;
                         const overlayFlags = {};
                         overlayFlags.renderTopRight = true;
-                        overlayFlags.renderTopLeft = false;
+                        overlayFlags.renderTopLeft = true;
                         overlayFlags.renderBottomLeft = false;
                         overlayFlags.renderCenter = true;
 
@@ -110,14 +110,33 @@ class ShareAlbum {
         return mediaContentList;
     }
 
-    renderDownload() {
+    async renderDownload() {
         const albumName = this.albumName;
         const albumId = this.albumId;
         const shareLink = this.shareLink;
 
         $("#downloadFormContainer").html('<form method="post" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 2rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="download" value="' + albumId + '" title="Download share album photos (download videos individually)"></button></form>');
 
-        $("#download"+albumId).on("click", function() {
+        $("#clearMultiSelect").on("click", function() {
+           shashin.clearAlbumSelection();
+           $("#clearMultiSelect").hide();
+            $("#multiSelectMetadataIds").val("[]");
+            $("#albumNumberSelected").hide();
+        });
+
+        $("#download"+albumId).on("click", function(e) {
+            e.preventDefault();
+
+            const metadataIdArray = shashin.getMetadataIdList();
+
+            if (metadataIdArray.length > 0) {
+                $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 2rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="downloadArray" value=\''+JSON.stringify(metadataIdArray)+'\' title="Download selected share album photos"></button></form>');
+            } else {
+                $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 2rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="download" value="' + albumId + '" title="Download share album photos (download videos individually)"></button></form>');
+            }
+
+            $("#download"+albumId).click();
+
             let downloadTimer;
             const tokenName = "ShashinShareAlbumName";
             const tokenSize = "ShashinShareAlbumSize";
@@ -142,11 +161,18 @@ class ShareAlbum {
                         Util.deleteCookie(tokenName, "/");
                         Util.deleteCookie(tokenSize, "/");
                         window.clearInterval(downloadTimer);
+                        window.location = window.location
                     }
                 }
 
                 attempts--;
             }, 1000);
+
+            $("#multiSelectMetadataIds").val("[]");
+            shashin.clearAlbumSelection();
+            $("#albumNumberSelected").hide();
+            $("#clearMultiSelect").hide();
+            $("#downloadWrapper").attr("href", "");
         });
     }
 }
