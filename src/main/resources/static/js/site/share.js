@@ -1,13 +1,12 @@
 class ShareAlbum {
 
-    constructor(shareLink, activePage, albumId, albumName, albumMetadataList) {
+    constructor(shareLink, activePage, albumId, albumMetadataList) {
         this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
         this.shareLink = shareLink;
         this.activePage = activePage;
         this.albumId = albumId;
-        this.albumName = albumName;
         this.albumMetadataList = albumMetadataList;
         this.eol = false;
         this.mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true},'.mediaLink');
@@ -111,7 +110,6 @@ class ShareAlbum {
     }
 
     async renderDownload() {
-        const albumName = this.albumName;
         const albumId = this.albumId;
         const shareLink = this.shareLink;
 
@@ -122,57 +120,6 @@ class ShareAlbum {
            $("#clearMultiSelect").hide();
             $("#multiSelectMetadataIds").val("[]");
             $("#albumNumberSelected").hide();
-        });
-
-        $("#download"+albumId).on("click", function(e) {
-            e.preventDefault();
-
-            const metadataIdArray = shashin.getMetadataIdList();
-
-            if (metadataIdArray.length > 0) {
-                $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 2rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="downloadArray" value=\''+JSON.stringify(metadataIdArray)+'\' title="Download selected media"></button></form>');
-            } else {
-                $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 2rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="download" value="' + albumId + '" title="Download all photos"></button></form>');
-            }
-
-            $("#download"+albumId).click();
-
-            let downloadTimer;
-            const tokenName = "ShashinShareAlbumName";
-            const tokenSize = "ShashinShareAlbumSize";
-            const configuredAttempts = 120;
-
-            shashin.showToastMessage("Downloading share album", "Downloading share album \""+albumName+"\". Downloading photos only.", {icon:"bi-info-circle", iconColor:"#777777"});
-            setTimeout(function () { $("#download"+albumId).removeAttr("href") }, 0);
-            Util.setCookie(tokenName, "", "/");
-            Util.setCookie(tokenSize, "", "/");
-
-            let attempts = configuredAttempts;
-
-            downloadTimer = setInterval( function() {
-                const tokenCookieValue = Util.getCookie(tokenName);
-                const tokenCookieSize = Util.getCookie(tokenSize);
-
-                if ((tokenCookieValue !== "" && tokenCookieSize !== "") || attempts === 0) {
-                    if (attempts === 0) {
-                        // $("#albumsMessage").html("&nbsp;").animate({opacity: 0}, 5000);
-                    } else {
-                        shashin.showToastMessage("Share album download", "<strong>File name</strong> " + tokenCookieValue + " <strong>File size</strong> " + Util.formatBytes(tokenCookieSize), {icon:"bi-info-circle", iconColor:"#777777"});
-                        Util.deleteCookie(tokenName, "/");
-                        Util.deleteCookie(tokenSize, "/");
-                        window.clearInterval(downloadTimer);
-                        window.location = window.location
-                    }
-                }
-
-                attempts--;
-            }, 1000);
-
-            $("#multiSelectMetadataIds").val("[]");
-            shashin.clearAlbumSelection();
-            $("#albumNumberSelected").hide();
-            $("#clearMultiSelect").hide();
-            $("#downloadWrapper").attr("href", "");
         });
     }
 }
