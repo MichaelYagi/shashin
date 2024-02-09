@@ -3,7 +3,9 @@
 <head th:insert="fragments/head :: head(${activePage},${titleDescriptor})"></head>
 <body class="thumb d-flex flex-column vh-100">
 
-<div class="py-1 mb-1 container-fluid align-items-center d-flex flex-shrink-0"></div>
+<th:block th:if="${not #lists.isEmpty(albumMetadataList)}">
+    <nav class="navbar navbar-default navbar-fixed-top ms-3"><h1 th:utext="${'&lt;span id=&quot;albumNameTitle&quot;&gt;'+album.name + '&lt;/span&gt;&nbsp;&lt;span id=&quot;downloadFormContainer&quot;&gt;&lt;/span&gt;&lt;button class=&quot;bi-x-circle link-button-lightmode&quot; style=&quot;font-size: 1.5rem;color: #0d6efd;display: none;&quot; title=&quot;Cancel multi select&quot; id=&quot;clearMultiSelect&quot;&gt;&lt;/button&gt;&nbsp;&lt;span style=&quot;font-size: 1rem;&quot; id=&quot;albumNumberSelected&quot;&gt;&lt;/span&gt;'}"></h1></nav>
+</th:block>
 
 <!-- For live toast messages, use shashin.showToastMessage() to display toast messages -->
 <div class="position-fixed bottom-0 start-50 translate-middle-x" id="toastContainer" style="z-index: 999999">
@@ -58,11 +60,11 @@
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
     <div class="row flex-grow-sm-1 flex-grow-0">
         <main role="main" class="col overflow-auto h-100">
+
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})"
                  class="col-sm p-3 min-vh-100"></div>
             <div id="infinite-scroll-gallery">
                 <th:block th:if="${not #lists.isEmpty(albumMetadataList)}">
-                    <h1 th:utext="${'&lt;span id=&quot;albumNameTitle&quot;&gt;'+album.name + '&lt;/span&gt;&nbsp;&lt;span id=&quot;downloadFormContainer&quot;&gt;&lt;/span&gt;&lt;button class=&quot;bi-x-circle link-button-lightmode&quot; style=&quot;font-size: 2rem;color: #0d6efd;display: none;&quot; title=&quot;Cancel multi select&quot; id=&quot;clearMultiSelect&quot;&gt;&lt;/button&gt;&nbsp;&lt;span style=&quot;font-size: 1rem;&quot; id=&quot;albumNumberSelected&quot;&gt;&lt;/span&gt;'}"></h1>
                     <input id="albumId" type="hidden" th:value="${album.id}">
                     <input id="albumName" type="hidden" th:value="${album.name}">
                     <input id="shareLink" type="hidden" th:value="${shareLink}">
