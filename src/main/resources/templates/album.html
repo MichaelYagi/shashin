@@ -23,7 +23,7 @@
 
             <th:block th:if="${not #lists.isEmpty(albumMetadataList)}">
                 <span id="albumNameHeader">
-                    <h1 id="albumNameHeading" th:inline="text">[[${album.name}]]</h1>
+<!--                    <h1 id="albumNameHeading" th:inline="text">[[${album.name}]]</h1>-->
 <!--                    <small class="me-3"><a href="/albums"><span class="bi-arrow-return-left" style="font-size: 1rem;text-decoration: none !important;color: #777777;" title="Go back"></span></a></small>-->
                     <th:block th:each="albumUser, iterStat: ${sharedAlbumUsers}">
                         <th:block th:if="${albumUser.profile != null}">
@@ -171,8 +171,10 @@
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         const activePage = /*[[${activePage}]]*/ 'album';
         const mediaTypeFilter = /*[[${mediaTypeFilter}]]*/ 'all';
+        const albumName = /*[[${album.name}]]*/ '';
         /*]]>*/
 
+        $("#appSearchInput").val(albumName);
         const http = new Http(activePage);
         http.ajax("get", "/album/metadata/list/"+albumId+"/0").then(function (data) {
             if (data.hasOwnProperty("albumMetadataList") === true) {

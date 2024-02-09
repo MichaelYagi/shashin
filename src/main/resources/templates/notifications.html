@@ -12,7 +12,7 @@
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
 
             <th:block th:if="${not #lists.isEmpty(notificationList)}">
-                <h1>Notifications</h1>
+<!--                <h1>Notifications</h1>-->
 <!--                <small class="text-muted">Click/Shift-Click rows to mark read</small>-->
 
                 <ul class="list-group list-group-hover" id="notificationList">
@@ -31,6 +31,8 @@
     /*<![CDATA[*/
     shashin.nonce = /*[[${cspNonce}]]*/ '';
     /*]]>*/
+
+    $("#appSearchInput").val("Notifications");
 
     const promise = $.ajax({
         type: 'get',

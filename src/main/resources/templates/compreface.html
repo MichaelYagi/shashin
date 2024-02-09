@@ -17,7 +17,7 @@
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},${counts},${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
             <input type="hidden" id="currentPerson" th:value="${personInfo.name}">
 
-            <h1 th:inline="text">[[${personInfo.name}]]</h1>
+<!--            <h1 th:inline="text">[[${personInfo.name}]]</h1>-->
             <div class="mt-2" id="comprefaceMessage"></div>
 
             <div id="infinite-scroll-gallery" class="row">
@@ -280,7 +280,10 @@
         const activePage = /*[[${activePage}]]*/ 'folder';
         const personId = /*[[${parameter}]]*/ '';
         const resultList = '[1]';
+        const personName = /*[[${personInfo.name}]]*/ '';
         /*]]>*/
+
+        $("#appSearchInput").val(personName);
 
         $("#comprefaceBatchDelete").on("click", function(e) {
             e.preventDefault();

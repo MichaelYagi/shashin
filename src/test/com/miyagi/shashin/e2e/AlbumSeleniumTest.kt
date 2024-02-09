@@ -388,9 +388,9 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val albumLink = this.driver!!.findElement(By.id("album$albumId"))
         albumLink.click()
 
-        val albumNameHeading = this.driver!!.findElement(By.id("albumNameHeading"))
+        val albumNameSearch = this.driver!!.findElement(By.id("appSearchInput"))
 
-        Assertions.assertEquals("testalbum", albumNameHeading.text)
+        Assertions.assertEquals("testalbum", albumNameSearch.text)
     }
 
     private fun elementHasClass(element: WebElement, active: String?): Boolean {

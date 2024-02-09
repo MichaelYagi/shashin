@@ -80,22 +80,24 @@
                     </th:block>
                     <th:block th:if="${activePage == 'person' || activePage == 'matches' || activePage == 'compreface'}">
                     &nbsp;
-                    <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" href="/people" aria-controls="back" title="Go back to folders">
+                    <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" href="/people" aria-controls="back" title="Go back">
                         <span th:class="'bi-arrow-left placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span>
                     </a>
                     </th:block>
                 </span>
             </th:block>
-            <th:block th:if="${activePage == 'album'}">
+            <th:block th:if="${activePage == 'album' || activePage == 'slideshow'}">
                 <span id="albumTools">
                     &nbsp;
                     <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" href="/albums" aria-controls="back" title="Go back to albums">
                         <span th:class="'bi-arrow-left placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span>
                     </a>
+                    <th:block th:if="${activePage == 'album'}">
                     &nbsp;
                     <a class="align-items-center mb-lg-0 link-dark text-decoration-none" id="albumMediaTypeToggle" data-bs-placement="bottom" href="#mediaTypeToggle" aria-controls="mediaTypeToggle" title="Toggle media type">
                         <span id="albumMediaTypeToggleIcon" th:class="'bi-camera-video placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span>
                     </a>
+                    </th:block>
                 </span>
             </th:block>
             <th:block th:if="${activePage == 'logs'}">
