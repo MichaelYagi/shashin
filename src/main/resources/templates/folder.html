@@ -17,7 +17,7 @@
 
             <div id="scroll-gallery">
                 <th:block th:if="${not #lists.isEmpty(metadataList)}">
-                    <h1 th:inline="text">[[${folder}]]</h1>
+<!--                    <h1 th:inline="text">[[${folder}]]</h1>-->
 <!--                    <small><a href="/folders"><span class="bi-arrow-return-left" style="font-size: 1rem;text-decoration: none !important;color: #777777;" title="Go back"></span></a></small>-->
                     <div class="mt-2" id="folderMessage"></div>
 
@@ -131,6 +131,7 @@
         const folderName = /*[[${folder}]]*/ '';
         /*]]>*/
 
+        $("#appSearchInput").val(folderName);
         const http = new Http(activePage);
         http.ajax("get", "/metadata/list/"+activePage+"/0?folder="+encodeURI(folderName)).then(function (data) {
             if (data.hasOwnProperty("metadataList") === true) {

@@ -10,7 +10,7 @@
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})"></div>
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
-            <h1>Dashboard</h1><br>
+<!--            <h1>Dashboard</h1><br>-->
 
             <div class="row pb-4">
 
@@ -160,6 +160,8 @@
     <script src="/js/site/min/dashboard.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
+    $("#appSearchInput").val("Dashboard");
+
     /*<![CDATA[*/
     const siteStatChartData = {};
     siteStatChartData["photosWithPeopleTaggedCount"] = /*[[${photosWithPeopleTaggedCount}]]*/ 0;
