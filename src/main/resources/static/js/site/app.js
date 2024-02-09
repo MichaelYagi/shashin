@@ -2091,7 +2091,7 @@
             const tokenSize = "ShashinShareAlbumSize";
             const configuredAttempts = 120;
 
-            shashin.showToastMessage("Downloading share album", "Downloading share album \""+albumName+"\". Downloading photos only.", {icon:"bi-info-circle", iconColor:"#777777"});
+            shashin.showToastMessage("Downloading share album", "Downloading share album \""+albumName+"\". Downloading photos only.", {icon:"bi-info-circle", iconColor:"#777777", autohide:false});
             setTimeout(function () { $("#download"+albumId).removeAttr("href") }, 0);
             Util.setCookie(tokenName, "", "/");
             Util.setCookie(tokenSize, "", "/");
@@ -2116,6 +2116,9 @@
                         $("#multiSelectMetadataIds").val("[]");
                         $("#albumNumberSelected").hide();
                         $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 1.5rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="download" value="' + albumId + '" title="Download all photos"></button></form>');
+                        $("#download"+albumId).on("click", function() {
+                            trackShareDownload(albumId,albumName,shareLink);
+                        });
                     }
                 }
 
