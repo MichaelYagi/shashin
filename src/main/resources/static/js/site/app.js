@@ -1793,27 +1793,26 @@
             $("#albumNumberSelected").text($('.bi-circle-fill').length + " Selected");
 
             if (view === "share") {
+                const albumId = $("#albumId").val();
+                const albumName = $("#albumName").val();
+                const shareLink = $("#shareLink").val();
+
                 if ($('.bi-circle-fill').length > 0) {
                     $("#clearMultiSelect").show();
                     $("#albumNumberSelected").show();
 
-                    const albumId = $("#albumId").val();
-                    const albumName = $("#albumName").val();
-                    const shareLink = $("#shareLink").val();
-
-                    if (metadataList.length > 0) {
-                        $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 1.5rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="downloadArray" value=\''+JSON.stringify(metadataList)+'\' title="Download selected media"></button></form>');
-                    } else {
-                        $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 1.5rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="download" value="' + albumId + '" title="Download all photos"></button></form>');
-                    }
-
-                    $("#download"+albumId).on("click", function() {
-                        trackShareDownload(albumId,albumName);
-                    });
+                    $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 1.5rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="downloadArray" value=\''+JSON.stringify(metadataList)+'\' title="Download selected media"></button></form>');
                 } else {
+                    shashin.clearAlbumSelection();
                     $("#clearMultiSelect").hide();
+                    $("#multiSelectMetadataIds").val("[]");
                     $("#albumNumberSelected").hide();
+                    $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 1.5rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="download" value="' + albumId + '" title="Download all photos"></button></form>');
                 }
+
+                $("#download"+albumId).on("click", function() {
+                    trackShareDownload(albumId,albumName);
+                });
             }
         });
 
@@ -1895,27 +1894,26 @@
             $("#albumNumberSelected").text($('.bi-circle-fill').length+" Selected");
 
             if (view === "share") {
+                const albumId = $("#albumId").val();
+                const albumName = $("#albumName").val();
+                const shareLink = $("#shareLink").val();
+
                 if ($('.bi-circle-fill').length > 0) {
                     $("#clearMultiSelect").show();
                     $("#albumNumberSelected").show();
 
-                    const albumId = $("#albumId").val();
-                    const albumName = $("#albumName").val();
-                    const shareLink = $("#shareLink").val();
-
-                    if (metadataIdArray.length > 0) {
-                        $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 1.5rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="downloadArray" value=\''+JSON.stringify(metadataIdArray)+'\' title="Download selected media"></button></form>');
-                    } else {
-                        $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 1.5rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="download" value="' + albumId + '" title="Download all photos"></button></form>');
-                    }
-
-                    $("#download"+albumId).on("click", function() {
-                        trackShareDownload(albumId,albumName);
-                    });
+                    $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 1.5rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="downloadArray" value=\''+JSON.stringify(metadataIdArray)+'\' title="Download selected media"></button></form>');
                 } else {
+                    shashin.clearAlbumSelection();
                     $("#clearMultiSelect").hide();
+                    $("#multiSelectMetadataIds").val("[]");
                     $("#albumNumberSelected").hide();
+                    $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 1.5rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="download" value="' + albumId + '" title="Download all photos"></button></form>');
                 }
+
+                $("#download"+albumId).on("click", function() {
+                    trackShareDownload(albumId,albumName);
+                });
             }
         });
 
