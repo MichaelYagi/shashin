@@ -1811,7 +1811,7 @@
                 }
 
                 $("#download"+albumId).on("click", function() {
-                    trackShareDownload(albumId,albumName);
+                    trackShareDownload(albumId,albumName,shareLink);
                 });
             }
         });
@@ -1912,7 +1912,7 @@
                 }
 
                 $("#download"+albumId).on("click", function() {
-                    trackShareDownload(albumId,albumName);
+                    trackShareDownload(albumId,albumName,shareLink);
                 });
             }
         });
@@ -2085,7 +2085,7 @@
             }
         });
 
-        function trackShareDownload(albumId,albumName) {
+        function trackShareDownload(albumId,albumName,shareLink) {
             let downloadTimer;
             const tokenName = "ShashinShareAlbumName";
             const tokenSize = "ShashinShareAlbumSize";
@@ -2110,17 +2110,23 @@
                         Util.deleteCookie(tokenName, "/");
                         Util.deleteCookie(tokenSize, "/");
                         window.clearInterval(downloadTimer);
+
+                        shashin.clearAlbumSelection();
+                        $("#clearMultiSelect").hide();
+                        $("#multiSelectMetadataIds").val("[]");
+                        $("#albumNumberSelected").hide();
+                        $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 1.5rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="download" value="' + albumId + '" title="Download all photos"></button></form>');
                     }
                 }
 
                 attempts--;
             }, 1000);
 
-            $("#multiSelectMetadataIds").val("[]");
-            shashin.clearAlbumSelection();
-            $("#albumNumberSelected").hide();
-            $("#clearMultiSelect").hide();
-            $("#downloadWrapper").attr("href", "");
+            // shashin.clearAlbumSelection();
+            // $("#clearMultiSelect").hide();
+            // $("#multiSelectMetadataIds").val("[]");
+            // $("#albumNumberSelected").hide();
+            // $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 1.5rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="download" value="' + albumId + '" title="Download all photos"></button></form>');
         }
     }
 
