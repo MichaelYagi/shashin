@@ -25,6 +25,7 @@ import java.io.File
 import java.net.URL
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
+import java.util.regex.Pattern
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -258,8 +259,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val linkEl = fullShareLink.findElement(By.xpath("./a[1]"))
         this.driver?.get(linkEl.text)
 
-        val scrollContainer = this.driver!!.findElement(By.id("infinite-scroll-gallery"))
-        val titleHeader = scrollContainer.findElement(By.xpath("./h1[1]"))
+        val titleHeader = this.driver!!.findElement(By.id("albumNameTitle"))
         Assertions.assertEquals("Album name update",titleHeader.text)
 
         // Test delete album
@@ -388,9 +388,9 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val albumLink = this.driver!!.findElement(By.id("album$albumId"))
         albumLink.click()
 
-        val albumNameSearch = this.driver!!.findElement(By.id("appSearchInput"))
+        val albumPageTitle = this.driver!!.title
 
-        Assertions.assertEquals("testalbum", albumNameSearch.text)
+        Assertions.assertEquals("testalbum - Shashin", albumPageTitle)
     }
 
     private fun elementHasClass(element: WebElement, active: String?): Boolean {
