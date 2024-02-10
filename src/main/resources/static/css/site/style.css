@@ -15,7 +15,7 @@ body {
 }
 
 .list-group-hover .list-group-item:hover {
-  background-color: slategray;
+  background-color: lightcoral;
 }
 
 .list-group-select {
