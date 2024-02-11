@@ -2401,7 +2401,7 @@
             let batchHtml =
                 '<input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="'+albumInputVal+'">\n' +
                 '<div class="input-group-append dropdown">\n' +
-                '   <button class="btn btn-outline-secondary dropdown-toggle" id="tagalbumdropdown" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
+                '   <button class="btn btn-secondary dropdown-toggle" id="tagalbumdropdown" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
                 '   <div class="dropdown-menu" id="albumNameList">\n';
 
             for (let index in albumList) {
@@ -2453,7 +2453,7 @@
             let batchHtml =
                 '       <input type="text" class="form-control" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="'+subjectInputVal+'">\n' +
                 '       <div class="input-group-append">\n' +
-                '           <button class="btn btn-outline-secondary dropdown-toggle" id="tagbatchpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
+                '           <button class="btn btn-secondary dropdown-toggle" id="tagbatchpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
                 '           <div class="dropdown-menu" id="peopleNameList">';
 
             for (let index in recognitionLabels) {
