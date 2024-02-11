@@ -70,7 +70,7 @@
 
                                     <th:block th:if="${allAlbumList != null && #lists.size(allAlbumList) > 0}">
                                         <div class="input-group-append dropdown">
-                                            <button class="btn btn-outline-secondary dropdown-toggle" id="tagalbumdropdown" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>
+                                            <button class="btn btn-secondary dropdown-toggle" id="tagalbumdropdown" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>
                                             <div class="dropdown-menu" id="albumNameList">
                                                 <th:block th:each="album, iterStat: ${allAlbumList}">
                                                     <button class="dropdown-item" type="button">
@@ -106,7 +106,7 @@
 
                                 <th:block th:if="${recognitionLabels != null && #lists.size(recognitionLabels) > 0}">
                                     <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary dropdown-toggle" id="tagbatchpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>
+                                        <button class="btn btn-secondary dropdown-toggle" id="tagbatchpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>
                                         <div class="dropdown-menu" id="peopleNameList">
                                             <th:block th:each="recognitionLabel, iterStat: ${recognitionLabels}">
                                                 <th:block th:if="${recognitionLabel.name != null and recognitionLabel.name != 'null'}">
