@@ -864,7 +864,11 @@ class AlbumsController: BaseController() {
             notificationObj.setCreatedAt(getCurrentTimestamp())
             notificationObj.setModifiedAt(getCurrentTimestamp())
             notificationObj.setRead(false)
-            notificationObj.setMessage("IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> viewed shared album '<a href='/share/$shareLink/album/$albumId' target='_blank'>${album?.getName()}</a>' at ${sdtf.format(Date())}")
+            var message = "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> viewed shared album '<a href='/share/$shareLink/album/$albumId' target='_blank'>${album?.getName()}</a>' at ${sdtf.format(Date())}"
+            if (album == null || album.getId() == 0) {
+                message = "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to view non existent shared album at shareLink $shareLink and albumId $albumId at ${sdtf.format(Date())}"
+            }
+            notificationObj.setMessage(message)
             notificationObjList.add(notificationObj)
         }
         if (notificationObjList.isNotEmpty()) {
