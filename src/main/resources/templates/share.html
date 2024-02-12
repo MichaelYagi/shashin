@@ -157,17 +157,20 @@
         const shareLink = /*[[${shareLink}]]*/ '';
         const activePage = /*[[${activePage}]]*/ 'share';
         const albumId = /*[[${album.id}]]*/ 0;
+        const albumListSize = /*${albumMetadataSize}*/ 0;
         /*]]>*/
 
-        const http = new Http(activePage);
-        http.ajax("get", "/share/"+shareLink+"/album/"+albumId+"/0").then(function (data) {
-            if (data.hasOwnProperty("albumMetadataList") === true) {
-                const albumMetadataList = data["albumMetadataList"];
-                const shareAlbumInstance = new ShareAlbum(shareLink, activePage, albumId, albumMetadataList);
-                shareAlbumInstance.init();
-                Util.checkErrorImage();
-            }
-        });
+        if (albumListSize > 0) {
+            const http = new Http(activePage);
+            http.ajax("get", "/share/" + shareLink + "/album/" + albumId + "/0").then(function (data) {
+                if (data.hasOwnProperty("albumMetadataList") === true) {
+                    const albumMetadataList = data["albumMetadataList"];
+                    const shareAlbumInstance = new ShareAlbum(shareLink, activePage, albumId, albumMetadataList);
+                    shareAlbumInstance.init();
+                    Util.checkErrorImage();
+                }
+            });
+        }
     });
 </script>
 </body>

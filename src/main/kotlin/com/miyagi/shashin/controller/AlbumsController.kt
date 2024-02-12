@@ -1008,6 +1008,7 @@ class AlbumsController: BaseController() {
         tempAlbum.setId(0)
         response["album"] = tempAlbum
         response["albumMetadataList"] = mutableListOf<Metadata>()
+        response["albumMetadataSize"] = 0
         response["shareLink"] = ""
         response["msg"] = "No results"
         response["status"] = ApiResponse.FAIL.status
@@ -1030,6 +1031,7 @@ class AlbumsController: BaseController() {
                     response["message"] = ""
                     response["album"] = album.get()
                     response["albumMetadataList"] = albumMetadataList
+                    response["albumMetadataSize"] = albumMetadataList.size
                     response["shareLink"] = shareLink
                     response["msg"] = "Results"
                     response["status"] = ApiResponse.SUCCESS.status
