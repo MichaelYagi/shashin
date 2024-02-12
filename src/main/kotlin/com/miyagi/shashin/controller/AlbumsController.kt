@@ -26,11 +26,12 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.context.request.RequestContextHolder
-import org.springframework.web.context.request.ServletRequestAttributes
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.io.File
 import java.io.FileInputStream
+import java.net.Inet4Address
+import java.net.InetAddress
+import java.net.UnknownHostException
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.text.SimpleDateFormat
@@ -844,6 +845,27 @@ class AlbumsController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
+    private fun isLocalIp(testAddress: String): Boolean {
+        val inetAddress: InetAddress
+
+        logger.log(
+            Level.INFO,
+            "Testing IP: $testAddress"
+        )
+
+        try {
+            inetAddress = InetAddress.getByName(testAddress) as Inet4Address
+
+            return inetAddress.isSiteLocalAddress || inetAddress.isLoopbackAddress
+        } catch (exception: UnknownHostException) {
+            logger.log(
+                Level.WARNING,
+                "Testing unknown IP: ${exception.localizedMessage}"
+            )
+            return false
+        }
+    }
+
     @RequestMapping(value = ["/share/{shareLink}/album/{albumId}"], method = [RequestMethod.GET])
     fun getAnonymousShareAlbum(model: Model, request: HttpServletRequest, @PathVariable shareLink: String, @PathVariable albumId: Int): String? {
         val module = "share"
@@ -855,24 +877,33 @@ class AlbumsController: BaseController() {
         val admins = userRepository.findAllByAuthorityEquals(adminRole!!)
         val album = response["album"] as Album?
 
-        val notificationObjList = mutableListOf<Notification>()
-        val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
-        sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
-        for (admin in admins) {
-            val notificationObj = Notification()
-            notificationObj.setUserId(admin.getId())
-            notificationObj.setCreatedAt(getCurrentTimestamp())
-            notificationObj.setModifiedAt(getCurrentTimestamp())
-            notificationObj.setRead(false)
-            var message = "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> viewed shared album '<a href='/share/$shareLink/album/$albumId' target='_blank'>${album?.getName()}</a>' at ${sdtf.format(Date())}"
-            if (album == null || album.getId() == 0) {
-                message = "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to access non existent shared album at shareLink <strong>$shareLink</strong> and albumId <strong>$albumId</strong> at ${sdtf.format(Date())}"
+        if (!isLocalIp(userIp)) {
+            val notificationObjList = mutableListOf<Notification>()
+            val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+            sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+            for (admin in admins) {
+                val notificationObj = Notification()
+                notificationObj.setUserId(admin.getId())
+                notificationObj.setCreatedAt(getCurrentTimestamp())
+                notificationObj.setModifiedAt(getCurrentTimestamp())
+                notificationObj.setRead(false)
+                var message =
+                    "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> viewed shared album '<a href='/share/$shareLink/album/$albumId' target='_blank'>${album?.getName()}</a>' at ${
+                        sdtf.format(Date())
+                    }"
+                if (album == null || album.getId() == 0) {
+                    message =
+                        "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to access non existent shared album at shareLink <strong>$shareLink</strong> and albumId <strong>$albumId</strong> at ${
+                            sdtf.format(Date())
+                        }"
+                }
+                notificationObj.setMessage(message)
+                notificationObjList.add(notificationObj)
             }
-            notificationObj.setMessage(message)
-            notificationObjList.add(notificationObj)
-        }
-        if (notificationObjList.isNotEmpty()) {
-            notificationRepository.saveAll(notificationObjList)
+
+            if (notificationObjList.isNotEmpty()) {
+                notificationRepository.saveAll(notificationObjList)
+            }
         }
 
         model["album"] = response["album"]!!
