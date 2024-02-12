@@ -4,7 +4,18 @@
 <body class="thumb d-flex flex-column vh-100">
 
 <th:block th:if="${not #lists.isEmpty(albumMetadataList)}">
-    <nav class="navbar navbar-default navbar-fixed-top ms-3"><h1 th:utext="${'&lt;span id=&quot;albumNameTitle&quot;&gt;'+album.name + '&lt;/span&gt;&nbsp;&lt;span id=&quot;downloadFormContainer&quot;&gt;&lt;/span&gt;&lt;button class=&quot;bi-x-circle link-button-lightmode&quot; style=&quot;font-size: 1.5rem;color: #0d6efd;display: none;&quot; title=&quot;Cancel multi select&quot; id=&quot;clearMultiSelect&quot;&gt;&lt;/button&gt;&nbsp;&lt;span style=&quot;font-size: 1rem;&quot; id=&quot;albumNumberSelected&quot;&gt;&lt;/span&gt;'}"></h1></nav>
+    <header class="py-2 mb-2 border-bottom">
+        <div class="container-fluid align-items-center d-flex">
+            <div class="flex-shrink-0">
+                <span class="display-6" th:utext="${'&lt;span id=&quot;albumNameTitle&quot;&gt;&lt;strong&gt;'+album.name + '&lt;/strong&gt;&lt;/span&gt;'}"></span>&nbsp;
+                <form id="downloadWrapper" method="post" th:action="${'/download/share/' + shareLink + '/album/' + albumId}" style="display: inline-block;white-space: nowrap;">
+                    <button th:id="${'download' + albumId}" class="bi-download link-button-lightmode" style="font-size: 1.5rem;color: #0d6efd;" type="submit" name="download" th:value="${albumId}" title="Download all photos"></button>
+                </form>
+                <button class="bi-x-circle link-button-lightmode" style="font-size: 1.5rem;color: #0d6efd;display: none;" title="Cancel multi select" id="clearMultiSelect"></button>&nbsp;
+                <span style="font-size: 1rem;display: none;" id="albumNumberSelected"></span>
+            </div>
+        </div>
+    </header>
 </th:block>
 
 <!-- For live toast messages, use shashin.showToastMessage() to display toast messages -->

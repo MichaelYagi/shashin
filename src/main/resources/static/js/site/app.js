@@ -1796,18 +1796,22 @@
                 const albumId = $("#albumId").val();
                 const albumName = $("#albumName").val();
                 const shareLink = $("#shareLink").val();
+                const downloadEl = $("#download" + albumId);
 
                 if ($('.bi-circle-fill').length > 0) {
                     $("#clearMultiSelect").show();
                     $("#albumNumberSelected").show();
-
-                    $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 1.5rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="downloadArray" value=\''+JSON.stringify(metadataList)+'\' title="Download selected media"></button></form>');
+                    downloadEl.attr("name", "downloadArray");
+                    downloadEl.attr("value", JSON.stringify(metadataList));
+                    downloadEl.attr("title", "Download selected media");
                 } else {
                     shashin.clearAlbumSelection();
                     $("#clearMultiSelect").hide();
                     $("#multiSelectMetadataIds").val("[]");
                     $("#albumNumberSelected").hide();
-                    $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 1.5rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="download" value="' + albumId + '" title="Download all photos"></button></form>');
+                    downloadEl.attr("name", "download");
+                    downloadEl.attr("value", albumId);
+                    downloadEl.attr("title", "Download all photos");
                 }
 
                 $("#download"+albumId).on("click", function() {
@@ -1897,18 +1901,22 @@
                 const albumId = $("#albumId").val();
                 const albumName = $("#albumName").val();
                 const shareLink = $("#shareLink").val();
+                const downloadEl = $("#download" + albumId);
 
                 if ($('.bi-circle-fill').length > 0) {
                     $("#clearMultiSelect").show();
                     $("#albumNumberSelected").show();
-
-                    $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 1.5rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="downloadArray" value=\''+JSON.stringify(metadataIdArray)+'\' title="Download selected media"></button></form>');
+                    downloadEl.attr("name", "downloadArray");
+                    downloadEl.attr("value", JSON.stringify(metadataIdArray));
+                    downloadEl.attr("title", "Download selected media");
                 } else {
                     shashin.clearAlbumSelection();
                     $("#clearMultiSelect").hide();
                     $("#multiSelectMetadataIds").val("[]");
                     $("#albumNumberSelected").hide();
-                    $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 1.5rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="download" value="' + albumId + '" title="Download all photos"></button></form>');
+                    downloadEl.attr("name", "download");
+                    downloadEl.attr("value", albumId);
+                    downloadEl.attr("title", "Download all photos");
                 }
 
                 $("#download"+albumId).on("click", function() {
@@ -2115,8 +2123,11 @@
                         $("#clearMultiSelect").hide();
                         $("#multiSelectMetadataIds").val("[]");
                         $("#albumNumberSelected").hide();
-                        $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 1.5rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="download" value="' + albumId + '" title="Download all photos"></button></form>');
-                        $("#download"+albumId).on("click", function() {
+                        const downloadEl = $("#download" + albumId);
+                        downloadEl.attr("name", "download");
+                        downloadEl.attr("value", albumId);
+                        downloadEl.attr("title", "Download all photos");
+                        downloadEl.on("click", function() {
                             trackShareDownload(albumId,albumName,shareLink);
                         });
                     }
@@ -2124,12 +2135,6 @@
 
                 attempts--;
             }, 1000);
-
-            // shashin.clearAlbumSelection();
-            // $("#clearMultiSelect").hide();
-            // $("#multiSelectMetadataIds").val("[]");
-            // $("#albumNumberSelected").hide();
-            // $("#downloadFormContainer").html('<form method="post" id="downloadWrapper" action="/download/share/' + shareLink + '/album/' + albumId + '" style="display: inline-block;white-space: nowrap;"><button class="bi-download link-button-lightmode" style="font-size: 1.5rem;color: #0d6efd;" type="submit" id="download' + albumId + '" name="download" value="' + albumId + '" title="Download all photos"></button></form>');
         }
     }
 
