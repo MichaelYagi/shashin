@@ -16,8 +16,10 @@
         }
 
         if ($("#shareLink").val() !== "" && action !== "clear") {
+            $("#clearLink").prop('disabled', false);
             $("#copyLink").prop('disabled', false);
         } else {
+            $("#clearLink").prop('disabled', true);
             $("#copyLink").prop('disabled', true);
         }
 
