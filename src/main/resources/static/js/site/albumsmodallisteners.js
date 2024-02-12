@@ -170,6 +170,7 @@
 
         if ($("#shareLink").val() === "") {
             $("#copyLink").prop('disabled', true);
+            $("#clearLink").prop('disabled', true);
         }
 
         $("#clearLink").on("click", function (e) {
