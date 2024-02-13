@@ -939,7 +939,6 @@ class TimelineController: BaseController() {
 
                                             logger.log(Level.INFO, "Deleted tagged people records for: " + metadataCopy.getId())
 
-
                                             metadataRepository.delete(metadataToDelete)
                                             logger.log(
                                                 Level.WARNING,
