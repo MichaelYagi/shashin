@@ -619,7 +619,7 @@ class SettingsController {
                     if (successDeletion) {
                         resp["msg"] = "Success!"
                     } else {
-                        resp["msg"] = "Could not delete sidecar files."
+                        resp["msg"] = "Records deleted but could not delete sidecar files."
                     }
                     resp["status"] = ApiResponse.SUCCESS.status
                     return mapper.writeValueAsString(resp)
