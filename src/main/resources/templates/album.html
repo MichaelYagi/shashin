@@ -175,7 +175,7 @@
         $("#appSearchInput").val(albumName);
         const http = new Http(activePage);
         http.ajax("get", "/album/metadata/list/"+albumId+"/0").then(function (data) {
-            if (data.hasOwnProperty("albumMetadataList") === true) {
+            if (data.hasOwnProperty("albumMetadataList") === true && data["albumMetadataList"].length > 0) {
                 const albumMetadataList = data["albumMetadataList"];
                 albumSettings.init(albumId, mediaTypeFilter, activePage, albumMetadataList);
                 Util.checkErrorImage();
