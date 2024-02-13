@@ -908,6 +908,7 @@ class AlbumsController: BaseController() {
 
         model["album"] = response["album"]!!
         model["albumMetadataList"] = response["albumMetadataList"]!!
+        model["albumMetadataSize"] = response["albumMetadataSize"]!!
         model["shareLink"] = response["shareLink"]!!
         model["message"] = response["message"]!!
         model["msg"] = response["msg"]!!
