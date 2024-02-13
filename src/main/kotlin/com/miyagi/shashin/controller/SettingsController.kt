@@ -599,11 +599,24 @@ class SettingsController {
                 val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
                 val sidecarDirFile = File(sidecarDir)
                 if (sidecarDirFile.exists()) {
+                    // Delete except for profile picture
+                    var successDeletion = true
 
-                    // Delete it
-                    val dirDeleteSuccess = sidecarDirFile.deleteRecursively()
+                    // delete metadata
+                    val metadataDirectory = "$sidecarDir/metadata"
+                    val metadataDirFile = File(metadataDirectory)
+                    if (metadataDirFile.exists()) {
+                        successDeletion = metadataDirFile.deleteRecursively()
+                    }
 
-                    if (dirDeleteSuccess) {
+                    // delete thumbnails
+                    val thumbnailDirectory = "$sidecarDir/thumbnails"
+                    val thumbnailDirFile = File(thumbnailDirectory)
+                    if (thumbnailDirFile.exists()) {
+                        successDeletion = thumbnailDirFile.deleteRecursively()
+                    }
+
+                    if (successDeletion) {
                         resp["msg"] = "Success!"
                     } else {
                         resp["msg"] = "Success, but could not delete sidecar files."

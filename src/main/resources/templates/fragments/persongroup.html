@@ -2,16 +2,18 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
 <ul class="nav nav-tabs nav-fill" th:fragment="person(activePage,parameter,counts,faceRecogServicesAvailable)">
-    <li class="nav-item">
-        <a th:attr="class='nav-link' + ${activePage=='person' ? ' active' : ''}" th:href="${'/person/'+parameter}">Person <span class="badge bg-secondary" th:text="${counts.get('person')}"></span></a>
-    </li>
-    <li class="nav-item">
-        <a th:attr="class='nav-link' + ${activePage=='matches' ? ' active' : ''}" th:href="${'/person/matches/'+parameter}">Matches <span class="badge bg-secondary" th:text="${counts.get('matches')}"></span></a>
-    </li>
-    <th:block th:if="${faceRecogServicesAvailable==true}">
+    <th:block th:if="${counts.get('person') > 0}">
         <li class="nav-item">
-            <a th:attr="class='nav-link' + ${activePage=='compreface' ? ' active' : ''}" th:href="${'/person/compreface/'+parameter}">Training Images <span class="badge bg-secondary" th:text="${counts.get('compreface')}"></span></a>
+            <a th:attr="class='nav-link' + ${activePage=='person' ? ' active' : ''}" th:href="${'/person/'+parameter}">Person <span class="badge bg-secondary" th:text="${counts.get('person')}"></span></a>
         </li>
+        <li class="nav-item">
+            <a th:attr="class='nav-link' + ${activePage=='matches' ? ' active' : ''}" th:href="${'/person/matches/'+parameter}">Matches <span class="badge bg-secondary" th:text="${counts.get('matches')}"></span></a>
+        </li>
+        <th:block th:if="${faceRecogServicesAvailable==true}">
+            <li class="nav-item">
+                <a th:attr="class='nav-link' + ${activePage=='compreface' ? ' active' : ''}" th:href="${'/person/compreface/'+parameter}">Training Images <span class="badge bg-secondary" th:text="${counts.get('compreface')}"></span></a>
+            </li>
+        </th:block>
     </th:block>
 </ul>
 </body>
