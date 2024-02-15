@@ -913,6 +913,11 @@ class AlbumsController: BaseController() {
         model["message"] = response["message"]!!
         model["msg"] = response["msg"]!!
         model["status"] = response["status"]!!
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        model["darkMode"] = false
+        if (currentUserObj != null) {
+            model["darkMode"] = currentUserObj.getDarkMode()!!
+        }
 
         model["activePage"] = module
         model["activeSidebar"] = module
