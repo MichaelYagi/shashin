@@ -6,6 +6,7 @@
         $("#albumsModalStatus").css("visibility", "visible");
         $("#albumsModalStatus").attr("title", "");
         $("#share"+albumId+" span").removeClass('bi-share-fill').addClass('bi-share');
+        $("#share"+albumId+" span").attr("title", "Share with other people");
         $("#msg").html("");
         let relativeShareLink = "";
 
@@ -13,6 +14,7 @@
             relativeShareLink = albumsModalSettings.makeShareLinkId(8, 11);
             $("#shareLink").val(relativeShareLink);
             $("#share"+albumId+" span").removeClass('bi-share').addClass('bi-share-fill');
+            $("#share"+albumId+" span").attr("title", "Shared with other people");
         }
 
         if ($("#shareLink").val() !== "" && action !== "clear") {
