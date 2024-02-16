@@ -69,7 +69,7 @@ class Albums {
 
                     if (true === showControls) {
                         html += '<a href="#" id="edit'+album.id+'"><span class="bi-pencil" title="Edit album"></span></a>';
-                        html += '&nbsp;&nbsp;&nbsp;<a href="#" id="share'+album.id+'"><span class="'+(album.shareUrl != null && album.shareUrl !== '' ? 'bi-share-fill' : 'bi-share')+'" title="Share with other users"></span></a>';
+                        html += '&nbsp;&nbsp;&nbsp;<a href="#" id="share'+album.id+'"><span class="'+(album.shareUrl != null && album.shareUrl !== '' ? 'bi-share-fill' : 'bi-share')+'" title="'+(album.shareUrl != null && album.shareUrl !== '' ? 'Shared' : 'Share')+' with other people"></span></a>';
                         html += '&nbsp;&nbsp;&nbsp;<a href="#" id="trash'+album.id+'" title="Delete album"><span class="bi-trash"></span></a>';
                     }
 
