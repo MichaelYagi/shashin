@@ -12,7 +12,7 @@
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})"
                  class="col-sm p-3 min-vh-100"></div>
 
-            <h2>Manage API key</h2>
+<!--            <h2>Manage API key</h2>-->
 
             <div class="row mt-4">
                 <div class="col-lg-4">
@@ -67,6 +67,8 @@
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         /*]]>*/
+
+        $("#appSearchInput").val("Manage API Key");
 
         $("#copyapikey").on("click", function (e) {
             e.preventDefault();

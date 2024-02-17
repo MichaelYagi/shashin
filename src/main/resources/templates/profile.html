@@ -11,7 +11,7 @@
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
 
-            <h2>Change profile picture</h2>
+<!--            <h2>Change profile picture</h2>-->
 
             <div class="row mt-4">
                 <div class="col-lg-4">
@@ -68,6 +68,8 @@
     if (profileUrl === null || profileUrl === "") {
         profileUrl = "#";
     }
+
+    $("#appSearchInput").val("Change profile picture");
 
     $("#removeProfile").on("click", function() {
         $("#removeProfileConfirmationModal").modal('show');
