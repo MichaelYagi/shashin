@@ -302,7 +302,7 @@ class UserController {
         model["status"] = ApiResponse.SUCCESS.status
         model["activePage"] = module
         model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
+        model["titleDescriptor"] = "API Key"
         return module
     }
 
