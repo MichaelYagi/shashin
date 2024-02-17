@@ -1542,7 +1542,7 @@ class SettingsController {
                                     if (metadata != null) {
                                         if (!metadata.getPath().isNullOrBlank()) {
                                             FileUtils.writeToThreadFileAndLogMessage(
-                                                "Checking for changes for file: " + metadata.getPath(),
+                                                "checking for changes for file - " + metadata.getPath(),
                                                 threadFile
                                             )
 
@@ -1910,7 +1910,7 @@ class SettingsController {
             for (i in files.indices) {
 
                 val file: File = files[i]
-                var threadText = file.path + " ALREADY SCANNED"
+                var threadText = file.path + " already scanned"
 
                 if (shouldStop.get()) {
                     threadText = "Scan Stopped"
