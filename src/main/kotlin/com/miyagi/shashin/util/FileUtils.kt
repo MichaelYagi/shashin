@@ -32,7 +32,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
         }
 
         fun allowableImageFiles(): Array<String> {
-            return arrayOf("jpeg","jpg","png","bmp","gif","webm","webp","heif","heic")
+            return arrayOf("jpeg","jpg","png","bmp","gif","webm","webp","heif","heic","tiff")
         }
 
         fun allowableAudioFiles(): Array<String> {
