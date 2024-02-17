@@ -37,7 +37,8 @@ class Snapshot {
         $("#export").on("click", function() {
             let attempts = this.configuredAttempts;
 
-            $("#msg").text("Exporting data.");
+            // $("#msg").text("Exporting data.");
+            shashin.showToastMessage("Exporting data", "Exporting metadata, albums and favorites", {icon:"bi-info-circle", iconColor:"#777777", autohide:false});
             setTimeout(function () { $("#export").prop("disabled", true); }, 0);
 
             Util.setCookie(tokenName, "", "/settings/snapshot");
@@ -51,10 +52,11 @@ class Snapshot {
 
                 if ((tokenCookieValue !== "" && tokenCookieSize !== "" && tokenCookieDbBackupName !== "") || attempts === 0) {
                     if (attempts === 0) {
-                        $("#msg").html("&nbsp;");
+                        // $("#msg").html("&nbsp;");
                     } else {
                         const dbBackupNameString = tokenCookieDbBackupName === "" ? "Error encountered":tokenCookieDbBackupName;
-                        $("#msg").text("Database backup name: " + dbBackupNameString + ". File name: " + tokenCookieValue + ". File size: " + Util.formatBytes(tokenCookieSize) + ".");
+                        // $("#msg").text("Database backup name: " + dbBackupNameString + ". File name: " + tokenCookieValue + ". File size: " + Util.formatBytes(tokenCookieSize) + ".");
+                        shashin.showToastMessage("Saving data", "Database backup name: " + dbBackupNameString + ". File name: " + tokenCookieValue + "; File size: " + Util.formatBytes(tokenCookieSize), {icon:"bi-info-circle", iconColor:"#777777"});
                         $("#export").prop("disabled", false);
                         Util.deleteCookie(tokenName, "/settings/snapshot");
                         Util.deleteCookie(tokenSize, "/settings/snapshot");
