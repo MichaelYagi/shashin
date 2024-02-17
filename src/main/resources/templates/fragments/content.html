@@ -11,7 +11,18 @@
     <div th:replace="fragments/persongroup :: person(${activePage},${parameter},${counts},${faceRecogServicesAvailable})"></div>
 </th:block>
 <th:block th:if="${message != ''}">
-    <br><p id="msg" th:text="${message == 'No message available' ? 'Oops! Something went wrong.' : message}"></p>
+    <th:block th:if="${activePage == 'scan' or activePage == 'match'}">
+        <br>
+    </th:block>
+    <div class="card">
+        <div class="card-body">
+            <span id="msg" th:text="${message == 'No message available' ? 'Oops! Something went wrong.' : message}"></span>
+        </div>
+    </div>
+    <th:block th:if="${activePage == 'scan' or activePage == 'match'}">
+        <br>
+    </th:block>
+<!--    <br><p id="msg" th:text="${message == 'No message available' ? 'Oops! Something went wrong.' : message}"></p>-->
 </th:block>
 
 <input type="hidden" id="multiSelectMetadataIds" name="multiSelectMetadataIds" value="[]">

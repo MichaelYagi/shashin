@@ -5,13 +5,31 @@
 
 <div th:replace="fragments/topnav :: topnav(${currentUser},${activePage},'')"></div>
 
+<th:block th:if="${toastMessage != ''}">
+<div class="position-fixed bottom-0 start-50 translate-middle-x">
+    <div id="customToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="5000">
+        <div class="toast-header">
+            <th:block th:if="${status == 'success'}">
+                <span class="bi-info-circle" style="font-size:1rem;color:#777777"></span>&nbsp;
+            </th:block>
+            <th:block th:if="${status == 'fail'}">
+                <span class="bi-exclamation-triangle" style="font-size:1rem;color:#FF0000"></span>&nbsp;
+            </th:block>
+            <strong class="me-auto" th:text="${#strings.capitalize(status)}"></strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" th:text="${toastMessage}"></div>
+    </div>
+</div>
+</th:block>
+
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
     <div class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})"></div>
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
 
-            <div class="row">
+            <div class="row mt-4">
                 <div class="col-md-auto">
                     <form method="post" action="/settings/snapshot/export">
                         <button class="btn btn-primary" type="submit" id="export" name="snapshot" value="export">Export data</button>
@@ -31,6 +49,7 @@
                     </form>
                 </div>
             </div>
+            <span class="bi-info-circle" style="font-size: 1rem;color: blue;"></span> Export or import metadata zip file and backup database. People and keywords will not be exported.
             <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>
         </main>
     </div>
@@ -44,6 +63,11 @@
 
         const snapshotInstance = new Snapshot();
         snapshotInstance.init();
+
+        const customToast = $('#customToast');
+        if (customToast.length > 0) {
+            customToast.toast("show");
+        }
     });
 </script>
 
