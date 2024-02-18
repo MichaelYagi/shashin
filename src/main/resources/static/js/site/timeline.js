@@ -91,7 +91,7 @@
             timelineSettings.initializeTimelineSlider(mediaTypeFilter);
         } else {
             $("#timelineTocToggle").show();
-            $("#dateSliderContainer").hide();
+            // $("#dateSliderContainer").hide();
         }
 
         let hash = "";
@@ -156,10 +156,6 @@
             // }
 
             timelineSettings.rescanElements();
-
-            // setTimeout(() => {
-            //     Util.reinitLightGalleryInstance();
-            // }, 500);
 
             if (shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null) {
                 shashin.getLightGallery().refresh();
@@ -1139,8 +1135,8 @@
 
             $("#dateSliderWrapper").hover(function () {
                 $("#dateSlider").show(timelineSettings.scrollBar.fadeInTime);
-            }, function () {
-                $("#dateSlider").hide(timelineSettings.scrollBar.fadeOutTime);
+            // }, function () {
+            //     $("#dateSlider").hide(timelineSettings.scrollBar.fadeOutTime);
             });
         }
     }
