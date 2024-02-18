@@ -91,7 +91,7 @@
             timelineSettings.initializeTimelineSlider(mediaTypeFilter);
         } else {
             $("#timelineTocToggle").show();
-            // $("#dateSliderContainer").hide();
+            $("#dateSliderContainer").hide();
         }
 
         let hash = "";
@@ -148,11 +148,12 @@
                 });
             }
 
-            if (Util.isMobile() === false && $("#dateSliderWrapper:not(:hover)").length > 0) {
-                // setTimeout(() => {
-                    $("#dateSlider").hide(timelineSettings.scrollBar.fadeOutTime);
-                // }, 2000);
-            }
+            // Causing flickering issues
+            // if (Util.isMobile() === false && $("#dateSliderWrapper:not(:hover)").length > 0) {
+            //     // setTimeout(() => {
+            //         $("#dateSlider").hide(timelineSettings.scrollBar.fadeOutTime);
+            //     // }, 2000);
+            // }
 
             timelineSettings.rescanElements();
 
@@ -1712,11 +1713,11 @@
 
             $("#offcanvasTocBody").append(html);
 
-            // if (Util.isMobile() === false) {
-            //     setTimeout(function() {
-            //         $("#timelineTocToggle").hide();
-            //     },0);
-            // }
+            if (Util.isMobile() === false) {
+                setTimeout(function() {
+                    $("#timelineTocToggle").hide();
+                },0);
+            }
         }
     }
 
