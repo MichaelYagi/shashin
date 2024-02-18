@@ -91,7 +91,7 @@
             timelineSettings.initializeTimelineSlider(mediaTypeFilter);
         } else {
             $("#timelineTocToggle").show();
-            $("#dateSliderContainer").hide();
+            // $("#dateSliderContainer").hide();
         }
 
         let hash = "";
@@ -1008,7 +1008,7 @@
                                 ", " +
                                 currentDateObj.year
                             );
-                            $(".monthYearSlider").hide();
+                            // $(".monthYearSlider").hide();
                         } else if (prevDateObj) {
                             handleTooltip.text(
                                 Util.getShortMonths(prevDateObj.month - 1) +
@@ -1017,7 +1017,7 @@
                                 ", " +
                                 prevDateObj.year
                             );
-                            $(".monthYearSlider").hide();
+                            // $(".monthYearSlider").hide();
                         }
                     }
                 },
@@ -1130,8 +1130,9 @@
 
                     sliderEl.hover(function () {
                         sliderTooltip.show();
-                    }, function () {
-                        sliderTooltip.hide();
+                    // }
+                    // , function () {
+                    //     sliderTooltip.hide();
                     });
                 }
             }

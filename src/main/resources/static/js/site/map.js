@@ -534,14 +534,14 @@ async function showMap(mapdata) {
 
     const lightGalleryConfigs = shashin.getLightGalleryConfigs();
     lightGalleryConfigs["plugins"].push(lgMetadataDetail);
-    // lightGalleryConfigs["plugins"].push(lgCastMedia);
+    lightGalleryConfigs["plugins"].push(lgCastMedia);
     lightGalleryConfigs["controls"] = true;
     lightGalleryConfigs["dynamic"] = true;
     lightGalleryConfigs["counter"] = true;
     lightGalleryConfigs["metadataDetail"] = true;
     // lightGalleryConfigs["editLocation"] = true;
     // lightGalleryConfigs["showControls"] = showControls;
-    //lightGalleryConfigs["castMedia"] = true;
+    lightGalleryConfigs["castMedia"] = true;
 
     const $dynamicGallery = document.getElementById('light-gallery-photo');
     let dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
