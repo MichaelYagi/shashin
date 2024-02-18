@@ -91,7 +91,7 @@
             timelineSettings.initializeTimelineSlider(mediaTypeFilter);
         } else {
             $("#timelineTocToggle").show();
-            // $("#dateSliderContainer").hide();
+            $("#dateSliderContainer").css('visibility', 'hidden');
         }
 
         let hash = "";
@@ -149,11 +149,11 @@
             }
 
             // Causing flickering issues
-            // if (Util.isMobile() === false && $("#dateSliderWrapper:not(:hover)").length > 0) {
-            //     // setTimeout(() => {
-            //         $("#dateSlider").hide(timelineSettings.scrollBar.fadeOutTime);
-            //     // }, 2000);
-            // }
+            if (Util.isMobile() === false && $("#dateSliderWrapper:not(:hover)").length > 0) {
+                setTimeout(() => {
+                    $("#dateSlider").css('visibility', 'hidden');
+                }, 1000);
+            }
 
             timelineSettings.rescanElements();
 
@@ -211,7 +211,7 @@
             lastOffset = $(e.target).scrollTop();
 
             if (timelineSettings.isScrolling === true) {
-                $("#dateSlider").show(timelineSettings.scrollBar.fadeInTime);
+                $("#dateSlider").css('visibility', 'visible');
             }
 
             // Hack to prevent infinite scroll upwards and throttle scrolling
@@ -1134,9 +1134,9 @@
             }
 
             $("#dateSliderWrapper").hover(function () {
-                $("#dateSlider").show(timelineSettings.scrollBar.fadeInTime);
-            // }, function () {
-            //     $("#dateSlider").hide(timelineSettings.scrollBar.fadeOutTime);
+                $("#dateSlider").css('visibility', 'visible');
+            }, function () {
+                $("#dateSlider").css('visibility', 'hidden');
             });
         }
     }
@@ -1688,7 +1688,7 @@
             // Rebuild slider
             if (Util.isMobile() === false) {
                 $("#dateSlider").empty();
-                $("#dateSlider").show(timelineSettings.scrollBar.fadeInTime);
+                $("#dateSlider").css('visibility', 'visible');
                 timelineSettings.initializeTimelineSlider(mediaTypeFilter);
             }
 
