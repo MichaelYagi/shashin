@@ -1592,13 +1592,13 @@
         shashin.autoplayVideo = $("#autoplayVideoSwitch").is(':checked');
 
         const configs = {
-            plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen, lgRotate, lgCastMedia],
+            plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen, lgRotate], //lgCastMedia],
             videojs: false,
             hideBarsDelay: 5000,
             showBarsAfter: 5000,
             allowMediaOverlap: true,
             counter: false,
-            castMedia: true,
+            //castMedia: true,
             fullScreen: true,
             download: true,
             zoomFromOrigin: true,

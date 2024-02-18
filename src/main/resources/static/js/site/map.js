@@ -541,7 +541,7 @@ async function showMap(mapdata) {
     lightGalleryConfigs["metadataDetail"] = true;
     // lightGalleryConfigs["editLocation"] = true;
     // lightGalleryConfigs["showControls"] = showControls;
-    lightGalleryConfigs["castMedia"] = true;
+    //lightGalleryConfigs["castMedia"] = true;
 
     const $dynamicGallery = document.getElementById('light-gallery-photo');
     let dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
