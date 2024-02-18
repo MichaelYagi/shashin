@@ -148,11 +148,11 @@
                 });
             }
 
-            // if (Util.isMobile() === false && $("#dateSliderWrapper:not(:hover)").length > 0) {
-            //     // setTimeout(() => {
-            //         $("#dateSlider").hide(timelineSettings.scrollBar.fadeOutTime);
-            //     // }, 2000);
-            // }
+            if (Util.isMobile() === false && $("#dateSliderWrapper:not(:hover)").length > 0) {
+                // setTimeout(() => {
+                    $("#dateSlider").hide(timelineSettings.scrollBar.fadeOutTime);
+                // }, 2000);
+            }
 
             timelineSettings.rescanElements();
 
@@ -1138,8 +1138,8 @@
 
             $("#dateSliderWrapper").hover(function () {
                 $("#dateSlider").show(timelineSettings.scrollBar.fadeInTime);
-            // }, function () {
-            //     $("#dateSlider").hide(timelineSettings.scrollBar.fadeOutTime);
+            }, function () {
+                $("#dateSlider").hide(timelineSettings.scrollBar.fadeOutTime);
             });
         }
     }
