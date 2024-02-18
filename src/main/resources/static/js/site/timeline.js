@@ -148,11 +148,11 @@
                 });
             }
 
-            if (Util.isMobile() === false && $("#dateSliderWrapper:not(:hover)").length > 0) {
-                // setTimeout(() => {
-                    $("#dateSlider").hide(timelineSettings.scrollBar.fadeOutTime);
-                // }, 2000);
-            }
+            // if (Util.isMobile() === false && $("#dateSliderWrapper:not(:hover)").length > 0) {
+            //     // setTimeout(() => {
+            //         $("#dateSlider").hide(timelineSettings.scrollBar.fadeOutTime);
+            //     // }, 2000);
+            // }
 
             timelineSettings.rescanElements();
 
@@ -1008,7 +1008,7 @@
                                 ", " +
                                 currentDateObj.year
                             );
-                            // $(".monthYearSlider").hide();
+                            $(".monthYearSlider").hide();
                         } else if (prevDateObj) {
                             handleTooltip.text(
                                 Util.getShortMonths(prevDateObj.month - 1) +
@@ -1017,7 +1017,7 @@
                                 ", " +
                                 prevDateObj.year
                             );
-                            // $(".monthYearSlider").hide();
+                            $(".monthYearSlider").hide();
                         }
                     }
                 },
@@ -1130,17 +1130,16 @@
 
                     sliderEl.hover(function () {
                         sliderTooltip.show();
-                    // }
-                    // , function () {
-                    //     sliderTooltip.hide();
+                    } , function () {
+                        sliderTooltip.hide();
                     });
                 }
             }
 
             $("#dateSliderWrapper").hover(function () {
                 $("#dateSlider").show(timelineSettings.scrollBar.fadeInTime);
-            }, function () {
-                $("#dateSlider").hide(timelineSettings.scrollBar.fadeOutTime);
+            // }, function () {
+            //     $("#dateSlider").hide(timelineSettings.scrollBar.fadeOutTime);
             });
         }
     }
@@ -1713,11 +1712,11 @@
 
             $("#offcanvasTocBody").append(html);
 
-            if (Util.isMobile() === false) {
-                setTimeout(function() {
-                    $("#timelineTocToggle").hide();
-                },0);
-            }
+            // if (Util.isMobile() === false) {
+            //     setTimeout(function() {
+            //         $("#timelineTocToggle").hide();
+            //     },0);
+            // }
         }
     }
 
