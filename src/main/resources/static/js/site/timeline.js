@@ -19,7 +19,7 @@
     timelineSettings.heightCounter = 0;
     timelineSettings.scrollBar = {};
     timelineSettings.scrollBar.fadeInTime = 100;
-    timelineSettings.scrollBar.fadeOutTime = 25;
+    timelineSettings.scrollBar.fadeOutTime = 100;
 
     const calculateDistanceToFooter = function() {
         return $(window).height() - $('#subfooter').offset().top;
@@ -148,10 +148,9 @@
                 });
             }
 
-            // Causing flickering issues
             if (Util.isMobile() === false && $("#dateSliderWrapper:not(:hover)").length > 0) {
                 setTimeout(() => {
-                    $("#dateSlider").css('visibility', 'hidden');
+                    $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).css('visibility', 'hidden');
                 }, 1000);
             }
 
@@ -211,7 +210,7 @@
             lastOffset = $(e.target).scrollTop();
 
             if (timelineSettings.isScrolling === true) {
-                $("#dateSlider").css('visibility', 'visible');
+                $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).css('visibility', 'visible');
             }
 
             // Hack to prevent infinite scroll upwards and throttle scrolling
@@ -1134,9 +1133,9 @@
             }
 
             $("#dateSliderWrapper").hover(function () {
-                $("#dateSlider").css('visibility', 'visible');
+                $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).css('visibility', 'visible');
             }, function () {
-                $("#dateSlider").css('visibility', 'hidden');
+                $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).css('visibility', 'hidden');
             });
         }
     }
