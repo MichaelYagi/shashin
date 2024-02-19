@@ -1210,14 +1210,10 @@ class Util {
 // Convenience function for visibility
 (function($) {
     $.fn.invisible = function() {
-        return this.each(function() {
-            $(this).invisible();
-        });
+        return this.css('visibility', 'hidden');
     };
     $.fn.visible = function() {
-        return this.each(function() {
-            $(this).visible();
-        });
+        return this.css('visibility', 'visible');
     };
 }(jQuery));
 
