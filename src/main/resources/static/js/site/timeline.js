@@ -1694,7 +1694,7 @@
             }
 
             // Clear offcanvas TOC and rebuild
-            $("#timelineTocToggle").show();
+            $("#timelineTocToggle").visible();
             $("#offcanvasTocBody").empty();
 
             let html = "";
