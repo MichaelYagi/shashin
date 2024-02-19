@@ -90,8 +90,8 @@
         if (Util.isMobile() === false) {
             timelineSettings.initializeTimelineSlider(mediaTypeFilter);
         } else {
-            $("#timelineTocToggle").show();
-            $("#dateSliderContainer").css('visibility', 'hidden');
+            $("#timelineTocToggle").visible();
+            $("#dateSliderContainer").invisible();
         }
 
         let hash = "";
@@ -150,7 +150,7 @@
 
             if (Util.isMobile() === false && $("#dateSliderWrapper:not(:hover)").length > 0) {
                 setTimeout(() => {
-                    $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).css('visibility', 'hidden');
+                    $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
                 }, 1000);
             }
 
@@ -210,7 +210,7 @@
             lastOffset = $(e.target).scrollTop();
 
             if (timelineSettings.isScrolling === true) {
-                $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).css('visibility', 'visible');
+                $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
             }
 
             // Hack to prevent infinite scroll upwards and throttle scrolling
@@ -317,8 +317,8 @@
             (elements.length > 0 && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) ||
             (Util.elementsInViewport($("#"+lastDate)).length === 0 && closeToFooter() === true && Util.atEndOfPage($("#container")[0]))
         ) {
-            $(".bi-play-btn").css("visibility", "hidden");
-            $(".bi-play-circle").css("visibility", "hidden");
+            $(".bi-play-btn").invisible();
+            $(".bi-play-circle").invisible();
             $(".mediaLink").unbind('click');
             reinitGalleryFlag = false;
 
@@ -744,7 +744,7 @@
                 //     (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && element.id !== ignoreTimelineDate))
             ) {
                 if (Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
-                    section.css('visibility', 'hidden');
+                    section.invisible();
                 }
 
                 if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down &&
@@ -784,7 +784,7 @@
                 $('#container').scrollTop(tempScrollTop - topHeight);
             }
         }
-        section.css('visibility', 'visible');
+        section.visible();
 
         // Get list of visible elements
         // const firstVisibleContainer = $('section').length > 0 ? $('section')[0] : null;
@@ -976,7 +976,7 @@
             const handleTooltip = $('<span class="badge bg-secondary" id="tooltip" style="background-color: slategray" />').css({
                 'position': 'absolute',
                 'right': 17
-            }).hide();
+            }).invisible();
 
             handleTooltip.text(Util.getShortMonths(dateList[0].month - 1) + ' ' + dateList[0].year);
 
@@ -1004,7 +1004,7 @@
                                 ", " +
                                 currentDateObj.year
                             );
-                            $(".monthYearSlider").hide();
+                            $(".monthYearSlider").invisible();
                         } else if (prevDateObj) {
                             handleTooltip.text(
                                 Util.getShortMonths(prevDateObj.month - 1) +
@@ -1013,7 +1013,7 @@
                                 ", " +
                                 prevDateObj.year
                             );
-                            $(".monthYearSlider").hide();
+                            $(".monthYearSlider").invisible();
                         }
                     }
                 },
@@ -1025,7 +1025,7 @@
                         timelineSettings.enableScrollSpy = true;
                     }
 
-                    $(".monthYearSlider").show();
+                    $(".monthYearSlider").visible();
                 },
                 change: function (event, ui) {
                     const currentDateObj = dateList[Math.round((dateList.length - 1) - ui.value)];
@@ -1038,11 +1038,11 @@
                             handleTooltip.text(Util.getShortMonths(prevDateObj.month - 1) + ' ' + prevDateObj.day + ', ' + prevDateObj.year);
                         }
 
-                        handleTooltip.show();
+                        handleTooltip.visible();
                     }
                 }
             }).find(".ui-slider-handle").append(handleTooltip).hover(function () {
-                handleTooltip.show();
+                handleTooltip.visible();
             });
 
             // Handle style
@@ -1071,12 +1071,14 @@
                         });
 
                         $("#dateSlider").append(el);
+
+                        // Hide overlapping year on date slider
                         setTimeout(function () {
                             if (prevEl !== null && Util.isOverlap($("#" + prevEl.attr("id")), $("#" + el.attr("id"))) === true) {
-                                $("#" + el.attr("id")).hide();
+                                $("#" + el.attr("id")).invisible();
 
                                 if (prevTickEl !== null && Util.isOverlap($("#" + prevTickEl.attr("id")), $("#" + el.attr("id"))) === true) {
-                                    $("#" + prevTickEl.attr("id")).hide();
+                                    $("#" + prevTickEl.attr("id")).invisible();
                                 }
                             } else {
                                 prevEl = el;
@@ -1107,7 +1109,7 @@
                         position: 'absolute',
                         right: 15,
                         bottom: "50%"
-                    }).hide();
+                    }).invisible();
 
                     sliderTooltip.text(Util.getShortMonths(timelineDateObj.month - 1) + ' ' + timelineDateObj.year);
 
@@ -1125,17 +1127,17 @@
                     $("#dateSlider").append(sliderEl);
 
                     sliderEl.hover(function () {
-                        sliderTooltip.show();
+                        sliderTooltip.visible();
                     } , function () {
-                        sliderTooltip.hide();
+                        sliderTooltip.invisible();
                     });
                 }
             }
 
             $("#dateSliderWrapper").hover(function () {
-                $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).css('visibility', 'visible');
+                $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
             }, function () {
-                $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).css('visibility', 'hidden');
+                $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
             });
         }
     }
@@ -1576,7 +1578,7 @@
 
                                     if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
                                         if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
-                                            $("#infinite-scroll-gallery").css('visibility', 'hidden');
+                                            $("#infinite-scroll-gallery").invisible();
                                         }
                                     }
 
@@ -1588,7 +1590,7 @@
                                                 if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
                                                     if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                                                         $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                        $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                        $("#infinite-scroll-gallery").visible();
                                                     }
                                                 }
                                             });
@@ -1601,7 +1603,7 @@
                                                 if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
                                                     if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                                                         $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                        $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                        $("#infinite-scroll-gallery").visible();
                                                     }
                                                 }
                                                 // deferred.resolve(timelineSettings.success);
@@ -1614,7 +1616,7 @@
                                                         if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
                                                             if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                                                                 $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                                $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                                $("#infinite-scroll-gallery").visible();
                                                             }
                                                         }
                                                         // deferred.resolve(timelineSettings.success);
@@ -1625,7 +1627,7 @@
                                                         if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
                                                             if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                                                                 $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                                $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                                $("#infinite-scroll-gallery").visible();
                                                             }
                                                         }
                                                         // deferred.resolve(timelineSettings.success);
@@ -1637,7 +1639,7 @@
                                                     if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
                                                         if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                                                             $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                            $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                            $("#infinite-scroll-gallery").visible();
                                                         }
                                                     }
                                                     // deferred.resolve(timelineSettings.success);
@@ -1687,7 +1689,7 @@
             // Rebuild slider
             if (Util.isMobile() === false) {
                 $("#dateSlider").empty();
-                $("#dateSlider").css('visibility', 'visible');
+                $("#dateSlider").visible();
                 timelineSettings.initializeTimelineSlider(mediaTypeFilter);
             }
 
@@ -1710,7 +1712,7 @@
 
             if (Util.isMobile() === false) {
                 setTimeout(function() {
-                    $("#timelineTocToggle").hide();
+                    $("#timelineTocToggle").invisible();
                 },0);
             }
         }
