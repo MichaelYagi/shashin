@@ -1207,6 +1207,20 @@ class Util {
     }
 }
 
+// Convenience function for visibility
+(function($) {
+    $.fn.invisible = function() {
+        return this.each(function() {
+            $(this).css("visibility", "hidden");
+        });
+    };
+    $.fn.visible = function() {
+        return this.each(function() {
+            $(this).css("visibility", "visible");
+        });
+    };
+}(jQuery));
+
 if (typeof module !== 'undefined') {
     module.exports = Util;
 }
