@@ -11,7 +11,7 @@
     <div th:replace="fragments/persongroup :: person(${activePage},${parameter},${counts},${faceRecogServicesAvailable})"></div>
 </th:block>
 <th:block th:if="${message != ''}">
-    <th:block th:if="${activePage == 'scan' or activePage == 'match'}">
+    <th:block th:if="${activePage == 'scan' or activePage == 'match' or activePage == 'matches'}">
         <br>
     </th:block>
     <div class="card">
