@@ -79,7 +79,7 @@ $("#saveBatchMetadata").on("click", async function (e) {
     $("saveBatchMetadata").prop("disabled", true);
     $("#msgBatchMetadata").html("");
     $("#metadataBatchModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-    $("#metadataBatchModalStatus").css("visibility", "visible");
+    $("#metadataBatchModalStatus").visible();
     $("#metadataBatchModalStatus").attr("title", "");
 
     const propBatchMetadataModal = bootstrap.Modal.getInstance(document.getElementById('propBatchMetadata'));
@@ -290,7 +290,7 @@ $("#batchisobject").on("click", function (e) {
 // Clear message on modal close
 $('#propBatchMetadata').on('hide.bs.modal', function () {
     $("#metadataBatchModalStatus").attr("class","spinner-grow me-auto");
-    $("#metadataBatchModalStatus").css("visibility","hidden");
+    $("#metadataBatchModalStatus").invisible();
     $("#msgBatchMetadata").html("");
     $("#msgBatchMetadata").html("");
     $('input:checkbox').prop('checked', false);
@@ -317,7 +317,7 @@ $('#propBatchMetadata').on('hide.bs.modal', function () {
 // Clear message on input editing
 $('#propBatchMetadata').bind('keypress', function() {
     $("#metadataBatchModalStatus").attr("class","spinner-grow me-auto");
-    $("#metadataBatchModalStatus").css("visibility","hidden");
+    $("#metadataBatchModalStatus").invisible();
     $("#msgBatchMetadata").html("");
 });
 
