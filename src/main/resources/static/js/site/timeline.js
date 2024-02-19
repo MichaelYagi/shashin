@@ -90,7 +90,7 @@
         if (Util.isMobile() === false) {
             timelineSettings.initializeTimelineSlider(mediaTypeFilter);
         } else {
-            $("#timelineTocToggle").visible();
+            $("#timelineTocToggle").show();
             $("#dateSliderContainer").invisible();
         }
 
@@ -1700,7 +1700,7 @@
             }
 
             // Clear offcanvas TOC and rebuild
-            $("#timelineTocToggle").visible();
+            $("#timelineTocToggle").show();
             $("#offcanvasTocBody").empty();
 
             let html = "";
@@ -1718,7 +1718,7 @@
 
             if (Util.isMobile() === false) {
                 setTimeout(function() {
-                    $("#timelineTocToggle").invisible();
+                    $("#timelineTocToggle").hide();
                 },0);
             }
         }
