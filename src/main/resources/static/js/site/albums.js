@@ -164,7 +164,7 @@ class Albums {
                 e.preventDefault();
 
                 $("#editAlbumNameStatus").addClass('spinner-grow').removeClass('bi-check-circle').removeClass('bi-x-circle');
-                $("#editAlbumNameStatus").invisible();
+                $("#editAlbumNameStatus").css("visibility","hidden");
                 $("#albumEditName").val("");
                 $("#originalAlbumName").val("");
 

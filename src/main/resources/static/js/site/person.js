@@ -35,7 +35,7 @@ class Person {
 
             e.preventDefault();
             $("#personModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-            $("#personModalStatus").visible();
+            $("#personModalStatus").css("visibility", "visible");
             $("#personModalStatus").attr("title", "");
             $("#personModalCancel").prop('disabled', true);
 
