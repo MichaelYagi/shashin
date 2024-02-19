@@ -1693,6 +1693,8 @@
             // Rebuild slider
             if (Util.isMobile() === false) {
                 $("#dateSlider").empty();
+                $("#dateSlider").hide();
+                $("#dateSlider").show();
                 $("#dateSlider").visible();
                 timelineSettings.initializeTimelineSlider(mediaTypeFilter);
             }
