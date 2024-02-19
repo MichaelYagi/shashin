@@ -4,7 +4,7 @@ $(document).ready(function () {
     $('#saveAlbumModal').on("click", async function (e) {
         e.preventDefault();
         $("#albumsModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-        $("#albumsModalStatus").css("visibility", "visible");
+        $("#albumsModalStatus").visible();
         $("#albumsModalStatus").attr("title", "");
         $("#albumsModalCancel").prop('disabled', true);
 
@@ -50,6 +50,6 @@ $(document).ready(function () {
 
     $('#propAlbumModal').on('hide.bs.modal', function () {
         $("#albumsModalStatus").attr("class","spinner-grow me-auto");
-        $("#albumsModalStatus").css("visibility","hidden");
+        $("#albumsModalStatus").invisible();
     });
 });
