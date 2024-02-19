@@ -1139,6 +1139,10 @@
             }, function () {
                 $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
             });
+
+            $("#dateSliderWrapper").mousemove(function () {
+                $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
+            });
         }
     }
 
