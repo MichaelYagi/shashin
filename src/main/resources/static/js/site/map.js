@@ -242,7 +242,7 @@ async function showMap(mapdata) {
         map.removeLayer(vectorLayer);
         const iconFeatures = [];
 
-        progressBarWrapper.css("visibility", "visible");
+        progressBarWrapper.visible();
 
         for (let index in mapdata) {
             const data = mapdata[index];
@@ -324,7 +324,7 @@ async function showMap(mapdata) {
 
         progressBar.attr("aria-valuenow", 0);
         progressBar.css("width", "0%");
-        progressBarWrapper.css("visibility", "hidden");
+        progressBarWrapper.invisible();
 
         if (iconFeatures.length > 0) {
 
@@ -732,7 +732,7 @@ async function showMap(mapdata) {
     });
 
     map.once("postrender", function() {
-        dateInputs.css("visibility", "visible");
+        dateInputs.visible();
     });
 
     // After closing lightgallery, clear select interaction

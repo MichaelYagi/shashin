@@ -163,7 +163,7 @@ class Util {
         let propMetadataModal = null;
         if (modalId === "propMetadata") {
             $("#metadataModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-            $("#metadataModalStatus").css("visibility", "visible");
+            $("#metadataModalStatus").visible();
             $("#metadataModalStatus").attr("title", "");
             $("#metadataModalCancel").prop('disabled', true);
             $("#saveMetadata").prop("disabled", true);
@@ -174,7 +174,7 @@ class Util {
             propMetadataModal._config.keyboard = false;
         } else if (modalId === "propBatchMetadata") {
             $("#metadataBatchModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-            $("#metadataBatchModalStatus").css("visibility", "visible");
+            $("#metadataBatchModalStatus").visible();
             $("#metadataBatchModalStatus").attr("title", "");
             $("#metadataBatchModalCancel").prop("disabled", true);
             $("#saveBatchMetadata").prop("disabled", true);
@@ -735,8 +735,8 @@ class Util {
                             shashin.getLightGallery().refresh(mediaContentList);
                         }
 
-                        $(".bi-play-btn").css("visibility", "visible");
-                        $(".bi-play-circle").css("visibility", "visible");
+                        $(".bi-play-btn").visible();
+                        $(".bi-play-circle").visible();
                         $(".mediaLink").bind('click');
                     }, timeoutValue);
                 }
@@ -959,7 +959,7 @@ class Util {
         $(".metadataIdLabel").hide();
         $(".albumsLabel").hide();
 
-        $(".linkCopyStatus").css("visibility","hidden");
+        $(".linkCopyStatus").invisible();
 
         const activePage = $("#activePage").val();
 
@@ -1211,12 +1211,12 @@ class Util {
 (function($) {
     $.fn.invisible = function() {
         return this.each(function() {
-            $(this).css("visibility", "hidden");
+            $(this).invisible();
         });
     };
     $.fn.visible = function() {
         return this.each(function() {
-            $(this).css("visibility", "visible");
+            $(this).visible();
         });
     };
 }(jQuery));
