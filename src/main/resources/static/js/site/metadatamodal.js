@@ -84,7 +84,7 @@ $("#saveMetadata").on("click", async function (e) {
 
     $("#metadataModalMsg").html("");
     $("#metadataModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-    $("#metadataModalStatus").visible();
+    $("#metadataModalStatus").css("visibility", "visible");
     $("#metadataModalStatus").attr("title", "");
     $("#metadataModalCancel").prop('disabled', true);
     $("#saveMetadata").prop('disabled', true);
@@ -420,7 +420,7 @@ $('#propMetadata').on('hide.bs.modal', function () {
 
     $("#collapseMetadata").collapse("hide");
     $("#metadataModalStatus").attr("class","spinner-grow me-auto");
-    $("#metadataModalStatus").invisible();
+    $("#metadataModalStatus").css("visibility","hidden");
     $("#metadataModalMsg").html("");
     $("#saveMetadata").prop('disabled', false);
 
@@ -442,7 +442,7 @@ $('#rescanMetadataConfirmation').on('hide.bs.modal', function () {
 // Clear message on input editing
 $('#propMetadata').find(':input').bind('keypress', function() {
     $("#metadataModalStatus").attr("class","spinner-grow me-auto");
-    $("#metadataModalStatus").invisible();
+    $("#metadataModalStatus").css("visibility","hidden");
     $("#metadataModalMsg").html("");
 });
 

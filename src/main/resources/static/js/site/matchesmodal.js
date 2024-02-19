@@ -34,7 +34,7 @@ $("#saveBatchMetadata").on("click", async function (e) {
 
     matchModalBatchSettings.closeBatchTagPeopleDropdown();
     $("#matchesBatchModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-    $("#matchesBatchModalStatus").visible();
+    $("#matchesBatchModalStatus").css("visibility", "visible");
     $("#matchesBatchModalStatus").attr("title", "");
     $("#matchesBatchModalCancel").prop('disabled', true);
 
@@ -112,7 +112,7 @@ $("#saveBatchMetadata").on("click", async function (e) {
 // Clear message on modal close
 $('#propBatchMetadata').on('hide.bs.modal', function () {
     $("#matchesBatchModalStatus").attr("class","spinner-grow me-auto");
-    $("#matchesBatchModalStatus").invisible();
+    $("#matchesBatchModalStatus").css("visibility","hidden");
     $("#msgBatchMetadata").html("");
     $('#tagBatchDataInput').val('');
     $('input:checkbox').prop('checked', false);
@@ -123,7 +123,7 @@ $('#propBatchMetadata').on('hide.bs.modal', function () {
 // Clear message on input editing
 $('#propBatchMetadata').bind('keypress', function () {
     $("#matchesBatchModalStatus").attr("class","spinner-grow me-auto");
-    $("#matchesBatchModalStatus").invisible();
+    $("#matchesBatchModalStatus").css("visibility","hidden");
     $("#msgBatchMetadata").html("");
 });
 
@@ -196,12 +196,12 @@ $('#propBatchMetadata').bind('keypress', function () {
 
             matchModalSettings.closeTagPeopleDropdown(metadata.id);
             $("#matchesModalStatus" + metadata.id).removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-            $("#matchesModalStatus" + metadata.id).visible();
+            $("#matchesModalStatus" + metadata.id).css("visibility", "visible");
             $("#matchesModalStatus" + metadata.id).attr("title", "");
             $("#matchesModalCancel" + metadata.id).prop('disabled', true);
 
             $("#personModalStatus" + metadata.id).removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-            $("#personModalStatus" + metadata.id).visible();
+            $("#personModalStatus" + metadata.id).css("visibility", "visible");
             $("#personModalStatus" + metadata.id).attr("title", "");
             $("#personModalStatus" + metadata.id).prop('disabled', true);
 
@@ -287,10 +287,10 @@ $('#propBatchMetadata').bind('keypress', function () {
         // Clear message on modal close
         $('#propmatches' + metadata.id).on('hide.bs.modal', function () {
             $("#matchesModalStatus" + metadata.id).attr("class","spinner-grow me-auto");
-            $("#matchesModalStatus" + metadata.id).invisible();
+            $("#matchesModalStatus" + metadata.id).css("visibility","hidden");
 
             $("#personModalStatus" + metadata.id).attr("class","spinner-grow me-auto");
-            $("#personModalStatus" + metadata.id).invisible();
+            $("#personModalStatus" + metadata.id).css("visibility","hidden");
 
             $("#msg" + metadata.id).html("");
             $("#isobject" + metadata.id)[0].checked = false;
@@ -299,10 +299,10 @@ $('#propBatchMetadata').bind('keypress', function () {
         // Clear message on input editing
         $('#propmatches' + metadata.id + ' input').bind('keypress', function () {
             $("#matchesModalStatus" + metadata.id).attr("class","spinner-grow me-auto");
-            $("#matchesModalStatus" + metadata.id).invisible();
+            $("#matchesModalStatus" + metadata.id).css("visibility","hidden");
 
             $("#personModalStatus" + metadata.id).attr("class","spinner-grow me-auto");
-            $("#personModalStatus" + metadata.id).invisible();
+            $("#personModalStatus" + metadata.id).css("visibility","hidden");
 
             $("#msg" + metadata.id).html("");
         });

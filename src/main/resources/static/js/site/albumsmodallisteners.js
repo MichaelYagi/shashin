@@ -114,7 +114,7 @@
 
             if (originalAlbumName.trim() !== albumName.trim() && albumName.trim() !== "") {
                 $("#editAlbumNameStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-                $("#editAlbumNameStatus").visible();
+                $("#editAlbumNameStatus").css("visibility", "visible");
                 $("#editAlbumNameStatus").attr("title", "");
                 $("#cancelAlbum").prop('disabled', true);
 
@@ -163,7 +163,7 @@
             $("#saveUserShare").off();
 
             $("#albumsModalStatus").attr("class","spinner-grow me-auto");
-            $("#albumsModalStatus").invisible();
+            $("#albumsModalStatus").css("visibility","hidden");
             $("#msg").html("");
             $("#propsharealbums").off();
         });
@@ -257,7 +257,7 @@
 
         async function saveUserShare() {
             $("#albumsModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-            $("#albumsModalStatus").visible();
+            $("#albumsModalStatus").css("visibility", "visible");
             $("#albumsModalStatus").attr("title", "");
             $("#cancelUserShare").prop('disabled', true);
             $("#userShare"+albumId).css('display', 'none');

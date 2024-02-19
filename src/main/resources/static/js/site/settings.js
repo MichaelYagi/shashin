@@ -127,7 +127,7 @@ class Settings {
         $("#deleteContentConfirm").on("click", async function (e) {
             e.preventDefault();
 
-            $("#deleteContentModalStatus").visible();
+            $("#deleteContentModalStatus").css("visibility", "visible");
 
             const http = new Http("deleting all content");
             let json = {deleteContent: true}
@@ -146,7 +146,7 @@ class Settings {
                 }
                 // $("#msgDeleteContent").html(message);
             }
-            $("#deleteContentModalStatus").invisible();
+            $("#deleteContentModalStatus").css("visibility", "hidden");
         });
 
         // If click anywhere on page, hide toast message

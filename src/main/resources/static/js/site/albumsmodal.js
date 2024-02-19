@@ -3,7 +3,7 @@
         $("#generateLink").prop('disabled', true);
         $("#cancelUserShare").prop('disabled', true);
         $("#albumsModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-        $("#albumsModalStatus").visible();
+        $("#albumsModalStatus").css("visibility", "visible");
         $("#albumsModalStatus").attr("title", "");
         $("#share"+albumId+" span").removeClass('bi-share-fill').addClass('bi-share');
         $("#share"+albumId+" span").attr("title", "Share with other people");
