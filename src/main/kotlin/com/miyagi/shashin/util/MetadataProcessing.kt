@@ -582,6 +582,8 @@ class MetadataProcessing() {
     }
 
     companion object {
+        private var logger: Logger = Logger.getLogger(MetadataProcessing::class.simpleName)
+
         fun deleteAlbumPhoto(metadataRepository: MetadataRepository, albumRepository: AlbumRepository, albumPhotoRepository: AlbumPhotoRepository, metadataId: String, albumId: Int): Int? {
             albumPhotoRepository.deleteByMetadataIdAndAlbumId(metadataId, albumId)
             val count = albumPhotoRepository.countByAlbumId(albumId)
@@ -596,6 +598,10 @@ class MetadataProcessing() {
                         metadataObj = metadataRepository.findById(albumPhoto.getMetadataId().toString())
                         album.get().setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
                         albumRepository.save(album.get())
+                        logger.log(
+                            Level.INFO,
+                            "Set the album cover when deleting album photo"
+                        )
                     }
                 }
             }

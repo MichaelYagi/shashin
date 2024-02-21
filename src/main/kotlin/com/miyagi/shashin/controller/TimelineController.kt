@@ -1950,6 +1950,10 @@ class TimelineController: BaseController() {
 
                         if (albumPhotoMetadata != null) {
                             album.setCoverUrl(albumPhotoMetadata.getThumbnailUrlCentered())
+                            logger.log(
+                                Level.INFO,
+                                "Set the album cover when cleaning album cover"
+                            )
                         }
                     }
                 }
@@ -2451,6 +2455,10 @@ class TimelineController: BaseController() {
             } else {
                 if (metadataObj != null && metadataObj.getThumbnailUrlCentered() != null) {
                     albumObj.setCoverUrl(metadataObj.getThumbnailUrlCentered())
+                    logger.log(
+                        Level.INFO,
+                        "Set the album cover when processing album"
+                    )
                 }
                 albumObj.setName(albumName)
                 albumObj.setCreatedAt(getCurrentTimestamp())
