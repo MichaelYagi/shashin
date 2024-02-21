@@ -12,6 +12,7 @@ import javax.transaction.Transactional
 @Transactional
 interface AlbumPhotoRepository : CrudRepository<AlbumPhoto?, Int?> {
     fun countByMetadataIdAndAlbumId(metadataId: String?, albumId: Int?): Int?
+    fun countByMetadataId(metadataId: String?): Int?
     fun countByAlbumId(albumId: Int?): Int?
     @Query("SELECT COUNT(DISTINCT ap.metadata_id) FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.type NOT LIKE '%video%'", nativeQuery = true)
     fun countPhotosByAlbumId(albumId: Int?): Int?
