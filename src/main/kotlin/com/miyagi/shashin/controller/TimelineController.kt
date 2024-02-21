@@ -1926,6 +1926,9 @@ class TimelineController: BaseController() {
 
         // Find people
         cleanupOrphanedSubjects()
+
+        // Find person cover
+        cleanupPersonCover(id)
     }
 
     fun cleanupAlbumCover(metadataId: String) {
@@ -1952,9 +1955,6 @@ class TimelineController: BaseController() {
                 }
             }
         }
-
-
-
     }
 
     fun cleanupOrphanedAlbums() {
@@ -1968,6 +1968,34 @@ class TimelineController: BaseController() {
                     albumRepository.deleteById(albumId)
                     albumCommentRepository.deleteByAlbumId(albumId)
                     userAlbumRepository.deleteByAlbumId(albumId)
+                }
+            }
+        }
+    }
+
+    fun cleanupPersonCover(metadataId: String) {
+        val metadataObj = metadataRepository.findByMetadataId(metadataId)
+
+        if (metadataObj != null) {
+            val thumbnailUrlCentered = metadataObj.getThumbnailUrlCentered()
+
+            val allPeople = recognitionLabelRepository?.findAll()
+            if (allPeople != null) {
+                for (person in allPeople) {
+                    val personCoverUrl = person?.getCoverUrl()
+
+                    if (person != null && thumbnailUrlCentered == personCoverUrl) {
+                        val personPhoto = recognitionLabelPhotoRepository?.findFirstByRecognitionLabelId(person.getId())
+
+                        // Find the next person album photo and set as person cover
+                        if (personPhoto != null) {
+                            val personPhotoMetadata = metadataRepository.findByMetadataId(personPhoto.getMetadataId()!!)
+
+                            if (personPhotoMetadata != null) {
+                                person.setCoverUrl(personPhotoMetadata.getThumbnailUrlCentered())
+                            }
+                        }
+                    }
                 }
             }
         }
