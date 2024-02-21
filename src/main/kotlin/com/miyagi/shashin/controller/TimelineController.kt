@@ -1921,8 +1921,40 @@ class TimelineController: BaseController() {
         // Find albums
         cleanupOrphanedAlbums()
 
+        // Find album cover
+        cleanupAlbumCover(id)
+
         // Find people
         cleanupOrphanedSubjects()
+    }
+
+    fun cleanupAlbumCover(metadataId: String) {
+        val metadataObj = metadataRepository.findByMetadataId(metadataId)
+
+        if (metadataObj != null) {
+            val thumbnailUrlCentered = metadataObj.getThumbnailUrlCentered()
+
+            val allAlbums = albumRepository.findAll()
+            for (album in allAlbums) {
+                val albumCoverUrl = album?.getCoverUrl()
+
+                if (album != null && thumbnailUrlCentered == albumCoverUrl) {
+                    val albumPhoto = albumPhotoRepository.findFirstByAlbumId(album.getId())
+
+                    // Find the next album photo and set as album cover
+                    if (albumPhoto != null) {
+                        val albumPhotoMetadata = metadataRepository.findByMetadataId(albumPhoto.getMetadataId()!!)
+
+                        if (albumPhotoMetadata != null) {
+                            album.setCoverUrl(albumPhotoMetadata.getThumbnailUrlCentered())
+                        }
+                    }
+                }
+            }
+        }
+
+
+
     }
 
     fun cleanupOrphanedAlbums() {
