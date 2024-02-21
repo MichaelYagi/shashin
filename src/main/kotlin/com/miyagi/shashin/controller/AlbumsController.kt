@@ -764,6 +764,11 @@ class AlbumsController: BaseController() {
                 album.get().setCoverUrl(coverAlbumUrl)
                 album.get().setModifiedAt(getCurrentTimestamp())
                 albumRepository.save(album.get())
+
+                logger.log(
+                    Level.INFO,
+                    "Set the album cover in /album/update"
+                )
             }
 
             resp["msg"] = "Saved!"
