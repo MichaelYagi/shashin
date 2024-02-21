@@ -1912,23 +1912,23 @@ class TimelineController: BaseController() {
     }
 
     @Transactional
-    fun removeMetadata(id: String) {
-        recognitionLabelPhotoRepository?.deleteByMetadataId(id)
-        albumPhotoRepository.deleteByMetadataId(id)
-        favoriteRepository.deleteByMetadataId(id)
-        albumPhotoCommentRepository.deleteByMetadataId(id)
+    fun removeMetadata(metadataId: String) {
+        recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
+        albumPhotoRepository.deleteByMetadataId(metadataId)
+        favoriteRepository.deleteByMetadataId(metadataId)
+        albumPhotoCommentRepository.deleteByMetadataId(metadataId)
 
         // Find albums
         cleanupOrphanedAlbums()
 
         // Find album cover
-        cleanupAlbumCover(id)
+        cleanupAlbumCover(metadataId)
 
         // Find people
         cleanupOrphanedSubjects()
 
         // Find person cover
-        cleanupPersonCover(id)
+        cleanupPersonCover(metadataId)
     }
 
     fun cleanupAlbumCover(metadataId: String) {
