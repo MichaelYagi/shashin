@@ -3,6 +3,7 @@ package com.miyagi.shashin.controller
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.util.FileUtils
+import com.miyagi.shashin.util.MetricsUtil
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -73,7 +74,11 @@ class MediaServiceController {
                                 (mp4MajorBrand.lowercase().contains("mpeg"))
                         )
             ) {
-                logger.log(Level.INFO, "Converting video " + metadata.getPath() + " to h.264.")
+                logger.log(Level.INFO, "Converting video " + metadata.getPath() + " to mp4.")
+                val metricsUtil = MetricsUtil()
+
+                metricsUtil.start("Converting video to mp4")
+
                 /* Step 1. Declaring source file and Target file */
                 val source = File(path)
 
@@ -84,31 +89,45 @@ class MediaServiceController {
                 }
                 val target = File(tempFilePath)
 
-                /* Step 2. Set Audio Attributes for conversion*/
+//                /* Step 2. Set Audio Attributes for conversion*/
+//                val audio = AudioAttributes()
+//                audio.setCodec("aac")
+//                audio.setBitRate(64000)
+//                audio.setChannels(2)
+//                audio.setSamplingRate(44100)
+//
+//                /* Step 3. Set Video Attributes for conversion*/
+//                val video = VideoAttributes()
+//                video.setCodec("h264")
+//                // video.setX264Profile(X264_PROFILE.BASELINE)
+//                // More the frames and higher bitrate means more quality and size,
+//                // keep it low based on devices like mobile
+//                // Here 160 kbps video is 160000
+//                //video.setBitRate(160000)
+//                //video.setFrameRate(15)
+//                val width = if (metadata.getOriginalImageWidth() == null) FileUtils.thumbnailHeight() else metadata.getOriginalImageWidth()!!
+//                val height = if (metadata.getOriginalImageHeight() == null) FileUtils.thumbnailHeight() else metadata.getOriginalImageHeight()!!
+//                video.setSize(VideoSize(width, height))
+//
+//                /* Step 4. Set Encoding Attributes*/
+//                val attrs = EncodingAttributes()
+//                attrs.setOutputFormat("mp4")
+//                attrs.setAudioAttributes(audio)
+//                attrs.setVideoAttributes(video)
+
+
                 val audio = AudioAttributes()
-                audio.setCodec("aac")
-                audio.setBitRate(64000)
-                audio.setChannels(2)
-                audio.setSamplingRate(44100)
-
-                /* Step 3. Set Video Attributes for conversion*/
+                audio.setCodec("libvorbis")
                 val video = VideoAttributes()
-                video.setCodec("h264")
-                // video.setX264Profile(X264_PROFILE.BASELINE)
-                // More the frames and higher bitrate means more quality and size,
-                // keep it low based on devices like mobile
-                // Here 160 kbps video is 160000
-                //video.setBitRate(160000)
-                //video.setFrameRate(15)
-                val width = if (metadata.getOriginalImageWidth() == null) FileUtils.thumbnailHeight() else metadata.getOriginalImageWidth()!!
-                val height = if (metadata.getOriginalImageHeight() == null) FileUtils.thumbnailHeight() else metadata.getOriginalImageHeight()!!
-                video.setSize(VideoSize(width, height))
-
-                /* Step 4. Set Encoding Attributes*/
+                video.setFrameRate(30)
                 val attrs = EncodingAttributes()
                 attrs.setOutputFormat("mp4")
                 attrs.setAudioAttributes(audio)
                 attrs.setVideoAttributes(video)
+
+
+                metricsUtil.end()
+                metricsUtil.start("Converting video to mp4 - encoding")
 
                 /* Step 5. Do the Encoding*/
                 try {
@@ -119,9 +138,11 @@ class MediaServiceController {
                     /*Handle here the video failure*/
                     logger.log(
                         Level.SEVERE,
-                        "Could not convert video " + metadata.getPath() + " to h.264: " + e.message
+                        "Could not convert video " + metadata.getPath() + " to mp4: " + e.message
                     )
                 }
+
+                metricsUtil.end()
             }
 
             return getVideoFactory(response, metadata, path)
