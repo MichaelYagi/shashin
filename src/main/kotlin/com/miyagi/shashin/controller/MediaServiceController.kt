@@ -115,7 +115,6 @@ class MediaServiceController {
 
                 // If video is 3 minutes or more, set to ultrafast
                 var preset = PresetEnum.SUPERFAST.presetName
-                video.setPreset(PresetEnum.SUPERFAST.presetName)
 
 //                val duration = metadata.getDuration()
 //                if (duration == "0:00" || duration == null) {
@@ -140,6 +139,8 @@ class MediaServiceController {
 //                    }
 //                }
 //                logger.log(Level.INFO, "Using $preset preset to convert video based on duration $duration.")
+
+                video.setPreset(preset)
 
                 /* Step 4. Set Encoding Attributes*/
                 val attrs = EncodingAttributes()
