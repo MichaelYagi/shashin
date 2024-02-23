@@ -21,6 +21,7 @@ import ws.schild.jave.MultimediaObject
 import ws.schild.jave.encode.AudioAttributes
 import ws.schild.jave.encode.EncodingAttributes
 import ws.schild.jave.encode.VideoAttributes
+import ws.schild.jave.encode.enums.PresetEnum
 import ws.schild.jave.info.VideoSize
 import java.io.File
 import java.nio.file.Files
@@ -109,6 +110,9 @@ class MediaServiceController {
                 val width = if (metadata.getOriginalImageWidth() == null) FileUtils.thumbnailHeight() else metadata.getOriginalImageWidth()!!
                 val height = if (metadata.getOriginalImageHeight() == null) FileUtils.thumbnailHeight() else metadata.getOriginalImageHeight()!!
                 video.setSize(VideoSize(width, height))
+                video.setFaststart(true)
+                video.setPreset(PresetEnum.SUPERFAST.presetName)
+                video.setQuality(4)
 
                 /* Step 4. Set Encoding Attributes*/
                 val attrs = EncodingAttributes()
