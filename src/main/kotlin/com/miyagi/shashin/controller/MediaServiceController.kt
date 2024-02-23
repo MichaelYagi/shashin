@@ -120,15 +120,6 @@ class MediaServiceController {
                 attrs.setAudioAttributes(audio)
                 attrs.setVideoAttributes(video)
 
-//                val audio = AudioAttributes()
-//                audio.setCodec("libvorbis")
-//                val video = VideoAttributes()
-//                video.setFrameRate(30)
-//                val attrs = EncodingAttributes()
-//                attrs.setOutputFormat("mp4")
-//                attrs.setAudioAttributes(audio)
-//                attrs.setVideoAttributes(video)
-
 
                 metricsUtil.end()
                 metricsUtil.start("Converting video to mp4 - encoding")
