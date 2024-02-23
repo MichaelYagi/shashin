@@ -89,41 +89,41 @@ class MediaServiceController {
                 }
                 val target = File(tempFilePath)
 
-//                /* Step 2. Set Audio Attributes for conversion*/
-//                val audio = AudioAttributes()
-//                audio.setCodec("aac")
-//                audio.setBitRate(64000)
-//                audio.setChannels(2)
-//                audio.setSamplingRate(44100)
-//
-//                /* Step 3. Set Video Attributes for conversion*/
-//                val video = VideoAttributes()
-//                video.setCodec("h264")
-//                // video.setX264Profile(X264_PROFILE.BASELINE)
-//                // More the frames and higher bitrate means more quality and size,
-//                // keep it low based on devices like mobile
-//                // Here 160 kbps video is 160000
-//                //video.setBitRate(160000)
-//                //video.setFrameRate(15)
-//                val width = if (metadata.getOriginalImageWidth() == null) FileUtils.thumbnailHeight() else metadata.getOriginalImageWidth()!!
-//                val height = if (metadata.getOriginalImageHeight() == null) FileUtils.thumbnailHeight() else metadata.getOriginalImageHeight()!!
-//                video.setSize(VideoSize(width, height))
-//
-//                /* Step 4. Set Encoding Attributes*/
-//                val attrs = EncodingAttributes()
-//                attrs.setOutputFormat("mp4")
-//                attrs.setAudioAttributes(audio)
-//                attrs.setVideoAttributes(video)
-
-
+                /* Step 2. Set Audio Attributes for conversion*/
                 val audio = AudioAttributes()
-                audio.setCodec("libvorbis")
+                audio.setCodec("aac")
+                audio.setBitRate(64000)
+                audio.setChannels(2)
+                audio.setSamplingRate(44100)
+
+                /* Step 3. Set Video Attributes for conversion*/
                 val video = VideoAttributes()
-                video.setFrameRate(30)
+                video.setCodec("h264")
+                // video.setX264Profile(X264_PROFILE.BASELINE)
+                // More the frames and higher bitrate means more quality and size,
+                // keep it low based on devices like mobile
+                // Here 160 kbps video is 160000
+                val kbps = 700
+                video.setBitRate(kbps*1000)
+                video.setFrameRate(25)
+                val width = if (metadata.getOriginalImageWidth() == null) FileUtils.thumbnailHeight() else metadata.getOriginalImageWidth()!!
+                val height = if (metadata.getOriginalImageHeight() == null) FileUtils.thumbnailHeight() else metadata.getOriginalImageHeight()!!
+                video.setSize(VideoSize(width, height))
+
+                /* Step 4. Set Encoding Attributes*/
                 val attrs = EncodingAttributes()
                 attrs.setOutputFormat("mp4")
                 attrs.setAudioAttributes(audio)
                 attrs.setVideoAttributes(video)
+
+//                val audio = AudioAttributes()
+//                audio.setCodec("libvorbis")
+//                val video = VideoAttributes()
+//                video.setFrameRate(30)
+//                val attrs = EncodingAttributes()
+//                attrs.setOutputFormat("mp4")
+//                attrs.setAudioAttributes(audio)
+//                attrs.setVideoAttributes(video)
 
 
                 metricsUtil.end()
