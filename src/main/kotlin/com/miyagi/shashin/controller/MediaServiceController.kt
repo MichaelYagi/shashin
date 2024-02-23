@@ -111,8 +111,35 @@ class MediaServiceController {
                 val height = if (metadata.getOriginalImageHeight() == null) FileUtils.thumbnailHeight() else metadata.getOriginalImageHeight()!!
                 video.setSize(VideoSize(width, height))
                 video.setFaststart(true)
-                video.setPreset(PresetEnum.SUPERFAST.presetName)
                 video.setQuality(4)
+
+                // If video is 3 minutes or more, set to ultrafast
+                var preset = PresetEnum.SUPERFAST.presetName
+                video.setPreset(PresetEnum.SUPERFAST.presetName)
+                val duration = metadata.getDuration()
+                if (duration == "0:00" || duration == null) {
+                    preset = PresetEnum.ULTRAFAST.presetName
+                    video.setPreset(preset)
+                } else {
+                    val timeArray = duration.split(":")
+                    if (timeArray.size > 1) {
+                        if (timeArray.size > 2) {
+                            val hour = timeArray[0].toInt()
+                            if (hour > 0) {
+                                preset = PresetEnum.ULTRAFAST.presetName
+                                video.setPreset(preset)
+                            }
+                        } else {
+                            val minute = timeArray[0].toInt()
+                            if (minute > 2) {
+                                preset = PresetEnum.ULTRAFAST.presetName
+                                video.setPreset(preset)
+                            }
+                        }
+                    }
+                }
+
+                logger.log(Level.INFO, "Using $preset preset to convert video based on duration $duration.")
 
                 /* Step 4. Set Encoding Attributes*/
                 val attrs = EncodingAttributes()
