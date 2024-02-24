@@ -541,6 +541,12 @@ $("#tagpeople").on("focus", function (e) {
     metadataModal.closeTagPeopleDropdown(metadataId);
 });
 
+$("#collapseMetadata").on("shown.bs.collapse", function (e) {
+    $("#propMetadataBody").animate({
+        scrollTop: $('#propMetadataBody')[0].scrollHeight - $('#propMetadataBody')[0].clientHeight
+    }, 1000);
+});
+
 $('body').on("click", function(event) {
     const metadataId = $("#metadataId").val();
 

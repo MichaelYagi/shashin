@@ -321,6 +321,12 @@ $('#propBatchMetadata').bind('keypress', function() {
     $("#msgBatchMetadata").html("");
 });
 
+$("#collapseBatchMetadata").on("shown.bs.collapse", function (e) {
+    $("#propBatchMetadataBody").animate({
+        scrollTop: $('#propBatchMetadataBody')[0].scrollHeight - $('#propBatchMetadataBody')[0].clientHeight
+    }, 1000);
+});
+
 $('body').on("click", function(event) {
     if (!$(event.target).closest("#tagalbumdropdown").length && !$(event.target).closest("#albumNameList").length && $("#tagalbumdropdown").hasClass("show")) {
         metadataBatchModal.toggleBatchTagAlbumDropdown();
