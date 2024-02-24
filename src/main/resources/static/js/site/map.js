@@ -760,6 +760,7 @@ async function showMap(mapdata) {
     setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
 
     $("#filterMap").on("click", function(e) {
+        shashin.showToastMessage("Applying filter", "Applying filter", {icon:"bi-info-circle", iconColor:"#777777", autohide: false});
         setLayerInputs(e);
         shashin.showToastMessage("Filter applied", "Filter applied", {icon:"bi-info-circle", iconColor:"#777777", delay: 3000});
     });
