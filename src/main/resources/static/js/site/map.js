@@ -760,18 +760,12 @@ async function showMap(mapdata) {
     setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
 
     $("#filterMap").on("click", function(e) {
+        e.preventDefault();
+
         shashin.showToastMessage("Applying filter", "Applying filter", {icon:"bi-info-circle", iconColor:"#777777", autohide: false});
-        setLayerInputs(e);
+        setLayerInputs();
         shashin.showToastMessage("Filter applied", "Filter applied", {icon:"bi-info-circle", iconColor:"#777777", delay: 3000});
     });
-
-    // $("#videoOnlyInput").on("change", function(e) {
-    //     setLayerInputs(e);
-    // });
-    //
-    // $("#showMarkersInput").on("change", function(e) {
-    //     setLayerInputs(e);
-    // });
 
     $("#albumSelect").on("change", function(e) {
         if ($(this).val() !== "0") {
@@ -818,8 +812,7 @@ async function showMap(mapdata) {
         });
     });
 
-    function setLayerInputs(e) {
-        e.preventDefault();
+    function setLayerInputs() {
 
         // Validate fields
         if (true === checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))) {
