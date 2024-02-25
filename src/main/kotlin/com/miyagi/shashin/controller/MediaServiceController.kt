@@ -1,7 +1,10 @@
 package com.miyagi.shashin.controller
 
 import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.repository.MetadataRepository
+import com.miyagi.shashin.repository.NotificationRepository
+import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.MetricsUtil
 import com.miyagi.shashin.util.TextUtils
@@ -26,10 +29,14 @@ import ws.schild.jave.info.VideoSize
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.text.SimpleDateFormat
+import java.time.ZoneId
+import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.activation.URLDataSource
+import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 
@@ -38,6 +45,12 @@ class MediaServiceController {
 
     @Autowired
     private lateinit var metadataRepository: MetadataRepository
+
+    @Autowired
+    private lateinit var userRepository: UserRepository
+
+    @Autowired
+    private lateinit var notificationRepository: NotificationRepository
 
     @Value("\${app.sidecar.path}")
     private var relativeSidecarDir: String? = null
@@ -49,7 +62,7 @@ class MediaServiceController {
     @RequestMapping(value = ["/api/v1/video/{metadataId}"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
     @ResponseBody
     @Throws(java.io.IOException::class)
-    fun getVideo(response: HttpServletResponse?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
+    fun getVideo(response: HttpServletResponse?, request: HttpServletRequest?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
         val metadataObj = metadataRepository.findById(metadataId)
 
         if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("video")!!) {
@@ -168,8 +181,66 @@ class MediaServiceController {
                 metricsUtil.end()
             }
 
+            Thread {
+                val admins = userRepository.findAllAdmins()
+                val userIp = TextUtils.getClientIp(request)
+                if (!TextUtils.isLocalIp(userIp)) {
+                    val notificationObjList = mutableListOf<Notification>()
+                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                    sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                    for (admin in admins) {
+                        val notificationObj = Notification()
+                        notificationObj.setUserId(admin.getId())
+                        notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
+                        notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                        notificationObj.setRead(false)
+                        val message =
+                            "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> played video '<a href='/timeline#${
+                                metadataObj.get().getYear()
+                            }-${metadataObj.get().getMonth()}-${
+                                metadataObj.get().getDay()
+                            }' target='_blank'>${metadataObj.get().getTitle()}</a>' at ${
+                                sdtf.format(Date())
+                            }"
+                        notificationObj.setMessage(message)
+                        notificationObjList.add(notificationObj)
+                    }
+
+                    if (notificationObjList.isNotEmpty()) {
+                        notificationRepository.saveAll(notificationObjList)
+                    }
+                }
+            }.start()
+
             return getVideoFactory(response, metadata, path)
         } else {
+            Thread {
+                val admins = userRepository.findAllAdmins()
+                val userIp = TextUtils.getClientIp(request)
+                if (!TextUtils.isLocalIp(userIp)) {
+                    val notificationObjList = mutableListOf<Notification>()
+                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                    sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                    for (admin in admins) {
+                        val notificationObj = Notification()
+                        notificationObj.setUserId(admin.getId())
+                        notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
+                        notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                        notificationObj.setRead(false)
+                        val message =
+                            "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to play invalid video with metadata ID $metadataId at ${
+                                sdtf.format(Date())
+                            }"
+                        notificationObj.setMessage(message)
+                        notificationObjList.add(notificationObj)
+                    }
+
+                    if (notificationObjList.isNotEmpty()) {
+                        notificationRepository.saveAll(notificationObjList)
+                    }
+                }
+            }.start()
+
             return ResponseEntity<FileSystemResource>(null, null, HttpStatus.NOT_FOUND)
         }
     }
@@ -177,12 +248,70 @@ class MediaServiceController {
     @RequestMapping(value = ["/api/v1/video/{metadataId}/download"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
     @ResponseBody
     @Throws(java.io.IOException::class)
-    fun getVideoDownload(response: HttpServletResponse?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource>? {
+    fun getVideoDownload(response: HttpServletResponse?, request: HttpServletRequest?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource>? {
         val metadataObj = metadataRepository.findById(metadataId)
 
         if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("video")!!) {
+            Thread {
+                val admins = userRepository.findAllAdmins()
+                val userIp = TextUtils.getClientIp(request)
+                if (!TextUtils.isLocalIp(userIp)) {
+                    val notificationObjList = mutableListOf<Notification>()
+                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                    sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                    for (admin in admins) {
+                        val notificationObj = Notification()
+                        notificationObj.setUserId(admin.getId())
+                        notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
+                        notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                        notificationObj.setRead(false)
+                        val message =
+                            "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> downloaded video '<a href='/timeline#${
+                                metadataObj.get().getYear()
+                            }-${metadataObj.get().getMonth()}-${
+                                metadataObj.get().getDay()
+                            }' target='_blank'>${metadataObj.get().getTitle()}</a>' at ${
+                                sdtf.format(Date())
+                            }"
+                        notificationObj.setMessage(message)
+                        notificationObjList.add(notificationObj)
+                    }
+
+                    if (notificationObjList.isNotEmpty()) {
+                        notificationRepository.saveAll(notificationObjList)
+                    }
+                }
+            }.start()
+
             return getVideoFactory(response, metadataObj.get(), metadataObj.get().getPath()!!, true)
         } else {
+            Thread {
+                val admins = userRepository.findAllAdmins()
+                val userIp = TextUtils.getClientIp(request)
+                if (!TextUtils.isLocalIp(userIp)) {
+                    val notificationObjList = mutableListOf<Notification>()
+                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                    sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                    for (admin in admins) {
+                        val notificationObj = Notification()
+                        notificationObj.setUserId(admin.getId())
+                        notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
+                        notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                        notificationObj.setRead(false)
+                        val message =
+                            "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to download video with metadata ID $metadataId at ${
+                                sdtf.format(Date())
+                            }"
+                        notificationObj.setMessage(message)
+                        notificationObjList.add(notificationObj)
+                    }
+
+                    if (notificationObjList.isNotEmpty()) {
+                        notificationRepository.saveAll(notificationObjList)
+                    }
+                }
+            }.start()
+
             return ResponseEntity<FileSystemResource>(null, null, HttpStatus.NOT_FOUND)
         }
     }
@@ -254,21 +383,52 @@ class MediaServiceController {
     @RequestMapping(value = ["/api/v1/image/{metadataId}","/api/v1/image/{metadataId}.jpg"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
     @Throws(java.io.IOException::class)
-    fun getImage(response: HttpServletResponse?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
-        return getImageFactory(response, metadataId)
+    fun getImage(response: HttpServletResponse?, request: HttpServletRequest?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
+        return getImageFactory(request, response, metadataId)
     }
 
     @RequestMapping(value = ["/api/v1/image/{metadataId}/download"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
     @Throws(java.io.IOException::class)
-    fun getImageDownload(response: HttpServletResponse?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
-        return getImageFactory(response, metadataId, true)
+    fun getImageDownload(response: HttpServletResponse?,request: HttpServletRequest?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
+        return getImageFactory(request, response, metadataId, true)
     }
 
-    private fun getImageFactory(response: HttpServletResponse?, metadataId: String, attachFile: Boolean = false): ResponseEntity<FileSystemResource> {
+    private fun getImageFactory(request: HttpServletRequest?, response: HttpServletResponse?, metadataId: String, attachFile: Boolean = false): ResponseEntity<FileSystemResource> {
         val metadataObj = metadataRepository.findById(metadataId)
 
         if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("image")!!) {
+            Thread {
+                val admins = userRepository.findAllAdmins()
+                val userIp = TextUtils.getClientIp(request)
+                if (!TextUtils.isLocalIp(userIp)) {
+                    val notificationObjList = mutableListOf<Notification>()
+                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                    sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                    for (admin in admins) {
+                        val notificationObj = Notification()
+                        notificationObj.setUserId(admin.getId())
+                        notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
+                        notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                        notificationObj.setRead(false)
+                        val message =
+                            "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> viewed image '<a href='/timeline#${
+                                metadataObj.get().getYear()
+                            }-${metadataObj.get().getMonth()}-${
+                                metadataObj.get().getDay()
+                            }' target='_blank'>${metadataObj.get().getTitle()}</a>' at ${
+                                sdtf.format(Date())
+                            }"
+                        notificationObj.setMessage(message)
+                        notificationObjList.add(notificationObj)
+                    }
+
+                    if (notificationObjList.isNotEmpty()) {
+                        notificationRepository.saveAll(notificationObjList)
+                    }
+                }
+            }.start()
+
             val path = metadataObj.get().getPath()!!
             var resource = FileSystemResource(path)
             val headers = HttpHeaders()
@@ -310,6 +470,33 @@ class MediaServiceController {
                 return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
             }
         } else {
+            Thread {
+                val admins = userRepository.findAllAdmins()
+                val userIp = TextUtils.getClientIp(request)
+                if (!TextUtils.isLocalIp(userIp)) {
+                    val notificationObjList = mutableListOf<Notification>()
+                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                    sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                    for (admin in admins) {
+                        val notificationObj = Notification()
+                        notificationObj.setUserId(admin.getId())
+                        notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
+                        notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                        notificationObj.setRead(false)
+                        val message =
+                            "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to view invalid image with metadata ID $metadataId at ${
+                                sdtf.format(Date())
+                            }"
+                        notificationObj.setMessage(message)
+                        notificationObjList.add(notificationObj)
+                    }
+
+                    if (notificationObjList.isNotEmpty()) {
+                        notificationRepository.saveAll(notificationObjList)
+                    }
+                }
+            }.start()
+
             return ResponseEntity<FileSystemResource>(null, null, HttpStatus.NOT_FOUND)
         }
     }

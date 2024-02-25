@@ -780,7 +780,8 @@ class AlbumsController: BaseController() {
         val albumShareInfo = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (albumShareInfo.containsKey("albumId") && albumShareInfo.containsKey("relativeShareUrl")) {
             val albumIdRequest = albumShareInfo["albumId"].toString().toInt()
-            var relativeShareUrl: String? = StringEscapeUtils.escapeHtml4(albumShareInfo["relativeShareUrl"].toString().trim())
+            var relativeShareUrl: String? =
+                StringEscapeUtils.escapeHtml4(albumShareInfo["relativeShareUrl"].toString().trim())
 
             if (albumIdRequest > 0) {
                 val albumObj = albumRepository.findById(albumIdRequest)
@@ -808,27 +809,6 @@ class AlbumsController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
-    private fun isLocalIp(testAddress: String): Boolean {
-        val inetAddress: InetAddress
-
-        logger.log(
-            Level.INFO,
-            "Testing IP: $testAddress"
-        )
-
-        try {
-            inetAddress = InetAddress.getByName(testAddress) as Inet4Address
-
-            return inetAddress.isSiteLocalAddress || inetAddress.isLoopbackAddress
-        } catch (exception: UnknownHostException) {
-            logger.log(
-                Level.WARNING,
-                "Testing unknown IP: ${exception.localizedMessage}"
-            )
-            return false
-        }
-    }
-
     @RequestMapping(value = ["/share/{shareLink}/album/{albumId}"], method = [RequestMethod.GET])
     fun getAnonymousShareAlbum(model: Model, request: HttpServletRequest, @PathVariable shareLink: String, @PathVariable albumId: Int): String? {
         val module = "share"
@@ -841,7 +821,7 @@ class AlbumsController: BaseController() {
 
         val album = response["album"] as Album?
 
-        if (!isLocalIp(userIp)) {
+        if (!TextUtils.isLocalIp(userIp)) {
             val notificationObjList = mutableListOf<Notification>()
             val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
             sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
