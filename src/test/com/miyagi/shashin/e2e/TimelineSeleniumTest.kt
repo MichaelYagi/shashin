@@ -51,7 +51,7 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         adminObj.setUsername("testadmin")
         var encodedPassword: String = bcrypt.encode("testadmin")
         adminObj.setPassword(encodedPassword)
-        adminObj.setAuthority("ROLE_ADMIN")
+        adminObj.setAuthority("ROLE_SUPER")
         adminObj.setIsAuthorized(true)
         adminObj.setApikey("00000000-00000000-00000000-00000000")
         userRepository?.save(adminObj)

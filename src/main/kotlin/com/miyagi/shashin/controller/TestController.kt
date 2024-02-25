@@ -38,7 +38,7 @@ class TestController {
     @Autowired
     private lateinit var metadataRepository: MetadataRepository
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
     @GetMapping("/test")
     fun test(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
         model["somevalue"] = "This is a test"
@@ -89,7 +89,7 @@ class TestController {
         return "test"
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/testvideo"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
     @ResponseBody
     fun getTestVideo(response: HttpServletResponse?): FileSystemResource? {
@@ -97,7 +97,7 @@ class TestController {
         return FileSystemResource(path)
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/testimage"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
     fun getTestImage(response: HttpServletResponse?): FileSystemResource? {
@@ -105,7 +105,7 @@ class TestController {
         return FileSystemResource(path)
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/testaudio"], method = [RequestMethod.GET], produces = ["audio/3gpp","audio/aac","audio/flac","audio/mpeg","audio/mp3","audio/mp4","audio/ogg","audio/wav","audio/webm"])
     @ResponseBody
     fun getTestAudio(response: HttpServletResponse?): FileSystemResource? {

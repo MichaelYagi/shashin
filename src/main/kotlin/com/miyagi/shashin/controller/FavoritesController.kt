@@ -29,10 +29,13 @@ import javax.transaction.Transactional
 
 @Suppress("UNCHECKED_CAST")
 @Controller
-@Secured("ROLE_ADMIN","ROLE_USER")
+@Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
 class FavoritesController: BaseController() {
     @Value("\${app.role.admin}")
     private var adminRole: String? = null
+
+    @Value("\${app.role.super}")
+    private var superRole: String? = null
 
     @Autowired
     private lateinit var favoriteRepository: FavoriteRepository
@@ -172,7 +175,7 @@ class FavoritesController: BaseController() {
     }
 
 
-    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/favorites/metadata/list/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getFavoritesMetadataList(model: Model,@PathVariable page: Int): String? {
@@ -234,7 +237,8 @@ class FavoritesController: BaseController() {
                 }
 
                 // Notify admins
-                val admins = userRepository.findAllByAuthorityEquals(adminRole!!)
+                val admins = userRepository.findAllAdmins()
+
                 val metadata = metadataRepository.findById(metadataId)
                 val notificationObjList = mutableListOf<Notification>()
                 val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")

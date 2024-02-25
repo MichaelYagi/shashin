@@ -74,6 +74,9 @@ class PeopleController: BaseController() {
     @Autowired
     private var userRepository: UserRepository? = null
 
+    @Value("\${app.role.super}")
+    private lateinit var superRole: String
+
     @Value("\${app.role.admin}")
     private lateinit var adminRole: String
 
@@ -142,7 +145,7 @@ class PeopleController: BaseController() {
     }
 
     @RequestMapping(value = ["/matches/start"], method = [RequestMethod.POST], produces = ["application/json"])
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER")
     @ResponseBody
     fun startPredictions(model: Model,@RequestParam stopScan: Boolean, request: HttpServletRequest): String {
         val settings = model.getAttribute("settings") as Settings
@@ -182,14 +185,15 @@ class PeopleController: BaseController() {
                             shouldStop.get()
                         )
 
-                        val admins = userRepository?.findAllByAuthorityEquals(adminRole)
-                        if (admins != null) {
+                        val adminSupers = userRepository?.findAllByAuthorityEquals(superRole)
+
+                        if (adminSupers != null) {
                             val notificationObjList = mutableListOf<Notification>()
                             val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                             sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
-                            for (admin in admins) {
+                            for (adminSuper in adminSupers) {
                                 val notificationObj = Notification()
-                                notificationObj.setUserId(admin.getId())
+                                notificationObj.setUserId(adminSuper.getId())
                                 notificationObj.setCreatedAt(getCurrentTimestamp())
                                 notificationObj.setModifiedAt(getCurrentTimestamp())
                                 notificationObj.setRead(false)
@@ -249,7 +253,7 @@ class PeopleController: BaseController() {
     }
 
     @GetMapping("/person/matches/{personId}")
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMIN","ROLE_SUPER")
     fun getPredictions(model: Model, @PathVariable personId: Int, request: HttpServletRequest): String {
         val module = "matches"
         model["message"] = "Nothing to see here."
@@ -287,7 +291,7 @@ class PeopleController: BaseController() {
             var personCount = 0
             if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
                 personCount = metadataRepository?.countByPhotoAlbumByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId())!!
-            } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
+            } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
                 personCount = metadataRepository?.countByMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId)!!
             }
             if (personCount > 0) {
@@ -365,7 +369,7 @@ class PeopleController: BaseController() {
     }
 
     @RequestMapping(value = ["/person/compreface/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMIN", "ROLE_SUPER")
     @ResponseBody
     fun deleteCompreFaceGetImages(model: Model, @RequestBody requestBody: JsonNode, request: HttpServletRequest): String {
         val imageMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -430,7 +434,7 @@ class PeopleController: BaseController() {
     }
 
     @GetMapping("/person/compreface/{personId}")
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     fun getCompreFaceGetImages(model: Model, @PathVariable personId: Int, request: HttpServletRequest): String {
         val module = "compreface"
         val page = 0
@@ -475,7 +479,7 @@ class PeopleController: BaseController() {
             var personCount = 0
             if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
                 personCount = metadataRepository?.countByPhotoAlbumByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId())!!
-            } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
+            } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
                 personCount = metadataRepository?.countByMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId)!!
             }
             if (personCount > 0) {
@@ -642,7 +646,7 @@ class PeopleController: BaseController() {
     }
 
     @GetMapping("/people")
-    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     fun getPeople(model: Model): String {
         val module = "people"
         model["message"] = "Nothing to see here."
@@ -657,7 +661,7 @@ class PeopleController: BaseController() {
 
             if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
                 peopleList = metadataRepository?.findAlbumPhotoByPeople(settings.getRecognitionConfidenceThreshold()!!,currentUserObj.getId())
-            } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
+            } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
                 peopleList = metadataRepository?.findMetadataByPeople(settings.getRecognitionConfidenceThreshold()!!)
 
                 if (peopleList != null && peopleList.count() > 0) {
@@ -685,7 +689,7 @@ class PeopleController: BaseController() {
     }
 
     @RequestMapping(value = ["/person/{personId}"], method = [RequestMethod.GET])
-    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     fun getPerson(model: Model, @PathVariable personId: Int,request: HttpServletRequest): String {
         val module = "person"
         val page = 0
@@ -737,7 +741,7 @@ class PeopleController: BaseController() {
                 )
                 response["msg"] = ""
                 response["status"] = ApiResponse.SUCCESS.status
-            } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
+            } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
                 metadataList = metadataRepository?.findMetadataByPerson(
                     settings.getRecognitionConfidenceThreshold()!!,
                     personId,
@@ -776,7 +780,7 @@ class PeopleController: BaseController() {
         counts["matches"] = 0
         counts["compreface"] = 0
         response["counts"] = counts
-        response["canEdit"] = model.getAttribute("authority") == adminRole
+        response["canEdit"] = model.getAttribute("authority") == adminRole || model.getAttribute("authority") == superRole
         response["faceRecogServicesAvailable"] = false
 
         response["msg"] = "Could not get results"
@@ -805,7 +809,7 @@ class PeopleController: BaseController() {
             var metadataList: MutableIterable<Metadata>? = null
             if (currentUserObj!!.getAuthority() == model.getAttribute("userRole")) {
                 metadataList = metadataRepository?.findAlbumPhotoByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId(),pageValue,size)
-            } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
+            } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
                 val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
                 if (recognitionLabels != null && recognitionLabels.count() > 0) {
                     response["recognitionLabels"] = recognitionLabels
@@ -822,7 +826,7 @@ class PeopleController: BaseController() {
                 var personCount = 0
                 if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
                     personCount = metadataRepository?.countByPhotoAlbumByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId())!!
-                } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
+                } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
                     personCount = metadataRepository?.countByMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId)!!
                 }
                 if (personCount > 0) {
@@ -895,7 +899,7 @@ class PeopleController: BaseController() {
     }
 
     @RequestMapping(value = ["/person/update"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @ResponseBody
     fun postPersonUpdate(model: Model, @RequestBody requestBody: JsonNode): String {
         val personMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -1061,7 +1065,7 @@ class PeopleController: BaseController() {
     }
 
     @RequestMapping(value = ["/person/recognition/faces"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @ResponseBody
     fun postPersonUpload(model: Model, @RequestBody requestBody: JsonNode): String {
         val personMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -1099,7 +1103,7 @@ class PeopleController: BaseController() {
     }
 
     @RequestMapping(value = ["/person/recognition/recognize/{metadataId}"], consumes = ["application/json"], method = [RequestMethod.GET], produces = ["application/json"])
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @ResponseBody
     fun postPersonRecognize(model: Model, @PathVariable metadataId: String): String {
         resp["responseData"] = mutableMapOf<String, Any?>()

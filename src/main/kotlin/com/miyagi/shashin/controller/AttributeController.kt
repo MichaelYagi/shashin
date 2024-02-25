@@ -72,6 +72,9 @@ class AttributeController: ResponseEntityExceptionHandler() {
     @Value("\${app.api.version}")
     private lateinit var apiVersion: String
 
+    @Value("\${app.role.super}")
+    private lateinit var superRole: String
+
     @Value("\${app.role.admin}")
     private lateinit var adminRole: String
 
@@ -203,6 +206,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
 
         model["userRole"] = userRole
         model["adminRole"] = adminRole
+        model["superRole"] = superRole
         model["settings"] = Settings()
         model["activeProfile"] = ""
         model["faceRecogServicesAvailable"] = false
@@ -354,7 +358,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
         model["baseUrl"] = "$baseUrl/"
 
         model["operatingSystemInfo"] = ""
-        if (model.getAttribute("authority") == adminRole) {
+        if (model.getAttribute("authority") == adminRole || model.getAttribute("authority") == superRole) {
             model["operatingSystemInfo"] = getOperatingSystemInfo()
         }
         model["copyrightYear"] = Calendar.getInstance().get(Calendar.YEAR)

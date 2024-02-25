@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest
 import kotlin.collections.HashMap
 
 @Controller
-@Secured("ROLE_ADMIN")
+@Secured("ROLE_SUPER","ROLE_ADMIN")
 class BrowseController: BaseController() {
 
     @Autowired

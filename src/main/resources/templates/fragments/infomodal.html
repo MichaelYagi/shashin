@@ -16,7 +16,7 @@
                     <li class="nav-item">
                         <a class="nav-link active" data-bs-toggle="tab" id="detailsTabLinkInfo" href="#detailsTab">Details</a>
                     </li>
-                    <th:block th:if="${authority == 'ROLE_ADMIN'}">
+                    <th:block th:if="${authority == 'ROLE_ADMIN' || authority == 'ROLE_SUPER'}">
                         <li class="nav-item">
                             <a class="nav-link" data-bs-toggle="tab" id="exifTabLinkInfo" href="#exifTab">EXIF data</a>
                         </li>

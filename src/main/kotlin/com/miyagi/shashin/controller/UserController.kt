@@ -62,6 +62,9 @@ class UserController {
     @Value("\${app.api.version}")
     private var apiVersion: String? = null
 
+    @Value("\${app.role.super}")
+    private var superRole: String? = null
+
     @Value("\${app.role.admin}")
     private var adminRole: String? = null
 
@@ -80,7 +83,7 @@ class UserController {
     private lateinit var persistentLoginsExpiryRepository: PersistentLoginsExpiryRepository
 
     @GetMapping("/users/update")
-    @Secured("ROLE_ADMIN","ROLE_USER")
+    @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     fun getUpdateUser(model: Model): String {
         model["message"] = ""
         model["user"] = User()
@@ -101,7 +104,7 @@ class UserController {
     }
 
     @RequestMapping(value = ["/users/update"], method = [RequestMethod.POST], consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE])
-    @Secured("ROLE_ADMIN","ROLE_USER")
+    @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     fun postUpdateUser(model: Model, redirectAttributes: RedirectAttributes, @RequestBody formData: MultiValueMap<String, String>): String {
         val module = "update"
         model["message"] = ""
@@ -149,7 +152,7 @@ class UserController {
     }
 
     @GetMapping("/users/profile")
-    @Secured("ROLE_ADMIN","ROLE_USER")
+    @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     fun getProfile(model: Model): String {
         model["message"] = ""
         model["user"] = User()
@@ -172,7 +175,7 @@ class UserController {
 
     @RequestMapping(value = ["/users/profile"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    @Secured("ROLE_ADMIN","ROLE_USER")
+    @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     fun postUpdateProfile(model: Model, redirectAttributes: RedirectAttributes, @RequestBody requestBody: JsonNode): String {
         val base64Map = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
         val response = mutableMapOf<String, Any?>()
@@ -232,7 +235,7 @@ class UserController {
 
     @RequestMapping(value = ["/users/profile/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    @Secured("ROLE_ADMIN","ROLE_USER")
+    @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     fun postDeleteProfile(model: Model, redirectAttributes: RedirectAttributes, @RequestBody requestBody: JsonNode): String {
         val requestMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
         val response = mutableMapOf<String, Any?>()
@@ -275,8 +278,9 @@ class UserController {
     }
 
     @GetMapping("/users/apikey")
-    @Secured("ROLE_ADMIN","ROLE_USER")
+    @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     fun getApiKey(model: Model, request: HttpServletRequest): String {
+
         model["message"] = ""
         model["user"] = User()
         model["alertClass"] = ""
@@ -286,6 +290,14 @@ class UserController {
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
             model["user"] = currentUserObj
+
+            if (currentUserObj.getAuthority() == "ROLE_SUPER") {
+                model["message"] = "<span>You have <strong>super admin</strong> privileges.</span>"
+            } else if (currentUserObj.getAuthority() == "ROLE_ADMIN") {
+                model["message"] = "<span>You have <strong>admin</strong> privileges.</span>"
+            } else {
+                model["message"] = "<span>You have <strong>user</strong> privileges.</span>"
+            }
 
             var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
             if (request.scheme == "https") {
@@ -308,7 +320,7 @@ class UserController {
 
     @RequestMapping(value = ["/users/apikey/update"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    @Secured("ROLE_ADMIN","ROLE_USER")
+    @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     fun postWebUpdateApikey(model: Model, request: HttpServletRequest, redirectAttributes: RedirectAttributes, @RequestBody requestBody: JsonNode): String {
         val apikeyMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
         val response = mutableMapOf<String, Any?>()
@@ -365,7 +377,7 @@ class UserController {
         model["user"] = User()
         model["message"] = ""
         if ((userCount != null) && (userCount.toInt() == 0)) {
-            model["message"] = "Register as an admin"
+            model["message"] = "Register as a super admin"
         }
 
         val module = "register"
@@ -411,7 +423,7 @@ class UserController {
             newUser.setApikey(TextUtils.generateUUID(newUser.getUsername(),System.currentTimeMillis().toString(),"",0.0,0,"","API key generated for new user from UserController").toString())
 
             if ((userCount != null) && (userCount.toInt() == 0)) {
-                newUser.setAuthority("ROLE_ADMIN")
+                newUser.setAuthority("ROLE_SUPER")
                 newUser.setIsAuthorized(true)
                 userRepository?.save(newUser)
                 return "redirect:/users/login?msg=regsuccess"
@@ -419,7 +431,8 @@ class UserController {
                 newUser.setAuthority("ROLE_USER")
                 userRepository?.save(newUser)
 
-                val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
+                val admins = userRepository?.findAllAdmins()
+
                 if (admins != null) {
                     val notificationObjList = mutableListOf<Notification>()
                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
@@ -452,9 +465,9 @@ class UserController {
     fun getLoginUser(model: Model, @RequestParam(name="error",required=false) error: String?, @RequestParam(name="msg",required=false) message: String?): String {
         val module = "login"
 
-        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") && model.getAttribute("agentName") != "safari") {
+        if ((model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) && model.getAttribute("agentName") != "safari") {
             return "redirect:/timeline"
-        } else if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") && model.getAttribute("agentName") == "safari") {
+        } else if ((model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) && model.getAttribute("agentName") == "safari") {
             return "redirect:/recent"
         } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
             return "redirect:/albums"
@@ -523,7 +536,7 @@ class UserController {
 
     @RequestMapping(value = ["/users/darkmode"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    @Secured("ROLE_ADMIN","ROLE_USER")
+    @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     fun toggleDarkmode(model: Model, @RequestBody requestBody: JsonNode): String? {
         val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
 
@@ -547,7 +560,7 @@ class UserController {
 
     @RequestMapping(value = ["/users/autoplayvideo"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    @Secured("ROLE_ADMIN","ROLE_USER")
+    @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     fun toggleAutoplayVideo(model: Model, @RequestBody requestBody: JsonNode): String? {
         val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
 
@@ -571,7 +584,7 @@ class UserController {
 
     @RequestMapping(value = ["/users/showplacename"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    @Secured("ROLE_ADMIN","ROLE_USER")
+    @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     fun toggleShowPlacename(model: Model, @RequestBody requestBody: JsonNode): String? {
         val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
 
@@ -638,7 +651,7 @@ class UserController {
     )
     @RequestMapping(value = ["/api/v1/users/self"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    @Secured("ROLE_ADMIN","ROLE_USER")
+    @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     fun getMyUserInfo(model: Model): String {
         val response = mutableMapOf<String, Any?>()
         response["msg"] = "Could not get user info"

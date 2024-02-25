@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest
 
 
 @Controller
-@Secured("ROLE_ADMIN","ROLE_USER")
+@Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
 class SearchController: BaseController() {
 
     @Autowired
@@ -97,7 +97,7 @@ class SearchController: BaseController() {
             val queryLimit = model.getAttribute("queryLimit").toString().toInt()
             val pageValue = page*queryLimit
             var metadataList: MutableIterable<Metadata>? = null
-            if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
+            if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) {
                 metadataList = searchRepository?.findMetadataBySearchTerm(term,pageValue,queryLimit)
                 response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
             } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
@@ -155,7 +155,7 @@ class SearchController: BaseController() {
         if (!term.isNullOrBlank()) {
             val queryLimit = model.getAttribute("queryLimit").toString().toInt()
             val pageValue = page * queryLimit
-            if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
+            if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) {
                 val metadataList = searchRepository?.findMetadataBySearchTerm(term, pageValue, queryLimit)
                 response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
                 response["msg"] = "Results"
