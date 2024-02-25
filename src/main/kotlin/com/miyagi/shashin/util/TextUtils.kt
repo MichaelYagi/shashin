@@ -8,8 +8,7 @@ import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import java.io.BufferedReader
 import java.io.InputStreamReader
-import java.net.URL
-import java.net.URLDecoder
+import java.net.*
 import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
 import java.time.*
@@ -26,6 +25,27 @@ class TextUtils {
     companion object {
 
         private var logger: Logger = Logger.getLogger(TextUtils::class.simpleName)
+
+        fun isLocalIp(testAddress: String): Boolean {
+            val inetAddress: InetAddress
+
+            logger.log(
+                Level.INFO,
+                "Testing IP: $testAddress"
+            )
+
+            try {
+                inetAddress = InetAddress.getByName(testAddress) as Inet4Address
+
+                return inetAddress.isSiteLocalAddress || inetAddress.isLoopbackAddress
+            } catch (exception: UnknownHostException) {
+                logger.log(
+                    Level.WARNING,
+                    "Testing unknown IP: ${exception.localizedMessage}"
+                )
+                return false
+            }
+        }
 
         fun parseRememberMeCookie(cookie: String): HashMap<String,String> {
             val seriesExpiryMap = HashMap<String,String>()
