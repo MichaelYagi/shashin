@@ -1,6 +1,7 @@
 package com.miyagi.shashin.component
 
 import com.miyagi.shashin.model.Notification
+import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
@@ -37,6 +38,9 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
     @Value("\${app.role.admin}")
     private var adminRole: String? = null
 
+    @Value("\${app.role.super}")
+    private var superRole: String? = null
+
     @Throws(IOException::class, ServletException::class)
     override fun onAuthenticationFailure(
         request: HttpServletRequest?,
@@ -45,7 +49,8 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
     ) {
         val lastUserName: String = request?.getParameter("username") ?: ""
 
-        val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
+        val admins = userRepository?.findAllAdmins()
+
         val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
         sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
 

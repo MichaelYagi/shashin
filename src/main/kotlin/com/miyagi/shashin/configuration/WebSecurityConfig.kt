@@ -104,14 +104,9 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
         )
 
         var adminList = arrayOf(
-            "settings/**",
-            "settings",
-            "settings/users",
-            "settings/scan",
             "timeline",
             "timeline/**",
             "complete/metadata/**",
-            "users/delete",
             "albums/add",
             "rescan/metadata",
             "api/v1/update/**",
@@ -132,6 +127,15 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "api/v1/keywords",
             "api/v1/rescan/metadata"
         )
+
+        val superList = adminList +
+                arrayOf(
+                    "settings/**",
+                    "settings",
+                    "settings/users",
+                    "settings/scan",
+                    "users/delete"
+                )
 
         val allRoleList = arrayOf(
             "comments/**",
@@ -223,6 +227,9 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
         @Autowired
         private val authSuccessHandler: AuthSuccessHandler? = null
 
+        @Value("\${app.role.super}")
+        private var superRole: String? = null
+
         @Value("\${app.role.admin}")
         private var adminRole: String? = null
 
@@ -301,8 +308,9 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .authorizeRequests()
                 .antMatchers(*publicList).permitAll()
                 .antMatchers(*adminList).hasRole(adminRole.toString().replace("ROLE_", ""))
+                .antMatchers(*superList).hasRole(superRole.toString().replace("ROLE_", ""))
                 .antMatchers(*allRoleList)
-                .hasAnyRole(userRole.toString().replace("ROLE_", ""), adminRole.toString().replace("ROLE_", ""))
+                .hasAnyRole(userRole.toString().replace("ROLE_", ""), adminRole.toString().replace("ROLE_", ""), superRole.toString().replace("ROLE_", ""))
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

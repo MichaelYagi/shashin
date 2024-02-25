@@ -50,7 +50,7 @@ class MapController: BaseController() {
 
         // If ROLE_ADMIN get lat lng for timeline
         if (currentUserObj != null) {
-            if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
+            if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
                 model["showControls"] = true
                 albums = albumRepository?.findAllWithLocationOrderByAlbumName()
             } else {
@@ -105,7 +105,7 @@ class MapController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/mapdata", "/mapdata"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getMapData(model: Model): ResponseEntity<String> {
@@ -117,7 +117,7 @@ class MapController: BaseController() {
 
         // If ROLE_ADMIN get lat lng for timeline
         if (currentUserObj != null) {
-            if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
+            if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
                 response["mapdata"] = metadataRepository!!.findTimelineAllForMap()
             } else {
                 response["mapdata"] = metadataRepository!!.findByAlbumMetadataByUserIdForMap(currentUserObj.getId())
@@ -134,7 +134,7 @@ class MapController: BaseController() {
             .body(json)
     }
 
-    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/album/mapdata/{id}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getAlbumMapData(model: Model, @PathVariable(required = true) id: Int): ResponseEntity<String> {
@@ -146,7 +146,7 @@ class MapController: BaseController() {
 
         // If ROLE_ADMIN get lat lng for timeline
         if (currentUserObj != null) {
-            if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
+            if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
                 response["albummapdata"] = albumRepository?.findMetadataIdsByAlbumId(id)
             } else {
                 response["albummapdata"] = albumRepository?.findMetadataIdsByAlbumIdAndUserId(id, currentUserObj.getId())
@@ -163,7 +163,7 @@ class MapController: BaseController() {
             .body(json)
     }
 
-    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/placedata", "/placedata"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getPlaceData(model: Model, @RequestBody requestBody: JsonNode): String {

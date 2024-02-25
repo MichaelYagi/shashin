@@ -36,6 +36,7 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+import kotlin.collections.ArrayList
 
 
 @Component
@@ -45,6 +46,9 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 
     @Value("\${app.role.admin}")
     private var adminRole: String? = null
+
+    @Value("\${app.role.super}")
+    private var superRole: String? = null
 
     @Value("\${app.role.user}")
     private var userRole: String? = null
@@ -108,6 +112,9 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
             for (authority in authentication.authorities) {
                 if (authority.authority == adminRole) {
                     currentAuthority = adminRole!!
+                    break
+                } else if (authority.authority == superRole) {
+                    currentAuthority = superRole!!
                     break
                 } else if (authority.authority == userRole) {
                     currentAuthority = userRole!!
@@ -238,9 +245,9 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 
                         if (uriPath.isNotEmpty()) {
                             redirectStrategy.sendRedirect(request, response, uriPath)
-                        } else if (currentAuthority == adminRole && agentName != "safari") {
+                        } else if ((currentAuthority == adminRole || currentAuthority == superRole) && agentName != "safari") {
                             redirectStrategy.sendRedirect(request, response, "/timeline")
-                        } else if (currentAuthority == adminRole && agentName == "safari") {
+                        } else if ((currentAuthority == adminRole || currentAuthority == superRole)  && agentName == "safari") {
                             redirectStrategy.sendRedirect(request, response, "/recent")
                         } else {
                             redirectStrategy.sendRedirect(request, response, "/albums")
@@ -305,7 +312,8 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
     }
 
     private fun notifyLogin(currentUserObj: User?) {
-        val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
+        val admins = userRepository?.findAllAdmins()
+
         val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
         sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
 
@@ -333,7 +341,10 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
     }
 
     private fun notifyLatestVersion(currentUserObj: User?, version: String) {
-        val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
+        val adminList = userRepository?.findAllByAuthorityEquals(adminRole!!)
+        val superAdmins = userRepository?.findAllByAuthorityEquals(superRole!!)
+        val admins = adminList?.plus(superAdmins) as ArrayList<User>?
+
         if (admins != null && currentUserObj != null) {
             val notificationObjList = mutableListOf<Notification>()
             for (admin in admins) {

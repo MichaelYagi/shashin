@@ -82,6 +82,9 @@ class AlbumsController: BaseController() {
     @Autowired
     private val keywordRepository: KeywordRepository? = null
 
+    @Value("\${app.role.super}")
+    private var superRole: String? = null
+
     @Value("\${app.role.admin}")
     private var adminRole: String? = null
 
@@ -90,7 +93,7 @@ class AlbumsController: BaseController() {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
 
-    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @GetMapping("/albums")
     fun getAlbums(model: Model): String {
         val response = buildAlbums(model, 0)
@@ -187,7 +190,7 @@ class AlbumsController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/albums/{page}","/albums/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getAlbumsApi(model: Model, @PathVariable page: Int): String {
@@ -282,7 +285,7 @@ class AlbumsController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/albums"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getAlbumsApi(model: Model, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>): String {
@@ -308,7 +311,7 @@ class AlbumsController: BaseController() {
         if (currentUserObj != null) {
             var userAlbums: MutableList<UserAlbum?>? = null
             if (currentUserObj.getAuthority() != null) {
-                if (currentUserObj.getAuthority()!! == "ROLE_ADMIN") {
+                if (currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") {
                     showControls = true
                     userAlbums =
                         userAlbumRepository.findAllOffsetAndLimit((page * size), size) as MutableList<UserAlbum?>?
@@ -375,7 +378,7 @@ class AlbumsController: BaseController() {
                     response["albumsList"] = albums
                     response["albumsCommentsMap"] = albumsCommentsMap
 
-                    if (currentUserObj.getAuthority()!! == "ROLE_ADMIN") {
+                    if (currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") {
                         val userCount = userRepository.count()
 
                         if (userCount > 1) {
@@ -474,7 +477,7 @@ class AlbumsController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/sharedalbums","/sharedalbums"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getSharedAlbumsApi(model: Model): String {
@@ -556,7 +559,7 @@ class AlbumsController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/albumcomments/{albumId}","/albumcomments/{albumId}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getAlbumCommentsApi(@PathVariable albumId: Int): String {
@@ -610,7 +613,7 @@ class AlbumsController: BaseController() {
                     "</tbody></table><br>"
         )
     )
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/album/delete", "/api/v1/all/album/delete"], method = [RequestMethod.DELETE], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
@@ -658,7 +661,7 @@ class AlbumsController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/album/media/delete/batch"], method = [RequestMethod.DELETE], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
@@ -698,7 +701,7 @@ class AlbumsController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/album/update"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
@@ -769,7 +772,7 @@ class AlbumsController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/share/album/save","/api/v1/share/album/save"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     //@Transactional
@@ -834,7 +837,8 @@ class AlbumsController: BaseController() {
         val response = buildShareData(albumId,shareLink, queryLimit, 0)
 
         val userIp = TextUtils.getClientIp(request)
-        val admins = userRepository.findAllByAuthorityEquals(adminRole!!)
+        val admins = userRepository.findAllAdmins()
+
         val album = response["album"] as Album?
 
         if (!isLocalIp(userIp)) {
@@ -1044,7 +1048,7 @@ class AlbumsController: BaseController() {
     }
 
 
-    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/album/metadata/list/{albumId}/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getAlbumMetadataList(model: Model, @PathVariable albumId: Int,@PathVariable page: Int): String? {
@@ -1075,7 +1079,7 @@ class AlbumsController: BaseController() {
         return mapper.writeValueAsString(response)
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/album/share/{albumId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
@@ -1124,7 +1128,7 @@ class AlbumsController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
-    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/album/{albumId}","/album/{albumId}/{mediaType}"], method = [RequestMethod.GET])
     fun getAlbum(model: Model, @PathVariable albumId: Int,@PathVariable(required = false) mediaType: String?): String {
         val response = buildAlbum(model,albumId,0,model.getAttribute("queryLimit").toString().toInt(),mediaType)
@@ -1191,14 +1195,14 @@ class AlbumsController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/album/{albumId}/page/{page}","/api/v1/album/{albumId}/page/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getPagedAlbum(model: Model, @PathVariable albumId: Int, @PathVariable page: Int): String {
         return mapper.writeValueAsString(buildAlbum(model,albumId,page,model.getAttribute("queryLimit").toString().toInt(),"all"))
     }
 
-    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/album/{albumId}/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getPagedAlbumWithMediaType(model: Model, @PathVariable albumId: Int, @PathVariable page: Int,@PathVariable mediaType: String): String {
@@ -1257,7 +1261,7 @@ class AlbumsController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/album/{albumId}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getPagedSizeAlbum(model: Model, @PathVariable albumId: Int, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>): String {
@@ -1283,7 +1287,7 @@ class AlbumsController: BaseController() {
         response["status"] = "noop"
         response["keywordMap"] = mutableMapOf<String, String>()
         response["status"] = "noop"
-        response["canEdit"] = model.getAttribute("authority") == adminRole
+        response["canEdit"] = (model.getAttribute("authority") == adminRole || model.getAttribute("authority") == superRole)
 
         var mediaType = mediaTypeFilter
 
@@ -1301,7 +1305,7 @@ class AlbumsController: BaseController() {
                 userAlbums = userAlbumRepository.findDistinctByUserIdAndAlbumId(currentUserObj.getId(), albumId)
             }
 
-            if (currentUserObj.getAuthority()!! == "ROLE_ADMIN" || (userAlbums != null && currentUserObj.getAuthority()!! == "ROLE_USER")) {
+            if ((currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") || (userAlbums != null && currentUserObj.getAuthority()!! == "ROLE_USER")) {
                 // Get album photos
                 var albumPhotos: MutableIterable<AlbumPhoto?>?
                 if (mediaType == "all") {
@@ -1381,7 +1385,7 @@ class AlbumsController: BaseController() {
                         userMap["username"] = if (currentUserObj.getUsername() == null) "" else currentUserObj.getUsername()!!
                         userMap["userProfile"] = if (currentUserObj.getProfile() == null) "" else currentUserObj.getProfile()!!
                         var showControls = false
-                        if (currentUserObj.getAuthority() != null && currentUserObj.getAuthority()!! == "ROLE_ADMIN") {
+                        if (currentUserObj.getAuthority() != null && (currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER")) {
                             showControls = true
                         }
                         userMap["showControls"] = showControls
@@ -1398,7 +1402,7 @@ class AlbumsController: BaseController() {
         return response
     }
 
-    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @PostMapping("/album/download/{albumId}")
     fun postAlbumDownload(model: Model, @RequestParam download: Int, @PathVariable albumId: Int, response: HttpServletResponse): ResponseEntity<InputStreamResource>? {
         val currentUserObj = model.getAttribute("currentUser") as User?
@@ -1408,7 +1412,7 @@ class AlbumsController: BaseController() {
                 userAlbums = userAlbumRepository.findDistinctByUserIdAndAlbumId(currentUserObj.getId(), albumId)
             }
 
-            if (currentUserObj.getAuthority()!! == "ROLE_ADMIN" || (userAlbums != null && currentUserObj.getAuthority()!! == "ROLE_USER")) {
+            if ((currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") || (userAlbums != null && currentUserObj.getAuthority()!! == "ROLE_USER")) {
                 // Get album photos
                 val albumPhotos = albumPhotoRepository.findAllByAlbumId(albumId)
                 if (albumPhotos != null) {
@@ -1582,7 +1586,7 @@ class AlbumsController: BaseController() {
         return null
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/album/updatename/{albumId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
@@ -1617,7 +1621,7 @@ class AlbumsController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
-    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/slideshow"], method = [RequestMethod.GET])
     fun getSlideShow(model: Model, request: HttpServletRequest): String {
         val module = "slideshow"

@@ -106,7 +106,7 @@ class ToolsController {
 //        }
 //    }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/tools/tokens"], method = [RequestMethod.GET])
     fun getPersistentTokens(model: Model, request: HttpServletRequest, response: HttpServletResponse): String? {
         var currentRememberMeToken = ""

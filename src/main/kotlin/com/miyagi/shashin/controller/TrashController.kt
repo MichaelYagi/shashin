@@ -21,7 +21,7 @@ import java.util.ArrayList
 import javax.transaction.Transactional
 
 @Controller
-@Secured("ROLE_ADMIN")
+@Secured("ROLE_SUPER","ROLE_ADMIN")
 class TrashController {
 
     @Autowired
@@ -60,7 +60,7 @@ class TrashController {
         return module
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/trash/metadata/list/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getTrashMetadataList(model: Model,@PathVariable page: Int): String? {

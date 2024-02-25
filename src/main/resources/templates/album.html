@@ -57,7 +57,7 @@
 
                                 <div th:replace="fragments/topleftoverlay :: topleftoverlay(${metadata.id})"></div>
 
-                                <th:block th:if="${authority == 'ROLE_ADMIN'}">
+                                <th:block th:if="${authority == 'ROLE_ADMIN' || authority == 'ROLE_SUPER'}">
                                     <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, null, 'albumModalEdit', 'albumSettings.openAlbumModal', 'overlayCommentText')"></div>
                                 </th:block>
 

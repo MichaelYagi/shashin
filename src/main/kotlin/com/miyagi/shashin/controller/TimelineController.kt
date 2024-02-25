@@ -56,7 +56,7 @@ import kotlin.io.path.pathString
 
 @Suppress("UNCHECKED_CAST")
 @Controller
-@Secured("ROLE_ADMIN")
+@Secured("ROLE_SUPER", "ROLE_ADMIN")
 class TimelineController: BaseController() {
 
     @Autowired
@@ -2110,7 +2110,7 @@ class TimelineController: BaseController() {
     @RequestMapping(value = ["/api/v1/metadata/{id}", "/metadata/{id}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["singleMetadataRequest"], key = "{#id}")
-    @Secured("ROLE_ADMIN","ROLE_USER")
+    @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     fun getMetadata(model: Model, @PathVariable(required = true) id: String): ResponseEntity<String> {
         val response = mutableMapOf<String, Any?>()
         val keywordArray = mutableListOf<String>()
@@ -2224,7 +2224,7 @@ class TimelineController: BaseController() {
     )
     @RequestMapping(value = ["/api/v1/complete/metadata/{id}","/complete/metadata/{id}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    @Secured("ROLE_ADMIN","ROLE_USER")
+    @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     fun getTimelineMetadata(model: Model, @PathVariable(required = true) id: String): String {
         val response = mutableMapOf<String, Any?>()
 
@@ -2284,7 +2284,7 @@ class TimelineController: BaseController() {
         val albumMap = mutableMapOf<Int, String>()
 
         if (currentUserObj != null && metadataId != null) {
-            val albumPhotos = if (currentUserObj.getAuthority() == "ROLE_ADMIN") {
+            val albumPhotos = if (currentUserObj.getAuthority() == "ROLE_ADMIN" || currentUserObj.getAuthority() == "ROLE_SUPER") {
                 albumPhotoRepository.findAlbumPhotoByMetadataId(metadataId)
             } else {
                 albumPhotoRepository.findAlbumPhotoByUserIdAndMetadataId(currentUserObj.getId(), metadataId)
@@ -2352,7 +2352,7 @@ class TimelineController: BaseController() {
         method = [RequestMethod.POST],
         consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE]
     )
-    @Secured("ROLE_ADMIN","ROLE_USER")
+    @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     @ResponseBody
     fun downloadBatchMetadata(model: Model, @RequestParam paramMap: Map<String, String>): ResponseEntity<InputStreamResource>? {
 

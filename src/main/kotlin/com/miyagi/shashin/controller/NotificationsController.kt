@@ -19,7 +19,7 @@ import java.util.ArrayList
 import javax.transaction.Transactional
 
 @Controller
-@Secured("ROLE_ADMIN","ROLE_USER")
+@Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
 class NotificationsController {
     @Autowired
     private lateinit var notificationRepository: NotificationRepository

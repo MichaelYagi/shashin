@@ -124,7 +124,7 @@ class DashboardController {
     fun handleSubscribeEvent(event: SessionSubscribeEvent) {}
 
     @RequestMapping(value = ["/dashboard"], method = [RequestMethod.GET])
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     fun getDashboard(model: Model): String {
         val module = "dashboard"
         val response = buildDashboardData(model)

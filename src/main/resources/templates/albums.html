@@ -54,12 +54,12 @@
                                 <th:block th:if="${album.albumPhotoCount == 0}">
                                     &nbsp;
                                 </th:block>
-                                <th:block th:if="${authority == 'ROLE_ADMIN'}">
+                                <th:block th:if="${authority == 'ROLE_ADMIN' || authority == 'ROLE_SUPER'}">
                                     <a href="#" th:id="'edit'+${album.id}"><span class="bi-pencil" title="Edit album"></span></a>
                                     &nbsp;&nbsp;<a href="#" th:id="'share'+${album.id}"><span th:class="${album.shareUrl != null and album.shareUrl != '' ? 'bi-share-fill' : 'bi-share'}" th:title="${(album.shareUrl != null and album.shareUrl != '' ? 'Shared' : 'Share') + ' with other people'}"></span></a>
                                     &nbsp;&nbsp;<a href="#" th:id="'trash'+${album.id}" title="Delete album"><span class="bi-trash"></span></a>
                                 </th:block>
-                                <p class="card-text"><small class="text-muted" th:text="${album.albumPhotoCount + (album.albumPhotoCount == 1 ? ' photo':' photos') + '&nbsp;&nbsp;&nbsp;&nbsp;' + album.albumVideoCount + (album.albumVideoCount == 1 ? ' video':' videos')}"></small>&nbsp;&nbsp;&nbsp;&nbsp;<span th:id="'userShare'+${album.id}" title="Shared with others users" th:style="${sharedAlbumsMap.containsKey(album.id) and authority == 'ROLE_ADMIN' ? 'display: inline-block' : 'display: none'}"><span class="bi-person-up text-muted"></span></span></p>
+                                <p class="card-text"><small class="text-muted" th:text="${album.albumPhotoCount + (album.albumPhotoCount == 1 ? ' photo':' photos') + '&nbsp;&nbsp;&nbsp;&nbsp;' + album.albumVideoCount + (album.albumVideoCount == 1 ? ' video':' videos')}"></small>&nbsp;&nbsp;&nbsp;&nbsp;<span th:id="'userShare'+${album.id}" title="Shared with others users" th:style="${sharedAlbumsMap.containsKey(album.id) and (authority == 'ROLE_ADMIN' || authority == 'ROLE_SUPER') ? 'display: inline-block' : 'display: none'}"><span class="bi-person-up text-muted"></span></span></p>
                             </div>
                         </div>
 
@@ -93,7 +93,7 @@
 </div>
 
 <!-- Modals -->
-<th:block th:if="${authority == 'ROLE_ADMIN'}">
+<th:block th:if="${authority == 'ROLE_ADMIN' || authority == 'ROLE_SUPER'}">
     <div class="modal fade" id="propsharealbums" tabindex="-1" role="dialog" aria-labelledby="label" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
             <div class="modal-content">

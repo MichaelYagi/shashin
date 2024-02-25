@@ -108,8 +108,8 @@ class ScheduledTasks {
     @Autowired
     private var userRepository: UserRepository? = null
 
-    @Value("\${app.role.admin}")
-    private var adminRole: String? = null
+    @Value("\${app.role.super}")
+    private var superRole: String? = null
 
     @Scheduled(cron = "#{cronProperties.expression()}", zone="GMT")
     fun scanSubjectsAndObjectsJob() {
@@ -137,7 +137,8 @@ class ScheduledTasks {
                         "Scheduled scanning for facial recognition started at " + TextUtils.getCurrentTimestamp()
                     )
                     val recognitionCount = subjectRecognizer(metadataRepository, recognitionLabelRepository, recognitionLabelPhotoRepository, settings, null, null)
-                    val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
+                    val admins = userRepository?.findAllByAuthorityEquals(superRole!!)
+
                     if (admins != null) {
                         val notificationObjList = mutableListOf<Notification>()
                         val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")

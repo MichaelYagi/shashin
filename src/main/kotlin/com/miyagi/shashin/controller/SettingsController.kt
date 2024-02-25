@@ -135,8 +135,8 @@ class SettingsController {
     @Autowired
     private val restartService: RestartService? = null
 
-    @Value("\${app.role.admin}")
-    private var adminRole: String? = null
+    @Value("\${app.role.super}")
+    private var superRole: String? = null
 
     @Value("\${spring.datasource.url}")
     private var dataSourceUrl: String? = null
@@ -222,7 +222,7 @@ class SettingsController {
 //        println(event.message)
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER")
     @RequestMapping(value = ["/settings"], method = [RequestMethod.GET])
     fun getSettings(model: Model, @ModelAttribute("settings") settings: Settings, request: HttpServletRequest): String {
         val mediaDirectories = mediaDirRepository?.findByExclude(false)
@@ -236,7 +236,7 @@ class SettingsController {
         model["status"] = ApiResponse.SUCCESS.status
 
         var dirDneString = ""
-        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") && mediaDirectories != null && mediaExcludeDirectories != null) {
+        if (model.getAttribute("authority").toString() == model.getAttribute("superRole") && mediaDirectories != null && mediaExcludeDirectories != null) {
             model["mediaDirList"] = mediaDirectories.joinToString { "${it?.getDirectory()}" }
             model["mediaExcludeDirList"] = mediaExcludeDirectories.joinToString { "${it?.getDirectory()}" }
 
@@ -301,7 +301,7 @@ class SettingsController {
         return module
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER")
     @CacheEvict(value = ["firstSettingQuery"], allEntries = true)
     @RequestMapping(value = ["/settings"], method = [RequestMethod.POST])
     fun postSettings(
@@ -515,7 +515,7 @@ class SettingsController {
         return module
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER")
     @GetMapping("/settings/users")
     fun getUsers(model: Model): String {
         val module = "users"
@@ -548,7 +548,7 @@ class SettingsController {
         return module
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER")
     @RequestMapping(value = ["/settings/content/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     @ResponseBody
@@ -640,7 +640,7 @@ class SettingsController {
         return mapper.writeValueAsString(resp)
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER")
     @RequestMapping(value = ["/settings/user/delete/{userId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
@@ -683,7 +683,7 @@ class SettingsController {
         return mapper.writeValueAsString(resp)
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER")
     @RequestMapping(value = ["/settings/user/changepassword/{userId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
@@ -712,7 +712,7 @@ class SettingsController {
         return mapper.writeValueAsString(resp)
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER")
     @RequestMapping(value = ["/settings/user/role/{userId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
@@ -744,7 +744,7 @@ class SettingsController {
         return mapper.writeValueAsString(resp)
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER")
     @RequestMapping(value = ["/settings/user/permission/{userId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
@@ -773,7 +773,7 @@ class SettingsController {
         return mapper.writeValueAsString(resp)
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER")
     @GetMapping("/settings/logs")
     fun getLogs(model: Model, request: HttpServletRequest): String {
         var lineLimit = 1000
@@ -832,7 +832,7 @@ class SettingsController {
         return lineList
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER")
     @GetMapping("/settings/logs/download")
     fun getDownloadLogsLogs(): ResponseEntity<InputStreamResource>? {
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
@@ -856,7 +856,7 @@ class SettingsController {
         return null
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER")
     @GetMapping("/settings/match")
     fun getMatchScan(model: Model): String {
         val settings = model.getAttribute("settings") as Settings?
@@ -879,7 +879,7 @@ class SettingsController {
         return module
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER")
     @GetMapping("/settings/scan")
     fun getScan(model: Model): String {
         val settings = model.getAttribute("settings") as Settings?
@@ -902,7 +902,7 @@ class SettingsController {
         return module
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER")
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     @RequestMapping(value = ["/settings/scan"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
@@ -934,7 +934,7 @@ class SettingsController {
         return mapper.writeValueAsString(resp)
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER")
     @GetMapping("/settings/snapshot")
     fun getSnapshot(model: Model): String {
         val settings = model.getAttribute("settings") as Settings?
@@ -958,7 +958,7 @@ class SettingsController {
         return module
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER")
     @PostMapping("/settings/snapshot/export")
     fun postExportSnapshot(model: Model, @RequestParam snapshot: String, response: HttpServletResponse): ResponseEntity<InputStreamResource>? {
         val user = model.getAttribute("currentUser") as User?
@@ -1111,7 +1111,7 @@ class SettingsController {
         return null
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER")
     @RequestMapping(value = ["/settings/directorytree"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getDirectoryTree(model: Model, @RequestBody requestBody: JsonNode): String? {
@@ -1156,7 +1156,7 @@ class SettingsController {
         return mapper.writeValueAsString(dirs)
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_SUPER")
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     @PostMapping("/settings/snapshot")
     @Transactional
@@ -1481,7 +1481,8 @@ class SettingsController {
     fun scanMediaDirectories(reindexFiles: Boolean): String {
         scanCount = 0
         recognitionCount = 0
-        val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
+        val superAdmins = userRepository?.findAllByAuthorityEquals(superRole!!)
+
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
         val sidecarDir = rootPath + relativeSidecarDir
         var threadFileContent = FileUtils.readThreadFile("shashinscan")
@@ -1769,9 +1770,9 @@ class SettingsController {
                                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                                     val msg =
                                         "Deleted $deleteCount images/videos at " + sdtf.format(Date()) + "."
-                                    if (admins != null) {
+                                    if (superAdmins != null) {
                                         val notificationObjList = mutableListOf<Notification>()
-                                        for (admin in admins) {
+                                        for (admin in superAdmins) {
                                             val notificationObj = Notification()
                                             notificationObj.setUserId(admin.getId())
                                             notificationObj.setCreatedAt(getCurrentTimestamp())
@@ -1848,9 +1849,9 @@ class SettingsController {
                                     }
                                     msg += " at ${sdtf.format(Date())}."
 
-                                    if (admins != null) {
+                                    if (superAdmins != null) {
                                         val notificationObjList = mutableListOf<Notification>()
-                                        for (admin in admins) {
+                                        for (admin in superAdmins) {
                                             var notificationObj = Notification()
                                             notificationObj.setUserId(admin.getId())
                                             notificationObj.setCreatedAt(getCurrentTimestamp())

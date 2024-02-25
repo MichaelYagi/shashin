@@ -7,14 +7,14 @@
 <th:block th:if="${activePage == 'recent' or activePage == 'folders' or activePage == 'modified' or activePage == 'taken' or activePage == 'trash'}">
     <div th:replace="fragments/browsegroup :: browse(${activePage})"></div>
 </th:block>
-<th:block th:if="${authority == 'ROLE_ADMIN' && (activePage == 'person' or activePage == 'matches' or activePage == 'compreface')}">
+<th:block th:if="${(authority == 'ROLE_SUPER' || authority == 'ROLE_ADMIN') && (activePage == 'person' or activePage == 'matches' or activePage == 'compreface')}">
     <div th:replace="fragments/persongroup :: person(${activePage},${parameter},${counts},${faceRecogServicesAvailable})"></div>
 </th:block>
 <th:block th:if="${message != ''}">
     <br>
     <div class="card">
         <div class="card-body">
-            <span id="msg" th:text="${message == 'No message available' ? 'Oops! Something went wrong.' : message}"></span>
+            <span id="msg" th:utext="${message == 'No message available' ? 'Oops! Something went wrong.' : message}"></span>
         </div>
     </div>
     <th:block th:if="${activePage == 'scan' or activePage == 'match'}">
