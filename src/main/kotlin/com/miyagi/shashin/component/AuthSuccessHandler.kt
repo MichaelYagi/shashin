@@ -134,6 +134,29 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                         userRepository?.save(user)
                         SecurityContextLogoutHandler().logout(request, response, authentication)
                         SecurityContextHolder.getContext().authentication = null
+
+                        val admins = userRepository?.findAllAdmins()
+                        val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                        sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                        val message = "User '${user.getUsername()}' failed login at "+ sdtf.format(Date())+"."
+                        val logger: Logger = Logger.getLogger(AuthFailureHandler::class.simpleName)
+                        logger.log(Level.WARNING, message)
+                        if (admins != null) {
+                            val notificationObjList = mutableListOf<Notification>()
+                            for (admin in admins) {
+                                val notificationObj = Notification()
+                                notificationObj.setUserId(admin.getId())
+                                notificationObj.setCreatedAt(getCurrentTimestamp())
+                                notificationObj.setModifiedAt(getCurrentTimestamp())
+                                notificationObj.setRead(false)
+                                notificationObj.setMessage(message)
+                                notificationObjList.add(notificationObj)
+                            }
+                            if (notificationObjList.isNotEmpty()) {
+                                notificationRepository?.saveAll(notificationObjList)
+                            }
+                        }
+
                         redirectStrategy.sendRedirect(request, response, "/users/login?msg=loginfail")
                         isAuthorized = false
                     } else {
