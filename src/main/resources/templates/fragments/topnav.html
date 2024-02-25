@@ -100,6 +100,14 @@
                     </th:block>
                 </span>
             </th:block>
+            <th:block th:if="${activePage == 'map'}">
+                <span id="mapTools">
+                    &nbsp;
+                    <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" id="mapFilterButton" href="#" aria-controls="back" title="Filter Map">
+                        <span th:class="'bi-globe-americas placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span>
+                    </a>
+                </span>
+            </th:block>
             <th:block th:if="${activePage == 'logs'}">
                 &nbsp;&nbsp;
                 <a class="align-items-center mb-lg-0 link-dark text-decoration-none" href="/settings/logs/download" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download logs">
