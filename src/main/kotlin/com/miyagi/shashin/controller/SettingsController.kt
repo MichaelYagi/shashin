@@ -722,21 +722,30 @@ class SettingsController {
             val userIdRequest = userRoleChangeMap["userId"].toString().toInt()
             val changeRoleTo = userRoleChangeMap["changeTo"].toString()
 
-            if (changeRoleTo == model.getAttribute("userRole")) {
-                favoriteRepository?.deleteByUserId(userIdRequest)
-            }
-            if (userId == userIdRequest) {
-                val userObj = userRepository?.findById(userId)?.get()
-                if (userObj != null) {
+            val currentUserSettings = userRepository?.findById(userIdRequest)
+
+            if (currentUserSettings != null && currentUserSettings.isPresent && userId == userIdRequest) {
+                val userObj = currentUserSettings.get()
+
+                // Reset favorites if role changed to user
+                if (userObj.getAuthority() != changeRoleTo) {
                     userObj.setModifiedAt(getCurrentTimestamp())
                     userObj.setAuthority(changeRoleTo)
                     userRepository?.save(userObj)
+
+                    if (changeRoleTo == model.getAttribute("userRole")) {
+                        favoriteRepository?.deleteByUserId(userIdRequest)
+                    }
+
+                    resp["msg"] = "Success!"
+                    resp["status"] = ApiResponse.SUCCESS.status
+                    return mapper.writeValueAsString(resp)
+                } else {
+                    resp["msg"] = "Success, role not changed."
+                    resp["status"] = ApiResponse.SUCCESS.status
+                    return mapper.writeValueAsString(resp)
                 }
             }
-
-            resp["msg"] = "Success!"
-            resp["status"] = ApiResponse.SUCCESS.status
-            return mapper.writeValueAsString(resp)
         }
 
         resp["msg"] = "Could not save"
