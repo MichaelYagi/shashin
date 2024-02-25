@@ -181,36 +181,12 @@ class MediaServiceController {
                 metricsUtil.end()
             }
 
-            Thread {
-                val admins = userRepository.findAllAdmins()
-                val userIp = TextUtils.getClientIp(request)
-                if (!TextUtils.isLocalIp(userIp)) {
-                    val notificationObjList = mutableListOf<Notification>()
-                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
-                    sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
-                    for (admin in admins) {
-                        val notificationObj = Notification()
-                        notificationObj.setUserId(admin.getId())
-                        notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
-                        notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
-                        notificationObj.setRead(false)
-                        val message =
-                            "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> played video '<a href='/timeline#${
-                                metadataObj.get().getYear()
-                            }-${metadataObj.get().getMonth()}-${
-                                metadataObj.get().getDay()
-                            }' target='_blank'>${metadataObj.get().getTitle()}</a>' at ${
-                                sdtf.format(Date())
-                            }"
-                        notificationObj.setMessage(message)
-                        notificationObjList.add(notificationObj)
-                    }
-
-                    if (notificationObjList.isNotEmpty()) {
-                        notificationRepository.saveAll(notificationObjList)
-                    }
-                }
-            }.start()
+            val userIp = TextUtils.getClientIp(request)
+            if (!TextUtils.isLocalIp(userIp)) {
+                val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                logger.log(Level.INFO, "IP $userIp played video ${metadataObj.get().getTitle()}' at ${sdtf.format(Date())}")
+            }
 
             return getVideoFactory(response, metadata, path)
         } else {
@@ -252,36 +228,12 @@ class MediaServiceController {
         val metadataObj = metadataRepository.findById(metadataId)
 
         if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("video")!!) {
-            Thread {
-                val admins = userRepository.findAllAdmins()
-                val userIp = TextUtils.getClientIp(request)
-                if (!TextUtils.isLocalIp(userIp)) {
-                    val notificationObjList = mutableListOf<Notification>()
-                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
-                    sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
-                    for (admin in admins) {
-                        val notificationObj = Notification()
-                        notificationObj.setUserId(admin.getId())
-                        notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
-                        notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
-                        notificationObj.setRead(false)
-                        val message =
-                            "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> downloaded video '<a href='/timeline#${
-                                metadataObj.get().getYear()
-                            }-${metadataObj.get().getMonth()}-${
-                                metadataObj.get().getDay()
-                            }' target='_blank'>${metadataObj.get().getTitle()}</a>' at ${
-                                sdtf.format(Date())
-                            }"
-                        notificationObj.setMessage(message)
-                        notificationObjList.add(notificationObj)
-                    }
-
-                    if (notificationObjList.isNotEmpty()) {
-                        notificationRepository.saveAll(notificationObjList)
-                    }
-                }
-            }.start()
+            val userIp = TextUtils.getClientIp(request)
+            if (!TextUtils.isLocalIp(userIp)) {
+                val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                logger.log(Level.INFO, "IP $userIp downloaded video ${metadataObj.get().getTitle()}' at ${sdtf.format(Date())}")
+            }
 
             return getVideoFactory(response, metadataObj.get(), metadataObj.get().getPath()!!, true)
         } else {
