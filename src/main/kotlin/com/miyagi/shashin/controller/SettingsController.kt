@@ -1845,7 +1845,7 @@ class SettingsController {
                                     var msg =
                                         "Scan complete for <a href='/recent' target='_blank'>$scanCount images/videos</a>"
                                     if (recognitionCount > 0) {
-                                        msg += " and $recognitionCount faces recognized"
+                                        msg += " and <a href='/people' target='_blank'>$recognitionCount faces recognized</a>"
                                     }
                                     msg += " at ${sdtf.format(Date())}."
 
