@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import kotlin.collections.ArrayList
 
-
+@Suppress("UNCHECKED_CAST")
 @Component
 class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 
@@ -139,7 +139,6 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                         val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                         sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
                         val message = "User '${user.getUsername()}' failed login at "+ sdtf.format(Date())+"."
-                        val logger: Logger = Logger.getLogger(AuthFailureHandler::class.simpleName)
                         logger.log(Level.WARNING, message)
                         if (admins != null) {
                             val notificationObjList = mutableListOf<Notification>()
