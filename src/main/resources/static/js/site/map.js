@@ -890,6 +890,8 @@ async function showMap(mapdata) {
     $("#resetMap").on("click", function(e) {
         e.preventDefault();
 
+        filtered = true;
+
         startDateField.val("");
         endDateField.val("");
         videoOnlyCheckbox.prop("checked", false);
