@@ -139,10 +139,29 @@
     <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="roleuserModalLabel">Change <th:block th:text="${user.username}"></th:block> to <th:block th:text="${user.authority == 'ROLE_ADMIN' ? 'user' : 'admin'}"></th:block></h5>
+                <h5 class="modal-title" id="roleuserModalLabel">Change <th:block th:text="${user.username}"></th:block>'s role?</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">Are you sure you want to change this users role?</div>
+            <div class="modal-body">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" th:name="'roleUpdate'+${user.id}" th:id="'roleUpdateUser'+${user.id}">
+                    <label class="form-check-label" th:for="'roleUpdateUser'+${user.id}">
+                        User
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" th:name="'roleUpdate'+${user.id}" th:id="'roleUpdateAdmin'+${user.id}">
+                    <label class="form-check-label" th:for="'roleUpdateAdmin'+${user.id}">
+                        Admin
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" th:name="'roleUpdate'+${user.id}" th:id="'roleUpdateSuper'+${user.id}">
+                    <label class="form-check-label" th:for="'roleUpdateSuper'+${user.id}">
+                        Super Admin
+                    </label>
+                </div>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" th:id="'roleUser'+${user.id}">Confirm</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -153,22 +172,43 @@
                     e.preventDefault();
 
                     let userId = "[[${user.id}]]";
-                    let currentRole = /*[[${user.authority}]]*/ '';
-                    let changeTo = currentRole === "ROLE_USER" ? "ROLE_ADMIN" : "ROLE_USER";
+                    let currentRole = /*[[${user.authority}]]*/ "";
+                    let changeTo = "";
+                    if($('#roleUpdateUser[[${user.id}]]').is(':checked')) {
+                        changeTo = "ROLE_USER";
+                    } else if($('#roleUpdateAdmin[[${user.id}]]').is(':checked')) {
+                        changeTo = "ROLE_ADMIN";
+                    } else if($('#roleUpdateSuper[[${user.id}]]').is(':checked')) {
+                        changeTo = "ROLE_SUPER";
+                    }
 
-                    const http = new Http("setting user");
-                    let json = {userId: userId, changeTo: changeTo}
-                    const data = await http.ajax("post", "/settings/user/role/" + userId, JSON.stringify(json));
+                    if (changeTo !== "" && currentRole !== changeTo) {
+                        let json = {userId: userId, changeTo: changeTo};
+                        const http = new Http("setting user");
+                        const data = await http.ajax("post", "/settings/user/role/" + userId, JSON.stringify(json));
 
-                    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                        let message = "Error";
-                        if (data["status"] === "success") {
-                            message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                            window.location.replace("/settings/users");
-                        } else {
-                            message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                            let message = "Error";
+                            if (data["status"] === "success") {
+                                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                                window.location.replace("/settings/users");
+                            } else {
+                                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                            }
+                            $("#usersSettingsMessage").html(message);
                         }
-                        $("#usersSettingsMessage").html(message);
+                    }
+                });
+
+                $('#proproleuser[[${user.id}]]').on('show.bs.modal', function () {
+                    let currentRole = /*[[${user.authority}]]*/ "";
+
+                    if (currentRole === "ROLE_USER") {
+                        $("#roleUpdateUser[[${user.id}]]").prop("checked", true);
+                    } else if (currentRole === "ROLE_ADMIN") {
+                        $("#roleUpdateAdmin[[${user.id}]]").prop("checked", true);
+                    } else if (currentRole === "ROLE_SUPER") {
+                        $("#roleUpdateSuper[[${user.id}]]").prop("checked", true);
                     }
                 });
                 /*]]>*/
