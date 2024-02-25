@@ -11,46 +11,46 @@
     $("#progressBar").css("width","100%");
 </script>
 
-<div class="row m-1" id="dateInputs" style="visibility: hidden">
-    <div class="d-inline-flex align-items-center col-sm-1">
-        <input class="form-check-input" type="checkbox" value="" id="videoOnlyInput">
-        <label class="form-check-label" for="videoOnlyInput">&nbsp;Videos Only</label>
-    </div>
+<!--<div class="row m-1" id="dateInputs" style="visibility: hidden">-->
+<!--    <div class="d-inline-flex align-items-center col-sm-1">-->
+<!--        <input class="form-check-input" type="checkbox" value="" id="videoOnlyInput">-->
+<!--        <label class="form-check-label" for="videoOnlyInput">&nbsp;Videos Only</label>-->
+<!--    </div>-->
 
-    <div class="d-inline-flex align-items-center col-sm-1">
-        <input class="form-check-input" type="checkbox" value="" id="showMarkersInput">
-        <label class="form-check-label" for="showMarkersInput">&nbsp;Map markers</label>
-    </div>
+<!--    <div class="d-inline-flex align-items-center col-sm-1">-->
+<!--        <input class="form-check-input" type="checkbox" value="" id="showMarkersInput">-->
+<!--        <label class="form-check-label" for="showMarkersInput">&nbsp;Map markers</label>-->
+<!--    </div>-->
 
-    <div class="d-inline-flex align-items-center col">
-        <label class="form-label me-2 mt-2" for="startDateInput">From</label>
-        <input class="form-control" type="date" id="startDateInput">
-    </div>
+<!--    <div class="d-inline-flex align-items-center col">-->
+<!--        <label class="form-label me-2 mt-2" for="startDateInput">From</label>-->
+<!--        <input class="form-control" type="date" id="startDateInput">-->
+<!--    </div>-->
 
-    <div class="d-inline-flex align-items-center col">
-        <label class="form-label me-2 mt-2" for="endDateInput">To</label>
-        <input class="form-control" type="date" id="endDateInput">
-    </div>
+<!--    <div class="d-inline-flex align-items-center col">-->
+<!--        <label class="form-label me-2 mt-2" for="endDateInput">To</label>-->
+<!--        <input class="form-control" type="date" id="endDateInput">-->
+<!--    </div>-->
 
-    <th:block th:if="${not #lists.isEmpty(albums)}">
-        <div class="d-inline-flex align-items-center col">
-            <select class="form-select" id="albumSelect">
-                <option selected value="0">Select Album</option>
-                <th:block th:each="album, iterStat: ${albums}">
-                    <option th:value="${album.id}" th:text="${album.name}"></option>
-                </th:block>
-            </select>
-        </div>
-    </th:block>
+<!--    <th:block th:if="${not #lists.isEmpty(albums)}">-->
+<!--        <div class="d-inline-flex align-items-center col">-->
+<!--            <select class="form-select" id="albumSelect">-->
+<!--                <option selected value="0">Select Album</option>-->
+<!--                <th:block th:each="album, iterStat: ${albums}">-->
+<!--                    <option th:value="${album.id}" th:text="${album.name}"></option>-->
+<!--                </th:block>-->
+<!--            </select>-->
+<!--        </div>-->
+<!--    </th:block>-->
 
-    <div class="col">
-        <button class="form-control" id="filterMap">Filter</button>
-    </div>
+<!--    <div class="col">-->
+<!--        <button class="form-control" id="filterMap">Filter</button>-->
+<!--    </div>-->
 
-    <div class="col">
-        <button class="form-control" id="resetMap">Reset</button>
-    </div>
-</div>
+<!--    <div class="col">-->
+<!--        <button class="form-control" id="resetMap">Reset</button>-->
+<!--    </div>-->
+<!--</div>-->
 
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column flex-sm-row overflow-auto">
     <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})"></div>
@@ -65,6 +65,57 @@
         <div th:replace="fragments/metadatamodal :: metadatamodal(${currentUser})"></div>
 
     </main>
+</div>
+
+<div class="modal fade" id="propMapFilter" tabindex="-1" role="dialog" aria-labelledby="labelMapFilter" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Filter Map</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="m-1" id="filterInputs" style="visibility: visible;">
+                    <div class="mb-3">
+                        <label class="form-label me-2 mt-2" for="startDateInput">From</label>
+                        <input class="form-control" type="date" id="startDateInput">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label me-2 mt-2" for="endDateInput">To</label>
+                        <input class="form-control" type="date" id="endDateInput">
+                    </div>
+
+                    <th:block th:if="${not #lists.isEmpty(albums)}">
+                        <div class="mb-3">
+                            <label class="form-label me-2 mt-2" for="albumSelect">Filter by Album</label>
+                            <select class="form-select" id="albumSelect">
+                                <option selected value="0">Select Album</option>
+                                <th:block th:each="album, iterStat: ${albums}">
+                                    <option th:value="${album.id}" th:text="${album.name}"></option>
+                                </th:block>
+                            </select>
+                        </div>
+                    </th:block>
+
+                    <div class="mb-3">
+                        <input class="form-check-input" type="checkbox" value="" id="videoOnlyInput">
+                        <label class="form-check-label" for="videoOnlyInput">&nbsp;Videos Only</label>
+                    </div>
+
+                    <div class="mb-3">
+                        <input class="form-check-input" type="checkbox" value="" id="showMarkersInput">
+                        <label class="form-check-label" for="showMarkersInput">&nbsp;Map markers</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="filterMap">Filter</button>
+                <button type="button" class="btn btn-primary" id="resetMap">Reset</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
@@ -93,6 +144,12 @@
             }
 
             showMap(mapdata);
+        });
+
+        $("#mapFilterButton").on("click", function (e) {
+            e.preventDefault();
+
+            $("#propMapFilter").modal('show');
         });
     });
 </script>

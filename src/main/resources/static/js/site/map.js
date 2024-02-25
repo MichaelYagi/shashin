@@ -14,7 +14,7 @@ async function showMap(mapdata) {
     const showMarkersCheckbox = $("#showMarkersInput");
     const startDateField = $("#startDateInput");
     const endDateField = $("#endDateInput");
-    const dateInputs = $("#dateInputs");
+    const filterInputs = $("#filterInputs");
     const progressBarWrapper = $("#progressBarWrapper");
     const progressBar = $("#progressBar");
 
@@ -732,7 +732,7 @@ async function showMap(mapdata) {
     });
 
     map.once("postrender", function() {
-        dateInputs.visible();
+        filterInputs.visible();
     });
 
     // After closing lightgallery, clear select interaction
@@ -765,6 +765,7 @@ async function showMap(mapdata) {
         shashin.showToastMessage("Applying filter", "Applying filter", {icon:"bi-info-circle", iconColor:"#777777", autohide: false});
         setLayerInputs();
         shashin.showToastMessage("Filter applied", "Filter applied", {icon:"bi-info-circle", iconColor:"#777777", delay: 3000});
+        $("#propMapFilter").modal('hide');
     });
 
     $("#albumSelect").on("change", function(e) {
@@ -894,6 +895,8 @@ async function showMap(mapdata) {
 
         setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
         shashin.showToastMessage("Map reset", "Map reset", {icon:"bi-info-circle", iconColor:"#777777", delay: 3000});
+
+        $("#propMapFilter").modal('hide');
     });
 
     map.on("pointermove", function (evt) {
