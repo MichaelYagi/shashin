@@ -18,6 +18,13 @@ async function showMap(mapdata) {
     const progressBarWrapper = $("#progressBarWrapper");
     const progressBar = $("#progressBar");
 
+    let filtered = false;
+    let originalFromInput = "";
+    let originalToInput = "";
+    let originalAlbumFilter = "";
+    let originalVideoOnly = "";
+    let originalMapMarkers = "";
+
     shashin.mouseMoveListener();
 
     const textFill = new ol.style.Fill({
@@ -762,6 +769,7 @@ async function showMap(mapdata) {
     $("#filterMap").on("click", function(e) {
         e.preventDefault();
 
+        filtered = true;
         shashin.showToastMessage("Applying filter", "Applying filter", {icon:"bi-info-circle", iconColor:"#777777", autohide: false});
         setLayerInputs();
         shashin.showToastMessage("Filter applied", "Filter applied", {icon:"bi-info-circle", iconColor:"#777777", delay: 3000});
@@ -897,6 +905,46 @@ async function showMap(mapdata) {
         shashin.showToastMessage("Map reset", "Map reset", {icon:"bi-info-circle", iconColor:"#777777", delay: 3000});
 
         $("#propMapFilter").modal('hide');
+    });
+
+    $("#mapFilterButton").on("click", function (e) {
+        e.preventDefault();
+
+        $("#propMapFilter").modal('show');
+    });
+
+    $("#propMapFilter").on('shown.bs.modal', function () {
+        originalFromInput = $("#startDateInput").val();
+        originalToInput = $("#endDateInput").val();
+        originalAlbumFilter = $("#albumSelect").val();
+        originalVideoOnly = $('#videoOnlyInput').is(":checked");
+        originalMapMarkers = $('#showMarkersInput').is(":checked");
+    });
+
+    $("#propMapFilter").on('hidden.bs.modal', function () {
+        if (filtered === false) {
+            $("#startDateInput").val(originalFromInput);
+            $("#endDateInput").val(originalToInput);
+            if ($("#albumSelect").length > 0) {
+                $("#albumSelect").val(originalAlbumFilter);
+            }
+            if (originalVideoOnly === true) {
+                $("#videoOnlyInput").prop("checked", true);
+            } else {
+                $("#videoOnlyInput").prop("checked", false);
+            }
+            if (originalMapMarkers === true) {
+                $("#showMarkersInput").prop("checked", true);
+            } else {
+                $("#showMarkersInput").prop("checked", false);
+            }
+        }
+        filtered = false;
+        originalFromInput = "";
+        originalToInput = "";
+        originalAlbumFilter = "";
+        originalVideoOnly = "";
+        originalMapMarkers = "";
     });
 
     map.on("pointermove", function (evt) {
