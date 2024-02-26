@@ -771,8 +771,13 @@ async function showMap(mapdata) {
 
         filtered = true;
         shashin.showToastMessage("Applying filter", "Applying filter", {icon:"bi-info-circle", iconColor:"#777777", autohide: false});
-        setLayerInputs();
-        shashin.showToastMessage("Filter applied", "Filter applied", {icon:"bi-info-circle", iconColor:"#777777", delay: 3000});
+        if (true === setLayerInputs()) {
+            shashin.showToastMessage("Filter applied", "Filter applied", {
+                icon: "bi-info-circle",
+                iconColor: "#777777",
+                delay: 3000
+            });
+        }
         $("#propMapFilter").modal('hide');
     });
 
@@ -822,9 +827,10 @@ async function showMap(mapdata) {
     });
 
     function setLayerInputs() {
+        const dateInputsValid = checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()));
 
         // Validate fields
-        if (true === checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))) {
+        if (true === dateInputsValid) {
             initialZoom = map.getView().getZoom();
             if ($("#albumSelect").length > 0 && $("#albumSelect").val() !== "0") {
                 const albumId = $("#albumSelect").val();
@@ -841,6 +847,8 @@ async function showMap(mapdata) {
                 setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
             }
         }
+
+        return dateInputsValid;
     }
 
     function renderMarker(id,lat,lng,color) {
