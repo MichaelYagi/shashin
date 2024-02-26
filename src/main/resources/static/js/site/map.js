@@ -777,8 +777,9 @@ async function showMap(mapdata) {
                 iconColor: "#777777",
                 delay: 3000
             });
+
+            $("#propMapFilter").modal('hide');
         }
-        $("#propMapFilter").modal('hide');
     });
 
     $("#albumSelect").on("change", function(e) {
