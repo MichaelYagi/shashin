@@ -292,11 +292,11 @@ class UserController {
             model["user"] = currentUserObj
 
             if (currentUserObj.getAuthority() == "ROLE_SUPER") {
-                model["message"] = "<span>You have <strong>super admin</strong> privileges.</span>"
+                model["message"] = "<span>You have <strong>Super Admin</strong> privileges.</span>"
             } else if (currentUserObj.getAuthority() == "ROLE_ADMIN") {
-                model["message"] = "<span>You have <strong>admin</strong> privileges.</span>"
+                model["message"] = "<span>You have <strong>Admin</strong> privileges.</span>"
             } else {
-                model["message"] = "<span>You have <strong>user</strong> privileges.</span>"
+                model["message"] = "<span>You have <strong>User</strong> privileges.</span>"
             }
 
             var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
