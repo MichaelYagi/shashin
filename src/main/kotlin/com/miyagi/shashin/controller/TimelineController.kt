@@ -960,6 +960,12 @@ class TimelineController: BaseController() {
                     }
                 }
 
+                Thread {
+                    for (metadataId in metadataIdArray) {
+                        ImageProcessing.createVideoGif(metadataId, metadataRepository)
+                    }
+                }.start()
+
                 return if (errorDetected) {
                     resp["msg"] = "Some data not saved"
                     resp["status"] = ApiResponse.WARN.status

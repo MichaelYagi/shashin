@@ -20,6 +20,7 @@ import com.miyagi.shashin.service.RestartService
 import com.miyagi.shashin.util.*
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import kotlinx.coroutines.*
+import net.iakovlev.timeshape.TimeZoneEngine
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.CacheEvict
@@ -53,7 +54,9 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
@@ -152,6 +155,8 @@ class SettingsController {
     private var scanCount: Int = 0
 
     private var recognitionCount: Int = 0
+
+    private var metadataIdArray = mutableListOf<String>()
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
@@ -1844,6 +1849,40 @@ class SettingsController {
                                 logger.log(Level.INFO, "Scan Complete")
                             }
 
+                            Thread {
+                                for (metadataId in metadataIdArray) {
+                                    val metadataObj = metadataRepository?.findByMetadataId(metadataId)
+                                    if (metadataObj != null) {
+                                        val lat = metadataObj.getLat()
+                                        val lng = metadataObj.getLng()
+                                        if (!lat.isNullOrBlank() && !lng.isNullOrBlank()) {
+                                            val geoDataJson = TextUtils.getGeoData(geocodeUrl!!, lat, lng)
+
+                                            val buildPlace = TextUtils.getPlaceNameFromJson(geoDataJson)
+                                            if (buildPlace.isNotBlank()) {
+                                                metadataObj.setPlaceName(buildPlace)
+
+                                                val engine = TimeZoneEngine.initialize()
+                                                val maybeZoneId: Optional<ZoneId> =
+                                                    engine.query(lat.toString().toDouble(), lng.toString().toDouble())
+                                                val zone = ZoneId.of(maybeZoneId.get().id)
+                                                val dt = LocalDateTime.now()
+                                                val zdt: ZonedDateTime = dt.atZone(zone)
+                                                val offset = zdt.offset
+                                                metadataObj.setTimeZone(offset.toString())
+                                                logger.log(
+                                                    Level.INFO,
+                                                    "Place set for " + metadataObj.getFileName()
+                                                )
+                                                metadataRepository?.save(metadataObj)
+                                            }
+                                        }
+                                    }
+                                    ImageProcessing.createVideoGif(metadataId, metadataRepository)
+                                }
+                                metadataIdArray.clear()
+                            }.start()
+
                             // Delete thread file
                             if (threadFile.delete()) {
                                 val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
@@ -1968,6 +2007,8 @@ class SettingsController {
 
                                         try {
                                             metadataRepository?.save(metadataObj)
+
+                                            metadataIdArray.add(metadataObj.getId())
 
                                             if (settings != null && webClient != null && compreFaceServerConnected) {
                                                 try {

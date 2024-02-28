@@ -538,6 +538,19 @@ class Util {
 
     }
 
+    static checkUrl(url, callback) {
+        $.ajax({
+            url:url,
+            type:'HEAD',
+            error: function() {
+                shashin.printMessageToConsole("URL " + url + " not valid.");
+                callback(false)
+            }, success: function() {
+                callback(true)
+            }
+        });
+    }
+
     static getParameterByName(name, url = window.location.href) {
         name = name.replace(/[\[\]]/g, '\\$&');
         const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
