@@ -10,6 +10,7 @@ import com.drew.imaging.ImageMetadataReader
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.javascript.jscomp.jarjar.com.google.common.io.Files
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import net.coobird.thumbnailator.Thumbnails
@@ -153,8 +154,9 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 logger.log(Level.WARNING, "Could not read file: " + file.path)
             }
         } else if (supportedVideoFormats.contains(file.extension.lowercase())) {
-            // Grab screen shot
-            img = getVideoScreenshot(file)
+            // Grab screenshot
+            val videoProcessing = VideoProcessing(file)
+            img = videoProcessing.getVideoScreenshot()
 //            _metadataObj?.setVideoUrl("/api/$apiVersion/original/video$fileRootDir/" + file.name)
         }
 
@@ -325,79 +327,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
         return null
     }
-    
-    private fun getVideoScreenshot(file: File): BufferedImage? {
-        try {
-            val frameGrabber = FFmpegFrameGrabber(file.path)
-            frameGrabber.start()
 
-            val aa = Java2DFrameConverter()
-
-            val f = frameGrabber.grabImage()
-            var bi = aa.convert(f)
-
-            val rotationStr = frameGrabber.getVideoMetadata("rotate")
-            if (!rotationStr.isNullOrBlank() && bi != null) {
-                val rotation = rotationStr.toDouble()
-                if (rotation > 0) {
-                    bi = rotateImage(bi, rotation)
-                }
-            }
-
-            if (bi == null) {
-                
-//            var f = frameGrabber.grabKeyFrame()
-//            var bi = aa.convert(f)
-
-//            if (bi != null) {
-//                val limit = 1000
-//                var count = 0
-//                while (bi != null) {
-//                    if (limit > count) {
-//                        break
-//                    }
-//                    f = frameGrabber.grabKeyFrame()
-//                    bi = aa.convert(f)
-//                    count++
-//                }
-//
-//            } else {
-                logger.log(Level.WARNING, "Could not convert video " + file.name + ": null")
-            }
-
-            frameGrabber.stop()
-            return bi
-        } catch (e: IOException) {
-            logger.log(Level.WARNING, "Could not convert video " + file.name + ": " + e.message)
-            return null
-        }
-    }
-
-    private fun rotateImage(buffImage: BufferedImage, angle: kotlin.Double): BufferedImage {
-        val radian = Math.toRadians(angle)
-        val sin = Math.abs(Math.sin(radian))
-        val cos = Math.abs(Math.cos(radian))
-        val width = buffImage.width
-        val height = buffImage.height
-        val nWidth = Math.floor(width.toDouble() * cos + height.toDouble() * sin).toInt()
-        val nHeight = Math.floor(height.toDouble() * cos + width.toDouble() * sin).toInt()
-        val rotatedImage = BufferedImage(
-            nWidth, nHeight, BufferedImage.TYPE_INT_RGB
-        )
-        val graphics = rotatedImage.createGraphics()
-        graphics.setRenderingHint(
-            RenderingHints.KEY_INTERPOLATION,
-            RenderingHints.VALUE_INTERPOLATION_BICUBIC
-        )
-        graphics.translate((nWidth - width) / 2, (nHeight - height) / 2)
-        // rotation around the center point
-        graphics.rotate(radian, (width / 2).toDouble(), (height / 2).toDouble())
-        graphics.drawImage(buffImage, 0, 0, null)
-        graphics.dispose()
-        return rotatedImage
-    }
-
-    private fun scaleImageByRatio(source: BufferedImage, ratio: kotlin.Double): BufferedImage {
+    private fun scaleImageByRatio(source: BufferedImage, ratio: Double): BufferedImage {
         val w = (source.width * ratio).toInt()
         val h = (source.height * ratio).toInt()
         return scaleImage(source, w, h)
@@ -444,6 +375,48 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
     companion object {
         private var logger: Logger = Logger.getLogger(FileUtils::class.simpleName)
+
+        fun createVideoGif(metadataId: String, metadataRepository: MetadataRepository?) {
+            val metadataObj = metadataRepository?.findByMetadataId(metadataId)
+
+            if (metadataObj != null && metadataObj.getType()!!.contains("video", ignoreCase = true)) {
+                val gifFilePath = metadataObj.getThumbnailPathSmall()!!.replace("_225.jpg", "_225.gif")
+                val gifFile = File(gifFilePath)
+
+                if (!gifFile.exists()) {
+                    val videoProcessing = VideoProcessing(File(metadataObj.getPath()))
+                    val processedGifFile = videoProcessing.getVideoGifFile()
+
+                    if (processedGifFile != null) {
+                        Files.copy(processedGifFile, gifFile)
+                    }
+                }
+            }
+        }
+
+        fun rotateImage(buffImage: BufferedImage, angle: Double): BufferedImage {
+            val radian = Math.toRadians(angle)
+            val sin = Math.abs(Math.sin(radian))
+            val cos = Math.abs(Math.cos(radian))
+            val width = buffImage.width
+            val height = buffImage.height
+            val nWidth = Math.floor(width.toDouble() * cos + height.toDouble() * sin).toInt()
+            val nHeight = Math.floor(height.toDouble() * cos + width.toDouble() * sin).toInt()
+            val rotatedImage = BufferedImage(
+                nWidth, nHeight, BufferedImage.TYPE_INT_RGB
+            )
+            val graphics = rotatedImage.createGraphics()
+            graphics.setRenderingHint(
+                RenderingHints.KEY_INTERPOLATION,
+                RenderingHints.VALUE_INTERPOLATION_BICUBIC
+            )
+            graphics.translate((nWidth - width) / 2, (nHeight - height) / 2)
+            // rotation around the center point
+            graphics.rotate(radian, (width / 2).toDouble(), (height / 2).toDouble())
+            graphics.drawImage(buffImage, 0, 0, null)
+            graphics.dispose()
+            return rotatedImage
+        }
 
         fun sharpenAndBrightenImage(bufferedImage: BufferedImage): BufferedImage {
 //        -0.15f, -0.15f, -0.15f,

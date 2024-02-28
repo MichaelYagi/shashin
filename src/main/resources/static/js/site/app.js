@@ -1956,6 +1956,19 @@
         });
 
         $("#tncentered" + metadata.id).hover(function () {
+            if (metadata.type.includes("video")) {
+                const gifUrl = $("#image" + metadata.id).attr("src").replace("_225.jpg", "_225.gif");
+                const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
+
+                Util.checkUrl(gifUrl, function (validUrl) {
+                    if (validUrl) {
+                        $("#image" + metadata.id).attr("src", gifUrl);
+                    } else {
+                        $("#image" + metadata.id).attr("src", jpgUrl);
+                    }
+                });
+            }
+
             $('#currentlat').val(metadata.lat === null ? "" : metadata.lat);
             $('#currentlng').val(metadata.lng === null ? "" : metadata.lng);
             $('#currentyear').val(metadata.year === null ? "" : metadata.year);
@@ -1983,6 +1996,11 @@
                 $('.thumbnail-br').hide();
             }
         }, function () {
+            if (metadata.type.includes("video")) {
+                const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
+                $("#image" + metadata.id).attr("src", jpgUrl);
+            }
+
             $('.bi-play-btn').css("color", "lightgray");
             $('.bi-play-circle').css("color", "lightgray");
             $(this).hide();
