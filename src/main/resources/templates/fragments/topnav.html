@@ -60,6 +60,16 @@
                 <span id="sidebarMenuDrawer" th:class="'bi-list placeholder position-relative'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;">
                 </span>
             </a>
+            <th:block th:if="${activeProfile != ''}">
+                <span id="environmentLabel" class="align-items-center link-dark text-decoration-none ms-2" style="font-size: 1.5rem;">
+                    <th:block th:if="${activeProfile == 'Test'}">
+                        <span class="alert alert-secondary" th:text="${activeProfile}"></span>
+                    </th:block>
+                    <th:block th:if="${activeProfile == 'Dev'}">
+                        <span class="alert alert-primary" th:text="${activeProfile}"></span>
+                    </th:block>
+                </span>
+            </th:block>
             <th:block th:if="${activePage == 'timeline' || activePage == 'folder' || activePage == 'person' || activePage == 'matches' || activePage == 'compreface'}">
                 <span id="timelineTools">
                     <th:block th:if="${activePage == 'timeline'}">
