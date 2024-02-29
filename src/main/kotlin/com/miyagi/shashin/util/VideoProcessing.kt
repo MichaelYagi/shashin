@@ -52,8 +52,6 @@ class VideoProcessing(private val videoFile: File) {
 
         frameGrabber.start()
 
-        val limit = 40
-
         val tempGifFilePath = System.getProperty("java.io.tmpdir") + "/temp.gif"
         if (Files.exists(Paths.get(tempGifFilePath))) {
             val tempFile = File(tempGifFilePath)
@@ -65,40 +63,47 @@ class VideoProcessing(private val videoFile: File) {
             val output: ImageOutputStream = FileImageOutputStream(File(tempGifFilePath))
             val writer = GifSequenceWriter(output, BufferedImage.TYPE_INT_ARGB, 0, true)
             val totalFrameCount = frameGrabber.lengthInFrames
+            // Skip every x frames
+            val skipFrame = 3
+            val limit = 30*skipFrame
 
             for (frameCount in 0 until totalFrameCount) {
                 if (frameCount > limit) {
                     break
                 }
 
-                val imageGrabber = frameGrabber.grabImage()
-                bi = frameConverter.convert(imageGrabber)
+                if (frameCount % skipFrame == 0) {
+                    frameGrabber.frameNumber = frameCount
 
-                if (bi != null) {
-                    val rotationStr = frameGrabber.getVideoMetadata("rotate")
-                    if (!rotationStr.isNullOrBlank()) {
-                        val rotation = rotationStr.toDouble()
-                        if (rotation > 0) {
-                            bi = ImageProcessing.rotateImage(bi, rotation)
+                    val imageGrabber = frameGrabber.grabImage()
+                    bi = frameConverter.convert(imageGrabber)
+
+                    if (bi != null) {
+                        val rotationStr = frameGrabber.getVideoMetadata("rotate")
+                        if (!rotationStr.isNullOrBlank()) {
+                            val rotation = rotationStr.toDouble()
+                            if (rotation > 0) {
+                                bi = ImageProcessing.rotateImage(bi, rotation)
+                            }
                         }
+
+                        val thumbnails = Thumbnails.of(bi)
+                            .outputQuality(1.0)
+
+                        if (bi.width > bi.height * 2) {
+                            thumbnails
+                                .crop(Positions.CENTER)
+                                .size(FileUtils.thumbnailHeight(), FileUtils.thumbnailHeight())
+                        } else {
+                            thumbnails
+                                .height(FileUtils.thumbnailHeight())
+                        }
+
+                        writer.writeToSequence(thumbnails.asBufferedImage())
                     }
 
-                    val thumbnails = Thumbnails.of(bi)
-                        .outputQuality(1.0)
-
-                    if (bi.width > bi.height * 2) {
-                        thumbnails
-                            .crop(Positions.CENTER)
-                            .size(FileUtils.thumbnailHeight(), FileUtils.thumbnailHeight())
-                    } else {
-                        thumbnails
-                            .height(FileUtils.thumbnailHeight())
-                    }
-
-                    writer.writeToSequence(thumbnails.asBufferedImage())
+                    logger.log(Level.INFO, "Current frame ${frameGrabber.frameNumber} of $totalFrameCount with iteration $frameCount and limit $limit")
                 }
-
-                logger.log(Level.INFO, "Current frame ${frameGrabber.frameNumber} of $totalFrameCount with limit $limit")
             }
 
             writer.close()
