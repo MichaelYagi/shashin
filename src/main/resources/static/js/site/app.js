@@ -1926,11 +1926,21 @@
         });
 
         $("#image" + metadata.id).hover(function () {
+            if (metadata.type.includes("video")) {
+                const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
+                $("#image" + metadata.id).attr("src", jpgUrl);
+            }
+
             // Only show overlays when scrolling stopped in timeline view
             if (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false)) {
                 shashin.imageHover(this, metadata.id);
             }
         }, function () {
+            if (metadata.type.includes("video")) {
+                const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
+                $("#image" + metadata.id).attr("src", jpgUrl);
+            }
+
             metadataIdArray = shashin.getMetadataIdList();
             const index = metadataIdArray.indexOf(metadata.id);
 
@@ -2012,6 +2022,11 @@
         });
 
         $("#tntl" + metadata.id).hover(function () {
+            if (metadata.type.includes("video")) {
+                const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
+                $("#image" + metadata.id).attr("src", jpgUrl);
+            }
+
             metadataIdArray = shashin.getMetadataIdList();
             const index = metadataIdArray.indexOf(metadata.id);
             if ($("#tlicon" + metadata.id).attr("class") !== "bi-circle-fill" && index <= -1) {
@@ -2029,6 +2044,11 @@
                 }
             }
         }, function () {
+            if (metadata.type.includes("video")) {
+                const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
+                $("#image" + metadata.id).attr("src", jpgUrl);
+            }
+
             if ($("#tlicon" + metadata.id).attr("class") !== "bi-circle-fill") {
                 $(this).hide();
                 $(this).siblings(".photo-thumbnail-image").css("opacity", transparent);
@@ -2042,6 +2062,11 @@
         });
 
         $("#tnbl" + metadata.id).hover(function () {
+            if (metadata.type.includes("video")) {
+                const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
+                $("#image" + metadata.id).attr("src", jpgUrl);
+            }
+
             metadataIdArray = shashin.getMetadataIdList();
             $(this).show();
             $(this).siblings(".thumbnail-tl").show();
@@ -2056,6 +2081,11 @@
                 $('.thumbnail-br').hide();
             }
         }, function () {
+            if (metadata.type.includes("video")) {
+                const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
+                $("#image" + metadata.id).attr("src", jpgUrl);
+            }
+
             $(this).hide();
             $(this).siblings(".thumbnail-tl").hide();
             $(this).siblings(".thumbnail-centered").hide();
@@ -2065,6 +2095,11 @@
         });
 
         $("#tnbr" + metadata.id).hover(function () {
+            if (metadata.type.includes("video")) {
+                const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
+                $("#image" + metadata.id).attr("src", jpgUrl);
+            }
+
             metadataIdArray = shashin.getMetadataIdList();
             $(this).show();
             $(this).siblings(".thumbnail-tl").show();
@@ -2079,6 +2114,11 @@
                 $('.thumbnail-br').hide();
             }
         }, function () {
+            if (metadata.type.includes("video")) {
+                const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
+                $("#image" + metadata.id).attr("src", jpgUrl);
+            }
+
             $(this).hide();
             $(this).siblings(".thumbnail-tl").hide();
             $(this).siblings(".thumbnail-centered").hide();
@@ -2088,6 +2128,11 @@
         });
 
         $("#tntr" + metadata.id).hover(function () {
+            if (metadata.type.includes("video")) {
+                const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
+                $("#image" + metadata.id).attr("src", jpgUrl);
+            }
+
             metadataIdArray = shashin.getMetadataIdList();
             $(this).show();
             $(this).siblings(".thumbnail-tl").show();
@@ -2102,6 +2147,11 @@
                 $('.thumbnail-br').hide();
             }
         }, function () {
+            if (metadata.type.includes("video")) {
+                const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
+                $("#image" + metadata.id).attr("src", jpgUrl);
+            }
+
             if ($(this).siblings(".thumbnail-tl").find('.bi-circle-fill').length === 0) {
                 $(this).siblings(".thumbnail-tl").hide();
                 $(this).siblings(".thumbnail-centered").hide();
