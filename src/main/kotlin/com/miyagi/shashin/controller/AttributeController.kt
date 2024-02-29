@@ -208,14 +208,11 @@ class AttributeController: ResponseEntityExceptionHandler() {
         model["adminRole"] = adminRole
         model["superRole"] = superRole
         model["settings"] = Settings()
-        model["activeProfile"] = ""
+        model["activeProfile"] = "prod"
         model["faceRecogServicesAvailable"] = false
 
         if (environment != null && environment.activeProfiles.isNotEmpty()) {
-            val profile = environment.activeProfiles[0]
-            if (profile != "prod") {
-                model["activeProfile"] = profile
-            }
+            model["activeProfile"] = environment.activeProfiles[0]
         }
 
         timingStart = Date()
