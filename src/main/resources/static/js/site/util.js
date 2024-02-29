@@ -538,17 +538,17 @@ class Util {
 
     }
 
-    static checkUrl(url, callback) {
-        $.ajax({
-            url:url,
-            type:'HEAD',
-            error: function() {
-                shashin.printMessageToConsole("URL " + url + " not valid.");
-                callback(false)
-            }, success: function() {
+    static checkImage(url, callback) {
+        const image = new Image();
+        image.onload = function() {
+            if (this.width > 0) {
                 callback(true)
             }
-        });
+        }
+        image.onerror = function() {
+            callback(false)
+        }
+        image.src = url;
     }
 
     static getParameterByName(name, url = window.location.href) {

@@ -1970,7 +1970,7 @@
                 const gifUrl = $("#image" + metadata.id).attr("src").replace("_225.jpg", "_225.gif");
                 const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
 
-                Util.checkUrl(gifUrl, function (validUrl) {
+                Util.checkImage(gifUrl, function (validUrl) {
                     if (validUrl) {
                         $("#image" + metadata.id).attr("src", gifUrl);
                     } else {
