@@ -65,17 +65,16 @@ class VideoProcessing(private val videoFile: File) {
             val totalFrameCount = frameGrabber.lengthInFrames
             // Skip every x frames
             val skipFrame = 3
-            val limit = 30*skipFrame
+            val limit = 25*skipFrame
 
             for (frameCount in 0 until totalFrameCount) {
                 if (frameCount > limit) {
                     break
                 }
 
-                if (frameCount % skipFrame == 0) {
-                    frameGrabber.frameNumber = frameCount
+                val imageGrabber = frameGrabber.grabImage()
 
-                    val imageGrabber = frameGrabber.grabImage()
+                if (frameCount % skipFrame == 0) {
                     bi = frameConverter.convert(imageGrabber)
 
                     if (bi != null) {
