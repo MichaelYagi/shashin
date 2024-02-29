@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
 <footer th:fragment="footer(copyrightYear,operatingSystemInfo,buildProperties,activeProfile)">
-    <p>&copy; <span th:text="'2021-'+${copyrightYear}+' '+${@environment.getProperty('app.build.properties.name')}+${activeProfile != '' ? ' '+#strings.capitalize(activeProfile)+' Build ': ' '}+${operatingSystemInfo != '' ? '('+operatingSystemInfo+') ' : ''}+${buildProperties.getVersion()}"></span></p>
+    <p>&copy; <span th:text="'2021-'+${copyrightYear}+' '+${@environment.getProperty('app.build.properties.name')}+${activeProfile != 'prod' ? ' '+#strings.capitalize(activeProfile)+' Build ': ' '}+${operatingSystemInfo != '' ? '('+operatingSystemInfo+') ' : ''}+${buildProperties.getVersion()}"></span></p>
 </footer>
 </body>
 </html>

@@ -60,7 +60,7 @@
                 <span id="sidebarMenuDrawer" th:class="'bi-list placeholder position-relative'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;">
                 </span>
             </a>
-            <th:block th:if="${activeProfile != ''}">
+            <th:block th:if="${activeProfile != 'prod'}">
                 <span id="environmentLabel" class="align-items-center link-dark text-decoration-none ms-2" style="font-size: 1.5rem;">
                     <th:block th:if="${activeProfile == 'dev'}">
                         <span class="alert alert-primary" th:text="${#strings.toUpperCase(activeProfile)}"></span>
