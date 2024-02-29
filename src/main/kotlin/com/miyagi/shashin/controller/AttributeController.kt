@@ -214,7 +214,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
         if (environment != null && environment.activeProfiles.isNotEmpty()) {
             val profile = environment.activeProfiles[0]
             if (profile != "prod") {
-                model["activeProfile"] = capitalize(profile)
+                model["activeProfile"] = profile
             }
         }
 

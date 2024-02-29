@@ -62,11 +62,11 @@
             </a>
             <th:block th:if="${activeProfile != ''}">
                 <span id="environmentLabel" class="align-items-center link-dark text-decoration-none ms-2" style="font-size: 1.5rem;">
-                    <th:block th:if="${activeProfile == 'Dev'}">
-                        <span class="alert alert-primary" th:text="${activeProfile}"></span>
+                    <th:block th:if="${activeProfile == 'dev'}">
+                        <span class="alert alert-primary" th:text="${#strings.toUpperCase(activeProfile)}"></span>
                     </th:block>
-                    <th:block th:if="${activeProfile == 'Test'}">
-                        <span class="alert alert-success" th:text="${activeProfile}"></span>
+                    <th:block th:if="${activeProfile == 'test'}">
+                        <span class="alert alert-success" th:text="${#strings.toUpperCase(activeProfile)}"></span>
                     </th:block>
                 </span>
             </th:block>
