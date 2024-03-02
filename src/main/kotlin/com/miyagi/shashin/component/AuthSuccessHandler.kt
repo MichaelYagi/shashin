@@ -363,9 +363,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
     }
 
     private fun notifyLatestVersion(currentUserObj: User?, version: String) {
-        val adminList = userRepository?.findAllByAuthorityEquals(adminRole!!)
-        val superAdmins = userRepository?.findAllByAuthorityEquals(superRole!!)
-        val admins = adminList?.plus(superAdmins) as ArrayList<User>?
+        val admins = userRepository?.findAllAdmins()
 
         if (admins != null && currentUserObj != null) {
             val notificationObjList = mutableListOf<Notification>()

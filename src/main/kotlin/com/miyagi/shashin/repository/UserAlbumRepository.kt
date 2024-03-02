@@ -1,5 +1,6 @@
 package com.miyagi.shashin.repository
 
+import com.miyagi.shashin.model.User
 import com.miyagi.shashin.model.UserAlbum
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
