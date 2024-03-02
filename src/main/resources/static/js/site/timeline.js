@@ -764,10 +764,10 @@
         // Get list of visible elements
         // const firstVisibleContainer = $('section').length > 0 ? $('section')[0] : null;
         // const lastVisibleContainer = $('section').length > 0 ? $('section')[$('section').length-1] : null;
-        // const firstVisibleContainer = sectionArray.length > 0 ? sectionArray[0] : null;
+        const firstVisibleContainer = sectionArray.length > 0 ? sectionArray[0] : null;
 
-        const visibleContainers = Util.elementsInViewport($(".dateContainer"));
-        const firstVisibleContainer = visibleContainers.length > 0 ? visibleContainers[0] : null;
+        // const visibleContainers = Util.elementsInViewport($(".dateContainer"));
+        // const firstVisibleContainer = visibleContainers.length > 0 ? visibleContainers[0] : null;
         const lastVisibleContainer = sectionArray.length > 0 ? sectionArray[sectionArray.length-1] : null;
 
         if (timelineSettings.isScrolling === true &&
@@ -776,12 +776,6 @@
             // Divide dates into 2
             // TODO: Optimize this further
             let currentDate = $(firstVisibleContainer).attr("id");
-            currentDate = currentDate.replace("container_", "");
-
-            if (Util.getKeyByValue(timelineSettings.timelineDatesHash, timelineSettings.timelineDatesHash[currentDate]-1)) {
-                currentDate = Util.getKeyByValue(timelineSettings.timelineDatesHash, timelineSettings.timelineDatesHash[currentDate] - 1);
-            }
-
             let prevDate = "";
 
             const firstDate = timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day;
@@ -854,12 +848,7 @@
                     }
 
                     if (prevDate !== firstDate) {
-                        // Check if prev is one step away from current
-                        if (timelineSettings.timelineDatesHash[prevDate]-1 === timelineSettings.timelineDatesHash[currentDate] ||
-                            timelineSettings.timelineDatesHash[prevDate]+1 === timelineSettings.timelineDatesHash[currentDate])
-                        {
-                            currentDate = prevDate;
-                        }
+                        currentDate = prevDate;
                     } else {
                         const msg = await timelineSettings.updateTimeline(firstDate, mediaTypeFilter, "above", currentDate);
                         if (msg === timelineSettings.success && $("#" + firstDate).length === 1) {
@@ -921,12 +910,7 @@
                     }
 
                     if (prevDate !== lastDate) {
-                        // Check if prev is one step away from current
-                        if (timelineSettings.timelineDatesHash[prevDate]-1 === timelineSettings.timelineDatesHash[currentDate] ||
-                            timelineSettings.timelineDatesHash[prevDate]+1 === timelineSettings.timelineDatesHash[currentDate])
-                        {
-                            currentDate = prevDate;
-                        }
+                        currentDate = prevDate;
                     } else {
                         const msg = await timelineSettings.updateTimeline(lastDate, mediaTypeFilter, "below", currentDate);
                         if (msg === timelineSettings.success && $("#" + lastDate).length === 1) {
