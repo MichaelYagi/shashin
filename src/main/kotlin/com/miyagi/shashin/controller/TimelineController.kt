@@ -66,6 +66,12 @@ class TimelineController: BaseController() {
     private lateinit var albumRepository: AlbumRepository
 
     @Autowired
+    private lateinit var userRepository: UserRepository
+
+    @Autowired
+    private lateinit var notificationRepository: NotificationRepository
+
+    @Autowired
     private lateinit var albumPhotoRepository: AlbumPhotoRepository
 
     @Autowired
@@ -1207,6 +1213,7 @@ class TimelineController: BaseController() {
 
                 metricsUtil.start("Metadata Update - Process albums")
                 val currentUserObj = model.getAttribute("currentUser") as User?
+                val albumIdAddedList = mutableListOf<Int>()
 
                 // Process albums
                 val albumPhotos = albumPhotoRepository.findAlbumPhotoByMetadataId(metadataId)
@@ -1237,6 +1244,9 @@ class TimelineController: BaseController() {
                                 albumPhotoObj.setCreatedAt(getCurrentTimestamp())
                                 albumPhotoObj.setModifiedAt(getCurrentTimestamp())
                                 albumPhotoList.add(albumPhotoObj)
+                                if (!albumIdAddedList.contains(albumId)) {
+                                    albumIdAddedList.add(albumId)
+                                }
                             }
 
                             if (currentAlbumIdList.contains(albumId)) {
@@ -1471,6 +1481,8 @@ class TimelineController: BaseController() {
                     metricsUtil.end()
                 }
 
+                notifyAlbumUpdate(albumIdAddedList,currentUserObj)
+
                 metricsUtil.start("Metadata Update - Getting attributes")
                 Thread {
                     val attrResponse = getAllAttributeData(model)
@@ -1489,6 +1501,67 @@ class TimelineController: BaseController() {
         resp["msg"] = "Could not save"
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
+    }
+
+    private fun notifyAlbumUpdate(albumIdAddedList: MutableList<Int>, currentUserObj: User?) {
+        var adminAlbumsMessage = ""
+        val filteredUserAlbumsMap = mutableMapOf<Int,MutableList<String>>()
+        val admins = userRepository.findAllAdmins()
+
+        for (albumId in albumIdAddedList) {
+            if (currentUserObj != null) {
+                val album = albumRepository.findAlbumById(albumId)
+
+                adminAlbumsMessage += "<a href='album/$albumId' target='_blank'>${album?.getName()}</a>,"
+
+                val userList = userRepository.findDistinctUserByAlbumId(albumId)
+                if (userList != null) {
+                    for (user in userList) {
+                        if (filteredUserAlbumsMap[user!!.getId()] == null) {
+                            filteredUserAlbumsMap[user.getId()] = mutableListOf()
+                        }
+                        filteredUserAlbumsMap[user.getId()]?.add("<a href='album/$albumId' target='_blank'>${album?.getName()}</a>")
+                    }
+                }
+            }
+        }
+
+        adminAlbumsMessage = adminAlbumsMessage.dropLast(1)
+
+        val notificationObjList = mutableListOf<Notification>()
+        if (adminAlbumsMessage.isNotEmpty()) {
+            for (admin in admins) {
+                val notificationObj = Notification()
+                notificationObj.setUserId(admin.getId())
+                notificationObj.setCreatedAt(getCurrentTimestamp())
+                notificationObj.setModifiedAt(getCurrentTimestamp())
+                notificationObj.setRead(false)
+                notificationObj.setMessage("Photos added to $adminAlbumsMessage")
+                notificationObjList.add(notificationObj)
+            }
+        }
+
+        filteredUserAlbumsMap.forEach { entry ->
+            val userId = entry.key
+            val albumLinks = entry.value
+
+            var message = ""
+            for (albumLink in albumLinks) {
+                message += "$albumLink,"
+            }
+            message = message.dropLast(1)
+            val notificationObj = Notification()
+            notificationObj.setUserId(userId)
+            notificationObj.setCreatedAt(getCurrentTimestamp())
+            notificationObj.setModifiedAt(getCurrentTimestamp())
+            notificationObj.setRead(false)
+            notificationObj.setMessage("Photos added to $message")
+            notificationObjList.add(notificationObj)
+        }
+
+        if (notificationObjList.isNotEmpty()) {
+            notificationRepository.saveAll(notificationObjList)
+        }
     }
 
     @RequestMapping(value = ["/metadata/remove/batch"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
@@ -1712,6 +1785,7 @@ class TimelineController: BaseController() {
             val metricsUtil = MetricsUtil()
             metricsUtil.start("Batch Metadata Update")
 
+            val currentUserObj = model.getAttribute("currentUser") as User?
             val settings = model.getAttribute("settings") as Settings
 
             val headers = HttpHeaders()
@@ -1724,8 +1798,6 @@ class TimelineController: BaseController() {
             // Process albums
             if (!isHidden && albumNames != null && albumNames.toString().trim() != "") {
                 val albumNameList = albumNames.toString().split(",")
-
-                val currentUserObj = model.getAttribute("currentUser") as User?
 
                 for (albumNameRaw in albumNameList) {
                     val albumId = processAlbum(albumNameRaw, currentUserObj, metadataCoverAlbumObj.get())
@@ -1810,6 +1882,8 @@ class TimelineController: BaseController() {
                 keywordList = keywords.split(",").map { it.trim() } as MutableList<String>
             }
 
+            val albumIdAddedList = mutableListOf<Int>()
+
             for (idVal in idArray) {
                 val id = StringEscapeUtils.escapeHtml4(idVal)
                 val metadataObj: Optional<Metadata?> = metadataRepository.findById(id)
@@ -1835,6 +1909,9 @@ class TimelineController: BaseController() {
                                     albumPhotoObj.setCreatedAt(getCurrentTimestamp())
                                     albumPhotoObj.setModifiedAt(getCurrentTimestamp())
                                     albumPhotoList.add(albumPhotoObj)
+                                    if (!albumIdAddedList.contains(albumId)) {
+                                        albumIdAddedList.add(albumId)
+                                    }
                                 }
                             }
                         }
@@ -1899,6 +1976,8 @@ class TimelineController: BaseController() {
             if (albumPhotoList.isNotEmpty()) {
                 albumPhotoRepository.saveAll(albumPhotoList)
             }
+
+            notifyAlbumUpdate(albumIdAddedList,currentUserObj)
 
             if (metadataList.isNotEmpty()) {
                 // Update record
@@ -2143,17 +2222,17 @@ class TimelineController: BaseController() {
         response["metadata"] = mapper.readTree(emptyJson)
 
         val metadataRecord = metadataRepository.findById(id)
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+
         if (metadataRecord.isPresent) {
             response["metadata"] = metadataRecord.get()
-
-            val currentUserObj = model.getAttribute("currentUser") as User?
             response["albumMap"] = getAlbumMapForUser(currentUserObj, id)
         }
 
         val favoritesMap = HashMap<String, HashMap<String, Any>>()
         val idList = mutableListOf<String>()
         idList.add(id)
-        val currentUserObj = model.getAttribute("currentUser") as User?
         val favoriteCounts = favoriteRepository.countByMetadataIdIn(idList)
         if (favoriteCounts.count() > 0) {
             for (favoriteCount in favoriteCounts) {
