@@ -584,6 +584,10 @@ class Util {
         return "";
     }
 
+    static getKeyByValue(object, value) {
+        return Object.keys(object).find(key => object[key] === value);
+    }
+
     static getDateObject(dateString) {
         if (dateString.indexOf("tail_") >= 0) {
             const idParts = dateString.split("tail_");

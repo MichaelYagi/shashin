@@ -11,6 +11,7 @@
     timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
     timelineSettings.initialized = false;
     timelineSettings.timelineDates = [];
+    timelineSettings.timelineDatesHash = {};
     timelineSettings.distanceToFooter = 9999;
     timelineSettings.metadataYearMonthCount = [];
     timelineSettings.thumbnailsPerRow = 4;
@@ -53,7 +54,8 @@
         Util.reinitLightGalleryInstance();
     }
 
-    timelineSettings.init = function(mediaTypeFilter, metadataDates, metadataYearMonthCount) {
+    timelineSettings.init = function(mediaTypeFilter, metadataDates, metadataYearMonthCount, timelineDatesHash) {
+        timelineSettings.timelineDatesHash = timelineDatesHash
         timelineSettings.timelineDates = metadataDates;
         timelineSettings.metadataYearMonthCount = metadataYearMonthCount;
 
@@ -697,25 +699,6 @@
         let lastVisibleId = lastElementId; //lastElementId.indexOf("tail_") === -1 ? lastElementId : lastElementId.substring(5, lastElementId.length);
         let ignoreTimelineDate = firstVisibleId;
 
-        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-            let firstVisibleArr = firstVisibleId.split("-");
-            let startIndex = 0;
-            let timelineObjArr = timelineDates.slice().reverse();
-            timelineObjArr.map(function(item, i) {
-                if (item.year === parseInt(firstVisibleArr[0]) && item.month === parseInt(firstVisibleArr[1]) && item.day === parseInt(firstVisibleArr[2])) {
-                    startIndex = i;
-                }
-            })
-            for (let index = startIndex; index < timelineObjArr.length; index ++) {
-                const timelineDateObj = timelineObjArr[index];
-                ignoreTimelineDate = timelineDateObj.year + "-" + timelineDateObj.month + "-" + timelineDateObj.day;
-
-                if (Util.getDateObject(firstVisibleId) < Util.getDateObject(ignoreTimelineDate)) {
-                    break;
-                }
-            }
-        }
-
         // Remove elements not visible in viewport
         let removeHeight = 0;
         let topHeight = 0;
@@ -734,14 +717,6 @@
                 Util.isInViewport($("#tail_" + element.id)) === false &&
                 Util.isInViewport($("#container_" + element.id)) === false &&
                 Util.elementsInViewport($(".photo-thumbnail-image.thumbnailTag_" + element.id)).length === 0
-                // &&
-                // ((Util.isSafari() === false && Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) ||
-                //     ((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && (Util.getDateObject(lastVisibleId) > Util.getDateObject(element.id) || Util.getDateObject(firstVisibleId) < Util.getDateObject(element.id))) ||
-                //         (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && Util.getDateObject(firstVisibleId) < Util.getDateObject(element.id)))
-                // )
-                // &&
-                // ((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && element.id !== $(section[section.length-1]).attr("id")) ||
-                //     (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && element.id !== ignoreTimelineDate))
             ) {
                 if (Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                     section.invisible();
@@ -789,8 +764,10 @@
         // Get list of visible elements
         // const firstVisibleContainer = $('section').length > 0 ? $('section')[0] : null;
         // const lastVisibleContainer = $('section').length > 0 ? $('section')[$('section').length-1] : null;
+        // const firstVisibleContainer = sectionArray.length > 0 ? sectionArray[0] : null;
 
-        const firstVisibleContainer = sectionArray.length > 0 ? sectionArray[0] : null;
+        const visibleContainers = Util.elementsInViewport($(".dateContainer"));
+        const firstVisibleContainer = visibleContainers.length > 0 ? visibleContainers[0] : null;
         const lastVisibleContainer = sectionArray.length > 0 ? sectionArray[sectionArray.length-1] : null;
 
         if (timelineSettings.isScrolling === true &&
@@ -799,11 +776,18 @@
             // Divide dates into 2
             // TODO: Optimize this further
             let currentDate = $(firstVisibleContainer).attr("id");
+            currentDate = currentDate.replace("container_", "");
+
+            if (Util.getKeyByValue(timelineSettings.timelineDatesHash, timelineSettings.timelineDatesHash[currentDate]-1)) {
+                currentDate = Util.getKeyByValue(timelineSettings.timelineDatesHash, timelineSettings.timelineDatesHash[currentDate] - 1);
+            }
+
             let prevDate = "";
+
             const firstDate = timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day;
             const lastDate = timelineDates[timelineDates.length-1].year + "-" + timelineDates[timelineDates.length-1].month + "-" + timelineDates[timelineDates.length-1].day;
 
-            let firstVisibleDateArr = $(firstVisibleContainer).attr("id").split("-");
+            let firstVisibleDateArr = currentDate.split("-");
             let lastVisibleDateArr = $(lastVisibleContainer).attr("id").split("-");
 
             let startingIndexTop = 0;
@@ -836,6 +820,7 @@
             // Render above visibleContainers going from bottom up
             let timelineArr = timelineDates.reverse();
             let lastTopPosition = $("#infinite-scroll-gallery").position().top;
+
             for (let index = startingIndexTop; index < timelineArr.length; index++) {
                 const timelineDate = timelineArr[index];
                 prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
@@ -869,7 +854,12 @@
                     }
 
                     if (prevDate !== firstDate) {
-                        currentDate = prevDate;
+                        // Check if prev is one step away from current
+                        if (timelineSettings.timelineDatesHash[prevDate]-1 === timelineSettings.timelineDatesHash[currentDate] ||
+                            timelineSettings.timelineDatesHash[prevDate]+1 === timelineSettings.timelineDatesHash[currentDate])
+                        {
+                            currentDate = prevDate;
+                        }
                     } else {
                         const msg = await timelineSettings.updateTimeline(firstDate, mediaTypeFilter, "above", currentDate);
                         if (msg === timelineSettings.success && $("#" + firstDate).length === 1) {
@@ -921,16 +911,6 @@
                                 timelineSettings.distanceToFooter = calculateDistanceToFooter();
                             }
                         }
-                        // else {
-                        //     // 1 sec delay for smoother scrolling
-                        //     setTimeout(async () => {
-                        //         // Stage 3 - network call to embed the image URL and complete the process
-                        //         if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
-                        //             await timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
-                        //             timelineSettings.distanceToFooter = calculateDistanceToFooter();
-                        //         }
-                        //     }, 1000);
-                        // }
 
                         timelineSettings.distanceToFooter = calculateDistanceToFooter();
 
@@ -938,11 +918,15 @@
                         if (closeToFooter() === false) {
                             break;
                         }
-
                     }
 
                     if (prevDate !== lastDate) {
-                        currentDate = prevDate;
+                        // Check if prev is one step away from current
+                        if (timelineSettings.timelineDatesHash[prevDate]-1 === timelineSettings.timelineDatesHash[currentDate] ||
+                            timelineSettings.timelineDatesHash[prevDate]+1 === timelineSettings.timelineDatesHash[currentDate])
+                        {
+                            currentDate = prevDate;
+                        }
                     } else {
                         const msg = await timelineSettings.updateTimeline(lastDate, mediaTypeFilter, "below", currentDate);
                         if (msg === timelineSettings.success && $("#" + lastDate).length === 1) {
@@ -952,6 +936,20 @@
                 }
             }
         }
+
+        // Remove dates out of order
+        const sections = $('section');
+        let prevIndex = 0;
+        sections.each(function (index, element) {
+            const currentTimelineIndex = timelineSettings.timelineDatesHash[element.id];
+
+            if (prevIndex > 0 && prevIndex+1 !== currentTimelineIndex)
+            {
+                Util.removeDateGallery(element.id);
+            }
+
+            prevIndex = currentTimelineIndex;
+        });
 
         $("#spinner_top").css("display", "none");
         $("#spinner_bottom").css("display", "none");

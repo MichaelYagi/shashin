@@ -240,6 +240,9 @@ class TimelineController: BaseController() {
         response["msg"] = "Results"
         response["status"] = ApiResponse.SUCCESS.status
 
+        val metadataDateHash = mutableMapOf<String, Int>()
+        response["metadataDatesHash"] = metadataDateHash
+
         response["metadataDates"] = mutableListOf<MetadataDate>()
         val metadataDates = if (mediaType == "all") {
             metadataRepository.findAllYearMonthDay()
@@ -248,6 +251,13 @@ class TimelineController: BaseController() {
         }
         if (metadataDates != null) {
             response["metadataDates"] = metadataDates
+
+            val dates = metadataDates.toMutableList()
+            for ((index, metadataDate) in dates.withIndex()) {
+                metadataDateHash[metadataDate.getYear().toString() + "-" + metadataDate.getMonth()
+                    .toString() + "-" + metadataDate.getDay().toString()] = index
+            }
+            response["metadataDatesHash"] = metadataDateHash
         }
 
         val countByYearAndMonthList = metadataRepository.countByYearAndMonth()

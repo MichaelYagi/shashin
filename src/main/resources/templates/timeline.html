@@ -215,7 +215,8 @@
             if (data.hasOwnProperty("metadataDates") && data.hasOwnProperty("metadataYearMonthCount")) {
                 const timelineYearMonthCountsData = data["metadataYearMonthCount"];
                 const timelineDatesData = data["metadataDates"];
-                timelineSettings.init(mediaTypeFilter, timelineDatesData, timelineYearMonthCountsData);
+                const timelineDatesHash = data["metadataDatesHash"];
+                timelineSettings.init(mediaTypeFilter, timelineDatesData, timelineYearMonthCountsData, timelineDatesHash);
             }
         });
     });
