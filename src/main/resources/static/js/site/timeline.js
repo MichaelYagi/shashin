@@ -943,8 +943,7 @@
         sections.each(function (index, element) {
             const currentTimelineIndex = timelineSettings.timelineDatesHash[element.id];
 
-            if (prevIndex > 0 && prevIndex+1 !== currentTimelineIndex)
-            {
+            if (prevIndex > 0 && prevIndex+1 !== currentTimelineIndex) {
                 Util.removeDateGallery(element.id);
             }
 
