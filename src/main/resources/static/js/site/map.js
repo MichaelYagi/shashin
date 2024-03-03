@@ -332,6 +332,7 @@ async function showMap(mapdata) {
         progressBar.attr("aria-valuenow", 0);
         progressBar.css("width", "0%");
         progressBarWrapper.invisible();
+        $("#mapFilterButton").removeClass("disabled");
 
         if (iconFeatures.length > 0) {
 
