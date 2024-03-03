@@ -56,8 +56,8 @@ class CommentsController {
     @Value("\${app.role.admin}")
     private var adminRole: String? = null
 
-    @Value("\${app.role.user}")
-    private var userRole: String? = null
+    @Value("\${app.role.super}")
+    private var superRole: String? = null
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
@@ -298,6 +298,8 @@ class CommentsController {
                 resp["commentId"] = savedCommentObj.getId().toString()
                 resp["userProfile"] = if (currentUserObj.getProfile()==null) "" else currentUserObj.getProfile().toString()
                 resp["createdAt"] = TextUtils.formatToLongDateWithTime(savedCommentObj.getCreatedAt().toString())
+                resp["canEdit"] = (model.getAttribute("authority") == adminRole || model.getAttribute("authority") == superRole)
+
                 return mapper.writeValueAsString(resp)
             } else {
                 return returnForbiddenError(response)
@@ -418,7 +420,7 @@ class CommentsController {
             if (currentUserObj != null) {
                 // Delete comment
                 val commentObj = commentRepository.findById(commentId)
-                if (currentUserObj.getId() == commentObj.get().getUserId()) {
+                if ((commentObj.isPresent && currentUserObj.getId() == commentObj.get().getUserId()) || currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
                     albumPhotoCommentRepository.deleteByCommentId(commentId)
                     commentRepository.deleteById(commentId)
 
@@ -484,7 +486,7 @@ class CommentsController {
             if (currentUserObj != null) {
                 // Delete comment
                 val commentObj = commentRepository.findById(commentId)
-                if (currentUserObj.getId() == commentObj.get().getUserId()) {
+                if ((commentObj.isPresent && currentUserObj.getId() == commentObj.get().getUserId()) || currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
                     albumCommentRepository.deleteByCommentId(commentId)
                     commentRepository.deleteById(commentId)
 

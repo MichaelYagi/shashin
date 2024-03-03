@@ -93,6 +93,7 @@
                     const albumPhotoCommentsMap = data["albumPhotoCommentsMap"];
                     const userMap = data["userMap"];
                     const favoritesMap = data["favorites"];
+                    const canEdit = data["canEdit"];
 
                     shashin.printMessageToConsole("albumSettings.getPagedAlbum");
                     shashin.printMessageToConsole(albumData);
@@ -143,7 +144,7 @@
                             const uuid = uuidv4();
                             $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid})).insertBefore($("."+appendClass).last()).ready(function () {
                                 // Call JS and modal
-                                albumModal.renderAlbumCommentsModal(albumData, metadata, userMap, albumPhotoCommentsMap);
+                                albumModal.renderAlbumCommentsModal(albumData, metadata, userMap, albumPhotoCommentsMap,canEdit);
                                 albumSettings.activateAlbumListeners(metadata, albumData);
                             });
                         }
@@ -210,7 +211,7 @@
     albumSettings.deleteComment = async function (commentId, metadataId) {
         const http = new Http("delete comment");
         const json = {commentId: commentId};
-        const data = await http.ajax("delete", "/comment/albumphoto/delete/", JSON.stringify(json));
+        const data = await http.ajax("delete", "/comment/albumphoto/delete", JSON.stringify(json));
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
             let commentId = data["commentId"];
@@ -347,6 +348,7 @@
                     let commentId = data["commentId"];
                     let userProfile = data["userProfile"];
                     let createdAt = data["createdAt"];
+                    let canEdit = data["createdAt"];
 
                     // Insert comment at top of list
                     $("#commentText" + metadata.id).val("")
@@ -357,7 +359,8 @@
                         commentUserId: userMap.id,
                         username: userMap.username,
                         userProfile: userProfile,
-                        createdAt: createdAt
+                        createdAt: createdAt,
+                        canEdit: canEdit
                     }));
 
                     $("#deletecomment" + commentId).on("click", function (e) {
@@ -379,7 +382,7 @@
 }( window.albumSettings = window.albumSettings || {}, jQuery ));
 
 (function( albumModal, $, undefined ) {
-    albumModal.renderAlbumCommentsModal = function (albumData,metadata,userMap,albumPhotoCommentsMap) {
+    albumModal.renderAlbumCommentsModal = function (albumData,metadata,userMap,albumPhotoCommentsMap,canEdit) {
         let index;
         let html = ModalTemplates.AlbumCommentsModalHead({metadata:metadata});
 
@@ -388,7 +391,7 @@
             const comments = albumPhotoCommentsMap[metadata.id][index];
             commentIdArray.push(comments["commentId"]);
 
-            html += ModalTemplates.AlbumComment({commentId:comments["commentId"],commentText:comments["comment"],userId:userMap.id,commentUserId:comments['userId'],username:comments["username"],userProfile:comments["userProfile"],createdAt:comments["createdAt"]});
+            html += ModalTemplates.AlbumComment({commentId:comments["commentId"],commentText:comments["comment"],userId:userMap.id,commentUserId:comments['userId'],username:comments["username"],userProfile:comments["userProfile"],createdAt:comments["createdAt"],canEdit:canEdit});
         }
 
         html += ModalTemplates.AlbumCommentsModalFooter({metadata:metadata});
