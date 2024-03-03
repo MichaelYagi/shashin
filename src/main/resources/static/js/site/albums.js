@@ -15,6 +15,8 @@ class Albums {
 
     async init() {
         shashin.pageLoader(await this.loadNextPage.bind(this), ".appendAlbumsPhotos", this.albumsList);
+        albumsModalListeners.setAlbumModalListeners();
+        albumsModalListeners.setCommentModalListeners();
     }
 
     async loadNextPage() {
@@ -107,6 +109,8 @@ class Albums {
             $("#share" + albumId).on("click", async function (e) {
                 e.preventDefault();
 
+                $("#currentAlbumId").val(albumId);
+
                 let http = new Http("sharealbums");
                 let data = await http.ajax("get", "/album/" + albumId + "/page/0");
 
@@ -129,6 +133,8 @@ class Albums {
                             $("#fullShareLinkContainer").css("display", "block");
                             $("#fullShareLink").html("<a target='_blank' href='" + fullShareLink + "'>" + fullShareLink + "</a>");
                             $("#copyLink").attr("data-clipboard-text", fullShareLink);
+                            $("#clearLink").prop('disabled', false);
+                            $("#copyLink").prop('disabled', false);
                         }
 
                         let sharedAlbumsList = await http.ajax("get", "/sharedalbums");
@@ -153,8 +159,6 @@ class Albums {
                             $("#shareUserList").html(html);
                         }
 
-                        albumsModalListeners.setAlbumModalListeners(albumId, baseUrl);
-
                         $("#propsharealbums").modal('show');
                     }
                 }
@@ -163,12 +167,14 @@ class Albums {
             $("#edit" + albumId).on("click", async function (e) {
                 e.preventDefault();
 
+                $("#currentAlbumId").val(albumId);
+
                 $("#editAlbumNameStatus").addClass('spinner-grow').removeClass('bi-check-circle').removeClass('bi-x-circle');
                 $("#editAlbumNameStatus").invisible();
                 $("#albumEditName").val("");
                 $("#originalAlbumName").val("");
 
-                let http = new Http("sharealbums");
+                let http = new Http("editalbums");
                 let data = await http.ajax("get", "/album/" + albumId + "/page/0");
 
                 if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("album") && data["status"] === shashin.apiResponse.SUCCESS) {
@@ -189,7 +195,9 @@ class Albums {
             $("#trash" + albumId).on("click", async function (e) {
                 e.preventDefault();
 
-                let http = new Http("sharealbums");
+                $("#currentAlbumId").val(albumId);
+
+                let http = new Http("trashalbums");
                 let data = await http.ajax("get", "/album/" + albumId + "/page/0");
 
                 if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("album")) {
@@ -210,6 +218,8 @@ class Albums {
 
         $("#comment"+albumId).on("click", async function (e) {
             e.preventDefault();
+
+            $("#currentAlbumId").val(albumId);
 
             let http = new Http("albumcomments");
             let data = await http.ajax("get", "/album/" + albumId + "/page/0");
@@ -250,19 +260,19 @@ class Albums {
                             html += '</span><span id="textareacontainer' + comments.commentId + '"></span>';
                             html += '</li>';
                         }
-                        html += '<script type="text/javascript" nonce="'+cspNonce+'">albumsModalListeners.setEditCommentModalListeners('+comments.commentId+', '+albumId+');<\/script>';
+                        html += '<script type="text/javascript" nonce="'+cspNonce+'">albumsModalListeners.setEditCommentModalListeners('+comments.commentId+');<\/script>';
                     });
 
                     $("#commentList").html(html);
                 }
 
                 $("#propcommentalbums").modal('show');
-
-                albumsModalListeners.setCommentModalListeners(albumId, $("#currentUser").val());
             }
         });
 
         $("#download"+albumId).on("click", function() {
+            $("#currentAlbumId").val(albumId);
+
             let downloadTimer;
             const tokenName = "ShashinAlbumName";
             const tokenSize = "ShashinAlbumSize";
