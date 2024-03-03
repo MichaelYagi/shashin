@@ -443,7 +443,11 @@ class UserController {
                         notificationObj.setCreatedAt(getCurrentTimestamp())
                         notificationObj.setModifiedAt(getCurrentTimestamp())
                         notificationObj.setRead(false)
-                        notificationObj.setMessage("<a href='/settings/users' target='_blank'>"+newUser.getUsername()+"</a> registered at "+sdtf.format(Date())+" and is pending approval.")
+                        var message = newUser.getUsername()+" registered at "+sdtf.format(Date())+" and is pending approval."
+                        if (admin.getAuthority() == superRole) {
+                            message = "<a href='/settings/users' target='_blank'>"+newUser.getUsername()+"</a> registered at "+sdtf.format(Date())+" and is pending approval."
+                        }
+                        notificationObj.setMessage(message)
                         notificationObjList.add(notificationObj)
                     }
                     if (notificationObjList.isNotEmpty()) {

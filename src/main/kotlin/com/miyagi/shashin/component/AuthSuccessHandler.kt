@@ -346,7 +346,11 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                 notificationObj.setUserId(admin.getId())
                 notificationObj.setCreatedAt(getCurrentTimestamp())
                 notificationObj.setModifiedAt(getCurrentTimestamp())
-                var identity = "<a href='/settings/users' target='_blank'>"+currentUserObj.getUsername()+"</a>"
+                var identity = currentUserObj.getUsername()
+                if (admin.getAuthority() == superRole) {
+                    identity = "<a href='/settings/users' target='_blank'>"+currentUserObj.getUsername()+"</a>"
+                }
+
                 if (admin.getId() == currentUserObj.getId()) {
                     notificationObj.setRead(true)
                     identity = "You "
