@@ -1070,7 +1070,9 @@ class AlbumsController: BaseController() {
             val userMap = mapper.convertValue(userMapObj, object : TypeReference<Map<String, Boolean>>() {})
             val shareAlbumId = shareAlbum["albumId"].toString().toInt()
             val userAlbumList = mutableListOf<UserAlbum>()
+            val notificationObjList = mutableListOf<Notification>()
             val deleteUserAlbumList = mutableListOf<UserAlbum>()
+            val albumObj = albumRepository.findAlbumById(albumId)
 
             for ((userId, share) in userMap) {
                 if (share) {
@@ -1082,6 +1084,14 @@ class AlbumsController: BaseController() {
                         userAlbumObj.setCreatedAt(getCurrentTimestamp())
                         userAlbumObj.setModifiedAt(getCurrentTimestamp())
                         userAlbumList.add(userAlbumObj)
+
+                        val notificationObj = Notification()
+                        notificationObj.setUserId(userId.toInt())
+                        notificationObj.setCreatedAt(getCurrentTimestamp())
+                        notificationObj.setModifiedAt(getCurrentTimestamp())
+                        notificationObj.setRead(false)
+                        notificationObj.setMessage("Album '<a href='/album/$shareAlbumId' target='_blank'>${albumObj?.getName()}</a>' was shared with you.")
+                        notificationObjList.add(notificationObj)
                     }
                 } else {
                     val userAlbumObj = userAlbumRepository.findDistinctByUserIdAndAlbumId(userId.toInt(),shareAlbumId)
@@ -1091,6 +1101,9 @@ class AlbumsController: BaseController() {
                 }
             }
 
+            if (notificationObjList.count() > 0) {
+                notificationRepository.saveAll(notificationObjList)
+            }
             if (userAlbumList.count() > 0) {
                 userAlbumRepository.saveAll(userAlbumList)
             }
