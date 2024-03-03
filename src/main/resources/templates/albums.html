@@ -11,7 +11,8 @@
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
 
-            <input type="hidden" id="albumsId" name="albumsId">
+            <input type="hidden" id="currentAlbumId">
+            <input type="hidden" id="currentBaseUrl" th:value="${baseUrl}">
             <input type="hidden" id="currentUser" th:value="${currentUser.username}">
             <input type="hidden" id="currentUserId" th:value="${currentUser.id}">
 

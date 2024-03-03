@@ -784,6 +784,8 @@ class AlbumsController: BaseController() {
                 StringEscapeUtils.escapeHtml4(albumShareInfo["relativeShareUrl"].toString().trim())
 
             if (albumIdRequest > 0) {
+                val admins = userRepository.findAllAdmins()
+                val notificationObjList = mutableListOf<Notification>()
                 val albumObj = albumRepository.findById(albumIdRequest)
                 if (albumObj.isPresent && albumObj.get().getId() == albumIdRequest) {
                     resp["msg"] = "Share link generated"
@@ -793,6 +795,25 @@ class AlbumsController: BaseController() {
                     }
                     albumObj.get().setShareUrl(relativeShareUrl)
                     albumRepository.save(albumObj.get())
+
+                    var action = "<a href='/share/$relativeShareUrl/album/$albumIdRequest' target='_blank'>generated</a>"
+                    if (relativeShareUrl == null) {
+                        action = "cleared"
+                    }
+
+                    for (admin in admins) {
+                        val notificationObj = Notification()
+                        notificationObj.setUserId(admin.getId())
+                        notificationObj.setCreatedAt(getCurrentTimestamp())
+                        notificationObj.setModifiedAt(getCurrentTimestamp())
+                        notificationObj.setRead(false)
+                        notificationObj.setMessage("Share URL was $action for album '<a href='/album/$albumIdRequest' target='_blank'>${albumObj.get().getName()}</a>'")
+                        notificationObjList.add(notificationObj)
+                    }
+
+                    if (notificationObjList.isNotEmpty()) {
+                        notificationRepository.saveAll(notificationObjList)
+                    }
 
                     resp["relativeShareUrl"] = relativeShareUrl
                     resp["status"] = ApiResponse.SUCCESS.status
@@ -1073,11 +1094,15 @@ class AlbumsController: BaseController() {
             val notificationObjList = mutableListOf<Notification>()
             val deleteUserAlbumList = mutableListOf<UserAlbum>()
             val albumObj = albumRepository.findAlbumById(albumId)
+            val admins = userRepository.findAllAdmins()
+            val userList = mutableListOf<String>()
 
             for ((userId, share) in userMap) {
                 if (share) {
                     val countUserAlbum = userAlbumRepository.countByUserIdAndAlbumId(userId.toInt(), albumId)
                     if (countUserAlbum == 0) {
+                        val userObj = userRepository.findById(userId.toInt())
+
                         val userAlbumObj = UserAlbum()
                         userAlbumObj.setUserId(userId.toInt())
                         userAlbumObj.setAlbumId(shareAlbumId)
@@ -1092,12 +1117,27 @@ class AlbumsController: BaseController() {
                         notificationObj.setRead(false)
                         notificationObj.setMessage("Album '<a href='/album/$shareAlbumId' target='_blank'>${albumObj?.getName()}</a>' was shared with you.")
                         notificationObjList.add(notificationObj)
+
+                        userList.add(userObj.get().getUsername()!!)
                     }
                 } else {
                     val userAlbumObj = userAlbumRepository.findDistinctByUserIdAndAlbumId(userId.toInt(),shareAlbumId)
                     if (userAlbumObj != null) {
                         deleteUserAlbumList.add(userAlbumObj)
                     }
+                }
+            }
+
+            if (userList.size > 0) {
+                val userListString = userList.joinToString(",")
+                for (admin in admins) {
+                    val notificationObj = Notification()
+                    notificationObj.setUserId(admin.getId())
+                    notificationObj.setCreatedAt(getCurrentTimestamp())
+                    notificationObj.setModifiedAt(getCurrentTimestamp())
+                    notificationObj.setRead(false)
+                    notificationObj.setMessage("Album '<a href='/album/$shareAlbumId' target='_blank'>${albumObj?.getName()}</a>' was shared with users $userListString")
+                    notificationObjList.add(notificationObj)
                 }
             }
 

@@ -155,23 +155,25 @@
         }
     }
 
-    albumsModalListeners.setAlbumModalListeners = function (albumId, baseUrl) {
+    albumsModalListeners.setAlbumModalListeners = function () {
         $("#propsharealbums").on('hide.bs.modal', function () {
-            $("#clearLink").off();
-            $("#generateLink").off();
-            $("#copyLink").off();
-            $("#saveUserShare").off();
+            // $("#clearLink").off();
+            // $("#generateLink").off();
+            // $("#copyLink").off();
+            // $("#saveUserShare").off();
 
             $("#albumsModalStatus").attr("class","spinner-grow me-auto");
             $("#albumsModalStatus").invisible();
             $("#msg").html("");
-            $("#propsharealbums").off();
+            // $("#propsharealbums").off();
         });
 
-        if ($("#shareLink").val() === "") {
-            $("#copyLink").prop('disabled', true);
-            $("#clearLink").prop('disabled', true);
-        }
+        $("#propsharealbums").on('shown.bs.modal', function () {
+            if ($("#shareLink").val() === "") {
+                $("#copyLink").prop('disabled', true);
+                $("#clearLink").prop('disabled', true);
+            }
+        });
 
         $("#clearLink").on("click", function (e) {
             if ($("#shareLink").val() !== "") {
@@ -203,6 +205,8 @@
 
         $("#shareConfirmation").on("click", function (e) {
             e.preventDefault();
+            const albumId = $("#currentAlbumId").val();
+            const baseUrl = $("#currentBaseUrl").val();
 
             const action = $("#shareConfirmationAction").val();
             if (action !== null && action.length > 0) {
@@ -256,6 +260,8 @@
         });
 
         async function saveUserShare() {
+            const albumId = $("#currentAlbumId").val();
+
             $("#albumsModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
             $("#albumsModalStatus").visible();
             $("#albumsModalStatus").attr("title", "");
@@ -304,7 +310,7 @@
         }
     }
 
-    albumsModalListeners.setCommentModalListeners = function (albumId, username) {
+    albumsModalListeners.setCommentModalListeners = function () {
         // $("#propcommentalbums").on('show.bs.modal', async function () {
         //     const http = new Http("album notification read");
         //     const data = await http.ajax("get", "/notifications/markread/album/" + albumId);
@@ -313,14 +319,16 @@
         $("#propcommentalbums").on('hide.bs.modal', async function () {
             $("#commentList").empty();
 
-            $("#cancelEditCommentAlbum").off();
-            $("#updateCommentAlbum").off();
-            $("#saveCommentAlbum").off();
-            $("#propcommentalbums").off();
+            // $("#cancelEditCommentAlbum").off();
+            // $("#updateCommentAlbum").off();
+            // $("#saveCommentAlbum").off();
+            // $("#propcommentalbums").off();
         });
 
-        $("#updateCommentAlbum").hide();
-        $("#cancelEditCommentAlbum").hide();
+        $("#propcommentalbums").on('shown.bs.modal', async function () {
+            $("#updateCommentAlbum").hide();
+            $("#cancelEditCommentAlbum").hide();
+        });
 
         $("#cancelEditCommentAlbum").on("click", function (e) {
             e.preventDefault();
@@ -393,6 +401,8 @@
 
         $("#saveCommentAlbum").on("click", async function (e) {
             e.preventDefault();
+            const username = $("#currentUser").val()
+            const albumId = $("#currentAlbumId").val();
 
             let comment = $.trim($("#commentText").val());
 
@@ -433,7 +443,7 @@
         });
     }
 
-    albumsModalListeners.setEditCommentModalListeners = function (commentId, albumId) {
+    albumsModalListeners.setEditCommentModalListeners = function (commentId) {
         $("#propcommentalbums").on('hide.bs.modal', async function () {
             $("#commentList").empty();
 
@@ -444,11 +454,13 @@
 
         $("#deletecomment"+commentId).on("click", function (e) {
             e.preventDefault();
+            const albumId = $("#currentAlbumId").val();
             albumsCommentsSettings.deleteComment(commentId, albumId);
         });
 
         $("#editcomment"+commentId).on("click", function (e) {
             e.preventDefault();
+            const albumId = $("#currentAlbumId").val();
             $("#currentCommentId").val("");
             albumsCommentsSettings.editComment(albumId, commentId);
         });
