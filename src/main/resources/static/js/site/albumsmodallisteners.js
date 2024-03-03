@@ -430,7 +430,9 @@
 
                         $("#deletecomment" + commentId).on("click", function (e) {
                             e.preventDefault();
-                            albumsCommentsSettings.deleteComment(commentId, albumId);
+                            $("#albumsCommentAlbumId").val(albumId);
+                            $("#albumsCommentCommentId").val(commentId);
+                            $("#propalbumstrashcomment").modal('show');
                         });
 
                         $("#editcomment" + commentId).on("click", function (e) {
@@ -455,7 +457,9 @@
         $("#deletecomment"+commentId).on("click", function (e) {
             e.preventDefault();
             const albumId = $("#currentAlbumId").val();
-            albumsCommentsSettings.deleteComment(commentId, albumId);
+            $("#albumsCommentAlbumId").val(albumId);
+            $("#albumsCommentCommentId").val(commentId);
+            $("#propalbumstrashcomment").modal('show');
         });
 
         $("#editcomment"+commentId).on("click", function (e) {

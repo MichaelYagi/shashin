@@ -216,6 +216,24 @@
     </div>
 </div>
 
+<div class="modal fade" id="propalbumstrashcomment" tabindex="-1" role="dialog" aria-labelledby="labeltrashcomment" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="trashalbumscommentModalLabel">Delete comment?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">Are you sure you want to delete this comment?</div>
+            <input type="hidden" id="albumsCommentAlbumId">
+            <input type="hidden" id="albumsCommentCommentId">
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="deleteAlbumsComment">Confirm</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
     $(document).ready(function() {
         /*<![CDATA[*/
