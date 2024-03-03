@@ -17,6 +17,14 @@ class Albums {
         shashin.pageLoader(await this.loadNextPage.bind(this), ".appendAlbumsPhotos", this.albumsList);
         albumsModalListeners.setAlbumModalListeners();
         albumsModalListeners.setCommentModalListeners();
+
+        $("#deleteAlbumsComment").on("click", function (e) {
+            e.preventDefault();
+            const commentId = $("#albumsCommentCommentId").val();
+            const albumId = $("#albumsCommentAlbumId").val();
+            albumsCommentsSettings.deleteComment(commentId, albumId);
+            $("#propalbumstrashcomment").modal('hide');
+        });
     }
 
     async loadNextPage() {

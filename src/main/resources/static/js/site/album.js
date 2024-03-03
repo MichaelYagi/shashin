@@ -39,6 +39,14 @@
             }
         }
 
+        $("#deleteComment").on("click", function (e) {
+            e.preventDefault();
+            const commentId = $("#commentCommentId").val();
+            const metadataId = $("#commentMetadataId").val();
+            albumSettings.deleteComment(commentId, metadataId);
+            $("#proptrashcomment").modal('hide');
+        });
+
         shashin.pageLoader(await loadNextPage, ".appendAlbumPhotos", albumMetadataList);
         shashin.mouseMoveListener();
         shashin.closeGalleryOnBack();
@@ -233,7 +241,6 @@
         if ($("#currentCommentId" + metadataId).val() === "") {
             $("#currentCommentId" + metadataId).val(commentId);
 
-
             $("#saveCommentMetadata" + metadataId).hide();
             $("#dismissModalCommentMetadata" + metadataId).hide();
             $("#updateCommentMetadata" + metadataId).show();
@@ -252,7 +259,9 @@
     albumSettings.albumCommentsDeleteEditModalListener = function(commentId, metadataId) {
         $("#deletecomment" + commentId).on("click", function (e) {
             e.preventDefault();
-            albumSettings.deleteComment(commentId, metadataId);
+            $("#commentMetadataId").val(metadataId);
+            $("#commentCommentId").val(commentId);
+            $("#proptrashcomment").modal('show');
         });
 
         $("#editcomment" + commentId).on("click", function (e) {
@@ -365,7 +374,9 @@
 
                     $("#deletecomment" + commentId).on("click", function (e) {
                         e.preventDefault();
-                        albumSettings.deleteComment(commentId, metadata.id);
+                        $("#commentMetadataId").val(metadata.id);
+                        $("#commentCommentId").val(commentId);
+                        $("#proptrashcomment").modal('show');
                     });
 
                     $("#editcomment" + commentId).on("click", function (e) {

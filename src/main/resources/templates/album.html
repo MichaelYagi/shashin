@@ -150,6 +150,24 @@
     </div>
 </div>
 
+<div class="modal fade" id="proptrashcomment" tabindex="-1" role="dialog" aria-labelledby="labeltrashcomment" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="trashcommentModalLabel">Delete comment?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">Are you sure you want to delete this comment?</div>
+            <input type="hidden" id="commentMetadataId">
+            <input type="hidden" id="commentCommentId">
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="deleteComment">Confirm</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
     <script src="/js/site/applisteners.js" type="text/javascript" th:nonce="${cspNonce}"></script>
     <script src="/js/site/albumlisteners.js" type="text/javascript" th:nonce="${cspNonce}"></script>
