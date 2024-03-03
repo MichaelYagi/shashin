@@ -227,6 +227,7 @@ class Albums {
 
             if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("album") && data["status"] === shashin.apiResponse.SUCCESS) {
                 let album = data["album"];
+                let canEdit = data["canEdit"];
 
                 $("#albumNameComments").text(album["name"]);
                 const version = Util.getMetadataLocalStorage();
@@ -255,6 +256,10 @@ class Albums {
                                 html += '<small><span style="float: right">';
                                 html += '<a href="#" id="deletecomment' + comments.commentId + '"><span class="bi-trash"></span></a>&nbsp;&nbsp';
                                 html += '<a href="#" id="editcomment' + comments.commentId + '"><span class="bi-pencil"></span></a>';
+                                html += '</span></small>';
+                            } else if (canEdit) {
+                                html += '<small><span style="float: right">';
+                                html += '<a href="#" id="deletecomment' + comments.commentId + '"><span class="bi-trash"></span></a>&nbsp;&nbsp';
                                 html += '</span></small>';
                             }
                             html += '</span><span id="textareacontainer' + comments.commentId + '"></span>';
