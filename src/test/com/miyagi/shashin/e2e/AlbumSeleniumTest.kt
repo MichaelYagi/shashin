@@ -373,18 +373,9 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         Assertions.assertTrue(this.driver!!.findElement(By.id("commentcontent$commentId")).text.contains("Test update"))
 
         // Delete comment
-        val confirmDeleteCommentEl = this.driver!!.findElement(By.id("deletecomment$commentId"))
+        val deleteCommentEl = this.driver!!.findElement(By.id("deletecomment$commentId"))
         scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
-        confirmDeleteCommentEl.click()
-
-        scanBeforeAfter = null
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
-            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
-        }
-
-        val deleteCommentEl = this.driver!!.findElement(By.id("deleteAlbumsComment"))
         deleteCommentEl.click()
-
         startTime = System.currentTimeMillis()
         scanBeforeAfter = null
         while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
