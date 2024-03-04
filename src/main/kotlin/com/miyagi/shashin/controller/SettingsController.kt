@@ -152,8 +152,6 @@ class SettingsController {
 
     private var alreadyScannedFilepaths = mutableListOf<String>()
 
-    private var scanCount: Int = 0
-
     private var recognitionCount: Int = 0
 
     private var metadataIdArray = mutableListOf<String>()
@@ -1493,7 +1491,6 @@ class SettingsController {
 
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     fun scanMediaDirectories(reindexFiles: Boolean): String {
-        scanCount = 0
         recognitionCount = 0
         val superAdmins = userRepository?.findAllByAuthorityEquals(superRole!!)
 
@@ -1850,6 +1847,7 @@ class SettingsController {
                             }
 
                             Thread {
+                                val metadataArrayCount = metadataIdArray.count()
                                 for (metadataId in metadataIdArray) {
                                     val metadataObj = metadataRepository?.findByMetadataId(metadataId)
                                     if (metadataObj != null) {
@@ -1857,7 +1855,7 @@ class SettingsController {
 
                                         // Set notification for scanCount and date and link to /recent
                                         var msg =
-                                            "Scan complete for <a href='/recent' target='_blank'>$scanCount images/videos</a>"
+                                            "Scan complete for <a href='/recent' target='_blank'>$metadataArrayCount images/videos</a>"
                                         if (recognitionCount > 0) {
                                             msg += " and <a href='/people' target='_blank'>$recognitionCount faces recognized</a>"
                                         }
@@ -2005,7 +2003,6 @@ class SettingsController {
                                         try {
                                             metadataRepository?.save(metadataObj)
                                             metadataIdArray.add(metadataObj.getId())
-                                            scanCount++
 
                                             if (settings != null && webClient != null && compreFaceServerConnected) {
                                                 try {
