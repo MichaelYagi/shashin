@@ -349,7 +349,7 @@ $("#saveMetadata").on("click", async function (e) {
                 }
 
                 // If in timeline and date, lat, lng changed, or hidden, refresh cache version
-                if (activePage === "timeline" && (takenDateUpdated === true || metadataObj.hidden === true || prevLat !== metadataObj.lat || prevLng !== metadataObj.lng || prevPlaceName !== metadataObj.placeName)) {
+                if (activePage === "timeline") {
                     Util.setMetadataLocalStorage();
                 }
 
@@ -369,9 +369,8 @@ $("#saveMetadata").on("click", async function (e) {
                 // If not timeline or map
                 if (activePage !== "timeline" && activePage !== "map") {
                     // refresh version
-                    if (prevLat !== metadataObj.lat || prevLng !== metadataObj.lng) {
-                        Util.setMetadataLocalStorage();
-                    }
+                    Util.setMetadataLocalStorage();
+
                     // Reload page
                     if (
                         (activePage !== "recent" && activePage !== "modified" && activePage !== "folder" && activePage !== "taken" && takenDateUpdated === true) ||
