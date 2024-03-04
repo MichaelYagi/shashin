@@ -11,6 +11,7 @@
     timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
     timelineSettings.initialized = false;
     timelineSettings.timelineDates = [];
+    timelineSettings.timelineDatesHash = {};
     timelineSettings.distanceToFooter = 9999;
     timelineSettings.metadataYearMonthCount = [];
     timelineSettings.thumbnailsPerRow = 4;
@@ -53,9 +54,10 @@
         Util.reinitLightGalleryInstance();
     }
 
-    timelineSettings.init = function(mediaTypeFilter, metadataDates, metadataYearMonthCount) {
+    timelineSettings.init = function(mediaTypeFilter, metadataDates, metadataYearMonthCount, timelineDatesHash) {
         timelineSettings.timelineDates = metadataDates;
         timelineSettings.metadataYearMonthCount = metadataYearMonthCount;
+        timelineSettings.timelineDatesHash = timelineDatesHash;
 
         Util.setMetadataLocalStorage();
 
