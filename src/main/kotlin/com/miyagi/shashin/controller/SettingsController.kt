@@ -1846,34 +1846,35 @@ class SettingsController {
                                 logger.log(Level.INFO, "Scan Complete")
                             }
 
-                            Thread {
-                                val metadataArrayCount = metadataIdArray.count()
-                                if (superAdmins != null && metadataArrayCount > 0) {
-                                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                            val metadataArrayCount = metadataIdArray.count()
+                            if (superAdmins != null && metadataArrayCount > 0) {
+                                val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
 
-                                    // Set notification for scanCount and date and link to /recent
-                                    var msg =
-                                        "Scan complete for <a href='/recent' target='_blank'>$metadataArrayCount images/videos</a>"
-                                    if (recognitionCount > 0) {
-                                        msg += " and <a href='/people' target='_blank'>$recognitionCount faces recognized</a>"
-                                    }
-                                    msg += " at ${sdtf.format(Date())}."
-
-                                    val notificationObjList = mutableListOf<Notification>()
-                                    for (admin in superAdmins) {
-                                        val notificationObj = Notification()
-                                        notificationObj.setUserId(admin.getId())
-                                        notificationObj.setCreatedAt(getCurrentTimestamp())
-                                        notificationObj.setModifiedAt(getCurrentTimestamp())
-                                        notificationObj.setRead(false)
-                                        notificationObj.setMessage(msg)
-                                        notificationObjList.add(notificationObj)
-                                    }
-                                    if (notificationObjList.isNotEmpty()) {
-                                        logger.log(Level.INFO, "Notifications saved for photos scanned for super admins.")
-                                        notificationRepository?.saveAll(notificationObjList)
-                                    }
+                                // Set notification for scanCount and date and link to /recent
+                                var msg =
+                                    "Scan complete for <a href='/recent' target='_blank'>$metadataArrayCount images/videos</a>"
+                                if (recognitionCount > 0) {
+                                    msg += " and <a href='/people' target='_blank'>$recognitionCount faces recognized</a>"
                                 }
+                                msg += " at ${sdtf.format(Date())}."
+
+                                val notificationObjList = mutableListOf<Notification>()
+                                for (admin in superAdmins) {
+                                    val notificationObj = Notification()
+                                    notificationObj.setUserId(admin.getId())
+                                    notificationObj.setCreatedAt(getCurrentTimestamp())
+                                    notificationObj.setModifiedAt(getCurrentTimestamp())
+                                    notificationObj.setRead(false)
+                                    notificationObj.setMessage(msg)
+                                    notificationObjList.add(notificationObj)
+                                }
+                                if (notificationObjList.isNotEmpty()) {
+                                    logger.log(Level.INFO, "Notifications saved for photos scanned for super admins.")
+                                    notificationRepository?.saveAll(notificationObjList)
+                                }
+                            }
+
+                            Thread {
                                 for (metadataId in metadataIdArray) {
                                     val metadataObj = metadataRepository?.findByMetadataId(metadataId)
                                     if (metadataObj != null) {
