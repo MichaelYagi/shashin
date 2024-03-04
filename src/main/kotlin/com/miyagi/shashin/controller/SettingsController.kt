@@ -1853,6 +1853,32 @@ class SettingsController {
                                 for (metadataId in metadataIdArray) {
                                     val metadataObj = metadataRepository?.findByMetadataId(metadataId)
                                     if (metadataObj != null) {
+                                        val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+
+                                        // Set notification for scanCount and date and link to /recent
+                                        var msg =
+                                            "Scan complete for <a href='/recent' target='_blank'>$scanCount images/videos</a>"
+                                        if (recognitionCount > 0) {
+                                            msg += " and <a href='/people' target='_blank'>$recognitionCount faces recognized</a>"
+                                        }
+                                        msg += " at ${sdtf.format(Date())}."
+
+                                        if (superAdmins != null) {
+                                            val notificationObjList = mutableListOf<Notification>()
+                                            for (admin in superAdmins) {
+                                                var notificationObj = Notification()
+                                                notificationObj.setUserId(admin.getId())
+                                                notificationObj.setCreatedAt(getCurrentTimestamp())
+                                                notificationObj.setModifiedAt(getCurrentTimestamp())
+                                                notificationObj.setRead(false)
+                                                notificationObj.setMessage(msg)
+                                                notificationObjList.add(notificationObj)
+                                            }
+                                            if (notificationObjList.isNotEmpty()) {
+                                                notificationRepository?.saveAll(notificationObjList)
+                                            }
+                                        }
+
                                         val lat = metadataObj.getLat()
                                         val lng = metadataObj.getLng()
                                         if (!lat.isNullOrBlank() && !lng.isNullOrBlank()) {
@@ -1882,35 +1908,6 @@ class SettingsController {
                                 }
                                 metadataIdArray.clear()
                             }.start()
-
-                            val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
-
-                            if (scanCount > 0) {
-                                // Set notification for scanCount and date and link to /recent
-
-                                var msg =
-                                    "Scan complete for <a href='/recent' target='_blank'>$scanCount images/videos</a>"
-                                if (recognitionCount > 0) {
-                                    msg += " and <a href='/people' target='_blank'>$recognitionCount faces recognized</a>"
-                                }
-                                msg += " at ${sdtf.format(Date())}."
-
-                                if (superAdmins != null) {
-                                    val notificationObjList = mutableListOf<Notification>()
-                                    for (admin in superAdmins) {
-                                        var notificationObj = Notification()
-                                        notificationObj.setUserId(admin.getId())
-                                        notificationObj.setCreatedAt(getCurrentTimestamp())
-                                        notificationObj.setModifiedAt(getCurrentTimestamp())
-                                        notificationObj.setRead(false)
-                                        notificationObj.setMessage(msg)
-                                        notificationObjList.add(notificationObj)
-                                    }
-                                    if (notificationObjList.isNotEmpty()) {
-                                        notificationRepository?.saveAll(notificationObjList)
-                                    }
-                                }
-                            }
 
                             // Delete thread file
                             if (threadFile.delete()) {
@@ -2007,8 +2004,8 @@ class SettingsController {
 
                                         try {
                                             metadataRepository?.save(metadataObj)
-
                                             metadataIdArray.add(metadataObj.getId())
+                                            scanCount++
 
                                             if (settings != null && webClient != null && compreFaceServerConnected) {
                                                 try {
@@ -2222,7 +2219,6 @@ class SettingsController {
                                             }
 
                                             threadText = file.path + " indexed"
-                                            scanCount++
                                         } catch (e: Exception) {
                                             logger.log(
                                                 Level.SEVERE,
