@@ -1883,37 +1883,37 @@ class SettingsController {
                                 metadataIdArray.clear()
                             }.start()
 
-                            // Delete thread file
-                            if (threadFile.delete()) {
-                                val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                            val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
 
-                                if (scanCount > 0) {
-                                    // Set notification for scanCount and date and link to /recent
+                            if (scanCount > 0) {
+                                // Set notification for scanCount and date and link to /recent
 
-                                    var msg =
-                                        "Scan complete for <a href='/recent' target='_blank'>$scanCount images/videos</a>"
-                                    if (recognitionCount > 0) {
-                                        msg += " and <a href='/people' target='_blank'>$recognitionCount faces recognized</a>"
+                                var msg =
+                                    "Scan complete for <a href='/recent' target='_blank'>$scanCount images/videos</a>"
+                                if (recognitionCount > 0) {
+                                    msg += " and <a href='/people' target='_blank'>$recognitionCount faces recognized</a>"
+                                }
+                                msg += " at ${sdtf.format(Date())}."
+
+                                if (superAdmins != null) {
+                                    val notificationObjList = mutableListOf<Notification>()
+                                    for (admin in superAdmins) {
+                                        var notificationObj = Notification()
+                                        notificationObj.setUserId(admin.getId())
+                                        notificationObj.setCreatedAt(getCurrentTimestamp())
+                                        notificationObj.setModifiedAt(getCurrentTimestamp())
+                                        notificationObj.setRead(false)
+                                        notificationObj.setMessage(msg)
+                                        notificationObjList.add(notificationObj)
                                     }
-                                    msg += " at ${sdtf.format(Date())}."
-
-                                    if (superAdmins != null) {
-                                        val notificationObjList = mutableListOf<Notification>()
-                                        for (admin in superAdmins) {
-                                            var notificationObj = Notification()
-                                            notificationObj.setUserId(admin.getId())
-                                            notificationObj.setCreatedAt(getCurrentTimestamp())
-                                            notificationObj.setModifiedAt(getCurrentTimestamp())
-                                            notificationObj.setRead(false)
-                                            notificationObj.setMessage(msg)
-                                            notificationObjList.add(notificationObj)
-                                        }
-                                        if (notificationObjList.isNotEmpty()) {
-                                            notificationRepository?.saveAll(notificationObjList)
-                                        }
+                                    if (notificationObjList.isNotEmpty()) {
+                                        notificationRepository?.saveAll(notificationObjList)
                                     }
                                 }
+                            }
 
+                            // Delete thread file
+                            if (threadFile.delete()) {
                                 logger.log(Level.FINE, "Thread file deleted: " + threadFile.name)
                             } else {
                                 logger.log(Level.SEVERE, "Could not delete thread file: " + threadFile.name)
