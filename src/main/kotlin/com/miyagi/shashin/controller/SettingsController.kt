@@ -1869,7 +1869,6 @@ class SettingsController {
                                     notificationObjList.add(notificationObj)
                                 }
                                 if (notificationObjList.isNotEmpty()) {
-                                    logger.log(Level.INFO, "Notifications saved for photos scanned for super admins.")
                                     notificationRepository?.saveAll(notificationObjList)
                                 }
                             }
