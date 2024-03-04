@@ -873,6 +873,9 @@
     }
 
     shashin.openMap = function (metadata) {
+        shashin.printMessageToConsole("Opening Map with metadata");
+        shashin.printMessageToConsole(metadata);
+
         if (Object.keys(metadata).length > 0 &&
             metadata.lat !== null && metadata.lng !== null &&
             metadata.lat !== "" && metadata.lng !== ""
