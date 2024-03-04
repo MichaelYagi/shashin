@@ -20,9 +20,9 @@ class VideoProcessing(private val videoFile: File) {
 
     fun getVideoScreenshot(): BufferedImage? {
         var bi: BufferedImage? = null
-        frameGrabber.start()
-
         try {
+            frameGrabber.start()
+
             val aa = Java2DFrameConverter()
 
             val f = frameGrabber.grabImage()
@@ -50,8 +50,6 @@ class VideoProcessing(private val videoFile: File) {
 
         var bi: BufferedImage?
 
-        frameGrabber.start()
-
         val tempGifFilePath = System.getProperty("java.io.tmpdir") + "/temp.gif"
         if (Files.exists(Paths.get(tempGifFilePath))) {
             val tempFile = File(tempGifFilePath)
@@ -59,6 +57,8 @@ class VideoProcessing(private val videoFile: File) {
         }
 
         try {
+            frameGrabber.start()
+
             val frameConverter = Java2DFrameConverter()
             val output: ImageOutputStream = FileImageOutputStream(File(tempGifFilePath))
             val writer = GifSequenceWriter(output, BufferedImage.TYPE_INT_ARGB, 0, true)
