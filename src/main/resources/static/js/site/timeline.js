@@ -956,17 +956,19 @@
         }
 
         // Remove dates out of order
-        const sections = $('section');
-        let prevIndex = 0;
-        sections.each(function (index, element) {
-            const currentTimelineIndex = timelineSettings.timelineDatesHash[element.id];
+        setTimeout(function () {
+            const sections = $('section');
+            let prevIndex = 0;
+            sections.each(function (index, element) {
+                const currentTimelineIndex = timelineSettings.timelineDatesHash[element.id];
 
-            if (prevIndex > 0 && prevIndex+1 !== currentTimelineIndex) {
-                Util.removeDateGallery(element.id);
-            }
+                if (prevIndex > 0 && prevIndex + 1 !== currentTimelineIndex) {
+                    Util.removeDateGallery(element.id);
+                }
 
-            prevIndex = currentTimelineIndex;
-        });
+                prevIndex = currentTimelineIndex;
+            });
+        }, 0);
 
         $("#spinner_top").css("display", "none");
         $("#spinner_bottom").css("display", "none");
