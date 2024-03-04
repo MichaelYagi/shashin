@@ -907,6 +907,7 @@
                         // Stage 1 - create a placeholder dive to enable scrolling through additional content based on current date section
                         const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
                         if (Util.isMobile() === false) {
+                            shashin.printMessageToConsole("timelineSettings.createEmptyContainer called");
                             // Stage 1 - create an empty block
                             await timelineSettings.createEmptyContainer(currentDate, anchorPoint, sectionHeight);
                             action = "emptyContainer";
