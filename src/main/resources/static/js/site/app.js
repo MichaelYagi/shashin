@@ -1,5 +1,6 @@
 (function( shashin, $, undefined ) {
     shashin.showDebug = false;
+    shashin.showTrace = false;
     shashin.map = null;
     shashin.layer = null;
     shashin.feature = null;
@@ -2404,8 +2405,14 @@
     }
 
     // Call in console
-    shashin.enableDebug = function () {
+    shashin.enableDebug = function (showTrace) {
         shashin.showDebug = true;
+
+        if (showTrace === undefined) {
+            showTrace = false;
+        }
+
+        shashin.showTrace = showTrace;
 
         if (Util.localStorageAvailable() === true) {
             localStorage.setItem("showDebug", "on");
@@ -2432,6 +2439,9 @@
 
         if (shashin.showDebug === true || localStorageDebugFlag === true) {
             console.log(msg);
+            if (shashin.showTrace === true) {
+                console.trace();
+            }
         }
     }
 
