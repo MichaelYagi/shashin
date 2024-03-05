@@ -1720,6 +1720,13 @@
             $("#tnbl" + metadata.id).hide();
         }
 
+        $("#photoThumbnailContainer" + metadata.id).hover(function () {}, function () {
+            if (metadata.type.includes("video")) {
+                const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
+                $("#image" + metadata.id).attr("src", jpgUrl);
+            }
+        });
+
         $("#select" + metadata.id).on("click", function (e) {
             e.preventDefault();
 
