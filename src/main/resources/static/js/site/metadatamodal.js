@@ -348,11 +348,6 @@ $("#saveMetadata").on("click", async function (e) {
                     });
                 }
 
-                // If in timeline and date, lat, lng changed, or hidden, refresh cache version
-                if (activePage === "timeline") {
-                    Util.setMetadataLocalStorage();
-                }
-
                 if (typeof Util !== "undefined" && dateGalleryRemoved === false && captionUpdated === true) {
                     let refreshContent = true;
                     if (activePage === "timeline") {
@@ -366,23 +361,20 @@ $("#saveMetadata").on("click", async function (e) {
                     Util.reinitLightGalleryInstance(options);
                 }
 
-                // If not timeline or map
-                if (activePage !== "timeline" && activePage !== "map") {
-                    // refresh version
-                    Util.setMetadataLocalStorage();
+                // refresh version
+                Util.setMetadataLocalStorage();
 
-                    // Reload page
-                    if (
-                        (activePage !== "recent" && activePage !== "modified" && activePage !== "folder" && activePage !== "taken" && takenDateUpdated === true) ||
-                        metadataObj.hidden === true ||
-                        (activePage === "album" && Util.arraysEqual(prevAlbumsArray,albumsArray) === false)
-                    ) {
-                        window.location.reload();
-                    }
+                // Reload page
+                if (
+                    (activePage !== "recent" && activePage !== "modified" && activePage !== "folder" && activePage !== "taken" && takenDateUpdated === true) ||
+                    metadataObj.hidden === true ||
+                    (activePage === "album" && Util.arraysEqual(prevAlbumsArray,albumsArray) === false)
+                ) {
+                    window.location.reload();
+                }
 
-                    if (activePage === "matches" || (Util.arraysEqual(prevPeopleArray,peopleArray) === false && activePage === "person")) {
-                        window.location.reload();
-                    }
+                if (activePage === "matches" || (Util.arraysEqual(prevPeopleArray,peopleArray) === false && activePage === "person")) {
+                    window.location.reload();
                 }
 
                 $("#metadataModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
