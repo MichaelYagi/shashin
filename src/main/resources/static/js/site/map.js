@@ -857,6 +857,7 @@ async function showMap(mapdata) {
         // register double click event to change date input to text input and select the value
         singleDateInput.on('dblclick', () => {
             el.type = "text";
+            el.placeholder = "yyyy-mm-dd";
 
             // After changing input type with JS .select() wont work as usual
             // Needs timeout fn() to make it work
@@ -868,11 +869,13 @@ async function showMap(mapdata) {
         // register the focusout event to reset the input back to a date input field
         singleDateInput.on('focusout', () => {
             el.type = "date";
+            el.placeholder = "mm/dd/yyyy";
         });
         singleDateInput.on('keypress',function(e) {
             // Enter key
             if(e.which === 13) {
                 el.type = "date";
+                el.placeholder = "mm/dd/yyyy";
             }
         });
     });
