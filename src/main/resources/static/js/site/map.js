@@ -255,10 +255,10 @@ async function showMap(mapdata) {
 
         progressBarWrapper.visible();
 
-        let minLat = 0;
-        let maxLat = 0;
-        let minLng = 0;
-        let maxLng = 0;
+        let minLat = null;
+        let maxLat = null;
+        let minLng = null;
+        let maxLng = null;
 
         for (let index in mapdata) {
             const data = mapdata[index];
@@ -283,19 +283,19 @@ async function showMap(mapdata) {
                 const lat = data["lat"];
                 const lng = data["lng"];
 
-                if (minLat === 0 || lat < minLat) {
+                if (minLat === null || lat < minLat) {
                     minLat = lat;
                 }
 
-                if (maxLat === 0 || lat > maxLat) {
+                if (maxLat === null || lat > maxLat) {
                     maxLat = lat;
                 }
 
-                if (minLng === 0 || lng < minLng) {
+                if (minLng === null || lng < minLng) {
                     minLng = lng;
                 }
 
-                if (maxLng === 0 || lng > maxLng) {
+                if (maxLng === null || lng > maxLng) {
                     maxLng = lng;
                 }
 
@@ -385,27 +385,14 @@ async function showMap(mapdata) {
 
             map.addLayer(vectorLayer);
 
-            if (minLat === 0 && maxLat !== 0) {
-                minLat = maxLat;
-            }
-            if (maxLat === 0 && minLat !== 0) {
-                maxLat = minLat;
-            }
-            if (minLng === 0 && maxLng !== 0) {
-                minLng = maxLng;
-            }
-            if (maxLng === 0 && minLng !== 0) {
-                maxLng = minLng;
-            }
-
             shashin.printMessageToConsole("minLat for map filtering: "+minLat);
             shashin.printMessageToConsole("minLng for map filtering: "+minLng)
             shashin.printMessageToConsole("maxLat for map filtering: "+maxLat)
             shashin.printMessageToConsole("maxLng for map filtering: "+maxLng)
 
-            if (resetMap === false && minLat !== 0 && minLng !== 0 && maxLat !== 0 && maxLng !== 0) {
+            if (resetMap === false && minLat !== null && minLng !== null && maxLat !== null && maxLng !== null) {
                 const mapSize = map.getSize();
-                const mapSizeAdjust = 100;
+                const mapSizeAdjust = 200;
                 let sizeX = mapSize[0]-mapSizeAdjust;
                 if (sizeX <= 0) {
                     sizeX = mapSize[0];
