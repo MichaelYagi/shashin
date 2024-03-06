@@ -244,10 +244,14 @@ async function showMap(mapdata) {
         return true;
     }
 
-    function setLayer(startDate, endDate, videoOnly, metadataList) {
+    function setLayer(startDate, endDate, videoOnly, metadataList, resetMap) {
         version = Util.getMetadataLocalStorage();
         map.removeLayer(vectorLayer);
         const iconFeatures = [];
+
+        if (resetMap === undefined) {
+            resetMap = false;
+        }
 
         progressBarWrapper.visible();
 
@@ -399,7 +403,7 @@ async function showMap(mapdata) {
             shashin.printMessageToConsole("maxLat for map filtering: "+maxLat)
             shashin.printMessageToConsole("maxLng for map filtering: "+maxLng)
 
-            if (minLat !== 0 && minLng !== 0 && maxLat !== 0 && maxLng !== 0) {
+            if (resetMap === false && minLat !== 0 && minLng !== 0 && maxLat !== 0 && maxLng !== 0) {
                 const mapSize = map.getSize();
                 const mapSizeAdjust = 100;
                 let sizeX = mapSize[0]-mapSizeAdjust;
@@ -823,7 +827,7 @@ async function showMap(mapdata) {
     });
 
     checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))
-    setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
+    setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],true);
 
     $("#filterMap").on("click", function(e) {
         e.preventDefault();
@@ -971,7 +975,7 @@ async function showMap(mapdata) {
             $("#albumSelect").val("0");
         }
 
-        setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
+        setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],true);
         shashin.showToastMessage("Map reset", "Map reset", {icon:"bi-info-circle", iconColor:"#777777", delay: 3000});
 
         $("#propMapFilter").modal('hide');
