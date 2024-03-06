@@ -251,6 +251,11 @@ async function showMap(mapdata) {
 
         progressBarWrapper.visible();
 
+        let minLat = 0;
+        let maxLat = 0;
+        let minLng = 0;
+        let maxLng = 0;
+
         for (let index in mapdata) {
             const data = mapdata[index];
 
@@ -270,6 +275,25 @@ async function showMap(mapdata) {
 
             if (data["lat"] !== null && data["lng"] !== null &&
                 data["lat"] !== "" && data["lng"] !== "") {
+
+                const lat = data["lat"];
+                const lng = data["lng"];
+
+                if (minLat === 0 || lat < minLat) {
+                    minLat = lat;
+                }
+
+                if (maxLat === 0 || lat > maxLat) {
+                    maxLat = lat;
+                }
+
+                if (minLng === 0 || lng < minLng) {
+                    minLng = lng;
+                }
+
+                if (maxLng === 0 || lng > maxLng) {
+                    maxLng = lng;
+                }
 
                 let dateTakenObj = new Date(data["year"],parseInt(data["month"])-1,data["day"]);
 
@@ -318,8 +342,8 @@ async function showMap(mapdata) {
                         originalImageWidth: data["originalImageWidth"],
                         originalImageHeight: data["originalImageHeight"],
                         metadataId: data["id"],
-                        lat: data["lat"],
-                        lng: data["lng"],
+                        lat: lat,
+                        lng: lng,
                         type: data["type"]
                     });
 
@@ -356,7 +380,41 @@ async function showMap(mapdata) {
             });
 
             map.addLayer(vectorLayer);
-            map.getView().setZoom(initialZoom);
+
+            if (minLat === 0 && maxLat !== 0) {
+                minLat = maxLat;
+            }
+            if (maxLat === 0 && minLat !== 0) {
+                maxLat = minLat;
+            }
+            if (minLng === 0 && maxLng !== 0) {
+                minLng = maxLng;
+            }
+            if (maxLng === 0 && minLng !== 0) {
+                maxLng = minLng;
+            }
+
+            shashin.printMessageToConsole("minLat for map filtering: "+minLat);
+            shashin.printMessageToConsole("minLng for map filtering: "+minLng)
+            shashin.printMessageToConsole("maxLat for map filtering: "+maxLat)
+            shashin.printMessageToConsole("maxLng for map filtering: "+maxLng)
+
+            if (minLat !== 0 && minLng !== 0 && maxLat !== 0 && maxLng !== 0) {
+                const mapSize = map.getSize();
+                const mapSizeAdjust = 100;
+                let sizeX = mapSize[0]-100;
+                if (sizeX <= 0) {
+                    sizeX = mapSize[0];
+                }
+                let sizeY = mapSize[1]-100;
+                if (sizeY <= 0) {
+                    sizeY = mapSize[1];
+                }
+                map.getView().fit(ol.proj.transformExtent([minLng, minLat, maxLng, maxLat], 'EPSG:4326', map.getView().getProjection()), { size: [sizeX,sizeY] });
+            } else {
+                map.getView().setZoom(initialZoom);
+            }
+
             initialZoom = 2;
         }
     }
@@ -833,7 +891,7 @@ async function showMap(mapdata) {
 
         // Validate fields
         if (true === dateInputsValid) {
-            initialZoom = map.getView().getZoom();
+            initialZoom = 2; //map.getView().getZoom();
             if ($("#albumSelect").length > 0 && $("#albumSelect").val() !== "0") {
                 const albumId = $("#albumSelect").val();
                 // Query metadata in album with lat/lng
