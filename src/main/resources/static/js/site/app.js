@@ -1728,7 +1728,7 @@
         });
 
         $("#photoThumbnailContainer" + metadata.id).on("mouseenter", function () {
-            if (metadata.type.includes("video")) {
+            if (metadata.type.includes("video") && $("#tlicon" + metadata.id).attr("class") === "bi-circle") {
                 const gifUrl = $("#image" + metadata.id).attr("src").replace("_225.jpg", "_225.gif");
                 const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
 
@@ -1757,6 +1757,10 @@
                 shashin.addToMetadataIdList(metadata.id);
                 shashin.addToMetadataFilenamesList($('#filename' + metadata.id).val());
                 shashin.addToMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
+                if (metadata.type.includes("video")) {
+                    const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
+                    $("#image" + metadata.id).attr("src", jpgUrl);
+                }
             } else {
                 $("#tntl" + metadata.id).show();
                 $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
@@ -1768,6 +1772,18 @@
                 shashin.removeFromMetadataIdList(metadata.id);
                 shashin.removeFromMetadataFilenamesList($('#filename' + metadata.id).val());
                 shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
+                if (metadata.type.includes("video")) {
+                    const gifUrl = $("#image" + metadata.id).attr("src").replace("_225.jpg", "_225.gif");
+                    const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
+
+                    Util.checkImage(gifUrl, function (validUrl) {
+                        if (validUrl) {
+                            $("#image" + metadata.id).attr("src", gifUrl);
+                        } else {
+                            $("#image" + metadata.id).attr("src", jpgUrl);
+                        }
+                    });
+                }
             }
 
             metadataIdArray = shashin.getMetadataIdList();
@@ -1862,6 +1878,10 @@
                     shashin.addToMetadataIdList(metadata.id);
                     shashin.addToMetadataFilenamesList($('#filename' + metadata.id).val());
                     shashin.addToMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
+                    if (metadata.type.includes("video")) {
+                        const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
+                        $("#image" + metadata.id).attr("src", jpgUrl);
+                    }
                 } else {
                     $("#tntl" + metadata.id).show();
                     $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
@@ -1872,6 +1892,18 @@
                     shashin.removeFromMetadataIdList(metadata.id);
                     shashin.removeFromMetadataFilenamesList($('#filename' + metadata.id).val());
                     shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
+                    if (metadata.type.includes("video")) {
+                        const gifUrl = $("#image" + metadata.id).attr("src").replace("_225.jpg", "_225.gif");
+                        const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
+
+                        Util.checkImage(gifUrl, function (validUrl) {
+                            if (validUrl) {
+                                $("#image" + metadata.id).attr("src", gifUrl);
+                            } else {
+                                $("#image" + metadata.id).attr("src", jpgUrl);
+                            }
+                        });
+                    }
                 }
             }
 
