@@ -402,11 +402,11 @@ async function showMap(mapdata) {
             if (minLat !== 0 && minLng !== 0 && maxLat !== 0 && maxLng !== 0) {
                 const mapSize = map.getSize();
                 const mapSizeAdjust = 100;
-                let sizeX = mapSize[0]-100;
+                let sizeX = mapSize[0]-mapSizeAdjust;
                 if (sizeX <= 0) {
                     sizeX = mapSize[0];
                 }
-                let sizeY = mapSize[1]-100;
+                let sizeY = mapSize[1]-mapSizeAdjust;
                 if (sizeY <= 0) {
                     sizeY = mapSize[1];
                 }
