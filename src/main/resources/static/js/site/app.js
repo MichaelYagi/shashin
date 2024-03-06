@@ -1730,7 +1730,15 @@
         $("#tncentered" + metadata.id).on("mouseover", function () {
             if (metadata.type.includes("video")) {
                 const gifUrl = $("#image" + metadata.id).attr("src").replace("_225.jpg", "_225.gif");
-                $("#image" + metadata.id).attr("src", gifUrl);
+                const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
+
+                Util.checkImage(gifUrl, function (validUrl) {
+                    if (validUrl) {
+                        $("#image" + metadata.id).attr("src", gifUrl);
+                    } else {
+                        $("#image" + metadata.id).attr("src", jpgUrl);
+                    }
+                });
             }
         });
 
