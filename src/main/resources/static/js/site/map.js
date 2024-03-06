@@ -283,22 +283,6 @@ async function showMap(mapdata) {
                 const lat = data["lat"];
                 const lng = data["lng"];
 
-                if (minLat === null || lat < minLat) {
-                    minLat = lat;
-                }
-
-                if (maxLat === null || lat > maxLat) {
-                    maxLat = lat;
-                }
-
-                if (minLng === null || lng < minLng) {
-                    minLng = lng;
-                }
-
-                if (maxLng === null || lng > maxLng) {
-                    maxLng = lng;
-                }
-
                 let dateTakenObj = new Date(data["year"],parseInt(data["month"])-1,data["day"]);
 
                 let startDateObj = null;
@@ -353,6 +337,22 @@ async function showMap(mapdata) {
 
                     iconFeature.setStyle(data["mapMarkerIcon"]);
                     iconFeatures.push(iconFeature);
+
+                    if (minLat === null || lat < minLat) {
+                        minLat = lat;
+                    }
+
+                    if (maxLat === null || lat > maxLat) {
+                        maxLat = lat;
+                    }
+
+                    if (minLng === null || lng < minLng) {
+                        minLng = lng;
+                    }
+
+                    if (maxLng === null || lng > maxLng) {
+                        maxLng = lng;
+                    }
                 }
             }
         }
