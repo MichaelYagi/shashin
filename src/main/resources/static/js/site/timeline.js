@@ -693,6 +693,22 @@
             return timelineSettings.success;
         }
 
+        // Remove dates out of order
+        const sections = $('section');
+        let prevIndex = 0;
+        shashin.printMessageToConsole("Cleaning up timeline");
+        shashin.printMessageToConsole(sections);
+        sections.each(function (index, element) {
+            const currentTimelineIndex = timelineSettings.timelineDatesHash[element.id];
+
+            if (prevIndex > 0 && prevIndex + 1 !== currentTimelineIndex) {
+                shashin.printMessageToConsole("Removing from timeline " + element.id);
+                Util.removeDateGallery(element.id);
+            }
+
+            prevIndex = currentTimelineIndex;
+        });
+
         let firstElementId = $(elements[0]).attr("id");
         let firstVisibleId = firstElementId.indexOf("tail_") === -1 ? firstElementId : firstElementId.substring(5, firstElementId.length);
         let lastElementId = $(".attachMetadataPhotos").last().attr("id").replace('amp_','');
@@ -955,22 +971,6 @@
                 }
             }
         }
-
-        // Remove dates out of order
-        const sections = $('section');
-        let prevIndex = 0;
-        shashin.printMessageToConsole("Cleaning up timeline");
-        shashin.printMessageToConsole(sections);
-        sections.each(function (index, element) {
-            const currentTimelineIndex = timelineSettings.timelineDatesHash[element.id];
-
-            if (prevIndex > 0 && prevIndex + 1 !== currentTimelineIndex) {
-                shashin.printMessageToConsole("Removing from timeline " + element.id);
-                Util.removeDateGallery(element.id);
-            }
-
-            prevIndex = currentTimelineIndex;
-        });
 
         $("#spinner_top").css("display", "none");
         $("#spinner_bottom").css("display", "none");
