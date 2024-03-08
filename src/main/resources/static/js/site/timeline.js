@@ -512,6 +512,7 @@
         let prevElementId = "";
         let topHeight = 0;
         let tempScrollTop = $("#container").scrollTop();
+        let prevIndex = 0;
 
         $('section').each(function (index, element) {
             shashin.printMessageToConsole(element.id + " checking to remove end");
@@ -525,6 +526,16 @@
                 shashin.printMessageToConsole(element.id + " removed end");
                 Util.removeDateGallery(element.id);
             }
+
+            // Remove elements out of order
+            const currentTimelineIndex = timelineSettings.timelineDatesHash[element.id];
+
+            if (prevIndex > 0 && prevIndex + 1 !== currentTimelineIndex) {
+                shashin.printMessageToConsole("Removing from timeline " + element.id);
+                Util.removeDateGallery(element.id);
+            }
+
+            prevIndex = currentTimelineIndex;
             prevElementId = element.id;
         });
 
@@ -693,22 +704,6 @@
             return timelineSettings.success;
         }
 
-        // Remove dates out of order
-        const sections = $('section');
-        let prevIndex = 0;
-        shashin.printMessageToConsole("Cleaning up timeline");
-        shashin.printMessageToConsole(sections);
-        sections.each(function (index, element) {
-            const currentTimelineIndex = timelineSettings.timelineDatesHash[element.id];
-
-            if (prevIndex > 0 && prevIndex + 1 !== currentTimelineIndex) {
-                shashin.printMessageToConsole("Removing from timeline " + element.id);
-                Util.removeDateGallery(element.id);
-            }
-
-            prevIndex = currentTimelineIndex;
-        });
-
         let firstElementId = $(elements[0]).attr("id");
         let firstVisibleId = firstElementId.indexOf("tail_") === -1 ? firstElementId : firstElementId.substring(5, firstElementId.length);
         let lastElementId = $(".attachMetadataPhotos").last().attr("id").replace('amp_','');
@@ -742,6 +737,8 @@
 
         const removedElements = [];
         const sectionArray = [];
+        let prevIndex = 0;
+
         section.each(function (index, element) {
             sectionArray.push(element);
 
@@ -793,6 +790,16 @@
                     sectionArray.pop();
                 }
             }
+
+            // Remove elements out of order
+            const currentTimelineIndex = timelineSettings.timelineDatesHash[element.id];
+
+            if (prevIndex > 0 && prevIndex + 1 !== currentTimelineIndex) {
+                shashin.printMessageToConsole("Removing from timeline " + element.id);
+                Util.removeDateGallery(element.id);
+            }
+
+            prevIndex = currentTimelineIndex;
         });
 
         if (Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
