@@ -1720,14 +1720,7 @@
             $("#tnbl" + metadata.id).hide();
         }
 
-        $("#photoThumbnailContainer" + metadata.id).on("mouseleave", function () {
-            if (metadata.type.includes("video")) {
-                const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
-                $("#image" + metadata.id).attr("src", jpgUrl);
-            }
-        });
-
-        $("#photoThumbnailContainer" + metadata.id).on("mouseenter", function () {
+        $("#photoThumbnailContainer" + metadata.id).hover(function () {
             if (metadata.type.includes("video")) {
                 if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
                     const gifUrl = $("#image" + metadata.id).attr("src").replace("_225.jpg", "_225.gif");
@@ -1744,6 +1737,11 @@
                     const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
                     $("#image" + metadata.id).attr("src", jpgUrl);
                 }
+            }
+        }, function () {
+            if (metadata.type.includes("video")) {
+                const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
+                $("#image" + metadata.id).attr("src", jpgUrl);
             }
         });
 
