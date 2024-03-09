@@ -1720,29 +1720,16 @@
             $("#tnbl" + metadata.id).hide();
         }
 
+        $("#image" + metadata.id).on('error', function() {
+            const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
+            $(this).attr("src", jpgUrl);
+        });
+
         $("#photoThumbnailContainer" + metadata.id).hover(function () {
             if (metadata.type.includes("video")) {
                 if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
                     const gifUrl = $("#image" + metadata.id).attr("src").replace("_225.jpg", "_225.gif");
-                    const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
-
-                    Util.checkImage(gifUrl, function (validUrl) {
-                        if (validUrl) {
-                            $("#image" + metadata.id).attr("src", gifUrl);
-                        } else {
-                            $("#image" + metadata.id).attr("src", jpgUrl);
-                        }
-                    });
-
-                    // Ensure other images are jpg
-                    setTimeout(function () {
-                        $(".photo-thumbnail-image").each(function (index, image) {
-                            if (image.id !== "image" + metadata.id) {
-                                const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
-                                $("#image" + metadata.id).attr("src", jpgUrl);
-                            }
-                        });
-                    }, 0);
+                    $("#image" + metadata.id).attr("src", gifUrl);
                 } else if ($("#tlicon" + metadata.id).attr("class") === "bi-circle-fill") {
                     const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
                     $("#image" + metadata.id).attr("src", jpgUrl);
@@ -1787,15 +1774,7 @@
                 shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
                 if (metadata.type.includes("video")) {
                     const gifUrl = $("#image" + metadata.id).attr("src").replace("_225.jpg", "_225.gif");
-                    const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
-
-                    Util.checkImage(gifUrl, function (validUrl) {
-                        if (validUrl) {
-                            $("#image" + metadata.id).attr("src", gifUrl);
-                        } else {
-                            $("#image" + metadata.id).attr("src", jpgUrl);
-                        }
-                    });
+                    $("#image" + metadata.id).attr("src", gifUrl);
                 }
             }
 
@@ -1907,15 +1886,7 @@
                     shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
                     if (metadata.type.includes("video")) {
                         const gifUrl = $("#image" + metadata.id).attr("src").replace("_225.jpg", "_225.gif");
-                        const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
-
-                        Util.checkImage(gifUrl, function (validUrl) {
-                            if (validUrl) {
-                                $("#image" + metadata.id).attr("src", gifUrl);
-                            } else {
-                                $("#image" + metadata.id).attr("src", jpgUrl);
-                            }
-                        });
+                        $("#image" + metadata.id).attr("src", gifUrl);
                     }
                 }
             }
