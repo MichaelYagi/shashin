@@ -504,7 +504,7 @@ class TextUtils {
             "REMOTE_ADDR"
         )
 
-        fun getClientIp(request: HttpServletRequest?): String {
+        fun getClientIp(request: HttpServletRequest?): String? {
             if (request == null) {
                 return "0.0.0.0"
             }
