@@ -1733,6 +1733,16 @@
                             $("#image" + metadata.id).attr("src", jpgUrl);
                         }
                     });
+
+                    // Ensure other images are jpg
+                    setTimeout(function () {
+                        $(".photo-thumbnail-image").each(function (index, image) {
+                            if (image.id !== "image" + metadata.id) {
+                                const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
+                                $("#image" + metadata.id).attr("src", jpgUrl);
+                            }
+                        });
+                    }, 0);
                 } else if ($("#tlicon" + metadata.id).attr("class") === "bi-circle-fill") {
                     const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
                     $("#image" + metadata.id).attr("src", jpgUrl);
