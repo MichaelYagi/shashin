@@ -1720,28 +1720,6 @@
             $("#tnbl" + metadata.id).hide();
         }
 
-        $("#image" + metadata.id).on('error', function() {
-            const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
-            $(this).attr("src", jpgUrl);
-        });
-
-        $("#photoThumbnailContainer" + metadata.id).hover(function () {
-            if (metadata.type.includes("video")) {
-                if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
-                    const gifUrl = $("#image" + metadata.id).attr("src").replace("_225.jpg", "_225.gif");
-                    $("#image" + metadata.id).attr("src", gifUrl);
-                } else if ($("#tlicon" + metadata.id).attr("class") === "bi-circle-fill") {
-                    const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
-                    $("#image" + metadata.id).attr("src", jpgUrl);
-                }
-            }
-        }, function () {
-            if (metadata.type.includes("video")) {
-                const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
-                $("#image" + metadata.id).attr("src", jpgUrl);
-            }
-        });
-
         $("#select" + metadata.id).on("click", function (e) {
             e.preventDefault();
 
@@ -1772,7 +1750,7 @@
                 shashin.removeFromMetadataIdList(metadata.id);
                 shashin.removeFromMetadataFilenamesList($('#filename' + metadata.id).val());
                 shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
-                if (metadata.type.includes("video")) {
+                if (metadata.type.includes("video") && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))) {
                     const gifUrl = $("#image" + metadata.id).attr("src").replace("_225.jpg", "_225.gif");
                     $("#image" + metadata.id).attr("src", gifUrl);
                 }
@@ -1884,7 +1862,7 @@
                     shashin.removeFromMetadataIdList(metadata.id);
                     shashin.removeFromMetadataFilenamesList($('#filename' + metadata.id).val());
                     shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
-                    if (metadata.type.includes("video")) {
+                    if (metadata.type.includes("video") && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))) {
                         const gifUrl = $("#image" + metadata.id).attr("src").replace("_225.jpg", "_225.gif");
                         $("#image" + metadata.id).attr("src", gifUrl);
                     }
@@ -1964,6 +1942,28 @@
                 $("#download"+albumId).on("click", function() {
                     trackShareDownload(albumId,albumName,shareLink);
                 });
+            }
+        });
+
+        $("#image" + metadata.id).on('error', function() {
+            const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
+            $(this).attr("src", jpgUrl);
+        });
+
+        $("#photoThumbnailContainer" + metadata.id).hover(function () {
+            if (metadata.type.includes("video") && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))) {
+                if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
+                    const gifUrl = $("#image" + metadata.id).attr("src").replace("_225.jpg", "_225.gif");
+                    $("#image" + metadata.id).attr("src", gifUrl);
+                } else if ($("#tlicon" + metadata.id).attr("class") === "bi-circle-fill") {
+                    const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
+                    $("#image" + metadata.id).attr("src", jpgUrl);
+                }
+            }
+        }, function () {
+            if (metadata.type.includes("video")) {
+                const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
+                $("#image" + metadata.id).attr("src", jpgUrl);
             }
         });
 
