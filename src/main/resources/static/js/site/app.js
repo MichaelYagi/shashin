@@ -1832,6 +1832,10 @@
             }
         });
 
+        $("#image" + metadata.id).on('error', function() {
+            $("#image" + metadata.id).attr("src", metadata.thumbnailUrlSmall);
+        });
+
         $("#image" + metadata.id).on("click", function (e) {
             e.preventDefault();
 
@@ -1943,10 +1947,6 @@
                     trackShareDownload(albumId,albumName,shareLink);
                 });
             }
-        });
-
-        $("#image" + metadata.id).on('error', function() {
-            $("#image" + metadata.id).attr("src", metadata.thumbnailUrlSmall);
         });
 
         $("#photoThumbnailContainer" + metadata.id).hover(function () {
