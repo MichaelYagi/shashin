@@ -1946,8 +1946,7 @@
         });
 
         $("#image" + metadata.id).on('error', function() {
-            const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
-            $(this).attr("src", jpgUrl);
+            $("#image" + metadata.id).attr("src", metadata.thumbnailUrlSmall);
         });
 
         $("#photoThumbnailContainer" + metadata.id).hover(function () {
