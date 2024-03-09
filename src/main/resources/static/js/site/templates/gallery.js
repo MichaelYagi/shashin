@@ -77,7 +77,7 @@ class GalleryTemplates {
                 $(this).css("background-color", "transparent");
             });
             
-            Util.checkErrorImage();
+            // Util.checkErrorImage();
         </script>
     `};
 

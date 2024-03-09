@@ -196,7 +196,7 @@
             if (data.hasOwnProperty("albumMetadataList") === true && data["albumMetadataList"].length > 0) {
                 const albumMetadataList = data["albumMetadataList"];
                 albumSettings.init(albumId, mediaTypeFilter, activePage, albumMetadataList);
-                Util.checkErrorImage();
+                // Util.checkErrorImage();
             }
         });
     });

@@ -364,7 +364,7 @@
                             timelineSettings.renderThumbnailsAlt(id, mediaTypeFilter).then(function (msg) {
                                 if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
                                     timelineSettings.setScrollSpyActive(id);
-                                    Util.checkErrorImage();
+                                    // Util.checkErrorImage();
                                 }
                             });
                         }
@@ -400,7 +400,7 @@
                                     return false;
                                 }
                             });
-                            Util.checkErrorImage();
+                            // Util.checkErrorImage();
                         }
                     });
                 }

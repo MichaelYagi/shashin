@@ -621,8 +621,11 @@ class Util {
             return "\\x" + v.substr(v.length - 2); }
     }
     
-    static checkErrorImage() {
-        $("img").on('error', function() {
+    static checkErrorImage(element) {
+        if (element === undefined) {
+            element = "img";
+        }
+        $(element).on('error', function() {
             const width = $(this).attr('width');
             const height = $(this).attr('width');
             let dimensions = "/" + Util.thumbnailHeight();
