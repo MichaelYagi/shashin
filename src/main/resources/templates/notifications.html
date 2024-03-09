@@ -11,11 +11,10 @@
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
 
-            <th:block th:if="${not #lists.isEmpty(notificationList)}">
-<!--                <h1>Notifications</h1>-->
-<!--                <small class="text-muted">Click/Shift-Click rows to mark read</small>-->
+            <button class="btn btn-secondary mt-3" type="button" id="requestNotifications" style="display: none">Request Notifications</button>
 
-                <ul class="list-group list-group-hover" id="notificationList">
+            <th:block th:if="${not #lists.isEmpty(notificationList)}">
+                <ul class="list-group list-group-hover mt-3" id="notificationList">
                 <th:block th:each="notification, iterStat: ${notificationList}">
                     <li th:id="${notification.id}" class="list-group-item"><th:block th:unless="${notification.read}"><span th:id="${'newNotification'+notification.id}" style="color: darkred;" class="notification">&bull;&nbsp;</span></th:block><th:block th:if="${notification.read}">&nbsp;&nbsp;</th:block><th:block th:remove="tag" th:utext="${notification.read ? notification.message : '<strong>'+notification.message+'</strong>'}"></th:block></li>
                 </th:block>
@@ -31,6 +30,25 @@
     /*<![CDATA[*/
     shashin.nonce = /*[[${cspNonce}]]*/ '';
     /*]]>*/
+
+    const notification = new NotificationUtil();
+    if (notification.isAvailable() && notification.getNotificationPermission() === "default") {
+        $("#requestNotifications").css("display", "block");
+
+        $("#requestNotifications").on("click", function (e) {
+            e.preventDefault();
+            notification.requestNotificationPermission();
+        });
+
+        notification.onclick = (e) => {
+            e.preventDefault();
+
+            if (notification.getNotificationPermission() !== "default") {
+                $("#requestNotifications").css("display", "none");
+            }
+        };
+    }
+
 
     $("#appSearchInput").val("Notifications");
 

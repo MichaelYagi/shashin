@@ -182,7 +182,7 @@ class MediaServiceController {
             }
 
             val userIp = TextUtils.getClientIp(request)
-            if (!TextUtils.isLocalIp(userIp)) {
+            if (userIp !== null && !TextUtils.isLocalIp(userIp)) {
                 val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                 sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
                 logger.log(Level.INFO, "IP $userIp played video ${metadataObj.get().getTitle()}' at ${sdtf.format(Date())}")
@@ -193,7 +193,7 @@ class MediaServiceController {
             Thread {
                 val admins = userRepository.findAllAdmins()
                 val userIp = TextUtils.getClientIp(request)
-                if (!TextUtils.isLocalIp(userIp)) {
+                if (userIp !== null && !TextUtils.isLocalIp(userIp)) {
                     val notificationObjList = mutableListOf<Notification>()
                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                     sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
@@ -229,7 +229,7 @@ class MediaServiceController {
 
         if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("video")!!) {
             val userIp = TextUtils.getClientIp(request)
-            if (!TextUtils.isLocalIp(userIp)) {
+            if (userIp !== null && !TextUtils.isLocalIp(userIp)) {
                 val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                 sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
                 logger.log(Level.INFO, "IP $userIp downloaded video ${metadataObj.get().getTitle()}' at ${sdtf.format(Date())}")
@@ -240,7 +240,7 @@ class MediaServiceController {
             Thread {
                 val admins = userRepository.findAllAdmins()
                 val userIp = TextUtils.getClientIp(request)
-                if (!TextUtils.isLocalIp(userIp)) {
+                if (userIp !== null && !TextUtils.isLocalIp(userIp)) {
                     val notificationObjList = mutableListOf<Notification>()
                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                     sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
@@ -353,7 +353,7 @@ class MediaServiceController {
             Thread {
                 val admins = userRepository.findAllAdmins()
                 val userIp = TextUtils.getClientIp(request)
-                if (!TextUtils.isLocalIp(userIp)) {
+                if (userIp !== null && !TextUtils.isLocalIp(userIp)) {
                     val notificationObjList = mutableListOf<Notification>()
                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                     sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
@@ -425,7 +425,7 @@ class MediaServiceController {
             Thread {
                 val admins = userRepository.findAllAdmins()
                 val userIp = TextUtils.getClientIp(request)
-                if (!TextUtils.isLocalIp(userIp)) {
+                if (userIp !== null && !TextUtils.isLocalIp(userIp)) {
                     val notificationObjList = mutableListOf<Notification>()
                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                     sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())

@@ -1,47 +1,48 @@
 // https://developer.mozilla.org/en-US/docs/Web/API/Notifications_API/Using_the_Notifications_API
 class NotificationUtil {
+    // notification.createNotification("Test", {
+    //     body: "I'm the body",
+    //     icon: "/images/android/mipmap-xhdpi/ic_launcher.png",
+    //     image: "/api/v1/image/56a91c60-1c9a-38c6-8abc-c86f7879046c"
+    // });
+
     constructor() {
         // Check if the browser supports notifications
         if (!("Notification" in window)) {
-            return;
+            shashin.printMessageToConsole("Notification API not available.");
+            this.available = false;
+            return false;
         }
 
-        this.permission = "default";
+        this.available = true;
+        // granted, denied, default (The user decision is unknown; in this case the application will act as if permission was denied.)
+        this.permission = Notification.permission;
         this.notification = null;
     }
 
-    askNotificationPermission() {
-        Notification.requestPermission().then((permission) => {
-            this.permission = permission;
-        });
+    isAvailable() {
+        return this.available;
+    }
+
+    async requestNotificationPermission() {
+        if (Notification.permission !== "granted") {
+            this.permission = await Notification.requestPermission();
+        }
+    }
+
+    getNotificationPermission() {
+        this.permission = Notification.permission;
+        return this.permission;
     }
 
     createNotification(title, options) {
-        let settings = {};
-
         if (options === undefined) {
             options = {};
         }
 
-        if (options.hasOwnProperty("message")) {
-            settings["body"] = options["message"];
-        }
-
-        if (options.hasOwnProperty("imageUrl")) {
-            settings["icon"] = options["imageUrl"];
-        }
-
-        if (options.hasOwnProperty("id")) {
-            settings["tag"] = options["id"];
-        }
-
         if (this.permission === "granted") {
             // Query notification
-            this.notification = new Notification(title, settings);
-
-            // Get unread
-
-            // Loop through messages
+            this.notification = new Notification(title, options);
         } else {
             if (shashin) {
                 shashin.printMessageToConsole("Notification permissions not granted.");
