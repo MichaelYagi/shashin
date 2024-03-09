@@ -1952,10 +1952,8 @@
         $("#photoThumbnailContainer" + metadata.id).hover(function () {
             if (metadata.type.includes("video") && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))) {
                 if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
-                    setTimeout(function () {
-                        const gifUrl = $("#image" + metadata.id).attr("src").replace("_225.jpg", "_225.gif");
-                        $("#image" + metadata.id).attr("src", gifUrl);
-                    }, 500);
+                    const gifUrl = $("#image" + metadata.id).attr("src").replace("_225.jpg", "_225.gif");
+                    $("#image" + metadata.id).attr("src", gifUrl);
                 } else if ($("#tlicon" + metadata.id).attr("class") === "bi-circle-fill") {
                     const jpgUrl = $("#image" + metadata.id).attr("src").replace("_225.gif", "_225.jpg");
                     $("#image" + metadata.id).attr("src", jpgUrl);
