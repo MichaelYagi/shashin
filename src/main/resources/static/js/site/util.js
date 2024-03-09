@@ -538,19 +538,6 @@ class Util {
 
     }
 
-    static checkImage(url, callback) {
-        const image = new Image();
-        image.onload = function() {
-            if (this.width > 0) {
-                callback(true)
-            }
-        }
-        image.onerror = function() {
-            callback(false)
-        }
-        image.src = url;
-    }
-
     static getParameterByName(name, url = window.location.href) {
         name = name.replace(/[\[\]]/g, '\\$&');
         const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
