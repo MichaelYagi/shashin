@@ -86,6 +86,8 @@ class NotificationsController {
                     notificationRepository.saveAll(notifications)
                 }
             }
+        } else {
+            return "{\"msg\":\"\",\"status\":\"fail\"}"
         }
 
         return "{\"msg\":\"\",\"status\":\"success\"}"
@@ -111,6 +113,8 @@ class NotificationsController {
                     notificationRepository.saveAll(notifications)
                 }
             }
+        } else {
+            return "{\"msg\":\"\",\"status\":\"fail\"}"
         }
 
         return "{\"msg\":\"\",\"status\":\"success\"}"
@@ -136,6 +140,8 @@ class NotificationsController {
                     notificationRepository.saveAll(notifications)
                 }
             }
+        } else {
+            return "{\"msg\":\"\",\"status\":\"fail\"}"
         }
 
         return "{\"msg\":\"\",\"status\":\"success\"}"
@@ -161,6 +167,8 @@ class NotificationsController {
                     notificationRepository.saveAll(notifications)
                 }
             }
+        } else {
+            return "{\"msg\":\"\",\"status\":\"fail\"}"
         }
 
         return "{\"msg\":\"\",\"status\":\"success\"}"
@@ -186,6 +194,8 @@ class NotificationsController {
                     notificationRepository.saveAll(notifications)
                 }
             }
+        } else {
+            return "{\"msg\":\"\",\"status\":\"fail\"}"
         }
 
         return "{\"msg\":\"\",\"status\":\"success\"}"
@@ -223,13 +233,14 @@ class NotificationsController {
     @Transactional
     fun markNotificationsReadByUsers(model: Model, @RequestBody requestBody: JsonNode): String? {
         val notificationIdList = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
-        if (notificationIdList.containsKey("notificationIds")) {
-            val notificationIds = notificationIdList["notificationIds"] as ArrayList<*>
+        val currentUserObj = model.getAttribute("currentUser") as User?
 
+        if (currentUserObj != null && notificationIdList.containsKey("notificationIds")) {
+            val notificationIds = notificationIdList["notificationIds"] as ArrayList<*>
             val notificationObjList = mutableListOf<Notification>()
+
             for (notificationId in notificationIds) {
-                val currentUserObj = model.getAttribute("currentUser") as User?
-                if (currentUserObj != null && notificationId != null && notificationId as Int > 0) {
+                if (notificationId != null && notificationId as Int > 0) {
                     val notificationObj = notificationRepository.findById(notificationId)
                     notificationObj.get().setRead(true)
                     notificationObjList.add(notificationObj.get())
@@ -238,6 +249,8 @@ class NotificationsController {
             if (notificationObjList.isNotEmpty()) {
                 notificationRepository.saveAll(notificationObjList)
             }
+        } else {
+            return "{\"msg\":\"\",\"status\":\"fail\"}"
         }
         return "{\"msg\":\"\",\"status\":\"success\"}"
     }
@@ -247,19 +260,24 @@ class NotificationsController {
     @Transactional
     fun markAllNotificationsReadByUsers(model: Model): String? {
         val currentUserObj = model.getAttribute("currentUser") as User?
-        val notificationList = notificationRepository.findAllByUserIdAndReadIsFalse(currentUserObj!!.getId())
 
-        if (notificationList != null && notificationList.count() > 0) {
-            val notificationObjList = mutableListOf<Notification>()
-            for (notificationObj in notificationList) {
-                if (notificationObj != null) {
-                    notificationObj.setRead(true)
-                    notificationObjList.add(notificationObj)
+        if (currentUserObj != null) {
+            val notificationList = notificationRepository.findAllByUserIdAndReadIsFalse(currentUserObj.getId())
+
+            if (notificationList != null && notificationList.count() > 0) {
+                val notificationObjList = mutableListOf<Notification>()
+                for (notificationObj in notificationList) {
+                    if (notificationObj != null) {
+                        notificationObj.setRead(true)
+                        notificationObjList.add(notificationObj)
+                    }
+                }
+                if (notificationObjList.isNotEmpty()) {
+                    notificationRepository.saveAll(notificationObjList)
                 }
             }
-            if (notificationObjList.isNotEmpty()) {
-                notificationRepository.saveAll(notificationObjList)
-            }
+        } else {
+            return "{\"msg\":\"\",\"status\":\"fail\"}"
         }
 
         return "{\"msg\":\"\",\"status\":\"success\"}"
