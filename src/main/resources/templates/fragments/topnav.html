@@ -362,14 +362,15 @@
             const timezone = /*[[${timezone}]]*/ "America/Los_Angeles";
             /*]]>*/
 
-            const http = new Http("check notifications");
-            const data = await http.ajax("get", "/notifications/check/");
+            if (activePage !== "notifications") {
 
-            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("hasNotifications") && data["hasNotifications"] === true) {
-                $("#sidebarMenuDrawer").html('<span id="topNavAlertBadge" class="position-absolute top-0 start-50 p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
-                $("#sidebarNotification").html('<span id="sideBarAlertBadge" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
+                let http = new Http("check notifications");
+                const data = await http.ajax("get", "/notifications/check/");
 
-                if (activePage !== "notifications") {
+                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("hasNotifications") && data["hasNotifications"] === true) {
+                    $("#sidebarMenuDrawer").html('<span id="topNavAlertBadge" class="position-absolute top-0 start-50 p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
+                    $("#sidebarNotification").html('<span id="sideBarAlertBadge" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
+
                     setTimeout(() => {
                         const unreadNotifications = data["unreadNotifications"];
                         const notificationCount = unreadNotifications.length;
@@ -378,7 +379,7 @@
                         const title = "You've got " + notificationCount + " notification" + (notificationCount === 1 ? "" : "s");
                         let message = firstNotification["message"];
                         if (notificationCount > 1) {
-                            message = message + "<br><a href='/notifications' target='_blank'>Read all notifications and mark as read</a>";
+                            message = message + "<br><br><a href='/notifications' class='gotoNotifications' target='_blank'>Read all notifications and mark as read</a>";
                         }
                         message = message + "<br>" + Util.getMessageSubText(createdAtDate, timezone);
 
@@ -389,11 +390,35 @@
                         });
 
                         if (notificationCount === 1) {
-                            const http = new Http("marking all notifications read");
+                            http = new Http("marking all notifications read");
                             http.ajax("get", "/notifications/markallread/notification").then(function (data) {
                                 if ($("#topNavAlertBadge").length > 0) {
                                     $("#topNavAlertBadge").remove();
                                 }
+                                if ($("#sideBarAlertBadge").length > 0) {
+                                    $("#sideBarAlertBadge").remove();
+                                }
+                            });
+                        } else {
+                            $(".gotoNotifications").on("click", function (e) {
+                                e.preventDefault();
+
+                                const url = $($(this)[0]).attr("href");
+                                window.open(url, '_blank');
+
+                                setTimeout(() => {
+                                    http = new Http("marking all notifications read");
+                                    http.ajax("get", "/notifications/markallread/notification").then(function (data) {
+                                        if ($("#topNavAlertBadge").length > 0) {
+                                            $("#topNavAlertBadge").remove();
+                                        }
+                                        if ($("#sideBarAlertBadge").length > 0) {
+                                            $("#sideBarAlertBadge").remove();
+                                        }
+
+                                        shashin.closeToastMessage();
+                                    });
+                                }, 500);
                             });
                         }
                     }, 0);
