@@ -34,6 +34,7 @@ import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.text.SimpleDateFormat
+import java.time.ZoneId
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -210,6 +211,9 @@ class AttributeController: ResponseEntityExceptionHandler() {
         model["settings"] = Settings()
         model["activeProfile"] = "prod"
         model["faceRecogServicesAvailable"] = false
+        val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+        sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+        model["timezone"] = sdtf.timeZone.toZoneId().toString()
 
         if (environment != null && environment.activeProfiles.isNotEmpty()) {
             model["activeProfile"] = environment.activeProfiles[0]

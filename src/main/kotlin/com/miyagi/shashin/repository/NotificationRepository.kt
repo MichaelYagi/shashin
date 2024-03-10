@@ -14,5 +14,4 @@ interface NotificationRepository : CrudRepository<Notification?, Int?> {
     fun findAllByUserIdAndAlbumIdIsNullAndCommentIdIsNullAndMetadataIdIsNullAndFavoriteIdIsNull(userId: Int): MutableIterable<Notification?>?
     fun findAllByUserIdAndFavoriteIdIsNotNull(userId: Int): MutableIterable<Notification?>?
     fun findAllByUserIdAndReadIsFalse(userId: Int): MutableIterable<Notification?>?
-    fun countAllByUserIdAndReadIsFalse(userId: Int): Int
 }

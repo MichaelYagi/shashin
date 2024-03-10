@@ -40,6 +40,7 @@ import java.io.FileInputStream
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -1530,16 +1531,22 @@ class TimelineController: BaseController() {
 
         val notificationObjList = mutableListOf<Notification>()
         if (adminAlbumsMessage.isNotEmpty()) {
+            val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+            sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+
             for (admin in admins) {
                 val notificationObj = Notification()
                 notificationObj.setUserId(admin.getId())
                 notificationObj.setCreatedAt(getCurrentTimestamp())
                 notificationObj.setModifiedAt(getCurrentTimestamp())
                 notificationObj.setRead(false)
-                notificationObj.setMessage("Photos added to $adminAlbumsMessage")
+                notificationObj.setMessage("Photos added to album $adminAlbumsMessage at ${sdtf.format(Date())}.")
                 notificationObjList.add(notificationObj)
             }
         }
+
+        val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+        sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
 
         filteredUserAlbumsMap.forEach { entry ->
             val userId = entry.key
@@ -1555,7 +1562,7 @@ class TimelineController: BaseController() {
             notificationObj.setCreatedAt(getCurrentTimestamp())
             notificationObj.setModifiedAt(getCurrentTimestamp())
             notificationObj.setRead(false)
-            notificationObj.setMessage("Photos added to $message")
+            notificationObj.setMessage("Photos added to album $message at ${sdtf.format(Date())}.")
             notificationObjList.add(notificationObj)
         }
 

@@ -11,7 +11,7 @@
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
 
-            <button class="btn btn-secondary mt-3" type="button" id="requestNotifications" style="display: none">Request Notifications</button>
+<!--            <button class="btn btn-secondary mt-3" type="button" id="requestNotifications" style="display: none">Request Notifications</button>-->
 
             <th:block th:if="${not #lists.isEmpty(notificationList)}">
                 <ul class="list-group list-group-hover mt-3" id="notificationList">
@@ -31,24 +31,23 @@
     shashin.nonce = /*[[${cspNonce}]]*/ '';
     /*]]>*/
 
-    const notification = new NotificationUtil();
-    if (notification.isAvailable() && notification.getNotificationPermission() === "default") {
-        $("#requestNotifications").css("display", "block");
-
-        $("#requestNotifications").on("click", function (e) {
-            e.preventDefault();
-            notification.requestNotificationPermission();
-        });
-
-        notification.onclick = (e) => {
-            e.preventDefault();
-
-            if (notification.getNotificationPermission() !== "default") {
-                $("#requestNotifications").css("display", "none");
-            }
-        };
-    }
-
+    // const notification = new NotificationUtil();
+    // if (notification.isAvailable() && notification.getNotificationPermission() === "default") {
+    //     $("#requestNotifications").css("display", "block");
+    //
+    //     $("#requestNotifications").on("click", function (e) {
+    //         e.preventDefault();
+    //         notification.requestNotificationPermission();
+    //     });
+    //
+    //     notification.onclick = (e) => {
+    //         e.preventDefault();
+    //
+    //         if (notification.getNotificationPermission() !== "default") {
+    //             $("#requestNotifications").css("display", "none");
+    //         }
+    //     };
+    // }
 
     $("#appSearchInput").val("Notifications");
 

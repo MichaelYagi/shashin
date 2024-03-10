@@ -15,7 +15,9 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
-import java.util.ArrayList
+import java.text.SimpleDateFormat
+import java.time.ZoneId
+import java.util.*
 import javax.transaction.Transactional
 
 @Controller
@@ -189,21 +191,28 @@ class NotificationsController {
         return "{\"msg\":\"\",\"status\":\"success\"}"
     }
 
-    @GetMapping("/notifications/check/{userId}", consumes = ["application/json"], produces = ["application/json"])
+    @GetMapping("/notifications/check", consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    fun checkHasNotifications(@PathVariable userId: Int): String {
+    fun checkHasNotifications(model: Model): String {
         val response = mutableMapOf<String, Any?>()
 
         response["msg"] = "No results"
         response["status"] = ApiResponse.FAIL.status
         response["hasNotifications"] = false
+        response["unreadNotifications"] = mutableListOf<Notification>()
 
-        if (userId > 0) {
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null) {
             response["msg"] = "Results"
             response["status"] = ApiResponse.SUCCESS.status
 
-            val notificationCount = notificationRepository.countAllByUserIdAndReadIsFalse(userId)
-            response["hasNotifications"] = notificationCount > 0
+            val unreadNotifications = notificationRepository.findAllByUserIdAndReadIsFalse(currentUserObj.getId())
+            response["unreadNotifications"] = unreadNotifications
+            var count = 0
+            if (unreadNotifications != null) {
+                count = unreadNotifications.count()
+            }
+            response["hasNotifications"] = count > 0
         }
 
         return mapper.writeValueAsString(response)
