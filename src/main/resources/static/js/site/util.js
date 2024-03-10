@@ -833,6 +833,48 @@ class Util {
 
         return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
     }
+
+    static msToTimeSegments(duration) {
+        let milliseconds = Math.floor((duration % 1000) / 100),
+            seconds = Math.floor((duration / 1000) % 60),
+            minutes = Math.floor((duration / (1000 * 60)) % 60),
+            hours = Math.floor((duration / (1000 * 60 * 60)) % 24),
+            days = Math.floor(duration / (1000 * 24 * 60 * 60)),
+            months = Math.floor(duration / (1000 * 60 * 60 * 24 * 30)),
+            years = Math.floor(duration / (1000 * 60 * 60 * 24 * 365));
+
+        return {
+            years: years,
+            months: months,
+            days: days,
+            hours: hours,
+            minutes: minutes,
+            seconds: seconds,
+            milliseconds: milliseconds
+        };
+    }
+
+    static getMessageSubText(createdAt, timezone) {
+        const createdAtDate = new Date(new Date(createdAt).toLocaleString("en-US", {timeZone: timezone}));
+        const nowDate = new Date(new Date().toLocaleString("en-US", {timeZone: timezone}));
+        const elapsedTime = Util.msToTimeSegments(nowDate - createdAtDate);
+        let timeLapsed = "0s";
+        if (elapsedTime["years"] > 0) {
+            timeLapsed = elapsedTime["years"] + " year" + (elapsedTime["years"] === 1 ? "": "s");
+        } else if (elapsedTime["months"] > 0) {
+            timeLapsed = elapsedTime["months"] + " month" + (elapsedTime["months"] === 1 ? "": "s");
+        } else if (elapsedTime["days"] > 0) {
+            timeLapsed = elapsedTime["days"] + " day" + (elapsedTime["days"] === 1 ? "": "s");
+        } else if (elapsedTime["hours"] > 0) {
+            timeLapsed = elapsedTime["hours"] + " hour" + (elapsedTime["hours"] === 1 ? "": "s");
+        } else if (elapsedTime["minutes"] > 0) {
+            timeLapsed = elapsedTime["minutes"] + " minute" + (elapsedTime["minutes"] === 1 ? "": "s");
+        } else if (elapsedTime["seconds"] > 0) {
+            timeLapsed = elapsedTime["seconds"] + " second" + (elapsedTime["seconds"] === 1 ? "": "s");
+        }
+        return "<small class='text-muted'>"+timeLapsed+" ago</small>"
+    }
+
     static getDateGalleryHeight(id) {
         if ($("#br" + id).length === 0 && $("#row" + id).length === 0 && $("#amp_" + id).length === 0 && $("#tail_" + id).length === 0 && $("#" + id).length === 0) {
             return 0;

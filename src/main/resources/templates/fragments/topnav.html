@@ -358,15 +358,46 @@
             /*<![CDATA[*/
             shashin.darkMode = /*[[${currentUser.darkMode}]]*/ false;
             shashin.showPlacename = /*[[${currentUser.showPlacename}]]*/ false;
-            const userId = /*[[${currentUser.id}]]*/ 0;
+            const activePage = /*[[${activePage}]]*/ '';
+            const timezone = /*[[${timezone}]]*/ "America/Los_Angeles";
             /*]]>*/
 
             const http = new Http("check notifications");
-            const data = await http.ajax("get", "/notifications/check/" + userId);
+            const data = await http.ajax("get", "/notifications/check/");
 
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("hasNotifications") && data["hasNotifications"] === true) {
                 $("#sidebarMenuDrawer").html('<span id="topNavAlertBadge" class="position-absolute top-0 start-50 p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
                 $("#sidebarNotification").html('<span id="sideBarAlertBadge" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
+
+                if (activePage !== "notifications") {
+                    setTimeout(() => {
+                        const unreadNotifications = data["unreadNotifications"];
+                        const notificationCount = unreadNotifications.length;
+                        const firstNotification = data["unreadNotifications"][0];
+                        const createdAtDate = firstNotification["createdAt"];
+                        const title = "You've got " + notificationCount + " notification" + (notificationCount === 1 ? "" : "s");
+                        let message = firstNotification["message"];
+                        if (notificationCount > 1) {
+                            message = message + "<br><a href='/notifications' target='_blank'>Read all notifications and mark as read</a>";
+                        }
+                        message = message + "<br>" + Util.getMessageSubText(createdAtDate, timezone);
+
+                        shashin.showToastMessage(title, message, {
+                            icon: "bi-info-circle",
+                            iconColor: "#777777",
+                            autohide: false
+                        });
+
+                        if (notificationCount === 1) {
+                            const http = new Http("marking all notifications read");
+                            http.ajax("get", "/notifications/markallread/notification").then(function (data) {
+                                if ($("#topNavAlertBadge").length > 0) {
+                                    $("#topNavAlertBadge").remove();
+                                }
+                            });
+                        }
+                    }, 0);
+                }
             }
 
             // Clear live toast message on close
