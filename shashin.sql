@@ -270,6 +270,7 @@ CREATE TABLE `notification` (
     `metadataId` VARCHAR(36) DEFAULT NULL,
     `commentId` INT DEFAULT NULL,
     `favoriteId` INT DEFAULT NULL,
+    `imageUrl` VARCHAR,
     `read` BOOLEAN DEFAULT FALSE,
     `message` VARCHAR,
     `createdAt` DATETIME DEFAULT NULL,

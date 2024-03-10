@@ -1508,6 +1508,7 @@ class TimelineController: BaseController() {
         var adminAlbumsMessage = ""
         val filteredUserAlbumsMap = mutableMapOf<Int,MutableList<String>>()
         val admins = userRepository.findAllAdmins()
+        var imageUrl: String? = null
 
         for (albumId in albumIdAddedList) {
             if (currentUserObj != null) {
@@ -1524,6 +1525,8 @@ class TimelineController: BaseController() {
                         filteredUserAlbumsMap[user.getId()]?.add("<a href='album/$albumId' target='_blank'>${album?.getName()}</a>")
                     }
                 }
+
+                imageUrl = album?.getCoverUrl()
             }
         }
 
@@ -1539,6 +1542,7 @@ class TimelineController: BaseController() {
                 notificationObj.setUserId(admin.getId())
                 notificationObj.setCreatedAt(getCurrentTimestamp())
                 notificationObj.setModifiedAt(getCurrentTimestamp())
+                notificationObj.setImageUrl(imageUrl)
                 notificationObj.setRead(false)
                 notificationObj.setMessage("Photos added to album $adminAlbumsMessage at ${sdtf.format(Date())}.")
                 notificationObjList.add(notificationObj)
@@ -1561,6 +1565,7 @@ class TimelineController: BaseController() {
             notificationObj.setUserId(userId)
             notificationObj.setCreatedAt(getCurrentTimestamp())
             notificationObj.setModifiedAt(getCurrentTimestamp())
+            notificationObj.setImageUrl(imageUrl)
             notificationObj.setRead(false)
             notificationObj.setMessage("Photos added to album $message at ${sdtf.format(Date())}.")
             notificationObjList.add(notificationObj)
