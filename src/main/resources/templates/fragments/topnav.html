@@ -9,6 +9,7 @@
             <div class="toast-header">
                 <span id="toastIcon"></span><span id="toastSpacer"></span>
                 <strong id="toastTitle" class="me-auto"></strong>
+                <small id="headerSubtext"></small>
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div id="toastMessage" class="toast-body"></div>
@@ -18,6 +19,7 @@
             <div class="toast-header">
                 <span id="toastIcon1"></span><span id="toastSpacer1"></span>
                 <strong id="toastTitle1" class="me-auto"></strong>
+                <small id="headerSubtext1"></small>
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div id="toastMessage1" class="toast-body"></div>
@@ -27,6 +29,7 @@
             <div class="toast-header">
                 <span id="toastIcon2"></span><span id="toastSpacer2"></span>
                 <strong id="toastTitle2" class="me-auto"></strong>
+                <small id="headerSubtext2"></small>
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div id="toastMessage2" class="toast-body"></div>
@@ -36,6 +39,7 @@
             <div class="toast-header">
                 <span id="toastIcon3"></span><span id="toastSpacer3"></span>
                 <strong id="toastTitle3" class="me-auto"></strong>
+                <small id="headerSubtext3"></small>
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div id="toastMessage3" class="toast-body"></div>
@@ -45,6 +49,7 @@
             <div class="toast-header">
                 <span id="toastIcon4"></span><span id="toastSpacer4"></span>
                 <strong id="toastTitle4" class="me-auto"></strong>
+                <small id="headerSubtext4"></small>
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div id="toastMessage4" class="toast-body"></div>
@@ -377,28 +382,21 @@
                         const firstNotification = data["unreadNotifications"][0];
                         const createdAtDate = firstNotification["createdAt"];
                         const title = "You've got " + notificationCount + " notification" + (notificationCount === 1 ? "" : "s");
-                        let message = firstNotification["message"];
+                        let message = '<div class="container"><div class="row">'+((firstNotification["imageUrl"] !== null && firstNotification["imageUrl"] !== "") ? '<div class="col-4"><img src="'+firstNotification["imageUrl"]+'" width="100"></div>' : '') + ((firstNotification["imageUrl"] !== null && firstNotification["imageUrl"] !== "") ? '<div class="col-8">' : '<div class="col">') + firstNotification["message"] + '</div></div>';
                         if (notificationCount > 1) {
-                            message = message + "<br><br><a href='/notifications' class='gotoNotifications' target='_blank'>Read all notifications and mark as read</a>";
+                            message = message + "<div class='row'><hr><a href='/notifications' class='gotoNotifications' target='_blank'>Read all notifications and mark as read</a></div>";
                         }
-                        message = message + "<br>" + Util.getMessageSubText(createdAtDate, timezone);
+                        message = message + '</div>';
 
                         shashin.showToastMessage(title, message, {
-                            icon: "bi-info-circle",
-                            iconColor: "#777777",
+                            icon: "bi-bell",
+                            iconColor: "#FF8C00",
+                            headerSubtext: Util.getMessageSubText(createdAtDate, timezone),
                             autohide: false
                         });
 
                         if (notificationCount === 1) {
-                            http = new Http("marking all notifications read");
-                            http.ajax("get", "/notifications/markallread/notification").then(function (data) {
-                                if ($("#topNavAlertBadge").length > 0) {
-                                    $("#topNavAlertBadge").remove();
-                                }
-                                if ($("#sideBarAlertBadge").length > 0) {
-                                    $("#sideBarAlertBadge").remove();
-                                }
-                            });
+                            NotificationUtil.markNotificationRead();
                         } else {
                             $(".gotoNotifications").on("click", function (e) {
                                 e.preventDefault();
@@ -407,17 +405,8 @@
                                 window.open(url, '_blank');
 
                                 setTimeout(() => {
-                                    http = new Http("marking all notifications read");
-                                    http.ajax("get", "/notifications/markallread/notification").then(function (data) {
-                                        if ($("#topNavAlertBadge").length > 0) {
-                                            $("#topNavAlertBadge").remove();
-                                        }
-                                        if ($("#sideBarAlertBadge").length > 0) {
-                                            $("#sideBarAlertBadge").remove();
-                                        }
-
-                                        shashin.closeToastMessage();
-                                    });
+                                    NotificationUtil.markNotificationRead();
+                                    shashin.closeToastMessage();
                                 }, 500);
                             });
                         }

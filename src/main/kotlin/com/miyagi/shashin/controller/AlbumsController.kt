@@ -803,6 +803,7 @@ class AlbumsController: BaseController() {
 
                     for (admin in admins) {
                         val notificationObj = Notification()
+                        notificationObj.setImageUrl(albumObj.get().getCoverUrl())
                         notificationObj.setUserId(admin.getId())
                         notificationObj.setCreatedAt(getCurrentTimestamp())
                         notificationObj.setModifiedAt(getCurrentTimestamp())
@@ -848,6 +849,7 @@ class AlbumsController: BaseController() {
             sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
             for (admin in admins) {
                 val notificationObj = Notification()
+                notificationObj.setImageUrl(album?.getCoverUrl())
                 notificationObj.setUserId(admin.getId())
                 notificationObj.setCreatedAt(getCurrentTimestamp())
                 notificationObj.setModifiedAt(getCurrentTimestamp())
@@ -1111,6 +1113,7 @@ class AlbumsController: BaseController() {
                         userAlbumList.add(userAlbumObj)
 
                         val notificationObj = Notification()
+                        notificationObj.setImageUrl(albumObj?.getCoverUrl())
                         notificationObj.setUserId(userId.toInt())
                         notificationObj.setCreatedAt(getCurrentTimestamp())
                         notificationObj.setModifiedAt(getCurrentTimestamp())
@@ -1132,6 +1135,7 @@ class AlbumsController: BaseController() {
                 val userListString = userList.joinToString(",")
                 for (admin in admins) {
                     val notificationObj = Notification()
+                    notificationObj.setImageUrl(albumObj?.getCoverUrl())
                     notificationObj.setUserId(admin.getId())
                     notificationObj.setCreatedAt(getCurrentTimestamp())
                     notificationObj.setModifiedAt(getCurrentTimestamp())

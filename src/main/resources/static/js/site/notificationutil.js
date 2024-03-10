@@ -55,4 +55,23 @@ class NotificationUtil {
             this.notification.close();
         }
     }
+
+    static markNotificationRead() {
+        const http = new Http("marking notifications read");
+        http.ajax("get", "/notifications/markallread/notification").then(function () {
+            NotificationUtil.toggleNotificationBadge();
+        });
+    }
+
+    static toggleNotificationBadge() {
+        // Check all rows and remove badge if all read
+        if ($(".notification").length === 0) {
+            if ($("#topNavAlertBadge").length > 0) {
+                $("#topNavAlertBadge").remove();
+            }
+            if ($("#sideBarAlertBadge").length > 0) {
+                $("#sideBarAlertBadge").remove();
+            }
+        }
+    }
 }

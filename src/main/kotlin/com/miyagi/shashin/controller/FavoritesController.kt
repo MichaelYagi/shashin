@@ -246,6 +246,7 @@ class FavoritesController: BaseController() {
                 for (admin in admins) {
                     if (admin.getId() != currentUserObj.getId()) {
                         val notificationObj = Notification()
+                        notificationObj.setImageUrl(metadata.get().getThumbnailUrlCentered())
                         notificationObj.setCreatedAt(getCurrentTimestamp())
                         notificationObj.setModifiedAt(getCurrentTimestamp())
                         notificationObj.setRead(false)

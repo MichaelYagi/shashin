@@ -23,6 +23,8 @@ class Notification {
 
     private var favoriteId: Int? = null
 
+    private var imageUrl: String? = null
+
     @NotBlank
     private var message: String? = null
 
@@ -83,6 +85,14 @@ class Notification {
         this.metadataId = metadataId
     }
 
+    fun getImageUrl(): String? {
+        return this.imageUrl
+    }
+
+    fun setImageUrl(imageUrl: String?) {
+        this.imageUrl = imageUrl
+    }
+
     fun getMessage(): String? {
         return this.message
     }
@@ -123,6 +133,7 @@ class Notification {
         map["commentId"] = this.commentId
         map["favoriteId"] = this.favoriteId
         map["metadataId"] = this.metadataId
+        map["imageUrl"] = this.imageUrl
         map["message"] = this.message
         map["read"] = this.read
         val mapper = ObjectMapper()

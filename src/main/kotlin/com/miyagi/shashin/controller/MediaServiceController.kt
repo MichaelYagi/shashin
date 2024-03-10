@@ -363,6 +363,7 @@ class MediaServiceController {
                         notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
                         notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
                         notificationObj.setRead(false)
+                        notificationObj.setImageUrl(metadataObj.get().getThumbnailUrlCentered())
                         val message =
                             "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> viewed image '<a href='/timeline#${
                                 metadataObj.get().getYear()
