@@ -27,23 +27,35 @@ class TextUtils {
         private var logger: Logger = Logger.getLogger(TextUtils::class.simpleName)
 
         fun isLocalIp(testAddress: String): Boolean {
-            val inetAddress: InetAddress
+            var inetAddress: InetAddress
 
             logger.log(
                 Level.INFO,
                 "Testing IP: $testAddress"
             )
 
-            try {
-                inetAddress = InetAddress.getByName(testAddress) as Inet4Address
-
-                return inetAddress.isSiteLocalAddress || inetAddress.isLoopbackAddress
-            } catch (exception: UnknownHostException) {
-                logger.log(
-                    Level.WARNING,
-                    "Testing unknown IP: ${exception.localizedMessage}"
-                )
-                return false
+            if (testAddress.contains(".")) {
+                try {
+                    inetAddress = Inet4Address.getByName(testAddress) as Inet4Address
+                    return inetAddress.isSiteLocalAddress || inetAddress.isLoopbackAddress
+                } catch (exception: UnknownHostException) {
+                    logger.log(
+                        Level.WARNING,
+                        "Testing unknown IP4: ${exception.localizedMessage}"
+                    )
+                    return false
+                }
+            } else {
+                try {
+                    inetAddress = Inet6Address.getByName(testAddress) as Inet6Address
+                    return inetAddress.isSiteLocalAddress || inetAddress.isLoopbackAddress
+                } catch (e: UnknownHostException) {
+                    logger.log(
+                        Level.WARNING,
+                        "Testing unknown IP6: ${e.localizedMessage}"
+                    )
+                    return false
+                }
             }
         }
 
