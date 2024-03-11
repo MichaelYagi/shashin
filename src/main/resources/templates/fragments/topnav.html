@@ -263,6 +263,12 @@
                         <label class="form-check-label" for="showPlacenameSwitch">Show places on map</label>
                     </div>
                 </div>
+                <div class="dropdown-item">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="showNotificationAlertsSwitch" th:checked="${currentUser.notificationAlerts}">
+                        <label class="form-check-label" for="showNotificationAlertsSwitch">Show Notification Alerts</label>
+                    </div>
+                </div>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="/users/logout">Sign out</a>
                 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
@@ -284,6 +290,22 @@
                         }
                     });
 
+                    $("#showNotificationAlertsSwitch").change(async function () {
+                        const activePage = $("#activePage").val();
+                        const notificationAlerts = this.checked;
+                        const http = new Http("show notificationAlerts");
+                        const json = {notificationAlerts: notificationAlerts};
+                        const data = await http.ajax("post", "/users/shownotificationalerts", JSON.stringify(json));
+
+                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                                if (data["status"] === "success") {
+                                    Util.reinitLightGalleryInstance();
+                                }
+                            }
+                        }
+                    });
+
                     $("#showPlacenameSwitch").change(async function () {
                         const activePage = $("#activePage").val();
                         const showPlacename = this.checked;
@@ -295,21 +317,10 @@
                         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                                 if (data["status"] === "success") {
-                                    if (activePage === "recent" ||
-                                        activePage === "modified" ||
-                                        activePage === "taken" ||
-                                        activePage === "folder" ||
-                                        activePage === "album" ||
-                                        activePage === "person" ||
-                                        activePage === "matches" ||
-                                        activePage === "favorites" ||
-                                        activePage === "map" ||
-                                        activePage === "search" ||
-                                        activePage === "trash"
-                                    ) {
-                                        window.location.reload();
-                                    } else if (activePage === "timeline") {
+                                    if (activePage === "timeline") {
                                         Util.reinitLightGalleryInstance();
+                                    } else {
+                                        window.location.reload();
                                     }
                                 }
                             }
@@ -326,21 +337,10 @@
 
                         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                             if (data["status"] === "success") {
-                                if (activePage === "recent" ||
-                                    activePage === "modified" ||
-                                    activePage === "taken" ||
-                                    activePage === "folder" ||
-                                    activePage === "album" ||
-                                    activePage === "person" ||
-                                    activePage === "matches" ||
-                                    activePage === "favorites" ||
-                                    activePage === "map" ||
-                                    activePage === "search" ||
-                                    activePage === "trash"
-                                ) {
-                                    window.location.reload();
-                                } else if (activePage === "timeline") {
+                                if (activePage === "timeline") {
                                     Util.reinitLightGalleryInstance();
+                                } else {
+                                    window.location.reload();
                                 }
                             }
                         }
@@ -365,6 +365,7 @@
             shashin.showPlacename = /*[[${currentUser.showPlacename}]]*/ false;
             const activePage = /*[[${activePage}]]*/ '';
             const timezone = /*[[${timezone}]]*/ "America/Los_Angeles";
+            const notificationAlerts = /*[[${currentUser.notificationAlerts}]]*/ false;
             /*]]>*/
 
             if (activePage !== "notifications") {
@@ -376,47 +377,49 @@
                     $("#sidebarMenuDrawer").html('<span id="topNavAlertBadge" class="position-absolute top-0 start-50 p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
                     $("#sidebarNotification").html('<span id="sideBarAlertBadge" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
 
-                    setTimeout(() => {
-                        const unreadNotifications = data["unreadNotifications"];
-                        const notificationCount = unreadNotifications.length;
-                        const firstNotification = data["unreadNotifications"][0];
-                        const createdAtDate = firstNotification["createdAt"];
-                        const title = notificationCount + " new notification" + (notificationCount === 1 ? "" : "s");
-                        let message = '<div class="container"><div class="row">'+((firstNotification["imageUrl"] !== null && firstNotification["imageUrl"] !== "") ? '<div class="col-4"><img src="'+firstNotification["imageUrl"]+'" width="100"></div>' : '') + ((firstNotification["imageUrl"] !== null && firstNotification["imageUrl"] !== "") ? '<div class="col-8">' : '<div class="col">') + ((notificationCount > 1) ? 'Latest - ' : '') + firstNotification["message"] + '</div></div>';
-                        if (notificationCount > 1) {
-                            message = message + "<div class='row'><hr class='mb-1 mt-3'><div class='col'><a href='#' class='gotoNotifications' target='_blank'>Read notifications</a></div><div class='col'><a href='#' class='markNotifications'>Mark all read</a></div></div>";
-                        }
-                        message = message + '</div>';
+                    if (notificationAlerts === true) {
+                        setTimeout(() => {
+                            const unreadNotifications = data["unreadNotifications"];
+                            const notificationCount = unreadNotifications.length;
+                            const firstNotification = data["unreadNotifications"][0];
+                            const createdAtDate = firstNotification["createdAt"];
+                            const title = notificationCount + " new notification" + (notificationCount === 1 ? "" : "s");
+                            let message = '<div class="container"><div class="row">' + ((firstNotification["imageUrl"] !== null && firstNotification["imageUrl"] !== "") ? '<div class="col-4"><img src="' + firstNotification["imageUrl"] + '" width="100"></div>' : '') + ((firstNotification["imageUrl"] !== null && firstNotification["imageUrl"] !== "") ? '<div class="col-8">' : '<div class="col">') + ((notificationCount > 1) ? 'Latest - ' : '') + firstNotification["message"] + '</div></div>';
+                            if (notificationCount > 1) {
+                                message = message + "<div class='row'><hr class='mb-1 mt-3'><div class='col'><a href='#' class='gotoNotifications' target='_blank'>Read notifications</a></div><div class='col'><a href='#' class='markNotifications'>Mark all read</a></div></div>";
+                            }
+                            message = message + '</div>';
 
-                        shashin.showToastMessage(title, message, {
-                            icon: "bi-bell",
-                            iconColor: "#FF8C00",
-                            headerSubtext: Util.getMessageSubText(createdAtDate, timezone),
-                            autohide: false
-                        });
+                            shashin.showToastMessage(title, message, {
+                                icon: "bi-bell",
+                                iconColor: "#FF8C00",
+                                headerSubtext: Util.getMessageSubText(createdAtDate, timezone),
+                                autohide: false
+                            });
 
-                        if (notificationCount === 1) {
-                            NotificationUtil.markNotificationRead();
-                        } else {
-                            $(".gotoNotifications").on("click", function (e) {
-                                e.preventDefault();
+                            if (notificationCount === 1) {
+                                NotificationUtil.markNotificationRead();
+                            } else {
+                                $(".gotoNotifications").on("click", function (e) {
+                                    e.preventDefault();
 
-                                window.open("/notifications", "_blank");
+                                    window.open("/notifications", "_blank");
 
-                                setTimeout(() => {
+                                    setTimeout(() => {
+                                        NotificationUtil.markNotificationRead();
+                                        shashin.closeToastMessage();
+                                    }, 500);
+                                });
+
+                                $(".markNotifications").on("click", function (e) {
+                                    e.preventDefault();
+
                                     NotificationUtil.markNotificationRead();
                                     shashin.closeToastMessage();
-                                }, 500);
-                            });
-
-                            $(".markNotifications").on("click", function (e) {
-                                e.preventDefault();
-
-                                NotificationUtil.markNotificationRead();
-                                shashin.closeToastMessage();
-                            });
-                        }
-                    }, 0);
+                                });
+                            }
+                        }, 0);
+                    }
                 }
             }
 
