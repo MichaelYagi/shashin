@@ -26,6 +26,8 @@ class User {
     private var autoplayVideo: Boolean? = false
     @NotBlank
     private var showPlacename: Boolean? = false
+    @NotBlank
+    private var notificationAlerts: Boolean? = false
     private var profile: String? = null
     private var authority: String? = null
     private var createdAt: String? = null
@@ -129,6 +131,14 @@ class User {
         this.autoplayVideo = autoplayVideo
     }
 
+    fun getNotificationAlerts(): Boolean? {
+        return this.notificationAlerts
+    }
+
+    fun setNotificationAlerts(notificationAlerts: Boolean?) {
+        this.notificationAlerts = notificationAlerts
+    }
+
     fun getShowPlacename(): Boolean? {
         return this.showPlacename
     }
@@ -160,6 +170,7 @@ class User {
         map["darkMode"] = this.darkMode
         map["autoplayVideo"] = this.autoplayVideo
         map["showPlacename"] = this.showPlacename
+        map["notificationAlerts"] = this.notificationAlerts
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {
