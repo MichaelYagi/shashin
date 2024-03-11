@@ -119,7 +119,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         this.logger.log(Level.INFO, "AlbumSeleniumTest - Photos scanned.")
 
         // Clear all notifications so that modal window does not show in next screen
-        this.driver!!.get("http://localhost:$port/notifications")
+//        this.driver!!.get("http://localhost:$port/notifications")
 
         // Check if UUID present
         this.driver!!.get("http://localhost:$port/timeline")
