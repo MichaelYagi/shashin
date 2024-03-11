@@ -384,7 +384,7 @@
                         const title = "You've got " + notificationCount + " notification" + (notificationCount === 1 ? "" : "s");
                         let message = '<div class="container"><div class="row">'+((firstNotification["imageUrl"] !== null && firstNotification["imageUrl"] !== "") ? '<div class="col-4"><img src="'+firstNotification["imageUrl"]+'" width="100"></div>' : '') + ((firstNotification["imageUrl"] !== null && firstNotification["imageUrl"] !== "") ? '<div class="col-8">' : '<div class="col">') + firstNotification["message"] + '</div></div>';
                         if (notificationCount > 1) {
-                            message = message + "<div class='row'><hr><a href='/notifications' class='gotoNotifications' target='_blank'>Read all notifications and mark as read</a></div>";
+                            message = message + "<div class='row'><hr class='mb-1 mt-3'><a href='/notifications' class='gotoNotifications' target='_blank'>Read all notifications and mark as read</a></div>";
                         }
                         message = message + '</div>';
 
