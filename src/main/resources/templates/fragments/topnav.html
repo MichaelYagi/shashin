@@ -297,10 +297,8 @@
                         const data = await http.ajax("post", "/users/shownotificationalerts", JSON.stringify(json));
 
                         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                                if (data["status"] === "success") {
-                                    window.location.reload();
-                                }
+                            if (data["status"] === "success") {
+                                window.location.reload();
                             }
                         }
                     });
@@ -314,13 +312,11 @@
                         const data = await http.ajax("post", "/users/showplacename", JSON.stringify(json));
 
                         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                                if (data["status"] === "success") {
-                                    if (activePage === "timeline") {
-                                        Util.reinitLightGalleryInstance();
-                                    } else {
-                                        window.location.reload();
-                                    }
+                            if (data["status"] === "success") {
+                                if (activePage === "timeline") {
+                                    Util.reinitLightGalleryInstance();
+                                } else {
+                                    window.location.reload();
                                 }
                             }
                         }
