@@ -291,7 +291,6 @@
                     });
 
                     $("#showNotificationAlertsSwitch").change(async function () {
-                        const activePage = $("#activePage").val();
                         const notificationAlerts = this.checked;
                         const http = new Http("show notificationAlerts");
                         const json = {notificationAlerts: notificationAlerts};
@@ -300,7 +299,7 @@
                         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                                 if (data["status"] === "success") {
-                                    Util.reinitLightGalleryInstance();
+                                    window.location.reload();
                                 }
                             }
                         }
