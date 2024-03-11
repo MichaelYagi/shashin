@@ -29,9 +29,10 @@ class TextUtils {
                 "Testing IP: $testAddress"
             )
 
+            val address: InetAddress
+
             try {
-                val address = InetAddress.getByName(testAddress)
-                return address.isSiteLocalAddress || address.isLoopbackAddress
+                address = InetAddress.getByName(testAddress)
             } catch (exception: UnknownHostException) {
                 logger.log(
                     Level.WARNING,
@@ -40,7 +41,7 @@ class TextUtils {
                 return false
             }
 
-            return false
+            return address.isSiteLocalAddress || address.isLoopbackAddress
         }
 
         fun parseRememberMeCookie(cookie: String): HashMap<String,String> {
