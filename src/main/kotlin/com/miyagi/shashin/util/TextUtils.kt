@@ -31,11 +31,7 @@ class TextUtils {
 
             try {
                 val address = InetAddress.getByName(testAddress)
-                if (address is Inet6Address) {
-                    return address.isSiteLocalAddress || address.isLoopbackAddress
-                } else if (address is Inet4Address) {
-                    return address.isSiteLocalAddress || address.isLoopbackAddress
-                }
+                return address.isSiteLocalAddress || address.isLoopbackAddress
             } catch (exception: UnknownHostException) {
                 logger.log(
                     Level.WARNING,
