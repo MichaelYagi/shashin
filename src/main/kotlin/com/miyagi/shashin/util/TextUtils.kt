@@ -4,10 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.repository.MetadataRepository
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
-import org.springframework.web.context.request.RequestContextHolder
-import org.springframework.web.context.request.ServletRequestAttributes
-import java.io.BufferedReader
-import java.io.InputStreamReader
 import java.net.*
 import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
@@ -27,36 +23,28 @@ class TextUtils {
         private var logger: Logger = Logger.getLogger(TextUtils::class.simpleName)
 
         fun isLocalIp(testAddress: String): Boolean {
-            var inetAddress: InetAddress
 
             logger.log(
                 Level.INFO,
                 "Testing IP: $testAddress"
             )
 
-            if (testAddress.contains(".")) {
-                try {
-                    inetAddress = Inet4Address.getByName(testAddress) as Inet4Address
-                    return inetAddress.isSiteLocalAddress || inetAddress.isLoopbackAddress
-                } catch (exception: UnknownHostException) {
-                    logger.log(
-                        Level.WARNING,
-                        "Testing unknown IP4: ${exception.localizedMessage}"
-                    )
-                    return false
+            try {
+                val address = InetAddress.getByName(testAddress)
+                if (address is Inet6Address) {
+                    return address.isSiteLocalAddress || address.isLoopbackAddress
+                } else if (address is Inet4Address) {
+                    return address.isSiteLocalAddress || address.isLoopbackAddress
                 }
-            } else {
-                try {
-                    inetAddress = Inet6Address.getByName(testAddress) as Inet6Address
-                    return inetAddress.isSiteLocalAddress || inetAddress.isLoopbackAddress
-                } catch (e: UnknownHostException) {
-                    logger.log(
-                        Level.WARNING,
-                        "Testing unknown IP6: ${e.localizedMessage}"
-                    )
-                    return false
-                }
+            } catch (exception: UnknownHostException) {
+                logger.log(
+                    Level.WARNING,
+                    "Testing unknown IP $testAddress: ${exception.localizedMessage}"
+                )
+                return false
             }
+
+            return false
         }
 
         fun parseRememberMeCookie(cookie: String): HashMap<String,String> {
