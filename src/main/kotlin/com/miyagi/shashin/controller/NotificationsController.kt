@@ -35,6 +35,7 @@ class NotificationsController {
         val module = "notifications"
         model["message"] = "Nothing to see here."
         model["notificationList"] = mutableListOf<Notification>()
+        model["notificationLimit"] = 0
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -43,9 +44,10 @@ class NotificationsController {
                 model["message"] = ""
                 val settings = model.getAttribute("settings") as Settings
                 val notificationLimit = settings.getNotificationLimit()
+                model["notificationLimit"] = notificationLimit!!
 
                 var notificationList = mutableListOf<Notification?>()
-                if (allNotificationList.count() > notificationLimit!!) {
+                if (allNotificationList.count() > notificationLimit) {
                     for ((index, notification) in allNotificationList.withIndex()) {
                         if (index > (notificationLimit-1) && notification != null) {
                             notificationRepository.deleteById(notification.getId())
