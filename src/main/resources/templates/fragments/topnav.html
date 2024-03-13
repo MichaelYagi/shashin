@@ -364,58 +364,68 @@
             /*]]>*/
 
             if (activePage !== "notifications") {
+                async function getNotifications() {
+                    setTimeout(() => {
+                        let http = new Http("check notifications");
+                        http.ajax("get", "/notifications/check").then(function (data) {
+                            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("hasNotifications") && data["hasNotifications"] === true) {
+                                $("#sidebarMenuDrawer").html('<span id="topNavAlertBadge" class="position-absolute top-0 start-50 p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
+                                $("#sidebarNotification").html('<span id="sideBarAlertBadge" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
 
-                let http = new Http("check notifications");
-                const data = await http.ajax("get", "/notifications/check/");
-
-                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("hasNotifications") && data["hasNotifications"] === true) {
-                    $("#sidebarMenuDrawer").html('<span id="topNavAlertBadge" class="position-absolute top-0 start-50 p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
-                    $("#sidebarNotification").html('<span id="sideBarAlertBadge" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
-
-                    if (notificationAlerts === true) {
-                        setTimeout(() => {
-                            const unreadNotifications = data["unreadNotifications"];
-                            const notificationCount = unreadNotifications.length;
-                            const firstNotification = data["unreadNotifications"][0];
-                            const createdAtDate = firstNotification["createdAt"];
-                            const title = notificationCount + " new notification" + (notificationCount === 1 ? "" : "s");
-                            let message = '<div class="container"><div class="row">' + ((firstNotification["imageUrl"] !== null && firstNotification["imageUrl"] !== "") ? '<div class="col-4"><img src="' + firstNotification["imageUrl"] + '" width="100"></div>' : '') + ((firstNotification["imageUrl"] !== null && firstNotification["imageUrl"] !== "") ? '<div class="col-8">' : '<div class="col">') + ((notificationCount > 1) ? 'Latest - ' : '') + firstNotification["message"] + '</div></div>';
-                            if (notificationCount > 1) {
-                                message = message + "<div class='row'><hr class='mb-1 mt-3'><div class='col'><a href='#' class='gotoNotifications' target='_blank'>Read notifications</a></div><div class='col'><a href='#' class='markNotifications'>Mark all read</a></div></div>";
-                            }
-                            message = message + '</div>';
-
-                            shashin.showToastMessage(title, message, {
-                                icon: "bi-bell",
-                                iconColor: "#FF8C00",
-                                headerSubtext: Util.getMessageSubText(createdAtDate, timezone),
-                                autohide: false
-                            });
-
-                            if (notificationCount === 1) {
-                                NotificationUtil.markNotificationRead();
-                            } else {
-                                $(".gotoNotifications").on("click", function (e) {
-                                    e.preventDefault();
-
-                                    window.open("/notifications", "_blank");
+                                if (notificationAlerts === true) {
+                                    const minutes = 10;
 
                                     setTimeout(() => {
-                                        NotificationUtil.markNotificationRead();
-                                        shashin.closeToastMessage();
-                                    }, 500);
-                                });
+                                        const unreadNotifications = data["unreadNotifications"];
+                                        const notificationCount = unreadNotifications.length;
+                                        const firstNotification = data["unreadNotifications"][0];
+                                        const createdAtDate = firstNotification["createdAt"];
+                                        const title = notificationCount + " new notification" + (notificationCount === 1 ? "" : "s");
+                                        let message = '<div class="container"><div class="row">' + ((firstNotification["imageUrl"] !== null && firstNotification["imageUrl"] !== "") ? '<div class="col-4"><img src="' + firstNotification["imageUrl"] + '" width="100"></div>' : '') + ((firstNotification["imageUrl"] !== null && firstNotification["imageUrl"] !== "") ? '<div class="col-8">' : '<div class="col">') + ((notificationCount > 1) ? 'Latest - ' : '') + firstNotification["message"] + '</div></div>';
+                                        if (notificationCount > 1) {
+                                            message = message + "<div class='row'><hr class='mb-1 mt-3'><div class='col'><a href='#' class='gotoNotifications' target='_blank'>Read notifications</a></div><div class='col'><a href='#' class='markNotifications'>Mark all read</a></div></div>";
+                                        }
+                                        message = message + '</div>';
 
-                                $(".markNotifications").on("click", function (e) {
-                                    e.preventDefault();
+                                        shashin.showToastMessage(title, message, {
+                                            icon: "bi-bell",
+                                            iconColor: "#FF8C00",
+                                            headerSubtext: Util.getMessageSubText(createdAtDate, timezone),
+                                            autohide: false
+                                        });
 
-                                    NotificationUtil.markNotificationRead();
-                                    shashin.closeToastMessage();
-                                });
+                                        if (notificationCount === 1) {
+                                            NotificationUtil.markNotificationRead();
+                                        } else {
+                                            $(".gotoNotifications").on("click", function (e) {
+                                                e.preventDefault();
+
+                                                window.open("/notifications", "_blank");
+
+                                                setTimeout(() => {
+                                                    NotificationUtil.markNotificationRead();
+                                                    shashin.closeToastMessage();
+                                                }, 500);
+                                            });
+
+                                            $(".markNotifications").on("click", function (e) {
+                                                e.preventDefault();
+
+                                                NotificationUtil.markNotificationRead();
+                                                shashin.closeToastMessage();
+                                            });
+                                        }
+                                    }, 0);
+
+                                    // Poll every 10 minutes
+                                    setTimeout(getNotifications, (minutes * 60 * 1000));
+                                }
                             }
-                        }, 0);
-                    }
+                        });
+                    }, 0);
                 }
+
+                await getNotifications();
             }
 
             // Clear live toast message on close
