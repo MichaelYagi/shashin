@@ -43,8 +43,9 @@ async function showMap(mapdata) {
     // Set an initial date to 500 photos ago
     let initIndex = 500;
     if (mapdata.length < initIndex) {
-        initIndex = mapdata.length
+        initIndex = mapdata.length;
     }
+    initIndex = initIndex - 1;
 
     // Date fields are format "yyyy-MM-dd"
     let initialStartDate = "";
@@ -298,7 +299,7 @@ async function showMap(mapdata) {
                     endDateObj = new Date(year, month, day);
                 }
 
-                if (true === checkDateInputs(dateTakenObj,startDateObj,endDateObj)) {
+                if (true === checkDateInputs(startDateObj,endDateObj,dateTakenObj)) {
                     const mapMarkerIcon = new ol.style.Style({
                         //geometry: feature.getGeometry(),
                         image: new ol.style.Icon(({
