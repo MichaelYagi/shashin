@@ -150,9 +150,7 @@ async function showMap(mapdata) {
     if (qsaid !== null && qsaid !== "" && albumIds.includes(qsaid)) {
         $("#albumSelect").val(qsaid);
     }
-    if ($("#albumSelect").length > 0 && $("#albumSelect").val() !== "0") {
-        renderAlbumSelected();
-    }
+    renderAlbumSelected();
 
     function isValidQsDate(dateString) {
         if (dateString === "" || dateString === null) {
@@ -900,9 +898,7 @@ async function showMap(mapdata) {
         if (true === dateInputsValid) {
             initialZoom = 2; //map.getView().getZoom();
 
-            if ($("#albumSelect").length > 0 && $("#albumSelect").val() !== "0") {
-                renderAlbumSelected();
-            } else {
+            if (false === renderAlbumSelected()) {
                 // Filter results
                 setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
             }
@@ -912,15 +908,21 @@ async function showMap(mapdata) {
     }
 
     function renderAlbumSelected() {
-        const albumId = $("#albumSelect").val();
-        // Query metadata in album with lat/lng
-        const http = new Http("get album map data");
+        if ($("#albumSelect").length > 0 && $("#albumSelect").val() !== "0") {
+            const albumId = $("#albumSelect").val();
+            // Query metadata in album with lat/lng
+            const http = new Http("get album map data");
 
-        http.ajax("get", "/album/mapdata/"+albumId).then(function (data) {
-            if (data.hasOwnProperty("albummapdata")) {
-                setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"), data["albummapdata"]);
-            }
-        });
+            http.ajax("get", "/album/mapdata/" + albumId).then(function (data) {
+                if (data.hasOwnProperty("albummapdata")) {
+                    setLayer(startDateField.val(), endDateField.val(), videoOnlyCheckbox.prop("checked"), data["albummapdata"]);
+                }
+            });
+
+            return true;
+        }
+
+        return false;
     }
 
     function renderMarker(id,lat,lng,color) {
