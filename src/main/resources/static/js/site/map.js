@@ -42,6 +42,7 @@ async function showMap(mapdata) {
 
     // Set an initial date to 500 photos ago
     let initIndex = 500;
+    initIndex = mapdata.length-initIndex;
     if (mapdata.length < initIndex) {
         initIndex = mapdata.length;
     }
