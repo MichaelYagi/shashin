@@ -58,6 +58,25 @@ async function showMap(mapdata) {
 
     let initialCoord = [-73.1234, 45.678];
     let initialZoom = 2;
+
+    // Query params for albumId
+    if (qsaid !== null && qsaid !== "") {
+        const options = $('#albumSelect option');
+        const albumIds = $.map(options, function (option) {
+            return option.value;
+        });
+
+        if (albumIds.includes(qsaid)) {
+            // Clear dates
+            startDateField.val("");
+            endDateField.val("");
+            albumSelect.val(qsaid);
+            renderAlbumSelected();
+        } else {
+            shashin.showToastMessage("Album does not exist", "Invalid album ID " + qsaid + ".", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+        }
+    }
+
     if (qslat !== null && qslng !== null && qslat !== '' && qslng !== '') {
         if (true === isValidQsLatLon(qslat,qslng)) {
             initialCoord = [qslng, qslat];
@@ -780,24 +799,6 @@ async function showMap(mapdata) {
     // Query params marker
     if (qslat !== "" && qslng !== "") {
         renderMarker('tempQpCoordinates',qslat,qslng,"red");
-    }
-
-    // Query params for albumId
-    if (qsaid !== null && qsaid !== "") {
-        const options = $('#albumSelect option');
-        const albumIds = $.map(options, function (option) {
-            return option.value;
-        });
-
-        if (albumIds.includes(qsaid)) {
-            // Clear dates
-            startDateField.val("");
-            endDateField.val("");
-            albumSelect.val(qsaid);
-            renderAlbumSelected();
-        } else {
-            shashin.showToastMessage("Album does not exist", "Invalid album ID " + qsaid + ".", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
-        }
     }
 
     map.on('click', function () {
