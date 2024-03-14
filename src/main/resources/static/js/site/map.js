@@ -16,6 +16,7 @@ async function showMap(mapdata) {
     const startDateField = $("#startDateInput");
     const endDateField = $("#endDateInput");
     const filterInputs = $("#filterInputs");
+    const albumSelect = $("#albumSelect");
     const progressBarWrapper = $("#progressBarWrapper");
     const progressBar = $("#progressBar");
 
@@ -789,7 +790,10 @@ async function showMap(mapdata) {
         });
 
         if (albumIds.includes(qsaid)) {
-            $("#albumSelect").val(qsaid);
+            // Clear dates
+            startDateField.val("");
+            endDateField.val("");
+            albumSelect.val(qsaid);
             renderAlbumSelected();
         } else {
             shashin.showToastMessage("Album does not exist", "Invalid album ID " + qsaid + ".", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
@@ -848,7 +852,7 @@ async function showMap(mapdata) {
         }
     });
 
-    $("#albumSelect").on("change", function(e) {
+    albumSelect.on("change", function(e) {
         if ($(this).val() !== "0") {
             startDateField.val("");
             endDateField.val("");
@@ -913,8 +917,8 @@ async function showMap(mapdata) {
     }
 
     function renderAlbumSelected() {
-        if ($("#albumSelect").length > 0 && $("#albumSelect").val() !== "0") {
-            const albumId = $("#albumSelect").val();
+        if (albumSelect.length > 0 && albumSelect.val() !== "0") {
+            const albumId = albumSelect.val();
             // Query metadata in album with lat/lng
             const http = new Http("get album map data");
 
@@ -996,8 +1000,8 @@ async function showMap(mapdata) {
 
         startDateField.val(initialStartDate);
 
-        if ($("#albumSelect").length > 0) {
-            $("#albumSelect").val("0");
+        if (albumSelect.length > 0) {
+            albumSelect.val("0");
         }
 
         setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],true);
