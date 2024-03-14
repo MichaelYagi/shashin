@@ -952,6 +952,7 @@ async function showMap(mapdata) {
     $("#resetMap").on("click", function(e) {
         e.preventDefault();
 
+        window.history.replaceState(null, '', window.location.pathname);
         filtered = true;
 
         startDateField.val("");
@@ -966,7 +967,6 @@ async function showMap(mapdata) {
         }
 
         setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],true);
-        window.history.replaceState(null, '', window.location.pathname);
         shashin.showToastMessage("Map reset", "Map reset", {icon:"bi-info-circle", iconColor:"#777777", delay: 3000});
 
         $("#propMapFilter").modal('hide');
