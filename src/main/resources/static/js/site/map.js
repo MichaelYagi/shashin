@@ -143,12 +143,17 @@ async function showMap(mapdata) {
     }
 
     // Query params for albumId
-    const options = $('#albumSelect option');
-    const albumIds = $.map(options, function (option) {
-        return option.value;
-    });
-    if (qsaid !== null && qsaid !== "" && albumIds.includes(qsaid)) {
-        $("#albumSelect").val(qsaid);
+    if (qsaid !== null && qsaid !== "") {
+        const options = $('#albumSelect option');
+        const albumIds = $.map(options, function (option) {
+            return option.value;
+        });
+
+        if (albumIds.includes(qsaid)) {
+            $("#albumSelect").val(qsaid);
+        } else {
+            shashin.showToastMessage("Album does not exist", "Invalid album ID " + qsaid + ".", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+        }
     }
     renderAlbumSelected();
 
