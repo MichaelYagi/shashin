@@ -142,21 +142,6 @@ async function showMap(mapdata) {
         localStorage.removeItem("vo");
     }
 
-    // Query params for albumId
-    if (qsaid !== null && qsaid !== "") {
-        const options = $('#albumSelect option');
-        const albumIds = $.map(options, function (option) {
-            return option.value;
-        });
-
-        if (albumIds.includes(qsaid)) {
-            $("#albumSelect").val(qsaid);
-        } else {
-            shashin.showToastMessage("Album does not exist", "Invalid album ID " + qsaid + ".", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
-        }
-    }
-    renderAlbumSelected();
-
     function isValidQsDate(dateString) {
         if (dateString === "" || dateString === null) {
             return true;
@@ -794,6 +779,21 @@ async function showMap(mapdata) {
     // Query params marker
     if (qslat !== "" && qslng !== "") {
         renderMarker('tempQpCoordinates',qslat,qslng,"red");
+    }
+
+    // Query params for albumId
+    if (qsaid !== null && qsaid !== "") {
+        const options = $('#albumSelect option');
+        const albumIds = $.map(options, function (option) {
+            return option.value;
+        });
+
+        if (albumIds.includes(qsaid)) {
+            $("#albumSelect").val(qsaid);
+            renderAlbumSelected();
+        } else {
+            shashin.showToastMessage("Album does not exist", "Invalid album ID " + qsaid + ".", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+        }
     }
 
     map.on('click', function () {
