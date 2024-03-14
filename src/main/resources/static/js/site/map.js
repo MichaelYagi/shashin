@@ -952,7 +952,16 @@ async function showMap(mapdata) {
     $("#resetMap").on("click", function(e) {
         e.preventDefault();
 
+        // Remove query params
         window.history.replaceState(null, '', window.location.pathname);
+
+        // Remove marker
+        map.getLayers().forEach(layer => {
+            if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempQpCoordinates") {
+                map.removeLayer(layer);
+            }
+        });
+
         filtered = true;
 
         startDateField.val("");
