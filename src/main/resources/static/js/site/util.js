@@ -922,6 +922,71 @@ class Util {
         }
     }
 
+    // Formats to yyyy-mm-dd if input is yyyy-m-d for eg.
+    static formatDate(dateString) {
+        const dateStringArray = dateString.split("-");
+        if (dateStringArray.length === 3) {
+            let month = dateStringArray[1];
+            if (month.charAt(0) !== "0" && Number.isInteger(parseInt(month)) && month <= 9) {
+                month = "0" + month;
+            }
+
+            let day = dateStringArray[2];
+            if (day.charAt(0) !== "0" && Number.isInteger(parseInt(day)) && day <= 9) {
+                day = "0" + day;
+            }
+
+            dateString = dateStringArray[0] + "-" + month + "-" + day;
+        }
+
+        return dateString;
+    }
+
+    // Validates yyy-mm-dd format
+    static isValidDate(dateString) {
+        if (dateString === "" || dateString === null) {
+            return true;
+        }
+
+        const regEx = /^\d{4}-\d{2}-\d{2}$/;
+        if (!dateString.match(regEx)) {
+            return false;
+        }
+        // Invalid format
+        const d = new Date(dateString);
+        const dNum = d.getTime();
+        if (!dNum && dNum !== 0) {
+            return false;
+        }
+        // NaN value, Invalid date
+        return d.toISOString().slice(0, 10) === dateString;
+    }
+
+    static isValidLatLon(lat, lon) {
+        const regexLat = /^(-?[1-8]?\d(?:\.\d{1,18})?|90(?:\.0{1,18})?)$/;
+        const regexLon = /^(-?(?:1[0-7]|[1-9])?\d(?:\.\d{1,18})?|180(?:\.0{1,18})?)$/;
+
+        let validLat = regexLat.test(lat);
+        let validLon = regexLon.test(lon);
+        return validLat && validLon;
+    }
+
+    static formatDateTime(d) {
+        if (Object.prototype.toString.call(d) === "[object Date]") {
+            // it is a date
+            if (isNaN(d)) { // d.getTime() or d.valueOf() will also work
+                // date object is not valid
+                return null;
+            } else {
+                // date object is valid
+                return new Date(d.getTime() - d.getTimezoneOffset() * -60000);
+            }
+        } else {
+            // not a date object
+            return null;
+        }
+    }
+
     static getBatchData(batchObj) {
         const jsonData = {};
         jsonData.batchMetadataIds = batchObj.hasOwnProperty("batchMetadataIds") ? JSON.parse(batchObj["batchMetadataIds"]) : null;
