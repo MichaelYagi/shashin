@@ -9,6 +9,7 @@ async function showMap(mapdata) {
     const qsvo = Util.getParameterByName("vo");
     // Media type filter
     const qsmtf = Util.getParameterByName("mtf");
+    const qsaid = Util.getParameterByName("aid");
 
     const videoOnlyCheckbox = $("#videoOnlyInput");
     const showMarkersCheckbox = $("#showMarkersInput");
@@ -139,6 +140,18 @@ async function showMap(mapdata) {
         localStorage.removeItem("sd");
         localStorage.removeItem("ed");
         localStorage.removeItem("vo");
+    }
+
+    // Query params for albumId
+    const options = $('#albumSelect option');
+    const albumIds = $.map(options, function (option) {
+        return option.value;
+    });
+    if (qsaid !== null && qsaid !== "" && albumIds.includes(qsaid)) {
+        $("#albumSelect").val(qsaid);
+    }
+    if ($("#albumSelect").length > 0 && $("#albumSelect").val() !== "0") {
+        renderAlbumSelected();
     }
 
     function isValidQsDate(dateString) {
@@ -886,16 +899,9 @@ async function showMap(mapdata) {
         // Validate fields
         if (true === dateInputsValid) {
             initialZoom = 2; //map.getView().getZoom();
-            if ($("#albumSelect").length > 0 && $("#albumSelect").val() !== "0") {
-                const albumId = $("#albumSelect").val();
-                // Query metadata in album with lat/lng
-                const http = new Http("get album map data");
 
-                http.ajax("get", "/album/mapdata/"+albumId).then(function (data) {
-                    if (data.hasOwnProperty("albummapdata")) {
-                        setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"), data["albummapdata"]);
-                    }
-                });
+            if ($("#albumSelect").length > 0 && $("#albumSelect").val() !== "0") {
+                renderAlbumSelected();
             } else {
                 // Filter results
                 setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
@@ -903,6 +909,18 @@ async function showMap(mapdata) {
         }
 
         return dateInputsValid;
+    }
+
+    function renderAlbumSelected() {
+        const albumId = $("#albumSelect").val();
+        // Query metadata in album with lat/lng
+        const http = new Http("get album map data");
+
+        http.ajax("get", "/album/mapdata/"+albumId).then(function (data) {
+            if (data.hasOwnProperty("albummapdata")) {
+                setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"), data["albummapdata"]);
+            }
+        });
     }
 
     function renderMarker(id,lat,lng,color) {
