@@ -215,6 +215,52 @@ describe('#Util tests', function() {
         assert.equal(month, 'Feb')
     })
 
+    it('Format string date tests', function() {
+        let date = Util.formatDate("2023-12-09")
+        assert.equal(date, "2023-12-09")
+
+        date = Util.formatDate("2023-12-9")
+        assert.equal(date, "2023-12-09")
+
+        date = Util.formatDate("2023-9-8")
+        assert.equal(date, "2023-09-08")
+
+        date = Util.formatDate(1)
+        assert.equal(date, null)
+    })
+
+    it('Valid date test', function() {
+        let dateCheck = Util.isValidDate("2023-12-09")
+        assert.equal(dateCheck, true)
+
+        dateCheck = Util.isValidDate("2023-12-9")
+        assert.equal(dateCheck, false)
+
+        dateCheck = Util.isValidDate("12-2023-09")
+        assert.equal(dateCheck, false)
+    })
+
+    it('Format date object test', function() {
+        let dateFormat = Util.formatDateTime(new Date("12/09/2023"))
+        assert.equal(dateFormat.getFullYear(), 2023)
+        // 0 based month for some reason
+        assert.equal(dateFormat.getMonth(), 11)
+        assert.equal(dateFormat.getDate(), 9)
+
+        dateFormat = Util.formatDateTime(new Date("2023-12-09"))
+        assert.equal(dateFormat.getFullYear(), 2023)
+        assert.equal(dateFormat.getMonth(), 11)
+        assert.equal(dateFormat.getDate(), 9)
+
+        dateFormat = Util.formatDateTime(1)
+        assert.equal(dateFormat, null)
+
+        dateFormat = Util.formatDateTime(new Date(1))
+        assert.equal(dateFormat.getFullYear(), 1970)
+        assert.equal(dateFormat.getMonth(), 0)
+        assert.equal(dateFormat.getDate(), 1)
+    })
+
     it('Cookie tests', function() {
         let aCookie = Util.getCookie("somecookiename");
         assert.equal(aCookie, "");

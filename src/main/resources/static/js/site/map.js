@@ -126,7 +126,7 @@ async function showMap(mapdata) {
     if ((qssd !== null && qssd !== "") || (qsed !== null && qsed !== "") || qsvo !== null) {
         if (qssd !== null && qssd !== "") {
             qssd = Util.formatDate(qssd);
-            if (true === Util.isValidDate(qssd)) {
+            if (qssd !== null && true === Util.isValidDate(qssd)) {
                 startDateField.val(qssd);
             } else {
                 shashin.showToastMessage("Validation error", "Date format must be yyyy-mm-dd.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
@@ -134,7 +134,7 @@ async function showMap(mapdata) {
         }
         if (qsed !== null && qsed !== "") {
             qsed = Util.formatDate(qsed);
-            if (true === Util.isValidDate(qsed)) {
+            if (qsed !== null && true === Util.isValidDate(qsed)) {
                 endDateField.val(qsed);
             } else {
                 shashin.showToastMessage("Validation error", "Date format must be yyyy-mm-dd.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
