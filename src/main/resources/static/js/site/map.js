@@ -164,63 +164,75 @@ async function showMap(mapdata) {
         localStorage.removeItem("vo");
     }
 
-    function checkDates(takenAtDateFormat,startDateFormat,endDateFormat) {
-        shashin.printMessageToConsole("startDateFormat before Util.formatDateTime reformatted: " + startDateFormat);
-        shashin.printMessageToConsole("endDateFormat before Util.formatDateTime reformatted: " + endDateFormat);
-        shashin.printMessageToConsole("takenAtDateFormat before Util.formatDateTime reformatted: " + takenAtDateFormat);
+    function checkDateInputs(startDateFormat,endDateFormat,takenAtDateFormat) {
+        if (takenAtDateFormat === undefined) {
+            shashin.printMessageToConsole("startDateFormat before processing: " + startDateFormat);
+            shashin.printMessageToConsole("endDateFormat before processing: " + endDateFormat);
 
-        startDateFormat = Util.formatDateTime(startDateFormat);
-        endDateFormat = Util.formatDateTime(endDateFormat);
-        takenAtDateFormat = Util.formatDateTime(takenAtDateFormat);
+            startDateFormat = Util.formatDateTime(startDateFormat);
+            endDateFormat = Util.formatDateTime(endDateFormat);
 
-        shashin.printMessageToConsole("startDateFormat after Util.formatDateTime reformatted: " + startDateFormat);
-        shashin.printMessageToConsole("endDateFormat after Util.formatDateTime reformatted: " + endDateFormat);
-        shashin.printMessageToConsole("takenAtDateFormat after Util.formatDateTime reformatted: " + takenAtDateFormat);
-        shashin.printMessageToConsole("-----------");
+            shashin.printMessageToConsole("startDateFormat after processing: " + startDateFormat);
+            shashin.printMessageToConsole("endDateFormat after processing: " + endDateFormat);
+            shashin.printMessageToConsole("-----------");
 
-        if (takenAtDateFormat !== null) {
-            if (startDateFormat && endDateFormat) {
-                return takenAtDateFormat >= startDateFormat && takenAtDateFormat <= endDateFormat;
-            } else if (endDateFormat) {
-                return takenAtDateFormat <= endDateFormat;
-            } else if (startDateFormat) {
-                return takenAtDateFormat >= startDateFormat;
-            } else return startDateFormat === null && endDateFormat === null;
-        }
-
-        return false;
-    }
-
-    function checkDateInputs(startDateFormat,endDateFormat) {
-        shashin.printMessageToConsole("startDateFormat before processing: " + startDateFormat);
-        shashin.printMessageToConsole("endDateFormat before processing: " + endDateFormat);
-
-        startDateFormat = Util.formatDateTime(startDateFormat);
-        endDateFormat = Util.formatDateTime(endDateFormat);
-
-        shashin.printMessageToConsole("startDateFormat after processing: " + startDateFormat);
-        shashin.printMessageToConsole("endDateFormat after processing: " + endDateFormat);
-        shashin.printMessageToConsole("-----------");
-
-        if (startDateField.val() === "" && endDateField.val() === "") {
-            return true;
-        } else if (startDateField.val() !== "" && startDateFormat == null && endDateField.val() !== "" && endDateFormat === null) {
-            shashin.showToastMessage("Validation error", "Invalid dates.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
-            return false;
-        } else if (startDateFormat && endDateFormat) {
-            if (endDateFormat < startDateFormat) {
-                shashin.showToastMessage("Validation error", "Start date must be before end date.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+            if (startDateField.val() === "" && endDateField.val() === "") {
+                return true;
+            } else if (startDateField.val() !== "" && startDateFormat == null && endDateField.val() !== "" && endDateFormat === null) {
+                shashin.showToastMessage("Validation error", "Invalid dates.", {
+                    icon: "bi-exclamation-triangle",
+                    iconColor: "#FF0000"
+                });
+                return false;
+            } else if (startDateFormat && endDateFormat) {
+                if (endDateFormat < startDateFormat) {
+                    shashin.showToastMessage("Validation error", "Start date must be before end date.", {
+                        icon: "bi-exclamation-triangle",
+                        iconColor: "#FF0000"
+                    });
+                }
+                return endDateFormat >= startDateFormat;
+            } else if (startDateField.val() !== "" && startDateFormat === null) {
+                shashin.showToastMessage("Validation error", "Invalid start date.", {
+                    icon: "bi-exclamation-triangle",
+                    iconColor: "#FF0000"
+                });
+                return false;
+            } else if (endDateField.val() !== "" && endDateFormat === null) {
+                shashin.showToastMessage("Validation error", "Invalid end date.", {
+                    icon: "bi-exclamation-triangle",
+                    iconColor: "#FF0000"
+                });
+                return false;
             }
-            return endDateFormat >= startDateFormat;
-        } else if (startDateField.val() !== "" && startDateFormat === null) {
-            shashin.showToastMessage("Validation error", "Invalid start date.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
-            return false;
-        } else if (endDateField.val() !== "" && endDateFormat === null) {
-            shashin.showToastMessage("Validation error", "Invalid end date.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+
+            return true;
+        } else {
+            shashin.printMessageToConsole("startDateFormat before Util.formatDateTime reformatted: " + startDateFormat);
+            shashin.printMessageToConsole("endDateFormat before Util.formatDateTime reformatted: " + endDateFormat);
+            shashin.printMessageToConsole("takenAtDateFormat before Util.formatDateTime reformatted: " + takenAtDateFormat);
+
+            startDateFormat = Util.formatDateTime(startDateFormat);
+            endDateFormat = Util.formatDateTime(endDateFormat);
+            takenAtDateFormat = Util.formatDateTime(takenAtDateFormat);
+
+            shashin.printMessageToConsole("startDateFormat after Util.formatDateTime reformatted: " + startDateFormat);
+            shashin.printMessageToConsole("endDateFormat after Util.formatDateTime reformatted: " + endDateFormat);
+            shashin.printMessageToConsole("takenAtDateFormat after Util.formatDateTime reformatted: " + takenAtDateFormat);
+            shashin.printMessageToConsole("-----------");
+
+            if (takenAtDateFormat !== null) {
+                if (startDateFormat && endDateFormat) {
+                    return takenAtDateFormat >= startDateFormat && takenAtDateFormat <= endDateFormat;
+                } else if (endDateFormat) {
+                    return takenAtDateFormat <= endDateFormat;
+                } else if (startDateFormat) {
+                    return takenAtDateFormat >= startDateFormat;
+                } else return startDateFormat === null && endDateFormat === null;
+            }
+
             return false;
         }
-
-        return true;
     }
 
     function setLayer(startDate, endDate, videoOnly, metadataList, resetMap) {
@@ -287,7 +299,7 @@ async function showMap(mapdata) {
                     endDateObj = new Date(year, month, day);
                 }
 
-                if (true === checkDates(dateTakenObj,startDateObj,endDateObj)) {
+                if (true === checkDateInputs(dateTakenObj,startDateObj,endDateObj)) {
                     const mapMarkerIcon = new ol.style.Style({
                         //geometry: feature.getGeometry(),
                         image: new ol.style.Icon(({
