@@ -4,8 +4,8 @@ async function showMap(mapdata) {
     let version = Util.getMetadataLocalStorage();
     const qslatlng = Util.getParameterByName("latlng");
     // Must be format yyyy-mm-dd
-    const qssd = Util.getParameterByName("sd");
-    const qsed = Util.getParameterByName("ed");
+    let qssd = Util.getParameterByName("sd");
+    let qsed = Util.getParameterByName("ed");
     const qsvo = Util.getParameterByName("vo");
     // Media type filter
     const qsmtf = Util.getParameterByName("mtf");
@@ -78,7 +78,7 @@ async function showMap(mapdata) {
     }
 
     if (qslat !== null && qslng !== null && qslat !== '' && qslng !== '') {
-        if (true === isValidQsLatLon(qslat,qslng)) {
+        if (true === Util.isValidLatLon(qslat,qslng)) {
             initialCoord = [qslng, qslat];
             initialZoom = shashin.initialMapZoom;
             startDateField.val("");
@@ -92,7 +92,7 @@ async function showMap(mapdata) {
             qslat = latlngArr[0].trim();
             qslng = latlngArr[1].trim();
 
-            if (true === isValidQsLatLon(qslat, qslng)) {
+            if (true === Util.isValidLatLon(qslat, qslng)) {
                 initialCoord = [qslng, qslat];
                 initialZoom = shashin.initialMapZoom;
                 startDateField.val("");
@@ -125,14 +125,16 @@ async function showMap(mapdata) {
     // Query param takes precedence over localstorage
     if ((qssd !== null && qssd !== "") || (qsed !== null && qsed !== "") || qsvo !== null) {
         if (qssd !== null && qssd !== "") {
-            if (true === isValidQsDate(qssd)) {
+            qssd = Util.formatDate(qssd);
+            if (true === Util.isValidDate(qssd)) {
                 startDateField.val(qssd);
             } else {
                 shashin.showToastMessage("Validation error", "Date format must be yyyy-mm-dd.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
             }
         }
         if (qsed !== null && qsed !== "") {
-            if (true === isValidQsDate(qsed)) {
+            qsed = Util.formatDate(qsed);
+            if (true === Util.isValidDate(qsed)) {
                 endDateField.val(qsed);
             } else {
                 shashin.showToastMessage("Validation error", "Date format must be yyyy-mm-dd.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
@@ -162,62 +164,18 @@ async function showMap(mapdata) {
         localStorage.removeItem("vo");
     }
 
-    function isValidQsDate(dateString) {
-        if (dateString === "" || dateString === null) {
-            return true;
-        }
-
-        const regEx = /^\d{4}-\d{2}-\d{2}$/;
-        if (!dateString.match(regEx)) {
-            return false;
-        }
-        // Invalid format
-        const d = new Date(dateString);
-        const dNum = d.getTime();
-        if (!dNum && dNum !== 0) {
-            return false;
-        }
-        // NaN value, Invalid date
-        return d.toISOString().slice(0, 10) === dateString;
-    }
-
-    function isValidQsLatLon(lat, lon) {
-        const regexLat = /^(-?[1-8]?\d(?:\.\d{1,18})?|90(?:\.0{1,18})?)$/;
-        const regexLon = /^(-?(?:1[0-7]|[1-9])?\d(?:\.\d{1,18})?|180(?:\.0{1,18})?)$/;
-
-        let validLat = regexLat.test(lat);
-        let validLon = regexLon.test(lon);
-        return validLat && validLon;
-    }
-    
-    function validateDate(d) {
-        if (Object.prototype.toString.call(d) === "[object Date]") {
-            // it is a date
-            if (isNaN(d)) { // d.getTime() or d.valueOf() will also work
-                // date object is not valid
-                return null;
-            } else {
-                // date object is valid
-                return new Date(d.getTime() - d.getTimezoneOffset() * -60000);
-            }
-        } else {
-            // not a date object
-            return null;
-        }
-    }
-
     function checkDates(takenAtDateFormat,startDateFormat,endDateFormat) {
-        shashin.printMessageToConsole("startDateFormat before validateDate reformatted: " + startDateFormat);
-        shashin.printMessageToConsole("endDateFormat before validateDate reformatted: " + endDateFormat);
-        shashin.printMessageToConsole("takenAtDateFormat before validateDate reformatted: " + takenAtDateFormat);
+        shashin.printMessageToConsole("startDateFormat before Util.formatDateTime reformatted: " + startDateFormat);
+        shashin.printMessageToConsole("endDateFormat before Util.formatDateTime reformatted: " + endDateFormat);
+        shashin.printMessageToConsole("takenAtDateFormat before Util.formatDateTime reformatted: " + takenAtDateFormat);
 
-        startDateFormat = validateDate(startDateFormat);
-        endDateFormat = validateDate(endDateFormat);
-        takenAtDateFormat = validateDate(takenAtDateFormat);
+        startDateFormat = Util.formatDateTime(startDateFormat);
+        endDateFormat = Util.formatDateTime(endDateFormat);
+        takenAtDateFormat = Util.formatDateTime(takenAtDateFormat);
 
-        shashin.printMessageToConsole("startDateFormat after validateDate reformatted: " + startDateFormat);
-        shashin.printMessageToConsole("endDateFormat after validateDate reformatted: " + endDateFormat);
-        shashin.printMessageToConsole("takenAtDateFormat after validateDate reformatted: " + takenAtDateFormat);
+        shashin.printMessageToConsole("startDateFormat after Util.formatDateTime reformatted: " + startDateFormat);
+        shashin.printMessageToConsole("endDateFormat after Util.formatDateTime reformatted: " + endDateFormat);
+        shashin.printMessageToConsole("takenAtDateFormat after Util.formatDateTime reformatted: " + takenAtDateFormat);
         shashin.printMessageToConsole("-----------");
 
         if (takenAtDateFormat !== null) {
@@ -237,8 +195,8 @@ async function showMap(mapdata) {
         shashin.printMessageToConsole("startDateFormat before processing: " + startDateFormat);
         shashin.printMessageToConsole("endDateFormat before processing: " + endDateFormat);
 
-        startDateFormat = validateDate(startDateFormat);
-        endDateFormat = validateDate(endDateFormat);
+        startDateFormat = Util.formatDateTime(startDateFormat);
+        endDateFormat = Util.formatDateTime(endDateFormat);
 
         shashin.printMessageToConsole("startDateFormat after processing: " + startDateFormat);
         shashin.printMessageToConsole("endDateFormat after processing: " + endDateFormat);
