@@ -1160,11 +1160,14 @@ async function showMap(mapdata) {
        if ($(this).val() === "bingmaps") {
            $("#bingMapsImagerySet").val("AerialWithLabels");
            $("#bingMapsImageryContainer").css("display", "block");
+           $("#maptilerContainer").css("display", "none");
        } else if ($(this).val() === "maptiler") {
            $("#maptilerImagerySet").val("maptiler");
            $("#maptilerContainer").css("display", "block");
+           $("#bingMapsImageryContainer").css("display", "none");
        } else {
            $("#bingMapsImageryContainer").css("display", "none");
+           $("#maptilerContainer").css("display", "none");
        }
     });
 }
