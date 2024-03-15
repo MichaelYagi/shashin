@@ -1125,6 +1125,7 @@ async function showMap(mapdata) {
 
     $("#mapSources").on("change", function () {
        if ($(this).val() === "bingmaps") {
+           $("#bingMapsImagerySet").val("AerialWithLabels");
            $("#bingMapsImageryContainer").css("display", "block");
        } else {
            $("#bingMapsImageryContainer").css("display", "none");
