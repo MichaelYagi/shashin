@@ -40,6 +40,7 @@
     shashin.apiResponse.SUCCESS = "success";
     shashin.apiResponse.WARN = "warn";
     shashin.apiResponse.FAIL = "fail";
+    shashin.currentMapSource = "osm" // "osm","bingmaps","maptiler"; Does not work:"mapbox"
 
     function fixContentHeight() {
         if ($("div[data-role='dialog']").is(":visible")) {
@@ -949,7 +950,7 @@
                     layers: [
                         new ol.layer.Tile({
                             visible: true,
-                            source: shashin.getMapSource("osm")
+                            source: shashin.getMapSource(shashin.currentMapSource)
                         })
                     ],
                     target: 'modalmap',
@@ -958,7 +959,7 @@
             } else {
                 const baseLayer = new ol.layer.Tile({
                     visible: true,
-                    source: shashin.getMapSource("osm")
+                    source: shashin.getMapSource(shashin.currentMapSource)
                 });
                 shashin.map.addLayer(baseLayer);
             }
@@ -1657,7 +1658,7 @@
     }
 
     shashin.getMapSource = function (source) {
-        const validSources = ["osm","bingmaps","maptiler","mapbox"];
+        const validSources = ["osm","bingmaps","maptiler"]; //,"mapbox"
 
         let mapSource = new ol.source.OSM();
 
@@ -1669,7 +1670,7 @@
                 case "bingmaps":
                     mapSource = new ol.source.BingMaps({
                         key: 'AgLAysLWWJdjeVeOTVUYlNfUddxeF6QFeXCciHblaYSG7xYx3OUuAnpX98MNQUFR', // Dev/Test
-                        imagerySet: 'RoadOnDemand', // 'Aerial', 'RoadOnDemand', 'AerialWithLabels', etc.
+                        imagerySet: 'AerialWithLabels', // 'Aerial', 'RoadOnDemand', 'AerialWithLabels', etc.
                         // use maxZoom 19 to see stretched tiles instead of the Bing Maps
                         // "no photos at this zoom level" tiles
                         maxZoom: 19
@@ -1681,11 +1682,11 @@
                         maxZoom: 19
                     });
                     break;
-                case "mapbox":
-                    mapSource = new ol.source.XYZ({
-                        url: 'https://{a-c}.tiles.mapbox.com/v4/mapbox.mapbox-streets-v6/{z}/{x}/{y}.vector.pbf?access_token=pk.eyJ1IjoibWljaGFlbHR5YWdpIiwiYSI6ImNrdGszZXNrdTFocTcyd29sMG1hYXprdmsifQ.RVimlhqPIKKTYmaGyr-ThQ'
-                    });
-                    break;
+                // case "mapbox":
+                //     mapSource = new ol.source.XYZ({
+                //         url: 'https://{a-c}.tiles.mapbox.com/v4/mapbox.mapbox-streets-v6/{z}/{x}/{y}.vector.pbf?access_token=pk.eyJ1IjoibWljaGFlbHR5YWdpIiwiYSI6ImNrdGszZXNrdTFocTcyd29sMG1hYXprdmsifQ.RVimlhqPIKKTYmaGyr-ThQ'
+                //     });
+                //     break;
                 default:
                     mapSource = new ol.source.OSM();
             }

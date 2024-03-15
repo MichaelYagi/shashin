@@ -666,7 +666,7 @@ async function showMap(mapdata) {
         interactions: interactions,
         layers: [
             new ol.layer.Tile({
-                source: shashin.getMapSource("osm"),
+                source: shashin.getMapSource(shashin.currentMapSource),
                 visible: true
             })
         ],
