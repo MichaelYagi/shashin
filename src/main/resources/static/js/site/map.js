@@ -1071,9 +1071,9 @@ async function showMap(mapdata) {
         });
 
         $("#bingMapsImageryContainer").css("display", "none");
-        $("#bingMapsImageryContainer").css("display", "none");
+        $("#maptilerContainer").css("display", "none");
 
-        if ($("#mapSources").val() !== "osm" || $("#bingMapsImagerySet").val() !== "AerialWithLabels") {
+        if ($("#mapSources").val() !== "osm" || $("#bingMapsImagerySet").val() !== "AerialWithLabels" || $("#maptilerImagerySet").val() !== "maptiler") {
             if ($("#mapSources").val() !== "osm") {
                 prevMapTile = "osm";
                 $("#mapSources").val(prevMapTile);
@@ -1083,6 +1083,11 @@ async function showMap(mapdata) {
             if ($("#bingMapsImagerySet").val() !== "AerialWithLabels") {
                 prevBingImagery = "AerialWithLabels";
                 $("#bingMapsImagerySet").val(prevBingImagery);
+            }
+
+            if ($("#maptilerImagerySet").val() !== "maptiler") {
+                prevMaptilerImagery = "maptiler";
+                $("#maptilerImagerySet").val(prevMaptilerImagery);
             }
         }
 
