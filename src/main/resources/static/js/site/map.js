@@ -92,7 +92,7 @@ async function showMap(mapdata) {
     } else if (qsan !== null && qsan !== "") {
         let albumId = -1;
         $("#albumSelect option").each(function(i, option) {
-            if (i !== 0 && $(option).text() === qsan) {
+            if (i !== 0 && $(option).text().toLowerCase() === qsan.toLowerCase()) {
                 albumId = $(option).val();
                 return true;
             }
