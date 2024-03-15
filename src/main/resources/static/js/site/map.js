@@ -1,15 +1,26 @@
 async function showMap(mapdata) {
+    // Query parameters
+    // Lat
     let qslat = Util.getParameterByName("lat");
+    // Lng
     let qslng = Util.getParameterByName("lng");
-    let version = Util.getMetadataLocalStorage();
+    // Lat, Lng
     const qslatlng = Util.getParameterByName("latlng");
     // Must be format yyyy-mm-dd
+    // Start date
     let qssd = Util.getParameterByName("sd");
+    // End date
     let qsed = Util.getParameterByName("ed");
+    // Video only
     const qsvo = Util.getParameterByName("vo");
-    // Media type filter
+    // Media type filter - video, gif, etc
     const qsmtf = Util.getParameterByName("mtf");
+    // Album ID
     const qsaid = Util.getParameterByName("aid");
+    // Album name
+    const qsan = Util.getParameterByName("an");
+
+    let version = Util.getMetadataLocalStorage();
 
     const videoOnlyCheckbox = $("#videoOnlyInput");
     const showMarkersCheckbox = $("#showMarkersInput");
@@ -61,19 +72,40 @@ async function showMap(mapdata) {
 
     // Query params for albumId
     if (qsaid !== null && qsaid !== "") {
-        const options = $('#albumSelect option');
-        const albumIds = $.map(options, function (option) {
-            return option.value;
+        let albumId = -1;
+        $("#albumSelect option").each(function(i, option) {
+            if (i !== 0 && $(option).val() === qsaid) {
+                albumId = $(option).val();
+                return true;
+            }
         });
 
-        if (albumIds.includes(qsaid)) {
+        if (albumId > 0) {
             // Clear dates
             startDateField.val("");
             endDateField.val("");
-            albumSelect.val(qsaid);
+            albumSelect.val(albumId);
             renderAlbumSelected();
         } else {
             shashin.showToastMessage("Album does not exist", "Invalid album ID " + qsaid + ".", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+        }
+    } else if (qsan !== null && qsan !== "") {
+        let albumId = -1;
+        $("#albumSelect option").each(function(i, option) {
+            if (i !== 0 && $(option).text() === qsan) {
+                albumId = $(option).val();
+                return true;
+            }
+        });
+
+        if (albumId > 0) {
+            // Clear dates
+            startDateField.val("");
+            endDateField.val("");
+            albumSelect.val(albumId);
+            renderAlbumSelected();
+        } else {
+            shashin.showToastMessage("Album does not exist", "Invalid album name " + qsan + ".", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
         }
     }
 
