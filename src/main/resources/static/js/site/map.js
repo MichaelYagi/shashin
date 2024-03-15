@@ -39,6 +39,7 @@ async function showMap(mapdata) {
     let originalMapMarkers = "";
     let prevMapTile = "osm";
     let prevBingImagery = "AerialWithLabels";
+    let prevMaptilerImagery = "maptiler";
 
     let osmMapTile = shashin.getMapSource("osm");
     let bingMapsTile = shashin.getMapSource("bingmaps");
@@ -47,6 +48,12 @@ async function showMap(mapdata) {
     let bingMapsTileCd = shashin.getMapSource("bingmapsCD");
     let bingMapsTileSs = shashin.getMapSource("bingmapsSS");
     let mapTilerTile = shashin.getMapSource("maptiler");
+    let mapTilerTileHy = shashin.getMapSource("maptilerHY");
+    let mapTilerTileBa = shashin.getMapSource("maptilerBA");
+    let mapTilerTileSa = shashin.getMapSource("maptilerSA");
+
+    let mapBoxTile = shashin.getMapSource("mapbox");
+
     const layerTile = new ol.layer.Tile({
         source: osmMapTile
     });
@@ -852,7 +859,7 @@ async function showMap(mapdata) {
     $("#filterMap").on("click", function(e) {
         e.preventDefault();
 
-        if (($("#mapSources").val() !== prevMapTile) || $("#bingMapsImagerySet").val() !== prevBingImagery) {
+        if (($("#mapSources").val() !== prevMapTile) || $("#bingMapsImagerySet").val() !== prevBingImagery || $("#maptilerImagerySet").val() !== prevMaptilerImagery) {
             if ($("#mapSources").val() !== prevMapTile) {
                 prevMapTile = $("#mapSources").val();
                 switch (prevMapTile) {
@@ -864,6 +871,9 @@ async function showMap(mapdata) {
                         break;
                     case "maptiler":
                         layerTile.setSource(mapTilerTile);
+                        break;
+                    case "mapbox":
+                        layerTile.setSource(mapBoxTile);
                         break;
                     default:
                         layerTile.setSource(osmMapTile);
@@ -891,6 +901,28 @@ async function showMap(mapdata) {
                             break;
                         default:
                             layerTile.setSource(bingMapsTile);
+                    }
+                }
+            }
+            if ($("#maptilerImagerySet").val() !== prevMaptilerImagery) {
+                prevMaptilerImagery = $("#maptilerImagerySet").val();
+
+                if ($("#mapSources").val() === "maptiler") {
+                    switch (prevMaptilerImagery) {
+                        case "maptiler":
+                            layerTile.setSource(mapTilerTile);
+                            break;
+                        case "maptilerHY":
+                            layerTile.setSource(mapTilerTileHy);
+                            break;
+                        case "maptilerBA":
+                            layerTile.setSource(mapTilerTileBa);
+                            break;
+                        case "maptilerSA":
+                            layerTile.setSource(mapTilerTileSa);
+                            break;
+                        default:
+                            layerTile.setSource(mapTilerTile);
                     }
                 }
             }
@@ -1039,6 +1071,7 @@ async function showMap(mapdata) {
         });
 
         $("#bingMapsImageryContainer").css("display", "none");
+        $("#bingMapsImageryContainer").css("display", "none");
 
         if ($("#mapSources").val() !== "osm" || $("#bingMapsImagerySet").val() !== "AerialWithLabels") {
             if ($("#mapSources").val() !== "osm") {
@@ -1127,6 +1160,9 @@ async function showMap(mapdata) {
        if ($(this).val() === "bingmaps") {
            $("#bingMapsImagerySet").val("AerialWithLabels");
            $("#bingMapsImageryContainer").css("display", "block");
+       } else if ($(this).val() === "maptiler") {
+           $("#maptilerImagerySet").val("maptiler");
+           $("#maptilerContainer").css("display", "block");
        } else {
            $("#bingMapsImageryContainer").css("display", "none");
        }
