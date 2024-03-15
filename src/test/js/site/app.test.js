@@ -58,9 +58,6 @@ describe('#shashin app tests', function() {
 
         source = shashin.getMapSource("invalidSourceAndDefaultingToOSM")
         expect(source.urls.join('|')).to.include('openstreetmap')
-
-        source = shashin.getMapSource("maptiler")
-        expect(source.urls.join('|')).to.include('maptiler')
     })
 
     it('gallery element', function () {

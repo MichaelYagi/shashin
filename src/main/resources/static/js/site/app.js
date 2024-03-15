@@ -1657,14 +1657,19 @@
     }
 
     shashin.getMapSource = function (source) {
-        const validSources = ["osm",
-            "bingmaps",
+        const validSources = [
+            "osm",
             "maptiler",
+            "maptilerHY",
+            "maptilerBA",
+            "maptilerSA",
+            "bingmaps",
             "bingmapsROD",
             "bingmapsBE",
             "bingmapsCD",
-            "bingmapsSS"
-        ]; //,"mapbox"
+            "bingmapsSS",
+            // "mapbox"
+        ];
 
         let mapSource = new ol.source.OSM();
 
@@ -1719,16 +1724,35 @@
                     });
                     break
                 case "maptiler":
-                    mapSource =  new ol.source.XYZ({
-                        url: 'https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=YlQvLcNKq0a4aFDX2z3O',
+                    mapSource =  new ol.source.TileJSON({
+                        url: 'https://api.maptiler.com/maps/streets-v2/tiles.json?key=YlQvLcNKq0a4aFDX2z3O',
                         maxZoom: 19
                     });
                     break;
-                // case "mapbox":
-                //     mapSource = new ol.source.XYZ({
-                //         url: 'https://{a-c}.tiles.mapbox.com/v4/mapbox.mapbox-streets-v6/{z}/{x}/{y}.vector.pbf?access_token=pk.eyJ1IjoibWljaGFlbHR5YWdpIiwiYSI6ImNrdGszZXNrdTFocTcyd29sMG1hYXprdmsifQ.RVimlhqPIKKTYmaGyr-ThQ'
-                //     });
-                //     break;
+                case "maptilerHY":
+                    mapSource = new ol.source.TileJSON({
+                        url: 'https://api.maptiler.com/maps/hybrid/tiles.json?key=YlQvLcNKq0a4aFDX2z3O',
+                        maxZoom: 19
+                    });
+                    break;
+                case "maptilerBA":
+                    mapSource = new ol.source.XYZ({
+                        url: 'https://api.maptiler.com/maps/basic/{z}/{x}/{y}.png?key=YlQvLcNKq0a4aFDX2z3O',
+                        maxZoom: 19
+                    });
+                    break;
+                case "maptilerSA":
+                    mapSource =  new ol.source.TileJSON({
+                        url: 'https://api.maptiler.com/tiles/satellite-v2/tiles.json?key=YlQvLcNKq0a4aFDX2z3O',
+                        maxZoom: 19
+                    });
+                    break;
+                case "mapbox":
+                    mapSource = new ol.source.XYZ({
+                        url: 'https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/1/0/0.mvt?access_token=pk.eyJ1IjoibWljaGFlbHR5YWdpIiwiYSI6ImNsdHQyeGY5azBxb3YyamxhdGttMzU3aW4ifQ.-2vN-mfBbj-HZh7VWGwFug',
+                        maxZoom: 19
+                    });
+                    break;
                 default:
                     mapSource = new ol.source.OSM();
             }
