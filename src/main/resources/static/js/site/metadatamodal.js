@@ -314,6 +314,7 @@ $("#saveMetadata").on("click", async function (e) {
                             queryParamDates = '&sd='+year+'-'+month+'-01&ed='+year+'-'+month+'-'+lastDay;
                         }
 
+                        Util.setMetadataLocalStorage();
                         window.location.replace("/map?latlng=" + $("#latlng").val()+queryParamDates);
                     }
 
@@ -324,12 +325,14 @@ $("#saveMetadata").on("click", async function (e) {
                     $("#metadataModalEdit" + metadataId + " span").removeClass("bi-info-circle").addClass("bi-info-square");
                     if (metadataObj.lat !== null && metadataObj.lng !== null && prevLng !== metadataObj.lng && $("#latlng").val() !== "") {
                         // Reload in map view if removed
+                        Util.setMetadataLocalStorage();
                         window.location.replace("/map");
                     }
 
                     $("#infoModalEdit" + metadataId + " span").removeClass("bi-info-circle").addClass("bi-info-square");
                     if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlng").val() !== "") {
                         // Reload in map view if removed
+                        Util.setMetadataLocalStorage();
                         window.location.replace("/map");
                     }
                 } else if (activePage === "timeline" || $("#activePage").length === 0) {
