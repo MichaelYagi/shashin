@@ -70,6 +70,7 @@
                 </div>
             </div>
             <div class="modal-footer">
+                <span id="qpInfo" class="bi-info-circle me-auto" style="font-size: 1rem;"></span>
                 <button type="button" class="btn btn-primary" id="filterMap">Filter</button>
                 <button type="button" class="btn btn-primary" id="resetMap">Reset</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -89,6 +90,22 @@
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         /*]]>*/
+
+        $('#qpInfo').popover({
+            trigger:'hover',
+            title:'Query Params Available',
+            html:true,
+            content:'<div class="row"><div class="col-3"><strong>lat</strong></div><div class="col">Latitude</div></div>' +
+                    '<div class="row"><div class="col-3"><strong>lng</strong></div><div class="col">Longitude</div></div>' +
+                    '<div class="row"><div class="col-3"><strong>latlng</strong></div><div class="col">Latitude,Longitude</div></div>' +
+                    '<div class="row"><div class="col-3"><strong>sd</strong></div><div class="col">Start date (yyyy-mm-dd)</div></div>' +
+                    '<div class="row"><div class="col-3"><strong>ed</strong></div><div class="col">End date (yyyy-mm-dd)</div></div>' +
+                    '<div class="row"><div class="col-3"><strong>vo</strong></div><div class="col">Video only</div></div>' +
+                    '<div class="row"><div class="col-3"><strong>mtf</strong></div><div class="col">Media type filer (video, gif, etc)</div></div>' +
+                    '<div class="row"><div class="col-3"><strong>aid</strong></div><div class="col">Album ID</div></div>' +
+                    '<div class="row"><div class="col-3"><strong>an</strong></div><div class="col">Album Name</div></div>',
+            placement:'bottom'
+        });
 
         const http = new Http("Getting map data");
         Util.setMetadataLocalStorage();
