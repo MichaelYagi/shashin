@@ -67,6 +67,28 @@
                         <input class="form-check-input" type="checkbox" value="" id="showMarkersInput">
                         <label class="form-check-label" for="showMarkersInput">&nbsp;Map markers</label>
                     </div>
+
+                    <div class="row">
+                        <div class="mb-3 col-6">
+                            <label class="form-label me-2 mt-2" for="mapSources">Map Sources</label>
+                            <select class="form-select" id="mapSources">
+                                <option selected value="osm">Open Street Maps</option>
+                                <option selected value="bingmaps">Bing Maps</option>
+                                <option selected value="maptiler">MapTiler</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3 col-6" style="display: none;" id="bingMapsImageryContainer">
+                            <label class="form-label me-2 mt-2" for="bingMapsImagerySet">Imagery Set</label>
+                            <select class="form-select" id="bingMapsImagerySet">
+                                <option selected value="AerialWithLabels">Aerial</option>
+                                <option selected value="RoadOnDemand">Roads</option>
+<!--                                <option selected value="BirdseyeV2WithLabels">Birds Eye</option>-->
+                                <option selected value="CanvasDark">Dark</option>
+<!--                                <option selected value="Streetside">Street Side</option>-->
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -106,6 +128,9 @@
                     '<div class="row"><div class="col-3"><strong>an</strong></div><div class="col">Album Name</div></div>',
             placement:'bottom'
         });
+
+        $("#mapSources").val("osm");
+        $("#bingMapsImagerySet").val("AerialWithLabels");
 
         const http = new Http("Getting map data");
         Util.setMetadataLocalStorage();

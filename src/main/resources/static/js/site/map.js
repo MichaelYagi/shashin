@@ -37,6 +37,19 @@ async function showMap(mapdata) {
     let originalAlbumFilter = "";
     let originalVideoOnly = "";
     let originalMapMarkers = "";
+    let prevMapTile = "osm";
+    let prevBingImagery = "AerialWithLabels";
+
+    let osmMapTile = shashin.getMapSource("osm");
+    let bingMapsTile = shashin.getMapSource("bingmaps");
+    let bingMapsTileRod = shashin.getMapSource("bingmapsROD");
+    let bingMapsTileBe = shashin.getMapSource("bingmapsBE");
+    let bingMapsTileCd = shashin.getMapSource("bingmapsCD");
+    let bingMapsTileSs = shashin.getMapSource("bingmapsSS");
+    let mapTilerTile = shashin.getMapSource("maptiler");
+    const layerTile = new ol.layer.Tile({
+        source: osmMapTile
+    });
 
     shashin.mouseMoveListener();
 
@@ -665,10 +678,7 @@ async function showMap(mapdata) {
         target: 'map',
         interactions: interactions,
         layers: [
-            new ol.layer.Tile({
-                source: shashin.getMapSource(shashin.currentMapSource),
-                visible: true
-            })
+            layerTile
         ],
         view: mapView,
         controls: []
@@ -842,6 +852,50 @@ async function showMap(mapdata) {
     $("#filterMap").on("click", function(e) {
         e.preventDefault();
 
+        if (($("#mapSources").val() !== prevMapTile) || $("#bingMapsImagerySet").val() !== prevBingImagery) {
+            if ($("#mapSources").val() !== prevMapTile) {
+                prevMapTile = $("#mapSources").val();
+                switch (prevMapTile) {
+                    case "osm":
+                        layerTile.setSource(osmMapTile);
+                        break;
+                    case "bingmaps":
+                        layerTile.setSource(bingMapsTile);
+                        break;
+                    case "maptiler":
+                        layerTile.setSource(mapTilerTile);
+                        break;
+                    default:
+                        layerTile.setSource(osmMapTile);
+                }
+            }
+            if ($("#bingMapsImagerySet").val() !== prevBingImagery) {
+                prevBingImagery = $("#bingMapsImagerySet").val();
+
+                if ($("#mapSources").val() === "bingmaps") {
+                    switch (prevBingImagery) {
+                        case "AerialWithLabels":
+                            layerTile.setSource(bingMapsTile);
+                            break;
+                        case "RoadOnDemand":
+                            layerTile.setSource(bingMapsTileRod);
+                            break;
+                        case "BirdseyeV2WithLabels":
+                            layerTile.setSource(bingMapsTileBe);
+                            break;
+                        case "CanvasDark":
+                            layerTile.setSource(bingMapsTileCd);
+                            break;
+                        case "Streetside":
+                            layerTile.setSource(bingMapsTileSs);
+                            break;
+                        default:
+                            layerTile.setSource(bingMapsTile);
+                    }
+                }
+            }
+        }
+
         filtered = true;
         shashin.showToastMessage("Applying filter", "Applying filter", {icon:"bi-info-circle", iconColor:"#777777", autohide: false});
         if (true === setLayerInputs()) {
@@ -859,16 +913,6 @@ async function showMap(mapdata) {
         if ($(this).val() !== "0") {
             startDateField.val("");
             endDateField.val("");
-
-            // const albumId = $(this).val();
-            // // Query metadata in album with lat/lng
-            // const http = new Http("get album data");
-            //
-            // http.ajax("get", "/album/mapdata/"+albumId).then(function (data) {
-            //     if (data.hasOwnProperty("albummapdata")) {
-            //         setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"), data["albummapdata"]);
-            //     }
-            // });
         }
     });
 
@@ -994,6 +1038,21 @@ async function showMap(mapdata) {
             }
         });
 
+        $("#bingMapsImageryContainer").css("display", "none");
+
+        if ($("#mapSources").val() !== "osm" || $("#bingMapsImagerySet").val() !== "AerialWithLabels") {
+            if ($("#mapSources").val() !== "osm") {
+                prevMapTile = "osm";
+                $("#mapSources").val(prevMapTile);
+                layerTile.setSource(osmMapTile);
+            }
+
+            if ($("#bingMapsImagerySet").val() !== "AerialWithLabels") {
+                prevBingImagery = "AerialWithLabels";
+                $("#bingMapsImagerySet").val(prevBingImagery);
+            }
+        }
+
         filtered = true;
 
         startDateField.val("");
@@ -1062,5 +1121,13 @@ async function showMap(mapdata) {
         } else {
             this.getTargetElement().style.cursor = '';
         }
+    });
+
+    $("#mapSources").on("change", function () {
+       if ($(this).val() === "bingmaps") {
+           $("#bingMapsImageryContainer").css("display", "block");
+       } else {
+           $("#bingMapsImageryContainer").css("display", "none");
+       }
     });
 }
