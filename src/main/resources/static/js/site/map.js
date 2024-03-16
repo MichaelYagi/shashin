@@ -42,6 +42,8 @@ async function showMap(mapdata) {
     let prevMaptilerImagery = "maptiler";
 
     let osmMapTile = shashin.getMapSource("osm");
+    let arcGisWsm = shashin.getMapSource("arcGisWSM");
+    let arcGisWi = shashin.getMapSource("arcGisWI");
     let bingMapsTile = shashin.getMapSource("bingmaps");
     let bingMapsTileRod = shashin.getMapSource("bingmapsROD");
     let bingMapsTileBe = shashin.getMapSource("bingmapsBE");
@@ -866,6 +868,12 @@ async function showMap(mapdata) {
                     case "osm":
                         layerTile.setSource(osmMapTile);
                         break;
+                    case "arcGisWSM":
+                        layerTile.setSource(arcGisWsm);
+                        break;
+                    case "arcGisWI":
+                        layerTile.setSource(arcGisWi);
+                        break;
                     case "bingmaps":
                         layerTile.setSource(bingMapsTile);
                         break;
@@ -874,6 +882,9 @@ async function showMap(mapdata) {
                         break;
                     case "mapbox":
                         layerTile.setSource(mapBoxTile);
+                        break;
+                    case "maptilerHY":
+                        layerTile.setSource(mapTilerTileHy);
                         break;
                     default:
                         layerTile.setSource(osmMapTile);
