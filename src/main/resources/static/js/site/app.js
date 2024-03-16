@@ -1657,105 +1657,101 @@
     }
 
     shashin.getMapSource = function (source) {
-        const validSources = [
-            "osm",
-            "maptiler",
-            "maptilerHY",
-            "maptilerBA",
-            "maptilerSA",
-            "bingmaps",
-            "bingmapsROD",
-            "bingmapsBE",
-            "bingmapsCD",
-            "bingmapsSS",
-            // "mapbox"
-        ];
-
         let mapSource = new ol.source.OSM();
 
-        if (validSources.includes(source)) {
-            switch(source) {
-                case "osm":
-                    mapSource = new ol.source.OSM();
-                    break
-                case "bingmaps":
-                    mapSource = new ol.source.BingMaps({
-                        key: 'AgLAysLWWJdjeVeOTVUYlNfUddxeF6QFeXCciHblaYSG7xYx3OUuAnpX98MNQUFR', // Dev/Test
-                        imagerySet: "AerialWithLabels", // 'Aerial', 'RoadOnDemand', 'AerialWithLabels', etc.
-                        // use maxZoom 19 to see stretched tiles instead of the Bing Maps
-                        // "no photos at this zoom level" tiles
-                        maxZoom: 19
-                    });
-                    break
-                case "bingmapsROD":
-                    mapSource = new ol.source.BingMaps({
-                        key: 'AgLAysLWWJdjeVeOTVUYlNfUddxeF6QFeXCciHblaYSG7xYx3OUuAnpX98MNQUFR', // Dev/Test
-                        imagerySet: "RoadOnDemand", // 'Aerial', 'RoadOnDemand', 'AerialWithLabels', etc.
-                        // use maxZoom 19 to see stretched tiles instead of the Bing Maps
-                        // "no photos at this zoom level" tiles
-                        maxZoom: 19
-                    });
-                    break
-                case "bingmapsBE":
-                    mapSource = new ol.source.BingMaps({
-                        key: 'AgLAysLWWJdjeVeOTVUYlNfUddxeF6QFeXCciHblaYSG7xYx3OUuAnpX98MNQUFR', // Dev/Test
-                        imagerySet: "BirdseyeWithLabels", // 'Aerial', 'RoadOnDemand', 'AerialWithLabels', etc.
-                        // use maxZoom 19 to see stretched tiles instead of the Bing Maps
-                        // "no photos at this zoom level" tiles
-                        maxZoom: 19
-                    });
-                    break
-                case "bingmapsCD":
-                    mapSource = new ol.source.BingMaps({
-                        key: 'AgLAysLWWJdjeVeOTVUYlNfUddxeF6QFeXCciHblaYSG7xYx3OUuAnpX98MNQUFR', // Dev/Test
-                        imagerySet: "CanvasDark", // 'Aerial', 'RoadOnDemand', 'AerialWithLabels', etc.
-                        // use maxZoom 19 to see stretched tiles instead of the Bing Maps
-                        // "no photos at this zoom level" tiles
-                        maxZoom: 19
-                    });
-                    break
-                case "bingmapsSS":
-                    mapSource = new ol.source.BingMaps({
-                        key: 'AgLAysLWWJdjeVeOTVUYlNfUddxeF6QFeXCciHblaYSG7xYx3OUuAnpX98MNQUFR', // Dev/Test
-                        imagerySet: "Streetside", // 'Aerial', 'RoadOnDemand', 'AerialWithLabels', etc.
-                        // use maxZoom 19 to see stretched tiles instead of the Bing Maps
-                        // "no photos at this zoom level" tiles
-                        maxZoom: 19
-                    });
-                    break
-                case "maptiler":
-                    mapSource =  new ol.source.TileJSON({
-                        url: 'https://api.maptiler.com/maps/streets-v2/tiles.json?key=YlQvLcNKq0a4aFDX2z3O',
-                        maxZoom: 19
-                    });
-                    break;
-                case "maptilerHY":
-                    mapSource = new ol.source.TileJSON({
-                        url: 'https://api.maptiler.com/maps/hybrid/tiles.json?key=YlQvLcNKq0a4aFDX2z3O',
-                        maxZoom: 19
-                    });
-                    break;
-                case "maptilerBA":
-                    mapSource = new ol.source.XYZ({
-                        url: 'https://api.maptiler.com/maps/basic/{z}/{x}/{y}.png?key=YlQvLcNKq0a4aFDX2z3O',
-                        maxZoom: 19
-                    });
-                    break;
-                case "maptilerSA":
-                    mapSource =  new ol.source.TileJSON({
-                        url: 'https://api.maptiler.com/tiles/satellite-v2/tiles.json?key=YlQvLcNKq0a4aFDX2z3O',
-                        maxZoom: 19
-                    });
-                    break;
-                case "mapbox":
-                    mapSource = new ol.source.XYZ({
-                        url: 'https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/1/0/0.mvt?access_token=pk.eyJ1IjoibWljaGFlbHR5YWdpIiwiYSI6ImNsdHQyeGY5azBxb3YyamxhdGttMzU3aW4ifQ.-2vN-mfBbj-HZh7VWGwFug',
-                        maxZoom: 19
-                    });
-                    break;
-                default:
-                    mapSource = new ol.source.OSM();
-            }
+        switch(source) {
+            case "osm":
+                mapSource = new ol.source.OSM();
+                break
+            case "arcGisWSM":
+                mapSource = new ol.source.XYZ({
+                    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+                    maxZoom: 19
+                });
+                break
+            case "arcGisWI":
+                mapSource = new ol.source.XYZ({
+                    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                    maxZoom: 19
+                });
+                break
+            case "bingmaps":
+                mapSource = new ol.source.BingMaps({
+                    key: 'AgLAysLWWJdjeVeOTVUYlNfUddxeF6QFeXCciHblaYSG7xYx3OUuAnpX98MNQUFR', // Dev/Test
+                    imagerySet: "AerialWithLabels", // 'Aerial', 'RoadOnDemand', 'AerialWithLabels', etc.
+                    // use maxZoom 19 to see stretched tiles instead of the Bing Maps
+                    // "no photos at this zoom level" tiles
+                    maxZoom: 19
+                });
+                break
+            case "bingmapsROD":
+                mapSource = new ol.source.BingMaps({
+                    key: 'AgLAysLWWJdjeVeOTVUYlNfUddxeF6QFeXCciHblaYSG7xYx3OUuAnpX98MNQUFR', // Dev/Test
+                    imagerySet: "RoadOnDemand", // 'Aerial', 'RoadOnDemand', 'AerialWithLabels', etc.
+                    // use maxZoom 19 to see stretched tiles instead of the Bing Maps
+                    // "no photos at this zoom level" tiles
+                    maxZoom: 19
+                });
+                break
+            case "bingmapsBE":
+                mapSource = new ol.source.BingMaps({
+                    key: 'AgLAysLWWJdjeVeOTVUYlNfUddxeF6QFeXCciHblaYSG7xYx3OUuAnpX98MNQUFR', // Dev/Test
+                    imagerySet: "BirdseyeWithLabels", // 'Aerial', 'RoadOnDemand', 'AerialWithLabels', etc.
+                    // use maxZoom 19 to see stretched tiles instead of the Bing Maps
+                    // "no photos at this zoom level" tiles
+                    maxZoom: 19
+                });
+                break
+            case "bingmapsCD":
+                mapSource = new ol.source.BingMaps({
+                    key: 'AgLAysLWWJdjeVeOTVUYlNfUddxeF6QFeXCciHblaYSG7xYx3OUuAnpX98MNQUFR', // Dev/Test
+                    imagerySet: "CanvasDark", // 'Aerial', 'RoadOnDemand', 'AerialWithLabels', etc.
+                    // use maxZoom 19 to see stretched tiles instead of the Bing Maps
+                    // "no photos at this zoom level" tiles
+                    maxZoom: 19
+                });
+                break
+            case "bingmapsSS":
+                mapSource = new ol.source.BingMaps({
+                    key: 'AgLAysLWWJdjeVeOTVUYlNfUddxeF6QFeXCciHblaYSG7xYx3OUuAnpX98MNQUFR', // Dev/Test
+                    imagerySet: "Streetside", // 'Aerial', 'RoadOnDemand', 'AerialWithLabels', etc.
+                    // use maxZoom 19 to see stretched tiles instead of the Bing Maps
+                    // "no photos at this zoom level" tiles
+                    maxZoom: 19
+                });
+                break
+            case "maptiler":
+                mapSource =  new ol.source.TileJSON({
+                    url: 'https://api.maptiler.com/maps/streets-v2/tiles.json?key=YlQvLcNKq0a4aFDX2z3O',
+                    maxZoom: 19
+                });
+                break;
+            case "maptilerHY":
+                mapSource = new ol.source.TileJSON({
+                    url: 'https://api.maptiler.com/maps/hybrid/tiles.json?key=YlQvLcNKq0a4aFDX2z3O',
+                    maxZoom: 19
+                });
+                break;
+            case "maptilerBA":
+                mapSource = new ol.source.XYZ({
+                    url: 'https://api.maptiler.com/maps/basic/{z}/{x}/{y}.png?key=YlQvLcNKq0a4aFDX2z3O',
+                    maxZoom: 19
+                });
+                break;
+            case "maptilerSA":
+                mapSource =  new ol.source.TileJSON({
+                    url: 'https://api.maptiler.com/tiles/satellite-v2/tiles.json?key=YlQvLcNKq0a4aFDX2z3O',
+                    maxZoom: 19
+                });
+                break;
+            case "mapbox":
+                mapSource = new ol.source.XYZ({
+                    url: 'https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/1/0/0.mvt?access_token=pk.eyJ1IjoibWljaGFlbHR5YWdpIiwiYSI6ImNsdHQyeGY5azBxb3YyamxhdGttMzU3aW4ifQ.-2vN-mfBbj-HZh7VWGwFug',
+                    maxZoom: 19
+                });
+                break;
+            default:
+                mapSource = new ol.source.OSM();
         }
 
         return mapSource
