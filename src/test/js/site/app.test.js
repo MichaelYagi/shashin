@@ -56,6 +56,9 @@ describe('#shashin app tests', function() {
         let source = shashin.getMapSource()
         expect(source.urls.join('|')).to.include('openstreetmap')
 
+        source = shashin.getMapSource("maptilerBA")
+        expect(source.urls.join('|')).to.include('maptiler')
+
         source = shashin.getMapSource("invalidSourceAndDefaultingToOSM")
         expect(source.urls.join('|')).to.include('openstreetmap')
     })
