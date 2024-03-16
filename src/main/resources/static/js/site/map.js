@@ -46,9 +46,9 @@ async function showMap(mapdata) {
     let arcGisWi = shashin.getMapSource("arcGisWI");
     let bingMapsTile = shashin.getMapSource("bingmaps");
     let bingMapsTileRod = shashin.getMapSource("bingmapsROD");
-    let bingMapsTileBe = shashin.getMapSource("bingmapsBE");
+    //let bingMapsTileBe = shashin.getMapSource("bingmapsBE");
     let bingMapsTileCd = shashin.getMapSource("bingmapsCD");
-    let bingMapsTileSs = shashin.getMapSource("bingmapsSS");
+    //let bingMapsTileSs = shashin.getMapSource("bingmapsSS");
     let mapTilerTile = shashin.getMapSource("maptiler");
     let mapTilerTileHy = shashin.getMapSource("maptilerHY");
     let mapTilerTileBa = shashin.getMapSource("maptilerBA");
@@ -289,13 +289,21 @@ async function showMap(mapdata) {
         }
     }
 
-    function setLayer(startDate, endDate, videoOnly, metadataList, resetMap) {
+    function setLayer(startDate, endDate, videoOnly, metadataList, resetMap, mapSourceChanged) {
         version = Util.getMetadataLocalStorage();
         map.removeLayer(vectorLayer);
         const iconFeatures = [];
 
         if (resetMap === undefined) {
             resetMap = false;
+        }
+
+        if (mapSourceChanged === undefined) {
+            mapSourceChanged = false;
+        }
+
+        if (resetMap === true) {
+            initialZoom = 2;
         }
 
         progressBarWrapper.visible();
@@ -435,7 +443,7 @@ async function showMap(mapdata) {
             shashin.printMessageToConsole("maxLat for map filtering: "+maxLat)
             shashin.printMessageToConsole("maxLng for map filtering: "+maxLng)
 
-            if (resetMap === false && minLat !== null && minLng !== null && maxLat !== null && maxLng !== null) {
+            if (mapSourceChanged === false && resetMap === false && minLat !== null && minLng !== null && maxLat !== null && maxLng !== null) {
                 const mapSize = map.getSize();
                 const mapSizeAdjust = 200;
                 let sizeX = mapSize[0]-mapSizeAdjust;
@@ -450,8 +458,6 @@ async function showMap(mapdata) {
             } else {
                 map.getView().setZoom(initialZoom);
             }
-
-            initialZoom = 2;
         }
     }
 
@@ -861,7 +867,10 @@ async function showMap(mapdata) {
     $("#filterMap").on("click", function(e) {
         e.preventDefault();
 
+        let mapSourceChanged = false;
         if (($("#mapSources").val() !== prevMapTile) || $("#bingMapsImagerySet").val() !== prevBingImagery || $("#maptilerImagerySet").val() !== prevMaptilerImagery) {
+            mapSourceChanged = true;
+
             if ($("#mapSources").val() !== prevMapTile) {
                 prevMapTile = $("#mapSources").val();
                 switch (prevMapTile) {
@@ -901,15 +910,15 @@ async function showMap(mapdata) {
                         case "RoadOnDemand":
                             layerTile.setSource(bingMapsTileRod);
                             break;
-                        case "BirdseyeV2WithLabels":
-                            layerTile.setSource(bingMapsTileBe);
-                            break;
+                        // case "BirdseyeV2WithLabels":
+                        //     layerTile.setSource(bingMapsTileBe);
+                        //     break;
                         case "CanvasDark":
                             layerTile.setSource(bingMapsTileCd);
                             break;
-                        case "Streetside":
-                            layerTile.setSource(bingMapsTileSs);
-                            break;
+                        // case "Streetside":
+                        //     layerTile.setSource(bingMapsTileSs);
+                        //     break;
                         default:
                             layerTile.setSource(bingMapsTile);
                     }
@@ -941,7 +950,7 @@ async function showMap(mapdata) {
 
         filtered = true;
         shashin.showToastMessage("Applying filter", "Applying filter", {icon:"bi-info-circle", iconColor:"#777777", autohide: false});
-        if (true === setLayerInputs()) {
+        if (true === setLayerInputs(mapSourceChanged)) {
             shashin.showToastMessage("Filter applied", "Filter applied", {
                 icon: "bi-info-circle",
                 iconColor: "#777777",
@@ -990,16 +999,24 @@ async function showMap(mapdata) {
         });
     });
 
-    function setLayerInputs() {
+    function setLayerInputs(mapSourceChanged) {
+        if (mapSourceChanged === undefined) {
+            mapSourceChanged = false;
+        }
+
         const dateInputsValid = checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()));
 
         // Validate fields
         if (true === dateInputsValid) {
-            initialZoom = 2; //map.getView().getZoom();
+            if (mapSourceChanged === true) {
+                initialZoom = map.getView().getZoom();
+            } else {
+                initialZoom = 2;
+            }
 
             if (false === renderAlbumSelected()) {
                 // Filter results
-                setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
+                setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],false,mapSourceChanged);
             }
         }
 
