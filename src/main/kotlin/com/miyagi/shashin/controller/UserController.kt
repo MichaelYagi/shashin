@@ -87,7 +87,8 @@ class UserController {
     fun getUpdateUser(model: Model): String {
         model["message"] = ""
         model["user"] = User()
-        model["alertClass"] = ""
+        model["toastTitle"] = ""
+        model["toastBody"] = ""
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -103,20 +104,19 @@ class UserController {
         return module
     }
 
-    @RequestMapping(value = ["/users/update"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/users/update"], method = [RequestMethod.POST], consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE])
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    @ResponseBody
-    fun postUpdateUser(model: Model, redirectAttributes: RedirectAttributes, @RequestBody requestBody: JsonNode): String {
-        val passwordMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
-        val response = mutableMapOf<String, Any?>()
+    fun postUpdateUser(model: Model, redirectAttributes: RedirectAttributes, @RequestBody formData: MultiValueMap<String, String>): String {
+        val module = "update"
+        model["message"] = ""
+        model["msg"] = "Could not save password"
+        model["status"] = ApiResponse.FAIL.status
+        model["toastTitle"] = ""
+        model["toastBody"] = ""
 
-        response["message"] = ""
-        response["msg"] = "Could not save password"
-        response["status"] = ApiResponse.FAIL.status
-
-        if (passwordMap.containsKey("newpassword") && passwordMap.containsKey("newpasswordconfirm")) {
-            val newPassword = java.lang.String.valueOf(passwordMap["newpassword"]).trim()
-            val newPasswordConfirm = java.lang.String.valueOf(passwordMap["newpasswordconfirm"]).trim()
+        if (formData.containsKey("newpassword") && formData.containsKey("newpasswordconfirm")) {
+            val newPassword = java.lang.String.valueOf(formData.getFirst("newpassword")).trim()
+            val newPasswordConfirm = java.lang.String.valueOf(formData.getFirst("newpasswordconfirm")).trim()
 
             val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
@@ -124,17 +124,25 @@ class UserController {
                     currentUserObj.setModifiedAt(getCurrentTimestamp())
                     currentUserObj.setPassword(bcrypt.encode(newPassword))
                     userRepository?.save(currentUserObj)
-                    response["msg"] = "Success"
-                    response["status"] = ApiResponse.SUCCESS.status
+
+                    model["msg"] = "Success"
+                    model["status"] = ApiResponse.SUCCESS.status
+                    model["toastTitle"] = "Password updated"
+                    model["toastBody"] = "Password successfully updated"
                 } else {
-                    response["message"] = ""
-                    response["msg"] = "Passwords do not match"
-                    response["status"] = ApiResponse.FAIL.status
+                    model["message"] = ""
+                    model["msg"] = ""
+                    model["status"] = ApiResponse.FAIL.status
+                    model["toastTitle"] = "Password updated failed"
+                    model["toastBody"] = "Passwords do not match"
                 }
             }
         }
 
-        return mapper.writeValueAsString(response)
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
     }
 
     @GetMapping("/users/profile")
