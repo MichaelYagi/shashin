@@ -114,13 +114,14 @@ class UserController {
         model["toastTitle"] = ""
         model["toastBody"] = ""
 
-        if (formData.containsKey("newpassword") && formData.containsKey("newpasswordconfirm")) {
+        if (formData.containsKey("oldpassword") && formData.containsKey("newpassword") && formData.containsKey("newpasswordconfirm")) {
+            val oldPassword = java.lang.String.valueOf(formData.getFirst("oldpassword")).trim()
             val newPassword = java.lang.String.valueOf(formData.getFirst("newpassword")).trim()
             val newPasswordConfirm = java.lang.String.valueOf(formData.getFirst("newpasswordconfirm")).trim()
 
             val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
-                if (newPassword.isNotEmpty() && newPassword == newPasswordConfirm) {
+                if (newPassword.isNotEmpty() && newPassword == newPasswordConfirm && bcrypt.matches(oldPassword, currentUserObj.getPassword())) {
                     currentUserObj.setModifiedAt(getCurrentTimestamp())
                     currentUserObj.setPassword(bcrypt.encode(newPassword))
                     userRepository?.save(currentUserObj)
@@ -133,8 +134,8 @@ class UserController {
                     model["message"] = ""
                     model["msg"] = ""
                     model["status"] = ApiResponse.FAIL.status
-                    model["toastTitle"] = "Password updated failed"
-                    model["toastBody"] = "Passwords do not match"
+                    model["toastTitle"] = "Password update failed"
+                    model["toastBody"] = "Password incorrect or passwords do not match"
                 }
             }
         }
