@@ -15,6 +15,10 @@
             <div class="row image-group-padding mt-4">
                 <form action="/users/update" method="post" id="passwordForm">
                     <div class="input-group mb-3">
+                        <input type="password" id="oldpassword" name="oldpassword" class="form-control" placeholder="Old password" aria-label="" aria-describedby="basic-addon1">
+                        <button class="btn btn-secondary" type="button" id="unhideold"><span id="unhideoldicon" class="bi-eye"></span></button>
+                    </div>
+                    <div class="input-group mb-3">
                         <input type="password" id="newpassword" name="newpassword" class="form-control" placeholder="New password" aria-label="" aria-describedby="basic-addon1">
                         <button class="btn btn-secondary" type="button" id="unhidenew"><span id="unhidenewicon" class="bi-eye"></span></button>
                     </div>
@@ -86,7 +90,7 @@
     function validateFields() {
         let fieldsValid = true;
 
-        if ($("#newpassword").val().trim().length === 0 || $("#newpasswordconfirm").val().trim().length === 0) {
+        if ($("#oldpassword").val().trim().length === 0 || $("#newpassword").val().trim().length === 0 || $("#newpasswordconfirm").val().trim().length === 0) {
             shashin.showToastMessage("Validation error", "Password fields cannot be empty.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
             fieldsValid = false;
         }
