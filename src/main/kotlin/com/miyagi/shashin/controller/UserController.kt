@@ -103,52 +103,38 @@ class UserController {
         return module
     }
 
-    @RequestMapping(value = ["/users/update"], method = [RequestMethod.POST], consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE])
+    @RequestMapping(value = ["/users/update"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    fun postUpdateUser(model: Model, redirectAttributes: RedirectAttributes, @RequestBody formData: MultiValueMap<String, String>): String {
-        val module = "update"
-        model["message"] = ""
-        model["msg"] = "Could not save password"
-        model["alertClass"] = "alert-danger"
-        model["status"] = ApiResponse.FAIL.status
+    @ResponseBody
+    fun postUpdateUser(model: Model, redirectAttributes: RedirectAttributes, @RequestBody requestBody: JsonNode): String {
+        val passwordMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
+        val response = mutableMapOf<String, Any?>()
 
-        if (formData.containsKey("oldpassword") && formData.containsKey("newpassword") && formData.containsKey("newpasswordconfirm")) {
-            val oldPassword = java.lang.String.valueOf(formData.getFirst("oldpassword")).trim()
-            val newPassword = java.lang.String.valueOf(formData.getFirst("newpassword")).trim()
-            val newPasswordConfirm = java.lang.String.valueOf(formData.getFirst("newpasswordconfirm")).trim()
+        response["message"] = ""
+        response["msg"] = "Could not save password"
+        response["status"] = ApiResponse.FAIL.status
+
+        if (passwordMap.containsKey("newpassword") && passwordMap.containsKey("newpasswordconfirm")) {
+            val newPassword = java.lang.String.valueOf(passwordMap["newpassword"]).trim()
+            val newPasswordConfirm = java.lang.String.valueOf(passwordMap["newpasswordconfirm"]).trim()
 
             val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
                 if (newPassword.isNotEmpty() && newPassword == newPasswordConfirm) {
-                    if (bcrypt.matches(oldPassword, currentUserObj.getPassword())) {
-                        currentUserObj.setModifiedAt(getCurrentTimestamp())
-                        currentUserObj.setPassword(bcrypt.encode(newPassword))
-                        userRepository?.save(currentUserObj)
-                        model["msg"] = "Success"
-                        model["status"] = ApiResponse.SUCCESS.status
-                        model["alertClass"] = "alert-success"
-                        return module
-                    } else {
-                        model["message"] = ""
-                        model["msg"] = "Invalid password"
-                        model["status"] = ApiResponse.FAIL.status
-                        model["alertClass"] = "alert-danger"
-                        return module
-                    }
+                    currentUserObj.setModifiedAt(getCurrentTimestamp())
+                    currentUserObj.setPassword(bcrypt.encode(newPassword))
+                    userRepository?.save(currentUserObj)
+                    response["msg"] = "Success"
+                    response["status"] = ApiResponse.SUCCESS.status
                 } else {
-                    model["message"] = ""
-                    model["msg"] = "Passwords do not match"
-                    model["status"] = ApiResponse.FAIL.status
-                    model["alertClass"] = "alert-danger"
-                    return module
+                    response["message"] = ""
+                    response["msg"] = "Passwords do not match"
+                    response["status"] = ApiResponse.FAIL.status
                 }
             }
         }
 
-        model["activePage"] = module
-        model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
-        return module
+        return mapper.writeValueAsString(response)
     }
 
     @GetMapping("/users/profile")

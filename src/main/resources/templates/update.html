@@ -11,29 +11,29 @@
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
             <div class="row image-group-padding mt-4">
-                <form action="/users/update" method="post" id="passwordForm">
 <!--                    <h2 class="form-signin-heading">Change Password</h2>-->
-                    <th:block th:if="${msg != '' and alertClass != ''}">
-                        <div class="col-12">
-                            <div th:class="${'alert ' + alertClass + ' alert-dismissible fade show'}" role="alert" th:utext="${msg+'&lt;button type=&quot;button&quot; class=&quot;btn-close&quot; data-bs-dismiss=&quot;alert&quot; aria-label=&quot;Close&quot;&gt;&lt;/button&gt;'}"/>
-                        </div>
-                    </th:block>
+                <th:block th:if="${msg != '' and alertClass != ''}">
+                    <div class="col-12">
+                        <div th:class="${'alert ' + alertClass + ' alert-dismissible fade show'}" role="alert" th:utext="${msg+'&lt;button type=&quot;button&quot; class=&quot;btn-close&quot; data-bs-dismiss=&quot;alert&quot; aria-label=&quot;Close&quot;&gt;&lt;/button&gt;'}"/>
+                    </div>
+                </th:block>
 
-                    <div class="input-group mb-3">
-                        <input type="password" id="oldpassword" name="oldpassword" class="form-control" placeholder="Old password" aria-label="" aria-describedby="basic-addon1">
-                        <button class="btn btn-secondary" type="button" id="unhideold"><span id="unhideoldicon" class="bi-eye"></span></button>
-                    </div>
-                    <div class="input-group mb-3">
-                        <input type="password" id="newpassword" name="newpassword" class="form-control" placeholder="New password" aria-label="" aria-describedby="basic-addon1">
-                        <button class="btn btn-secondary" type="button" id="unhidenew"><span id="unhidenewicon" class="bi-eye"></span></button>
-                    </div>
-                    <div class="input-group mb-3">
-                        <input type="password" id="newpasswordconfirm" name="newpasswordconfirm" class="form-control" placeholder="New password confirm" aria-label="" aria-describedby="basic-addon1">
-                        <button class="btn btn-secondary" type="button" id="unhideconfirm"><span id="unhideconfirmicon" class="bi-eye"></span></button>
-                    </div>
+<!--                    <div class="input-group mb-3">-->
+<!--                        <input type="password" id="oldpassword" name="oldpassword" class="form-control" placeholder="Old password" aria-label="" aria-describedby="basic-addon1">-->
+<!--                        <button class="btn btn-secondary" type="button" id="unhideold"><span id="unhideoldicon" class="bi-eye"></span></button>-->
+<!--                    </div>-->
+                <div class="input-group mb-3">
+                    <input type="password" id="newpassword" name="newpassword" class="form-control" placeholder="New password" aria-label="" aria-describedby="basic-addon1">
+                    <button class="btn btn-secondary" type="button" id="unhidenew"><span id="unhidenewicon" class="bi-eye"></span></button>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="password" id="newpasswordconfirm" name="newpasswordconfirm" class="form-control" placeholder="New password confirm" aria-label="" aria-describedby="basic-addon1">
+                    <button class="btn btn-secondary" type="button" id="unhideconfirm"><span id="unhideconfirmicon" class="bi-eye"></span></button>
+                </div>
 
-                    <button class="btn btn-lg btn-primary btn-block" type="submit">Save</button>
-                </form>
+                <div class="input-group mb-3">
+                    <button class="btn btn-primary btn-block" id="savePassword">Save</button>
+                </div>
             </div>
 
             <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>
@@ -48,18 +48,39 @@
 
     $("#appSearchInput").val("Change Password");
 
-    $("#passwordForm").on("submit", function (e) {
+    $("#savePassword").on("click", function (e) {
         e.preventDefault();
 
         if (validateFields() === true) {
-            this.submit();
+            const http = new Http("update password");
+            const version = Util.getMetadataLocalStorage();
+            const json = {
+                newpassword: $("#newpassword").val(),
+                newpasswordconfirm: $("#newpasswordconfirm").val()
+            }
+
+            http.ajax("post", "/users/update" + (version === "" ? "" : "?v=" + version), JSON.stringify(json)).then(function (data) {
+                if (data.hasOwnProperty("msg") && data.hasOwnProperty("status") && data["status"] === "success") {
+                    shashin.showToastMessage("Success!", "Password updated", {
+                        icon: "bi-info-circle",
+                        iconColor: "#777777"
+                    });
+                    $("#newpassword").val("");
+                    $("#newpasswordconfirm").val("");
+                } else {
+                    shashin.showToastMessage("Failed", "Could not update password", {
+                        icon:"bi-exclamation-triangle",
+                        iconColor:"#FF0000"
+                    });
+                }
+            });
         }
     });
 
-    $("#unhideold").on("click", function (e) {
-        e.preventDefault();
-        changeTypes($("#oldpassword"), $("#unhideoldicon"));
-    });
+    // $("#unhideold").on("click", function (e) {
+    //     e.preventDefault();
+    //     changeTypes($("#oldpassword"), $("#unhideoldicon"));
+    // });
 
     $("#unhidenew").on("click", function (e) {
         e.preventDefault();
@@ -84,7 +105,7 @@
     function validateFields() {
         let fieldsValid = true;
 
-        if ($("#oldpassword").val().trim().length === 0 || $("#newpassword").val().trim().length === 0 || $("#newpasswordconfirm").val().trim().length === 0) {
+        if ($("#newpassword").val().trim().length === 0 || $("#newpasswordconfirm").val().trim().length === 0) {
             shashin.showToastMessage("Validation error", "Password fields cannot be empty.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
             fieldsValid = false;
         }
