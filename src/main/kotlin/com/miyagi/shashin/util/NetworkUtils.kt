@@ -75,7 +75,17 @@ class NetworkUtils {
 
             if (!compreFaceKey.isNullOrBlank() && !compreFaceServer.isNullOrBlank()) {
                 val requestProperties: Map<String, String> = mapOf("x-api-key" to compreFaceKey)
-                available = pingURL(compreFaceServer + "api/v1/recognition/faces?page=1&size=1&subject=1", requestProperties, 2000)
+                //available = pingURL(compreFaceServer + "api/v1/recognition/faces?page=1&size=1&subject=1", requestProperties, 1000)
+                val connection = URL(compreFaceServer + "api/v1/recognition/faces?page=1&size=1&subject=1").openConnection() as HttpURLConnection
+                connection.requestMethod = "HEAD"
+                connection.connectTimeout = 1000
+                connection.readTimeout = 1000
+                connection.setRequestProperty("x-api-key", compreFaceKey)
+
+                val responseCode = connection.responseCode
+                if (responseCode == 200) {
+                    available = true
+                }
             }
 
             val timingEnd = Date()
