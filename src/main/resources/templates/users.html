@@ -52,10 +52,10 @@
                                 <td>
                                     <a href="#" th:id="${'isauthorized' + user.id}">
                                         <th:block th:if="${user.isAuthorized}">
-                                            <span class="bi-check" style="font-size: 1rem;color: lightgreen;" data-bs-toggle="tooltip" data-bs-placement="right" title="Click to disable authorization"></span>
+                                            <span class="bi-check" style="font-size: 1rem;color: lightgreen;" data-bs-toggle="tooltip" data-bs-placement="right" th:title="${'Deauthorize ' + user.username}"></span>
                                         </th:block>
                                         <th:block th:unless="${user.isAuthorized}">
-                                            <span class="bi-x" style="font-size: 1rem;color: lightsalmon;" data-bs-toggle="tooltip" data-bs-placement="right" title="Click to enable authorization"></span>
+                                            <span class="bi-x" style="font-size: 1rem;color: lightsalmon;" data-bs-toggle="tooltip" data-bs-placement="right" th:title="${'Authorize ' + user.username}"></span>
                                         </th:block>
                                     </a>
                                 </td>
@@ -63,12 +63,12 @@
                                 <td><span th:text="${user.modifiedAt}"></span></td>
                                 <td>
                                     <a href="#" th:id="${'resetPassword' + user.id}">
-                                        <span class="bi-arrow-clockwise overlayIconBackground overlayIcon" data-bs-toggle="tooltip" data-bs-placement="right" th:title="${'Create a temporary password for ' + user.username}"></span>
+                                        <span class="bi-arrow-clockwise overlayIconBackground overlayIcon" data-bs-toggle="tooltip" data-bs-placement="right" th:title="${'Reset password for ' + user.username}"></span>
                                     </a>
                                 </td>
                                 <td>
                                     <a href="#" th:id="${'trash' + user.id}">
-                                        <span class="bi-trash overlayIconBackground overlayIcon" data-bs-toggle="tooltip" data-bs-placement="right" title="Delete user"></span>
+                                        <span class="bi-trash overlayIconBackground overlayIcon" data-bs-toggle="tooltip" data-bs-placement="right" th:title="${'Delete account for ' + user.username}"></span>
                                     </a>
                                 </td>
                             </tr>
