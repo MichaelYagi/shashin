@@ -1722,25 +1722,25 @@
                 break
             case "maptiler":
                 mapSource =  new ol.source.TileJSON({
-                    url: 'https://api.maptiler.com/maps/streets-v2/tiles.json?key=YlQvLcNKq0a4aFDX2z3O',
+                    url: 'https://api.maptiler.com/maps/streets-v2/256/tiles.json?key=YlQvLcNKq0a4aFDX2z3O',
                     maxZoom: 19
                 });
                 break;
             case "maptilerHY":
                 mapSource = new ol.source.TileJSON({
-                    url: 'https://api.maptiler.com/maps/hybrid/tiles.json?key=YlQvLcNKq0a4aFDX2z3O',
+                    url: 'https://api.maptiler.com/maps/hybrid/256/tiles.json?key=YlQvLcNKq0a4aFDX2z3O',
                     maxZoom: 19
                 });
                 break;
             case "maptilerBA":
                 mapSource = new ol.source.XYZ({
-                    url: 'https://api.maptiler.com/maps/basic/{z}/{x}/{y}.png?key=YlQvLcNKq0a4aFDX2z3O',
+                    url: 'https://api.maptiler.com/maps/basic/256/{z}/{x}/{y}.png?key=YlQvLcNKq0a4aFDX2z3O',
                     maxZoom: 19
                 });
                 break;
             case "maptilerSA":
                 mapSource =  new ol.source.TileJSON({
-                    url: 'https://api.maptiler.com/tiles/satellite-v2/tiles.json?key=YlQvLcNKq0a4aFDX2z3O',
+                    url: 'https://api.maptiler.com/tiles/satellite-v2/256/tiles.json?key=YlQvLcNKq0a4aFDX2z3O',
                     maxZoom: 19
                 });
                 break;
