@@ -837,15 +837,19 @@
             }
         }, 200);
         $("#container").on('scroll', async function () {
-            shashin.showScrollToTop($("#container"));
-            if (Util.atEndOfPage(this) && appendClassObj[appendClassObj.length-1].textContent !== "EOL") {
-                const page = await func();
+            if (Util.atEndOfPage(this) && appendClassObj[appendClassObj.length - 1].textContent !== "EOL") {
+                shashin.showScrollToTop($("#container"));
+                setTimeout(async function () {
+                    const page = await func();
+                }, 200);
             }
         })
         $("main").on('scroll', async function () {
             shashin.showScrollToTop($("main"));
             if (Util.atEndOfPage(this) && appendClassObj[appendClassObj.length-1].textContent !== "EOL") {
-                const page = await func();
+                setTimeout(async function () {
+                    const page = await func();
+                }, 200);
             }
         })
 
