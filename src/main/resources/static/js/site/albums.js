@@ -57,8 +57,8 @@ class Albums {
                 const sharedAlbumMap = data["sharedAlbumsMap"];
 
                 if (albumsList !== null && albumsList.length > 0) {
-                    if ($("#album"+album.id).length === 0) {
-                        albumsList.forEach(function (album) {
+                    albumsList.forEach(function (album) {
+                        if ($("#album"+album.id).length === 0) {
                             let html = '<div class="card" style="width:235px;padding-top:10px;">';
                             html += '<a href="/album/' + album.id + '" style="text-decoration: none !important;color: #777777;" id="album' + album.id + '">';
                             html += '<img loading="lazy" class="card-img-top" src="' + album.coverUrl + '" width="209" height="209" style="width: 209px;height: 209px;">';
@@ -91,8 +91,8 @@ class Albums {
                             html += '<span class="' + appendClass + '" style="width:0;height:0;padding:0"></span>';
 
                             $(html).insertBefore($("." + appendClass).last());
-                        });
-                    }
+                        }
+                    });
 
                     this.rendering = false;
                     $("#spinner").css("display", "none");
