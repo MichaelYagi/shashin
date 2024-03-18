@@ -26,7 +26,9 @@ class Recent {
     }
 
     async init() {
-        shashin.pageLoader(await this.loadNextPage.bind(this), ".appendRecentPhotos", this.metadataList);
+        setTimeout(async () => {
+            shashin.pageLoader(await this.loadNextPage.bind(this), ".appendRecentPhotos", this.metadataList);
+        }, 0);
         shashin.mouseMoveListener();
         shashin.closeGalleryOnBack();
     }
@@ -48,85 +50,83 @@ class Recent {
     }
 
     async updateRecent(nextPage,activePage,mediaTypeFilter) {
-        setTimeout(async () => {
-            this.rendering = true;
+        this.rendering = true;
 
-            let data = null
+        let data = null
 
-            if (false === this.eol) {
-                $("#spinner").css("display", "block");
-                data = await this.http.ajax("get", "/recent/mediatype/" + mediaTypeFilter + "/page/" + nextPage);
-            }
+        if (false === this.eol) {
+            $("#spinner").css("display", "block");
+            data = await this.http.ajax("get", "/recent/mediatype/" + mediaTypeFilter + "/page/" + nextPage);
+        }
 
-            const mediaContentList = [];
-            if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data["status"] === shashin.apiResponse.SUCCESS) {
-                const metadataList = data["metadataList"];
+        const mediaContentList = [];
+        if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data["status"] === shashin.apiResponse.SUCCESS) {
+            const metadataList = data["metadataList"];
 
-                if (metadataList !== null && metadataList.length > 0) {
-                    const mediaLinkLength = $(".mediaLink").length;
-                    const appendClass = "appendRecentPhotos";
+            if (metadataList !== null && metadataList.length > 0) {
+                const mediaLinkLength = $(".mediaLink").length;
+                const appendClass = "appendRecentPhotos";
 
-                    for (const index in metadataList) {
-                        const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
-                        const metadata = metadataList[index];
+                for (const index in metadataList) {
+                    const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
+                    const metadata = metadataList[index];
 
-                        if ($("#photoThumbnailContainer"+metadata.id).length === 0) {
+                    if ($("#photoThumbnailContainer"+metadata.id).length === 0) {
 
-                            let dateHeadingObj = null;
-                            const overlayFlags = {};
-                            overlayFlags.renderTopRight = true;
-                            overlayFlags.renderTopLeft = true;
-                            overlayFlags.renderBottomLeft = true;
-                            overlayFlags.renderCenter = true;
+                        let dateHeadingObj = null;
+                        const overlayFlags = {};
+                        overlayFlags.renderTopRight = true;
+                        overlayFlags.renderTopLeft = true;
+                        overlayFlags.renderBottomLeft = true;
+                        overlayFlags.renderCenter = true;
 
-                            const dateHeadingCount = $(".dateSection").length;
-                            const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
-                            const currentDate = dateFormat(metadata["addedAt"].replace(/-/g, "/"), "isoDate");
-                            const displayCurrentDate = dateFormat(metadata["addedAt"].replace(/-/g, "/"), "ddd, mmm d, yyyy");
+                        const dateHeadingCount = $(".dateSection").length;
+                        const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
+                        const currentDate = dateFormat(metadata["addedAt"].replace(/-/g, "/"), "isoDate");
+                        const displayCurrentDate = dateFormat(metadata["addedAt"].replace(/-/g, "/"), "ddd, mmm d, yyyy");
 
-                            if (lastDateHeading !== currentDate) {
-                                dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
-                            }
-
-                            const overlayData = shashin.getOverlayData(metadata, {
-                                editControls: true,
-                                editIcon: ((metadata.lat === null || metadata.lng === null) ? "bi-info-square" : "bi-info-circle"),
-                                cOnClickFunction: "shashin.openGallery",
-                                galleryIndex: currentMediaLinkIndex,
-                                overlayFlags
-                            });
-
-                            mediaContentList.push(shashin.getMediaContent(metadata));
-
-                            const uuid = uuidv4();
-                            $(GalleryTemplates.PhotoGalleryItem({
-                                activePage,
-                                appendClass,
-                                dateHeadingObj,
-                                metadata,
-                                currentMediaLinkIndex,
-                                overlayData,
-                                uuid
-                            })).insertBefore($("." + appendClass).last());
+                        if (lastDateHeading !== currentDate) {
+                            dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
                         }
-                    }
 
-                    this.rendering = false;
-                    $("#spinner").css("display", "none");
-                } else {
-                    $(".appendRecentPhotos").last().text("EOL").css("display","none");
-                    this.rendering = false;
-                    this.eol = true;
+                        const overlayData = shashin.getOverlayData(metadata, {
+                            editControls: true,
+                            editIcon: ((metadata.lat === null || metadata.lng === null) ? "bi-info-square" : "bi-info-circle"),
+                            cOnClickFunction: "shashin.openGallery",
+                            galleryIndex: currentMediaLinkIndex,
+                            overlayFlags
+                        });
+
+                        mediaContentList.push(shashin.getMediaContent(metadata));
+
+                        const uuid = uuidv4();
+                        $(GalleryTemplates.PhotoGalleryItem({
+                            activePage,
+                            appendClass,
+                            dateHeadingObj,
+                            metadata,
+                            currentMediaLinkIndex,
+                            overlayData,
+                            uuid
+                        })).insertBefore($("." + appendClass).last());
+                    }
                 }
+
+                this.rendering = false;
+                $("#spinner").css("display", "none");
             } else {
                 $(".appendRecentPhotos").last().text("EOL").css("display","none");
                 this.rendering = false;
                 this.eol = true;
             }
+        } else {
+            $(".appendRecentPhotos").last().text("EOL").css("display","none");
+            this.rendering = false;
+            this.eol = true;
+        }
 
-            $("#spinner").css("display","none");
+        $("#spinner").css("display","none");
 
-            return mediaContentList;
-        }, 0);
+        return mediaContentList;
     }
 }

@@ -24,7 +24,9 @@ class Trash {
     }
 
     async init() {
-        shashin.pageLoader(await this.loadNextPage.bind(this), ".appendMetadataPhotos", this.metadataList);
+        setTimeout(async () => {
+            shashin.pageLoader(await this.loadNextPage.bind(this), ".appendMetadataPhotos", this.metadataList);
+        }, 0);
         shashin.mouseMoveListener();
         shashin.closeGalleryOnBack();
     }
@@ -45,95 +47,93 @@ class Trash {
     }
 
     async updateTrash(nextPage, activePage) {
-        setTimeout(async () => {
-            this.rendering = true;
+        this.rendering = true;
 
-            let data = null
+        let data = null
 
-            if (false === this.eol) {
-                $("#spinner").css("display", "block");
-                data = await this.http.ajax("get", "/trash/" + nextPage);
-            }
+        if (false === this.eol) {
+            $("#spinner").css("display", "block");
+            data = await this.http.ajax("get", "/trash/" + nextPage);
+        }
 
-            const mediaContentList = [];
-            if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                let message = "Error";
-                if (data["status"] === shashin.apiResponse.SUCCESS) {
-                    if (data.hasOwnProperty("metadataList")) {
-                        const metadataList = data["metadataList"];
+        const mediaContentList = [];
+        if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+            let message = "Error";
+            if (data["status"] === shashin.apiResponse.SUCCESS) {
+                if (data.hasOwnProperty("metadataList")) {
+                    const metadataList = data["metadataList"];
 
-                        if (metadataList.length > 0) {
-                            const mediaLinkLength = $(".mediaLink").length;
-                            const appendClass = "appendMetadataPhotos";
+                    if (metadataList.length > 0) {
+                        const mediaLinkLength = $(".mediaLink").length;
+                        const appendClass = "appendMetadataPhotos";
 
-                            for (const index in metadataList) {
-                                const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
-                                const metadata = metadataList[index];
+                        for (const index in metadataList) {
+                            const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
+                            const metadata = metadataList[index];
 
-                                if ($("#photoThumbnailContainer"+metadata.id).length === 0) {
-                                    let dateHeadingObj = null;
-                                    const overlayFlags = {};
-                                    overlayFlags.renderTopRight = true;
-                                    overlayFlags.renderTopLeft = true;
-                                    overlayFlags.renderBottomLeft = true;
-                                    overlayFlags.renderCenter = true;
+                            if ($("#photoThumbnailContainer"+metadata.id).length === 0) {
+                                let dateHeadingObj = null;
+                                const overlayFlags = {};
+                                overlayFlags.renderTopRight = true;
+                                overlayFlags.renderTopLeft = true;
+                                overlayFlags.renderBottomLeft = true;
+                                overlayFlags.renderCenter = true;
 
-                                    const dateHeadingCount = $(".dateSection").length;
-                                    const lastModifiedDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
-                                    const currentModifiedDate = dateFormat(metadata["modifiedAt"].replace(/-/g, "/"), "isoDate");
-                                    const displayCurrentModifiedDate = dateFormat(metadata["modifiedAt"].replace(/-/g, "/"), "ddd, mmm d, yyyy");
+                                const dateHeadingCount = $(".dateSection").length;
+                                const lastModifiedDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
+                                const currentModifiedDate = dateFormat(metadata["modifiedAt"].replace(/-/g, "/"), "isoDate");
+                                const displayCurrentModifiedDate = dateFormat(metadata["modifiedAt"].replace(/-/g, "/"), "ddd, mmm d, yyyy");
 
-                                    if (lastModifiedDateHeading !== currentModifiedDate) {
-                                        dateHeadingObj = {
-                                            heading: currentModifiedDate,
-                                            display: displayCurrentModifiedDate
-                                        };
-                                    }
-
-                                    const overlayData = shashin.getOverlayData(metadata, {
-                                        cOnClickFunction: "shashin.openGallery",
-                                        galleryIndex: currentMediaLinkIndex,
-                                        overlayFlags
-                                    });
-
-                                    mediaContentList.push(shashin.getMediaContent(metadata));
-
-                                    const uuid = uuidv4();
-                                    $(GalleryTemplates.PhotoGalleryItem({
-                                        activePage,
-                                        appendClass,
-                                        dateHeadingObj,
-                                        metadata,
-                                        currentMediaLinkIndex,
-                                        overlayData,
-                                        uuid
-                                    })).insertBefore($("." + appendClass).last());
+                                if (lastModifiedDateHeading !== currentModifiedDate) {
+                                    dateHeadingObj = {
+                                        heading: currentModifiedDate,
+                                        display: displayCurrentModifiedDate
+                                    };
                                 }
-                            }
 
-                            this.rendering = false;
-                            $("#spinner").css("display", "none");
-                        } else {
-                            this.rendering = false;
-                            this.eol = true;
-                            $(".appendMetadataPhotos").last().text("EOL").css("display", "none");
+                                const overlayData = shashin.getOverlayData(metadata, {
+                                    cOnClickFunction: "shashin.openGallery",
+                                    galleryIndex: currentMediaLinkIndex,
+                                    overlayFlags
+                                });
+
+                                mediaContentList.push(shashin.getMediaContent(metadata));
+
+                                const uuid = uuidv4();
+                                $(GalleryTemplates.PhotoGalleryItem({
+                                    activePage,
+                                    appendClass,
+                                    dateHeadingObj,
+                                    metadata,
+                                    currentMediaLinkIndex,
+                                    overlayData,
+                                    uuid
+                                })).insertBefore($("." + appendClass).last());
+                            }
                         }
+
+                        this.rendering = false;
+                        $("#spinner").css("display", "none");
+                    } else {
+                        this.rendering = false;
+                        this.eol = true;
+                        $(".appendMetadataPhotos").last().text("EOL").css("display", "none");
                     }
-                } else {
-                    this.rendering = false;
-                    this.eol = true;
-                    $(".appendMetadataPhotos").last().text("EOL").css("display", "none");
-                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                    $("#msgTimeline").html(message);
                 }
             } else {
                 this.rendering = false;
-                $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
+                this.eol = true;
+                $(".appendMetadataPhotos").last().text("EOL").css("display", "none");
+                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                $("#msgTimeline").html(message);
             }
+        } else {
+            this.rendering = false;
+            $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
+        }
 
-            $("#spinner").css("display","none");
+        $("#spinner").css("display","none");
 
-            return mediaContentList;
-        }, 0);
+        return mediaContentList;
     }
 }
