@@ -838,7 +838,7 @@
         }, 200);
         $("#container").on('scroll', async function () {
             shashin.showScrollToTop($("#container"));
-            if (Util.atEndOfPage(this) && appendClassObj[appendClassObj.length - 1].textContent !== "EOL") {
+            if (Util.atEndOfPage(this)) {
                 setTimeout(async function () {
                     const page = await func();
                 }, 200);
@@ -846,7 +846,7 @@
         })
         $("main").on('scroll', async function () {
             shashin.showScrollToTop($("main"));
-            if (Util.atEndOfPage(this) && appendClassObj[appendClassObj.length-1].textContent !== "EOL") {
+            if (Util.atEndOfPage(this)) {
                 setTimeout(async function () {
                     const page = await func();
                 }, 200);
