@@ -821,6 +821,8 @@
     }
 
     shashin.pageLoader = function(func, appendClass, list) {
+        const appendClassObj = $(appendClass);
+
         const refreshIntervalId = window.setInterval(function () {
             if (!Util.hasScrollBar($("#container")) && !Util.hasScrollBar($("main"))) {
                 setTimeout(async () => {
@@ -830,19 +832,19 @@
                 clearInterval(refreshIntervalId);
             }
 
-            if ($(appendClass).last().text() === "EOL" || list === '' || list === '[]') {
+            if (appendClassObj[appendClassObj.length-1].textContent === "EOL" || list === '' || list === '[]') {
                 clearInterval(refreshIntervalId);
             }
         }, 200);
         $("#container").on('scroll', async function () {
             shashin.showScrollToTop($("#container"));
-            if (Util.atEndOfPage(this) && $(appendClass).last().text() !== "EOL") {
+            if (Util.atEndOfPage(this) && appendClassObj[appendClassObj.length-1].textContent !== "EOL") {
                 const page = await func();
             }
         })
         $("main").on('scroll', async function () {
             shashin.showScrollToTop($("main"));
-            if (Util.atEndOfPage(this) && $(appendClass).last().text() !== "EOL") {
+            if (Util.atEndOfPage(this) && appendClassObj[appendClassObj.length-1].textContent !== "EOL") {
                 const page = await func();
             }
         })
