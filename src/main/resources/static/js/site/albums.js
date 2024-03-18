@@ -57,41 +57,42 @@ class Albums {
                 const sharedAlbumMap = data["sharedAlbumsMap"];
 
                 if (albumsList !== null && albumsList.length > 0) {
+                    if ($("#album"+album.id).length === 0) {
+                        albumsList.forEach(function (album) {
+                            let html = '<div class="card" style="width:235px;padding-top:10px;">';
+                            html += '<a href="/album/' + album.id + '" style="text-decoration: none !important;color: #777777;" id="album' + album.id + '">';
+                            html += '<img loading="lazy" class="card-img-top" src="' + album.coverUrl + '" width="209" height="209" style="width: 209px;height: 209px;">';
+                            html += '</a>';
+                            html += '<div class="card-body">';
+                            html += '<strong id="albumName' + album.id + '">' + album.name + '</strong><br>';
+                            html += '<a href="#" id="comment' + album.id + '" style="text-decoration: none;" title="Comments">';
+                            html += '<span id="commentcount' + album.id + '">' + (album.id in data["albumsCommentsMap"] ? data["albumsCommentsMap"][album.id].length : "0") + '</span>&nbsp;';
+                            html += '<span class="bi-chat-square position-relative">';
+                            html += '</span></a>';
 
-                    albumsList.forEach(function(album) {
-                        let html = '<div class="card" style="width:235px;padding-top:10px;">';
-                        html += '<a href="/album/'+album.id+'" style="text-decoration: none !important;color: #777777;" id="album'+album.id+'">';
-                        html += '<img loading="lazy" class="card-img-top" src="'+album.coverUrl+'" width="209" height="209" style="width: 209px;height: 209px;">';
-                        html += '</a>';
-                        html += '<div class="card-body">';
-                        html += '<strong id="albumName'+album.id+'">'+album.name+'</strong><br>';
-                        html += '<a href="#" id="comment'+album.id+'" style="text-decoration: none;" title="Comments">';
-                        html += '<span id="commentcount'+album.id+'">'+(album.id in data["albumsCommentsMap"] ? data["albumsCommentsMap"][album.id].length : "0")+'</span>&nbsp;';
-                        html += '<span class="bi-chat-square position-relative">';
-                        html += '</span></a>';
+                            if (album.albumPhotoCount > 0) {
+                                html += '&nbsp;<form method="post" action="/album/download/' + album.id + '" style="display: inline-block;white-space: nowrap;">';
+                                html += '<button class="bi-download' + (darkMode ? ' link-button-darkmode' : ' link-button-lightmode') + '" type="submit" id="download' + album.id + '" name="download" value="' + album.id + '" title="Download album photos"></button>';
+                                html += '</form>&nbsp;';
+                            } else {
+                                html += '&nbsp;&nbsp;&nbsp;';
+                            }
 
-                        if (album.albumPhotoCount > 0) {
-                            html += '&nbsp;<form method="post" action="/album/download/'+album.id+'" style="display: inline-block;white-space: nowrap;">';
-                            html += '<button class="bi-download'+(darkMode ? ' link-button-darkmode' : ' link-button-lightmode')+'" type="submit" id="download'+album.id+'" name="download" value="'+album.id+'" title="Download album photos"></button>';
-                            html += '</form>&nbsp;';
-                        } else {
-                            html += '&nbsp;&nbsp;&nbsp;';
-                        }
+                            if (true === showControls) {
+                                html += '<a href="#" id="edit' + album.id + '"><span class="bi-pencil" title="Edit album"></span></a>';
+                                html += '&nbsp;&nbsp;&nbsp;<a href="#" id="share' + album.id + '"><span class="' + (album.shareUrl != null && album.shareUrl !== '' ? 'bi-share-fill' : 'bi-share') + '" title="' + (album.shareUrl != null && album.shareUrl !== '' ? 'Shared' : 'Share') + ' with other people"></span></a>';
+                                html += '&nbsp;&nbsp;&nbsp;<a href="#" id="trash' + album.id + '" title="Delete album"><span class="bi-trash"></span></a>';
+                            }
 
-                        if (true === showControls) {
-                            html += '<a href="#" id="edit'+album.id+'"><span class="bi-pencil" title="Edit album"></span></a>';
-                            html += '&nbsp;&nbsp;&nbsp;<a href="#" id="share'+album.id+'"><span class="'+(album.shareUrl != null && album.shareUrl !== '' ? 'bi-share-fill' : 'bi-share')+'" title="'+(album.shareUrl != null && album.shareUrl !== '' ? 'Shared' : 'Share')+' with other people"></span></a>';
-                            html += '&nbsp;&nbsp;&nbsp;<a href="#" id="trash'+album.id+'" title="Delete album"><span class="bi-trash"></span></a>';
-                        }
+                            html += '<p class="card-text"><small class="text-muted">' + album.albumPhotoCount + (album.albumPhotoCount === 1 ? ' photo' : ' photos') + '&nbsp;&nbsp;&nbsp;&nbsp;' + album.albumVideoCount + (album.albumVideoCount === 1 ? ' video' : ' videos') + '</small>&nbsp;&nbsp;&nbsp;&nbsp;<span id="userShare' + album.id + '" title="Shared with other users" style="' + (sharedAlbumMap.hasOwnProperty(album.id) && showControls === true ? "display: inline-block" : "display: none") + '"><span class="bi-person-up text-muted"></span></span></p>';
+                            html += '</div></div>';
 
-                        html += '<p class="card-text"><small class="text-muted">'+album.albumPhotoCount + (album.albumPhotoCount === 1 ? ' photo':' photos') + '&nbsp;&nbsp;&nbsp;&nbsp;' + album.albumVideoCount + (album.albumVideoCount === 1 ? ' video':' videos')+'</small>&nbsp;&nbsp;&nbsp;&nbsp;<span id="userShare'+album.id+'" title="Shared with other users" style="'+(sharedAlbumMap.hasOwnProperty(album.id) && showControls === true ? "display: inline-block" : "display: none") +'"><span class="bi-person-up text-muted"></span></span></p>';
-                        html += '</div></div>';
+                            html += '<script type="text/javascript" nonce="' + cspNonce + '">Albums.setAlbumsEventListeners(' + album.id + ', "' + baseUrl + '", ' + showControls + ', "' + cspNonce + '");<\/script>';
+                            html += '<span class="' + appendClass + '" style="width:0;height:0;padding:0"></span>';
 
-                        html += '<script type="text/javascript" nonce="'+cspNonce+'">Albums.setAlbumsEventListeners('+album.id+', "'+baseUrl+'", '+showControls+', "'+cspNonce+'");<\/script>';
-                        html += '<span class="'+appendClass+'" style="width:0;height:0;padding:0"></span>';
-
-                        $(html).insertBefore($("."+appendClass).last());
-                    });
+                            $(html).insertBefore($("." + appendClass).last());
+                        });
+                    }
 
                     this.rendering = false;
                     $("#spinner").css("display", "none");

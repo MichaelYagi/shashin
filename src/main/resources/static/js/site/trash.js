@@ -70,28 +70,45 @@ class Trash {
                                 const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                                 const metadata = metadataList[index];
 
-                                let dateHeadingObj = null;
-                                const overlayFlags = {};
-                                overlayFlags.renderTopRight = true;
-                                overlayFlags.renderTopLeft = true;
-                                overlayFlags.renderBottomLeft = true;
-                                overlayFlags.renderCenter = true;
+                                if ($("#photoThumbnailContainer"+metadata).length === 0) {
+                                    let dateHeadingObj = null;
+                                    const overlayFlags = {};
+                                    overlayFlags.renderTopRight = true;
+                                    overlayFlags.renderTopLeft = true;
+                                    overlayFlags.renderBottomLeft = true;
+                                    overlayFlags.renderCenter = true;
 
-                                const dateHeadingCount = $(".dateSection").length;
-                                const lastModifiedDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
-                                const currentModifiedDate = dateFormat(metadata["modifiedAt"].replace(/-/g, "/"), "isoDate");
-                                const displayCurrentModifiedDate = dateFormat(metadata["modifiedAt"].replace(/-/g, "/"), "ddd, mmm d, yyyy");
+                                    const dateHeadingCount = $(".dateSection").length;
+                                    const lastModifiedDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
+                                    const currentModifiedDate = dateFormat(metadata["modifiedAt"].replace(/-/g, "/"), "isoDate");
+                                    const displayCurrentModifiedDate = dateFormat(metadata["modifiedAt"].replace(/-/g, "/"), "ddd, mmm d, yyyy");
 
-                                if (lastModifiedDateHeading !== currentModifiedDate) {
-                                    dateHeadingObj = {heading: currentModifiedDate, display: displayCurrentModifiedDate};
+                                    if (lastModifiedDateHeading !== currentModifiedDate) {
+                                        dateHeadingObj = {
+                                            heading: currentModifiedDate,
+                                            display: displayCurrentModifiedDate
+                                        };
+                                    }
+
+                                    const overlayData = shashin.getOverlayData(metadata, {
+                                        cOnClickFunction: "shashin.openGallery",
+                                        galleryIndex: currentMediaLinkIndex,
+                                        overlayFlags
+                                    });
+
+                                    mediaContentList.push(shashin.getMediaContent(metadata));
+
+                                    const uuid = uuidv4();
+                                    $(GalleryTemplates.PhotoGalleryItem({
+                                        activePage,
+                                        appendClass,
+                                        dateHeadingObj,
+                                        metadata,
+                                        currentMediaLinkIndex,
+                                        overlayData,
+                                        uuid
+                                    })).insertBefore($("." + appendClass).last());
                                 }
-
-                                const overlayData = shashin.getOverlayData(metadata, {cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,overlayFlags});
-
-                                mediaContentList.push(shashin.getMediaContent(metadata));
-
-                                const uuid = uuidv4();
-                                $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid})).insertBefore($("."+appendClass).last());
                             }
 
                             this.rendering = false;

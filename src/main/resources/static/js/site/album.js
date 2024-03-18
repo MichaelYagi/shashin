@@ -119,43 +119,70 @@
                                 const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                                 const metadata = albumMetadataList[index];
 
-                                let dateHeadingObj = null;
-                                const overlayFlags = {};
-                                overlayFlags.renderTopRight = true;
-                                overlayFlags.renderTopLeft = true;
-                                overlayFlags.renderBottomLeft = true;
-                                overlayFlags.renderCenter = true;
-                                overlayFlags.renderBottomRight = true;
+                                if ($("#photoThumbnailContainer"+metadata).length === 0) {
 
-                                const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
-                                const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
+                                    let dateHeadingObj = null;
+                                    const overlayFlags = {};
+                                    overlayFlags.renderTopRight = true;
+                                    overlayFlags.renderTopLeft = true;
+                                    overlayFlags.renderBottomLeft = true;
+                                    overlayFlags.renderCenter = true;
+                                    overlayFlags.renderBottomRight = true;
 
-                                const dateHeadingCount = $(".dateSection").length;
-                                const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
-                                const currentDate = metadata["year"] +"-"+ metadata["month"] +"-"+ metadata["day"];
-                                const displayCurrentDate = Util.getDateString(metadata["year"], metadata["month"], metadata["day"]);
+                                    const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
+                                    const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
 
-                                if (lastDateHeading !== currentDate) {
-                                    dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
+                                    const dateHeadingCount = $(".dateSection").length;
+                                    const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
+                                    const currentDate = metadata["year"] + "-" + metadata["month"] + "-" + metadata["day"];
+                                    const displayCurrentDate = Util.getDateString(metadata["year"], metadata["month"], metadata["day"]);
+
+                                    if (lastDateHeading !== currentDate) {
+                                        dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
+                                    }
+
+                                    let overlayData;
+
+                                    if (userMap.showControls === true) {
+                                        overlayData = shashin.getOverlayData(metadata, {
+                                            blOnClickFunction: "albumSettings.openAlbumModal",
+                                            cOnClickFunction: "shashin.openGallery",
+                                            onClickIdPrefix: "albumModalEdit",
+                                            galleryIndex: currentMediaLinkIndex,
+                                            favoriteCount: favoriteCount,
+                                            favoriteIcon: favoriteIcon,
+                                            albumPhotoCommentsMap: albumPhotoCommentsMap,
+                                            overlayFlags
+                                        });
+                                    } else {
+                                        overlayData = shashin.getOverlayData(metadata, {
+                                            cOnClickFunction: "shashin.openGallery",
+                                            galleryIndex: currentMediaLinkIndex,
+                                            favoriteCount: favoriteCount,
+                                            favoriteIcon: favoriteIcon,
+                                            albumPhotoCommentsMap: albumPhotoCommentsMap,
+                                            overlayFlags
+                                        });
+                                    }
+
+                                    mediaContentList.push(shashin.getMediaContent(metadata));
+
+                                    // Append HTML
+                                    const uuid = uuidv4();
+                                    $(GalleryTemplates.PhotoGalleryItem({
+                                        activePage,
+                                        appendClass,
+                                        dateHeadingObj,
+                                        metadata,
+                                        currentMediaLinkIndex,
+                                        overlayData,
+                                        uuid
+                                    })).insertBefore($("." + appendClass).last()).ready(function () {
+                                        // Call JS and modal
+                                        albumModal.renderAlbumCommentsModal(albumData, metadata, userMap, albumPhotoCommentsMap, canEdit);
+                                        albumSettings.activateAlbumListeners(metadata, albumData);
+                                    });
                                 }
-
-                                let overlayData;
-
-                                if (userMap.showControls === true) {
-                                    overlayData = shashin.getOverlayData(metadata, {blOnClickFunction:"albumSettings.openAlbumModal",cOnClickFunction:"shashin.openGallery",onClickIdPrefix:"albumModalEdit",galleryIndex:currentMediaLinkIndex,favoriteCount:favoriteCount,favoriteIcon:favoriteIcon,albumPhotoCommentsMap:albumPhotoCommentsMap,overlayFlags});
-                                } else {
-                                    overlayData = shashin.getOverlayData(metadata, {cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,favoriteCount:favoriteCount,favoriteIcon:favoriteIcon,albumPhotoCommentsMap:albumPhotoCommentsMap,overlayFlags});
-                                }
-
-                                mediaContentList.push(shashin.getMediaContent(metadata));
-
-                                // Append HTML
-                                const uuid = uuidv4();
-                                $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid})).insertBefore($("."+appendClass).last()).ready(function () {
-                                    // Call JS and modal
-                                    albumModal.renderAlbumCommentsModal(albumData, metadata, userMap, albumPhotoCommentsMap,canEdit);
-                                    albumSettings.activateAlbumListeners(metadata, albumData);
-                                });
                             }
 
                             $("#spinner").css("display","none");

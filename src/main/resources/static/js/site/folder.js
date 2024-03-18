@@ -68,20 +68,35 @@ class Folder {
                     for (const index in metadataList) {
                         const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                         const metadata = metadataList[index];
+                        if ($("#photoThumbnailContainer" + metadata).length === 0) {
+                            let dateHeadingObj = null;
+                            const overlayFlags = {};
+                            overlayFlags.renderTopRight = true;
+                            overlayFlags.renderTopLeft = true;
+                            overlayFlags.renderBottomLeft = true;
+                            overlayFlags.renderCenter = true;
 
-                        let dateHeadingObj = null;
-                        const overlayFlags = {};
-                        overlayFlags.renderTopRight = true;
-                        overlayFlags.renderTopLeft = true;
-                        overlayFlags.renderBottomLeft = true;
-                        overlayFlags.renderCenter = true;
+                            const overlayData = shashin.getOverlayData(metadata, {
+                                editControls: true,
+                                editIcon: ((metadata.lat === null || metadata.lng === null) ? 'bi-info-square' : 'bi-info-circle'),
+                                cOnClickFunction: "shashin.openGallery",
+                                galleryIndex: currentMediaLinkIndex,
+                                overlayFlags
+                            });
 
-                        const overlayData = shashin.getOverlayData(metadata, {editControls:true,editIcon: ((metadata.lat === null || metadata.lng === null) ? 'bi-info-square' : 'bi-info-circle'),cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,overlayFlags});
+                            mediaContentList.push(shashin.getMediaContent(metadata));
 
-                        mediaContentList.push(shashin.getMediaContent(metadata));
-
-                        const uuid = uuidv4();
-                        $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid})).insertBefore($("."+appendClass).last());
+                            const uuid = uuidv4();
+                            $(GalleryTemplates.PhotoGalleryItem({
+                                activePage,
+                                appendClass,
+                                dateHeadingObj,
+                                metadata,
+                                currentMediaLinkIndex,
+                                overlayData,
+                                uuid
+                            })).insertBefore($("." + appendClass).last());
+                        }
                     }
 
                     this.rendering = false;

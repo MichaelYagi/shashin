@@ -129,28 +129,51 @@ class Person {
                                 const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                                 const metadata = metadataList[index];
 
-                                let dateHeadingObj = null;
-                                const overlayFlags = {};
-                                overlayFlags.renderTopRight = true;
-                                overlayFlags.renderTopLeft = true;
-                                overlayFlags.renderBottomLeft = true;
-                                overlayFlags.renderCenter = true;
+                                if ($("#photoThumbnailContainer"+metadata).length === 0) {
 
-                                let overlayData;
+                                    let dateHeadingObj = null;
+                                    const overlayFlags = {};
+                                    overlayFlags.renderTopRight = true;
+                                    overlayFlags.renderTopLeft = true;
+                                    overlayFlags.renderBottomLeft = true;
+                                    overlayFlags.renderCenter = true;
 
-                                if (this.canEdit === true) {
-                                    overlayData = shashin.getOverlayData(metadata, {labelPhotoMap:labelPhotoMap,/*onClickIdPrefix:"propperson"*/blOnClickFunction:"personSettings.openPersonModal",cOnClickFunction:"shashin.openGallery",onClickIdPrefix:"personModalEdit",galleryIndex:currentMediaLinkIndex,overlayFlags});
-                                } else {
-                                    overlayData = shashin.getOverlayData(metadata, {labelPhotoMap:labelPhotoMap,cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,overlayFlags});
+                                    let overlayData;
+
+                                    if (this.canEdit === true) {
+                                        overlayData = shashin.getOverlayData(metadata, {
+                                            labelPhotoMap: labelPhotoMap,/*onClickIdPrefix:"propperson"*/
+                                            blOnClickFunction: "personSettings.openPersonModal",
+                                            cOnClickFunction: "shashin.openGallery",
+                                            onClickIdPrefix: "personModalEdit",
+                                            galleryIndex: currentMediaLinkIndex,
+                                            overlayFlags
+                                        });
+                                    } else {
+                                        overlayData = shashin.getOverlayData(metadata, {
+                                            labelPhotoMap: labelPhotoMap,
+                                            cOnClickFunction: "shashin.openGallery",
+                                            galleryIndex: currentMediaLinkIndex,
+                                            overlayFlags
+                                        });
+                                    }
+
+                                    mediaContentList.push(shashin.getMediaContent(metadata));
+
+                                    const uuid = uuidv4();
+                                    $(GalleryTemplates.PhotoGalleryItem({
+                                        activePage,
+                                        appendClass,
+                                        dateHeadingObj,
+                                        metadata,
+                                        currentMediaLinkIndex,
+                                        overlayData,
+                                        uuid
+                                    })).insertBefore($("." + appendClass).last()).ready(function () {
+                                        // Call JS and modal
+                                        // personModalSettings.renderPersonModal(metadata, recognitionLabels, labelPhotoMap[metadata.id]["labels"]);
+                                    });
                                 }
-
-                                mediaContentList.push(shashin.getMediaContent(metadata));
-
-                                const uuid = uuidv4();
-                                $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid})).insertBefore($("."+appendClass).last()).ready(function () {
-                                    // Call JS and modal
-                                    // personModalSettings.renderPersonModal(metadata, recognitionLabels, labelPhotoMap[metadata.id]["labels"]);
-                                });
                             }
 
                             $("#spinner").css("display","none");
