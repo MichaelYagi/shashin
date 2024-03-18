@@ -129,7 +129,7 @@ class Person {
                                 const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                                 const metadata = metadataList[index];
 
-                                if ($("#photoThumbnailContainer"+metadata).length === 0) {
+                                if ($("#photoThumbnailContainer"+metadata.id).length === 0) {
 
                                     let dateHeadingObj = null;
                                     const overlayFlags = {};
