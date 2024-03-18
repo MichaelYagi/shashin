@@ -77,111 +77,113 @@
     }
 
     albumSettings.getPagedAlbum = async function(albumId,mediaTypeFilter, nextPage,activePage) {
-        albumSettings.rendering = true;
+        setTimeout(async () => {
+            albumSettings.rendering = true;
 
-        let data = null
+            let data = null
 
-        if (false === albumSettings.eol) {
-            $("#spinner").css("display", "block");
-            data = await this.http.ajax("get","/album/"+albumId+"/mediatype/"+mediaTypeFilter+"/page/"+nextPage);
-        }
+            if (false === albumSettings.eol) {
+                $("#spinner").css("display", "block");
+                data = await this.http.ajax("get","/album/"+albumId+"/mediatype/"+mediaTypeFilter+"/page/"+nextPage);
+            }
 
-        const mediaContentList = [];
+            const mediaContentList = [];
 
-        if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-            let message = "Error";
-            if (data["status"] === shashin.apiResponse.SUCCESS) {
-                if (data.hasOwnProperty("album") &&
-                    data.hasOwnProperty("albumMetadataList") &&
-                    data.hasOwnProperty("albumPhotoCommentsMap") &&
-                    data.hasOwnProperty("userMap")
-                ) {
-                    const albumData = data["album"];
-                    const albumMetadataList = data["albumMetadataList"];
-                    const albumPhotoCommentsMap = data["albumPhotoCommentsMap"];
-                    const userMap = data["userMap"];
-                    const favoritesMap = data["favorites"];
-                    const canEdit = data["canEdit"];
+            if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                let message = "Error";
+                if (data["status"] === shashin.apiResponse.SUCCESS) {
+                    if (data.hasOwnProperty("album") &&
+                        data.hasOwnProperty("albumMetadataList") &&
+                        data.hasOwnProperty("albumPhotoCommentsMap") &&
+                        data.hasOwnProperty("userMap")
+                    ) {
+                        const albumData = data["album"];
+                        const albumMetadataList = data["albumMetadataList"];
+                        const albumPhotoCommentsMap = data["albumPhotoCommentsMap"];
+                        const userMap = data["userMap"];
+                        const favoritesMap = data["favorites"];
+                        const canEdit = data["canEdit"];
 
-                    shashin.printMessageToConsole("albumSettings.getPagedAlbum");
-                    shashin.printMessageToConsole(albumData);
-                    shashin.printMessageToConsole(albumMetadataList);
-                    shashin.printMessageToConsole(albumPhotoCommentsMap);
-                    shashin.printMessageToConsole(userMap);
-                    shashin.printMessageToConsole(albumMetadataList.length);
+                        shashin.printMessageToConsole("albumSettings.getPagedAlbum");
+                        shashin.printMessageToConsole(albumData);
+                        shashin.printMessageToConsole(albumMetadataList);
+                        shashin.printMessageToConsole(albumPhotoCommentsMap);
+                        shashin.printMessageToConsole(userMap);
+                        shashin.printMessageToConsole(albumMetadataList.length);
 
-                    if (albumMetadataList.length > 0) {
-                        const mediaLinkLength = $(".mediaLink").length;
-                        const appendClass = "appendAlbumPhotos";
+                        if (albumMetadataList.length > 0) {
+                            const mediaLinkLength = $(".mediaLink").length;
+                            const appendClass = "appendAlbumPhotos";
 
-                        for (const index in albumMetadataList) {
-                            const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
-                            const metadata = albumMetadataList[index];
+                            for (const index in albumMetadataList) {
+                                const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
+                                const metadata = albumMetadataList[index];
 
-                            let dateHeadingObj = null;
-                            const overlayFlags = {};
-                            overlayFlags.renderTopRight = true;
-                            overlayFlags.renderTopLeft = true;
-                            overlayFlags.renderBottomLeft = true;
-                            overlayFlags.renderCenter = true;
-                            overlayFlags.renderBottomRight = true;
+                                let dateHeadingObj = null;
+                                const overlayFlags = {};
+                                overlayFlags.renderTopRight = true;
+                                overlayFlags.renderTopLeft = true;
+                                overlayFlags.renderBottomLeft = true;
+                                overlayFlags.renderCenter = true;
+                                overlayFlags.renderBottomRight = true;
 
-                            const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
-                            const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
+                                const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
+                                const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
 
-                            const dateHeadingCount = $(".dateSection").length;
-                            const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
-                            const currentDate = metadata["year"] +"-"+ metadata["month"] +"-"+ metadata["day"];
-                            const displayCurrentDate = Util.getDateString(metadata["year"], metadata["month"], metadata["day"]);
+                                const dateHeadingCount = $(".dateSection").length;
+                                const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
+                                const currentDate = metadata["year"] +"-"+ metadata["month"] +"-"+ metadata["day"];
+                                const displayCurrentDate = Util.getDateString(metadata["year"], metadata["month"], metadata["day"]);
 
-                            if (lastDateHeading !== currentDate) {
-                                dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
+                                if (lastDateHeading !== currentDate) {
+                                    dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
+                                }
+
+                                let overlayData;
+
+                                if (userMap.showControls === true) {
+                                    overlayData = shashin.getOverlayData(metadata, {blOnClickFunction:"albumSettings.openAlbumModal",cOnClickFunction:"shashin.openGallery",onClickIdPrefix:"albumModalEdit",galleryIndex:currentMediaLinkIndex,favoriteCount:favoriteCount,favoriteIcon:favoriteIcon,albumPhotoCommentsMap:albumPhotoCommentsMap,overlayFlags});
+                                } else {
+                                    overlayData = shashin.getOverlayData(metadata, {cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,favoriteCount:favoriteCount,favoriteIcon:favoriteIcon,albumPhotoCommentsMap:albumPhotoCommentsMap,overlayFlags});
+                                }
+
+                                mediaContentList.push(shashin.getMediaContent(metadata));
+
+                                // Append HTML
+                                const uuid = uuidv4();
+                                $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid})).insertBefore($("."+appendClass).last()).ready(function () {
+                                    // Call JS and modal
+                                    albumModal.renderAlbumCommentsModal(albumData, metadata, userMap, albumPhotoCommentsMap,canEdit);
+                                    albumSettings.activateAlbumListeners(metadata, albumData);
+                                });
                             }
 
-                            let overlayData;
-
-                            if (userMap.showControls === true) {
-                                overlayData = shashin.getOverlayData(metadata, {blOnClickFunction:"albumSettings.openAlbumModal",cOnClickFunction:"shashin.openGallery",onClickIdPrefix:"albumModalEdit",galleryIndex:currentMediaLinkIndex,favoriteCount:favoriteCount,favoriteIcon:favoriteIcon,albumPhotoCommentsMap:albumPhotoCommentsMap,overlayFlags});
-                            } else {
-                                overlayData = shashin.getOverlayData(metadata, {cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,favoriteCount:favoriteCount,favoriteIcon:favoriteIcon,albumPhotoCommentsMap:albumPhotoCommentsMap,overlayFlags});
-                            }
-
-                            mediaContentList.push(shashin.getMediaContent(metadata));
-
-                            // Append HTML
-                            const uuid = uuidv4();
-                            $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid})).insertBefore($("."+appendClass).last()).ready(function () {
-                                // Call JS and modal
-                                albumModal.renderAlbumCommentsModal(albumData, metadata, userMap, albumPhotoCommentsMap,canEdit);
-                                albumSettings.activateAlbumListeners(metadata, albumData);
-                            });
+                            $("#spinner").css("display","none");
+                            albumSettings.rendering = false;
+                        } else {
+                            albumSettings.eol = true;
+                            $("#spinner").css("display","none");
+                            $(".appendAlbumPhotos").last().text("EOL").css("display","none");
+                            albumSettings.rendering = false;
                         }
-
-                        $("#spinner").css("display","none");
-                        albumSettings.rendering = false;
-                    } else {
-                        albumSettings.eol = true;
-                        $("#spinner").css("display","none");
-                        $(".appendAlbumPhotos").last().text("EOL").css("display","none");
-                        albumSettings.rendering = false;
                     }
+                } else {
+                    albumSettings.eol = true;
+                    $("#spinner").css("display","none");
+                    $(".appendAlbumPhotos").last().text("EOL").css("display","none");
+                    albumSettings.rendering = false;
+                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                    $("#msgTimeline").html(message);
                 }
             } else {
                 albumSettings.eol = true;
                 $("#spinner").css("display","none");
                 $(".appendAlbumPhotos").last().text("EOL").css("display","none");
                 albumSettings.rendering = false;
-                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                $("#msgTimeline").html(message);
             }
-        } else {
-            albumSettings.eol = true;
-            $("#spinner").css("display","none");
-            $(".appendAlbumPhotos").last().text("EOL").css("display","none");
-            albumSettings.rendering = false;
-        }
 
-        return mediaContentList;
+            return mediaContentList;
+        }, 0);
     }
 
     albumSettings.activateAlbumListeners = function(metadata,album) {

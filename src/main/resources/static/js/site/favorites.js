@@ -47,76 +47,78 @@ class Favorites {
     }
 
     async updateFavorites(nextPage,activePage,mediaTypeFilter) {
-        this.rendering = true;
+        setTimeout(async () => {
+            this.rendering = true;
 
-        let data = null
+            let data = null
 
-        if (false === this.eol) {
-            $("#spinner").css("display", "block");
-            data = await this.http.ajax("get", "/favorites/mediatype/" + mediaTypeFilter + "/page/" + nextPage);
-        }
+            if (false === this.eol) {
+                $("#spinner").css("display", "block");
+                data = await this.http.ajax("get", "/favorites/mediatype/" + mediaTypeFilter + "/page/" + nextPage);
+            }
 
-        const mediaContentList = [];
-        if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-            let message = "Error";
-            if (data["status"] === shashin.apiResponse.SUCCESS) {
-                if (data.hasOwnProperty("metadataList")) {
-                    const metadataList = data["metadataList"];
+            const mediaContentList = [];
+            if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                let message = "Error";
+                if (data["status"] === shashin.apiResponse.SUCCESS) {
+                    if (data.hasOwnProperty("metadataList")) {
+                        const metadataList = data["metadataList"];
 
-                    if (metadataList.length > 0) {
-                        const mediaLinkLength = $(".mediaLink").length;
-                        const appendClass = "appendMetadataPhotos";
+                        if (metadataList.length > 0) {
+                            const mediaLinkLength = $(".mediaLink").length;
+                            const appendClass = "appendMetadataPhotos";
 
-                        for (const index in metadataList) {
-                            const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
-                            const metadata = metadataList[index];
+                            for (const index in metadataList) {
+                                const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
+                                const metadata = metadataList[index];
 
-                            let dateHeadingObj = null;
-                            const overlayFlags = {};
-                            overlayFlags.renderTopRight = true;
-                            overlayFlags.renderTopLeft = true;
-                            overlayFlags.renderBottomLeft = true;
-                            overlayFlags.renderCenter = true;
+                                let dateHeadingObj = null;
+                                const overlayFlags = {};
+                                overlayFlags.renderTopRight = true;
+                                overlayFlags.renderTopLeft = true;
+                                overlayFlags.renderBottomLeft = true;
+                                overlayFlags.renderCenter = true;
 
-                            const dateHeadingCount = $(".dateSection").length;
-                            const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
-                            const currentDate = metadata["year"] +"-"+ metadata["month"] +"-"+ metadata["day"];
-                            const displayCurrentDate = Util.getDateString(metadata["year"], metadata["month"], metadata["day"]);
+                                const dateHeadingCount = $(".dateSection").length;
+                                const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
+                                const currentDate = metadata["year"] +"-"+ metadata["month"] +"-"+ metadata["day"];
+                                const displayCurrentDate = Util.getDateString(metadata["year"], metadata["month"], metadata["day"]);
 
-                            if (lastDateHeading !== currentDate) {
-                                dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
+                                if (lastDateHeading !== currentDate) {
+                                    dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
+                                }
+
+                                const overlayData = shashin.getOverlayData(metadata, {cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,overlayFlags});
+                                mediaContentList.push(shashin.getMediaContent(metadata));
+
+                                const uuid = uuidv4();
+                                $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid})).insertBefore($("."+appendClass).last());
                             }
 
-                            const overlayData = shashin.getOverlayData(metadata, {cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,overlayFlags});
-                            mediaContentList.push(shashin.getMediaContent(metadata));
-
-                            const uuid = uuidv4();
-                            $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid})).insertBefore($("."+appendClass).last());
+                            this.rendering = false;
+                            $("#spinner").css("display", "none");
+                        } else {
+                            $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
+                            this.rendering = false;
+                            this.eol = true;
                         }
-
-                        this.rendering = false;
-                        $("#spinner").css("display", "none");
-                    } else {
-                        $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
-                        this.rendering = false;
-                        this.eol = true;
                     }
+                } else {
+                    $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
+                    this.rendering = false;
+                    this.eol = true;
+                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                    $("#msgTimeline").html(message);
                 }
             } else {
                 $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
                 this.rendering = false;
                 this.eol = true;
-                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                $("#msgTimeline").html(message);
             }
-        } else {
-            $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
-            this.rendering = false;
-            this.eol = true;
-        }
 
-        $("#spinner").css("display","none");
+            $("#spinner").css("display","none");
 
-        return mediaContentList;
+            return mediaContentList;
+        }, 0);
     }
 }

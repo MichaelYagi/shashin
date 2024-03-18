@@ -47,57 +47,59 @@ class Folder {
     }
 
     async updateRecent(nextPage,folderName,activePage) {
-        this.rendering = true;
+        setTimeout(async () => {
+            this.rendering = true;
 
-        let data = null
+            let data = null
 
-        if (false === this.eol) {
-            $("#spinner").css("display", "block");
-            data = await this.http.ajax("get", "/folder/" + nextPage + "/" + encodeURI(encodeURIComponent(folderName)));
-        }
+            if (false === this.eol) {
+                $("#spinner").css("display", "block");
+                data = await this.http.ajax("get", "/folder/" + nextPage + "/" + encodeURI(encodeURIComponent(folderName)));
+            }
 
-        const mediaContentList = [];
-        if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data["status"] === shashin.apiResponse.SUCCESS) {
-            const metadataList = data["metadataList"];
+            const mediaContentList = [];
+            if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data["status"] === shashin.apiResponse.SUCCESS) {
+                const metadataList = data["metadataList"];
 
-            if (metadataList !== null && metadataList.length > 0) {
-                const mediaLinkLength = $(".mediaLink").length;
-                const appendClass = "appendFolderPhotos";
+                if (metadataList !== null && metadataList.length > 0) {
+                    const mediaLinkLength = $(".mediaLink").length;
+                    const appendClass = "appendFolderPhotos";
 
-                for (const index in metadataList) {
-                    const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
-                    const metadata = metadataList[index];
+                    for (const index in metadataList) {
+                        const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
+                        const metadata = metadataList[index];
 
-                    let dateHeadingObj = null;
-                    const overlayFlags = {};
-                    overlayFlags.renderTopRight = true;
-                    overlayFlags.renderTopLeft = true;
-                    overlayFlags.renderBottomLeft = true;
-                    overlayFlags.renderCenter = true;
+                        let dateHeadingObj = null;
+                        const overlayFlags = {};
+                        overlayFlags.renderTopRight = true;
+                        overlayFlags.renderTopLeft = true;
+                        overlayFlags.renderBottomLeft = true;
+                        overlayFlags.renderCenter = true;
 
-                    const overlayData = shashin.getOverlayData(metadata, {editControls:true,editIcon: ((metadata.lat === null || metadata.lng === null) ? 'bi-info-square' : 'bi-info-circle'),cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,overlayFlags});
+                        const overlayData = shashin.getOverlayData(metadata, {editControls:true,editIcon: ((metadata.lat === null || metadata.lng === null) ? 'bi-info-square' : 'bi-info-circle'),cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,overlayFlags});
 
-                    mediaContentList.push(shashin.getMediaContent(metadata));
+                        mediaContentList.push(shashin.getMediaContent(metadata));
 
-                    const uuid = uuidv4();
-                    $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid})).insertBefore($("."+appendClass).last());
+                        const uuid = uuidv4();
+                        $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid})).insertBefore($("."+appendClass).last());
+                    }
+
+                    this.rendering = false;
+                    $("#spinner").css("display", "none");
+                } else {
+                    this.rendering = false;
+                    this.eol = true;
+                    $(".appendFolderPhotos").last().text("EOL").css("display","none")
                 }
-
-                this.rendering = false;
-                $("#spinner").css("display", "none");
             } else {
                 this.rendering = false;
                 this.eol = true;
                 $(".appendFolderPhotos").last().text("EOL").css("display","none")
             }
-        } else {
-            this.rendering = false;
-            this.eol = true;
-            $(".appendFolderPhotos").last().text("EOL").css("display","none")
-        }
 
-        $("#spinner").css("display","none");
+            $("#spinner").css("display","none");
 
-        return mediaContentList;
+            return mediaContentList;
+        }, 0);
     }
 }
