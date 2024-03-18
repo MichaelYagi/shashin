@@ -421,9 +421,9 @@ async function showMap(mapdata) {
                 features: iconFeatures //add an array of features
             });
 
-            let clusterDistance = 50;
+            let clusterDistance = 200;
             if (showMarkersCheckbox.prop("checked") === true) {
-                clusterDistance = 200;
+                clusterDistance = 300;
             }
 
             const clusterSource = new ol.source.Cluster({
