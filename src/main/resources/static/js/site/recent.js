@@ -70,28 +70,45 @@ class Recent {
                         const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                         const metadata = metadataList[index];
 
-                        let dateHeadingObj = null;
-                        const overlayFlags = {};
-                        overlayFlags.renderTopRight = true;
-                        overlayFlags.renderTopLeft = true;
-                        overlayFlags.renderBottomLeft = true;
-                        overlayFlags.renderCenter = true;
+                        if ($("#photoThumbnailContainer"+metadata).length === 0) {
 
-                        const dateHeadingCount = $(".dateSection").length;
-                        const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
-                        const currentDate = dateFormat(metadata["addedAt"].replace(/-/g, "/"), "isoDate");
-                        const displayCurrentDate = dateFormat(metadata["addedAt"].replace(/-/g, "/"), "ddd, mmm d, yyyy");
+                            let dateHeadingObj = null;
+                            const overlayFlags = {};
+                            overlayFlags.renderTopRight = true;
+                            overlayFlags.renderTopLeft = true;
+                            overlayFlags.renderBottomLeft = true;
+                            overlayFlags.renderCenter = true;
 
-                        if (lastDateHeading !== currentDate) {
-                            dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
+                            const dateHeadingCount = $(".dateSection").length;
+                            const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
+                            const currentDate = dateFormat(metadata["addedAt"].replace(/-/g, "/"), "isoDate");
+                            const displayCurrentDate = dateFormat(metadata["addedAt"].replace(/-/g, "/"), "ddd, mmm d, yyyy");
+
+                            if (lastDateHeading !== currentDate) {
+                                dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
+                            }
+
+                            const overlayData = shashin.getOverlayData(metadata, {
+                                editControls: true,
+                                editIcon: ((metadata.lat === null || metadata.lng === null) ? "bi-info-square" : "bi-info-circle"),
+                                cOnClickFunction: "shashin.openGallery",
+                                galleryIndex: currentMediaLinkIndex,
+                                overlayFlags
+                            });
+
+                            mediaContentList.push(shashin.getMediaContent(metadata));
+
+                            const uuid = uuidv4();
+                            $(GalleryTemplates.PhotoGalleryItem({
+                                activePage,
+                                appendClass,
+                                dateHeadingObj,
+                                metadata,
+                                currentMediaLinkIndex,
+                                overlayData,
+                                uuid
+                            })).insertBefore($("." + appendClass).last());
                         }
-
-                        const overlayData = shashin.getOverlayData(metadata, {editControls:true,editIcon: ((metadata.lat === null || metadata.lng === null) ? "bi-info-square" : "bi-info-circle"),cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,overlayFlags});
-
-                        mediaContentList.push(shashin.getMediaContent(metadata));
-
-                        const uuid = uuidv4();
-                        $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid})).insertBefore($("."+appendClass).last());
                     }
 
                     this.rendering = false;

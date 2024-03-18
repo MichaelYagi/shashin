@@ -75,35 +75,51 @@ class Search {
                         const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                         const metadata = metadataList[index];
 
-                        let dateHeadingObj = null;
-                        const overlayFlags = {};
-                        overlayFlags.renderTopRight = true;
-                        overlayFlags.renderTopLeft = true;
-                        overlayFlags.renderBottomLeft = true;
-                        overlayFlags.renderCenter = true;
-                        overlayFlags.renderBottomRight = true;
+                        if ($("#photoThumbnailContainer"+metadata).length === 0) {
+                            let dateHeadingObj = null;
+                            const overlayFlags = {};
+                            overlayFlags.renderTopRight = true;
+                            overlayFlags.renderTopLeft = true;
+                            overlayFlags.renderBottomLeft = true;
+                            overlayFlags.renderCenter = true;
+                            overlayFlags.renderBottomRight = true;
 
-                        const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
-                        const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
+                            const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
+                            const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
 
-                        const dateHeadingCount = $(".dateSection").length;
-                        const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
-                        const currentDate = metadata["year"] +"-"+ metadata["month"] +"-"+ metadata["day"];
-                        const displayCurrentDate = Util.getDateString(metadata["year"], metadata["month"], metadata["day"]);
+                            const dateHeadingCount = $(".dateSection").length;
+                            const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
+                            const currentDate = metadata["year"] + "-" + metadata["month"] + "-" + metadata["day"];
+                            const displayCurrentDate = Util.getDateString(metadata["year"], metadata["month"], metadata["day"]);
 
-                        if (lastDateHeading !== currentDate) {
-                            dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
+                            if (lastDateHeading !== currentDate) {
+                                dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
+                            }
+
+                            const overlayData = shashin.getOverlayData(metadata, {
+                                cOnClickFunction: "shashin.openGallery",
+                                galleryIndex: currentMediaLinkIndex,
+                                favoriteCount: favoriteCount,
+                                favoriteIcon: favoriteIcon,
+                                overlayFlags
+                            });
+
+                            mediaContentList.push(shashin.getMediaContent(metadata));
+
+                            const uuid = uuidv4();
+                            $(GalleryTemplates.PhotoGalleryItem({
+                                activePage,
+                                appendClass,
+                                dateHeadingObj,
+                                metadata,
+                                currentMediaLinkIndex,
+                                overlayData,
+                                uuid
+                            })).insertAfter($("." + appendClass).last()).ready(function () {
+                                // Call JS and modal
+                                shashin.updateFavorites("#favorite", "#brfavoriteicon", "#briconcount", metadata.id);
+                            });
                         }
-
-                        const overlayData = shashin.getOverlayData(metadata,{cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,favoriteCount:favoriteCount,favoriteIcon:favoriteIcon,overlayFlags});
-
-                        mediaContentList.push(shashin.getMediaContent(metadata));
-
-                        const uuid = uuidv4();
-                        $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid})).insertAfter($("."+appendClass).last()).ready(function () {
-                            // Call JS and modal
-                            shashin.updateFavorites("#favorite","#brfavoriteicon","#briconcount",metadata.id);
-                        });
                     }
 
                     $("#spinner").css("display", "none");

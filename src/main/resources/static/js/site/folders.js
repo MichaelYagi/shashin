@@ -41,11 +41,20 @@ class Folders {
                     for (const index in foldersList) {
                         const folderObj = foldersList[index];
                         const appendClass = "appendFoldersPhotos";
+                        const folderId = folderObj.id;
                         const folder = folderObj.folder;
                         const thumbnailUrlCentered = folderObj.thumbnailUrlCentered;
                         const count = folderObj.count;
 
-                        $(GalleryTemplates.getFoldersCard({folder, thumbnailUrlCentered, count, appendClass})).insertBefore($("."+appendClass).last());
+                        if ($("#folder"+folderId).length === 0) {
+                            $(GalleryTemplates.getFoldersCard({
+                                folderId,
+                                folder,
+                                thumbnailUrlCentered,
+                                count,
+                                appendClass
+                            })).insertBefore($("." + appendClass).last());
+                        }
                     }
 
                     this.rendering = false;

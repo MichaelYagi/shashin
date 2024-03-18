@@ -61,29 +61,43 @@ class ShareAlbum {
                             const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                             const metadata = albumMetadataList[index];
 
-                            let dateHeadingObj = null;
-                            const overlayFlags = {};
-                            overlayFlags.renderTopRight = true;
-                            overlayFlags.renderTopLeft = true;
-                            overlayFlags.renderBottomLeft = false;
-                            overlayFlags.renderCenter = true;
+                            if ($("#photoThumbnailContainer"+metadata).length === 0) {
+                                let dateHeadingObj = null;
+                                const overlayFlags = {};
+                                overlayFlags.renderTopRight = true;
+                                overlayFlags.renderTopLeft = true;
+                                overlayFlags.renderBottomLeft = false;
+                                overlayFlags.renderCenter = true;
 
-                            const dateHeadingCount = $(".dateSection").length;
-                            const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
-                            const currentDate = metadata["year"] +"-"+ metadata["month"] +"-"+ metadata["day"];
-                            const displayCurrentDate = Util.getDateString(metadata["year"], metadata["month"], metadata["day"]);
+                                const dateHeadingCount = $(".dateSection").length;
+                                const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
+                                const currentDate = metadata["year"] + "-" + metadata["month"] + "-" + metadata["day"];
+                                const displayCurrentDate = Util.getDateString(metadata["year"], metadata["month"], metadata["day"]);
 
-                            if (lastDateHeading !== currentDate) {
-                                dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
+                                if (lastDateHeading !== currentDate) {
+                                    dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
+                                }
+
+                                const overlayData = shashin.getOverlayData(metadata, {
+                                    cOnClickFunction: "shashin.openGallery",
+                                    galleryIndex: currentMediaLinkIndex,
+                                    overlayFlags
+                                });
+
+                                mediaContentList.push(shashin.getMediaContent(metadata));
+
+                                const appendClass = "appendAlbumPhotos";
+                                const uuid = uuidv4();
+                                $(GalleryTemplates.PhotoGalleryItem({
+                                    activePage,
+                                    appendClass,
+                                    dateHeadingObj,
+                                    metadata,
+                                    currentMediaLinkIndex,
+                                    overlayData,
+                                    uuid
+                                })).insertBefore($("." + appendClass).last());
                             }
-
-                            const overlayData = shashin.getOverlayData(metadata, {cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,overlayFlags});
-
-                            mediaContentList.push(shashin.getMediaContent(metadata));
-
-                            const appendClass = "appendAlbumPhotos";
-                            const uuid = uuidv4();
-                            $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid})).insertBefore($("."+appendClass).last());
                         }
 
                         this.rendering = false;
