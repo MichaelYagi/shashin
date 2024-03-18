@@ -26,7 +26,9 @@ class Person {
     }
 
     async init() {
-        shashin.pageLoader(await this.loadNextPage.bind(this), ".appendPersonPhotos", this.metadataList);
+        setTimeout(async () => {
+            shashin.pageLoader(await this.loadNextPage.bind(this), ".appendPersonPhotos", this.metadataList);
+        }, 0);
         shashin.matchingListeners();
         shashin.mouseMoveListener();
         shashin.closeGalleryOnBack();
@@ -102,105 +104,103 @@ class Person {
     }
 
     async updatePerson(personId,nextPage,activePage) {
-        setTimeout(async () => {
-            this.rendering = true;
+        this.rendering = true;
 
-            let data = null
+        let data = null
 
-            if (false === this.eol) {
-                $("#spinner").css("display", "block");
-                data = await this.http.ajax("get", "/person/" + personId + "/" + nextPage);
-            }
+        if (false === this.eol) {
+            $("#spinner").css("display", "block");
+            data = await this.http.ajax("get", "/person/" + personId + "/" + nextPage);
+        }
 
-            const mediaContentList = [];
-            if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                let message = "Error";
-                if (data["status"] === shashin.apiResponse.SUCCESS) {
-                    if (data.hasOwnProperty("metadataList")) {
-                        const metadataList = data["metadataList"];
-                        const recognitionLabels = data["recognitionLabels"];
-                        const labelPhotoMap = data["labelPhotoMap"];
+        const mediaContentList = [];
+        if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+            let message = "Error";
+            if (data["status"] === shashin.apiResponse.SUCCESS) {
+                if (data.hasOwnProperty("metadataList")) {
+                    const metadataList = data["metadataList"];
+                    const recognitionLabels = data["recognitionLabels"];
+                    const labelPhotoMap = data["labelPhotoMap"];
 
-                        if (metadataList.length > 0) {
-                            const mediaLinkLength = $(".mediaLink").length;
-                            const appendClass = "appendPersonPhotos";
+                    if (metadataList.length > 0) {
+                        const mediaLinkLength = $(".mediaLink").length;
+                        const appendClass = "appendPersonPhotos";
 
-                            for (const index in metadataList) {
-                                const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
-                                const metadata = metadataList[index];
+                        for (const index in metadataList) {
+                            const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
+                            const metadata = metadataList[index];
 
-                                if ($("#photoThumbnailContainer"+metadata.id).length === 0) {
+                            if ($("#photoThumbnailContainer"+metadata.id).length === 0) {
 
-                                    let dateHeadingObj = null;
-                                    const overlayFlags = {};
-                                    overlayFlags.renderTopRight = true;
-                                    overlayFlags.renderTopLeft = true;
-                                    overlayFlags.renderBottomLeft = true;
-                                    overlayFlags.renderCenter = true;
+                                let dateHeadingObj = null;
+                                const overlayFlags = {};
+                                overlayFlags.renderTopRight = true;
+                                overlayFlags.renderTopLeft = true;
+                                overlayFlags.renderBottomLeft = true;
+                                overlayFlags.renderCenter = true;
 
-                                    let overlayData;
+                                let overlayData;
 
-                                    if (this.canEdit === true) {
-                                        overlayData = shashin.getOverlayData(metadata, {
-                                            labelPhotoMap: labelPhotoMap,/*onClickIdPrefix:"propperson"*/
-                                            blOnClickFunction: "personSettings.openPersonModal",
-                                            cOnClickFunction: "shashin.openGallery",
-                                            onClickIdPrefix: "personModalEdit",
-                                            galleryIndex: currentMediaLinkIndex,
-                                            overlayFlags
-                                        });
-                                    } else {
-                                        overlayData = shashin.getOverlayData(metadata, {
-                                            labelPhotoMap: labelPhotoMap,
-                                            cOnClickFunction: "shashin.openGallery",
-                                            galleryIndex: currentMediaLinkIndex,
-                                            overlayFlags
-                                        });
-                                    }
-
-                                    mediaContentList.push(shashin.getMediaContent(metadata));
-
-                                    const uuid = uuidv4();
-                                    $(GalleryTemplates.PhotoGalleryItem({
-                                        activePage,
-                                        appendClass,
-                                        dateHeadingObj,
-                                        metadata,
-                                        currentMediaLinkIndex,
-                                        overlayData,
-                                        uuid
-                                    })).insertBefore($("." + appendClass).last()).ready(function () {
-                                        // Call JS and modal
-                                        // personModalSettings.renderPersonModal(metadata, recognitionLabels, labelPhotoMap[metadata.id]["labels"]);
+                                if (this.canEdit === true) {
+                                    overlayData = shashin.getOverlayData(metadata, {
+                                        labelPhotoMap: labelPhotoMap,/*onClickIdPrefix:"propperson"*/
+                                        blOnClickFunction: "personSettings.openPersonModal",
+                                        cOnClickFunction: "shashin.openGallery",
+                                        onClickIdPrefix: "personModalEdit",
+                                        galleryIndex: currentMediaLinkIndex,
+                                        overlayFlags
+                                    });
+                                } else {
+                                    overlayData = shashin.getOverlayData(metadata, {
+                                        labelPhotoMap: labelPhotoMap,
+                                        cOnClickFunction: "shashin.openGallery",
+                                        galleryIndex: currentMediaLinkIndex,
+                                        overlayFlags
                                     });
                                 }
-                            }
 
-                            $("#spinner").css("display","none");
-                            this.rendering = false;
-                        } else {
-                            $(".appendPersonPhotos").last().text("EOL").css("display", "none");
-                            this.rendering = false;
-                            this.eol = true;
+                                mediaContentList.push(shashin.getMediaContent(metadata));
+
+                                const uuid = uuidv4();
+                                $(GalleryTemplates.PhotoGalleryItem({
+                                    activePage,
+                                    appendClass,
+                                    dateHeadingObj,
+                                    metadata,
+                                    currentMediaLinkIndex,
+                                    overlayData,
+                                    uuid
+                                })).insertBefore($("." + appendClass).last()).ready(function () {
+                                    // Call JS and modal
+                                    // personModalSettings.renderPersonModal(metadata, recognitionLabels, labelPhotoMap[metadata.id]["labels"]);
+                                });
+                            }
                         }
+
+                        $("#spinner").css("display","none");
+                        this.rendering = false;
+                    } else {
+                        $(".appendPersonPhotos").last().text("EOL").css("display", "none");
+                        this.rendering = false;
+                        this.eol = true;
                     }
-                } else {
-                    $(".appendPersonPhotos").last().text("EOL").css("display", "none");
-                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                    $("#msgTimeline").html(message);
-                    this.rendering = false;
-                    this.eol = true;
                 }
             } else {
                 $(".appendPersonPhotos").last().text("EOL").css("display", "none");
+                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                $("#msgTimeline").html(message);
                 this.rendering = false;
                 this.eol = true;
             }
+        } else {
+            $(".appendPersonPhotos").last().text("EOL").css("display", "none");
+            this.rendering = false;
+            this.eol = true;
+        }
 
-            $("#spinner").css("display","none");
+        $("#spinner").css("display","none");
 
-            return mediaContentList;
-        }, 0);
+        return mediaContentList;
     }
 }
 

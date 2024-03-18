@@ -13,7 +13,9 @@ class ShareAlbum {
     }
 
     async init() {
-        shashin.pageLoader(await this.loadNextPage.bind(this), ".appendAlbumPhotos", this.albumMetadataList);
+        setTimeout(async () => {
+            shashin.pageLoader(await this.loadNextPage.bind(this), ".appendAlbumPhotos", this.albumMetadataList);
+        }, 0);
         shashin.mouseMoveListener();
         shashin.closeGalleryOnBack();
         await this.renderDownload();
@@ -37,92 +39,90 @@ class ShareAlbum {
     }
 
     async updateAlbum(albumId, nextPage, activePage) {
-        setTimeout(async () => {
-            const self = this;
-            self.rendering = true;
+        const self = this;
+        self.rendering = true;
 
-            let data = null
+        let data = null
 
-            if (false === this.eol) {
-                $("#spinner").css("display", "block");
-                data = await this.http.ajax("get", "/share/" + self.getShareLink() + "/album/" + albumId + "/" + nextPage);
-            }
+        if (false === this.eol) {
+            $("#spinner").css("display", "block");
+            data = await this.http.ajax("get", "/share/" + self.getShareLink() + "/album/" + albumId + "/" + nextPage);
+        }
 
-            const mediaContentList = [];
+        const mediaContentList = [];
 
-            if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                let message = "Error";
-                if (data["status"] === shashin.apiResponse.SUCCESS) {
-                    if (data.hasOwnProperty("albumMetadataList")) {
-                        const albumMetadataList = data["albumMetadataList"];
-                        const mediaLinkLength = $(".mediaLink").length;
+        if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+            let message = "Error";
+            if (data["status"] === shashin.apiResponse.SUCCESS) {
+                if (data.hasOwnProperty("albumMetadataList")) {
+                    const albumMetadataList = data["albumMetadataList"];
+                    const mediaLinkLength = $(".mediaLink").length;
 
-                        for (const index in albumMetadataList) {
-                            const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
-                            const metadata = albumMetadataList[index];
+                    for (const index in albumMetadataList) {
+                        const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
+                        const metadata = albumMetadataList[index];
 
-                            if ($("#photoThumbnailContainer"+metadata.id).length === 0) {
-                                let dateHeadingObj = null;
-                                const overlayFlags = {};
-                                overlayFlags.renderTopRight = true;
-                                overlayFlags.renderTopLeft = true;
-                                overlayFlags.renderBottomLeft = false;
-                                overlayFlags.renderCenter = true;
+                        if ($("#photoThumbnailContainer"+metadata.id).length === 0) {
+                            let dateHeadingObj = null;
+                            const overlayFlags = {};
+                            overlayFlags.renderTopRight = true;
+                            overlayFlags.renderTopLeft = true;
+                            overlayFlags.renderBottomLeft = false;
+                            overlayFlags.renderCenter = true;
 
-                                const dateHeadingCount = $(".dateSection").length;
-                                const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
-                                const currentDate = metadata["year"] + "-" + metadata["month"] + "-" + metadata["day"];
-                                const displayCurrentDate = Util.getDateString(metadata["year"], metadata["month"], metadata["day"]);
+                            const dateHeadingCount = $(".dateSection").length;
+                            const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
+                            const currentDate = metadata["year"] + "-" + metadata["month"] + "-" + metadata["day"];
+                            const displayCurrentDate = Util.getDateString(metadata["year"], metadata["month"], metadata["day"]);
 
-                                if (lastDateHeading !== currentDate) {
-                                    dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
-                                }
-
-                                const overlayData = shashin.getOverlayData(metadata, {
-                                    cOnClickFunction: "shashin.openGallery",
-                                    galleryIndex: currentMediaLinkIndex,
-                                    overlayFlags
-                                });
-
-                                mediaContentList.push(shashin.getMediaContent(metadata));
-
-                                const appendClass = "appendAlbumPhotos";
-                                const uuid = uuidv4();
-                                $(GalleryTemplates.PhotoGalleryItem({
-                                    activePage,
-                                    appendClass,
-                                    dateHeadingObj,
-                                    metadata,
-                                    currentMediaLinkIndex,
-                                    overlayData,
-                                    uuid
-                                })).insertBefore($("." + appendClass).last());
+                            if (lastDateHeading !== currentDate) {
+                                dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
                             }
-                        }
 
-                        this.rendering = false;
-                        $("#spinner").css("display", "none");
-                    } else {
-                        $(".appendAlbumPhotos").last().text("EOL").css("display","none");
-                        this.rendering = false;
-                        this.eol = true;
+                            const overlayData = shashin.getOverlayData(metadata, {
+                                cOnClickFunction: "shashin.openGallery",
+                                galleryIndex: currentMediaLinkIndex,
+                                overlayFlags
+                            });
+
+                            mediaContentList.push(shashin.getMediaContent(metadata));
+
+                            const appendClass = "appendAlbumPhotos";
+                            const uuid = uuidv4();
+                            $(GalleryTemplates.PhotoGalleryItem({
+                                activePage,
+                                appendClass,
+                                dateHeadingObj,
+                                metadata,
+                                currentMediaLinkIndex,
+                                overlayData,
+                                uuid
+                            })).insertBefore($("." + appendClass).last());
+                        }
                     }
+
+                    this.rendering = false;
+                    $("#spinner").css("display", "none");
                 } else {
                     $(".appendAlbumPhotos").last().text("EOL").css("display","none");
-                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                    $("#msgTimeline").html(message);
                     this.rendering = false;
                     this.eol = true;
                 }
             } else {
                 $(".appendAlbumPhotos").last().text("EOL").css("display","none");
+                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                $("#msgTimeline").html(message);
                 this.rendering = false;
                 this.eol = true;
             }
+        } else {
+            $(".appendAlbumPhotos").last().text("EOL").css("display","none");
+            this.rendering = false;
+            this.eol = true;
+        }
 
-            $("#spinner").css("display","none");
-            return mediaContentList;
-        }, 0);
+        $("#spinner").css("display","none");
+        return mediaContentList;
     }
 
     async renderDownload() {
