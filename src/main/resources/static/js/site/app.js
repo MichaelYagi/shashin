@@ -845,7 +845,7 @@
                 setTimeout(async function () {
                     eol = await func();
 
-                    if (eol === true) {
+                    if (eol !== undefined && eol === true) {
                         $("#container").off('scroll');
                     }
                 }, 200);
@@ -858,7 +858,7 @@
         //         setTimeout(async function () {
         //             eol = await func();
         //
-        //             if (eol === true) {
+        //             if (eol !== undefined && eol === true) {
         //                 $("main").off('scroll');
         //             }
         //         }, 200);
