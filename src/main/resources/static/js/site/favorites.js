@@ -27,7 +27,7 @@ class Favorites {
 
     async init() {
         setTimeout(async () => {
-            shashin.pageLoader(await this.loadNextPage.bind(this), ".appendMetadataPhotos", this.metadataList);
+            shashin.pageLoader(await this.loadNextPage.bind(this), ".appendMetadataPhotos", this.metadataList, this.activePage);
         }, 0);
         shashin.mouseMoveListener();
         shashin.closeGalleryOnBack();

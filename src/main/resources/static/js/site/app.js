@@ -820,7 +820,9 @@
         }
     }
 
-    shashin.pageLoader = function(func, appendClass, list) {
+    shashin.pageLoader = function(func, appendClass, list, activePage) {
+
+console.log(activePage)
         let eol = false;
 
         const refreshIntervalId = window.setInterval(function () {
@@ -843,13 +845,34 @@
         function createOnScrollListener(element, eol) {
             element.on('scroll', async function () {
                 shashin.showScrollToTop(element);
-                if (Util.atEndOfPage(this)) {
+
+                if (activePage !== undefined &&
+                    (activePage === "album" ||
+                    activePage === "favorites" ||
+                    activePage === "folder" ||
+                    activePage === "recent" ||
+                    activePage === "search" ||
+                    activePage === "share" ||
+                    activePage === "taken" ||
+                    activePage === "trash" ||
+                    activePage === "modified"))
+                {
+                    setTimeout(() => {
+                        const elementsInViewport = Util.elementsInViewport($(".photo-thumbnail-container"));
+                        $.map(elementsInViewport, function (element) {
+                            $(element).children('img').attr("src",$(element).children('img').attr("tag"));
+                        });
+                    }, 200);
+
+                    setTimeout(() => {
+                        const elementsNotInViewport = Util.elementsNotInViewport($('img[src*="api/v1/thumbnails"].photo-thumbnail-image'));
+                        $(elementsNotInViewport).attr("src","data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=");
+                    }, 200);
+                }
+
+                if (Util.atEndOfPage(this) && eol === false) {
                     setTimeout(async function () {
                         eol = await func();
-
-                        if (eol !== undefined && eol === true) {
-                            element.off('scroll');
-                        }
                     }, 200);
                 }
             })

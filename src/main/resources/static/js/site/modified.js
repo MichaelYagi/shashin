@@ -27,7 +27,7 @@ class Modified {
 
     async init() {
         setTimeout(async () => {
-            shashin.pageLoader(await this.loadNextPage.bind(this), ".appendModifiedPhotos", this.metadataList);
+            shashin.pageLoader(await this.loadNextPage.bind(this), ".appendModifiedPhotos", this.metadataList, this.activePage);
         }, 0);
         shashin.mouseMoveListener();
         shashin.closeGalleryOnBack();

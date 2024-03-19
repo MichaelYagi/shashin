@@ -32,7 +32,7 @@ class Search {
 
     async init() {
         setTimeout(async () => {
-            shashin.pageLoader(await this.loadNextPage.bind(this), ".appendSearchPhotos", this.metadataSearchList);
+            shashin.pageLoader(await this.loadNextPage.bind(this), ".appendSearchPhotos", this.metadataSearchList, this.activePage);
         }, 0);
         shashin.mouseMoveListener();
         shashin.closeGalleryOnBack();

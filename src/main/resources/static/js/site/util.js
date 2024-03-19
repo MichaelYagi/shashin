@@ -39,6 +39,19 @@ class Util {
         return $(elementsArray);
     };
 
+    static elementsNotInViewport(element) {
+        const elementsArray = [];
+        if (element.length > 0) {
+            element.each(function () {
+                if (!Util.isInViewport($(this))) {
+                    elementsArray.push(this);
+                }
+            });
+        }
+
+        return $(elementsArray);
+    };
+
     static isOverlap(div1, div2) {
         if (div1.length > 0 && div2.length > 0) {
             const x1 = div1.offset().left;
