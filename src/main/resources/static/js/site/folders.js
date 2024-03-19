@@ -10,9 +10,45 @@ class Folders {
     }
 
     async init() {
-        setTimeout(async () => {
-            shashin.pageLoader(await this.loadNextPage.bind(this), ".appendFoldersPhotos", this.foldersList);
-        }, 0);
+        let eol = false;
+
+        const refreshIntervalId = window.setInterval(function () {
+            const appendClassObj = $(".appendFoldersPhotos");
+
+            if (!Util.hasScrollBar($("#container")) && !Util.hasScrollBar($("main"))) {
+                setTimeout(async () => {
+                    eol = await func();
+                }, 1000);
+            } else {
+                clearInterval(refreshIntervalId);
+            }
+
+            if (appendClassObj[appendClassObj.length-1].textContent === "EOL" || list === '' || list === '[]') {
+                clearInterval(refreshIntervalId);
+            }
+        }, 200);
+
+        createOnScrollListener($("#container"),eol,this.loadNextPage());
+        createOnScrollListener($("main"),eol);
+
+        function createOnScrollListener(element, eol, fun) {
+            const appendClassObj = $(".appendFoldersPhotos");
+            element.on('scroll', async function () {
+                shashin.showScrollToTop(element);
+                if (Util.atEndOfPage(this) && appendClassObj[appendClassObj.length-1].textContent === "EOL") {
+                    eol = await fun();
+                }
+            })
+        }
+
+        const scrollToTopButton = $("#btn-back-to-top");
+
+        if (scrollToTopButton.length > 0) {
+            scrollToTopButton.on("click",function () {
+                $("main")[0].scrollTo({top: 0, behavior: 'smooth'});
+                $("#container")[0].scrollTo({top: 0, behavior: 'smooth'});
+            });
+        }
     }
 
     async loadNextPage() {
