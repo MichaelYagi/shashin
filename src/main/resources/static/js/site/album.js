@@ -50,7 +50,7 @@
         });
 
         setTimeout(async () => {
-            shashin.pageLoader(await loadNextPage, ".appendAlbumPhotos", albumMetadataList, this.activePage);
+            shashin.pageLoader(await loadNextPage, ".appendAlbumPhotos", albumMetadataList, activePage);
         }, 0);
         shashin.mouseMoveListener();
         shashin.closeGalleryOnBack();
