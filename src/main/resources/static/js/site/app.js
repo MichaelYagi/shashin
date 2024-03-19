@@ -821,8 +821,6 @@
     }
 
     shashin.pageLoader = function(func, appendClass, list, activePage) {
-
-console.log(activePage)
         let eol = false;
 
         const refreshIntervalId = window.setInterval(function () {
