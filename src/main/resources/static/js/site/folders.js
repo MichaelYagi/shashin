@@ -10,33 +10,15 @@ class Folders {
     }
 
     async init() {
-        let eol = false;
+        createOnScrollListener($("#container"),this.loadNextPage());
+        createOnScrollListener($("main"),this.loadNextPage());
 
-        const refreshIntervalId = window.setInterval(function () {
-            const appendClassObj = $(".appendFoldersPhotos");
-
-            if (!Util.hasScrollBar($("#container")) && !Util.hasScrollBar($("main"))) {
-                setTimeout(async () => {
-                    eol = await func();
-                }, 1000);
-            } else {
-                clearInterval(refreshIntervalId);
-            }
-
-            if (appendClassObj[appendClassObj.length-1].textContent === "EOL" || list === '' || list === '[]') {
-                clearInterval(refreshIntervalId);
-            }
-        }, 200);
-
-        createOnScrollListener($("#container"),eol,this.loadNextPage());
-        createOnScrollListener($("main"),eol);
-
-        function createOnScrollListener(element, eol, fun) {
+        function createOnScrollListener(element, fun) {
             const appendClassObj = $(".appendFoldersPhotos");
             element.on('scroll', async function () {
                 shashin.showScrollToTop(element);
                 if (Util.atEndOfPage(this) && appendClassObj[appendClassObj.length-1].textContent !== "EOL") {
-                    eol = await fun();
+                    await fun();
                 }
             })
         }
