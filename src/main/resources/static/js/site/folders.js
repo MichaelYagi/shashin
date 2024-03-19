@@ -18,8 +18,9 @@ class Folders {
     async loadNextPage() {
         if (this.rendering === false) {
             // console.log(this.page)
-            this.updateFolders(this.page, this.activePage).then(function(data) {
+            this.updateFolders(this.page, this.activePage).then(function(folderList) {
                 this.page++;
+                this.foldersList.push(folderList);
             }.bind(this));
         }
 
@@ -28,6 +29,8 @@ class Folders {
 
     async updateFolders(nextPage,activePage) {
         this.rendering = true;
+        const appendClass = "appendFoldersPhotos";
+        let foldersList = [];
 
         let data = null
 
@@ -37,13 +40,12 @@ class Folders {
         }
 
         if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("foldersList") && data["status"] === shashin.apiResponse.SUCCESS) {
-            const foldersList = data["foldersList"];
+            foldersList = data["foldersList"];
 
             if (foldersList !== null && foldersList.length > 0) {
 
                 for (const index in foldersList) {
                     const folderObj = foldersList[index];
-                    const appendClass = "appendFoldersPhotos";
                     const folderId = folderObj.id;
                     const folder = folderObj.folder;
                     const thumbnailUrlCentered = folderObj.thumbnailUrlCentered;
@@ -63,18 +65,18 @@ class Folders {
                 this.rendering = false;
                 $("#spinner").css("display", "none");
             } else {
-                $(".appendFoldersPhotos").last().text("EOL").css("display","none");
+                $("."+appendClass).last().text("EOL").css("display","none");
                 this.rendering = false;
                 this.eol = true;
             }
         } else {
-            $(".appendFoldersPhotos").last().text("EOL").css("display","none");
+            $("."+appendClass).last().text("EOL").css("display","none");
             this.rendering = false;
             this.eol = true;
         }
 
         $("#spinner").css("display","none");
 
-        return data;
+        return foldersList;
     }
 }
