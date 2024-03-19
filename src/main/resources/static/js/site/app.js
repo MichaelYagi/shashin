@@ -841,8 +841,24 @@
         createOnScrollListener($("main"),eol);
 
         function createOnScrollListener(element, eol) {
-            element.on('scroll', async function () {
+            let lastOffset = $("#container").scrollTop();
+            let lastDate = new Date().getTime();
+            let scrollTimer = null;
+
+            element.on('scroll', async function (e) {
                 shashin.showScrollToTop(element);
+
+                let st = $(e.target).scrollTop();
+                let delayInMs = e.timeStamp - lastDate;
+                let offset = st - lastOffset;
+                let speedInpxPerMs = offset / delayInMs;
+
+                if (scrollTimer !== null) {
+                    clearTimeout(scrollTimer);
+                }
+                scrollTimer = setTimeout(function() {
+                    $(window).trigger("scrollStop");
+                }, 200);
 
                 if (activePage !== undefined &&
                     (activePage === "album" ||
@@ -855,17 +871,15 @@
                     activePage === "trash" ||
                     activePage === "modified"))
                 {
-                    setTimeout(() => {
+                    if (speedInpxPerMs < 0.20 && speedInpxPerMs > 0.15) {
                         const elementsInViewport = Util.elementsInViewport($(".photo-thumbnail-container"));
                         $.map(elementsInViewport, function (element) {
                             $(element).children('img').attr("src",$(element).children('img').attr("tag"));
                         });
-                    }, 200);
+                    }
 
-                    setTimeout(() => {
-                        const elementsNotInViewport = Util.elementsNotInViewport($('img[src*="api/v1/thumbnails"].photo-thumbnail-image'));
-                        $(elementsNotInViewport).attr("src","data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=");
-                    }, 200);
+                    const elementsNotInViewport = Util.elementsNotInViewport($('img[src*="api/v1/thumbnails"].photo-thumbnail-image'));
+                    $(elementsNotInViewport).attr("src","data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=");
                 }
 
                 if (Util.atEndOfPage(this) && eol === false) {
@@ -874,6 +888,28 @@
                     }, 200);
                 }
             })
+
+            $(window).bind("scrollStop", function() {
+                if (activePage !== undefined &&
+                    (activePage === "album" ||
+                        activePage === "favorites" ||
+                        activePage === "folder" ||
+                        activePage === "recent" ||
+                        activePage === "search" ||
+                        activePage === "share" ||
+                        activePage === "taken" ||
+                        activePage === "trash" ||
+                        activePage === "modified"))
+                {
+                    const elementsInViewport = Util.elementsInViewport($(".photo-thumbnail-container"));
+                    $.map(elementsInViewport, function (element) {
+                        $(element).children('img').attr("src",$(element).children('img').attr("tag"));
+                    });
+
+                    const elementsNotInViewport = Util.elementsNotInViewport($('img[src*="api/v1/thumbnails"].photo-thumbnail-image'));
+                    $(elementsNotInViewport).attr("src","data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=");
+                }
+            });
         }
 
         const scrollToTopButton = $("#btn-back-to-top");
