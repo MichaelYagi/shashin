@@ -47,6 +47,8 @@ class Recent {
                 }
             }.bind(this));
         }
+
+        return this.eol;
     }
 
     async updateRecent(nextPage,activePage,mediaTypeFilter) {

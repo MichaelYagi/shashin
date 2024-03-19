@@ -836,22 +836,34 @@
                 clearInterval(refreshIntervalId);
             }
         }, 200);
+
+        let eol = false;
+
         $("#container").on('scroll', async function () {
             shashin.showScrollToTop($("#container"));
             if (Util.atEndOfPage(this)) {
                 setTimeout(async function () {
-                    const page = await func();
+                    eol = await func();
+
+                    if (eol === true) {
+                        $("#container").off('scroll');
+                    }
                 }, 200);
             }
         })
-        $("main").on('scroll', async function () {
-            shashin.showScrollToTop($("main"));
-            if (Util.atEndOfPage(this)) {
-                setTimeout(async function () {
-                    const page = await func();
-                }, 200);
-            }
-        })
+
+        // $("main").on('scroll', async function () {
+        //     shashin.showScrollToTop($("main"));
+        //     if (Util.atEndOfPage(this)) {
+        //         setTimeout(async function () {
+        //             eol = await func();
+        //
+        //             if (eol === true) {
+        //                 $("main").off('scroll');
+        //             }
+        //         }, 200);
+        //     }
+        // })
 
         const scrollToTopButton = $("#btn-back-to-top");
 

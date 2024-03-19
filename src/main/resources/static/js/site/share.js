@@ -31,7 +31,7 @@ class ShareAlbum {
             }.bind(this));
         }
 
-        return parseInt($("#currentPage").val());
+        return this.eol;
     }
 
     getShareLink() {

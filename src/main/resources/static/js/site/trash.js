@@ -44,6 +44,8 @@ class Trash {
                 }
             }.bind(this));
         }
+
+        return this.eol;
     }
 
     async updateTrash(nextPage, activePage) {

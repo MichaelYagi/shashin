@@ -22,6 +22,8 @@ class Folders {
                 this.page++;
             }.bind(this));
         }
+
+        return this.eol;
     }
 
     async updateFolders(nextPage,activePage) {

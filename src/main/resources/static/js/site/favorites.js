@@ -46,6 +46,8 @@ class Favorites {
                 }
             }.bind(this));
         }
+
+        return this.eol;
     }
 
     async updateFavorites(nextPage,activePage,mediaTypeFilter) {
