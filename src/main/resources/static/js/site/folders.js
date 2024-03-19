@@ -35,7 +35,7 @@ class Folders {
             const appendClassObj = $(".appendFoldersPhotos");
             element.on('scroll', async function () {
                 shashin.showScrollToTop(element);
-                if (Util.atEndOfPage(this) && appendClassObj[appendClassObj.length-1].textContent === "EOL") {
+                if (Util.atEndOfPage(this) && appendClassObj[appendClassObj.length-1].textContent !== "EOL") {
                     eol = await fun();
                 }
             })
