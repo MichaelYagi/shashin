@@ -101,6 +101,8 @@ class Person {
                 }
             }.bind(this));
         }
+
+        return this.eol;
     }
 
     async updatePerson(personId,nextPage,activePage) {

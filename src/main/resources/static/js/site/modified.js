@@ -46,6 +46,8 @@ class Modified {
                 }
             }.bind(this));
         }
+
+        return this.eol;
     }
 
     async updateModified(nextPage,activePage,mediaTypeFilter) {

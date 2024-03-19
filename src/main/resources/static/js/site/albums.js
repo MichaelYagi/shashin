@@ -36,6 +36,8 @@ class Albums {
                 this.page++;
             }.bind(this));
         }
+
+        return this.eol;
     }
 
     async updateAlbums(nextPage,activePage) {

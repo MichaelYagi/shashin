@@ -46,6 +46,8 @@ class Folder {
                 }
             }.bind(this));
         }
+
+        return this.eol;
     }
 
     async updateRecent(nextPage,folderName,activePage) {

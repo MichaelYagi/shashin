@@ -51,6 +51,8 @@ class Search {
                 }
             }.bind(this));
         }
+
+        return this.eol;
     }
 
     async updateSearch(nextPage,term,activePage) {

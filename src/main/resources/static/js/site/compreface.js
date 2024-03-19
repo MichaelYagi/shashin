@@ -25,6 +25,8 @@ class Compreface {
                 this.page++;
             }.bind(this));
         }
+
+        return this.eol;
     }
 
     async updateCompreface(nextPage,personId) {

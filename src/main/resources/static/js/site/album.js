@@ -37,6 +37,8 @@
                     }
                 });
             }
+
+            return albumSettings.eol;
         }
 
         $("#deleteComment").on("click", function (e) {
