@@ -821,23 +821,21 @@
     }
 
     shashin.pageLoader = function(func, appendClass, list) {
-        const appendClassObj = $(appendClass);
+        let eol = false;
 
         const refreshIntervalId = window.setInterval(function () {
             if (!Util.hasScrollBar($("#container")) && !Util.hasScrollBar($("main"))) {
                 setTimeout(async () => {
-                    const page = await func();
+                    eol = await func();
                 }, 1000);
             } else {
                 clearInterval(refreshIntervalId);
             }
 
-            if (appendClassObj[appendClassObj.length-1].textContent === "EOL" || list === '' || list === '[]') {
+            if ((eol !== undefined && eol === true) || list === '' || list === '[]') {
                 clearInterval(refreshIntervalId);
             }
         }, 200);
-
-        let eol = false;
 
         createOnScrollListener($("#container"),eol);
         createOnScrollListener($("main"),eol);
