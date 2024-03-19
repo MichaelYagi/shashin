@@ -10,27 +10,9 @@ class Folders {
     }
 
     async init() {
-        createOnScrollListener($("#container"),this.loadNextPage());
-        createOnScrollListener($("main"),this.loadNextPage());
-
-        function createOnScrollListener(element, fun) {
-            const appendClassObj = $(".appendFoldersPhotos");
-            element.on('scroll', async function () {
-                shashin.showScrollToTop(element);
-                if (Util.atEndOfPage(this) && appendClassObj[appendClassObj.length-1].textContent !== "EOL") {
-                    await fun();
-                }
-            })
-        }
-
-        const scrollToTopButton = $("#btn-back-to-top");
-
-        if (scrollToTopButton.length > 0) {
-            scrollToTopButton.on("click",function () {
-                $("main")[0].scrollTo({top: 0, behavior: 'smooth'});
-                $("#container")[0].scrollTo({top: 0, behavior: 'smooth'});
-            });
-        }
+        setTimeout(async () => {
+            shashin.pageLoader(await this.loadNextPage.bind(this), ".appendFoldersPhotos", this.foldersList);
+        }, 0);
     }
 
     async loadNextPage() {
@@ -64,20 +46,16 @@ class Folders {
 
                 for (const index in foldersList) {
                     const folderObj = foldersList[index];
-                    const folderId = folderObj.id;
                     const folder = folderObj.folder;
                     const thumbnailUrlCentered = folderObj.thumbnailUrlCentered;
                     const count = folderObj.count;
 
-                    if ($("#folder"+folderId).length === 0) {
-                        $(GalleryTemplates.getFoldersCard({
-                            folderId,
-                            folder,
-                            thumbnailUrlCentered,
-                            count,
-                            appendClass
-                        })).insertBefore($("." + appendClass).last());
-                    }
+                    $(GalleryTemplates.getFoldersCard({
+                        folder,
+                        thumbnailUrlCentered,
+                        count,
+                        appendClass
+                    })).insertBefore($("." + appendClass).last());
                 }
 
                 this.rendering = false;
