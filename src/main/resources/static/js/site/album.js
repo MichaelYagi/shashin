@@ -215,7 +215,7 @@
         return mediaContentList;
     }
 
-    albumSettings.activateAlbumListeners = function(metadata,album) {
+    albumSettings.activateAlbumListeners = function(metadata) {
         $("#image"+metadata.id).on('load', function() {
             $(this).css("background-color","transparent");
         });
