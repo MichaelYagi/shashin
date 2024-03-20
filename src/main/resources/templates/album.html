@@ -86,9 +86,9 @@
 
                             <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                                 /*<![CDATA[*/
-                                shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'album');
-                                albumModal.renderAlbumCommentsModal(/*[[${album}]]*/{},/*[[${metadata}]]*/{},/*[[${userMap}]]*/{},/*[[${albumPhotoCommentsMap}]]*/{},/*[[${canEdit}]]*/false)
-                                albumSettings.activateAlbumListeners(/*[[${metadata}]]*/{},/*[[${album}]]*/{})
+                                shashin.setPhotoOverlays({id:[[${metadata.id}]],lat:[[${metadata.lat}]],lng:[[${metadata.lng}]],year:[[${metadata.year}]],month:[[${metadata.month}]],day:[[${metadata.day}]],fileName:[[${metadata.fileName}]],thumbnailUrlSmall:[[${metadata.thumbnailUrlSmall}]],type:[[${metadata.type}]]}, /*[[${activePage}]]*/'album');
+                                albumModal.renderAlbumCommentsModal({id:[[${album.id}]]},{id:[[${metadata.id}]],fileName:[[${metadata.fileName}]]},/*[[${userMap}]]*/{},/*[[${albumPhotoCommentsMap}]]*/{},/*[[${canEdit}]]*/false)
+                                albumSettings.activateAlbumListeners({id:[[${metadata.id}]]})
                                 $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000");
                                 $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").on("click", function(e) {
                                     e.preventDefault();

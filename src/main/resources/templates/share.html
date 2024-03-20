@@ -119,7 +119,7 @@
 
                             <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                                 /*<![CDATA[*/
-                                shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'share');
+                                shashin.setPhotoOverlays({id:[[${metadata.id}]],lat:[[${metadata.lat}]],lng:[[${metadata.lng}]],year:[[${metadata.year}]],month:[[${metadata.month}]],day:[[${metadata.day}]],fileName:[[${metadata.fileName}]],thumbnailUrlSmall:[[${metadata.thumbnailUrlSmall}]],type:[[${metadata.type}]]}, /*[[${activePage}]]*/'share');
                                 /*]]>*/
                             </script>
 

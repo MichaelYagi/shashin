@@ -77,7 +77,7 @@
                                     shashin.openEditMetadataModal(/*[[${metadata.id}]]*/"");
                                 });
 
-                                shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'taken');
+                                shashin.setPhotoOverlays({id:[[${metadata.id}]],lat:[[${metadata.lat}]],lng:[[${metadata.lng}]],year:[[${metadata.year}]],month:[[${metadata.month}]],day:[[${metadata.day}]],fileName:[[${metadata.fileName}]],thumbnailUrlSmall:[[${metadata.thumbnailUrlSmall}]],type:[[${metadata.type}]]}, /*[[${activePage}]]*/'taken');
                                 Util.activateMetadataListeners(/*[[${metadata.id}]]*/"");
                                 /*]]>*/
                             </script>
