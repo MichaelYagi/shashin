@@ -62,10 +62,11 @@ class VideoProcessing(private val videoFile: File) {
             val frameConverter = Java2DFrameConverter()
             val output: ImageOutputStream = FileImageOutputStream(File(tempGifFilePath))
             val writer = GifSequenceWriter(output, BufferedImage.TYPE_INT_ARGB, 0, true)
+            val framerate = frameGrabber.frameRate
             val totalFrameCount = frameGrabber.lengthInFrames
             // Skip every x frames
-            val skipFrame = 3
-            val limit = 25*skipFrame
+            val skipFrame = framerate/12
+            val limit = framerate*skipFrame
 
             for (frameCount in 0 until totalFrameCount) {
                 if (frameCount > limit) {
@@ -74,7 +75,7 @@ class VideoProcessing(private val videoFile: File) {
 
                 val imageGrabber = frameGrabber.grabImage()
 
-                if (frameCount % skipFrame == 0) {
+                if ((frameCount % skipFrame).toInt() == 0) {
                     bi = frameConverter.convert(imageGrabber)
 
                     if (bi != null) {
