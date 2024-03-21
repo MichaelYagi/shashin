@@ -110,7 +110,13 @@ class Search {
                         mediaContentList.push(shashin.getMediaContent(metadata));
 
                         const uuid = uuidv4();
-                        $(GalleryTemplates.PhotoGalleryItem({
+
+                        if (dateHeadingObj !== null) {
+                            const headerAndBody = '<section class="dateSection" id="'+dateHeadingObj.heading+'"><div class="mb-3" id="dateHeader'+dateHeadingObj.heading+'"><span class="text-muted">Taken </span><strong>'+dateHeadingObj.display+'</strong>&nbsp;'+(dateHeadingObj.hasOwnProperty("placename")?dateHeadingObj.placename:'')+'</div><div id="dateBody'+dateHeadingObj.heading+'" class="row"></div></section>';
+                            $(headerAndBody).insertBefore($("." + appendClass).last());
+                        }
+
+                        const html = $(GalleryTemplates.PhotoGalleryItem({
                             activePage,
                             appendClass,
                             dateHeadingObj,
@@ -118,7 +124,9 @@ class Search {
                             currentMediaLinkIndex,
                             overlayData,
                             uuid
-                        })).insertAfter($("." + appendClass).last()).ready(function () {
+                        }));
+
+                        $(html).insertBefore($("." + appendClass).last()).ready(function () {
                             // Call JS and modal
                             shashin.updateFavorites("#favorite", "#brfavoriteicon", "#briconcount", metadata.id);
                         });

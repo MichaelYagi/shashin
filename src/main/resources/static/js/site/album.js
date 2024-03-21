@@ -172,7 +172,13 @@
 
                                 // Append HTML
                                 const uuid = uuidv4();
-                                $(GalleryTemplates.PhotoGalleryItem({
+
+                                if (dateHeadingObj !== null) {
+                                    const headerAndBody = '<section class="dateSection" id="'+dateHeadingObj.heading+'"><div class="mb-3" id="dateHeader'+dateHeadingObj.heading+'"><span class="text-muted">Taken </span><strong>'+dateHeadingObj.display+'</strong>&nbsp;'+(dateHeadingObj.hasOwnProperty("placename")?dateHeadingObj.placename:'')+'</div><div id="dateBody'+dateHeadingObj.heading+'" class="row"></div></section>';
+                                    $(headerAndBody).insertBefore($("." + appendClass).last());
+                                }
+
+                                const html = $(GalleryTemplates.PhotoGalleryItem({
                                     activePage,
                                     appendClass,
                                     dateHeadingObj,
@@ -180,7 +186,9 @@
                                     currentMediaLinkIndex,
                                     overlayData,
                                     uuid
-                                })).insertBefore($("." + appendClass).last()).ready(function () {
+                                }));
+
+                                $(html).insertBefore($("." + appendClass).last()).ready(function () {
                                     // Call JS and modal
                                     albumModal.renderAlbumCommentsModal(albumData, metadata, userMap, albumPhotoCommentsMap, canEdit);
                                     albumSettings.activateAlbumListeners(metadata, albumData);
