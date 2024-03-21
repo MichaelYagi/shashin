@@ -183,7 +183,7 @@ async function showMap(mapdata) {
             if (qssd !== null && true === Util.isValidDate(qssd)) {
                 startDateField.val(qssd);
             } else {
-                shashin.showToastMessage("Validation error", "Date format must be yyyy-mm-dd.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+                shashin.showToastMessage("Validation error", "Start date is invalid or format not yyyy-mm-dd.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
             }
         }
         if (qsed !== null && qsed !== "") {
@@ -191,7 +191,7 @@ async function showMap(mapdata) {
             if (qsed !== null && true === Util.isValidDate(qsed)) {
                 endDateField.val(qsed);
             } else {
-                shashin.showToastMessage("Validation error", "Date format must be yyyy-mm-dd.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+                shashin.showToastMessage("Validation error", "End date is invalid or format not yyyy-mm-dd.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
             }
         }
         if (qsvo !== null) {
@@ -1001,7 +1001,7 @@ async function showMap(mapdata) {
     function validateAndChangeDateType(singleDateInput, el) {
         singleDateInput.val(Util.formatDate(singleDateInput.val()));
         if (false === Util.isValidDate(singleDateInput.val())) {
-            shashin.showToastMessage("Validation error", "Date format is invalid.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+            shashin.showToastMessage("Validation error", singleDateInput.val() + " is invalid or format not yyyy-mm-dd.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
         }
         el.type = "date";
         el.placeholder = "mm/dd/yyyy";
