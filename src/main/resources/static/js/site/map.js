@@ -987,17 +987,25 @@ async function showMap(mapdata) {
 
         // register the focusout event to reset the input back to a date input field
         singleDateInput.on('focusout', () => {
-            el.type = "date";
-            el.placeholder = "mm/dd/yyyy";
+            validateAndChangeDateType(singleDateInput,el);
         });
+
         singleDateInput.on('keypress',function(e) {
             // Enter key
             if(e.which === 13) {
-                el.type = "date";
-                el.placeholder = "mm/dd/yyyy";
+                validateAndChangeDateType(singleDateInput,el);
             }
         });
     });
+
+    function validateAndChangeDateType(singleDateInput, el) {
+        singleDateInput.val(Util.formatDate(singleDateInput.val()));
+        if (false === Util.isValidDate(singleDateInput.val())) {
+            shashin.showToastMessage("Validation error", "Date format is invalid.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+        }
+        el.type = "date";
+        el.placeholder = "mm/dd/yyyy";
+    }
 
     function setLayerInputs(mapSourceChanged) {
         if (mapSourceChanged === undefined) {
