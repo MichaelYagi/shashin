@@ -937,19 +937,32 @@ class Util {
 
     // Formats to yyyy-mm-dd if input is yyyy-m-d for eg.
     static formatDate(dateString) {
-        const dateStringArray = dateString.toString().split("-");
-        if (dateStringArray.length === 3) {
-            let month = dateStringArray[1];
+        const dateStringArrayDash = dateString.toString().split("-");
+        const dateStringArraySlash = dateString.toString().split("/");
+        if (dateStringArrayDash.length === 3) {
+            let month = dateStringArrayDash[1];
             if (month.charAt(0) !== "0" && Number.isInteger(parseInt(month)) && month <= 9) {
                 month = "0" + month;
             }
 
-            let day = dateStringArray[2];
+            let day = dateStringArrayDash[2];
             if (day.charAt(0) !== "0" && Number.isInteger(parseInt(day)) && day <= 9) {
                 day = "0" + day;
             }
 
-            dateString = dateStringArray[0] + "-" + month + "-" + day;
+            dateString = dateStringArrayDash[0] + "-" + month + "-" + day;
+        } else if (dateStringArraySlash.length === 3) {
+            let month = dateStringArraySlash[0];
+            if (month.charAt(0) !== "0" && Number.isInteger(parseInt(month)) && month <= 9) {
+                month = "0" + month;
+            }
+
+            let day = dateStringArraySlash[1];
+            if (day.charAt(0) !== "0" && Number.isInteger(parseInt(day)) && day <= 9) {
+                day = "0" + day;
+            }
+
+            dateString = dateStringArraySlash[2] + "-" + month + "-" + day;
         } else {
             return null;
         }
