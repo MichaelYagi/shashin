@@ -1,6 +1,5 @@
 class GalleryTemplates {
     static PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid}) { return `
-        ${(typeof dateHeadingObj === "undefined" || dateHeadingObj === null) ? '' : `<section class="dateSection" id="${dateHeadingObj.heading}"><div class="mb-3">${(activePage === "trash") ? `<span class="text-muted">Removed </span>` : ''}${(activePage === "recent") ? `<span class="text-muted">Added </span>` : ''}${(activePage === "taken") ? `<span class="text-muted">Taken </span>` : ''}${(activePage === "modified") ? `<span class="text-muted">Modified </span>` : ''}<strong>${dateHeadingObj.display}</strong>&nbsp;${dateHeadingObj.hasOwnProperty("placename")?dateHeadingObj.placename:''}</div></section>`}
         <div id="photoThumbnailContainer${metadata.id}" class="photo-thumbnail-container photo-thumbnail" style="width:${metadata.thumbnailSmallWidth}px;height:${metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
             <a class="lightGalleryIndexAnchor" name="lightGalleryIndex${currentMediaLinkIndex}"></a>
             <img loading="lazy" tag="${encodeURI(metadata.thumbnailUrlSmall)}?v=${uuid}" src="${encodeURI(metadata.thumbnailUrlSmall)}?v=${uuid}" class="photo-thumbnail-image" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
@@ -50,7 +49,6 @@ class GalleryTemplates {
         </div>
         ${(activePage === "album") ? `<span id="albummodal${metadata.id}" style="width:0;height:0;padding:0"></span>` : ''}
         ${(activePage === "person") ? `<span id="personmodal${metadata.id}" style="width:0;height:0;padding:0"></span>` : ''}
-        <span class="${appendClass}" style="width:0;height:0;padding:0"></span>
         
         <script type="text/javascript"${(shashin.nonce.length > 0 ? ' nonce="' + shashin.nonce + '"' : '')}>
             shashin.setPhotoOverlays({id:"${metadata.id}",type:"${metadata.type}",lat:"${(metadata.lat === null) ? '' : `${metadata.lat}`}", lng:"${(metadata.lng === null) ? '' : `${metadata.lng}`}", year:${metadata.year}, month:${metadata.month}, day:${metadata.day}, fileName:"${metadata.fileName}", thumbnailUrlSmall:"${metadata.thumbnailUrlSmall}"}, "${activePage}");
@@ -79,6 +77,8 @@ class GalleryTemplates {
             
             // Util.checkErrorImage();
         </script>
+        
+        <span class="${appendClass}" style="width:0;height:0;padding:0"></span>
     `};
 
     static getTopRightOverlay({id, overlays, data}) { return `
