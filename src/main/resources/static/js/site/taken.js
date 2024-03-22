@@ -106,7 +106,7 @@ class Taken {
                         }
                     }
 
-                    if (lastDate !== currentDate) {
+                    if (lastDate !== currentDate || $("#"+currentDate).length === 0) {
                         dateHeadingObj = {
                             heading: currentDate,
                             display: displayCurrentDate,
@@ -141,9 +141,11 @@ class Taken {
                         uuid
                     }));
 
-                    $($("#dateBody" + currentDate)).append(html);
+                    if ($("#dateBody"+currentDate).length > 0) {
+                        $(html).appendTo($("#dateBody" + currentDate));
+                    }
 
-                    if (nextDate !== "" && currentDate !== nextDate) {
+                    if ($("#"+currentDate).length > 0 && nextDate !== "" && currentDate !== nextDate) {
                         $("<span class='"+appendClass+"' style='width:0;height:0;padding:0'></span>").insertAfter($("#"+currentDate));
                     }
                 }

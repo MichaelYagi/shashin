@@ -69,8 +69,9 @@ class Trash {
                         const mediaLinkLength = $(".mediaLink").length;
                         const appendClass = "appendMetadataPhotos";
 
-                        for (const index in metadataList) {
-                            const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
+                        for (let index in metadataList) {
+                            index = parseInt(index);
+                            const currentMediaLinkIndex = (mediaLinkLength + index);
                             const metadata = metadataList[index];
 
                             if ($("#photoThumbnailContainer"+metadata.id).length === 0) {
@@ -81,15 +82,15 @@ class Trash {
                                 overlayFlags.renderBottomLeft = true;
                                 overlayFlags.renderCenter = true;
 
-                                const dateHeadingCount = $(".dateSection").length;
-                                const lastModifiedDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
-                                const currentModifiedDate = dateFormat(metadata["modifiedAt"].replace(/-/g, "/"), "isoDate");
-                                const displayCurrentModifiedDate = dateFormat(metadata["modifiedAt"].replace(/-/g, "/"), "ddd, mmm d, yyyy");
+                                const lastDate = metadataList.hasOwnProperty(index-1) ? metadataList[index-1]["year"] + "-" + metadataList[index-1]["month"] + "-" + metadataList[index-1]["day"] : "";
+                                const currentDate = metadata["year"] + "-" + metadata["month"] + "-" + metadata["day"];
+                                const nextDate = metadataList.hasOwnProperty(index+1) ? metadataList[index+1]["year"] + "-" + metadataList[index+1]["month"] + "-" + metadataList[index+1]["day"] : "";
+                                const displayCurrentDate = dateFormat(currentDate.replace(/-/g, "/"), "ddd, mmm d, yyyy");
 
-                                if (lastModifiedDateHeading !== currentModifiedDate) {
+                                if (lastDate !== currentDate || $("#"+currentDate).length === 0) {
                                     dateHeadingObj = {
-                                        heading: currentModifiedDate,
-                                        display: displayCurrentModifiedDate
+                                        heading: currentDate,
+                                        display: displayCurrentDate
                                     };
                                 }
 
@@ -103,8 +104,8 @@ class Trash {
 
                                 const uuid = uuidv4();
 
-                                if (dateHeadingObj !== null) {
-                                    const headerAndBody = '<section class="dateSection" id="'+dateHeadingObj.heading+'"><div class="mb-3" id="dateHeader'+dateHeadingObj.heading+'"><span class="text-muted">Taken </span><strong>'+dateHeadingObj.display+'</strong>&nbsp;'+(dateHeadingObj.hasOwnProperty("placename")?dateHeadingObj.placename:'')+'</div><div id="dateBody'+dateHeadingObj.heading+'" class="row" style="margin-left: -1px;"></div></section>';
+                                if ($("#"+currentDate).length === 0 && dateHeadingObj !== null) {
+                                    const headerAndBody = '<section class="dateSection" id="' + currentDate + '"><div class="mb-3" id="dateHeader' + currentDate + '"><span class="text-muted">Taken </span><strong>' + dateHeadingObj.display + '</strong>&nbsp;' + (dateHeadingObj.hasOwnProperty("placename") ? dateHeadingObj.placename : '') + '</div><div id="dateBody' + currentDate + '" class="row" style="margin-left:-2px;"></div></section>';
                                     $(headerAndBody).insertBefore($("." + appendClass).last());
                                 }
 
@@ -118,7 +119,13 @@ class Trash {
                                     uuid
                                 }));
 
-                                $($("#dateBody" + currentDate)).append(html);
+                                if ($("#dateBody"+currentDate).length > 0) {
+                                    $(html).appendTo($("#dateBody" + currentDate));
+                                }
+
+                                if ($("#"+currentDate).length > 0 && nextDate !== "" && currentDate !== nextDate) {
+                                    $("<span class='"+appendClass+"' style='width:0;height:0;padding:0'></span>").insertAfter($("#"+currentDate));
+                                }
                             }
                         }
 

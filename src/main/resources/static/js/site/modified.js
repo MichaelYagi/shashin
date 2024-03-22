@@ -86,7 +86,7 @@ class Modified {
                         const nextDate = metadataList.hasOwnProperty(index+1) ? metadataList[index+1]["year"] + "-" + metadataList[index+1]["month"] + "-" + metadataList[index+1]["day"] : "";
                         const displayCurrentDate = dateFormat(currentDate.replace(/-/g, "/"), "ddd, mmm d, yyyy");
 
-                        if (lastDate !== currentDate) {
+                        if (lastDate !== currentDate || $("#"+currentDate).length === 0) {
                             dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
                         }
 
@@ -117,9 +117,11 @@ class Modified {
                             uuid
                         }));
 
-                        $($("#dateBody" + currentDate)).append(html);
+                        if ($("#dateBody"+currentDate).length > 0) {
+                            $(html).appendTo($("#dateBody" + currentDate));
+                        }
 
-                        if (nextDate !== "" && currentDate !== nextDate) {
+                        if ($("#"+currentDate).length > 0 && nextDate !== "" && currentDate !== nextDate) {
                             $("<span class='"+appendClass+"' style='width:0;height:0;padding:0'></span>").insertAfter($("#"+currentDate));
                         }
                     }
