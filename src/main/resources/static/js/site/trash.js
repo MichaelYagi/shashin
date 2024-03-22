@@ -104,7 +104,7 @@ class Trash {
                                 const uuid = uuidv4();
 
                                 if (dateHeadingObj !== null) {
-                                    const headerAndBody = '<section class="dateSection" id="'+dateHeadingObj.heading+'"><div class="mb-3" id="dateHeader'+dateHeadingObj.heading+'"><span class="text-muted">Taken </span><strong>'+dateHeadingObj.display+'</strong>&nbsp;'+(dateHeadingObj.hasOwnProperty("placename")?dateHeadingObj.placename:'')+'</div><div id="dateBody'+dateHeadingObj.heading+'" class="row"></div></section>';
+                                    const headerAndBody = '<section class="dateSection" id="'+dateHeadingObj.heading+'"><div class="mb-3" id="dateHeader'+dateHeadingObj.heading+'"><span class="text-muted">Taken </span><strong>'+dateHeadingObj.display+'</strong>&nbsp;'+(dateHeadingObj.hasOwnProperty("placename")?dateHeadingObj.placename:'')+'</div><div id="dateBody'+dateHeadingObj.heading+'" class="row" style="margin-left: -1px;"></div></section>';
                                     $(headerAndBody).insertBefore($("." + appendClass).last());
                                 }
 
@@ -118,7 +118,7 @@ class Trash {
                                     uuid
                                 }));
 
-                                $(html).insertBefore($("." + appendClass).last());
+                                $($("#dateBody" + currentDate)).append(html);
                             }
                         }
 

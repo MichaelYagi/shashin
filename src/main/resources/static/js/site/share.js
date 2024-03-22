@@ -58,8 +58,9 @@ class ShareAlbum {
                     const albumMetadataList = data["albumMetadataList"];
                     const mediaLinkLength = $(".mediaLink").length;
 
-                    for (const index in albumMetadataList) {
-                        const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
+                    for (let index in albumMetadataList) {
+                        index = parseInt(index);
+                        const currentMediaLinkIndex = (mediaLinkLength + index);
                         const metadata = albumMetadataList[index];
 
                         if ($("#photoThumbnailContainer"+metadata.id).length === 0) {
@@ -70,13 +71,16 @@ class ShareAlbum {
                             overlayFlags.renderBottomLeft = false;
                             overlayFlags.renderCenter = true;
 
-                            const dateHeadingCount = $(".dateSection").length;
-                            const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
+                            const lastDate = albumMetadataList.hasOwnProperty(index-1) ? albumMetadataList[index-1]["year"] + "-" + albumMetadataList[index-1]["month"] + "-" + albumMetadataList[index-1]["day"] : "";
                             const currentDate = metadata["year"] + "-" + metadata["month"] + "-" + metadata["day"];
-                            const displayCurrentDate = Util.getDateString(metadata["year"], metadata["month"], metadata["day"]);
+                            const nextDate = albumMetadataList.hasOwnProperty(index+1) ? albumMetadataList[index+1]["year"] + "-" + albumMetadataList[index+1]["month"] + "-" + albumMetadataList[index+1]["day"] : "";
+                            const displayCurrentDate = dateFormat(currentDate.replace(/-/g, "/"), "ddd, mmm d, yyyy");
 
-                            if (lastDateHeading !== currentDate) {
-                                dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
+                            if (lastDate !== currentDate) {
+                                dateHeadingObj = {
+                                    heading: currentDate,
+                                    display: displayCurrentDate
+                                };
                             }
 
                             const overlayData = shashin.getOverlayData(metadata, {
@@ -90,8 +94,8 @@ class ShareAlbum {
                             const appendClass = "appendAlbumPhotos";
                             const uuid = uuidv4();
 
-                            if (dateHeadingObj !== null) {
-                                const headerAndBody = '<section class="dateSection" id="'+dateHeadingObj.heading+'"><div class="mb-3" id="dateHeader'+dateHeadingObj.heading+'"><span class="text-muted">Taken </span><strong>'+dateHeadingObj.display+'</strong>&nbsp;'+(dateHeadingObj.hasOwnProperty("placename")?dateHeadingObj.placename:'')+'</div><div id="dateBody'+dateHeadingObj.heading+'" class="row"></div></section>';
+                            if ($("#"+currentDate).length === 0 && dateHeadingObj !== null) {
+                                const headerAndBody = '<section class="dateSection" id="'+dateHeadingObj.heading+'"><div class="mb-3" id="dateHeader'+dateHeadingObj.heading+'"><span class="text-muted">Taken </span><strong>'+dateHeadingObj.display+'</strong>&nbsp;'+(dateHeadingObj.hasOwnProperty("placename")?dateHeadingObj.placename:'')+'</div><div id="dateBody'+dateHeadingObj.heading+'" class="row" class="row" style="margin-left:-2px;"></div></section>';
                                 $(headerAndBody).insertBefore($("." + appendClass).last());
                             }
 
@@ -105,7 +109,11 @@ class ShareAlbum {
                                 uuid
                             }));
 
-                            $(html).insertBefore($("." + appendClass).last());
+                            $($("#dateBody" + currentDate)).append(html);
+
+                            if (nextDate !== "" && currentDate !== nextDate) {
+                                $("<span class='"+appendClass+"' style='width:0;height:0;padding:0'></span>").insertAfter($("#"+currentDate));
+                            }
                         }
                     }
 
