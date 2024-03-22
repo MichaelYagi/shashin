@@ -22,7 +22,7 @@
 
                             <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
                                 <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadata.addedAt!=null and #dates.format(sdf.parse(metadataList[iterStat.index-1].addedAt),'yyyy-M-dd')==#dates.format(sdf.parse(metadata.addedAt),'yyyy-M-dd')}">
-                                    <section class="dateSection" th:id="${#dates.format(sdf.parse(metadata.addedAt),'yyyy-MM-dd')}"><p><span class="text-muted">Added </span><strong th:text="${#strings.replace(#dates.format(sdf.parse(metadata.addedAt), 'EEE, MMM d, yyyy'),'.','')}"></strong></p><div th:id="'dateBody'+${#dates.format(sdf.parse(metadata.addedAt),'yyyy-MM-dd')}" class="row" style="margin-left: -1px;">
+                                    <section class="dateSection" th:id="${#dates.format(sdf.parse(metadata.addedAt),'yyyy-MM-dd')}"><p><span class="text-muted">Added </span><strong th:text="${#strings.replace(#dates.format(sdf.parse(metadata.addedAt), 'EEE, MMM d, yyyy'),'.','')}"></strong></p><div th:id="'dateBody'+${metadata.year+'-'+metadata.month+'-'+metadata.day}" class="row" style="margin-left: -1px;">
                                 </th:block>
                             </th:block>
 

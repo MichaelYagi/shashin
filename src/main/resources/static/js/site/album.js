@@ -141,7 +141,7 @@
                                 const nextDate = albumMetadataList.hasOwnProperty(index+1) ? albumMetadataList[index+1]["year"] + "-" + albumMetadataList[index+1]["month"] + "-" + albumMetadataList[index+1]["day"] : "";
                                 const displayCurrentDate = dateFormat(currentDate.replace(/-/g, "/"), "ddd, mmm d, yyyy");
 
-                                if (lastDate !== currentDate) {
+                                if (lastDate !== currentDate || $("#"+currentDate).length === 0) {
                                     dateHeadingObj = {
                                         heading: currentDate,
                                         display: displayCurrentDate
@@ -192,13 +192,15 @@
                                     uuid
                                 }));
 
-                                $($("#dateBody" + currentDate)).append(html).ready(function () {
-                                    // Call JS and modal
-                                    albumModal.renderAlbumCommentsModal(albumData, metadata, userMap, albumPhotoCommentsMap, canEdit);
-                                    albumSettings.activateAlbumListeners(metadata, albumData);
-                                });
+                                if ($("#dateBody"+currentDate).length > 0) {
+                                    $(html).appendTo($("#dateBody" + currentDate)).ready(function () {
+                                        // Call JS and modal
+                                        albumModal.renderAlbumCommentsModal(albumData, metadata, userMap, albumPhotoCommentsMap, canEdit);
+                                        albumSettings.activateAlbumListeners(metadata, albumData);
+                                    });
+                                }
 
-                                if (nextDate !== "" && currentDate !== nextDate) {
+                                if ($("#"+currentDate).length > 0 && nextDate !== "" && currentDate !== nextDate) {
                                     $("<span class='"+appendClass+"' style='width:0;height:0;padding:0'></span>").insertAfter($("#"+currentDate));
                                 }
                             }
