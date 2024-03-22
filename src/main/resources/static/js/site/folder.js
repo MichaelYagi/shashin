@@ -92,10 +92,7 @@ class Folder {
                         const uuid = uuidv4();
                         $(GalleryTemplates.PhotoGalleryItem({
                             activePage,
-                            appendClass,
-                            dateHeadingObj,
                             metadata,
-                            currentMediaLinkIndex,
                             overlayData,
                             uuid
                         })).insertBefore($("." + appendClass).last());
