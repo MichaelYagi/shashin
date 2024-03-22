@@ -44,7 +44,7 @@
                                                 </th:block>
                                             </th:block>
                                         </div>
-                                    </section>
+                                        <div th:id="'dateBody'+${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day),'yyyy-MM-dd')}" class="row" style="margin-left: -1px;">
                                 </th:block>
                             </th:block>
 
@@ -82,8 +82,16 @@
                                 /*]]>*/
                             </script>
 
-                            <span class="appendTakenPhotos" style="width:0;height:0;padding:0"></span>
-
+                            <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
+                                <th:block th:if="${iterStat.count > 0 and !iterStat.last and metadata.year!=null and (metadataList[iterStat.index+1].year+'-'+metadataList[iterStat.index+1].month+'-'+metadataList[iterStat.index+1].day)!=metadata.year+'-'+metadata.month+'-'+metadata.day}">
+                                    <th:block th:remove="tag" th:utext="'&lt;/div&gt;&lt;/section&gt;'"></th:block>
+                                    <span class="appendTakenPhotos" style="width:0;height:0;padding:0"></span>
+                                </th:block>
+                                <th:block th:if="${iterStat.last and metadata.year!=null}">
+                                    <th:block th:remove="tag" th:utext="'&lt;/div&gt;&lt;/section&gt;'"></th:block>
+                                    <span class="appendTakenPhotos" style="width:0;height:0;padding:0"></span>
+                                </th:block>
+                            </th:block>
                         </th:block>
                     </div>
                 </th:block>

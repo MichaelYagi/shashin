@@ -76,9 +76,7 @@ class GalleryTemplates {
             });
             
             // Util.checkErrorImage();
-        </script>
-        
-        <span class="${appendClass}" style="width:0;height:0;padding:0"></span>
+        </script>        
     `};
 
     static getTopRightOverlay({id, overlays, data}) { return `

@@ -112,7 +112,7 @@ class Search {
                         const uuid = uuidv4();
 
                         if (dateHeadingObj !== null) {
-                            const headerAndBody = '<section class="dateSection" id="'+dateHeadingObj.heading+'"><div class="mb-3" id="dateHeader'+dateHeadingObj.heading+'"><span class="text-muted">Taken </span><strong>'+dateHeadingObj.display+'</strong>&nbsp;'+(dateHeadingObj.hasOwnProperty("placename")?dateHeadingObj.placename:'')+'</div><div id="dateBody'+dateHeadingObj.heading+'" class="row"></div></section>';
+                            const headerAndBody = '<section class="dateSection" id="'+dateHeadingObj.heading+'"><div class="mb-3" id="dateHeader'+dateHeadingObj.heading+'"><span class="text-muted">Taken </span><strong>'+dateHeadingObj.display+'</strong>&nbsp;'+(dateHeadingObj.hasOwnProperty("placename")?dateHeadingObj.placename:'')+'</div><div id="dateBody'+dateHeadingObj.heading+'" class="row" style="margin-left:-2px;"></div></section>';
                             $(headerAndBody).insertBefore($("." + appendClass).last());
                         }
 
@@ -126,7 +126,7 @@ class Search {
                             uuid
                         }));
 
-                        $(html).insertBefore($("." + appendClass).last()).ready(function () {
+                        $($("#dateBody" + currentDate)).append(html).ready(function () {
                             // Call JS and modal
                             shashin.updateFavorites("#favorite", "#brfavoriteicon", "#briconcount", metadata.id);
                         });

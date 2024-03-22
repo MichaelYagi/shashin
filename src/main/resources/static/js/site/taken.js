@@ -68,79 +68,83 @@ class Taken {
                 const mediaLinkLength = $(".mediaLink").length;
                 const appendClass = "appendTakenPhotos";
 
-                for (const index in metadataList) {
-                    const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
+                for (let index in metadataList) {
+                    index = parseInt(index);
+
+                    const currentMediaLinkIndex = (mediaLinkLength + index);
                     const metadata = metadataList[index];
 
-                    if ($("#photoThumbnailContainer"+metadata.id).length === 0) {
-                        let dateHeadingObj = null;
-                        const overlayFlags = {};
-                        overlayFlags.renderTopRight = true;
-                        overlayFlags.renderTopLeft = true;
-                        overlayFlags.renderBottomLeft = true;
-                        overlayFlags.renderCenter = true;
+                    let dateHeadingObj = null;
+                    const overlayFlags = {};
+                    overlayFlags.renderTopRight = true;
+                    overlayFlags.renderTopLeft = true;
+                    overlayFlags.renderBottomLeft = true;
+                    overlayFlags.renderCenter = true;
 
-                        const dateHeadingCount = $(".dateSection").length;
-                        const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
-                        const currentDate = metadata["year"] + "-" + metadata["month"] + "-" + metadata["day"];
-                        const displayCurrentDate = dateFormat((metadata["year"] + "-" + metadata["month"] + "-" + metadata["day"]).replace(/-/g, "/"), "ddd, mmm d, yyyy");
+                    const lastDate = metadataList.hasOwnProperty(index-1) ? metadataList[index-1]["year"] + "-" + metadataList[index-1]["month"] + "-" + metadataList[index-1]["day"] : "";
+                    const currentDate = metadata["year"] + "-" + metadata["month"] + "-" + metadata["day"];
+                    const nextDate = metadataList.hasOwnProperty(index+1) ? metadataList[index+1]["year"] + "-" + metadataList[index+1]["month"] + "-" + metadataList[index+1]["day"] : "";
+                    const displayCurrentDate = dateFormat(currentDate.replace(/-/g, "/"), "ddd, mmm d, yyyy");
 
-                        const placenameMap = data["placenameMap"];
-                        let placename = "";
-                        if (index === 0 || (index > 0 && placenameMap[metadataList[index - 1].year + "-" + metadataList[index - 1].month + "-" + metadataList[index - 1].day].join(",") !== placenameMap[metadata.year + '-' + metadata.month + '-' + metadata.day].join(","))) {
-                            if (placenameMap[metadata.year + '-' + metadata.month + '-' + metadata.day].length === 1) {
-                                const placeNameHeaders = placenameMap[metadata.year + '-' + metadata.month + '-' + metadata.day];
-                                placename = '<span class="text-muted"><a class="link-unstyled" href="/search?term=' + placeNameHeaders[0] + '" target="_blank">' + placeNameHeaders[0] + '</a></span>';
-                            } else if (placenameMap[metadata.year + '-' + metadata.month + '-' + metadata.day].length > 1) {
-                                const placeNameHeaders = placenameMap[metadata.year + '-' + metadata.month + '-' + metadata.day];
-                                let listHtml = "";
-                                if (placeNameHeaders.length > 1) {
-                                    for (const index in placeNameHeaders) {
-                                        const placeNameHeader = placeNameHeaders[index];
-                                        listHtml += '<li class="text-muted"><a class="dropdown-item" href="/search?term=' + placeNameHeader + '" target="_blank">' + placeNameHeader + '</a></li>\n';
-                                    }
+                    const placenameMap = data["placenameMap"];
+                    let placename = "";
+                    if (index === 0 || (index > 0 && placenameMap[metadataList[index - 1].year + "-" + metadataList[index - 1].month + "-" + metadataList[index - 1].day].join(",") !== placenameMap[metadata.year + '-' + metadata.month + '-' + metadata.day].join(","))) {
+                        if (placenameMap[metadata.year + '-' + metadata.month + '-' + metadata.day].length === 1) {
+                            const placeNameHeaders = placenameMap[metadata.year + '-' + metadata.month + '-' + metadata.day];
+                            placename = '<span class="text-muted"><a class="link-unstyled" href="/search?term=' + placeNameHeaders[0] + '" target="_blank">' + placeNameHeaders[0] + '</a></span>';
+                        } else if (placenameMap[metadata.year + '-' + metadata.month + '-' + metadata.day].length > 1) {
+                            const placeNameHeaders = placenameMap[metadata.year + '-' + metadata.month + '-' + metadata.day];
+                            let listHtml = "";
+                            if (placeNameHeaders.length > 1) {
+                                for (const index in placeNameHeaders) {
+                                    const placeNameHeader = placeNameHeaders[index];
+                                    listHtml += '<li class="text-muted"><a class="dropdown-item" href="/search?term=' + placeNameHeader + '" target="_blank">' + placeNameHeader + '</a></li>\n';
                                 }
-                                placename = '<span class="text-muted"><div class="dropdown" style="display: inline-block;"><a class="dropdown-toggle link-unstyled" data-bs-toggle="dropdown" href="#">' + placeNameHeaders[0] + '</a>\n' +
-                                    '<ul class="dropdown-menu">' + listHtml + '</ul></div></span>';
                             }
+                            placename = '<span class="text-muted"><div class="dropdown" style="display: inline-block;"><a class="dropdown-toggle link-unstyled" data-bs-toggle="dropdown" href="#">' + placeNameHeaders[0] + '</a>\n' +
+                                '<ul class="dropdown-menu">' + listHtml + '</ul></div></span>';
                         }
+                    }
 
-                        if (lastDateHeading !== currentDate) {
-                            dateHeadingObj = {
-                                heading: currentDate,
-                                display: displayCurrentDate,
-                                placename: placename
-                            };
-                        }
+                    if (lastDate !== currentDate) {
+                        dateHeadingObj = {
+                            heading: currentDate,
+                            display: displayCurrentDate,
+                            placename: placename
+                        };
+                    }
 
-                        const overlayData = shashin.getOverlayData(metadata, {
-                            editControls: true,
-                            editIcon: ((metadata.lat === null || metadata.lng === null) ? "bi-info-square" : "bi-info-circle"),
-                            cOnClickFunction: "shashin.openGallery",
-                            galleryIndex: currentMediaLinkIndex,
-                            overlayFlags
-                        });
+                    const overlayData = shashin.getOverlayData(metadata, {
+                        editControls: true,
+                        editIcon: ((metadata.lat === null || metadata.lng === null) ? "bi-info-square" : "bi-info-circle"),
+                        cOnClickFunction: "shashin.openGallery",
+                        galleryIndex: currentMediaLinkIndex,
+                        overlayFlags
+                    });
 
-                        mediaContentList.push(shashin.getMediaContent(metadata));
+                    mediaContentList.push(shashin.getMediaContent(metadata));
 
-                        const uuid = uuidv4();
+                    const uuid = uuidv4();
 
-                        if (dateHeadingObj !== null) {
-                            const headerAndBody = '<section class="dateSection" id="'+dateHeadingObj.heading+'"><div class="mb-3" id="dateHeader'+dateHeadingObj.heading+'"><span class="text-muted">Taken </span><strong>'+dateHeadingObj.display+'</strong>&nbsp;'+(dateHeadingObj.hasOwnProperty("placename")?dateHeadingObj.placename:'')+'</div><div id="dateBody'+dateHeadingObj.heading+'" class="row"></div></section>';
-                            $(headerAndBody).insertBefore($("." + appendClass).last());
-                        }
+                    if ($("#"+currentDate).length === 0 && dateHeadingObj !== null) {
+                        const headerAndBody = '<section class="dateSection" id="' + currentDate + '"><div class="mb-3" id="dateHeader' + currentDate + '"><span class="text-muted">Taken </span><strong>' + dateHeadingObj.display + '</strong>&nbsp;' + (dateHeadingObj.hasOwnProperty("placename") ? dateHeadingObj.placename : '') + '</div><div id="dateBody' + currentDate + '" class="row" style="margin-left:-2px;"></div></section>';
+                        $(headerAndBody).insertBefore($("." + appendClass).last());
+                    }
 
-                        const html = $(GalleryTemplates.PhotoGalleryItem({
-                            activePage,
-                            appendClass,
-                            dateHeadingObj,
-                            metadata,
-                            currentMediaLinkIndex,
-                            overlayData,
-                            uuid
-                        }));
+                    const html = $(GalleryTemplates.PhotoGalleryItem({
+                        activePage,
+                        appendClass,
+                        dateHeadingObj,
+                        metadata,
+                        currentMediaLinkIndex,
+                        overlayData,
+                        uuid
+                    }));
 
-                        $(html).insertBefore($("." + appendClass).last());
+                    $($("#dateBody" + currentDate)).append(html);
+
+                    if (nextDate !== "" && currentDate !== nextDate) {
+                        $("<span class='"+appendClass+"' style='width:0;height:0;padding:0'></span>").insertAfter($("#"+currentDate));
                     }
                 }
 

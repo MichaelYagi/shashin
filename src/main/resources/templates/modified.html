@@ -22,7 +22,7 @@
 
                             <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
                                 <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadata.modifiedAt!=null and #dates.format(sdf.parse(metadataList[iterStat.index-1].modifiedAt),'yyyy-M-dd')==#dates.format(sdf.parse(metadata.modifiedAt),'yyyy-M-dd')}">
-                                    <section class="dateSection" th:id="${#dates.format(sdf.parse(metadata.modifiedAt),'yyyy-MM-dd')}"><p><span class="text-muted">Modified </span><strong th:text="${#strings.replace(#dates.format(sdf.parse(metadata.modifiedAt), 'EEE, MMM d, yyyy'),'.','')}"></strong></p></section>
+                                    <section class="dateSection" th:id="${#dates.format(sdf.parse(metadata.modifiedAt),'yyyy-MM-dd')}"><p><span class="text-muted">Modified </span><strong th:text="${#strings.replace(#dates.format(sdf.parse(metadata.modifiedAt), 'EEE, MMM d, yyyy'),'.','')}"></strong></p><div th:id="'dateBody'+${#dates.format(sdf.parse(metadata.modifiedAt),'yyyy-MM-dd')}" class="row" style="margin-left: -1px;">
                                 </th:block>
                             </th:block>
 
@@ -60,8 +60,16 @@
                                 /*]]>*/
                             </script>
 
-                            <span class="appendModifiedPhotos" style="width:0;height:0;padding:0"></span>
-
+                            <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
+                                <th:block th:if="${iterStat.count > 0 and !iterStat.last and metadata.modifiedAt!=null and #dates.format(sdf.parse(metadataList[iterStat.index+1].modifiedAt),'yyyy-M-dd')!=#dates.format(sdf.parse(metadata.modifiedAt),'yyyy-M-dd')}">
+                                    <th:block th:remove="tag" th:utext="'&lt;/div&gt;&lt;/section&gt;'"></th:block>
+                                    <span class="appendModifiedPhotos" style="width:0;height:0;padding:0"></span>
+                                </th:block>
+                                <th:block th:if="${iterStat.last and metadata.modifiedAt!=null}">
+                                    <th:block th:remove="tag" th:utext="'&lt;/div&gt;&lt;/section&gt;'"></th:block>
+                                    <span class="appendModifiedPhotos" style="width:0;height:0;padding:0"></span>
+                                </th:block>
+                            </th:block>
                         </th:block>
                     </div>
                 </th:block>
