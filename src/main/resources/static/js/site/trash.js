@@ -111,10 +111,7 @@ class Trash {
 
                                 const html = $(GalleryTemplates.PhotoGalleryItem({
                                     activePage,
-                                    appendClass,
-                                    dateHeadingObj,
                                     metadata,
-                                    currentMediaLinkIndex,
                                     overlayData,
                                     uuid
                                 }));

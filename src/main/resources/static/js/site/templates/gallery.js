@@ -1,7 +1,7 @@
 class GalleryTemplates {
-    static PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData, uuid}) { return `
+    static PhotoGalleryItem({activePage, metadata, overlayData, uuid}) { return `
         <div id="photoThumbnailContainer${metadata.id}" class="photo-thumbnail-container photo-thumbnail" style="width:${metadata.thumbnailSmallWidth}px;height:${metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
-            <a class="lightGalleryIndexAnchor" name="lightGalleryIndex${currentMediaLinkIndex}"></a>
+            <span class="lightGalleryIndexAnchor"></span>
             <img loading="lazy" tag="${encodeURI(metadata.thumbnailUrlSmall)}?v=${uuid}" src="${encodeURI(metadata.thumbnailUrlSmall)}?v=${uuid}" class="photo-thumbnail-image" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
             <input type="hidden" name="filename${metadata.id}" id="filename${metadata.id}" value="${metadata.fileName}">
             <input type="hidden" name="thumbnailCentered${metadata.id}" id="thumbnailCentered${metadata.id}" value="${encodeURI(metadata.thumbnailUrlCentered)}">
