@@ -116,7 +116,7 @@ class Search {
                         const uuid = uuidv4();
 
                         if ($("#"+currentDate).length === 0 && dateHeadingObj !== null) {
-                            const headerAndBody = '<section class="dateSection" id="' + currentDate + '"><div class="mb-3" id="dateHeader' + currentDate + '"><span class="text-muted">Taken </span><strong>' + dateHeadingObj.display + '</strong>&nbsp;' + (dateHeadingObj.hasOwnProperty("placename") ? dateHeadingObj.placename : '') + '</div><div id="dateBody' + currentDate + '" class="row" style="margin-left:-2px;"></div></section>';
+                            const headerAndBody = '<section class="dateSection" id="' + currentDate + '"><div class="mb-3" id="dateHeader' + currentDate + '"><strong>' + dateHeadingObj.display + '</strong>&nbsp;' + (dateHeadingObj.hasOwnProperty("placename") ? dateHeadingObj.placename : '') + '</div><div id="dateBody' + currentDate + '" class="row" style="margin-left:-2px;"></div></section>';
                             $(headerAndBody).insertBefore($("." + appendClass).last());
                         }
 
