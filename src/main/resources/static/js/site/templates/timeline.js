@@ -70,11 +70,11 @@ class TimelineTemplates {
             ${(metadata.year == null || metadata.month == null || metadata.day == null) ?
             `
             <input type="hidden" name="thumbnailUrl-undated[]" id="thumbnailUrl_${metadata.id}" value="${encodeURI(metadata.thumbnailUrlSmall)}">
-            <img loading="lazy" class="photo-thumbnail-image thumbnailTag_undated" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}">
+            <img loading="lazy" class="photo-thumbnail-image thumbnailTag_undated" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}" src="${metadata.thumbnailUrlExtraSmall===null || metadata.thumbnailUrlExtraSmall===undefined?`data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=`:encodeURI(metadata.thumbnailUrlExtraSmall)}">
             ` :
             `
             <input type="hidden" name="thumbnailUrl-${metadata.year}-${metadata.month}-${metadata.day}[]" id="thumbnailUrl_${metadata.id}" value="${encodeURI(metadata.thumbnailUrlSmall)}">
-            <img loading="lazy" class="photo-thumbnail-image thumbnailTag_${metadata.year}-${metadata.month}-${metadata.day}" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}">
+            <img loading="lazy" class="photo-thumbnail-image thumbnailTag_${metadata.year}-${metadata.month}-${metadata.day}" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}" src="${metadata.thumbnailUrlExtraSmall===null || metadata.thumbnailUrlExtraSmall===undefined?`data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=`:encodeURI(metadata.thumbnailUrlExtraSmall)}">
             `}
             
             <div id="tntl${metadata.id}"></div>

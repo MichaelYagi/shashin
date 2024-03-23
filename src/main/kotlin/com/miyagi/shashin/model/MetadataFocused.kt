@@ -7,6 +7,7 @@ interface MetadataFocused {
     fun getDay(): Int?
     fun getType(): String?
     fun getFileName(): String?
+    fun getThumbnailUrlExtraSmall(): String?
     fun getThumbnailUrlSmall(): String?
     fun getThumbnailUrlCentered(): String?
     fun getThumbnailSmallWidth(): Int?

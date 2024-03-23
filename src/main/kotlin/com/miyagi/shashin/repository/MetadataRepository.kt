@@ -75,7 +75,7 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    fun findAllByYearAndMonthAndDayAndHiddenEqualsOrderByYearDescMonthDescDayDescTimeDesc(year: Int?, month: Int?, day: Int?, hidden: Boolean?): MutableIterable<Metadata>
 
    @Cacheable(value = ["allMetadataByDate"], key = "{#year, #month, #day}")
-   @Query("SELECT id, year, month, day, type, file_name as fileName, thumbnail_small_width as thumbnailSmallWidth, thumbnail_small_height as thumbnailSmallHeight, thumbnail_url_small as thumbnailUrlSmall, thumbnail_url_centered as thumbnailUrlCentered FROM metadata WHERE year = :year AND month = :month AND day = :day AND hidden = false ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
+   @Query("SELECT id, year, month, day, type, file_name as fileName, thumbnail_small_width as thumbnailSmallWidth, thumbnail_small_height as thumbnailSmallHeight, thumbnail_url_small as thumbnailUrlSmall, thumbnail_url_extra_small as thumbnailUrlExtraSmall, thumbnail_url_centered as thumbnailUrlCentered FROM metadata WHERE year = :year AND month = :month AND day = :day AND hidden = false ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findTimelineDateFocused(year: Int?, month: Int?, day: Int?): MutableIterable<MetadataFocused>
 
    @Query("SELECT place_name FROM metadata WHERE year = :year AND month = :month AND day = :day AND hidden = false ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
@@ -91,7 +91,7 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    fun findAllByTypeAndYearAndMonthAndDay(@Param("type") type: String,@Param("year") year: Int?,@Param("month") month: Int?,@Param("day") day: Int?): MutableIterable<Metadata>
 
    @Cacheable(value = ["allMetadataByDateAndType"], key = "{#year, #month, #day}")
-   @Query("SELECT id, year, month, day, type, file_name as fileName, thumbnail_small_width as thumbnailSmallWidth, thumbnail_small_height as thumbnailSmallHeight, thumbnail_url_small as thumbnailUrlSmall, thumbnail_url_centered as thumbnailUrlCentered FROM metadata WHERE type LIKE %:type% AND year = :year AND month = :month AND day = :day AND hidden = false ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
+   @Query("SELECT id, year, month, day, type, file_name as fileName, thumbnail_small_width as thumbnailSmallWidth, thumbnail_small_height as thumbnailSmallHeight, thumbnail_url_small as thumbnailUrlSmall, thumbnail_url_extra_small as thumbnailUrlExtraSmall, thumbnail_url_centered as thumbnailUrlCentered FROM metadata WHERE type LIKE %:type% AND year = :year AND month = :month AND day = :day AND hidden = false ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findAllByTypeAndYearAndMonthAndDayFocused(@Param("type") type: String,@Param("year") year: Int?,@Param("month") month: Int?,@Param("day") day: Int?): MutableIterable<MetadataFocused>
 
    @Query("SELECT rl.id,rl.name,rl.cover_url as coverUrl, COUNT(*) AS tagCount, m.thumbnail_url_centered AS thumbnailUrlCentered FROM metadata m INNER JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id INNER JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id WHERE rl.name != 'object' AND m.hidden = false AND rlp.confidence >= 0.0 AND rlp.confidence <= :recognitionConfidenceThreshold GROUP BY rl.id", nativeQuery = true)
