@@ -12,6 +12,8 @@ class Metadata {
     private var path: String? = null
     private var title: String? = null
     private var description: String? = null
+    private var thumbnailPathExtraSmall: String? = null
+    private var thumbnailUrlExtraSmall: String? = null
     private var thumbnailPathSmall: String? = null
     private var thumbnailUrlSmall: String? = null
     private var thumbnailSmallWidth: Int? = null
@@ -64,6 +66,12 @@ class Metadata {
     }
     fun setDescription(description: String?) {
         this.description = description
+    }
+    fun setThumbnailPathExtraSmall(thumbnailPathExtraSmall: String?) {
+        this.thumbnailPathExtraSmall = thumbnailPathExtraSmall
+    }
+    fun setThumbnailUrlExtraSmall(thumbnailUrlExtraSmall: String?) {
+        this.thumbnailUrlExtraSmall = thumbnailUrlExtraSmall
     }
     fun setThumbnailPathSmall(thumbnailPathSmall: String?) {
         this.thumbnailPathSmall = thumbnailPathSmall
@@ -201,6 +209,12 @@ class Metadata {
     fun getThumbnailUrlSmall(): String? {
         return this.thumbnailUrlSmall
     }
+    fun getThumbnailPathExtraSmall(): String? {
+        return this.thumbnailPathExtraSmall
+    }
+    fun getThumbnailUrlExtraSmall(): String? {
+        return this.thumbnailUrlExtraSmall
+    }
     fun getThumbnailPathCentered(): String? {
         return this.thumbnailPathCentered
     }
@@ -327,6 +341,7 @@ class Metadata {
     override fun toString(): String {
         val map = mutableMapOf<String, Any?>()
         map["id"] = this.id
+        map["thumbnailUrlExtraSmall"] = this.thumbnailUrlExtraSmall
         map["thumbnailUrlSmall"] = this.thumbnailUrlSmall
         map["thumbnailUrlCentered"] = this.thumbnailUrlCentered
         map["thumbnailUrlOriginal"] = this.thumbnailUrlOriginal

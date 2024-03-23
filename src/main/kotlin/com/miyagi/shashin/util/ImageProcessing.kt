@@ -13,10 +13,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.javascript.jscomp.jarjar.com.google.common.io.Files
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
+import com.twelvemonkeys.image.ConvolveWithEdgeOp
 import net.coobird.thumbnailator.Thumbnails
 import net.coobird.thumbnailator.geometry.Positions
 import org.bytedeco.javacv.FFmpegFrameGrabber
-import org.bytedeco.javacv.Java2DFrameConverter
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -34,10 +34,11 @@ import java.awt.image.ConvolveOp
 import java.awt.image.Kernel
 import java.io.File
 import java.io.IOException
-import java.util.ArrayList
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
+import kotlin.reflect.jvm.internal.impl.types.checker.ClassicTypeSystemContext.DefaultImpls.original
+
 
 @Suppress("UNCHECKED_CAST")
 class ImageProcessing(private var apiVersion: String?, private var file: File, private var sidecarDir: String, private var metadataObj: Metadata?) {
@@ -78,6 +79,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                                 }
                             }
                         }
+
                         "Exif Image Height", "Height", "Image Height" -> {
                             val heightValue = tag.description.filter { it.isDigit() }
 
@@ -97,10 +99,11 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                                 jpegImageHeight = true
                             }
 
-                            if ((originalPixelHeight == null && heightValue != "")  || (originalPixelHeight != null && heightValue.toInt() > originalPixelHeight)) {
+                            if ((originalPixelHeight == null && heightValue != "") || (originalPixelHeight != null && heightValue.toInt() > originalPixelHeight)) {
                                 originalPixelHeight = heightValue.toInt()
                             }
                         }
+
                         "Exif Image Width", "Width", "Image Width" -> {
                             val widthValue = tag.description.filter { it.isDigit() }
 
@@ -183,7 +186,12 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
             _metadataObj.setFolder(fileRootDir)
 
-            _metadataObj = setThumbnails(img, _metadataObj, (FileUtils.isRaw(file.extension.lowercase()) || supportedVideoFormats.contains(file.extension.lowercase())), extension)
+            _metadataObj = setThumbnails(
+                img,
+                _metadataObj,
+                (FileUtils.isRaw(file.extension.lowercase()) || supportedVideoFormats.contains(file.extension.lowercase())),
+                extension
+            )
         } else {
             logger.log(Level.WARNING, "File not supported: " + file.name)
             _metadataObj = null
@@ -192,7 +200,13 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         return _metadataObj
     }
 
-    fun setThumbnails(img: BufferedImage, metadataObj: Metadata, isRawOrVideo: Boolean, extension: String, overwriteThumbnails: Boolean = false): Metadata {
+    fun setThumbnails(
+        img: BufferedImage,
+        metadataObj: Metadata,
+        isRawOrVideo: Boolean,
+        extension: String,
+        overwriteThumbnails: Boolean = false
+    ): Metadata {
         if (file.exists()) {
             val thumbnailDirectory = sidecarDir.dropLast(1) + "/thumbnails"
             val fileRootDir: String = FileUtils.getRootDir(file)
@@ -202,7 +216,12 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             var tnFile: File?
             if (isRawOrVideo) {
                 thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_original." + extension
-                tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail", overwriteThumbnails)
+                tnFile = FileUtils.createFile(
+                    thumbnailDirectory + fileRootDir,
+                    thumbnailFileStr,
+                    "Thumbnail",
+                    overwriteThumbnails
+                )
                 if (tnFile != null) {
                     val imgCopy = img
                     Thumbnails.of(imgCopy)
@@ -213,10 +232,15 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 metadataObj.setThumbnailUrlOriginal("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_original." + extension)
             }
 
-            // Gallery thumbnails
+            // Gallery small thumbnails
             thumbnailFileStr =
                 thumbnailDirectory + fileRootDir + "/" + file.name + "_" + FileUtils.thumbnailHeight() + "." + extension
-            tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail", overwriteThumbnails)
+            tnFile = FileUtils.createFile(
+                thumbnailDirectory + fileRootDir,
+                thumbnailFileStr,
+                "Thumbnail",
+                overwriteThumbnails
+            )
 
             if (tnFile != null) {
                 val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp.jpg")
@@ -253,9 +277,59 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 }
             }
 
+            // Gallery x-small thumbnail
+            val xsHeight = 112
+            thumbnailFileStr =
+                thumbnailDirectory + fileRootDir + "/" + file.name + "_" + xsHeight + "." + extension
+            tnFile = FileUtils.createFile(
+                thumbnailDirectory + fileRootDir,
+                thumbnailFileStr,
+                "XS Thumbnail",
+                overwriteThumbnails
+            )
+
+            if (tnFile != null) {
+                val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp.jpg")
+
+                val thumbnails = Thumbnails.of(img)
+                    .outputQuality(1.0)
+                if (file.extension.lowercase() == "gif") {
+                    thumbnails
+                        .imageType(BufferedImage.TYPE_INT_ARGB)
+                }
+                // If panorama dimensions
+                if (img.width > img.height * 2) {
+                    thumbnails
+                        .crop(Positions.CENTER)
+                        .size(xsHeight, xsHeight)
+                } else {
+                    thumbnails
+                        .height(xsHeight)
+                }
+                thumbnails.toFile(tempFile)
+
+                val scaledImage: BufferedImage?
+                try {
+//                    scaledImage = sharpenAndBrightenImage(ImageIO.read(tempFile))
+                    scaledImage = blurImage(ImageIO.read(tempFile))
+                    tempFile.delete()
+                    ImageIO.write(scaledImage, "jpg", tnFile)
+                    metadataObj.setThumbnailPathExtraSmall(thumbnailFileStr)
+                    metadataObj.setThumbnailUrlExtraSmall("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_" + xsHeight + "." + extension)
+                    logger.log(Level.INFO, "X-Small thumbnail created: " + file.path)
+                } catch (e: IOException) {
+                    logger.log(Level.WARNING, "Could not read file: " + tnFile.path)
+                }
+            }
+
             // Square image thumbnail
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_centered." + extension
-            tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail", overwriteThumbnails)
+            tnFile = FileUtils.createFile(
+                thumbnailDirectory + fileRootDir,
+                thumbnailFileStr,
+                "Thumbnail",
+                overwriteThumbnails
+            )
             if (tnFile != null) {
                 val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp.jpg")
                 Thumbnails.of(img)
@@ -279,7 +353,12 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
             // Map marker thumbnail
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_mapmarker." + extension
-            tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail", overwriteThumbnails)
+            tnFile = FileUtils.createFile(
+                thumbnailDirectory + fileRootDir,
+                thumbnailFileStr,
+                "Thumbnail",
+                overwriteThumbnails
+            )
             if (tnFile != null) {
                 val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp.jpg")
                 Thumbnails.of(img)
@@ -356,6 +435,24 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         g2d.drawRenderedImage(source, at)
         g2d.dispose()
         return bi
+    }
+
+    private fun blurImage(img: BufferedImage): BufferedImage {
+        val radius = 11
+        val size = radius * 2 + 1
+        val weight = 1.0f / (size * size)
+        val data = FloatArray(size * size)
+
+        for (i in data.indices) {
+            data[i] = weight
+        }
+
+        val kernel = Kernel(size, size, data)
+        val op: BufferedImageOp = ConvolveWithEdgeOp(kernel, 2, null)
+
+        val blurred = op.filter(img, null)
+
+        return blurred
     }
 
     private fun getSquareThumbnail(source: BufferedImage): BufferedImage {

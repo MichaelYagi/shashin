@@ -1619,6 +1619,20 @@ class SettingsController {
                                                         )
                                                     }
                                                 }
+                                                if (!metadata.getThumbnailPathExtraSmall().isNullOrBlank()) {
+                                                    val fileObj = File(metadata.getThumbnailPathExtraSmall()!!)
+                                                    if (fileObj.delete()) {
+                                                        logger.log(
+                                                            Level.INFO,
+                                                            "Deleted thumbnail x-small file: " + fileObj.name
+                                                        )
+                                                    } else {
+                                                        logger.log(
+                                                            Level.WARNING,
+                                                            "Failed to delete thumbnail x-small file: " + fileObj.name
+                                                        )
+                                                    }
+                                                }
                                                 if (!metadata.getMapMarkerPath().isNullOrBlank()) {
                                                     val fileObj = File(metadata.getMapMarkerPath()!!)
                                                     if (fileObj.delete()) {

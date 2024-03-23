@@ -16,6 +16,8 @@ CREATE TABLE `metadata` (
     `path` VARCHAR(255) DEFAULT NULL,
     `fileName` VARCHAR(255) DEFAULT NULL,
     `expectedExtension` VARCHAR(255) DEFAULT NULL,
+    `thumbnailPathExtraSmall` VARCHAR(255) DEFAULT NULL,
+    `thumbnailUrlExtraSmall` VARCHAR (255) DEFAULT NULL,
     `thumbnailPathSmall` VARCHAR(255) DEFAULT NULL,
     `thumbnailUrlSmall` VARCHAR (255) DEFAULT NULL,
     `thumbnailPathCentered` VARCHAR(255) DEFAULT NULL,

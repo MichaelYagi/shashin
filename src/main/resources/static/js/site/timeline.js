@@ -1588,7 +1588,7 @@
                                         lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
                                         lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
                                         lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
-
+console.log(metadata)
                                         let loopedHtml = TimelineTemplates.TimelinePreLoadGalleryBody({metadata:metadata});
                                         html += loopedHtml;
                                         internalHtml += loopedHtml;

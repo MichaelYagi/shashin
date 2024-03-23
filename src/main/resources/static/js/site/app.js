@@ -871,6 +871,7 @@
                     activePage === "trash" ||
                     activePage === "modified"))
                 {
+                    // Save url image to tag
                     if (speedInpxPerMs < 0.20 && speedInpxPerMs > 0.15) {
                         const elementsInViewport = Util.elementsInViewport($(".photo-thumbnail-container"));
                         $.map(elementsInViewport, function (element) {
@@ -878,6 +879,7 @@
                         });
                     }
 
+                    // Replace with small dot image
                     const elementsNotInViewport = Util.elementsNotInViewport($('img[src*="api/v1/thumbnails"].photo-thumbnail-image'));
                     $(elementsNotInViewport).attr("src","data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=");
                 }
