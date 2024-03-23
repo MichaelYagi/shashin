@@ -836,17 +836,33 @@ class TimelineController: BaseController() {
                                 metadataCopy = metadataProcessing.populateMetadata()
 
                                 // Re-process thumbnails
-                                val centeredTnFile = File(metadataCopy.getThumbnailPathCentered())
-                                if (centeredTnFile.exists()) {
-                                    centeredTnFile.delete()
+                                var thumbnailFile = metadataCopy.getThumbnailPathCentered()
+                                if (!thumbnailFile.isNullOrBlank()) {
+                                    val centeredTnFile = File(metadataCopy.getThumbnailPathCentered())
+                                    if (centeredTnFile.exists()) {
+                                        centeredTnFile.delete()
+                                    }
                                 }
-                                val mapTnFile = File(metadataCopy.getMapMarkerPath())
-                                if (mapTnFile.exists()) {
-                                    mapTnFile.delete()
+                                thumbnailFile = metadataCopy.getMapMarkerPath()
+                                if (!thumbnailFile.isNullOrBlank()) {
+                                    val mapTnFile = File(metadataCopy.getMapMarkerPath())
+                                    if (mapTnFile.exists()) {
+                                        mapTnFile.delete()
+                                    }
                                 }
-                                val smallTnFile = File(metadataCopy.getThumbnailPathSmall())
-                                if (smallTnFile.exists()) {
-                                    smallTnFile.delete()
+                                thumbnailFile = metadataCopy.getThumbnailPathSmall()
+                                if (!thumbnailFile.isNullOrBlank()) {
+                                    val smallTnFile = File(metadataCopy.getThumbnailPathSmall())
+                                    if (smallTnFile.exists()) {
+                                        smallTnFile.delete()
+                                    }
+                                }
+                                thumbnailFile = metadataCopy.getThumbnailPathExtraSmall()
+                                if (!thumbnailFile.isNullOrBlank()) {
+                                    val extraSmallTnFile = File(metadataCopy.getThumbnailPathExtraSmall())
+                                    if (extraSmallTnFile.exists()) {
+                                        extraSmallTnFile.delete()
+                                    }
                                 }
                                 if (metadataCopy.getType()!!.contains("video")) {
                                     val originalTnFile =
