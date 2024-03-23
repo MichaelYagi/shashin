@@ -837,6 +837,39 @@
             }
         }, 200);
 
+        function setupPlaceholders(activePage, speedInpxPerMs) {
+            if (activePage !== undefined &&
+                (activePage === "album" ||
+                    activePage === "favorites" ||
+                    activePage === "folder" ||
+                    activePage === "recent" ||
+                    activePage === "search" ||
+                    activePage === "share" ||
+                    activePage === "taken" ||
+                    activePage === "trash" ||
+                    activePage === "modified"))
+            {
+                // Save url image to data attribute
+                if ((speedInpxPerMs < 0.20 && speedInpxPerMs > 0.15) || speedInpxPerMs === -1.0) {
+                    const elementsInViewport = Util.elementsInViewport($(".photo-thumbnail-container"));
+                    $.map(elementsInViewport, function (element) {
+                        $(element).children('img').attr("src",$(element).children('img').attr("data-smallthumb"));
+                    });
+                }
+
+                // Replace with small dot image or blur image
+                const elementsNotInViewport = Util.elementsNotInViewport($('img[src*="api/v1/thumbnails"].photo-thumbnail-image'));
+                $.map(elementsNotInViewport, function (element) {
+                    const xsmallThumb = $(element).attr("data-xsmallthumb");
+                    if (xsmallThumb !== "") {
+                        $(element).attr("src", xsmallThumb);
+                    } else {
+                        $(element).attr("src", "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=");
+                    }
+                });
+            }
+        }
+
         createOnScrollListener($("#container"),eol);
         createOnScrollListener($("main"),eol);
 
@@ -860,36 +893,7 @@
                     $(window).trigger("scrollStop");
                 }, 200);
 
-                if (activePage !== undefined &&
-                    (activePage === "album" ||
-                    activePage === "favorites" ||
-                    activePage === "folder" ||
-                    activePage === "recent" ||
-                    activePage === "search" ||
-                    activePage === "share" ||
-                    activePage === "taken" ||
-                    activePage === "trash" ||
-                    activePage === "modified"))
-                {
-                    // Save url image to data attribute
-                    if (speedInpxPerMs < 0.20 && speedInpxPerMs > 0.15) {
-                        const elementsInViewport = Util.elementsInViewport($(".photo-thumbnail-container"));
-                        $.map(elementsInViewport, function (element) {
-                            $(element).children('img').attr("src",$(element).children('img').attr("data-smallthumb"));
-                        });
-                    }
-
-                    // Replace with small dot image or blur image
-                    const elementsNotInViewport = Util.elementsNotInViewport($('img[src*="api/v1/thumbnails"].photo-thumbnail-image'));
-                    $.map(elementsNotInViewport, function (element) {
-                        const xsmallThumb = $(element).attr("data-xsmallthumb");
-                        if (xsmallThumb !== "") {
-                            $(element).attr("src", xsmallThumb);
-                        } else {
-                            $(element).attr("src", "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=");
-                        }
-                    });
-                }
+                setupPlaceholders(activePage, speedInpxPerMs);
 
                 if (Util.atEndOfPage(this) && eol === false) {
                     setTimeout(async function () {
@@ -899,34 +903,7 @@
             })
 
             $(window).bind("scrollStop", function() {
-                if (activePage !== undefined &&
-                    (activePage === "album" ||
-                        activePage === "favorites" ||
-                        activePage === "folder" ||
-                        activePage === "recent" ||
-                        activePage === "search" ||
-                        activePage === "share" ||
-                        activePage === "taken" ||
-                        activePage === "trash" ||
-                        activePage === "modified"))
-                {
-                    // Save url image to data attribute
-                    const elementsInViewport = Util.elementsInViewport($(".photo-thumbnail-container"));
-                    $.map(elementsInViewport, function (element) {
-                        $(element).children('img').attr("src",$(element).children('img').attr("data-smallthumb"));
-                    });
-
-                    // Replace with small dot image or blur image
-                    const elementsNotInViewport = Util.elementsNotInViewport($('img[src*="api/v1/thumbnails"].photo-thumbnail-image'));
-                    $.map(elementsNotInViewport, function (element) {
-                        const xsmallThumb = $(element).attr("data-xsmallthumb");
-                        if (xsmallThumb !== "") {
-                            $(element).attr("src", xsmallThumb);
-                        } else {
-                            $(element).attr("src", "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=");
-                        }
-                    });
-                }
+                setupPlaceholders(activePage, -1.0);
             });
         }
 
