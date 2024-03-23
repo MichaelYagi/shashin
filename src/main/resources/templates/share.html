@@ -94,7 +94,7 @@
 
                             <div th:id="${'photoThumbnailContainer'+metadata.id}" class="photo-thumbnail-container photo-thumbnail"
                                  th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
-                                <img loading="lazy" th:tag="${#uris.escapePath(metadata.thumbnailUrlSmall)}" th:src="${#uris.escapePath(metadata.thumbnailUrlSmall)}" class="photo-thumbnail-image"
+                                <img loading="lazy" th:data-smallthumb="${#uris.escapePath(metadata.thumbnailUrlSmall)}" th:data-xsmallthumb="${metadata.thumbnailUrlExtraSmall==null?'':#uris.escapePath(metadata.thumbnailUrlExtraSmall)}" th:src="${#uris.escapePath(metadata.thumbnailUrlSmall)}" class="photo-thumbnail-image"
                                      th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" th:height="${metadata.thumbnailSmallHeight}">
 
                                 <div th:replace="fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight},${metadata.expectedExtension},false)"></div>

@@ -871,17 +871,24 @@
                     activePage === "trash" ||
                     activePage === "modified"))
                 {
-                    // Save url image to tag
+                    // Save url image to data attribute
                     if (speedInpxPerMs < 0.20 && speedInpxPerMs > 0.15) {
                         const elementsInViewport = Util.elementsInViewport($(".photo-thumbnail-container"));
                         $.map(elementsInViewport, function (element) {
-                            $(element).children('img').attr("src",$(element).children('img').attr("tag"));
+                            $(element).children('img').attr("src",$(element).children('img').attr("data-smallthumb"));
                         });
                     }
 
-                    // Replace with small dot image
+                    // Replace with small dot image or blur image
                     const elementsNotInViewport = Util.elementsNotInViewport($('img[src*="api/v1/thumbnails"].photo-thumbnail-image'));
-                    $(elementsNotInViewport).attr("src","data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=");
+                    $.map(elementsNotInViewport, function (element) {
+                        const xsmallThumb = $(element).attr("data-xsmallthumb");
+                        if (xsmallThumb !== "") {
+                            $(element).attr("src", xsmallThumb);
+                        } else {
+                            $(element).attr("src", "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=");
+                        }
+                    });
                 }
 
                 if (Util.atEndOfPage(this) && eol === false) {
@@ -903,13 +910,22 @@
                         activePage === "trash" ||
                         activePage === "modified"))
                 {
+                    // Save url image to data attribute
                     const elementsInViewport = Util.elementsInViewport($(".photo-thumbnail-container"));
                     $.map(elementsInViewport, function (element) {
-                        $(element).children('img').attr("src",$(element).children('img').attr("tag"));
+                        $(element).children('img').attr("src",$(element).children('img').attr("data-smallthumb"));
                     });
 
+                    // Replace with small dot image or blur image
                     const elementsNotInViewport = Util.elementsNotInViewport($('img[src*="api/v1/thumbnails"].photo-thumbnail-image'));
-                    $(elementsNotInViewport).attr("src","data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=");
+                    $.map(elementsNotInViewport, function (element) {
+                        const xsmallThumb = $(element).attr("data-xsmallthumb");
+                        if (xsmallThumb !== "") {
+                            $(element).attr("src", xsmallThumb);
+                        } else {
+                            $(element).attr("src", "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=");
+                        }
+                    });
                 }
             });
         }
