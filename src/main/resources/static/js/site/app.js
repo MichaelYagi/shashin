@@ -849,7 +849,7 @@
                     activePage === "trash" ||
                     activePage === "modified"))
             {
-                // Save url image to data attribute
+                // Show image from data
                 if ((speedInpxPerMs < 0.20 && speedInpxPerMs > 0.15) || speedInpxPerMs === -1.0) {
                     const elementsInViewport = Util.elementsInViewport($(".photo-thumbnail-container"));
                     $.map(elementsInViewport, function (element) {
@@ -858,13 +858,13 @@
                 }
 
                 // Replace with small dot image or blur image
-                const elementsImagesNotInViewport = Util.elementsNotInViewport($('img[src*="api/v1/thumbnails"].photo-thumbnail-image'));
+                const elementsImagesNotInViewport = Util.elementsNotInViewport($('img[src*="_225.jpg"].photo-thumbnail-image'));
                 $(elementsImagesNotInViewport).attr("src", "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=");
 
-                $.map(elementsImagesNotInViewport, function (element) {
-                    const xsmallThumb = $(element).attr("data-xsmallthumb");
-                    if (xsmallThumb !== "") {
-                        $(element).attr("src", xsmallThumb);
+                const elementsNotInViewport = Util.elementsNotInViewport($('img[src*="data:image/gif"].photo-thumbnail-image'));
+                $.map(elementsNotInViewport, function (element) {
+                    if ($(element).attr("data-xsmallthumb") !== "") {
+                        $(element).attr("src", $(element).attr("data-xsmallthumb"));
                     }
                 });
             }
