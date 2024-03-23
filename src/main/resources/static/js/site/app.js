@@ -858,13 +858,13 @@
                 }
 
                 // Replace with small dot image or blur image
-                const elementsNotInViewport = Util.elementsNotInViewport($('img[src*="api/v1/thumbnails"].photo-thumbnail-image'));
-                $.map(elementsNotInViewport, function (element) {
+                const elementsImagesNotInViewport = Util.elementsNotInViewport($('img[src*="api/v1/thumbnails"].photo-thumbnail-image'));
+                $(elementsImagesNotInViewport).attr("src", "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=");
+
+                $.map(elementsImagesNotInViewport, function (element) {
                     const xsmallThumb = $(element).attr("data-xsmallthumb");
                     if (xsmallThumb !== "") {
                         $(element).attr("src", xsmallThumb);
-                    } else {
-                        $(element).attr("src", "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=");
                     }
                 });
             }
