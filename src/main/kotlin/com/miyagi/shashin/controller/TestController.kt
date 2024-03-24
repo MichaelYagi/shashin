@@ -9,8 +9,10 @@ import ai.djl.modality.cv.output.DetectedObjects
 import ai.djl.repository.zoo.Criteria
 import ai.djl.repository.zoo.ModelZoo
 import ai.djl.training.util.ProgressBar
+import com.miyagi.shashin.model.MetadataFocused
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.PersistentLoginsRepository
+import com.miyagi.shashin.util.MetricsUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.FileSystemResource
 import org.springframework.security.access.annotation.Secured
@@ -43,8 +45,32 @@ class TestController {
     fun test(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
         model["somevalue"] = "This is a test"
 
-        val persistentLoginsDetails = persistentLoginsRepository.findAllPersistentLoginsDetails()
-        model["persistentLoginsDetails"] = persistentLoginsDetails as Any
+        val metricsUtil = MetricsUtil()
+        metricsUtil.start("query test 1")
+
+        val metadataListTwo = metadataRepository.findAllByYearAndMonthAndDayAndHiddenEqualsOrderByYearDescMonthDescDayDescTimeDesc(
+            2018, 12, 27, hidden = false
+        )
+
+        println(metadataListTwo)
+
+
+        metricsUtil.end()
+
+        metricsUtil.start("query test 2")
+
+        val metadataList = metadataRepository.findTimelineDateFocused(
+            2018, 12, 27
+        )
+
+        println(metadataList)
+
+        metricsUtil.end()
+
+
+
+//        val persistentLoginsDetails = persistentLoginsRepository.findAllPersistentLoginsDetails()
+//        model["persistentLoginsDetails"] = persistentLoginsDetails as Any
 
         // http://127.0.0.1:6624/image/68bcd16b-b362-304c-b521-f21bb6ee23d3/viewer
 //        val metadataId = "42722f17-65de-3d6c-aa6f-dbe6dbb257f9"
