@@ -841,6 +841,7 @@ class TimelineController: BaseController() {
                                     val centeredTnFile = File(metadataCopy.getThumbnailPathCentered())
                                     if (centeredTnFile.exists()) {
                                         centeredTnFile.delete()
+                                        logger.log(Level.INFO, "Centered thumbnail deleted: " + metadataCopy.getThumbnailPathCentered())
                                     }
                                 }
                                 thumbnailFile = metadataCopy.getMapMarkerPath()
@@ -848,6 +849,7 @@ class TimelineController: BaseController() {
                                     val mapTnFile = File(metadataCopy.getMapMarkerPath())
                                     if (mapTnFile.exists()) {
                                         mapTnFile.delete()
+                                        logger.log(Level.INFO, "Map thumbnail deleted: " + metadataCopy.getMapMarkerPath())
                                     }
                                 }
                                 thumbnailFile = metadataCopy.getThumbnailPathSmall()
@@ -855,6 +857,7 @@ class TimelineController: BaseController() {
                                     val smallTnFile = File(metadataCopy.getThumbnailPathSmall())
                                     if (smallTnFile.exists()) {
                                         smallTnFile.delete()
+                                        logger.log(Level.INFO, "Small thumbnail deleted: " + metadataCopy.getThumbnailPathSmall())
                                     }
                                 }
                                 thumbnailFile = metadataCopy.getThumbnailPathExtraSmall()
@@ -862,6 +865,7 @@ class TimelineController: BaseController() {
                                     val extraSmallTnFile = File(metadataCopy.getThumbnailPathExtraSmall())
                                     if (extraSmallTnFile.exists()) {
                                         extraSmallTnFile.delete()
+                                        logger.log(Level.INFO, "Extra Small thumbnail deleted: " + metadataCopy.getThumbnailPathExtraSmall())
                                     }
                                 }
                                 if (metadataCopy.getType()!!.contains("video")) {
@@ -869,6 +873,7 @@ class TimelineController: BaseController() {
                                         File(metadataCopy.getThumbnailPathCentered()?.replace("_centered.", "_original."))
                                     if (originalTnFile.exists()) {
                                         originalTnFile.delete()
+                                        logger.log(Level.INFO, "Original thumbnail deleted: " + metadataCopy.getThumbnailPathCentered())
                                     }
                                 }
 

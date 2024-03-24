@@ -63,11 +63,11 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                 }
                 // Create file
                 val someFile = File(fileName)
-                if (someFile.createNewFile()) {
-                    logger.log(Level.INFO, type + " created: " + someFile.name)
-                    return someFile
-                } else if (overwriteThumbnails) {
+                if (overwriteThumbnails) {
                     logger.log(Level.INFO, type + " overwriting: " + someFile.name)
+                    return someFile
+                } else if (someFile.createNewFile()) {
+                    logger.log(Level.INFO, type + " created: " + someFile.name)
                     return someFile
                 } else {
                     logger.log(Level.INFO, type + " already exists: " + someFile.name)
