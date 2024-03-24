@@ -449,10 +449,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
         val kernel = Kernel(size, size, data)
         val op: BufferedImageOp = ConvolveWithEdgeOp(kernel, 2, null)
-
-        val blurred = op.filter(img, null)
-
-        return blurred
+        
+        return op.filter(img, null)
     }
 
     private fun getSquareThumbnail(source: BufferedImage): BufferedImage {
