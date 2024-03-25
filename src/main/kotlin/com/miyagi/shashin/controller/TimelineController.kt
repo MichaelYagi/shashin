@@ -653,7 +653,7 @@ class TimelineController: BaseController() {
             mediaType = mediaTypeFilter
         }
         response["message"] = "There are no "+mediaType+"s."
-        response["metadataList"] = mutableListOf<MetadataFocused>()
+        response["metadataList"] = mutableListOf<Metadata>()
         response["favorites"] = mutableMapOf<String, Any>()
         response["mediaTypeFilter"] = mediaTypeFilter
         response["placeNameHeaders"] = ""
@@ -677,12 +677,25 @@ class TimelineController: BaseController() {
                 val currentUserObj = model.getAttribute("currentUser") as User?
 
                 if (metadataOnly) {
-                    val metadataList: MutableList<MetadataFocused> = if (mediaTypeFilter == "all") {
-                        metadataRepository.findTimelineDateFocused(
-                            year, month, day
+
+//                    // TODO: SQLEXCEPTION : Bad value for type BigDecimal when adding thumbnail_url_extra_small to query. FIGURE OUT WHY
+//                    val metadataList: MutableList<MetadataFocused> = if (mediaTypeFilter == "all") {
+//                        metadataRepository.findTimelineDateFocused(
+//                            year, month, day
+//                        ).toMutableList()
+//                    } else {
+//                        metadataRepository.findAllByTypeAndYearAndMonthAndDayFocused(
+//                            mediaTypeFilter,
+//                            year, month, day
+//                        ).toMutableList()
+//                    }
+
+                    val metadataList: MutableList<Metadata> = if (mediaTypeFilter == "all") {
+                        metadataRepository.findAllByYearAndMonthAndDayAndHiddenEqualsOrderByYearDescMonthDescDayDescTimeDesc(
+                            year, month, day, false
                         ).toMutableList()
                     } else {
-                        metadataRepository.findAllByTypeAndYearAndMonthAndDayFocused(
+                        metadataRepository.findAllByTypeAndYearAndMonthAndDay(
                             mediaTypeFilter,
                             year, month, day
                         ).toMutableList()
@@ -841,6 +854,7 @@ class TimelineController: BaseController() {
                                     val centeredTnFile = File(metadataCopy.getThumbnailPathCentered()!!)
                                     if (centeredTnFile.exists()) {
                                         centeredTnFile.delete()
+                                        logger.log(Level.INFO, "Centered thumbnail deleted: " + metadataCopy.getThumbnailPathCentered())
                                     }
                                 }
                                 thumbnailFile = metadataCopy.getMapMarkerPath()
@@ -848,6 +862,7 @@ class TimelineController: BaseController() {
                                     val mapTnFile = File(metadataCopy.getMapMarkerPath()!!)
                                     if (mapTnFile.exists()) {
                                         mapTnFile.delete()
+                                        logger.log(Level.INFO, "Map thumbnail deleted: " + metadataCopy.getMapMarkerPath())
                                     }
                                 }
                                 thumbnailFile = metadataCopy.getThumbnailPathSmall()
@@ -855,6 +870,7 @@ class TimelineController: BaseController() {
                                     val smallTnFile = File(metadataCopy.getThumbnailPathSmall()!!)
                                     if (smallTnFile.exists()) {
                                         smallTnFile.delete()
+                                        logger.log(Level.INFO, "Small thumbnail deleted: " + metadataCopy.getThumbnailPathSmall())
                                     }
                                 }
                                 thumbnailFile = metadataCopy.getThumbnailPathExtraSmall()
@@ -862,6 +878,7 @@ class TimelineController: BaseController() {
                                     val extraSmallTnFile = File(metadataCopy.getThumbnailPathExtraSmall()!!)
                                     if (extraSmallTnFile.exists()) {
                                         extraSmallTnFile.delete()
+                                        logger.log(Level.INFO, "Extra Small thumbnail deleted: " + metadataCopy.getThumbnailPathExtraSmall())
                                     }
                                 }
                                 if (metadataCopy.getType()!!.contains("video")) {
@@ -869,6 +886,7 @@ class TimelineController: BaseController() {
                                         File(metadataCopy.getThumbnailPathCentered()?.replace("_centered.", "_original.")!!)
                                     if (originalTnFile.exists()) {
                                         originalTnFile.delete()
+                                        logger.log(Level.INFO, "Original thumbnail deleted: " + metadataCopy.getThumbnailPathCentered())
                                     }
                                 }
 
