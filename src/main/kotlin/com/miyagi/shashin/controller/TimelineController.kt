@@ -678,7 +678,7 @@ class TimelineController: BaseController() {
 
                 if (metadataOnly) {
 
-                    // TODO: BigDecimal error when adding thumbnail_url_extra_small to query. FIGURE OUT WHY
+//                    // TODO: SQLEXCEPTION : Bad value for type BigDecimal when adding thumbnail_url_extra_small to query. FIGURE OUT WHY
 //                    val metadataList: MutableList<MetadataFocused> = if (mediaTypeFilter == "all") {
 //                        metadataRepository.findTimelineDateFocused(
 //                            year, month, day

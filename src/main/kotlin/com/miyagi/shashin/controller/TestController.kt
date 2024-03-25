@@ -45,27 +45,35 @@ class TestController {
     fun test(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
         model["somevalue"] = "This is a test"
 
-        val metricsUtil = MetricsUtil()
-        metricsUtil.start("query test 1")
+//        val metricsUtil = MetricsUtil()
+//        metricsUtil.start("query test 1")
+//
+//        val metadataList1 = metadataRepository.findAllByYearAndMonthAndDayAndHiddenEqualsOrderByYearDescMonthDescDayDescTimeDesc(
+//            2018, 12, 26, hidden = false
+//        )
+//
+//        println(metadataList1)
+//
+//
+//        metricsUtil.end()
 
-        val metadataListTwo = metadataRepository.findAllByYearAndMonthAndDayAndHiddenEqualsOrderByYearDescMonthDescDayDescTimeDesc(
-            2018, 12, 27, hidden = false
-        )
+//        val metadataList2 = metadataRepository.findAllByTypeAndYearAndMonthAndDayFocused(
+//            "image",
+//            2018, 12, 26
+//        ).toMutableList()
+//
+//        println(metadataList2)
 
-        println(metadataListTwo)
+//        metricsUtil.start("query test 2")
 
-
-        metricsUtil.end()
-
-        metricsUtil.start("query test 2")
-
-        val metadataList = metadataRepository.findTimelineDateFocused(
-            2018, 12, 27
-        )
+        val metadataList =
+            metadataRepository.findTimelineDateFocused(
+                2018, 12, 26
+            )
 
         println(metadataList)
 
-        metricsUtil.end()
+//        metricsUtil.end()
 
 
 
