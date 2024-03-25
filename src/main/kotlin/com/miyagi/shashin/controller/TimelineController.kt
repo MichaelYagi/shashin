@@ -653,7 +653,7 @@ class TimelineController: BaseController() {
             mediaType = mediaTypeFilter
         }
         response["message"] = "There are no "+mediaType+"s."
-        response["metadataList"] = mutableListOf<MetadataFocused>()
+        response["metadataList"] = mutableListOf<Metadata>()
         response["favorites"] = mutableMapOf<String, Any>()
         response["mediaTypeFilter"] = mediaTypeFilter
         response["placeNameHeaders"] = ""
