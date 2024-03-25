@@ -1,20 +1,11 @@
 package com.miyagi.shashin.controller
 
-import ai.djl.Application
-import ai.djl.engine.Engine
-import ai.djl.modality.Classifications
-import ai.djl.modality.cv.Image
-import ai.djl.modality.cv.ImageFactory
-import ai.djl.modality.cv.output.DetectedObjects
-import ai.djl.repository.zoo.Criteria
-import ai.djl.repository.zoo.ModelZoo
-import ai.djl.training.util.ProgressBar
 import com.miyagi.shashin.model.MetadataFocused
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.PersistentLoginsRepository
-import com.miyagi.shashin.util.MetricsUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.FileSystemResource
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -23,12 +14,10 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.ResponseBody
-import java.awt.image.BufferedImage
-import java.io.File
-import javax.imageio.ImageIO
+import java.util.*
+import javax.persistence.EntityManager
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-import kotlin.io.path.Path
 
 
 @Controller
@@ -39,6 +28,9 @@ class TestController {
 
     @Autowired
     private lateinit var metadataRepository: MetadataRepository
+
+    @Autowired
+    private val jdbcTemplate: JdbcTemplate? = null
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @GetMapping("/test")
@@ -66,12 +58,18 @@ class TestController {
 
 //        metricsUtil.start("query test 2")
 
-        val metadataList =
-            metadataRepository.findTimelineDateFocused(
-                2018, 12, 26
-            )
 
-        println(metadataList)
+//        try {
+            val metadataList =
+                metadataRepository.findTimelineDateFocused(
+                    2018, 12, 26
+                )
+
+            println(metadataList)
+//        } catch(e: Exception) {
+//            println("Error")
+//            println(e.stackTraceToString())
+//        }
 
 //        metricsUtil.end()
 
