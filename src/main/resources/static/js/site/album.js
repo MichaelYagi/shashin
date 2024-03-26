@@ -3,9 +3,11 @@
     albumSettings.page = 1;
     albumSettings.http = null;
     albumSettings.eol = false;
+    albumSettings.lastDate = "";
 
-    albumSettings.init = async function (albumId, mediaTypeFilter, activePage, albumMetadataList) {
+    albumSettings.init = async function (albumId, mediaTypeFilter, activePage, albumMetadataList, lastDate) {
         albumSettings.http = new Http(activePage);
+        albumSettings.lastDate = lastDate;
 
         const lgConfig = {
             dynamic:true,
@@ -136,7 +138,11 @@
                                 const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
                                 const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
 
-                                const lastDate = albumMetadataList.hasOwnProperty(index-1) ? albumMetadataList[index-1]["year"] + "-" + albumMetadataList[index-1]["month"] + "-" + albumMetadataList[index-1]["day"] : "";
+                                let lastDate = albumMetadataList.hasOwnProperty(index-1) ? albumMetadataList[index-1]["year"]+ "-" + albumMetadataList[index-1]["month"] + "-" + albumMetadataList[index-1]["day"] : "";
+                                if (albumSettings.lastDate !== "") {
+                                    lastDate = albumSettings.lastDate;
+                                    albumSettings.lastDate = "";
+                                }
                                 const currentDate = metadata["year"] + "-" + metadata["month"] + "-" + metadata["day"];
                                 const nextDate = albumMetadataList.hasOwnProperty(index+1) ? albumMetadataList[index+1]["year"] + "-" + albumMetadataList[index+1]["month"] + "-" + albumMetadataList[index+1]["day"] : "";
                                 const displayCurrentDate = dateFormat(currentDate.replace(/-/g, "/"), "ddd, mmm d, yyyy");

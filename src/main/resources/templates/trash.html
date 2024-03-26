@@ -96,11 +96,19 @@
         const activePage = /*[[${activePage}]]*/ 'trash';
         /*]]>*/
 
+        const section = $("section");
+        let lastDate = "";
+        if (section.length > 0) {
+            const lastSection = $("section").last();
+            lastDate = lastSection.attr("id")
+            lastDate = dateFormat(lastDate.replace(/-/g, "/"), "yyyy-m-d");
+        }
+
         const http = new Http(activePage);
         http.ajax("get", "/trash/metadata/list/0").then(function (data) {
             if (data.hasOwnProperty("metadataList") === true) {
                 const metadataList = data["metadataList"];
-                const trashInstance = new Trash(activePage, metadataList);
+                const trashInstance = new Trash(activePage, metadataList, lastDate);
                 trashInstance.init();
                 // Util.checkErrorImage();
             }

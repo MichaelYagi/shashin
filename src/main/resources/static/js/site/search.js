@@ -1,12 +1,13 @@
 class Search {
 
-    constructor(term, activePage, metadataSearchList) {
+    constructor(term, activePage, metadataSearchList, lastDate) {
         this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
         this.term = term;
         this.activePage = activePage;
         this.metadataSearchList = metadataSearchList;
+        this.lastDate = lastDate;
         this.eol = false;
 
         const lgConfig = {
@@ -91,7 +92,11 @@ class Search {
                         const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
                         const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
 
-                        const lastDate = metadataList.hasOwnProperty(index-1) ? metadataList[index-1]["year"] + "-" + metadataList[index-1]["month"] + "-" + metadataList[index-1]["day"] : "";
+                        let lastDate = metadataList.hasOwnProperty(index-1) ? metadataList[index-1]["year"]+ "-" + metadataList[index-1]["month"] + "-" + metadataList[index-1]["day"] : "";
+                        if (this.lastDate !== "") {
+                            lastDate = this.lastDate;
+                            this.lastDate = "";
+                        }
                         const currentDate = metadata["year"] + "-" + metadata["month"] + "-" + metadata["day"];
                         const nextDate = metadataList.hasOwnProperty(index+1) ? metadataList[index+1]["year"] + "-" + metadataList[index+1]["month"] + "-" + metadataList[index+1]["day"] : "";
                         const displayCurrentDate = dateFormat(currentDate.replace(/-/g, "/"), "ddd, mmm d, yyyy");
