@@ -854,12 +854,14 @@
                     const elementsInViewport = Util.elementsInViewport($(".photo-thumbnail-container"));
                     $.map(elementsInViewport, function (element) {
                         $(element).children('img').attr("src",$(element).children('img').attr("data-smallthumb"));
+                        $(element).children('img').css("z-index", 0);
                     });
                 }
 
                 // Replace with small dot image or blur image
                 const elementsImagesNotInViewport = Util.elementsNotInViewport($('img[src*="_225.jpg"].photo-thumbnail-image'));
                 $(elementsImagesNotInViewport).attr("src", "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=");
+                $(elementsImagesNotInViewport).css("z-index", -1);
 
                 const elementsNotInViewport = Util.elementsNotInViewport($('img[src*="data:image/gif"].photo-thumbnail-image'));
                 $.map(elementsNotInViewport, function (element) {
