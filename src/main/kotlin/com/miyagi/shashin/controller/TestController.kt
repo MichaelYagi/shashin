@@ -60,12 +60,15 @@ class TestController {
 
 
 //        try {
-            val metadataList =
-                metadataRepository.findTimelineDateFocused(
-                    2018, 12, 26
-                )
+        val metadataList =
+            metadataRepository.findTimelineDateFocused(
+                2018, 12, 26
+            )
 
-            println(metadataList)
+        for (metadata in metadataList) {
+            println(metadata.getThumbnailUrlExtraSmall())
+        }
+
 //        } catch(e: Exception) {
 //            println("Error")
 //            println(e.stackTraceToString())

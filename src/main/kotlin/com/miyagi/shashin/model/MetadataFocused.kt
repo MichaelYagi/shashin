@@ -1,5 +1,7 @@
 package com.miyagi.shashin.model
 
+import javax.persistence.Column
+
 interface MetadataFocused {
     fun getId(): String?
     fun getYear(): Int?
@@ -10,6 +12,7 @@ interface MetadataFocused {
     fun getThumbnailSmallWidth(): Int?
     fun getThumbnailSmallHeight(): Int?
     fun getThumbnailUrlSmall(): String?
+    @Column(columnDefinition = "varchar")
     fun getThumbnailUrlExtraSmall(): String?
     fun getThumbnailUrlCentered(): String?
 }
