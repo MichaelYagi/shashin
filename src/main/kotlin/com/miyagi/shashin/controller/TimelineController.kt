@@ -828,7 +828,7 @@ class TimelineController: BaseController() {
                                 // Re-process metadata
                                 val metadataProcessing = MetadataProcessing(
                                     apiVersion!!,
-                                    File(metadataCopy.getPath()),
+                                    File(metadataCopy.getPath()!!),
                                     sidecarDir,
                                     metadataCopy,
                                     geocodeUrl!!
@@ -838,7 +838,7 @@ class TimelineController: BaseController() {
                                 // Re-process thumbnails
                                 var thumbnailFile = metadataCopy.getThumbnailPathCentered()
                                 if (!thumbnailFile.isNullOrBlank()) {
-                                    val centeredTnFile = File(metadataCopy.getThumbnailPathCentered())
+                                    val centeredTnFile = File(metadataCopy.getThumbnailPathCentered()!!)
                                     if (centeredTnFile.exists()) {
                                         centeredTnFile.delete()
                                         logger.log(Level.INFO, "Centered thumbnail deleted: " + metadataCopy.getThumbnailPathCentered())
@@ -846,7 +846,7 @@ class TimelineController: BaseController() {
                                 }
                                 thumbnailFile = metadataCopy.getMapMarkerPath()
                                 if (!thumbnailFile.isNullOrBlank()) {
-                                    val mapTnFile = File(metadataCopy.getMapMarkerPath())
+                                    val mapTnFile = File(metadataCopy.getMapMarkerPath()!!)
                                     if (mapTnFile.exists()) {
                                         mapTnFile.delete()
                                         logger.log(Level.INFO, "Map thumbnail deleted: " + metadataCopy.getMapMarkerPath())
@@ -854,7 +854,7 @@ class TimelineController: BaseController() {
                                 }
                                 thumbnailFile = metadataCopy.getThumbnailPathSmall()
                                 if (!thumbnailFile.isNullOrBlank()) {
-                                    val smallTnFile = File(metadataCopy.getThumbnailPathSmall())
+                                    val smallTnFile = File(metadataCopy.getThumbnailPathSmall()!!)
                                     if (smallTnFile.exists()) {
                                         smallTnFile.delete()
                                         logger.log(Level.INFO, "Small thumbnail deleted: " + metadataCopy.getThumbnailPathSmall())
@@ -862,7 +862,7 @@ class TimelineController: BaseController() {
                                 }
                                 thumbnailFile = metadataCopy.getThumbnailPathExtraSmall()
                                 if (!thumbnailFile.isNullOrBlank()) {
-                                    val extraSmallTnFile = File(metadataCopy.getThumbnailPathExtraSmall())
+                                    val extraSmallTnFile = File(metadataCopy.getThumbnailPathExtraSmall()!!)
                                     if (extraSmallTnFile.exists()) {
                                         extraSmallTnFile.delete()
                                         logger.log(Level.INFO, "Extra Small thumbnail deleted: " + metadataCopy.getThumbnailPathExtraSmall())
@@ -870,14 +870,14 @@ class TimelineController: BaseController() {
                                 }
                                 if (metadataCopy.getType()!!.contains("video")) {
                                     val originalTnFile =
-                                        File(metadataCopy.getThumbnailPathCentered()?.replace("_centered.", "_original."))
+                                        File(metadataCopy.getThumbnailPathCentered()?.replace("_centered.", "_original.")!!)
                                     if (originalTnFile.exists()) {
                                         originalTnFile.delete()
                                         logger.log(Level.INFO, "Original thumbnail deleted: " + metadataCopy.getThumbnailPathCentered())
                                     }
                                 }
 
-                                val imageProcessing = ImageProcessing(apiVersion, File(metadataCopy.getPath()), sidecarDir, metadataCopy)
+                                val imageProcessing = ImageProcessing(apiVersion, File(metadataCopy.getPath()!!), sidecarDir, metadataCopy)
                                 metadataCopy = imageProcessing.createThumbnails()!!
 
                                 if (metadataCopy.getId().isNotEmpty() && metadataCopy.getThumbnailSmallWidth() != null && metadataCopy.getThumbnailSmallHeight() != null && metadataCopy.getThumbnailUrlSmall() != null) {
