@@ -1,6 +1,6 @@
 class ShareAlbum {
 
-    constructor(shareLink, activePage, albumId, albumMetadataList) {
+    constructor(shareLink, activePage, albumId, albumMetadataList, lastDate) {
         this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
@@ -9,6 +9,7 @@ class ShareAlbum {
         this.albumId = albumId;
         this.albumMetadataList = albumMetadataList;
         this.eol = false;
+        this.lastDate = lastDate;
         this.mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true},'.mediaLink');
     }
 
@@ -71,7 +72,11 @@ class ShareAlbum {
                             overlayFlags.renderBottomLeft = false;
                             overlayFlags.renderCenter = true;
 
-                            const lastDate = albumMetadataList.hasOwnProperty(index-1) ? albumMetadataList[index-1]["year"] + "-" + albumMetadataList[index-1]["month"] + "-" + albumMetadataList[index-1]["day"] : "";
+                            let lastDate = albumMetadataList.hasOwnProperty(index-1) ? albumMetadataList[index-1]["year"]+ "-" + albumMetadataList[index-1]["month"] + "-" + albumMetadataList[index-1]["day"] : "";
+                            if (albumSettings.lastDate !== "") {
+                                lastDate = albumSettings.lastDate;
+                                albumSettings.lastDate = "";
+                            }
                             const currentDate = metadata["year"] + "-" + metadata["month"] + "-" + metadata["day"];
                             const nextDate = albumMetadataList.hasOwnProperty(index+1) ? albumMetadataList[index+1]["year"] + "-" + albumMetadataList[index+1]["month"] + "-" + albumMetadataList[index+1]["day"] : "";
                             const displayCurrentDate = dateFormat(currentDate.replace(/-/g, "/"), "ddd, mmm d, yyyy");

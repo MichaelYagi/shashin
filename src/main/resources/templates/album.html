@@ -199,12 +199,20 @@
         const albumName = /*[[${album.name}]]*/ '';
         /*]]>*/
 
+        const section = $("section");
+        let lastDate = "";
+        if (section.length > 0) {
+            const lastSection = $("section").last();
+            lastDate = lastSection.attr("id")
+            lastDate = dateFormat(lastDate.replace(/-/g, "/"), "yyyy-m-d");
+        }
+
         $("#appSearchInput").val(albumName);
         const http = new Http(activePage);
         http.ajax("get", "/album/metadata/list/"+albumId+"/0").then(function (data) {
             if (data.hasOwnProperty("albumMetadataList") === true && data["albumMetadataList"].length > 0) {
                 const albumMetadataList = data["albumMetadataList"];
-                albumSettings.init(albumId, mediaTypeFilter, activePage, albumMetadataList);
+                albumSettings.init(albumId, mediaTypeFilter, activePage, albumMetadataList, lastDate);
                 // Util.checkErrorImage();
             }
         });

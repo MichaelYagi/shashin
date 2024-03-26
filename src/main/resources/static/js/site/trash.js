@@ -1,10 +1,11 @@
 class Trash {
-    constructor(activePage, metadataList) {
+    constructor(activePage, metadataList, lastDate) {
         this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
         this.activePage = activePage;
         this.metadataList = metadataList;
+        this.lastDate = lastDate;
         this.eol = false;
         const lgConfig = {
             dynamic:true,
@@ -82,7 +83,11 @@ class Trash {
                                 overlayFlags.renderBottomLeft = true;
                                 overlayFlags.renderCenter = true;
 
-                                const lastDate = metadataList.hasOwnProperty(index-1) ? dateFormat(metadataList[index-1]["modifiedAt"].replace(/-/g, "/"), "yyyy-m-d") : "";
+                                let lastDate = metadataList.hasOwnProperty(index-1) ? metadataList[index-1]["year"]+ "-" + metadataList[index-1]["month"] + "-" + metadataList[index-1]["day"] : "";
+                                if (this.lastDate !== "") {
+                                    lastDate = this.lastDate;
+                                    this.lastDate = "";
+                                }
                                 const currentDate = dateFormat(metadata["modifiedAt"].replace(/-/g, "/"), "yyyy-m-d");
                                 const nextDate = metadataList.hasOwnProperty(index+1) ? dateFormat(metadataList[index+1]["modifiedAt"].replace(/-/g, "/"), "yyyy-m-d") : "";
                                 const displayCurrentDate = dateFormat(metadata["modifiedAt"].replace(/-/g, "/"), "ddd, mmm d, yyyy");

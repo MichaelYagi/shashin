@@ -1,12 +1,13 @@
 class Taken {
 
-    constructor(metadataList, mediaTypeFilter, activePage) {
+    constructor(metadataList, mediaTypeFilter, activePage, lastDate) {
         this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
         this.mediaTypeFilter = mediaTypeFilter;
         this.metadataList = metadataList;
         this.activePage = activePage;
+        this.lastDate = lastDate;
         this.eol = false;
         const lgConfig = {
             dynamic:true,
@@ -81,7 +82,11 @@ class Taken {
                     overlayFlags.renderBottomLeft = true;
                     overlayFlags.renderCenter = true;
 
-                    const lastDate = metadataList.hasOwnProperty(index-1) ? metadataList[index-1]["year"] + "-" + metadataList[index-1]["month"] + "-" + metadataList[index-1]["day"] : "";
+                    let lastDate = metadataList.hasOwnProperty(index-1) ? metadataList[index-1]["year"]+ "-" + metadataList[index-1]["month"] + "-" + metadataList[index-1]["day"] : "";
+                    if (this.lastDate !== "") {
+                        lastDate = this.lastDate;
+                        this.lastDate = "";
+                    }
                     const currentDate = metadata["year"] + "-" + metadata["month"] + "-" + metadata["day"];
                     const nextDate = metadataList.hasOwnProperty(index+1) ? metadataList[index+1]["year"] + "-" + metadataList[index+1]["month"] + "-" + metadataList[index+1]["day"] : "";
                     const displayCurrentDate = dateFormat(currentDate.replace(/-/g, "/"), "ddd, mmm d, yyyy");
