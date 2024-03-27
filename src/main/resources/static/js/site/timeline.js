@@ -861,6 +861,7 @@
             // Render above visibleContainers going from bottom up
             let timelineArr = timelineDates.reverse();
             let lastTopPosition = $("#infinite-scroll-gallery").position().top;
+            let skip = true;
             for (let index = startingIndexTop; index < timelineArr.length; index++) {
                 const timelineDate = timelineArr[index];
                 prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
@@ -889,7 +890,15 @@
 
                         // Break if top not in viewport
                         if (Util.elementsInViewport($("#" + currentDate)).length === 0) {
-                            break;
+                            if (
+                                timelineSettings.currentScrollDirection ===
+                                timelineSettings.ScrollDirection.up && skip === true
+                            ) {
+                                skip = false;
+                                continue;
+                            } else {
+                                break;
+                            }
                         }
                     }
 
