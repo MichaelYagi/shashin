@@ -304,7 +304,7 @@ async function showMap(mapdata) {
 
         if (resetMap === true) {
             initialZoom = 2;
-            if (qslat !== "" && qslng !== "") {
+            if (qslat !== null && qslng !== null && qslat !== "" && qslng !== "") {
                 initialZoom = shashin.initialMapZoom;
             }
         }
