@@ -204,11 +204,7 @@
                     ((Util.isFirefox() === true && timelineSettings.elementTracking[timelineSettings.elementTracking.length - 1] === elementsInViewPort[elementsInViewPort.length - 1]) ||
                         timelineSettings.elementTracking[timelineSettings.elementTracking.length - 1].isSameNode(elementsInViewPort[elementsInViewPort.length - 1]))
                 ) {
-                    if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
-                        timelineSettings.isScrolling = false;
-                    } else {
-                        showSlider = false;
-                    }
+                    timelineSettings.isScrolling = false;
                 }
                 timelineSettings.elementTracking = elementsInViewPort;
             }
@@ -216,17 +212,15 @@
             lastDate = e.timeStamp;
             lastOffset = $(e.target).scrollTop();
 
-            if (elementsInViewPort.hasOwnProperty(0) && elementsInViewPort[0].hasAttribute("id") && elementsInViewPort[0].id === timelineSettings.timelineDates[0]["year"]+"-"+timelineSettings.timelineDates[0]["month"]+"-"+timelineSettings.timelineDates[0]["day"]) {
-                timelineSettings.isScrolling = false;
-            } else if (elementsInViewPort.hasOwnProperty(elementsInViewPort.length-1) && elementsInViewPort[elementsInViewPort.length-1].hasAttribute("id") && elementsInViewPort[elementsInViewPort.length-1].id === timelineSettings.timelineDates[timelineSettings.timelineDates.length-1]["year"]+"-"+timelineSettings.timelineDates[timelineSettings.timelineDates.length-1]["month"]+"-"+timelineSettings.timelineDates[timelineSettings.timelineDates.length-1]["day"]) {
-                timelineSettings.isScrolling = true;
-            }
             // if (timelineSettings.isScrolling === true || showSlider === true) {
             //     $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
             // }
 
             // Hack to prevent infinite scroll upwards and throttle scrolling
             if (topScroll === true && topOfPage === false && Util.isMobile() === false) {
+                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                    timelineSettings.isScrolling = true;
+                }
                 scrollByN(1);
             }
 
@@ -759,14 +753,6 @@
                 Util.isInViewport($("#tail_" + element.id)) === false &&
                 Util.isInViewport($("#container_" + element.id)) === false &&
                 Util.elementsInViewport($(".photo-thumbnail-image.thumbnailTag_" + element.id)).length === 0
-                // &&
-                // ((Util.isSafari() === false && Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) ||
-                //     ((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && (Util.getDateObject(lastVisibleId) > Util.getDateObject(element.id) || Util.getDateObject(firstVisibleId) < Util.getDateObject(element.id))) ||
-                //         (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && Util.getDateObject(firstVisibleId) < Util.getDateObject(element.id)))
-                // )
-                // &&
-                // ((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && element.id !== $(section[section.length-1]).attr("id")) ||
-                //     (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && element.id !== ignoreTimelineDate))
             ) {
                 if (Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                     section.invisible();
@@ -822,9 +808,6 @@
         section.visible();
 
         // Get list of visible elements
-        // const firstVisibleContainer = $('section').length > 0 ? $('section')[0] : null;
-        // const lastVisibleContainer = $('section').length > 0 ? $('section')[$('section').length-1] : null;
-
         const firstVisibleContainer = sectionArray.length > 0 ? sectionArray[0] : null;
         const lastVisibleContainer = sectionArray.length > 0 ? sectionArray[sectionArray.length-1] : null;
 
@@ -871,7 +854,6 @@
             // Render above visibleContainers going from bottom up
             let timelineArr = timelineDates.reverse();
             let lastTopPosition = $("#infinite-scroll-gallery").position().top;
-            let skipCount = 0;
             for (let index = startingIndexTop; index < timelineArr.length; index++) {
                 const timelineDate = timelineArr[index];
                 prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
@@ -894,28 +876,12 @@
                         if ($("#container").position().top === $("#infinite-scroll-gallery").position().top
                             || (Util.isMobile() === false && lastTopPosition === currentTopPosition)
                         ) {
-                            if (
-                                timelineSettings.currentScrollDirection ===
-                                timelineSettings.ScrollDirection.up && skipCount < 3
-                            ) {
-                                skipCount++;
-                                continue;
-                            } else {
-                                break;
-                            }
+                            break;
                         }
 
                         // Break if top not in viewport
                         if (Util.elementsInViewport($("#" + currentDate)).length === 0) {
-                            if (
-                                timelineSettings.currentScrollDirection ===
-                                timelineSettings.ScrollDirection.up && skipCount < 3
-                            ) {
-                                skipCount++;
-                                continue;
-                            } else {
-                                break;
-                            }
+                            break;
                         }
                     }
 
