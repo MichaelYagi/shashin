@@ -885,7 +885,15 @@
                         if ($("#container").position().top === $("#infinite-scroll-gallery").position().top
                             || (Util.isMobile() === false && lastTopPosition === currentTopPosition)
                         ) {
-                            break;
+                            if (
+                                timelineSettings.currentScrollDirection ===
+                                timelineSettings.ScrollDirection.up && skip === true
+                            ) {
+                                skip = false;
+                                continue;
+                            } else {
+                                break;
+                            }
                         }
 
                         // Break if top not in viewport
