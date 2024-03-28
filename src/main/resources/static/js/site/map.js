@@ -304,6 +304,9 @@ async function showMap(mapdata) {
 
         if (resetMap === true) {
             initialZoom = 2;
+            if (qslat !== "" && qslng !== "") {
+                initialZoom = shashin.initialMapZoom;
+            }
         }
 
         progressBarWrapper.visible();
