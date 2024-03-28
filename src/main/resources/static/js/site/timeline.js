@@ -150,11 +150,11 @@
                 });
             }
 
-            if (Util.isMobile() === false && $("#dateSliderWrapper:not(:hover)").length > 0) {
-                setTimeout(() => {
-                    $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
-                }, 1000);
-            }
+            // if (Util.isMobile() === false && $("#dateSliderWrapper:not(:hover)").length > 0) {
+            //     setTimeout(() => {
+            //         $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
+            //     }, 1000);
+            // }
 
             timelineSettings.rescanElements();
 
@@ -216,9 +216,9 @@
             lastDate = e.timeStamp;
             lastOffset = $(e.target).scrollTop();
 
-            if (timelineSettings.isScrolling === true || showSlider === true) {
-                $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
-            }
+            // if (timelineSettings.isScrolling === true || showSlider === true) {
+            //     $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
+            // }
 
             // Hack to prevent infinite scroll upwards and throttle scrolling
             if (topScroll === true && topOfPage === false && Util.isMobile() === false) {
@@ -1182,15 +1182,15 @@
                 }
             }
 
-            $("#dateSliderWrapper").hover(function () {
-                $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
-            }, function () {
-                $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
-            });
-
-            $("#dateSliderWrapper").mousemove(function () {
-                $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
-            });
+            // $("#dateSliderWrapper").hover(function () {
+            //     $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
+            // }, function () {
+            //     $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
+            // });
+            //
+            // $("#dateSliderWrapper").mousemove(function () {
+            //     $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
+            // });
         }
     }
 
