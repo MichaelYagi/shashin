@@ -194,7 +194,8 @@
             // Prevent flickering
             const elementsInViewPort = Util.elementsInViewport($(".scrollspy"));
 
-            if (Util.isMobile() === false && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
+            let showSlider = true;
+            if (Util.isMobile() === false) {
                 if (Util.isInViewport($("footer")) === false &&
                     timelineSettings.elementTracking.length > 0 &&
                     elementsInViewPort.length === timelineSettings.elementTracking.length &&
@@ -203,7 +204,11 @@
                     ((Util.isFirefox() === true && timelineSettings.elementTracking[timelineSettings.elementTracking.length - 1] === elementsInViewPort[elementsInViewPort.length - 1]) ||
                         timelineSettings.elementTracking[timelineSettings.elementTracking.length - 1].isSameNode(elementsInViewPort[elementsInViewPort.length - 1]))
                 ) {
-                    timelineSettings.isScrolling = false;
+                    if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
+                        timelineSettings.isScrolling = false;
+                    } else {
+                        showSlider = false;
+                    }
                 }
                 timelineSettings.elementTracking = elementsInViewPort;
             }
@@ -211,7 +216,7 @@
             lastDate = e.timeStamp;
             lastOffset = $(e.target).scrollTop();
 
-            if (timelineSettings.isScrolling === true) {
+            if (timelineSettings.isScrolling === true || showSlider === true) {
                 $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
             }
 
