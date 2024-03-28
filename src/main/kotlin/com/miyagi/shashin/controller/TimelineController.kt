@@ -677,12 +677,23 @@ class TimelineController: BaseController() {
                 val currentUserObj = model.getAttribute("currentUser") as User?
 
                 if (metadataOnly) {
-                    val metadataList: MutableList<MetadataFocused> = if (mediaTypeFilter == "all") {
-                        metadataRepository.findTimelineDateFocused(
-                            year, month, day
+//                    val metadataList: MutableList<MetadataFocused> = if (mediaTypeFilter == "all") {
+//                        metadataRepository.findTimelineDateFocused(
+//                            year, month, day
+//                        ).toMutableList()
+//                    } else {
+//                        metadataRepository.findAllByTypeAndYearAndMonthAndDayFocused(
+//                            mediaTypeFilter,
+//                            year, month, day
+//                        ).toMutableList()
+//                    }
+
+                    val metadataList: MutableList<Metadata> = if (mediaTypeFilter == "all") {
+                        metadataRepository.findAllByYearAndMonthAndDayAndHiddenEqualsOrderByYearDescMonthDescDayDescTimeDesc(
+                            year, month, day, false
                         ).toMutableList()
                     } else {
-                        metadataRepository.findAllByTypeAndYearAndMonthAndDayFocused(
+                        metadataRepository.findAllByTypeAndYearAndMonthAndDay(
                             mediaTypeFilter,
                             year, month, day
                         ).toMutableList()
