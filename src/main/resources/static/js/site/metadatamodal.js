@@ -370,7 +370,7 @@ $("#saveMetadata").on("click", async function (e) {
                 // Reload page
                 if (
                     (activePage !== "recent" && activePage !== "modified" && activePage !== "folder" && activePage !== "taken" && takenDateUpdated === true) ||
-                    metadataObj.hidden === true ||
+                    (metadataObj.hidden === true && activePage !== "timeline") ||
                     ((activePage === "map" || activePage === "album") && Util.arraysEqual(prevAlbumsArray,albumsArray) === false)
                 ) {
                     window.location.reload();
