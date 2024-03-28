@@ -194,7 +194,7 @@
             // Prevent flickering
             const elementsInViewPort = Util.elementsInViewport($(".scrollspy"));
 
-            if (Util.isMobile() === false) {
+            if (Util.isMobile() === false && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
                 if (Util.isInViewport($("footer")) === false &&
                     timelineSettings.elementTracking.length > 0 &&
                     elementsInViewPort.length === timelineSettings.elementTracking.length &&
@@ -861,7 +861,7 @@
             // Render above visibleContainers going from bottom up
             let timelineArr = timelineDates.reverse();
             let lastTopPosition = $("#infinite-scroll-gallery").position().top;
-            let skip = true;
+            let skipCount = 0;
             for (let index = startingIndexTop; index < timelineArr.length; index++) {
                 const timelineDate = timelineArr[index];
                 prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
@@ -869,7 +869,6 @@
                 if (Util.getDateObject(currentDate) < Util.getDateObject(prevDate)) {
                     if ($("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) ||
                         ((Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
-
                         // Render currentDate
                         const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
 
@@ -887,9 +886,9 @@
                         ) {
                             if (
                                 timelineSettings.currentScrollDirection ===
-                                timelineSettings.ScrollDirection.up && skip === true
+                                timelineSettings.ScrollDirection.up && skipCount < 3
                             ) {
-                                skip = false;
+                                skipCount++;
                                 continue;
                             } else {
                                 break;
@@ -900,9 +899,9 @@
                         if (Util.elementsInViewport($("#" + currentDate)).length === 0) {
                             if (
                                 timelineSettings.currentScrollDirection ===
-                                timelineSettings.ScrollDirection.up && skip === true
+                                timelineSettings.ScrollDirection.up && skipCount < 3
                             ) {
-                                skip = false;
+                                skipCount++;
                                 continue;
                             } else {
                                 break;
@@ -931,7 +930,8 @@
                 let prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
 
                 if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate) && closeToFooter() === true) {
-                    if ($("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) || ((Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
+                    if (timelineSettings.currentScrollDirection ===
+                        timelineSettings.ScrollDirection.down && $("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) || ((Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
                         const numberOfPhotos = timelineSettings.metadataYearMonthCount[timelineDate.year + "-" + timelineDate.month];
 
                         let sectionHeight = 0;
