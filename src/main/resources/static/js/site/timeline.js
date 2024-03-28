@@ -216,6 +216,11 @@
             lastDate = e.timeStamp;
             lastOffset = $(e.target).scrollTop();
 
+            if (elementsInViewPort[0].id === timelineSettings.timelineDates[0]["year"]+"-"+timelineSettings.timelineDates[0]["month"]+"-"+timelineSettings.timelineDates[0]["day"]) {
+                timelineSettings.isScrolling = false;
+            } else if (elementsInViewPort[elementsInViewPort.length-1].id === timelineSettings.timelineDates[timelineSettings.timelineDates.length-1]["year"]+"-"+timelineSettings.timelineDates[timelineSettings.timelineDates.length-1]["month"]+"-"+timelineSettings.timelineDates[timelineSettings.timelineDates.length-1]["day"]) {
+                timelineSettings.isScrolling = true;
+            }
             // if (timelineSettings.isScrolling === true || showSlider === true) {
             //     $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
             // }
