@@ -371,12 +371,10 @@ $("#saveMetadata").on("click", async function (e) {
                 if (
                     (activePage !== "recent" && activePage !== "modified" && activePage !== "folder" && activePage !== "taken" && takenDateUpdated === true) ||
                     (metadataObj.hidden === true && activePage !== "timeline") ||
+                    activePage === "matches" ||
+                    (Util.arraysEqual(prevPeopleArray,peopleArray) === false && activePage === "person") ||
                     ((activePage === "map" || activePage === "album") && Util.arraysEqual(prevAlbumsArray,albumsArray) === false)
                 ) {
-                    window.location.reload();
-                }
-
-                if (activePage === "matches" || (Util.arraysEqual(prevPeopleArray,peopleArray) === false && activePage === "person")) {
                     window.location.reload();
                 }
 
