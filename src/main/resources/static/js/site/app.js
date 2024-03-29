@@ -1038,7 +1038,7 @@
                     } else if ($("#propMetadata").is(':visible')) {
                         containerId = "propMetadata";
                     }
-                    Util.processCopyText(copyText, "location", {containerId: containerId});
+                    Util.copyToClipboard(copyText, "location", {containerId: containerId});
                 }
             }
 
@@ -1052,7 +1052,7 @@
                     } else if ($("#propMetadata").is(':visible')) {
                         containerId = "propMetadata";
                     }
-                    Util.processCopyText(copyText, "coordinates", {containerId: containerId});
+                    Util.copyToClipboard(copyText, "coordinates", {containerId: containerId});
                 }
             };
 

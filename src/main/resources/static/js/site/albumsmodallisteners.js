@@ -224,7 +224,7 @@
             const shareLink = $("#copyLink").attr("data-clipboard-text");
 
             if (shareLink !== null && shareLink !== "") {
-                Util.processCopyText(shareLink, "share link", {containerId: "propsharealbums",inputFieldId: "copyLink"}, function (successfullyCopied) {
+                Util.copyToClipboard(shareLink, "share link", {containerId: "propsharealbums",inputFieldId: "copyLink"}, function (successfullyCopied) {
                     if (successfullyCopied) {
                         $("#copyLinkIcon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
                         $('#copyLinkIcon').fadeOut(5000, function () {
