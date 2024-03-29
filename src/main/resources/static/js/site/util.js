@@ -26,27 +26,29 @@ class Util {
         return false;
     };
 
-    static processCopyText(obj, copyText, msgType) {
+    static processCopyText(textToCopy, msgType) {
         const tempText = document.createElement("input");
-        tempText.value = copyText;
+        const tempId = "tempClipboardId"
+        tempText.value = textToCopy;
         tempText.type = "hidden";
-        tempText.id = "tempClipboardMapId";
-        tempText.setAttribute('data-clipboard-text', copyText);
+        tempText.id = tempId;
+        tempText.setAttribute('data-clipboard-text', textToCopy);
         document.body.appendChild(tempText);
         tempText.select();
 
         let clipboard = null;
 
         if ($("#propMetadata").is(':visible')) {
-            clipboard = new ClipboardJS('#tempClipboardMapId', {container: document.getElementById("propMetadata")});
+            clipboard = new ClipboardJS('#'+tempId, {container: document.getElementById("propMetadata")});
         } else if ($("#propInfoModal").is(':visible')) {
-            clipboard = new ClipboardJS('#tempClipboardMapId', {container: document.getElementById("propInfoModal")});
+            clipboard = new ClipboardJS('#'+tempId, {container: document.getElementById("propInfoModal")});
         } else {
-            clipboard = new ClipboardJS('#tempClipboardMapId');
+            clipboard = new ClipboardJS('#'+tempId);
         }
 
         if (clipboard !== null) {
-            $("#tempClipboardMapId").on("click", function () {
+            const tempEl = $('#'+tempId);
+            tempEl.on("click", function () {
 
                 clipboard.on('success', function (e) {
                     shashin.showToastMessage(msgType.charAt(0).toUpperCase() + msgType.slice(1) + " copied to clipboard", e.text + " copied to clipboard", {
@@ -56,15 +58,15 @@ class Util {
                 });
 
                 clipboard.on('error', function (e) {
-                    shashin.showToastMessage("Could not copy " + msgType, copyText + " could not be copied: " + e, {
+                    shashin.showToastMessage("Could not copy " + msgType, textToCopy + " could not be copied: " + e, {
                         icon: "bi-exclamation-triangle",
                         iconColor: "#FF0000"
                     });
                 });
             });
-            $("#tempClipboardMapId").trigger("click");
+            tempEl.trigger("click");
 
-            $("#tempClipboardMapId").remove();
+            tempEl.remove();
             clipboard.destroy();
         }
     }
