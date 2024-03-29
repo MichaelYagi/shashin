@@ -53,6 +53,7 @@ async function showMap(mapdata) {
     let mapTilerTileHy = shashin.getMapSource("maptilerHY");
     let mapTilerTileBa = shashin.getMapSource("maptilerBA");
     let mapTilerTileSa = shashin.getMapSource("maptilerSA");
+    let stadiaSa = shashin.getMapSource("stadiaSA");
 
     let mapBoxTile = shashin.getMapSource("mapbox");
 
@@ -872,6 +873,9 @@ async function showMap(mapdata) {
                     case "maptilerHY":
                         layerTile.setSource(mapTilerTileHy);
                         break;
+                    case "stadiaSA":
+                        layerTile.setSource(stadiaSa);
+                        break;
                     default:
                         layerTile.setSource(osmMapTile);
                 }
@@ -911,6 +915,9 @@ async function showMap(mapdata) {
                             break;
                         case "maptilerHY":
                             layerTile.setSource(mapTilerTileHy);
+                            break;
+                        case "stadiaSA":
+                            layerTile.setSource(stadiaSa);
                             break;
                         case "maptilerBA":
                             layerTile.setSource(mapTilerTileBa);
