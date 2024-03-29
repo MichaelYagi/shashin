@@ -1,4 +1,4 @@
-/*# Version 8.1.0 */
+/*! Version 9.1.0 */
 :root,
 :host {
     --ol-background-color: white;
@@ -348,4 +348,4 @@
 
 .ol-overviewmap .ol-overviewmap-box:hover {
     cursor: move;
-}}
+}

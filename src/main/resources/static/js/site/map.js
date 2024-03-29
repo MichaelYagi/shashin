@@ -57,6 +57,7 @@ async function showMap(mapdata) {
     let mapBoxTile = shashin.getMapSource("mapbox");
 
     const layerTile = new ol.layer.Tile({
+        visible: true,
         source: osmMapTile
     });
 
