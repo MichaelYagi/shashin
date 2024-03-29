@@ -76,27 +76,15 @@
             let apikey = $("#apikey").val();
 
             if (apikey !== null && apikey !== "") {
-                const clipboard = new ClipboardJS("#copyapikey");
-
-                clipboard.on('success', function (e) {
-                    $("#apikeycopyicon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
-                    $('#apikeycopyicon').fadeOut(5000, function () {
-                        $(this).removeClass("bi-clipboard-check").removeClass("bi-clipboard-x").addClass("bi-clipboard-plus");
-                    }).fadeIn(400)
-                    shashin.showToastMessage("API key copied", "API key has been copied to clipboard.", {
-                        icon: "bi-info-circle",
-                        iconColor: "#777777"
-                    });
-                });
-
-                clipboard.on('error', function (e) {
-                    // console.log("fail:" + e.message)
-                    $("#apikeycopyicon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
-                    shashin.showToastMessage("Operation failed", "Operation failed: " + e.message, {
-                        icon: "bi-exclamation-triangle",
-                        iconColor: "#FF0000"
-                    });
-                    // $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Operation failed: "+e.message+"</div>");
+                Util.processCopyText(apikey, "API key", {inputFieldId:"copyapikey"}, function (successfullyCopied) {
+                    if (successfullyCopied) {
+                        $("#apikeycopyicon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
+                        $('#apikeycopyicon').fadeOut(5000, function () {
+                            $(this).removeClass("bi-clipboard-check").removeClass("bi-clipboard-x").addClass("bi-clipboard-plus");
+                        }).fadeIn(400)
+                    } else {
+                        $("#apikeycopyicon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
+                    }
                 });
             } else {
                 $("#apikeycopyicon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
@@ -104,7 +92,6 @@
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000"
                 });
-                // $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Link must not be blank</div>");
             }
         });
 
