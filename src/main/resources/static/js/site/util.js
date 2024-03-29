@@ -26,6 +26,49 @@ class Util {
         return false;
     };
 
+    static processCopyText(obj, copyText, msgType) {
+        const tempText = document.createElement("input");
+        tempText.value = copyText;
+        tempText.type = "hidden";
+        tempText.id = "tempClipboardMapId";
+        tempText.setAttribute('data-clipboard-text', copyText);
+        document.body.appendChild(tempText);
+        tempText.select();
+
+        let clipboard = null;
+
+        if ($("#propMetadata").is(':visible')) {
+            clipboard = new ClipboardJS('#tempClipboardMapId', {container: document.getElementById("propMetadata")});
+        } else if ($("#propInfoModal").is(':visible')) {
+            clipboard = new ClipboardJS('#tempClipboardMapId', {container: document.getElementById("propInfoModal")});
+        } else {
+            clipboard = new ClipboardJS('#tempClipboardMapId');
+        }
+
+        if (clipboard !== null) {
+            $("#tempClipboardMapId").on("click", function () {
+
+                clipboard.on('success', function (e) {
+                    shashin.showToastMessage(msgType.charAt(0).toUpperCase() + msgType.slice(1) + " copied to clipboard", e.text + " copied to clipboard", {
+                        icon: "bi-info-circle",
+                        iconColor: "#777777"
+                    });
+                });
+
+                clipboard.on('error', function (e) {
+                    shashin.showToastMessage("Could not copy " + msgType, copyText + " could not be copied: " + e, {
+                        icon: "bi-exclamation-triangle",
+                        iconColor: "#FF0000"
+                    });
+                });
+            });
+            $("#tempClipboardMapId").trigger("click");
+
+            $("#tempClipboardMapId").remove();
+            clipboard.destroy();
+        }
+    }
+
     static elementsInViewport(element) {
         const elementsArray = [];
         if (element.length > 0) {
