@@ -26,48 +26,74 @@ class Util {
         return false;
     };
 
-    static processCopyText(textToCopy, msgType) {
-        const tempText = document.createElement("input");
-        const tempId = "tempClipboardId"
-        tempText.value = textToCopy;
-        tempText.type = "hidden";
-        tempText.id = tempId;
-        tempText.setAttribute('data-clipboard-text', textToCopy);
-        document.body.appendChild(tempText);
-        tempText.select();
+    static processCopyText(textToCopy, msgType, options, callback) {
+        let inputId = "tempClipboardId";
+        let inputFieldId = null;
+        let containerId = null;
+
+        if (options !== undefined) {
+            if (options.hasOwnProperty("containerId")) {
+                containerId = options["containerId"];
+            }
+            if (options.hasOwnProperty("inputFieldId")) {
+                inputFieldId = options["inputFieldId"];
+            }
+        }
+
+        if (inputFieldId === null) {
+            const tempText = document.createElement("input");
+            tempText.value = textToCopy;
+            tempText.type = "hidden";
+            tempText.id = inputId;
+            tempText.setAttribute('data-clipboard-text', textToCopy);
+            document.body.appendChild(tempText);
+            tempText.select();
+        } else {
+            inputId = inputFieldId;
+        }
 
         let clipboard = null;
 
-        if ($("#propMetadata").is(':visible')) {
-            clipboard = new ClipboardJS('#'+tempId, {container: document.getElementById("propMetadata")});
-        } else if ($("#propInfoModal").is(':visible')) {
-            clipboard = new ClipboardJS('#'+tempId, {container: document.getElementById("propInfoModal")});
+        if (containerId !== null && $("#"+containerId).is(':visible')) {
+            clipboard = new ClipboardJS('#'+inputId, {container: document.getElementById(containerId)});
         } else {
-            clipboard = new ClipboardJS('#'+tempId);
+            clipboard = new ClipboardJS('#'+inputId);
         }
 
         if (clipboard !== null) {
-            const tempEl = $('#'+tempId);
-            tempEl.on("click", function () {
-
-                clipboard.on('success', function (e) {
+            function clipboardListeners(clipboardObj, callback) {
+                clipboardObj.on('success', function (e) {
                     shashin.showToastMessage(msgType.charAt(0).toUpperCase() + msgType.slice(1) + " copied to clipboard", e.text + " copied to clipboard", {
                         icon: "bi-info-circle",
                         iconColor: "#777777"
                     });
+                    if (callback !== undefined) {
+                        callback(true);
+                    }
                 });
 
-                clipboard.on('error', function (e) {
+                clipboardObj.on('error', function (e) {
                     shashin.showToastMessage("Could not copy " + msgType, textToCopy + " could not be copied: " + e, {
                         icon: "bi-exclamation-triangle",
                         iconColor: "#FF0000"
                     });
+                    if (callback !== undefined) {
+                        callback(false);
+                    }
                 });
-            });
-            tempEl.trigger("click");
+            }
 
-            tempEl.remove();
-            clipboard.destroy();
+            if (inputFieldId === null) {
+                const InputEl = $('#' + inputId);
+                InputEl.on("click", function () {
+                    clipboardListeners(clipboard, callback);
+                });
+                InputEl.trigger("click");
+                InputEl.remove();
+                clipboard.destroy();
+            } else {
+                clipboardListeners(clipboard, callback);
+            }
         }
     }
 
@@ -1314,27 +1340,20 @@ class Util {
         if (metadata.id != null) {
             $(".metadataIdLabel").show();
             $(".metadataIdDetails").html(metadata.id + "&nbsp;<a href='#' class='copyLink bi-clipboard-plus sharecopy' data-clipboard-text='" + metadata.id + "' title='Copy metadata ID' style='font-size: 1rem;' id='copyMetadataId'></a>");
-            const metadataClipboard = new ClipboardJS("#copyMetadataId",{container: document.getElementById(containerModalId)});
-            $("#copyMetadataId").on("click", function () {
-                metadataClipboard.on('success', function (e) {
-                    $("#copyMetadataId").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
-                    $('#copyMetadataId').fadeOut(5000, function () {
-                        $(this).removeClass("bi-clipboard-check").removeClass("bi-clipboard-x").addClass("bi-clipboard-plus");
-                    }).fadeIn(400)
-                    shashin.showToastMessage("Link copied", "Metadata ID copied to clipboard!", {
-                        icon: "bi-info-circle",
-                        iconColor: "#777777",
-                        target: shashin.toast.target.one
-                    });
-                });
 
-                metadataClipboard.on('error', function (e) {
-                    $("#copyMetadataId").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
-                    shashin.showToastMessage("Could not copy metadata ID", "Could not copy metadata ID. " + e, {
-                        icon: "bi-exclamation-triangle",
-                        iconColor: "#FF0000",
-                        target: shashin.toast.target.one
-                    });
+            $("#copyMetadataId").on("click", function () {
+                Util.processCopyText(metadata.id, "metadata ID", {
+                    containerId: containerModalId,
+                    inputFieldId: "copyMetadataId"
+                }, function (successfullyCopied) {
+                    if (successfullyCopied) {
+                        $("#copyMetadataId").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
+                        $('#copyMetadataId').fadeOut(5000, function () {
+                            $(this).removeClass("bi-clipboard-check").removeClass("bi-clipboard-x").addClass("bi-clipboard-plus");
+                        }).fadeIn(400)
+                    } else {
+                        $("#copyMetadataId").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
+                    }
                 });
             });
         }
