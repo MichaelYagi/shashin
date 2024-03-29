@@ -26,7 +26,8 @@ class Util {
         return false;
     };
 
-    static processCopyText(textToCopy, msgType, options, callback) {
+    // Copies text to keyboard. If inputFieldId not specified in options, a hidden input field will be created with the value
+    static copyToClipboard(textToCopy, msgType, options, callback) {
         let inputId = "tempClipboardId";
         let inputFieldId = null;
         let containerId = null;
@@ -1342,7 +1343,7 @@ class Util {
             $(".metadataIdDetails").html(metadata.id + "&nbsp;<a href='#' class='copyLink bi-clipboard-plus sharecopy' data-clipboard-text='" + metadata.id + "' title='Copy metadata ID' style='font-size: 1rem;' id='copyMetadataId'></a>");
 
             $("#copyMetadataId").on("click", function () {
-                Util.processCopyText(metadata.id, "metadata ID", {
+                Util.copyToClipboard(metadata.id, "metadata ID", {
                     containerId: containerModalId,
                     inputFieldId: "copyMetadataId"
                 }, function (successfullyCopied) {

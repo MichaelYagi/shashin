@@ -709,7 +709,7 @@ async function showMap(mapdata) {
     const copyPlacename = function (obj) {
         if (obj.hasOwnProperty("data") && obj.data !== null && obj.data !== "" && obj.data.placename !== null && obj.data.placename !== "") {
             const copyText = obj.data.placename;
-            Util.processCopyText(copyText, "location");
+            Util.copyToClipboard(copyText, "location");
         }
     }
 
@@ -717,7 +717,7 @@ async function showMap(mapdata) {
         const coordArray = ol.proj.toLonLat(obj.coordinate);
         if (coordArray.length > 1) {
             const copyText = coordArray[1]+","+coordArray[0];
-            Util.processCopyText(copyText, "coordinates");
+            Util.copyToClipboard(copyText, "coordinates");
         }
     };
 
