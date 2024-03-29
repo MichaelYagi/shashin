@@ -1772,9 +1772,15 @@
                 });
                 break;
             case "maptilerSA":
-                mapSource =  new ol.source.TileJSON({
-                    url: 'https://api.maptiler.com/tiles/satellite-v2/256/tiles.json?key=YlQvLcNKq0a4aFDX2z3O',
-                    maxZoom: 19
+                mapSource =  new ol.source.StadiaMaps({
+                    layer: 'alidade_satellite',
+                    retina: false
+                });
+                break;
+            case "stadiaSA":
+                mapSource =  new ol.source.StadiaMaps({
+                    layer: 'alidade_satellite',
+                    retina: false
                 });
                 break;
             case "mapbox":
