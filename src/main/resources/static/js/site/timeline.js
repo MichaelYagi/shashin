@@ -221,7 +221,7 @@
                 if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
                     timelineSettings.isScrolling = true;
                 }
-                scrollByN(1);
+                //scrollByN(1);
             }
 
             const firstDate = $("#offcanvasTocBody div a").first().attr("id").split("offcanvas_")[1];
