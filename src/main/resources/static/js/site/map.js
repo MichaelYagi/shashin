@@ -706,37 +706,10 @@ async function showMap(mapdata) {
 
     map.addControl(attributions);
 
-    const processCopyText = function(obj, copyText, msgType) {
-        const tempText = document.createElement("input");
-        tempText.value = copyText;
-        tempText.type = "hidden";
-        tempText.id = "tempClipboardMapId";
-        tempText.setAttribute('data-clipboard-text', copyText);
-        document.body.appendChild(tempText);
-        tempText.select();
-
-        const clipboard = new ClipboardJS('#tempClipboardMapId');
-
-        $("#tempClipboardMapId").on( "click", function () {
-
-            clipboard.on('success', function(e) {
-                shashin.showToastMessage(msgType + "copied to clipboard", e.text + " copied to clipboard", {icon:"bi-info-circle", iconColor:"#777777"});
-            });
-
-            clipboard.on('error', function(e) {
-                shashin.showToastMessage("Could not copy " + msgType, copyText + " could not be copied: " + e, {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
-            });
-        });
-        $("#tempClipboardMapId").trigger( "click" );
-
-        $("#tempClipboardMapId").remove();
-        clipboard.destroy();
-    }
-
     const copyPlacename = function (obj) {
         if (obj.hasOwnProperty("data") && obj.data !== null && obj.data !== "" && obj.data.placename !== null && obj.data.placename !== "") {
             const copyText = obj.data.placename;
-            processCopyText(obj, copyText, "location");
+            Util.processCopyText(obj, copyText, "location");
         }
     }
 
@@ -744,7 +717,7 @@ async function showMap(mapdata) {
         const coordArray = ol.proj.toLonLat(obj.coordinate);
         if (coordArray.length > 1) {
             const copyText = coordArray[1]+","+coordArray[0];
-            processCopyText(obj, copyText, "coordinates");
+            Util.processCopyText(obj, copyText, "coordinates");
         }
     };
 
