@@ -1197,14 +1197,16 @@
         const msg = await timelineSettings.updateTimeline(anchor, mediaTypeFilter, "new", null);
         if (msg === timelineSettings.success && $("#" + anchor).length === 1) {
             await timelineSettings.attachAssociatedMetadata(anchor, mediaTypeFilter);
-            const saveState = timelineSettings.isScrolling;
             timelineSettings.isScrolling = true;
-            const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
-            await timelineSettings.renderThumbnails(elementsInViewport, mediaTypeFilter, timelineDates, true);
-            timelineSettings.isScrolling = saveState;
+
+            // const saveState = timelineSettings.isScrolling;
+            // timelineSettings.isScrolling = true;
+            // const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
+            // await timelineSettings.renderThumbnails(elementsInViewport, mediaTypeFilter, timelineDates, true);
+            // timelineSettings.isScrolling = saveState;
         }
 
-        /*let depth = 6;
+        let depth = 6;
         let currAnchor = anchor;
         for (const [index, timelineDate] of timelineDates.entries()) {
             let currTimelineDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
@@ -1245,7 +1247,7 @@
                 }
                 break;
             }
-        }*/
+        }
 
         // Jump to anchor after rendering
         location.href = "#" + anchor;
