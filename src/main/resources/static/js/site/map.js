@@ -291,13 +291,17 @@ async function showMap(mapdata) {
         }
     }
 
-    function setLayer(startDate, endDate, videoOnly, metadataList, resetMap, mapSourceChanged) {
+    function setLayer(startDate, endDate, videoOnly, metadataList, resetMap, mapSourceChanged, inputsChanged) {
         version = Util.getMetadataLocalStorage();
         map.removeLayer(vectorLayer);
         const iconFeatures = [];
 
         if (resetMap === undefined) {
             resetMap = false;
+        }
+
+        if (inputsChanged === undefined) {
+            inputsChanged = false;
         }
 
         if (mapSourceChanged === undefined) {
@@ -447,8 +451,8 @@ async function showMap(mapdata) {
             shashin.printMessageToConsole("minLng for map filtering: "+minLng)
             shashin.printMessageToConsole("maxLat for map filtering: "+maxLat)
             shashin.printMessageToConsole("maxLng for map filtering: "+maxLng)
-
-            if (mapSourceChanged === false && resetMap === false && minLat !== null && minLng !== null && maxLat !== null && maxLng !== null) {
+            
+            if (inputsChanged === true && resetMap === false && minLat !== null && minLng !== null && maxLat !== null && maxLng !== null) {
                 const mapSize = map.getSize();
                 const mapSizeAdjust = 200;
                 let sizeX = mapSize[0]-mapSizeAdjust;
@@ -840,95 +844,27 @@ async function showMap(mapdata) {
     });
 
     checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))
-    setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],true);
+    setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],true, false, false);
 
     $("#filterMap").on("click", function(e) {
         e.preventDefault();
 
         let mapSourceChanged = false;
-        if (($("#mapSources").val() !== prevMapTile) || $("#bingMapsImagerySet").val() !== prevBingImagery || $("#maptilerImagerySet").val() !== prevMaptilerImagery) {
+        if ($("#mapSources").val() !== prevMapTile) {
             mapSourceChanged = true;
-
-            if ($("#mapSources").val() !== prevMapTile) {
-                prevMapTile = $("#mapSources").val();
-                switch (prevMapTile) {
-                    case "osm":
-                        layerTile.setSource(osmMapTile);
-                        break;
-                    case "arcGisWSM":
-                        layerTile.setSource(arcGisWsm);
-                        break;
-                    case "arcGisWI":
-                        layerTile.setSource(arcGisWi);
-                        break;
-                    case "bingmaps":
-                        layerTile.setSource(bingMapsTile);
-                        break;
-                    case "maptiler":
-                        layerTile.setSource(mapTilerTile);
-                        break;
-                    case "mapbox":
-                        layerTile.setSource(mapBoxTile);
-                        break;
-                    case "maptilerHY":
-                        layerTile.setSource(mapTilerTileHy);
-                        break;
-                    case "stadiaSA":
-                        layerTile.setSource(stadiaSa);
-                        break;
-                    default:
-                        layerTile.setSource(osmMapTile);
-                }
-            }
-            if ($("#bingMapsImagerySet").val() !== prevBingImagery) {
-                prevBingImagery = $("#bingMapsImagerySet").val();
-
-                if ($("#mapSources").val() === "bingmaps") {
-                    switch (prevBingImagery) {
-                        case "AerialWithLabels":
-                            layerTile.setSource(bingMapsTile);
-                            break;
-                        case "RoadOnDemand":
-                            layerTile.setSource(bingMapsTileRod);
-                            break;
-                        // case "BirdseyeV2WithLabels":
-                        //     layerTile.setSource(bingMapsTileBe);
-                        //     break;
-                        case "CanvasDark":
-                            layerTile.setSource(bingMapsTileCd);
-                            break;
-                        // case "Streetside":
-                        //     layerTile.setSource(bingMapsTileSs);
-                        //     break;
-                        default:
-                            layerTile.setSource(bingMapsTile);
-                    }
-                }
-            }
-            if ($("#maptilerImagerySet").val() !== prevMaptilerImagery) {
-                prevMaptilerImagery = $("#maptilerImagerySet").val();
-
-                if ($("#mapSources").val() === "maptiler") {
-                    switch (prevMaptilerImagery) {
-                        case "maptiler":
-                            layerTile.setSource(mapTilerTile);
-                            break;
-                        case "maptilerHY":
-                            layerTile.setSource(mapTilerTileHy);
-                            break;
-                        case "stadiaSA":
-                            layerTile.setSource(stadiaSa);
-                            break;
-                        case "maptilerBA":
-                            layerTile.setSource(mapTilerTileBa);
-                            break;
-                        case "maptilerSA":
-                            layerTile.setSource(mapTilerTileSa);
-                            break;
-                        default:
-                            layerTile.setSource(mapTilerTile);
-                    }
-                }
+            prevMapTile = $("#mapSources").val();
+            switch (prevMapTile) {
+                case "osm":
+                    layerTile.setSource(osmMapTile);
+                    break;
+                case "maptiler":
+                    layerTile.setSource(mapTilerTile);
+                    break;
+                case "stadiaSA":
+                    layerTile.setSource(stadiaSa);
+                    break;
+                default:
+                    layerTile.setSource(osmMapTile);
             }
         }
 
@@ -1000,7 +936,16 @@ async function showMap(mapdata) {
 
         // Validate fields
         if (true === dateInputsValid) {
-            if (mapSourceChanged === true) {
+            let inputsChanged = false;
+            if (originalFromInput !== $("#startDateInput").val() ||
+                originalToInput !== $("#endDateInput").val() ||
+                originalAlbumFilter !== $("#albumSelect").val() ||
+                originalVideoOnly !== $('#videoOnlyInput').is(":checked") ||
+                originalMapMarkers !== $('#showMarkersInput').is(":checked")) {
+                inputsChanged = true;
+            }
+
+            if (inputsChanged === false && mapSourceChanged === true) {
                 initialZoom = map.getView().getZoom();
             } else {
                 initialZoom = 2;
@@ -1008,7 +953,7 @@ async function showMap(mapdata) {
 
             if (false === renderAlbumSelected()) {
                 // Filter results
-                setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],false,mapSourceChanged);
+                setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],false, mapSourceChanged, inputsChanged);
             }
         }
 
@@ -1016,14 +961,14 @@ async function showMap(mapdata) {
     }
 
     function renderAlbumSelected() {
-        if (albumSelect.length > 0 && albumSelect.val() !== "0") {
+        if (albumSelect.length > 0 && albumSelect.val() !== "0" && originalAlbumFilter !== albumSelect.val()) {
             const albumId = albumSelect.val();
             // Query metadata in album with lat/lng
             const http = new Http("get album map data");
 
             http.ajax("get", "/album/mapdata/" + albumId).then(function (data) {
                 if (data.hasOwnProperty("albummapdata")) {
-                    setLayer(startDateField.val(), endDateField.val(), videoOnlyCheckbox.prop("checked"), data["albummapdata"]);
+                    setLayer(startDateField.val(), endDateField.val(), videoOnlyCheckbox.prop("checked"), data["albummapdata"], false, false, true);
                 }
             });
 
@@ -1124,7 +1069,7 @@ async function showMap(mapdata) {
             albumSelect.val("0");
         }
 
-        setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],true);
+        setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],true, false, false);
         shashin.showToastMessage("Map reset", "Map reset", {icon:"bi-info-circle", iconColor:"#777777", delay: 3000});
 
         $("#propMapFilter").modal('hide');
