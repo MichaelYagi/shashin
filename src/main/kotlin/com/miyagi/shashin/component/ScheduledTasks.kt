@@ -111,7 +111,7 @@ class ScheduledTasks {
     @Value("\${app.role.super}")
     private var superRole: String? = null
 
-    // Every 2 days at midnight
+    // Check Compreface connection every 2 days at midnight
     @Scheduled(cron = "0 0 12 */2 * *", zone="GMT")
     fun scanUpdateNotificationsForFaceRecogAvailability() {
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
@@ -139,6 +139,7 @@ class ScheduledTasks {
         }
     }
 
+    // Configured hour to scan faces
     @Scheduled(cron = "#{cronProperties.expression()}", zone="GMT")
     fun scanSubjectsAndObjectsJob() {
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
