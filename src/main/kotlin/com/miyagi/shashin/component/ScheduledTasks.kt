@@ -113,7 +113,7 @@ class ScheduledTasks {
 
     // Check Compreface connection every 2 days at midnight
     @Scheduled(cron = "0 0 12 */2 * *", zone="GMT")
-    fun scanUpdateNotificationsForFaceRecogAvailability() {
+    fun updateNotificationsForFaceRecogAvailability() {
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
         val superAdmins = userRepository?.findAllByAuthorityEquals(superRole!!)
 
