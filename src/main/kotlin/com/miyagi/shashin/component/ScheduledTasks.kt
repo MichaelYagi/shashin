@@ -111,6 +111,34 @@ class ScheduledTasks {
     @Value("\${app.role.super}")
     private var superRole: String? = null
 
+    // Every 2 days at midnight
+    @Scheduled(cron = "0 0 12 */2 * *", zone="GMT")
+    fun scanUpdateNotificationsForFaceRecogAvailability() {
+        val settings = settingsRepository?.findFirstByOrderByIdAsc()
+        val superAdmins = userRepository?.findAllByAuthorityEquals(superRole!!)
+
+        if (settings != null && superAdmins != null && !settings.getCompreFaceServer().isNullOrBlank() && !settings.getCompreFaceKey().isNullOrBlank()) {
+            val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())
+            if (!faceRecogServicesAvailable) {
+                val notificationObjList = mutableListOf<Notification>()
+                val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                for (admin in superAdmins) {
+                    val notificationObj = Notification()
+                    notificationObj.setUserId(admin.getId())
+                    notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
+                    notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                    notificationObj.setRead(false)
+                    notificationObj.setMessage("Not connected to Compreface server. Check <a href='/settings' target='_blank'>configuration</a>.")
+                    notificationObjList.add(notificationObj)
+                }
+                if (notificationObjList.isNotEmpty()) {
+                    notificationRepository?.saveAll(notificationObjList)
+                }
+            }
+        }
+    }
+
     @Scheduled(cron = "#{cronProperties.expression()}", zone="GMT")
     fun scanSubjectsAndObjectsJob() {
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
@@ -137,13 +165,13 @@ class ScheduledTasks {
                         "Scheduled scanning for facial recognition started at " + TextUtils.getCurrentTimestamp()
                     )
                     val recognitionCount = subjectRecognizer(metadataRepository, recognitionLabelRepository, recognitionLabelPhotoRepository, settings, null, null)
-                    val admins = userRepository?.findAllByAuthorityEquals(superRole!!)
+                    val superAdmins = userRepository?.findAllByAuthorityEquals(superRole!!)
 
-                    if (admins != null) {
+                    if (superAdmins != null) {
                         val notificationObjList = mutableListOf<Notification>()
                         val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                         sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
-                        for (admin in admins) {
+                        for (admin in superAdmins) {
                             val notificationObj = Notification()
                             notificationObj.setUserId(admin.getId())
                             notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
