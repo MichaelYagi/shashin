@@ -1771,12 +1771,6 @@
                     maxZoom: 19
                 });
                 break;
-            case "maptilerSA":
-                mapSource =  new ol.source.StadiaMaps({
-                    layer: 'alidade_satellite',
-                    retina: false
-                });
-                break;
             case "stadiaSA":
                 mapSource =  new ol.source.StadiaMaps({
                     layer: 'alidade_satellite',
