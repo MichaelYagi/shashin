@@ -1214,12 +1214,10 @@
         const msg = await timelineSettings.updateTimeline(anchor, mediaTypeFilter, "new", null);
         if (msg === timelineSettings.success && $("#" + anchor).length === 1) {
             await timelineSettings.attachAssociatedMetadata(anchor, mediaTypeFilter);
-
-            const saveState = timelineSettings.isScrolling;
             timelineSettings.isScrolling = true;
+
             const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
             await timelineSettings.renderThumbnails(elementsInViewport, mediaTypeFilter, timelineDates, true);
-            timelineSettings.isScrolling = saveState;
         }
 
         // let depth = 7;
