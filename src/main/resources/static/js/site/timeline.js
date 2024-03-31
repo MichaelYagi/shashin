@@ -971,11 +971,13 @@
                     }
                 }
             }
+        }
 
-            if (initiatedFromToc === true &&
-                timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down &&
-                (Util.isInViewport($("footer")) === true || Util.isInViewport($("#spinner_bottom")) === true)
-            ) {
+        if (Util.isInViewport($("footer")) === true || Util.isInViewport($("#spinner_bottom")) === true) {
+            const elementsInViewport = Util.elementsInViewport($("section"));
+            if (elementsInViewport.length > 0) {
+                const currentDateObj = elementsInViewport[elementsInViewport.length - 1];
+                const currentDate = currentDateObj.id;
                 const currentIndex = timelineSettings.timelineDatesHash[currentDate];
                 const renderDateObj = timelineDates[currentIndex + 1];
 
