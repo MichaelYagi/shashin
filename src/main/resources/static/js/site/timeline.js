@@ -974,7 +974,7 @@
 
             if (initiatedFromToc === true &&
                 timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down &&
-                (Util.isInViewport($("footer"))  === true || Util.isInViewport($("#spinner_bottom"))  === true)
+                (Util.isInViewport($("footer")) === true || Util.isInViewport($("#spinner_bottom")) === true)
             ) {
                 const currentIndex = timelineSettings.timelineDatesHash[currentDate];
                 const renderDateObj = timelineDates[currentIndex + 1];
