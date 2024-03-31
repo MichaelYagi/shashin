@@ -1206,7 +1206,7 @@
             // timelineSettings.isScrolling = saveState;
         }
 
-        let depth = 6;
+        let depth = 7;
         let currAnchor = anchor;
         for (const [index, timelineDate] of timelineDates.entries()) {
             let currTimelineDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
