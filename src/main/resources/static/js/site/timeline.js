@@ -1273,9 +1273,9 @@
             history.pushState("", document.title, window.location.pathname + window.location.search);
         }
 
-        timelineSettings.enableScrollSpy = true;
         timelineSettings.setScrollSpyActive(anchor);
         timelineSettings.scrollToTimelineToc(Util.elementsInViewport($(".scrollspy")));
+        timelineSettings.enableScrollSpy = true;
     }
 
     timelineSettings.observeAnchorChange = function(id, functionCall) {
