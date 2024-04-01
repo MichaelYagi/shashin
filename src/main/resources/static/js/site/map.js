@@ -91,7 +91,7 @@ async function showMap(mapdata) {
     }
     startDateField.val(initialStartDate);
 
-    let initialCoord = [-73.1234, 45.678];
+    let initialCoord = [-123.14659455430593, 49.16889576756705];
     let initialZoom = 2;
 
     // Query params for albumId
