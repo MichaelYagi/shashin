@@ -78,8 +78,7 @@
                             let currentDynamicEl = this.settings.dynamicEl[index] && this.settings.dynamicEl[index].hasOwnProperty("args") ?
                                 this.settings.dynamicEl : this.core.galleryItems;
 
-                            // getMediaMetadata(currentDynamicEl, index);
-
+                            // Play slide show too if casting and playing
                             this.core.LGel.on('lgBeforeSlide', (e) => {
                                 getMediaMetadata(currentDynamicEl, e.detail.index);
                             });
