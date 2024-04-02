@@ -77,7 +77,7 @@
 
                             let currentDynamicEl = this.settings.dynamicEl[index] && this.settings.dynamicEl[index].hasOwnProperty("args") ?
                                 this.settings.dynamicEl : this.core.galleryItems;
-                            
+
                             const activePage = $("#activePage").val();
                             getMediaMetadata(currentDynamicEl, index);
 
@@ -151,6 +151,10 @@
                             }
 
                             cjs.on('disconnect', () => {
+                                const activePage = $("#activePage").val();
+                                if (activePage === "slideshow") {
+                                    this.core.closeGallery();
+                                }
                                 $("#chromecasting").addClass('bi-cast').removeClass('bi-stop-circle');
                             });
                         }
