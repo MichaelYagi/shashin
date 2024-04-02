@@ -39,7 +39,9 @@
                                     <span class="mediaLink" th:id="'mediaLink'+${metadata.id}"
                                           th:data-download-url="${metadata.thumbnailUrlOriginal + '/download'}"
                                           th:data-sub-html="${metadata.freeFormString}"
-                                          th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}">
+                                          th:data-src="${metadata.thumbnailUrlOriginal}"
+                                          th:data-metadata-id="${metadata.id}"
+                                          th:href="${metadata.thumbnailUrlOriginal}">
                                     </span>
                                 </th:block>
 
@@ -106,11 +108,12 @@
         });
 
         lg = lightGallery($infiniteScrollGallery, {
-            plugins: [lgRelativeCaption, lgFullscreen, lgAutoplay],
+            plugins: [lgRelativeCaption, lgFullscreen, lgAutoplay, lgCastMedia],
             preload: 2,
             autoplay: true,
             slideShowAutoplay: true,
             progressBar: false,
+            castMedia: false,
             counter: false,
             controls: false,
             allowMediaOverlap: true,
