@@ -47,3 +47,4 @@ build/
 /node_modules/
 /jdk-11.0.12/
 .nyc_output
+/src/main/resources/lib/

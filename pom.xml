@@ -297,6 +297,42 @@
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
         <testSourceDirectory>${project.basedir}/src/test</testSourceDirectory>
         <plugins>
+            <plugin>
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <version>1.8.1</version>
+                <executions>
+                    <execution>
+                        <id>vgg</id>
+                        <!-- the wget goal actually binds itself to this phase by default -->
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+<!--                            <url>https://github.com/timesler/facenet-pytorch/releases/download/v2.2.9/20180402-114759-vggface2.pt</url>-->
+                            <url>https://github.com/jmformenti/face-recognition-java/raw/master/core/src/main/resources/models/pytorch/vggface2/vggface2.pt</url>
+                            <outputFileName>vggface2.pt</outputFileName>
+                            <!-- default target location -->
+                            <outputDirectory>${project.basedir}/src/main/resources/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>retina</id>
+                        <!-- the wget goal actually binds itself to this phase by default -->
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://resources.djl.ai/test-models/pytorch/retinaface.zip</url>
+                            <outputFileName>retinaface.zip</outputFileName>
+                            <!-- default target location, just to demonstrate the parameter -->
+                            <outputDirectory>${project.basedir}/src/main/resources/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- javadoc support for springdoc-openapi -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
