@@ -1,9 +1,14 @@
 package com.miyagi.shashin.controller
 
+import ai.djl.modality.cv.Image
+import ai.djl.repository.zoo.Criteria
+import com.miyagi.shashin.ShashinApplication
+import com.miyagi.shashin.component.DjlFaceRecognizer
 import com.miyagi.shashin.model.MetadataFocused
-import com.miyagi.shashin.repository.MetadataRepository
-import com.miyagi.shashin.repository.PersistentLoginsRepository
+import com.miyagi.shashin.model.Settings
+import com.miyagi.shashin.repository.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.access.annotation.Secured
@@ -15,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.ResponseBody
 import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.persistence.EntityManager
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -30,12 +36,72 @@ class TestController {
     private lateinit var metadataRepository: MetadataRepository
 
     @Autowired
+    private lateinit var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository
+
+    @Autowired
+    private lateinit var recognitionLabelRepository: RecognitionLabelRepository
+
+    @Autowired
+    private lateinit var notificationRepository: NotificationRepository
+
+    @Autowired
+    private lateinit var userRepository: UserRepository
+
+    @Autowired
     private val jdbcTemplate: JdbcTemplate? = null
+
+    @Value("\${app.role.super}")
+    private var superRole: String? = null
+
+    @Value("\${app.role.admin}")
+    private var adminRole: String? = null
+
+    private var shouldStop = AtomicBoolean(false)
+
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @GetMapping("/test")
     fun test(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
         model["somevalue"] = "This is a test"
+
+        val settings = model.getAttribute("settings") as Settings
+
+
+        val testImages = metadataRepository.findNonMatched(settings.getMatchScanLimit()!!)
+        val trainingData = metadataRepository.findTrainingData(settings.getRecognitionConfidenceThreshold()!!, settings.getTrainingDataLimit()!!)
+        val distinctLabelRecords = recognitionLabelPhotoRepository.findGroupByRecognitionLabelId()
+
+        if (distinctLabelRecords.count() > 0) {
+            println("running recognizer")
+            val faceRecognizer = DjlFaceRecognizer(testImages, trainingData, recognitionLabelPhotoRepository, settings, model)
+//            faceRecognizer.startPredict()
+        } else {
+            println("no labels found. start tagging people")
+        }
+
+
+
+
+//
+//        // Start matching in a separate thread
+//        if (distinctLabelRecords.count() > 0) {
+//            val faceRecognizer = FaceRecognizer(
+//                testImages,
+//                trainingData,
+//                recognitionLabelPhotoRepository
+//                //,
+////                recognitionLabelRepository,
+////                notificationRepository,
+////                userRepository,
+////                adminRole,
+////                settings.getRecognitionConfidenceThreshold()!!.toDouble()
+//            )
+//            faceRecognizer.runRecognizer()
+//            shouldStop.set(false)
+//        }
+
+
+
 
 //        val metricsUtil = MetricsUtil()
 //        metricsUtil.start("query test 1")
@@ -60,14 +126,14 @@ class TestController {
 
 
 //        try {
-        val metadataList =
-            metadataRepository.findTimelineDateFocused(
-                2018, 12, 26
-            )
-
-        for (metadata in metadataList) {
-            println(metadata.getThumbnailUrlExtraSmall())
-        }
+//        val metadataList =
+//            metadataRepository.findTimelineDateFocused(
+//                2018, 12, 26
+//            )
+//
+//        for (metadata in metadataList) {
+//            println(metadata.getThumbnailUrlExtraSmall())
+//        }
 
 //        } catch(e: Exception) {
 //            println("Error")
