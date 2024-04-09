@@ -307,7 +307,7 @@ class DjlFaceRecognizer {
 //                .optModelName("face_feature") // specify model file prefix
                 .optModelUrls(
                     classLoader.getResource("lib/vggface2.pt")!!.path
-//                    "https://github.com/timesler/facenet-pytorch/releases/download/v2.2.9/20180402-114759-vggface2.pt"
+//                    "https://github.com/jmformenti/face-recognition-java/raw/master/core/src/main/resources/models/pytorch/vggface2/vggface2.pt"
                 )
                 .optModelName("vggface2") // specify model file prefix
                 .optEngine("PyTorch") // Use PyTorch engine
