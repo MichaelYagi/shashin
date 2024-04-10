@@ -464,7 +464,10 @@ class UserController {
     fun getLoginUser(model: Model, @RequestParam(name="error",required=false) error: String?, @RequestParam(name="msg",required=false) message: String?): String {
         val module = "login"
 
-        if ((model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) && model.getAttribute("agentName") != "safari") {
+        val userCount = userRepository?.count()
+        if ((userCount != null) && (userCount.toInt() == 0)) {
+            return "redirect:/users/register"
+        } else if ((model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) && model.getAttribute("agentName") != "safari") {
             return "redirect:/timeline"
         } else if ((model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) && model.getAttribute("agentName") == "safari") {
             return "redirect:/recent"

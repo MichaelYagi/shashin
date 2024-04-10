@@ -279,18 +279,19 @@ class SettingsController {
         model["faceRecogAvailableStatusIcon"] = "bi-x-circle"
         model["faceRecogAvailableStatusColor"] = "red"
         model["faceRecogAvailableStatusText"] = "Could not connect to CompreFace server"
-        if (settings.getCompreFaceKey() == "" && settings.getCompreFaceServer() != "") {
-            model["faceRecogAvailableStatusIcon"] = "bi-exclamation-triangle"
-            model["faceRecogAvailableStatusColor"] = "orange"
-            model["faceRecogAvailableStatusText"] = "Enter a valid CompreFace key"
-        } else if (settings.getCompreFaceKey() != "" && settings.getCompreFaceServer() == "") {
-            model["faceRecogAvailableStatusIcon"] = "bi-exclamation-triangle"
-            model["faceRecogAvailableStatusColor"] = "orange"
-            model["faceRecogAvailableStatusText"] = "Enter a valid CompreFace server endpoint"
-        } else if (settings.getCompreFaceKey() == "" && settings.getCompreFaceServer() == "") {
+
+        if ((settings.getCompreFaceKey() == "" || settings.getCompreFaceKey() == null) && (settings.getCompreFaceServer() == "" || settings.getCompreFaceServer() == null)) {
             model["faceRecogAvailableStatusIcon"] = "bi-info-circle"
             model["faceRecogAvailableStatusColor"] = "gray"
             model["faceRecogAvailableStatusText"] = "CompreFace not setup"
+        } else if ((settings.getCompreFaceKey() == "" || settings.getCompreFaceKey() == null) && settings.getCompreFaceServer() != "") {
+            model["faceRecogAvailableStatusIcon"] = "bi-exclamation-triangle"
+            model["faceRecogAvailableStatusColor"] = "orange"
+            model["faceRecogAvailableStatusText"] = "Enter a valid CompreFace key"
+        } else if (settings.getCompreFaceKey() != "" && (settings.getCompreFaceServer() == "" || settings.getCompreFaceServer() == null)) {
+            model["faceRecogAvailableStatusIcon"] = "bi-exclamation-triangle"
+            model["faceRecogAvailableStatusColor"] = "orange"
+            model["faceRecogAvailableStatusText"] = "Enter a valid CompreFace server endpoint"
         } else if (faceRecogServicesAvailable) {
             model["faceRecogAvailableStatusIcon"] = "bi-check-circle"
             model["faceRecogAvailableStatusColor"] = "green"
@@ -486,18 +487,19 @@ class SettingsController {
             model["faceRecogAvailableStatusIcon"] = "bi-x-circle"
             model["faceRecogAvailableStatusColor"] = "red"
             model["faceRecogAvailableStatusText"] = "Could not connect to CompreFace server"
-            if (settings.getCompreFaceKey() == "" && settings.getCompreFaceServer() != "") {
-                model["faceRecogAvailableStatusIcon"] = "bi-exclamation-triangle"
-                model["faceRecogAvailableStatusColor"] = "orange"
-                model["faceRecogAvailableStatusText"] = "Enter a valid CompreFace key"
-            } else if (settings.getCompreFaceKey() != "" && settings.getCompreFaceServer() == "") {
-                model["faceRecogAvailableStatusIcon"] = "bi-exclamation-triangle"
-                model["faceRecogAvailableStatusColor"] = "orange"
-                model["faceRecogAvailableStatusText"] = "Enter a valid CompreFace server endpoint"
-            } else if (settings.getCompreFaceKey() == "" && settings.getCompreFaceServer() == "") {
+
+            if ((settings.getCompreFaceKey() == "" || settings.getCompreFaceKey() == null) && (settings.getCompreFaceServer() == "" || settings.getCompreFaceServer() == null)) {
                 model["faceRecogAvailableStatusIcon"] = "bi-info-circle"
                 model["faceRecogAvailableStatusColor"] = "gray"
                 model["faceRecogAvailableStatusText"] = "CompreFace not setup"
+            } else if ((settings.getCompreFaceKey() == "" || settings.getCompreFaceKey() == null) && settings.getCompreFaceServer() != "") {
+                model["faceRecogAvailableStatusIcon"] = "bi-exclamation-triangle"
+                model["faceRecogAvailableStatusColor"] = "orange"
+                model["faceRecogAvailableStatusText"] = "Enter a valid CompreFace key"
+            } else if (settings.getCompreFaceKey() != "" && (settings.getCompreFaceServer() == "" || settings.getCompreFaceServer() == null)) {
+                model["faceRecogAvailableStatusIcon"] = "bi-exclamation-triangle"
+                model["faceRecogAvailableStatusColor"] = "orange"
+                model["faceRecogAvailableStatusText"] = "Enter a valid CompreFace server endpoint"
             } else if (faceRecogServicesAvailable) {
                 model["faceRecogAvailableStatusIcon"] = "bi-check-circle"
                 model["faceRecogAvailableStatusColor"] = "green"
