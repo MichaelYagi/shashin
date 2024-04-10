@@ -360,25 +360,25 @@ class DjlFaceRecognizer {
     fun test() {
         // Noah
 //        val imageBi1 = ImageIO.read(File("C:/Users/Michael/Documents/shashin/sidecar_dev/thumbnails/z/2024/mar/PXL_20240303_191551227.jpg_225.jpg"))
-        val imageBi1 = ImageIO.read(File("Z:/2024/mar/PXL_20240303_191551227.jpg"))
-        val image1 = Thumbnails.of(imageBi1)
-            .outputQuality(0.5)
-            .imageType(BufferedImage.TYPE_BYTE_GRAY)
-            .height(1000)
-            .asBufferedImage()
+//        val imageBi1 = ImageIO.read(File("Z:/2024/mar/PXL_20240303_191551227.jpg"))
+//        val image1 = Thumbnails.of(imageBi1)
+//            .outputQuality(0.5)
+//            .imageType(BufferedImage.TYPE_BYTE_GRAY)
+//            .height(1000)
+//            .asBufferedImage()
 
-        val img1 = ImageFactory.getInstance().fromImage(image1)
+//        val img1 = ImageFactory.getInstance().fromImage(image1)
 //        val img1 = ImageFactory.getInstance().fromFile(imageFile1)
 
         // Noah
 //        val imageBi2 = ImageIO.read(File("C:/Users/Michael/Documents/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/testpics/PXL_20230519_205237907.jpg_225.jpg"))
-        val imageBi2 = ImageIO.read(File("C:/users/michael/downloads/testpics/PXL_20230519_205237907.jpg"))
-        val image2 = Thumbnails.of(imageBi2)
-            .outputQuality(0.5)
-            .imageType(BufferedImage.TYPE_BYTE_GRAY)
-            .height(1000)
-            .asBufferedImage()
-        val img2 = ImageFactory.getInstance().fromImage(image2)
+//        val imageBi2 = ImageIO.read(File("C:/users/michael/downloads/testpics/PXL_20230519_205237907.jpg"))
+//        val image2 = Thumbnails.of(imageBi2)
+//            .outputQuality(0.5)
+//            .imageType(BufferedImage.TYPE_BYTE_GRAY)
+//            .height(1000)
+//            .asBufferedImage()
+//        val img2 = ImageFactory.getInstance().fromImage(image2)
 
         // Ryuko
 //        val imageBi3 = ImageIO.read(File("C:/Users/Michael/Documents/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/testpics/japan 2018/IMG_20181220_191102.jpg_225.jpg"))
@@ -392,23 +392,23 @@ class DjlFaceRecognizer {
 
         // Mike
 //        val imageBi4 = ImageIO.read(File("C:/Users/Michael/Documents/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/testpics/PXL_20231203_001440894.MP.jpg_225.jpg"))
-        val imageBi4 = ImageIO.read(File("C:/users/michael/downloads/testpics/PXL_20231203_001440894.MP.jpg"))
-        val image4 = Thumbnails.of(imageBi4)
-            .outputQuality(0.5)
-            .imageType(BufferedImage.TYPE_BYTE_GRAY)
-            .height(1000)
-            .asBufferedImage()
-        val img4 = ImageFactory.getInstance().fromImage(image4)
+//        val imageBi4 = ImageIO.read(File("C:/users/michael/downloads/testpics/PXL_20231203_001440894.MP.jpg"))
+//        val image4 = Thumbnails.of(imageBi4)
+//            .outputQuality(0.5)
+//            .imageType(BufferedImage.TYPE_BYTE_GRAY)
+//            .height(1000)
+//            .asBufferedImage()
+//        val img4 = ImageFactory.getInstance().fromImage(image4)
 
         // Mike, Ryuko, Noah, Dai, Miki, Hitoshi
 //        val imageBi5 = ImageIO.read(File("C:/Users/Michael/Documents/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/testpics/japan 2018/IMG_20181230_113407.jpg_225.jpg"))
-        val imageBi5 = ImageIO.read(File("C:/users/michael/downloads/testpics/japan 2018/IMG_20181230_113407.jpg"))
-        val image5 = Thumbnails.of(imageBi5)
-            .outputQuality(0.5)
-            .imageType(BufferedImage.TYPE_BYTE_GRAY)
-            .height(1000)
-            .asBufferedImage()
-        val img5 = ImageFactory.getInstance().fromImage(image5)
+//        val imageBi5 = ImageIO.read(File("C:/users/michael/downloads/testpics/japan 2018/IMG_20181230_113407.jpg"))
+//        val image5 = Thumbnails.of(imageBi5)
+//            .outputQuality(0.5)
+//            .imageType(BufferedImage.TYPE_BYTE_GRAY)
+//            .height(1000)
+//            .asBufferedImage()
+//        val img5 = ImageFactory.getInstance().fromImage(image5)
 
         // Noah, Ryuko
 //        val imageBi6 = ImageIO.read(File("C:/Users/Michael/Documents/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/testpics/DSC06100.JPG_225.jpg"))
@@ -469,7 +469,7 @@ class DjlFaceRecognizer {
             // Compare with other profiles
             println("testImage predict")
             val testImage = ImageFactory.getInstance().fromImage(image6)
-            val testFeature = predict(testImage)
+            predict(testImage)
             println("tempImage6 predict")
             val tempFeature6 = predict(tempImage6)
 
