@@ -7,6 +7,7 @@ import com.miyagi.shashin.component.DjlFaceRecognizer
 import com.miyagi.shashin.model.MetadataFocused
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.util.FileUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
@@ -58,6 +59,10 @@ class TestController {
 
     private var shouldStop = AtomicBoolean(false)
 
+    private val threadExtensionName: String = "facescan_shashinscan"
+
+    @Value("\${app.sidecar.path}")
+    private val relativeSidecarDir: String? = null
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @GetMapping("/test")
@@ -66,22 +71,49 @@ class TestController {
 
         val settings = model.getAttribute("settings") as Settings
 
+        val tempDir = System.getProperty("java.io.tmpdir")
 
-        val testImages = metadataRepository.findNonMatched(settings.getMatchScanLimit()!!)
-        val trainingData = metadataRepository.findTrainingData(settings.getRecognitionConfidenceThreshold()!!, settings.getTrainingDataLimit()!!)
-        val distinctLabelRecords = recognitionLabelPhotoRepository.findGroupByRecognitionLabelId()
+        if (!FileUtils.checkThreadFileAlive(threadExtensionName)) {
+            // Clean up any existing thread files
+            FileUtils.deleteThreadFiles(threadExtensionName)
 
-        if (distinctLabelRecords.count() > 0) {
-            println("running recognizer")
-            val faceRecognizer = DjlFaceRecognizer(testImages, trainingData, recognitionLabelPhotoRepository, settings, model)
-//            faceRecognizer.startPredict()
-//            faceRecognizer.test()
-        } else {
-            println("no labels found. start tagging people")
+            Thread {
+                val threadFile = FileUtils.createFile(
+                    tempDir,
+                    tempDir + "/" + Thread.currentThread().name + "." + threadExtensionName,
+                    "Thread"
+                )
+
+                // Object and person recognition
+                if (threadFile != null) {
+
+                    val testImages = metadataRepository.findNonMatched(settings.getMatchScanLimit()!!)
+                    val trainingData = metadataRepository.findTrainingData(
+                        settings.getRecognitionConfidenceThreshold()!!,
+                        settings.getTrainingDataLimit()!!
+                    )
+                    val distinctLabelRecords = recognitionLabelPhotoRepository.findGroupByRecognitionLabelId()
+
+                    if (distinctLabelRecords.count() > 0) {
+                        println("running recognizer")
+                        val faceRecognizer = DjlFaceRecognizer(
+                            testImages,
+                            trainingData,
+                            recognitionLabelPhotoRepository,
+                            settings,
+                            relativeSidecarDir!!,
+                            threadFile
+                        )
+//                        val facesRecognized = faceRecognizer.startPredict()
+//                        println(facesRecognized)
+
+                        //            faceRecognizer.test()
+                    } else {
+                        println("no labels found. start tagging people")
+                    }
+                }
+            }.start()
         }
-
-
-
 
 //
 //        // Start matching in a separate thread

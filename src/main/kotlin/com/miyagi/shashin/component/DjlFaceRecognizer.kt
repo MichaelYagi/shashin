@@ -43,20 +43,21 @@ class DjlFaceRecognizer {
     private var trainingData: MutableIterable<TrainingData>? = null
     private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
     private lateinit var cascadeFileList: MutableList<String>
-    private val threadExtensionName: String = "facescan_shashinscan"
     private lateinit var sidecarDir: String
     private lateinit var settings: Settings
+    private lateinit var threadFile: File
 
     constructor()
 
-    constructor(testImages: MutableIterable<Metadata>, trainingData: MutableIterable<TrainingData>, recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?, settings: Settings, model: org.springframework.ui.Model) : this() {
+    constructor(testImages: MutableIterable<Metadata>, trainingData: MutableIterable<TrainingData>, recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?, settings: Settings, relativeSidecarDir: String, threadFile: File) : this() {
         this.trainingData = trainingData
         this.testImages = testImages
         this.recognitionLabelPhotoRepository = recognitionLabelPhotoRepository
         this.cascadeFileList = mutableListOf()
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
-        this.sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
+        this.sidecarDir = rootPath + relativeSidecarDir
         this.settings = settings
+        this.threadFile = threadFile
     }
 
     private fun getSubImage(image: BufferedImage, jsonNode: JsonNode, index: Int): BufferedImage {
@@ -75,207 +76,199 @@ class DjlFaceRecognizer {
         return image.getSubimage(x1.toInt(), y1.toInt(), (x2-x1).toInt(), (y2-y1).toInt())
     }
 
-    fun startPredict() {
-        if (!FileUtils.checkThreadFileAlive(threadExtensionName)) {
+    fun startPredict(): Int {
+        var recognitionCount = 0
 
-            // Clean up any existing thread files
-            FileUtils.deleteThreadFiles(threadExtensionName)
+        val metricsUtil = MetricsUtil()
+        metricsUtil.start("Face comparisons")
 
-            Thread {
-                val tempDir = System.getProperty("java.io.tmpdir")
-                val threadFile = FileUtils.createFile(tempDir, "$tempDir/${Thread.currentThread().name}.$threadExtensionName", "Thread")
+        if (this.trainingData != null && this.trainingData!!.count() > 0 && this.testImages != null && this.testImages!!.count() > 0) {
+            val mapper = ObjectMapper()
 
-                if (threadFile != null) {
-                    val metricsUtil = MetricsUtil()
-                    metricsUtil.start("Face comparisons")
+            val trainingDataCount = this.trainingData!!.count()
+            val testImagesCount = this.testImages!!.count()
 
-                    if (this.trainingData != null && this.trainingData!!.count() > 0 && this.testImages != null && this.testImages!!.count() > 0) {
-                        val mapper = ObjectMapper()
-                        //            var tempFilePath = ""
+            // Loop through training data
+            this.trainingData!!.forEachIndexed { trainingDataCurrentCount, trainingImageObj ->
+                logger.log(
+                    Level.INFO,
+                    "Processing training image ${trainingDataCurrentCount+1}/$trainingDataCount - ${trainingImageObj.getRecognitionLabelName()!!} using training image ${trainingImageObj.getPath()}"
+                )
 
-                        val trainingDataCount = this.trainingData!!.count()
-                        val testImagesCount = this.testImages!!.count()
+                var trainingImageTn = Thumbnails.of(ImageIO.read(File(trainingImageObj.getPath())))
+                if (trainingImageObj.getType()?.contains("video") == true) {
+                    trainingImageTn = if (trainingImageObj.getThumbnailUrlOriginal() !== null) {
+                        val path = this.sidecarDir + (trainingImageObj.getThumbnailUrlOriginal()!!.replace("/api/v1/",""))
+                        Thumbnails.of(ImageIO.read(File(path)))
+                    } else {
+                        Thumbnails.of(ImageIO.read(File(trainingImageObj.getThumbnailPathSmall())))
+                    }
+                }
 
-                        // Loop through training data
-                        this.trainingData!!.forEachIndexed { trainingDataCurrentCount, trainingImageObj ->
-                            logger.log(
-                                Level.INFO,
-                                "Processing training image ${trainingDataCurrentCount+1}/$trainingDataCount - ${trainingImageObj.getRecognitionLabelName()!!} using training image ${trainingImageObj.getPath()}"
-                            )
+                val scaledTrainingImage = trainingImageTn
+                    .outputQuality(0.5)
+                    .imageType(BufferedImage.TYPE_BYTE_GRAY)
+                    .height(1000)
+                    .asBufferedImage()
 
-                            var trainingImageTn = Thumbnails.of(ImageIO.read(File(trainingImageObj.getPath())))
-                            if (trainingImageObj.getType()?.contains("video") == true) {
-                                trainingImageTn = if (trainingImageObj.getThumbnailUrlOriginal() !== null) {
-                                    val path = this.sidecarDir + (trainingImageObj.getThumbnailUrlOriginal()!!.replace("/api/v1/",""))
-                                    Thumbnails.of(ImageIO.read(File(path)))
-                                } else {
-                                    Thumbnails.of(ImageIO.read(File(trainingImageObj.getThumbnailPathSmall())))
-                                }
-                            }
+                val trainingImageLabelId = trainingImageObj.getRecognitionLabelId()!!
 
-                            val scaledTrainingImage = trainingImageTn
-                                .outputQuality(0.5)
-                                .imageType(BufferedImage.TYPE_BYTE_GRAY)
-                                .height(1000)
-                                .asBufferedImage()
+                val trainingImage = ImageFactory.getInstance().fromImage(scaledTrainingImage)
+                val detectedTrainingImages = detect(trainingImage)
+                val numOfTrainingObject = detectedTrainingImages.numberOfObjects
+                val trainingImageJsonNode = mapper.readTree(detectedTrainingImages.toJson())
 
-                            val trainingImageLabelId = trainingImageObj.getRecognitionLabelId()!!
+                FileUtils.writeToThreadFileAndLogMessage("$numOfTrainingObject faces detected in ${trainingImageObj.getPath()} training image",this.threadFile)
+                logger.log(
+                    Level.INFO,
+                    "$numOfTrainingObject faces detected in ${trainingImageObj.getPath()} training image"
+                )
 
-                            val trainingImage = ImageFactory.getInstance().fromImage(scaledTrainingImage)
-                            val detectedTrainingImages = detect(trainingImage)
-                            val numOfTrainingObject = detectedTrainingImages.numberOfObjects
-                            val trainingImageJsonNode = mapper.readTree(detectedTrainingImages.toJson())
+                // Loop through test images
+                this.testImages!!.forEachIndexed { testImagesCurrentCount, testImageObj ->
+                    logger.log(
+                        Level.INFO,
+                        "Processing test image ${testImagesCurrentCount+1}/$testImagesCount - ${testImageObj.getPath()}"
+                    )
 
-                            FileUtils.writeToThreadFileAndLogMessage("$numOfTrainingObject faces detected in ${trainingImageObj.getPath()} training image",threadFile)
-                            logger.log(
-                                Level.INFO,
-                                "$numOfTrainingObject faces detected in ${trainingImageObj.getPath()} training image"
-                            )
-
-                            // Loop through test images
-                            this.testImages!!.forEachIndexed { testImagesCurrentCount, testImageObj ->
-                                logger.log(
-                                    Level.INFO,
-                                    "Processing test image ${testImagesCurrentCount+1}/$testImagesCount - ${testImageObj.getPath()}"
-                                )
-
-                                var scaledTestImageTn = Thumbnails.of(ImageIO.read(File(testImageObj.getPath())))
-                                if (testImageObj.getType()?.contains("video") == true) {
-                                    if (testImageObj.getThumbnailUrlOriginal() !== null) {
-                                        val path = this.sidecarDir + (testImageObj.getThumbnailUrlOriginal()!!.replace("/api/v1/",""))
-                                        scaledTestImageTn = Thumbnails.of(ImageIO.read(File(path)))
-                                    } else {
-                                        scaledTestImageTn =
-                                            Thumbnails.of(ImageIO.read(File(testImageObj.getThumbnailPathSmall())))
-                                    }
-                                }
-
-                                val scaledTestImage = scaledTestImageTn
-                                    .outputQuality(0.5)
-                                    .imageType(BufferedImage.TYPE_BYTE_GRAY)
-                                    .height(1000)
-                                    .asBufferedImage()
-
-                                val testImage = ImageFactory.getInstance().fromImage(scaledTestImage)
-                                val detectedTestImages = detect(testImage)
-                                val numOfTestObject = detectedTestImages.numberOfObjects
-                                val testImageJsonNode = mapper.readTree(detectedTestImages.toJson())
-
-                                FileUtils.writeToThreadFileAndLogMessage("$numOfTestObject faces detected in ${testImageObj.getPath()} test image",threadFile)
-                                logger.log(
-                                    Level.INFO,
-                                    "$numOfTestObject faces detected in ${testImageObj.getPath()} test image"
-                                )
-
-                                if (numOfTestObject == 0) {
-                                    val recognitionLabelPhotoObj = RecognitionLabelPhoto()
-                                    recognitionLabelPhotoObj.setMetadataId(testImageObj.getId())
-                                    recognitionLabelPhotoObj.setConfidence("-0.1")
-                                    recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
-                                }
-
-                                for (i in 0 until numOfTrainingObject) {
-                                    // Get sub images
-                                    val trainingSubImageBi = getSubImage(scaledTrainingImage, trainingImageJsonNode, i)
-                                    val trainingSubImage = ImageFactory.getInstance().fromImage(trainingSubImageBi)
-
-                                    // Training output
-                                    // val tempTrainingFilePath = "C:\\Users\\Michael\\Downloads\\outputfolder\\training-${trainingImageObj.getMetadataId()}-i-$i.jpg"
-                                    // ImageIO.write(trainingSubImageBi, "jpg", File(tempTrainingFilePath))
-
-                                    FileUtils.writeToThreadFileAndLogMessage("Predicting faces detected in ${trainingImageObj.getPath()} training image",threadFile)
-                                    logger.log(
-                                        Level.INFO,
-                                        "Predicting faces detected in ${trainingImageObj.getPath()} training image"
-                                    )
-                                    try {
-                                        val trainingFeature = predict(trainingSubImage)
-
-                                        for (j in 0 until numOfTestObject) {
-                                            val testSubImageBi = getSubImage(scaledTestImage, testImageJsonNode, j)
-                                            val testSubImage = ImageFactory.getInstance().fromImage(testSubImageBi)
-
-                                            // Testing output
-                                            // val tempTestFilePath = "C:\\Users\\Michael\\Downloads\\outputfolder\\test-${testImageObj.getId()}-j-$j.jpg"
-                                            // ImageIO.write(testSubImageBi, "jpg", File(tempTestFilePath))
-
-                                            FileUtils.writeToThreadFileAndLogMessage(
-                                                "Predicting faces detected in ${testImageObj.getPath()} test image",
-                                                threadFile
-                                            )
-                                            logger.log(
-                                                Level.INFO,
-                                                "Predicting faces detected in ${testImageObj.getPath()} test image"
-                                            )
-
-                                            try {
-                                                val testFeature = predict(testSubImage)
-
-                                                // Compare images
-                                                val similarity =
-                                                    calculateSimilar(trainingFeature, testFeature).toString()
-
-                                                val message =
-                                                    "Similarity $similarity for person ${trainingImageObj.getRecognitionLabelId()} ${trainingImageObj.getRecognitionLabelName()} between training image ${trainingImageObj.getPath()} face ${i+1}/$numOfTrainingObject and test image ${testImageObj.getPath()} face ${j+1}/$numOfTestObject"
-                                                FileUtils.writeToThreadFileAndLogMessage(message, threadFile)
-                                                logger.log(
-                                                    Level.INFO,
-                                                    "Similarity $similarity for person ${trainingImageObj.getRecognitionLabelId()} ${trainingImageObj.getRecognitionLabelName()} between training image ${trainingImageObj.getPath()} face ${i+1}/$numOfTrainingObject and test image ${testImageObj.getPath()} face ${j+1}/$numOfTestObject"
-                                                )
-
-                                                // Save record if greater than threshold
-                                                if (similarity.toDouble() >= this.settings.getRecognitionConfidenceThreshold()!!.toDouble()) {
-                                                    val recordCount =
-                                                        this.recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
-                                                            trainingImageLabelId,
-                                                            testImageObj.getId()
-                                                        )
-                                                    if (recordCount == 0) {
-                                                        val recognitionLabelPhoto = RecognitionLabelPhoto()
-                                                        recognitionLabelPhoto.setMetadataId(testImageObj.getId())
-                                                        recognitionLabelPhoto.setRecognitionLabelId(trainingImageLabelId)
-                                                        recognitionLabelPhoto.setConfidence(similarity)
-                                                        recognitionLabelPhoto.setAutoTagged(true)
-                                                        this.recognitionLabelPhotoRepository?.save(recognitionLabelPhoto)
-                                                    } else {
-                                                        val recognitionLabelPhoto =
-                                                            this.recognitionLabelPhotoRepository?.findByRecognitionLabelIdAndMetadataId(
-                                                                trainingImageLabelId,
-                                                                testImageObj.getId()
-                                                            )
-                                                        if (recognitionLabelPhoto != null) {
-                                                            recognitionLabelPhoto.setConfidence(similarity)
-                                                            recognitionLabelPhoto.setAutoTagged(true)
-                                                            this.recognitionLabelPhotoRepository?.save(
-                                                                recognitionLabelPhoto
-                                                            )
-                                                        }
-                                                    }
-                                                }
-                                            } catch (e: Exception) {
-                                                logger.log(
-                                                    Level.WARNING,
-                                                    "Could not predict for test image ${testImageObj.getPath()}. ${e.message}"
-                                                )
-                                                continue
-                                            }
-                                        }
-                                    } catch (e: Exception) {
-                                        logger.log(
-                                            Level.WARNING,
-                                            "Could not predict for training image ${trainingImageObj.getPath()}. ${e.message}"
-                                        )
-                                        continue
-                                    }
-                                }
-                            }
+                    var scaledTestImageTn = Thumbnails.of(ImageIO.read(File(testImageObj.getPath())))
+                    if (testImageObj.getType()?.contains("video") == true) {
+                        if (testImageObj.getThumbnailUrlOriginal() !== null) {
+                            val path = this.sidecarDir + (testImageObj.getThumbnailUrlOriginal()!!.replace("/api/v1/",""))
+                            scaledTestImageTn = Thumbnails.of(ImageIO.read(File(path)))
+                        } else {
+                            scaledTestImageTn =
+                                Thumbnails.of(ImageIO.read(File(testImageObj.getThumbnailPathSmall())))
                         }
                     }
 
-                    metricsUtil.end()
+                    val scaledTestImage = scaledTestImageTn
+                        .outputQuality(0.5)
+                        .imageType(BufferedImage.TYPE_BYTE_GRAY)
+                        .height(1000)
+                        .asBufferedImage()
+
+                    val testImage = ImageFactory.getInstance().fromImage(scaledTestImage)
+                    val detectedTestImages = detect(testImage)
+                    val numOfTestObject = detectedTestImages.numberOfObjects
+                    val testImageJsonNode = mapper.readTree(detectedTestImages.toJson())
+
+                    FileUtils.writeToThreadFileAndLogMessage("$numOfTestObject faces detected in ${testImageObj.getPath()} test image",this.threadFile)
+                    logger.log(
+                        Level.INFO,
+                        "$numOfTestObject faces detected in ${testImageObj.getPath()} test image"
+                    )
+
+                    if (numOfTestObject == 0) {
+                        val recognitionLabelPhotoObj = RecognitionLabelPhoto()
+                        recognitionLabelPhotoObj.setMetadataId(testImageObj.getId())
+                        recognitionLabelPhotoObj.setConfidence("-0.1")
+                        recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
+                    }
+
+                    for (i in 0 until numOfTrainingObject) {
+                        // Get sub images
+                        val trainingSubImageBi = getSubImage(scaledTrainingImage, trainingImageJsonNode, i)
+                        val trainingSubImage = ImageFactory.getInstance().fromImage(trainingSubImageBi)
+
+                        // Training output
+                        // val tempTrainingFilePath = "C:\\Users\\Michael\\Downloads\\outputfolder\\training-${trainingImageObj.getMetadataId()}-i-$i.jpg"
+                        // ImageIO.write(trainingSubImageBi, "jpg", File(tempTrainingFilePath))
+
+                        FileUtils.writeToThreadFileAndLogMessage("Predicting faces detected in ${trainingImageObj.getPath()} training image",this.threadFile)
+                        logger.log(
+                            Level.INFO,
+                            "Predicting faces detected in ${trainingImageObj.getPath()} training image"
+                        )
+                        try {
+                            val trainingFeature = predict(trainingSubImage)
+
+                            for (j in 0 until numOfTestObject) {
+                                val testSubImageBi = getSubImage(scaledTestImage, testImageJsonNode, j)
+                                val testSubImage = ImageFactory.getInstance().fromImage(testSubImageBi)
+
+                                // Testing output
+                                // val tempTestFilePath = "C:\\Users\\Michael\\Downloads\\outputfolder\\test-${testImageObj.getId()}-j-$j.jpg"
+                                // ImageIO.write(testSubImageBi, "jpg", File(tempTestFilePath))
+
+                                FileUtils.writeToThreadFileAndLogMessage(
+                                    "Predicting faces detected in ${testImageObj.getPath()} test image",
+                                    this.threadFile
+                                )
+                                logger.log(
+                                    Level.INFO,
+                                    "Predicting faces detected in ${testImageObj.getPath()} test image"
+                                )
+
+                                try {
+                                    val testFeature = predict(testSubImage)
+
+                                    // Compare images
+                                    val similarity =
+                                        calculateSimilar(trainingFeature, testFeature).toString()
+
+                                    val message =
+                                        "Similarity $similarity for person ${trainingImageObj.getRecognitionLabelId()} ${trainingImageObj.getRecognitionLabelName()} between training image ${trainingImageObj.getPath()} face ${i+1}/$numOfTrainingObject and test image ${testImageObj.getPath()} face ${j+1}/$numOfTestObject"
+                                    FileUtils.writeToThreadFileAndLogMessage(message, this.threadFile)
+                                    logger.log(
+                                        Level.INFO,
+                                        message
+                                    )
+
+                                    // Save record if greater than threshold
+                                    if (similarity.toDouble() >= this.settings.getRecognitionConfidenceThreshold()!!.toDouble()) {
+                                        recognitionCount++
+
+                                        val recordCount =
+                                            this.recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
+                                                trainingImageLabelId,
+                                                testImageObj.getId()
+                                            )
+                                        if (recordCount == 0) {
+                                            val recognitionLabelPhoto = RecognitionLabelPhoto()
+                                            recognitionLabelPhoto.setMetadataId(testImageObj.getId())
+                                            recognitionLabelPhoto.setRecognitionLabelId(trainingImageLabelId)
+                                            recognitionLabelPhoto.setConfidence(similarity)
+                                            recognitionLabelPhoto.setAutoTagged(true)
+                                            this.recognitionLabelPhotoRepository?.save(recognitionLabelPhoto)
+                                        } else {
+                                            val recognitionLabelPhoto =
+                                                this.recognitionLabelPhotoRepository?.findByRecognitionLabelIdAndMetadataId(
+                                                    trainingImageLabelId,
+                                                    testImageObj.getId()
+                                                )
+                                            if (recognitionLabelPhoto != null) {
+                                                recognitionLabelPhoto.setConfidence(similarity)
+                                                recognitionLabelPhoto.setAutoTagged(true)
+                                                this.recognitionLabelPhotoRepository?.save(
+                                                    recognitionLabelPhoto
+                                                )
+                                            }
+                                        }
+                                    }
+                                } catch (e: Exception) {
+                                    logger.log(
+                                        Level.WARNING,
+                                        "Could not predict for test image ${testImageObj.getPath()}. ${e.message}"
+                                    )
+                                    continue
+                                }
+                            }
+                        } catch (e: Exception) {
+                            logger.log(
+                                Level.WARNING,
+                                "Could not predict for training image ${trainingImageObj.getPath()}. ${e.message}"
+                            )
+                            continue
+                        }
+                    }
                 }
-            }.start()
+            }
         }
+
+        metricsUtil.end()
+
+        return recognitionCount
     }
 
     private fun calculateSimilar(feature1: FloatArray, feature2: FloatArray): Float {

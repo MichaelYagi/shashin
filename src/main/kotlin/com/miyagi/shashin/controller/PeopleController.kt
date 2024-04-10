@@ -80,6 +80,9 @@ class PeopleController: BaseController() {
     @Value("\${app.role.admin}")
     private lateinit var adminRole: String
 
+    @Value("\${app.sidecar.path}")
+    private val relativeSidecarDir: String? = null
+
     private var shouldStop = AtomicBoolean(false)
 
     private val threadExtensionName: String = "facescan_shashinscan"
@@ -169,40 +172,33 @@ class PeopleController: BaseController() {
 
                 // Object and person recognition
                 if (threadFile != null) {
-
-                    val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
-                        settings.getCompreFaceServer(),
-                        settings.getCompreFaceKey()
+                    val recognitionCount = ImageProcessing.subjectRecognizer(
+                        metadataRepository,
+                        recognitionLabelRepository,
+                        recognitionLabelPhotoRepository,
+                        relativeSidecarDir!!,
+                        settings,
+                        threadFile,
+                        shouldStop.get()
                     )
 
-                    if (faceRecogServicesAvailable) {
-                        val recognitionCount = ImageProcessing.subjectRecognizer(
-                            metadataRepository,
-                            recognitionLabelRepository,
-                            recognitionLabelPhotoRepository,
-                            settings,
-                            threadFile,
-                            shouldStop.get()
-                        )
+                    val adminSupers = userRepository?.findAllByAuthorityEquals(superRole)
 
-                        val adminSupers = userRepository?.findAllByAuthorityEquals(superRole)
-
-                        if (adminSupers != null) {
-                            val notificationObjList = mutableListOf<Notification>()
-                            val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
-                            sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
-                            for (adminSuper in adminSupers) {
-                                val notificationObj = Notification()
-                                notificationObj.setUserId(adminSuper.getId())
-                                notificationObj.setCreatedAt(getCurrentTimestamp())
-                                notificationObj.setModifiedAt(getCurrentTimestamp())
-                                notificationObj.setRead(false)
-                                notificationObj.setMessage("$recognitionCount faces recognized during match indexing at ${sdtf.format(Date())}.")
-                                notificationObjList.add(notificationObj)
-                            }
-                            if (notificationObjList.isNotEmpty()) {
-                                notificationRepository?.saveAll(notificationObjList)
-                            }
+                    if (adminSupers != null) {
+                        val notificationObjList = mutableListOf<Notification>()
+                        val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                        sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                        for (adminSuper in adminSupers) {
+                            val notificationObj = Notification()
+                            notificationObj.setUserId(adminSuper.getId())
+                            notificationObj.setCreatedAt(getCurrentTimestamp())
+                            notificationObj.setModifiedAt(getCurrentTimestamp())
+                            notificationObj.setRead(false)
+                            notificationObj.setMessage("$recognitionCount faces recognized during match indexing at ${sdtf.format(Date())}.")
+                            notificationObjList.add(notificationObj)
+                        }
+                        if (notificationObjList.isNotEmpty()) {
+                            notificationRepository?.saveAll(notificationObjList)
                         }
                     }
 
