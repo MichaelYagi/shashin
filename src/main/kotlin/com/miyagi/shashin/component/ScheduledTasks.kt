@@ -166,7 +166,7 @@ class ScheduledTasks {
                 val recognitionCount = subjectRecognizer(metadataRepository, recognitionLabelRepository, recognitionLabelPhotoRepository, relativeSidecarDir!!, settings, null, null)
                 val superAdmins = userRepository?.findAllByAuthorityEquals(superRole!!)
 
-                if (superAdmins != null) {
+                if (superAdmins != null && recognitionCount > 0) {
                     val notificationObjList = mutableListOf<Notification>()
                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                     sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())

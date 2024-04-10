@@ -184,7 +184,7 @@ class PeopleController: BaseController() {
 
                     val adminSupers = userRepository?.findAllByAuthorityEquals(superRole)
 
-                    if (adminSupers != null) {
+                    if (adminSupers != null && recognitionCount > 0) {
                         val notificationObjList = mutableListOf<Notification>()
                         val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                         sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
