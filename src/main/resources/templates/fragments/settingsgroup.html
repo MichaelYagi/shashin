@@ -8,11 +8,11 @@
   <li class="nav-item">
     <a th:attr="class='nav-link' + ${activePage=='scan' ? ' active' : ''}" href="/settings/scan">Media Indexing</a>
   </li>
-  <th:block th:if="${faceRecogServicesAvailable==true or objectRecogEnabled==true}">
+<!--  <th:block th:if="${faceRecogServicesAvailable==true or objectRecogEnabled==true}">-->
     <li class="nav-item">
       <a th:attr="class='nav-link' + ${activePage=='match' ? ' active' : ''}" href="/settings/match">Match Indexing</a>
     </li>
-  </th:block>
+<!--  </th:block>-->
   <li class="nav-item">
     <a th:attr="class='nav-link' + ${activePage=='users' ? ' active' : ''}" href="/settings/users">User Management</a>
   </li>

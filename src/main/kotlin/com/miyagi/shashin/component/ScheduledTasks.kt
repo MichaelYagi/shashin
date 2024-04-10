@@ -111,6 +111,9 @@ class ScheduledTasks {
     @Value("\${app.role.super}")
     private var superRole: String? = null
 
+    @Value("\${app.sidecar.path}")
+    private val relativeSidecarDir: String? = null
+
     // Check Compreface connection every 2 days at midnight
     @Scheduled(cron = "0 0 12 */2 * *", zone="GMT")
     fun updateNotificationsForFaceRecogAvailability() {
@@ -156,34 +159,28 @@ class ScheduledTasks {
                 // Object and person recognition
 
                 // Start subject matching
-                if (NetworkUtils.checkCompreFaceConnection(
-                        settings.getCompreFaceServer(),
-                        settings.getCompreFaceKey()
-                    )
-                ) {
-                    logger.log(
-                        Level.INFO,
-                        "Scheduled scanning for facial recognition started at " + TextUtils.getCurrentTimestamp()
-                    )
-                    val recognitionCount = subjectRecognizer(metadataRepository, recognitionLabelRepository, recognitionLabelPhotoRepository, settings, null, null)
-                    val superAdmins = userRepository?.findAllByAuthorityEquals(superRole!!)
+                logger.log(
+                    Level.INFO,
+                    "Scheduled scanning for facial recognition started at " + TextUtils.getCurrentTimestamp()
+                )
+                val recognitionCount = subjectRecognizer(metadataRepository, recognitionLabelRepository, recognitionLabelPhotoRepository, relativeSidecarDir!!, settings, null, null)
+                val superAdmins = userRepository?.findAllByAuthorityEquals(superRole!!)
 
-                    if (superAdmins != null) {
-                        val notificationObjList = mutableListOf<Notification>()
-                        val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
-                        sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
-                        for (admin in superAdmins) {
-                            val notificationObj = Notification()
-                            notificationObj.setUserId(admin.getId())
-                            notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
-                            notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
-                            notificationObj.setRead(false)
-                            notificationObj.setMessage("$recognitionCount faces recognized during scheduled scanning at ${sdtf.format(Date())}.")
-                            notificationObjList.add(notificationObj)
-                        }
-                        if (notificationObjList.isNotEmpty()) {
-                            notificationRepository?.saveAll(notificationObjList)
-                        }
+                if (superAdmins != null) {
+                    val notificationObjList = mutableListOf<Notification>()
+                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                    sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                    for (admin in superAdmins) {
+                        val notificationObj = Notification()
+                        notificationObj.setUserId(admin.getId())
+                        notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
+                        notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                        notificationObj.setRead(false)
+                        notificationObj.setMessage("$recognitionCount faces recognized during scheduled scanning at ${sdtf.format(Date())}.")
+                        notificationObjList.add(notificationObj)
+                    }
+                    if (notificationObjList.isNotEmpty()) {
+                        notificationRepository?.saveAll(notificationObjList)
                     }
                 }
 
