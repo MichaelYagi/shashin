@@ -100,6 +100,7 @@ class TestController {
                             testImages,
                             trainingData,
                             recognitionLabelPhotoRepository,
+                            recognitionLabelRepository,
                             settings,
                             relativeSidecarDir!!,
                             threadFile

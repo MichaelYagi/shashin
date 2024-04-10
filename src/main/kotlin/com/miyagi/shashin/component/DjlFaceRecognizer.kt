@@ -18,13 +18,12 @@ import ai.djl.translate.TranslatorContext
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.ShashinApplication
-import com.miyagi.shashin.model.TrainingData
-import com.miyagi.shashin.model.Metadata
-import com.miyagi.shashin.model.RecognitionLabelPhoto
-import com.miyagi.shashin.model.Settings
+import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.RecognitionLabelPhotoRepository
+import com.miyagi.shashin.repository.RecognitionLabelRepository
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.MetricsUtil
+import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import net.coobird.thumbnailator.Thumbnails
 import org.springframework.core.io.FileSystemResource
 import java.awt.image.BufferedImage
@@ -42,6 +41,7 @@ class DjlFaceRecognizer {
     private var testImages: MutableIterable<Metadata>? = null
     private var trainingData: MutableIterable<TrainingData>? = null
     private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
+    private var recognitionLabelRepository: RecognitionLabelRepository? = null
     private lateinit var cascadeFileList: MutableList<String>
     private lateinit var sidecarDir: String
     private lateinit var settings: Settings
@@ -49,10 +49,11 @@ class DjlFaceRecognizer {
 
     constructor()
 
-    constructor(testImages: MutableIterable<Metadata>, trainingData: MutableIterable<TrainingData>, recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?, settings: Settings, relativeSidecarDir: String, threadFile: File) : this() {
+    constructor(testImages: MutableIterable<Metadata>, trainingData: MutableIterable<TrainingData>, recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?, recognitionLabelRepository: RecognitionLabelRepository?, settings: Settings, relativeSidecarDir: String, threadFile: File) : this() {
         this.trainingData = trainingData
         this.testImages = testImages
         this.recognitionLabelPhotoRepository = recognitionLabelPhotoRepository
+        this.recognitionLabelRepository = recognitionLabelRepository
         this.cascadeFileList = mutableListOf()
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
         this.sidecarDir = rootPath + relativeSidecarDir
@@ -160,8 +161,21 @@ class DjlFaceRecognizer {
                     )
 
                     if (numOfTestObject == 0) {
+                        recognitionLabelPhotoRepository?.deleteByMetadataId(testImageObj.getId())
+                        val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase("object")
+                        var recognitionLabelObj = RecognitionLabel()
+                        if (recognitionLabelRecord == null) {
+                            recognitionLabelObj.setName("object")
+                            recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
+                            recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
+                            recognitionLabelRepository?.save(recognitionLabelObj)
+                        } else {
+                            recognitionLabelObj = recognitionLabelRecord
+                        }
+
                         val recognitionLabelPhotoObj = RecognitionLabelPhoto()
                         recognitionLabelPhotoObj.setMetadataId(testImageObj.getId())
+                        recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
                         recognitionLabelPhotoObj.setConfidence("-0.1")
                         recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
                     }
