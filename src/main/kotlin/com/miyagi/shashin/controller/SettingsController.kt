@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
+import com.miyagi.shashin.component.DjlFaceRecognizer
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.*
@@ -2018,201 +2019,218 @@ class SettingsController {
                                             metadataRepository?.save(metadataObj)
                                             metadataIdArray.add(metadataObj.getId())
 
-                                            if (settings != null && webClient != null && compreFaceServerConnected) {
-                                                try {
-                                                    // Have at least 3 people tagged
-                                                    val compreFaceTagAllow = 3
-                                                    if (recognitionLabelPhotoLabels!!.count() >= compreFaceTagAllow) {
-                                                        var builder = MultipartBodyBuilder()
-                                                        builder.part(
-                                                            "file",
-                                                            FileSystemResource(metadataObj.getThumbnailPathSmall()!!)
-                                                        )
-
-                                                        var response: String? = null
-
-                                                        try {
-                                                            response = webClient.post()
-                                                                .uri("api/v1/recognition/recognize")
-                                                                .header(
-                                                                    HttpHeaders.CONTENT_TYPE,
-                                                                    MediaType.MULTIPART_FORM_DATA.toString()
-                                                                )
-                                                                .header("x-api-key", settings.getCompreFaceKey())
-                                                                .body(BodyInserters.fromMultipartData(builder.build()))
-                                                                .retrieve()
-                                                                .bodyToMono(String::class.java)
-                                                                .block()
-
-                                                            logger.log(
-                                                                Level.INFO,
-                                                                "Recognizing face for " + metadataObj.getPath() + ": " + response
+                                            // Recognize face during index scan
+                                            if (settings != null) {
+                                                if (webClient != null && compreFaceServerConnected) {
+                                                    try {
+                                                        // Have at least 3 people tagged
+                                                        val compreFaceTagAllow = 3
+                                                        if (recognitionLabelPhotoLabels!!.count() >= compreFaceTagAllow) {
+                                                            var builder = MultipartBodyBuilder()
+                                                            builder.part(
+                                                                "file",
+                                                                FileSystemResource(metadataObj.getThumbnailPathSmall()!!)
                                                             )
-                                                        } catch (e: Exception) {
-                                                            val recognitionLabelRecord =
-                                                                recognitionLabelRepository?.findByNameIgnoreCase("object")
-                                                            var recognitionLabelObj = RecognitionLabel()
-                                                            if (recognitionLabelRecord == null) {
-                                                                recognitionLabelObj.setName("object")
-                                                                recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
-                                                                recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
-                                                                recognitionLabelRepository?.save(recognitionLabelObj)
-                                                            } else {
-                                                                recognitionLabelObj = recognitionLabelRecord
+
+                                                            var response: String? = null
+
+                                                            try {
+                                                                response = webClient.post()
+                                                                    .uri("api/v1/recognition/recognize")
+                                                                    .header(
+                                                                        HttpHeaders.CONTENT_TYPE,
+                                                                        MediaType.MULTIPART_FORM_DATA.toString()
+                                                                    )
+                                                                    .header("x-api-key", settings.getCompreFaceKey())
+                                                                    .body(BodyInserters.fromMultipartData(builder.build()))
+                                                                    .retrieve()
+                                                                    .bodyToMono(String::class.java)
+                                                                    .block()
+
+                                                                logger.log(
+                                                                    Level.INFO,
+                                                                    "Recognizing face for " + metadataObj.getPath() + ": " + response
+                                                                )
+                                                            } catch (e: Exception) {
+                                                                val recognitionLabelRecord =
+                                                                    recognitionLabelRepository?.findByNameIgnoreCase("object")
+                                                                var recognitionLabelObj = RecognitionLabel()
+                                                                if (recognitionLabelRecord == null) {
+                                                                    recognitionLabelObj.setName("object")
+                                                                    recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
+                                                                    recognitionLabelObj.setModifiedAt(
+                                                                        getCurrentTimestamp()
+                                                                    )
+                                                                    recognitionLabelRepository?.save(recognitionLabelObj)
+                                                                } else {
+                                                                    recognitionLabelObj = recognitionLabelRecord
+                                                                }
+
+                                                                val recognitionLabelPhotoObj = RecognitionLabelPhoto()
+                                                                recognitionLabelPhotoObj.setMetadataId(metadataObj.getId())
+                                                                recognitionLabelPhotoObj.setRecognitionLabelId(
+                                                                    recognitionLabelObj.getId()
+                                                                )
+                                                                recognitionLabelPhotoObj.setConfidence("-0.1")
+                                                                recognitionLabelPhotoRepository?.save(
+                                                                    recognitionLabelPhotoObj
+                                                                )
+
+                                                                logger.log(
+                                                                    Level.WARNING,
+                                                                    "Error recognizing face for " + metadataObj.getPath() + ": " + e.localizedMessage
+                                                                )
                                                             }
 
-                                                            val recognitionLabelPhotoObj = RecognitionLabelPhoto()
-                                                            recognitionLabelPhotoObj.setMetadataId(metadataObj.getId())
-                                                            recognitionLabelPhotoObj.setRecognitionLabelId(
-                                                                recognitionLabelObj.getId()
-                                                            )
-                                                            recognitionLabelPhotoObj.setConfidence("-0.1")
-                                                            recognitionLabelPhotoRepository?.save(
-                                                                recognitionLabelPhotoObj
-                                                            )
+                                                            if (response != null) {
+                                                                var jsonObj = mapper.readTree(response)
+                                                                val resultMap = mapper.convertValue(
+                                                                    jsonObj,
+                                                                    object :
+                                                                        TypeReference<Map<String, ArrayList<Map<String, Any>>>>() {})
+                                                                val resultList =
+                                                                    resultMap["result"] as ArrayList<Map<String, Any>>
+                                                                if (resultList.isNotEmpty() && resultList[0].containsKey(
+                                                                        "subjects"
+                                                                    )
+                                                                ) {
+                                                                    for (singleResult in resultList) {
+                                                                        val subjects =
+                                                                            singleResult["subjects"] as ArrayList<Map<String, Any>>
 
-                                                            logger.log(
-                                                                Level.WARNING,
-                                                                "Error recognizing face for " + metadataObj.getPath() + ": " + e.localizedMessage
-                                                            )
-                                                        }
+                                                                        for (subjectObj in subjects) {
+                                                                            var subject = ""
+                                                                            var similarity = 0.0
 
-                                                        if (response != null) {
-                                                            var jsonObj = mapper.readTree(response)
-                                                            val resultMap = mapper.convertValue(
-                                                                jsonObj,
-                                                                object :
-                                                                    TypeReference<Map<String, ArrayList<Map<String, Any>>>>() {})
-                                                            val resultList =
-                                                                resultMap["result"] as ArrayList<Map<String, Any>>
-                                                            if (resultList.isNotEmpty() && resultList[0].containsKey("subjects")) {
-                                                                for (singleResult in resultList) {
-                                                                    val subjects =
-                                                                        singleResult["subjects"] as ArrayList<Map<String, Any>>
-
-                                                                    for (subjectObj in subjects) {
-                                                                        var subject = ""
-                                                                        var similarity = 0.0
-
-                                                                        if (subjectObj.isNotEmpty()) {
-                                                                            subject = subjectObj["subject"].toString()
-                                                                            similarity =
-                                                                                subjectObj["similarity"].toString()
-                                                                                    .toDouble()
-                                                                        }
-
-                                                                        if (similarity != 1.0 && (similarity <= 0.0 || similarity >= settings.getRecognitionConfidenceThreshold()
-                                                                                .toString().toDouble())
-                                                                        ) {
-
-                                                                            builder = MultipartBodyBuilder()
-                                                                            builder.part(
-                                                                                "file",
-                                                                                FileSystemResource(metadataObj.getThumbnailPathSmall()!!)
-                                                                            )
-
-                                                                            response = null
-
-                                                                            try {
-                                                                                response = webClient.post()
-                                                                                    .uri("api/v1/recognition/faces?subject=${subject}")
-                                                                                    .header(
-                                                                                        HttpHeaders.CONTENT_TYPE,
-                                                                                        MediaType.MULTIPART_FORM_DATA.toString()
-                                                                                    )
-                                                                                    .header(
-                                                                                        "x-api-key",
-                                                                                        settings.getCompreFaceKey()
-                                                                                    )
-                                                                                    .body(
-                                                                                        BodyInserters.fromMultipartData(
-                                                                                            builder.build()
-                                                                                        )
-                                                                                    )
-                                                                                    .retrieve()
-                                                                                    .bodyToMono(String::class.java)
-                                                                                    .block()
-                                                                            } catch (e: Exception) {
-                                                                                logger.log(
-                                                                                    Level.WARNING,
-                                                                                    "Error uploading face for " + subject + ": " + e.localizedMessage
-                                                                                )
+                                                                            if (subjectObj.isNotEmpty()) {
+                                                                                subject =
+                                                                                    subjectObj["subject"].toString()
+                                                                                similarity =
+                                                                                    subjectObj["similarity"].toString()
+                                                                                        .toDouble()
                                                                             }
 
-                                                                            var compreFaceImageId: String? = null
-                                                                            if (response != null) {
-                                                                                jsonObj = mapper.readTree(response)
-                                                                                if (jsonObj.has("image_id")) {
-                                                                                    compreFaceImageId =
-                                                                                        jsonObj["image_id"].toString()
-                                                                                    compreFaceImageId =
-                                                                                        compreFaceImageId.drop(1)
-                                                                                            .dropLast(1)
+                                                                            if (similarity != 1.0 && (similarity <= 0.0 || similarity >= settings.getRecognitionConfidenceThreshold()
+                                                                                    .toString().toDouble())
+                                                                            ) {
+
+                                                                                builder = MultipartBodyBuilder()
+                                                                                builder.part(
+                                                                                    "file",
+                                                                                    FileSystemResource(metadataObj.getThumbnailPathSmall()!!)
+                                                                                )
+
+                                                                                response = null
+
+                                                                                try {
+                                                                                    response = webClient.post()
+                                                                                        .uri("api/v1/recognition/faces?subject=${subject}")
+                                                                                        .header(
+                                                                                            HttpHeaders.CONTENT_TYPE,
+                                                                                            MediaType.MULTIPART_FORM_DATA.toString()
+                                                                                        )
+                                                                                        .header(
+                                                                                            "x-api-key",
+                                                                                            settings.getCompreFaceKey()
+                                                                                        )
+                                                                                        .body(
+                                                                                            BodyInserters.fromMultipartData(
+                                                                                                builder.build()
+                                                                                            )
+                                                                                        )
+                                                                                        .retrieve()
+                                                                                        .bodyToMono(String::class.java)
+                                                                                        .block()
+                                                                                } catch (e: Exception) {
+                                                                                    logger.log(
+                                                                                        Level.WARNING,
+                                                                                        "Error uploading face for " + subject + ": " + e.localizedMessage
+                                                                                    )
                                                                                 }
-                                                                            }
 
-                                                                            logger.log(
-                                                                                Level.INFO,
-                                                                                "Uploaded face for " + metadataObj.getPath() + " for subject " + subject + ": " + response
-                                                                            )
+                                                                                var compreFaceImageId: String? = null
+                                                                                if (response != null) {
+                                                                                    jsonObj = mapper.readTree(response)
+                                                                                    if (jsonObj.has("image_id")) {
+                                                                                        compreFaceImageId =
+                                                                                            jsonObj["image_id"].toString()
+                                                                                        compreFaceImageId =
+                                                                                            compreFaceImageId.drop(1)
+                                                                                                .dropLast(1)
+                                                                                    }
+                                                                                }
 
-                                                                            val recognitionLabelObj =
-                                                                                recognitionLabelRepository?.findByNameIgnoreCase(
-                                                                                    subject
+                                                                                logger.log(
+                                                                                    Level.INFO,
+                                                                                    "Uploaded face for " + metadataObj.getPath() + " for subject " + subject + ": " + response
                                                                                 )
 
-                                                                            if (recognitionLabelObj != null) {
-                                                                                val recognitionLabelPhoto =
-                                                                                    recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
-                                                                                        recognitionLabelObj.getId(),
-                                                                                        metadataObj.getId()
+                                                                                val recognitionLabelObj =
+                                                                                    recognitionLabelRepository?.findByNameIgnoreCase(
+                                                                                        subject
                                                                                     )
 
-                                                                                if (recognitionLabelPhoto == 0) {
-                                                                                    val recognitionLabelPhotoObj =
-                                                                                        RecognitionLabelPhoto()
-                                                                                    recognitionLabelPhotoObj.setMetadataId(
-                                                                                        metadataObj.getId()
-                                                                                    )
-                                                                                    recognitionLabelPhotoObj.setRecognitionLabelId(
-                                                                                        recognitionLabelObj.getId()
-                                                                                    )
-                                                                                    recognitionLabelPhotoObj.setConfidence(
-                                                                                        similarity.toString()
-                                                                                    )
-                                                                                    if (compreFaceImageId != null) {
-                                                                                        recognitionLabelPhotoObj.setCompreFaceImageId(
-                                                                                            compreFaceImageId
+                                                                                if (recognitionLabelObj != null) {
+                                                                                    val recognitionLabelPhoto =
+                                                                                        recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
+                                                                                            recognitionLabelObj.getId(),
+                                                                                            metadataObj.getId()
                                                                                         )
+
+                                                                                    if (recognitionLabelPhoto == 0) {
+                                                                                        val recognitionLabelPhotoObj =
+                                                                                            RecognitionLabelPhoto()
+                                                                                        recognitionLabelPhotoObj.setMetadataId(
+                                                                                            metadataObj.getId()
+                                                                                        )
+                                                                                        recognitionLabelPhotoObj.setRecognitionLabelId(
+                                                                                            recognitionLabelObj.getId()
+                                                                                        )
+                                                                                        recognitionLabelPhotoObj.setConfidence(
+                                                                                            similarity.toString()
+                                                                                        )
+                                                                                        if (compreFaceImageId != null) {
+                                                                                            recognitionLabelPhotoObj.setCompreFaceImageId(
+                                                                                                compreFaceImageId
+                                                                                            )
+                                                                                        }
+                                                                                        recognitionLabelPhotoRepository?.save(
+                                                                                            recognitionLabelPhotoObj
+                                                                                        )
+
+                                                                                        metadataObj.setModifiedAt(
+                                                                                            getCurrentTimestamp()
+                                                                                        )
+                                                                                        metadataRepository?.save(
+                                                                                            metadataObj
+                                                                                        )
+
+                                                                                        recognitionCount++
                                                                                     }
-                                                                                    recognitionLabelPhotoRepository?.save(
-                                                                                        recognitionLabelPhotoObj
-                                                                                    )
-
-                                                                                    metadataObj.setModifiedAt(
-                                                                                        getCurrentTimestamp()
-                                                                                    )
-                                                                                    metadataRepository?.save(metadataObj)
-
-                                                                                    recognitionCount++
                                                                                 }
                                                                             }
                                                                         }
                                                                     }
                                                                 }
                                                             }
+                                                        } else {
+                                                            logger.log(
+                                                                Level.INFO,
+                                                                "You need to manually tag at least $compreFaceTagAllow different people to use face recognition service"
+                                                            )
                                                         }
-                                                    } else {
+                                                    } catch (e: Exception) {
                                                         logger.log(
                                                             Level.INFO,
-                                                            "You need to manually tag at least $compreFaceTagAllow different people to use face recognition service"
+                                                            "Issue connecting to face recognizer: " + metadataObj.getPath() + ": " + e.localizedMessage
                                                         )
                                                     }
-                                                } catch (e: Exception) {
-                                                    logger.log(
-                                                        Level.INFO,
-                                                        "Issue connecting to face recognizer: " + metadataObj.getPath() + ": " + e.localizedMessage
-                                                    )
+                                                } else {
+                                                    val testImage = mutableListOf<Metadata>()
+                                                    testImage.add(metadataObj)
+                                                    val trainingData = metadataRepository?.findTrainingData(settings.getRecognitionConfidenceThreshold()!!, settings.getTrainingDataLimit()!!)
+                                                    val faceRecognizer = DjlFaceRecognizer(testImage, trainingData!!, recognitionLabelPhotoRepository, settings, relativeSidecarDir!!, threadFile)
+                                                    recognitionCount = faceRecognizer.startPredict()
                                                 }
                                             }
 
