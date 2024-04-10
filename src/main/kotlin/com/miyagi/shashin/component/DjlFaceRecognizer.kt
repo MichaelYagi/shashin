@@ -216,11 +216,11 @@ class DjlFaceRecognizer {
                                                     calculateSimilar(trainingFeature, testFeature).toString()
 
                                                 val message =
-                                                    "Similarity $similarity for person ${trainingImageObj.getRecognitionLabelId()} ${trainingImageObj.getRecognitionLabelName()} between training image ${trainingImageObj.getPath()} and test image ${testImageObj.getPath()}"
+                                                    "Similarity $similarity for person ${trainingImageObj.getRecognitionLabelId()} ${trainingImageObj.getRecognitionLabelName()} between training image ${trainingImageObj.getPath()} face ${i+1}/$numOfTrainingObject and test image ${testImageObj.getPath()} face ${j+1}/$numOfTestObject"
                                                 FileUtils.writeToThreadFileAndLogMessage(message, threadFile)
                                                 logger.log(
                                                     Level.INFO,
-                                                    "Similarity $similarity for person ${trainingImageObj.getRecognitionLabelId()} ${trainingImageObj.getRecognitionLabelName()} between training image ${trainingImageObj.getPath()} and test image ${testImageObj.getPath()}"
+                                                    "Similarity $similarity for person ${trainingImageObj.getRecognitionLabelId()} ${trainingImageObj.getRecognitionLabelName()} between training image ${trainingImageObj.getPath()} face ${i+1}/$numOfTrainingObject and test image ${testImageObj.getPath()} face ${j+1}/$numOfTestObject"
                                                 )
 
                                                 // Save record if greater than threshold
@@ -350,145 +350,149 @@ class DjlFaceRecognizer {
         }
     }
 
-    fun tests() {
-//        // Noah
-////        val imageBi1 = ImageIO.read(File("C:/Users/Michael/Documents/shashin/sidecar_dev/thumbnails/z/2024/mar/PXL_20240303_191551227.jpg_225.jpg"))
-//        val imageBi1 = ImageIO.read(File("Z:/2024/mar/PXL_20240303_191551227.jpg"))
-//        val image1 = Thumbnails.of(imageBi1)
-//            .outputQuality(0.5)
-//            .imageType(BufferedImage.TYPE_BYTE_GRAY)
-//            .height(1000)
-//            .asBufferedImage()
-//
-//        val img1 = ImageFactory.getInstance().fromImage(image1)
-////        val img1 = ImageFactory.getInstance().fromFile(imageFile1)
-//
-//        // Noah
-////        val imageBi2 = ImageIO.read(File("C:/Users/Michael/Documents/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/testpics/PXL_20230519_205237907.jpg_225.jpg"))
-//        val imageBi2 = ImageIO.read(File("C:/users/michael/downloads/testpics/PXL_20230519_205237907.jpg"))
-//        val image2 = Thumbnails.of(imageBi2)
-//            .outputQuality(0.5)
-//            .imageType(BufferedImage.TYPE_BYTE_GRAY)
-//            .height(1000)
-//            .asBufferedImage()
-//        val img2 = ImageFactory.getInstance().fromImage(image2)
-//
-//        // Ryuko
-////        val imageBi3 = ImageIO.read(File("C:/Users/Michael/Documents/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/testpics/japan 2018/IMG_20181220_191102.jpg_225.jpg"))
-//        val imageBi3 = ImageIO.read(File("C:/users/michael/downloads/testpics/japan 2018/IMG_20181220_191102.jpg"))
-//        val image3 = Thumbnails.of(imageBi3)
-//            .outputQuality(0.5)
-//            .imageType(BufferedImage.TYPE_BYTE_GRAY)
-//            .height(1000)
-//            .asBufferedImage()
-//        val img3 = ImageFactory.getInstance().fromImage(image3)
-//
-//        // Mike
-////        val imageBi4 = ImageIO.read(File("C:/Users/Michael/Documents/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/testpics/PXL_20231203_001440894.MP.jpg_225.jpg"))
-//        val imageBi4 = ImageIO.read(File("C:/users/michael/downloads/testpics/PXL_20231203_001440894.MP.jpg"))
-//        val image4 = Thumbnails.of(imageBi4)
-//            .outputQuality(0.5)
-//            .imageType(BufferedImage.TYPE_BYTE_GRAY)
-//            .height(1000)
-//            .asBufferedImage()
-//        val img4 = ImageFactory.getInstance().fromImage(image4)
-//
-//        // Mike, Ryuko, Noah, Dai, Miki, Hitoshi
-////        val imageBi5 = ImageIO.read(File("C:/Users/Michael/Documents/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/testpics/japan 2018/IMG_20181230_113407.jpg_225.jpg"))
-//        val imageBi5 = ImageIO.read(File("C:/users/michael/downloads/testpics/japan 2018/IMG_20181230_113407.jpg"))
-//        val image5 = Thumbnails.of(imageBi5)
-//            .outputQuality(0.5)
-//            .imageType(BufferedImage.TYPE_BYTE_GRAY)
-//            .height(1000)
-//            .asBufferedImage()
-//        val img5 = ImageFactory.getInstance().fromImage(image5)
-//
-//        // Mike
-////        val imageBi6 = ImageIO.read(File("C:/Users/Michael/Documents/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/testpics/DSC06100.JPG_225.jpg"))
-//        val imageBi6 = ImageIO.read(File("C:/users/michael/downloads/testpics/DSC06100.JPG"))
-//        val image6 = Thumbnails.of(imageBi6)
-//            .outputQuality(0.5)
-//            .imageType(BufferedImage.TYPE_BYTE_GRAY)
-//            .height(1000)
-//            .asBufferedImage()
-//        val img6 = ImageFactory.getInstance().fromImage(image6)
-//
-////        val feature1: FloatArray = predict(img1)
-////        val feature2: FloatArray = predict(img2)
-////        val feature3: FloatArray = predict(img3)
-////        val feature4: FloatArray = predict(img4)
-////        val feature5: FloatArray = predict(img5)
-////        val feature6: FloatArray = predict(img6)
-//
-//
-//        val mapper = ObjectMapper()
-//
-//        val detect3 = detect(img3)
-//        val numOfObjects3 = detect3.numberOfObjects
-//        val imageWidth3 = image3.width
-//        val imageHeight3 = image3.height
-//        val jsonNode3 = mapper.readTree(detect3.toJson())
-//        println(detect3.toJson())
-//
-//        val detect5 = detect(img5)
-//        val numOfObjects5 = detect5.numberOfObjects
-//        val imageWidth5 = image5.width
-//        val imageHeight5 = image5.height
-//        val jsonNode5 = mapper.readTree(detect5.toJson())
-//        println(detect5.toJson())
-//
-//        // 1st photo - find faces
-//        println("i: "+numOfObjects5)
-//        println("j: "+numOfObjects3)
-//        for (i in 0 until numOfObjects5) {
-//            var cornerMin = jsonNode5.get(i).get("boundingBox").get("corners")[0]
-//            var xMin = cornerMin.get("x").toString().toDouble()
-//            var yMin = cornerMin.get("y").toString().toDouble()
-//            var cornerMax = jsonNode5.get(i).get("boundingBox").get("corners")[2]
-//            var xMax = cornerMax.get("x").toString().toDouble()
-//            var yMax = cornerMax.get("y").toString().toDouble()
-//
-//            var y1 = yMin * imageHeight5
-//            var x1 = xMin * imageWidth5
-//            var y2 = yMax * imageHeight5
-//            var x2 = xMax * imageWidth5
-//
-//            // Temp image file with face in subimage
-//            val bi5 = image5.getSubimage(x1.toInt(), y1.toInt(), (x2-x1).toInt(), (y2-y1).toInt())
-//            var tempFilePath = "C:\\Users\\Michael\\Downloads\\outputfolder\\temp-i-$i.jpg"
-//            ImageIO.write(bi5, "jpg", File(tempFilePath))
-//            val tempImage5 = ImageFactory.getInstance().fromImage(bi5)
-//
-//            // Compare with other profiles
-//            val tempFeature5 = predict(tempImage5)
-//
-//            // 2nd photo - find faces
-//            for (j in 0 until numOfObjects3) {
-//                cornerMin = jsonNode3.get(j).get("boundingBox").get("corners")[0]
-//                xMin = cornerMin.get("x").toString().toDouble()
-//                yMin = cornerMin.get("y").toString().toDouble()
-//                cornerMax = jsonNode3.get(j).get("boundingBox").get("corners")[2]
-//                xMax = cornerMax.get("x").toString().toDouble()
-//                yMax = cornerMax.get("y").toString().toDouble()
-//
-//                y1 = yMin * imageHeight3
-//                x1 = xMin * imageWidth3
-//                y2 = yMax * imageHeight3
-//                x2 = xMax * imageWidth3
-//
-//                // Temp image file with face in subimage
-//                val bi3 = image3.getSubimage(x1.toInt(), y1.toInt(), (x2-x1).toInt(), (y2-y1).toInt())
-//                tempFilePath = "C:\\Users\\Michael\\Downloads\\outputfolder\\temp-j-$j.jpg"
-//                ImageIO.write(bi3, "jpg", File(tempFilePath))
-//                val tempImage3 = ImageFactory.getInstance().fromImage(bi3)
-//
-//                // Compare with other profiles
-//                val tempFeature3 = predict(tempImage3)
-//
-//                println("testing iteration $i-$j: "+calculateSimilar(tempFeature3, tempFeature5).toString())
-//            }
-//
-//        }
+    fun test() {
+        // Noah
+//        val imageBi1 = ImageIO.read(File("C:/Users/Michael/Documents/shashin/sidecar_dev/thumbnails/z/2024/mar/PXL_20240303_191551227.jpg_225.jpg"))
+        val imageBi1 = ImageIO.read(File("Z:/2024/mar/PXL_20240303_191551227.jpg"))
+        val image1 = Thumbnails.of(imageBi1)
+            .outputQuality(0.5)
+            .imageType(BufferedImage.TYPE_BYTE_GRAY)
+            .height(1000)
+            .asBufferedImage()
+
+        val img1 = ImageFactory.getInstance().fromImage(image1)
+//        val img1 = ImageFactory.getInstance().fromFile(imageFile1)
+
+        // Noah
+//        val imageBi2 = ImageIO.read(File("C:/Users/Michael/Documents/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/testpics/PXL_20230519_205237907.jpg_225.jpg"))
+        val imageBi2 = ImageIO.read(File("C:/users/michael/downloads/testpics/PXL_20230519_205237907.jpg"))
+        val image2 = Thumbnails.of(imageBi2)
+            .outputQuality(0.5)
+            .imageType(BufferedImage.TYPE_BYTE_GRAY)
+            .height(1000)
+            .asBufferedImage()
+        val img2 = ImageFactory.getInstance().fromImage(image2)
+
+        // Ryuko
+//        val imageBi3 = ImageIO.read(File("C:/Users/Michael/Documents/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/testpics/japan 2018/IMG_20181220_191102.jpg_225.jpg"))
+        val imageBi3 = ImageIO.read(File("C:/users/michael/downloads/testpics/japan 2018/IMG_20181220_191102.jpg"))
+        val image3 = Thumbnails.of(imageBi3)
+            .outputQuality(0.5)
+            .imageType(BufferedImage.TYPE_BYTE_GRAY)
+            .height(1000)
+            .asBufferedImage()
+        val img3 = ImageFactory.getInstance().fromImage(image3)
+
+        // Mike
+//        val imageBi4 = ImageIO.read(File("C:/Users/Michael/Documents/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/testpics/PXL_20231203_001440894.MP.jpg_225.jpg"))
+        val imageBi4 = ImageIO.read(File("C:/users/michael/downloads/testpics/PXL_20231203_001440894.MP.jpg"))
+        val image4 = Thumbnails.of(imageBi4)
+            .outputQuality(0.5)
+            .imageType(BufferedImage.TYPE_BYTE_GRAY)
+            .height(1000)
+            .asBufferedImage()
+        val img4 = ImageFactory.getInstance().fromImage(image4)
+
+        // Mike, Ryuko, Noah, Dai, Miki, Hitoshi
+//        val imageBi5 = ImageIO.read(File("C:/Users/Michael/Documents/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/testpics/japan 2018/IMG_20181230_113407.jpg_225.jpg"))
+        val imageBi5 = ImageIO.read(File("C:/users/michael/downloads/testpics/japan 2018/IMG_20181230_113407.jpg"))
+        val image5 = Thumbnails.of(imageBi5)
+            .outputQuality(0.5)
+            .imageType(BufferedImage.TYPE_BYTE_GRAY)
+            .height(1000)
+            .asBufferedImage()
+        val img5 = ImageFactory.getInstance().fromImage(image5)
+
+        // Noah, Ryuko
+//        val imageBi6 = ImageIO.read(File("C:/Users/Michael/Documents/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/testpics/DSC06100.JPG_225.jpg"))
+        val imageBi6 = ImageIO.read(File("C:/Users/Michael/Downloads/testpics/japan 2018/IMG_20181219_113155.jpg"))
+        val image6 = Thumbnails.of(imageBi6)
+            .outputQuality(0.5)
+            .imageType(BufferedImage.TYPE_BYTE_GRAY)
+            .height(1000)
+            .asBufferedImage()
+        val img6 = ImageFactory.getInstance().fromImage(image6)
+
+//        val feature1: FloatArray = predict(img1)
+//        val feature2: FloatArray = predict(img2)
+//        val feature3: FloatArray = predict(img3)
+//        val feature4: FloatArray = predict(img4)
+//        val feature5: FloatArray = predict(img5)
+//        val feature6: FloatArray = predict(img6)
+
+
+        val mapper = ObjectMapper()
+
+        val detect3 = detect(img3)
+        val numOfObjects3 = detect3.numberOfObjects
+        val imageWidth3 = image3.width
+        val imageHeight3 = image3.height
+        val jsonNode3 = mapper.readTree(detect3.toJson())
+        println(detect3.toJson())
+
+        val detect6 = detect(img6)
+        val numOfObjects6 = detect6.numberOfObjects
+        val imageWidth6 = image6.width
+        val imageHeight6 = image6.height
+        val jsonNode6 = mapper.readTree(detect6.toJson())
+        println(detect6.toJson())
+
+        // 1st photo - find faces
+        println("i: "+numOfObjects6)
+        println("j: "+numOfObjects3)
+        for (i in 0 until numOfObjects6) {
+            var cornerMin = jsonNode6.get(i).get("boundingBox").get("corners")[0]
+            var xMin = cornerMin.get("x").toString().toDouble()
+            var yMin = cornerMin.get("y").toString().toDouble()
+            var cornerMax = jsonNode6.get(i).get("boundingBox").get("corners")[2]
+            var xMax = cornerMax.get("x").toString().toDouble()
+            var yMax = cornerMax.get("y").toString().toDouble()
+
+            var y1 = yMin * imageHeight6
+            var x1 = xMin * imageWidth6
+            var y2 = yMax * imageHeight6
+            var x2 = xMax * imageWidth6
+
+            // Temp image file with face in subimage
+            val bi6 = image6.getSubimage(x1.toInt(), y1.toInt(), (x2-x1).toInt(), (y2-y1).toInt())
+            var tempFilePath = "C:\\Users\\Michael\\Downloads\\outputfolder\\temp-i-$i.jpg"
+            ImageIO.write(bi6, "jpg", File(tempFilePath))
+            val tempImage6 = ImageFactory.getInstance().fromImage(bi6)
+
+            // Compare with other profiles
+            println("testImage predict")
+            val testImage = ImageFactory.getInstance().fromImage(image6)
+            val testFeature = predict(testImage)
+            println("tempImage6 predict")
+            val tempFeature6 = predict(tempImage6)
+
+            // 2nd photo - find faces
+            for (j in 0 until numOfObjects3) {
+                cornerMin = jsonNode3.get(j).get("boundingBox").get("corners")[0]
+                xMin = cornerMin.get("x").toString().toDouble()
+                yMin = cornerMin.get("y").toString().toDouble()
+                cornerMax = jsonNode3.get(j).get("boundingBox").get("corners")[2]
+                xMax = cornerMax.get("x").toString().toDouble()
+                yMax = cornerMax.get("y").toString().toDouble()
+
+                y1 = yMin * imageHeight3
+                x1 = xMin * imageWidth3
+                y2 = yMax * imageHeight3
+                x2 = xMax * imageWidth3
+
+                // Temp image file with face in subimage
+                val bi3 = image3.getSubimage(x1.toInt(), y1.toInt(), (x2-x1).toInt(), (y2-y1).toInt())
+                tempFilePath = "C:\\Users\\Michael\\Downloads\\outputfolder\\temp-j-$j.jpg"
+                ImageIO.write(bi3, "jpg", File(tempFilePath))
+                val tempImage3 = ImageFactory.getInstance().fromImage(bi3)
+
+                // Compare with other profiles
+                val tempFeature3 = predict(tempImage3)
+
+                println("testing iteration $i-$j: "+calculateSimilar(tempFeature3, tempFeature6).toString())
+            }
+
+        }
     }
 
     class FaceFeatureTranslator :
@@ -498,7 +502,7 @@ class DjlFaceRecognizer {
             val array = input?.toNDArray(ctx.ndManager, Image.Flag.GRAYSCALE)
             val pipeline = Pipeline()
             pipeline
-                //.add(Resize(200))
+                .add(Resize(100))
                 .add(ToTensor())
                 .add(
                     Normalize(

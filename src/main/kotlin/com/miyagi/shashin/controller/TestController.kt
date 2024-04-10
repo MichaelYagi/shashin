@@ -75,6 +75,7 @@ class TestController {
             println("running recognizer")
             val faceRecognizer = DjlFaceRecognizer(testImages, trainingData, recognitionLabelPhotoRepository, settings, model)
 //            faceRecognizer.startPredict()
+//            faceRecognizer.test()
         } else {
             println("no labels found. start tagging people")
         }
