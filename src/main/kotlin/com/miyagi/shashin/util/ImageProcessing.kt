@@ -1092,7 +1092,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     }
                 } else {
                     val trainingData = metadataRepository.findTrainingData(settings.getRecognitionConfidenceThreshold()!!, settings.getTrainingDataLimit()!!)
-                    val faceRecognizer = DjlFaceRecognizer(testImages, trainingData, recognitionLabelPhotoRepository, settings, relativeSidecarDir, threadFile!!)
+                    val faceRecognizer = DjlFaceRecognizer(testImages, trainingData, recognitionLabelPhotoRepository, recognitionLabelRepository, settings, relativeSidecarDir, threadFile!!)
                     recognitionCount = faceRecognizer.startPredict()
                 }
             }

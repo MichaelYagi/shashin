@@ -1889,8 +1889,29 @@ class SettingsController {
                             }
 
                             Thread {
+                                var webClient: WebClient? = null
+                                if (settings != null && compreFaceServerConnected) {
+                                    webClient = WebClient.create(settings.getCompreFaceServer()!!)
+                                }
+                                val recognitionLabelPhotoLabels =
+                                    recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
+
+                                var threadText = ""
+
+                                var criteria: Criteria<Image, DetectedObjects>? = null
+                                if (settings?.getObjectDetection() == true) {
+                                    criteria = Criteria.builder()
+                                        .optApplication(Application.CV.OBJECT_DETECTION)
+                                        .setTypes(Image::class.java, DetectedObjects::class.java)
+                                        .optEngine(Engine.getDefaultEngineName())
+                                        .optFilter("backbone", "resnet50")
+                                        .optProgress(ProgressBar())
+                                        .build()
+                                }
+
                                 for (metadataId in metadataIdArray) {
                                     val metadataObj = metadataRepository?.findByMetadataId(metadataId)
+
                                     if (metadataObj != null) {
                                         val lat = metadataObj.getLat()
                                         val lng = metadataObj.getLng()
@@ -1916,109 +1937,8 @@ class SettingsController {
                                                 metadataRepository?.save(metadataObj)
                                             }
                                         }
-                                    }
-                                    ImageProcessing.createVideoGif(metadataId, metadataRepository)
-                                }
-                                metadataIdArray.clear()
-                            }.start()
-
-                            // Delete thread file
-                            if (threadFile.delete()) {
-                                logger.log(Level.FINE, "Thread file deleted: " + threadFile.name)
-                            } else {
-                                logger.log(Level.SEVERE, "Could not delete thread file: " + threadFile.name)
-                            }
-                        }
-                    }.start()
-
-                    return "Start Scan"
-                }
-
-                threadFileContent = FileUtils.readThreadFile("shashinscan")
-                var lmsg = "Scan in progress"
-                if (shouldStop.get()) {
-                    lmsg = "Scan cancellation in progress"
-                }
-
-                return if (threadFileContent != null) {
-                    lmsg + ": " + threadFileContent.replace("\\", "/")
-                } else {
-                    lmsg
-                }
-            } else {
-                logger.log(
-                    Level.INFO,
-                    "Directory not found"
-                )
-                return "Directory not found"
-            }
-        } else {
-            logger.log(
-                Level.INFO,
-                "No directories configured"
-            )
-            return "No directories configured"
-        }
-//        msg = "Start Scan"
-//
-//        return msg
-    }
-
-    private fun deleteThreadScan() {
-        FileUtils.deleteThreadFiles("shashinscan")
-        logger.log(Level.INFO, "shashinscan thread file deleted")
-    }
-
-    private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, settings: Settings?, criteria: Criteria<Image, DetectedObjects>?, webClient: WebClient?, recognitionLabelPhotoLabels: MutableIterable<RecognitionLabelId>?, compreFaceServerConnected: Boolean) {
-        val f = File(dirPath)
-        val files = f.listFiles()
-
-        if (files != null) {
-            for (i in files.indices) {
-
-                val file: File = files[i]
-                var threadText = file.path + " already scanned"
-
-                if (shouldStop.get()) {
-                    threadText = "Scan Stopped"
-                    FileUtils.writeToThreadFileAndLogMessage(threadText, threadFile)
-                    break
-                }
-
-                var exclude = false
-                if (mediaExcludeDirs != null) {
-                    for (mediaExcludeDir in mediaExcludeDirs) {
-                        // Don't scan if path starts with exclude path
-                        if (file.path.startsWith(mediaExcludeDir?.getDirectory().toString())) {
-                            exclude = true
-                            break
-                        }
-                    }
-                }
-
-                if (file.isFile && !alreadyScannedFilepaths.contains(file.path)) {
-                    if (!exclude && FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
-
-                        //val mediaProcessingUtils = MediaProcessing(apiVersion,geocodeUrl)
-                        var metadataObj: Metadata? = Metadata()
-
-                        if (!shouldStop.get() && FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
-                            val metadataProcessing = MetadataProcessing(apiVersion!!, file, sidecarDir, metadataObj!!, geocodeUrl!!)
-                            metadataObj = metadataProcessing.populateMetadata()
-                            if (metadataObj.getId().isNotEmpty()) {
-                                // Check for entry
-                                val metadataCount = metadataRepository?.countMetadataById(metadataObj.getId())
-
-                                if (metadataCount == 0) {
-                                    val imageProcessing = ImageProcessing(apiVersion, file, sidecarDir, metadataObj)
-                                    metadataObj = imageProcessing.createThumbnails()
-                                    if (metadataObj?.getThumbnailSmallWidth() != null && metadataObj.getThumbnailSmallHeight() != null && metadataObj.getThumbnailUrlSmall() != null) {
-                                        metadataObj.setHidden(false)
 
                                         try {
-                                            metadataRepository?.save(metadataObj)
-                                            metadataIdArray.add(metadataObj.getId())
-
                                             // Recognize face during index scan
                                             if (settings != null) {
                                                 if (webClient != null && compreFaceServerConnected) {
@@ -2035,7 +1955,7 @@ class SettingsController {
                                                             var response: String? = null
 
                                                             try {
-                                                                response = webClient.post()
+                                                                response = webClient!!.post()
                                                                     .uri("api/v1/recognition/recognize")
                                                                     .header(
                                                                         HttpHeaders.CONTENT_TYPE,
@@ -2123,7 +2043,7 @@ class SettingsController {
                                                                                 response = null
 
                                                                                 try {
-                                                                                    response = webClient.post()
+                                                                                    response = webClient!!.post()
                                                                                         .uri("api/v1/recognition/faces?subject=${subject}")
                                                                                         .header(
                                                                                             HttpHeaders.CONTENT_TYPE,
@@ -2229,8 +2149,28 @@ class SettingsController {
                                                     val testImage = mutableListOf<Metadata>()
                                                     testImage.add(metadataObj)
                                                     val trainingData = metadataRepository?.findTrainingData(settings.getRecognitionConfidenceThreshold()!!, settings.getTrainingDataLimit()!!)
-                                                    val faceRecognizer = DjlFaceRecognizer(testImage, trainingData!!, recognitionLabelPhotoRepository, settings, relativeSidecarDir!!, threadFile)
+                                                    val faceRecognizer = DjlFaceRecognizer(testImage, trainingData!!, recognitionLabelPhotoRepository, recognitionLabelRepository, settings, relativeSidecarDir!!, threadFile)
                                                     recognitionCount = faceRecognizer.startPredict()
+                                                }
+
+                                                val superAdminsUsers = userRepository?.findAllByAuthorityEquals(superRole!!)
+
+                                                if (superAdminsUsers != null) {
+                                                    val notificationObjList = mutableListOf<Notification>()
+                                                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                                                    sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                                                    for (admin in superAdminsUsers) {
+                                                        val notificationObj = Notification()
+                                                        notificationObj.setUserId(admin.getId())
+                                                        notificationObj.setCreatedAt(getCurrentTimestamp())
+                                                        notificationObj.setModifiedAt(getCurrentTimestamp())
+                                                        notificationObj.setRead(false)
+                                                        notificationObj.setMessage("$recognitionCount faces recognized during media indexing at ${sdtf.format(Date())}.")
+                                                        notificationObjList.add(notificationObj)
+                                                    }
+                                                    if (notificationObjList.isNotEmpty()) {
+                                                        notificationRepository?.saveAll(notificationObjList)
+                                                    }
                                                 }
                                             }
 
@@ -2240,14 +2180,14 @@ class SettingsController {
                                                     keywordPhotoRepository!!,
                                                     metadataRepository!!,
                                                     metadataObj,
-                                                    criteria,
+                                                    criteria!!,
                                                     settings,
                                                     threadFile,
                                                     shouldStop.get()
                                                 )
                                             }
 
-                                            threadText = file.path + " indexed"
+                                            threadText = metadataObj.getPath() + " indexed"
                                         } catch (e: Exception) {
                                             logger.log(
                                                 Level.SEVERE,
@@ -2255,6 +2195,108 @@ class SettingsController {
                                             )
                                             threadText = "Error saving metadata: " + metadataObj.getPath() + "."
                                         }
+                                        FileUtils.writeToThreadFileAndLogMessage(threadText, threadFile)
+                                    }
+                                    ImageProcessing.createVideoGif(metadataId, metadataRepository)
+                                }
+                                metadataIdArray.clear()
+                            }.start()
+
+                            // Delete thread file
+                            if (threadFile.delete()) {
+                                logger.log(Level.FINE, "Thread file deleted: " + threadFile.name)
+                            } else {
+                                logger.log(Level.SEVERE, "Could not delete thread file: " + threadFile.name)
+                            }
+                        }
+                    }.start()
+
+                    return "Start Scan"
+                }
+
+                threadFileContent = FileUtils.readThreadFile("shashinscan")
+                var lmsg = "Scan in progress"
+                if (shouldStop.get()) {
+                    lmsg = "Scan cancellation in progress"
+                }
+
+                return if (threadFileContent != null) {
+                    lmsg + ": " + threadFileContent.replace("\\", "/")
+                } else {
+                    lmsg
+                }
+            } else {
+                logger.log(
+                    Level.INFO,
+                    "Directory not found"
+                )
+                return "Directory not found"
+            }
+        } else {
+            logger.log(
+                Level.INFO,
+                "No directories configured"
+            )
+            return "No directories configured"
+        }
+//        msg = "Start Scan"
+//
+//        return msg
+    }
+
+    private fun deleteThreadScan() {
+        FileUtils.deleteThreadFiles("shashinscan")
+        logger.log(Level.INFO, "shashinscan thread file deleted")
+    }
+
+    private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, settings: Settings?, criteria: Criteria<Image, DetectedObjects>?, webClient: WebClient?, recognitionLabelPhotoLabels: MutableIterable<RecognitionLabelId>?, compreFaceServerConnected: Boolean) {
+        val f = File(dirPath)
+        val files = f.listFiles()
+
+        if (files != null) {
+            for (i in files.indices) {
+
+                val file: File = files[i]
+                var threadText = file.path + " already scanned"
+
+                if (shouldStop.get()) {
+                    threadText = "Scan Stopped"
+                    FileUtils.writeToThreadFileAndLogMessage(threadText, threadFile)
+                    break
+                }
+
+                var exclude = false
+                if (mediaExcludeDirs != null) {
+                    for (mediaExcludeDir in mediaExcludeDirs) {
+                        // Don't scan if path starts with exclude path
+                        if (file.path.startsWith(mediaExcludeDir?.getDirectory().toString())) {
+                            exclude = true
+                            break
+                        }
+                    }
+                }
+
+                if (file.isFile && !alreadyScannedFilepaths.contains(file.path)) {
+                    if (!exclude && FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
+
+                        //val mediaProcessingUtils = MediaProcessing(apiVersion,geocodeUrl)
+                        var metadataObj: Metadata? = Metadata()
+
+                        if (!shouldStop.get() && FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
+                            val metadataProcessing = MetadataProcessing(apiVersion!!, file, sidecarDir, metadataObj!!, geocodeUrl!!)
+                            metadataObj = metadataProcessing.populateMetadata()
+                            if (metadataObj.getId().isNotEmpty()) {
+                                // Check for entry
+                                val metadataCount = metadataRepository?.countMetadataById(metadataObj.getId())
+
+                                if (metadataCount == 0) {
+                                    val imageProcessing = ImageProcessing(apiVersion, file, sidecarDir, metadataObj)
+                                    metadataObj = imageProcessing.createThumbnails()
+                                    if (metadataObj?.getThumbnailSmallWidth() != null && metadataObj.getThumbnailSmallHeight() != null && metadataObj.getThumbnailUrlSmall() != null) {
+                                        metadataObj.setHidden(false)
+
+                                        metadataRepository?.save(metadataObj)
+                                        metadataIdArray.add(metadataObj.getId())
                                     } else {
                                         logger.log(
                                             Level.WARNING,
