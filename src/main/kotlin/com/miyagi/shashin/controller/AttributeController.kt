@@ -236,7 +236,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
             settingsObj.setTrainingDataLimit(trainingDataLimitProperty)
             settingsObj.setNotificationLimit(notificationLimitProperty)
             settingsObj.setSearchHistoryLimit(searchHistoryLimitProperty)
-            settingsObj.setCompreFaceServer(comprefaceServer)
+//            settingsObj.setCompreFaceServer(comprefaceServer)
             settingsObj.setPort(portProperty)
             settingsObj.setScanAutomatically(false)
             settingsObj.setObjectDetection(false)

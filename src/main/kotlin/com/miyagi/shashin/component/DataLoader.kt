@@ -53,7 +53,7 @@ class DataLoader @Autowired constructor(private val settingsRepository: Settings
             settingsObj.setTrainingDataLimit(trainingDataLimitProperty)
             settingsObj.setNotificationLimit(notificationLimitProperty)
             settingsObj.setSearchHistoryLimit(searchHistoryLimitProperty)
-            settingsObj.setCompreFaceServer(comprefaceServer)
+//            settingsObj.setCompreFaceServer(comprefaceServer)
             settingsObj.setPort(portProperty)
             settingsObj.setScanAutomatically(false)
             settingsObj.setObjectDetection(false)

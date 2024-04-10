@@ -46,16 +46,6 @@
                     </div>
                     <th:block th:if="${settings != null}">
                         <div class="row">
-                            <div class="col-6">
-                                <label for="compreFaceServer" class="form-label"><strong>CompreFace Endpoint</strong> (Default http://127.0.0.1:8000/)&nbsp;<span id="compreFaceInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Setup your own CompreFace server (https://github.com/exadel-inc/CompreFace) for facial recognition."></span></label>
-                                <input class="form-control" id="compreFaceServer" name="compreFaceServer" th:value="${settings.compreFaceServer}">
-                            </div>
-                            <div class="col-6">
-                                <label for="compreFaceKey" class="form-label"><strong>CompreFace API key</strong></label>&nbsp;<span id="faceRecogAvailableStatusInfo" th:style="${'color: '+faceRecogAvailableStatusColor+';font-size: 1rem;'}" th:class="${faceRecogAvailableStatusIcon}" data-bs-toggle="tooltip" th:title="${faceRecogAvailableStatusText}"></span>
-                                <input class="form-control" id="compreFaceKey" name="compreFaceKey" th:value="${settings.compreFaceKey}">
-                            </div>
-                        </div>
-                        <div class="row">
                             <div class="col-3">
                                 <label for="recognitionConfidenceThreshold" class="form-label"><strong>Facial Recognition Confidence Threshold</strong> (Default 0.8)</label>
                                 <input class="form-control" id="recognitionConfidenceThreshold" name="recognitionConfidenceThreshold" th:value="${settings.recognitionConfidenceThreshold}">
@@ -89,6 +79,16 @@
                             <div class="col-3">
                                 <label for="changePort" class="form-label"><strong>Change Port</strong></label>&nbsp;<span id="changePortInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Restarts app after updated and saved"></span>
                                 <input class="form-control" id="changePort" name="changePort" th:value="${settings.port}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="compreFaceServer" class="form-label"><strong>CompreFace Endpoint</strong> (eg. http://127.0.0.1:8000/)&nbsp;<span id="compreFaceInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Setup your own CompreFace server (https://github.com/exadel-inc/CompreFace) for facial recognition."></span></label>
+                                <input class="form-control" id="compreFaceServer" name="compreFaceServer" th:value="${settings.compreFaceServer}">
+                            </div>
+                            <div class="col-6">
+                                <label for="compreFaceKey" class="form-label"><strong>CompreFace API key</strong></label>&nbsp;<span id="faceRecogAvailableStatusInfo" th:style="${'color: '+faceRecogAvailableStatusColor+';font-size: 1rem;'}" th:class="${faceRecogAvailableStatusIcon}" data-bs-toggle="tooltip" th:title="${faceRecogAvailableStatusText}"></span>
+                                <input class="form-control" id="compreFaceKey" name="compreFaceKey" th:value="${settings.compreFaceKey}">
                             </div>
                         </div>
                         <div class="form-check">
