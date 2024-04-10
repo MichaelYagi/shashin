@@ -7,7 +7,7 @@ An Image Gallery inspired by Google Photos
 Must be updated in POM file and git tag with format v[Major][Minor][Patch].
 
 # Maven Install
-Run ```mvn clean install``` with unminified JS assets. Run ```mvn -Pprod clean install``` to run with minified JS assets.
+Run ```mvn clean install``` with unminified JS assets. Run ```mvn -Pprod clean install``` to run with minified JS assets. These also download and installs libraries needed for face recognition.
 
 # Pipeline
 Built on CircleCI with every push to master at:
