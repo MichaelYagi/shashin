@@ -2168,27 +2168,7 @@ class SettingsController {
                                                     testImage.add(metadataObj)
                                                     val trainingData = metadataRepository?.findTrainingData(settings.getRecognitionConfidenceThreshold()!!, settings.getTrainingDataLimit()!!)
                                                     val faceRecognizer = DjlFaceRecognizer(testImage, trainingData!!, recognitionLabelPhotoRepository, recognitionLabelRepository, settings, relativeSidecarDir!!, threadFile)
-                                                    recognitionCount = faceRecognizer.startPredict()
-                                                }
-
-                                                val superAdminsUsers = userRepository?.findAllByAuthorityEquals(superRole!!)
-
-                                                if (superAdminsUsers != null) {
-                                                    val notificationObjList = mutableListOf<Notification>()
-                                                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
-                                                    sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
-                                                    for (admin in superAdminsUsers) {
-                                                        val notificationObj = Notification()
-                                                        notificationObj.setUserId(admin.getId())
-                                                        notificationObj.setCreatedAt(getCurrentTimestamp())
-                                                        notificationObj.setModifiedAt(getCurrentTimestamp())
-                                                        notificationObj.setRead(false)
-                                                        notificationObj.setMessage("$recognitionCount faces recognized during media indexing at ${sdtf.format(Date())}.")
-                                                        notificationObjList.add(notificationObj)
-                                                    }
-                                                    if (notificationObjList.isNotEmpty()) {
-                                                        notificationRepository?.saveAll(notificationObjList)
-                                                    }
+                                                    recognitionCount += faceRecognizer.startPredict()
                                                 }
                                             }
 
@@ -2217,6 +2197,27 @@ class SettingsController {
                                     }
                                     ImageProcessing.createVideoGif(metadataId, metadataRepository)
                                 }
+
+                                val superAdminsUsers = userRepository?.findAllByAuthorityEquals(superRole!!)
+
+                                if (superAdminsUsers != null && recognitionCount > 0) {
+                                    val notificationObjList = mutableListOf<Notification>()
+                                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                                    sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                                    for (admin in superAdminsUsers) {
+                                        val notificationObj = Notification()
+                                        notificationObj.setUserId(admin.getId())
+                                        notificationObj.setCreatedAt(getCurrentTimestamp())
+                                        notificationObj.setModifiedAt(getCurrentTimestamp())
+                                        notificationObj.setRead(false)
+                                        notificationObj.setMessage("$recognitionCount faces recognized during media indexing at ${sdtf.format(Date())}.")
+                                        notificationObjList.add(notificationObj)
+                                    }
+                                    if (notificationObjList.isNotEmpty()) {
+                                        notificationRepository?.saveAll(notificationObjList)
+                                    }
+                                }
+
                                 metadataIdArray.clear()
                             }.start()
 
