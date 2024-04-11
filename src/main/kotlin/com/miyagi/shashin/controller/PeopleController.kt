@@ -165,7 +165,7 @@ println("test")
             // Clean up any existing thread files
             FileUtils.deleteThreadFiles(threadExtensionName)
 
-            val superAdmins = userRepository?.findAllByAuthorityEquals(superRole!!)
+            val superAdmins = userRepository?.findAllByAuthorityEquals(superRole)
 
             Thread {
                 val threadFile = FileUtils.createFile(
