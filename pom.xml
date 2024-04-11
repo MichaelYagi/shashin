@@ -305,7 +305,7 @@
                     <execution>
                         <id>vgg</id>
                         <!-- the wget goal actually binds itself to this phase by default -->
-                        <phase>process-resources</phase>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>wget</goal>
                         </goals>
@@ -320,7 +320,7 @@
                     <execution>
                         <id>retina</id>
                         <!-- the wget goal actually binds itself to this phase by default -->
-                        <phase>process-resources</phase>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>wget</goal>
                         </goals>
@@ -329,6 +329,39 @@
                             <outputFileName>retinaface.zip</outputFileName>
                             <!-- default target location, just to demonstrate the parameter -->
                             <outputDirectory>${project.basedir}/src/main/resources/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>unzip</id>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <tasks>
+                                <echo message="unzipping retinaface.zip" />
+                                <unzip src="${project.basedir}/src/main/resources/lib/retinaface.zip" dest="${project.basedir}/src/main/resources/lib/" />
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>cleanup</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <delete>
+                                    <fileset dir="${project.basedir}/src/main/resources/lib" includes="*.zip" />
+                                </delete>
+                            </tasks>
                         </configuration>
                     </execution>
                 </executions>
