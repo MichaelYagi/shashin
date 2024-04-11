@@ -155,6 +155,7 @@ class PeopleController: BaseController() {
         val settings = model.getAttribute("settings") as Settings
 
         if (stopScan) {
+println("test")
             shouldStop.set(true)
         }
 
@@ -209,7 +210,7 @@ class PeopleController: BaseController() {
                         relativeSidecarDir!!,
                         settings,
                         threadFile,
-                        shouldStop.get()
+                        shouldStop
                     )
 
                     val adminSupers = userRepository?.findAllByAuthorityEquals(superRole)

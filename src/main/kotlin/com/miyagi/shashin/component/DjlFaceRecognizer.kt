@@ -29,6 +29,7 @@ import org.springframework.core.io.FileSystemResource
 import java.awt.image.BufferedImage
 import java.io.File
 import java.io.IOException
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
@@ -46,10 +47,11 @@ class DjlFaceRecognizer {
     private lateinit var sidecarDir: String
     private lateinit var settings: Settings
     private lateinit var threadFile: File
+    private var shouldStop: AtomicBoolean = AtomicBoolean(false)
 
     constructor()
 
-    constructor(testImages: MutableIterable<Metadata>, trainingData: MutableIterable<TrainingData>, recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?, recognitionLabelRepository: RecognitionLabelRepository?, settings: Settings, relativeSidecarDir: String, threadFile: File) : this() {
+    constructor(testImages: MutableIterable<Metadata>, trainingData: MutableIterable<TrainingData>, recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?, recognitionLabelRepository: RecognitionLabelRepository?, settings: Settings, relativeSidecarDir: String, threadFile: File, shouldStop: AtomicBoolean = AtomicBoolean(false)) : this() {
         this.trainingData = trainingData
         this.testImages = testImages
         this.recognitionLabelPhotoRepository = recognitionLabelPhotoRepository
@@ -59,6 +61,7 @@ class DjlFaceRecognizer {
         this.sidecarDir = rootPath + relativeSidecarDir
         this.settings = settings
         this.threadFile = threadFile
+        this.shouldStop = shouldStop
     }
 
     private fun getSubImage(image: BufferedImage, jsonNode: JsonNode, index: Int): BufferedImage {
@@ -90,7 +93,12 @@ class DjlFaceRecognizer {
             val testImagesCount = this.testImages!!.count()
 
             // Loop through training data
-            this.trainingData!!.forEachIndexed { trainingDataCurrentCount, trainingImageObj ->
+            var trainingDataCurrentCount = 0
+            for (trainingImageObj in this.trainingData!!) {
+                if (this.shouldStop.get()) {
+                    break
+                }
+
                 logger.log(
                     Level.INFO,
                     "Processing training image ${trainingDataCurrentCount+1}/$trainingDataCount - ${trainingImageObj.getRecognitionLabelName()!!} using training image ${trainingImageObj.getPath()}"
@@ -126,7 +134,12 @@ class DjlFaceRecognizer {
                 )
 
                 // Loop through test images
-                this.testImages!!.forEachIndexed { testImagesCurrentCount, testImageObj ->
+//                this.testImages!!.forEachIndexed { testImagesCurrentCount, testImageObj ->
+                var testImagesCurrentCount = 0
+                for (testImageObj in this.testImages!!) {
+                    if (this.shouldStop.get()) {
+                        break
+                    }
                     logger.log(
                         Level.INFO,
                         "Processing test image ${testImagesCurrentCount+1}/$testImagesCount - ${testImageObj.getPath()}"
@@ -181,6 +194,10 @@ class DjlFaceRecognizer {
                     }
 
                     for (i in 0 until numOfTrainingObject) {
+                        if (this.shouldStop.get()) {
+                            break
+                        }
+
                         // Get sub images
                         val trainingSubImageBi = getSubImage(scaledTrainingImage, trainingImageJsonNode, i)
                         val trainingSubImage = ImageFactory.getInstance().fromImage(trainingSubImageBi)
@@ -198,6 +215,10 @@ class DjlFaceRecognizer {
                             val trainingFeature = predict(trainingSubImage)
 
                             for (j in 0 until numOfTestObject) {
+                                if (this.shouldStop.get()) {
+                                    break
+                                }
+
                                 val testSubImageBi = getSubImage(scaledTestImage, testImageJsonNode, j)
                                 val testSubImage = ImageFactory.getInstance().fromImage(testSubImageBi)
 
@@ -276,7 +297,9 @@ class DjlFaceRecognizer {
                             continue
                         }
                     }
+                    testImagesCurrentCount++
                 }
+                trainingDataCurrentCount++
             }
         }
 
