@@ -1093,9 +1093,9 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     }
                 } else {
                     val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
-                    val vggfaceFile = File(classLoader.getResource("lib/vggface2.pt")!!.path.toString())
-                    val retinafaceFile = File(classLoader.getResource("lib/retinaface.zip")!!.path.toString())
-                    if (vggfaceFile.exists() && retinafaceFile.exists()) {
+                    val vggfaceFileExists = classLoader.getResource("lib/vggface2.pt") != null
+                    val retinafaceFileExists = classLoader.getResource("lib/retinaface.zip") != null
+                    if (vggfaceFileExists && retinafaceFileExists) {
                         val trainingData = metadataRepository.findTrainingData(
                             settings.getRecognitionConfidenceThreshold()!!,
                             settings.getTrainingDataLimit()!!
@@ -1115,6 +1115,12 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                             Level.WARNING,
                             "Missing lib files for DJL face scan"
                         )
+                        if (threadFile != null) {
+                            FileUtils.writeToThreadFileAndLogMessage(
+                        "Missing lib files for DJL face scan",
+                                threadFile
+                            )
+                        }
                     }
                 }
             }
