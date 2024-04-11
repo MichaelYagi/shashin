@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.javascript.jscomp.jarjar.com.google.common.io.Files
+import com.miyagi.shashin.ShashinApplication
 import com.miyagi.shashin.component.DjlFaceRecognizer
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
@@ -1091,9 +1092,30 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                         }
                     }
                 } else {
-                    val trainingData = metadataRepository.findTrainingData(settings.getRecognitionConfidenceThreshold()!!, settings.getTrainingDataLimit()!!)
-                    val faceRecognizer = DjlFaceRecognizer(testImages, trainingData, recognitionLabelPhotoRepository, recognitionLabelRepository, settings, relativeSidecarDir, threadFile!!)
-                    recognitionCount = faceRecognizer.startPredict()
+                    val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
+                    val vggfaceFile = File(classLoader.getResource("lib/vggface2.pt")!!.path.toString())
+                    val retinafaceFile = File(classLoader.getResource("lib/retinaface.zip")!!.path.toString())
+                    if (vggfaceFile.exists() && retinafaceFile.exists()) {
+                        val trainingData = metadataRepository.findTrainingData(
+                            settings.getRecognitionConfidenceThreshold()!!,
+                            settings.getTrainingDataLimit()!!
+                        )
+                        val faceRecognizer = DjlFaceRecognizer(
+                            testImages,
+                            trainingData,
+                            recognitionLabelPhotoRepository,
+                            recognitionLabelRepository,
+                            settings,
+                            relativeSidecarDir,
+                            threadFile!!
+                        )
+                        recognitionCount = faceRecognizer.startPredict()
+                    } else {
+                        logger.log(
+                            Level.WARNING,
+                            "Missing lib files for DJL face scan"
+                        )
+                    }
                 }
             }
 
