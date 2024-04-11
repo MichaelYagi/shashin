@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
+import com.miyagi.shashin.ShashinApplication
 import com.miyagi.shashin.component.DjlFaceRecognizer
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScanMessage
@@ -19,6 +20,7 @@ import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.service.RestartService
 import com.miyagi.shashin.util.*
+import com.miyagi.shashin.util.ImageProcessing.Companion
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import kotlinx.coroutines.*
 import net.iakovlev.timeshape.TimeZoneEngine
@@ -2164,11 +2166,32 @@ class SettingsController {
                                                         )
                                                     }
                                                 } else {
-                                                    val testImage = mutableListOf<Metadata>()
-                                                    testImage.add(metadataObj)
-                                                    val trainingData = metadataRepository?.findTrainingData(settings.getRecognitionConfidenceThreshold()!!, settings.getTrainingDataLimit()!!)
-                                                    val faceRecognizer = DjlFaceRecognizer(testImage, trainingData!!, recognitionLabelPhotoRepository, recognitionLabelRepository, settings, relativeSidecarDir!!, threadFile)
-                                                    recognitionCount += faceRecognizer.startPredict()
+                                                    val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
+                                                    val vggfaceFile = File(classLoader.getResource("lib/vggface2.pt")!!.path.toString())
+                                                    val retinafaceFile = File(classLoader.getResource("lib/retinaface.zip")!!.path.toString())
+                                                    if (vggfaceFile.exists() && retinafaceFile.exists()) {
+                                                        val testImage = mutableListOf<Metadata>()
+                                                        testImage.add(metadataObj)
+                                                        val trainingData = metadataRepository?.findTrainingData(
+                                                            settings.getRecognitionConfidenceThreshold()!!,
+                                                            settings.getTrainingDataLimit()!!
+                                                        )
+                                                        val faceRecognizer = DjlFaceRecognizer(
+                                                            testImage,
+                                                            trainingData!!,
+                                                            recognitionLabelPhotoRepository,
+                                                            recognitionLabelRepository,
+                                                            settings,
+                                                            relativeSidecarDir!!,
+                                                            threadFile
+                                                        )
+                                                        recognitionCount += faceRecognizer.startPredict()
+                                                    } else {
+                                                        logger.log(
+                                                            Level.WARNING,
+                                                            "Missing lib files for DJL face scan"
+                                                        )
+                                                    }
                                                 }
                                             }
 
