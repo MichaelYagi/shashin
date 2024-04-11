@@ -36,6 +36,7 @@ import java.awt.image.ConvolveOp
 import java.awt.image.Kernel
 import java.io.File
 import java.io.IOException
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
@@ -863,7 +864,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             return recogresponse
         }
 
-        fun subjectRecognizer(metadataRepository: MetadataRepository?, recognitionLabelRepository: RecognitionLabelRepository?, recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?, relativeSidecarDir: String, settings: Settings, threadFile: File?, shouldStop: Boolean?): Int {
+        fun subjectRecognizer(metadataRepository: MetadataRepository?, recognitionLabelRepository: RecognitionLabelRepository?, recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?, relativeSidecarDir: String, settings: Settings, threadFile: File?, shouldStop: AtomicBoolean?): Int {
             // Scan records of photos that haven't been scanned in a separate thread
             val testImages = metadataRepository?.findNonMatched(settings.getMatchScanLimit()!!)
             val distinctLabelRecords = recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
@@ -880,7 +881,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
                     for (testImage in testImages) {
 
-                        if (shouldStop != null && shouldStop) {
+                        if (shouldStop != null && shouldStop.get()) {
                             break
                         }
 
@@ -1100,6 +1101,10 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                             settings.getRecognitionConfidenceThreshold()!!,
                             settings.getTrainingDataLimit()!!
                         )
+                        var stop = AtomicBoolean(false)
+                        if (shouldStop != null) {
+                            stop = shouldStop
+                        }
                         val faceRecognizer = DjlFaceRecognizer(
                             testImages,
                             trainingData,
@@ -1107,7 +1112,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                             recognitionLabelRepository,
                             settings,
                             relativeSidecarDir,
-                            threadFile!!
+                            threadFile!!,
+                            stop
                         )
                         recognitionCount = faceRecognizer.startPredict()
                     } else {

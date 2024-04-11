@@ -2185,7 +2185,8 @@ class SettingsController {
                                                             recognitionLabelRepository,
                                                             settings,
                                                             relativeSidecarDir!!,
-                                                            threadFile
+                                                            threadFile,
+                                                            shouldStop
                                                         )
                                                         recognitionCount += faceRecognizer.startPredict()
                                                     } else {
