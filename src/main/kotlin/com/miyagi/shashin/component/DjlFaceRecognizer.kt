@@ -316,7 +316,7 @@ class DjlFaceRecognizer {
                     classLoader.getResource("lib/vggface2.pt")!!.path
 //                    "https://github.com/jmformenti/face-recognition-java/raw/master/core/src/main/resources/models/pytorch/vggface2/vggface2.pt"
                 )
-                .optModelName("vggface2") // specify model file prefix
+//                .optModelName("vggface2") // specify model file prefix
                 .optEngine("PyTorch") // Use PyTorch engine
                 .build()
 
@@ -341,9 +341,9 @@ class DjlFaceRecognizer {
         val criteria =
             Criteria.builder()
                 .setTypes(Image::class.java, DetectedObjects::class.java)
-                .optModelUrls(classLoader.getResource("lib/retinaface.zip")!!.path) // Load model from local file, e.g:
+                .optModelUrls(classLoader.getResource("lib/retinaface.pt")!!.path) // Load model from local file, e.g:
 //                .optModelUrls("https://resources.djl.ai/test-models/pytorch/retinaface.zip")
-                .optModelName("retinaface") // specify model file prefix
+//                .optModelName("retinaface") // specify model file prefix
                 .optTranslator(translator)
 //                .optProgress(ProgressBar())
                 .optEngine("PyTorch") // Use PyTorch engine
