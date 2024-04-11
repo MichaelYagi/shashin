@@ -1916,6 +1916,8 @@ class SettingsController {
                                 val recognitionLabelPhotoLabels =
                                     recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
 
+                                val superAdminsUsers = userRepository?.findAllByAuthorityEquals(superRole!!)
+
                                 var threadText: String
 
                                 var criteria: Criteria<Image, DetectedObjects>? = null
@@ -1929,7 +1931,7 @@ class SettingsController {
                                         .build()
                                 }
 
-                                for (metadataId in metadataIdArray) {
+                                for ((index, metadataId) in metadataIdArray.withIndex()) {
                                     val metadataObj = metadataRepository?.findByMetadataId(metadataId)
 
                                     if (metadataObj != null) {
@@ -2167,9 +2169,9 @@ class SettingsController {
                                                     }
                                                 } else {
                                                     val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
-                                                    val vggfaceFile = File(classLoader.getResource("lib/vggface2.pt")!!.path.toString())
-                                                    val retinafaceFile = File(classLoader.getResource("lib/retinaface.zip")!!.path.toString())
-                                                    if (vggfaceFile.exists() && retinafaceFile.exists()) {
+                                                    val vggfaceFileExists = classLoader.getResource("lib/vggface2.pt") != null
+                                                    val retinafaceFileExists = classLoader.getResource("lib/retinaface.zip") != null
+                                                    if (vggfaceFileExists && retinafaceFileExists) {
                                                         val testImage = mutableListOf<Metadata>()
                                                         testImage.add(metadataObj)
                                                         val trainingData = metadataRepository?.findTrainingData(
@@ -2191,6 +2193,25 @@ class SettingsController {
                                                             Level.WARNING,
                                                             "Missing lib files for DJL face scan"
                                                         )
+                                                        FileUtils.writeToThreadFileAndLogMessage("Missing lib files for DJL face scan", threadFile)
+
+                                                        if (superAdminsUsers != null && index < 1) {
+                                                            val notificationObjList = mutableListOf<Notification>()
+                                                            val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                                                            sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                                                            for (admin in superAdminsUsers) {
+                                                                val notificationObj = Notification()
+                                                                notificationObj.setUserId(admin.getId())
+                                                                notificationObj.setCreatedAt(getCurrentTimestamp())
+                                                                notificationObj.setModifiedAt(getCurrentTimestamp())
+                                                                notificationObj.setRead(false)
+                                                                notificationObj.setMessage("Missing lib files for DJL face scan.")
+                                                                notificationObjList.add(notificationObj)
+                                                            }
+                                                            if (notificationObjList.isNotEmpty()) {
+                                                                notificationRepository?.saveAll(notificationObjList)
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
@@ -2220,8 +2241,6 @@ class SettingsController {
                                     }
                                     ImageProcessing.createVideoGif(metadataId, metadataRepository)
                                 }
-
-                                val superAdminsUsers = userRepository?.findAllByAuthorityEquals(superRole!!)
 
                                 if (superAdminsUsers != null && recognitionCount > 0) {
                                     val notificationObjList = mutableListOf<Notification>()

@@ -9,6 +9,7 @@ import ai.djl.training.util.ProgressBar
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.ShashinApplication
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.*
@@ -163,12 +164,41 @@ class PeopleController: BaseController() {
             // Clean up any existing thread files
             FileUtils.deleteThreadFiles(threadExtensionName)
 
+            val superAdmins = userRepository?.findAllByAuthorityEquals(superRole!!)
+
             Thread {
                 val threadFile = FileUtils.createFile(
                     tempDir,
                     tempDir + "/" + Thread.currentThread().name + "." + threadExtensionName,
                     "Thread"
                 )
+
+                val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
+                val vggfaceFileExists = classLoader.getResource("lib/vggface2.pt") != null
+                val retinafaceFileExists = classLoader.getResource("lib/retinaface.zip") != null
+
+                if ((!vggfaceFileExists || !retinafaceFileExists) && !NetworkUtils.checkCompreFaceConnection(
+                        settings.getCompreFaceServer(),
+                        settings.getCompreFaceKey()
+                    )) {
+                    if (superAdmins != null) {
+                        val notificationObjList = mutableListOf<Notification>()
+                        val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                        sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                        for (admin in superAdmins) {
+                            val notificationObj = Notification()
+                            notificationObj.setUserId(admin.getId())
+                            notificationObj.setCreatedAt(getCurrentTimestamp())
+                            notificationObj.setModifiedAt(getCurrentTimestamp())
+                            notificationObj.setRead(false)
+                            notificationObj.setMessage("Missing lib files for DJL face scan")
+                            notificationObjList.add(notificationObj)
+                        }
+                        if (notificationObjList.isNotEmpty()) {
+                            notificationRepository?.saveAll(notificationObjList)
+                        }
+                    }
+                }
 
                 // Object and person recognition
                 if (threadFile != null) {
