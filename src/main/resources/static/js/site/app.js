@@ -543,7 +543,11 @@
                 taggedPeopleString = taggedPeopleString.replace(/,\s*$/, "");
                 taggedPeopleString = taggedPeopleString.trim();
 
-                if (taggedPeopleString !== "") {
+                if (isObject === true) {
+                    $("#tagpeople").val();
+                    $("#peopleList").val();
+                    $("#isobject").prop("checked", true)
+                } else if (taggedPeopleString !== "") {
                     $("#tagpeople").val(taggedPeopleString);
                     $("#peopleList").val(taggedPeopleString);
                 } else if (metadata.tagpeople !== null) {
