@@ -1317,15 +1317,17 @@ class TimelineController: BaseController() {
                 metricsUtil.start("Metadata Update - Process people")
                 // Process tagged people
                 val taggedPeople = metadataMap["tagpeople"].toString()
-                if (taggedPeople.isBlank()) {
-                    recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
-                } else {
+                val isObject = metadataMap["isObject"].toString().toBoolean()
+
+                if (isObject) {
                     processPeople(
                         model.getAttribute("settings") as Settings,
                         metadataObj.get(),
                         taggedPeople,
                         metadataMap["isObject"].toString().toBoolean()
                     )
+                } else if (taggedPeople.isBlank()) {
+                    recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
                 }
                 cleanupOrphanedSubjects()
                 metricsUtil.end()
@@ -2710,77 +2712,7 @@ class TimelineController: BaseController() {
                 }
             }
 
-            if (taggedPeople != null && taggedPeople.trim() != "") {
-                val recognitionLabelArray = taggedPeople.split(",")
-                if (recognitionLabelArray.count() > 0) {
-                    recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
-                }
-                    val compreFaceImageIdMap = mutableMapOf<String, Any?>()
-//                    val recognitionLabelList = mutableListOf<RecognitionLabel>()
-                    val recognitionLabelPhotoList = mutableListOf<RecognitionLabelPhoto>()
-
-                    for (recognitionLabel in recognitionLabelArray) {
-                        if (!recognitionLabel.trim().isNullOrBlank() && recognitionLabel.trim() != "null") {
-                            val recognitionLabelRecord =
-                                recognitionLabelRepository?.findByNameIgnoreCase(recognitionLabel.trim())
-                            var recognitionLabelObj = RecognitionLabel()
-                            if (recognitionLabelRecord == null) {
-                                recognitionLabelObj.setName(recognitionLabel.trim())
-                                recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
-                                recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
-                                recognitionLabelObj.setCoverUrl(metadataObj.getThumbnailUrlCentered())
-                                recognitionLabelRepository?.save(recognitionLabelObj)
-                                //recognitionLabelList.add(recognitionLabelObj)
-                            } else {
-                                recognitionLabelObj = recognitionLabelRecord
-                            }
-                            val recognitionLabelPhotoCount =
-                                recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
-                                    recognitionLabelObj.getId(),
-                                    metadataId
-                                )
-
-                            if (recognitionLabelPhotoCount == 0) {
-                                val recognitionLabelPhotoObj = RecognitionLabelPhoto()
-                                recognitionLabelPhotoObj.setMetadataId(metadataObj.getId())
-                                recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
-                                //recognitionLabelPhotoObj.setCompreFaceImageId(compreFaceImageId)
-                                recognitionLabelPhotoObj.setConfidence("0.0")
-                                recognitionLabelPhotoList.add(recognitionLabelPhotoObj)
-
-                                Thread {
-//                                    val uploadResp = mapper.writeValueAsString(
-                                        ImageProcessing.buildPersonUpload(
-                                            settings,
-                                            recognitionLabel,
-                                            metadataObj,
-                                            compreFaceImageIdMap
-                                        )
-//                                    )
-
-//                                    val jsonRespObj = mapper.readTree(uploadResp)
-//                                    var compreFaceImageId: String? = null
-//                                    if (jsonRespObj.has("responseDataUpload") && jsonRespObj["responseDataUpload"].has("image_id")) {
-//                                        compreFaceImageId = jsonRespObj["responseDataUpload"]["image_id"].toString()
-//                                        compreFaceImageId = compreFaceImageId.drop(1).dropLast(1)
-//                                    } else if (jsonRespObj.has("responseData") && jsonRespObj["responseData"].has("image_id")) {
-//                                        compreFaceImageId = jsonRespObj["responseData"]["image_id"].toString()
-//                                        compreFaceImageId = compreFaceImageId.drop(1).dropLast(1)
-//                                    }
-                                }.start()
-                            }
-                        }
-                    }
-
-//                    if (recognitionLabelList.isNotEmpty()) {
-//                        recognitionLabelRepository?.saveAll(recognitionLabelList)
-//                    }
-
-                    if (recognitionLabelPhotoList.isNotEmpty()) {
-                        recognitionLabelPhotoRepository?.saveAll(recognitionLabelPhotoList)
-                    }
-
-            } else if (isObject) {
+            if (isObject) {
                 recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
                 val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase("shashinobject")
                 var recognitionLabelObj = RecognitionLabel()
@@ -2798,6 +2730,77 @@ class TimelineController: BaseController() {
                 recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
                 recognitionLabelPhotoObj.setConfidence("-0.1")
                 recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
+            } else if (taggedPeople != null && taggedPeople.trim() != "") {
+                val recognitionLabelArray = taggedPeople.split(",")
+                if (recognitionLabelArray.count() > 0) {
+                    recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
+                }
+
+                val compreFaceImageIdMap = mutableMapOf<String, Any?>()
+//                    val recognitionLabelList = mutableListOf<RecognitionLabel>()
+                val recognitionLabelPhotoList = mutableListOf<RecognitionLabelPhoto>()
+
+                for (recognitionLabel in recognitionLabelArray) {
+                    if (!recognitionLabel.trim().isNullOrBlank() && recognitionLabel.trim() != "null") {
+                        val recognitionLabelRecord =
+                            recognitionLabelRepository?.findByNameIgnoreCase(recognitionLabel.trim())
+                        var recognitionLabelObj = RecognitionLabel()
+                        if (recognitionLabelRecord == null) {
+                            recognitionLabelObj.setName(recognitionLabel.trim())
+                            recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
+                            recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
+                            recognitionLabelObj.setCoverUrl(metadataObj.getThumbnailUrlCentered())
+                            recognitionLabelRepository?.save(recognitionLabelObj)
+                            //recognitionLabelList.add(recognitionLabelObj)
+                        } else {
+                            recognitionLabelObj = recognitionLabelRecord
+                        }
+                        val recognitionLabelPhotoCount =
+                            recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
+                                recognitionLabelObj.getId(),
+                                metadataId
+                            )
+
+                        if (recognitionLabelPhotoCount == 0) {
+                            val recognitionLabelPhotoObj = RecognitionLabelPhoto()
+                            recognitionLabelPhotoObj.setMetadataId(metadataObj.getId())
+                            recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
+                            //recognitionLabelPhotoObj.setCompreFaceImageId(compreFaceImageId)
+                            recognitionLabelPhotoObj.setConfidence("0.0")
+                            recognitionLabelPhotoList.add(recognitionLabelPhotoObj)
+
+                            Thread {
+//                                    val uploadResp = mapper.writeValueAsString(
+                                    ImageProcessing.buildPersonUpload(
+                                        settings,
+                                        recognitionLabel,
+                                        metadataObj,
+                                        compreFaceImageIdMap
+                                    )
+//                                    )
+
+//                                    val jsonRespObj = mapper.readTree(uploadResp)
+//                                    var compreFaceImageId: String? = null
+//                                    if (jsonRespObj.has("responseDataUpload") && jsonRespObj["responseDataUpload"].has("image_id")) {
+//                                        compreFaceImageId = jsonRespObj["responseDataUpload"]["image_id"].toString()
+//                                        compreFaceImageId = compreFaceImageId.drop(1).dropLast(1)
+//                                    } else if (jsonRespObj.has("responseData") && jsonRespObj["responseData"].has("image_id")) {
+//                                        compreFaceImageId = jsonRespObj["responseData"]["image_id"].toString()
+//                                        compreFaceImageId = compreFaceImageId.drop(1).dropLast(1)
+//                                    }
+                            }.start()
+                        }
+                    }
+                }
+
+//                    if (recognitionLabelList.isNotEmpty()) {
+//                        recognitionLabelRepository?.saveAll(recognitionLabelList)
+//                    }
+
+                if (recognitionLabelPhotoList.isNotEmpty()) {
+                    recognitionLabelPhotoRepository?.saveAll(recognitionLabelPhotoList)
+                }
+
             }
         }
     }
