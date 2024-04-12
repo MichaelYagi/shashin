@@ -1319,16 +1319,13 @@ class TimelineController: BaseController() {
                 val taggedPeople = metadataMap["tagpeople"].toString()
                 val isObject = metadataMap["isObject"].toString().toBoolean()
 
-                if (isObject) {
-                    processPeople(
-                        model.getAttribute("settings") as Settings,
-                        metadataObj.get(),
-                        taggedPeople,
-                        metadataMap["isObject"].toString().toBoolean()
-                    )
-                } else if (taggedPeople.isBlank()) {
-                    recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
-                }
+                processPeople(
+                    model.getAttribute("settings") as Settings,
+                    metadataObj.get(),
+                    taggedPeople,
+                    isObject
+                )
+
                 cleanupOrphanedSubjects()
                 metricsUtil.end()
 
@@ -2705,15 +2702,9 @@ class TimelineController: BaseController() {
         if (metadataObj != null) {
             val metadataId = metadataObj.getId()
 
-            val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadataId)
-            if (recognitionLabelPhotos != null) {
-                for (recognitionLabelPhoto in recognitionLabelPhotos) {
-                    recognitionLabelPhotoRepository?.delete(recognitionLabelPhoto)
-                }
-            }
+            recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
 
             if (isObject) {
-                recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
                 val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase("shashinobject")
                 var recognitionLabelObj = RecognitionLabel()
                 if (recognitionLabelRecord == null) {
@@ -2732,9 +2723,6 @@ class TimelineController: BaseController() {
                 recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
             } else if (taggedPeople != null && taggedPeople.trim() != "") {
                 val recognitionLabelArray = taggedPeople.split(",")
-                if (recognitionLabelArray.count() > 0) {
-                    recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
-                }
 
                 val compreFaceImageIdMap = mutableMapOf<String, Any?>()
 //                    val recognitionLabelList = mutableListOf<RecognitionLabel>()
