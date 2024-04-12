@@ -175,10 +175,10 @@ class DjlFaceRecognizer {
 
                     if (numOfTestObject == 0) {
                         recognitionLabelPhotoRepository?.deleteByMetadataId(testImageObj.getId())
-                        val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase("object")
+                        val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase("shashinobject")
                         var recognitionLabelObj = RecognitionLabel()
                         if (recognitionLabelRecord == null) {
-                            recognitionLabelObj.setName("object")
+                            recognitionLabelObj.setName("shashinobject")
                             recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
                             recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
                             recognitionLabelRepository?.save(recognitionLabelObj)
