@@ -534,7 +534,7 @@
                 let isObject = false;
                 for (index in taggedPeopleArray) {
                     const person = taggedPeopleArray[index];
-                    if (person === "object") {
+                    if (person === "shashinobject") {
                         isObject = true;
                     } else {
                         taggedPeopleString += person + ",";

@@ -28,7 +28,7 @@ class BaseController {
         val response = mutableMapOf<String,Any>()
 
         model["recognitionLabels"] = mutableListOf<RecognitionLabel>()
-        val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
+        val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("shashinobject")
         if (recognitionLabels != null && recognitionLabels.count() > 0) {
             model["recognitionLabels"] = recognitionLabels
         }

@@ -1995,10 +1995,10 @@ class SettingsController {
                                                                 )
                                                             } catch (e: Exception) {
                                                                 val recognitionLabelRecord =
-                                                                    recognitionLabelRepository?.findByNameIgnoreCase("object")
+                                                                    recognitionLabelRepository?.findByNameIgnoreCase("shashinobject")
                                                                 var recognitionLabelObj = RecognitionLabel()
                                                                 if (recognitionLabelRecord == null) {
-                                                                    recognitionLabelObj.setName("object")
+                                                                    recognitionLabelObj.setName("shashinobject")
                                                                     recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
                                                                     recognitionLabelObj.setModifiedAt(
                                                                         getCurrentTimestamp()
