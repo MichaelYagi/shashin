@@ -916,10 +916,10 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                             )
                         } catch (e: Exception) {
                             val recognitionLabelRecord =
-                                recognitionLabelRepository?.findByNameIgnoreCase("shashinobject")
+                                recognitionLabelRepository?.findByNameIgnoreCase(TextUtils.getObjectName())
                             var recognitionLabelObj = RecognitionLabel()
                             if (recognitionLabelRecord == null) {
-                                recognitionLabelObj.setName("shashinobject")
+                                recognitionLabelObj.setName(TextUtils.getObjectName())
                                 recognitionLabelObj.setCreatedAt(TextUtils.getCurrentTimestamp())
                                 recognitionLabelObj.setModifiedAt(TextUtils.getCurrentTimestamp())
                                 recognitionLabelRepository?.save(recognitionLabelObj)
