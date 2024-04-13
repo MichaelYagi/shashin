@@ -28,6 +28,10 @@
         }
 
         $("#tagpeople").val(labelString);
+
+        if (labelString !== "") {
+            $("#isobject").prop("checked", false);
+        }
     }
 
     metadataModal.populateAlbum = function (metadataId) {
