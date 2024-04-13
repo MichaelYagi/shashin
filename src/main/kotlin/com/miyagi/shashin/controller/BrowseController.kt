@@ -589,7 +589,7 @@ class BrowseController: BaseController() {
                 response["message"] = ""
                 response["favorites"] = favoritesMap
 
-                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("shashinobject")
+                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
                 if (recognitionLabels != null && recognitionLabels.count() > 0) {
                     response["recognitionLabels"] = recognitionLabels
                 }
@@ -1077,7 +1077,7 @@ class BrowseController: BaseController() {
                 response["message"] = ""
                 response["favorites"] = favoritesMap
 
-                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("shashinobject")
+                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
                 if (recognitionLabels != null && recognitionLabels.count() > 0) {
                     response["recognitionLabels"] = recognitionLabels
                 }

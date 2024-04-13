@@ -296,7 +296,7 @@ println("test")
         model["counts"] = counts
         model["parameter"] = personId
 
-        val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("shashinobject")
+        val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
         if (recognitionLabels != null && recognitionLabels.count() > 0) {
             model["recognitionLabels"] = recognitionLabels
         }
@@ -360,7 +360,7 @@ println("test")
                 if (recognitionLabelPhotos != null) {
                     for (recognitionLabelPhoto in recognitionLabelPhotos) {
                         val recognitionLabelObj = recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
-                        if (recognitionLabelObj != null && recognitionLabelObj.get().getName() != "shashinobject") {
+                        if (recognitionLabelObj != null && recognitionLabelObj.get().getName() != TextUtils.getObjectName()) {
                             labelString += recognitionLabelObj.get().getName() + ","
                         }
                     }
@@ -687,9 +687,9 @@ println("test")
             val settings = model.getAttribute("settings") as Settings
 
             if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
-                peopleList = metadataRepository?.findAlbumPhotoByPeople(settings.getRecognitionConfidenceThreshold()!!,currentUserObj.getId())
+                peopleList = metadataRepository?.findAlbumPhotoByPeople(settings.getRecognitionConfidenceThreshold()!!,currentUserObj.getId(),TextUtils.getObjectName())
             } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
-                peopleList = metadataRepository?.findMetadataByPeople(settings.getRecognitionConfidenceThreshold()!!)
+                peopleList = metadataRepository?.findMetadataByPeople(settings.getRecognitionConfidenceThreshold()!!, TextUtils.getObjectName())
 
                 if (peopleList != null && peopleList.count() > 0) {
                     for (person in peopleList) {
@@ -837,7 +837,7 @@ println("test")
             if (currentUserObj!!.getAuthority() == model.getAttribute("userRole")) {
                 metadataList = metadataRepository?.findAlbumPhotoByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId(),pageValue,size)
             } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
-                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("shashinobject")
+                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
                 if (recognitionLabels != null && recognitionLabels.count() > 0) {
                     response["recognitionLabels"] = recognitionLabels
                 }
@@ -891,7 +891,7 @@ println("test")
                     if (recognitionLabelPhotos != null) {
                         for (recognitionLabelPhoto in recognitionLabelPhotos) {
                             val recognitionLabelObj = recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
-                            if (recognitionLabelObj != null && recognitionLabelObj.get().getName() != "shashinobject") {
+                            if (recognitionLabelObj != null && recognitionLabelObj.get().getName() != TextUtils.getObjectName()) {
                                 labelString += recognitionLabelObj.get().getName() + ","
                             }
                             if (!isAutoTagged) {
@@ -1012,7 +1012,7 @@ println("test")
                 }
 
                 resp["recognitionLabels"] = mutableListOf<RecognitionLabel>()
-                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("shashinobject")
+                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
                 if (recognitionLabels != null && recognitionLabels.count() > 0) {
                     resp["recognitionLabels"] = recognitionLabels
                 }
@@ -1022,10 +1022,10 @@ println("test")
                 return mapper.writeValueAsString(resp)
             } else if (isObject) {
                 recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
-                val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase("shashinobject")
+                val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase(TextUtils.getObjectName())
                 var recognitionLabelObj = RecognitionLabel()
                 if (recognitionLabelRecord == null) {
-                    recognitionLabelObj.setName("shashinobject")
+                    recognitionLabelObj.setName(TextUtils.getObjectName())
                     recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
                     recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
                     recognitionLabelRepository?.save(recognitionLabelObj)
@@ -1040,7 +1040,7 @@ println("test")
                 recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
 
                 resp["recognitionLabels"] = mutableListOf<RecognitionLabel>()
-                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("shashinobject")
+                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
                 if (recognitionLabels != null && recognitionLabels.count() > 0) {
                     resp["recognitionLabels"] = recognitionLabels
                 }
@@ -1052,7 +1052,7 @@ println("test")
                 recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
 
                 resp["recognitionLabels"] = mutableListOf<RecognitionLabel>()
-                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("shashinobject")
+                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
                 if (recognitionLabels != null && recognitionLabels.count() > 0) {
                     resp["recognitionLabels"] = recognitionLabels
                 }

@@ -2401,7 +2401,7 @@ class TimelineController: BaseController() {
             }
             response["keywordList"] = keywordArray
 
-            val allRecognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("shashinobject")
+            val allRecognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
             if (allRecognitionLabels != null && allRecognitionLabels.count() > 0) {
                 response["allRecognitionLabels"] = allRecognitionLabels
             }
@@ -2705,10 +2705,10 @@ class TimelineController: BaseController() {
             recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
 
             if (isObject) {
-                val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase("shashinobject")
+                val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase(TextUtils.getObjectName())
                 var recognitionLabelObj = RecognitionLabel()
                 if (recognitionLabelRecord == null) {
-                    recognitionLabelObj.setName("shashinobject")
+                    recognitionLabelObj.setName(TextUtils.getObjectName())
                     recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
                     recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
                     recognitionLabelRepository?.save(recognitionLabelObj)

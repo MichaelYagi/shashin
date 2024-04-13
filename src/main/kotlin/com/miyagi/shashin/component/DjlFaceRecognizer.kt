@@ -23,6 +23,7 @@ import com.miyagi.shashin.repository.RecognitionLabelPhotoRepository
 import com.miyagi.shashin.repository.RecognitionLabelRepository
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.MetricsUtil
+import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import net.coobird.thumbnailator.Thumbnails
 import org.springframework.core.io.FileSystemResource
@@ -175,10 +176,10 @@ class DjlFaceRecognizer {
 
                     if (numOfTestObject == 0) {
                         recognitionLabelPhotoRepository?.deleteByMetadataId(testImageObj.getId())
-                        val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase("shashinobject")
+                        val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase(TextUtils.getObjectName())
                         var recognitionLabelObj = RecognitionLabel()
                         if (recognitionLabelRecord == null) {
-                            recognitionLabelObj.setName("shashinobject")
+                            recognitionLabelObj.setName(TextUtils.getObjectName())
                             recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
                             recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
                             recognitionLabelRepository?.save(recognitionLabelObj)

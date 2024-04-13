@@ -22,6 +22,10 @@ class TextUtils {
 
         private var logger: Logger = Logger.getLogger(TextUtils::class.simpleName)
 
+        fun getObjectName(): String {
+            return "shashinobject"
+        }
+
         fun isLocalIp(testAddress: String): Boolean {
 
             logger.log(
