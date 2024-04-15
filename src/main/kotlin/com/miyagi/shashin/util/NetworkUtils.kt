@@ -19,7 +19,7 @@ class NetworkUtils {
     companion object {
         private var logger: Logger = Logger.getLogger(NetworkUtils::class.simpleName)
 
-        private fun pingURL(url: String, requestProperties: Map<String,String>? = null, timeoutInMS: Int = 0, requestMethod: String = "HEAD", jsonInputString: String = "", getResponse: Boolean = false): Boolean {
+        fun pingURL(url: String, requestProperties: Map<String,String>? = null, timeoutInMS: Int = 0, requestMethod: String = "HEAD", jsonInputString: String = "", getResponse: Boolean = false): Boolean {
             var urlcopy = url
             urlcopy = urlcopy.replaceFirst(
                 "^https".toRegex(),
