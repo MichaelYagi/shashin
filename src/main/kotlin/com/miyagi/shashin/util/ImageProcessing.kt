@@ -153,8 +153,13 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             extension = file.extension.lowercase()
             try {
                 img = ImageIO.read(file)
+                if (extension == "png" || extension == "gif") {
+                    val tempImg = BufferedImage(img.width, img.height, BufferedImage.TYPE_INT_RGB)
+                    tempImg.createGraphics().drawImage(img, 0, 0, img.width, img.height, null)
+                    img = tempImg
+                }
                 if (rotation > 0) {
-                    img = rotateImage(img, rotation.toDouble())
+                    img = rotateImage(img!!, rotation.toDouble())
                 }
             } catch (e: Exception) {
                 logger.log(Level.WARNING, "Could not read file: " + file.path)
