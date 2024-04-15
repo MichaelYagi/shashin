@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="fragments/head :: head(${activePage},${titleDescriptor})"></head>
+<body class="thumb d-flex flex-column vh-100">
+
+<div th:replace="fragments/topnav :: topnav(${currentUser},${activePage},'')"></div>
+
+<div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
+    <div class="row flex-grow-sm-1 flex-grow-0">
+        <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})"></div>
+        <main role="main" class="col overflow-auto h-100">
+            <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})"
+                 class="col-sm p-3 min-vh-100"></div>
+
+            <div class="row image-group-padding mt-4">
+                <form action="/tools/imagescraper" method="post" id="imageScraperForm">
+                    <div class="input-group mb-3">
+                        <button class="btn btn-primary" type="submit" id="submitForm" title="Get images from URL"><span class="bi-images"></span></button>
+                        <input type="text" id="pageUrl" name="pageUrl" class="form-control" placeholder="Page URL" th:value="${pageUrl != ''?pageUrl:''}">
+                    </div>
+                </form>
+            </div>
+
+
+            <th:block th:if="${not #lists.isEmpty(imgList)}">
+                <div class="row mt-4 ms-1">
+                    <span class="lead">
+                        <th:block th:text="${numOfImages}+' image'+${numOfImages == 1 ? '' : 's'}+' found!' "></th:block>
+                        <form method="post" action="/tools/download/images" style="display: inline-block;white-space: nowrap;">
+                            <button th:class="'bi-download'+${currentUser.darkMode ? ' link-button-darkmode' : ' link-button-lightmode'}" type="submit" title="Download all images"></button>
+                            <input type="hidden" th:value="${pageUrl}" name="pageUrl">
+                        </form>
+                    </span>
+                </div>
+                <div class="row mt-4 ms-1">
+                    <th:block th:each="imgObj, iterStat: ${imgList}">
+                        <div class="card" style="width:235px;padding-top:10px;">
+                            <img th:src="${imgObj.imgThumbBase64}" th:title="${imgObj.imgTitle}" th:alt="${imgObj.imgAlt}" th:data-src="${imgRealSrc}" th:style="'width: '+${imgObj.imgThumbWidth}+'px;height: '+${imgObj.imgThumbHeight}+'px;'">
+                            <div class="card-body">
+                                <strong th:text="${imgObj.imgTitle!=''?imgObj.imgTitle:imgObj.imgAlt}"></strong><br>
+
+                                <form method="post" action="/tools/download/image" style="display: inline-block;white-space: nowrap;">
+                                    <input type="hidden" name="imageUrl" th:value="${imgObj.imgRealSrc}">
+                                    <button th:class="'bi-download'+${currentUser.darkMode ? ' link-button-darkmode' : ' link-button-lightmode'}" type="submit" name="download" title="Download image"></button>
+                                </form>
+                            </div>
+                        </div>
+                    </th:block>
+                </div>
+            </th:block>
+
+            <button type="button" class="btn btn-primary btn-floating btn-lg" id="btn-back-to-top">
+                <i class="bi-arrow-up-circle"></i>
+            </button>
+
+            <div id="footer"
+                 th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>
+        </main>
+    </div>
+</div>
+
+<script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
+    $(document).ready(function () {
+        /*<![CDATA[*/
+        shashin.nonce = /*[[${cspNonce}]]*/ '';
+        const toastMessage = /*[[${toastMessage}]]*/ '';
+        const status = /*[[${status}]]*/ '';
+        const srcList = /*[[${srcList}]]*/ '';
+        /*]]>*/
+
+        $("#appSearchInput").val("Image Scraper");
+
+        if (status !== "") {
+            if (status === shashin.apiResponse.SUCCESS) {
+                shashin.showToastMessage("Page processed", toastMessage, {icon:"bi-info-circle", iconColor:"#777777"});
+            } else {
+                shashin.showToastMessage("Something went wrong", toastMessage, {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+            }
+        }
+
+        shashin.activateScrollToTop();
+    });
+</script>
+
+</body>
+</html>
