@@ -18,6 +18,10 @@
             labelString = labelString.slice(0,-1)
         }
         $("#tagBatchDataInput").val(labelString);
+
+        if (labelString !== "") {
+            $("#batchisobject").prop("checked", false);
+        }
     }
 
     metadataBatchModal.toggleBatchTagAlbumDropdown = function() {
