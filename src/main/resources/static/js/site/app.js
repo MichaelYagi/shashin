@@ -40,6 +40,7 @@
     shashin.apiResponse.SUCCESS = "success";
     shashin.apiResponse.WARN = "warn";
     shashin.apiResponse.FAIL = "fail";
+    shashin.objectName = "shashinobject";
 
     function fixContentHeight() {
         if ($("div[data-role='dialog']").is(":visible")) {
@@ -534,7 +535,7 @@
                 let isObject = false;
                 for (index in taggedPeopleArray) {
                     const person = taggedPeopleArray[index];
-                    if (person === "shashinobject") {
+                    if (person === shashin.objectName) {
                         isObject = true;
                     } else {
                         taggedPeopleString += person + ",";
