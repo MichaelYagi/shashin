@@ -35,7 +35,7 @@
                 <div class="row mt-4 ms-1">
                     <th:block th:each="imgObj, iterStat: ${imgList}">
                         <div class="card" style="width:235px;padding-top:10px;">
-                            <img th:src="${imgObj.imgThumbBase64}" th:title="${imgObj.imgTitle}" th:alt="${imgObj.imgAlt}" th:data-src="${imgRealSrc}" th:style="'width: '+${imgObj.imgThumbWidth}+'px;height: '+${imgObj.imgThumbHeight}+'px;'">
+                            <a th:href="${imgObj.imgRealSrc}" target="_blank"><img th:src="${imgObj.imgThumbBase64}" th:title="${imgObj.imgTitle}" th:alt="${imgObj.imgAlt}" th:data-src="${imgRealSrc}" th:style="'width: '+${imgObj.imgThumbWidth}+'px;height: '+${imgObj.imgThumbHeight}+'px;'"></a>
                             <div class="card-body">
                                 <strong th:text="${imgObj.imgTitle!=''?imgObj.imgTitle:imgObj.imgAlt}"></strong>
                                 <br>

@@ -181,8 +181,9 @@ class ToolsController {
                 val srcList = mutableListOf<String>()
                 val doc = Jsoup.connect(pageUrl).get()
                 val imgTags = doc.getElementsByTag("img")
+                val totalImages = imgTags.count()
 
-                for (imgTag in imgTags) {
+                for ((index, imgTag) in imgTags.withIndex()) {
                     if (imgTag.hasAttr("src") && imgTag.attr("src").isNotEmpty()) {
                         val imgObj = mutableMapOf<String, String>()
                         val srcUrl = imgTag.attr("src").toString()
@@ -230,12 +231,12 @@ class ToolsController {
                             srcList.add(urlWithoutParameters)
                             logger.log(
                                 Level.INFO,
-                                "Processed image at $urlWithoutParameters"
+                                "${index+1}/$totalImages - Processed image at $urlWithoutParameters"
                             )
                         } else {
                             logger.log(
                                 Level.WARNING,
-                                "Could not process image at $urlWithoutParameters"
+                                "${index+1}/$totalImages - Could not process image at $urlWithoutParameters"
                             )
                         }
                     }
