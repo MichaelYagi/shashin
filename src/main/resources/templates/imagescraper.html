@@ -24,7 +24,8 @@
             <th:block th:if="${not #lists.isEmpty(imgList)}">
                 <div class="row mt-4 ms-1">
                     <span class="lead">
-                        <th:block th:utext="${numOfImages}+' image'+${numOfImages == 1 ? '' : 's'}+' found at <a href=\''+${pageUrl}+'\' target=\'_blank\'>link</a>' "></th:block>
+                        <th:block th:utext="${numOfImages}+' image'+${numOfImages == 1 ? '' : 's'}+' found!'"></th:block>
+                        <a th:class="'ms-1 bi-link-45deg'+${currentUser.darkMode ? ' link-button-darkmode' : ' link-button-lightmode'}" th:href="${pageUrl}" target="_blank"></a>
                         <form method="post" action="/tools/download/images" style="display: inline-block;white-space: nowrap;">
                             <button th:class="'bi-download'+${currentUser.darkMode ? ' link-button-darkmode' : ' link-button-lightmode'}" type="submit" title="Download all images"></button>
                             <input type="hidden" th:value="${pageUrl}" name="pageUrl">
