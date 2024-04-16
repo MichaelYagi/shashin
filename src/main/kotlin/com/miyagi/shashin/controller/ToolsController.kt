@@ -29,7 +29,6 @@ import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
-import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.socket.messaging.SessionConnectEvent
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
@@ -44,8 +43,6 @@ import java.net.URL
 import java.nio.file.Files
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
@@ -231,6 +228,7 @@ class ToolsController {
         if (imageScraperMap.containsKey("pageUrl")) {
             val pageUrl: String = java.lang.String.valueOf(imageScraperMap["pageUrl"])
             response["pageUrl"] = pageUrl
+            val pageUrlObj = URL(pageUrl)
 
             if (NetworkUtils.pingURL(java.lang.String.valueOf(imageScraperMap["pageUrl"]))) {
                 // eg. https://store.line.me/stickershop/author/939305/en
@@ -245,7 +243,7 @@ class ToolsController {
                     currentIndex = index
                     if (imgTag.hasAttr("src") && imgTag.attr("src").isNotEmpty()) {
                         val imgObj = mutableMapOf<String, String>()
-                        val srcUrl = imgTag.attr("src").toString()
+                        var srcUrl = imgTag.attr("src").toString()
                         var image: BufferedImage? = null
                         var urlWithoutParameters: String? = null
                         try {
@@ -255,6 +253,11 @@ class ToolsController {
                                 val imageBytes = DatatypeConverter.parseBase64Binary(base64Image)
                                 image = ImageIO.read(ByteArrayInputStream(imageBytes))
                             } else {
+                                if (!srcUrl.startsWith("http")) {
+                                    val path: String = pageUrlObj.file.substring(0, pageUrlObj.file.lastIndexOf('/'))
+                                    val base: String = (pageUrlObj.protocol + "://" + pageUrlObj.host) + path
+                                    srcUrl = "$base/$srcUrl"
+                                }
                                 urlWithoutParameters = getUrlWithoutParameters(srcUrl)
                                 val url = URL(urlWithoutParameters)
                                 image = ImageIO.read(url)
@@ -401,13 +404,20 @@ class ToolsController {
             val tempExportBaseDir = Files.createTempDirectory("images")
 
             for ((index, imageUrl) in imageUrls.withIndex()) {
+                var currentImageUrl = imageUrl
                 var image: BufferedImage?
-                if (imageUrl.startsWith("data:image")) {
-                    val base64Image: String = imageUrl.split(",")[1]
+                if (currentImageUrl.startsWith("data:image")) {
+                    val base64Image: String = currentImageUrl.split(",")[1]
                     val imageBytes = DatatypeConverter.parseBase64Binary(base64Image)
                     image = ImageIO.read(ByteArrayInputStream(imageBytes))
                 } else {
-                    val url = URL(imageUrl)
+                    if (!currentImageUrl.startsWith("http")) {
+                        val pageUrlObj = URL(pageUrl)
+                        val path: String = pageUrlObj.file.substring(0, pageUrlObj.file.lastIndexOf('/'))
+                        val base: String = (pageUrlObj.protocol + "://" + pageUrlObj.host) + path
+                        currentImageUrl = "$base/$currentImageUrl"
+                    }
+                    val url = URL(currentImageUrl)
                     image = ImageIO.read(url)
                 }
 
