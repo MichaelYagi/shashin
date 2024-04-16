@@ -62,7 +62,7 @@
                 }
                 if (data.hasOwnProperty("imgList") && data["imgList"].length > 0) {
                     let html = '<div class="row mt-2 ms-1">';
-                    html += '<span class="lead">';
+                    html += '<span class="lead mb-4">';
                     html += data["numOfImages"] + ' image' + ((data["numOfImages"] === 1) ? '' : 's') + ' found!';
                     html += '<a class="ms-1 bi-link-45deg '+classMode+'" href=\"' + data["pageUrl"] + '\" target="_blank"></a>';
                     html += '<form method="post" action="/tools/download/images" style="display: inline-block;white-space: nowrap;">';
@@ -70,7 +70,7 @@
                     html += '<input type="hidden" value="' + data["pageUrl"] + '" name="pageUrl">';
                     html += '</form></span>';
 
-                    html += '<div class="row mt-4 ms-1">';
+                    html += '<div class="row">';
 
                     for (let index in data["imgList"]) {
                         const imgObj = data["imgList"][index];
