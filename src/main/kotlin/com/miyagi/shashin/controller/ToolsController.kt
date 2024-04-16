@@ -246,20 +246,27 @@ class ToolsController {
                     if (imgTag.hasAttr("src") && imgTag.attr("src").isNotEmpty()) {
                         val imgObj = mutableMapOf<String, String>()
                         val srcUrl = imgTag.attr("src").toString()
-                        var image: BufferedImage?
-                        val urlWithoutParameters: String?
-                        if (srcUrl.startsWith("data:image")) {
-                            urlWithoutParameters = srcUrl
-                            val base64Image: String = srcUrl.split(",")[1]
-                            val imageBytes = DatatypeConverter.parseBase64Binary(base64Image)
-                            image = ImageIO.read(ByteArrayInputStream(imageBytes))
-                        } else {
-                            urlWithoutParameters = getUrlWithoutParameters(srcUrl)
-                            val url = URL(urlWithoutParameters)
-                            image = ImageIO.read(url)
+                        var image: BufferedImage? = null
+                        var urlWithoutParameters: String? = null
+                        try {
+                            if (srcUrl.startsWith("data:image")) {
+                                urlWithoutParameters = srcUrl
+                                val base64Image: String = srcUrl.split(",")[1]
+                                val imageBytes = DatatypeConverter.parseBase64Binary(base64Image)
+                                image = ImageIO.read(ByteArrayInputStream(imageBytes))
+                            } else {
+                                urlWithoutParameters = getUrlWithoutParameters(srcUrl)
+                                val url = URL(urlWithoutParameters)
+                                image = ImageIO.read(url)
+                            }
+                        } catch (e: Exception) {
+                            logger.log(
+                                Level.WARNING,
+                                e.message
+                            )
                         }
 
-                        if (image != null && image.height > 1 && image.width > 1) {
+                        if (image != null && urlWithoutParameters != null && image.height > 1 && image.width > 1) {
                             var width = 209
                             var height = 209
 
@@ -304,7 +311,8 @@ class ToolsController {
                 response["srcList"] = srcList
                 response["imgList"] = imgList
                 response["numOfImages"] = srcList.size
-                response["toastMessage"] = "Page processed"
+                val plural = if (srcList.size != 1) "s" else ""
+                response["toastMessage"] = "Page processed with ${srcList.size} result$plural"
                 response["status"] = ApiResponse.SUCCESS.status
             } else {
                 response["toastMessage"] = "Invalid URL"
