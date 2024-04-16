@@ -1,7 +1,5 @@
 package com.miyagi.shashin.controller
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.MetadataRepository
@@ -16,7 +14,6 @@ import org.jsoup.Jsoup
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.info.BuildProperties
-import org.springframework.core.io.FileSystemResource
 import org.springframework.core.io.InputStreamResource
 import org.springframework.core.io.UrlResource
 import org.springframework.http.*
@@ -34,16 +31,16 @@ import java.io.FileInputStream
 import java.io.IOException
 import java.lang.management.ManagementFactory
 import java.math.RoundingMode
+import java.net.URI
+import java.net.URISyntaxException
 import java.net.URL
 import java.nio.file.Files
-import java.nio.file.StandardCopyOption
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
-import javax.activation.URLDataSource
 import javax.imageio.ImageIO
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -191,31 +188,50 @@ class ToolsController {
                 for (imgTag in imgTags) {
                     if (imgTag.hasAttr("src") && imgTag.attr("src").isNotEmpty()) {
                         val imgObj = mutableMapOf<String, String>()
-                        val url = URL(imgTag.attr("src"))
+                        val urlWithoutParameters = getUrlWithoutParameters(imgTag.attr("src").toString())
+                        val url = URL(urlWithoutParameters)
                         val image = ImageIO.read(url)
-                        val thumbnail = Thumbnails.of(image)
-                            .outputQuality(1.0)
-                            .imageType(BufferedImage.TYPE_INT_ARGB)
-                            .outputFormat("png")
+                        if (image != null) {
+                            var width = 209
+                            var height = 209
+
+                            if (image.width < 209) {
+                                width = image.width
+                            }
+
+                            if (image.height < 209) {
+                                height = image.height
+                            }
+
+                            val thumbnail = Thumbnails.of(image)
+                                .outputQuality(1.0)
+                                .imageType(BufferedImage.TYPE_INT_ARGB)
+                                .outputFormat("png")
 //                            .height(FileUtils.thumbnailHeight())
-                            .crop(Positions.CENTER)
-                            .size(209, 209)
-                            .asBufferedImage()
-                        val base64String = imgToBase64String(thumbnail, "png")
-                        imgObj["imgThumbBase64"] = base64String
-                        imgObj["imgThumbHeight"] = thumbnail.height.toString()
-                        imgObj["imgThumbWidth"] = thumbnail.width.toString()
-                        imgObj["imgRealSrc"] = imgTag.attr("src")
-                        imgObj["imgTitle"] = if (imgTag.hasAttr("title")) imgTag.attr("title") else ""
-                        imgObj["imgAlt"] = if (imgTag.hasAttr("alt")) imgTag.attr("alt") else ""
-                        imgList.add(imgObj)
-                        srcList.add(imgTag.attr("src"))
+                                .crop(Positions.CENTER)
+                                .size(width, height)
+                                .asBufferedImage()
+                            val base64String = imgToBase64String(thumbnail, "png")
+                            imgObj["imgThumbBase64"] = base64String
+                            imgObj["imgThumbHeight"] = thumbnail.height.toString()
+                            imgObj["imgThumbWidth"] = thumbnail.width.toString()
+                            imgObj["imgRealSrc"] = urlWithoutParameters
+                            imgObj["imgTitle"] = if (imgTag.hasAttr("title")) imgTag.attr("title") else ""
+                            imgObj["imgAlt"] = if (imgTag.hasAttr("alt")) imgTag.attr("alt") else ""
+                            imgList.add(imgObj)
+                            srcList.add(urlWithoutParameters)
+                        } else {
+                            logger.log(
+                                Level.WARNING,
+                                "Could not process image at $url"
+                            )
+                        }
                     }
                 }
 
                 model["srcList"] = srcList
                 model["imgList"] = imgList
-                model["numOfImages"] = imgTags.size
+                model["numOfImages"] = srcList.size
                 model["toastMessage"] = "Page processed"
                 model["status"] = ApiResponse.SUCCESS.status
             } else {
@@ -228,6 +244,18 @@ class ToolsController {
         }
 
         return "imagescraper"
+    }
+
+    @Throws(URISyntaxException::class)
+    private fun getUrlWithoutParameters(url: String): String {
+        val uri = URI(url)
+        return URI(
+            uri.scheme,
+            uri.getAuthority(),
+            uri.getPath(),
+            null,  // Ignore the query part of the input url
+            uri.getFragment()
+        ).toString()
     }
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
@@ -268,7 +296,8 @@ class ToolsController {
 
             for (imgTag in imgTags) {
                 if (imgTag.hasAttr("src") && imgTag.attr("src").isNotEmpty()) {
-                    imageUrls.add(imgTag.attr("src"))
+                    val urlWithoutParameters = getUrlWithoutParameters(imgTag.attr("src").toString())
+                    imageUrls.add(urlWithoutParameters)
                 }
             }
 
@@ -276,14 +305,16 @@ class ToolsController {
 
             for ((index, imageUrl) in imageUrls.withIndex()) {
                 val image = ImageIO.read(URL(imageUrl))
-                val tempFileTo =
-                    File("$tempExportBaseDir/$index.png")
-                ImageIO.write(image, "png", tempFileTo)
+                if (image != null) {
+                    val tempFileTo =
+                        File("$tempExportBaseDir/$index.png")
+                    ImageIO.write(image, "png", tempFileTo)
+                }
             }
 
             if (tempExportBaseDir.isDirectory() && tempExportBaseDir.toList().isNotEmpty()) {
                 val tempDir = tempExportBaseDir.toFile()
-                val outputZipFile = FileUtils.zipFolder(tempDir, "ImageScraperDownload")
+                val outputZipFile = FileUtils.zipFolder(tempDir, "ShashinScrapedImages")
                 FileUtils.deleteDirectory(tempDir)
 
                 if (outputZipFile != null) {
