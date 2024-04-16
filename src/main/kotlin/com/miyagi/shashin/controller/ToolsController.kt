@@ -25,13 +25,9 @@ import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.*
 import java.awt.image.BufferedImage
 import java.awt.image.RenderedImage
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileInputStream
-import java.io.IOException
+import java.io.*
 import java.lang.management.ManagementFactory
 import java.math.RoundingMode
-import java.net.URI
 import java.net.URISyntaxException
 import java.net.URL
 import java.nio.file.Files
@@ -44,6 +40,7 @@ import java.util.logging.Logger
 import javax.imageio.ImageIO
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+import javax.xml.bind.DatatypeConverter
 import kotlin.io.path.isDirectory
 
 
@@ -188,10 +185,21 @@ class ToolsController {
                 for (imgTag in imgTags) {
                     if (imgTag.hasAttr("src") && imgTag.attr("src").isNotEmpty()) {
                         val imgObj = mutableMapOf<String, String>()
-                        val urlWithoutParameters = getUrlWithoutParameters(imgTag.attr("src").toString())
-                        val url = URL(urlWithoutParameters)
-                        val image = ImageIO.read(url)
-                        if (image != null) {
+                        val srcUrl = imgTag.attr("src").toString()
+                        var image: BufferedImage?
+                        val urlWithoutParameters: String?
+                        if (srcUrl.startsWith("data:image")) {
+                            urlWithoutParameters = srcUrl
+                            val base64Image: String = srcUrl.split(",")[1]
+                            val imageBytes = DatatypeConverter.parseBase64Binary(base64Image)
+                            image = ImageIO.read(ByteArrayInputStream(imageBytes))
+                        } else {
+                            urlWithoutParameters = getUrlWithoutParameters(srcUrl)
+                            val url = URL(urlWithoutParameters)
+                            image = ImageIO.read(url)
+                        }
+
+                        if (image != null && image.height > 1 && image.width > 1) {
                             var width = 209
                             var height = 209
 
@@ -220,10 +228,14 @@ class ToolsController {
                             imgObj["imgAlt"] = if (imgTag.hasAttr("alt")) imgTag.attr("alt") else ""
                             imgList.add(imgObj)
                             srcList.add(urlWithoutParameters)
+                            logger.log(
+                                Level.INFO,
+                                "Processed image at $urlWithoutParameters"
+                            )
                         } else {
                             logger.log(
                                 Level.WARNING,
-                                "Could not process image at $url"
+                                "Could not process image at $urlWithoutParameters"
                             )
                         }
                     }
@@ -248,21 +260,37 @@ class ToolsController {
 
     @Throws(URISyntaxException::class)
     private fun getUrlWithoutParameters(url: String): String {
-        val uri = URI(url)
-        return URI(
-            uri.scheme,
-            uri.getAuthority(),
-            uri.getPath(),
-            null,  // Ignore the query part of the input url
-            uri.getFragment()
-        ).toString()
+        return if (url.contains("?")) {
+            url.substring(0, url.lastIndexOf("?"))
+        } else {
+            url
+        }
+//        val uri = URI(url)
+//        return URI(
+//            uri.scheme,
+//            uri.getAuthority(),
+//            uri.getPath(),
+//            null,  // Ignore the query part of the input url
+//            uri.getFragment()
+//        ).toString()
     }
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/tools/download/image"], method = [RequestMethod.POST])
     fun downloadScrapeImage(model: Model, request: HttpServletRequest, response: HttpServletResponse, @RequestParam("imageUrl") imageUrl: String): ResponseEntity<UrlResource> {
         if (imageUrl != "") {
-            val resource = UrlResource(imageUrl)
+            val resource: UrlResource?
+            if (imageUrl.startsWith("data:image")) {
+                val base64Image: String = imageUrl.split(",")[1]
+                val imageBytes = DatatypeConverter.parseBase64Binary(base64Image)
+                val image = ImageIO.read(ByteArrayInputStream(imageBytes))
+                val path = System.getProperty("java.io.tmpdir") + "/image.png"
+                val tempFile = File(path)
+                ImageIO.write(image, "png", tempFile)
+                resource = UrlResource("file:$path")
+            } else {
+                resource = UrlResource(imageUrl)
+            }
             val headers = HttpHeaders()
 
             try {
@@ -296,7 +324,8 @@ class ToolsController {
 
             for (imgTag in imgTags) {
                 if (imgTag.hasAttr("src") && imgTag.attr("src").isNotEmpty()) {
-                    val urlWithoutParameters = getUrlWithoutParameters(imgTag.attr("src").toString())
+                    val srcUrl = imgTag.attr("src").toString()
+                    val urlWithoutParameters = getUrlWithoutParameters(srcUrl)
                     imageUrls.add(urlWithoutParameters)
                 }
             }
@@ -304,8 +333,17 @@ class ToolsController {
             val tempExportBaseDir = Files.createTempDirectory("images")
 
             for ((index, imageUrl) in imageUrls.withIndex()) {
-                val image = ImageIO.read(URL(imageUrl))
-                if (image != null) {
+                var image: BufferedImage?
+                if (imageUrl.startsWith("data:image")) {
+                    val base64Image: String = imageUrl.split(",")[1]
+                    val imageBytes = DatatypeConverter.parseBase64Binary(base64Image)
+                    image = ImageIO.read(ByteArrayInputStream(imageBytes))
+                } else {
+                    val url = URL(imageUrl)
+                    image = ImageIO.read(url)
+                }
+
+                if (image != null && image.height > 1 && image.width > 1) {
                     val tempFileTo =
                         File("$tempExportBaseDir/$index.png")
                     ImageIO.write(image, "png", tempFileTo)
