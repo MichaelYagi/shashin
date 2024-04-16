@@ -92,6 +92,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "/websocket-endpoint",
             "/topic/messages",
             "/topic/matchmessages",
+            "/topic/scrapermessages",
             "/settings/matchmessage",
             "/settings/scanmessage",
             "/dashboard/statmessages",

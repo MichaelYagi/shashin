@@ -1,6 +1,10 @@
 package com.miyagi.shashin.controller
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.component.Message
+import com.miyagi.shashin.component.ScaperMessage
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.PersistentLoginsRepository
@@ -14,15 +18,22 @@ import org.jsoup.Jsoup
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.info.BuildProperties
+import org.springframework.context.event.EventListener
 import org.springframework.core.io.InputStreamResource
 import org.springframework.core.io.UrlResource
 import org.springframework.http.*
+import org.springframework.messaging.handler.annotation.MessageMapping
+import org.springframework.messaging.handler.annotation.SendTo
+import org.springframework.messaging.simp.annotation.SubscribeMapping
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.socket.messaging.SessionConnectEvent
+import org.springframework.web.socket.messaging.SessionDisconnectEvent
+import org.springframework.web.socket.messaging.SessionSubscribeEvent
 import java.awt.image.BufferedImage
 import java.awt.image.RenderedImage
 import java.io.*
@@ -33,6 +44,8 @@ import java.net.URL
 import java.nio.file.Files
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
@@ -40,6 +53,7 @@ import java.util.logging.Logger
 import javax.imageio.ImageIO
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+import javax.servlet.http.HttpSession
 import javax.xml.bind.DatatypeConverter
 import kotlin.io.path.isDirectory
 
@@ -61,9 +75,45 @@ class ToolsController {
 
     private var logger: Logger = Logger.getLogger(ToolsController::class.simpleName)
 
+    private var currentIndex = 0
+    private var totalIndex = 0
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
+
+    @MessageMapping("/scrapermessage")
+    @SendTo("/topic/scrapermessages")
+    @Throws(java.lang.Exception::class)
+    fun sendScanMessage(message: ScaperMessage): Message? {
+        //println("message:${message.getMessage()}")
+        val scraperMap = mutableMapOf<String,Int>()
+        scraperMap["currentIndex"] = currentIndex
+        scraperMap["totalIndex"] = totalIndex
+
+        val msg: String = mapper.writeValueAsString(scraperMap)
+//        println(msg)
+
+        val messageObj = Message()
+        messageObj.setContent(msg)
+
+        return messageObj
+    }
+
+    @SubscribeMapping("/topic/scrapermessages")
+    fun subscribe(
+        session: HttpSession,
+        @PathVariable pipelineId: String,
+        @PathVariable topic: String
+    ) {}
+
+    @EventListener
+    fun onApplicationEvent(event: SessionConnectEvent) {}
+
+    @EventListener
+    fun onApplicationEvent(event: SessionDisconnectEvent) {}
+
+    @EventListener
+    fun handleSubscribeEvent(event: SessionSubscribeEvent) {}
 
 //    @RequestMapping(value = ["tools/minifyassets"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
 //    @ResponseBody
@@ -157,33 +207,42 @@ class ToolsController {
         model["status"] = ""
         model["imgList"] = mutableListOf<MutableMap<String,Any>>()
         model["srcList"] = mutableListOf<String>()
+        model["activePage"] = "imagescraper"
 
         return "imagescraper"
     }
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
-    @RequestMapping(value = ["/tools/imagescraper"], method = [RequestMethod.POST])
-    fun postScrapeImages(model: Model, request: HttpServletRequest, response: HttpServletResponse, @RequestBody formData: MultiValueMap<String, String>): String? {
-        model["pageUrl"] = ""
-        model["numOfImages"] = 0
-        model["toastMessage"] = ""
-        model["status"] = ""
-        model["imgList"] = mutableListOf<MutableMap<String,Any>>()
-        model["srcList"] = mutableListOf<String>()
+    @RequestMapping(value = ["/tools/imagescraper"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun postScrapeImages(model: Model, @RequestBody requestBody: JsonNode): String? {
+        val imageScraperMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
-        if (formData.containsKey("pageUrl")) {
-            val pageUrl: String = java.lang.String.valueOf(formData.getFirst("pageUrl"))
-            model["pageUrl"] = pageUrl
+        val response = mutableMapOf<String, Any?>()
+        response["pageUrl"] = ""
+        response["numOfImages"] = 0
+        response["toastMessage"] = ""
+        response["status"] = ""
+        response["msg"] = ""
+        response["imgList"] = mutableListOf<MutableMap<String,Any>>()
+        response["srcList"] = mutableListOf<String>()
+        response["activePage"] = "imagescraper"
 
-            if (NetworkUtils.pingURL(java.lang.String.valueOf(formData.getFirst("pageUrl")))) {
+        if (imageScraperMap.containsKey("pageUrl")) {
+            val pageUrl: String = java.lang.String.valueOf(imageScraperMap["pageUrl"])
+            response["pageUrl"] = pageUrl
+
+            if (NetworkUtils.pingURL(java.lang.String.valueOf(imageScraperMap["pageUrl"]))) {
                 // eg. https://store.line.me/stickershop/author/939305/en
                 val imgList = mutableListOf<MutableMap<String, String>>()
                 val srcList = mutableListOf<String>()
                 val doc = Jsoup.connect(pageUrl).get()
                 val imgTags = doc.getElementsByTag("img")
                 val totalImages = imgTags.count()
+                totalIndex = imgTags.count()
 
                 for ((index, imgTag) in imgTags.withIndex()) {
+                    currentIndex = index
                     if (imgTag.hasAttr("src") && imgTag.attr("src").isNotEmpty()) {
                         val imgObj = mutableMapOf<String, String>()
                         val srcUrl = imgTag.attr("src").toString()
@@ -242,21 +301,21 @@ class ToolsController {
                     }
                 }
 
-                model["srcList"] = srcList
-                model["imgList"] = imgList
-                model["numOfImages"] = srcList.size
-                model["toastMessage"] = "Page processed"
-                model["status"] = ApiResponse.SUCCESS.status
+                response["srcList"] = srcList
+                response["imgList"] = imgList
+                response["numOfImages"] = srcList.size
+                response["toastMessage"] = "Page processed"
+                response["status"] = ApiResponse.SUCCESS.status
             } else {
-                model["toastMessage"] = "Invalid URL"
-                model["status"] = ApiResponse.FAIL.status
+                response["toastMessage"] = "Invalid URL"
+                response["status"] = ApiResponse.FAIL.status
             }
         } else {
-            model["toastMessage"] = "Something went wrong"
-            model["status"] = ApiResponse.FAIL.status
+            response["toastMessage"] = "Something went wrong"
+            response["status"] = ApiResponse.FAIL.status
         }
 
-        return "imagescraper"
+        return mapper.writeValueAsString(response)
     }
 
     @Throws(URISyntaxException::class)
