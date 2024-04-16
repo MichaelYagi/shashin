@@ -37,9 +37,9 @@
                         <div class="card" style="width:235px;padding-top:10px;">
                             <img th:src="${imgObj.imgThumbBase64}" th:title="${imgObj.imgTitle}" th:alt="${imgObj.imgAlt}" th:data-src="${imgRealSrc}" th:style="'width: '+${imgObj.imgThumbWidth}+'px;height: '+${imgObj.imgThumbHeight}+'px;'">
                             <div class="card-body">
-                                <strong th:text="${imgObj.imgTitle!=''?imgObj.imgTitle:imgObj.imgAlt}"></strong><br>
-
-                                <form method="post" action="/tools/download/image" style="display: inline-block;white-space: nowrap;">
+                                <strong th:text="${imgObj.imgTitle!=''?imgObj.imgTitle:imgObj.imgAlt}"></strong>
+                                <br>
+                                <form method="post" action="/tools/download/image">
                                     <input type="hidden" name="imageUrl" th:value="${imgObj.imgRealSrc}">
                                     <button th:class="'bi-download'+${currentUser.darkMode ? ' link-button-darkmode' : ' link-button-lightmode'}" type="submit" name="download" title="Download image"></button>
                                 </form>
