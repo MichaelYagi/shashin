@@ -22,7 +22,7 @@
             </div>
 
             <th:block th:if="${not #lists.isEmpty(imgList)}">
-                <div class="row mt-4 ms-1">
+                <div class="row mt-2 ms-1">
                     <span class="lead">
                         <th:block th:utext="${numOfImages}+' image'+${numOfImages == 1 ? '' : 's'}+' found!'"></th:block>
                         <a th:class="'ms-1 bi-link-45deg'+${currentUser.darkMode ? ' link-button-darkmode' : ' link-button-lightmode'}" th:href="${pageUrl}" target="_blank"></a>
