@@ -271,7 +271,7 @@ class ToolsController {
                                 )
                             }
 
-                            if (image != null && urlWithoutParameters != null && image.height > 1 && image.width > 1) {
+                            if (image != null && urlWithoutParameters != null && image.height > 1 && image.width > 1 && !srcList.contains(urlWithoutParameters)) {
                                 var width = 209
                                 var height = 209
 
@@ -298,6 +298,7 @@ class ToolsController {
                                 imgObj["imgRealSrc"] = urlWithoutParameters
                                 imgObj["imgTitle"] = if (imgTag.hasAttr("title")) imgTag.attr("title") else ""
                                 imgObj["imgAlt"] = if (imgTag.hasAttr("alt")) imgTag.attr("alt") else ""
+                                
                                 imgList.add(imgObj)
                                 srcList.add(urlWithoutParameters)
                                 logger.log(
