@@ -433,8 +433,16 @@ class ToolsController {
                             currentImageUrl = "$base/$currentImageUrl"
                         }
                         urlWithoutParameters = getUrlWithoutParameters(currentImageUrl)
-                        val url = URL(urlWithoutParameters)
-                        image = ImageIO.read(url)
+                        try {
+                            val url = URL(urlWithoutParameters)
+                            image = ImageIO.read(url)
+                        } catch (e: Exception) {
+                            logger.log(
+                                Level.WARNING,
+                                "${index + 1}/${imageUrls.size} - Not a valid url. $urlWithoutParameters"
+                            )
+                            continue
+                        }
                     }
 
                     if (image != null && image.height > 1 && image.width > 1 && !srcList.contains(urlWithoutParameters)) {
