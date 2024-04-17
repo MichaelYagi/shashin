@@ -41,8 +41,19 @@
 
         $("#appSearchInput").val("Image Scraper");
 
+        $("#pageUrl").on('keypress',function(e) {
+            if(e.which === 13) {
+                makeImageScraperRequest();
+            }
+        });
+
         $("#submitForm").on("click", function (e) {
             e.preventDefault();
+
+            makeImageScraperRequest();
+        });
+
+        function makeImageScraperRequest() {
             $("#imageScraperContainer").html("");
 
             $("#progressBarWrapper").visible();
@@ -90,7 +101,7 @@
 
                 $("#progressBarWrapper").invisible();
             });
-        });
+        }
 
         shashin.activateScrollToTop();
 
