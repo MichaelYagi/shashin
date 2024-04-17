@@ -230,93 +230,102 @@ class ToolsController {
             response["pageUrl"] = pageUrl
             val pageUrlObj = URL(pageUrl)
 
-            if (NetworkUtils.pingURL(java.lang.String.valueOf(imageScraperMap["pageUrl"]))) {
+            if (NetworkUtils.pingURL(java.lang.String.valueOf(pageUrl))) {
                 // eg. https://store.line.me/stickershop/author/939305/en
-                val imgList = mutableListOf<MutableMap<String, String>>()
+                val imgList = mutableListOf<MutableMap<String, Any>>()
                 val srcList = mutableListOf<String>()
-                val doc = Jsoup.connect(pageUrl).get()
-                val imgTags = doc.getElementsByTag("img")
-                val totalImages = imgTags.count()
-                totalIndex = imgTags.count()
+                try {
+                    val doc = Jsoup.connect(pageUrl).get()
+                    val imgTags = doc.getElementsByTag("img")
+                    val totalImages = imgTags.count()
+                    totalIndex = imgTags.count()
 
-                for ((index, imgTag) in imgTags.withIndex()) {
-                    currentIndex = index
-                    if (imgTag.hasAttr("src") && imgTag.attr("src").isNotEmpty()) {
-                        val imgObj = mutableMapOf<String, String>()
-                        var srcUrl = imgTag.attr("src").toString()
-                        var image: BufferedImage? = null
-                        var urlWithoutParameters: String? = null
-                        try {
-                            if (srcUrl.startsWith("data:image")) {
-                                urlWithoutParameters = srcUrl
-                                val base64Image: String = srcUrl.split(",")[1]
-                                val imageBytes = DatatypeConverter.parseBase64Binary(base64Image)
-                                image = ImageIO.read(ByteArrayInputStream(imageBytes))
-                            } else {
-                                if (!srcUrl.startsWith("http")) {
-                                    val path: String = pageUrlObj.file.substring(0, pageUrlObj.file.lastIndexOf('/'))
-                                    val base: String = (pageUrlObj.protocol + "://" + pageUrlObj.host) + path
-                                    srcUrl = "$base/$srcUrl"
+                    for ((index, imgTag) in imgTags.withIndex()) {
+                        currentIndex = index
+                        if (imgTag.hasAttr("src") && imgTag.attr("src").isNotEmpty()) {
+                            val imgObj = mutableMapOf<String, Any>()
+                            var srcUrl = imgTag.attr("src").toString()
+                            var image: BufferedImage? = null
+                            var urlWithoutParameters: String? = null
+                            try {
+                                if (srcUrl.startsWith("data:image")) {
+                                    urlWithoutParameters = srcUrl
+                                    val base64Image: String = srcUrl.split(",")[1]
+                                    val imageBytes = DatatypeConverter.parseBase64Binary(base64Image)
+                                    image = ImageIO.read(ByteArrayInputStream(imageBytes))
+                                } else {
+                                    if (!srcUrl.startsWith("http")) {
+                                        val path: String =
+                                            pageUrlObj.file.substring(0, pageUrlObj.file.lastIndexOf('/'))
+                                        val base: String = (pageUrlObj.protocol + "://" + pageUrlObj.host) + path
+                                        srcUrl = "$base/$srcUrl"
+                                    }
+                                    urlWithoutParameters = getUrlWithoutParameters(srcUrl)
+                                    val url = URL(urlWithoutParameters)
+                                    image = ImageIO.read(url)
                                 }
-                                urlWithoutParameters = getUrlWithoutParameters(srcUrl)
-                                val url = URL(urlWithoutParameters)
-                                image = ImageIO.read(url)
-                            }
-                        } catch (e: Exception) {
-                            logger.log(
-                                Level.WARNING,
-                                e.message
-                            )
-                        }
-
-                        if (image != null && urlWithoutParameters != null && image.height > 1 && image.width > 1) {
-                            var width = 209
-                            var height = 209
-
-                            if (image.width < 209) {
-                                width = image.width
+                            } catch (e: Exception) {
+                                logger.log(
+                                    Level.WARNING,
+                                    e.message
+                                )
                             }
 
-                            if (image.height < 209) {
-                                height = image.height
-                            }
+                            if (image != null && urlWithoutParameters != null && image.height > 1 && image.width > 1) {
+                                var width = 209
+                                var height = 209
 
-                            val thumbnail = Thumbnails.of(image)
-                                .outputQuality(1.0)
-                                .imageType(BufferedImage.TYPE_INT_ARGB)
-                                .outputFormat("png")
+                                if (image.width < 209) {
+                                    width = image.width
+                                }
+
+                                if (image.height < 209) {
+                                    height = image.height
+                                }
+
+                                val thumbnail = Thumbnails.of(image)
+                                    .outputQuality(1.0)
+                                    .imageType(BufferedImage.TYPE_INT_ARGB)
+                                    .outputFormat("png")
 //                            .height(FileUtils.thumbnailHeight())
-                                .crop(Positions.CENTER)
-                                .size(width, height)
-                                .asBufferedImage()
-                            val base64String = imgToBase64String(thumbnail, "png")
-                            imgObj["imgThumbBase64"] = base64String
-                            imgObj["imgThumbHeight"] = thumbnail.height.toString()
-                            imgObj["imgThumbWidth"] = thumbnail.width.toString()
-                            imgObj["imgRealSrc"] = urlWithoutParameters
-                            imgObj["imgTitle"] = if (imgTag.hasAttr("title")) imgTag.attr("title") else ""
-                            imgObj["imgAlt"] = if (imgTag.hasAttr("alt")) imgTag.attr("alt") else ""
-                            imgList.add(imgObj)
-                            srcList.add(urlWithoutParameters)
-                            logger.log(
-                                Level.INFO,
-                                "${index+1}/$totalImages - Processed image at $urlWithoutParameters"
-                            )
-                        } else {
-                            logger.log(
-                                Level.WARNING,
-                                "${index+1}/$totalImages - Could not process image at $urlWithoutParameters"
-                            )
+                                    .crop(Positions.CENTER)
+                                    .size(width, height)
+                                    .asBufferedImage()
+                                val base64String = imgToBase64String(thumbnail, "png")
+                                imgObj["imgThumbBase64"] = base64String
+                                imgObj["imgThumbHeight"] = thumbnail.height
+                                imgObj["imgThumbWidth"] = thumbnail.width
+                                imgObj["imgRealSrc"] = urlWithoutParameters
+                                imgObj["imgTitle"] = if (imgTag.hasAttr("title")) imgTag.attr("title") else ""
+                                imgObj["imgAlt"] = if (imgTag.hasAttr("alt")) imgTag.attr("alt") else ""
+                                imgList.add(imgObj)
+                                srcList.add(urlWithoutParameters)
+                                logger.log(
+                                    Level.INFO,
+                                    "${index + 1}/$totalImages - Processed image at $urlWithoutParameters"
+                                )
+                            } else {
+                                logger.log(
+                                    Level.WARNING,
+                                    "${index + 1}/$totalImages - Could not process image at $urlWithoutParameters"
+                                )
+                            }
                         }
                     }
-                }
 
-                response["srcList"] = srcList
-                response["imgList"] = imgList
-                response["numOfImages"] = srcList.size
-                val plural = if (srcList.size != 1) "s" else ""
-                response["toastMessage"] = "Page processed with ${srcList.size} result$plural"
-                response["status"] = ApiResponse.SUCCESS.status
+                    response["srcList"] = srcList
+                    response["imgList"] = imgList.sortedBy { it["imgThumbHeight"].toString().toInt() }
+                    response["numOfImages"] = srcList.size
+                    val plural = if (srcList.size != 1) "s" else ""
+                    response["toastMessage"] = "Page processed with ${srcList.size} result$plural"
+                    response["status"] = ApiResponse.SUCCESS.status
+                } catch (e: Exception) {
+                    logger.log(
+                        Level.SEVERE,
+                        "Error getting URL: " + e.message
+                    )
+                    response["toastMessage"] = "Error getting URL: " + e.message
+                }
             } else {
                 response["toastMessage"] = "Invalid URL"
                 response["status"] = ApiResponse.FAIL.status
@@ -390,74 +399,87 @@ class ToolsController {
         if (pageUrl != "" && NetworkUtils.pingURL(java.lang.String.valueOf(pageUrl))) {
             // eg. https://store.line.me/stickershop/author/939305/en
             val imageUrls = mutableListOf<String>()
-            val doc = Jsoup.connect(pageUrl).get()
-            val imgTags = doc.getElementsByTag("img")
+            try {
+                val doc = Jsoup.connect(pageUrl).get()
+                val imgTags = doc.getElementsByTag("img")
 
-            for (imgTag in imgTags) {
-                if (imgTag.hasAttr("src") && imgTag.attr("src").isNotEmpty()) {
-                    val srcUrl = imgTag.attr("src").toString()
-                    val urlWithoutParameters = getUrlWithoutParameters(srcUrl)
-                    imageUrls.add(urlWithoutParameters)
-                }
-            }
-
-            val tempExportBaseDir = Files.createTempDirectory("images")
-
-            for ((index, imageUrl) in imageUrls.withIndex()) {
-                var currentImageUrl = imageUrl
-                var image: BufferedImage?
-                if (currentImageUrl.startsWith("data:image")) {
-                    val base64Image: String = currentImageUrl.split(",")[1]
-                    val imageBytes = DatatypeConverter.parseBase64Binary(base64Image)
-                    image = ImageIO.read(ByteArrayInputStream(imageBytes))
-                } else {
-                    if (!currentImageUrl.startsWith("http")) {
-                        val pageUrlObj = URL(pageUrl)
-                        val path: String = pageUrlObj.file.substring(0, pageUrlObj.file.lastIndexOf('/'))
-                        val base: String = (pageUrlObj.protocol + "://" + pageUrlObj.host) + path
-                        currentImageUrl = "$base/$currentImageUrl"
+                for (imgTag in imgTags) {
+                    if (imgTag.hasAttr("src") && imgTag.attr("src").isNotEmpty()) {
+                        val srcUrl = imgTag.attr("src").toString()
+                        val urlWithoutParameters = getUrlWithoutParameters(srcUrl)
+                        imageUrls.add(urlWithoutParameters)
                     }
-                    val url = URL(currentImageUrl)
-                    image = ImageIO.read(url)
                 }
 
-                if (image != null && image.height > 1 && image.width > 1) {
-                    val tempFileTo =
-                        File("$tempExportBaseDir/$index.png")
-                    ImageIO.write(image, "png", tempFileTo)
+                val tempExportBaseDir = Files.createTempDirectory("images")
+
+                for ((index, imageUrl) in imageUrls.withIndex()) {
+                    var currentImageUrl = imageUrl
+                    var image: BufferedImage?
+                    if (currentImageUrl.startsWith("data:image")) {
+                        val base64Image: String = currentImageUrl.split(",")[1]
+                        val imageBytes = DatatypeConverter.parseBase64Binary(base64Image)
+                        image = ImageIO.read(ByteArrayInputStream(imageBytes))
+                    } else {
+                        if (!currentImageUrl.startsWith("http")) {
+                            val pageUrlObj = URL(pageUrl)
+                            val path: String = pageUrlObj.file.substring(0, pageUrlObj.file.lastIndexOf('/'))
+                            val base: String = (pageUrlObj.protocol + "://" + pageUrlObj.host) + path
+                            currentImageUrl = "$base/$currentImageUrl"
+                        }
+                        val url = URL(currentImageUrl)
+                        image = ImageIO.read(url)
+                    }
+
+                    if (image != null && image.height > 1 && image.width > 1) {
+                        val tempFileTo =
+                            File("$tempExportBaseDir/$index.png")
+                        ImageIO.write(image, "png", tempFileTo)
+                    }
                 }
-            }
 
-            if (tempExportBaseDir.isDirectory() && tempExportBaseDir.toList().isNotEmpty()) {
-                val tempDir = tempExportBaseDir.toFile()
-                val outputZipFile = FileUtils.zipFolder(tempDir, "ShashinScrapedImages")
-                FileUtils.deleteDirectory(tempDir)
+                if (tempExportBaseDir.isDirectory() && tempExportBaseDir.toList().isNotEmpty()) {
+                    val tempDir = tempExportBaseDir.toFile()
+                    val outputZipFile = FileUtils.zipFolder(tempDir, "ShashinScrapedImages")
+                    FileUtils.deleteDirectory(tempDir)
 
-                if (outputZipFile != null) {
-                    outputZipFile.deleteOnExit()
+                    if (outputZipFile != null) {
+                        outputZipFile.deleteOnExit()
 
-                    val resource = InputStreamResource(FileInputStream(outputZipFile))
-                    val contentLength = outputZipFile.length()
+                        val resource = InputStreamResource(FileInputStream(outputZipFile))
+                        val contentLength = outputZipFile.length()
 
-                    val headers = HttpHeaders()
-                    headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("ShashinImageScraper",
-                        outputZipFile.name.replace("\\s".toRegex(), "_").lowercase(Locale.getDefault())
-                    ).path("/").build().toString())
-                    headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("ShashinImageScraperSize",contentLength.toString()).path("/").build().toString())
-                    headers.add(
-                        HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=" + outputZipFile.name
-                    )
-                    headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
-                    headers.add("Pragma", "no-cache")
-                    headers.add("Expires", "0")
+                        val headers = HttpHeaders()
+                        headers.add(
+                            HttpHeaders.SET_COOKIE, ResponseCookie.from(
+                                "ShashinImageScraper",
+                                outputZipFile.name.replace("\\s".toRegex(), "_").lowercase(Locale.getDefault())
+                            ).path("/").build().toString()
+                        )
+                        headers.add(HttpHeaders.SET_COOKIE,
+                            ResponseCookie.from("ShashinImageScraperSize", contentLength.toString()).path("/").build()
+                                .toString()
+                        )
+                        headers.add(
+                            HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=" + outputZipFile.name
+                        )
+                        headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
+                        headers.add("Pragma", "no-cache")
+                        headers.add("Expires", "0")
 
-                    return ResponseEntity.ok()
-                        .headers(headers)
-                        .contentLength(contentLength)
-                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                        .body(resource)
+                        return ResponseEntity.ok()
+                            .headers(headers)
+                            .contentLength(contentLength)
+                            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                            .body(resource)
+                    }
                 }
+            } catch (e: Exception) {
+                logger.log(
+                    Level.SEVERE,
+                    "Error getting URL: " + e.message
+                )
             }
         }
 

@@ -80,6 +80,7 @@
                             });
                         }
                     }
+                    // console.log(data)
                     if (data.hasOwnProperty("imgList") && data["imgList"].length > 0) {
                         let html = '<div class="row mt-2 ms-1">';
                         html += '<span class="lead mb-4">';
@@ -92,8 +93,9 @@
 
                         html += '<div class="row">';
 
-                        for (let index in data["imgList"]) {
-                            const imgObj = data["imgList"][index];
+                        const imgList = data["imgList"].reverse();
+                        for (let index in imgList) {
+                            const imgObj = imgList[index];
 
                             html += '<div class="card" style="width:235px;padding-top:10px;">';
                             html += '<a href="' + imgObj.imgRealSrc + '" target="_blank"><img src="' + imgObj.imgThumbBase64 + '" title="' + imgObj.imgTitle + '" alt="' + imgObj.imgAlt + '" data-src="' + imgObj.imgRealSrc + '" style="width: ' + imgObj.imgThumbWidth + 'px;height: ' + imgObj.imgThumbHeight + 'px;"></a>';
