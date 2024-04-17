@@ -298,7 +298,7 @@ class ToolsController {
                                 imgObj["imgRealSrc"] = urlWithoutParameters
                                 imgObj["imgTitle"] = if (imgTag.hasAttr("title")) imgTag.attr("title") else ""
                                 imgObj["imgAlt"] = if (imgTag.hasAttr("alt")) imgTag.attr("alt") else ""
-                                
+
                                 imgList.add(imgObj)
                                 srcList.add(urlWithoutParameters)
                                 logger.log(
@@ -413,11 +413,15 @@ class ToolsController {
                 }
 
                 val tempExportBaseDir = Files.createTempDirectory("images")
+                val srcList = mutableListOf<String>()
 
                 for ((index, imageUrl) in imageUrls.withIndex()) {
                     var currentImageUrl = imageUrl
                     var image: BufferedImage?
+                    var urlWithoutParameters: String? = null
+
                     if (currentImageUrl.startsWith("data:image")) {
+                        urlWithoutParameters = currentImageUrl
                         val base64Image: String = currentImageUrl.split(",")[1]
                         val imageBytes = DatatypeConverter.parseBase64Binary(base64Image)
                         image = ImageIO.read(ByteArrayInputStream(imageBytes))
@@ -428,14 +432,21 @@ class ToolsController {
                             val base: String = (pageUrlObj.protocol + "://" + pageUrlObj.host) + path
                             currentImageUrl = "$base/$currentImageUrl"
                         }
-                        val url = URL(currentImageUrl)
+                        urlWithoutParameters = getUrlWithoutParameters(currentImageUrl)
+                        val url = URL(urlWithoutParameters)
                         image = ImageIO.read(url)
                     }
 
-                    if (image != null && image.height > 1 && image.width > 1) {
+                    if (image != null && image.height > 1 && image.width > 1 && !srcList.contains(urlWithoutParameters)) {
+                        srcList.add(urlWithoutParameters)
+
                         val tempFileTo =
-                            File("$tempExportBaseDir/$index.png")
+                            File("$tempExportBaseDir/${index+1}.png")
                         ImageIO.write(image, "png", tempFileTo)
+                        logger.log(
+                            Level.INFO,
+                            "${index + 1}/${imageUrls.size} - Processed image at $urlWithoutParameters"
+                        )
                     }
                 }
 
