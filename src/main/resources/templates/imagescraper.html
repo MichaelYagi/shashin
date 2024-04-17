@@ -54,7 +54,9 @@
         });
 
         function makeImageScraperRequest() {
-            if ($("#pageUrl").val().trim() === "") {
+            const pageUrl = $("#pageUrl").val().trim();
+
+            if (pageUrl === "") {
                 shashin.showToastMessage("Invalid URL", "Enter a valid URL", {icon:"bi-info-circle", iconColor:"#777777"});
             } else {
                 $("#imageScraperContainer").html("");
@@ -64,7 +66,7 @@
                 $("#progressBar").css("width", "0%");
 
                 const http = new Http("scraper images");
-                let json = {pageUrl: $("#pageUrl").val()}
+                let json = {pageUrl: pageUrl}
                 http.ajax("post", "/tools/imagescraper", JSON.stringify(json)).then(function (data) {
 
                     if (data.hasOwnProperty("status")) {
@@ -78,6 +80,17 @@
                                 icon: "bi-exclamation-triangle",
                                 iconColor: "#FF0000"
                             });
+
+                            let html = '<div class="row mt-2 ms-1">';
+                            html += '<span class="lead mb-1">';
+                            if (data.toastMessage === "Invalid URL") {
+                                html += data.toastMessage+'.';
+                            } else {
+                                html += 'Something went wrong. Could not render <a href="' + pageUrl + '" target="_blank">' + pageUrl + '</a>.';
+                            }
+                            html += '</span></div>';
+
+                            $("#imageScraperContainer").html(html);
                         }
                     }
                     // console.log(data)
@@ -100,7 +113,7 @@
                             html += '<div class="card" style="width:235px;padding-top:10px;">';
                             html += '<a href="' + imgObj.imgRealSrc + '" target="_blank"><img src="' + imgObj.imgThumbBase64 + '" title="' + imgObj.imgTitle + '" alt="' + imgObj.imgAlt + '" data-src="' + imgObj.imgRealSrc + '" style="width: ' + imgObj.imgThumbWidth + 'px;height: ' + imgObj.imgThumbHeight + 'px;"></a>';
                             html += '<div class="card-body">';
-                            html += '<strong>' + ((imgObj.imgTitle != '') ? imgObj.imgTitle : imgObj.imgAlt) + '</strong>';
+                            html += '<strong>' + ((imgObj.imgTitle !== '') ? imgObj.imgTitle : imgObj.imgAlt) + '</strong>';
                             html += '<br>';
                             html += '<form method="post" action="/tools/download/image"><input type="hidden" name="imageUrl" value="' + imgObj.imgRealSrc + '"><button class="bi-download ' + classMode + '" type="submit" name="download" title="Download image"></button></form>';
                             html += '</div></div>';

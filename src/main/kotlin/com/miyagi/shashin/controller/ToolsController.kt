@@ -227,10 +227,10 @@ class ToolsController {
 
         if (imageScraperMap.containsKey("pageUrl")) {
             val pageUrl: String = java.lang.String.valueOf(imageScraperMap["pageUrl"])
-            response["pageUrl"] = pageUrl
-            val pageUrlObj = URL(pageUrl)
 
             if (NetworkUtils.pingURL(java.lang.String.valueOf(pageUrl))) {
+                response["pageUrl"] = pageUrl
+                val pageUrlObj = URL(pageUrl)
                 // eg. https://store.line.me/stickershop/author/939305/en
                 val imgList = mutableListOf<MutableMap<String, Any>>()
                 val srcList = mutableListOf<String>()
