@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.ResponseBody
+import java.io.IOException
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -61,17 +62,31 @@ class TestController {
     @GetMapping("/test")
     fun test(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
         model["somevalue"] = "This is a test"
+
         val userAgent = request.getHeader("User-Agent")
+        println(userAgent)
         val doc = Jsoup.connect("https://www.pexels.com/")
             .method(Connection.Method.GET)
-            .timeout(60000)
-            .header("User-Agent", "Mozilla/5.0")
-            .header("Accept", "application/json")
-            //Hard Coded, taken from Chrome after valid email is entered.
-            //Can we get this cookie value dynamically or runtime ??
-            .header("Cookie", "HARD_CODED_COOKIE_VALUE_FROM_CHRIME")
-            .ignoreContentType(true)
+            .userAgent(userAgent)
+            .header("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7")
+            .header("Accept-Encoding", "gzip, deflate, br, zstd")
+            .header("Accept-Language","en-CA,en;q=0.9,ja-JP;q=0.8,ja;q=0.7,en-GB;q=0.6,en-US;q=0.5")
+            .header("Cache-Control","no-cache")
+            .header("Cookie","ab.storage.deviceId.5791d6db-4410-4ace-8814-12c903a548ba=g%3A79befdc3-189c-4679-8468-67ca1d388303%7Ce%3Aundefined%7Cc%3A1708142471100%7Cl%3A1708142471100; ab.storage.sessionId.5791d6db-4410-4ace-8814-12c903a548ba=g%3A6d8be8ab-20f6-0c65-c5b6-37115dd55f71%7Ce%3A1708144271105%7Cc%3A1708142471097%7Cl%3A1708142471105; country-code-v2=CA; OptanonConsent=isGpcEnabled=0&datestamp=Tue+Apr+16+2024+18%3A27%3A59+GMT-0700+(Pacific+Daylight+Time)&version=202301.1.0&isIABGlobal=false&hosts=&landingPath=NotLandingPage&groups=C0001%3A1%2CC0002%3A0%2CC0003%3A0%2CC0004%3A0&AwaitingReconsent=false; _sp_id.9ec1=fea7ac91-e04a-4135-9279-8c298d5de7bc.1708142471.3.1713317280.1713313573.91eb0838-50ba-4311-aab6-b99644156a98.c5641ced-d938-4a64-872d-2ae6d0ce3e3f.57ec68e6-be62-4ae6-975f-804f40cf8baf.1713317279930.1; cf_clearance=G7v2936XTGZY4yaucm.RhJEEm8yf19kwAt_PZp4Jz2s-1713317280-1.0.1.1-l8lvMn9oKiJ6jwwnwAZ4Ngox4i3QmQD1uS58grZidkuef6lfiL5hR5_4wj5iRipQuK5jlFOQhJL_E9we.I9RFw")
+            .header("Pragma","no-cache")
+            .header("Sec-Ch-Ua","\"Google Chrome\";v=\"123\", \"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"123\"")
+            .header("Sec-Ch-Ua-Mobile","\"?0")
+            .header("Sec-Ch-Ua-Platform","Windows")
+            .header("Sec-Fetch-Dest","document")
+            .header("Sec-Fetch-Mode","navigate")
+            .header("Sec-Fetch-Site","none")
+            .header("Sec-Fetch-User","\"?1")
+            .header("Upgrade-Insecure-Requests","1")
             .get()
+
+        val imgTags = doc.getElementsByTag("img")
+        println("imgTags")
+        println(imgTags)
 
 //        val settings = model.getAttribute("settings") as Settings
 //
