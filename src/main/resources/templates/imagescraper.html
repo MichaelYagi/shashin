@@ -54,53 +54,63 @@
         });
 
         function makeImageScraperRequest() {
-            $("#imageScraperContainer").html("");
+            if ($("#pageUrl").val().trim() === "") {
+                shashin.showToastMessage("Invalid URL", "Enter a valid URL", {icon:"bi-info-circle", iconColor:"#777777"});
+            } else {
+                $("#imageScraperContainer").html("");
 
-            $("#progressBarWrapper").visible();
-            $("#progressBar").attr("aria-valuenow","0");
-            $("#progressBar").css("width","0%");
+                $("#progressBarWrapper").visible();
+                $("#progressBar").attr("aria-valuenow", "0");
+                $("#progressBar").css("width", "0%");
 
-            const http = new Http("scraper images");
-            let json = {pageUrl: $("#pageUrl").val()}
-            http.ajax("post", "/tools/imagescraper", JSON.stringify(json)).then(function (data) {
+                const http = new Http("scraper images");
+                let json = {pageUrl: $("#pageUrl").val()}
+                http.ajax("post", "/tools/imagescraper", JSON.stringify(json)).then(function (data) {
 
-                if (data.hasOwnProperty("status")) {
-                    if (data.status === shashin.apiResponse.SUCCESS) {
-                        shashin.showToastMessage("Page processed", data.toastMessage, {icon:"bi-info-circle", iconColor:"#777777"});
-                    } else {
-                        shashin.showToastMessage("Something went wrong", data.toastMessage, {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+                    if (data.hasOwnProperty("status")) {
+                        if (data.status === shashin.apiResponse.SUCCESS) {
+                            shashin.showToastMessage("Page processed", data.toastMessage, {
+                                icon: "bi-info-circle",
+                                iconColor: "#777777"
+                            });
+                        } else {
+                            shashin.showToastMessage("Something went wrong", data.toastMessage, {
+                                icon: "bi-exclamation-triangle",
+                                iconColor: "#FF0000"
+                            });
+                        }
                     }
-                }
-                if (data.hasOwnProperty("imgList") && data["imgList"].length > 0) {
-                    let html = '<div class="row mt-2 ms-1">';
-                    html += '<span class="lead mb-4">';
-                    html += data["numOfImages"] + ' image' + ((data["numOfImages"] === 1) ? '' : 's') + ' found!';
-                    html += '<a class="ms-1 bi-link-45deg '+classMode+'" href=\"' + data["pageUrl"] + '\" target="_blank"></a>';
-                    html += '<form method="post" action="/tools/download/images" style="display: inline-block;white-space: nowrap;">';
-                    html += '<button class="bi-download '+classMode+'" type="submit" title="Download all images"></button>';
-                    html += '<input type="hidden" value="' + data["pageUrl"] + '" name="pageUrl">';
-                    html += '</form></span>';
+                    if (data.hasOwnProperty("imgList") && data["imgList"].length > 0) {
+                        let html = '<div class="row mt-2 ms-1">';
+                        html += '<span class="lead mb-4">';
+                        html += data["numOfImages"] + ' image' + ((data["numOfImages"] === 1) ? '' : 's') + ' found!';
+                        html += '<a class="ms-1 bi-link-45deg ' + classMode + '" href=\"' + data["pageUrl"] + '\" target="_blank"></a>';
+                        html += '<form method="post" action="/tools/download/images" style="display: inline-block;white-space: nowrap;">';
+                        html += '<button class="bi-download ' + classMode + '" type="submit" title="Download all images"></button>';
+                        html += '<input type="hidden" value="' + data["pageUrl"] + '" name="pageUrl">';
+                        html += '</form></span>';
 
-                    html += '<div class="row">';
+                        html += '<div class="row">';
 
-                    for (let index in data["imgList"]) {
-                        const imgObj = data["imgList"][index];
+                        for (let index in data["imgList"]) {
+                            const imgObj = data["imgList"][index];
 
-                        html += '<div class="card" style="width:235px;padding-top:10px;">';
-                        html += '<a href="' + imgObj.imgRealSrc + '" target="_blank"><img src="' + imgObj.imgThumbBase64 + '" title="' + imgObj.imgTitle + '" alt="' + imgObj.imgAlt + '" data-src="' + imgObj.imgRealSrc + '" style="width: ' + imgObj.imgThumbWidth + 'px;height: ' + imgObj.imgThumbHeight + 'px;"></a>';
-                        html += '<div class="card-body">';
-                        html += '<strong>' + ((imgObj.imgTitle != '') ? imgObj.imgTitle : imgObj.imgAlt) + '</strong>';
-                        html += '<br>';
-                        html += '<form method="post" action="/tools/download/image"><input type="hidden" name="imageUrl" value="' + imgObj.imgRealSrc + '"><button class="bi-download '+classMode+'" type="submit" name="download" title="Download image"></button></form>';
-                        html += '</div></div>';
+                            html += '<div class="card" style="width:235px;padding-top:10px;">';
+                            html += '<a href="' + imgObj.imgRealSrc + '" target="_blank"><img src="' + imgObj.imgThumbBase64 + '" title="' + imgObj.imgTitle + '" alt="' + imgObj.imgAlt + '" data-src="' + imgObj.imgRealSrc + '" style="width: ' + imgObj.imgThumbWidth + 'px;height: ' + imgObj.imgThumbHeight + 'px;"></a>';
+                            html += '<div class="card-body">';
+                            html += '<strong>' + ((imgObj.imgTitle != '') ? imgObj.imgTitle : imgObj.imgAlt) + '</strong>';
+                            html += '<br>';
+                            html += '<form method="post" action="/tools/download/image"><input type="hidden" name="imageUrl" value="' + imgObj.imgRealSrc + '"><button class="bi-download ' + classMode + '" type="submit" name="download" title="Download image"></button></form>';
+                            html += '</div></div>';
+                        }
+
+                        html += '</div>';
+                        $("#imageScraperContainer").html(html);
                     }
 
-                    html += '</div>';
-                    $("#imageScraperContainer").html(html);
-                }
-
-                $("#progressBarWrapper").invisible();
-            });
+                    $("#progressBarWrapper").invisible();
+                });
+            }
         }
 
         shashin.activateScrollToTop();
