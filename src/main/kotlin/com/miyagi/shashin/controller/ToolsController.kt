@@ -292,6 +292,8 @@ class ToolsController {
                                     .size(width, height)
                                     .asBufferedImage()
                                 val base64String = imgToBase64String(thumbnail, "png")
+                                imgObj["imgRealHeight"] = image.height
+                                imgObj["imgRealWidth"] = image.width
                                 imgObj["imgThumbBase64"] = base64String
                                 imgObj["imgThumbHeight"] = thumbnail.height
                                 imgObj["imgThumbWidth"] = thumbnail.width

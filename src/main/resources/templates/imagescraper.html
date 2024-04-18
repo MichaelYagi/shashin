@@ -113,9 +113,9 @@
                             html += '<div class="card" style="width:235px;padding-top:10px;">';
                             html += '<a href="' + imgObj.imgRealSrc + '" target="_blank"><img src="' + imgObj.imgThumbBase64 + '" title="' + imgObj.imgTitle + '" alt="' + imgObj.imgAlt + '" data-src="' + imgObj.imgRealSrc + '" style="width: ' + imgObj.imgThumbWidth + 'px;height: ' + imgObj.imgThumbHeight + 'px;"></a>';
                             html += '<div class="card-body">';
-                            html += '<strong>' + ((imgObj.imgTitle !== '') ? imgObj.imgTitle : imgObj.imgAlt) + '</strong>';
-                            html += '<br>';
-                            html += '<form method="post" action="/tools/download/image"><input type="hidden" name="imageUrl" value="' + imgObj.imgRealSrc + '"><button class="bi-download ' + classMode + '" type="submit" name="download" title="Download image"></button></form>';
+                            html += '<strong>' + ((imgObj.imgTitle !== '') ? imgObj.imgTitle : imgObj.imgAlt) + '</strong><br>';
+                            html += '<form method="post" action="/tools/download/image" style="display: inline-block;white-space: nowrap;"><input type="hidden" name="imageUrl" value="' + imgObj.imgRealSrc + '"><button class="bi-download ' + classMode + '" type="submit" name="download" title="Download image"></button></form>';
+                            html += '<small>' + imgObj.imgRealWidth + 'x' + imgObj.imgRealHeight + '</small>';
                             html += '</div></div>';
                         }
 

@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.ResponseBody
-import java.io.IOException
+import java.io.BufferedReader
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.net.URL
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -64,7 +67,24 @@ class TestController {
         model["somevalue"] = "This is a test"
 
         val userAgent = request.getHeader("User-Agent")
-        println(userAgent)
+
+
+        val url = URL("https://www.pexels.com/")
+        val conn = url.openConnection()
+        conn.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
+        val `is` = conn.getInputStream()
+        val br = BufferedReader(InputStreamReader(`is`))
+        var line: String? = null
+        val sb = StringBuffer()
+        while ((br.readLine().also { line = it }) != null) {
+            sb.append(line)
+        }
+        val htmlContent = sb.toString()
+        println("testzzz")
+        println(htmlContent)
+
+
+
         val doc = Jsoup.connect("https://www.pexels.com/")
             .method(Connection.Method.GET)
             .userAgent(userAgent)
