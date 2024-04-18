@@ -317,7 +317,7 @@ class ToolsController {
                     }
 
                     response["srcList"] = srcList
-                    response["imgList"] = imgList.sortedBy { it["imgThumbHeight"].toString().toInt() }
+                    response["imgList"] = imgList.sortedBy { it["imgRealWidth"].toString().toInt() }
                     response["numOfImages"] = srcList.size
                     val plural = if (srcList.size != 1) "s" else ""
                     response["toastMessage"] = "Page processed with ${srcList.size} result$plural"
