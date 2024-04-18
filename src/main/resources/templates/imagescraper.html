@@ -54,6 +54,9 @@
         });
 
         function makeImageScraperRequest() {
+            disconnect();
+            connect();
+
             const pageUrl = $("#pageUrl").val().trim();
 
             if (pageUrl === "") {
@@ -136,8 +139,6 @@
         // Socket polling refresh rate
         const refreshRateMS = 1000;
         let elapsedMS = 0;
-
-        connect();
 
         function scanRefresh() {
             sendMessage();
