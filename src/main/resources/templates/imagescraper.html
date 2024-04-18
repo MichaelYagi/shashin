@@ -39,6 +39,8 @@
         const classMode = darkMode ? "link-button-darkmode":"link-button-lightmode";
         /*]]>*/
 
+        let startTime, endTime;
+
         $("#appSearchInput").val("Image Scraper");
 
         $("#pageUrl").on('keypress',function(e) {
@@ -70,13 +72,17 @@
                 $("#progressBar").attr("aria-valuenow", "0");
                 $("#progressBar").css("width", "0%");
 
+                startTime = new Date();
+
                 const http = new Http("scraper images");
                 let json = {pageUrl: pageUrl}
                 http.ajax("post", "/tools/imagescraper", JSON.stringify(json)).then(function (data) {
 
                     if (data.hasOwnProperty("status")) {
                         if (data.status === shashin.apiResponse.SUCCESS) {
-                            shashin.showToastMessage("Page processed", data.toastMessage, {
+                            endTime = new Date();
+                            let timeDiff = endTime - startTime;
+                            shashin.showToastMessage("Page processed", data.toastMessage + " in " + timeDiff + " ms.", {
                                 icon: "bi-info-circle",
                                 iconColor: "#777777"
                             });
