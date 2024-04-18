@@ -420,7 +420,7 @@ class ToolsController {
                 for ((index, imageUrl) in imageUrls.withIndex()) {
                     var currentImageUrl = imageUrl
                     var image: BufferedImage?
-                    var urlWithoutParameters: String? = null
+                    var urlWithoutParameters: String?
 
                     if (currentImageUrl.startsWith("data:image")) {
                         urlWithoutParameters = currentImageUrl

@@ -160,7 +160,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     img = tempImg
 //                }
                 if (rotation > 0) {
-                    img = rotateImage(img!!, rotation.toDouble())
+                    img = rotateImage(img, rotation.toDouble())
                 }
             } catch (e: Exception) {
                 logger.log(Level.WARNING, "Could not read file: " + file.path)
