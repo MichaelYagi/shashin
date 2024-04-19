@@ -197,6 +197,7 @@ class SearchController: BaseController() {
                     if (searchTermCount == 0) {
                         searchHistory = SearchHistory()
                         searchHistory.setTerm(term)
+                        searchHistory.setSearchType(1)
                         searchHistory.setUserId(currentUserObj.getId())
                         searchHistory.setCreatedAt(TextUtils.getCurrentTimestamp())
                         searchHistory.setModifiedAt(TextUtils.getCurrentTimestamp())
