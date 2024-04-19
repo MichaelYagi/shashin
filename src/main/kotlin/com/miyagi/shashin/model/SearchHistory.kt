@@ -14,6 +14,7 @@ class SearchHistory {
     @NotBlank
     private var term: String? = null
     private var userId: Int? = null
+    private var searchType: Int? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
 
@@ -39,6 +40,14 @@ class SearchHistory {
         this.userId = userId
     }
 
+    fun getSearchType(): Int? {
+        return this.searchType
+    }
+
+    fun setSearchType(searchType: Int?) {
+        this.searchType = searchType
+    }
+
     fun getCreatedAt(): String? {
         return this.createdAt
     }
@@ -59,6 +68,7 @@ class SearchHistory {
         val map = mutableMapOf<String, Any?>()
         map["id"] = this.id
         map["userId"] = this.userId
+        map["searchType"] = this.searchType
         map["term"] = this.term
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"

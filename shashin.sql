@@ -140,24 +140,6 @@ CREATE TABLE `user` (
                         CHECK(`password` <> '')
 );
 
-DROP TABLE IF EXISTS `persistent_logins`;
-CREATE TABLE `persistent_logins` (
-                                     `username` VARCHAR(64) NOT NULL,
-                                     `series` VARCHAR(64) NOT NULL,
-                                     `token` VARCHAR(64) NOT NULL,
-                                     `last_used` INTEGER NOT NULL,
-                                     PRIMARY KEY (`series`)
-);
-
-DROP TABLE IF EXISTS `persistent_logins_expiry`;
-CREATE TABLE `persistent_logins_expiry` (
-                                            `series` VARCHAR(64) NOT NULL,
-                                            `expiry` INTEGER NOT NULL,
-                                            `host` VARCHAR(3000),
-                                            `useragent` TEXT,
-                                            FOREIGN KEY (`series`) REFERENCES persistent_logins(`series`)
-);
-
 DROP TABLE IF EXISTS `useragent`;
 CREATE TABLE `useragent` (
                              `id` INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -290,6 +272,7 @@ CREATE TABLE `searchhistory` (
                                  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
                                  `term` VARCHAR(150) NOT NULL,
                                  `userId` INT,
+                                 `searchType` INT,
                                  `createdAt` DATETIME DEFAULT NULL,
                                  `modifiedAt` DATETIME DEFAULT NULL,
                                  FOREIGN KEY (`userId`) REFERENCES user(`id`)
