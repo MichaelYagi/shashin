@@ -56,7 +56,6 @@
         });
 
         function makeImageScraperRequest() {
-            disconnect();
             connect();
 
             const pageUrl = $("#pageUrl").val().trim();
@@ -137,6 +136,7 @@
                     $("#progressBarWrapper").invisible();
                 });
             }
+            disconnect();
         }
 
         shashin.activateScrollToTop();
