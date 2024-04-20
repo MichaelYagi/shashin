@@ -1754,7 +1754,10 @@ class SettingsController {
                                                                     metadataRepository?.findById(firstAlbumPhoto?.getMetadataId()!!)
                                                                 val albumObj =
                                                                     albumRepository?.findById(albumPhotoCount.getAlbumId()!!)
-                                                                if (metadataObj != null && metadataObj.isPresent && albumObj != null && albumObj.isPresent) {
+
+                                                                if (metadataObj != null && metadataObj.isPresent && albumObj != null && albumObj.isPresent &&
+                                                                    albumObj.get().getCoverUrl() == metadata.getThumbnailUrlCentered()
+                                                                ) {
                                                                     albumObj.get().setCoverUrl(
                                                                         metadataObj.get().getThumbnailUrlCentered()
                                                                     )
