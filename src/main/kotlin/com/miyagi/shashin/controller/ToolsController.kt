@@ -28,6 +28,7 @@ import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.annotation.SubscribeMapping
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
@@ -216,6 +217,7 @@ class ToolsController {
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/tools/imagescraper"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
+    @Transactional
     fun postScrapeImages(model: Model, @RequestBody requestBody: JsonNode): String? {
         val imageScraperMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
@@ -257,7 +259,8 @@ class ToolsController {
 
                 val searchImageScraperHistoryCount = searchHistoryRepository?.countByUserId(currentUserObj.getId(), SearchHistoryTypes.UrlHistorySearch.type)
                 val searchHistoryLimit = model.getAttribute("searchHistoryLimit").toString().toInt()
-                if (searchImageScraperHistoryCount != null && searchImageScraperHistoryCount > searchHistoryLimit) {
+
+                if (searchImageScraperHistoryCount != null && searchImageScraperHistoryCount >= searchHistoryLimit) {
                     val searchHistoryRefresh = searchHistoryRepository?.findTopNByUserIdOrderByIdDesc(currentUserObj.getId(), 1, SearchHistoryTypes.UrlHistorySearch.type)
                     if (searchHistoryRefresh != null && searchHistoryRefresh.count() > 0) {
                         searchHistoryRepository?.deleteByIdAndSearchType(searchHistoryRefresh.last().getId(), SearchHistoryTypes.UrlHistorySearch.type)
@@ -407,7 +410,7 @@ class ToolsController {
             response["status"] = ApiResponse.SUCCESS.status
 
             val urlHistoryList =
-                searchHistoryRepository?.findTopNByUserIdOrderByCreatedAtDesc(currentUserObj.getId(), searchHistoryLimit, SearchHistoryTypes.UrlHistorySearch.type)
+                searchHistoryRepository?.findTopNByUserIdOrderByModifiedAtDesc(currentUserObj.getId(), searchHistoryLimit, SearchHistoryTypes.UrlHistorySearch.type)
             if (urlHistoryList != null) {
                 response["urlHistoryList"] = urlHistoryList
             }
