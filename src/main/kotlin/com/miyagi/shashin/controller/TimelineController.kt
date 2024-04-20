@@ -1296,6 +1296,7 @@ class TimelineController: BaseController() {
                 }
 
                 if (currentAlbumIdList.isNotEmpty()) {
+                    var albumListString = ""
                     for (albumId in currentAlbumIdList) {
                         val count = MetadataProcessing.deleteAlbumPhoto(metadataRepository, albumRepository, albumPhotoRepository, metadataId, albumId)
 
@@ -1309,6 +1310,32 @@ class TimelineController: BaseController() {
                                 albumCommentRepository,
                                 albumId
                             )
+
+                            val albumObj = albumRepository.findAlbumById(albumId)
+                            if (albumObj != null) {
+                                albumListString += albumObj.getName() + ","
+                            }
+                        }
+                    }
+
+                    val admins = userRepository.findAllAdmins()
+
+                    if (admins.count() > 0 && albumListString.length > 0) {
+                        albumListString = albumListString.dropLast(1)
+                        val notificationObjList = mutableListOf<Notification>()
+                        val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                        sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                        for (admin in admins) {
+                            val notificationObj = Notification()
+                            notificationObj.setUserId(admin.getId())
+                            notificationObj.setCreatedAt(getCurrentTimestamp())
+                            notificationObj.setModifiedAt(getCurrentTimestamp())
+                            notificationObj.setRead(false)
+                            notificationObj.setMessage("Albums $albumListString deleted at ${sdtf.format(Date())}")
+                            notificationObjList.add(notificationObj)
+                        }
+                        if (notificationObjList.isNotEmpty()) {
+                            notificationRepository.saveAll(notificationObjList)
                         }
                     }
                 }
@@ -2110,6 +2137,26 @@ class TimelineController: BaseController() {
                     albumRepository.deleteById(albumId)
                     albumCommentRepository.deleteByAlbumId(albumId)
                     userAlbumRepository.deleteByAlbumId(albumId)
+
+                    val admins = userRepository.findAllAdmins()
+
+                    if (admins.count() > 0) {
+                        val notificationObjList = mutableListOf<Notification>()
+                        val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                        sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                        for (admin in admins) {
+                            val notificationObj = Notification()
+                            notificationObj.setUserId(admin.getId())
+                            notificationObj.setCreatedAt(getCurrentTimestamp())
+                            notificationObj.setModifiedAt(getCurrentTimestamp())
+                            notificationObj.setRead(false)
+                            notificationObj.setMessage("Album ${album.getName()} deleted at ${sdtf.format(Date())}")
+                            notificationObjList.add(notificationObj)
+                        }
+                        if (notificationObjList.isNotEmpty()) {
+                            notificationRepository.saveAll(notificationObjList)
+                        }
+                    }
                 }
             }
         }

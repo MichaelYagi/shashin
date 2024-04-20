@@ -622,6 +622,7 @@ class AlbumsController: BaseController() {
 
         if (albumDeleteMap.containsKey("albumId")) {
             val albumIdRequest = albumDeleteMap["albumId"].toString().toInt()
+            val albumObj = albumRepository.findAlbumById(albumIdRequest)
 
 //            val currentUserObj = model.getAttribute("currentUser") as User?
 //            val userAlbumCount = userAlbumRepository.countByUserIdAndAlbumId(currentUserObj?.getId(), albumIdRequest)
@@ -631,6 +632,27 @@ class AlbumsController: BaseController() {
                 userAlbumRepository.deleteByAlbumId(albumIdRequest)
                 albumPhotoRepository.deleteByAlbumId(albumIdRequest)
                 albumRepository.deleteById(albumIdRequest)
+
+                val admins = userRepository.findAllAdmins()
+
+                if (albumObj != null && admins.count() > 0) {
+                    val notificationObjList = mutableListOf<Notification>()
+                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                    sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                    for (admin in admins) {
+                        val notificationObj = Notification()
+                        notificationObj.setUserId(admin.getId())
+                        notificationObj.setCreatedAt(getCurrentTimestamp())
+                        notificationObj.setModifiedAt(getCurrentTimestamp())
+                        notificationObj.setRead(false)
+                        notificationObj.setMessage("Album ${albumObj.getName()} deleted at ${sdtf.format(Date())}")
+                        notificationObjList.add(notificationObj)
+                    }
+                    if (notificationObjList.isNotEmpty()) {
+                        notificationRepository.saveAll(notificationObjList)
+                    }
+                }
+
                 // Delete comments
                 val albumComments = albumCommentRepository.findAllByAlbumId(albumIdRequest)
                 if (albumComments != null) {
@@ -670,6 +692,7 @@ class AlbumsController: BaseController() {
         if (batchMetadataMap.containsKey("metadataIdList") && batchMetadataMap.containsKey("albumId")) {
             val idArray = batchMetadataMap["metadataIdList"] as ArrayList<String>
             val albumId = batchMetadataMap["albumId"].toString().toInt()
+            val albumObj = albumRepository.findAlbumById(albumId)
 
             for (metadataId in idArray) {
                 MetadataProcessing.deleteAlbumPhoto(metadataRepository, albumRepository, albumPhotoRepository, metadataId, albumId)
@@ -684,6 +707,28 @@ class AlbumsController: BaseController() {
                 albumCommentRepository,
                 albumId
             )
+
+            if (count!! > 0) {
+                val admins = userRepository.findAllAdmins()
+
+                if (albumObj != null && admins.count() > 0) {
+                    val notificationObjList = mutableListOf<Notification>()
+                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                    sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                    for (admin in admins) {
+                        val notificationObj = Notification()
+                        notificationObj.setUserId(admin.getId())
+                        notificationObj.setCreatedAt(getCurrentTimestamp())
+                        notificationObj.setModifiedAt(getCurrentTimestamp())
+                        notificationObj.setRead(false)
+                        notificationObj.setMessage("Album ${albumObj.getName()} deleted at ${sdtf.format(Date())}")
+                        notificationObjList.add(notificationObj)
+                    }
+                    if (notificationObjList.isNotEmpty()) {
+                        notificationRepository.saveAll(notificationObjList)
+                    }
+                }
+            }
 
             if (count != null && count.toInt() == 0) {
                 resp["msg"] = "/albums"
