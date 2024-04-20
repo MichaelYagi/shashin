@@ -9,6 +9,7 @@ import com.miyagi.shashin.repository.KeywordRepository
 import com.miyagi.shashin.repository.SearchHistoryRepository
 import com.miyagi.shashin.repository.SearchRepository
 import com.miyagi.shashin.util.ApiResponse
+import com.miyagi.shashin.util.SearchHistoryTypes
 import com.miyagi.shashin.util.TextUtils
 import io.swagger.v3.oas.annotations.Operation
 import org.apache.commons.text.StringEscapeUtils
@@ -197,7 +198,7 @@ class SearchController: BaseController() {
                     if (searchTermCount == 0) {
                         searchHistory = SearchHistory()
                         searchHistory.setTerm(term)
-                        searchHistory.setSearchType(1)
+                        searchHistory.setSearchType(SearchHistoryTypes.AppHistorySearch.type)
                         searchHistory.setUserId(currentUserObj.getId())
                         searchHistory.setCreatedAt(TextUtils.getCurrentTimestamp())
                         searchHistory.setModifiedAt(TextUtils.getCurrentTimestamp())

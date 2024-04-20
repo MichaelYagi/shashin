@@ -5,12 +5,13 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScaperMessage
+import com.miyagi.shashin.model.SearchHistory
 import com.miyagi.shashin.model.Settings
+import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.PersistentLoginsRepository
-import com.miyagi.shashin.util.ApiResponse
-import com.miyagi.shashin.util.FileUtils
-import com.miyagi.shashin.util.NetworkUtils
+import com.miyagi.shashin.repository.SearchHistoryRepository
+import com.miyagi.shashin.util.*
 import com.sun.management.OperatingSystemMXBean
 import net.coobird.thumbnailator.Thumbnails
 import net.coobird.thumbnailator.geometry.Positions
@@ -63,6 +64,9 @@ class ToolsController {
 
     @Autowired
     private var buildProperties: BuildProperties? = null
+
+    @Autowired
+    private val searchHistoryRepository: SearchHistoryRepository? = null
 
     @Value("\${app.endpoint.url.geocode}")
     private lateinit var geocodeUrl: String
@@ -228,8 +232,37 @@ class ToolsController {
         if (imageScraperMap.containsKey("pageUrl")) {
             val pageUrl: String = java.lang.String.valueOf(imageScraperMap["pageUrl"])
 
-            if (NetworkUtils.pingURL(java.lang.String.valueOf(pageUrl))) {
+            val currentUserObj = model.getAttribute("currentUser") as User?
+            if (currentUserObj != null && NetworkUtils.pingURL(java.lang.String.valueOf(pageUrl))) {
                 response["pageUrl"] = pageUrl
+
+                val searchImageScraperHistoryCount = searchHistoryRepository?.countImageScraperByUserId(currentUserObj.getId())
+                val searchHistory: SearchHistory?
+                if (searchImageScraperHistoryCount == 0) {
+                    searchHistory = SearchHistory()
+                    searchHistory.setTerm(pageUrl)
+                    searchHistory.setSearchType(SearchHistoryTypes.UrlHistorySearch.type)
+                    searchHistory.setUserId(currentUserObj.getId())
+                    searchHistory.setCreatedAt(TextUtils.getCurrentTimestamp())
+                    searchHistory.setModifiedAt(TextUtils.getCurrentTimestamp())
+                } else {
+                    searchHistory =
+                        searchHistoryRepository?.findImageScraperDistinctByUserIdAndTerm(currentUserObj.getId(), pageUrl)
+                    searchHistory?.setModifiedAt(TextUtils.getCurrentTimestamp())
+                }
+
+                if (searchHistory != null) {
+                    searchHistoryRepository?.save(searchHistory)
+                }
+
+                val searchHistoryLimit = model.getAttribute("searchHistoryLimit").toString().toInt()
+                if (searchImageScraperHistoryCount != null && searchImageScraperHistoryCount > searchHistoryLimit) {
+                    val searchHistoryRefresh = searchHistoryRepository?.findImageScraperTopNByUserIdOrderByIdDesc(currentUserObj.getId(), 1)
+                    if (searchHistoryRefresh != null && searchHistoryRefresh.count() > 0) {
+                        searchHistoryRepository?.deleteByIdAndSearchType(searchHistoryRefresh.last().getId(), SearchHistoryTypes.UrlHistorySearch.type)
+                    }
+                }
+
                 val pageUrlObj = URL(pageUrl)
                 // eg. https://store.line.me/stickershop/author/939305/en
                 val imgList = mutableListOf<MutableMap<String, Any>>()
@@ -356,6 +389,29 @@ class ToolsController {
 //            null,  // Ignore the query part of the input url
 //            uri.getFragment()
 //        ).toString()
+    }
+
+    @RequestMapping(value = ["/tools/imagescraper/history"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun getImageScraperSearchHistory(model: Model, request: HttpServletRequest, @RequestParam size: Optional<Int>): String {
+        val searchHistoryLimit = size.orElse(model.getAttribute("searchHistoryLimit").toString().toInt())
+        val response = mutableMapOf<String, Any?>()
+        response["urlHistoryList"] = mutableListOf<SearchHistory>()
+        response["msg"] = "Not authorized"
+        response["status"] = ApiResponse.FAIL.status
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null) {
+            response["msg"] = "Success!"
+            response["status"] = ApiResponse.SUCCESS.status
+
+            val urlHistoryList =
+                searchHistoryRepository?.findImageScraperTopNByUserIdOrderByCreatedAtDesc(currentUserObj.getId(), searchHistoryLimit)
+            if (urlHistoryList != null) {
+                response["urlHistoryList"] = urlHistoryList
+            }
+        }
+        return mapper.writeValueAsString(response)
     }
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
