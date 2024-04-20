@@ -54,9 +54,7 @@
                                     urlHistoryData.push(urlHistoryObj.term)
                                 }
 
-                                shashin.createAutocomplete("#pageUrl", urlHistoryData, false, 15, function () {
-                                    $("#pageUrl").click();
-                                });
+                                shashin.createAutocomplete("#pageUrl", urlHistoryData, false);
                             }
                         }
                     }
