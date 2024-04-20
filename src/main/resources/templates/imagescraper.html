@@ -39,30 +39,32 @@
         const classMode = darkMode ? "link-button-darkmode":"link-button-lightmode";
         /*]]>*/
 
-        const http = new Http("url search history");
-        http.ajax("get", "/tools/imagescraper/history").then(function (data) {
-            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                if (data["status"] === "success") {
-                    if (data.hasOwnProperty("urlHistoryList")) {
-                        const urlHistoryList = data["urlHistoryList"];
+        function urlHistoryAutoComplete() {
+            const http = new Http("url search history");
+            http.ajax("get", "/tools/imagescraper/history").then(function (data) {
+                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                    if (data["status"] === "success") {
+                        if (data.hasOwnProperty("urlHistoryList")) {
+                            const urlHistoryList = data["urlHistoryList"];
 
-                        if (urlHistoryList.length > 0) {
-                            let urlHistoryData = [];
-                            for (const index in urlHistoryList) {
-                                const urlHistoryObj = urlHistoryList[index];
-                                urlHistoryData.push(urlHistoryObj.term)
+                            if (urlHistoryList.length > 0) {
+                                let urlHistoryData = [];
+                                for (const index in urlHistoryList) {
+                                    const urlHistoryObj = urlHistoryList[index];
+                                    urlHistoryData.push(urlHistoryObj.term)
+                                }
+
+                                shashin.createAutocomplete("#pageUrl", urlHistoryData, false, 15, function () {
+                                    $("#pageUrl").click();
+                                });
                             }
-
-                            shashin.createAutocomplete("#pageUrl", urlHistoryData, false, 15, function () {
-                                $("#pageUrl").click();
-                            });
                         }
                     }
                 }
-            }
-        });
+            });
+        }
 
-
+        urlHistoryAutoComplete();
 
         let startTime, endTime;
 
@@ -78,6 +80,7 @@
             e.preventDefault();
 
             makeImageScraperRequest();
+            urlHistoryAutoComplete();
         });
 
         function makeImageScraperRequest() {
