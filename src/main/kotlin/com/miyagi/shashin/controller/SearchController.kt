@@ -193,7 +193,6 @@ class SearchController: BaseController() {
             if (currentUserObj != null) {
                 val searchTermCount = searchHistoryRepository?.countByUserIdAndTermIgnoreCase(currentUserObj.getId(), term.lowercase())
                 if (term.isNotBlank()) {
-                    val searchHistoryCount = searchHistoryRepository?.countByUserId(currentUserObj.getId())
                     val searchHistory: SearchHistory?
                     if (searchTermCount == 0) {
                         searchHistory = SearchHistory()
@@ -212,6 +211,7 @@ class SearchController: BaseController() {
                         searchHistoryRepository?.save(searchHistory)
                     }
 
+                    val searchHistoryCount = searchHistoryRepository?.countByUserId(currentUserObj.getId())
                     val searchHistoryLimit = model.getAttribute("searchHistoryLimit").toString().toInt()
                     if (searchHistoryCount != null && searchHistoryCount > searchHistoryLimit) {
                         val searchHistoryRefresh = searchHistoryRepository?.findTopNByUserIdOrderByIdDesc(currentUserObj.getId(), 1)

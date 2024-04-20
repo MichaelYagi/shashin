@@ -236,9 +236,9 @@ class ToolsController {
             if (currentUserObj != null && NetworkUtils.pingURL(java.lang.String.valueOf(pageUrl))) {
                 response["pageUrl"] = pageUrl
 
-                val searchImageScraperHistoryCount = searchHistoryRepository?.countImageScraperByUserId(currentUserObj.getId())
+                val searchImageScraperTermCount = searchHistoryRepository?.countImageScraperByUserIdAndTermIgnoreCase(currentUserObj.getId(), pageUrl)
                 val searchHistory: SearchHistory?
-                if (searchImageScraperHistoryCount == 0) {
+                if (searchImageScraperTermCount == 0) {
                     searchHistory = SearchHistory()
                     searchHistory.setTerm(pageUrl)
                     searchHistory.setSearchType(SearchHistoryTypes.UrlHistorySearch.type)
@@ -255,6 +255,7 @@ class ToolsController {
                     searchHistoryRepository?.save(searchHistory)
                 }
 
+                val searchImageScraperHistoryCount = searchHistoryRepository?.countImageScraperByUserId(currentUserObj.getId())
                 val searchHistoryLimit = model.getAttribute("searchHistoryLimit").toString().toInt()
                 if (searchImageScraperHistoryCount != null && searchImageScraperHistoryCount > searchHistoryLimit) {
                     val searchHistoryRefresh = searchHistoryRepository?.findImageScraperTopNByUserIdOrderByIdDesc(currentUserObj.getId(), 1)
