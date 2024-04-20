@@ -290,7 +290,7 @@ class SearchController: BaseController() {
             response["status"] = ApiResponse.SUCCESS.status
 
             val searchHistoryList =
-                searchHistoryRepository?.findTopNByUserIdOrderByCreatedAtDesc(currentUserObj.getId(), searchHistoryLimit, SearchHistoryTypes.AppHistorySearch.type)
+                searchHistoryRepository?.findTopNByUserIdOrderByModifiedAtDesc(currentUserObj.getId(), searchHistoryLimit, SearchHistoryTypes.AppHistorySearch.type)
             if (searchHistoryList != null) {
                 response["searchHistoryList"] = searchHistoryList
             }

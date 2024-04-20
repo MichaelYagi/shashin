@@ -41,7 +41,8 @@
 
         function urlHistoryAutoComplete() {
             const http = new Http("url search history");
-            http.ajax("get", "/tools/imagescraper/history").then(function (data) {
+            const version = Util.getMetadataLocalStorage();
+            http.ajax("get", "/tools/imagescraper/history/"+(version === "" ? "" : "?v=" + version)).then(function (data) {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                     if (data["status"] === "success") {
                         if (data.hasOwnProperty("urlHistoryList")) {
@@ -53,8 +54,8 @@
                                     const urlHistoryObj = urlHistoryList[index];
                                     urlHistoryData.push(urlHistoryObj.term)
                                 }
-
                                 shashin.createAutocomplete("#pageUrl", urlHistoryData, false);
+                                Util.setMetadataLocalStorage();
                             }
                         }
                     }
@@ -77,8 +78,8 @@
         $("#submitForm").on("click", function (e) {
             e.preventDefault();
 
-            makeImageScraperRequest();
             urlHistoryAutoComplete();
+            makeImageScraperRequest();
         });
 
         function makeImageScraperRequest() {
