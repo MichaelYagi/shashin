@@ -191,7 +191,7 @@ class SearchController: BaseController() {
 
             val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
-                val searchTermCount = searchHistoryRepository?.countByUserIdAndTermIgnoreCase(currentUserObj.getId(), term.lowercase())
+                val searchTermCount = searchHistoryRepository?.countByUserIdAndTermIgnoreCase(currentUserObj.getId(), term.lowercase(), SearchHistoryTypes.AppHistorySearch.type)
                 if (term.isNotBlank()) {
                     val searchHistory: SearchHistory?
                     if (searchTermCount == 0) {
@@ -203,7 +203,7 @@ class SearchController: BaseController() {
                         searchHistory.setModifiedAt(TextUtils.getCurrentTimestamp())
                     } else {
                         searchHistory =
-                            searchHistoryRepository?.findDistinctByUserIdAndTerm(currentUserObj.getId(), term)
+                            searchHistoryRepository?.findDistinctByUserIdAndTerm(currentUserObj.getId(), term, SearchHistoryTypes.AppHistorySearch.type)
                         searchHistory?.setModifiedAt(TextUtils.getCurrentTimestamp())
                     }
 
@@ -211,12 +211,12 @@ class SearchController: BaseController() {
                         searchHistoryRepository?.save(searchHistory)
                     }
 
-                    val searchHistoryCount = searchHistoryRepository?.countByUserId(currentUserObj.getId())
+                    val searchHistoryCount = searchHistoryRepository?.countByUserId(currentUserObj.getId(), SearchHistoryTypes.AppHistorySearch.type)
                     val searchHistoryLimit = model.getAttribute("searchHistoryLimit").toString().toInt()
                     if (searchHistoryCount != null && searchHistoryCount > searchHistoryLimit) {
-                        val searchHistoryRefresh = searchHistoryRepository?.findTopNByUserIdOrderByIdDesc(currentUserObj.getId(), 1)
+                        val searchHistoryRefresh = searchHistoryRepository?.findTopNByUserIdOrderByIdDesc(currentUserObj.getId(), 1, SearchHistoryTypes.AppHistorySearch.type)
                         if (searchHistoryRefresh != null && searchHistoryRefresh.count() > 0) {
-                            searchHistoryRepository?.deleteById(searchHistoryRefresh.last().getId())
+                            searchHistoryRepository?.deleteByIdAndSearchType(searchHistoryRefresh.last().getId(), SearchHistoryTypes.AppHistorySearch.type)
                         }
                     }
 
@@ -290,7 +290,7 @@ class SearchController: BaseController() {
             response["status"] = ApiResponse.SUCCESS.status
 
             val searchHistoryList =
-                searchHistoryRepository?.findTopNByUserIdOrderByCreatedAtDesc(currentUserObj.getId(), searchHistoryLimit)
+                searchHistoryRepository?.findTopNByUserIdOrderByCreatedAtDesc(currentUserObj.getId(), searchHistoryLimit, SearchHistoryTypes.AppHistorySearch.type)
             if (searchHistoryList != null) {
                 response["searchHistoryList"] = searchHistoryList
             }

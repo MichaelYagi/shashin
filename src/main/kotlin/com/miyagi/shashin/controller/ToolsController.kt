@@ -236,7 +236,7 @@ class ToolsController {
             if (currentUserObj != null && NetworkUtils.pingURL(java.lang.String.valueOf(pageUrl))) {
                 response["pageUrl"] = pageUrl
 
-                val searchImageScraperTermCount = searchHistoryRepository?.countImageScraperByUserIdAndTermIgnoreCase(currentUserObj.getId(), pageUrl)
+                val searchImageScraperTermCount = searchHistoryRepository?.countByUserIdAndTermIgnoreCase(currentUserObj.getId(), pageUrl, SearchHistoryTypes.UrlHistorySearch.type)
                 val searchHistory: SearchHistory?
                 if (searchImageScraperTermCount == 0) {
                     searchHistory = SearchHistory()
@@ -247,7 +247,7 @@ class ToolsController {
                     searchHistory.setModifiedAt(TextUtils.getCurrentTimestamp())
                 } else {
                     searchHistory =
-                        searchHistoryRepository?.findImageScraperDistinctByUserIdAndTerm(currentUserObj.getId(), pageUrl)
+                        searchHistoryRepository?.findDistinctByUserIdAndTerm(currentUserObj.getId(), pageUrl, SearchHistoryTypes.UrlHistorySearch.type)
                     searchHistory?.setModifiedAt(TextUtils.getCurrentTimestamp())
                 }
 
@@ -255,10 +255,10 @@ class ToolsController {
                     searchHistoryRepository?.save(searchHistory)
                 }
 
-                val searchImageScraperHistoryCount = searchHistoryRepository?.countImageScraperByUserId(currentUserObj.getId())
+                val searchImageScraperHistoryCount = searchHistoryRepository?.countByUserId(currentUserObj.getId(), SearchHistoryTypes.UrlHistorySearch.type)
                 val searchHistoryLimit = model.getAttribute("searchHistoryLimit").toString().toInt()
                 if (searchImageScraperHistoryCount != null && searchImageScraperHistoryCount > searchHistoryLimit) {
-                    val searchHistoryRefresh = searchHistoryRepository?.findImageScraperTopNByUserIdOrderByIdDesc(currentUserObj.getId(), 1)
+                    val searchHistoryRefresh = searchHistoryRepository?.findTopNByUserIdOrderByIdDesc(currentUserObj.getId(), 1, SearchHistoryTypes.UrlHistorySearch.type)
                     if (searchHistoryRefresh != null && searchHistoryRefresh.count() > 0) {
                         searchHistoryRepository?.deleteByIdAndSearchType(searchHistoryRefresh.last().getId(), SearchHistoryTypes.UrlHistorySearch.type)
                     }
@@ -407,7 +407,7 @@ class ToolsController {
             response["status"] = ApiResponse.SUCCESS.status
 
             val urlHistoryList =
-                searchHistoryRepository?.findImageScraperTopNByUserIdOrderByCreatedAtDesc(currentUserObj.getId(), searchHistoryLimit)
+                searchHistoryRepository?.findTopNByUserIdOrderByCreatedAtDesc(currentUserObj.getId(), searchHistoryLimit, SearchHistoryTypes.UrlHistorySearch.type)
             if (urlHistoryList != null) {
                 response["urlHistoryList"] = urlHistoryList
             }
