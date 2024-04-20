@@ -1,6 +1,5 @@
 package com.miyagi.shashin.controller
 
-import com.microsoft.playwright.Playwright
 import com.miyagi.shashin.repository.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
