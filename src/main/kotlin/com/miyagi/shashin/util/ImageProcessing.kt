@@ -156,7 +156,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 //                if (extension == "png" || extension == "gif") {
                     // make sure it's rgb
                     val tempImg = BufferedImage(img.width, img.height, BufferedImage.TYPE_INT_RGB)
-                    tempImg.createGraphics().drawImage(img, 0, 0, img.width, img.height, null)
+                    tempImg.createGraphics().drawImage(img, 0, 0, img.width, img.height, Color.WHITE, null)
                     img = tempImg
 //                }
                 if (rotation > 0) {
