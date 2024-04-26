@@ -730,7 +730,7 @@ class AlbumsController: BaseController() {
                 }
             }
 
-            if (count != null && count.toInt() == 0) {
+            if (count.toInt() == 0) {
                 resp["msg"] = "/albums"
                 resp["status"] = "redirect"
                 return mapper.writeValueAsString(resp)

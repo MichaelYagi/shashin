@@ -60,7 +60,7 @@ class TestController {
     fun test(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
         model["somevalue"] = "This is a test"
 
-        val userAgent = request.getHeader("User-Agent")
+//        val userAgent = request.getHeader("User-Agent")
 
 
         return "test"
