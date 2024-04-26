@@ -43,5 +43,5 @@ Tech Stack
 * [Nominatim](https://nominatim.org/) - Open-source geocoding with OpenStreetMap data
 * [Bootstrap](https://getbootstrap.com/) - Frontend toolkit
 * [CompreFace](https://github.com/exadel-inc/CompreFace) - Self hosted REST API for face recognition
-* [Deep Java Library](https://djl.ai/) - Object recognition library
+* [Deep Java Library](https://djl.ai/) - Face and object recognition library
 * [Croppie](https://foliotek.github.io/Croppie/) - Image cropping Javascript plugin
