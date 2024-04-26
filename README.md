@@ -39,7 +39,7 @@ Tech Stack
 * [lightGallery](https://www.lightgalleryjs.com/) and [plugins](https://cdnjs.com/libraries/lightgallery) - Image and video lightbox
 * [Metadata Extractor](https://github.com/drewnoakes/metadata-extractor) - Extracts Exif, IPTC, XMP, ICC and other metadata from image, video and audio files
 * [JQuery](https://jquery.com/) - JavaScript library
-* [OpenLayers](https://openlayers.org/) with [OpenStreetMap](https://www.openstreetmap.org/) - Display map tiles, vector data and markers loaded from multiple map sources, like OpenStreetMap
+* [OpenLayers](https://openlayers.org/) - Display map tiles, vector data and markers loaded from multiple map sources, like [OpenStreetMap](https://www.openstreetmap.org/), [ArcGIS](https://www.arcgis.com/index.html) and [MapTiler](https://www.maptiler.com/)
 * [Nominatim](https://nominatim.org/) - Open-source geocoding with OpenStreetMap data
 * [Bootstrap](https://getbootstrap.com/) - Frontend toolkit
 * [CompreFace](https://github.com/exadel-inc/CompreFace) - Self hosted REST API for face recognition
