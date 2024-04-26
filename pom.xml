@@ -363,11 +363,11 @@
                             <goal>run</goal>
                         </goals>
                         <configuration>
-                            <target>
+                            <tasks>
                                 <delete>
                                     <fileset dir="${project.basedir}/src/main/resources/lib" includes="*.zip" />
                                 </delete>
-                            </target>
+                            </tasks>
                         </configuration>
                     </execution>
                 </executions>
