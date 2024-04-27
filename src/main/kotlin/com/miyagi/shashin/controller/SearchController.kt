@@ -187,12 +187,19 @@ class SearchController: BaseController() {
     fun postSearch(model: Model, redirectAttributes: RedirectAttributes, @RequestBody formData: MultiValueMap<String, String>): String {
         model["term"] = ""
         if (formData.containsKey("appSearchInput")) {
-            val term: String = java.lang.String.valueOf(formData.getFirst("appSearchInput"))
+            var term: String = java.lang.String.valueOf(formData.getFirst("appSearchInput"))
 
             val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
                 val searchTermCount = searchHistoryRepository?.countByUserIdAndTermIgnoreCase(currentUserObj.getId(), term.lowercase(), SearchHistoryTypes.AppHistorySearch.type)
                 if (term.isNotBlank()) {
+
+                    // If a date is detected, reformat to yyyy-mm-dd
+                    val possibleDate = TextUtils.validateDate(term)
+                    if (possibleDate != null) {
+                        term = possibleDate
+                    }
+
                     val searchHistory: SearchHistory?
                     if (searchTermCount == 0) {
                         searchHistory = SearchHistory()

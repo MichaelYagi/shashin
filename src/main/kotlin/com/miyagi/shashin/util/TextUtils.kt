@@ -477,6 +477,40 @@ class TextUtils {
             return true
         }
 
+        fun validateDate(inDate: String): String? {
+            val format = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+            var date: Date?
+
+            try {
+                date = format.parse(inDate)
+            } catch (e: Exception) {
+                try {
+                    val sourceDateFormat =
+                        SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH)
+                    date = sourceDateFormat.parse(inDate)
+                } catch (e: Exception) {
+                    try {
+                        val sourceDateFormat =
+                            SimpleDateFormat("yyyy-M-d", Locale.ENGLISH)
+                        date = sourceDateFormat.parse(inDate)
+                    } catch (e: Exception) {
+                        try {
+                            val sourceDateFormat =
+                                SimpleDateFormat("yyyy/M/d", Locale.ENGLISH)
+                            date = sourceDateFormat.parse(inDate)
+                        } catch (e: Exception) {
+                            return null
+                        }
+                    }
+                }
+            }
+
+            val destFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+
+            return destFormat.format(date)
+
+        }
+
         fun returnForbiddenError(response: HttpServletResponse): String {
             val jsonResponseMap = mutableMapOf<String, Any>()
             jsonResponseMap["msg"] = "Access is denied"
