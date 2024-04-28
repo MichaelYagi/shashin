@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.util.MultiValueMap
@@ -200,6 +201,7 @@ class SearchController: BaseController() {
     }
 
     @RequestMapping(value = ["/search"], method = [RequestMethod.POST], consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE])
+    @Transactional
     fun postSearch(model: Model, redirectAttributes: RedirectAttributes, @RequestBody formData: MultiValueMap<String, String>): String {
         model["term"] = ""
         if (formData.containsKey("appSearchInput")) {
