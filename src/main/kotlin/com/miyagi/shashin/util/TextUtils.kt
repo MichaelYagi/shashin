@@ -478,6 +478,19 @@ class TextUtils {
         }
 
         fun convertDateToYMD(inDate: String): String? {
+//            var dateArray = inDate.split('-')
+//            if (dateArray.size >= 2) {
+//                if (dateArray[0].length != 4) {
+//                    return null
+//                }
+//            }
+//            dateArray = inDate.split('/')
+//            if (dateArray.size >= 2) {
+//                if (dateArray[0].length != 4) {
+//                    return null
+//                }
+//            }
+
             val format = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
             var isShort = false
             var date: Date?
@@ -487,79 +500,79 @@ class TextUtils {
             } catch (e: Exception) {
                 try {
                     val sourceDateFormat =
-                        SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH)
+                        SimpleDateFormat("yy/MM/dd", Locale.ENGLISH)
                     date = sourceDateFormat.parse(inDate)
                 } catch (e: Exception) {
                     try {
                         val sourceDateFormat =
-                            SimpleDateFormat("yyyy-M-d", Locale.ENGLISH)
+                            SimpleDateFormat("yy-M-d", Locale.ENGLISH)
                         date = sourceDateFormat.parse(inDate)
                     } catch (e: Exception) {
                         try {
                             val sourceDateFormat =
-                                SimpleDateFormat("yyyy/M/d", Locale.ENGLISH)
+                                SimpleDateFormat("yy/M/d", Locale.ENGLISH)
                             date = sourceDateFormat.parse(inDate)
                         } catch (e: Exception) {
                             try {
                                 val sourceDateFormat =
-                                    SimpleDateFormat("yyyy/M", Locale.ENGLISH)
+                                    SimpleDateFormat("yy/M", Locale.ENGLISH)
                                 date = sourceDateFormat.parse(inDate)
                                 isShort = true
                             } catch (e: Exception) {
                                 try {
                                     val sourceDateFormat =
-                                        SimpleDateFormat("yyyy-M", Locale.ENGLISH)
+                                        SimpleDateFormat("yy-M", Locale.ENGLISH)
                                     date = sourceDateFormat.parse(inDate)
                                     isShort = true
                                 } catch (e: Exception) {
                                     try {
                                         val sourceDateFormat =
-                                            SimpleDateFormat("yyyy/MM", Locale.ENGLISH)
+                                            SimpleDateFormat("yy/MM", Locale.ENGLISH)
                                         date = sourceDateFormat.parse(inDate)
                                         isShort = true
                                     } catch (e: Exception) {
                                         try {
                                             val sourceDateFormat =
-                                                SimpleDateFormat("yyyy-MM", Locale.ENGLISH)
+                                                SimpleDateFormat("yy-MM", Locale.ENGLISH)
                                             date = sourceDateFormat.parse(inDate)
                                             isShort = true
                                         } catch (e: Exception) {
                                             try {
                                                 val sourceDateFormat =
-                                                    SimpleDateFormat("yy/MM/dd", Locale.ENGLISH)
+                                                    SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH)
                                                 date = sourceDateFormat.parse(inDate)
                                             } catch (e: Exception) {
                                                 try {
                                                     val sourceDateFormat =
-                                                        SimpleDateFormat("yy-M-d", Locale.ENGLISH)
+                                                        SimpleDateFormat("yyyy-M-d", Locale.ENGLISH)
                                                     date = sourceDateFormat.parse(inDate)
                                                 } catch (e: Exception) {
                                                     try {
                                                         val sourceDateFormat =
-                                                            SimpleDateFormat("yy/M/d", Locale.ENGLISH)
+                                                            SimpleDateFormat("yyyy/M/d", Locale.ENGLISH)
                                                         date = sourceDateFormat.parse(inDate)
                                                     } catch (e: Exception) {
                                                         try {
                                                             val sourceDateFormat =
-                                                                SimpleDateFormat("yy/M", Locale.ENGLISH)
+                                                                SimpleDateFormat("yyyy/M", Locale.ENGLISH)
                                                             date = sourceDateFormat.parse(inDate)
                                                             isShort = true
                                                         } catch (e: Exception) {
                                                             try {
                                                                 val sourceDateFormat =
-                                                                    SimpleDateFormat("yy-M", Locale.ENGLISH)
+                                                                    SimpleDateFormat("yyyy-M", Locale.ENGLISH)
                                                                 date = sourceDateFormat.parse(inDate)
                                                                 isShort = true
                                                             } catch (e: Exception) {
                                                                 try {
                                                                     val sourceDateFormat =
-                                                                        SimpleDateFormat("yy/MM", Locale.ENGLISH)
+                                                                        SimpleDateFormat("yyyy/MM", Locale.ENGLISH)
                                                                     date = sourceDateFormat.parse(inDate)
                                                                     isShort = true
                                                                 } catch (e: Exception) {
                                                                     try {
                                                                         val sourceDateFormat =
-                                                                            SimpleDateFormat("yy-MM", Locale.ENGLISH)
+                                                                            SimpleDateFormat("yyyy-MM", Locale.ENGLISH)
                                                                         date = sourceDateFormat.parse(inDate)
                                                                         isShort = true
                                                                     } catch (e: Exception) {

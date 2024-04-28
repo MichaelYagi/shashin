@@ -98,4 +98,31 @@ class TextUtilsTest {
         // yyyy-MM-dd HH:mm:ss
         Assertions.assertTrue(ts.matches("^\\d{4}\\-(0?[1-9]|1[012])\\-(0?[1-9]|[12][0-9]|3[01]) (?:(?:([01]?\\d|2[0-3]):)?([0-5]?\\d):)?([0-5]?\\d)\$".toRegex()))
     }
+
+    @Test
+    fun getConvertDateToYMDTest() {
+        var convertedString = TextUtils.convertDateToYMD("")
+        Assertions.assertEquals(null, convertedString)
+
+        convertedString = TextUtils.convertDateToYMD("asdf")
+        Assertions.assertEquals(null, convertedString)
+
+        convertedString = TextUtils.convertDateToYMD("2024/03/25")
+        Assertions.assertEquals("2024-03-25", convertedString)
+
+        convertedString = TextUtils.convertDateToYMD("24/03/25")
+        Assertions.assertEquals("2024-03-25", convertedString)
+
+        convertedString = TextUtils.convertDateToYMD("2024/3/25")
+        Assertions.assertEquals("2024-03-25", convertedString)
+
+        convertedString = TextUtils.convertDateToYMD("24/3/25")
+        Assertions.assertEquals("2024-03-25", convertedString)
+
+        convertedString = TextUtils.convertDateToYMD("24/3")
+        Assertions.assertEquals("2024-03", convertedString)
+
+        convertedString = TextUtils.convertDateToYMD("03/3")
+        Assertions.assertEquals("2003-03", convertedString)
+    }
 }
