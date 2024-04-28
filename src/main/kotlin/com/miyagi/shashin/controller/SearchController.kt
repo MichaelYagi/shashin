@@ -93,17 +93,25 @@ class SearchController: BaseController() {
         if (!term.isNullOrBlank()) {
             response["term"] = term
 
+            var updatedTerm = term
+
+            // If a date is detected, reformat to yyyy-mm-dd
+            val possibleDate = TextUtils.validateDate(term)
+            if (possibleDate != null) {
+                updatedTerm = possibleDate
+            }
+
             val favoritesMap = HashMap<String, HashMap<String, Any>>()
 
             val queryLimit = model.getAttribute("queryLimit").toString().toInt()
             val pageValue = page*queryLimit
             var metadataList: MutableIterable<Metadata>? = null
             if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) {
-                metadataList = searchRepository?.findMetadataBySearchTerm(term,pageValue,queryLimit)
+                metadataList = searchRepository?.findMetadataBySearchTerm(updatedTerm,pageValue,queryLimit)
                 response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
             } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
                 if (currentUserObj != null) {
-                    metadataList = searchRepository?.findMetadataBySearchTermAndUserId(term,currentUserObj.getId(),pageValue,queryLimit)
+                    metadataList = searchRepository?.findMetadataBySearchTermAndUserId(updatedTerm,currentUserObj.getId(),pageValue,queryLimit)
                     response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
                 }
             }
@@ -164,8 +172,16 @@ class SearchController: BaseController() {
             } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
                 val currentUserObj = model.getAttribute("currentUser") as User?
                 if (currentUserObj != null) {
+                    var updatedTerm = term
+
+                    // If a date is detected, reformat to yyyy-mm-dd
+                    val possibleDate = TextUtils.validateDate(term)
+                    if (possibleDate != null) {
+                        updatedTerm = possibleDate
+                    }
+
                     val metadataList = searchRepository?.findMetadataBySearchTermAndUserId(
-                        term,
+                        updatedTerm,
                         currentUserObj.getId(),
                         pageValue,
                         queryLimit
@@ -188,6 +204,7 @@ class SearchController: BaseController() {
         model["term"] = ""
         if (formData.containsKey("appSearchInput")) {
             var term: String = java.lang.String.valueOf(formData.getFirst("appSearchInput"))
+            val originalTerm = term
 
             val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
@@ -227,7 +244,7 @@ class SearchController: BaseController() {
                         }
                     }
 
-                    redirectAttributes.addAttribute("term", term)
+                    redirectAttributes.addAttribute("term", originalTerm)
                 }
             }
         }
