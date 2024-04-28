@@ -598,7 +598,7 @@ class TextUtils {
             val jsonResponseMap = mutableMapOf<String, Any>()
             jsonResponseMap["msg"] = "Access is denied"
             val now = LocalDateTime.now()
-            val formatter = DateTimeFormatter.ofPattern(TextUtils.getCommonDateFormat())
+            val formatter = DateTimeFormatter.ofPattern(getCommonDateFormat())
             jsonResponseMap["timestamp"] = now.format(formatter);
             jsonResponseMap["status"] = HttpStatus.FORBIDDEN
             val mapper = ObjectMapper()
