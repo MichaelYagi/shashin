@@ -477,7 +477,7 @@ class TextUtils {
             return true
         }
 
-        fun validateDate(inDate: String): String? {
+        fun convertDateToYMD(inDate: String): String? {
             val format = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
             var isShort = false
             var date: Date?

@@ -96,7 +96,7 @@ class SearchController: BaseController() {
             var updatedTerm = term
 
             // If a date is detected, reformat to yyyy-mm-dd
-            val possibleDate = TextUtils.validateDate(term)
+            val possibleDate = TextUtils.convertDateToYMD(term)
             if (possibleDate != null) {
                 updatedTerm = possibleDate
             }
@@ -175,7 +175,7 @@ class SearchController: BaseController() {
                     var updatedTerm = term
 
                     // If a date is detected, reformat to yyyy-mm-dd
-                    val possibleDate = TextUtils.validateDate(term)
+                    val possibleDate = TextUtils.convertDateToYMD(term)
                     if (possibleDate != null) {
                         updatedTerm = possibleDate
                     }
@@ -212,7 +212,7 @@ class SearchController: BaseController() {
                 if (term.isNotBlank()) {
 
                     // If a date is detected, reformat to yyyy-mm-dd
-                    val possibleDate = TextUtils.validateDate(term)
+                    val possibleDate = TextUtils.convertDateToYMD(term)
                     if (possibleDate != null) {
                         term = possibleDate
                     }
