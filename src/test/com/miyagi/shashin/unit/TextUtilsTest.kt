@@ -110,19 +110,43 @@ class TextUtilsTest {
         convertedString = TextUtils.convertDateToYMD("2024/03/25")
         Assertions.assertEquals("2024-03-25", convertedString)
 
+        convertedString = TextUtils.convertDateToYMD("2024-03-25")
+        Assertions.assertEquals("2024-03-25", convertedString)
+
         convertedString = TextUtils.convertDateToYMD("24/03/25")
+        Assertions.assertEquals("2024-03-25", convertedString)
+
+        convertedString = TextUtils.convertDateToYMD("24-03-25")
         Assertions.assertEquals("2024-03-25", convertedString)
 
         convertedString = TextUtils.convertDateToYMD("2024/3/25")
         Assertions.assertEquals("2024-03-25", convertedString)
 
+        convertedString = TextUtils.convertDateToYMD("2024-3-25")
+        Assertions.assertEquals("2024-03-25", convertedString)
+
         convertedString = TextUtils.convertDateToYMD("24/3/25")
+        Assertions.assertEquals("2024-03-25", convertedString)
+
+        convertedString = TextUtils.convertDateToYMD("24-3-25")
         Assertions.assertEquals("2024-03-25", convertedString)
 
         convertedString = TextUtils.convertDateToYMD("24/3")
         Assertions.assertEquals("2024-03", convertedString)
 
+        convertedString = TextUtils.convertDateToYMD("24-3")
+        Assertions.assertEquals("2024-03", convertedString)
+
+        convertedString = TextUtils.convertDateToYMD("24/3/25")
+        Assertions.assertEquals("2024-03-25", convertedString)
+
+        convertedString = TextUtils.convertDateToYMD("24-3-25")
+        Assertions.assertEquals("2024-03-25", convertedString)
+
         convertedString = TextUtils.convertDateToYMD("03/3")
+        Assertions.assertEquals("2003-03", convertedString)
+
+        convertedString = TextUtils.convertDateToYMD("03-3")
         Assertions.assertEquals("2003-03", convertedString)
     }
 }
