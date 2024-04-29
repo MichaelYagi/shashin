@@ -26,7 +26,14 @@ class TextUtils {
             return "shashinobject"
         }
 
-        fun isLocalIp(testAddress: String): Boolean {
+        fun isLocalIp(testAddress: String?): Boolean {
+            if (testAddress.isNullOrBlank()) {
+                logger.log(
+                    Level.INFO,
+                    "Testing IP: null or blank",
+                )
+                return false
+            }
 
             logger.log(
                 Level.INFO,
@@ -51,7 +58,7 @@ class TextUtils {
         fun parseRememberMeCookie(cookie: String): HashMap<String,String> {
             val seriesExpiryMap = HashMap<String,String>()
             seriesExpiryMap["series"] = ""
-            seriesExpiryMap["expiry"] = ""
+            seriesExpiryMap["expires"] = ""
 
             val cookieArray = cookie.split("; ")
             for (keyValue in cookieArray) {
