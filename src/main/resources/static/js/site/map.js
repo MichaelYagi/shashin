@@ -291,7 +291,7 @@ async function showMap(mapdata) {
         }
     }
 
-    function setLayer(startDate, endDate, videoOnly, metadataList, resetMap, mapSourceChanged, inputsChanged) {
+    function setLayer(startDate, endDate, videoOnly, metadataList, resetMap, inputsChanged) {
         version = Util.getMetadataLocalStorage();
         map.removeLayer(vectorLayer);
         const iconFeatures = [];
@@ -302,10 +302,6 @@ async function showMap(mapdata) {
 
         if (inputsChanged === undefined) {
             inputsChanged = false;
-        }
-
-        if (mapSourceChanged === undefined) {
-            mapSourceChanged = false;
         }
 
         if (resetMap === true) {
@@ -420,9 +416,9 @@ async function showMap(mapdata) {
             }
         }
 
-        progressBar.attr("aria-valuenow", 0);
-        progressBar.css("width", "0%");
         progressBarWrapper.invisible();
+        progressBar.attr("aria-valuenow", "0");
+        progressBar.css("width", "0%");
         $("#mapFilterButton").removeClass("disabled");
 
         if (iconFeatures.length > 0) {
@@ -845,7 +841,7 @@ async function showMap(mapdata) {
     });
 
     checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))
-    setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],true, false, false);
+    setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],true, false);
 
     $("#filterMap").on("click", function(e) {
         e.preventDefault();
@@ -954,7 +950,7 @@ async function showMap(mapdata) {
 
             if (false === renderAlbumSelected()) {
                 // Filter results
-                setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],false, mapSourceChanged, inputsChanged);
+                setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],false, inputsChanged);
             }
         }
 
@@ -969,7 +965,7 @@ async function showMap(mapdata) {
 
             http.ajax("get", "/album/mapdata/" + albumId).then(function (data) {
                 if (data.hasOwnProperty("albummapdata")) {
-                    setLayer(startDateField.val(), endDateField.val(), videoOnlyCheckbox.prop("checked"), data["albummapdata"], false, false, true);
+                    setLayer(startDateField.val(), endDateField.val(), videoOnlyCheckbox.prop("checked"), data["albummapdata"], false, true);
                 }
             });
 
@@ -1070,7 +1066,7 @@ async function showMap(mapdata) {
             albumSelect.val("0");
         }
 
-        setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],true, false, false);
+        setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],true);
         shashin.showToastMessage("Map reset", "Map reset", {icon:"bi-info-circle", iconColor:"#777777", delay: 3000});
 
         $("#propMapFilter").modal('hide');
