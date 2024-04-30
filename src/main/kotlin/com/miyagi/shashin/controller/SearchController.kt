@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.util.MultiValueMap
@@ -93,17 +94,25 @@ class SearchController: BaseController() {
         if (!term.isNullOrBlank()) {
             response["term"] = term
 
+            var updatedTerm = term
+
+            // If a date is detected, reformat to yyyy-mm-dd
+            val possibleDate = TextUtils.convertDateToYMD(term)
+            if (possibleDate != null) {
+                updatedTerm = possibleDate
+            }
+
             val favoritesMap = HashMap<String, HashMap<String, Any>>()
 
             val queryLimit = model.getAttribute("queryLimit").toString().toInt()
             val pageValue = page*queryLimit
             var metadataList: MutableIterable<Metadata>? = null
             if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) {
-                metadataList = searchRepository?.findMetadataBySearchTerm(term,pageValue,queryLimit)
+                metadataList = searchRepository?.findMetadataBySearchTerm(updatedTerm,pageValue,queryLimit)
                 response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
             } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
                 if (currentUserObj != null) {
-                    metadataList = searchRepository?.findMetadataBySearchTermAndUserId(term,currentUserObj.getId(),pageValue,queryLimit)
+                    metadataList = searchRepository?.findMetadataBySearchTermAndUserId(updatedTerm,currentUserObj.getId(),pageValue,queryLimit)
                     response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
                 }
             }
@@ -164,8 +173,16 @@ class SearchController: BaseController() {
             } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
                 val currentUserObj = model.getAttribute("currentUser") as User?
                 if (currentUserObj != null) {
+                    var updatedTerm = term
+
+                    // If a date is detected, reformat to yyyy-mm-dd
+                    val possibleDate = TextUtils.convertDateToYMD(term)
+                    if (possibleDate != null) {
+                        updatedTerm = possibleDate
+                    }
+
                     val metadataList = searchRepository?.findMetadataBySearchTermAndUserId(
-                        term,
+                        updatedTerm,
                         currentUserObj.getId(),
                         pageValue,
                         queryLimit
@@ -184,15 +201,24 @@ class SearchController: BaseController() {
     }
 
     @RequestMapping(value = ["/search"], method = [RequestMethod.POST], consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE])
+    @Transactional
     fun postSearch(model: Model, redirectAttributes: RedirectAttributes, @RequestBody formData: MultiValueMap<String, String>): String {
         model["term"] = ""
         if (formData.containsKey("appSearchInput")) {
-            val term: String = java.lang.String.valueOf(formData.getFirst("appSearchInput"))
+            var term: String = java.lang.String.valueOf(formData.getFirst("appSearchInput"))
+            val originalTerm = term
 
             val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
                 val searchTermCount = searchHistoryRepository?.countByUserIdAndTermIgnoreCase(currentUserObj.getId(), term.lowercase(), SearchHistoryTypes.AppHistorySearch.type)
                 if (term.isNotBlank()) {
+
+                    // If a date is detected, reformat to yyyy-mm-dd
+                    val possibleDate = TextUtils.convertDateToYMD(term)
+                    if (possibleDate != null) {
+                        term = possibleDate
+                    }
+
                     val searchHistory: SearchHistory?
                     if (searchTermCount == 0) {
                         searchHistory = SearchHistory()
@@ -220,7 +246,7 @@ class SearchController: BaseController() {
                         }
                     }
 
-                    redirectAttributes.addAttribute("term", term)
+                    redirectAttributes.addAttribute("term", originalTerm)
                 }
             }
         }
