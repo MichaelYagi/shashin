@@ -316,6 +316,7 @@ async function showMap(mapdata) {
         }
 
         progressBarWrapper.visible();
+        progressBar.css("width", "0%");
 
         let minLat = null;
         let maxLat = null;
@@ -325,7 +326,7 @@ async function showMap(mapdata) {
         for (let index in mapdata) {
             const data = mapdata[index];
 
-            const currentProgress = (parseInt(index) + 1) / mapdata.length * 100;
+            const currentProgress = parseInt(((parseInt(index) + 1) / mapdata.length * 100).toString(), 10);
             progressBar.attr("aria-valuenow", currentProgress.toString());
             const width = currentProgress.toString() + "%";
             progressBar.css("width", width);
