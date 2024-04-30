@@ -26,7 +26,14 @@ class TextUtils {
             return "shashinobject"
         }
 
-        fun isLocalIp(testAddress: String): Boolean {
+        fun isLocalIp(testAddress: String?): Boolean {
+            if (testAddress.isNullOrBlank()) {
+                logger.log(
+                    Level.INFO,
+                    "Testing IP: null or blank",
+                )
+                return false
+            }
 
             logger.log(
                 Level.INFO,
@@ -51,7 +58,7 @@ class TextUtils {
         fun parseRememberMeCookie(cookie: String): HashMap<String,String> {
             val seriesExpiryMap = HashMap<String,String>()
             seriesExpiryMap["series"] = ""
-            seriesExpiryMap["expiry"] = ""
+            seriesExpiryMap["expires"] = ""
 
             val cookieArray = cookie.split("; ")
             for (keyValue in cookieArray) {
@@ -477,11 +484,128 @@ class TextUtils {
             return true
         }
 
+        fun convertDateToYMD(inDate: String): String? {
+            var isShort = false
+            var date: Date?
+
+            try {
+                val sourceDateFormat =
+                    SimpleDateFormat("yy/MM/dd", Locale.ENGLISH)
+                date = sourceDateFormat.parse(inDate)
+            } catch (e: Exception) {
+                try {
+                    val sourceDateFormat =
+                        SimpleDateFormat("yy-M-d", Locale.ENGLISH)
+                    date = sourceDateFormat.parse(inDate)
+                } catch (e: Exception) {
+                    try {
+                        val sourceDateFormat =
+                            SimpleDateFormat("yy/M/d", Locale.ENGLISH)
+                        date = sourceDateFormat.parse(inDate)
+                    } catch (e: Exception) {
+                        try {
+                            val sourceDateFormat =
+                                SimpleDateFormat("yy/M", Locale.ENGLISH)
+                            date = sourceDateFormat.parse(inDate)
+                            isShort = true
+                        } catch (e: Exception) {
+                            try {
+                                val sourceDateFormat =
+                                    SimpleDateFormat("yy-M", Locale.ENGLISH)
+                                date = sourceDateFormat.parse(inDate)
+                                isShort = true
+                            } catch (e: Exception) {
+                                try {
+                                    val sourceDateFormat =
+                                        SimpleDateFormat("yy/MM", Locale.ENGLISH)
+                                    date = sourceDateFormat.parse(inDate)
+                                    isShort = true
+                                } catch (e: Exception) {
+                                    try {
+                                        val sourceDateFormat =
+                                            SimpleDateFormat("yy-MM", Locale.ENGLISH)
+                                        date = sourceDateFormat.parse(inDate)
+                                        isShort = true
+                                    } catch (e: Exception) {
+                                        try {
+                                            val sourceDateFormat =
+                                                SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH)
+                                            date = sourceDateFormat.parse(inDate)
+                                        } catch (e: Exception) {
+                                            try {
+                                                val sourceDateFormat =
+                                                    SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+                                                date = sourceDateFormat.parse(inDate)
+                                            } catch (e: Exception) {
+                                                try {
+                                                    val sourceDateFormat =
+                                                        SimpleDateFormat("yyyy-M-d", Locale.ENGLISH)
+                                                    date = sourceDateFormat.parse(inDate)
+                                                } catch (e: Exception) {
+                                                    try {
+                                                        val sourceDateFormat =
+                                                            SimpleDateFormat("yyyy/M/d", Locale.ENGLISH)
+                                                        date = sourceDateFormat.parse(inDate)
+                                                    } catch (e: Exception) {
+                                                        try {
+                                                            val sourceDateFormat =
+                                                                SimpleDateFormat("yyyy/M", Locale.ENGLISH)
+                                                            date = sourceDateFormat.parse(inDate)
+                                                            isShort = true
+                                                        } catch (e: Exception) {
+                                                            try {
+                                                                val sourceDateFormat =
+                                                                    SimpleDateFormat("yyyy-M", Locale.ENGLISH)
+                                                                date = sourceDateFormat.parse(inDate)
+                                                                isShort = true
+                                                            } catch (e: Exception) {
+                                                                try {
+                                                                    val sourceDateFormat =
+                                                                        SimpleDateFormat("yyyy/MM", Locale.ENGLISH)
+                                                                    date = sourceDateFormat.parse(inDate)
+                                                                    isShort = true
+                                                                } catch (e: Exception) {
+                                                                    try {
+                                                                        val sourceDateFormat =
+                                                                            SimpleDateFormat(
+                                                                                "yyyy-MM",
+                                                                                Locale.ENGLISH
+                                                                            )
+                                                                        date = sourceDateFormat.parse(inDate)
+                                                                        isShort = true
+                                                                    } catch (e: Exception) {
+                                                                        return null
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            var destFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+            if (isShort) {
+                destFormat = SimpleDateFormat("yyyy-MM", Locale.ENGLISH)
+            }
+
+            return destFormat.format(date)
+
+        }
+
         fun returnForbiddenError(response: HttpServletResponse): String {
             val jsonResponseMap = mutableMapOf<String, Any>()
             jsonResponseMap["msg"] = "Access is denied"
             val now = LocalDateTime.now()
-            val formatter = DateTimeFormatter.ofPattern(TextUtils.getCommonDateFormat())
+            val formatter = DateTimeFormatter.ofPattern(getCommonDateFormat())
             jsonResponseMap["timestamp"] = now.format(formatter);
             jsonResponseMap["status"] = HttpStatus.FORBIDDEN
             val mapper = ObjectMapper()

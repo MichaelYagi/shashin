@@ -404,7 +404,7 @@ class UserController {
             if (user != null && newUser != null) {
                 if (user.getUsername()?.lowercase() == newUser.getUsername()?.lowercase()) {
                     logger.log(Level.INFO, "Already registered user: $newUser")
-                    model["message"] = "User already exists"
+                    model["message"] = "Could not register user"
                     return module
                 }
             }
