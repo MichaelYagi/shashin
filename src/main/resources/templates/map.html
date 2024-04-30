@@ -7,8 +7,7 @@
 
 <script type="text/javascript" th:nonce="${cspNonce}">
     $("#progressBarWrapper").visible();
-    $("#progressBar").attr("aria-valuenow","100");
-    $("#progressBar").css("width","0%");
+    $("#progressBar").attr("aria-valuenow","100").css("width","100%");
     $("#mapFilterButton").addClass("disabled");
 </script>
 
@@ -161,7 +160,6 @@
                 }
             }
 
-            $("#progressBar").css("width","100%");
             showMap(mapdata);
         });
     });
