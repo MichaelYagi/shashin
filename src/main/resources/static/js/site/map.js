@@ -312,7 +312,7 @@ async function showMap(mapdata) {
         }
 
         progressBarWrapper.visible();
-        progressBar.css("width", "0%");
+        progressBar.attr("aria-valuenow","0").css("width","0%");
 
         let minLat = null;
         let maxLat = null;
@@ -323,9 +323,7 @@ async function showMap(mapdata) {
             const data = mapdata[index];
 
             const currentProgress = parseInt(((parseInt(index) + 1) / mapdata.length * 100).toString(), 10);
-            progressBar.attr("aria-valuenow", currentProgress.toString());
-            const width = currentProgress.toString() + "%";
-            progressBar.css("width", width);
+            progressBar.attr("aria-valuenow", currentProgress.toString()).css("width", currentProgress.toString() + "%");
             shashin.printMessageToConsole("currentProgress for map: "+currentProgress.toString());
 
             if ((videoOnly === true && data["type"].includes("video") === false) || (qsmtf !== null && qsmtf !== "" && data["type"].includes(qsmtf) === false)) {
@@ -417,8 +415,6 @@ async function showMap(mapdata) {
         }
 
         progressBarWrapper.invisible();
-        progressBar.attr("aria-valuenow", "0");
-        progressBar.css("width", "0%");
         $("#mapFilterButton").removeClass("disabled");
 
         if (iconFeatures.length > 0) {
