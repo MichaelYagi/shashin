@@ -134,7 +134,7 @@ class TimelineTemplates {
             ` 
                 ${(metadata.originalImageWidth !== null && metadata.originalImageHeight !== null && metadata.originalImageWidth > metadata.originalImageHeight * 2) ?
                     `
-                        <span id="panorama${metadata.id}" class="bi-aspect-ratio overlayIcon overlayIconBackground" title="panorama"></span>
+                        <span id="panorama${metadata.id}" class="bi-arrows-expand-vertical overlayIcon overlayIconBackground" title="panorama"></span>
                     `
                 :
                 `

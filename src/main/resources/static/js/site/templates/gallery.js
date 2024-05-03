@@ -93,7 +93,7 @@ class GalleryTemplates {
         
         ${($.inArray("isPan", overlays) !== -1) ?
             `
-            <span id="panorama${id}" class="bi-aspect-ratio overlayIcon overlayIconBackground" title="panorama"></span>
+            <span id="panorama${id}" class="bi-arrows-expand-vertical overlayIcon overlayIconBackground" title="panorama"></span>
             <br>
             ` : ''
         }
