@@ -236,7 +236,9 @@
             if (timelineSettings.enableScrollSpy === true) {
                 topScroll = false;
                 timelineSettings.renderThumbnailsInViewport(elementsInViewPort, mediaTypeFilter);
-                shashin.getLightGallery().refresh();
+                if (shashin.getLightGallery() !== null) {
+                    shashin.getLightGallery().refresh();
+                }
             }
         };
         $("#container").on('scroll', scrollHandler);
@@ -289,7 +291,7 @@
                 const imageMetadataId = imageId.substring(5);
                 timelineSettings.renderMetadata(imageMetadataId);
             })
-            if (elements.length > 0) {
+            if (elements.length > 0 && shashin.getLightGallery() !== null) {
                 setTimeout(() => {
                     shashin.getLightGallery().refresh();
                 }, 1000);
