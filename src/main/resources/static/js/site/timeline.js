@@ -289,9 +289,11 @@
                 const imageMetadataId = imageId.substring(5);
                 timelineSettings.renderMetadata(imageMetadataId);
             })
-            setTimeout(() => {
-                shashin.getLightGallery().refresh();
-            }, 1000);
+            if (elements.length > 0) {
+                setTimeout(() => {
+                    shashin.getLightGallery().refresh();
+                }, 1000);
+            }
         }, 0);
     }
 
