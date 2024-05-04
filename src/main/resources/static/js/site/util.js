@@ -1386,7 +1386,7 @@ class Util {
                 // "<a href='#' class='copyLink bi-clipboard-plus sharecopy' data-clipboard-text='" + shareUrl + page + "' title='Copy share link' style='font-size: 1rem;' id='shareCopyLink'></a>&nbsp;&nbsp;&nbsp;" +
                 "<a class='"+((metadata.videoUrl != null) ? "bi-camera-video":"bi-file-image")+"' style='font-size: 1rem;' href='" + relativeShareLink.replace('/api/v1','') + page + "' title='View "+((metadata.videoUrl != null) ? "video":"image")+"' target='_blank'></a>";
 
-            if (metadata.videoUrl === null && Util.isLocalNetwork() === true) {
+            if (metadata.videoUrl === null && Util.isLocalNetwork() === false) {
                 shareDetailsHtml += "&nbsp;&nbsp;&nbsp;<a class='bi-camera' style='font-size: 1rem;' href='https://lens.google.com/uploadbyurl?url="+relativeShareLink+"' title='Search Google Lens' target='_blank'></a>";
             }
 
