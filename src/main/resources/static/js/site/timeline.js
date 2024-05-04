@@ -124,6 +124,7 @@
 
         $(window).bind("scrollStop", function() {
             firsthovered = true;
+            timelineSettings.isScrolling = false;
 
             // Prevent getting stuck scrolling up
             if ($("#container").position().top === $("#infinite-scroll-gallery").position().top) {
@@ -153,18 +154,14 @@
             if (Util.isMobile() === false && $("#dateSliderWrapper:not(:hover)").length > 0) {
                 setTimeout(() => {
                     $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
-                    timelineSettings.rescanElements();
-                    timelineSettings.isScrolling = false;
                 }, 1000);
             }
 
             timelineSettings.rescanElements();
 
             setTimeout(() => {
-                if (shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null) {
-                    shashin.getLightGallery().refresh();
-                }
-            }, 1500);
+                timelineSettings.rescanElements();
+            }, 4000);
         });
 
         // Scroll event handler
@@ -239,6 +236,7 @@
             if (timelineSettings.enableScrollSpy === true) {
                 topScroll = false;
                 timelineSettings.renderThumbnailsInViewport(elementsInViewPort, mediaTypeFilter);
+                shashin.getLightGallery().refresh();
             }
         };
         $("#container").on('scroll', scrollHandler);
@@ -291,6 +289,9 @@
                 const imageMetadataId = imageId.substring(5);
                 timelineSettings.renderMetadata(imageMetadataId);
             })
+            setTimeout(() => {
+                shashin.getLightGallery().refresh();
+            }, 1000);
         }, 0);
     }
 
