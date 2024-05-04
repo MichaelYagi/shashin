@@ -154,14 +154,17 @@
                 setTimeout(() => {
                     $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
                     timelineSettings.rescanElements();
+                    timelineSettings.isScrolling = false;
                 }, 1000);
             }
 
             timelineSettings.rescanElements();
 
-            if (shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null) {
-                shashin.getLightGallery().refresh();
-            }
+            setTimeout(() => {
+                if (shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null) {
+                    shashin.getLightGallery().refresh();
+                }
+            }, 1500);
         });
 
         // Scroll event handler
