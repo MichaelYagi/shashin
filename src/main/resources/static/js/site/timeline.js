@@ -237,7 +237,7 @@
                 topScroll = false;
                 timelineSettings.renderThumbnailsInViewport(elementsInViewPort, mediaTypeFilter);
                 if (shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null) {
-                    shashin.getLightGallery().refresh();
+                    shashin?.getLightGallery()?.refresh();
                 }
             }
         };
@@ -293,7 +293,7 @@
             })
             if (elements.length > 0 && shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null) {
                 setTimeout(() => {
-                    shashin.getLightGallery().refresh();
+                    shashin?.getLightGallery()?.refresh();
                 }, 1000);
             }
         }, 0);
