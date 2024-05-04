@@ -1387,7 +1387,7 @@ class Util {
                 "<a class='"+((metadata.videoUrl != null) ? "bi-camera-video":"bi-file-image")+"' style='font-size: 1rem;' href='" + relativeShareLink.replace('/api/v1','') + page + "' title='View "+((metadata.videoUrl != null) ? "video":"image")+"' target='_blank'></a>";
 
             if (metadata.videoUrl === null && Util.isLocalNetwork() === false) {
-                shareDetailsHtml += "&nbsp;&nbsp;&nbsp;<a class='bi-camera' style='font-size: 1rem;' href='https://lens.google.com/uploadbyurl?url="+baseUrl+"/"+relativeShareLink+"' title='Search Google Lens' target='_blank'></a>";
+                shareDetailsHtml += "&nbsp;&nbsp;&nbsp;<a class='bi-camera' style='font-size: 1rem;' href='https://lens.google.com/uploadbyurl?url="+baseUrl+relativeShareLink+"' title='Search Google Lens' target='_blank'></a>";
             }
 
             if ($(".shareUrlDetailsA").length > 0) {
