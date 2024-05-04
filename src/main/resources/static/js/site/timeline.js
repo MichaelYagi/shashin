@@ -153,6 +153,7 @@
             if (Util.isMobile() === false && $("#dateSliderWrapper:not(:hover)").length > 0) {
                 setTimeout(() => {
                     $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
+                    timelineSettings.rescanElements();
                 }, 1000);
             }
 
