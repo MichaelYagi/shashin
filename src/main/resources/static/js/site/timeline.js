@@ -157,7 +157,7 @@
                 }, 1000);
             }
 
-            timelineSettings.rescanElements();
+            // timelineSettings.rescanElements();
 
             setTimeout(() => {
                 timelineSettings.rescanElements();
@@ -236,9 +236,9 @@
             if (timelineSettings.enableScrollSpy === true) {
                 topScroll = false;
                 timelineSettings.renderThumbnailsInViewport(elementsInViewPort, mediaTypeFilter);
-                if (shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null) {
-                    shashin?.getLightGallery()?.refresh();
-                }
+                // if (shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null) {
+                //     shashin?.getLightGallery()?.refresh();
+                // }
             }
         };
         $("#container").on('scroll', scrollHandler);
