@@ -142,6 +142,7 @@
                 // Only show overlays when scrolling stopped for current hovered image
                 let hovered = false;
                 $(".photo-thumbnail-image").mousemove(function () {
+                    timelineSettings.rescanElements();
                     if (hovered === false) {
                         const attrId = $(this).attr("id");
                         const metadataId = attrId.substring(5, attrId.length);
@@ -154,14 +155,18 @@
             if (Util.isMobile() === false && $("#dateSliderWrapper:not(:hover)").length > 0) {
                 setTimeout(() => {
                     $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
+                    timelineSettings.rescanElements();
                 }, 1000);
             }
 
             // timelineSettings.rescanElements();
 
             setTimeout(() => {
-                timelineSettings.rescanElements();
-            }, 4000);
+                const elements = Util.elementsInViewport($('img.photo-thumbnail-image:not([src*="_225."])'));
+                if (elements.length > 0) {
+                    timelineSettings.rescanElements(elements);
+                }
+            }, 2500);
         });
 
         // Scroll event handler
@@ -283,9 +288,14 @@
         }
     }
 
-    timelineSettings.rescanElements = function () {
+    timelineSettings.rescanElements = function (preCalculatedElements) {
         setTimeout(() => {
-            const elements = Util.elementsInViewport($(".photo-thumbnail-image"));
+            let elements;
+            if (preCalculatedElements !== undefined && preCalculatedElements !== null) {
+                elements = preCalculatedElements;
+            } else {
+                elements = Util.elementsInViewport($('img.photo-thumbnail-image:not([src*="_225."])'));
+            }
             $.each(elements, function(index, value) {
                 const imageId = $(value).attr('id');
                 const imageMetadataId = imageId.substring(5);
