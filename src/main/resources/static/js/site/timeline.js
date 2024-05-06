@@ -1252,17 +1252,17 @@
                 if (msg === timelineSettings.success && $("#" + renderDate).length === 1) {
                     await timelineSettings.attachAssociatedMetadata(renderDate, mediaTypeFilter);
 
-                    currentDate = renderDate;
-                    renderDateObj = nextRenderDateObj;
-
-                    if (renderDateObj !== undefined && renderDateObj !== null) {
-                        renderDate = renderDateObj["year"] + "-" + renderDateObj["month"] + "-" + renderDateObj["day"];
-
-                        const msg = await timelineSettings.updateTimeline(renderDate, mediaTypeFilter, "below", currentDate);
-                        if (msg === timelineSettings.success && $("#" + renderDate).length === 1) {
-                            await timelineSettings.attachAssociatedMetadata(renderDate, mediaTypeFilter);
-                        }
-                    }
+                    // currentDate = renderDate;
+                    // renderDateObj = nextRenderDateObj;
+                    //
+                    // if (renderDateObj !== undefined && renderDateObj !== null) {
+                    //     renderDate = renderDateObj["year"] + "-" + renderDateObj["month"] + "-" + renderDateObj["day"];
+                    //
+                    //     const msg = await timelineSettings.updateTimeline(renderDate, mediaTypeFilter, "below", currentDate);
+                    //     if (msg === timelineSettings.success && $("#" + renderDate).length === 1) {
+                    //         await timelineSettings.attachAssociatedMetadata(renderDate, mediaTypeFilter);
+                    //     }
+                    // }
                 }
             }
         }
