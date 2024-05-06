@@ -1238,7 +1238,7 @@
         if (elementsInViewport.length > 0) {
             const currentDateObj = elementsInViewport[elementsInViewport.length - 1];
             let currentDate = currentDateObj.id;
-            const currentIndex = timelineSettings.timelineDatesHash[currentDate];
+            let currentIndex = timelineSettings.timelineDatesHash[currentDate];
             let renderDateObj = timelineDates[currentIndex + 1];
 
             if (renderDateObj !== undefined && renderDateObj !== null) {
@@ -1249,7 +1249,8 @@
                     await timelineSettings.attachAssociatedMetadata(renderDate, mediaTypeFilter);
 
                     currentDate = renderDate;
-                    renderDateObj = timelineDates[currentIndex + 2];
+                    let currentIndex = timelineSettings.timelineDatesHash[currentDate];
+                    let renderDateObj = timelineDates[currentIndex + 1];
 
                     if (renderDateObj !== undefined && renderDateObj !== null) {
                         renderDate = renderDateObj["year"] + "-" + renderDateObj["month"] + "-" + renderDateObj["day"];
