@@ -18,6 +18,7 @@
     timelineSettings.heightArray = [];
     timelineSettings.elementTracking = [];
     timelineSettings.heightCounter = 0;
+    timelineSettings.scrollBarIsSliding = false;
     timelineSettings.scrollBar = {};
     timelineSettings.scrollBar.fadeInTime = 100;
     timelineSettings.scrollBar.fadeOutTime = 100;
@@ -1026,6 +1027,7 @@
                 step: 0.0001,
                 range: false,
                 slide: function (event, ui) {
+                    timelineSettings.scrollBarIsSliding = true;
                     const currentDateObj = dateList[Math.round((dateList.length - 1) - ui.value)];
 
                     if (currentDateObj) {
@@ -1056,6 +1058,7 @@
                     }
                 },
                 stop: function (event, ui) {
+                    timelineSettings.scrollBarIsSliding = false;
                     const currentDateObj = dateList[Math.round((dateList.length - 1) - ui.value)];
 
                     if (currentDateObj && timelineSettings.enableScrollSpy === true) {
@@ -1175,7 +1178,11 @@
             $("#dateSliderWrapper").hover(function () {
                 $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
             }, function () {
-                $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
+                if (timelineSettings.scrollBarIsSliding === false) {
+                    $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
+                } else {
+                    $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
+                }
             });
 
             $("#dateSliderWrapper").mousemove(function () {
