@@ -16,6 +16,10 @@
             <div class="row mt-4">
                 <div class="col-lg-4">
                     <div class="input-group mb-2">
+                        <h1 class="display-6" style="font-size:1.5rem;">Edit Profile Picture</h1>
+                    </div>
+
+                    <div class="input-group mb-2">
                         <input type="file" th:accept="${'.'+#strings.listJoin(acceptedFileTypes, ',.')}" class="form-control" id="chooseProfilePhoto" name="chooseProfilePhoto" aria-describedby="chooseProfilePhoto" aria-label="Upload">
                         <button type="button" class="btn btn-danger rounded-end" id="removeProfile" th:style="${'display: '+{user.profile==null or user.profile==''?'none;':'block;'}}">Delete Profile Picture</button>
                         <button type="button" class="btn btn-secondary rounded-end" id="saveProfile" style="display: none;">Save</button>
@@ -69,7 +73,7 @@
         profileUrl = "#";
     }
 
-    $("#appSearchInput").val("Change Profile Picture");
+    $("#appSearchInput").val("View Profile");
 
     $("#removeProfile").on("click", function() {
         $("#removeProfileConfirmationModal").modal('show');
