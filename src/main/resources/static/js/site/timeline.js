@@ -18,6 +18,7 @@
     timelineSettings.heightArray = [];
     timelineSettings.elementTracking = [];
     timelineSettings.heightCounter = 0;
+    timelineSettings.scrollBarIsSliding = false;
     timelineSettings.scrollBar = {};
     timelineSettings.scrollBar.fadeInTime = 100;
     timelineSettings.scrollBar.fadeOutTime = 100;
@@ -1026,6 +1027,7 @@
                 step: 0.0001,
                 range: false,
                 slide: function (event, ui) {
+                    timelineSettings.scrollBarIsSliding = true;
                     const currentDateObj = dateList[Math.round((dateList.length - 1) - ui.value)];
 
                     if (currentDateObj) {
@@ -1056,6 +1058,7 @@
                     }
                 },
                 stop: function (event, ui) {
+                    timelineSettings.scrollBarIsSliding = false;
                     const currentDateObj = dateList[Math.round((dateList.length - 1) - ui.value)];
 
                     if (currentDateObj && timelineSettings.enableScrollSpy === true) {
@@ -1175,7 +1178,11 @@
             $("#dateSliderWrapper").hover(function () {
                 $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
             }, function () {
-                $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
+                if (timelineSettings.scrollBarIsSliding === false) {
+                    $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
+                } else {
+                    $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
+                }
             });
 
             $("#dateSliderWrapper").mousemove(function () {
@@ -1222,49 +1229,6 @@
             await timelineSettings.renderThumbnails(elementsInViewport, mediaTypeFilter, timelineDates, true);
         }
 
-        // let depth = 7;
-        // let currAnchor = anchor;
-        // for (const [index, timelineDate] of timelineDates.entries()) {
-        //     let currTimelineDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
-        //     if (anchor === currTimelineDate) {
-        //         let limit = index - 1;
-        //         for (let i = index - 1; i > limit; i--) {
-        //             if (timelineDates[i] !== undefined) {
-        //                 let id = timelineDates[i].year + "-" + timelineDates[i].month + "-" + timelineDates[i].day;
-        //                 if ($("#" + id).length === 0) {
-        //                     // Render currentDate
-        //                     const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "above", currAnchor);
-        //                     if (msg === timelineSettings.success && $("#" + id).length === 1) {
-        //                         await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
-        //                     }
-        //                     currAnchor = id;
-        //                 }
-        //             } else {
-        //                 break;
-        //             }
-        //         }
-        //
-        //         currAnchor = anchor;
-        //         limit = index + depth;
-        //         for (let i = index + 1; i < limit; i++) {
-        //             if (timelineDates[i] !== undefined) {
-        //                 let id = timelineDates[i].year + "-" + timelineDates[i].month + "-" + timelineDates[i].day;
-        //                 if ($("#" + id).length === 0) {
-        //                     // Render currentDate
-        //                     const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "below", currAnchor);
-        //                     if (msg === timelineSettings.success && $("#" + id).length === 1) {
-        //                         await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
-        //                     }
-        //                     currAnchor = id;
-        //                 }
-        //             } else {
-        //                 break;
-        //             }
-        //         }
-        //         break;
-        //     }
-        // }
-
         // Jump to anchor after rendering
         location.href = "#" + anchor;
 
@@ -1276,20 +1240,36 @@
         timelineSettings.setScrollSpyActive(anchor);
         timelineSettings.scrollToTimelineToc(Util.elementsInViewport($(".scrollspy")));
 
-        if (Util.isInViewport($("footer")) === true || Util.isInViewport($("#spinner_bottom")) === true) {
-            const elementsInViewport = Util.elementsInViewport($("section"));
-            if (elementsInViewport.length > 0) {
-                const currentDateObj = elementsInViewport[elementsInViewport.length - 1];
-                const currentDate = currentDateObj.id;
-                const currentIndex = timelineSettings.timelineDatesHash[currentDate];
-                const renderDateObj = timelineDates[currentIndex + 1];
+        // Render 2 more
+        const elementsInViewport = Util.elementsInViewport($("section"));
+        if (elementsInViewport.length > 0) {
+            const currentDateObj = elementsInViewport[elementsInViewport.length - 1];
+            let currentDate = currentDateObj.id;
+            let currentIndex = timelineSettings.timelineDatesHash[currentDate];
+            currentIndex = parseInt(currentIndex)
+            currentIndex++;
+            let renderDateObj = timelineDates[currentIndex];
+            currentIndex++;
+            const nextRenderDateObj = timelineDates[currentIndex];
 
-                if (renderDateObj !== undefined && renderDateObj !== null) {
-                    const renderDate = renderDateObj["year"] + "-" + renderDateObj["month"] + "-" + renderDateObj["day"];
-                    const msg = await timelineSettings.updateTimeline(renderDate, mediaTypeFilter, "below", currentDate);
-                    if (msg === timelineSettings.success && $("#" + renderDate).length === 1) {
-                        await timelineSettings.attachAssociatedMetadata(renderDate, mediaTypeFilter);
-                    }
+            if (renderDateObj !== undefined && renderDateObj !== null) {
+                let renderDate = renderDateObj["year"] + "-" + renderDateObj["month"] + "-" + renderDateObj["day"];
+                const msg = await timelineSettings.updateTimeline(renderDate, mediaTypeFilter, "below", currentDate);
+
+                if (msg === timelineSettings.success && $("#" + renderDate).length === 1) {
+                    await timelineSettings.attachAssociatedMetadata(renderDate, mediaTypeFilter);
+
+                    // currentDate = renderDate;
+                    // renderDateObj = nextRenderDateObj;
+                    //
+                    // if (renderDateObj !== undefined && renderDateObj !== null) {
+                    //     renderDate = renderDateObj["year"] + "-" + renderDateObj["month"] + "-" + renderDateObj["day"];
+                    //
+                    //     const msg = await timelineSettings.updateTimeline(renderDate, mediaTypeFilter, "below", currentDate);
+                    //     if (msg === timelineSettings.success && $("#" + renderDate).length === 1) {
+                    //         await timelineSettings.attachAssociatedMetadata(renderDate, mediaTypeFilter);
+                    //     }
+                    // }
                 }
             }
         }
