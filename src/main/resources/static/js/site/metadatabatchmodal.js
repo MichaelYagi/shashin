@@ -232,7 +232,7 @@ $("#saveBatchMetadata").on("click", async function (e) {
 
                 if (activePage !== "timeline") {
                     if (markedHidden === true ||
-                        (activePage !== "recent" && activePage !== "modified" && activePage !== "folder" && activePage !== "taken" &&
+                        (activePage !== "recent" && activePage !== "modified" && activePage !== "accessed" && activePage !== "folder" && activePage !== "taken" &&
                             ($("#yearTakenBatchData").val() !== "" ||
                             $("#monthTakenBatchData").val() !== "" ||
                             $("#dayTakenBatchData").val() !== "")

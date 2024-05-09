@@ -851,6 +851,7 @@
                     activePage === "search" ||
                     activePage === "share" ||
                     activePage === "taken" ||
+                    activePage === "accessed" ||
                     activePage === "trash" ||
                     activePage === "modified"))
             {
@@ -1880,7 +1881,7 @@
                     if (view === "album") {
                         $("#albumTools").hide();
                     }
-                } else if (view === "timeline" || view === "recent" || view === "modified" || view === "taken" || view === "folder" || view === "search") {
+                } else if (view === "timeline" || view === "recent" || view === "modified" || view === "taken" || view === "accessed" || view === "folder" || view === "search") {
                     $("#timelineAppTools").show();
                     if (view === "timeline" || view === "folder") {
                         $("#timelineTools").hide();

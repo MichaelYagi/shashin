@@ -57,6 +57,9 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    @Query("SELECT * FROM metadata WHERE hidden = false ORDER BY modified_at DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findModifiedByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
+   @Query("SELECT * FROM metadata WHERE hidden = false ORDER BY last_accessed_at DESC LIMIT :offset, :limit", nativeQuery = true)
+   fun findLastAccessedByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
+
    @Query("SELECT * FROM metadata WHERE hidden = false ORDER BY added_at DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findRecentByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
@@ -71,6 +74,9 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
 
    @Query("SELECT * FROM metadata WHERE hidden = false AND type LIKE %:type% ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findTakenByMediaTypeAndOffsetAndLimit(@Param("offset") offset: Int, @Param("type") type: String, @Param("limit") limit: Int): MutableIterable<Metadata>
+
+   @Query("SELECT * FROM metadata WHERE hidden = false AND type LIKE %:type% ORDER BY last_accessed_at DESC LIMIT :offset, :limit", nativeQuery = true)
+   fun findLastAccessedByMediaTypeAndOffsetAndLimit(@Param("offset") offset: Int, @Param("type") type: String, @Param("limit") limit: Int): MutableIterable<Metadata>
 
    fun findAllByYearAndMonthAndDayAndHiddenEqualsOrderByYearDescMonthDescDayDescTimeDesc(year: Int?, month: Int?, day: Int?, hidden: Boolean?): MutableIterable<Metadata>
 

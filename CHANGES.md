@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [2.5.1] - 2024-05-04
 ### Added
 
+- Accessed in browse view
+
 ### Changed
 
 ### Fixed
