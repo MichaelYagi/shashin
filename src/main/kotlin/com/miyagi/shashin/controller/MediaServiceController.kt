@@ -327,16 +327,17 @@ class MediaServiceController {
     }
 
     private fun setModel(metadataId: String,model: Model,module: String): String {
+        model["metadataObj"] = Metadata()
         val metadataObj = metadataRepository.findById(metadataId)
+        val metadata = metadataObj.get()
 
         // Updated viewed date
         if (metadataObj.isPresent) {
-            val metadata = metadataObj.get()
+            model["metadataObj"] = metadata
             metadata.setLastAccessedAt(getCurrentTimestamp())
             metadataRepository.save(metadata)
         }
-
-        model["metadataObj"] = metadataObj.get()
+        
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
