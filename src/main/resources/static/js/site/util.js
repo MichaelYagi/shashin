@@ -1153,6 +1153,7 @@ class Util {
         $(".coordinatesDetails").text("");
         $(".locationDetails").html("");
         $(".locationTypeDetails").html("");
+        $(".accessedAtDetails").html("");
         $(".albumsDetails").html("");
 
         $(".pathLabel").hide();
@@ -1172,6 +1173,7 @@ class Util {
         $(".modifiedAtLabel").hide();
         $(".takenAtLabel").hide();
         $(".manualTakenAtLabel").hide();
+        $(".accessedAtLabel").hide();
         $(".timeZoneLabel").hide();
         $(".keywordsLabel").hide();
         $(".resolutionLabel").hide();
@@ -1317,6 +1319,10 @@ class Util {
         if (metadata.modifiedAt != null) {
             $(".modifiedAtLabel").show();
             $(".modifiedAtDetails").text(metadata.modifiedAt);
+        }
+        if (metadata.lastAccessedAt != null) {
+            $(".accessedAtLabel").show();
+            $(".accessedAtDetails").text(metadata.lastAccessedAt);
         }
         if (metadata.takenAt != null) {
             $(".takenAtLabel").show();
