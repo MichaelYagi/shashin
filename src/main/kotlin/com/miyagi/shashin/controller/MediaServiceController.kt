@@ -69,6 +69,7 @@ class MediaServiceController {
         if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("video")!!) {
             var path = metadataObj.get().getPath()!!
             val metadata = metadataObj.get()
+
             var mp4MajorBrand = ""
 
             // metadata/<folder>/<fileName>.exif.yaml
@@ -270,6 +271,9 @@ class MediaServiceController {
     }
 
     private fun getVideoFactory(response: HttpServletResponse?, metadataObj: Metadata, path: String, attachFile: Boolean = false): ResponseEntity<FileSystemResource> {
+        metadataObj.setLastAccessedAt(getCurrentTimestamp())
+        metadataRepository.save(metadataObj)
+
         var resource = FileSystemResource(path)
         val headers = HttpHeaders()
         try {
@@ -314,30 +318,23 @@ class MediaServiceController {
 
     @RequestMapping(value = ["/video/{metadataId}/player"], method = [RequestMethod.GET])
     fun getVideoPlayer(model: Model, @PathVariable metadataId: String): String {
-        // Updated viewed date
-        val metadataObj = metadataRepository.findById(metadataId)
-        if (metadataObj.isPresent) {
-            val metadata = metadataObj.get()
-            metadata.setLastAccessedAt(getCurrentTimestamp())
-        }
-
         return setModel(metadataId,model,"player")
     }
 
     @RequestMapping(value = ["/image/{metadataId}/viewer"], method = [RequestMethod.GET])
     fun getImageViewer(model: Model, @PathVariable metadataId: String): String {
-        // Updated viewed date
-        val metadataObj = metadataRepository.findById(metadataId)
-        if (metadataObj.isPresent) {
-            val metadata = metadataObj.get()
-            metadata.setLastAccessedAt(getCurrentTimestamp())
-        }
-
         return setModel(metadataId,model,"viewer")
     }
 
     private fun setModel(metadataId: String,model: Model,module: String): String {
         val metadataObj = metadataRepository.findById(metadataId)
+
+        // Updated viewed date
+        if (metadataObj.isPresent) {
+            val metadata = metadataObj.get()
+            metadata.setLastAccessedAt(getCurrentTimestamp())
+            metadataRepository.save(metadata)
+        }
 
         model["metadataObj"] = metadataObj.get()
         model["activePage"] = module
@@ -365,6 +362,11 @@ class MediaServiceController {
         val metadataObj = metadataRepository.findById(metadataId)
 
         if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("image")!!) {
+            // Updated viewed date
+            val metadata = metadataObj.get()
+            metadata.setLastAccessedAt(getCurrentTimestamp())
+            metadataRepository.save(metadata)
+
             val path = metadataObj.get().getPath()!!
             var resource = FileSystemResource(path)
             val headers = HttpHeaders()
