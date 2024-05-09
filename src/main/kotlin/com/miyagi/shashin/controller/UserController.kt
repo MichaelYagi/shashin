@@ -160,13 +160,13 @@ class UserController {
 
             if (currentUserObj.getAuthority() == "ROLE_SUPER") {
                 model["message"] = "<span>You have <strong>Super Admin</strong> privileges. " +
-                        "You have access to application settings, editing metadata, dashboard, browsing and timeline views (if available).</span>"
+                        "You have access to application settings, editing metadata, dashboard, maps, browsing and timeline views (if available).</span>"
             } else if (currentUserObj.getAuthority() == "ROLE_ADMIN") {
                 model["message"] = "<span>You have <strong>Admin</strong> privileges. " +
-                        "You have access to editing metadata, dashboard, browsing and timeline views (if available).</span>"
+                        "You have access to editing metadata, dashboard, maps, browsing and timeline views (if available).</span>"
             } else {
                 model["message"] = "<span>You have <strong>User</strong> privileges. " +
-                        "You have access to albums shared with you and viewing metadata.</span>"
+                        "You have access to albums shared with you, maps and viewing metadata.</span>"
             }
         }
 
