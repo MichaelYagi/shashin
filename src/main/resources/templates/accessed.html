@@ -21,8 +21,8 @@
                         <th:block th:each="metadata, iterStat: ${metadataList}">
 
                             <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                                <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadata.lastAccessedAt!=null and #dates.format(sdf.parse(metadataList[iterStat.index-1].lastAccessedAt),'yyyy-M-dd')==#dates.format(sdf.parse(metadata.lastAccessedAt),'yyyy-M-dd')}">
-                                    <section class="dateSection" th:id="${#dates.format(sdf.parse(metadata.lastAccessedAt),'yyyy-M-dd')}"><p><span class="text-muted">Modified </span><strong th:text="${#strings.replace(#dates.format(sdf.parse(metadata.lastAccessedAt), 'EEE, MMM d, yyyy'),'.','')}"></strong></p><div th:id="'dateBody'+${#dates.format(sdf.parse(metadata.lastAccessedAt),'yyyy-M-dd')}" class="row" style="margin-left: -1px;">
+                                <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadata.lastAccessedAt!=null and #dates.format(sdf.parse(metadataList[iterStat.index-1].lastAccessedAt),'yyyy-M-d')==#dates.format(sdf.parse(metadata.lastAccessedAt),'yyyy-M-d')}">
+                                    <section class="dateSection" th:id="${#dates.format(sdf.parse(metadata.lastAccessedAt),'yyyy-M-d')}"><p><span class="text-muted">Accessed </span><strong th:text="${#strings.replace(#dates.format(sdf.parse(metadata.lastAccessedAt), 'EEE, MMM d, yyyy'),'.','')}"></strong></p><div th:id="'dateBody'+${#dates.format(sdf.parse(metadata.lastAccessedAt),'yyyy-M-d')}" class="row" style="margin-left: -1px;">
                                 </th:block>
                             </th:block>
 
@@ -61,7 +61,7 @@
                             </script>
 
                             <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                                <th:block th:if="${iterStat.count > 0 and !iterStat.last and metadata.lastAccessedAt!=null and #dates.format(sdf.parse(metadataList[iterStat.index+1].lastAccessedAt),'yyyy-M-dd')!=#dates.format(sdf.parse(metadata.lastAccessedAt),'yyyy-M-dd')}">
+                                <th:block th:if="${iterStat.count > 0 and !iterStat.last and metadata.lastAccessedAt!=null and #dates.format(sdf.parse(metadataList[iterStat.index+1].lastAccessedAt),'yyyy-M-d')!=#dates.format(sdf.parse(metadata.lastAccessedAt),'yyyy-M-d')}">
                                     <th:block th:remove="tag" th:utext="'&lt;/div&gt;&lt;/section&gt;'"></th:block>
                                     <span class="appendAccessedPhotos" style="width:0;height:0;padding:0"></span>
                                 </th:block>
@@ -80,8 +80,8 @@
 
             <div th:replace="fragments/metadatabatchmodal :: metadatabatchmodal(${recognitionLabels},${allAlbumList})"></div>
             <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
-                const httpModified = new Http("accessed");
-                httpModified.ajax("get", "/browse/album/list").then(function (data) {
+                const httpAccessed = new Http("accessed");
+                httpAccessed.ajax("get", "/browse/album/list").then(function (data) {
                     if (data.hasOwnProperty("albumList") === true) {
                         const albumList = data["albumList"];
 
