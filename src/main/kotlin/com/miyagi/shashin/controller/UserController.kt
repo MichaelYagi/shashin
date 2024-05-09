@@ -157,6 +157,14 @@ class UserController {
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
             model["user"] = currentUserObj
+
+            if (currentUserObj.getAuthority() == "ROLE_SUPER") {
+                model["message"] = "<span>You have <strong>Super Admin</strong> privileges.</span>"
+            } else if (currentUserObj.getAuthority() == "ROLE_ADMIN") {
+                model["message"] = "<span>You have <strong>Admin</strong> privileges.</span>"
+            } else {
+                model["message"] = "<span>You have <strong>User</strong> privileges.</span>"
+            }
         }
 
         val module = "profile"
@@ -285,14 +293,6 @@ class UserController {
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
             model["user"] = currentUserObj
-
-            if (currentUserObj.getAuthority() == "ROLE_SUPER") {
-                model["message"] = "<span>You have <strong>Super Admin</strong> privileges.</span>"
-            } else if (currentUserObj.getAuthority() == "ROLE_ADMIN") {
-                model["message"] = "<span>You have <strong>Admin</strong> privileges.</span>"
-            } else {
-                model["message"] = "<span>You have <strong>User</strong> privileges.</span>"
-            }
 
             var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
             if (request.scheme == "https") {
