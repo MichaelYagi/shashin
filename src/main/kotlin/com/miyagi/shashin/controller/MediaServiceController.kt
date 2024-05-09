@@ -8,6 +8,7 @@ import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.MetricsUtil
 import com.miyagi.shashin.util.TextUtils
+import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
@@ -313,11 +314,25 @@ class MediaServiceController {
 
     @RequestMapping(value = ["/video/{metadataId}/player"], method = [RequestMethod.GET])
     fun getVideoPlayer(model: Model, @PathVariable metadataId: String): String {
+        // Updated viewed date
+        val metadataObj = metadataRepository.findById(metadataId)
+        if (metadataObj.isPresent) {
+            val metadata = metadataObj.get()
+            metadata.setLastAccessedAt(getCurrentTimestamp())
+        }
+
         return setModel(metadataId,model,"player")
     }
 
     @RequestMapping(value = ["/image/{metadataId}/viewer"], method = [RequestMethod.GET])
     fun getImageViewer(model: Model, @PathVariable metadataId: String): String {
+        // Updated viewed date
+        val metadataObj = metadataRepository.findById(metadataId)
+        if (metadataObj.isPresent) {
+            val metadata = metadataObj.get()
+            metadata.setLastAccessedAt(getCurrentTimestamp())
+        }
+
         return setModel(metadataId,model,"viewer")
     }
 

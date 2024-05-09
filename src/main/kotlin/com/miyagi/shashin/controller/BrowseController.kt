@@ -363,6 +363,24 @@ class BrowseController: BaseController() {
         return mapper.writeValueAsString(buildBrowseRecord("modified",model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType))
     }
 
+    @RequestMapping(value = ["/accessed","/accessed/{mediaType}"], method = [RequestMethod.GET])
+    fun getAccessed(model: Model,@PathVariable(required = false) mediaType: String?): String {
+        val module = "accessed"
+
+        buildInitialPage(module,model,mediaType)
+
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
+    @RequestMapping(value = ["/accessed/{page}","/accessed/mediatype/{mediaType}/page/{page}","/api/v1/accessed/{page}","/api/v1/accessed/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun getPagedAccessed(model: Model, request: HttpServletRequest, @PathVariable page: Int,@PathVariable(required = false) mediaType: String?): String {
+        return mapper.writeValueAsString(buildBrowseRecord("accessed",model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType))
+    }
+
     @RouterOperation(
         operation =
         Operation(
@@ -561,6 +579,11 @@ class BrowseController: BaseController() {
                         pageValue,
                         size
                     ).toMutableList()
+                } else if (module == "accessed") {
+                    metadataList = metadataRepository.findLastAccessedByOffsetAndLimit(
+                        pageValue,
+                        size
+                    ).toMutableList()
                 }
             } else {
                 if (module == "recent") {
@@ -577,6 +600,12 @@ class BrowseController: BaseController() {
                     ).toMutableList()
                 } else if (module == "taken") {
                     metadataList = metadataRepository.findTakenByMediaTypeAndOffsetAndLimit(
+                        pageValue,
+                        mediaType!!,
+                        size
+                    ).toMutableList()
+                } else if (module == "accessed") {
+                    metadataList = metadataRepository.findLastAccessedByMediaTypeAndOffsetAndLimit(
                         pageValue,
                         mediaType!!,
                         size
@@ -617,11 +646,14 @@ class BrowseController: BaseController() {
                     }
                     val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
                     var labelString = ""
-                    if (recognitionLabelPhotos != null) {
+                    if (recognitionLabelPhotos != null && recognitionLabelPhotos.count() > 0) {
                         for (recognitionLabelPhoto in recognitionLabelPhotos) {
-                            val recognitionLabelObj = recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
-                            if (recognitionLabelObj != null) {
-                                labelString += recognitionLabelObj.get().getName() + ","
+                            if (recognitionLabelPhoto.getRecognitionLabelId() != null) {
+                                val recognitionLabelObj =
+                                    recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
+                                if (recognitionLabelObj != null) {
+                                    labelString += recognitionLabelObj.get().getName() + ","
+                                }
                             }
                         }
                     }

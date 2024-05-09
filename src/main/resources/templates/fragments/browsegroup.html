@@ -12,6 +12,9 @@
         <a th:attr="class='nav-link' + ${activePage=='taken' ? ' active' : ''}" href="/taken">Recently Taken</a>
     </li>
     <li class="nav-item">
+        <a th:attr="class='nav-link' + ${activePage=='accessed' ? ' active' : ''}" href="/accessed">Recently Accessed</a>
+    </li>
+    <li class="nav-item">
         <a th:attr="class='nav-link' + ${activePage=='trash' ? ' active' : ''}" href="/trash">Recently Removed</a>
     </li>
     <li class="nav-item">

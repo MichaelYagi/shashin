@@ -91,6 +91,7 @@
         activePageLower == 'recent' or
         activePageLower == 'taken' or
         activePageLower == 'modified' or
+        activePageLower == 'accessed' or
         activePageLower == 'slideshow' or
         activePageLower == 'folder'}">
             <script src="/js/lightgallery.min.js" th:nonce="${cspNonce}"></script>
@@ -168,6 +169,9 @@
             <th:block th:if="${activePageLower == 'modified'}">
                 <script src="/js/site/modified.js" th:nonce="${cspNonce}"></script>
             </th:block>
+            <th:block th:if="${activePageLower == 'accessed'}">
+                <script src="/js/site/accessed.js" th:nonce="${cspNonce}"></script>
+            </th:block>
             <th:block th:if="${activePageLower == 'folder'}">
                 <script src="/js/site/folder.js" th:nonce="${cspNonce}"></script>
             </th:block>
@@ -221,6 +225,9 @@
             </th:block>
             <th:block th:if="${activePageLower == 'modified'}">
                 <script src="/js/site/min/modified.min.js" th:nonce="${cspNonce}"></script>
+            </th:block>
+            <th:block th:if="${activePageLower == 'accessed'}">
+                <script src="/js/site/min/accessed.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
             <th:block th:if="${activePageLower == 'folder'}">
                 <script src="/js/site/min/folder.min.js" th:nonce="${cspNonce}"></script>
