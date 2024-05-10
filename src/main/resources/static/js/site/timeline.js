@@ -841,8 +841,8 @@
             const firstDate = timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day;
             const lastDate = timelineDates[timelineDates.length-1].year + "-" + timelineDates[timelineDates.length-1].month + "-" + timelineDates[timelineDates.length-1].day;
 
-            let firstVisibleDateArr = $(firstVisibleContainer).attr("id").split("-");
-            let lastVisibleDateArr = $(lastVisibleContainer).attr("id").split("-");
+            // let firstVisibleDateArr = $(firstVisibleContainer).attr("id").split("-");
+            // let lastVisibleDateArr = $(lastVisibleContainer).attr("id").split("-");
 
             let startingIndexTop = 0;
             let startingIndexBottom = 0;
@@ -855,20 +855,28 @@
                 reversed = true;
             }
 
-            for (let i = 0; i < timelineDateArr.length; i ++) {
-                if (timelineDateArr[i].year === parseInt(firstVisibleDateArr[0]) && timelineDateArr[i].month === parseInt(firstVisibleDateArr[1]) && timelineDateArr[i].day === parseInt(firstVisibleDateArr[2])) {
-                    startingIndexTop = i;
-                    if (reversed === true) {
-                        break;
-                    }
-                }
+            // for (let i = 0; i < timelineDateArr.length; i ++) {
+            //     if (timelineDateArr[i].year === parseInt(firstVisibleDateArr[0]) && timelineDateArr[i].month === parseInt(firstVisibleDateArr[1]) && timelineDateArr[i].day === parseInt(firstVisibleDateArr[2])) {
+            //         startingIndexTop = i;
+            //         if (reversed === true) {
+            //             break;
+            //         }
+            //     }
+            //
+            //     if (timelineDates[i].year === parseInt(lastVisibleDateArr[0]) && timelineDates[i].month === parseInt(lastVisibleDateArr[1]) && timelineDates[i].day === parseInt(lastVisibleDateArr[2])) {
+            //         startingIndexBottom = i;
+            //         if (reversed === false) {
+            //             break;
+            //         }
+            //     }
+            // }
 
-                if (timelineDates[i].year === parseInt(lastVisibleDateArr[0]) && timelineDates[i].month === parseInt(lastVisibleDateArr[1]) && timelineDates[i].day === parseInt(lastVisibleDateArr[2])) {
-                    startingIndexBottom = i;
-                    if (reversed === false) {
-                        break;
-                    }
-                }
+            startingIndexTop = timelineSettings.timelineDatesHash[$(firstVisibleContainer).attr("id")];
+            startingIndexBottom = timelineSettings.timelineDatesHash[$(lastVisibleContainer).attr("id")];
+
+            if (reversed === true) {
+                startingIndexTop = timelineDateArr.length-startingIndexTop-1;
+                startingIndexBottom = 0;
             }
 
             // Render above visibleContainers going from bottom up
