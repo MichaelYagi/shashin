@@ -841,12 +841,6 @@
             const firstDate = timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day;
             const lastDate = timelineDates[timelineDates.length-1].year + "-" + timelineDates[timelineDates.length-1].month + "-" + timelineDates[timelineDates.length-1].day;
 
-            // let firstVisibleDateArr = $(firstVisibleContainer).attr("id").split("-");
-            // let lastVisibleDateArr = $(lastVisibleContainer).attr("id").split("-");
-
-            let startingIndexTop = 0;
-            let startingIndexBottom = 0;
-
             let timelineDateArr = timelineDates;
             const halfwayPoint = Math.floor(timelineDates.length/2);
             let reversed = false;
@@ -855,6 +849,15 @@
                 reversed = true;
             }
 
+            if (currentDate === firstDate) {
+                timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
+            }
+
+            // let startingIndexTop = 0;
+            // let startingIndexBottom = 0;
+            // let firstVisibleDateArr = $(firstVisibleContainer).attr("id").split("-");
+            // let lastVisibleDateArr = $(lastVisibleContainer).attr("id").split("-");
+            //
             // for (let i = 0; i < timelineDateArr.length; i ++) {
             //     if (timelineDateArr[i].year === parseInt(firstVisibleDateArr[0]) && timelineDateArr[i].month === parseInt(firstVisibleDateArr[1]) && timelineDateArr[i].day === parseInt(firstVisibleDateArr[2])) {
             //         startingIndexTop = i;
@@ -871,8 +874,8 @@
             //     }
             // }
 
-            startingIndexTop = timelineSettings.timelineDatesHash[$(firstVisibleContainer).attr("id")];
-            startingIndexBottom = timelineSettings.timelineDatesHash[$(lastVisibleContainer).attr("id")];
+            let startingIndexTop = timelineSettings.timelineDatesHash[$(firstVisibleContainer).attr("id")];
+            let startingIndexBottom = timelineSettings.timelineDatesHash[$(lastVisibleContainer).attr("id")];
 
             if (reversed === true) {
                 startingIndexTop = timelineDateArr.length-startingIndexTop-1;
