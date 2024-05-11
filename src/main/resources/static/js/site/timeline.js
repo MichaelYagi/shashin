@@ -22,6 +22,7 @@
     timelineSettings.scrollBar = {};
     timelineSettings.scrollBar.fadeInTime = 100;
     timelineSettings.scrollBar.fadeOutTime = 100;
+    timelineSettings.didJumpFromTimelineToc = false;
 
     const calculateDistanceToFooter = function() {
         return $(window).height() - $('#subfooter').offset().top;
@@ -168,6 +169,21 @@
                     timelineSettings.rescanElements(elements);
                 }
             }, 2500);
+
+            // Clean up
+            if (timelineSettings.didJumpFromTimelineToc === true) {
+                let prevClass = "";
+                let deleteElements = false;
+                $('#infinite-scroll-gallery').children().each(function () {
+                    const currClass = $(this).attr("class");
+                    if (prevClass === currClass || deleteElements === true) {
+                        $(this).remove();
+                        deleteElements = true;
+                    }
+                    prevClass = $(this).attr("class");
+                });
+                timelineSettings.didJumpFromTimelineToc = false;
+            }
         });
 
         // Scroll event handler
@@ -1205,6 +1221,7 @@
             e.preventDefault();
         }
 
+        timelineSettings.didJumpFromTimelineToc = true;
         timelineSettings.heightArray = [];
         timelineSettings.heightCounter = 0;
         timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
