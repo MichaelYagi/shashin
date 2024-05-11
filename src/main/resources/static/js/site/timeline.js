@@ -1246,9 +1246,6 @@
             history.pushState("", document.title, window.location.pathname + window.location.search);
         }
 
-        timelineSettings.setScrollSpyActive(anchor);
-        timelineSettings.scrollToTimelineToc(Util.elementsInViewport($(".scrollspy")));
-
         // Render 2 more
         const elementsInViewport = Util.elementsInViewport($("section"));
         if (elementsInViewport.length > 0) {
@@ -1282,6 +1279,9 @@
                 }
             }
         }
+
+        timelineSettings.setScrollSpyActive(anchor);
+        timelineSettings.scrollToTimelineToc(Util.elementsInViewport($(".scrollspy")));
 
         timelineSettings.enableScrollSpy = true;
     }
