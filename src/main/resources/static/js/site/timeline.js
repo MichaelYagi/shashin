@@ -730,19 +730,17 @@
 
         let firstElementId = $(elements[0]).attr("id");
         let firstVisibleId = firstElementId.indexOf("tail_") === -1 ? firstElementId : firstElementId.substring(5, firstElementId.length);
-        let lastElementId = $(".attachMetadataPhotos").last().attr("id").replace('amp_','');
-        let lastVisibleId = lastElementId; //lastElementId.indexOf("tail_") === -1 ? lastElementId : lastElementId.substring(5, lastElementId.length);
         let ignoreTimelineDate = firstVisibleId;
 
         if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-            let firstVisibleArr = firstVisibleId.split("-");
-            let startIndex = 0;
+            let startIndex = timelineSettings.timelineDatesHash[firstVisibleId];
             let timelineObjArr = timelineDates.slice().reverse();
-            timelineObjArr.map(function(item, i) {
-                if (item.year === parseInt(firstVisibleArr[0]) && item.month === parseInt(firstVisibleArr[1]) && item.day === parseInt(firstVisibleArr[2])) {
-                    startIndex = i;
-                }
-            })
+            // let firstVisibleArr = firstVisibleId.split("-");
+            // timelineObjArr.map(function(item, i) {
+            //     if (item.year === parseInt(firstVisibleArr[0]) && item.month === parseInt(firstVisibleArr[1]) && item.day === parseInt(firstVisibleArr[2])) {
+            //         startIndex = i;
+            //     }
+            // })
             for (let index = startIndex; index < timelineObjArr.length; index ++) {
                 const timelineDateObj = timelineObjArr[index];
                 ignoreTimelineDate = timelineDateObj.year + "-" + timelineDateObj.month + "-" + timelineDateObj.day;
@@ -1519,7 +1517,7 @@
         let ret = shashin.apiResponse.FAIL;
         const dateArray = date.split("-");
 
-        if (dateArray.length > 0) {
+        if (date !== attachToId && dateArray.length > 0) {
             const year = dateArray[0];
             const month = dateArray[1];
             const day = dateArray[2];
