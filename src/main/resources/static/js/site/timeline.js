@@ -745,273 +745,274 @@
             return timelineSettings.success;
         }
 
-        let firstElementId = $(elements[0]).attr("id");
-        let firstVisibleId = firstElementId.indexOf("tail_") === -1 ? firstElementId : firstElementId.substring(5, firstElementId.length);
-        let ignoreTimelineDate = firstVisibleId;
+        if (elements.length > 0) {
+            let firstElementId = $(elements[0]).attr("id");
+            let firstVisibleId = firstElementId.indexOf("tail_") === -1 ? firstElementId : firstElementId.substring(5, firstElementId.length);
+            let ignoreTimelineDate = firstVisibleId;
 
-        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-            let startIndex = timelineSettings.timelineDatesHash[firstVisibleId];
-            let timelineObjArr = timelineDates.slice().reverse();
-            // let firstVisibleArr = firstVisibleId.split("-");
-            // timelineObjArr.map(function(item, i) {
-            //     if (item.year === parseInt(firstVisibleArr[0]) && item.month === parseInt(firstVisibleArr[1]) && item.day === parseInt(firstVisibleArr[2])) {
-            //         startIndex = i;
-            //     }
-            // })
-            for (let index = startIndex; index < timelineObjArr.length; index ++) {
-                const timelineDateObj = timelineObjArr[index];
-                ignoreTimelineDate = timelineDateObj.year + "-" + timelineDateObj.month + "-" + timelineDateObj.day;
+            if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                let startIndex = timelineSettings.timelineDatesHash[firstVisibleId];
+                let timelineObjArr = timelineDates.slice().reverse();
+                // let firstVisibleArr = firstVisibleId.split("-");
+                // timelineObjArr.map(function(item, i) {
+                //     if (item.year === parseInt(firstVisibleArr[0]) && item.month === parseInt(firstVisibleArr[1]) && item.day === parseInt(firstVisibleArr[2])) {
+                //         startIndex = i;
+                //     }
+                // })
+                for (let index = startIndex; index < timelineObjArr.length; index++) {
+                    const timelineDateObj = timelineObjArr[index];
+                    ignoreTimelineDate = timelineDateObj.year + "-" + timelineDateObj.month + "-" + timelineDateObj.day;
 
-                if (Util.getDateObject(firstVisibleId) < Util.getDateObject(ignoreTimelineDate)) {
-                    break;
+                    if (Util.getDateObject(firstVisibleId) < Util.getDateObject(ignoreTimelineDate)) {
+                        break;
+                    }
                 }
             }
-        }
 
-        // Remove elements not visible in viewport
-        let removeHeight = 0;
-        let topHeight = 0;
-        let tempScrollTop = $('#container').scrollTop();
-        const section = $('section');
+            // Remove elements not visible in viewport
+            let removeHeight = 0;
+            let topHeight = 0;
+            let tempScrollTop = $('#container').scrollTop();
+            const section = $('section');
 
-        const removedElements = [];
-        const sectionArray = [];
-        let prevIndex = 0;
+            const removedElements = [];
+            const sectionArray = [];
+            let prevIndex = 0;
 
-        section.each(function (index, element) {
-            sectionArray.push(element);
+            section.each(function (index, element) {
+                sectionArray.push(element);
 
-            if (((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && timelineSettings.isScrolling === false) || timelineSettings.isScrolling === true) &&
-                Util.isInViewport($("#" + element.id)) === false &&
-                Util.isInViewport($("#br" + element.id)) === false &&
-                Util.isInViewport($("#row" + element.id)) === false &&
-                Util.isInViewport($("#tail_" + element.id)) === false &&
-                Util.isInViewport($("#container_" + element.id)) === false &&
-                Util.elementsInViewport($(".photo-thumbnail-image.thumbnailTag_" + element.id)).length === 0
-            ) {
-                if (Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
-                    section.invisible();
-                }
-
-                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down &&
+                if (((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && timelineSettings.isScrolling === false) || timelineSettings.isScrolling === true) &&
+                    Util.isInViewport($("#" + element.id)) === false &&
                     Util.isInViewport($("#br" + element.id)) === false &&
                     Util.isInViewport($("#row" + element.id)) === false &&
                     Util.isInViewport($("#tail_" + element.id)) === false &&
                     Util.isInViewport($("#container_" + element.id)) === false &&
-                    Util.isInViewport($("#amp_" + element.id)) === false
+                    Util.elementsInViewport($(".photo-thumbnail-image.thumbnailTag_" + element.id)).length === 0
                 ) {
-                    // removeHeight += Util.getDateGalleryHeight(element.id);
+                    if (Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                        section.invisible();
+                    }
+
+                    if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down &&
+                        Util.isInViewport($("#br" + element.id)) === false &&
+                        Util.isInViewport($("#row" + element.id)) === false &&
+                        Util.isInViewport($("#tail_" + element.id)) === false &&
+                        Util.isInViewport($("#container_" + element.id)) === false &&
+                        Util.isInViewport($("#amp_" + element.id)) === false
+                    ) {
+                        // removeHeight += Util.getDateGalleryHeight(element.id);
+                        Util.removeDateGallery(element.id);
+                        removedElements.push(element.id);
+                        sectionArray.pop();
+                    } else if (section[index + 1] !== undefined &&
+                        Util.isInViewport($("#br" + section[index + 1].id)) === false &&
+                        Util.isInViewport($("#row" + section[index + 1].id)) === false &&
+                        Util.isInViewport($("#tail_" + section[index + 1].id)) === false &&
+                        Util.isInViewport($("#container_" + section[index + 1].id)) === false &&
+                        Util.isInViewport($("#amp_" + section[index + 1].id)) === false &&
+                        Util.isInViewport($("#br" + element.id)) === false &&
+                        Util.isInViewport($("#row" + element.id)) === false &&
+                        Util.isInViewport($("#tail_" + element.id)) === false &&
+                        Util.isInViewport($("#container_" + element.id)) === false &&
+                        Util.isInViewport($("#amp_" + element.id)) === false
+                    ) {
+                        Util.removeDateGallery(element.id)
+                        sectionArray.pop();
+                    }
+                }
+
+                // Remove elements out of order
+                const currentTimelineIndex = timelineSettings.timelineDatesHash[element.id];
+
+                if (prevIndex > 0 && prevIndex + 1 !== currentTimelineIndex) {
+                    shashin.printMessageToConsole("Removing from timeline " + element.id);
                     Util.removeDateGallery(element.id);
-                    removedElements.push(element.id);
-                    sectionArray.pop();
                 }
-                else if (section[index+1] !== undefined &&
-                    Util.isInViewport($("#br" + section[index+1].id)) === false &&
-                    Util.isInViewport($("#row" + section[index+1].id)) === false &&
-                    Util.isInViewport($("#tail_" + section[index+1].id)) === false &&
-                    Util.isInViewport($("#container_" + section[index+1].id)) === false &&
-                    Util.isInViewport($("#amp_" + section[index+1].id)) === false &&
-                    Util.isInViewport($("#br" + element.id)) === false &&
-                    Util.isInViewport($("#row" + element.id)) === false &&
-                    Util.isInViewport($("#tail_" + element.id)) === false &&
-                    Util.isInViewport($("#container_" + element.id)) === false &&
-                    Util.isInViewport($("#amp_" + element.id)) === false
-                ) {
-                    Util.removeDateGallery(element.id)
-                    sectionArray.pop();
+
+                prevIndex = currentTimelineIndex;
+            });
+
+            if (Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
+                    $('#container').scrollTop(tempScrollTop - removeHeight);
+                } else if (topHeight > 0) {
+                    $('#container').scrollTop(tempScrollTop - topHeight);
                 }
             }
+            section.visible();
 
-            // Remove elements out of order
-            const currentTimelineIndex = timelineSettings.timelineDatesHash[element.id];
+            // Get list of visible elements
+            const firstVisibleContainer = sectionArray.length > 0 ? sectionArray[0] : null;
+            const lastVisibleContainer = sectionArray.length > 0 ? sectionArray[sectionArray.length - 1] : null;
 
-            if (prevIndex > 0 && prevIndex + 1 !== currentTimelineIndex) {
-                shashin.printMessageToConsole("Removing from timeline " + element.id);
-                Util.removeDateGallery(element.id);
-            }
+            if (timelineSettings.isScrolling === true &&
+                firstVisibleContainer !== null) {
 
-            prevIndex = currentTimelineIndex;
-        });
+                // Divide dates into 2
+                // TODO: Optimize this further
+                let currentDate = $(firstVisibleContainer).attr("id");
+                let prevDate = "";
+                const firstDate = timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day;
+                const lastDate = timelineDates[timelineDates.length - 1].year + "-" + timelineDates[timelineDates.length - 1].month + "-" + timelineDates[timelineDates.length - 1].day;
 
-        if (Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
-            if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
-                $('#container').scrollTop(tempScrollTop - removeHeight);
-            } else if (topHeight > 0) {
-                $('#container').scrollTop(tempScrollTop - topHeight);
-            }
-        }
-        section.visible();
-
-        // Get list of visible elements
-        const firstVisibleContainer = sectionArray.length > 0 ? sectionArray[0] : null;
-        const lastVisibleContainer = sectionArray.length > 0 ? sectionArray[sectionArray.length-1] : null;
-
-        if (timelineSettings.isScrolling === true &&
-            firstVisibleContainer !== null) {
-
-            // Divide dates into 2
-            // TODO: Optimize this further
-            let currentDate = $(firstVisibleContainer).attr("id");
-            let prevDate = "";
-            const firstDate = timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day;
-            const lastDate = timelineDates[timelineDates.length-1].year + "-" + timelineDates[timelineDates.length-1].month + "-" + timelineDates[timelineDates.length-1].day;
-
-            let timelineDateArr = timelineDates;
-            const halfwayPoint = Math.floor(timelineDates.length/2);
-            let reversed = false;
-            if (Util.getDateObject(currentDate) < Util.getDateObject(timelineDates[halfwayPoint].year+"-"+timelineDates[halfwayPoint].month+"-"+timelineDates[halfwayPoint].day)) {
-                timelineDateArr = timelineDates.slice().reverse();
-                reversed = true;
-            }
-
-            if (currentDate === firstDate) {
-                timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
-            }
-
-            // let startingIndexTop = 0;
-            // let startingIndexBottom = 0;
-            // let firstVisibleDateArr = $(firstVisibleContainer).attr("id").split("-");
-            // let lastVisibleDateArr = $(lastVisibleContainer).attr("id").split("-");
-            //
-            // for (let i = 0; i < timelineDateArr.length; i ++) {
-            //     if (timelineDateArr[i].year === parseInt(firstVisibleDateArr[0]) && timelineDateArr[i].month === parseInt(firstVisibleDateArr[1]) && timelineDateArr[i].day === parseInt(firstVisibleDateArr[2])) {
-            //         startingIndexTop = i;
-            //         if (reversed === true) {
-            //             break;
-            //         }
-            //     }
-            //
-            //     if (timelineDates[i].year === parseInt(lastVisibleDateArr[0]) && timelineDates[i].month === parseInt(lastVisibleDateArr[1]) && timelineDates[i].day === parseInt(lastVisibleDateArr[2])) {
-            //         startingIndexBottom = i;
-            //         if (reversed === false) {
-            //             break;
-            //         }
-            //     }
-            // }
-
-            let startingIndexTop = timelineSettings.timelineDatesHash[$(firstVisibleContainer).attr("id")];
-            let startingIndexBottom = timelineSettings.timelineDatesHash[$(lastVisibleContainer).attr("id")];
-
-            if (reversed === true) {
-                startingIndexTop = timelineDateArr.length-startingIndexTop-1;
-                startingIndexBottom = 0;
-            }
-
-            // Render above visibleContainers going from bottom up
-            let timelineArr = timelineDates.reverse();
-            let lastTopPosition = $("#infinite-scroll-gallery").position().top;
-            for (let index = startingIndexTop; index < timelineArr.length; index++) {
-                const timelineDate = timelineArr[index];
-                prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
-
-                if (Util.getDateObject(currentDate) < Util.getDateObject(prevDate)) {
-                    if ($("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) ||
-                        ((Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
-                        // Render currentDate
-                        const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
-
-                        const currentTopPosition = $("#infinite-scroll-gallery").position().top;
-
-                        const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "above", anchorPoint);
-
-                        if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
-                            await timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
-                        }
-
-                        // Prevent auto scrolling & div flickering
-                        if ($("#container").position().top === $("#infinite-scroll-gallery").position().top
-                            || (Util.isMobile() === false && lastTopPosition === currentTopPosition)
-                        ) {
-                            break;
-                        }
-
-                        // Break if top not in viewport
-                        if (Util.elementsInViewport($("#" + currentDate)).length === 0) {
-                            break;
-                        }
-                    }
-
-                    if (prevDate !== firstDate) {
-                        currentDate = prevDate;
-                    } else {
-                        const msg = await timelineSettings.updateTimeline(firstDate, mediaTypeFilter, "above", currentDate);
-                        if (msg === timelineSettings.success && $("#" + firstDate).length === 1) {
-                            await timelineSettings.attachAssociatedMetadata(firstDate, mediaTypeFilter);
-                        }
-                    }
+                let timelineDateArr = timelineDates;
+                const halfwayPoint = Math.floor(timelineDates.length / 2);
+                let reversed = false;
+                if (Util.getDateObject(currentDate) < Util.getDateObject(timelineDates[halfwayPoint].year + "-" + timelineDates[halfwayPoint].month + "-" + timelineDates[halfwayPoint].day)) {
+                    timelineDateArr = timelineDates.slice().reverse();
+                    reversed = true;
                 }
-                lastTopPosition = $("#infinite-scroll-gallery").position().top;
-            }
 
-            // Render below visibleContainers going from top down
-            currentDate = $(lastVisibleContainer).attr("id");
-            timelineArr = timelineDates.reverse();
+                if (currentDate === firstDate) {
+                    timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
+                }
 
-            for (let index = startingIndexBottom; index < timelineArr.length; index ++) {
-                const timelineDate = timelineArr[index];
-                let prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
+                // let startingIndexTop = 0;
+                // let startingIndexBottom = 0;
+                // let firstVisibleDateArr = $(firstVisibleContainer).attr("id").split("-");
+                // let lastVisibleDateArr = $(lastVisibleContainer).attr("id").split("-");
+                //
+                // for (let i = 0; i < timelineDateArr.length; i ++) {
+                //     if (timelineDateArr[i].year === parseInt(firstVisibleDateArr[0]) && timelineDateArr[i].month === parseInt(firstVisibleDateArr[1]) && timelineDateArr[i].day === parseInt(firstVisibleDateArr[2])) {
+                //         startingIndexTop = i;
+                //         if (reversed === true) {
+                //             break;
+                //         }
+                //     }
+                //
+                //     if (timelineDates[i].year === parseInt(lastVisibleDateArr[0]) && timelineDates[i].month === parseInt(lastVisibleDateArr[1]) && timelineDates[i].day === parseInt(lastVisibleDateArr[2])) {
+                //         startingIndexBottom = i;
+                //         if (reversed === false) {
+                //             break;
+                //         }
+                //     }
+                // }
 
-                if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate) && closeToFooter() === true) {
-                    if (timelineSettings.currentScrollDirection ===
-                        timelineSettings.ScrollDirection.down && $("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) || ((Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
-                        const numberOfPhotos = timelineSettings.metadataYearMonthCount[timelineDate.year + "-" + timelineDate.month];
+                let startingIndexTop = timelineSettings.timelineDatesHash[$(firstVisibleContainer).attr("id")];
+                let startingIndexBottom = timelineSettings.timelineDatesHash[$(lastVisibleContainer).attr("id")];
 
-                        let sectionHeight = 0;
+                if (reversed === true) {
+                    startingIndexTop = timelineDateArr.length - startingIndexTop - 1;
+                    startingIndexBottom = 0;
+                }
 
-                        if (numberOfPhotos !== null && numberOfPhotos > 0) {
-                            // sectionHeight = (Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * Util.thumbnailHeight()) + ((Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * Util.thumbnailHeight()) + 5)
-                            sectionHeight = 11705;
-                        }
+                // Render above visibleContainers going from bottom up
+                let timelineArr = timelineDates.reverse();
+                let lastTopPosition = $("#infinite-scroll-gallery").position().top;
+                for (let index = startingIndexTop; index < timelineArr.length; index++) {
+                    const timelineDate = timelineArr[index];
+                    prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
 
-                        let action = "below";
+                    if (Util.getDateObject(currentDate) < Util.getDateObject(prevDate)) {
+                        if ($("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) ||
+                            ((Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
+                            // Render currentDate
+                            const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
 
-                        // Render currentDate
-                        // Stage 1 - create a placeholder dive to enable scrolling through additional content based on current date section
-                        const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
-                        if (Util.isMobile() === false) {
-                            shashin.printMessageToConsole("timelineSettings.createEmptyContainer called");
-                            // Stage 1 - create an empty block
-                            await timelineSettings.createEmptyContainer(currentDate, anchorPoint, sectionHeight);
-                            action = "emptyContainer";
-                        } else {
-                            action = "below";
-                        }
+                            const currentTopPosition = $("#infinite-scroll-gallery").position().top;
 
-                        // Stage 2 - network call to create image placeholders and UI skeleton for month
-                        const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, action, anchorPoint);
+                            const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "above", anchorPoint);
 
-                        // Stage 3 - network call to embed the image URL and complete the process
-                        if (timelineSettings.initialized === false) {
                             if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
                                 await timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
-                                timelineSettings.distanceToFooter = calculateDistanceToFooter();
                             }
+
+                            // Prevent auto scrolling & div flickering
+                            if ($("#container").position().top === $("#infinite-scroll-gallery").position().top
+                                || (Util.isMobile() === false && lastTopPosition === currentTopPosition)
+                            ) {
+                                break;
+                            }
+
+                            // Break if top not in viewport
+                            if (Util.elementsInViewport($("#" + currentDate)).length === 0) {
+                                break;
+                            }
+                        }
+
+                        if (prevDate !== firstDate) {
+                            currentDate = prevDate;
                         } else {
-                            // 1 sec delay for smoother scrolling
-                            setTimeout(async () => {
+                            const msg = await timelineSettings.updateTimeline(firstDate, mediaTypeFilter, "above", currentDate);
+                            if (msg === timelineSettings.success && $("#" + firstDate).length === 1) {
+                                await timelineSettings.attachAssociatedMetadata(firstDate, mediaTypeFilter);
+                            }
+                        }
+                    }
+                    lastTopPosition = $("#infinite-scroll-gallery").position().top;
+                }
+
+                // Render below visibleContainers going from top down
+                currentDate = $(lastVisibleContainer).attr("id");
+                timelineArr = timelineDates.reverse();
+
+                for (let index = startingIndexBottom; index < timelineArr.length; index++) {
+                    const timelineDate = timelineArr[index];
+                    let prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
+
+                    if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate) && closeToFooter() === true) {
+                        if (timelineSettings.currentScrollDirection ===
+                            timelineSettings.ScrollDirection.down && $("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) || ((Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
+                            const numberOfPhotos = timelineSettings.metadataYearMonthCount[timelineDate.year + "-" + timelineDate.month];
+
+                            let sectionHeight = 0;
+
+                            if (numberOfPhotos !== null && numberOfPhotos > 0) {
+                                // sectionHeight = (Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * Util.thumbnailHeight()) + ((Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * Util.thumbnailHeight()) + 5)
+                                sectionHeight = 11705;
+                            }
+
+                            let action = "below";
+
+                            // Render currentDate
+                            // Stage 1 - create a placeholder dive to enable scrolling through additional content based on current date section
+                            const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
+                            if (Util.isMobile() === false) {
+                                shashin.printMessageToConsole("timelineSettings.createEmptyContainer called");
+                                // Stage 1 - create an empty block
+                                await timelineSettings.createEmptyContainer(currentDate, anchorPoint, sectionHeight);
+                                action = "emptyContainer";
+                            } else {
+                                action = "below";
+                            }
+
+                            // Stage 2 - network call to create image placeholders and UI skeleton for month
+                            const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, action, anchorPoint);
+
+                            // Stage 3 - network call to embed the image URL and complete the process
+                            if (timelineSettings.initialized === false) {
                                 if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
                                     await timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
                                     timelineSettings.distanceToFooter = calculateDistanceToFooter();
                                 }
-                            }, 1000);
+                            } else {
+                                // 1 sec delay for smoother scrolling
+                                setTimeout(async () => {
+                                    if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
+                                        await timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
+                                        timelineSettings.distanceToFooter = calculateDistanceToFooter();
+                                    }
+                                }, 1000);
+                            }
+
+                            timelineSettings.distanceToFooter = calculateDistanceToFooter();
+
+                            // Break if footer not in viewport
+                            if (closeToFooter() === false) {
+                                currentDate = prevDate;
+                                break;
+                            }
+
                         }
 
-                        timelineSettings.distanceToFooter = calculateDistanceToFooter();
-
-                        // Break if footer not in viewport
-                        if (closeToFooter() === false) {
+                        if (prevDate !== lastDate) {
                             currentDate = prevDate;
-                            break;
-                        }
-
-                    }
-
-                    if (prevDate !== lastDate) {
-                        currentDate = prevDate;
-                    } else {
-                        const msg = await timelineSettings.updateTimeline(lastDate, mediaTypeFilter, "below", currentDate);
-                        if (msg === timelineSettings.success && $("#" + lastDate).length === 1) {
-                            await timelineSettings.attachAssociatedMetadata(lastDate, mediaTypeFilter);
+                        } else {
+                            const msg = await timelineSettings.updateTimeline(lastDate, mediaTypeFilter, "below", currentDate);
+                            if (msg === timelineSettings.success && $("#" + lastDate).length === 1) {
+                                await timelineSettings.attachAssociatedMetadata(lastDate, mediaTypeFilter);
+                            }
                         }
                     }
                 }
