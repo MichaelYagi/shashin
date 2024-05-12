@@ -179,6 +179,7 @@
                     if (prevClass === currClass || deleteElements === true) {
                         $(this).remove();
                         deleteElements = true;
+                        shashin.printMessageToConsole("Cleaning up IDs after jump:"+$(this).attr("id"));
                     }
                     prevClass = $(this).attr("class");
                 });
