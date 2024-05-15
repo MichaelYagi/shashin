@@ -385,8 +385,7 @@
     // Get metadata with albums,tagged people and keywords
     shashin.getCompleteMetadata = async function(metadataId) {
         const http = new Http("get timeline metadata");
-        const version = Util.getMetadataLocalStorage();
-        const data = await http.ajax("get", "/complete/metadata/"+metadataId+(version === "" ? "" : "?v=" + version));
+        const data = await http.ajax("get", "/complete/metadata/"+metadataId+"?v="+uuidv4());
 
         let ret = {};
         if (data.hasOwnProperty("metadata")) {
