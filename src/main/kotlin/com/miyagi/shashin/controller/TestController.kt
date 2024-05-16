@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.ResponseBody
 import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
+import javax.imageio.ImageIO
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -63,33 +64,54 @@ class TestController {
         model["somevalue"] = "This is a test"
 
         // Retroactively create gif
-        val metadataList = metadataRepository.findAllByMediaType("video")
+//        var metadataList = metadataRepository.findAllByMediaType("video")
+//
+//        if (metadataList != null) {
+//            var numProcessed = 0
+//            val metadataCount = metadataList.count()
+//            for ((index, metadata) in metadataList.withIndex()) {
+//                println("iteration ${index+1} out of $metadataCount")
+//                if (metadata.getThumbnailPathSmall() !== null) {
+//                    val jpgVersion = metadata.getThumbnailPathSmall()
+//                    val gifVersion = jpgVersion?.replace("_225.jpg", "_225.gif")
+//                    println("processing $gifVersion")
+//
+//                    val gifFile = File(gifVersion!!)
+//                    if (!gifFile.exists()) {
+//                        println("gif doesn't exist")
+//
+//                        ImageProcessing.createVideoGif(metadata.getId(), metadataRepository)
+//                        numProcessed++
+//                        println("processed $gifVersion")
+//                    } else {
+//                        println("already exists $gifVersion")
+//                    }
+//
+//                    println("-------------")
+//                }
+//            }
+//            println("Number processed: $numProcessed")
+//        }
 
-        if (metadataList != null) {
-            var numProcessed = 0
-            val metadataCount = metadataList.count()
-            for ((index, metadata) in metadataList.withIndex()) {
+        // Retroactively create 112 images
+        val allMetadataList = metadataRepository.findAll()
+
+        if (allMetadataList != null) {
+            val metadataCount = allMetadataList.count()
+            for ((index, metadata) in allMetadataList.withIndex()) {
                 println("iteration ${index+1} out of $metadataCount")
-                if (metadata.getThumbnailPathSmall() !== null) {
-                    val jpgVersion = metadata.getThumbnailPathSmall()
-                    val gifVersion = jpgVersion?.replace("_225.jpg", "_225.gif")
-                    println("processing $gifVersion")
-
-                    val gifFile = File(gifVersion!!)
-                    if (!gifFile.exists()) {
-                        println("gif doesn't exist")
-
-                        ImageProcessing.createVideoGif(metadata.getId(), metadataRepository)
-                        numProcessed++
-                        println("processed $gifVersion")
-                    } else {
-                        println("already exists $gifVersion")
+                if (metadata != null) {
+                    if (metadata.getThumbnailPathExtraSmall() == null || !File(metadata.getThumbnailPathExtraSmall()!!).exists()) {
+                        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+                        val sidecarDir = rootPath + relativeSidecarDir
+                        val imageProcessing = ImageProcessing("v1", File(metadata.getPath()!!), sidecarDir, metadata)
+                        val metadataObj = imageProcessing.createThumbnails()
+                        if (metadataObj != null) {
+                            metadataRepository.save(metadataObj)
+                        }
                     }
-
-                    println("-------------")
                 }
             }
-            println("Number processed: $numProcessed")
         }
 
         return "test"
