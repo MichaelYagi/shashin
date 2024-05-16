@@ -66,14 +66,15 @@ class TestController {
         val metadataList = metadataRepository.findAllByMediaType("video")
 
         if (metadataList != null) {
-
-            for (metadata in metadataList) {
+            val metadataCount = metadataList.count()
+            for ((index, metadata) in metadataList.withIndex()) {
+                println("iteration ${index+1} out of $metadataCount")
                 if (metadata.getThumbnailPathSmall() !== null) {
                     val jpgVersion = metadata.getThumbnailPathSmall()
                     val gifVersion = jpgVersion?.replace("_225.jpg", "_225.gif")
                     println("processing $gifVersion")
 
-                    val gifFile = File(gifVersion)
+                    val gifFile = File(gifVersion!!)
                     if (!gifFile.exists()) {
                         println("gif doesn't exist")
 
