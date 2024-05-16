@@ -66,6 +66,7 @@ class TestController {
         val metadataList = metadataRepository.findAllByMediaType("video")
 
         if (metadataList != null) {
+            var numProcessed = 0
             val metadataCount = metadataList.count()
             for ((index, metadata) in metadataList.withIndex()) {
                 println("iteration ${index+1} out of $metadataCount")
@@ -79,6 +80,7 @@ class TestController {
                         println("gif doesn't exist")
 
                         ImageProcessing.createVideoGif(metadata.getId(), metadataRepository)
+                        numProcessed++
                         println("processed $gifVersion")
                     } else {
                         println("already exists $gifVersion")
@@ -87,6 +89,7 @@ class TestController {
                     println("-------------")
                 }
             }
+            println("Number processed: $numProcessed")
         }
 
         return "test"
