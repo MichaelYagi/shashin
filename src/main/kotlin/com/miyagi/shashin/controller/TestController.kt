@@ -1,6 +1,7 @@
 package com.miyagi.shashin.controller
 
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.util.ImageProcessing
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.ResponseBody
+import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -60,8 +62,31 @@ class TestController {
     fun test(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
         model["somevalue"] = "This is a test"
 
-        val userAgent = request.getHeader("User-Agent")
-        model["userAgent"] = userAgent
+        // Retroactively create gif
+        val metadataList = metadataRepository.findAllByMediaType("video")
+
+        if (metadataList != null) {
+
+            for (metadata in metadataList) {
+                if (metadata.getThumbnailPathSmall() !== null) {
+                    val jpgVersion = metadata.getThumbnailPathSmall()
+                    val gifVersion = jpgVersion?.replace("_225.jpg", "_225.gif")
+                    println("processing $gifVersion")
+
+                    val gifFile = File(gifVersion)
+                    if (!gifFile.exists()) {
+                        println("gif doesn't exist")
+
+                        ImageProcessing.createVideoGif(metadata.getId(), metadataRepository)
+                        println("processed $gifVersion")
+                    } else {
+                        println("already exists $gifVersion")
+                    }
+
+                    println("-------------")
+                }
+            }
+        }
 
         return "test"
     }
