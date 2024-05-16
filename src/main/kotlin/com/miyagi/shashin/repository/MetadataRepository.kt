@@ -12,6 +12,9 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    @Query("SELECT * FROM metadata WHERE id = :metadataId", nativeQuery = true)
    fun findByMetadataId(@Param("metadataId") metadataId: String): Metadata?
 
+   @Query("SELECT * FROM metadata WHERE hidden = false AND type LIKE %:type%", nativeQuery = true)
+   fun findAllByMediaType(@Param("type") type: String): MutableIterable<Metadata>?
+
    @Cacheable(value = ["allAlbumMetadataWithCoordinates"], key = "{#userId}")
    @Query("SELECT DISTINCT m.id, m.type, m.lat, m.lng, m.year, m.month, m.day, m.thumbnail_url_small as thumbnailUrlSmall, m.thumbnail_url_original as thumbnailUrlOriginal, m.video_url as videoUrl, m.original_image_width as originalImageWidth, m.original_image_height as originalImageHeight, m.map_marker_url as mapMarkerUrl FROM metadata m LEFT JOIN albumphoto ap ON m.id = ap.metadata_id LEFT JOIN useralbum ua ON ap.album_id = ua.album_id LEFT JOIN album a ON a.id = ua.album_id WHERE m.hidden = false AND ua.user_id = :userId AND m.lat IS NOT NULL AND m.lat != \"\" AND m.lng IS NOT NULL AND m.lng != \"\"", nativeQuery = true)
    fun findByAlbumMetadataByUserIdForMap(@Param("userId") userId: Int): MutableIterable<MapData>
