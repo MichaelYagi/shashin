@@ -183,7 +183,6 @@
                     }
                     prevClass = $(this).attr("class");
                 });
-                timelineSettings.didJumpFromTimelineToc = false;
             }
         });
 
@@ -257,6 +256,22 @@
             }
 
             if (timelineSettings.enableScrollSpy === true) {
+                // Clean up
+                if (timelineSettings.didJumpFromTimelineToc === true) {
+                    let prevClass = "";
+                    let deleteElements = false;
+                    $('#infinite-scroll-gallery').children().each(function () {
+                        const currClass = $(this).attr("class");
+                        if (prevClass === currClass || deleteElements === true) {
+                            $(this).remove();
+                            deleteElements = true;
+                            shashin.printMessageToConsole("Cleaning up IDs after jump:"+$(this).attr("id"));
+                        }
+                        prevClass = $(this).attr("class");
+                    });
+                    timelineSettings.didJumpFromTimelineToc = false;
+                }
+
                 topScroll = false;
                 timelineSettings.renderThumbnailsInViewport(elementsInViewPort, mediaTypeFilter);
                 // if (shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null) {
