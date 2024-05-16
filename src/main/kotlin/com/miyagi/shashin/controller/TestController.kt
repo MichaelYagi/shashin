@@ -64,34 +64,34 @@ class TestController {
         model["somevalue"] = "This is a test"
 
         // Retroactively create gif
-//        var metadataList = metadataRepository.findAllByMediaType("video")
-//
-//        if (metadataList != null) {
-//            var numProcessed = 0
-//            val metadataCount = metadataList.count()
-//            for ((index, metadata) in metadataList.withIndex()) {
-//                println("iteration ${index+1} out of $metadataCount")
-//                if (metadata.getThumbnailPathSmall() !== null) {
-//                    val jpgVersion = metadata.getThumbnailPathSmall()
-//                    val gifVersion = jpgVersion?.replace("_225.jpg", "_225.gif")
-//                    println("processing $gifVersion")
-//
-//                    val gifFile = File(gifVersion!!)
-//                    if (!gifFile.exists()) {
-//                        println("gif doesn't exist")
-//
-//                        ImageProcessing.createVideoGif(metadata.getId(), metadataRepository)
-//                        numProcessed++
-//                        println("processed $gifVersion")
-//                    } else {
-//                        println("already exists $gifVersion")
-//                    }
-//
-//                    println("-------------")
-//                }
-//            }
-//            println("Number processed: $numProcessed")
-//        }
+        var metadataList = metadataRepository.findAllByMediaType("video")
+
+        if (metadataList != null) {
+            var numProcessed = 0
+            val metadataCount = metadataList.count()
+            for ((index, metadata) in metadataList.withIndex()) {
+                println("iteration ${index+1} out of $metadataCount")
+                if (metadata.getThumbnailPathSmall() !== null) {
+                    val jpgVersion = metadata.getThumbnailPathSmall()
+                    val gifVersion = jpgVersion?.replace("_225.jpg", "_225.gif")
+                    println("processing $gifVersion")
+
+                    val gifFile = File(gifVersion!!)
+                    if (!gifFile.exists()) {
+                        println("gif doesn't exist")
+
+                        ImageProcessing.createVideoGif(metadata.getId(), metadataRepository)
+                        numProcessed++
+                        println("processed $gifVersion")
+                    } else {
+                        println("already exists $gifVersion")
+                    }
+
+                    println("-------------")
+                }
+            }
+            println("Number processed: $numProcessed")
+        }
 
         // Retroactively create 112 images
         val allMetadataList = metadataRepository.findAll()
