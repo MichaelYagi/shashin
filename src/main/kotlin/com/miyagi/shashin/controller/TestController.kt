@@ -90,7 +90,7 @@ class TestController {
                     println("-------------")
                 }
             }
-            println("Number processed: $numProcessed")
+            println("Number gifs processed: $numProcessed")
         }
 
         // Retroactively create 112 images
@@ -98,6 +98,7 @@ class TestController {
 
         if (allMetadataList != null) {
             val metadataCount = allMetadataList.count()
+            var numProcessed = 0
             for ((index, metadata) in allMetadataList.withIndex()) {
                 println("iteration ${index+1} out of $metadataCount")
                 if (metadata != null) {
@@ -107,12 +108,14 @@ class TestController {
                         val imageProcessing = ImageProcessing("v1", File(metadata.getPath()!!), sidecarDir, metadata)
                         val metadataObj = imageProcessing.createThumbnails()
                         if (metadataObj != null) {
-                            println("processed thumbnail ${metadataObj.getThumbnailPathExtraSmall()}")
                             metadataRepository.save(metadataObj)
+                            println("processed thumbnail ${metadataObj.getThumbnailPathExtraSmall()}")
+                            numProcessed++
                         }
                     }
                 }
             }
+            println("Number xs thumbnails processed: $numProcessed")
         }
 
         return "test"
