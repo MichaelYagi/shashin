@@ -64,7 +64,7 @@ class TestController {
         model["somevalue"] = "This is a test"
 
         // Retroactively create gif
-        var metadataList = metadataRepository.findAllByMediaType("video")
+        val metadataList = metadataRepository.findAllByMediaType("video")
 
         if (metadataList != null) {
             var numProcessed = 0
