@@ -8,10 +8,11 @@
 
 <h1>Health Check</h1>
 
-<th:block th:text="${'Status: '+status}"></th:block><br><br>
+<th:block th:text="${'Status: '+status}"></th:block><br>
+<th:block th:text="${'Page request: '+requestTiming}"></th:block><br><br>
 
 <th:block th:text="${'Database connection: '+dbConnect}"></th:block><br>
-<th:block th:text="${'Database lookup for '+dbCount+' metadata record'+(dbCount != 1 ? 's' : '')+' took (m:s:ms): '+dbTiming}"></th:block><br>
+<th:block th:text="${'Database lookup for '+dbCount+' metadata record'+(dbCount != 1 ? 's' : '')+': '+dbTiming}"></th:block><br>
 <th:block th:text="${'Geocoder connection: '+geocoderServicesAvailable}"></th:block><br>
 <th:block th:if="${faceRecogAvailable != 'N/A'}">
 <th:block th:text="${'Face recognition (CompreFace) connection: '+faceRecogAvailable}"></th:block><br>

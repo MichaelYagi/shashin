@@ -590,12 +590,15 @@ class ToolsController {
     @GetMapping("/health")
     fun getHealth(model: Model): String {
 
+        val requestTimingStart = Date()
+
         var status = "OK"
 
         model["dbCount"] = 0
-        val timingOne = Date()
+        val dbTimingStart = Date()
         val metadataResult = metaRepository.findAllByOffsetAndLimit(0,1000)
-        val timingTwo = Date()
+        val dbTimingEnd = Date()
+
         try {
             model["dbConnect"] = "OK"
             model["dbCount"] = metadataResult.count()
@@ -605,10 +608,10 @@ class ToolsController {
             logger.log(Level.WARNING, "Error querying DB: ${e.message}")
         }
 
-        val diff: Long = timingTwo.time - timingOne.time
+        val dbTimingDiff: Long = dbTimingEnd.time - dbTimingStart.time
 
-        if (diff >= 0) {
-            model["dbTiming"] = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
+        if (dbTimingDiff >= 0) {
+            model["dbTiming"] = SimpleDateFormat("mm:ss:SSS").format(Date(dbTimingDiff))
         } else {
             model["dbTiming"] = "FAIL"
             status = "FAIL"
@@ -664,6 +667,12 @@ class ToolsController {
         model["buildVersion"] = if (buildProperties != null) buildProperties?.version.toString() else "Missing"
 
         model["status"] = status
+
+        val requestTimingEnd = Date()
+
+        val requestTimingDiff: Long = requestTimingEnd.time - requestTimingStart.time
+
+        model["requestTiming"] = SimpleDateFormat("mm:ss:SSS").format(Date(requestTimingDiff))
 
         return "health"
     }
