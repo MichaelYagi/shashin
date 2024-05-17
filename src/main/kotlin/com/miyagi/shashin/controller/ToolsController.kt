@@ -594,14 +594,15 @@ class ToolsController {
 
         model["dbCount"] = 0
         val timingOne = Date()
-        val firstMetadataResult = metaRepository.findDistinctFirstByHiddenIsFalseOrderByYearDescMonthDescDayDesc()
+        val metadataResult = metaRepository.findAllByOffsetAndLimit(0,1000)
         val timingTwo = Date()
-        if (firstMetadataResult != null) {
+        try {
             model["dbConnect"] = "OK"
-            model["dbCount"] = 1
-        } else {
+            model["dbCount"] = metadataResult.count()
+        } catch (e: Exception) {
             model["dbConnect"] = "FAIL"
             status = "FAIL"
+            logger.log(Level.WARNING, "Error querying DB: ${e.message}")
         }
 
         val diff: Long = timingTwo.time - timingOne.time

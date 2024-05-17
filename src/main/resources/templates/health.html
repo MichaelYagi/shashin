@@ -11,7 +11,7 @@
 <th:block th:text="${'Status: '+status}"></th:block><br><br>
 
 <th:block th:text="${'Database connection: '+dbConnect}"></th:block><br>
-<th:block th:text="${'Database lookup for '+dbCount+' metadata record took (m:s:ms): '+dbTiming}"></th:block><br>
+<th:block th:text="${'Database lookup for '+dbCount+' metadata record'+(dbCount != 1 ? 's' : '')+' took (m:s:ms): '+dbTiming}"></th:block><br>
 <th:block th:text="${'Geocoder connection: '+geocoderServicesAvailable}"></th:block><br>
 <th:block th:if="${faceRecogAvailable != 'N/A'}">
 <th:block th:text="${'Face recognition (CompreFace) connection: '+faceRecogAvailable}"></th:block><br>
