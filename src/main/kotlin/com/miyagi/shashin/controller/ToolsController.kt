@@ -594,11 +594,11 @@ class ToolsController {
 
         model["dbCount"] = 0
         val timingOne = Date()
-        val allMetadata = metaRepository.findAll()
+        val firstMetadataResult = metaRepository.findDistinctFirstByHiddenIsFalseOrderByYearDescMonthDescDayDesc()
         val timingTwo = Date()
-        if (allMetadata.count() >= 0) {
+        if (firstMetadataResult != null) {
             model["dbConnect"] = "OK"
-            model["dbCount"] = allMetadata.count()
+            model["dbCount"] = 1
         } else {
             model["dbConnect"] = "FAIL"
             status = "FAIL"
