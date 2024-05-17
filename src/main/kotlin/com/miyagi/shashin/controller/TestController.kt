@@ -107,6 +107,7 @@ class TestController {
                         val imageProcessing = ImageProcessing("v1", File(metadata.getPath()!!), sidecarDir, metadata)
                         val metadataObj = imageProcessing.createThumbnails()
                         if (metadataObj != null) {
+                            println("processed thumbnail ${metadataObj.getThumbnailPathExtraSmall()}")
                             metadataRepository.save(metadataObj)
                         }
                     }
