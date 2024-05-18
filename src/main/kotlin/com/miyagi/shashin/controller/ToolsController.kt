@@ -637,9 +637,11 @@ class ToolsController {
 //        println("Process CPU load:"+(osMXBean.processCpuLoad * 100).toInt())
 //        println("System CPU load:"+(osMXBean.cpuLoad * 100).toInt())
         val runtimeMXBean: RuntimeMXBean = ManagementFactory.getRuntimeMXBean()
-        val uptimeMS = runtimeMXBean.uptime
-        val hours = ((uptimeMS / (1000*60*60)) % 24);
-        model["uptime"] = hours.toString()+":"+SimpleDateFormat("mm:ss.SSS").format(Date(uptimeMS))
+        val seconds: Long = runtimeMXBean.uptime / 1000
+        val minutes = seconds / 60
+        val hours = minutes / 60
+        val days = hours / 24
+        model["uptime"] = (if (days > 0) (days.toString() + " day"+(if (days.toInt() == 1) "" else "s")+ " ") else "") + (if ((hours % 24) < 10) "0" else "") + (hours % 24) + ":" + (if ((minutes % 60) < 10) "0" else "") + (minutes % 60) + ":" + (if ((seconds % 60) < 10) "0" else "") + (seconds % 60)
         model["processCpuLoadPercentDouble"] = (osMXBean.processCpuLoad * 100).toInt()
         @Suppress("DEPRECATION")
         model["systemCpuLoadPercentDouble"] = (osMXBean.systemCpuLoad * 100).toInt()
