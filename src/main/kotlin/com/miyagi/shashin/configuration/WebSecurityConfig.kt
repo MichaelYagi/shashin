@@ -73,9 +73,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "atom",
             "test",
             "slideshow",
-            "actuator",
-            "actuator\\/metrics",
-            "actuator\\/metrics\\/http.server.requests"
+            "actuator"
         )
 
         var publicList = arrayOf(
