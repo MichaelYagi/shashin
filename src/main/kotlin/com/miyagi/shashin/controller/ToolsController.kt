@@ -39,6 +39,7 @@ import java.awt.image.BufferedImage
 import java.awt.image.RenderedImage
 import java.io.*
 import java.lang.management.ManagementFactory
+import java.lang.management.RuntimeMXBean
 import java.math.RoundingMode
 import java.net.URISyntaxException
 import java.net.URL
@@ -611,7 +612,7 @@ class ToolsController {
         val dbTimingDiff: Long = dbTimingEnd.time - dbTimingStart.time
 
         if (dbTimingDiff >= 0) {
-            model["dbTiming"] = SimpleDateFormat("mm:ss:SSS").format(Date(dbTimingDiff))
+            model["dbTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(dbTimingDiff))
         } else {
             model["dbTiming"] = "FAIL"
             status = "FAIL"
@@ -635,6 +636,10 @@ class ToolsController {
 
 //        println("Process CPU load:"+(osMXBean.processCpuLoad * 100).toInt())
 //        println("System CPU load:"+(osMXBean.cpuLoad * 100).toInt())
+        val runtimeMXBean: RuntimeMXBean = ManagementFactory.getRuntimeMXBean()
+        val uptimeMS = runtimeMXBean.uptime
+        val hours = ((uptimeMS / (1000*60*60)) % 24);
+        model["uptime"] = hours.toString()+":"+SimpleDateFormat("mm:ss.SSS").format(Date(uptimeMS))
         model["processCpuLoadPercentDouble"] = (osMXBean.processCpuLoad * 100).toInt()
         @Suppress("DEPRECATION")
         model["systemCpuLoadPercentDouble"] = (osMXBean.systemCpuLoad * 100).toInt()
