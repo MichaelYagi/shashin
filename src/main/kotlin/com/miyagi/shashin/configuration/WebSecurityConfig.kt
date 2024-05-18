@@ -110,6 +110,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "timeline",
             "timeline/**",
             "actuator/**",
+            "health",
             "complete/metadata/**",
             "albums/add",
             "rescan/metadata",

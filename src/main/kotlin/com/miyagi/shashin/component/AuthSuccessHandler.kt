@@ -269,8 +269,8 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                             redirectStrategy.sendRedirect(request, response, uriPath)
                         } else if ((currentAuthority == adminRole || currentAuthority == superRole) && agentName != "safari") {
                             redirectStrategy.sendRedirect(request, response, "/timeline")
-                        } else if ((currentAuthority == adminRole || currentAuthority == superRole)  && agentName == "safari") {
-                            redirectStrategy.sendRedirect(request, response, "/recent")
+                        } else if (currentAuthority == adminRole || currentAuthority == superRole) {
+                            redirectStrategy.sendRedirect(request, response, "/taken")
                         } else {
                             redirectStrategy.sendRedirect(request, response, "/albums")
                         }
