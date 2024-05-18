@@ -646,6 +646,8 @@ class ToolsController {
         @Suppress("DEPRECATION")
         model["systemCpuLoadPercentDouble"] = (osMXBean.systemCpuLoad * 100).toInt()
         model["os"] = System.getProperty("os.name") + " v" + System.getProperty("os.version") + " " + System.getProperty("os.arch")
+
+        val nominatimTimingStart = Date()
         val reachable: Boolean = NetworkUtils.checkNominatimConnection(geocodeUrl+"status.php?format=json")
         if (reachable) {
             model["geocoderServicesAvailable"] = "OK"
@@ -653,8 +655,12 @@ class ToolsController {
             model["geocoderServicesAvailable"] = "FAIL"
             status = "FAIL"
         }
+        val nominatimTimingEnd = Date()
+        val nominatimTimingDiff: Long = nominatimTimingEnd.time - nominatimTimingStart.time
+        model["nominatimTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(nominatimTimingDiff))
 
         // If enabled - status fail if not available
+        val compreFaceTimingStart = Date()
         val settings = model.getAttribute("settings") as Settings?
         if (settings != null && settings.getCompreFaceKey() != "" && settings.getCompreFaceServer() != "") {
             val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
@@ -670,6 +676,9 @@ class ToolsController {
         } else {
             model["faceRecogAvailable"] = "N/A"
         }
+        val compreFaceTimingEnd = Date()
+        val compreFaceTimingDiff: Long = compreFaceTimingEnd.time - compreFaceTimingStart.time
+        model["compreFaceTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(compreFaceTimingDiff))
 
         model["buildVersion"] = if (buildProperties != null) buildProperties?.version.toString() else "Missing"
 

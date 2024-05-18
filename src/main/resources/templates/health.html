@@ -10,12 +10,14 @@
 
 <th:block th:text="${'Status: '+status}"></th:block><br><br>
 <th:block th:text="${'Uptime: '+uptime}"></th:block><br>
-<th:block th:text="${'Page request: '+requestTiming}"></th:block><br>
+<th:block th:text="${'Page request elapsed time: '+requestTiming}"></th:block><br>
 <th:block th:text="${'Database connection: '+dbConnect}"></th:block><br>
-<th:block th:text="${'Database lookup for '+dbCount+' metadata record'+(dbCount != 1 ? 's' : '')+': '+dbTiming}"></th:block><br>
+<th:block th:text="${'Database lookup for '+dbCount+' metadata record'+(dbCount != 1 ? 's' : '')+' elapsed time: '+dbTiming}"></th:block><br>
 <th:block th:text="${'Geocoder connection: '+geocoderServicesAvailable}"></th:block><br>
+<th:block th:text="${'Geocoder elapsed time: '+nominatimTiming}"></th:block><br>
 <th:block th:if="${faceRecogAvailable != 'N/A'}">
-<th:block th:text="${'Face recognition (CompreFace) connection: '+faceRecogAvailable}"></th:block><br>
+<th:block th:text="${'CompreFace connection: '+faceRecogAvailable}"></th:block><br>
+<th:block th:text="${'CompreFace elapsed time: '+compreFaceTiming}"></th:block><br>
 </th:block>
 <th:block th:text="${'Used heap memory: '+usedHeapMemoryGB+' GB'}"></th:block><br>
 <th:block th:text="${'Max heap memory: '+maxHeapMemoryGB+' GB'}"></th:block><br>
