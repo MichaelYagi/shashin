@@ -72,7 +72,10 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "rss",
             "atom",
             "test",
-            "slideshow"
+            "slideshow",
+            "actuator",
+            "actuator\\/metrics",
+            "actuator\\/metrics\\/http.server.requests"
         )
 
         var publicList = arrayOf(
@@ -108,6 +111,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
         var adminList = arrayOf(
             "timeline",
             "timeline/**",
+            "actuator/**",
             "complete/metadata/**",
             "albums/add",
             "rescan/metadata",
