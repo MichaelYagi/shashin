@@ -688,9 +688,9 @@ class ToolsController {
 
 //        println("Process CPU load:"+(osMXBean.processCpuLoad * 100).toInt())
 //        println("System CPU load:"+(osMXBean.cpuLoad * 100).toInt())
-        response["processCpuLoadPercentDouble"] = (osMXBean.processCpuLoad * 100).toInt()
+        response["processCpuLoadPercent"] = (osMXBean.processCpuLoad * 100).toInt()
         @Suppress("DEPRECATION")
-        response["systemCpuLoadPercentDouble"] = (osMXBean.systemCpuLoad * 100).toInt()
+        response["systemCpuLoadPercent"] = (osMXBean.systemCpuLoad * 100).toInt()
         response["os"] = System.getProperty("os.name") + " v" + System.getProperty("os.version") + " " + System.getProperty("os.arch")
 
         response["buildVersion"] = if (buildProperties != null) buildProperties?.version.toString() else "Missing"
