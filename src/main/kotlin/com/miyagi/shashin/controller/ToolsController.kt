@@ -599,6 +599,13 @@ class ToolsController {
         return "health"
     }
 
+    @RequestMapping(value = ["/api/v1/status"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun getStatusApi(model: Model): String {
+        val healthData = buildHealthData(model)
+        return "{\"status\":\""+healthData["status"]+"\"}"
+    }
+
     @RequestMapping(value = ["/api/v1/health"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getHealthApi(model: Model): String {
