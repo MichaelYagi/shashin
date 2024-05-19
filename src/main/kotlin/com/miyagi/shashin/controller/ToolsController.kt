@@ -588,7 +588,6 @@ class ToolsController {
         }
     }
 
-    @Secured("ROLE_SUPER","ROLE_ADMIN")
     @GetMapping("/health")
     fun getHealth(model: Model): String {
 
@@ -661,7 +660,7 @@ class ToolsController {
         }
 
         val dbTimingStart = Date()
-        val metadataResult = metaRepository.findAllByOffsetAndLimit(0,1000)
+        val metadataResult = metaRepository.findAllByOffsetAndLimit(0,500)
         val dbTimingEnd = Date()
 
         try {
