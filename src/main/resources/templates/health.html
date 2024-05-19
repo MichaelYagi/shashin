@@ -10,7 +10,7 @@
 
 <th:block th:text="${'Status: '+status}"></th:block><br><br>
 <th:block th:text="${'Uptime: '+uptime}"></th:block><br>
-<th:block th:text="${'Health endpoint request elapsed time: '+healthEndpointRequestTiming}"></th:block><br>
+<th:block th:text="${'Health endpoint request elapsed time: '+healthEndpointTiming}"></th:block><br>
 <th:block th:text="${'SQLite connection: '+dbAvailable}"></th:block><br>
 <th:block th:text="${'SQLite lookup for '+dbQueryCount+' metadata record'+(dbQueryCount != 1 ? 's' : '')+' elapsed time: '+dbQueryTiming}"></th:block><br>
 <th:block th:text="${'Nominatim connection: '+nominatimAvailable}"></th:block><br>
