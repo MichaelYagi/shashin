@@ -658,17 +658,17 @@ class ToolsController {
         val dbTimingEnd = Date()
 
         try {
-            response["dbAvailable"] = "OK"
-            response["dbQueryCount"] = metadataResult.count()
+            response["sqlLiteAvailable"] = "OK"
+            response["sqlLiteQueryCount"] = metadataResult.count()
         } catch (e: Exception) {
-            response["dbAvailable"] = "FAIL"
-            response["dbQueryCount"] = 0
+            response["sqlLiteAvailable"] = "FAIL"
+            response["sqlLiteQueryCount"] = 0
             status = "FAIL"
-            logger.log(Level.WARNING, "Error querying DB: ${e.message}")
+            logger.log(Level.WARNING, "Error querying SQLLite: ${e.message}")
         }
 
         val dbTimingDiff: Long = dbTimingEnd.time - dbTimingStart.time
-        response["dbQueryTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(dbTimingDiff))
+        response["sqlLiteQueryTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(dbTimingDiff))
 
         val memoryMXBean = ManagementFactory.getMemoryMXBean()
         response["initialMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.init.toDouble() / 1073741824)
