@@ -9,7 +9,6 @@ import com.miyagi.shashin.model.SearchHistory
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.MetadataRepository
-import com.miyagi.shashin.repository.PersistentLoginsRepository
 import com.miyagi.shashin.repository.SearchHistoryRepository
 import com.miyagi.shashin.util.*
 import com.sun.management.OperatingSystemMXBean
@@ -18,6 +17,9 @@ import net.coobird.thumbnailator.geometry.Positions
 import org.jsoup.Jsoup
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.actuate.health.Health
+import org.springframework.boot.actuate.health.HealthComponent
+import org.springframework.boot.actuate.health.HealthEndpoint
 import org.springframework.boot.info.BuildProperties
 import org.springframework.context.event.EventListener
 import org.springframework.core.io.InputStreamResource
@@ -74,7 +76,7 @@ class ToolsController {
     private lateinit var geocodeUrl: String
 
     @Autowired
-    private lateinit var persistentLoginsRepository: PersistentLoginsRepository
+    private var healthEndpoint: HealthEndpoint? = null
 
     private var logger: Logger = Logger.getLogger(ToolsController::class.simpleName)
 
@@ -620,6 +622,11 @@ class ToolsController {
 
         response["status"] = status
         response["healthEndpointTiming"] = 0
+
+        val health: HealthComponent? = healthEndpoint!!.health()
+        if (health == null || health.status.code != "UP") {
+            status = "FAIL"
+        }
 
         val runtimeMXBean: RuntimeMXBean = ManagementFactory.getRuntimeMXBean()
         val seconds: Long = runtimeMXBean.uptime / 1000
