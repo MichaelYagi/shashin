@@ -641,7 +641,7 @@ class UserController {
             operationId = "getMyUserInfo",
             description = "<strong>See your user information including your user ID.</strong><br>" +
                     "<pre><code>" +
-                    "curl -X GET \"http://127.0.0.1:6624/api/v1/users/self\" \\\n" +
+                    "curl -X GET \"http://127.0.0.1:6624/api/v1/users/me\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "</code></pre>" +
@@ -678,7 +678,7 @@ class UserController {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/api/v1/users/self"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/users/me"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     fun getMyUserInfo(model: Model): String {
