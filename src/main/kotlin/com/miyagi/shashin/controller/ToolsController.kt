@@ -621,7 +621,7 @@ class ToolsController {
         var status = "OK"
 
         response["status"] = status
-        response["healthEndpointTiming"] = 0
+        response["requestTiming"] = 0
 
         val health: HealthComponent? = healthEndpoint!!.health()
         if (health == null || health.status.code != "UP") {
@@ -712,7 +712,7 @@ class ToolsController {
 
         val requestTimingDiff: Long = requestTimingEnd.time - requestTimingStart.time
 
-        response["healthEndpointTiming"] = SimpleDateFormat("mm:ss:SSS").format(Date(requestTimingDiff))
+        response["requestTiming"] = SimpleDateFormat("mm:ss:SSS").format(Date(requestTimingDiff))
 
         response["status"] = status
 
