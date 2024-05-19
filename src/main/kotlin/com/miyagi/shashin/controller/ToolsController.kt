@@ -592,38 +592,89 @@ class ToolsController {
     @GetMapping("/health")
     fun getHealth(model: Model): String {
 
+        for ((k, v) in buildHealthData(model)) {
+            model[k] = v!!
+        }
+
+        return "health"
+    }
+
+    @RequestMapping(value = ["/api/v1/health"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun getHealthApi(model: Model): String {
+        return mapper.writeValueAsString(buildHealthData(model))
+    }
+
+    private fun buildHealthData(model: Model): MutableMap<String, Any?> {
+        val response = mutableMapOf<String, Any?>()
+
         val requestTimingStart = Date()
 
         var status = "OK"
 
-        model["dbCount"] = 0
+        response["status"] = status
+        response["endpointRequestTiming"] = 0
+
+        val runtimeMXBean: RuntimeMXBean = ManagementFactory.getRuntimeMXBean()
+        val seconds: Long = runtimeMXBean.uptime / 1000
+        val minutes = seconds / 60
+        val hours = minutes / 60
+        val days = hours / 24
+        response["uptime"] = (if (days > 0) (days.toString() + " day"+(if (days.toInt() == 1) "" else "s")+ " ") else "") + (if ((hours % 24) < 10) "0" else "") + (hours % 24) + ":" + (if ((minutes % 60) < 10) "0" else "") + (minutes % 60) + ":" + (if ((seconds % 60) < 10) "0" else "") + (seconds % 60)
+
+        val nominatimTimingStart = Date()
+        val reachable: Boolean = NetworkUtils.checkNominatimConnection(geocodeUrl+"status.php?format=json")
+        if (reachable) {
+            response["nominatimAvailable"] = "OK"
+        } else {
+            response["nominatimAvailable"] = "FAIL"
+            status = "FAIL"
+        }
+        val nominatimTimingEnd = Date()
+        val nominatimTimingDiff: Long = nominatimTimingEnd.time - nominatimTimingStart.time
+        response["nominatimTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(nominatimTimingDiff))
+
+        // If enabled - status fail if not available
+        val settings = model.getAttribute("settings") as Settings?
+        if (settings != null && settings.getCompreFaceKey() != "" && settings.getCompreFaceServer() != "") {
+            val compreFaceTimingStart = Date()
+            val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
+                settings.getCompreFaceServer(),
+                settings.getCompreFaceKey()
+            )
+            if (faceRecogServicesAvailable) {
+                response["compreFaceAvailable"] = "OK"
+            } else {
+                response["compreFaceAvailable"] = "FAIL"
+                status = "FAIL"
+            }
+            val compreFaceTimingEnd = Date()
+            val compreFaceTimingDiff: Long = compreFaceTimingEnd.time - compreFaceTimingStart.time
+            response["compreFaceTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(compreFaceTimingDiff))
+        }
+
         val dbTimingStart = Date()
         val metadataResult = metaRepository.findAllByOffsetAndLimit(0,1000)
         val dbTimingEnd = Date()
 
         try {
-            model["dbConnect"] = "OK"
-            model["dbCount"] = metadataResult.count()
+            response["dbAvailable"] = "OK"
+            response["dbQueryCount"] = metadataResult.count()
         } catch (e: Exception) {
-            model["dbConnect"] = "FAIL"
+            response["dbAvailable"] = "FAIL"
+            response["dbQueryCount"] = 0
             status = "FAIL"
             logger.log(Level.WARNING, "Error querying DB: ${e.message}")
         }
 
         val dbTimingDiff: Long = dbTimingEnd.time - dbTimingStart.time
-
-        if (dbTimingDiff >= 0) {
-            model["dbTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(dbTimingDiff))
-        } else {
-            model["dbTiming"] = "FAIL"
-            status = "FAIL"
-        }
+        response["dbQueryTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(dbTimingDiff))
 
         val memoryMXBean = ManagementFactory.getMemoryMXBean()
-        model["initialMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.init.toDouble() / 1073741824)
-        model["usedHeapMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.used.toDouble() / 1073741824)
-        model["maxHeapMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.max.toDouble() / 1073741824)
-        model["committedMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.committed.toDouble() / 1073741824)
+        response["initialMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.init.toDouble() / 1073741824)
+        response["usedHeapMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.used.toDouble() / 1073741824)
+        response["maxHeapMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.max.toDouble() / 1073741824)
+        response["committedMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.committed.toDouble() / 1073741824)
 //        println("Used Heap Memory GB:"+metricsMap["usedHeapMemoryGB"])
 //        println("Max Heap Memory GB:"+metricsMap["maxHeapMemoryGB"])
 
@@ -633,65 +684,26 @@ class ToolsController {
         if (cores < 1) {
             status = "FAIL"
         }
-        model["availableCores"] = cores
+        response["availableCores"] = cores
 
 //        println("Process CPU load:"+(osMXBean.processCpuLoad * 100).toInt())
 //        println("System CPU load:"+(osMXBean.cpuLoad * 100).toInt())
-        val runtimeMXBean: RuntimeMXBean = ManagementFactory.getRuntimeMXBean()
-        val seconds: Long = runtimeMXBean.uptime / 1000
-        val minutes = seconds / 60
-        val hours = minutes / 60
-        val days = hours / 24
-        model["uptime"] = (if (days > 0) (days.toString() + " day"+(if (days.toInt() == 1) "" else "s")+ " ") else "") + (if ((hours % 24) < 10) "0" else "") + (hours % 24) + ":" + (if ((minutes % 60) < 10) "0" else "") + (minutes % 60) + ":" + (if ((seconds % 60) < 10) "0" else "") + (seconds % 60)
-        model["processCpuLoadPercentDouble"] = (osMXBean.processCpuLoad * 100).toInt()
+        response["processCpuLoadPercentDouble"] = (osMXBean.processCpuLoad * 100).toInt()
         @Suppress("DEPRECATION")
-        model["systemCpuLoadPercentDouble"] = (osMXBean.systemCpuLoad * 100).toInt()
-        model["os"] = System.getProperty("os.name") + " v" + System.getProperty("os.version") + " " + System.getProperty("os.arch")
+        response["systemCpuLoadPercentDouble"] = (osMXBean.systemCpuLoad * 100).toInt()
+        response["os"] = System.getProperty("os.name") + " v" + System.getProperty("os.version") + " " + System.getProperty("os.arch")
 
-        val nominatimTimingStart = Date()
-        val reachable: Boolean = NetworkUtils.checkNominatimConnection(geocodeUrl+"status.php?format=json")
-        if (reachable) {
-            model["geocoderServicesAvailable"] = "OK"
-        } else {
-            model["geocoderServicesAvailable"] = "FAIL"
-            status = "FAIL"
-        }
-        val nominatimTimingEnd = Date()
-        val nominatimTimingDiff: Long = nominatimTimingEnd.time - nominatimTimingStart.time
-        model["nominatimTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(nominatimTimingDiff))
-
-        // If enabled - status fail if not available
-        val compreFaceTimingStart = Date()
-        val settings = model.getAttribute("settings") as Settings?
-        if (settings != null && settings.getCompreFaceKey() != "" && settings.getCompreFaceServer() != "") {
-            val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
-                settings.getCompreFaceServer(),
-                settings.getCompreFaceKey()
-            )
-            if (faceRecogServicesAvailable) {
-                model["faceRecogAvailable"] = "OK"
-            } else {
-                model["faceRecogAvailable"] = "FAIL"
-                status = "FAIL"
-            }
-        } else {
-            model["faceRecogAvailable"] = "N/A"
-        }
-        val compreFaceTimingEnd = Date()
-        val compreFaceTimingDiff: Long = compreFaceTimingEnd.time - compreFaceTimingStart.time
-        model["compreFaceTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(compreFaceTimingDiff))
-
-        model["buildVersion"] = if (buildProperties != null) buildProperties?.version.toString() else "Missing"
-
-        model["status"] = status
+        response["buildVersion"] = if (buildProperties != null) buildProperties?.version.toString() else "Missing"
 
         val requestTimingEnd = Date()
 
         val requestTimingDiff: Long = requestTimingEnd.time - requestTimingStart.time
 
-        model["requestTiming"] = SimpleDateFormat("mm:ss:SSS").format(Date(requestTimingDiff))
+        response["endpointRequestTiming"] = SimpleDateFormat("mm:ss:SSS").format(Date(requestTimingDiff))
 
-        return "health"
+        response["status"] = status
+
+        return response
     }
 
     private fun roundOffDecimal(number: Double): Any {

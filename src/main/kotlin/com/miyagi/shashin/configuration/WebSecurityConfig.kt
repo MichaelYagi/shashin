@@ -132,7 +132,8 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "api/v1/folders",
             "api/v1/all/album/delete",
             "api/v1/keywords",
-            "api/v1/rescan/metadata"
+            "api/v1/rescan/metadata",
+            "api/v1/health"
         )
 
         val superList = adminList +
