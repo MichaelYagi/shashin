@@ -613,7 +613,7 @@ class ToolsController {
         var status = "OK"
 
         response["status"] = status
-        response["endpointRequestTiming"] = 0
+        response["healthEndpointRequestTiming"] = 0
 
         val runtimeMXBean: RuntimeMXBean = ManagementFactory.getRuntimeMXBean()
         val seconds: Long = runtimeMXBean.uptime / 1000
@@ -699,7 +699,7 @@ class ToolsController {
 
         val requestTimingDiff: Long = requestTimingEnd.time - requestTimingStart.time
 
-        response["endpointRequestTiming"] = SimpleDateFormat("mm:ss:SSS").format(Date(requestTimingDiff))
+        response["healthEndpointRequestTiming"] = SimpleDateFormat("mm:ss:SSS").format(Date(requestTimingDiff))
 
         response["status"] = status
 
