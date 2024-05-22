@@ -84,6 +84,8 @@ class DashboardController {
         //println("message:${message.getMessage()}")
         val metricsMap = mutableMapOf<String,Any>()
 
+        metricsMap["uptime"] = TextUtils.getServerUptime()
+
         val memoryMXBean = ManagementFactory.getMemoryMXBean()
         metricsMap["initialMemoryGB"] = memoryMXBean.heapMemoryUsage.init.toDouble() / 1073741824
         metricsMap["usedHeapMemoryGB"] = memoryMXBean.heapMemoryUsage.used.toDouble() / 1073741824
