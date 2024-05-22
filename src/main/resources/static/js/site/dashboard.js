@@ -500,7 +500,7 @@ class Dashboard {
                     const systemStats = JSON.parse(respMessageJsonString);
 
                     const uptime = systemStats["uptime"];
-                    $("#uptime").text(uptime);
+                    $("#uptime").html("Uptime <code>" + uptime + "</code>");
 
                     const processCpuLoadPercent = Math.ceil(systemStats["processCpuLoadPercentDouble"]*100)|0;
                     const processCpuLoadData = ~~processCpuLoadPercent;
