@@ -194,52 +194,52 @@
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     $("#appSearchInput").val("Dashboard");
 
-    
+    setTimeout(function() {
+        const http = new Http("dashboard data");
+        http.ajax("get", "/dashboard/data").then(function (data) {
+            const siteStatChartData = {};
+            siteStatChartData["photosWithPeopleTaggedCount"] = data["photosWithPeopleTaggedCount"];
+            siteStatChartData["favoritesCount"] = data["favoritesCount"];
+            siteStatChartData["commentsCount"] = data["commentsCount"];
+            siteStatChartData["albumCount"] = data["albumCount"];
 
-    const http = new Http("dashboard data");
-    http.ajax("get", "/dashboard/data").then(function (data) {
-        const siteStatChartData = {};
-        siteStatChartData["photosWithPeopleTaggedCount"] = data["photosWithPeopleTaggedCount"];
-        siteStatChartData["favoritesCount"] = data["favoritesCount"];
-        siteStatChartData["commentsCount"] = data["commentsCount"];
-        siteStatChartData["albumCount"] = data["albumCount"];
+            const userChartData = {};
+            userChartData["activeUserCount"] = data["allowedUserCount"];
+            userChartData["pendingUserCount"] = data["notAllowedUserCount"];
+            userChartData["activeAdminCount"] = data["allowedAdminCount"];
+            userChartData["pendingAdminCount"] = data["notAllowedAdminCount"];
 
-        const userChartData = {};
-        userChartData["activeUserCount"] = data["allowedUserCount"];
-        userChartData["pendingUserCount"] = data["notAllowedUserCount"];
-        userChartData["activeAdminCount"] = data["allowedAdminCount"];
-        userChartData["pendingAdminCount"] = data["notAllowedAdminCount"];
+            const mediaChartData = {};
+            mediaChartData["photoCount"] = data["photoCount"];
+            mediaChartData["videoCount"] = data["videoCount"];
+            mediaChartData["notLocatedCount"] = data["notLocatedCount"];
+            mediaChartData["hiddenCount"] = data["hiddenCount"];
 
-        const mediaChartData = {};
-        mediaChartData["photoCount"] = data["photoCount"];
-        mediaChartData["videoCount"] = data["videoCount"];
-        mediaChartData["notLocatedCount"] = data["notLocatedCount"];
-        mediaChartData["hiddenCount"] = data["hiddenCount"];
+            const cameraChartData = {};
+            cameraChartData["cameraCountJson"] = data["cameraCountJson"];
 
-        const cameraChartData = {};
-        cameraChartData["cameraCountJson"] = data["cameraCountJson"];
+            const agentNameChartData = {};
+            agentNameChartData["agentNameCountJson"] = data["agentNameCountJson"];
 
-        const agentNameChartData = {};
-        agentNameChartData["agentNameCountJson"] = data["agentNameCountJson"];
+            const osNameChartData = {};
+            osNameChartData["osNameCountJson"] = data["osNameCountJson"];
 
-        const osNameChartData = {};
-        osNameChartData["osNameCountJson"] = data["osNameCountJson"];
+            const keywordChartData = {};
+            keywordChartData["keywordCountJson"] = data["keywordCountJson"];
 
-        const keywordChartData = {};
-        keywordChartData["keywordCountJson"] = data["keywordCountJson"];
-
-        const dashboard = new Dashboard();
-        const siteStatChart = dashboard.displaySiteStatChart(siteStatChartData);
-        const userChart = dashboard.displayUserChart(userChartData);
-        const mediaChart = dashboard.displayMediaChart(mediaChartData);
-        const cameraChart = dashboard.displayCameraChart(cameraChartData);
-        const agentNameChart = dashboard.displayAgentNameChart(agentNameChartData);
-        const osNameChart = dashboard.displayOsNameChart(osNameChartData);
-        const keywordChart = dashboard.displayKeywordChart(keywordChartData);
-        const cpuChart = dashboard.displayCpuChart();
-        const memoryChart = dashboard.displayMemoryChart();
-        dashboard.startWebSocket(cpuChart, memoryChart);
-    });
+            const dashboard = new Dashboard();
+            const siteStatChart = dashboard.displaySiteStatChart(siteStatChartData);
+            const userChart = dashboard.displayUserChart(userChartData);
+            const mediaChart = dashboard.displayMediaChart(mediaChartData);
+            const cameraChart = dashboard.displayCameraChart(cameraChartData);
+            const agentNameChart = dashboard.displayAgentNameChart(agentNameChartData);
+            const osNameChart = dashboard.displayOsNameChart(osNameChartData);
+            const keywordChart = dashboard.displayKeywordChart(keywordChartData);
+            const cpuChart = dashboard.displayCpuChart();
+            const memoryChart = dashboard.displayMemoryChart();
+            dashboard.startWebSocket(cpuChart, memoryChart);
+        });
+    }, 0);
 </script>
 
 </body>
