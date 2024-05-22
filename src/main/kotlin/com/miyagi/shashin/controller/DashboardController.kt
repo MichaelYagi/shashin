@@ -3,8 +3,10 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.StatMessage
+import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
+import com.miyagi.shashin.util.NetworkUtils
 import com.miyagi.shashin.util.TextUtils
 import com.sun.management.OperatingSystemMXBean
 import org.springframework.beans.factory.annotation.Autowired
@@ -66,6 +68,9 @@ class DashboardController {
 
     @Autowired
     private lateinit var useragentRepository: UseragentRepository
+
+    @Value("\${app.endpoint.url.geocode}")
+    private var geocodeUrl: String? = null
 
     private var logger: Logger = Logger.getLogger(DashboardController::class.simpleName)
 
@@ -157,6 +162,33 @@ class DashboardController {
         response["keywordCount"] = keywordCount
         response["browserTotalCount"] = browserCount
         response["osTotalCount"] = osCount
+
+        val runtimeMXBean = ManagementFactory.getRuntimeMXBean()
+        val seconds: Long = runtimeMXBean.uptime / 1000
+        val minutes = seconds / 60
+        val hours = minutes / 60
+        val days = hours / 24
+        response["uptime"] = (if (days > 0) (days.toString() + " day"+(if (days.toInt() == 1) "" else "s")+ " ") else "") + (if ((hours % 24) < 10) "0" else "") + (hours % 24) + ":" + (if ((minutes % 60) < 10) "0" else "") + (minutes % 60) + ":" + (if ((seconds % 60) < 10) "0" else "") + (seconds % 60)
+        val reachable: Boolean = NetworkUtils.checkNominatimConnection(geocodeUrl+"status.php?format=json")
+        if (reachable) {
+            response["nominatimAvailable"] = true
+        } else {
+            response["nominatimAvailable"] = false
+        }
+
+        response["compreFaceAvailable"] = null
+        val settings = model.getAttribute("settings") as Settings?
+        if (settings != null && settings.getCompreFaceKey() != "" && settings.getCompreFaceServer() != "") {
+            val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
+                settings.getCompreFaceServer(),
+                settings.getCompreFaceKey()
+            )
+            if (faceRecogServicesAvailable) {
+                response["compreFaceAvailable"] = true
+            } else {
+                response["compreFaceAvailable"] = false
+            }
+        }
 
         // Browser stats
         val browserCounts = useragentRepository.countByAgentName()
