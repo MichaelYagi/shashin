@@ -135,11 +135,11 @@ class DashboardController {
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     fun getDashboard(model: Model): String {
         val module = "dashboard"
-        val response = buildDashboardData(model, true)
-
-        for ((k, v) in response) {
-            model[k] = v!!
-        }
+//        val response = buildDashboardData(model)
+//
+//        for ((k, v) in response) {
+//            model[k] = v!!
+//        }
 
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -148,27 +148,82 @@ class DashboardController {
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
-    @RequestMapping(value = ["/dashboard/data"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/dashboard/data","/api/v1/dashboard/data"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getSharedAlbumsApi(model: Model): String {
         return mapper.writeValueAsString(buildDashboardData(model))
     }
 
-    private fun buildDashboardData(model: Model, getMinimal: Boolean = false): MutableMap<String, Any?> {
+    private fun buildDashboardData(model: Model): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
-        // Site stats
-        if (getMinimal == false) {
-            val photosWithPeopleTaggedCount = recognitionLabelPhotoRepository.countDistinctMetadataId()
-            val favoritesCount = favoriteRepository.count()
-            val commentsCount = commentRepository.count()
-            val albumCount = albumRepository.count()
+        response["uptime"] = TextUtils.getServerUptime()
 
-            response["photosWithPeopleTaggedCount"] = photosWithPeopleTaggedCount
-            response["favoritesCount"] = favoritesCount
-            response["commentsCount"] = commentsCount
-            response["albumCount"] = albumCount
+        // Files stats
+        val kilo = 1024
+        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+        val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
+        var sidecarSize = 0.toLong()
+        try {
+            sidecarSize = if (Files.isSymbolicLink(Paths.get(sidecarDir))) {
+                Files.walk(Paths.get(sidecarDir), FileVisitOption.FOLLOW_LINKS)
+                    .mapToLong { p -> p.toFile().length() }.sum()
+            } else {
+                Files.walk(Paths.get(sidecarDir)).mapToLong { p -> p.toFile().length() }.sum()
+            }
+        } catch (e: Exception) {
+            logger.log(Level.SEVERE, "Error calculating sidecar size:" + e.message)
         }
+        var sidecarSizeProcessed = sidecarSize.toDouble() / (kilo * kilo)
+        var sidecarSizeNotation = "MB"
+        if (sidecarSizeProcessed > kilo) {
+            sidecarSizeProcessed /= kilo
+            sidecarSizeNotation = "GB"
+        }
+        if (sidecarSizeProcessed > kilo) {
+            sidecarSizeProcessed /= kilo
+            sidecarSizeNotation = "TB"
+        }
+        response["sidecarSizeText"] = "${String.format("%.2f", sidecarSizeProcessed)} $sidecarSizeNotation"
+
+        var dir = Paths.get(sidecarDir)
+        dir = dir.toRealPath()
+        val fs = Files.getFileStore(dir)
+        var sidecarUsabe = fs.usableSpace.toDouble() / (kilo * kilo).toDouble()
+        var sidecarUsabeNotation = "MB"
+        if (sidecarUsabe > kilo) {
+            sidecarUsabe /= kilo
+            sidecarUsabeNotation = "GB"
+        }
+        if (sidecarUsabe > kilo) {
+            sidecarUsabe /= kilo
+            sidecarUsabeNotation = "TB"
+        }
+        response["sidecarUsableSpaceText"] = "${String.format("%.2f", sidecarUsabe)} $sidecarUsabeNotation"
+
+        val reachable: Boolean = NetworkUtils.checkNominatimConnection(geocodeUrl+"status.php?format=json")
+        response["nominatimAvailable"] = reachable
+
+        response["compreFaceAvailable"] = null
+        val settings = model.getAttribute("settings") as Settings?
+        if (settings != null && settings.getCompreFaceKey() != "" && settings.getCompreFaceServer() != "") {
+            val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
+                settings.getCompreFaceServer(),
+                settings.getCompreFaceKey()
+            )
+            response["compreFaceAvailable"] = faceRecogServicesAvailable
+        }
+
+        // Site stats
+        val photosWithPeopleTaggedCount = recognitionLabelPhotoRepository.countDistinctMetadataId()
+        val favoritesCount = favoriteRepository.count()
+        val commentsCount = commentRepository.count()
+        val albumCount = albumRepository.count()
+
+        response["photosWithPeopleTaggedCount"] = photosWithPeopleTaggedCount
+        response["favoritesCount"] = favoritesCount
+        response["commentsCount"] = commentsCount
+        response["albumCount"] = albumCount
 
         // Browser stats
         val browserCounts = useragentRepository.countByAgentName()
@@ -245,47 +300,6 @@ class DashboardController {
         response["allowedAdminCount"] = allowedAdminCount
         response["notAllowedAdminCount"] = notAllowedAdminCount
 
-        // Files stats
-        val kilo = 1024
-        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
-        val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
-        var sidecarSize = 0.toLong()
-        try {
-            sidecarSize = if (Files.isSymbolicLink(Paths.get(sidecarDir))) {
-                Files.walk(Paths.get(sidecarDir), FileVisitOption.FOLLOW_LINKS).mapToLong { p -> p.toFile().length() }.sum()
-            } else {
-                Files.walk(Paths.get(sidecarDir)).mapToLong { p -> p.toFile().length() }.sum()
-            }
-        } catch(e: Exception) {
-            logger.log(Level.SEVERE, "Error calculating sidecar size:"+ e.message)
-        }
-        var sidecarSizeProcessed = sidecarSize.toDouble()/(kilo * kilo)
-        var sidecarSizeNotation = "MB"
-        if (sidecarSizeProcessed > kilo) {
-            sidecarSizeProcessed /= kilo
-            sidecarSizeNotation = "GB"
-        }
-        if (sidecarSizeProcessed > kilo) {
-            sidecarSizeProcessed /= kilo
-            sidecarSizeNotation = "TB"
-        }
-        response["sidecarSizeText"] = "${String.format("%.2f",sidecarSizeProcessed)} $sidecarSizeNotation"
-
-        var dir = Paths.get(sidecarDir)
-        dir = dir.toRealPath()
-        val fs = Files.getFileStore(dir)
-        var sidecarUsabe = fs.usableSpace.toDouble()/(kilo * kilo).toDouble()
-        var sidecarUsabeNotation = "MB"
-        if (sidecarUsabe > kilo) {
-            sidecarUsabe /= kilo
-            sidecarUsabeNotation = "GB"
-        }
-        if (sidecarUsabe > kilo) {
-            sidecarUsabe /= kilo
-            sidecarUsabeNotation = "TB"
-        }
-        response["sidecarUsableSpaceText"] = "${String.format("%.2f",sidecarUsabe)} $sidecarUsabeNotation"
-
         // Keyword stats
         val keywordCounts = keywordRepository.countByKeyword()
         val keywordCountList = ArrayList<HashMap<String, Any>>()
@@ -298,20 +312,6 @@ class DashboardController {
         }
         response["keywordCountJson"] = mapper.writeValueAsString(keywordCountList)
         response["keywordTotalCount"] = keywordCount
-
-        response["uptime"] = TextUtils.getServerUptime()
-
-        val reachable: Boolean = NetworkUtils.checkNominatimConnection(geocodeUrl+"status.php?format=json")
-        response["nominatimAvailable"] = reachable
-
-        val settings = model.getAttribute("settings") as Settings?
-        if (settings != null && settings.getCompreFaceKey() != "" && settings.getCompreFaceServer() != "") {
-            val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
-                settings.getCompreFaceServer(),
-                settings.getCompreFaceKey()
-            )
-            response["compreFaceAvailable"] = faceRecogServicesAvailable
-        }
 
         response["message"] = ""
         response["msg"] = ""
