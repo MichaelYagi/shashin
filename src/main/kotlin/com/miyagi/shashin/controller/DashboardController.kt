@@ -216,15 +216,40 @@ class DashboardController {
         val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
         var sidecarSize = 0.toLong()
         try {
-            if (Files.isSymbolicLink(Paths.get(sidecarDir))) {
-                sidecarSize = Files.walk(Paths.get(sidecarDir), FileVisitOption.FOLLOW_LINKS).mapToLong { p -> p.toFile().length() }.sum()
+            sidecarSize = if (Files.isSymbolicLink(Paths.get(sidecarDir))) {
+                Files.walk(Paths.get(sidecarDir), FileVisitOption.FOLLOW_LINKS).mapToLong { p -> p.toFile().length() }.sum()
             } else {
-                sidecarSize = Files.walk(Paths.get(sidecarDir)).mapToLong { p -> p.toFile().length() }.sum()
+                Files.walk(Paths.get(sidecarDir)).mapToLong { p -> p.toFile().length() }.sum()
             }
         } catch(e: Exception) {
             logger.log(Level.SEVERE, "Error calculating sidecar size:"+ e.message)
         }
-        response["sidecarSizeMB"] = String.format("%.2f", (sidecarSize.toDouble()/(1024 * 1024).toDouble()))
+        var sidecarSizeProcessed = sidecarSize.toDouble()/(1024 * 1024)
+        var sidecarSizeNotation = "MB"
+        if (sidecarSizeProcessed > 1024) {
+            sidecarSizeProcessed /= 1024
+            sidecarSizeNotation = "GB"
+        }
+        if (sidecarSizeProcessed > 1024) {
+            sidecarSizeProcessed /= 1024
+            sidecarSizeNotation = "TB"
+        }
+        response["sidecarSizeText"] = "${String.format("%.2f",sidecarSizeProcessed)} $sidecarSizeNotation"
+
+        var dir = Paths.get(sidecarDir)
+        dir = dir.toRealPath()
+        val fs = Files.getFileStore(dir)
+        var sidecarUsabe = fs.usableSpace.toDouble()/(1024 * 1024).toDouble()
+        var sidecarUsabeNotation = "MB"
+        if (sidecarUsabe > 1024) {
+            sidecarUsabe /= 1024
+            sidecarUsabeNotation = "GB"
+        }
+        if (sidecarUsabe > 1024) {
+            sidecarUsabe /= 1024
+            sidecarUsabeNotation = "TB"
+        }
+        response["sidecarUsableSpaceText"] = "${String.format("%.2f",sidecarUsabe)} $sidecarUsabeNotation"
 
         // User stats
         val allowedUserCount = userRepository.countAllByIsAuthorizedIsTrueAndAuthorityEquals(userRole!!)
