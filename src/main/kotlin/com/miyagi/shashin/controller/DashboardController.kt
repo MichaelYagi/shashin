@@ -163,12 +163,7 @@ class DashboardController {
         response["browserTotalCount"] = browserCount
         response["osTotalCount"] = osCount
 
-        val runtimeMXBean = ManagementFactory.getRuntimeMXBean()
-        val seconds: Long = runtimeMXBean.uptime / 1000
-        val minutes = seconds / 60
-        val hours = minutes / 60
-        val days = hours / 24
-        response["uptime"] = (if (days > 0) (days.toString() + " day"+(if (days.toInt() == 1) "" else "s")+ " ") else "") + (if ((hours % 24) < 10) "0" else "") + (hours % 24) + ":" + (if ((minutes % 60) < 10) "0" else "") + (minutes % 60) + ":" + (if ((seconds % 60) < 10) "0" else "") + (seconds % 60)
+        response["uptime"] = TextUtils.getServerUptime()
 
         val reachable: Boolean = NetworkUtils.checkNominatimConnection(geocodeUrl+"status.php?format=json")
         response["nominatimAvailable"] = reachable
