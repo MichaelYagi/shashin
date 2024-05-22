@@ -73,8 +73,8 @@
                 <div class="col">
                     <div class="card">
                         <div class="card-header">
-                            <h2 th:text="${sidecarSizeMB}+' MB'"></h2>
-                            <p class="text-muted">Sidecar Data Size</p>
+                            <h2 th:text="${sidecarSizeText}"></h2>
+                            <p class="text-muted" th:text="'Sidecar Data Size - '+${sidecarUsableSpaceText}+' usable space left'"></p>
                         </div>
                         <div class="card-body">
                             <h5 class="card-title">Gallery Stats</h5>
