@@ -193,10 +193,13 @@
     $("#appSearchInput").val("Dashboard");
 
     setTimeout(function() {
+        shashin.showToastMessage("Loading", "Dashboard data loading ...", {
+            icon: "bi-info-circle",
+            iconColor: "#777777",
+            autohide: false
+        });
         const http = new Http("dashboard data");
         http.ajax("get", "/dashboard/data").then(function (data) {
-            console.log(data)
-
             $("#uptime").html("Uptime <code>" + data["uptime"] + "</code>");
             if (data["nominatimAvailable"] !== null) {
                 $("#nominatimStatusContainer").css("display", "block");
@@ -265,6 +268,7 @@
             const cpuChart = dashboard.displayCpuChart();
             const memoryChart = dashboard.displayMemoryChart();
             dashboard.startWebSocket(cpuChart, memoryChart);
+            shashin.closeToastMessage();
         });
     }, 0);
 </script>
