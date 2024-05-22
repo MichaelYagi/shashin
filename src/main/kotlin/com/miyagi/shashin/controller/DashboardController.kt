@@ -212,6 +212,7 @@ class DashboardController {
         response["osNameCountJson"] = mapper.writeValueAsString(osNameCountList)
 
         // Files stats
+        val kilo = 1024
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
         val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
         var sidecarSize = 0.toLong()
@@ -224,14 +225,14 @@ class DashboardController {
         } catch(e: Exception) {
             logger.log(Level.SEVERE, "Error calculating sidecar size:"+ e.message)
         }
-        var sidecarSizeProcessed = sidecarSize.toDouble()/(1024 * 1024)
+        var sidecarSizeProcessed = sidecarSize.toDouble()/(kilo * kilo)
         var sidecarSizeNotation = "MB"
-        if (sidecarSizeProcessed > 1024) {
-            sidecarSizeProcessed /= 1024
+        if (sidecarSizeProcessed > kilo) {
+            sidecarSizeProcessed /= kilo
             sidecarSizeNotation = "GB"
         }
-        if (sidecarSizeProcessed > 1024) {
-            sidecarSizeProcessed /= 1024
+        if (sidecarSizeProcessed > kilo) {
+            sidecarSizeProcessed /= kilo
             sidecarSizeNotation = "TB"
         }
         response["sidecarSizeText"] = "${String.format("%.2f",sidecarSizeProcessed)} $sidecarSizeNotation"
@@ -239,14 +240,14 @@ class DashboardController {
         var dir = Paths.get(sidecarDir)
         dir = dir.toRealPath()
         val fs = Files.getFileStore(dir)
-        var sidecarUsabe = fs.usableSpace.toDouble()/(1024 * 1024).toDouble()
+        var sidecarUsabe = fs.usableSpace.toDouble()/(kilo * kilo).toDouble()
         var sidecarUsabeNotation = "MB"
-        if (sidecarUsabe > 1024) {
-            sidecarUsabe /= 1024
+        if (sidecarUsabe > kilo) {
+            sidecarUsabe /= kilo
             sidecarUsabeNotation = "GB"
         }
-        if (sidecarUsabe > 1024) {
-            sidecarUsabe /= 1024
+        if (sidecarUsabe > kilo) {
+            sidecarUsabe /= kilo
             sidecarUsabeNotation = "TB"
         }
         response["sidecarUsableSpaceText"] = "${String.format("%.2f",sidecarUsabe)} $sidecarUsabeNotation"
