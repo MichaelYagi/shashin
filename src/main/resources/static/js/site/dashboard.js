@@ -499,6 +499,9 @@ class Dashboard {
                     let respMessageJsonString = JSON.parse(message.body).content;
                     const systemStats = JSON.parse(respMessageJsonString);
 
+                    const uptime = systemStats["uptime"];
+                    $("#uptimeValue").text(uptime);
+
                     const processCpuLoadPercent = Math.ceil(systemStats["processCpuLoadPercentDouble"]*100)|0;
                     const processCpuLoadData = ~~processCpuLoadPercent;
                     shashin.printMessageToConsole("processCpuLoadData: "+processCpuLoadData);
