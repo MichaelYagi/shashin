@@ -176,7 +176,6 @@ class DashboardController {
             response["nominatimAvailable"] = false
         }
 
-        response["compreFaceAvailable"] = null
         val settings = model.getAttribute("settings") as Settings?
         if (settings != null && settings.getCompreFaceKey() != "" && settings.getCompreFaceServer() != "") {
             val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(

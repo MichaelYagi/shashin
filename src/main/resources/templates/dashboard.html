@@ -12,37 +12,54 @@
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
 <!--            <h1>Dashboard</h1><br>-->
 
-            <div class="row pb-4 mt-4">
+            <div class="row pb-4">
                 <div class="col">
-                    <strong>Nominatim available</strong>&nbsp;<span th:style="'color: '+${nominatimAvailable ? 'green' : 'red' }+';font-size: 1rem;'" th:class="${nominatimAvailable ? 'bi-check-circle' : 'bi-x-circle'}"></span>
-                </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Availability</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-text">
+                                <div class="row">
+                                    <div class="col">
+                                        <strong>Nominatim</strong>&nbsp;<span th:style="'color: '+${nominatimAvailable ? 'green' : 'red' }+';font-size: 1rem;'" th:class="${nominatimAvailable ? 'bi-check-circle' : 'bi-x-circle'}"></span>
+                                    </div>
 
-                <th:block th:if="${compreFaceAvailable != null}">
-                <div class="col">
-                    <strong>CompreFace available</strong>&nbsp;<span th:style="'color: '+${compreFaceAvailable ? 'green' : 'red' }+';font-size: 1rem;'" th:class="${compreFaceAvailable ? 'bi-check-circle' : 'bi-x-circle'}"></span>
+                                    <th:block th:if="${compreFaceAvailable != null}">
+                                    <div class="col">
+                                        <strong>CompreFace</strong>&nbsp;<span th:style="'color: '+${compreFaceAvailable ? 'green' : 'red' }+';font-size: 1rem;'" th:class="${compreFaceAvailable ? 'bi-check-circle' : 'bi-x-circle'}"></span>
+                                    </div>
+                                    </th:block>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                </th:block>
             </div>
 
             <div class="row pb-4">
                 <div class="col">
                     <div class="card">
-                        <div class="card-body">
+                        <div class="card-header">
                             <h5 class="card-title">CPU</h5>
-                            <p class="card-text">
+                        </div>
+                        <div class="card-body">
+                            <div class="card-text">
                                 <canvas id="cpuChart" height="400"></canvas>
-                            </p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="col">
                     <div class="card">
-                        <div class="card-body">
+                        <div class="card-header">
                             <h5 class="card-title">Memory</h5>
-                            <p class="card-text">
+                        </div>
+                        <div class="card-body">
+                            <div class="card-text">
                                 <canvas id="memoryChart" height="400"></canvas>
-                            </p>
+                            </div>
                         </div>
                     </div>
                 </div>
