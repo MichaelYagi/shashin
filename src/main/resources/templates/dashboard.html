@@ -22,6 +22,10 @@
                             <div class="card-text">
                                 <div class="row">
                                     <div class="col">
+                                        <strong th:utext="'Uptime &lt;code&gt;'+${uptime}+'&lt;/code&gt;'"></strong>
+                                    </div>
+
+                                    <div class="col">
                                         <strong>Nominatim</strong>&nbsp;<span th:style="'color: '+${nominatimAvailable ? 'green' : 'red' }+';font-size: 1rem;'" th:class="${nominatimAvailable ? 'bi-check-circle' : 'bi-x-circle'}"></span>
                                     </div>
 

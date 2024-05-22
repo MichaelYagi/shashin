@@ -169,12 +169,9 @@ class DashboardController {
         val hours = minutes / 60
         val days = hours / 24
         response["uptime"] = (if (days > 0) (days.toString() + " day"+(if (days.toInt() == 1) "" else "s")+ " ") else "") + (if ((hours % 24) < 10) "0" else "") + (hours % 24) + ":" + (if ((minutes % 60) < 10) "0" else "") + (minutes % 60) + ":" + (if ((seconds % 60) < 10) "0" else "") + (seconds % 60)
+
         val reachable: Boolean = NetworkUtils.checkNominatimConnection(geocodeUrl+"status.php?format=json")
-        if (reachable) {
-            response["nominatimAvailable"] = true
-        } else {
-            response["nominatimAvailable"] = false
-        }
+        response["nominatimAvailable"] = reachable
 
         val settings = model.getAttribute("settings") as Settings?
         if (settings != null && settings.getCompreFaceKey() != "" && settings.getCompreFaceServer() != "") {
@@ -182,11 +179,7 @@ class DashboardController {
                 settings.getCompreFaceServer(),
                 settings.getCompreFaceKey()
             )
-            if (faceRecogServicesAvailable) {
-                response["compreFaceAvailable"] = true
-            } else {
-                response["compreFaceAvailable"] = false
-            }
+            response["compreFaceAvailable"] = faceRecogServicesAvailable
         }
 
         // Browser stats
