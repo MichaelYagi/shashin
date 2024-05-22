@@ -23,6 +23,7 @@ import org.springframework.ui.set
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.socket.messaging.SessionConnectEvent
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import org.springframework.web.socket.messaging.SessionSubscribeEvent
@@ -134,7 +135,7 @@ class DashboardController {
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     fun getDashboard(model: Model): String {
         val module = "dashboard"
-        val response = buildDashboardData(model)
+        val response = buildDashboardData(model, true)
 
         for ((k, v) in response) {
             model[k] = v!!
@@ -146,37 +147,27 @@ class DashboardController {
         return module
     }
 
-    private fun buildDashboardData(model: Model): MutableMap<String, Any?> {
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @RequestMapping(value = ["/dashboard/data"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun getSharedAlbumsApi(model: Model): String {
+        return mapper.writeValueAsString(buildDashboardData(model))
+    }
+
+    private fun buildDashboardData(model: Model, getMinimal: Boolean = false): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         // Site stats
-        val photosWithPeopleTaggedCount = recognitionLabelPhotoRepository.countDistinctMetadataId()
-        val favoritesCount = favoriteRepository.count()
-        val commentsCount = commentRepository.count()
-        val albumCount = albumRepository.count()
-        val keywordCount = keywordRepository.count()
-        val browserCount = useragentRepository.countDistinctAgentName()
-        val osCount = useragentRepository.countDistinctOsName()
-        response["photosWithPeopleTaggedCount"] = photosWithPeopleTaggedCount
-        response["favoritesCount"] = favoritesCount
-        response["commentsCount"] = commentsCount
-        response["albumCount"] = albumCount
-        response["keywordCount"] = keywordCount
-        response["browserTotalCount"] = browserCount
-        response["osTotalCount"] = osCount
+        if (getMinimal == false) {
+            val photosWithPeopleTaggedCount = recognitionLabelPhotoRepository.countDistinctMetadataId()
+            val favoritesCount = favoriteRepository.count()
+            val commentsCount = commentRepository.count()
+            val albumCount = albumRepository.count()
 
-        response["uptime"] = TextUtils.getServerUptime()
-
-        val reachable: Boolean = NetworkUtils.checkNominatimConnection(geocodeUrl+"status.php?format=json")
-        response["nominatimAvailable"] = reachable
-
-        val settings = model.getAttribute("settings") as Settings?
-        if (settings != null && settings.getCompreFaceKey() != "" && settings.getCompreFaceServer() != "") {
-            val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
-                settings.getCompreFaceServer(),
-                settings.getCompreFaceKey()
-            )
-            response["compreFaceAvailable"] = faceRecogServicesAvailable
+            response["photosWithPeopleTaggedCount"] = photosWithPeopleTaggedCount
+            response["favoritesCount"] = favoritesCount
+            response["commentsCount"] = commentsCount
+            response["albumCount"] = albumCount
         }
 
         // Browser stats
@@ -210,6 +201,49 @@ class DashboardController {
             osNameCountList.add(osNameCountMap)
         }
         response["osNameCountJson"] = mapper.writeValueAsString(osNameCountList)
+
+        // Camera stats
+        val cameraCounts = metadataRepository.countByCameraType()
+        val cameraCountList = ArrayList<HashMap<String, Any>>()
+        for (cameraCount in cameraCounts) {
+            val cameraCountMap = HashMap<String, Any>()
+            var cameraName = cameraCount.getCamera().toString()
+            if (cameraCount.getCamera() == null) {
+                cameraName = "Unknown"
+            }
+            cameraCountMap["y"] = cameraName
+            cameraCountMap["x"] = cameraCount.getCount().toString().toInt()
+            cameraCountList.add(cameraCountMap)
+        }
+        response["cameraCountJson"] = mapper.writeValueAsString(cameraCountList)
+        response["cameraTotalCount"] = cameraCountList.count()
+
+        val keywordCount = keywordRepository.count()
+        val browserCount = useragentRepository.countDistinctAgentName()
+        val osCount = useragentRepository.countDistinctOsName()
+        response["keywordCount"] = keywordCount
+        response["browserTotalCount"] = browserCount
+        response["osTotalCount"] = osCount
+
+        // Media stats
+        val photoCount = metadataRepository.countAllByTypeContains("image")
+        val videoCount = metadataRepository.countAllByTypeContains("video")
+        val notLocatedCount = metadataRepository.countAllByLatIsNullAndLngIsNull()
+        val hiddenCount = metadataRepository.countAllByHiddenIsTrue()
+        response["photoCount"] = photoCount
+        response["videoCount"] = videoCount
+        response["notLocatedCount"] = notLocatedCount
+        response["hiddenCount"] = hiddenCount
+
+        // User stats
+        val allowedUserCount = userRepository.countAllByIsAuthorizedIsTrueAndAuthorityEquals(userRole!!)
+        val notAllowedUserCount = userRepository.countAllByIsAuthorizedIsFalseAndAuthorityEquals(userRole!!)
+        val allowedAdminCount = userRepository.countAllByIsAuthorizedIsTrueAndAuthorityEquals(adminRole!!)
+        val notAllowedAdminCount = userRepository.countAllByIsAuthorizedIsFalseAndAuthorityEquals(adminRole!!)
+        response["allowedUserCount"] = allowedUserCount
+        response["notAllowedUserCount"] = notAllowedUserCount
+        response["allowedAdminCount"] = allowedAdminCount
+        response["notAllowedAdminCount"] = notAllowedAdminCount
 
         // Files stats
         val kilo = 1024
@@ -252,42 +286,6 @@ class DashboardController {
         }
         response["sidecarUsableSpaceText"] = "${String.format("%.2f",sidecarUsabe)} $sidecarUsabeNotation"
 
-        // User stats
-        val allowedUserCount = userRepository.countAllByIsAuthorizedIsTrueAndAuthorityEquals(userRole!!)
-        val notAllowedUserCount = userRepository.countAllByIsAuthorizedIsFalseAndAuthorityEquals(userRole!!)
-        val allowedAdminCount = userRepository.countAllByIsAuthorizedIsTrueAndAuthorityEquals(adminRole!!)
-        val notAllowedAdminCount = userRepository.countAllByIsAuthorizedIsFalseAndAuthorityEquals(adminRole!!)
-        response["allowedUserCount"] = allowedUserCount
-        response["notAllowedUserCount"] = notAllowedUserCount
-        response["allowedAdminCount"] = allowedAdminCount
-        response["notAllowedAdminCount"] = notAllowedAdminCount
-
-        // Media stats
-        val photoCount = metadataRepository.countAllByTypeContains("image")
-        val videoCount = metadataRepository.countAllByTypeContains("video")
-        val notLocatedCount = metadataRepository.countAllByLatIsNullAndLngIsNull()
-        val hiddenCount = metadataRepository.countAllByHiddenIsTrue()
-        response["photoCount"] = photoCount
-        response["videoCount"] = videoCount
-        response["notLocatedCount"] = notLocatedCount
-        response["hiddenCount"] = hiddenCount
-
-        // Camera stats
-        val cameraCounts = metadataRepository.countByCameraType()
-        val cameraCountList = ArrayList<HashMap<String, Any>>()
-        for (cameraCount in cameraCounts) {
-            val cameraCountMap = HashMap<String, Any>()
-            var cameraName = cameraCount.getCamera().toString()
-            if (cameraCount.getCamera() == null) {
-                cameraName = "Unknown"
-            }
-            cameraCountMap["y"] = cameraName
-            cameraCountMap["x"] = cameraCount.getCount().toString().toInt()
-            cameraCountList.add(cameraCountMap)
-        }
-        response["cameraCountJson"] = mapper.writeValueAsString(cameraCountList)
-        response["cameraTotalCount"] = cameraCountList.count()
-
         // Keyword stats
         val keywordCounts = keywordRepository.countByKeyword()
         val keywordCountList = ArrayList<HashMap<String, Any>>()
@@ -300,6 +298,20 @@ class DashboardController {
         }
         response["keywordCountJson"] = mapper.writeValueAsString(keywordCountList)
         response["keywordTotalCount"] = keywordCount
+
+        response["uptime"] = TextUtils.getServerUptime()
+
+        val reachable: Boolean = NetworkUtils.checkNominatimConnection(geocodeUrl+"status.php?format=json")
+        response["nominatimAvailable"] = reachable
+
+        val settings = model.getAttribute("settings") as Settings?
+        if (settings != null && settings.getCompreFaceKey() != "" && settings.getCompreFaceServer() != "") {
+            val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
+                settings.getCompreFaceServer(),
+                settings.getCompreFaceKey()
+            )
+            response["compreFaceAvailable"] = faceRecogServicesAvailable
+        }
 
         response["message"] = ""
         response["msg"] = ""
