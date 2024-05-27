@@ -196,8 +196,7 @@ class MetadataProcessing() {
                                 if (!takenTagged && date != null) {
                                     var formattedDate = destFormat.format(date)
 
-                                    // When a file or folder doesn't have a timestamp, it defaults to the epoch in GMT,
-                                    // which is the earliest possible time
+                                    // When a file or folder doesn't have a timestamp, it defaults to the epoch date
                                     val gmtPattern = TextUtils.getCommonDateFormat()
                                     val gmtFormat = SimpleDateFormat(gmtPattern, Locale.ENGLISH)
                                     gmtFormat.timeZone = TimeZone.getTimeZone("GMT")
