@@ -201,7 +201,7 @@ class MetadataProcessing() {
                                     val gmtPattern = TextUtils.getCommonDateFormat()
                                     val gmtFormat = SimpleDateFormat(gmtPattern, Locale.ENGLISH)
                                     gmtFormat.timeZone = TimeZone.getTimeZone("GMT")
-                                    if (gmtFormat.format(date) == "1970-01-01 00:00:00") {
+                                    if (gmtFormat.format(date) == TextUtils.getEpochDateTime()) {
                                         formattedDate = TextUtils.getCurrentTimestamp()
                                         logger.log(
                                             Level.INFO,
