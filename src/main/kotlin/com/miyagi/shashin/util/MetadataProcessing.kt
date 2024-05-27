@@ -203,6 +203,10 @@ class MetadataProcessing() {
                                     gmtFormat.timeZone = TimeZone.getTimeZone("GMT")
                                     if (gmtFormat.format(date) == "1970-01-01 00:00:00") {
                                         formattedDate = TextUtils.getCurrentTimestamp()
+                                        logger.log(
+                                            Level.INFO,
+                                            "Epoch time detected for " + file.name + ". Changing CreatedAt/TakenAt datetime to the current datetime"
+                                        )
                                     }
                                     this.metadataObj.setTakenAt(formattedDate)
                                     this.metadataObj.setCreatedAt(formattedDate)
