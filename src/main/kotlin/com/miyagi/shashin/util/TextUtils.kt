@@ -110,6 +110,10 @@ class TextUtils {
             return "yyyy-MM-dd HH:mm:ss"
         }
 
+        fun getEpochDateTime() : String {
+            return "1970-01-01 00:00:00"
+        }
+
         fun isNumber(input: String): Boolean {
             val integerChars = '0'..'9'
             var dotOccurred = 0
