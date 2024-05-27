@@ -193,11 +193,16 @@ class MetadataProcessing() {
                                     }
                                 }
 
-                                if (date != null && !takenTagged) {
-                                    this.metadataObj.setTakenAt(destFormat.format(date))
-                                    this.metadataObj.setCreatedAt(destFormat.format(date))
+                                if (!takenTagged && date != null) {
+                                    var formattedDate = destFormat.format(date)
+                                    // When a file or folder doesn't have a time-stamp, it defaults to Dec 31, 1969, which is the earliest possible time
+                                    if (destFormat.format(date).startsWith("1969-12-31")) {
+                                        formattedDate = TextUtils.getCurrentTimestamp()
+                                    }
+                                    this.metadataObj.setTakenAt(formattedDate)
+                                    this.metadataObj.setCreatedAt(formattedDate)
 
-                                    val dateArray = destFormat.format(date).toString().split(" ")
+                                    val dateArray = formattedDate.toString().split(" ")
                                     val takenDateArray = dateArray[0].split("-")
 
                                     this.metadataObj.setYear(takenDateArray[0].toInt())
