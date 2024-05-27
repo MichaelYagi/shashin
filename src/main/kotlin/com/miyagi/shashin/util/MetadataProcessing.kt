@@ -195,8 +195,13 @@ class MetadataProcessing() {
 
                                 if (!takenTagged && date != null) {
                                     var formattedDate = destFormat.format(date)
-                                    // When a file or folder doesn't have a time-stamp, it defaults to Dec 31, 1969, which is the earliest possible time
-                                    if (destFormat.format(date).startsWith("1969-12-31")) {
+
+                                    // When a file or folder doesn't have a timestamp, it defaults to the epoch in GMT,
+                                    // which is the earliest possible time
+                                    val gmtPattern = TextUtils.getCommonDateFormat()
+                                    val gmtFormat = SimpleDateFormat(gmtPattern, Locale.ENGLISH)
+                                    gmtFormat.timeZone = TimeZone.getTimeZone("GMT")
+                                    if (gmtFormat.format(date) == "1970-01-01 00:00:00") {
                                         formattedDate = TextUtils.getCurrentTimestamp()
                                     }
                                     this.metadataObj.setTakenAt(formattedDate)
