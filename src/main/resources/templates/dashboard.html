@@ -220,7 +220,7 @@
 
             $("#sidecarSizeText").text(data["sidecarSizeText"]);
             $("#sidecarUsableSpaceText").text("Sidecar Data Size - "+data["sidecarUsableSpaceText"]+" usable space left");
-            $("#userCounts").text(parseInt(data["allowedUserCount"])+parseInt(data["notAllowedUserCount"])+parseInt(data["allowedAdminCount"])+parseInt(data["notAllowedAdminCount"]));
+            $("#userCounts").text(parseInt(data["allowedUserCount"])+parseInt(data["notAllowedUserCount"])+parseInt(data["allowedAdminCount"])+parseInt(data["notAllowedAdminCount"])+parseInt(data["allowedSuperCount"])+parseInt(data["notAllowedSuperCount"]));
             $("#mediaCount").text(parseInt(data["photoCount"])+parseInt(data["videoCount"]));
             $("#osCount").text(parseInt(data["osTotalCount"]));
             $("#browserCount").text(parseInt(data["browserTotalCount"]));
@@ -238,6 +238,8 @@
             userChartData["pendingUserCount"] = data["notAllowedUserCount"];
             userChartData["activeAdminCount"] = data["allowedAdminCount"];
             userChartData["pendingAdminCount"] = data["notAllowedAdminCount"];
+            userChartData["activeSuperCount"] = data["allowedSuperCount"];
+            userChartData["pendingSuperCount"] = data["notAllowedSuperCount"];
 
             const mediaChartData = {};
             mediaChartData["photoCount"] = data["photoCount"];

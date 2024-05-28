@@ -40,6 +40,9 @@ import javax.servlet.http.HttpSession
 
 @Controller
 class DashboardController {
+    @Value("\${app.role.super}")
+    private var superRole: String? = null
+
     @Value("\${app.role.admin}")
     private var adminRole: String? = null
 
@@ -295,10 +298,14 @@ class DashboardController {
         val notAllowedUserCount = userRepository.countAllByIsAuthorizedIsFalseAndAuthorityEquals(userRole!!)
         val allowedAdminCount = userRepository.countAllByIsAuthorizedIsTrueAndAuthorityEquals(adminRole!!)
         val notAllowedAdminCount = userRepository.countAllByIsAuthorizedIsFalseAndAuthorityEquals(adminRole!!)
+        val allowedSuperCount = userRepository.countAllByIsAuthorizedIsTrueAndAuthorityEquals(superRole!!)
+        val notAllowedSuperCount = userRepository.countAllByIsAuthorizedIsFalseAndAuthorityEquals(superRole!!)
         response["allowedUserCount"] = allowedUserCount
         response["notAllowedUserCount"] = notAllowedUserCount
         response["allowedAdminCount"] = allowedAdminCount
         response["notAllowedAdminCount"] = notAllowedAdminCount
+        response["allowedSuperCount"] = allowedSuperCount
+        response["notAllowedSuperCount"] = notAllowedSuperCount
 
         // Keyword stats
         val keywordCounts = keywordRepository.countByKeyword()
