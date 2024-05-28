@@ -86,7 +86,7 @@ class Dashboard {
         return new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Photos', 'Videos', 'Missing GPS Data', 'Removed'],
+                labels: ['Photos', 'Videos', 'No GPS Data', 'Removed'],
                 datasets: [{
                     data: [data.photoCount, data.videoCount, data.notLocatedCount, data.hiddenCount],
                     backgroundColor: [
