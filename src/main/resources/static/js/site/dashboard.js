@@ -44,9 +44,9 @@ class Dashboard {
         return new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Registered Users', 'Registered Admins', 'Pending Users', 'Pending Admins'],
+                labels: ['Authorized Users', 'Authorized Admins', 'Authorized Super Admins', 'Unauthorized Users', 'Unauthorized Admins', 'Unauthorized Super Admins'],
                 datasets: [{
-                    data: [data.activeUserCount, data.activeAdminCount, data.pendingUserCount, data.pendingAdminCount],
+                    data: [data.activeUserCount, data.activeAdminCount, data.activeSuperCount, data.pendingUserCount, data.pendingAdminCount, data.pendingSuperCount],
                     backgroundColor: [
                         'rgba(54, 162, 235, 0.2)',
                         'rgba(255, 206, 86, 0.2)',
