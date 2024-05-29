@@ -1346,7 +1346,7 @@ class Util {
             $(".manualTakenAtDetails").text(takenDetails);
 
             if (Util.isSafari() === false) {
-                timeLinkHtml = "&nbsp;&nbsp;&nbsp;<a class='bi-binoculars' style='font-size: 1rem;' href='/timeline#" + metadata.year + '-' + metadata.month + '-' + metadata.day + "' title='"+(activePage === "trash" ? "Search for date in " : "View in ")+"timeline' target='_blank'></a>";
+                timeLinkHtml = "&nbsp;&nbsp;&nbsp;<a class='bi-calendar4' style='font-size: 1rem;' href='/timeline#" + metadata.year + '-' + metadata.month + '-' + metadata.day + "' title='"+(activePage === "trash" ? "Search for date in " : "View in ")+"timeline' target='_blank'></a>";
             }
         }
         if (metadata.timeZone != null) {
