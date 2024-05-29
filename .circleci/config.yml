@@ -4,7 +4,7 @@ orbs:
   maven: circleci/maven@1.4.0
   node: circleci/node@5.1.0
   artifactory: circleci/artifactory@1.0.0
-  browser-tools: circleci/browser-tools@1.4.1
+  browser-tools: circleci/browser-tools@1.4.8
 
 workflows:
   shashin_workflow:
@@ -45,11 +45,11 @@ workflows:
                   sudo apt-get install libgbm1 libgconf-2-4 libnss3 libxss1 lsb-release
                   sudo apt-get install libappindicator3-1 libasound2 fonts-liberation xdg-utils
             # Install latest
-#            - browser-tools/install-chrome
-#            - browser-tools/install-chromedriver
+            - browser-tools/install-chrome
+            - browser-tools/install-chromedriver
             # Install version based on https://chromedriver.chromium.org/downloads
-            - browser-tools/install-browser-tools:
-                chrome-version: 114.0.5735.90
+#            - browser-tools/install-browser-tools:
+#                chrome-version: 114.0.5735.90
             - run:
                 command: |
                   google-chrome --version
