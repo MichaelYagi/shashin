@@ -63,10 +63,10 @@ workflows:
                   mkdir -p target/test-results/junit-selenium/
                   find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} target/test-results/junit/ \;
                 when: always
-#            - store_test_results:
-#                path: target/test-results
-#            - store_artifacts:
-#                path: target/test-results/junit
+            - store_test_results:
+                path: target/test-results
+            - store_artifacts:
+                path: target/test-results/junit
 #            - store_artifacts:
 #                path: target/shashin-1.0.0.jar
 #                destination: shashin-1.0.0.jar
