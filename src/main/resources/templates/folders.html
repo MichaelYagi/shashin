@@ -47,6 +47,8 @@
 
 <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
     $(document).ready(function() {
+        $("#appSearchInput").val("Folders");
+
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         const activePage = /*[[${activePage}]]*/ 'folders';
