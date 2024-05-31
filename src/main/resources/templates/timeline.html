@@ -206,6 +206,8 @@
 </th:block>
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     $(document).ready(function () {
+        $("#appSearchInput").val("Timeline");
+
         /*<![CDATA[*/
         const mediaTypeFilter = /*[[${mediaTypeFilter}]]*/ 'all';
         /*]]>*/
