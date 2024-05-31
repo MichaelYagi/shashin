@@ -91,6 +91,8 @@
 </th:block>
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     $(document).ready(function() {
+        $("#appSearchInput").val("Recently Removed");
+
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         const activePage = /*[[${activePage}]]*/ 'trash';
