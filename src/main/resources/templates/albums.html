@@ -236,6 +236,8 @@
 
 <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
     $(document).ready(function() {
+        $("#appSearchInput").val("Albums");
+
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         const activePage = /*[[${activePage}]]*/ 'albums';
