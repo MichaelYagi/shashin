@@ -20,10 +20,10 @@ workflows:
                 name: Save JS test results
                 command: |
                   mkdir -p target/test-results/mocha/
-                  find . -type f -regex ".*/test-results.xml" -exec cp {} / \;
+                  find . -type f -regex ".*/test-results.xml" -exec cp {} ../ \;
                 when: always
             - store_test_results:
-                path: target/test-results
+                path: target/test-results/mocha
             - store_artifacts:
                 path: target/test-results/mocha
             - persist_to_workspace: # persist across jobs
@@ -61,10 +61,10 @@ workflows:
                 name: Save test results
                 command: |
                   mkdir -p target/test-results/junit-selenium/
-                  find . -type f -regex ".*/TEST-com.miyagi.shashin.*.xml" -exec cp {} / \;
+                  find . -type f -regex ".*/target/surefire-reports/.*.xml" -exec cp {} / \;
                 when: always
             - store_test_results:
-                path: target/test-results
+                path: target/test-results/junit-selenium
             - store_artifacts:
                 path: target/test-results/junit-selenium
             - persist_to_workspace: # persist across jobs
