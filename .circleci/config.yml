@@ -20,7 +20,7 @@ workflows:
                 name: Save JS test results
                 command: |
                   mkdir -p target/test-results/mocha/
-                  find . -type f -regex ".*/test-results.xml" -exec cp {} / \;
+                  find . -type f -regex ".*/test-results.xml" -exec cp {} target/test-results/mocha/ \;
                 when: always
             - store_test_results:
                 path: target/test-results
@@ -60,17 +60,17 @@ workflows:
             - run:
                 name: Save test results
                 command: |
-                  mkdir -p ~/test-results/junit/
-                  find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/test-results/junit/ \;
+                  mkdir -p target/test-results/junit/
+                  find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} target/test-results/junit/ \;
                 when: always
-            - store_test_results:
-                path: test-results/junit/
-            - store_artifacts:
-                path: test-results/junit/
-            - persist_to_workspace: # persist across jobs
-                root: .
-                paths:
-                  - target/test-results/junit-selenium
+#            - store_test_results:
+#                path: ~/test-results
+#            - store_artifacts:
+#                path: ~/test-results/junit
+#            - persist_to_workspace: # persist across jobs
+#                root: .
+#                paths:
+#                  - target/test-results/junit-selenium
 #            - store_artifacts:
 #                path: target/shashin-1.0.0.jar
 #                destination: shashin-1.0.0.jar
@@ -79,8 +79,8 @@ workflows:
 #                destination: Shashin-1.0.0.exe
             - attach_workspace: # attach from another job
                 at: target/test-results/mocha
-            - attach_workspace: # attach from current job
-                at: target/test-results/junit-selenium
+#            - attach_workspace: # attach from current job
+#                at: target/test-results/junit-selenium
             - run:
                 name: Set Version # get version from pom.xml
                 command: |
