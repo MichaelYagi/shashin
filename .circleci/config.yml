@@ -60,8 +60,8 @@ workflows:
             - run:
                 name: Save test results
                 command: |
-                  mkdir -p target/test-results/junit-selenium/
-                  find . -type f -regex ".*/target/surefire-reports/.*.xml" -exec cp {} / \;
+                  mkdir -p ~/test-results/junit/
+                  find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/test-results/junit/ \;
                 when: always
             - store_test_results:
                 path: target/test-results
