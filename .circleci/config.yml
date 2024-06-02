@@ -27,9 +27,9 @@ workflows:
             - store_artifacts:
                 path: target/test-results/mocha
             - persist_to_workspace: # persist across jobs
-                root: ~/project/target/test-results
+                root: ~/project/target
                 paths:
-                  - mocha
+                  - test-results
       - maven/test: # checkout, build, test, and upload test results
           name: Run junit tests and package to tar # and store artifacts
           requires:
