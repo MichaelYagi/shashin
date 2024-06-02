@@ -75,6 +75,9 @@ class ToolsController {
     @Value("\${app.endpoint.url.geocode}")
     private lateinit var geocodeUrl: String
 
+    @Value("\${app.circleci.key}")
+    private lateinit var circleCiKey: String
+
     @Autowired
     private var healthEndpoint: HealthEndpoint? = null
 
@@ -641,6 +644,21 @@ class ToolsController {
         val nominatimTimingEnd = Date()
         val nominatimTimingDiff: Long = nominatimTimingEnd.time - nominatimTimingStart.time
         response["nominatimTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(nominatimTimingDiff))
+
+
+        val circleciTimingStart = Date()
+        val passing: Boolean = NetworkUtils.checkCircleCiStatus(circleCiKey)
+        if (passing) {
+            response["circleCiPassing"] = "OK"
+        } else {
+            response["circleCiPassing"] = "FAIL"
+            // Don't include as part of status, credits might run out resulting
+            // status = "FAIL"
+        }
+        val circleciTimingEnd = Date()
+        val circleciTimingDiff: Long = circleciTimingEnd.time - circleciTimingStart.time
+        response["circleCiPassingTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(circleciTimingDiff))
+
 
         // If enabled - status fail if not available
         val settings = model.getAttribute("settings") as Settings?

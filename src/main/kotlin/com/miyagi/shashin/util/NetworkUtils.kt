@@ -16,6 +16,8 @@ import java.util.logging.Level
 import java.util.logging.Logger
 
 class NetworkUtils {
+
+
     companion object {
         private var logger: Logger = Logger.getLogger(NetworkUtils::class.simpleName)
 
@@ -85,6 +87,37 @@ class NetworkUtils {
             logger.log(Level.INFO, "checkCompreFaceConnection - processing time: $processingTime")
 
             return available
+        }
+
+        fun checkCircleCiStatus(apiKey: String?): Boolean {
+            var passing = false
+
+            if (!apiKey.isNullOrBlank()) {
+                var response: ResponseEntity<String>?
+                try {
+                    val webClient =
+                        WebClient.create("https://circleci.com/api/v1.1/project/github/MichaelYagi/shashin?limit=1&offset=0&filter=completed&circle-token=$apiKey")
+                    response = webClient.get()
+                        .retrieve()
+                        .toEntity(String::class.java)
+                        .block()
+
+                    if (response != null) {
+                        val jsonResult = response.body
+                        val mapper = ObjectMapper()
+                        val jsonObj = mapper.readTree(jsonResult)
+                        val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Array<Map<String, Any>>>() {})
+                        if (resultMap[0].containsKey("outcome") && resultMap[0]["outcome"] == "success") {
+                            passing = true
+                        }
+                    }
+                } catch (e: Exception) {
+                    logger.log(Level.WARNING, "Error checking CircleCI: ${e.message}")
+                    passing = false
+                }
+            }
+
+            return passing
         }
 
         fun checkNominatimConnection(nominatimUrl: String?): Boolean {
