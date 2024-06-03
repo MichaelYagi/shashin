@@ -195,7 +195,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - Initial commit
 - Framework setup
-- Base and timeline contoller and views
+- Base and timeline controller and views
 
 ### Changed
 
