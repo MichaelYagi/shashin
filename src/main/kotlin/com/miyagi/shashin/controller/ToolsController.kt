@@ -649,15 +649,15 @@ class ToolsController {
         val circleciTimingStart = Date()
         val passing: Boolean = NetworkUtils.checkCircleCiStatus(circleCiKey)
         if (passing) {
-            response["circleCiPassing"] = "OK"
+            response["circleCIBuild"] = "OK"
         } else {
-            response["circleCiPassing"] = "FAIL"
+            response["circleCIBuild"] = "FAIL"
             // Don't include as part of status, credits might run out resulting
             // status = "FAIL"
         }
         val circleciTimingEnd = Date()
         val circleciTimingDiff: Long = circleciTimingEnd.time - circleciTimingStart.time
-        response["circleCiPassingTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(circleciTimingDiff))
+        response["circleCIBuildTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(circleciTimingDiff))
 
 
         // If enabled - status fail if not available
