@@ -20,7 +20,7 @@ workflows:
                 name: Save JS test results
                 command: |
                   mkdir -p target/test-results/mocha/
-                  find . -type f -regex ".*/test-results.xml" -exec cp {} target/test-results/mocha/ \;
+                  find . -type f -regex ".*/.*" -exec cp {} target/test-results/mocha/ \;
                 when: always
             - store_test_results:
                 path: target/test-results
@@ -61,7 +61,7 @@ workflows:
                 name: Save test results
                 command: |
                   mkdir -p target/test-results/junit/
-                  find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} target/test-results/junit/ \;
+                  find . -type f -regex ".*/target/surefire-reports/.*" -exec cp {} target/test-results/junit/ \;
                 when: always
 #            - store_test_results:
 #                path: ~/test-results
@@ -79,8 +79,6 @@ workflows:
 #                destination: Shashin-1.0.0.exe
             - attach_workspace: # attach from another job
                 at: .
-#            - attach_workspace: # attach from another job
-#                at: target/test-results/mocha
 #            - attach_workspace: # attach from current job
 #                at: target/test-results/junit-selenium
             - run:
