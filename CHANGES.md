@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [2.5.1] - 2024-05-04
+## [2.5.1] - 2024-06-02
 ### Added
 
 - Accessed in browse view
