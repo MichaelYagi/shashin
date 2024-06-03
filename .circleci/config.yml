@@ -78,7 +78,9 @@ workflows:
 #                path: target/Shashin-1.0.0.exe
 #                destination: Shashin-1.0.0.exe
             - attach_workspace: # attach from another job
-                at: target/test-results/mocha
+                at: .
+#            - attach_workspace: # attach from another job
+#                at: target/test-results/mocha
 #            - attach_workspace: # attach from current job
 #                at: target/test-results/junit-selenium
             - run:
