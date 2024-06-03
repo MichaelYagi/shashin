@@ -9,9 +9,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+- Added more search input titles
+
 ### Fixed
 
 - Timeline scrolling rendering
+- Non-blocking Dashboard loading
+- CircleCI script
 
 ## [2.5.0] - 2024-05-03
 ### Added
@@ -185,3 +189,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed API data structure of values returned
 - Prevent keyword blank string entry
 - Open only one search link when clicking on dashboard bar for camera and keywords
+
+## [0.1.0] - 2021-08-09
+### Added
+
+- Initial commit
+- Framework setup
+- Base and timeline contoller and views
+
+### Changed
+
+### Fixed
