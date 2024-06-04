@@ -203,11 +203,14 @@ class TextUtils {
             val uuidInput = "$inputString-$inputStringTwo-$inputStringThree-$someDouble-$someInt-$inputStringFour"
             val uuid = UUID.nameUUIDFromBytes(uuidInput.toByteArray())
 
-            var logString = "UUID $uuid generated from input $uuidInput"
-            if (location.isNotEmpty()) {
-                logString += " from $location"
+            if (location.isEmpty() || (location.isNotEmpty() && !location.contains("AttributeController"))) {
+                var logString = "UUID $uuid generated from input $uuidInput"
+                if (location.isNotEmpty()) {
+                    logString += " from $location"
+                }
+
+                logger.log(Level.INFO, logString)
             }
-            logger.log(Level.INFO, logString)
             return uuid
         }
 

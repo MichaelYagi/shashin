@@ -173,7 +173,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
         if (browserDetails != null) {
             val user = browserDetails.lowercase(Locale.getDefault())
 
-            logger.log(Level.INFO, "User Agent: $browserDetails")
+//            logger.log(Level.INFO, "User Agent: $browserDetails")
             //===============Browser===========================
             if (user.contains("msie")) {
                 browser = "IE"
@@ -196,14 +196,14 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 browser = "Unknown browser: $browserDetails"
             }
         }
-        logger.log(Level.INFO,"Browser Name: $browser")
+//        logger.log(Level.INFO,"Browser Name: $browser")
         model["agentName"] = browser.lowercase()
 
         var timingEnd = Date()
         var diff: Long = timingEnd.time - timingStart.time
 
         var processingTime = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
-        logger.log(Level.INFO, "AttributeController - browser processing time: $processingTime")
+//        logger.log(Level.INFO, "AttributeController - browser processing time: $processingTime")
 
         model["userRole"] = userRole
         model["adminRole"] = adminRole
@@ -277,7 +277,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
         diff = timingEnd.time - timingStart.time
 
         processingTime = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
-        logger.log(Level.INFO, "AttributeController - setting processing time: $processingTime")
+//        logger.log(Level.INFO, "AttributeController - setting processing time: $processingTime")
 
         timingStart = Date()
 
@@ -304,12 +304,12 @@ class AttributeController: ResponseEntityExceptionHandler() {
             }
 
             if (request.session.getAttribute("CurrentUser") == null) {
-                logger.log(Level.INFO, "AttributeController - CurrentUser db check")
+//                logger.log(Level.INFO, "AttributeController - CurrentUser db check")
 
                 currentUser = userRepository.findByUsername(authentication.name)
                 request.session.setAttribute("CurrentUser",currentUser)
             } else {
-                logger.log(Level.INFO, "AttributeController - CurrentUser attribute check")
+//                logger.log(Level.INFO, "AttributeController - CurrentUser attribute check")
 
                 currentUser = request.session.getAttribute("CurrentUser") as User
             }
@@ -347,7 +347,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
         diff = timingEnd.time - timingStart.time
 
         processingTime = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
-        logger.log(Level.INFO, "AttributeController - current user processing time: $processingTime")
+//        logger.log(Level.INFO, "AttributeController - current user processing time: $processingTime")
 
         timingStart = Date()
 
@@ -375,13 +375,13 @@ class AttributeController: ResponseEntityExceptionHandler() {
         diff = timingEnd.time - timingStart.time
 
         processingTime = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
-        logger.log(Level.INFO, "AttributeController - base builder processing time: $processingTime")
+//        logger.log(Level.INFO, "AttributeController - base builder processing time: $processingTime")
 
         val totalTimingEnd = Date()
         diff = totalTimingEnd.time - totalTimingStart.time
 
         processingTime = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
-        logger.log(Level.INFO, "AttributeController total processing time: $processingTime")
+//        logger.log(Level.INFO, "AttributeController - total processing time: $processingTime")
     }
 
     private fun getOperatingSystemInfo(): String {
