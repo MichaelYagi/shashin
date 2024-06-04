@@ -10,9 +10,15 @@ Must be updated in POM file and git tag with format v[Major][Minor][Patch].
 Run ```mvn clean install``` with unminified JS assets. Run ```mvn -Pprod clean install``` to run with minified JS assets. These also download and installs libraries needed for face recognition.
 
 # Pipeline
-Built on CircleCI with every push to master at:
+Built on CircleCI with push to master at:
 
 https://app.circleci.com/pipelines/github/MichaelYagi/shashin
+
+To avoid triggering a CircleCI pipeline, ensure commit messages to master contain ```[ci skip]```.
+
+Eg. ```git commit -m "[ci skip] Updated README"```
+
+See this [help](https://circleci.com/docs/skip-build/) article.
 
 # Docker
 ```mvn -Pprod clean install```
