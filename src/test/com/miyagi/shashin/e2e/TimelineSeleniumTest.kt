@@ -141,7 +141,7 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         val imageEl = this.driver!!.findElement(By.id("image$metadataId"))
         val imageSrc = imageEl.getAttribute("src")
 
-        Assertions.assertTrue(false)
+        Assertions.assertTrue(imageSrc.contains("testscreen.jpg"))
     }
 
     private fun isUUID(someUUID: String): Boolean {
