@@ -164,8 +164,8 @@ class AttributeController: ResponseEntityExceptionHandler() {
     @ModelAttribute
     @Transactional
     fun addAttributes(model: Model, request: HttpServletRequest, response: HttpServletResponse, authentication: Authentication?) {
-        val totalTimingStart = Date()
-        var timingStart = Date()
+//        val totalTimingStart = Date()
+//        var timingStart = Date()
         val logger: Logger = Logger.getLogger(AttributeController::class.simpleName)
 
         val browserDetails = request.getHeader("User-Agent")
@@ -199,10 +199,10 @@ class AttributeController: ResponseEntityExceptionHandler() {
 //        logger.log(Level.INFO,"Browser Name: $browser")
         model["agentName"] = browser.lowercase()
 
-        var timingEnd = Date()
-        var diff: Long = timingEnd.time - timingStart.time
+//        var timingEnd = Date()
+//        var diff: Long = timingEnd.time - timingStart.time
 
-        var processingTime = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
+//        var processingTime = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
 //        logger.log(Level.INFO, "AttributeController - browser processing time: $processingTime")
 
         model["userRole"] = userRole
@@ -219,7 +219,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
             model["activeProfile"] = environment.activeProfiles[0]
         }
 
-        timingStart = Date()
+//        timingStart = Date()
 
         var queryLimit = queryLimitProperty
         var searchHistoryLimit = searchHistoryLimitProperty
@@ -273,15 +273,15 @@ class AttributeController: ResponseEntityExceptionHandler() {
             "random string generated from AttributeController"
         )
 
-        timingEnd = Date()
-        diff = timingEnd.time - timingStart.time
+//        timingEnd = Date()
+//        diff = timingEnd.time - timingStart.time
 
-        processingTime = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
+//        processingTime = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
 //        logger.log(Level.INFO, "AttributeController - setting processing time: $processingTime")
 
-        timingStart = Date()
+//        timingStart = Date()
 
-        var currentUser: User?
+        val currentUser: User?
 
         if (!request.getHeader("X-API-KEY").isNullOrBlank()) {
             currentUser = userRepository.findByApikey(request.getHeader("X-API-KEY"))
@@ -343,13 +343,13 @@ class AttributeController: ResponseEntityExceptionHandler() {
             }
         }
 
-        timingEnd = Date()
-        diff = timingEnd.time - timingStart.time
+//        timingEnd = Date()
+//        diff = timingEnd.time - timingStart.time
 
-        processingTime = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
+//        processingTime = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
 //        logger.log(Level.INFO, "AttributeController - current user processing time: $processingTime")
 
-        timingStart = Date()
+//        timingStart = Date()
 
         var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
         if (request.scheme == "https") {
@@ -371,16 +371,16 @@ class AttributeController: ResponseEntityExceptionHandler() {
         model["msg"] = "Response status not set. Defaulting to status fail."
         model["status"] = ApiResponse.FAIL.status
 
-        timingEnd = Date()
-        diff = timingEnd.time - timingStart.time
+//        timingEnd = Date()
+//        diff = timingEnd.time - timingStart.time
 
-        processingTime = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
+//        processingTime = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
 //        logger.log(Level.INFO, "AttributeController - base builder processing time: $processingTime")
 
-        val totalTimingEnd = Date()
-        diff = totalTimingEnd.time - totalTimingStart.time
+//        val totalTimingEnd = Date()
+//        diff = totalTimingEnd.time - totalTimingStart.time
 
-        processingTime = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
+//        processingTime = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
 //        logger.log(Level.INFO, "AttributeController - total processing time: $processingTime")
     }
 
