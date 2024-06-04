@@ -4,6 +4,7 @@ import com.miyagi.shashin.util.TextUtils
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.ActiveProfiles
+import java.time.LocalTime
 
 @ActiveProfiles("test")
 class TextUtilsTest {
@@ -171,6 +172,18 @@ class TextUtilsTest {
         val ts = TextUtils.getCurrentTimestamp()
         // yyyy-MM-dd HH:mm:ss
         Assertions.assertTrue(ts.matches("^\\d{4}\\-(0?[1-9]|1[012])\\-(0?[1-9]|[12][0-9]|3[01]) (?:(?:([01]?\\d|2[0-3]):)?([0-5]?\\d):)?([0-5]?\\d)\$".toRegex()))
+    }
+
+    @Test
+    fun convertDateToYMDTest() {
+        var possibleDate = TextUtils.convertDateToYMD("2024/01")
+        Assertions.assertEquals("2024-01", possibleDate)
+
+        possibleDate = TextUtils.convertDateToYMD("24/01/20")
+        Assertions.assertEquals("2024-01-20", possibleDate)
+
+        possibleDate = TextUtils.convertDateToYMD("yada/yada/yada")
+        Assertions.assertEquals(null, possibleDate)
     }
 
     @Test
