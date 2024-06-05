@@ -3,6 +3,8 @@ package com.miyagi.shashin.util
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import org.springframework.core.io.FileSystemResource
@@ -17,6 +19,7 @@ import java.util.logging.Logger
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import javax.xml.bind.DatatypeConverter.parseBase64Binary
+
 
 @Component
 class FileUtils(private val metadataRepository: MetadataRepository) {
@@ -178,10 +181,19 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
         }
 
         fun convertYamlToJson(yaml: String?): String {
-            val yamlReader = ObjectMapper(YAMLFactory())
-            val obj = yamlReader.readValue(yaml, Any::class.java)
-            val jsonWriter = ObjectMapper()
-            return jsonWriter.writeValueAsString(obj)
+            try {
+                val yamlReader = ObjectMapper(YAMLFactory())
+                val obj = yamlReader.readValue(yaml, Any::class.java)
+                val jsonWriter = ObjectMapper()
+                val json = jsonWriter.writeValueAsString(obj)
+
+                if ((json.first() == '{' || json.first() == '[') && isJSONValid(json)) {
+                    return json
+                }
+            } catch (e: IOException) {
+                logger.log(Level.WARNING, "Yaml to JSON conversion failed: " + e.message)
+            }
+            return ""
         }
 
         fun getExifFile(folder: String, fileName: String, relativeSidecarDir: String): File? {
@@ -268,6 +280,15 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                 writer.close()
             } catch(e: Exception) {
                 logger.log(Level.WARNING, "Could not write to thread file: " + threadFile.name)
+            }
+        }
+
+        private fun isJSONValid(jsonInString: String): Boolean {
+            try {
+                Gson().fromJson(jsonInString, Any::class.java)
+                return true
+            } catch (ex: JsonSyntaxException) {
+                return false
             }
         }
 
