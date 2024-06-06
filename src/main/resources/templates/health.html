@@ -10,6 +10,7 @@
 
 <th:block th:text="${'Status: '+status}"></th:block><br><br>
 <th:block th:text="${'Uptime: '+uptime}"></th:block><br>
+<th:block th:text="${'UTC timestamp: '+utcTimestamp}"></th:block><br>
 <th:block th:text="${'Request elapsed time: '+requestTiming}"></th:block><br>
 <th:block th:text="${'SQLite connection: '+sqlLiteAvailable}"></th:block><br>
 <th:block th:text="${'SQLite lookup for '+sqlLiteQueryCount+' metadata record'+(sqlLiteQueryCount != 1 ? 's' : '')+' elapsed time: '+sqlLiteQueryTiming}"></th:block><br>
