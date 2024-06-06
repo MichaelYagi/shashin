@@ -175,7 +175,7 @@ class DashboardController {
                 Files.walk(Paths.get(sidecarDir)).mapToLong { p -> p.toFile().length() }.sum()
             }
         } catch (e: Exception) {
-            logger.log(Level.SEVERE, "Error calculating sidecar size:" + e.message)
+            logger.log(Level.WARNING, "Error calculating sidecar size:" + e.message)
         }
         var sidecarSizeProcessed = sidecarSize.toDouble() / (kilo * kilo)
         var sidecarSizeNotation = "MB"
@@ -189,10 +189,16 @@ class DashboardController {
         }
         response["sidecarSizeText"] = "${String.format("%.2f", sidecarSizeProcessed)} $sidecarSizeNotation"
 
-        var dir = Paths.get(sidecarDir)
-        dir = dir.toRealPath()
-        val fs = Files.getFileStore(dir)
-        var sidecarUsabe = fs.usableSpace.toDouble() / (kilo * kilo).toDouble()
+        var sidecarUsabe: Double
+        try {
+            var dir = Paths.get(sidecarDir)
+            dir = dir.toRealPath()
+            val fs = Files.getFileStore(dir)
+            sidecarUsabe = fs.usableSpace.toDouble() / (kilo * kilo).toDouble()
+        } catch (exception: Exception) {
+            logger.log(Level.WARNING, "Error reading sidecar directory:" + exception.message)
+            sidecarUsabe = 0.0
+        }
         var sidecarUsabeNotation = "MB"
         if (sidecarUsabe > kilo) {
             sidecarUsabe /= kilo
@@ -209,7 +215,10 @@ class DashboardController {
 
         response["compreFaceAvailable"] = null
         val settings = model.getAttribute("settings") as Settings?
-        if (settings != null && settings.getCompreFaceKey() != "" && settings.getCompreFaceServer() != "") {
+        if (settings?.getCompreFaceKey() != null &&
+            settings.getCompreFaceKey() != "" && settings.getCompreFaceServer() != null &&
+            settings.getCompreFaceServer() != "")
+        {
             val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
                 settings.getCompreFaceServer(),
                 settings.getCompreFaceKey()
