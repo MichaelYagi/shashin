@@ -17,7 +17,6 @@ import net.coobird.thumbnailator.geometry.Positions
 import org.jsoup.Jsoup
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.actuate.health.Health
 import org.springframework.boot.actuate.health.HealthComponent
 import org.springframework.boot.actuate.health.HealthEndpoint
 import org.springframework.boot.info.BuildProperties
@@ -41,7 +40,6 @@ import java.awt.image.BufferedImage
 import java.awt.image.RenderedImage
 import java.io.*
 import java.lang.management.ManagementFactory
-import java.lang.management.RuntimeMXBean
 import java.math.RoundingMode
 import java.net.URISyntaxException
 import java.net.URL
@@ -726,6 +724,11 @@ class ToolsController {
         val requestTimingDiff: Long = requestTimingEnd.time - requestTimingStart.time
 
         response["requestTiming"] = SimpleDateFormat("mm:ss:SSS").format(Date(requestTimingDiff))
+
+        val timestampMilliseconds = System.currentTimeMillis()
+        val simpleDateFormat = SimpleDateFormat(TextUtils.getCommonDateFormat(), Locale.US)
+        simpleDateFormat.timeZone = TimeZone.getTimeZone("GMT")
+        response["utcTimestamp"] = simpleDateFormat.format(Date(timestampMilliseconds))
 
         response["status"] = status
 
