@@ -104,6 +104,7 @@ class NetworkUtils {
 
                     if (response != null) {
                         val jsonResult = response.body
+                        logger.log(Level.INFO, "CircleCI response: $jsonResult")
                         val mapper = ObjectMapper()
                         val jsonObj = mapper.readTree(jsonResult)
                         val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Array<Map<String, Any>>>() {})
