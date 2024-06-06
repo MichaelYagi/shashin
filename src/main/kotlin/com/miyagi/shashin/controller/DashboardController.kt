@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.socket.messaging.SessionConnectEvent
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import org.springframework.web.socket.messaging.SessionSubscribeEvent
+import java.io.File
 import java.lang.management.ManagementFactory
 import java.nio.file.FileVisitOption
 import java.nio.file.Files
@@ -191,10 +192,17 @@ class DashboardController {
 
         var sidecarUsabe: Double
         try {
-            var dir = Paths.get(sidecarDir)
-            dir = dir.toRealPath()
-            val fs = Files.getFileStore(dir)
-            sidecarUsabe = fs.usableSpace.toDouble() / (kilo * kilo).toDouble()
+            if (File(sidecarDir).exists()) {
+                var dir = Paths.get(sidecarDir)
+                dir = dir.toRealPath()
+                val fs = Files.getFileStore(dir)
+                sidecarUsabe = fs.usableSpace.toDouble() / (kilo * kilo).toDouble()
+            } else {
+                var dir = Paths.get(rootPath)
+                dir = dir.toRealPath()
+                val fs = Files.getFileStore(dir)
+                sidecarUsabe = fs.usableSpace.toDouble() / (kilo * kilo).toDouble()
+            }
         } catch (exception: Exception) {
             logger.log(Level.WARNING, "Error reading sidecar directory:" + exception.message)
             sidecarUsabe = 0.0
