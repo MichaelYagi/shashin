@@ -46,7 +46,6 @@ import java.net.URL
 import java.nio.file.Files
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
-import java.time.Instant
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
@@ -725,7 +724,8 @@ class ToolsController {
         val requestTimingDiff: Long = requestTimingEnd.time - requestTimingStart.time
 
         response["requestTiming"] = SimpleDateFormat("mm:ss:SSS").format(Date(requestTimingDiff))
-        response["utcTimestampMS"] = Instant.now()
+
+        response["utcTimestampMS"] = System.currentTimeMillis()
 
         response["status"] = status
 
