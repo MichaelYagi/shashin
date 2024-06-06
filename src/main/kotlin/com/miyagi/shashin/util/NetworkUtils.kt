@@ -107,7 +107,8 @@ class NetworkUtils {
                         val mapper = ObjectMapper()
                         val jsonObj = mapper.readTree(jsonResult)
                         val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Array<Map<String, Any>>>() {})
-                        if (resultMap[0].containsKey("outcome") && resultMap[0]["outcome"] == "success") {
+                        // :retried, :canceled, :infrastructure_fail, :timedout, :not_run, :running, :failed, :queued, :not_running, :no_tests, :fixed, :success
+                        if (resultMap[0].containsKey("status") && resultMap[0]["status"] != "failed") {
                             passing = true
                         }
                     }
