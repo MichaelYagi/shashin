@@ -124,7 +124,7 @@ class APITests: BaseSeleniumTests() {
         val webClient = WebClient.create("http://localhost:$port/")
 
         var jsonString: String? = null
-        var jsonNode: JsonNode? = null
+        var jsonNode: JsonNode?
         val mapper = ObjectMapper()
 
         try {
@@ -199,7 +199,7 @@ class APITests: BaseSeleniumTests() {
         Assertions.assertTrue(jsonNode!!.has("metadataList"))
         Assertions.assertTrue(jsonNode.get("metadataList").get(0).get("id").textValue() != "")
 
-        var result: String? = ""
+        var result: String?
         try {
             val response = webClient.get()
                 .uri("api/v1/recent")
