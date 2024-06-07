@@ -622,7 +622,6 @@ class ToolsController {
         var status = "OK"
 
         response["status"] = status
-        response["requestTiming"] = 0
 
         val health: HealthComponent? = healthEndpoint!!.health()
         if (health == null || health.status.code != "UP") {
@@ -641,8 +640,8 @@ class ToolsController {
         }
         val nominatimTimingEnd = Date()
         val nominatimTimingDiff: Long = nominatimTimingEnd.time - nominatimTimingStart.time
-        response["nominatimTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(nominatimTimingDiff))
-
+//        response["nominatimTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(nominatimTimingDiff))
+        logger.log(Level.INFO, "HealthEP - Nominatim connection time: ${SimpleDateFormat("mm:ss.SSS").format(Date(nominatimTimingDiff))}")
 
         val circleciTimingStart = Date()
         val passing: Boolean = NetworkUtils.checkCircleCiStatus(circleCiKey)
@@ -655,8 +654,8 @@ class ToolsController {
         }
         val circleciTimingEnd = Date()
         val circleciTimingDiff: Long = circleciTimingEnd.time - circleciTimingStart.time
-        response["circleCIBuildTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(circleciTimingDiff))
-
+//        response["circleCIBuildTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(circleciTimingDiff))
+        logger.log(Level.INFO, "HealthEP - CircleCI connection time: ${SimpleDateFormat("mm:ss.SSS").format(Date(circleciTimingDiff))}")
 
         // If enabled - status fail if not available
         val settings = model.getAttribute("settings") as Settings?
@@ -674,25 +673,29 @@ class ToolsController {
             }
             val compreFaceTimingEnd = Date()
             val compreFaceTimingDiff: Long = compreFaceTimingEnd.time - compreFaceTimingStart.time
-            response["compreFaceTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(compreFaceTimingDiff))
+//            response["compreFaceTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(compreFaceTimingDiff))
+            logger.log(Level.INFO, "HealthEP - CompreFace connection time: ${SimpleDateFormat("mm:ss.SSS").format(Date(compreFaceTimingDiff))}")
         }
 
         val dbTimingStart = Date()
         val metadataResult = metaRepository.findAllByOffsetAndLimit(0,500)
         val dbTimingEnd = Date()
+        var sqlLiteQueryCount = 0
 
         try {
             response["sqlLiteAvailable"] = "OK"
-            response["sqlLiteQueryCount"] = metadataResult.count()
+//            response["sqlLiteQueryCount"] = metadataResult.count()
+            sqlLiteQueryCount = metadataResult.count()
         } catch (e: Exception) {
             response["sqlLiteAvailable"] = "FAIL"
-            response["sqlLiteQueryCount"] = 0
+//            response["sqlLiteQueryCount"] = sqlLiteQueryCount
             status = "FAIL"
-            logger.log(Level.WARNING, "Error querying SQLLite: ${e.message}")
+            logger.log(Level.WARNING, "HealthEP - Error querying SQLLite: ${e.message}")
         }
 
         val dbTimingDiff: Long = dbTimingEnd.time - dbTimingStart.time
-        response["sqlLiteQueryTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(dbTimingDiff))
+//        response["sqlLiteQueryTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(dbTimingDiff))
+        logger.log(Level.INFO, "HealthEP - SQLite query time for $sqlLiteQueryCount records: ${SimpleDateFormat("mm:ss.SSS").format(Date(dbTimingDiff))}")
 
         val memoryMXBean = ManagementFactory.getMemoryMXBean()
         response["initialMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.init.toDouble() / 1073741824)
@@ -723,7 +726,8 @@ class ToolsController {
 
         val requestTimingDiff: Long = requestTimingEnd.time - requestTimingStart.time
 
-        response["requestTiming"] = SimpleDateFormat("mm:ss:SSS").format(Date(requestTimingDiff))
+//        response["requestTiming"] = SimpleDateFormat("mm:ss:SSS").format(Date(requestTimingDiff))
+        logger.log(Level.INFO, "HealthEP - Total request time: ${SimpleDateFormat("mm:ss:SSS").format(Date(requestTimingDiff))}")
 
         response["utcTimestampMS"] = System.currentTimeMillis()
 
