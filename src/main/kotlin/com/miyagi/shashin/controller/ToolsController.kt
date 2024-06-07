@@ -694,7 +694,7 @@ class ToolsController {
         val circleciTimingDiff: Long = circleciTimingEnd.time - circleciTimingStart.time
 //        response["circleCIBuildTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(circleciTimingDiff))
         logger.log(Level.INFO, "HealthEP - CircleCI connection time: ${SimpleDateFormat("mm:ss.SSS").format(Date(circleciTimingDiff))}")
-        
+
         val dbTimingDiff: Long = dbTimingEnd.time - dbTimingStart.time
 //        response["sqlLiteQueryTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(dbTimingDiff))
         logger.log(Level.INFO, "HealthEP - SQLite query time for $sqlLiteQueryCount records: ${SimpleDateFormat("mm:ss.SSS").format(Date(dbTimingDiff))}")
