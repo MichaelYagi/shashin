@@ -89,7 +89,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
     private lateinit var geocodeUrl: String
 
     @Value("\${app.config.default.querylimit}")
-    private var queryLimitProperty: Int = 20
+    private var queryLimitProperty: Int = 30
 
     @Value("\${app.config.default.matchscanlimit}")
     private var matchScanLimitProperty: Int = 50
@@ -101,7 +101,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
     private var notificationLimitProperty: Int = 20
 
     @Value("\${app.config.default.searchhistorylimit}")
-    private var searchHistoryLimitProperty: Int = 15
+    private var searchHistoryLimitProperty: Int = 10
 
     @Value("\${app.config.default.recognitionConfidenceThreshold}")
     private lateinit var recognitionConfidenceThresholdProperty: String
