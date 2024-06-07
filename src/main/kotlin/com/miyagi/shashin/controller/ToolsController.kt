@@ -598,6 +598,8 @@ class ToolsController {
             model[k] = v!!
         }
 
+        model["localServerTime"] = TextUtils.getCurrentTimestampTZ()
+
         return "health"
     }
 

@@ -192,6 +192,10 @@ class TextUtils {
             return dtf.format(now)
         }
 
+        fun getCurrentTimestampTZ(): String {
+            return getCurrentTimestamp() + " " + ZoneId.systemDefault()
+        }
+
         fun generateUUID(
             inputString:String?,
             inputStringTwo:String? = null,
