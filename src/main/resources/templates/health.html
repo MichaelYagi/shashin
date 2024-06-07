@@ -22,13 +22,13 @@
 </th:block>
 <th:block th:text="${'CircleCI Status: '+circleCIBuild}"></th:block><br>
 <!--<th:block th:text="${'CircleCI elapsed time: '+circleCIBuildTiming}"></th:block><br>-->
-<th:block th:text="${'Used heap memory: '+usedHeapMemoryGB+' GB'}"></th:block><br>
-<th:block th:text="${'Max heap memory: '+maxHeapMemoryGB+' GB'}"></th:block><br>
-<th:block th:text="${'Committed memory: '+committedMemoryGB+' GB'}"></th:block><br>
-<th:block th:text="${'System CPU Usage: '+processCpuLoadPercent+'%'}"></th:block><br>
-<th:block th:text="${'JVM CPU Usage: '+processCpuLoadPercent+'%'}"></th:block><br>
-<th:block th:text="${'Available cores: '+availableCores}"></th:block><br>
-<th:block th:text="${'OS: '+os}"></th:block><br>
+<th:block th:text="${'Used heap memory: '+system.usedHeapMemoryGB+' GB'}"></th:block><br>
+<th:block th:text="${'Max heap memory: '+system.maxHeapMemoryGB+' GB'}"></th:block><br>
+<th:block th:text="${'Committed memory: '+system.committedMemoryGB+' GB'}"></th:block><br>
+<th:block th:text="${'System CPU Usage: '+system.processCpuLoadPercent+'%'}"></th:block><br>
+<th:block th:text="${'JVM CPU Usage: '+system.processCpuLoadPercent+'%'}"></th:block><br>
+<th:block th:text="${'Available cores: '+system.availableCores}"></th:block><br>
+<th:block th:text="${'OS: '+system.os}"></th:block><br>
 <th:block th:text="${'Build Version: '+buildVersion}"></th:block><br>
 
 </body>

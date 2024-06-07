@@ -623,6 +623,8 @@ class ToolsController {
 
         response["status"] = status
 
+        response["utcTimestampMS"] = System.currentTimeMillis()
+
         val health: HealthComponent? = healthEndpoint!!.health()
         if (health == null || health.status.code != "UP") {
             status = "FAIL"
@@ -642,20 +644,6 @@ class ToolsController {
         val nominatimTimingDiff: Long = nominatimTimingEnd.time - nominatimTimingStart.time
 //        response["nominatimTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(nominatimTimingDiff))
         logger.log(Level.INFO, "HealthEP - Nominatim connection time: ${SimpleDateFormat("mm:ss.SSS").format(Date(nominatimTimingDiff))}")
-
-        val circleciTimingStart = Date()
-        val passing: Boolean = NetworkUtils.checkCircleCiStatus(circleCiKey)
-        if (passing) {
-            response["circleCIBuild"] = "OK"
-        } else {
-            response["circleCIBuild"] = "FAIL"
-            // Don't include as part of status, credits might run out resulting
-            // status = "FAIL"
-        }
-        val circleciTimingEnd = Date()
-        val circleciTimingDiff: Long = circleciTimingEnd.time - circleciTimingStart.time
-//        response["circleCIBuildTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(circleciTimingDiff))
-        logger.log(Level.INFO, "HealthEP - CircleCI connection time: ${SimpleDateFormat("mm:ss.SSS").format(Date(circleciTimingDiff))}")
 
         // If enabled - status fail if not available
         val settings = model.getAttribute("settings") as Settings?
@@ -693,17 +681,32 @@ class ToolsController {
             logger.log(Level.WARNING, "HealthEP - Error querying SQLLite: ${e.message}")
         }
 
+        val circleciTimingStart = Date()
+        val passing: Boolean = NetworkUtils.checkCircleCiStatus(circleCiKey)
+        if (passing) {
+            response["circleCIBuild"] = "OK"
+        } else {
+            response["circleCIBuild"] = "FAIL"
+            // Don't include as part of status, credits might run out resulting
+            // status = "FAIL"
+        }
+        val circleciTimingEnd = Date()
+        val circleciTimingDiff: Long = circleciTimingEnd.time - circleciTimingStart.time
+//        response["circleCIBuildTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(circleciTimingDiff))
+        logger.log(Level.INFO, "HealthEP - CircleCI connection time: ${SimpleDateFormat("mm:ss.SSS").format(Date(circleciTimingDiff))}")
+        
         val dbTimingDiff: Long = dbTimingEnd.time - dbTimingStart.time
 //        response["sqlLiteQueryTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(dbTimingDiff))
         logger.log(Level.INFO, "HealthEP - SQLite query time for $sqlLiteQueryCount records: ${SimpleDateFormat("mm:ss.SSS").format(Date(dbTimingDiff))}")
 
+        response["buildVersion"] = if (buildProperties != null) buildProperties?.version.toString() else "Missing"
+
+        val systemMap = mutableMapOf<String, Any?>()
         val memoryMXBean = ManagementFactory.getMemoryMXBean()
-        response["initialMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.init.toDouble() / 1073741824)
-        response["usedHeapMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.used.toDouble() / 1073741824)
-        response["maxHeapMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.max.toDouble() / 1073741824)
-        response["committedMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.committed.toDouble() / 1073741824)
-//        println("Used Heap Memory GB:"+metricsMap["usedHeapMemoryGB"])
-//        println("Max Heap Memory GB:"+metricsMap["maxHeapMemoryGB"])
+        systemMap["initialMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.init.toDouble() / 1073741824)
+        systemMap["usedHeapMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.used.toDouble() / 1073741824)
+        systemMap["maxHeapMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.max.toDouble() / 1073741824)
+        systemMap["committedMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.committed.toDouble() / 1073741824)
 
         val osMXBean: OperatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
 
@@ -711,16 +714,15 @@ class ToolsController {
         if (cores < 1) {
             status = "FAIL"
         }
-        response["availableCores"] = cores
+        systemMap["availableCores"] = cores
 
 //        println("Process CPU load:"+(osMXBean.processCpuLoad * 100).toInt())
 //        println("System CPU load:"+(osMXBean.cpuLoad * 100).toInt())
-        response["processCpuLoadPercent"] = (osMXBean.processCpuLoad * 100).toInt()
+        systemMap["processCpuLoadPercent"] = (osMXBean.processCpuLoad * 100).toInt()
         @Suppress("DEPRECATION")
-        response["systemCpuLoadPercent"] = (osMXBean.systemCpuLoad * 100).toInt()
-        response["os"] = System.getProperty("os.name") + " v" + System.getProperty("os.version") + " " + System.getProperty("os.arch")
-
-        response["buildVersion"] = if (buildProperties != null) buildProperties?.version.toString() else "Missing"
+        systemMap["systemCpuLoadPercent"] = (osMXBean.systemCpuLoad * 100).toInt()
+        systemMap["os"] = System.getProperty("os.name") + " v" + System.getProperty("os.version") + " " + System.getProperty("os.arch")
+        response["system"] = systemMap
 
         val requestTimingEnd = Date()
 
@@ -728,8 +730,6 @@ class ToolsController {
 
 //        response["requestTiming"] = SimpleDateFormat("mm:ss:SSS").format(Date(requestTimingDiff))
         logger.log(Level.INFO, "HealthEP - Total request time: ${SimpleDateFormat("mm:ss:SSS").format(Date(requestTimingDiff))}")
-
-        response["utcTimestampMS"] = System.currentTimeMillis()
 
         response["status"] = status
 
