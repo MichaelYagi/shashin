@@ -112,7 +112,7 @@ class APITests: BaseSeleniumTests() {
         // Indicates scanning something
         var scanBeforeAfter: WebElement? = null
         var startTime = System.currentTimeMillis()
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
+        while ((System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
         this.logger.log(Level.INFO, "APITests - Photos scanned.")
@@ -120,7 +120,7 @@ class APITests: BaseSeleniumTests() {
 
     @Test
     @Throws(Exception::class)
-    fun toolsControllerAPITests() {
+    fun toolsControllerAPITest() {
         val webClient = WebClient.create("http://localhost:$port/")
 
         var jsonString: String? = null
@@ -174,7 +174,7 @@ class APITests: BaseSeleniumTests() {
 
     @Test
     @Throws(Exception::class)
-    fun browseControllerAPITests() {
+    fun browseControllerAPITest() {
         val webClient = WebClient.create("http://localhost:$port/")
 
         var jsonString: String? = null
@@ -196,8 +196,8 @@ class APITests: BaseSeleniumTests() {
         if (!jsonString.isNullOrBlank()) {
             jsonNode = mapper.readTree(jsonString)
         }
-
         Assertions.assertTrue(jsonNode!!.has("metadataList"))
+        Assertions.assertTrue(jsonNode.get("metadataList").get(0).get("id").textValue() != "")
 
         var result: String? = ""
         try {
