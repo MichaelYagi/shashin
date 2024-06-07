@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 class DataLoader @Autowired constructor(private val settingsRepository: SettingsRepository) : ApplicationRunner {
 
     @Value("\${app.config.default.querylimit}")
-    private var queryLimitProperty: Int = 20
+    private var queryLimitProperty: Int = 30
 
     @Value("\${app.config.default.matchscanlimit}")
     private var matchScanLimitProperty: Int = 50
@@ -26,7 +26,7 @@ class DataLoader @Autowired constructor(private val settingsRepository: Settings
     private var notificationLimitProperty: Int = 20
 
     @Value("\${app.config.default.searchhistorylimit}")
-    private var searchHistoryLimitProperty: Int = 15
+    private var searchHistoryLimitProperty: Int = 10
 
     @Value("\${app.endpoint.url.compreface}")
     private lateinit var comprefaceServer: String
