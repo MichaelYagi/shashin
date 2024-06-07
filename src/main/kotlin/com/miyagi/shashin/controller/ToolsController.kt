@@ -647,7 +647,11 @@ class ToolsController {
 
         // If enabled - status fail if not available
         val settings = model.getAttribute("settings") as Settings?
-        if (settings != null && settings.getCompreFaceKey() != "" && settings.getCompreFaceServer() != "") {
+        if (settings?.getCompreFaceKey() != null &&
+            settings.getCompreFaceKey() != "" &&
+            settings.getCompreFaceServer() != null &&
+            settings.getCompreFaceServer() != "")
+        {
             val compreFaceTimingStart = Date()
             val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
                 settings.getCompreFaceServer(),
