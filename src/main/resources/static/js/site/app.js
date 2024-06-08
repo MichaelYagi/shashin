@@ -935,6 +935,18 @@
         }
     }
 
+    shashin.showScrollToBottom = function(scrollEl) {
+        const scrollToBottomButton = $("#btn-to-bottom");
+
+        if (scrollToBottomButton.length > 0) {
+            if ((scrollEl.innerHeight() + scrollEl.scrollTop()) >= scrollEl[0].scrollHeight) {
+                scrollToBottomButton.css("display","none");
+            } else {
+                scrollToBottomButton.css("display","block");
+            }
+        }
+    }
+
     shashin.activateScrollToTop = function() {
         const scrollToTopButton = $("#btn-back-to-top");
 
@@ -949,6 +961,24 @@
             scrollToTopButton.on("click",function () {
                 $("main")[0].scrollTo({top: 0, behavior: 'smooth'});
                 $("#container")[0].scrollTo({top: 0, behavior: 'smooth'});
+            });
+        }
+    }
+
+    shashin.activateScrollToBottom = function() {
+        const scrollToBottomButton = $("#btn-to-bottom");
+
+        if (scrollToBottomButton.length > 0) {
+            $("#container").on('scroll', function () {
+                shashin.showScrollToBottom($(this));
+            });
+            $("main").on('scroll', function () {
+                shashin.showScrollToBottom($(this));
+            });
+
+            scrollToBottomButton.on("click",function () {
+                $("main")[0].scrollTo({top: $("main")[0].scrollHeight, behavior: 'smooth'});
+                $("#container")[0].scrollTo({top: $("#container")[0].scrollHeight, behavior: 'smooth'});
             });
         }
     }
