@@ -389,6 +389,13 @@ footer {
   display: none;
 }
 
+#btn-to-bottom {
+  position: fixed;
+  top: 110px;
+  right: 40px;
+  display: none;
+}
+
 .darkmodeIcons {
   color: white;
 }

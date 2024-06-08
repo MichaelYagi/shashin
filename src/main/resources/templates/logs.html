@@ -55,6 +55,16 @@
                 </div>
             </th:block>
 
+            <!-- Back to top button -->
+            <button type="button" class="btn btn-primary btn-floating btn-lg" id="btn-back-to-top">
+                <i class="bi-arrow-up-circle"></i>
+            </button>
+
+            <!-- To bottom button -->
+            <button type="button" class="btn btn-primary btn-floating btn-lg" id="btn-to-bottom">
+                <i class="bi-arrow-down-circle"></i>
+            </button>
+
             <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>
         </main>
     </div>
@@ -64,6 +74,9 @@
     /*<![CDATA[*/
     shashin.nonce = /*[[${cspNonce}]]*/ '';
     /*]]>*/
+
+    shashin.activateScrollToTop();
+    shashin.activateScrollToBottom();
 
     const lines = Util.getParameterByName("lines");
     if (lines === null) {
