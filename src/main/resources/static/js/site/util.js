@@ -1433,7 +1433,7 @@ class Util {
     }
 }
 
-// Convenience function for visibility
+// Convenience functions
 (function($) {
     $.fn.invisible = function() {
         return this.css('visibility', 'hidden');
@@ -1441,6 +1441,9 @@ class Util {
     $.fn.visible = function() {
         return this.css('visibility', 'visible');
     };
+    $.fn.hasScrollBar = function() {
+        return this.get(0).scrollHeight > this.get(0).clientHeight;
+    }
 }(jQuery));
 
 if (typeof module !== 'undefined') {

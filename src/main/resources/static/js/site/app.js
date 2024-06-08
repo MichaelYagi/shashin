@@ -969,6 +969,11 @@
         const scrollToBottomButton = $("#btn-to-bottom");
 
         if (scrollToBottomButton.length > 0) {
+
+            if ($("#container").hasScrollBar() || $("main").hasScrollBar()) {
+                scrollToBottomButton.css("display","block");
+            }
+
             $("#container").on('scroll', function () {
                 shashin.showScrollToBottom($(this));
             });
