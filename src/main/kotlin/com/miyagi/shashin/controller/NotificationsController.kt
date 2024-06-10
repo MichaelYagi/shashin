@@ -3,11 +3,14 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
+import com.miyagi.shashin.repository.MediaDirectoryRepository
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.util.ApiResponse
+import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.annotation.Secured
@@ -25,6 +28,9 @@ import javax.transaction.Transactional
 class NotificationsController {
     @Autowired
     private lateinit var notificationRepository: NotificationRepository
+
+    @Autowired
+    private val mediaDirRepository: MediaDirectoryRepository? = null
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
@@ -93,6 +99,26 @@ class NotificationsController {
         }
 
         return "{\"msg\":\"\",\"status\":\"success\"}"
+    }
+
+    @GetMapping("/notifications/mediascan", consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun getMediaScanStatus(model: Model): String {
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null) {
+            var msg = "complete"
+
+            if (FileUtils.checkThreadFileAlive("shashinscan")) {
+                val threadFileContent = FileUtils.readThreadFile("shashinscan")
+                if (threadFileContent != null) {
+                    msg = "processing"
+                }
+            }
+
+            return "{\"msg\":\"$msg\",\"status\":\"success\"}"
+        }
+
+        return "{\"msg\":\"\",\"status\":\"fail\"}"
     }
 
     @GetMapping("/notifications/markread/album/{albumId}", consumes = ["application/json"], produces = ["application/json"])
