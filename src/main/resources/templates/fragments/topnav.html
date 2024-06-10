@@ -366,7 +366,7 @@
             const notificationAlerts = /*[[${currentUser.notificationAlerts}]]*/ false;
             /*]]>*/
 
-            if (activePage !== "notifications") {
+            if (activePage !== "notifications" && activePage !== "timeline") {
                 async function getNotifications() {
                     setTimeout(() => {
                         let http = new Http("check notifications");
@@ -422,18 +422,18 @@
                                             }
                                         }, 0);
 
-                                        // // Poll every x minutes
-                                        // setInterval(getNotifications, (pollMinutes * 60 * 1000));
+                                        // Poll every x minutes
+                                        setInterval(getNotifications, (pollMinutes * 60 * 1000));
                                     }
                                 } else {
                                     $("#sidebarMenuDrawer").html('');
                                     $("#sidebarNotification").html('');
                                     shashin.closeToastMessage();
 
-                                    // if (notificationAlerts === true) {
-                                    //     // Poll every x minutes
-                                    //     setInterval(getNotifications, (pollMinutes * 60 * 1000));
-                                    // }
+                                    if (notificationAlerts === true) {
+                                        // Poll every x minutes
+                                        setInterval(getNotifications, (pollMinutes * 60 * 1000));
+                                    }
                                 }
                             }
                         });
@@ -478,26 +478,6 @@
                 $("#toastTitle4").text("");
                 $("#toastMessage4").text("");
             });
-
-            if (notificationAlerts === true && activePage !== "scan" && activePage !== "timeline") {
-                setTimeout(function () {
-                    setInterval(function () {
-                        const http = new Http("get scan media status");
-                        http.ajax("get", "/notifications/mediascan").then(function (data) {
-                            if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                                const msg = data["msg"];
-                                const mediaScanSpinner = $("#mediaScanSpinner");
-
-                                if (msg === "complete") {
-                                    mediaScanSpinner.css("display", "none");
-                                } else {
-                                    mediaScanSpinner.css("display", "block");
-                                }
-                            }
-                        });
-                    }, 3000);
-                }, 0);
-            }
         });
     </script>
 </header>
