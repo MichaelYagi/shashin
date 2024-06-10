@@ -1176,7 +1176,6 @@ class Util {
                     } else {
                         $("#sidebarMenuDrawer").html('');
                         $("#sidebarNotification").html('');
-                        shashin.closeToastMessage();
 
                         if (notificationAlerts === true && pollMinutes !== undefined) {
                             // Poll every x minutes
