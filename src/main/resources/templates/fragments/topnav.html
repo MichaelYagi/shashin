@@ -422,7 +422,7 @@
                                     }, 0);
 
                                     // Poll every x minutes
-                                    setTimeout(getNotifications, (pollMinutes * 60 * 1000));
+                                    setInterval(getNotifications, (pollMinutes * 60 * 1000));
                                 }
                             }
                         });
