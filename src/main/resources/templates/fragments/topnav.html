@@ -376,7 +376,7 @@
                                 $("#sidebarNotification").html('<span id="sideBarAlertBadge" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
 
                                 if (notificationAlerts === true) {
-                                    const minutes = 10;
+                                    const pollMinutes = 5;
 
                                     setTimeout(() => {
                                         const unreadNotifications = data["unreadNotifications"];
@@ -421,8 +421,8 @@
                                         }
                                     }, 0);
 
-                                    // Poll every 10 minutes
-                                    setTimeout(getNotifications, (minutes * 60 * 1000));
+                                    // Poll every x minutes
+                                    setTimeout(getNotifications, (pollMinutes * 60 * 1000));
                                 }
                             }
                         });
