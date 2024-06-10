@@ -422,18 +422,18 @@
                                             }
                                         }, 0);
 
-                                        // Poll every x minutes
-                                        setInterval(getNotifications, (pollMinutes * 60 * 1000));
+                                        // // Poll every x minutes
+                                        // setInterval(getNotifications, (pollMinutes * 60 * 1000));
                                     }
                                 } else {
                                     $("#sidebarMenuDrawer").html('');
                                     $("#sidebarNotification").html('');
                                     shashin.closeToastMessage();
 
-                                    if (notificationAlerts === true) {
-                                        // Poll every x minutes
-                                        setInterval(getNotifications, (pollMinutes * 60 * 1000));
-                                    }
+                                    // if (notificationAlerts === true) {
+                                    //     // Poll every x minutes
+                                    //     setInterval(getNotifications, (pollMinutes * 60 * 1000));
+                                    // }
                                 }
                             }
                         });
