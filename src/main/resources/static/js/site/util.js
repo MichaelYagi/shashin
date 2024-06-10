@@ -1142,7 +1142,7 @@ class Util {
                                     iconColor: "#FF8C00",
                                     headerSubtext: Util.getMessageSubText(createdAtDate, timezone),
                                     autohide: false,
-                                    target: "toastTarget4"
+                                    target: shashin.toast.target.four
                                 });
 
                                 if (notificationCount === 1) {
@@ -1155,7 +1155,9 @@ class Util {
 
                                         setTimeout(() => {
                                             NotificationUtil.markNotificationRead();
-                                            shashin.closeToastMessage();
+                                            shashin.closeToastMessage({
+                                                target: shashin.toast.target.four
+                                            });
                                         }, 500);
                                     });
 
@@ -1163,7 +1165,9 @@ class Util {
                                         e.preventDefault();
 
                                         NotificationUtil.markNotificationRead();
-                                        shashin.closeToastMessage();
+                                        shashin.closeToastMessage({
+                                            target: shashin.toast.target.four
+                                        });
                                     });
                                 }
                             }, 0);

@@ -196,7 +196,8 @@
         shashin.showToastMessage("Loading", "Loading dashboard data ...", {
             icon: "bi-info-circle",
             iconColor: "#777777",
-            autohide: false
+            autohide: false,
+            target: shashin.toast.target.two
         });
         const http = new Http("dashboard data");
         http.ajax("get", "/dashboard/data").then(function (data) {
@@ -270,7 +271,9 @@
             const cpuChart = dashboard.displayCpuChart();
             const memoryChart = dashboard.displayMemoryChart();
             dashboard.startWebSocket(cpuChart, memoryChart);
-            shashin.closeToastMessage();
+            shashin.closeToastMessage({
+                target: shashin.toast.target.two
+            });
         });
     }, 0);
 </script>
