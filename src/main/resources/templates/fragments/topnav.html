@@ -227,6 +227,9 @@
                     &nbsp;&nbsp;<span id="comprefaceNumberSelected"></span>
                 </div>
             </th:block>
+            <div id="mediaScanSpinner" style="display: none;">
+                <span class="spinner-border spinner-border-sm"></span>
+            </div>
         </div>
         <div class="flex-shrink-0 dropdown" style="margin-left: 10px;">
             <a id="dLabel" th:class="'d-block link-dark text-decoration-none dropdown-toggle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" role="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
@@ -464,6 +467,26 @@
                 $("#toastTitle4").text("");
                 $("#toastMessage4").text("");
             });
+
+            if (notificationAlerts === true) {
+                setTimeout(function () {
+                    setInterval(function () {
+                        const http = new Http("get scan media status");
+                        http.ajax("get", "/notifications/mediascan").then(function (data) {
+                            if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                                const msg = data["msg"];
+                                const mediaScanSpinner = $("#mediaScanSpinner");
+
+                                if (msg === "complete") {
+                                    mediaScanSpinner.css("display", "none");
+                                } else {
+                                    mediaScanSpinner.css("display", "block");
+                                }
+                            }
+                        });
+                    }, 3000);
+                }, 0);
+            }
         });
     </script>
 </header>
