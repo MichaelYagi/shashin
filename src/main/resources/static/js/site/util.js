@@ -1180,6 +1180,9 @@ class Util {
                     } else {
                         $("#sidebarMenuDrawer").html('');
                         $("#sidebarNotification").html('');
+                        shashin.closeToastMessage({
+                            target: shashin.toast.target.four
+                        });
 
                         if (notificationAlerts === true && pollMinutes !== undefined) {
                             // Poll every x minutes
