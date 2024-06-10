@@ -468,7 +468,7 @@
                 $("#toastMessage4").text("");
             });
 
-            if (notificationAlerts === true && activePage !== "scan") {
+            if (notificationAlerts === true && activePage !== "scan" && activePage !== "timeline") {
                 setTimeout(function () {
                     setInterval(function () {
                         const http = new Http("get scan media status");
