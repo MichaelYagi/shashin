@@ -826,6 +826,11 @@ class TimelineController: BaseController() {
                     if (metadataObj.isPresent) {
                         val metadata = metadataObj.get()
 
+                        val originalMetadataAdded = metadata.getAddedAt()
+                        val originalMetadataCreated = metadata.getCreatedAt()
+                        val originalMetadataTaken = metadata.getTakenAt()
+                        val originalMetadataAccessed = metadata.getLastAccessedAt()
+
                         val stringMetadata = Gson().toJson(metadata, Metadata::class.java)
                         var metadataCopy = Gson().fromJson(stringMetadata, Metadata::class.java)
 
@@ -890,6 +895,12 @@ class TimelineController: BaseController() {
 
                                 val imageProcessing = ImageProcessing(apiVersion, File(metadataCopy.getPath()!!), sidecarDir, metadataCopy)
                                 metadataCopy = imageProcessing.createThumbnails()!!
+
+                                metadataCopy.setAddedAt(originalMetadataAdded)
+                                metadataCopy.setCreatedAt(originalMetadataCreated)
+                                metadataCopy.setTakenAt(originalMetadataTaken)
+                                metadataCopy.setLastAccessedAt(originalMetadataAccessed)
+                                metadataCopy.setModifiedAt(getCurrentTimestamp())
 
                                 if (metadataCopy.getId().isNotEmpty() && metadataCopy.getThumbnailSmallWidth() != null && metadataCopy.getThumbnailSmallHeight() != null && metadataCopy.getThumbnailUrlSmall() != null) {
                                     metadataRepository.save(metadataCopy)
