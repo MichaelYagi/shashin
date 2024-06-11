@@ -904,7 +904,7 @@ class TimelineController: BaseController() {
                                 if (metadataCopy.getId().isNotEmpty() && metadataCopy.getThumbnailSmallWidth() != null && metadataCopy.getThumbnailSmallHeight() != null && metadataCopy.getThumbnailUrlSmall() != null) {
                                     metadataRepository.save(metadataCopy)
 
-                                    // Something was updated that changed the UUID, tradelete the old record
+                                    // Something was updated that changed the UUID, delete the old record
                                     if (metadataCopy.getId() != metadataId) {
                                         val metadataToDelete = metadataRepository.findByMetadataId(metadataId)
                                         if (metadataToDelete != null) {
