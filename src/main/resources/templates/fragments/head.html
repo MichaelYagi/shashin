@@ -36,6 +36,8 @@
         <script src="/js/date.format.js" th:nonce="${cspNonce}"></script>
         <script src="/js/uuid4.min.js" th:nonce="${cspNonce}"></script>
         <script src="/js/jquery.fileDownload.js" th:nonce="${cspNonce}"></script>
+        <script src="/js/stomp.min.js" th:nonce="${cspNonce}"></script>
+        <script src="/js/sockjs.min.js" th:nonce="${cspNonce}"></script>
 
         <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
             <script src="/js/site/notificationutil.js" th:nonce="${cspNonce}"></script>
@@ -133,10 +135,6 @@
                 }
             </style>
         </th:block>
-<!--        <th:block th:if="${activePageLower == 'scan' or activePageLower == 'match' or activePageLower == 'dashboard' or activePageLower == 'imagescraper'}">-->
-            <script src="/js/stomp.min.js" th:nonce="${cspNonce}"></script>
-            <script src="/js/sockjs.min.js" th:nonce="${cspNonce}"></script>
-<!--        </th:block>-->
         <th:block th:if="${activePageLower == 'dashboard'}">
             <script src="/js/chart.min.js" th:nonce="${cspNonce}"></script>
         </th:block>
