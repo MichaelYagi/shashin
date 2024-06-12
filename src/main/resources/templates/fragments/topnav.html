@@ -61,6 +61,7 @@
     <div class="container-fluid align-items-center d-flex">
         <div class="flex-shrink-0">
             <input type="hidden" id="activePage" th:value="${activePage}">
+            <input type="hidden" id="scanPhotoMsg">
             <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-toggle="offcanvas" data-bs-placement="bottom" href="#offcanvasMenu" aria-controls="offcanvasMenu" title="Show Menu">
                 <span id="sidebarMenuDrawer" th:class="'bi-list placeholder position-relative'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;">
                 </span>
@@ -405,6 +406,158 @@
                 $("#toastTitle4").text("");
                 $("#toastMessage4").text("");
             });
+
+
+            // Get updates from media scans
+            let stompClient = null;
+            let scanInProgress = false;
+
+            connectSP();
+
+            $("#scanPhotos").on("click", function (e) {
+                e.preventDefault();
+                postToScan(false);
+            });
+
+            $("#deleteThread").on("click", function (e) {
+                e.preventDefault();
+                let posting = $.post(
+                    "/settings/scan",
+                    {"submit": "", "deleteThread": true, "stopScan": false, "reindexFiles": false}
+                );
+
+                posting.done(function (data) {
+                    if (data.hasOwnProperty("msg")) {
+                        showMessageSP(data["msg"]);
+                    }
+                });
+            });
+
+            $("#stopScanPhotos").on("click", function (e) {
+                e.preventDefault();
+                let posting = $.post(
+                    "/settings/scan",
+                    {"submit": "", "deleteThread": false, "stopScan": true, "reindexFiles": false}
+                );
+
+                posting.done(function (data) {
+                    if (data.hasOwnProperty("msg")) {
+                        showMessageSP(data["msg"]);
+                        window.top.location = window.top.location
+                    }
+                });
+            });
+
+            function postToScan(deleteThread) {
+                let posting = $.post(
+                    "/settings/scan",
+                    {"submit": "Scan", "deleteThread": deleteThread, "stopScan": false, "reindexFiles": $('#reindexFiles').prop("checked")}
+                );
+
+                posting.done(function (data) {
+
+                    showMessageSP(data.hasOwnProperty("msg") ? data["msg"] : "")
+                    if (scanInProgress === false) {
+                        if ($("#msg").text() === "Start Scan") {
+                            connectSP();
+                        } else {
+                            scanRefresh();
+                        }
+                    }
+                });
+
+                return false;
+            }
+
+            function scanRefresh() {
+                sendMessageSP();
+                let msgVal = $("#scanPhotoMsg").val();
+                if (activePage === "scan") {
+                    msgVal = $("#msg").text();
+                }
+
+                if (msgVal === "Scan Stopped" || msgVal === "No directories configured" || msgVal === "Scan Complete") {
+                    scanInProgress = false;
+                } else {
+                    scanInProgress = true;
+                    setTimeout(scanRefresh, 1000);
+                }
+            }
+
+            let counterSP = 0;
+            function connectSP() {
+                const socket = new SockJS('/websocket-endpoint');
+                stompClient = Stomp.over(socket);
+                if (shashin.showDebug === false) {
+                    stompClient.debug = null
+                }
+
+                shashin.printMessageToConsole("Socket Connecting");
+
+                stompClient.connect({}, function() {
+                    if (scanInProgress === false) {
+                        scanRefresh();
+                    }
+                    shashin.printMessageToConsole( "Connected STOMP client");
+                    this.subscribe("/topic/messages", function (message) {
+                        let respMessage = JSON.parse(message.body).content;
+                        shashin.printMessageToConsole("message: "+message);
+                        if (respMessage === "Scan Stopped" || respMessage === "No directories configured" || respMessage === "Scan Complete") {
+                            $("#mediaScanSpinner").css("display", "none");
+                        } else {
+                            $("#mediaScanSpinner").css("display", "block");
+                        }
+                        showMessageSP(respMessage);
+                    });
+                }, function(e) {
+                    shashin.printMessageToConsole( "scan files connectSP() error" );
+                    shashin.printMessageToConsole( e.toString() );
+                    //showMessageSP("Socket connection error: " + e.toString())
+                    if (counterSP > 0) {
+                        showMessageSP("Oops, something went wrong! " + e.toString() + ". Probably already scanning.");
+                        if (activePage === "scan") {
+                            window.top.location = window.top.location
+                        }
+                    } else {
+                        showMessageSP("Oops, something went wrong! " + e.toString() + ". Click the Scan button once, to proceed with indexing.");
+                        if (activePage === "scan") {
+                            window.top.location = window.top.location
+                        }
+                    }
+
+                    if (counterSP < 10) {
+                        counterSP = 0;
+                        disconnectSP();
+                        connectSP();
+                    }
+
+                    scanInProgress = false;
+                    counterSP++;
+                });
+            }
+
+            function disconnectSP() {
+                if (stompClient !== null) {
+                    stompClient.disconnect();
+                }
+                shashin.printMessageToConsole("Disconnected");
+            }
+
+            function sendMessageSP() {
+                if (stompClient !== null) {
+                    stompClient.send("/app/scanmessage", {}, JSON.stringify({'message': "getScanMessage"}));
+                } else {
+                    showMessageSP("Trying to send message but STOMP client is null")
+                    scanInProgress = false;
+                }
+            }
+
+            function showMessageSP(message) {
+                $("#scanPhotoMsg").val(message);
+                if (activePage === "scan") {
+                    $("#msg").text(message);
+                }
+            }
         });
     </script>
 </header>
