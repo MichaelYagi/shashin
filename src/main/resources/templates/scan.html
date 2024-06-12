@@ -12,7 +12,7 @@
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
             <button class="btn btn-primary" id="scanPhotos">Scan</button>
 <!--            <button class="btn btn-danger" id="deleteThread">Delete Thread</button>-->
-            <button class="btn btn-danger" id="stopScan">Stop</button>
+            <button class="btn btn-danger" id="stopScanPhotos">Stop</button>
             <br>
             <input type="checkbox" id="reindexFiles" name="reindexFiles">
             <label for="reindexFiles">Recheck All Files (operation may take a while)</label>
@@ -21,147 +21,7 @@
     </div>
 </div>
 
-<script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
-    /*<![CDATA[*/
-    shashin.nonce = /*[[${cspNonce}]]*/ '';
-    /*]]>*/
+<!-- Scan UI logic in topnav.html -->
 
-    $(document).ready(function () {
-        // Web socket
-        let stompClient = null;
-        let scanInProgress = false;
-
-        connect();
-
-        $("#scanPhotos").on("click", function (e) {
-            e.preventDefault();
-            postToScan(false);
-        });
-
-        $("#deleteThread").on("click", function (e) {
-            e.preventDefault();
-            let posting = $.post(
-                "/settings/scan",
-                {"submit": "", "deleteThread": true, "stopScan": false, "reindexFiles": false}
-            );
-
-            posting.done(function (data) {
-                if (data.hasOwnProperty("msg")) {
-                    showMessage(data["msg"]);
-                }
-            });
-        });
-
-        $("#stopScan").on("click", function (e) {
-            e.preventDefault();
-            let posting = $.post(
-                "/settings/scan",
-                {"submit": "", "deleteThread": false, "stopScan": true, "reindexFiles": false}
-            );
-
-            posting.done(function (data) {
-                if (data.hasOwnProperty("msg")) {
-                    showMessage(data["msg"]);
-                    window.top.location = window.top.location
-                }
-            });
-        });
-
-        function postToScan(deleteThread) {
-            let posting = $.post(
-                "/settings/scan",
-                {"submit": "Scan", "deleteThread": deleteThread, "stopScan": false, "reindexFiles": $('#reindexFiles').prop("checked")}
-            );
-
-            posting.done(function (data) {
-
-                showMessage(data.hasOwnProperty("msg") ? data["msg"] : "")
-                if (scanInProgress === false) {
-                    if ($("#msg").text() === "Start Scan") {
-                        connect();
-                    } else {
-                        scanRefresh();
-                    }
-                }
-            });
-
-            return false;
-        }
-
-        function scanRefresh() {
-            sendMessage();
-            let msgId = "#msg";
-            if ($(msgId).text() === "No directories configured" || $(msgId).text() === "Scan Complete") {
-                scanInProgress = false;
-                disconnect();
-            } else {
-                scanInProgress = true;
-                setTimeout(scanRefresh, 1000);
-            }
-        }
-
-        let counter = 0;
-        function connect() {
-            const socket = new SockJS('/websocket-endpoint');
-            stompClient = Stomp.over(socket);
-            if (shashin.showDebug === false) {
-                stompClient.debug = null
-            }
-
-            shashin.printMessageToConsole("Socket Connecting");
-
-            stompClient.connect({}, function() {
-                if (scanInProgress === false) {
-                    scanRefresh();
-                }
-                shashin.printMessageToConsole( "Connected STOMP client");
-                this.subscribe("/topic/messages", function (message) {
-                    let respMessage = JSON.parse(message.body).content;
-                    shashin.printMessageToConsole("message: "+message);
-                    showMessage(respMessage);
-                });
-            }, function(e) {
-                shashin.printMessageToConsole( "scan files connect() error" );
-                shashin.printMessageToConsole( e.toString() );
-                //showMessage("Socket connection error: " + e.toString())
-                if (counter > 0) {
-                    showMessage("Oops, something went wrong! " + e.toString() + ". Probably already scanning.");
-                    window.top.location = window.top.location
-                } else {
-                    showMessage("Oops, something went wrong! " + e.toString() + ". Click the Scan button once, to proceed with indexing.");
-                    window.top.location = window.top.location
-                }
-
-                if (counter < 10) {
-                    counter = 0;
-                    scanRefresh();
-                }
-
-                scanInProgress = false;
-                counter++;
-            });
-        }
-
-        function disconnect() {
-            if (stompClient !== null) {
-                stompClient.disconnect();
-            }
-            shashin.printMessageToConsole("Disconnected");
-        }
-
-        function sendMessage() {
-            if (stompClient !== null) {
-                stompClient.send("/app/scanmessage", {}, JSON.stringify({'message': "getScanMessage"}));
-            } else {
-                showMessage("Trying to send message but STOMP client is null")
-                scanInProgress = false;
-            }
-        }
-
-        function showMessage(message) {
-            $("#msg").text(message);
-        }
-    });
-</script>
 </body>
 </html>
