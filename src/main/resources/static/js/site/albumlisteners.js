@@ -12,7 +12,7 @@ $(document).ready(function () {
         const metadataId = $("#metadataId").val();
 
         let requestJson = {
-            setCoverAlbum: $('#setCoverAlbum').prop("checked"),
+            setCoverAlbum: $('#setCoverAlbum').val() === "yes",
             metadataId: metadataId,
             albumId: albumId
         }
