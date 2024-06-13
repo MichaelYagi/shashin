@@ -371,6 +371,22 @@
                 await Util.getNotifications(notificationAlerts, timezone);
             }
 
+            if (notificationAlerts === true) {
+                setTimeout(function () {
+                    const http = new Http("check compreface status");
+                    const data = http.ajax("get", "/status/compreface");
+
+                    if (data.hasOwnProperty("status") && data["status"] === false) {
+                        shashin.showToastMessage("CompreFace server check failed", "Check CompreFace server connection.", {
+                            icon: "bi-exclamation-triangle",
+                            iconColor: "#FF0000",
+                            autohide: false,
+                            target: shashin.toast.target.three
+                        });
+                    }
+                }, 0);
+            }
+
             // Clear live toast message on close
             $('#'+shashin.toast.target.default).on('hidden.bs.toast', function () {
                 $("#toastIcon").removeClass();
