@@ -67,7 +67,8 @@
                 $("#albumModalTitle").text(metadata.title)
                 $('#propAlbumModal').find(':input').val('');
                 // $("#removeFromAlbum")[0].checked = false;
-                $("#setCoverAlbum")[0].checked = true;
+                // $("#setCoverAlbum")[0].checked = true;
+                $("#setCoverAlbum").val("yes");
                 $("#propAlbumModalThumbnail").html("");
 
                 $("#metadataId").val(metadata.id);
