@@ -603,6 +603,33 @@ class ToolsController {
         return "health"
     }
 
+    @RequestMapping(value = ["/status/compreface"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun checkComprefacestatus(model: Model): String {
+        val settings = model.getAttribute("settings") as Settings?
+
+        var status = true
+
+        if (settings != null) {
+            val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
+                settings.getCompreFaceServer(),
+                settings.getCompreFaceKey()
+            )
+
+            if ((settings.getCompreFaceKey() == "" || settings.getCompreFaceKey() == null) && (settings.getCompreFaceServer() == "" || settings.getCompreFaceServer() == null)) {
+                status = true
+            } else if ((settings.getCompreFaceKey() == "" || settings.getCompreFaceKey() == null) && settings.getCompreFaceServer() != "") {
+                status = false
+            } else if (settings.getCompreFaceKey() != "" && (settings.getCompreFaceServer() == "" || settings.getCompreFaceServer() == null)) {
+                status = false
+            } else if (faceRecogServicesAvailable) {
+                status = true
+            }
+        }
+
+        return "{\"status\":\"$status\"}"
+    }
+
     @RequestMapping(value = ["/api/v1/status"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getStatusApi(model: Model): String {
