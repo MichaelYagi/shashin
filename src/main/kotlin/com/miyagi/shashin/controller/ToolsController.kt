@@ -8,6 +8,7 @@ import com.miyagi.shashin.component.ScaperMessage
 import com.miyagi.shashin.model.SearchHistory
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
+import com.miyagi.shashin.model.UserAlbum
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.SearchHistoryRepository
 import com.miyagi.shashin.util.*
@@ -607,10 +608,11 @@ class ToolsController {
     @ResponseBody
     fun checkComprefacestatus(model: Model): String {
         val settings = model.getAttribute("settings") as Settings?
+        val currentUserObj = model.getAttribute("currentUser") as User?
 
         var status = true
 
-        if (settings != null) {
+        if (settings != null && currentUserObj != null && currentUserObj.getAuthority() != null && (currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER")) {
             val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
                 settings.getCompreFaceServer(),
                 settings.getCompreFaceKey()
@@ -622,12 +624,12 @@ class ToolsController {
                 status = false
             } else if (settings.getCompreFaceKey() != "" && (settings.getCompreFaceServer() == "" || settings.getCompreFaceServer() == null)) {
                 status = false
-            } else if (faceRecogServicesAvailable) {
-                status = true
+            } else {
+                status = faceRecogServicesAvailable
             }
         }
 
-        return "{\"status\":\"$status\"}"
+        return "{\"status\":$status,\"msg\":\"\"}"
     }
 
     @RequestMapping(value = ["/api/v1/status"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
