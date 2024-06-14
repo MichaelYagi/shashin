@@ -89,28 +89,29 @@
 </div>
 
 <div class="modal fade" id="propPersonModal" tabindex="-1" role="dialog" aria-labelledby="labelPersonModal" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="propPersonModalLabel">Edit &ldquo;<span id="personModalTitle"></span>&rdquo;<div id="propPersonModalThumbnail"></div></h5>
+                <h5 class="modal-title" id="propPersonModalLabel">Set &ldquo;<span id="personModalTitle"></span>&rdquo; as cover?<div id="propPersonModalThumbnail"></div></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
             </div>
-            <div class="modal-body">
+<!--            <div class="modal-body">-->
                 <form id="savePersonModalForm">
+                    <input type="hidden" name="setCoverPerson" id="setCoverPerson" value="yes">
 <!--                    <input type="hidden" name="metadataId" id="metadataId" value="">-->
-                    <div class="col-auto form-check">
-                        <input type="radio" class="form-check-input" id="setCoverPerson" name="personAction">
-                        <label class="form-check-label" for="setCoverPerson">Set as cover</label>
-                    </div>
+<!--                    <div class="col-auto form-check">-->
+<!--                        <input type="radio" class="form-check-input" id="setCoverPerson" name="personAction">-->
+<!--                        <label class="form-check-label" for="setCoverPerson">Set as cover</label>-->
+<!--                    </div>-->
                 </form>
                 <div class="col-sm">
                     <span id="personModalMsg"></span>
                 </div>
-            </div>
+<!--            </div>-->
             <div class="modal-footer">
                 <div id="personModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
-                <button type="button" class="btn btn-primary" id="savePersonModal">Save</button>
+                <button type="button" class="btn btn-primary" id="savePersonModal">OK</button>
                 <button id="personModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
         </div>
@@ -135,6 +136,7 @@
 
         $("#appSearchInput").val(personName);
         const http = new Http("check notifications");
+
         http.ajax("get", "/person/metadata/"+personId+"/0").then(function (metadataList) {
             const personInstance = new Person(metadataList, activePage, personId, canEdit);
             personInstance.init();
