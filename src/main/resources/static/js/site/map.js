@@ -461,6 +461,10 @@ async function showMap(mapdata) {
                 map.getView().setZoom(initialZoom);
             }
         }
+
+        shashin.closeToastMessage({
+            target: shashin.toast.target.two
+        });
     }
 
     function editLocation(...args) {
