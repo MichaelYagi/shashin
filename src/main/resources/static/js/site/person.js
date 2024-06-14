@@ -46,7 +46,7 @@ class Person {
             const personId = $("#personId").val();
 
             let requestJson = {
-                setCoverPerson: $('#setCoverPerson').prop("checked"),
+                setCoverPerson: $('#setCoverPerson').val() === "yes",
                 metadataId: metadataId,
                 personId: personId
             }
@@ -212,7 +212,7 @@ class Person {
             // Clear modal data
             $("#personModalTitle").text(metadata.title)
             $('#propPersonModal').find(':input').val('');
-            $("#setCoverPerson")[0].checked = true;
+            $("#setCoverPerson").val("yes");
             $("#propPersonModalThumbnail").html("");
 
             $("#metadataId").val(metadata.id);
