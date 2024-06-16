@@ -529,20 +529,15 @@
                     shashin.printMessageToConsole( "scan files connectSP() error" );
                     shashin.printMessageToConsole( e.toString() );
                     //showMessageSP("Socket connection error: " + e.toString())
-                    if (counterSP > 0) {
+
+                    if (counterSP > 10) {
                         showMessageSP("Oops, something went wrong! " + e.toString() + ". Probably already scanning.");
                         if (activePage === "scan") {
                             window.top.location = window.top.location
                         }
+                        counterSP = 0;
                     } else {
                         showMessageSP("Oops, something went wrong! " + e.toString() + ". Click the Scan button once, to proceed with indexing.");
-                        if (activePage === "scan") {
-                            window.top.location = window.top.location
-                        }
-                    }
-
-                    if (counterSP < 10) {
-                        counterSP = 0;
                         disconnectSP();
                         connectSP();
                     }
