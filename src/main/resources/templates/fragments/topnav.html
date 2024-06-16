@@ -423,6 +423,8 @@
                 $("#toastMessage4").text("");
             });
 
+            // Focus and select search input
+            $("#appSearchInput").focus(function() { $(this).select(); } );
 
             // Get updates from media scans
             let stompClient = null;

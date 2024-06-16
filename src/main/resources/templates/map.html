@@ -123,7 +123,7 @@
     <script src="/js/site/min/map.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
-    $(document).ready(function () {
+    $(document).ready(async function () {
         $("#appSearchInput").val("Map");
 
         /*<![CDATA[*/
@@ -131,19 +131,19 @@
         /*]]>*/
 
         $('#qpInfo').popover({
-            trigger:'hover',
-            title:'Query Params Available',
-            html:true,
-            content:'<div class="row"><div class="col-3"><strong>lat</strong></div><div class="col">Latitude</div></div>' +
-                    '<div class="row"><div class="col-3"><strong>lng</strong></div><div class="col">Longitude</div></div>' +
-                    '<div class="row"><div class="col-3"><strong>latlng</strong></div><div class="col">Latitude,Longitude</div></div>' +
-                    '<div class="row"><div class="col-3"><strong>sd</strong></div><div class="col">Start date (yyyy-mm-dd)</div></div>' +
-                    '<div class="row"><div class="col-3"><strong>ed</strong></div><div class="col">End date (yyyy-mm-dd)</div></div>' +
-                    '<div class="row"><div class="col-3"><strong>vo</strong></div><div class="col">Video only</div></div>' +
-                    '<div class="row"><div class="col-3"><strong>mtf</strong></div><div class="col">Media type filer (video, gif, etc)</div></div>' +
-                    '<div class="row"><div class="col-3"><strong>aid</strong></div><div class="col">Album ID</div></div>' +
-                    '<div class="row"><div class="col-3"><strong>an</strong></div><div class="col">Album Name</div></div>',
-            placement:'bottom'
+            trigger: 'hover',
+            title: 'Query Params Available',
+            html: true,
+            content: '<div class="row"><div class="col-3"><strong>lat</strong></div><div class="col">Latitude</div></div>' +
+                '<div class="row"><div class="col-3"><strong>lng</strong></div><div class="col">Longitude</div></div>' +
+                '<div class="row"><div class="col-3"><strong>latlng</strong></div><div class="col">Latitude,Longitude</div></div>' +
+                '<div class="row"><div class="col-3"><strong>sd</strong></div><div class="col">Start date (yyyy-mm-dd)</div></div>' +
+                '<div class="row"><div class="col-3"><strong>ed</strong></div><div class="col">End date (yyyy-mm-dd)</div></div>' +
+                '<div class="row"><div class="col-3"><strong>vo</strong></div><div class="col">Video only</div></div>' +
+                '<div class="row"><div class="col-3"><strong>mtf</strong></div><div class="col">Media type filer (video, gif, etc)</div></div>' +
+                '<div class="row"><div class="col-3"><strong>aid</strong></div><div class="col">Album ID</div></div>' +
+                '<div class="row"><div class="col-3"><strong>an</strong></div><div class="col">Album Name</div></div>',
+            placement: 'bottom'
         });
 
         $("#mapSources").val("osm");
@@ -152,14 +152,27 @@
         const http = new Http("Getting map data");
         Util.setMetadataLocalStorage();
         const version = Util.getMetadataLocalStorage();
+        shashin.showToastMessage("Loading", "Loading map data ...", {
+            icon: "bi-info-circle",
+            iconColor: "#777777",
+            autohide: false,
+            target: shashin.toast.target.two
+        });
         http.ajax("get", "/mapdata" + (version === "" ? "" : "?v=" + version)).then(function (mapdataObj) {
             let mapdata = [];
 
             if (mapdataObj !== null && mapdataObj.hasOwnProperty("mapdata")) {
                 mapdata = mapdataObj["mapdata"];
+
                 if (mapdata === null || mapdata === "") {
                     mapdata = [];
                 }
+            }
+
+            if (mapdata.length === 0) {
+                shashin.closeToastMessage({
+                    target: shashin.toast.target.two
+                });
             }
 
             showMap(mapdata);
