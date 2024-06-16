@@ -2640,7 +2640,7 @@
             }
 
             if (shashin.showTrace === true) {
-                console.trace();
+                console.log(getStackTrace().join('\n'));
             }
 
             if (shashin.writeLog === true) {
