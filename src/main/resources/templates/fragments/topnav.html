@@ -512,6 +512,7 @@
 
                 shashin.printMessageToConsole("Socket Connecting");
 
+                let counterMessage = 0;
                 stompClient.connect({}, function() {
                     if (scanInProgress === false) {
                         scanRefresh();
@@ -522,10 +523,15 @@
                         shashin.printMessageToConsole("message: "+message);
                         if (respMessage === "Scan Stopped" || respMessage === "No directories configured" || respMessage === "Scan Complete") {
                             $("#mediaScanSpinner").css("display", "none");
+                            if (counterMessage === 1) {
+                                Util.getNotifications(notificationAlerts, timezone);
+                            }
                         } else {
                             $("#mediaScanSpinner").css("display", "block");
+                            counterMessage = 0;
                         }
                         showMessageSP(respMessage);
+                        counterMessage++;
                     });
                 }, function(e) {
                     shashin.printMessageToConsole( "scan files connectSP() error" );
