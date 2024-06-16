@@ -1,6 +1,8 @@
 (function( shashin, $, undefined ) {
     shashin.showDebug = false;
     shashin.showTrace = false;
+    shashin.writeLog = false;
+    shashin.consoleFilterTypes = [];
     shashin.map = null;
     shashin.layer = null;
     shashin.feature = null;
@@ -41,6 +43,13 @@
     shashin.apiResponse.WARN = "warn";
     shashin.apiResponse.FAIL = "fail";
     shashin.objectName = "shashinobject";
+    const ConsoleTypes = Object.freeze({
+        error: 0,
+        info: 1,
+        log: 2,
+        warn: 3
+    });
+    shashin.consoleTypes = ConsoleTypes;
 
     function fixContentHeight() {
         if ($("div[data-role='dialog']").is(":visible")) {
@@ -348,7 +357,9 @@
     shashin.onFail = function(xhr, textStatus, ajaxParams, description, failFunction) {
         $("#spinner").hide();
         shashin.showToastMessage("AJAX error", "AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
-        shashin.printMessageToConsole("AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+        shashin.printMessageToConsole("AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".", {
+            type: shashin.consoleTypes.error
+        });
         if (xhr.status === 403 || xhr.status === 401) {
             $(location).prop('href', '/users/login');
         } else if ((textStatus === 'timeout' || textStatus === 'error') && ajaxParams.retries-- > 0) {
@@ -1297,7 +1308,9 @@
                         image = canvas.toDataURL('image/jpeg');
                     }
                 } catch (e) {
-                    shashin.printMessageToConsole("Error capturing thumbnail: " + e);
+                    shashin.printMessageToConsole("Error capturing thumbnail: " + e, {
+                        type: shashin.consoleTypes.error
+                    });
                 }
 
                 $(canvas).remove();
@@ -1526,9 +1539,15 @@
                         }
                     },
                     failCallback: function (html, url) {
-                        shashin.printMessageToConsole("Media ZIP download fail");
-                        shashin.printMessageToConsole(url);
-                        shashin.printMessageToConsole(html);
+                        shashin.printMessageToConsole("Media ZIP download fail", {
+                            type: shashin.consoleTypes.error
+                        });
+                        shashin.printMessageToConsole(url, {
+                            type: shashin.consoleTypes.error
+                        });
+                        shashin.printMessageToConsole(html, {
+                            type: shashin.consoleTypes.error
+                        });
 
                         if (span !== null) {
                             span.addClass('bi-download').removeClass('spinner-grow');
@@ -1558,7 +1577,9 @@
                             span.addClass('bi-download').removeClass('spinner-grow');
                         }
                     }).catch(() => {
-                        shashin.printMessageToConsole("Media ZIP download fail using fetch()");
+                        shashin.printMessageToConsole("Media ZIP download fail using fetch()", {
+                            type: shashin.consoleTypes.error
+                        });
                         if (span !== null) {
                             span.addClass('bi-download').removeClass('spinner-grow');
                         }
@@ -2523,14 +2544,35 @@
     }
 
     // Call in console
-    shashin.enableDebug = function (showTrace) {
+    shashin.enableDebug = function (options) {
         shashin.showDebug = true;
+        shashin.writeLog = false;
+        shashin.consoleFilterTypes = [];
 
-        if (showTrace === undefined) {
+        let showTrace = false;
+        //[shashin.consoleTypes.error, shashin.consoleTypes.info, shashin.consoleTypes.log, shashin.consoleTypes.warn]
+        let filters = [];
+
+        if (options === undefined || options === null) {
             showTrace = false;
+            filters = [];
+            shashin.writeLog = false;
+        } else {
+            if (options.hasOwnProperty("showTrace")) {
+                showTrace = options["showTrace"];
+            }
+
+            if (options.hasOwnProperty("filter")) {
+                filters = options["filter"];
+            }
+
+            if (options.hasOwnProperty("writeLog")) {
+                shashin.writeLog = options["writeLog"];
+            }
         }
 
         shashin.showTrace = showTrace;
+        shashin.consoleFilterTypes = filters;
 
         if (Util.localStorageAvailable() === true) {
             localStorage.setItem("showDebug", "on");
@@ -2546,7 +2588,18 @@
         }
     }
 
-    shashin.printMessageToConsole = function (msg) {
+    shashin.printMessageToConsole = function (msg, options) {
+        // error, info, log, warn
+        let type = shashin.consoleTypes.info;
+
+        if (options === undefined || options === null) {
+            type = shashin.consoleTypes.log;
+        } else {
+            if (options.hasOwnProperty("type")) {
+                type = options["type"];
+            }
+        }
+
         let localStorageDebugFlag = false;
         if (Util.localStorageAvailable() === true && localStorage.getItem("showDebug") !== null && localStorage.getItem("showDebug").length > 0) {
             let getFlag = localStorage.getItem("showDebug")
@@ -2556,9 +2609,23 @@
         }
 
         if (shashin.showDebug === true || localStorageDebugFlag === true) {
-            console.log(msg);
+            if (type === shashin.consoleTypes.log && (shashin.consoleFilterTypes.length === 0 || $.inArray(shashin.consoleTypes.log, shashin.consoleFilterTypes) !== -1)) {
+                console.log(msg);
+            } else if (type === shashin.consoleTypes.error && (shashin.consoleFilterTypes.length === 0 || $.inArray(shashin.consoleTypes.error, shashin.consoleFilterTypes) !== -1)) {
+                console.error(msg);
+            } else if (type === shashin.consoleTypes.info && (shashin.consoleFilterTypes.length === 0 || $.inArray(shashin.consoleTypes.info, shashin.consoleFilterTypes) !== -1)) {
+                console.info(msg);
+            } else if (type === shashin.consoleTypes.warn && (shashin.consoleFilterTypes.length === 0 || $.inArray(shashin.consoleTypes.warn, shashin.consoleFilterTypes) !== -1)) {
+                console.warn(msg);
+            }
+
             if (shashin.showTrace === true) {
                 console.trace();
+            }
+
+            if (shashin.writeLog === true) {
+                // TODO: Write to file via endpoint
+
             }
         }
     }

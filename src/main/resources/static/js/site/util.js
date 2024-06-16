@@ -797,7 +797,9 @@ class Util {
                             try {
                                 shashin.getLightGallery().$container.remove();
                             } catch (e) {
-                                shashin.printMessageToConsole("Error removing lightGallery instance: " + e.message);
+                                shashin.printMessageToConsole("Error removing lightGallery instance: " + e.message, {
+                                    type: shashin.consoleTypes.error
+                                });
                             }
                         } else {
                             shashin.getLightGallery().destroy();

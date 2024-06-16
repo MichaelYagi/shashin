@@ -531,11 +531,15 @@ class Dashboard {
                 });
             }, function(e) {
                 if (counter > 10) {
-                    shashin.printMessageToConsole("Oops, something went wrong! " + e.toString() + ". Probably already scanning.");
+                    shashin.printMessageToConsole("Oops, something went wrong! " + e.toString() + ". Probably already scanning.", {
+                        type: shashin.consoleTypes.error
+                    });
                     counter = 0;
                     window.top.location = window.top.location
                 } else {
-                    shashin.printMessageToConsole("Oops, something went wrong! " + e.toString() + ".");
+                    shashin.printMessageToConsole("Oops, something went wrong! " + e.toString() + ".", {
+                        type: shashin.consoleTypes.error
+                    });
                     disconnect();
                     connect();
                 }
@@ -555,7 +559,9 @@ class Dashboard {
             if (stompClient !== null) {
                 stompClient.send("/app/statmessage", {}, JSON.stringify({'message': "getStatMessage"}));
             } else {
-                shashin.printMessageToConsole("Trying to send message but STOMP client is null")
+                shashin.printMessageToConsole("Trying to send message but STOMP client is null", {
+                    type: shashin.consoleTypes.error
+                });
             }
         }
     }
