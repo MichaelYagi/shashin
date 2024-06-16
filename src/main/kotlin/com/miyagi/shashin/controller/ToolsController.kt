@@ -15,6 +15,7 @@ import com.miyagi.shashin.util.*
 import com.sun.management.OperatingSystemMXBean
 import net.coobird.thumbnailator.Thumbnails
 import net.coobird.thumbnailator.geometry.Positions
+import org.apache.commons.text.StringEscapeUtils
 import org.jsoup.Jsoup
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -769,6 +770,39 @@ class ToolsController {
         response["status"] = status
 
         return response
+    }
+
+    @RequestMapping(value = ["/console/log"], method = [RequestMethod.POST], consumes = ["application/json"])
+    @ResponseBody
+    fun writeConsoleToLog(model: Model, @RequestBody requestBody: JsonNode): String {
+        val consoleLogMapper = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        if (consoleLogMapper.containsKey("type") && consoleLogMapper.containsKey("log")) {
+            // error: 0, info: 1, log: 2, warn: 3
+            val type = consoleLogMapper["type"].toString().toInt()
+            val log = consoleLogMapper["log"].toString()
+
+            when (type) {
+                0 -> {
+                    logger.log(Level.SEVERE, log)
+                }
+                1 -> {
+                    logger.log(Level.INFO, log)
+                }
+                2 -> {
+                    logger.log(Level.INFO, log)
+                }
+                3 -> {
+                    logger.log(Level.WARNING, log)
+                }
+                else -> {
+                    logger.log(Level.INFO, log)
+                }
+            }
+
+            return "{\"status\": \"success\",\"msg\":\"\"}"
+        }
+
+        return "{\"status\": \"fail\",\"msg\":\"\"}"
     }
 
     private fun roundOffDecimal(number: Double): Any {

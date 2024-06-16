@@ -43,13 +43,12 @@
     shashin.apiResponse.WARN = "warn";
     shashin.apiResponse.FAIL = "fail";
     shashin.objectName = "shashinobject";
-    const ConsoleTypes = Object.freeze({
+    shashin.consoleTypes = Object.freeze({
         error: 0,
         info: 1,
         log: 2,
         warn: 3
     });
-    shashin.consoleTypes = ConsoleTypes;
 
     function fixContentHeight() {
         if ($("div[data-role='dialog']").is(":visible")) {
@@ -2544,6 +2543,7 @@
     }
 
     // Call in console
+    // eg: shashin.enableDebug({filter:[shashin.consoleTypes.log,shashin.consoleTypes.error],showTrace:true,writeLog:true})
     shashin.enableDebug = function (options) {
         shashin.showDebug = true;
         shashin.writeLog = false;
@@ -2588,6 +2588,20 @@
         }
     }
 
+    function getStackTrace() {
+        let stack;
+
+        try {
+            throw new Error('');
+        }
+        catch (error) {
+            stack = error.stack || '';
+        }
+
+        stack = stack.split('\n').map(function (line) { return line.trim(); });
+        return stack.splice(stack[0] === 'Error' ? 2 : 1);
+    }
+
     shashin.printMessageToConsole = function (msg, options) {
         // error, info, log, warn
         let type = shashin.consoleTypes.info;
@@ -2624,8 +2638,34 @@
             }
 
             if (shashin.writeLog === true) {
-                // TODO: Write to file via endpoint
+                let log = "";
+                if (msg.length > 0) {
+                    if (shashin.consoleFilterTypes.length === 0) {
+                        log = msg;
+                    } else if (type === shashin.consoleTypes.log && $.inArray(shashin.consoleTypes.log, shashin.consoleFilterTypes) !== -1) {
+                        log = "console.log: " + msg;
+                    } else if (type === shashin.consoleTypes.error && $.inArray(shashin.consoleTypes.error, shashin.consoleFilterTypes) !== -1) {
+                        log = "console.error: " + msg;
+                    } else if (type === shashin.consoleTypes.info && $.inArray(shashin.consoleTypes.info, shashin.consoleFilterTypes) !== -1) {
+                        log = "console.info: " + msg;
+                    } else if (type === shashin.consoleTypes.warn && $.inArray(shashin.consoleTypes.warn, shashin.consoleFilterTypes) !== -1) {
+                        log = "console.warn: " + msg;
+                    }
 
+                    if (log.length > 0) {
+                        const http = new Http("log console output");
+                        if (shashin.showTrace === true) {
+                            log += "\n" + getStackTrace().join('\n');
+                        }
+
+                        let json = {type: type, log: log}
+                        http.ajax("post", "/console/log", JSON.stringify(json)).then(function (data) {
+                            if (data.hasOwnProperty("status") && data["status"] === "fail" && data.hasOwnProperty("msg")) {
+                                console.error("Could not log console output");
+                            }
+                        });
+                    }
+                }
             }
         }
     }
