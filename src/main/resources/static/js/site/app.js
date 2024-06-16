@@ -2546,6 +2546,7 @@
     // eg: shashin.enableDebug({filter:[shashin.consoleTypes.log,shashin.consoleTypes.error],showTrace:true,writeLog:true})
     shashin.enableDebug = function (options) {
         shashin.showDebug = true;
+        shashin.showTrace = false;
         shashin.writeLog = false;
         shashin.consoleFilterTypes = [];
 
@@ -2582,6 +2583,9 @@
     // Call in console
     shashin.disableDebug = function () {
         shashin.showDebug = false;
+        shashin.showTrace = false;
+        shashin.writeLog = false;
+        shashin.consoleFilterTypes = [];
 
         if (Util.localStorageAvailable() === true && localStorage.getItem("showDebug") !== null) {
             localStorage.removeItem("showDebug");
