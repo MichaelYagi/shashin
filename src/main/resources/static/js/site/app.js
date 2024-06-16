@@ -2608,7 +2608,7 @@
 
     shashin.printMessageToConsole = function (msg, options) {
         // error, info, log, warn
-        let type = shashin.consoleTypes.info;
+        let type = shashin.consoleTypes.log;
 
         if (options === undefined || options === null) {
             type = shashin.consoleTypes.log;
@@ -2635,6 +2635,8 @@
                 console.info(msg);
             } else if (type === shashin.consoleTypes.warn && (shashin.consoleFilterTypes.length === 0 || $.inArray(shashin.consoleTypes.warn, shashin.consoleFilterTypes) !== -1)) {
                 console.warn(msg);
+            } else {
+                console.log(msg);
             }
 
             if (shashin.showTrace === true) {
@@ -2645,7 +2647,7 @@
                 let log = "";
                 if (msg.length > 0) {
                     if (shashin.consoleFilterTypes.length === 0) {
-                        log = msg;
+                        log = "console.log: " + msg;
                     } else if (type === shashin.consoleTypes.log && $.inArray(shashin.consoleTypes.log, shashin.consoleFilterTypes) !== -1) {
                         log = "console.log: " + msg;
                     } else if (type === shashin.consoleTypes.error && $.inArray(shashin.consoleTypes.error, shashin.consoleFilterTypes) !== -1) {
