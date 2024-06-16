@@ -530,17 +530,14 @@ class Dashboard {
                     shashin.printMessageToConsole("Message:"+respMessageJsonString);
                 });
             }, function(e) {
-                if (counter > 0) {
+                if (counter > 10) {
                     shashin.printMessageToConsole("Oops, something went wrong! " + e.toString() + ". Probably already scanning.");
+                    counter = 0;
                     window.top.location = window.top.location
                 } else {
-                    shashin.printMessageToConsole("Oops, something went wrong! " + e.toString() + ". Click the Scan button once, to proceed with indexing.");
-                    window.top.location = window.top.location
-                }
-
-                if (counter < 10) {
-                    counter = 0;
-                    scanRefresh();
+                    shashin.printMessageToConsole("Oops, something went wrong! " + e.toString() + ".");
+                    disconnect();
+                    connect();
                 }
 
                 counter++;
