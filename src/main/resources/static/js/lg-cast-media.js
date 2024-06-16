@@ -16,14 +16,24 @@
     });
 
     cjs.on('event', (e) => {
-        shashin.printMessageToConsole("Castjs Event: " + e);
+        if (shashin) {
+            shashin.printMessageToConsole("Castjs Event: " + e, {
+                type: shashin.consoleTypes.error
+            });
+        }
+
         if (e === "connect" && $("#chromecasting").hasClass("bi-cast")) {
             $("#chromecasting").addClass('bi-stop-circle').removeClass('bi-cast');
         }
     });
 
     cjs.on('error', (e) => {
-        shashin.printMessageToConsole("Castjs Error: " + e);
+        if (shashin) {
+            shashin.printMessageToConsole("Castjs Error: " + e, {
+                type: shashin.consoleTypes.error
+            });
+        }
+
         if (e !== "invalid_parameter") {
             $("#chromecasting").css({"display": "none", "font-size": "1rem"});
         }
