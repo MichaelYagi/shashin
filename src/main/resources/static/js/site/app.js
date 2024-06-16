@@ -2664,12 +2664,14 @@
                             log += "\n" + getStackTrace().join('\n');
                         }
 
-                        let json = {type: type, log: log}
-                        http.ajax("post", "/console/log", JSON.stringify(json)).then(function (data) {
-                            if (data.hasOwnProperty("status") && data["status"] === "fail" && data.hasOwnProperty("msg")) {
-                                console.error("Could not log console output");
-                            }
-                        });
+                        setTimeout(function () {
+                            let json = {type: type, log: log}
+                            http.ajax("post", "/console/log", JSON.stringify(json)).then(function (data) {
+                                if (data.hasOwnProperty("status") && data["status"] === "fail" && data.hasOwnProperty("msg")) {
+                                    console.error("Could not log console output");
+                                }
+                            });
+                        },0);
                     }
                 }
             }
