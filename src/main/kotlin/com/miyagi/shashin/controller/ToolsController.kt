@@ -772,6 +772,7 @@ class ToolsController {
         return response
     }
 
+    @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     @RequestMapping(value = ["/console/log"], method = [RequestMethod.POST], consumes = ["application/json"])
     @ResponseBody
     fun writeConsoleToLog(model: Model, @RequestBody requestBody: JsonNode): String {
