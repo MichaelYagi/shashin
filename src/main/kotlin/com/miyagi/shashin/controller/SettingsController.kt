@@ -1189,6 +1189,23 @@ class SettingsController {
         return mapper.writeValueAsString(dirs)
     }
 
+    @RequestMapping(value = ["/api/v1/system/settings"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    @Secured("ROLE_SUPER")
+    fun getSystemSettings(model: Model): String {
+        var response: JsonNode? = null
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null) {
+            val settings = model.getAttribute("settings") as Settings?
+            response = mapper.readTree(settings.toString())
+        } else {
+            logger.log(Level.INFO, "Could not access system settings")
+        }
+
+        return mapper.writeValueAsString(response)
+    }
+
     @Secured("ROLE_SUPER")
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     @PostMapping("/settings/snapshot")

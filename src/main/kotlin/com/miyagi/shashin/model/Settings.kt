@@ -179,6 +179,10 @@ class Settings {
     override fun toString(): String {
         val map = mutableMapOf<String, Any?>()
         map["id"] = this.id
+        map["port"] = this.port
+        map["compreFaceServer"] = this.compreFaceServer
+        map["compreFaceKey"] = this.compreFaceKey
+        map["objectDetection"] = this.objectDetection
         map["recognitionConfidenceThreshold"] = this.recognitionConfidenceThreshold
         map["objectRecognitionConfidenceThreshold"] = this.objectRecognitionConfidenceThreshold
         map["queryLimit"] = this.queryLimit
@@ -186,9 +190,7 @@ class Settings {
         map["trainingDataLimit"] = this.trainingDataLimit
         map["notificationLimit"] = this.notificationLimit
         map["searchHistoryLimit"] = this.searchHistoryLimit
-        map["port"] = this.port
         map["scanAutomatically"] = this.scanAutomatically
-        map["objectDetection"] = this.objectDetection
         map["scheduledMatching"] = this.scheduledMatching
         map["scheduledTime"] = this.scheduledTime
         val mapper = ObjectMapper()
