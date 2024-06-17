@@ -290,6 +290,19 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 model["authority"] = currentUser.getAuthority()!!
                 model["username"] = currentUser.getUsername()!!
                 model["apikey"] = currentUser.getApikey()!!
+
+                if (currentUser.getDarkMode() == null) {
+                    currentUser.setDarkMode(false)
+                }
+                if (currentUser.getAutoplayVideo() == null) {
+                    currentUser.setAutoplayVideo(false)
+                }
+                if (currentUser.getShowPlacename() == null) {
+                    currentUser.setShowPlacename(false)
+                }
+                if (currentUser.getNotificationAlerts() == null) {
+                    currentUser.setNotificationAlerts(false)
+                }
             } else {
                 logger.log(Level.INFO, "{\"message\":\"Invalid API Key\"}")
             }
