@@ -654,17 +654,12 @@ class UserController {
                     "</tbody></table><br>" +
                     "Response body on success:<br>" +
                     "<code><pre>{\n" +
-                    "    \"msg\": \"\",\n" +
-                    "    \"message\": \"\",\n" +
-                    "    \"status\": \"success\",\n" +
-                    "    \"user\": {\n" +
-                    "        \"id\": &lt;user_id&gt;,\n" +
-                    "        \"username\": \"&lt;username&gt;\",\n" +
-                    "        \"authority\": \"&lt;role&gt;\",\n" +
-                    "        \"apikey\": \"&lt;api_key&gt;\",\n" +
-                    "        \"isAuthorized\": &lt;is_authorized&gt;,\n" +
-                    "        \"darkMode\": &lt;dark_mode&gt;\n" +
-                    "    }\n" +
+                    "    \"id\": &lt;user_id&gt;,\n" +
+                    "    \"username\": \"&lt;username&gt;\",\n" +
+                    "    \"authority\": \"&lt;role&gt;\",\n" +
+                    "    \"apikey\": \"&lt;api_key&gt;\",\n" +
+                    "    \"isAuthorized\": &lt;is_authorized&gt;,\n" +
+                    "    \"darkMode\": &lt;dark_mode&gt;\n" +
                     "}" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
