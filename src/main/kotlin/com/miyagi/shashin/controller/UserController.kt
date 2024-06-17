@@ -641,7 +641,7 @@ class UserController {
             operationId = "getMyUserInfo",
             description = "<strong>See your user information including your user ID.</strong><br>" +
                     "<pre><code>" +
-                    "curl -X GET \"http://127.0.0.1:6624/api/v1/users/me\" \\\n" +
+                    "curl -X GET \"http://127.0.0.1:6624/api/v1/userinfo\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "</code></pre>" +
@@ -678,22 +678,35 @@ class UserController {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/api/v1/users/me"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/user/info"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     fun getMyUserInfo(model: Model): String {
-        val response = mutableMapOf<String, Any?>()
-        response["msg"] = "Could not get user info"
-        response["message"] = "Could not get user info"
-        response["status"] = ApiResponse.FAIL.status
-        response["user"] = User()
+        var response: JsonNode? = null
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
-            response["user"] = mapper.readTree(currentUserObj.toString())
-            response["msg"] = ""
-            response["message"] = ""
-            response["status"] = ApiResponse.SUCCESS.status
+            response = mapper.readTree(currentUserObj.toString())
+        } else {
+            logger.log(Level.INFO, "Could not access user info")
+        }
+
+        return mapper.writeValueAsString(response)
+    }
+
+    @RequestMapping(value = ["/api/v1/user/info/{userId}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    @Secured("ROLE_SUPER")
+    fun getUserInfoById(model: Model, @PathVariable userId: Int): String {
+        var response: JsonNode? = null
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        val userObj = userRepository?.findById(userId)?.orElse(null)
+
+        if (currentUserObj != null && userObj != null) {
+            response = mapper.readTree(userObj.toString())
+        } else {
+            logger.log(Level.INFO, "Could not access user info")
         }
 
         return mapper.writeValueAsString(response)
