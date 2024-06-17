@@ -336,6 +336,9 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 if (currentUser.getShowPlacename() == null) {
                     currentUser.setShowPlacename(false)
                 }
+                if (currentUser.getNotificationAlerts() == null) {
+                    currentUser.setNotificationAlerts(false)
+                }
                 if (!currentUser.getApikey().isNullOrBlank()) {
                     model["apikey"] = currentUser.getApikey()!!
                 }
