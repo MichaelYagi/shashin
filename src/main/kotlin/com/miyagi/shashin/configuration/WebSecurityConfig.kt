@@ -141,7 +141,10 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                     "settings",
                     "settings/users",
                     "settings/scan",
-                    "users/delete"
+                    "users/delete",
+                    "api/v1/system/settings",
+                    "api/v1/users/info",
+                    "api/v1/user/info/**"
                 )
 
         val allRoleList = arrayOf(
@@ -160,7 +163,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "api/v1/placedata",
             "api/v1/profile/**",
             "api/v1/metadata/**",
-            "api/v1/users/me",
+            "api/v1/user/info",
             "api/v1/comment/**",
             "api/v1/favorites/**",
             "api/v1/complete/metadata/**",
