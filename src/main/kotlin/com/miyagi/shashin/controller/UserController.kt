@@ -18,6 +18,7 @@ import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
+import org.springframework.data.domain.Sort
 import org.springframework.http.MediaType
 import org.springframework.security.access.annotation.Secured
 import org.springframework.security.authentication.AuthenticationManager
@@ -707,6 +708,24 @@ class UserController {
             response = mapper.readTree(userObj.toString())
         } else {
             logger.log(Level.INFO, "Could not access user info")
+        }
+
+        return mapper.writeValueAsString(response)
+    }
+
+    @RequestMapping(value = ["/api/v1/users/info"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    @Secured("ROLE_SUPER")
+    fun getAllUsersInfo(model: Model): String {
+        var response: JsonNode? = null
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        val usersObj = userRepository?.findAll(Sort.by(Sort.Direction.DESC, "id"))
+
+        if (currentUserObj != null && usersObj != null) {
+            response = mapper.readTree(usersObj.toString())
+        } else {
+            logger.log(Level.INFO, "Could not access users info")
         }
 
         return mapper.writeValueAsString(response)
