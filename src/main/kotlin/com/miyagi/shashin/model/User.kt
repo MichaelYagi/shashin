@@ -171,6 +171,8 @@ class User {
         map["autoplayVideo"] = this.autoplayVideo
         map["showPlacename"] = this.showPlacename
         map["notificationAlerts"] = this.notificationAlerts
+        map["createdAt"] = this.createdAt
+        map["modifiedAt"] = this.modifiedAt
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {
