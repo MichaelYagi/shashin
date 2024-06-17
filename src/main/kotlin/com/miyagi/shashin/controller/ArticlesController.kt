@@ -58,6 +58,12 @@ class ArticlesController {
         //mutableListOf<MutableMap<String, String>>()
 
         // Based on WebSecurityConfig
+        val superEndpoints = MultiSecurityConfig.superList
+        superEndpoints.forEachIndexed { i, _ ->
+            if(superEndpoints[i].contains("**")) {
+                superEndpoints[i] = superEndpoints[i].replace("**", "(.*)")
+            }
+        }
         val adminEndpoints = MultiSecurityConfig.adminList
         adminEndpoints.forEachIndexed { i, _ ->
             if(adminEndpoints[i].contains("**")) {
@@ -93,11 +99,19 @@ class ArticlesController {
                     }
                 }
 
+                for (superEndpoint in superEndpoints) {
+                    val matcher = superEndpoint.toRegex()
+                    if (matcher.findAll(key.toString()).count() > 0) {
+                        roleController["role"] = "Super"
+                        break
+                    }
+                }
+
                 if (roleController["role"]!!.isNotBlank()) {
                     for (allRoleEndpoint in allRoleEndpoints) {
                         val matcher = allRoleEndpoint.toRegex()
                         if (matcher.findAll(key.toString()).count() > 0) {
-                            roleController["role"] = "Admin and User"
+                            roleController["role"] = "Super, Admin and User"
                             break
                         }
                     }
