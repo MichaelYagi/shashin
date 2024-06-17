@@ -1193,13 +1193,14 @@ class SettingsController {
     @ResponseBody
     @Secured("ROLE_SUPER")
     fun getSystemSettings(model: Model): String {
-        var response: JsonNode? = null
+        var response: JsonNode?
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
             val settings = model.getAttribute("settings") as Settings?
             response = mapper.readTree(settings.toString())
         } else {
+            response = mapper.readTree(Settings().toString())
             logger.log(Level.INFO, "Could not access system settings")
         }
 

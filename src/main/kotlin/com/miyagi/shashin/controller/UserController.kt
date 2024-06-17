@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Notification
+import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.PersistentLoginsExpiryRepository
@@ -678,12 +679,13 @@ class UserController {
     @ResponseBody
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     fun getMyUserInfo(model: Model): String {
-        var response: JsonNode? = null
+        var response: JsonNode?
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
             response = mapper.readTree(currentUserObj.toString())
         } else {
+            response = mapper.readTree(User().toString())
             logger.log(Level.INFO, "Could not access user info")
         }
 
@@ -694,7 +696,7 @@ class UserController {
     @ResponseBody
     @Secured("ROLE_SUPER")
     fun getUserInfoById(model: Model, @PathVariable userId: Int): String {
-        var response: JsonNode? = null
+        var response: JsonNode?
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         val userObj = userRepository?.findById(userId)?.orElse(null)
@@ -702,6 +704,7 @@ class UserController {
         if (currentUserObj != null && userObj != null) {
             response = mapper.readTree(userObj.toString())
         } else {
+            response = mapper.readTree(User().toString())
             logger.log(Level.INFO, "Could not access user info")
         }
 
@@ -712,7 +715,7 @@ class UserController {
     @ResponseBody
     @Secured("ROLE_SUPER")
     fun getAllUsersInfo(model: Model): String {
-        var response: JsonNode? = null
+        var response: JsonNode?
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         val usersObj = userRepository?.findAll(Sort.by(Sort.Direction.DESC, "id"))
@@ -720,6 +723,7 @@ class UserController {
         if (currentUserObj != null && usersObj != null) {
             response = mapper.readTree(usersObj.toString())
         } else {
+            response = mapper.readTree(User().toString())
             logger.log(Level.INFO, "Could not access users info")
         }
 
