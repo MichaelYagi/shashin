@@ -643,7 +643,7 @@ class UserController {
             operationId = "getMyUserInfo",
             description = "<strong>See your user information including your user ID.</strong><br>" +
                     "<pre><code>" +
-                    "curl -X GET \"http://127.0.0.1:6624/api/v1/userinfo\" \\\n" +
+                    "curl -X GET \"http://127.0.0.1:6624/api/v1/user/self\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "</code></pre>" +
