@@ -1193,7 +1193,7 @@ class SettingsController {
     @ResponseBody
     @Secured("ROLE_SUPER")
     fun getSystemSettings(model: Model): String {
-        var response: JsonNode?
+        val response: JsonNode?
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
