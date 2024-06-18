@@ -163,7 +163,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "api/v1/placedata",
             "api/v1/profile/**",
             "api/v1/metadata/**",
-            "api/v1/user/info",
+            "api/v1/user/self",
             "api/v1/comment/**",
             "api/v1/favorites/**",
             "api/v1/complete/metadata/**",

@@ -91,18 +91,19 @@ class ArticlesController {
                 roleController["description"] = ""
                 roleController["role"] = "Public"
 
-                for (adminEndpoint in adminEndpoints) {
-                    val matcher = adminEndpoint.toRegex()
-                    if (matcher.findAll(key.toString()).count() > 0) {
-                        roleController["role"] = "Admin"
-                        break
-                    }
-                }
-
+                // Order is important! Highest to lowest roles
                 for (superEndpoint in superEndpoints) {
                     val matcher = superEndpoint.toRegex()
                     if (matcher.findAll(key.toString()).count() > 0) {
                         roleController["role"] = "Super"
+                        break
+                    }
+                }
+
+                for (adminEndpoint in adminEndpoints) {
+                    val matcher = adminEndpoint.toRegex()
+                    if (matcher.findAll(key.toString()).count() > 0) {
+                        roleController["role"] = "Admin and Super"
                         break
                     }
                 }
