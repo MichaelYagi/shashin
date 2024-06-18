@@ -31,6 +31,8 @@ async function showMap(mapdata) {
     const progressBarWrapper = $("#progressBarWrapper");
     const progressBar = $("#progressBar");
 
+    // Bigger number for better performance, smaller number for better accuracy
+    let clusterDistance = 175;
     let filtered = false;
     let originalFromInput = "";
     let originalToInput = "";
@@ -423,13 +425,12 @@ async function showMap(mapdata) {
                 features: iconFeatures //add an array of features
             });
 
-            let clusterDistance = 200;
             if (showMarkersCheckbox.prop("checked") === true) {
                 clusterDistance = 300;
             }
 
             const clusterSource = new ol.source.Cluster({
-                distance: clusterDistance, // Bigger number for better performance, smaller number for better accuracy
+                distance: clusterDistance,
                 source: vectorSource,
             });
 
