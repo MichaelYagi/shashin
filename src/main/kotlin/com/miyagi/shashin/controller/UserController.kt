@@ -679,7 +679,7 @@ class UserController {
     @ResponseBody
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     fun getMyUserInfo(model: Model): String {
-        var response: JsonNode?
+        val response: JsonNode?
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -696,7 +696,7 @@ class UserController {
     @ResponseBody
     @Secured("ROLE_SUPER")
     fun getUserInfoById(model: Model, @PathVariable userId: Int): String {
-        var response: JsonNode?
+        val response: JsonNode?
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         val userObj = userRepository?.findById(userId)?.orElse(null)
@@ -715,7 +715,7 @@ class UserController {
     @ResponseBody
     @Secured("ROLE_SUPER")
     fun getAllUsersInfo(model: Model): String {
-        var response: JsonNode?
+        val response: JsonNode?
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         val usersObj = userRepository?.findAll(Sort.by(Sort.Direction.DESC, "id"))
