@@ -668,7 +668,7 @@ class UserController {
                     "</thead><tbody>" +
                     "<tr><td>user.id</td><td>int</td><td>Your user ID</td></tr>" +
                     "<tr><td>user.username</td><td>string</td><td>Your username</td></tr>" +
-                    "<tr><td>user.authority</td><td>string</td><td>One of \"ROLE_SUPER\", \"ROLE_ADMIN\" or \"ROLE_USER\"</td></tr>" +
+                    "<tr><td>user.authority</td><td>string</td><td>One of ROLE_SUPER, ROLE_ADMIN or ROLE_USER</td></tr>" +
                     "<tr><td>user.apikey</td><td>string</td><td>Your service API key</td></tr>" +
                     "<tr><td>user.isAuthorized</td><td>boolean</td><td>Authorized to access Shashin flag</td></tr>" +
                     "<tr><td>user.darkMode</td><td>boolean</td><td>Flag of whether you have dark enabled or not</td></tr>" +
