@@ -156,6 +156,8 @@ class MapController: BaseController() {
                 metadataRepository!!.findByAlbumMetadataByUserIdForMap(currentUserObj.getId()) as MutableList<MapData>
             }
 
+            response["mapdata"] = mapdata
+
             val keywordMap = mutableMapOf<String, Any?>()
             for (data in mapdata) {
                 val metadataId = data.getId()
