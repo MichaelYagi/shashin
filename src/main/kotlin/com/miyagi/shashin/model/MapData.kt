@@ -11,6 +11,7 @@ interface MapData {
     fun getOriginalImageHeight(): Int?
     fun getVideoUrl(): String?
     fun getMapMarkerUrl(): String?
+    fun getPlaceName(): String?
     fun getYear(): Int?
     fun getMonth(): Int?
     fun getDay(): Int?
