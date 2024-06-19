@@ -139,9 +139,9 @@ class MapController: BaseController() {
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/api/v1/mapdata/keywords"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/mapdata/keywords/{offset}/{limit}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    fun getMapDataWithKeywords(model: Model): ResponseEntity<String> {
+    fun getMapDataWithKeywords(model: Model, @PathVariable offset: Int, @PathVariable limit: Int): ResponseEntity<String> {
         val response = mutableMapOf<String, Any?>()
         val currentUserObj = model.getAttribute("currentUser") as User?
         response["mapdata"] = mutableListOf<MapData>()
@@ -151,9 +151,9 @@ class MapController: BaseController() {
 
         if (currentUserObj != null) {
             val mapdata = if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
-                metadataRepository!!.findTimelineForMap(0, 500) as MutableList<MapData>
+                metadataRepository!!.findTimelineForMap(offset, limit) as MutableList<MapData>
             } else {
-                metadataRepository!!.findByAlbumMetadataByUserIdForMapWithLimit(currentUserObj.getId(), 0, 500) as MutableList<MapData>
+                metadataRepository!!.findByAlbumMetadataByUserIdForMapWithLimit(currentUserObj.getId(), offset, limit) as MutableList<MapData>
             }
 
             response["mapdata"] = mapdata
