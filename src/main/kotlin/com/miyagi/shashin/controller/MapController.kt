@@ -7,6 +7,7 @@ import com.miyagi.shashin.model.Album
 import com.miyagi.shashin.model.MapData
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.AlbumRepository
+import com.miyagi.shashin.repository.KeywordRepository
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.TextUtils
@@ -31,6 +32,9 @@ class MapController: BaseController() {
 
     @Autowired
     private val albumRepository: AlbumRepository? = null
+
+    @Autowired
+    private lateinit var keywordRepository: KeywordRepository
 
     @Value("\${app.endpoint.url.geocode}")
     private lateinit var geocodeUrl: String
@@ -122,6 +126,48 @@ class MapController: BaseController() {
             } else {
                 response["mapdata"] = metadataRepository!!.findByAlbumMetadataByUserIdForMap(currentUserObj.getId())
             }
+
+            response["msg"] = ""
+            response["status"] = ApiResponse.SUCCESS.status
+        }
+
+        val json = mapper.writeValueAsString(response)
+        return ResponseEntity
+            .ok()
+            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+            .body(json)
+    }
+
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
+    @RequestMapping(value = ["/api/v1/mapdata/keywords"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun getMapDataWithKeywords(model: Model): ResponseEntity<String> {
+        val response = mutableMapOf<String, Any?>()
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        response["mapdata"] = mutableListOf<MapData>()
+        response["keywordMap"] = mutableMapOf<String, Any?>()
+        response["msg"] = "Not logged in"
+        response["status"] = ApiResponse.SUCCESS.status
+
+        if (currentUserObj != null) {
+            val mapdata = if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
+                metadataRepository!!.findTimelineAllForMap() as MutableList<MapData>
+            } else {
+                metadataRepository!!.findByAlbumMetadataByUserIdForMap(currentUserObj.getId()) as MutableList<MapData>
+            }
+
+            val keywordMap = mutableMapOf<String, Any?>()
+            for (data in mapdata) {
+                val metadataId = data.getId()
+
+                val keywordArray = mutableListOf<String>()
+                val keywords = keywordRepository.findKeywordsByMetadataId(metadataId!!)
+                for (keyword in keywords) {
+                    keywordArray.add(keyword.getKeyword()!!)
+                }
+                keywordMap[metadataId] = keywordArray
+            }
+            response["keywordMap"] = keywordMap
 
             response["msg"] = ""
             response["status"] = ApiResponse.SUCCESS.status
