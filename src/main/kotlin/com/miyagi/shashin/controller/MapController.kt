@@ -151,9 +151,9 @@ class MapController: BaseController() {
 
         if (currentUserObj != null) {
             val mapdata = if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
-                metadataRepository!!.findTimelineAllForMap() as MutableList<MapData>
+                metadataRepository!!.findTimelineForMap(0, 500) as MutableList<MapData>
             } else {
-                metadataRepository!!.findByAlbumMetadataByUserIdForMap(currentUserObj.getId()) as MutableList<MapData>
+                metadataRepository!!.findByAlbumMetadataByUserIdForMapWithLimit(currentUserObj.getId(), 0, 500) as MutableList<MapData>
             }
 
             response["mapdata"] = mapdata
