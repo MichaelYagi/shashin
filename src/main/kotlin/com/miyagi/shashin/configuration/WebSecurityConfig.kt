@@ -215,8 +215,23 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .anyRequest()
                 .authenticated()
                 .and()
+                .cors().configurationSource(corsConfigurationSource())
+                .and()
                 .exceptionHandling()
                 .accessDeniedHandler(apiAccessDeniedHandler)
+        }
+
+        fun corsConfigurationSource(): CorsConfigurationSource {
+            val configuration = CorsConfiguration()
+            configuration.allowedOrigins = listOf("*")
+            configuration.allowedMethods = listOf("*")
+            configuration.allowedHeaders = listOf("*")
+            configuration.exposedHeaders = listOf("*")
+
+            val source = UrlBasedCorsConfigurationSource()
+            source.registerCorsConfiguration("/**", configuration)
+
+            return source
         }
 
         override fun configure(web: WebSecurity) {
@@ -356,8 +371,6 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .clearAuthentication(true)
                 .deleteCookies("JSESSIONID")
                 .and()
-                .cors().configurationSource(corsConfigurationSource())
-                .and()
                 .csrf().disable()
                 .httpBasic()
 
@@ -369,19 +382,6 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .maxSessionsPreventsLogin(false)
                 .expiredUrl("/users/login")
                 .sessionRegistry(sessionRegistry())
-        }
-
-        fun corsConfigurationSource(): CorsConfigurationSource {
-            val configuration = CorsConfiguration()
-            configuration.allowedOrigins = listOf("*")
-            configuration.allowedMethods = listOf("*")
-            configuration.allowedHeaders = listOf("*")
-            configuration.exposedHeaders = listOf("*")
-
-            val source = UrlBasedCorsConfigurationSource()
-            source.registerCorsConfiguration("/**", configuration)
-
-            return source
         }
 
         @Bean
