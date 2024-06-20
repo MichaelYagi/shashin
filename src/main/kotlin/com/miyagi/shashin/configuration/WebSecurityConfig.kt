@@ -28,6 +28,10 @@ import org.springframework.security.web.firewall.HttpFirewall
 import org.springframework.security.web.firewall.StrictHttpFirewall
 import org.springframework.security.web.header.HeaderWriterFilter
 import org.springframework.security.web.session.HttpSessionEventPublisher
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import java.util.*
 import javax.sql.DataSource
 
 
@@ -306,6 +310,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             }
 
             http
+
                 .addFilterBefore(CSPNonceFilter(), HeaderWriterFilter::class.java)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 .and()
@@ -351,6 +356,8 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .clearAuthentication(true)
                 .deleteCookies("JSESSIONID")
                 .and()
+                .cors().configurationSource(corsConfigurationSource())
+                .and()
                 .csrf().disable()
                 .httpBasic()
 
@@ -362,6 +369,19 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .maxSessionsPreventsLogin(false)
                 .expiredUrl("/users/login")
                 .sessionRegistry(sessionRegistry())
+        }
+
+        fun corsConfigurationSource(): CorsConfigurationSource {
+            val configuration = CorsConfiguration()
+            configuration.allowedOrigins = listOf("*")
+            configuration.allowedMethods = listOf("*")
+            configuration.allowedHeaders = listOf("*")
+            configuration.exposedHeaders = listOf("*")
+
+            val source = UrlBasedCorsConfigurationSource()
+            source.registerCorsConfiguration("/**", configuration)
+
+            return source
         }
 
         @Bean
