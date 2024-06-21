@@ -338,10 +338,14 @@ async function showMap(mapdata) {
                 continue;
             }
 
+            const placeName = data["placeName"] !== null ? data["placeName"] : "";
+            const mapMarkerUrl = data["mapMarkerUrl"] !== null ? data["mapMarkerUrl"] : "";
+            const type = data["type"] !== null ? data["type"] : "";
+
             if (searchTerm !== null && searchTerm !== "" &&
-                data["placeName"] !== null && data["placeName"].toLowerCase().indexOf(searchTerm.toLowerCase()) === -1 &&
-                data["mapMarkerUrl"] !== null && data["mapMarkerUrl"].toLowerCase().indexOf(searchTerm.toLowerCase()) === -1 &&
-                data["type"] !== null && data["type"].toLowerCase().indexOf(searchTerm.toLowerCase()) === -1
+                placeName.toLowerCase().indexOf(searchTerm.toLowerCase()) === -1 &&
+                mapMarkerUrl.toLowerCase().indexOf(searchTerm.toLowerCase()) === -1 &&
+                type.toLowerCase().indexOf(searchTerm.toLowerCase()) === -1
             ) {
                 continue;
             }
