@@ -139,40 +139,75 @@ class MapController: BaseController() {
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/api/v1/mapdata/keywords/{offset}/{limit}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/mapdata/keywords"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    fun getMapDataWithKeywords(model: Model, @PathVariable offset: Int, @PathVariable limit: Int): ResponseEntity<String> {
+    fun getMapDataWithKeywords(model: Model, @RequestBody requestBody: JsonNode): ResponseEntity<String> {
+        val mapKeywordsMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         val response = mutableMapOf<String, Any?>()
-        val currentUserObj = model.getAttribute("currentUser") as User?
-        response["mapdata"] = mutableListOf<MapData>()
-        response["keywordMap"] = mutableMapOf<String, Any?>()
-        response["msg"] = "Not logged in"
-        response["status"] = ApiResponse.SUCCESS.status
 
-        if (currentUserObj != null) {
-            val mapdata = if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
-                metadataRepository!!.findTimelineForMap(offset, limit) as MutableList<MapData>
-            } else {
-                metadataRepository!!.findByAlbumMetadataByUserIdForMapWithLimit(currentUserObj.getId(), offset, limit) as MutableList<MapData>
-            }
+        if (mapKeywordsMap.containsKey("offset") && mapKeywordsMap.containsKey("limit") && mapKeywordsMap.containsKey("startDate") && mapKeywordsMap.containsKey("endDate")) {
+            val offset = mapKeywordsMap["offset"] as Int
+            val limit = mapKeywordsMap["limit"] as Int
+            val startDate = mapKeywordsMap["startDate"] as String
+            val endDate = mapKeywordsMap["endDate"] as String
 
-            response["mapdata"] = mapdata
-
-            val keywordMap = mutableMapOf<String, Any?>()
-            for (data in mapdata) {
-                val metadataId = data.getId()
-
-                val keywordArray = mutableListOf<String>()
-                val keywords = keywordRepository.findKeywordsByMetadataId(metadataId!!)
-                for (keyword in keywords) {
-                    keywordArray.add(keyword.getKeyword()!!)
-                }
-                keywordMap[metadataId] = keywordArray
-            }
-            response["keywordMap"] = keywordMap
-
-            response["msg"] = ""
+            val currentUserObj = model.getAttribute("currentUser") as User?
+            response["mapdata"] = mutableListOf<MapData>()
+            response["keywordMap"] = mutableMapOf<String, Any?>()
+            response["msg"] = "Not logged in"
             response["status"] = ApiResponse.SUCCESS.status
+
+            if (currentUserObj != null) {
+                val mapdata: MutableList<MapData>
+
+                if (startDate != "" && endDate != "") {
+                    if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute(
+                            "superRole"
+                        )
+                    ) {
+                        mapdata = metadataRepository!!.findTimelineDatesForMap(offset, limit, startDate, endDate) as MutableList<MapData>
+                    } else {
+                        mapdata = metadataRepository!!.findByAlbumMetadataByUserIdDatesForMapWithLimit(
+                            currentUserObj.getId(),
+                            offset,
+                            limit,
+                            startDate,
+                            endDate
+                        ) as MutableList<MapData>
+                    }
+                } else {
+                    if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute(
+                            "superRole"
+                        )
+                    ) {
+                        mapdata = metadataRepository!!.findTimelineForMap(offset, limit) as MutableList<MapData>
+                    } else {
+                        mapdata = metadataRepository!!.findByAlbumMetadataByUserIdForMapWithLimit(
+                            currentUserObj.getId(),
+                            offset,
+                            limit
+                        ) as MutableList<MapData>
+                    }
+                }
+
+                response["mapdata"] = mapdata
+
+                val keywordMap = mutableMapOf<String, Any?>()
+                for (data in mapdata) {
+                    val metadataId = data.getId()
+
+                    val keywordArray = mutableListOf<String>()
+                    val keywords = keywordRepository.findKeywordsByMetadataId(metadataId!!)
+                    for (keyword in keywords) {
+                        keywordArray.add(keyword.getKeyword()!!)
+                    }
+                    keywordMap[metadataId] = keywordArray
+                }
+                response["keywordMap"] = keywordMap
+
+                response["msg"] = ""
+                response["status"] = ApiResponse.SUCCESS.status
+            }
         }
 
         val json = mapper.writeValueAsString(response)
