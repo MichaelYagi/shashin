@@ -1452,6 +1452,26 @@ class TimelineController: BaseController() {
                 } else if (metadataObj.get().getDay() != metadataMap["day"].toString().toInt()) {
                     metadataObj.get().setDay(StringEscapeUtils.escapeHtml4(metadataMap["day"].toString()).toInt())
                 }
+                // Original taken date can be looked at in EXIF data
+                if (metadataMap["year"].toString() != "" && metadataMap["month"].toString() != "" && metadataMap["day"].toString() != "") {
+                    // Set taken date
+                    val yearTaken = metadataMap["year"].toString().toInt()
+                    val monthTaken = metadataMap["month"].toString().toInt()
+                    val dayTaken = metadataMap["day"].toString().toInt()
+
+                    val takenAt = metadataObj.get().getTakenAt()
+                    if (takenAt != null) {
+                        val takenArr = takenAt.split(" ")
+                        if (takenArr.count() == 2) {
+                            val month = if (monthTaken > 9) monthTaken else "0$monthTaken"
+                            val day = if (dayTaken > 9) dayTaken else "0$dayTaken"
+                            val time = takenArr[1]
+                            val takenVal = "$yearTaken-$month-$day $time"
+                            metadataObj.get().setTakenAt(takenVal)
+                        }
+                    }
+                }
+
                 metricsUtil.end()
                 metricsUtil.start("Metadata Update - time")
                 if (metadataMap["time"].toString() == "") {
@@ -2011,6 +2031,21 @@ class TimelineController: BaseController() {
                         }
                         if (yearTaken != null) {
                             metadata.setYear(yearTaken)
+                        }
+                        // Original taken date can be looked at in EXIF data
+                        if (yearTaken != null && monthTaken != null && dayTaken != null) {
+                            // Set taken date
+                            val takenAt = metadata.getTakenAt()
+                            if (takenAt != null) {
+                                val takenArr = takenAt.split(" ")
+                                if (takenArr.count() == 2) {
+                                    val month = if (monthTaken > 9) monthTaken else "0$monthTaken"
+                                    val day = if (dayTaken > 9) dayTaken else "0$dayTaken"
+                                    val time = takenArr[1]
+                                    val takenVal = "$yearTaken-$month-$day $time"
+                                    metadata.setTakenAt(takenVal)
+                                }
+                            }
                         }
                         if (camera != null && camera.trim().isNotBlank()) {
                             metadata.setCamera(camera)
