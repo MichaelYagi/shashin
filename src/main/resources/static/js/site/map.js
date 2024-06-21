@@ -298,6 +298,8 @@ async function showMap(mapdata) {
         map.removeLayer(vectorLayer);
         const iconFeatures = [];
 
+        const searchTerm = $("#searchInput").val();
+
         if (resetMap === undefined) {
             resetMap = false;
         }
@@ -333,6 +335,14 @@ async function showMap(mapdata) {
             }
 
             if (metadataList !== undefined && metadataList.length > 0 && $.inArray(data["id"], metadataList) === -1) {
+                continue;
+            }
+
+            if (searchTerm !== null && searchTerm !== "" &&
+                data["placeName"] !== null && data["placeName"].toLowerCase().indexOf(searchTerm.toLowerCase()) === -1 &&
+                data["mapMarkerUrl"] !== null && data["mapMarkerUrl"].toLowerCase().indexOf(searchTerm.toLowerCase()) === -1 &&
+                data["type"] !== null && data["type"].toLowerCase().indexOf(searchTerm.toLowerCase()) === -1
+            ) {
                 continue;
             }
 
@@ -1058,6 +1068,7 @@ async function showMap(mapdata) {
 
         filtered = true;
 
+        $("#searchInput").val("");
         startDateField.val("");
         endDateField.val("");
         videoOnlyCheckbox.prop("checked", false);
