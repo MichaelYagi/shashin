@@ -1414,19 +1414,29 @@ class Util {
             $(".resolutionDetails").text(metadata.originalImageWidth+"x"+metadata.originalImageHeight);
         }
         let timeLinkHtml = "";
-        if (metadata.year !== undefined && metadata.month !== undefined && metadata.day !== undefined &&
-            metadata.year !== null && metadata.month !== null && metadata.day !== null) {
-            let month = (metadata.month.toString().length === 1 && metadata.month < 10) ? "0"+metadata.month : metadata.month;
-            let day = (metadata.day.toString().length === 1 && metadata.day < 10) ? "0"+metadata.day : metadata.day;
-            let takenDate = metadata.year + '-' + month + '-' + day;
-            let takenDetails = takenDate;
-            if (metadata.time !== null && metadata.time !== "") {
-                takenDetails += ' ' + metadata.time;
-            }
+        // if (metadata.year !== undefined && metadata.month !== undefined && metadata.day !== undefined &&
+        //     metadata.year !== null && metadata.month !== null && metadata.day !== null) {
+        //     let month = (metadata.month.toString().length === 1 && metadata.month < 10) ? "0"+metadata.month : metadata.month;
+        //     let day = (metadata.day.toString().length === 1 && metadata.day < 10) ? "0"+metadata.day : metadata.day;
+        //     let takenDate = metadata.year + '-' + month + '-' + day;
+        //     let takenDetails = takenDate;
+        //     if (metadata.time !== null && metadata.time !== "") {
+        //         takenDetails += ' ' + metadata.time;
+        //     }
+        //     $(".manualTakenAtLabel").show();
+        //     $(".manualTakenAtDetails").text(takenDetails);
+        //
+        //     if (Util.isSafari() === false) {
+        //         timeLinkHtml = "&nbsp;&nbsp;&nbsp;<a class='bi-calendar4' style='font-size: 1rem;' href='/timeline#" + metadata.year + '-' + metadata.month + '-' + metadata.day + "' title='"+(activePage === "trash" ? "Search for date in " : "View in ")+"timeline' target='_blank'></a>";
+        //     }
+        // }
+        if (metadata.takenAt !== null) {
             $(".manualTakenAtLabel").show();
             $(".manualTakenAtDetails").text(metadata.takenAt);
 
-            if (Util.isSafari() === false) {
+            if (Util.isSafari() === false && metadata.year !== undefined && metadata.month !== undefined && metadata.day !== undefined &&
+                metadata.year !== null && metadata.month !== null && metadata.day !== null)
+            {
                 timeLinkHtml = "&nbsp;&nbsp;&nbsp;<a class='bi-calendar4' style='font-size: 1rem;' href='/timeline#" + metadata.year + '-' + metadata.month + '-' + metadata.day + "' title='"+(activePage === "trash" ? "Search for date in " : "View in ")+"timeline' target='_blank'></a>";
             }
         }
