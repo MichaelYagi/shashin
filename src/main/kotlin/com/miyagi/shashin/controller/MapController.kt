@@ -146,10 +146,10 @@ class MapController: BaseController() {
         val response = mutableMapOf<String, Any?>()
 
         if (mapKeywordsMap.containsKey("offset") && mapKeywordsMap.containsKey("limit") && mapKeywordsMap.containsKey("startDate") && mapKeywordsMap.containsKey("endDate")) {
-            val offset = mapKeywordsMap["offset"] as Int
-            val limit = mapKeywordsMap["limit"] as Int
-            val startDate = mapKeywordsMap["startDate"] as String
-            val endDate = mapKeywordsMap["endDate"] as String
+            val offset = mapKeywordsMap["offset"].toString().toInt()
+            val limit = mapKeywordsMap["limit"].toString().toInt()
+            val startDate = mapKeywordsMap["startDate"].toString()
+            val endDate = mapKeywordsMap["endDate"].toString()
 
             val currentUserObj = model.getAttribute("currentUser") as User?
             response["mapdata"] = mutableListOf<MapData>()
