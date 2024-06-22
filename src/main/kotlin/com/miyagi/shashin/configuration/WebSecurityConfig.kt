@@ -214,13 +214,14 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .authorizeRequests()
                 .anyRequest()
                 .authenticated()
-                .and()
-                .cors().configurationSource(corsConfigurationSource())
+//                .and()
+//                .cors().configurationSource(corsConfigurationSource())
                 .and()
                 .exceptionHandling()
                 .accessDeniedHandler(apiAccessDeniedHandler)
         }
 
+        // This will let any domain through for CORs
         fun corsConfigurationSource(): CorsConfigurationSource {
             val configuration = CorsConfiguration()
             configuration.allowedOrigins = listOf("*")
