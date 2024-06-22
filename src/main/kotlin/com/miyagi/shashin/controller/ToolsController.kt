@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScaperMessage
+import com.miyagi.shashin.configuration.MultiSecurityConfig
 import com.miyagi.shashin.model.SearchHistory
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
@@ -804,6 +805,41 @@ class ToolsController {
         }
 
         return "{\"status\": \"fail\",\"msg\":\"\"}"
+    }
+
+    @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
+    @RequestMapping(value = ["/api/v1/endpoints"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun getApiEndpoints(model: Model): String {
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        var response = mutableListOf<String>()
+
+        if (currentUserObj?.getAuthority() != null) {
+            if (currentUserObj.getAuthority() == "ROLE_SUPER") {
+                val allRoleEndpoints = MultiSecurityConfig.superList
+                allRoleEndpoints.forEachIndexed { i, _ ->
+                    if(allRoleEndpoints[i].startsWith("api/v1/")) {
+                        response.add(allRoleEndpoints[i])
+                    }
+                }
+            } else if (currentUserObj.getAuthority() == "ROLE_ADMIN") {
+                val allRoleEndpoints = MultiSecurityConfig.adminList
+                allRoleEndpoints.forEachIndexed { i, _ ->
+                    if(allRoleEndpoints[i].startsWith("api/v1/")) {
+                        response.add(allRoleEndpoints[i])
+                    }
+                }
+            } else {
+                val allRoleEndpoints = MultiSecurityConfig.allRoleList
+                allRoleEndpoints.forEachIndexed { i, _ ->
+                    if(allRoleEndpoints[i].startsWith("api/v1/")) {
+                        response.add(allRoleEndpoints[i])
+                    }
+                }
+            }
+        }
+
+        return mapper.writeValueAsString(response)
     }
 
     private fun roundOffDecimal(number: Double): Any {
