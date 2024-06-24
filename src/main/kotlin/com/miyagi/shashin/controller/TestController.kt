@@ -167,7 +167,7 @@ class TestController {
                     if (fullDate != adjustedTakenDateProp) {
                         println("TakenDates don't match")
                         println("oriniginalTaken: $fullDate")
-                        println("adjustedTakenTime: $adjustedTakenTime")
+                        println("adjustedTaken: $adjustedTakenDateProp")
                         println("------------")
                     }
                 }
