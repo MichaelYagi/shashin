@@ -171,6 +171,7 @@ class TestController {
                         println("oriniginalTaken: $fullDate")
                         println("adjustedTaken: $adjustedTakenDateProp")
                         println("------------")
+                        metadata.setTakenAt(fullDate)
                     }
                 }
             }
