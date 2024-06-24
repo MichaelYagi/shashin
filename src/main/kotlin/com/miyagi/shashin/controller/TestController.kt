@@ -149,6 +149,7 @@ class TestController {
     fun reconcileTakenDates(response: HttpServletResponse): String {
         val metadataRecords = metadataRepository.findAll()
 
+        var index = 0;
         for (metadata in metadataRecords) {
             if (metadata != null) {
                 val adjustedTakenDateProp = metadata.getTakenAt()
@@ -165,15 +166,17 @@ class TestController {
                     val fullDate = takenDateYear.toString() + "-" + month + "-" + day + " " + adjustedTakenTime
 
                     if (fullDate != adjustedTakenDateProp) {
+                        index++
                         println("TakenDates don't match")
                         println("oriniginalTaken: $fullDate")
                         println("adjustedTaken: $adjustedTakenDateProp")
                         println("------------")
                     }
                 }
-
             }
         }
+
+        println("# of records not matching: $index")
 
         return "test"
     }
