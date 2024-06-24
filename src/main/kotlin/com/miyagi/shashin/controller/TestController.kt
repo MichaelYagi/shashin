@@ -58,67 +58,67 @@ class TestController {
     @Value("\${app.sidecar.path}")
     private val relativeSidecarDir: String? = null
 
-    @Secured("ROLE_SUPER","ROLE_ADMIN")
-    @GetMapping("/test")
-    fun test(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
-        model["somevalue"] = "This is a test"
-
-        // Retroactively create gif
-        val metadataList = metadataRepository.findAllByMediaType("video")
-
-        if (metadataList != null) {
-            var numProcessed = 0
-            val metadataCount = metadataList.count()
-            for ((index, metadata) in metadataList.withIndex()) {
-                println("iteration ${index+1} out of $metadataCount")
-                if (metadata.getThumbnailPathSmall() !== null) {
-                    val jpgVersion = metadata.getThumbnailPathSmall()
-                    val gifVersion = jpgVersion?.replace("_225.jpg", "_225.gif")
-                    println("processing $gifVersion")
-
-                    val gifFile = File(gifVersion!!)
-                    if (!gifFile.exists()) {
-                        println("gif doesn't exist")
-
-                        ImageProcessing.createVideoGif(metadata.getId(), metadataRepository)
-                        numProcessed++
-                        println("processed $gifVersion")
-                    } else {
-                        println("already exists $gifVersion")
-                    }
-
-                    println("-------------")
-                }
-            }
-            println("Number gifs processed: $numProcessed")
-        }
-
-        // Retroactively create 112 images
-        val allMetadataList = metadataRepository.findAll()
-
-        val metadataCount = allMetadataList.count()
-        var numProcessed = 0
-        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
-        val sidecarDir = rootPath + relativeSidecarDir
-
-        for ((index, metadata) in allMetadataList.withIndex()) {
-            println("iteration ${index+1} out of $metadataCount")
-            if (metadata != null) {
-                if (metadata.getThumbnailPathExtraSmall() == null || !File(metadata.getThumbnailPathExtraSmall()!!).exists()) {
-                    val imageProcessing = ImageProcessing("v1", File(metadata.getPath()!!), sidecarDir, metadata)
-                    val metadataObj = imageProcessing.createThumbnails()
-                    if (metadataObj != null) {
-                        metadataRepository.save(metadataObj)
-                        println("processed thumbnail ${metadataObj.getThumbnailPathExtraSmall()}")
-                        numProcessed++
-                    }
-                }
-            }
-        }
-        println("Number xs thumbnails processed: $numProcessed")
-
-        return "test"
-    }
+//    @Secured("ROLE_SUPER","ROLE_ADMIN")
+//    @GetMapping("/test")
+//    fun test(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
+//        model["somevalue"] = "This is a test"
+//
+//        // Retroactively create gif
+//        val metadataList = metadataRepository.findAllByMediaType("video")
+//
+//        if (metadataList != null) {
+//            var numProcessed = 0
+//            val metadataCount = metadataList.count()
+//            for ((index, metadata) in metadataList.withIndex()) {
+//                println("iteration ${index+1} out of $metadataCount")
+//                if (metadata.getThumbnailPathSmall() !== null) {
+//                    val jpgVersion = metadata.getThumbnailPathSmall()
+//                    val gifVersion = jpgVersion?.replace("_225.jpg", "_225.gif")
+//                    println("processing $gifVersion")
+//
+//                    val gifFile = File(gifVersion!!)
+//                    if (!gifFile.exists()) {
+//                        println("gif doesn't exist")
+//
+//                        ImageProcessing.createVideoGif(metadata.getId(), metadataRepository)
+//                        numProcessed++
+//                        println("processed $gifVersion")
+//                    } else {
+//                        println("already exists $gifVersion")
+//                    }
+//
+//                    println("-------------")
+//                }
+//            }
+//            println("Number gifs processed: $numProcessed")
+//        }
+//
+//        // Retroactively create 112 images
+//        val allMetadataList = metadataRepository.findAll()
+//
+//        val metadataCount = allMetadataList.count()
+//        var numProcessed = 0
+//        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+//        val sidecarDir = rootPath + relativeSidecarDir
+//
+//        for ((index, metadata) in allMetadataList.withIndex()) {
+//            println("iteration ${index+1} out of $metadataCount")
+//            if (metadata != null) {
+//                if (metadata.getThumbnailPathExtraSmall() == null || !File(metadata.getThumbnailPathExtraSmall()!!).exists()) {
+//                    val imageProcessing = ImageProcessing("v1", File(metadata.getPath()!!), sidecarDir, metadata)
+//                    val metadataObj = imageProcessing.createThumbnails()
+//                    if (metadataObj != null) {
+//                        metadataRepository.save(metadataObj)
+//                        println("processed thumbnail ${metadataObj.getThumbnailPathExtraSmall()}")
+//                        numProcessed++
+//                    }
+//                }
+//            }
+//        }
+//        println("Number xs thumbnails processed: $numProcessed")
+//
+//        return "test"
+//    }
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/testvideo"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
@@ -142,5 +142,39 @@ class TestController {
     fun getTestAudio(response: HttpServletResponse?): FileSystemResource? {
         val path = "c:/some/audio.mp3";
         return FileSystemResource(path)
+    }
+
+    @Secured("ROLE_SUPER")
+    @GetMapping("/fixtakendates")
+    fun reconcileTakenDates(response: HttpServletResponse): String {
+        val metadataRecords = metadataRepository.findAll()
+
+        for (metadata in metadataRecords) {
+            if (metadata != null) {
+                val adjustedTakenDateProp = metadata.getTakenAt()
+                val adjustedTakenDateArray = adjustedTakenDateProp?.split(" ")?.toTypedArray()
+                if (adjustedTakenDateArray != null && adjustedTakenDateArray.size == 2) {
+                    val adjustedTakenTime = adjustedTakenDateArray[1]
+
+                    val takenDateYear = metadata.getYear()
+                    val takenDateMonth = metadata.getMonth()
+                    val takenDateDay = metadata.getDay()
+                    val month = if (takenDateMonth!!.toInt() > 9) takenDateMonth else "0$takenDateMonth"
+                    val day = if (takenDateDay!!.toInt() > 9) takenDateDay else "0$takenDateDay"
+
+                    val fullDate = takenDateYear.toString() + "-" + month + "-" + day + " " + adjustedTakenTime
+
+                    if (fullDate != adjustedTakenDateProp) {
+                        println("TakenDates don't match")
+                        println("oriniginalTaken: $fullDate")
+                        println("adjustedTakenTime: $adjustedTakenTime")
+                        println("------------")
+                    }
+                }
+
+            }
+        }
+
+        return "test"
     }
 }
