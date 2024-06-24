@@ -1,5 +1,6 @@
 package com.miyagi.shashin.controller
 
+import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ImageProcessing
 import org.springframework.beans.factory.annotation.Autowired
@@ -148,6 +149,7 @@ class TestController {
     @GetMapping("/fixtakendates")
     fun reconcileTakenDates(response: HttpServletResponse): String {
         val metadataRecords = metadataRepository.findAll()
+        val metadataRecordsList = mutableListOf<Metadata>()
 
         var index = 0;
         for (metadata in metadataRecords) {
@@ -172,11 +174,15 @@ class TestController {
                         println("adjustedTaken: $adjustedTakenDateProp")
                         println("------------")
                         metadata.setTakenAt(fullDate)
+                        metadataRecordsList.add(metadata)
                     }
                 }
             }
         }
 
+        if (metadataRecordsList.size > 0) {
+            metadataRepository.saveAll(metadataRecordsList)
+        }
         println("# of records not matching: $index")
 
         return "test"
