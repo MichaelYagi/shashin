@@ -351,9 +351,6 @@ async function showMap(mapdata) {
         let minLng = null;
         let maxLng = null;
 
-        $("#distanceInfo").text("");
-        $("#distanceInfo").css("display", "none");
-
         let filteredCount = 0;
 
         for (let index in mapdata) {
@@ -430,9 +427,6 @@ async function showMap(mapdata) {
                         // maxLat = coordArray[1] + 0.045;
                         // minLng = coordArray[0] - (0.045 / Math.cos(coordArray[1]*Math.PI/180));
                         // maxLng = coordArray[0] + (0.045 / Math.cos(coordArray[1]*Math.PI/180));
-
-                        $("#distanceInfo").text("Filtered results within a "+maxDistance+" km distance from " + coordArray[1] + ", " + coordArray[0]);
-                        $("#distanceInfo").css("display", "block");
                     }
 
                     filteredCount++;
@@ -542,6 +536,15 @@ async function showMap(mapdata) {
                     sizeY = mapSize[1];
                 }
                 map.getView().fit(ol.proj.transformExtent([minLng, minLat, maxLng, maxLat], 'EPSG:4326', map.getView().getProjection()), { size: [sizeX,sizeY] });
+
+                if (coordArray.length > 0 && maxDistance > 0) {
+                    map.getLayers().forEach(layer => {
+                        if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinates2") {
+                            map.removeLayer(layer);
+                        }
+                    });
+                    renderMarker('tempCoordinatesFN', coordArray[1], coordArray[0], "red");
+                }
             } else {
                 map.getView().setZoom(initialZoom);
             }
@@ -1137,9 +1140,6 @@ async function showMap(mapdata) {
 
         $("#bingMapsImageryContainer").css("display", "none");
         $("#maptilerContainer").css("display", "none");
-
-        $("#distanceInfo").text("");
-        $("#distanceInfo").css("display", "none");
 
         $("#findNearestRadius").val("5");
 
