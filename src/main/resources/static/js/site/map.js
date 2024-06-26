@@ -224,15 +224,15 @@ async function showMap(mapdata) {
 
     function checkDateInputs(startDateFormat,endDateFormat,takenAtDateFormat) {
         if (takenAtDateFormat === undefined) {
-            shashin.printMessageToConsole("startDateFormat before processing: " + startDateFormat);
-            shashin.printMessageToConsole("endDateFormat before processing: " + endDateFormat);
+            // shashin.printMessageToConsole("startDateFormat before processing: " + startDateFormat);
+            // shashin.printMessageToConsole("endDateFormat before processing: " + endDateFormat);
 
             startDateFormat = Util.formatDateTime(startDateFormat);
             endDateFormat = Util.formatDateTime(endDateFormat);
 
-            shashin.printMessageToConsole("startDateFormat after processing: " + startDateFormat);
-            shashin.printMessageToConsole("endDateFormat after processing: " + endDateFormat);
-            shashin.printMessageToConsole("-----------");
+            // shashin.printMessageToConsole("startDateFormat after processing: " + startDateFormat);
+            // shashin.printMessageToConsole("endDateFormat after processing: " + endDateFormat);
+            // shashin.printMessageToConsole("-----------");
 
             if (startDateField.val() === "" && endDateField.val() === "") {
                 return true;
@@ -266,18 +266,18 @@ async function showMap(mapdata) {
 
             return true;
         } else {
-            shashin.printMessageToConsole("startDateFormat before Util.formatDateTime reformatted: " + startDateFormat);
-            shashin.printMessageToConsole("endDateFormat before Util.formatDateTime reformatted: " + endDateFormat);
-            shashin.printMessageToConsole("takenAtDateFormat before Util.formatDateTime reformatted: " + takenAtDateFormat);
+            // shashin.printMessageToConsole("startDateFormat before Util.formatDateTime reformatted: " + startDateFormat);
+            // shashin.printMessageToConsole("endDateFormat before Util.formatDateTime reformatted: " + endDateFormat);
+            // shashin.printMessageToConsole("takenAtDateFormat before Util.formatDateTime reformatted: " + takenAtDateFormat);
 
             startDateFormat = Util.formatDateTime(startDateFormat);
             endDateFormat = Util.formatDateTime(endDateFormat);
             takenAtDateFormat = Util.formatDateTime(takenAtDateFormat);
 
-            shashin.printMessageToConsole("startDateFormat after Util.formatDateTime reformatted: " + startDateFormat);
-            shashin.printMessageToConsole("endDateFormat after Util.formatDateTime reformatted: " + endDateFormat);
-            shashin.printMessageToConsole("takenAtDateFormat after Util.formatDateTime reformatted: " + takenAtDateFormat);
-            shashin.printMessageToConsole("-----------");
+            // shashin.printMessageToConsole("startDateFormat after Util.formatDateTime reformatted: " + startDateFormat);
+            // shashin.printMessageToConsole("endDateFormat after Util.formatDateTime reformatted: " + endDateFormat);
+            // shashin.printMessageToConsole("takenAtDateFormat after Util.formatDateTime reformatted: " + takenAtDateFormat);
+            // shashin.printMessageToConsole("-----------");
 
             if (takenAtDateFormat !== null) {
                 if (startDateFormat && endDateFormat) {
@@ -411,11 +411,15 @@ async function showMap(mapdata) {
                     // Check distance
                     if (coordArray.length > 0 && maxDistance > 0) {
                         const kmDistance = calcCrow(coordArray[1], coordArray[0], lat, lng);
+                        shashin.printMessageToConsole("center: "+coordArray[1]+", "+ coordArray[0])
+                        shashin.printMessageToConsole("current coord: "+lat+", "+ lng)
+                        shashin.printMessageToConsole("Distance: "+kmDistance)
+
                         if (kmDistance > maxDistance) {
                             continue;
                         }
                         $("#distanceInfo").text("Filtered results within a "+maxDistance+" km distance from " + coordArray[1] + ", " + coordArray[0]);
-                        $("#distanceInfo").css("display", "display");
+                        $("#distanceInfo").css("display", "block");
                     } else {
                         $("#distanceInfo").text("");
                         $("#distanceInfo").css("display", "none");
@@ -544,8 +548,8 @@ async function showMap(mapdata) {
         // Sort by number of features for radius calculation
         features.sort((a, b) => a.get('features').length > b.get('features').length ? 1 : -1);
 
-        shashin.printMessageToConsole("============================================");
-        shashin.printMessageToConsole("number of features:" + features.length);
+        // shashin.printMessageToConsole("============================================");
+        // shashin.printMessageToConsole("number of features:" + features.length);
 
         for (let i = features.length - 1; i >= 0; --i) {
             feature = features[i];
@@ -560,14 +564,14 @@ async function showMap(mapdata) {
             //radius = (0.45 * (ol.extent.getWidth(extent) + ol.extent.getHeight(extent))) / resolution;
             radius = (15 * ((maxFeatureCount + jj) / maxFeatureCount));
 
-            shashin.printMessageToConsole("---------------------------");
-            shashin.printMessageToConsole("originalRadius:" + (0.45 * (ol.extent.getWidth(extent) + ol.extent.getHeight(extent))) / resolution);
-            shashin.printMessageToConsole("extentWidth:" + ol.extent.getWidth(extent));
-            shashin.printMessageToConsole("extentHeight:" + ol.extent.getHeight(extent));
-            shashin.printMessageToConsole("resolution:" + resolution);
-            shashin.printMessageToConsole("Feature count:" + jj);
-            shashin.printMessageToConsole("maxFeatureCount:" + maxFeatureCount);
-            shashin.printMessageToConsole("radius: " + radius);
+            // shashin.printMessageToConsole("---------------------------");
+            // shashin.printMessageToConsole("originalRadius:" + (0.45 * (ol.extent.getWidth(extent) + ol.extent.getHeight(extent))) / resolution);
+            // shashin.printMessageToConsole("extentWidth:" + ol.extent.getWidth(extent));
+            // shashin.printMessageToConsole("extentHeight:" + ol.extent.getHeight(extent));
+            // shashin.printMessageToConsole("resolution:" + resolution);
+            // shashin.printMessageToConsole("Feature count:" + jj);
+            // shashin.printMessageToConsole("maxFeatureCount:" + maxFeatureCount);
+            // shashin.printMessageToConsole("radius: " + radius);
 
             feature.set('radius', radius);
         }
@@ -826,8 +830,8 @@ async function showMap(mapdata) {
             placeJson = JSON.parse(data["placedata"]);
         }
 
-        shashin.printMessageToConsole("Placedata:");
-        shashin.printMessageToConsole(placeJson);
+        // shashin.printMessageToConsole("Placedata:");
+        // shashin.printMessageToConsole(placeJson);
 
         map.getLayers().forEach(layer => {
             if (layer && layer.getProperties().hasOwnProperty("name") && (layer.getProperties()["name"] === "tempCoordinates" || layer.getProperties()["name"] === "tempQpCoordinates")) {
