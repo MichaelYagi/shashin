@@ -64,11 +64,23 @@
 
                     <div class="row">
                         <div class="mb-3 col-12">
+                            <label class="form-label me-2 mt-2" for="findNearestRadius">Find Nearest Distance</label>
+                            <select class="form-select" id="findNearestRadius">
+                                <option value="5">5 km</option>
+                                <option value="10">10 km</option>
+                                <option value="100">100 km</option>
+                                <option value="1000">1000 km</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="mb-3 col-12">
                             <label class="form-label me-2 mt-2" for="mapSources">Map Styles</label>
                             <select class="form-select" id="mapSources">
-                                <option selected value="osm">Standard</option>
-                                <option selected value="maptiler">Street</option>
-                                <option selected value="stadiaSA">Satellite</option>
+                                <option value="osm">Standard</option>
+                                <option value="maptiler">Street</option>
+                                <option value="stadiaSA">Satellite</option>
 <!--                                <option selected value="maptilerHY">Satellite</option>-->
                                 <!--                                <option selected value="arcGisWSM">Street</option>-->
                                 <!--                                <option selected value="arcGisWI">Satellite</option>-->
