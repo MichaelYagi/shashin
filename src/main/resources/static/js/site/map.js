@@ -314,6 +314,11 @@ async function showMap(mapdata) {
     }
 
     function setLayer(startDate, endDate, videoOnly, metadataList, resetMap, inputsChanged, coordArray, maxDistance) {
+        map.getLayers().forEach(layer => {
+            if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinatesFN") {
+                map.removeLayer(layer);
+            }
+        });
         version = Util.getMetadataLocalStorage();
         map.removeLayer(vectorLayer);
         const iconFeatures = [];
@@ -538,11 +543,6 @@ async function showMap(mapdata) {
                 map.getView().fit(ol.proj.transformExtent([minLng, minLat, maxLng, maxLat], 'EPSG:4326', map.getView().getProjection()), { size: [sizeX,sizeY] });
 
                 if (coordArray.length > 0 && maxDistance > 0) {
-                    map.getLayers().forEach(layer => {
-                        if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinates2") {
-                            map.removeLayer(layer);
-                        }
-                    });
                     renderMarker('tempCoordinatesFN', coordArray[1], coordArray[0], "red");
                 }
             } else {
@@ -915,7 +915,7 @@ async function showMap(mapdata) {
 
     map.on('click', function () {
         map.getLayers().forEach(layer => {
-            if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempQpCoordinates") {
+            if (layer && layer.getProperties().hasOwnProperty("name") && (layer.getProperties()["name"] === "tempQpCoordinates" || layer.getProperties()["name"] === "tempCoordinatesFN")) {
                 map.removeLayer(layer);
             }
         });
