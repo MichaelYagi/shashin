@@ -876,7 +876,7 @@ async function showMap(mapdata) {
         });
 
         contextValueArray.push({
-            text: "Find nearest photos",
+            text: "Find photos within " + $("#findNearestRadius").val() + " km",
             callback: findMediaNear
         });
 
