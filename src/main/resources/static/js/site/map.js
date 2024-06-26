@@ -43,6 +43,7 @@ async function showMap(mapdata) {
     let prevMapTile = "osm";
     let prevBingImagery = "AerialWithLabels";
     let prevMaptilerImagery = "maptiler";
+    let forcedFiltered = false;
 
     let osmMapTile = shashin.getMapSource("osm");
     let arcGisWsm = shashin.getMapSource("arcGisWSM");
@@ -174,7 +175,7 @@ async function showMap(mapdata) {
             const lslat = latlngArr[0].trim();
             const lslng = latlngArr[1].trim();
 
-            initialCoord = [lslat, lslng];
+            initialCoord = [lslng, lslat];
             initialZoom = shashin.initialMapZoom;
             startDateField.val("");
             localStorage.removeItem('latlng');
@@ -353,6 +354,8 @@ async function showMap(mapdata) {
         $("#distanceInfo").text("");
         $("#distanceInfo").css("display", "none");
 
+        let filteredCount = 0;
+
         for (let index in mapdata) {
             const data = mapdata[index];
 
@@ -432,6 +435,8 @@ async function showMap(mapdata) {
                         $("#distanceInfo").css("display", "block");
                     }
 
+                    filteredCount++;
+
                     const mapMarkerIcon = new ol.style.Style({
                         //geometry: feature.getGeometry(),
                         image: new ol.style.Icon(({
@@ -480,6 +485,16 @@ async function showMap(mapdata) {
             }
         }
 
+        if (filteredCount === 0 && coordArray.length > 0 && maxDistance > 0) {
+            shashin.showToastMessage("No results", "No results for photos near " + coordArray[1]+", "+coordArray[0], {
+                icon: "bi-info-circle",
+                iconColor: "#777777",
+                target: shashin.toast.target.three
+            });
+            forcedFiltered = true;
+            $("#filterMap").click();
+        }
+
         progressBarWrapper.invisible();
         $("#mapFilterButton").removeClass("disabled");
 
@@ -509,8 +524,13 @@ async function showMap(mapdata) {
             shashin.printMessageToConsole("minLng for map filtering: "+minLng)
             shashin.printMessageToConsole("maxLat for map filtering: "+maxLat)
             shashin.printMessageToConsole("maxLng for map filtering: "+maxLng)
-            
-            if (inputsChanged === true && resetMap === false && minLat !== null && minLng !== null && maxLat !== null && maxLng !== null) {
+
+            if (forcedFiltered === true) {
+                initialCoord = [-123.14659455430593, 49.16889576756705];
+                initialZoom = 2;
+                map.getView().setCenter(ol.proj.fromLonLat(initialCoord));
+                map.getView().setZoom(initialZoom);
+            } else if (inputsChanged === true && resetMap === false && minLat !== null && minLng !== null && maxLat !== null && maxLng !== null) {
                 const mapSize = map.getSize();
                 const mapSizeAdjust = 200;
                 let sizeX = mapSize[0]-mapSizeAdjust;
@@ -525,6 +545,8 @@ async function showMap(mapdata) {
             } else {
                 map.getView().setZoom(initialZoom);
             }
+
+            forcedFiltered = false;
         }
 
         shashin.closeToastMessage({
