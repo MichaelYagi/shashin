@@ -1,4 +1,4 @@
-async function showMap(mapdata) {
+async function showMap(mapdata, keywordMap) {
     // Query parameters
     // Lat
     let qslat = Util.getParameterByName("lat");
@@ -379,11 +379,13 @@ async function showMap(mapdata) {
             const placeName = data["placeName"] !== null ? data["placeName"] : "";
             const mapMarkerUrl = data["mapMarkerUrl"] !== null ? data["mapMarkerUrl"] : "";
             const type = data["type"] !== null ? data["type"] : "";
+            const keywords = keywordMap[data["id"]].length > 0 ? keywordMap[data["id"]].join(", ") : "";
 
             if (searchTerm !== null && searchTerm !== "" &&
                 placeName.toLowerCase().indexOf(searchTerm.toLowerCase()) === -1 &&
                 mapMarkerUrl.toLowerCase().indexOf(searchTerm.toLowerCase()) === -1 &&
-                type.toLowerCase().indexOf(searchTerm.toLowerCase()) === -1
+                type.toLowerCase().indexOf(searchTerm.toLowerCase()) === -1 &&
+                keywords.toLowerCase().indexOf(searchTerm.toLowerCase()) === -1
             ) {
                 continue;
             }

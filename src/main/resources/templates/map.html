@@ -187,14 +187,20 @@
             autohide: false,
             target: shashin.toast.target.two
         });
-        http.ajax("get", "/mapdata" + (version === "" ? "" : "?v=" + version)).then(function (mapdataObj) {
+        http.ajax("get", "/mapdata/keywords" + (version === "" ? "" : "?v=" + version)).then(function (mapdataObj) {
             let mapdata = [];
+            let keywordMap = {};
 
-            if (mapdataObj !== null && mapdataObj.hasOwnProperty("mapdata")) {
+            if (mapdataObj !== null && mapdataObj.hasOwnProperty("mapdata") && mapdataObj.hasOwnProperty("keywordMap")) {
                 mapdata = mapdataObj["mapdata"];
+                keywordMap = mapdataObj["keywordMap"];
 
                 if (mapdata === null || mapdata === "") {
                     mapdata = [];
+                }
+
+                if (keywordMap === null || keywordMap === "") {
+                    keywordMap = {};
                 }
             }
 
@@ -204,7 +210,7 @@
                 });
             }
 
-            showMap(mapdata);
+            showMap(mapdata, keywordMap);
         });
     });
 </script>

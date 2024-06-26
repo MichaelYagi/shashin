@@ -139,6 +139,53 @@ class MapController: BaseController() {
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
+    @RequestMapping(value = ["/api/v1/mapdata/keywords", "mapdata/keywords"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun getAllMapDataWithKeywords(model: Model): ResponseEntity<String> {
+        val response = mutableMapOf<String, Any?>()
+        response["mapdata"] = mutableListOf<MapData>()
+        response["keywordMap"] = mutableMapOf<String, Any?>()
+        response["msg"] = ""
+        response["status"] = ApiResponse.FAIL.status
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+
+        if (currentUserObj != null) {
+            val mapdata: MutableIterable<MapData>
+
+            if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
+                mapdata = metadataRepository!!.findTimelineAllForMap()
+            } else {
+                mapdata = metadataRepository!!.findByAlbumMetadataByUserIdForMap(currentUserObj.getId())
+            }
+
+            response["mapdata"] = mapdata
+
+            val keywordMap = mutableMapOf<String, Any?>()
+            for (data in mapdata) {
+                val metadataId = data.getId()
+
+                val keywordArray = mutableListOf<String>()
+                val keywords = keywordRepository.findKeywordsByMetadataId(metadataId!!)
+                for (keyword in keywords) {
+                    keywordArray.add(keyword.getKeyword()!!)
+                }
+                keywordMap[metadataId] = keywordArray
+            }
+            response["keywordMap"] = keywordMap
+
+            response["msg"] = ""
+            response["status"] = ApiResponse.SUCCESS.status
+        }
+
+        val json = mapper.writeValueAsString(response)
+        return ResponseEntity
+            .ok()
+            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+            .body(json)
+    }
+
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/mapdata/keywords"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getMapDataWithKeywords(model: Model, @RequestBody requestBody: JsonNode): ResponseEntity<String> {
