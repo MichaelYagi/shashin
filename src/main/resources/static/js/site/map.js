@@ -349,6 +349,9 @@ async function showMap(mapdata) {
         let minLng = null;
         let maxLng = null;
 
+        $("#distanceInfo").text("");
+        $("#distanceInfo").css("display", "none");
+
         for (let index in mapdata) {
             const data = mapdata[index];
 
@@ -418,11 +421,14 @@ async function showMap(mapdata) {
                         if (kmDistance > maxDistance) {
                             continue;
                         }
+
+                        // minLat = coordArray[1] - 0.045;
+                        // maxLat = coordArray[1] + 0.045;
+                        // minLng = coordArray[0] - (0.045 / Math.cos(coordArray[1]*Math.PI/180));
+                        // maxLng = coordArray[0] + (0.045 / Math.cos(coordArray[1]*Math.PI/180));
+
                         $("#distanceInfo").text("Filtered results within a "+maxDistance+" km distance from " + coordArray[1] + ", " + coordArray[0]);
                         $("#distanceInfo").css("display", "block");
-                    } else {
-                        $("#distanceInfo").text("");
-                        $("#distanceInfo").css("display", "none");
                     }
 
                     const mapMarkerIcon = new ol.style.Style({
