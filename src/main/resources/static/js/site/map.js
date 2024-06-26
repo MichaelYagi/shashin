@@ -39,6 +39,7 @@ async function showMap(mapdata) {
     let originalAlbumFilter = "";
     let originalVideoOnly = "";
     let originalMapMarkers = "";
+    let originalFindNearest = "";
     let prevMapTile = "osm";
     let prevBingImagery = "AerialWithLabels";
     let prevMaptilerImagery = "maptiler";
@@ -790,31 +791,12 @@ async function showMap(mapdata) {
         }
     };
 
-    const findMediaNear5 = function (obj) {
+    const findMediaNear = function (obj) {
         const coordArray = ol.proj.toLonLat(obj.coordinate);
-        if (coordArray.length > 1) {
-            setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],false, true, coordArray, 5);
-        }
-    }
+        const radius = $("#findNearestRadius").val();
 
-    const findMediaNear10 = function (obj) {
-        const coordArray = ol.proj.toLonLat(obj.coordinate);
-        if (coordArray.length > 1) {
-            setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],false, true, coordArray, 10);
-        }
-    }
-
-    const findMediaNear100 = function (obj) {
-        const coordArray = ol.proj.toLonLat(obj.coordinate);
-        if (coordArray.length > 1) {
-            setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],false, true, coordArray, 100);
-        }
-    }
-
-    const findMediaNear1000 = function (obj) {
-        const coordArray = ol.proj.toLonLat(obj.coordinate);
-        if (coordArray.length > 1) {
-            setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],false, true, coordArray, 1000);
+        if (coordArray.length > 1 && radius > 0) {
+            setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],false, true, coordArray, radius);
         }
     }
 
@@ -872,23 +854,8 @@ async function showMap(mapdata) {
         });
 
         contextValueArray.push({
-            text: "Find photos within 5 km",
-            callback: findMediaNear5
-        });
-
-        contextValueArray.push({
-            text: "Find photos within 10 km",
-            callback: findMediaNear10
-        });
-
-        contextValueArray.push({
-            text: "Find photos within 100 km",
-            callback: findMediaNear100
-        });
-
-        contextValueArray.push({
-            text: "Find photos within 1000 km",
-            callback: findMediaNear1000
+            text: "Find nearest photos",
+            callback: findMediaNear
         });
 
         contextmenu.extend(contextValueArray);
@@ -1056,7 +1023,7 @@ async function showMap(mapdata) {
                 inputsChanged = true;
             }
 
-            if (inputsChanged === false && mapSourceChanged === true) {
+            if (inputsChanged === false && (mapSourceChanged === true || originalFindNearest !== $("#findNearestRadius").val())) {
                 initialZoom = map.getView().getZoom();
             } else {
                 initialZoom = 2;
@@ -1152,6 +1119,8 @@ async function showMap(mapdata) {
         $("#distanceInfo").text("");
         $("#distanceInfo").css("display", "none");
 
+        $("#findNearestRadius").val("5");
+
         if ($("#mapSources").val() !== "osm" || $("#bingMapsImagerySet").val() !== "AerialWithLabels" || $("#maptilerImagerySet").val() !== "maptiler") {
             if ($("#mapSources").val() !== "osm") {
                 prevMapTile = "osm";
@@ -1202,12 +1171,14 @@ async function showMap(mapdata) {
         originalAlbumFilter = $("#albumSelect").val();
         originalVideoOnly = $('#videoOnlyInput').is(":checked");
         originalMapMarkers = $('#showMarkersInput').is(":checked");
+        originalFindNearest = $('#findNearestRadius').val();
     });
 
     $("#propMapFilter").on('hidden.bs.modal', function () {
         if (filtered === false) {
             $("#startDateInput").val(originalFromInput);
             $("#endDateInput").val(originalToInput);
+            $("#findNearestRadius").val(originalFindNearest);
             if ($("#albumSelect").length > 0) {
                 $("#albumSelect").val(originalAlbumFilter);
             }
@@ -1228,6 +1199,7 @@ async function showMap(mapdata) {
         originalAlbumFilter = "";
         originalVideoOnly = "";
         originalMapMarkers = "";
+        originalFindNearest = "";
     });
 
     map.on("pointermove", function (evt) {
