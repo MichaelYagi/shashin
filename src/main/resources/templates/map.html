@@ -64,7 +64,7 @@
 
                     <div class="row">
                         <div class="mb-3 col-12">
-                            <label class="form-label me-2 mt-2" for="findNearestRadius">Find Nearest Distance</label>
+                            <label class="form-label me-2 mt-2" for="findNearestRadius">Find Nearest Distance</label> <span id="findNearestInfo" class="bi-info-circle me-auto" style="font-size: 1rem;"></span>
                             <select class="form-select" id="findNearestRadius">
                                 <option value="5">5 km</option>
                                 <option value="10">10 km</option>
@@ -165,6 +165,14 @@
                 '<div class="row"><div class="col-3"><strong>aid</strong></div><div class="col">Album ID</div></div>' +
                 '<div class="row"><div class="col-3"><strong>an</strong></div><div class="col">Album Name</div></div>',
             placement: 'bottom'
+        });
+
+        $('#findNearestInfo').popover({
+            trigger: 'hover',
+            title: 'Finding Nearest Photos',
+            html: false,
+            content: 'Bring up the context menu on the map on a point with right click. Selecting "Find nearest photos" will find photos within the selected distance.',
+            placement: 'right'
         });
 
         $("#mapSources").val("osm");
