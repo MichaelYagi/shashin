@@ -293,12 +293,38 @@ async function showMap(mapdata) {
         }
     }
 
-    function setLayer(startDate, endDate, videoOnly, metadataList, resetMap, inputsChanged) {
+    function calcCrow(lat1, lon1, lat2, lon2) {
+        const R = 6371; // Radius of the earth in km
+        const dLat = toRad(lat2 - lat1);
+        const dLon = toRad(lon2 - lon1);
+        lat1 = toRad(lat1);
+        lat2 = toRad(lat2);
+
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
+    // Converts numeric degrees to radians
+    function toRad(val) {
+        return val * Math.PI / 180;
+    }
+
+    function setLayer(startDate, endDate, videoOnly, metadataList, resetMap, inputsChanged, coordArray, maxDistance) {
         version = Util.getMetadataLocalStorage();
         map.removeLayer(vectorLayer);
         const iconFeatures = [];
 
         const searchTerm = $("#searchInput").val();
+
+        if (coordArray === undefined) {
+            coordArray = [];
+        }
+
+        if (maxDistance === undefined) {
+            maxDistance = 0;
+        }
 
         if (resetMap === undefined) {
             resetMap = false;
@@ -382,6 +408,19 @@ async function showMap(mapdata) {
                 }
 
                 if (true === checkDateInputs(startDateObj,endDateObj,dateTakenObj)) {
+                    // Check distance
+                    if (coordArray.length > 0 && maxDistance > 0) {
+                        const kmDistance = calcCrow(coordArray[1], coordArray[0], lat, lng);
+                        if (kmDistance > maxDistance) {
+                            continue;
+                        }
+                        $("#distanceInfo").text("Filtered results within a "+maxDistance+" km distance from " + coordArray[1] + ", " + coordArray[0]);
+                        $("#distanceInfo").css("display", "display");
+                    } else {
+                        $("#distanceInfo").text("");
+                        $("#distanceInfo").css("display", "none");
+                    }
+
                     const mapMarkerIcon = new ol.style.Style({
                         //geometry: feature.getGeometry(),
                         image: new ol.style.Icon(({
@@ -741,6 +780,34 @@ async function showMap(mapdata) {
         }
     };
 
+    const findMediaNear5 = function (obj) {
+        const coordArray = ol.proj.toLonLat(obj.coordinate);
+        if (coordArray.length > 1) {
+            setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],false, true, coordArray, 5);
+        }
+    }
+
+    const findMediaNear10 = function (obj) {
+        const coordArray = ol.proj.toLonLat(obj.coordinate);
+        if (coordArray.length > 1) {
+            setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],false, true, coordArray, 10);
+        }
+    }
+
+    const findMediaNear100 = function (obj) {
+        const coordArray = ol.proj.toLonLat(obj.coordinate);
+        if (coordArray.length > 1) {
+            setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],false, true, coordArray, 100);
+        }
+    }
+
+    const findMediaNear1000 = function (obj) {
+        const coordArray = ol.proj.toLonLat(obj.coordinate);
+        if (coordArray.length > 1) {
+            setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],false, true, coordArray, 1000);
+        }
+    }
+
     const contextmenu = new ContextMenu({
         width: 300,
         defaultItems: false // defaultItems are (for now) Zoom In/Zoom Out
@@ -792,6 +859,26 @@ async function showMap(mapdata) {
         contextValueArray.push({
             text: copyText,
             callback: copyCoordinates
+        });
+
+        contextValueArray.push({
+            text: "Find photos within 5 km",
+            callback: findMediaNear5
+        });
+
+        contextValueArray.push({
+            text: "Find photos within 10 km",
+            callback: findMediaNear10
+        });
+
+        contextValueArray.push({
+            text: "Find photos within 100 km",
+            callback: findMediaNear100
+        });
+
+        contextValueArray.push({
+            text: "Find photos within 1000 km",
+            callback: findMediaNear1000
         });
 
         contextmenu.extend(contextValueArray);
@@ -1051,6 +1138,9 @@ async function showMap(mapdata) {
 
         $("#bingMapsImageryContainer").css("display", "none");
         $("#maptilerContainer").css("display", "none");
+
+        $("#distanceInfo").text("");
+        $("#distanceInfo").css("display", "none");
 
         if ($("#mapSources").val() !== "osm" || $("#bingMapsImagerySet").val() !== "AerialWithLabels" || $("#maptilerImagerySet").val() !== "maptiler") {
             if ($("#mapSources").val() !== "osm") {
