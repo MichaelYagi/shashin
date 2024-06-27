@@ -446,6 +446,7 @@
                 let index;
 
                 const keywordsAvailable = $('#keywordsString').val();
+                keywordsAvailable.replace("unidentified objects,","");
                 const camerasList = $('#camerasString').val();
                 const lensList = $('#lensesString').val();
 
@@ -666,7 +667,7 @@
                 $("#albumDetailRow").remove();
                 Util.populateDetailsInfo(metadata, "propMetadata");
 
-                if ($("#keywordsString").length > 0 && $("#keywordsString").val() !== "unidentified objects") {
+                if ($("#keywordsString").length > 0) {
                     const keywordAvailableList = $($("#keywordsString").val().split(",")).not($("#keywords").val().split(",")).get().filter(function (v) {
                         return v !== ''
                     });
