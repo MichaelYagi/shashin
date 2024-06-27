@@ -1348,17 +1348,18 @@ class Util {
             $(".albumsDetails").html(albumHtml);
         }
         if (metadata.hasOwnProperty("keywords") && metadata.keywords != null && metadata.keywords.length > 0) {
-            $(".keywordsLabel").show();
             let keywordHtml = "";
             const keywordArray = metadata.keywords;
             if (keywordArray.length > 1) {
                 for (let index in keywordArray) {
                     const keyword = keywordArray[index].trim();
                     if (keyword !== "unidentified objects") {
+                        $(".keywordsLabel").show();
                         keywordHtml += "<a href='/search?term=" + keyword + "' target='_blank'>" + keyword + "</a>, ";
                     }
                 }
             } else if (keywordArray[0] !== "unidentified objects") {
+                $(".keywordsLabel").show();
                 keywordHtml = "<a href='/search?term="+keywordArray[0]+"' target='_blank'>"+keywordArray[0]+"</a>";
             }
 
