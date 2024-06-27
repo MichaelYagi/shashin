@@ -503,9 +503,9 @@
                     $("#timeTaken").val(metadata.time);
                 }
 
-                if (metadata.hasOwnProperty("keywords") && metadata.keywords !== null) {
+                if (metadata.hasOwnProperty("keywords") && metadata.keywords !== null && metadata.keywords !== "unidentified objects") {
                     $("#keywords").val(metadata.keywords);
-                } else {
+                } else if (keywordList !== "unidentified objects") {
                     $("#keywords").val(keywordList);
                     metadata.keywords = keywordList
                 }
@@ -666,7 +666,7 @@
                 $("#albumDetailRow").remove();
                 Util.populateDetailsInfo(metadata, "propMetadata");
 
-                if ($("#keywordsString").length > 0) {
+                if ($("#keywordsString").length > 0 && $("#keywordsString").val() !== "unidentified objects") {
                     const keywordAvailableList = $($("#keywordsString").val().split(",")).not($("#keywords").val().split(",")).get().filter(function (v) {
                         return v !== ''
                     });
