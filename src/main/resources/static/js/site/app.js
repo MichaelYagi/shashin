@@ -437,7 +437,9 @@
                 const taggedPeopleArray = data["taggedPeopleList"];
 
                 let keywordList = data["keywordList"];
-                keywordList.splice($.inArray("unidentified objects", keywordList), 1);
+                if ($.inArray("unidentified objects", keywordList) !== -1) {
+                    keywordList.splice($.inArray("unidentified objects", keywordList), 1);
+                }
                 metadata["keywords"] = keywordList;
                 const albumMap = data["albumMap"];
                 metadata["albumMap"] = albumMap;
@@ -448,7 +450,9 @@
 
                 let keywordsAvailable = $('#keywordsString').val();
                 let keywordArr = keywordsAvailable.split(",");
-                keywordArr.splice($.inArray("unidentified objects", keywordArr), 1);
+                if ($.inArray("unidentified objects", keywordList) !== -1) {
+                    keywordList.splice($.inArray("unidentified objects", keywordList), 1);
+                }
                 keywordsAvailable = keywordArr.join(",");
                 const camerasList = $('#camerasString').val();
                 const lensList = $('#lensesString').val();
