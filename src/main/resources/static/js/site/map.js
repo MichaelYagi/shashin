@@ -369,7 +369,7 @@ async function showMap(mapdata, keywordMap) {
 
             if (progressBarShown === false) {
                 const currentProgress = parseInt(((parseInt(index) + 1) / mapdata.length * 100).toString(), 10);
-                Util.updateProgressBar(currentProgress, 100*parseInt(index));
+                Util.updateProgressBar(currentProgress);
                 shashin.printMessageToConsole("currentProgress for map: " + currentProgress.toString());
             }
 
