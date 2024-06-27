@@ -371,7 +371,6 @@ async function showMap(mapdata, keywordMap) {
                 const currentProgress = parseInt(((parseInt(index) + 1) / mapdata.length * 100).toString(), 10);
                 Util.updateProgressBar(currentProgress);
                 shashin.printMessageToConsole("currentProgress for map: " + currentProgress.toString());
-                $("#toastMessage2").text("Loading map data "+currentProgress+"%");
             }
 
             if ((videoOnly === true && data["type"].includes("video") === false) || (qsmtf !== null && qsmtf !== "" && data["type"].includes(qsmtf) === false)) {

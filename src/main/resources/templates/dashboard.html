@@ -270,36 +270,26 @@
                 const keywordChartData = {};
                 keywordChartData["keywordCountJson"] = data["keywordCountJson"];
 
-                $("#toastMessage2").text("Loading map data 10%");
                 Util.updateProgressBar(10);
                 const dashboard = new Dashboard();
                 const siteStatChart = dashboard.displaySiteStatChart(siteStatChartData);
-                $("#toastMessage2").text("Loading map data 20%");
                 Util.updateProgressBar(20);
                 const userChart = dashboard.displayUserChart(userChartData);
-                $("#toastMessage2").text("Loading map data 30%");
                 Util.updateProgressBar(30);
                 const mediaChart = dashboard.displayMediaChart(mediaChartData);
-                $("#toastMessage2").text("Loading map data 40%");
                 Util.updateProgressBar(40);
                 const cameraChart = dashboard.displayCameraChart(cameraChartData);
-                $("#toastMessage2").text("Loading map data 50%");
                 Util.updateProgressBar(50);
                 const agentNameChart = dashboard.displayAgentNameChart(agentNameChartData);
-                $("#toastMessage2").text("Loading map data 60%");
                 Util.updateProgressBar(60);
                 const osNameChart = dashboard.displayOsNameChart(osNameChartData);
-                $("#toastMessage2").text("Loading map data 70%");
                 Util.updateProgressBar(70);
                 const keywordChart = dashboard.displayKeywordChart(keywordChartData);
-                $("#toastMessage2").text("Loading map data 80%");
                 Util.updateProgressBar(80);
                 const cpuChart = dashboard.displayCpuChart();
-                $("#toastMessage2").text("Loading map data 90%");
                 Util.updateProgressBar(90);
                 const memoryChart = dashboard.displayMemoryChart();
                 dashboard.startWebSocket(cpuChart, memoryChart);
-                $("#toastMessage2").text("Loading map data 100%");
                 Util.updateProgressBar(100);
 
                 $("#progressBarWrapper").invisible();
