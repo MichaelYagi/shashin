@@ -29,7 +29,6 @@ async function showMap(mapdata, keywordMap) {
     const filterInputs = $("#filterInputs");
     const albumSelect = $("#albumSelect");
     const progressBarWrapper = $("#progressBarWrapper");
-    const progressBar = $("#progressBar");
 
     // Bigger number for better performance, smaller number for better accuracy
     let clusterDistance = 175;
@@ -44,6 +43,7 @@ async function showMap(mapdata, keywordMap) {
     let prevBingImagery = "AerialWithLabels";
     let prevMaptilerImagery = "maptiler";
     let forcedFiltered = false;
+    let progressBarShown = false;
 
     let osmMapTile = shashin.getMapSource("osm");
     let arcGisWsm = shashin.getMapSource("arcGisWSM");
@@ -349,8 +349,10 @@ async function showMap(mapdata, keywordMap) {
             }
         }
 
-        progressBarWrapper.visible();
-        progressBar.attr("aria-valuenow","0").css("width","0%");
+        if (progressBarShown === false) {
+            progressBarWrapper.visible();
+            Util.updateProgressBar(0);
+        }
 
         let minLat = null;
         let maxLat = null;
@@ -365,9 +367,11 @@ async function showMap(mapdata, keywordMap) {
         for (let index in mapdata) {
             const data = mapdata[index];
 
-            const currentProgress = parseInt(((parseInt(index) + 1) / mapdata.length * 100).toString(), 10);
-            progressBar.attr("aria-valuenow", currentProgress.toString()).css("width", currentProgress.toString() + "%");
-            shashin.printMessageToConsole("currentProgress for map: "+currentProgress.toString());
+            if (progressBarShown === false) {
+                const currentProgress = parseInt(((parseInt(index) + 1) / mapdata.length * 100).toString(), 10);
+                Util.updateProgressBar(currentProgress);
+                shashin.printMessageToConsole("currentProgress for map: " + currentProgress.toString());
+            }
 
             if ((videoOnly === true && data["type"].includes("video") === false) || (qsmtf !== null && qsmtf !== "" && data["type"].includes(qsmtf) === false)) {
                 continue;
@@ -486,6 +490,12 @@ async function showMap(mapdata, keywordMap) {
                     }
                 }
             }
+
+            if (mapdata.length === parseInt(index)+1) {
+                progressBarWrapper.invisible();
+                Util.updateProgressBar(0);
+                progressBarShown = true;
+            }
         }
 
         $("#resultsText").text(filteredCount + " result" + (filteredCount === 1 ? "" : "s"));
@@ -500,7 +510,6 @@ async function showMap(mapdata, keywordMap) {
             $("#filterMap").click();
         }
 
-        progressBarWrapper.invisible();
         $("#mapFilterButton").removeClass("disabled");
 
         if (iconFeatures.length > 0) {
