@@ -193,6 +193,8 @@
     $("#appSearchInput").val("Dashboard");
 
     $(document).ready(function () {
+        $("#progressBarWrapper").visible();
+
         setTimeout(function () {
             shashin.showToastMessage("Loading", "Loading dashboard data ...", {
                 icon: "bi-info-circle",
@@ -202,6 +204,8 @@
             });
             const http = new Http("dashboard data");
             http.ajax("get", "/dashboard/data").then(function (data) {
+                Util.updateProgressBar(0);
+
                 $("#uptime").html("Uptime <code>" + data["uptime"] + "</code>");
                 if (data["nominatimAvailable"] !== null) {
                     $("#nominatimStatusContainer").css("display", "block");
@@ -266,17 +270,29 @@
                 const keywordChartData = {};
                 keywordChartData["keywordCountJson"] = data["keywordCountJson"];
 
+                Util.updateProgressBar(10);
                 const dashboard = new Dashboard();
                 const siteStatChart = dashboard.displaySiteStatChart(siteStatChartData);
+                Util.updateProgressBar(20);
                 const userChart = dashboard.displayUserChart(userChartData);
+                Util.updateProgressBar(30);
                 const mediaChart = dashboard.displayMediaChart(mediaChartData);
+                Util.updateProgressBar(40);
                 const cameraChart = dashboard.displayCameraChart(cameraChartData);
+                Util.updateProgressBar(50);
                 const agentNameChart = dashboard.displayAgentNameChart(agentNameChartData);
+                Util.updateProgressBar(60);
                 const osNameChart = dashboard.displayOsNameChart(osNameChartData);
                 const keywordChart = dashboard.displayKeywordChart(keywordChartData);
+                Util.updateProgressBar(70);
                 const cpuChart = dashboard.displayCpuChart();
+                Util.updateProgressBar(80);
                 const memoryChart = dashboard.displayMemoryChart();
                 dashboard.startWebSocket(cpuChart, memoryChart);
+                Util.updateProgressBar(100);
+
+                $("#progressBarWrapper").invisible();
+                Util.updateProgressBar(0);
                 shashin.closeToastMessage({
                     target: shashin.toast.target.two
                 });
