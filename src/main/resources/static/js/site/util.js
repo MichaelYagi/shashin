@@ -1019,8 +1019,10 @@ class Util {
     }
 
     static updateProgressBar(value) {
-        $("#progressBarWrapper").attr("aria-valuenow",value.toString());
-        $("#progressBar").css("width",value.toString()+"%");
+        setTimeout(() => {
+            $("#progressBarWrapper").attr("aria-valuenow",value.toString());
+            $("#progressBar").css("width",value.toString()+"%");
+        }, 0);
     }
 
     // Formats to yyyy-mm-dd if input is yyyy-m-d for eg.
