@@ -319,6 +319,7 @@ async function showMap(mapdata, keywordMap) {
                 map.removeLayer(layer);
             }
         });
+        $("#resultsText").text("");
         version = Util.getMetadataLocalStorage();
         map.removeLayer(vectorLayer);
         const iconFeatures = [];
@@ -486,6 +487,8 @@ async function showMap(mapdata, keywordMap) {
                 }
             }
         }
+
+        $("#resultsText").text(filteredCount + " result" + (filteredCount === 1 ? "" : "s"));
 
         if (filteredCount === 0 && coordArray.length > 0 && maxDistance > 0) {
             shashin.showToastMessage("No results", "No results for photos near " + coordArray[1]+", "+coordArray[0], {
@@ -1169,6 +1172,7 @@ async function showMap(mapdata, keywordMap) {
 
         filtered = true;
 
+        $("#resultsText").text("");
         $("#searchInput").val("");
         startDateField.val("");
         endDateField.val("");
