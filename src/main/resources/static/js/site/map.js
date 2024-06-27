@@ -351,7 +351,7 @@ async function showMap(mapdata, keywordMap) {
 
         if (progressBarShown === false) {
             progressBarWrapper.visible();
-            Util.updateProgressBar(0);
+            Util.updateProgressBar(100);
         }
 
         let minLat = null;
@@ -369,7 +369,6 @@ async function showMap(mapdata, keywordMap) {
 
             if (progressBarShown === false) {
                 const currentProgress = parseInt(((parseInt(index) + 1) / mapdata.length * 100).toString(), 10);
-                Util.updateProgressBar(currentProgress);
                 shashin.printMessageToConsole("currentProgress for map: " + currentProgress.toString());
             }
 
