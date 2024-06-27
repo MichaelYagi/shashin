@@ -1495,8 +1495,10 @@ class TimelineController: BaseController() {
                     if (keywords.last() == ',') {
                         keywords = keywords.dropLast(1)
                     }
-                    val keywordList = keywords.split(",").map { it.trim() }
-                    processKeywords(keywordList, metadataId)
+                    if (keywords != "" && keywords != "unidentified objects") {
+                        val keywordList = keywords.split(",").map { it.trim() }
+                        processKeywords(keywordList, metadataId)
+                    }
                 } else {
                     val settings = model.getAttribute("settings") as Settings
                     val keywordCount = keywordPhotoRepository.countByMetadataId(metadataId)

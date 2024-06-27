@@ -1347,7 +1347,7 @@ class Util {
             }
             $(".albumsDetails").html(albumHtml);
         }
-        if (metadata.hasOwnProperty("keywords") && metadata.keywords != null && metadata.keywords.length > 0) {
+        if (metadata.hasOwnProperty("keywords") && metadata.keywords != null && metadata.keywords.length > 0 && metadata.keywords !== "unidentified objects") {
             $(".keywordsLabel").show();
             let keywordHtml = "";
             const keywordArray = metadata.keywords;
