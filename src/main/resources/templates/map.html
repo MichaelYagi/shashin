@@ -179,6 +179,9 @@
         $("#mapSources").val("osm");
         // $("#bingMapsImagerySet").val("AerialWithLabels");
 
+        $("#progressBarWrapper").visible();
+        Util.updateProgressBar(100);
+
         const http = new Http("Getting map data");
         Util.setMetadataLocalStorage();
         const version = Util.getMetadataLocalStorage();
