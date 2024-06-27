@@ -191,11 +191,10 @@
 </th:block>
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     $("#appSearchInput").val("Dashboard");
+    Util.updateProgressBar(100);
+    $("#progressBarWrapper").visible();
 
     $(document).ready(function () {
-        Util.updateProgressBar(100);
-        $("#progressBarWrapper").visible();
-
         setTimeout(function () {
             shashin.showToastMessage("Loading", "Loading dashboard data ...", {
                 icon: "bi-info-circle",
