@@ -436,7 +436,8 @@
 
                 const taggedPeopleArray = data["taggedPeopleList"];
 
-                const keywordList = data["keywordList"];
+                let keywordList = data["keywordList"];
+                keywordList.splice($.inArray("unidentified objects", keywordList), 1);
                 metadata["keywords"] = keywordList;
                 const albumMap = data["albumMap"];
                 metadata["albumMap"] = albumMap;
@@ -445,8 +446,10 @@
                 const allAlbumList = data["allAlbumList"];
                 let index;
 
-                const keywordsAvailable = $('#keywordsString').val();
-                keywordsAvailable.replace("unidentified objects,","");
+                let keywordsAvailable = $('#keywordsString').val();
+                let keywordArr = keywordsAvailable.split(",");
+                keywordArr.splice($.inArray("unidentified objects", keywordArr), 1);
+                keywordsAvailable = keywordArr.join(",");
                 const camerasList = $('#camerasString').val();
                 const lensList = $('#lensesString').val();
 
@@ -504,9 +507,9 @@
                     $("#timeTaken").val(metadata.time);
                 }
 
-                if (metadata.hasOwnProperty("keywords") && metadata.keywords !== null && metadata.keywords !== "unidentified objects") {
+                if (metadata.hasOwnProperty("keywords") && metadata.keywords !== null) {
                     $("#keywords").val(metadata.keywords);
-                } else if (keywordList !== "unidentified objects") {
+                } else {
                     $("#keywords").val(keywordList);
                     metadata.keywords = keywordList
                 }
