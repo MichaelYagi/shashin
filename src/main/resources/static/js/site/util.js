@@ -1018,6 +1018,11 @@ class Util {
         }
     }
 
+    static updateProgressBar(value) {
+        $("#progressBarWrapper").attr("aria-valuenow",value.toString());
+        $("#progressBar").css("width",value.toString()+"%");
+    }
+
     // Formats to yyyy-mm-dd if input is yyyy-m-d for eg.
     static formatDate(dateString) {
         const dateStringArrayDash = dateString.toString().split("-");
