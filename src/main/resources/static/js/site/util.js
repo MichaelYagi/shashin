@@ -1347,16 +1347,18 @@ class Util {
             }
             $(".albumsDetails").html(albumHtml);
         }
-        if (metadata.hasOwnProperty("keywords") && metadata.keywords != null && metadata.keywords.length > 0 && metadata.keywords !== "unidentified objects") {
+        if (metadata.hasOwnProperty("keywords") && metadata.keywords != null && metadata.keywords.length > 0) {
             $(".keywordsLabel").show();
             let keywordHtml = "";
             const keywordArray = metadata.keywords;
             if (keywordArray.length > 1) {
                 for (let index in keywordArray) {
                     const keyword = keywordArray[index].trim();
-                    keywordHtml += "<a href='/search?term="+keyword+"' target='_blank'>"+keyword+"</a>, ";
+                    if (keyword !== "unidentified objects") {
+                        keywordHtml += "<a href='/search?term=" + keyword + "' target='_blank'>" + keyword + "</a>, ";
+                    }
                 }
-            } else {
+            } else if (keywordArray[0] !== "unidentified objects") {
                 keywordHtml = "<a href='/search?term="+keywordArray[0]+"' target='_blank'>"+keywordArray[0]+"</a>";
             }
 
