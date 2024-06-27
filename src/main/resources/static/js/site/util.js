@@ -1018,11 +1018,14 @@ class Util {
         }
     }
 
-    static updateProgressBar(value) {
+    static updateProgressBar(value, timeout) {
+        if (timeout === undefined) {
+            timeout = 0;
+        }
         setTimeout(() => {
             $("#progressBarWrapper").attr("aria-valuenow",value.toString());
             $("#progressBar").css("width",value.toString()+"%");
-        }, 0);
+        }, timeout);
     }
 
     // Formats to yyyy-mm-dd if input is yyyy-m-d for eg.
