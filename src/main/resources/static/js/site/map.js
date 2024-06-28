@@ -900,6 +900,19 @@ async function showMap(mapdata, keywordMap) {
         }
     }
 
+    const googleMapsLink = function (obj) {
+        const coordArray = ol.proj.toLonLat(obj.coordinate);
+
+        if (coordArray.length > 1) {
+            const win = window.open('https://www.google.com/maps/search/?api=1&query='+coordArray[1]+"%2C"+coordArray[0], '_blank');
+            if (win) {
+                //Browser has allowed it to be opened
+                win.focus();
+                renderMarker('tempGoogleCoordinates',coordArray[1],coordArray[0],"red");
+            }
+        }
+    }
+
     const contextmenu = new ContextMenu({
         width: 300,
         defaultItems: false // defaultItems are (for now) Zoom In/Zoom Out
@@ -963,6 +976,11 @@ async function showMap(mapdata, keywordMap) {
             callback: zoomIn
         });
 
+        contextValueArray.push({
+            text: '<span class="bi-google"></span>',
+            callback: googleMapsLink
+        });
+
         contextmenu.extend(contextValueArray);
     }
 
@@ -993,9 +1011,16 @@ async function showMap(mapdata, keywordMap) {
         renderMarker('tempQpCoordinates',qslat,qslng,"red");
     }
 
+    // Remove markers
     map.on('click', function () {
         map.getLayers().forEach(layer => {
-            if (layer && layer.getProperties().hasOwnProperty("name") && (layer.getProperties()["name"] === "tempQpCoordinates" || layer.getProperties()["name"] === "tempCoordinatesFN")) {
+            if (layer && layer.getProperties().hasOwnProperty("name") &&
+                (
+                    layer.getProperties()["name"] === "tempQpCoordinates" ||
+                    layer.getProperties()["name"] === "tempCoordinatesFN" ||
+                    layer.getProperties()["name"] === "tempGoogleCoordinates"
+                )
+            ) {
                 map.removeLayer(layer);
             }
         });
