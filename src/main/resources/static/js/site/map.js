@@ -346,6 +346,13 @@ async function showMap(mapdata, keywordMap) {
         return val * Math.PI / 180;
     }
 
+    function isFloat(value) {
+        value = value.trim();
+        return !isNaN(value) &&
+            parseFloat(Number(value)) == value &&
+            !isNaN(parseFloat(value));
+    }
+
     function setLayer(startDate, endDate, videoOnly, metadataList, resetMap, inputsChanged, coordArray, maxDistance, zoomOnly) {
         map.getLayers().forEach(layer => {
             if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinatesFN") {
@@ -358,6 +365,8 @@ async function showMap(mapdata, keywordMap) {
         const iconFeatures = [];
 
         const searchTerm = $("#searchInput").val();
+
+        const formCoordinates = $("#formCoordinates").val();
 
         if (coordArray === undefined) {
             coordArray = [];
@@ -551,10 +560,22 @@ async function showMap(mapdata, keywordMap) {
 
         $("#mapFilterButton").removeClass("disabled");
 
-        if (zoomOnly === true) {
+        let formLatLng = false;
+        if (zoomOnly === true || formCoordinates !== "") {
             // Zoom to the coordinates at a distance of maxDistance
-            const centerLat = coordArray[1];
-            const centerLng = coordArray[0];
+            let centerLat = coordArray[1];
+            let centerLng = coordArray[0];
+            if (zoomOnly === false && formCoordinates !== "") {
+                const formCoordinatesArr = formCoordinates.split(",");
+                if (formCoordinatesArr.length === 2 && isFloat(formCoordinatesArr[0]) && isFloat(formCoordinatesArr[1])) {
+                    centerLat = parseFloat(formCoordinatesArr[0].trim());
+                    centerLng = parseFloat(formCoordinatesArr[1].trim());
+                    maxDistance = parseFloat($("#findNearestRadius").val().trim());
+                    inputsChanged = true;
+                    formLatLng = true;
+                }
+            }
+
             let pointExtent = getExtentFromCenterCoordinate([centerLng, centerLat], maxDistance);
 
             minLat = pointExtent[0][1];
@@ -607,9 +628,13 @@ async function showMap(mapdata, keywordMap) {
                     sizeY = mapSize[1];
                 }
                 map.getView().fit(ol.proj.transformExtent([minLng, minLat, maxLng, maxLat], 'EPSG:4326', map.getView().getProjection()), { size: [sizeX,sizeY] });
-
-                if (coordArray.length > 0 && maxDistance > 0) {
-                    renderMarker('tempCoordinatesFN', coordArray[1], coordArray[0], "red");
+                if (maxDistance > 0) {
+                    if (coordArray.length > 0) {
+                        renderMarker('tempCoordinatesFN', coordArray[1], coordArray[0], "red");
+                    } else if (formLatLng === true) {
+                        const formCoordinatesArr = formCoordinates.split(",");
+                        renderMarker('tempCoordinatesFN', parseFloat(formCoordinatesArr[0].trim()), parseFloat(formCoordinatesArr[1].trim()), "red");
+                    }
                 }
             } else {
                 map.getView().setZoom(initialZoom);
@@ -1283,6 +1308,7 @@ async function showMap(mapdata, keywordMap) {
 
         $("#resultsText").text("");
         $("#searchInput").val("");
+        $("#formCoordinates").val("");
         startDateField.val("");
         endDateField.val("");
         videoOnlyCheckbox.prop("checked", false);
