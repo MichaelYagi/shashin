@@ -333,6 +333,7 @@ async function showMap(mapdata, keywordMap) {
         if (maxDistance === undefined) {
             maxDistance = 0;
         }
+        maxDistance = parseFloat(maxDistance);
 
         if (resetMap === undefined) {
             resetMap = false;
