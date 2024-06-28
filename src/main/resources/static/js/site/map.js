@@ -308,12 +308,45 @@ async function showMap(mapdata, keywordMap) {
         return R * c;
     }
 
+    // https://stackoverflow.com/questions/62532283/get-the-extent-of-a-one-center-point
+    // OL extent is {'bottom-left'} {'bottom-right'} {'top-left'} {'top-right'}
+    // or {'bottom-left'} {'top-right'} or [minLat, minLng, maxLat, maxLng] or [minX, minY, maxX, maxY]
+    // where X -> Lat, Y -> Lng
+    // In OL lat, lng is switched around ie lng, lat
+    function getExtentFromCenterCoordinate(centerCoordLngLat, distanceKm) {
+        const lat = centerCoordLngLat[1];
+        const lng = centerCoordLngLat[0];
+        const hypotenuseEachQuardilator = Math.sqrt(Math.pow((distanceKm / 2), 2) + Math.pow((distanceKm / 2), 2));
+        const radAngle = (Math.PI / 180) * 45;
+        const distance = hypotenuseEachQuardilator / 100;
+
+        //left-top
+        const x1 = lat - (distance * Math.cos(radAngle));
+        const y1 = lng + (distance * Math.sin(radAngle));
+        //right-top
+        const x2 = lat + (distance * Math.cos(radAngle));
+        const y2 = lng + (distance * Math.sin(radAngle));
+        //right-bottom
+        const x3 = lat + (distance * Math.cos(radAngle));
+        const y3 = lng - (distance * Math.sin(radAngle));
+        //left-bottom
+        const x4 = lat - (distance * Math.cos(radAngle));
+        const y4 = lng - (distance * Math.sin(radAngle));
+
+        return [
+            [y4, x4], //bottom-left
+            [y1, x1], //bottom-right
+            [y3, x3], //top-left
+            [y2, x2]  //top-right
+        ];
+    }
+
     // Converts numeric degrees to radians
     function toRad(val) {
         return val * Math.PI / 180;
     }
 
-    function setLayer(startDate, endDate, videoOnly, metadataList, resetMap, inputsChanged, coordArray, maxDistance) {
+    function setLayer(startDate, endDate, videoOnly, metadataList, resetMap, inputsChanged, coordArray, maxDistance, zoomOnly) {
         map.getLayers().forEach(layer => {
             if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinatesFN") {
                 map.removeLayer(layer);
@@ -328,6 +361,10 @@ async function showMap(mapdata, keywordMap) {
 
         if (coordArray === undefined) {
             coordArray = [];
+        }
+
+        if (zoomOnly === undefined) {
+            zoomOnly = false;
         }
 
         if (maxDistance === undefined) {
@@ -427,17 +464,19 @@ async function showMap(mapdata, keywordMap) {
                 if (true === checkDateInputs(startDateObj,endDateObj,dateTakenObj)) {
                     // Check distance
                     if (coordArray.length > 0 && maxDistance > 0) {
-                        const kmDistance = calcCrow(coordArray[1], coordArray[0], lat, lng);
-                        shashin.printMessageToConsole("center: "+coordArray[1]+", "+ coordArray[0])
-                        shashin.printMessageToConsole("current coord: "+lat+", "+ lng)
-                        shashin.printMessageToConsole("Distance: "+kmDistance)
+                        if (zoomOnly === false) {
+                            const kmDistance = calcCrow(coordArray[1], coordArray[0], lat, lng);
+                            shashin.printMessageToConsole("center: " + coordArray[1] + ", " + coordArray[0])
+                            shashin.printMessageToConsole("current coord: " + lat + ", " + lng)
+                            shashin.printMessageToConsole("Distance: " + kmDistance)
 
-                        if (kmDistance > maxDistance) {
-                            continue;
+                            if (kmDistance > maxDistance) {
+                                continue;
+                            }
+
+                            $("#distanceInfo").text("Filtered results within a " + maxDistance + " km distance from " + coordArray[1] + ", " + coordArray[0]);
+                            $("#distanceInfo").css("display", "block");
                         }
-
-                        $("#distanceInfo").text("Filtered results within a "+maxDistance+" km distance from " + coordArray[1] + ", " + coordArray[0]);
-                        $("#distanceInfo").css("display", "block");
                     }
 
                     filteredCount++;
@@ -471,20 +510,22 @@ async function showMap(mapdata, keywordMap) {
                     iconFeature.setStyle(data["mapMarkerIcon"]);
                     iconFeatures.push(iconFeature);
 
-                    if (minLat === null || lat < minLat) {
-                        minLat = lat;
-                    }
+                    if (zoomOnly === false) {
+                        if (minLat === null || lat < minLat) {
+                            minLat = lat;
+                        }
 
-                    if (maxLat === null || lat > maxLat) {
-                        maxLat = lat;
-                    }
+                        if (maxLat === null || lat > maxLat) {
+                            maxLat = lat;
+                        }
 
-                    if (minLng === null || lng < minLng) {
-                        minLng = lng;
-                    }
+                        if (minLng === null || lng < minLng) {
+                            minLng = lng;
+                        }
 
-                    if (maxLng === null || lng > maxLng) {
-                        maxLng = lng;
+                        if (maxLng === null || lng > maxLng) {
+                            maxLng = lng;
+                        }
                     }
                 }
             }
@@ -509,6 +550,18 @@ async function showMap(mapdata, keywordMap) {
         }
 
         $("#mapFilterButton").removeClass("disabled");
+
+        if (zoomOnly === true) {
+            // Zoom to the coordinates at a distance of maxDistance
+            const centerLat = coordArray[1];
+            const centerLng = coordArray[0];
+            let pointExtent = getExtentFromCenterCoordinate([centerLng, centerLat], maxDistance);
+
+            minLat = pointExtent[0][1];
+            maxLat = pointExtent[3][1];
+            minLng = pointExtent[0][0];
+            maxLng = pointExtent[3][0];
+        }
 
         if (iconFeatures.length > 0) {
 
@@ -838,6 +891,15 @@ async function showMap(mapdata, keywordMap) {
         }
     }
 
+    const zoomIn = function (obj) {
+        const coordArray = ol.proj.toLonLat(obj.coordinate);
+        const radius = $("#findNearestRadius").val();
+
+        if (coordArray.length > 1 && radius > 0) {
+            setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],false, true, coordArray, radius, true);
+        }
+    }
+
     const contextmenu = new ContextMenu({
         width: 300,
         defaultItems: false // defaultItems are (for now) Zoom In/Zoom Out
@@ -894,6 +956,11 @@ async function showMap(mapdata, keywordMap) {
         contextValueArray.push({
             text: "Find photos within " + $("#findNearestRadius").val() + " km",
             callback: findMediaNear
+        });
+
+        contextValueArray.push({
+            text: "Zoom within " + $("#findNearestRadius").val() + " km",
+            callback: zoomIn
         });
 
         contextmenu.extend(contextValueArray);
