@@ -961,9 +961,7 @@ async function showMap(mapdata, keywordMap) {
     checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))
     setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],true, false);
 
-    $("#filterMap").on("click", function(e) {
-        e.preventDefault();
-
+    function filterClicked() {
         let mapSourceChanged = false;
         if ($("#mapSources").val() !== prevMapTile) {
             mapSourceChanged = true;
@@ -993,6 +991,18 @@ async function showMap(mapdata, keywordMap) {
             });
 
             $("#propMapFilter").modal('hide');
+        }
+    }
+
+    $("#filterMap").on("click", function(e) {
+        e.preventDefault();
+        filterClicked();
+    });
+
+    $('#propMapFilter').on('keypress', function (event) {
+        const keycode = (event.keyCode ? event.keyCode : event.which);
+        if (keycode === '13' || keycode === 13) {
+            filterClicked();
         }
     });
 
