@@ -960,7 +960,11 @@ async function showMap(mapdata, keywordMap) {
         // shashin.printMessageToConsole(placeJson);
 
         map.getLayers().forEach(layer => {
-            if (layer && layer.getProperties().hasOwnProperty("name") && (layer.getProperties()["name"] === "tempCoordinates" || layer.getProperties()["name"] === "tempQpCoordinates")) {
+            if (layer && layer.getProperties().hasOwnProperty("name") &&
+                (layer.getProperties()["name"] === "tempQpCoordinates" ||
+                layer.getProperties()["name"] === "tempCoordinatesFN" ||
+                layer.getProperties()["name"] === "tempGoogleCoordinates"
+            )) {
                 map.removeLayer(layer);
             }
         });
@@ -1329,6 +1333,7 @@ async function showMap(mapdata, keywordMap) {
     $("#mapFilterButton").on("click", function (e) {
         e.preventDefault();
 
+        contextmenu.closeMenu();
         $("#propMapFilter").modal('show');
     });
 
