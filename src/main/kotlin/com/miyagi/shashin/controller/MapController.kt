@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Album
+import com.miyagi.shashin.model.KeywordsMetadata
 import com.miyagi.shashin.model.MapData
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.AlbumRepository
@@ -138,6 +139,7 @@ class MapController: BaseController() {
             .body(json)
     }
 
+    @Suppress("UNCHECKED_CAST")
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/mapdata/keywords", "mapdata/keywords"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
@@ -161,16 +163,15 @@ class MapController: BaseController() {
 
             response["mapdata"] = mapdata
 
-            val keywordMap = mutableMapOf<String, Any?>()
-            for (data in mapdata) {
-                val metadataId = data.getId()
-
-                val keywordArray = mutableListOf<String>()
-                val keywords = keywordRepository.findKeywordsByMetadataId(metadataId!!)
-                for (keyword in keywords) {
-                    keywordArray.add(keyword.getKeyword()!!)
+            var keywordMap = mutableMapOf<String, String>()
+            if (mapdata.count() > 0) {
+                val metadataIds = mapdata.map { it.getId()!! }.toMutableList()
+                val keywordList = keywordRepository.findAllKeywordsGroupedByMetadataIds(metadataIds)
+                if (keywordList.count() > 0) {
+                    keywordMap =
+                        keywordList.associate { it.getMetadataId() to it.getKeywords() } as MutableMap<String, String>
                 }
-                keywordMap[metadataId] = keywordArray
+
             }
             response["keywordMap"] = keywordMap
 

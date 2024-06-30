@@ -466,7 +466,7 @@ async function showMap(mapdata, keywordMap) {
             const placeName = data["placeName"] !== null ? data["placeName"] : "";
             const mapMarkerUrl = data["mapMarkerUrl"] !== null ? data["mapMarkerUrl"] : "";
             const type = data["type"] !== null ? data["type"] : "";
-            const keywords = keywordMap[data["id"]].length > 0 ? keywordMap[data["id"]].join(", ") : "";
+            const keywords = keywordMap.hasOwnProperty(data["id"]) && keywordMap[data["id"]].length > 0 ? keywordMap[data["id"]] : "";
 
             if (searchTerm !== null && searchTerm !== "" &&
                 placeName.toLowerCase().indexOf(searchTerm.toLowerCase()) === -1 &&
