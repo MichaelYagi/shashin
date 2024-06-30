@@ -353,7 +353,7 @@ async function showMap(mapdata, keywordMap) {
             !isNaN(parseFloat(value));
     }
 
-    function setLayer(startDate, endDate, videoOnly, metadataList, resetMap, inputsChanged, coordArray, maxDistance, zoomOnly) {
+    function setLayer(options) {
         map.getLayers().forEach(layer => {
             if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinatesFN") {
                 map.removeLayer(layer);
@@ -368,25 +368,69 @@ async function showMap(mapdata, keywordMap) {
 
         const formCoordinates = $("#formCoordinates").val();
 
-        if (coordArray === undefined) {
-            coordArray = [];
+        let startDateObj = null;
+        let dateArray = null;
+        let year = null;
+        let month = null;
+        let day = null;
+
+        if (options.hasOwnProperty("startDate") === true) {
+            const startDate = options["startDate"];
+
+            if (startDate) {
+                dateArray = startDate.split("-");
+                year = dateArray[0];
+                month = parseInt(dateArray[1], 10) - 1;
+                day = dateArray[2];
+                startDateObj = new Date(year, month, day);
+            }
         }
 
-        if (zoomOnly === undefined) {
-            zoomOnly = false;
+        let endDateObj = null;
+        if (options.hasOwnProperty("endDate") === true) {
+            const endDate = options["endDate"];
+
+            dateArray = endDate.split("-");
+            year = dateArray[0];
+            month = parseInt(dateArray[1], 10) - 1;
+            day = dateArray[2];
+            endDateObj = new Date(year, month, day);
         }
 
-        if (maxDistance === undefined) {
-            maxDistance = 0;
+        let videoOnly = false;
+        if (options.hasOwnProperty("videoOnly") === true) {
+            videoOnly = options["videoOnly"];
+        }
+
+        let metadataList = [];
+        if (options.hasOwnProperty("metadataList") === true) {
+            metadataList = options["metadataList"];
+        }
+
+        let resetMap = false;
+        if (options.hasOwnProperty("resetMap") === true) {
+            resetMap = options["resetMap"];
+        }
+
+        let inputsChanged = false;
+        if (options.hasOwnProperty("inputsChanged") === true) {
+            inputsChanged = options["inputsChanged"];
+        }
+
+        let coordArrayFilter = [];
+        if (options.hasOwnProperty("coordArrayFilter") === true) {
+            coordArrayFilter = options["coordArrayFilter"];
+        }
+
+        let maxDistance = 0;
+        if (options.hasOwnProperty("maxDistance") === true) {
+            maxDistance = options["maxDistance"];
         }
         maxDistance = parseFloat(maxDistance);
 
-        if (resetMap === undefined) {
-            resetMap = false;
-        }
-
-        if (inputsChanged === undefined) {
-            inputsChanged = false;
+        let zoomOnly = false;
+        if (options.hasOwnProperty("zoomOnly") === true) {
+            zoomOnly = options["zoomOnly"];
         }
 
         if (resetMap === true) {
@@ -447,35 +491,12 @@ async function showMap(mapdata, keywordMap) {
 
                 let dateTakenObj = new Date(data["year"],parseInt(data["month"])-1,data["day"]);
 
-                let startDateObj = null;
-                let dateArray = null;
-                let year = null;
-                let month = null;
-                let day = null;
-
-                if (startDate) {
-                    dateArray = startDate.split("-");
-                    year = dateArray[0];
-                    month = parseInt(dateArray[1], 10) - 1;
-                    day = dateArray[2];
-                    startDateObj = new Date(year, month, day);
-                }
-
-                let endDateObj = null;
-                if (endDate) {
-                    dateArray = endDate.split("-");
-                    year = dateArray[0];
-                    month = parseInt(dateArray[1], 10) - 1;
-                    day = dateArray[2];
-                    endDateObj = new Date(year, month, day);
-                }
-
                 if (true === checkDateInputs(startDateObj,endDateObj,dateTakenObj)) {
                     // Check distance
-                    if (coordArray.length > 0 && maxDistance > 0) {
+                    if (coordArrayFilter.length > 0 && maxDistance > 0) {
                         if (zoomOnly === false) {
-                            const kmDistance = calcCrow(coordArray[1], coordArray[0], lat, lng);
-                            shashin.printMessageToConsole("center: " + coordArray[1] + ", " + coordArray[0])
+                            const kmDistance = calcCrow(coordArrayFilter[1], coordArrayFilter[0], lat, lng);
+                            shashin.printMessageToConsole("center: " + coordArrayFilter[1] + ", " + coordArrayFilter[0])
                             shashin.printMessageToConsole("current coord: " + lat + ", " + lng)
                             shashin.printMessageToConsole("Distance: " + kmDistance)
 
@@ -483,7 +504,7 @@ async function showMap(mapdata, keywordMap) {
                                 continue;
                             }
 
-                            $("#distanceInfo").text("Filtered results within a " + maxDistance + " km distance from " + coordArray[1] + ", " + coordArray[0]);
+                            $("#distanceInfo").text("Filtered results within a " + maxDistance + " km distance from " + coordArrayFilter[1] + ", " + coordArrayFilter[0]);
                             $("#distanceInfo").css("display", "block");
                         }
                     }
@@ -548,8 +569,8 @@ async function showMap(mapdata, keywordMap) {
 
         $("#resultsText").text(filteredCount + " result" + (filteredCount === 1 ? "" : "s"));
 
-        if (filteredCount === 0 && coordArray.length > 0 && maxDistance > 0) {
-            shashin.showToastMessage("No results", "No results for photos near " + coordArray[1]+", "+coordArray[0], {
+        if (filteredCount === 0 && coordArrayFilter.length > 0 && maxDistance > 0) {
+            shashin.showToastMessage("No results", "No results for photos near " + coordArrayFilter[1]+", "+coordArrayFilter[0], {
                 icon: "bi-info-circle",
                 iconColor: "#777777",
                 target: shashin.toast.target.three
@@ -563,8 +584,8 @@ async function showMap(mapdata, keywordMap) {
         let formLatLng = false;
         if (zoomOnly === true || formCoordinates !== "") {
             // Zoom to the coordinates at a distance of maxDistance
-            let centerLat = coordArray[1];
-            let centerLng = coordArray[0];
+            let centerLat = coordArrayFilter[1];
+            let centerLng = coordArrayFilter[0];
             if (zoomOnly === false && formCoordinates !== "") {
                 const formCoordinatesArr = formCoordinates.split(",");
                 if (formCoordinatesArr.length === 2 && isFloat(formCoordinatesArr[0]) && isFloat(formCoordinatesArr[1])) {
@@ -629,8 +650,8 @@ async function showMap(mapdata, keywordMap) {
                 }
                 map.getView().fit(ol.proj.transformExtent([minLng, minLat, maxLng, maxLat], 'EPSG:4326', map.getView().getProjection()), { size: [sizeX,sizeY] });
                 if (maxDistance > 0) {
-                    if (coordArray.length > 0) {
-                        renderMarker('tempCoordinatesFN', coordArray[1], coordArray[0], "red");
+                    if (coordArrayFilter.length > 0) {
+                        renderMarker('tempCoordinatesFN', coordArrayFilter[1], coordArrayFilter[0], "red");
                     } else if (formLatLng === true) {
                         const formCoordinatesArr = formCoordinates.split(",");
                         renderMarker('tempCoordinatesFN', parseFloat(formCoordinatesArr[0].trim()), parseFloat(formCoordinatesArr[1].trim()), "red");
@@ -912,7 +933,16 @@ async function showMap(mapdata, keywordMap) {
         const radius = $("#findNearestRadius").val();
 
         if (coordArray.length > 1 && radius > 0) {
-            setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],false, true, coordArray, radius);
+            setLayer({
+                startDate: startDateField.val(),
+                endDate: endDateField.val(),
+                videoOnly: videoOnlyCheckbox.prop("checked"),
+                metadataList: [],
+                resetMap: false,
+                inputsChanged: true,
+                coordArrayFilter: coordArray,
+                maxDistance: radius
+            });
         }
     }
 
@@ -921,7 +951,17 @@ async function showMap(mapdata, keywordMap) {
         const radius = $("#findNearestRadius").val();
 
         if (coordArray.length > 1 && radius > 0) {
-            setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],false, true, coordArray, radius, true);
+            setLayer({
+                startDate: startDateField.val(),
+                endDate: endDateField.val(),
+                videoOnly: videoOnlyCheckbox.prop("checked"),
+                metadataList: [],
+                resetMap: false,
+                inputsChanged: true,
+                coordArrayFilter: coordArray,
+                maxDistance: radius,
+                zoomOnly: true
+            });
         }
     }
 
@@ -1081,7 +1121,14 @@ async function showMap(mapdata, keywordMap) {
     });
 
     checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))
-    setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],true, false);
+    setLayer({
+        startDate: startDateField.val(),
+        endDate: endDateField.val(),
+        videoOnly: videoOnlyCheckbox.prop("checked"),
+        metadataList: [],
+        resetMap: false,
+        inputsChanged: false
+    });
 
     function filterClicked() {
         let mapSourceChanged = false;
@@ -1200,7 +1247,14 @@ async function showMap(mapdata, keywordMap) {
 
             if (false === renderAlbumSelected()) {
                 // Filter results
-                setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],false, inputsChanged);
+                setLayer({
+                    startDate: startDateField.val(),
+                    endDate: endDateField.val(),
+                    videoOnly: videoOnlyCheckbox.prop("checked"),
+                    metadataList: [],
+                    resetMap: false,
+                    inputsChanged: inputsChanged
+                });
             }
         }
 
@@ -1215,7 +1269,14 @@ async function showMap(mapdata, keywordMap) {
 
             http.ajax("get", "/album/mapdata/" + albumId).then(function (data) {
                 if (data.hasOwnProperty("albummapdata")) {
-                    setLayer(startDateField.val(), endDateField.val(), videoOnlyCheckbox.prop("checked"), data["albummapdata"], false, true);
+                    setLayer({
+                        startDate: startDateField.val(),
+                        endDate: endDateField.val(),
+                        videoOnly: videoOnlyCheckbox.prop("checked"),
+                        metadataList: data["albummapdata"],
+                        resetMap: false,
+                        inputsChanged: true
+                    });
                 }
             });
 
@@ -1324,7 +1385,13 @@ async function showMap(mapdata, keywordMap) {
             albumSelect.val("0");
         }
 
-        setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"),[],true);
+        setLayer({
+            startDate: startDateField.val(),
+            endDate: endDateField.val(),
+            videoOnly: videoOnlyCheckbox.prop("checked"),
+            metadataList: [],
+            resetMap: true
+        });
         shashin.showToastMessage("Map reset", "Map reset", {icon:"bi-info-circle", iconColor:"#777777", delay: 3000});
 
         $("#propMapFilter").modal('hide');
