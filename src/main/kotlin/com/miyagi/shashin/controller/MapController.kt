@@ -146,7 +146,7 @@ class MapController: BaseController() {
     fun getAllMapDataWithKeywords(model: Model): ResponseEntity<String> {
         val response = mutableMapOf<String, Any?>()
         response["mapdata"] = mutableListOf<MapData>()
-        response["keywordMap"] = mutableMapOf<String, Any?>()
+        response["keywordMap"] = mutableMapOf<String, String>()
         response["msg"] = ""
         response["status"] = ApiResponse.FAIL.status
 
@@ -201,7 +201,7 @@ class MapController: BaseController() {
 
             val currentUserObj = model.getAttribute("currentUser") as User?
             response["mapdata"] = mutableListOf<MapData>()
-            response["keywordMap"] = mutableMapOf<String, Any?>()
+            response["keywordMap"] = mutableMapOf<String, String>()
             response["msg"] = "Not logged in"
             response["status"] = ApiResponse.SUCCESS.status
 
@@ -240,16 +240,15 @@ class MapController: BaseController() {
 
                 response["mapdata"] = mapdata
 
-                val keywordMap = mutableMapOf<String, Any?>()
-                for (data in mapdata) {
-                    val metadataId = data.getId()
-
-                    val keywordArray = mutableListOf<String>()
-                    val keywords = keywordRepository.findKeywordsByMetadataId(metadataId!!)
-                    for (keyword in keywords) {
-                        keywordArray.add(keyword.getKeyword()!!)
+                var keywordMap = mutableMapOf<String, String>()
+                if (mapdata.count() > 0) {
+                    val metadataIds = mapdata.map { it.getId()!! }.toMutableList()
+                    val keywordList = keywordRepository.findAllKeywordsGroupedByMetadataIds(metadataIds)
+                    if (keywordList.count() > 0) {
+                        keywordMap =
+                            keywordList.associate { it.getMetadataId() to it.getKeywords() } as MutableMap<String, String>
                     }
-                    keywordMap[metadataId] = keywordArray
+
                 }
                 response["keywordMap"] = keywordMap
 
