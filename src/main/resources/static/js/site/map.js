@@ -95,7 +95,8 @@ async function showMap(mapdata, keywordMap) {
     }
     startDateField.val(initialStartDate);
 
-    let initialCoord = [-123.14659455430593, 49.16889576756705];
+    const defaultCoord = [-123.14659455430593, 49.16889576756705];
+    let initialCoord = defaultCoord;
     let initialZoom = 2;
 
     // Query params for albumId
@@ -627,7 +628,7 @@ async function showMap(mapdata, keywordMap) {
             shashin.printMessageToConsole("maxLng for map filtering: "+maxLng)
 
             if (forcedFiltered === true) {
-                initialCoord = [-123.14659455430593, 49.16889576756705];
+                initialCoord = defaultCoord;
                 initialZoom = 2;
                 map.getView().setCenter(ol.proj.fromLonLat(initialCoord));
                 map.getView().setZoom(initialZoom);
