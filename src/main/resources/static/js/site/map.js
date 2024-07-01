@@ -1450,4 +1450,32 @@ async function showMap(mapdata, keywordMap) {
            $("#maptilerContainer").css("display", "none");
        }
     });
+
+    $("#propMetadata").on('shown.bs.modal', _ => {
+        $("#title").focus();
+    });
+
+    $("#propMetadata").on('keydown', function(e) {
+        // left arrow
+        if (e.keyCode === 37) {
+            e.stopPropagation();
+            e.currentTarget.setSelectionRange(
+                e.currentTarget.selectionStart,
+                e.currentTarget.selectionStart - 1,
+            );
+            e.currentTarget.focus();
+            return false;
+        }
+
+        // right arrow
+        if (e.keyCode === 39) {
+            e.stopPropagation();
+            e.currentTarget.setSelectionRange(
+                e.currentTarget.selectionStart,
+                e.currentTarget.selectionStart + 1,
+            );
+            e.currentTarget.focus();
+            return false;
+        }
+    });
 }
