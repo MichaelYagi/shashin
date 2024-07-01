@@ -1455,6 +1455,7 @@ async function showMap(mapdata, keywordMap) {
         $("#title").focus();
     });
 
+    // Focus control on modal instead of gallery
     $("#propMetadata").on('keydown', function(e) {
         // left arrow
         if (e.keyCode === 37) {

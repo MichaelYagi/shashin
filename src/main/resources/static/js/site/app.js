@@ -1625,11 +1625,17 @@
         shashin.infiniteScrollGallery = null;
         if (document.getElementById(name)) {
             shashin.infiniteScrollGallery = document.getElementById(name);
+
+            // Hide sidebar when going to next slide
             shashin.infiniteScrollGallery.addEventListener('lgBeforeSlide', _ => {
                 const bsOffcanvasEl = document.getElementById('propInfoSidebar');
                 const bsOffcanvas = bootstrap.Offcanvas.getInstance(bsOffcanvasEl);
-                bsOffcanvas.hide();
+                if (bsOffcanvas !== null) {
+                    bsOffcanvas.hide();
+                }
             });
+
+            // If info sidebar open, pressing escape key closes only the sidebar
             $("#propInfoSidebar").on('keydown', function(e) {
                 // escape
                 if (e.keyCode === 27) {
