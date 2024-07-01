@@ -449,13 +449,17 @@
                 const allAlbumList = data["allAlbumList"];
                 let index;
 
-                let keywordsAvailable = $('#keywordsString').val();
-                let keywordArr = keywordsAvailable.split(",");
-                const keywordInArr = $.inArray("unidentified objects", keywordArr);
-                if (keywordInArr !== -1) {
-                    keywordList.splice(keywordInArr, 1);
+                let keywordsAvailable = "";
+                if ($('#keywordsString').length > 0) {
+                    keywordsAvailable = $('#keywordsString').val();
+                    let keywordArr = keywordsAvailable.split(",");
+                    const keywordInArr = $.inArray("unidentified objects", keywordArr);
+                    if (keywordInArr !== -1) {
+                        keywordList.splice(keywordInArr, 1);
+                    }
+                    keywordsAvailable = keywordArr.join(",");
                 }
-                keywordsAvailable = keywordArr.join(",");
+
                 const camerasList = $('#camerasString').val();
                 const lensList = $('#lensesString').val();
 
