@@ -77,6 +77,16 @@ $("#confirmRescanBatchMetadata").on("click", function (e) {
 });
 
 $("#saveBatchMetadata").on("click", async function (e) {
+    await saveBatchMetadata(e);
+});
+
+$("#propBatchMetadata").on("keydown", async function (e) {
+    if (e.keyCode === 13) {
+        await saveBatchMetadata(e);
+    }
+});
+
+async function saveBatchMetadata(e) {
     e.preventDefault();
 
     $("#metadataBatchModalCancel").prop("disabled", true);
@@ -216,7 +226,7 @@ $("#saveBatchMetadata").on("click", async function (e) {
                                     }
                                 });
                                 // if (index === metadataIds.length - 1) {
-                                    Util.setMetadataLocalStorage();
+                                Util.setMetadataLocalStorage();
                                 // }
                             }
 
@@ -234,8 +244,8 @@ $("#saveBatchMetadata").on("click", async function (e) {
                     if (markedHidden === true ||
                         (activePage !== "recent" && activePage !== "modified" && activePage !== "accessed" && activePage !== "folder" && activePage !== "taken" &&
                             ($("#yearTakenBatchData").val() !== "" ||
-                            $("#monthTakenBatchData").val() !== "" ||
-                            $("#dayTakenBatchData").val() !== "")
+                                $("#monthTakenBatchData").val() !== "" ||
+                                $("#dayTakenBatchData").val() !== "")
                         )
                     ) {
                         window.location.reload();
@@ -266,7 +276,7 @@ $("#saveBatchMetadata").on("click", async function (e) {
     }
 
     return false;
-});
+}
 
 $('#rescanBatchMetadataConfirmation').on('hide.bs.modal', function () {
     $("#metadataBatchModalCancel").prop("disabled", false);

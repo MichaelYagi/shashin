@@ -84,6 +84,16 @@ $("#hidden").on("click", async function (e) {
 });
 
 $("#saveMetadata").on("click", async function (e) {
+    await saveMetadata(e);
+});
+
+$("#propMetadata").on("keydown", async function (e) {
+    if (e.keyCode === 13 && $('#saveMetadata').prop('disabled') === false) {
+        await saveMetadata(e);
+    }
+});
+
+async function saveMetadata(e) {
     e.preventDefault();
 
     $("#metadataModalMsg").html("");
@@ -124,11 +134,11 @@ $("#saveMetadata").on("click", async function (e) {
             captionUpdated = true;
         }
 
-        prevPeopleArray = prevPeople.split(",").map(function(item) {
+        prevPeopleArray = prevPeople.split(",").map(function (item) {
             return item.trim();
         });
 
-        prevAlbumsArray = prevAlbums.split(",").map(function(item) {
+        prevAlbumsArray = prevAlbums.split(",").map(function (item) {
             return item.trim();
         });
 
@@ -174,15 +184,15 @@ $("#saveMetadata").on("click", async function (e) {
         }
 
         let compreFaceImageId = "";
-        const peopleArray = people.split(",").map(function(item) {
+        const peopleArray = people.split(",").map(function (item) {
             return item.trim();
         });
 
-        const albumsArray = albums.split(",").map(function(item) {
+        const albumsArray = albums.split(",").map(function (item) {
             return item.trim();
         });
 
-        if (Util.arraysEqual(prevPeopleArray,peopleArray) === false) {
+        if (Util.arraysEqual(prevPeopleArray, peopleArray) === false) {
             $.each(peopleArray, async function (index, person) {
                 person = person.trim();
 
@@ -280,7 +290,7 @@ $("#saveMetadata").on("click", async function (e) {
                         if (duration === "" || duration === null) {
                             duration = "0:00";
                         }
-                        $("#duration"+metadataId).text(Util.decodeHtml(duration));
+                        $("#duration" + metadataId).text(Util.decodeHtml(duration));
                         $("#duration").val(duration);
                     }
 
@@ -309,17 +319,17 @@ $("#saveMetadata").on("click", async function (e) {
                         let queryParamDates = "";
                         if (year !== null && year !== "" && month !== null && month !== "" && day !== null && day !== "") {
                             if (month < 10) {
-                                month = '0'+month;
+                                month = '0' + month;
                             }
                             let lastDay = day;
                             if (lastDay < 29) {
                                 lastDay = 28;
                             }
-                            queryParamDates = '&sd='+year+'-'+month+'-01&ed='+year+'-'+month+'-'+lastDay;
+                            queryParamDates = '&sd=' + year + '-' + month + '-01&ed=' + year + '-' + month + '-' + lastDay;
                         }
 
                         Util.setMetadataLocalStorage();
-                        window.location.replace("/map?latlng=" + $("#latlng").val()+queryParamDates);
+                        window.location.replace("/map?latlng=" + $("#latlng").val() + queryParamDates);
                     }
 
                     if (takenDateUpdated === true && ($("#activePage").length > 0 && $("#activePage").val() !== "recent" && $("#activePage").val() !== "modified" && $("#activePage").val() !== "taken" && $("#activePage").val() !== "folder") || $("#activePage").length === 0) {
@@ -363,7 +373,7 @@ $("#saveMetadata").on("click", async function (e) {
                     // Refresh gallery if caption updated
                     const options = {
                         mediaContentList: mediaContentList,
-                        refreshContent:refreshContent
+                        refreshContent: refreshContent
                     }
                     Util.reinitLightGalleryInstance(options);
                 }
@@ -376,8 +386,8 @@ $("#saveMetadata").on("click", async function (e) {
                     (activePage !== "recent" && activePage !== "modified" && activePage !== "folder" && activePage !== "taken" && takenDateUpdated === true) ||
                     (metadataObj.hidden === true && activePage !== "timeline") ||
                     activePage === "matches" ||
-                    (Util.arraysEqual(prevPeopleArray,peopleArray) === false && activePage === "person") ||
-                    ((activePage === "map" || activePage === "album") && Util.arraysEqual(prevAlbumsArray,albumsArray) === false)
+                    (Util.arraysEqual(prevPeopleArray, peopleArray) === false && activePage === "person") ||
+                    ((activePage === "map" || activePage === "album") && Util.arraysEqual(prevAlbumsArray, albumsArray) === false)
                 ) {
                     window.location.reload();
                 }
@@ -404,7 +414,7 @@ $("#saveMetadata").on("click", async function (e) {
         propMetadataModal._config.backdrop = true;
         propMetadataModal._config.keyboard = true;
     }
-});
+}
 
 // Clear message on modal close
 $('#propMetadata').on('hide.bs.modal', function () {
