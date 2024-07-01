@@ -1630,6 +1630,16 @@
                 const bsOffcanvas = bootstrap.Offcanvas.getInstance(bsOffcanvasEl);
                 bsOffcanvas.hide();
             });
+            $("#propInfoSidebar").on('keydown', function(e) {
+                // escape
+                if (e.keyCode === 27) {
+                    e.stopPropagation();
+                    const bsOffcanvasEl = document.getElementById('propInfoSidebar');
+                    const bsOffcanvas = bootstrap.Offcanvas.getInstance(bsOffcanvasEl);
+                    bsOffcanvas.hide();
+                    return false;
+                }
+            });
         }
     };
 
