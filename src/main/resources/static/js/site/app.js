@@ -1625,6 +1625,11 @@
         shashin.infiniteScrollGallery = null;
         if (document.getElementById(name)) {
             shashin.infiniteScrollGallery = document.getElementById(name);
+            shashin.infiniteScrollGallery.addEventListener('lgBeforeSlide', _ => {
+                const bsOffcanvasEl = document.getElementById('propInfoSidebar');
+                const bsOffcanvas = bootstrap.Offcanvas.getInstance(bsOffcanvasEl);
+                bsOffcanvas.hide();
+            });
         }
     };
 
