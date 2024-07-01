@@ -1477,5 +1477,14 @@ async function showMap(mapdata, keywordMap) {
             e.currentTarget.focus();
             return false;
         }
+
+        // escape
+        if (e.keyCode === 27) {
+            e.stopPropagation();
+            const bsModalEl = document.getElementById('propMetadata');
+            const bsModal = bootstrap.Modal.getInstance(bsModalEl);
+            bsModal.hide();
+            return false;
+        }
     });
 }
