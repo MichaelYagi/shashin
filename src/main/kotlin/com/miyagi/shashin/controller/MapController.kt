@@ -186,6 +186,7 @@ class MapController: BaseController() {
             .body(json)
     }
 
+    @Suppress("UNCHECKED_CAST")
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/mapdata/keywords"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
