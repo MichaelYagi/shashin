@@ -1557,7 +1557,11 @@ class TimelineController: BaseController() {
                                     metadataObj.get().setLng(coordinateMap["lng"])
                                 }
 
-                                if (coordinateMap["place"] != null && (metadataMap["placeName"] == null || metadataMap["placeName"] == "" || !(coordinateMap["place"]!!.contains(metadataMap["placeName"].toString())))) {
+                                if (coordinateMap["place"] != null &&
+                                    (metadataMap["placeName"] == null ||
+                                    metadataMap["placeName"] == "" ||
+                                    !(coordinateMap["place"]!!.contains(metadataMap["placeName"].toString())))
+                                ) {
                                     metadataObj.get().setPlaceName(coordinateMap["place"])
                                 }
                                 if (coordinateMap["timezone"] != null) {
