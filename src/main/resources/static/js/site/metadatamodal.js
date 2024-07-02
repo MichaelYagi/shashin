@@ -102,6 +102,7 @@ async function saveMetadata(e) {
     $("#metadataModalStatus").attr("title", "");
     $("#metadataModalCancel").prop('disabled', true);
     $("#saveMetadata").prop('disabled', true);
+    $("#placeName").attr("placeholder", "");
 
     const propMetadataModal = bootstrap.Modal.getInstance(document.getElementById('propMetadata'));
     propMetadataModal._config.backdrop = 'static';
@@ -336,8 +337,10 @@ async function saveMetadata(e) {
                         } else {
                             $("#placeName").val("");
                             $("#placeType").val("");
-                            $("#placeName").prop('disabled', true);
-                            $("#placeName").attr("placeholder", "Updating location ...");
+                            if ($("#latlng").val().length > 0) {
+                                $("#placeName").prop('disabled', true);
+                                $("#placeName").attr("placeholder", "Updating location ...");
+                            }
                         }
                     }
 
@@ -440,6 +443,7 @@ $('#propMetadata').on('hide.bs.modal', function () {
     $("#metadataModalStatus").invisible();
     $("#metadataModalMsg").html("");
     $("#saveMetadata").prop('disabled', false);
+    $("#placeName").attr("placeholder", "");
 
     if ($("#generalTabLink").length > 0) {
         const tab = new bootstrap.Tab($("#generalTabLink"));
