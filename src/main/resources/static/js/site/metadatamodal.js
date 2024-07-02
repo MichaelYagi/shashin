@@ -312,26 +312,32 @@ async function saveMetadata(e) {
                         $("#mapTabNav").hide();
                     }
 
-                    // Reload in map view if latlng changed
-                    if (activePage === "map" && (prevLat !== metadataObj.lat || prevLng !== metadataObj.lng)) {
-                        let year = $("#yearTaken").val();
-                        let month = $("#monthTaken").val();
-                        let day = $("#dayTaken").val();
+                    if (prevLat !== metadataObj.lat || prevLng !== metadataObj.lng) {
+                        // Reload in map view if latlng changed
+                        if (activePage === "map") {
+                            let year = $("#yearTaken").val();
+                            let month = $("#monthTaken").val();
+                            let day = $("#dayTaken").val();
 
-                        let queryParamDates = "";
-                        if (year !== null && year !== "" && month !== null && month !== "" && day !== null && day !== "") {
-                            if (month < 10) {
-                                month = '0' + month;
+                            let queryParamDates = "";
+                            if (year !== null && year !== "" && month !== null && month !== "" && day !== null && day !== "") {
+                                if (month < 10) {
+                                    month = '0' + month;
+                                }
+                                let lastDay = day;
+                                if (lastDay < 29) {
+                                    lastDay = 28;
+                                }
+                                queryParamDates = '&sd=' + year + '-' + month + '-01&ed=' + year + '-' + month + '-' + lastDay;
                             }
-                            let lastDay = day;
-                            if (lastDay < 29) {
-                                lastDay = 28;
-                            }
-                            queryParamDates = '&sd=' + year + '-' + month + '-01&ed=' + year + '-' + month + '-' + lastDay;
+
+                            Util.setMetadataLocalStorage();
+                            window.location.replace("/map?latlng=" + $("#latlng").val() + queryParamDates);
+                        } else {
+                            $("#placeName").val("");
+                            $("#placeType").val("");
+                            $("#placeName").attr("placeholder", "Updating location ...");
                         }
-
-                        Util.setMetadataLocalStorage();
-                        window.location.replace("/map?latlng=" + $("#latlng").val() + queryParamDates);
                     }
 
                     if (takenDateUpdated === true && ($("#activePage").length > 0 && $("#activePage").val() !== "recent" && $("#activePage").val() !== "modified" && $("#activePage").val() !== "taken" && $("#activePage").val() !== "folder") || $("#activePage").length === 0) {
@@ -396,12 +402,14 @@ async function saveMetadata(e) {
 
                 $("#metadataModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                 $("#metadataModalCancel").prop('disabled', false);
+                $("#saveMetadata").prop('disabled', true);
+                $("#metadataModalCancel").text("Close");
             } else {
                 $("#metadataModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                 $("#metadataModalStatus").attr("title", shashin.modalStatusFailMessage());
                 $("#metadataModalCancel").prop('disabled', false);
+                $("#saveMetadata").prop('disabled', false);
             }
-            $("#saveMetadata").prop('disabled', false);
         } else {
             $("#metadataModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
             $("#metadataModalStatus").attr("title", shashin.modalStatusFailMessage());
