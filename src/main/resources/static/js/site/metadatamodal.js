@@ -336,6 +336,7 @@ async function saveMetadata(e) {
                         } else {
                             $("#placeName").val("");
                             $("#placeType").val("");
+                            $("#placeName").prop('disabled', true);
                             $("#placeName").attr("placeholder", "Updating location ...");
                         }
                     }
