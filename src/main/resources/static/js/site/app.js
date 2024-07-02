@@ -513,6 +513,7 @@
                 if (metadata.timeZone !== null) {
                     $("#offsetTaken").val(metadata.timeZone);
                 }
+
                 if (metadata.time !== null) {
                     $("#timeTaken").val(metadata.time);
                 }
@@ -544,6 +545,18 @@
                 }
                 if (metadata.timeZone !== null) {
                     $("#offsetTaken option[value='" + metadata.timeZone + "']").attr('selected', 'selected');
+                }
+
+                if (metadata.placeName !== null) {
+                    const placeNameArr = metadata.placeName.split(";");
+                    let placeName = metadata.placeName;
+                    let placeType = "";
+                    if (placeNameArr.length === 2) {
+                        placeName = placeNameArr[0].trim();
+                        placeType = placeNameArr[1].trim();
+                    }
+                    $("#placeName").val(placeName);
+                    $("#placeType").val(placeType);
                 }
 
                 const latlngValue = (metadata.hasOwnProperty("lat") && metadata.hasOwnProperty("lng") && metadata.lat != null && metadata.lng != null && metadata.lat !== "" && metadata.lng !== "") ? ($.trim(metadata.lat) + ',' + $.trim(metadata.lng)) : '';

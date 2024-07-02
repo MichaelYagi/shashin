@@ -375,6 +375,10 @@ class Util {
                     if (rescannedMetadata["timeZone"] !== null) {
                         $("#offsetTaken").val(rescannedMetadata["timeZone"]);
                     }
+                    $("#placeName").val("");
+                    if (rescannedMetadata["placeName"] !== null) {
+                        $("#placeName").val(rescannedMetadata["placeName"]);
+                    }
                     $("#latlng").val("");
                     if (rescannedMetadata["lat"] !== null && rescannedMetadata["lng"] !== null) {
                         $("#latlng").val(rescannedMetadata["lat"]+","+rescannedMetadata["lng"]);
@@ -1123,6 +1127,7 @@ class Util {
         jsonData.albumNameInput = batchObj.hasOwnProperty("albumNameInput") ? batchObj["albumNameInput"] : null;
         jsonData.batchisobject = batchObj.hasOwnProperty("batchisobject") ? batchObj["batchisobject"] : null;
         jsonData.batchhidden = batchObj.hasOwnProperty("batchhidden") ? batchObj["batchhidden"] : null;
+        jsonData.placeNameBatchData = batchObj.hasOwnProperty("placeNameBatchData") ? batchObj["placeNameBatchData"] : null;
 
         return jsonData;
     }

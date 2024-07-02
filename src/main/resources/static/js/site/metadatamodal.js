@@ -176,6 +176,8 @@ async function saveMetadata(e) {
             time: $("#timeTaken").val(),
             offset: $("#offsetTaken").val() === null ? "" : $("#offsetTaken").val(),
             latlng: Util.decodeHtml($("#latlng").val()),
+            placeName: $("#placeName").val(),
+            placeType: $("#placeType").val(),
             keywords: $("#keywords").val(),
             tagpeople: people,
             albumnames: albums,
