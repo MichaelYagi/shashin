@@ -430,7 +430,9 @@
             let stompClient = null;
             let scanInProgress = false;
 
-            connectSP();
+            if (activePage !== "timeline") {
+                connectSP();
+            }
 
             $("#scanPhotos").on("click", function (e) {
                 e.preventDefault();
