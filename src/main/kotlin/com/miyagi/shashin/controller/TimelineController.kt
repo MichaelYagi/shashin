@@ -1225,6 +1225,8 @@ class TimelineController: BaseController() {
             metadataMap.containsKey("time") &&
             metadataMap.containsKey("offset") &&
             metadataMap.containsKey("keywords") &&
+            metadataMap.containsKey("placeName") &&
+            metadataMap.containsKey("placeType") &&
             metadataMap.containsKey("latlng") &&
             metadataMap.containsKey("title") &&
             metadataMap.containsKey("description") &&
@@ -1528,10 +1530,15 @@ class TimelineController: BaseController() {
                 var setAndSave = false
 
                 metricsUtil.start("Metadata Update - Process location")
+                if (metadataMap["placeName"].toString() == "") {
+                    metadataObj.get().setPlaceName(null)
+                } else {
+                    val placeNameStr = metadataMap["placeName"].toString() + "; " + metadataMap["placeType"].toString()
+                    metadataObj.get().setPlaceName(placeNameStr)
+                }
                 if (metadataMap["latlng"].toString() == "") {
                     metadataObj.get().setLat(null)
                     metadataObj.get().setLng(null)
-                    metadataObj.get().setPlaceName(null)
                 } else {
                     val latlng = metadataMap["latlng"].toString()
                     val latlngArray = latlng.split(",")
@@ -1548,7 +1555,8 @@ class TimelineController: BaseController() {
                                     metadataObj.get().setLat(coordinateMap["lat"])
                                     metadataObj.get().setLng(coordinateMap["lng"])
                                 }
-                                if (coordinateMap["place"] != null) {
+
+                                if (coordinateMap["place"] != null && !(coordinateMap["place"]!!.contains(metadataMap["placeName"].toString()))) {
                                     metadataObj.get().setPlaceName(coordinateMap["place"])
                                 }
                                 if (coordinateMap["timezone"] != null) {
@@ -1869,6 +1877,7 @@ class TimelineController: BaseController() {
         var keywords: String? = batchMetadataMap.keywordsBatchData
         val recognitionLabelNames: String? = batchMetadataMap.tagBatchDataInput
         val albumNames: String? = batchMetadataMap.albumNameInput
+        val placeNames: String? = batchMetadataMap.placeNameBatchData
 //        println(albumNames)
         val isObject = batchMetadataMap.batchisobject == "on"
         val isHidden = batchMetadataMap.batchhidden == "on"
@@ -1954,7 +1963,7 @@ class TimelineController: BaseController() {
                                     metadata.setLat(lat)
                                     metadata.setLng(lng)
 
-                                    if (place != null) {
+                                    if (place != null && placeNames.isNullOrBlank()) {
                                         metadata.setPlaceName(place)
                                     }
 
@@ -2024,6 +2033,9 @@ class TimelineController: BaseController() {
                             isObject
                         )
 
+                        if (!placeNames.isNullOrBlank()) {
+                            metadata.setPlaceName(placeNames)
+                        }
                         if (dayTaken != null) {
                             metadata.setDay(dayTaken)
                         }
