@@ -336,15 +336,20 @@ class TextUtils {
 
                     if (addressObj.has("address")) {
                         if (addressObj.get("address").has("house_number") && addressObj.get("address").get("house_number") != null && addressObj.get("address").get("house_number").textValue() != "") {
-                            buildPlace += addressObj.get("address").get("house_number").textValue() + ", "
+                            buildPlace += addressObj.get("address").get("house_number").textValue() + " "
                         }
                         if (addressObj.get("address").has("road") && addressObj.get("address").get("road") != null && addressObj.get("address").get("road").textValue() != "") {
                             buildPlace += addressObj.get("address").get("road").textValue() + ", "
                         }
-                        if (addressObj.get("address").has("suburb") && addressObj.get("address")
-                                .get("suburb") != null && addressObj.get("address").get("suburb").textValue() != ""
+                        if (addressObj.get("address").has("village") && addressObj.get("address")
+                                .get("village") != null && addressObj.get("address").get("village").textValue() != ""
                         ) {
-                            buildPlace += addressObj.get("address").get("suburb").textValue() + ", "
+                            buildPlace += addressObj.get("address").get("town").textValue() + ", "
+                        }
+                        if (addressObj.get("address").has("town") && addressObj.get("address")
+                                .get("town") != null && addressObj.get("address").get("town").textValue() != ""
+                        ) {
+                            buildPlace += addressObj.get("address").get("town").textValue() + ", "
                         }
                         if (addressObj.get("address").has("city") && addressObj.get("address").get("city") != null && addressObj.get("address").get("city").textValue() != "") {
                             buildPlace += addressObj.get("address").get("city").textValue() + ", "
