@@ -547,6 +547,7 @@
                     $("#offsetTaken option[value='" + metadata.timeZone + "']").attr('selected', 'selected');
                 }
 
+                $("#placeName").prop('disabled', true);
                 if (metadata.placeName !== null) {
                     const placeNameArr = metadata.placeName.split(";");
                     let placeName = metadata.placeName;
@@ -557,7 +558,16 @@
                     }
                     $("#placeName").val(placeName);
                     $("#placeType").val(placeType);
+                    $("#placeName").prop('disabled', false);
                 }
+
+                $("#latlng").on('paste keyup', function() {
+                    if ($(this).val().length > 0) {
+                        $("#placeName").prop('disabled', false);
+                    } else {
+                        $("#placeName").prop('disabled', true);
+                    }
+                });
 
                 const latlngValue = (metadata.hasOwnProperty("lat") && metadata.hasOwnProperty("lng") && metadata.lat != null && metadata.lng != null && metadata.lat !== "" && metadata.lng !== "") ? ($.trim(metadata.lat) + ',' + $.trim(metadata.lng)) : '';
                 $("#latlng").val(latlngValue);

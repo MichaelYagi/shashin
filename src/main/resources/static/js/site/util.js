@@ -1127,7 +1127,6 @@ class Util {
         jsonData.albumNameInput = batchObj.hasOwnProperty("albumNameInput") ? batchObj["albumNameInput"] : null;
         jsonData.batchisobject = batchObj.hasOwnProperty("batchisobject") ? batchObj["batchisobject"] : null;
         jsonData.batchhidden = batchObj.hasOwnProperty("batchhidden") ? batchObj["batchhidden"] : null;
-        jsonData.placeNameBatchData = batchObj.hasOwnProperty("placeNameBatchData") ? batchObj["placeNameBatchData"] : null;
 
         return jsonData;
     }
