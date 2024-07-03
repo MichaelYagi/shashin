@@ -1882,7 +1882,6 @@ class TimelineController: BaseController() {
         var keywords: String? = batchMetadataMap.keywordsBatchData
         val recognitionLabelNames: String? = batchMetadataMap.tagBatchDataInput
         val albumNames: String? = batchMetadataMap.albumNameInput
-        val placeNames: String? = batchMetadataMap.placeNameBatchData
 //        println(albumNames)
         val isObject = batchMetadataMap.batchisobject == "on"
         val isHidden = batchMetadataMap.batchhidden == "on"
@@ -1968,10 +1967,6 @@ class TimelineController: BaseController() {
                                     metadata.setLat(lat)
                                     metadata.setLng(lng)
 
-                                    if (place != null && placeNames.isNullOrBlank()) {
-                                        metadata.setPlaceName(place)
-                                    }
-
                                     if (timezone != null) {
                                         metadata.setTimeZone(timezone)
                                     }
@@ -2038,9 +2033,6 @@ class TimelineController: BaseController() {
                             isObject
                         )
 
-                        if (!placeNames.isNullOrBlank()) {
-                            metadata.setPlaceName(placeNames)
-                        }
                         if (dayTaken != null) {
                             metadata.setDay(dayTaken)
                         }
