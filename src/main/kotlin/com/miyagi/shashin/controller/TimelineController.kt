@@ -1950,7 +1950,6 @@ class TimelineController: BaseController() {
                     val coordinateMap = processCoordinates(latlng)
                     val lat = coordinateMap["lat"]
                     val lng = coordinateMap["lng"]
-                    val place = coordinateMap["place"]
                     val timezone = coordinateMap["timezone"]
 
                     if (latlng.isNotEmpty() && (lat == null || lng == null)) {
