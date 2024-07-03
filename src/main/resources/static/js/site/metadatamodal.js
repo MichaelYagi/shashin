@@ -408,6 +408,7 @@ async function saveMetadata(e) {
                 $("#metadataModalCancel").prop('disabled', false);
                 $("#saveMetadata").prop('disabled', true);
                 $("#metadataModalCancel").text("Close");
+                $("#saveTimelineModalForm :input").prop("disabled", true);
             } else {
                 $("#metadataModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                 $("#metadataModalStatus").attr("title", shashin.modalStatusFailMessage());
@@ -445,6 +446,7 @@ $('#propMetadata').on('hide.bs.modal', function () {
     $("#saveMetadata").prop('disabled', false);
     $("#placeName").attr("placeholder", "");
     $("#metadataModalCancel").text("Cancel");
+    $("#saveTimelineModalForm :input").prop("disabled", false);
 
     if ($("#generalTabLink").length > 0) {
         const tab = new bootstrap.Tab($("#generalTabLink"));
