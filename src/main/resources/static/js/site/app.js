@@ -574,6 +574,8 @@
                 $("#mapTabNav").show();
                 if (latlngValue === "") {
                     $("#mapTabNav").hide();
+                } else {
+                    $("#placeName").prop('disabled', false);
                 }
 
                 let taggedPeopleString = "";
