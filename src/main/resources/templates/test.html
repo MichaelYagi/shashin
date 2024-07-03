@@ -38,64 +38,75 @@
                 </div>
             </div>
 
-            <br><th:block th:text="${'Using minified JS: '+@environment.getProperty('app.js.useMinified')}"></th:block><br><br>
+<!--            <br><th:block th:text="${'Using minified JS: '+@environment.getProperty('app.js.useMinified')}"></th:block><br><br>-->
 
-            <h2>Persistent Tokens</h2>
+            <h2>Tools</h2>
+            <ul>
+                <li><a href="/testvideo" target="_blank">Video test</a></li>
+                <li><a href="/testimage" target="_blank">Image test</a></li>
+                <li><a href="/testaudio" target="_blank">Audio test</a></li>
+                <li><a href="/creategif" target="_blank">Create missing gif images</a></li>
+                <li><a href="/createxsmall" target="_blank">Create missing X small images</a></li>
+                <li><a href="/fixtakendates" target="_blank">Fix taken dates</a></li>
+                <li><a href="/fixnullplacenames" target="_blank">Fix null place names</a></li>
+            </ul>
 
-            <th:block th:each="persistentLoginsDetail, iterStat: ${persistentLoginsDetails}">
-                <br><th:block th:utext="${'<strong>Username</strong>: '+persistentLoginsDetail.username}"></th:block>
-                <br><th:block th:utext="${'<strong>Series</strong>: '+persistentLoginsDetail.series}"></th:block>
-                <br><th:block th:utext="${'<strong>Token</strong>: '+persistentLoginsDetail.token}"></th:block>
-                <br><th:block th:utext="${'<strong>Expiry</strong>: '+persistentLoginsDetail.expiry}"></th:block> <span class="expiries" th:id="${persistentLoginsDetail.expiry}"></span>
-                <br><th:block th:utext="${'<strong>Host</strong>: '+persistentLoginsDetail.host}"></th:block>
-                <br><th:block th:utext="${'<strong>Useragent</strong>: '+persistentLoginsDetail.useragent}"></th:block>
-                <br>
-            </th:block>
+<!--            <h2>Persistent Tokens</h2>-->
 
-            <br><br>
-            <h2>Decode Persistent Login Cookie</h2>
-            <input type="text" id="decodePersistentLogin" size="100">
-            <button type="button" id="decode">Decode</button><br>
-            <span id="decoded"></span>
+<!--            <th:block th:each="persistentLoginsDetail, iterStat: ${persistentLoginsDetails}">-->
+<!--                <br><th:block th:utext="${'<strong>Username</strong>: '+persistentLoginsDetail.username}"></th:block>-->
+<!--                <br><th:block th:utext="${'<strong>Series</strong>: '+persistentLoginsDetail.series}"></th:block>-->
+<!--                <br><th:block th:utext="${'<strong>Token</strong>: '+persistentLoginsDetail.token}"></th:block>-->
+<!--                <br><th:block th:utext="${'<strong>Expiry</strong>: '+persistentLoginsDetail.expiry}"></th:block> <span class="expiries" th:id="${persistentLoginsDetail.expiry}"></span>-->
+<!--                <br><th:block th:utext="${'<strong>Host</strong>: '+persistentLoginsDetail.host}"></th:block>-->
+<!--                <br><th:block th:utext="${'<strong>Useragent</strong>: '+persistentLoginsDetail.useragent}"></th:block>-->
+<!--                <br>-->
+<!--            </th:block>-->
+
+<!--            <br><br>-->
+<!--            <h2>Decode Persistent Login Cookie</h2>-->
+<!--            <input type="text" id="decodePersistentLogin" size="100">-->
+<!--            <button type="button" id="decode">Decode</button><br>-->
+<!--            <span id="decoded"></span>-->
 
             <script type="text/javascript">
                 $(document).ready(function() {
-                    $('.expiries').each(function(i, obj) {
-                        const idunixtime = $(obj).attr("id");
-                        const localDateTime = timeConverter(parseInt(idunixtime));
-                        $("#"+idunixtime).text(" - "+localDateTime);
-                    });
-
-                    function timeConverter(UNIX_timestamp) {
-                        const date = new Date(UNIX_timestamp).toLocaleDateString("en-US");
-                        const time = new Date(UNIX_timestamp).toLocaleTimeString("en-US");
-
-                        return date + ' ' + time;
-                    }
-
-                    $("#decode").on("click", function (e) {
-                        e.preventDefault();
-                        $("#decoded").text("");
-
-                        const cookieVal = $("#decodePersistentLogin").val();
-                        if (cookieVal.length > 0) {
-                            let decodedSeriesToken = atob(cookieVal);
-
-                            decodedSeriesToken = decodeURIComponent(decodedSeriesToken)
-                            const decodedSeriesTokenArray = decodedSeriesToken.split(":")
-                            console.log(decodedSeriesTokenArray[0])
-                            $("#decoded").text(decodedSeriesTokenArray[0]+":"+decodedSeriesTokenArray[1]);
-                        }
-                    });
-
-
-                    shashin.showToastMessage("Title 1", "Message 1.");
-                    shashin.showToastMessage("Title 2", "Message 2", {target:shashin.toast.target.one, delay: 8000, icon:"bi-alt", iconColor:"green"});
-                    shashin.showToastMessage("Title 3", "Message 3", {autohide: false, target:shashin.toast.target.four, icon:"bi-alt", iconColor:"#ff0000"});
-                    shashin.showToastMessage("Title 4", "Message 4.", {autohide: false, target:shashin.toast.target.three, icon:"bi-exclamation-triangle", iconColor:"#000000"});
-                    shashin.showToastMessage("Title 5", "Message 5..", {autohide: false,target:shashin.toast.target.two, delay: 8000, icon:"bi-backpack2", iconColor:"purple"});
-                    shashin.showToastMessage("Title 6", "Message 6", {autohide: false,target:shashin.toast.target.default, delay: 4000, icon:"bi-backpack", iconColor:"purple", placement: shashin.toast.placement.middle.center});
-
+                    // $('.expiries').each(function(i, obj) {
+                    //     const idunixtime = $(obj).attr("id");
+                    //     const localDateTime = timeConverter(parseInt(idunixtime));
+                    //     $("#"+idunixtime).text(" - "+localDateTime);
+                    // });
+                    //
+                    // function timeConverter(UNIX_timestamp) {
+                    //     const date = new Date(UNIX_timestamp).toLocaleDateString("en-US");
+                    //     const time = new Date(UNIX_timestamp).toLocaleTimeString("en-US");
+                    //
+                    //     return date + ' ' + time;
+                    // }
+                    //
+                    // $("#decode").on("click", function (e) {
+                    //     e.preventDefault();
+                    //     $("#decoded").text("");
+                    //
+                    //     const cookieVal = $("#decodePersistentLogin").val();
+                    //     if (cookieVal.length > 0) {
+                    //         let decodedSeriesToken = atob(cookieVal);
+                    //
+                    //         decodedSeriesToken = decodeURIComponent(decodedSeriesToken)
+                    //         const decodedSeriesTokenArray = decodedSeriesToken.split(":")
+                    //         console.log(decodedSeriesTokenArray[0])
+                    //         $("#decoded").text(decodedSeriesTokenArray[0]+":"+decodedSeriesTokenArray[1]);
+                    //     }
+                    // });
+                    //
+                    //
+                    // shashin.showToastMessage("Title 1", "Message 1.");
+                    // shashin.showToastMessage("Title 2", "Message 2", {target:shashin.toast.target.one, delay: 8000, icon:"bi-alt", iconColor:"green"});
+                    // shashin.showToastMessage("Title 3", "Message 3", {autohide: false, target:shashin.toast.target.four, icon:"bi-alt", iconColor:"#ff0000"});
+                    // shashin.showToastMessage("Title 4", "Message 4.", {autohide: false, target:shashin.toast.target.three, icon:"bi-exclamation-triangle", iconColor:"#000000"});
+                    // shashin.showToastMessage("Title 5", "Message 5..", {autohide: false,target:shashin.toast.target.two, delay: 8000, icon:"bi-backpack2", iconColor:"purple"});
+                    // shashin.showToastMessage("Title 6", "Message 6", {autohide: false,target:shashin.toast.target.default, delay: 4000, icon:"bi-backpack", iconColor:"purple", placement: shashin.toast.placement.middle.center});
+                    //
 
                 });
             </script>

@@ -71,59 +71,77 @@ class TestController {
     fun test(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
         model["somevalue"] = "This is a test"
 
-        // Retroactively create gif
-        val metadataList = metadataRepository.findAllByMediaType("video")
+        return "test"
+    }
 
-        if (metadataList != null) {
+    @Secured("ROLE_SUPER")
+    @RequestMapping(value = ["/creategif"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
+    @ResponseBody
+    fun createGif(response: HttpServletResponse?): String? {
+        Thread {
+            // Retroactively create gif
+            val metadataList = metadataRepository.findAllByMediaType("video")
+
+            if (metadataList != null) {
+                var numProcessed = 0
+                val metadataCount = metadataList.count()
+                for ((index, metadata) in metadataList.withIndex()) {
+                    println("iteration ${index+1} out of $metadataCount")
+                    if (metadata.getThumbnailPathSmall() !== null) {
+                        val jpgVersion = metadata.getThumbnailPathSmall()
+                        val gifVersion = jpgVersion?.replace("_225.jpg", "_225.gif")
+                        println("processing $gifVersion")
+
+                        val gifFile = File(gifVersion!!)
+                        if (!gifFile.exists()) {
+                            println("gif doesn't exist")
+
+                            ImageProcessing.createVideoGif(metadata.getId(), metadataRepository)
+                            numProcessed++
+                            println("processed $gifVersion")
+                        } else {
+                            println("already exists $gifVersion")
+                        }
+
+                        println("-------------")
+                    }
+                }
+                println("Number gifs processed: $numProcessed")
+            }
+        }.start()
+
+        return "test"
+    }
+
+    @Secured("ROLE_SUPER")
+    @RequestMapping(value = ["/createxsmall"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
+    @ResponseBody
+    fun createXSImages(response: HttpServletResponse?): String? {
+        Thread {
+            // Retroactively create xsmall images
+            val allMetadataList = metadataRepository.findAll()
+
+            val metadataCount = allMetadataList.count()
             var numProcessed = 0
-            val metadataCount = metadataList.count()
-            for ((index, metadata) in metadataList.withIndex()) {
-                println("iteration ${index+1} out of $metadataCount")
-                if (metadata.getThumbnailPathSmall() !== null) {
-                    val jpgVersion = metadata.getThumbnailPathSmall()
-                    val gifVersion = jpgVersion?.replace("_225.jpg", "_225.gif")
-                    println("processing $gifVersion")
+            val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+            val sidecarDir = rootPath + relativeSidecarDir
 
-                    val gifFile = File(gifVersion!!)
-                    if (!gifFile.exists()) {
-                        println("gif doesn't exist")
-
-                        ImageProcessing.createVideoGif(metadata.getId(), metadataRepository)
-                        numProcessed++
-                        println("processed $gifVersion")
-                    } else {
-                        println("already exists $gifVersion")
-                    }
-
-                    println("-------------")
-                }
-            }
-            println("Number gifs processed: $numProcessed")
-        }
-
-        // Retroactively create 112 images
-        val allMetadataList = metadataRepository.findAll()
-
-        val metadataCount = allMetadataList.count()
-        var numProcessed = 0
-        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
-        val sidecarDir = rootPath + relativeSidecarDir
-
-        for ((index, metadata) in allMetadataList.withIndex()) {
-            println("iteration ${index+1} out of $metadataCount")
-            if (metadata != null) {
-                if (metadata.getThumbnailPathExtraSmall() == null || !File(metadata.getThumbnailPathExtraSmall()!!).exists()) {
-                    val imageProcessing = ImageProcessing("v1", File(metadata.getPath()!!), sidecarDir, metadata)
-                    val metadataObj = imageProcessing.createThumbnails()
-                    if (metadataObj != null) {
-                        metadataRepository.save(metadataObj)
-                        println("processed thumbnail ${metadataObj.getThumbnailPathExtraSmall()}")
-                        numProcessed++
+            for ((index, metadata) in allMetadataList.withIndex()) {
+                println("iteration ${index + 1} out of $metadataCount")
+                if (metadata != null) {
+                    if (metadata.getThumbnailPathExtraSmall() == null || !File(metadata.getThumbnailPathExtraSmall()!!).exists()) {
+                        val imageProcessing = ImageProcessing("v1", File(metadata.getPath()!!), sidecarDir, metadata)
+                        val metadataObj = imageProcessing.createThumbnails()
+                        if (metadataObj != null) {
+                            metadataRepository.save(metadataObj)
+                            println("processed thumbnail ${metadataObj.getThumbnailPathExtraSmall()}")
+                            numProcessed++
+                        }
                     }
                 }
             }
-        }
-        println("Number xs thumbnails processed: $numProcessed")
+            println("Number xs thumbnails processed: $numProcessed")
+        }.start()
 
         return "test"
     }
@@ -132,7 +150,7 @@ class TestController {
     @RequestMapping(value = ["/testvideo"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
     @ResponseBody
     fun getTestVideo(response: HttpServletResponse?): FileSystemResource? {
-        val path = "c:/Users/micha/Downloads/testVideo/PXL_20210725_213342002.mp4";
+        val path = "c:/Users/Michael/Downloads/testpics/PXL_20240505_214316983.TS.mp4";
         return FileSystemResource(path)
     }
 
@@ -140,7 +158,7 @@ class TestController {
     @RequestMapping(value = ["/testimage"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
     fun getTestImage(response: HttpServletResponse?): FileSystemResource? {
-        val path = "c:/Users/micha/Downloads/testData/anotherDir/DSCF1061.JPG";
+        val path = "c:/Users/Michael/Downloads/testpics/PXL_20240316_005235232.jpg";
         return FileSystemResource(path)
     }
 
@@ -148,49 +166,51 @@ class TestController {
     @RequestMapping(value = ["/testaudio"], method = [RequestMethod.GET], produces = ["audio/3gpp","audio/aac","audio/flac","audio/mpeg","audio/mp3","audio/mp4","audio/ogg","audio/wav","audio/webm"])
     @ResponseBody
     fun getTestAudio(response: HttpServletResponse?): FileSystemResource? {
-        val path = "c:/some/audio.mp3";
+        val path = "c:/Users/Michael/Downloads/testpics/file_example_MP3_2MG.mp3";
         return FileSystemResource(path)
     }
 
     @Secured("ROLE_SUPER")
     @GetMapping("/fixtakendates")
     fun reconcileTakenDates(response: HttpServletResponse): String {
-        val metadataRecords = metadataRepository.findAll()
-        val metadataRecordsList = mutableListOf<Metadata>()
+        Thread {
+            val metadataRecords = metadataRepository.findAll()
+            val metadataRecordsList = mutableListOf<Metadata>()
 
-        var index = 0;
-        for (metadata in metadataRecords) {
-            if (metadata != null) {
-                val adjustedTakenDateProp = metadata.getTakenAt()
-                val adjustedTakenDateArray = adjustedTakenDateProp?.split(" ")?.toTypedArray()
-                if (adjustedTakenDateArray != null && adjustedTakenDateArray.size == 2) {
-                    val adjustedTakenTime = adjustedTakenDateArray[1]
+            var index = 0;
+            for (metadata in metadataRecords) {
+                if (metadata != null) {
+                    val adjustedTakenDateProp = metadata.getTakenAt()
+                    val adjustedTakenDateArray = adjustedTakenDateProp?.split(" ")?.toTypedArray()
+                    if (adjustedTakenDateArray != null && adjustedTakenDateArray.size == 2) {
+                        val adjustedTakenTime = adjustedTakenDateArray[1]
 
-                    val takenDateYear = metadata.getYear()
-                    val takenDateMonth = metadata.getMonth()
-                    val takenDateDay = metadata.getDay()
-                    val month = if (takenDateMonth!!.toInt() > 9) takenDateMonth else "0$takenDateMonth"
-                    val day = if (takenDateDay!!.toInt() > 9) takenDateDay else "0$takenDateDay"
+                        val takenDateYear = metadata.getYear()
+                        val takenDateMonth = metadata.getMonth()
+                        val takenDateDay = metadata.getDay()
+                        val month = if (takenDateMonth!!.toInt() > 9) takenDateMonth else "0$takenDateMonth"
+                        val day = if (takenDateDay!!.toInt() > 9) takenDateDay else "0$takenDateDay"
 
-                    val fullDate = takenDateYear.toString() + "-" + month + "-" + day + " " + adjustedTakenTime
+                        val fullDate = takenDateYear.toString() + "-" + month + "-" + day + " " + adjustedTakenTime
 
-                    if (fullDate != adjustedTakenDateProp) {
-                        index++
-                        println("TakenDates don't match")
-                        println("oriniginalTaken: $fullDate")
-                        println("adjustedTaken: $adjustedTakenDateProp")
-                        println("------------")
-                        metadata.setTakenAt(fullDate)
-                        metadataRecordsList.add(metadata)
+                        if (fullDate != adjustedTakenDateProp) {
+                            index++
+                            println("TakenDates don't match")
+                            println("oriniginalTaken: $fullDate")
+                            println("adjustedTaken: $adjustedTakenDateProp")
+                            println("------------")
+                            metadata.setTakenAt(fullDate)
+                            metadataRecordsList.add(metadata)
+                        }
                     }
                 }
             }
-        }
 
-        if (metadataRecordsList.size > 0) {
-            metadataRepository.saveAll(metadataRecordsList)
-        }
-        println("# of records not matching: $index")
+            if (metadataRecordsList.size > 0) {
+                metadataRepository.saveAll(metadataRecordsList)
+            }
+            println("# of records not matching: $index")
+        }.start()
 
         return "test"
     }
@@ -198,22 +218,25 @@ class TestController {
     @Secured("ROLE_SUPER")
     @GetMapping("/fixnullplacenames")
     fun fixNullPlaceNames(response: HttpServletResponse): String {
-        val mids = testRepository.findLocationsWithNullPlace()
+        Thread {
+            val mids = testRepository.findLocationsWithNullPlace()
 
-        if (mids != null) {
-            for (metadataId in mids) {
-                val metadata = metadataRepository.findByMetadataId(metadataId)
+            if (mids != null) {
+                for (metadataId in mids) {
+                    val metadata = metadataRepository.findByMetadataId(metadataId)
 
-                if (metadata?.getLat() != null && metadata.getLat() != null && metadata.getPlaceName() == null) {
-                    println(metadata.toString())
-                    val coordinateMap = TextUtils.processCoordinates(geocodeUrl!!, metadata.getLat() + "," + metadata.getLng())
-                    if (coordinateMap["place"] != null) {
-                        metadata.setPlaceName(coordinateMap["place"])
-                        metadataRepository.save(metadata)
+                    if (metadata?.getLat() != null && metadata.getLat() != null && metadata.getPlaceName() == null) {
+                        println(metadata.toString())
+                        val coordinateMap =
+                            TextUtils.processCoordinates(geocodeUrl!!, metadata.getLat() + "," + metadata.getLng())
+                        if (coordinateMap["place"] != null) {
+                            metadata.setPlaceName(coordinateMap["place"])
+                            metadataRepository.save(metadata)
+                        }
                     }
                 }
             }
-        }
+        }.start()
 
         return "test"
     }
