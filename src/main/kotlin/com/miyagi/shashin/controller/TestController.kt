@@ -7,6 +7,7 @@ import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
+import org.springframework.http.*
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.ResponseBody
 import java.io.File
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.imageio.ImageIO
 import javax.servlet.http.HttpServletRequest
@@ -146,28 +148,41 @@ class TestController {
         return "test"
     }
 
+    private fun getFSR(path: String, mediaType: String, mediaSubtype: String): ResponseEntity<FileSystemResource> {
+        if (File(path).exists()) {
+            val resource = FileSystemResource(path)
+            val headers = HttpHeaders()
+            headers.contentLength = resource.contentLength()
+            headers.contentType = MediaType(mediaType, mediaSubtype)
+            headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
+            return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
+        } else {
+            return ResponseEntity<FileSystemResource>(null, null, HttpStatus.NOT_FOUND)
+        }
+    }
+
     @Secured("ROLE_SUPER")
     @RequestMapping(value = ["/testvideo"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
     @ResponseBody
-    fun getTestVideo(response: HttpServletResponse?): FileSystemResource? {
-        val path = "c:/Users/Michael/Downloads/testpics/PXL_20240505_214316983.TS.mp4";
-        return FileSystemResource(path)
+    fun getTestVideo(response: HttpServletResponse?): ResponseEntity<FileSystemResource> {
+        val path = "c:/Users/Michael/Downloads/testpics/PXL_20240505_214316983.TS.mp4"
+        return getFSR(path, "video", "mp4")
     }
 
     @Secured("ROLE_SUPER")
     @RequestMapping(value = ["/testimage"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
-    fun getTestImage(response: HttpServletResponse?): FileSystemResource? {
-        val path = "c:/Users/Michael/Downloads/testpics/PXL_20240316_005235232.jpg";
-        return FileSystemResource(path)
+    fun getTestImage(response: HttpServletResponse?): ResponseEntity<FileSystemResource> {
+        val path = "c:/Users/Michael/Downloads/testpics/PXL_20240316_005235232.jpg"
+        return getFSR(path, "image", "jpeg")
     }
 
     @Secured("ROLE_SUPER")
     @RequestMapping(value = ["/testaudio"], method = [RequestMethod.GET], produces = ["audio/3gpp","audio/aac","audio/flac","audio/mpeg","audio/mp3","audio/mp4","audio/ogg","audio/wav","audio/webm"])
     @ResponseBody
-    fun getTestAudio(response: HttpServletResponse?): FileSystemResource? {
-        val path = "c:/Users/Michael/Downloads/testpics/file_example_MP3_2MG.mp3";
-        return FileSystemResource(path)
+    fun getTestAudio(response: HttpServletResponse?): ResponseEntity<FileSystemResource> {
+        val path = "c:/Users/Michael/Downloads/testpics/file_example_MP3_2MG.mp3"
+        return getFSR(path, "audio", "mpeg")
     }
 
     @Secured("ROLE_SUPER")
@@ -194,9 +209,11 @@ class TestController {
                         val fullDate = takenDateYear.toString() + "-" + month + "-" + day + " " + adjustedTakenTime
 
                         if (fullDate != adjustedTakenDateProp) {
+                            println("iteration ${index + 1} out of ${metadataRecords.count()}")
                             index++
-                            println("TakenDates don't match")
-                            println("oriniginalTaken: $fullDate")
+                            println("TakenDates don't match, fixing...")
+                            println("metadata ID: ${metadata.getId()}")
+                            println("originalTaken: $fullDate")
                             println("adjustedTaken: $adjustedTakenDateProp")
                             println("------------")
                             metadata.setTakenAt(fullDate)
@@ -220,7 +237,9 @@ class TestController {
     fun fixNullPlaceNames(response: HttpServletResponse): String {
         Thread {
             val mids = testRepository.findLocationsWithNullPlace()
+            val metadataRecordsList = mutableListOf<Metadata>()
 
+            var index = 0;
             if (mids != null) {
                 for (metadataId in mids) {
                     val metadata = metadataRepository.findByMetadataId(metadataId)
@@ -230,12 +249,24 @@ class TestController {
                         val coordinateMap =
                             TextUtils.processCoordinates(geocodeUrl!!, metadata.getLat() + "," + metadata.getLng())
                         if (coordinateMap["place"] != null) {
+                            println("iteration ${index + 1} out of ${mids.count()}")
+                            index++
+                            println("Location not found, fixing...")
+                            println("metadata ID: ${metadata.getId()}")
+                            println("location: ${coordinateMap["place"]}")
+
+                            println("------------")
                             metadata.setPlaceName(coordinateMap["place"])
-                            metadataRepository.save(metadata)
+                            metadataRecordsList.add(metadata)
                         }
                     }
                 }
             }
+
+            if (metadataRecordsList.size > 0) {
+                metadataRepository.saveAll(metadataRecordsList)
+            }
+            println("# of records missing location data: $index")
         }.start()
 
         return "test"
