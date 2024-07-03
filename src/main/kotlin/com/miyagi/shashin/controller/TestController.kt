@@ -181,7 +181,7 @@ class TestController {
     @RequestMapping(value = ["/testaudio"], method = [RequestMethod.GET], produces = ["audio/3gpp","audio/aac","audio/flac","audio/mpeg","audio/mp3","audio/mp4","audio/ogg","audio/wav","audio/webm"])
     @ResponseBody
     fun getTestAudio(response: HttpServletResponse?): ResponseEntity<FileSystemResource> {
-        val path = "c:/Users/Michael/Downloads/testpics/file_example_MP3_2MG.mp3"
+        val path = "c:/Users/Michael/Downloads/testpics/Ray Bull - The New Thing Dies.mp3"
         return getFSR(path, "audio", "mpeg")
     }
 
