@@ -1951,6 +1951,7 @@ class TimelineController: BaseController() {
                     val lat = coordinateMap["lat"]
                     val lng = coordinateMap["lng"]
                     val timezone = coordinateMap["timezone"]
+                    val place = coordinateMap["place"]
 
                     if (latlng.isNotEmpty() && (lat == null || lng == null)) {
                         logger.log(Level.WARNING, "Could not save location due to invalid latlng.")
@@ -1968,6 +1969,10 @@ class TimelineController: BaseController() {
 
                                     if (timezone != null) {
                                         metadata.setTimeZone(timezone)
+                                    }
+
+                                    if (place != null) {
+                                        metadata.setPlaceName(place)
                                     }
 
                                     metadataLocationList.add(metadata)
@@ -2065,19 +2070,6 @@ class TimelineController: BaseController() {
                         if (offset != null && offset.trim().isNotBlank()) {
                             metadata.setTimeZone(offset)
                         }
-
-//                        if (lat != null && lng != null && (metadata.getLat() != lat || metadata.getLng() != lng)) {
-//                            metadata.setLat(lat)
-//                            metadata.setLng(lng)
-//
-//                            if (place != null) {
-//                                metadata.setPlaceName(place)
-//                            }
-//
-//                            if (timezone != null) {
-//                                metadata.setTimeZone(timezone)
-//                            }
-//                        }
 
                         if (keywordList.isNotEmpty()) {
                             keywordPhotoRepository.deleteAllByMetadataId(metadata.getId())
