@@ -1551,7 +1551,7 @@ class TimelineController: BaseController() {
                         if (metadataObj.get().getLat() != newlat || metadataObj.get().getLng() != newlng) {
                             setAndSave = true
                             Thread {
-                                val coordinateMap = processCoordinates(metadataMap["latlng"].toString())
+                                val coordinateMap = TextUtils.processCoordinates(geocodeUrl!!, metadataMap["latlng"].toString())
                                 if (coordinateMap["lat"] != null && coordinateMap["lng"] != null) {
                                     metadataObj.get().setLat(coordinateMap["lat"])
                                     metadataObj.get().setLng(coordinateMap["lng"])
@@ -1947,7 +1947,7 @@ class TimelineController: BaseController() {
             // Process keyword and lat/lng data
             if (latlng != null && latlng != "") {
                 Thread {
-                    val coordinateMap = processCoordinates(latlng)
+                    val coordinateMap = TextUtils.processCoordinates(geocodeUrl!!, latlng)
                     val lat = coordinateMap["lat"]
                     val lng = coordinateMap["lng"]
                     val timezone = coordinateMap["timezone"]
@@ -2722,55 +2722,6 @@ class TimelineController: BaseController() {
         }
 
         return albumId
-    }
-
-    private fun processCoordinates(latlngStr: String?): Map<String, String?> {
-        val coordinateMap = mutableMapOf<String, String?>()
-        coordinateMap["lat"] = null
-        coordinateMap["lng"] = null
-        coordinateMap["place"] = null
-        coordinateMap["timezone"] = null
-
-        var lat: String? = null
-        var lng: String? = null
-        var place: String? = null
-        var timezone: String? = null
-
-        if (latlngStr != null && latlngStr.trim().isNotBlank()) {
-            val latlng = latlngStr.replace("\\s".toRegex(), "")
-            val latlngArr = latlng.split(",")
-            val latlngRegex = "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?)\\s*,\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$".toRegex()
-            if (latlngRegex.matches(latlng) && latlngArr.count() == 2) {
-                lat = latlngArr[0]
-                lng = latlngArr[1]
-
-                val buildPlace = TextUtils.getPlaceNameFromJson(TextUtils.getGeoData(geocodeUrl!!,lat, lng))
-                if (buildPlace.isNotBlank()) {
-                    place = buildPlace
-
-                    val engine = TimeZoneEngine.initialize()
-                    val maybeZoneId: Optional<ZoneId> = engine.query(lat.toDouble(), lng.toDouble())
-                    val zone = ZoneId.of(maybeZoneId.get().id)
-                    val dt = LocalDateTime.now()
-                    val zdt: ZonedDateTime = dt.atZone(zone)
-                    val zoneOffset = zdt.offset
-                    timezone = zoneOffset.toString()
-                }
-            }
-        }
-
-        if (lat != null && lng != null) {
-            coordinateMap["lat"] = lat
-            coordinateMap["lng"] = lng
-        }
-        if (place != null) {
-            coordinateMap["place"] = place
-        }
-        if (timezone != null) {
-            coordinateMap["timezone"] = timezone
-        }
-
-        return coordinateMap
     }
 
     private fun processKeywords(keywordList: List<String>, metadataId: String) {

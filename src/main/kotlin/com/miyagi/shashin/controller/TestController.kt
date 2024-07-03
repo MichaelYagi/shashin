@@ -3,6 +3,7 @@ package com.miyagi.shashin.controller
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ImageProcessing
+import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
@@ -44,6 +45,12 @@ class TestController {
     private lateinit var userRepository: UserRepository
 
     @Autowired
+    private lateinit var testRepository: TestRepository
+
+    @Value("\${app.endpoint.url.geocode}")
+    private var geocodeUrl: String? = null
+
+    @Autowired
     private val jdbcTemplate: JdbcTemplate? = null
 
     @Value("\${app.role.super}")
@@ -59,69 +66,69 @@ class TestController {
     @Value("\${app.sidecar.path}")
     private val relativeSidecarDir: String? = null
 
-//    @Secured("ROLE_SUPER","ROLE_ADMIN")
-//    @GetMapping("/test")
-//    fun test(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
-//        model["somevalue"] = "This is a test"
-//
-//        // Retroactively create gif
-//        val metadataList = metadataRepository.findAllByMediaType("video")
-//
-//        if (metadataList != null) {
-//            var numProcessed = 0
-//            val metadataCount = metadataList.count()
-//            for ((index, metadata) in metadataList.withIndex()) {
-//                println("iteration ${index+1} out of $metadataCount")
-//                if (metadata.getThumbnailPathSmall() !== null) {
-//                    val jpgVersion = metadata.getThumbnailPathSmall()
-//                    val gifVersion = jpgVersion?.replace("_225.jpg", "_225.gif")
-//                    println("processing $gifVersion")
-//
-//                    val gifFile = File(gifVersion!!)
-//                    if (!gifFile.exists()) {
-//                        println("gif doesn't exist")
-//
-//                        ImageProcessing.createVideoGif(metadata.getId(), metadataRepository)
-//                        numProcessed++
-//                        println("processed $gifVersion")
-//                    } else {
-//                        println("already exists $gifVersion")
-//                    }
-//
-//                    println("-------------")
-//                }
-//            }
-//            println("Number gifs processed: $numProcessed")
-//        }
-//
-//        // Retroactively create 112 images
-//        val allMetadataList = metadataRepository.findAll()
-//
-//        val metadataCount = allMetadataList.count()
-//        var numProcessed = 0
-//        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
-//        val sidecarDir = rootPath + relativeSidecarDir
-//
-//        for ((index, metadata) in allMetadataList.withIndex()) {
-//            println("iteration ${index+1} out of $metadataCount")
-//            if (metadata != null) {
-//                if (metadata.getThumbnailPathExtraSmall() == null || !File(metadata.getThumbnailPathExtraSmall()!!).exists()) {
-//                    val imageProcessing = ImageProcessing("v1", File(metadata.getPath()!!), sidecarDir, metadata)
-//                    val metadataObj = imageProcessing.createThumbnails()
-//                    if (metadataObj != null) {
-//                        metadataRepository.save(metadataObj)
-//                        println("processed thumbnail ${metadataObj.getThumbnailPathExtraSmall()}")
-//                        numProcessed++
-//                    }
-//                }
-//            }
-//        }
-//        println("Number xs thumbnails processed: $numProcessed")
-//
-//        return "test"
-//    }
+    @Secured("ROLE_SUPER")
+    @GetMapping("/test")
+    fun test(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
+        model["somevalue"] = "This is a test"
 
-    @Secured("ROLE_SUPER","ROLE_ADMIN")
+        // Retroactively create gif
+        val metadataList = metadataRepository.findAllByMediaType("video")
+
+        if (metadataList != null) {
+            var numProcessed = 0
+            val metadataCount = metadataList.count()
+            for ((index, metadata) in metadataList.withIndex()) {
+                println("iteration ${index+1} out of $metadataCount")
+                if (metadata.getThumbnailPathSmall() !== null) {
+                    val jpgVersion = metadata.getThumbnailPathSmall()
+                    val gifVersion = jpgVersion?.replace("_225.jpg", "_225.gif")
+                    println("processing $gifVersion")
+
+                    val gifFile = File(gifVersion!!)
+                    if (!gifFile.exists()) {
+                        println("gif doesn't exist")
+
+                        ImageProcessing.createVideoGif(metadata.getId(), metadataRepository)
+                        numProcessed++
+                        println("processed $gifVersion")
+                    } else {
+                        println("already exists $gifVersion")
+                    }
+
+                    println("-------------")
+                }
+            }
+            println("Number gifs processed: $numProcessed")
+        }
+
+        // Retroactively create 112 images
+        val allMetadataList = metadataRepository.findAll()
+
+        val metadataCount = allMetadataList.count()
+        var numProcessed = 0
+        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+        val sidecarDir = rootPath + relativeSidecarDir
+
+        for ((index, metadata) in allMetadataList.withIndex()) {
+            println("iteration ${index+1} out of $metadataCount")
+            if (metadata != null) {
+                if (metadata.getThumbnailPathExtraSmall() == null || !File(metadata.getThumbnailPathExtraSmall()!!).exists()) {
+                    val imageProcessing = ImageProcessing("v1", File(metadata.getPath()!!), sidecarDir, metadata)
+                    val metadataObj = imageProcessing.createThumbnails()
+                    if (metadataObj != null) {
+                        metadataRepository.save(metadataObj)
+                        println("processed thumbnail ${metadataObj.getThumbnailPathExtraSmall()}")
+                        numProcessed++
+                    }
+                }
+            }
+        }
+        println("Number xs thumbnails processed: $numProcessed")
+
+        return "test"
+    }
+
+    @Secured("ROLE_SUPER")
     @RequestMapping(value = ["/testvideo"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
     @ResponseBody
     fun getTestVideo(response: HttpServletResponse?): FileSystemResource? {
@@ -129,7 +136,7 @@ class TestController {
         return FileSystemResource(path)
     }
 
-    @Secured("ROLE_SUPER","ROLE_ADMIN")
+    @Secured("ROLE_SUPER")
     @RequestMapping(value = ["/testimage"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
     fun getTestImage(response: HttpServletResponse?): FileSystemResource? {
@@ -137,7 +144,7 @@ class TestController {
         return FileSystemResource(path)
     }
 
-    @Secured("ROLE_SUPER","ROLE_ADMIN")
+    @Secured("ROLE_SUPER")
     @RequestMapping(value = ["/testaudio"], method = [RequestMethod.GET], produces = ["audio/3gpp","audio/aac","audio/flac","audio/mpeg","audio/mp3","audio/mp4","audio/ogg","audio/wav","audio/webm"])
     @ResponseBody
     fun getTestAudio(response: HttpServletResponse?): FileSystemResource? {
@@ -184,6 +191,29 @@ class TestController {
             metadataRepository.saveAll(metadataRecordsList)
         }
         println("# of records not matching: $index")
+
+        return "test"
+    }
+
+    @Secured("ROLE_SUPER")
+    @GetMapping("/fixnullplacenames")
+    fun fixNullPlaceNames(response: HttpServletResponse): String {
+        val mids = testRepository.findLocationsWithNullPlace()
+
+        if (mids != null) {
+            for (metadataId in mids) {
+                val metadata = metadataRepository.findByMetadataId(metadataId)
+
+                if (metadata?.getLat() != null && metadata.getLat() != null && metadata.getPlaceName() == null) {
+                    println(metadata.toString())
+                    val coordinateMap = TextUtils.processCoordinates(geocodeUrl!!, metadata.getLat() + "," + metadata.getLng())
+                    if (coordinateMap["place"] != null) {
+                        metadata.setPlaceName(coordinateMap["place"])
+                        metadataRepository.save(metadata)
+                    }
+                }
+            }
+        }
 
         return "test"
     }

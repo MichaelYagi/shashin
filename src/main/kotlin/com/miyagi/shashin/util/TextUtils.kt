@@ -2,6 +2,8 @@ package com.miyagi.shashin.util
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.repository.MetadataRepository
+import net.iakovlev.timeshape.TimeZoneEngine
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import java.lang.management.ManagementFactory
@@ -266,6 +268,55 @@ class TextUtils {
             }
 
             return placeNameHeaders
+        }
+
+        fun processCoordinates(geocodeUrl: String, latlngStr: String?): Map<String, String?> {
+            val coordinateMap = mutableMapOf<String, String?>()
+            coordinateMap["lat"] = null
+            coordinateMap["lng"] = null
+            coordinateMap["place"] = null
+            coordinateMap["timezone"] = null
+
+            var lat: String? = null
+            var lng: String? = null
+            var place: String? = null
+            var timezone: String? = null
+
+            if (latlngStr != null && latlngStr.trim().isNotBlank()) {
+                val latlng = latlngStr.replace("\\s".toRegex(), "")
+                val latlngArr = latlng.split(",")
+                val latlngRegex = "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?)\\s*,\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$".toRegex()
+                if (latlngRegex.matches(latlng) && latlngArr.count() == 2) {
+                    lat = latlngArr[0]
+                    lng = latlngArr[1]
+
+                    val buildPlace = getPlaceNameFromJson(getGeoData(geocodeUrl,lat, lng))
+                    if (buildPlace.isNotBlank()) {
+                        place = buildPlace
+
+                        val engine = TimeZoneEngine.initialize()
+                        val maybeZoneId: Optional<ZoneId> = engine.query(lat.toDouble(), lng.toDouble())
+                        val zone = ZoneId.of(maybeZoneId.get().id)
+                        val dt = LocalDateTime.now()
+                        val zdt: ZonedDateTime = dt.atZone(zone)
+                        val zoneOffset = zdt.offset
+                        timezone = zoneOffset.toString()
+                    }
+                }
+            }
+
+            if (lat != null && lng != null) {
+                coordinateMap["lat"] = lat
+                coordinateMap["lng"] = lng
+            }
+            if (place != null) {
+                coordinateMap["place"] = place
+            }
+            if (timezone != null) {
+                coordinateMap["timezone"] = timezone
+            }
+
+            return coordinateMap
         }
 
         fun getPlaceNameFromJson(geoDataJsonString: String?): String {
