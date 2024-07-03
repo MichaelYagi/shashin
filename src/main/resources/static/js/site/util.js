@@ -1291,7 +1291,7 @@ class Util {
             // if (metadata.placeName != null) {
                 $(".locationLabel").show();
                 let locationType = "";
-                let placeNameDisplayName = (metadata.placeName === null) ? 'Unknown location name' : metadata.placeName;
+                let placeNameDisplayName = (metadata.placeName === null) ? 'Unknown location' : metadata.placeName;
                 let placeNameDisplayNameArray = placeNameDisplayName.split(";");
                 if (placeNameDisplayNameArray.length > 1) {
                     placeNameDisplayName = placeNameDisplayNameArray[0];

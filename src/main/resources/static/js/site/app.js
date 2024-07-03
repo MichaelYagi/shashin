@@ -1056,7 +1056,7 @@
         ) {
             $("#map").css("display","block");
             $("#mapTabMessage").css("display","block");
-            let placeNameDisplayName = (metadata.placeName === null) ? 'Unknown location name' : metadata.placeName;
+            let placeNameDisplayName = (metadata.placeName === null) ? 'Unknown location' : metadata.placeName;
             let placeNameDisplayNameArray = placeNameDisplayName.split(";");
             if (placeNameDisplayNameArray.length > 1) {
                 placeNameDisplayName = placeNameDisplayNameArray[0];

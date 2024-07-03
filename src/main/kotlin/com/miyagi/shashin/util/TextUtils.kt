@@ -396,7 +396,7 @@ class TextUtils {
             }
 
             if (buildPlace.isBlank()) {
-                buildPlace = "Unknown location name"
+                buildPlace = "Unknown location"
             }
 
             logger.log(Level.INFO, "Place string built: $buildPlace")
