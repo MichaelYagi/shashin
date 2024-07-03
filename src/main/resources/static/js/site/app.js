@@ -547,7 +547,6 @@
                     $("#offsetTaken option[value='" + metadata.timeZone + "']").attr('selected', 'selected');
                 }
 
-                $("#placeName").prop('disabled', true);
                 if (metadata.placeName !== null) {
                     const placeNameArr = metadata.placeName.split(";");
                     let placeName = metadata.placeName;
@@ -559,13 +558,27 @@
                     $("#placeName").val(placeName);
                     $("#placeType").val(placeType);
                     $("#placeName").prop('disabled', false);
+                    if (shashin.darkMode === true) {
+                        $("#placeName").css("background-color","#222222");
+                    }
+                } else {
+                    $("#placeName").prop('disabled', true);
+                    if (shashin.darkMode === true) {
+                        $("#placeName").css("background-color","#2F2F2F");
+                    }
                 }
 
                 $("#latlng").on('paste keyup', function() {
                     if ($(this).val().length > 0) {
                         $("#placeName").prop('disabled', false);
+                        if (shashin.darkMode === true) {
+                            $("#placeName").css("background-color","#222222");
+                        }
                     } else {
                         $("#placeName").prop('disabled', true);
+                        if (shashin.darkMode === true) {
+                            $("#placeName").css("background-color","#2F2F2F");
+                        }
                     }
                 });
 
@@ -576,6 +589,9 @@
                     $("#mapTabNav").hide();
                 } else {
                     $("#placeName").prop('disabled', false);
+                    if (shashin.darkMode === true) {
+                        $("#placeName").css("background-color","#222222");
+                    }
                 }
 
                 let taggedPeopleString = "";
