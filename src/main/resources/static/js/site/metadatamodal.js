@@ -340,6 +340,9 @@ async function saveMetadata(e) {
                             if ($("#latlng").val().length > 0) {
                                 $("#placeName").prop('disabled', true);
                                 $("#placeName").attr("placeholder", "Updating location ...");
+                                if (shashin.darkMode === true) {
+                                    $("#placeName").css("background-color","#2F2F2F");
+                                }
                             }
                         }
                     }
