@@ -1,4 +1,8 @@
 (function( metadataModal, $, undefined ) {
+    function getUpdateText() {
+        return "Updating location ...";
+    }
+
     metadataModal.toggleTagPeopleDropdown = function (metadataId) {
         $("#tagpeopledropdown"+metadataId).dropdown('toggle')
     }
@@ -50,6 +54,10 @@
     }
 
 }( window.metadataModal = window.metadataModal || {}, jQuery ));
+
+function getMetadataModalUpdateText() {
+    return "Updating location ...";
+}
 
 $("#confirmRescanMetadata").on("click", function (e) {
     e.preventDefault();
@@ -338,12 +346,8 @@ async function saveMetadata(e) {
                             $("#placeName").val("");
                             $("#placeType").val("");
                             if ($("#latlng").val().length > 0) {
-                                $("#generalTabLink").prop('disabled', true);
-                                $("#detailsTabLink").prop('disabled', true);
-                                $("#exifTabLink").prop('disabled', true);
-                                $("#mapTabLink").prop('disabled', true);
                                 $("#placeName").prop('disabled', true);
-                                $("#placeName").attr("placeholder", "Updating location ...");
+                                $("#placeName").attr("placeholder", getMetadataModalUpdateText());
                             }
                         }
                     }
@@ -557,7 +561,7 @@ $("#generalTabLink").on("click", function (e) {
     $("#saveMetadata").prop('disabled', false);
 
     const metadataId = $("#metadataId").val();
-    if ($("#placeName").attr("placeholder") === "Updating location ...") {
+    if ($("#placeName").attr("placeholder") === getMetadataModalUpdateText()) {
         shashin.getMetadata(metadataId).then(function (metadataObj) {
             $("#placeName").attr("placeholder", "");
             const placeArr = metadataObj.placeName.split(";");
