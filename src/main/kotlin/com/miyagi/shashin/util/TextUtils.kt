@@ -332,7 +332,7 @@ class TextUtils {
                         addressObj.get("name").textValue() != "") {
                         if (addressObj.has("address") && addressObj.get("address").has("road") && addressObj.get("address").get("road") != null &&
                             addressObj.get("address").get("road").textValue() != "" && addressObj.get("address").get("road").textValue() != addressObj.get("name").textValue()) {
-                            buildPlace += addressObj.get("name").textValue() + ", "
+                            buildPlace += addressObj.get("name").textValue() + " • "
                         }
                     }
 

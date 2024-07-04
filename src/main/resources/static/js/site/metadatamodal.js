@@ -547,6 +547,15 @@ $("#generalTabLink").on("click", function (e) {
     const modal = bootstrap.Modal.getInstance(propMetadataModal);
     modal.handleUpdate();
     $("#saveMetadata").prop('disabled', false);
+
+    const metadataId = $("#metadataId").val();
+    if ($("#placeName").attr("placeholder") === "Updating location ...") {
+        shashin.getMetadata(metadataId).then(function (metadataObj) {
+            $("#placeName").attr("placeholder", "");
+            const placeArr = metadataObj.placeName.split(";");
+            $("#placeName").val(placeArr[0].trim());
+        });
+    }
 });
 
 $("#isobject").on("click", function (e) {
