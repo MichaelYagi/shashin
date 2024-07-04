@@ -338,6 +338,10 @@ async function saveMetadata(e) {
                             $("#placeName").val("");
                             $("#placeType").val("");
                             if ($("#latlng").val().length > 0) {
+                                $("#generalTabLink").prop('disabled', true);
+                                $("#detailsTabLink").prop('disabled', true);
+                                $("#exifTabLink").prop('disabled', true);
+                                $("#mapTabLink").prop('disabled', true);
                                 $("#placeName").prop('disabled', true);
                                 $("#placeName").attr("placeholder", "Updating location ...");
                             }
@@ -444,6 +448,10 @@ $('#propMetadata').on('hide.bs.modal', function () {
     $("#metadataModalStatus").invisible();
     $("#metadataModalMsg").html("");
     $("#saveMetadata").prop('disabled', false);
+    $("#generalTabLink").prop('disabled', false);
+    $("#detailsTabLink").prop('disabled', false);
+    $("#exifTabLink").prop('disabled', false);
+    $("#mapTabLink").prop('disabled', false);
     $("#placeName").attr("placeholder", "");
     $("#metadataModalCancel").text("Cancel");
     $("#saveTimelineModalForm :input").prop("disabled", false);
