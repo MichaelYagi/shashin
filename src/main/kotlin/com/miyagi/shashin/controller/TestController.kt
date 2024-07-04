@@ -271,4 +271,39 @@ class TestController {
 
         return "test"
     }
+
+    @Secured("ROLE_SUPER")
+    @GetMapping("/fixplacenames")
+    fun fixNPlaceNames(response: HttpServletResponse): String {
+        Thread {
+            val mids = metadataRepository.findAll()
+            val metadataRecordsList = mutableListOf<Metadata>()
+
+            var index = 0;
+            for (metadata in mids) {
+                if (metadata?.getLat() != null && metadata.getLat() != null) {
+                    println(metadata.toString())
+                    val coordinateMap =
+                        TextUtils.processCoordinates(geocodeUrl!!, metadata.getLat() + "," + metadata.getLng())
+                    if (coordinateMap["place"] != null) {
+                        println("iteration ${index + 1} out of ${mids.count()}")
+                        index++
+                        println("metadata ID: ${metadata.getId()}")
+                        println("location: ${coordinateMap["place"]}")
+
+                        println("------------")
+                        metadata.setPlaceName(coordinateMap["place"])
+                        metadataRecordsList.add(metadata)
+                    }
+                }
+            }
+
+            if (metadataRecordsList.size > 0) {
+                metadataRepository.saveAll(metadataRecordsList)
+            }
+            println("# of records with rescanned location data: $index")
+        }.start()
+
+        return "test"
+    }
 }
