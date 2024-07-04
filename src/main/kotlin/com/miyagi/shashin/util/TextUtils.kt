@@ -351,7 +351,7 @@ class TextUtils {
                         if (addressObj.get("address").has("village") && addressObj.get("address")
                                 .get("village") != null && addressObj.get("address").get("village").textValue() != ""
                         ) {
-                            buildPlace += addressObj.get("address").get("town").textValue() + ", "
+                            buildPlace += addressObj.get("address").get("village").textValue() + ", "
                         } else if (addressObj.get("address").has("town") && addressObj.get("address")
                                 .get("town") != null && addressObj.get("address").get("town").textValue() != ""
                         ) {
