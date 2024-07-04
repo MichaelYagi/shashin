@@ -1225,8 +1225,6 @@ class TimelineController: BaseController() {
             metadataMap.containsKey("time") &&
             metadataMap.containsKey("offset") &&
             metadataMap.containsKey("keywords") &&
-            metadataMap.containsKey("placeName") &&
-            metadataMap.containsKey("placeType") &&
             metadataMap.containsKey("latlng") &&
             metadataMap.containsKey("title") &&
             metadataMap.containsKey("description") &&
@@ -1530,12 +1528,12 @@ class TimelineController: BaseController() {
                 var setAndSave = false
 
                 metricsUtil.start("Metadata Update - Process location")
-                if (metadataMap["placeName"].toString() == "") {
-                    metadataObj.get().setPlaceName(null)
-                } else {
-                    val placeNameStr = metadataMap["placeName"].toString() + "; " + metadataMap["placeType"].toString()
-                    metadataObj.get().setPlaceName(placeNameStr)
-                }
+//                if (metadataMap["placeName"].toString() == "") {
+//                    metadataObj.get().setPlaceName(null)
+//                } else {
+//                    val placeNameStr = metadataMap["placeName"].toString() + "; " + metadataMap["placeType"].toString()
+//                    metadataObj.get().setPlaceName(placeNameStr)
+//                }
                 if (metadataMap["latlng"].toString() == "") {
                     metadataObj.get().setLat(null)
                     metadataObj.get().setLng(null)
@@ -1557,11 +1555,7 @@ class TimelineController: BaseController() {
                                     metadataObj.get().setLng(coordinateMap["lng"])
                                 }
 
-                                if (coordinateMap["place"] != null &&
-                                    (metadataMap["placeName"] == null ||
-                                    metadataMap["placeName"] == "" ||
-                                    !(coordinateMap["place"]!!.contains(metadataMap["placeName"].toString())))
-                                ) {
+                                if (coordinateMap["place"] != null) {
                                     metadataObj.get().setPlaceName(coordinateMap["place"])
                                 }
                                 if (coordinateMap["timezone"] != null) {

@@ -96,7 +96,7 @@ $("#saveMetadata").on("click", async function (e) {
 });
 
 $("#propMetadata").on("keydown", async function (e) {
-    if (e.keyCode === 13 && $('#saveMetadata').prop('disabled') === false) {
+    if (e.keyCode === 13) {
         await saveMetadata(e);
     }
 });
@@ -109,7 +109,6 @@ async function saveMetadata(e) {
     $("#metadataModalStatus").visible();
     $("#metadataModalStatus").attr("title", "");
     $("#metadataModalCancel").prop('disabled', true);
-    $("#saveMetadata").prop('disabled', true);
     $("#placeName").attr("placeholder", "");
 
     const propMetadataModal = bootstrap.Modal.getInstance(document.getElementById('propMetadata'));
@@ -185,8 +184,6 @@ async function saveMetadata(e) {
             time: $("#timeTaken").val(),
             offset: $("#offsetTaken").val() === null ? "" : $("#offsetTaken").val(),
             latlng: Util.decodeHtml($("#latlng").val()),
-            placeName: $("#placeName").val(),
-            placeType: $("#placeType").val(),
             keywords: $("#keywords").val(),
             tagpeople: people,
             albumnames: albums,
@@ -342,14 +339,15 @@ async function saveMetadata(e) {
 
                             Util.setMetadataLocalStorage();
                             window.location.replace("/map?latlng=" + $("#latlng").val() + queryParamDates);
-                        } else {
-                            $("#placeName").val("");
-                            $("#placeType").val("");
-                            if ($("#latlng").val().length > 0) {
-                                $("#placeName").prop('disabled', true);
-                                $("#placeName").attr("placeholder", getMetadataModalUpdateText());
-                            }
                         }
+                        // else {
+                        //     $("#placeName").val("");
+                        //     $("#placeType").val("");
+                        //     if ($("#latlng").val().length > 0) {
+                        //         $("#placeName").prop('disabled', true);
+                        //         $("#placeName").attr("placeholder", getMetadataModalUpdateText());
+                        //     }
+                        // }
                     }
 
                     if (takenDateUpdated === true && ($("#activePage").length > 0 && $("#activePage").val() !== "recent" && $("#activePage").val() !== "modified" && $("#activePage").val() !== "taken" && $("#activePage").val() !== "folder") || $("#activePage").length === 0) {
@@ -414,26 +412,21 @@ async function saveMetadata(e) {
 
                 $("#metadataModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                 $("#metadataModalCancel").prop('disabled', false);
-                $("#saveMetadata").prop('disabled', true);
                 $("#metadataModalCancel").text("Close");
-                $("#saveTimelineModalForm :input").prop("disabled", true);
             } else {
                 $("#metadataModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                 $("#metadataModalStatus").attr("title", shashin.modalStatusFailMessage());
                 $("#metadataModalCancel").prop('disabled', false);
-                $("#saveMetadata").prop('disabled', false);
             }
         } else {
             $("#metadataModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
             $("#metadataModalStatus").attr("title", shashin.modalStatusFailMessage());
             $("#metadataModalCancel").prop('disabled', false);
-            $("#saveMetadata").prop('disabled', false);
         }
         propMetadataModal._config.backdrop = true;
         propMetadataModal._config.keyboard = true;
     } else {
         $("#metadataModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
-        $("#saveMetadata").prop('disabled', false);
         propMetadataModal._config.backdrop = true;
         propMetadataModal._config.keyboard = true;
     }
@@ -451,7 +444,6 @@ $('#propMetadata').on('hide.bs.modal', function () {
     $("#metadataModalStatus").attr("class","spinner-grow me-auto");
     $("#metadataModalStatus").invisible();
     $("#metadataModalMsg").html("");
-    $("#saveMetadata").prop('disabled', false);
     $("#generalTabLink").prop('disabled', false);
     $("#detailsTabLink").prop('disabled', false);
     $("#exifTabLink").prop('disabled', false);
@@ -471,7 +463,6 @@ $('#propMetadata').on('hide.bs.modal', function () {
 
 $('#rescanMetadataConfirmation').on('hide.bs.modal', function () {
     $("#metadataModalCancel").prop('disabled', false);
-    $("#saveMetadata").prop('disabled', false);
     $("#metadataModalStatus").removeClass('bi-x-circle').removeClass('bi-check-circle').removeClass('spinner-grow');
 });
 
@@ -505,7 +496,6 @@ $("#detailsTabLink").on("click", function (e) {
     const modal = bootstrap.Modal.getInstance(propMetadataModal);
     modal.handleUpdate();
     $("#metadataModalMsg").html("");
-    $("#saveMetadata").prop('disabled', true);
 
     const metadataId = $("#metadataId").val();
     shashin.getMetadata(metadataId).then(function (metadataObj) {
@@ -520,7 +510,6 @@ $("#mapTabLink").on("click", function (e) {
     const modal = bootstrap.Modal.getInstance(propMetadataModal);
     modal.handleUpdate();
     $("#metadataModalMsg").html("");
-    $("#saveMetadata").prop('disabled', true);
 
     const metadataId = $("#metadataId").val();
 
@@ -538,7 +527,6 @@ $("#exifTabLink").on("click", async function (e) {
     const modal = bootstrap.Modal.getInstance(propMetadataModal);
     modal.handleUpdate();
     $("#exifInfo").val("");
-    $("#saveMetadata").prop('disabled', true);
 
     // Get exif yaml data and display
     const metadataId = $("#metadataId").val();
@@ -558,16 +546,15 @@ $("#generalTabLink").on("click", function (e) {
     const propMetadataModal = document.getElementById('propMetadata');
     const modal = bootstrap.Modal.getInstance(propMetadataModal);
     modal.handleUpdate();
-    $("#saveMetadata").prop('disabled', false);
 
-    const metadataId = $("#metadataId").val();
-    if ($("#placeName").attr("placeholder") === getMetadataModalUpdateText()) {
-        shashin.getMetadata(metadataId).then(function (metadataObj) {
-            $("#placeName").attr("placeholder", "");
-            const placeArr = metadataObj.placeName.split(";");
-            $("#placeName").val(placeArr[0].trim());
-        });
-    }
+    // const metadataId = $("#metadataId").val();
+    // if ($("#placeName").attr("placeholder") === getMetadataModalUpdateText()) {
+    //     shashin.getMetadata(metadataId).then(function (metadataObj) {
+    //         $("#placeName").attr("placeholder", "");
+    //         const placeArr = metadataObj.placeName.split(";");
+    //         $("#placeName").val(placeArr[0].trim());
+    //     });
+    // }
 });
 
 $("#isobject").on("click", function (e) {
