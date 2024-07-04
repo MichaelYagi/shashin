@@ -344,6 +344,10 @@ class TextUtils {
                             buildPlace += addressObj.get("address").get("road").textValue() + ", "
                         }
 
+                        if (addressObj.get("address").has("suburb") && addressObj.get("address").get("suburb") != null && addressObj.get("address").get("suburb").textValue() != "") {
+                            buildPlace += addressObj.get("address").get("suburb").textValue() + ", "
+                        }
+
                         if (addressObj.get("address").has("village") && addressObj.get("address")
                                 .get("village") != null && addressObj.get("address").get("village").textValue() != ""
                         ) {
