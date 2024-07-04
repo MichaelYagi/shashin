@@ -356,13 +356,13 @@ class ToolsController {
                     roleController["endpoints"] = arrayOf<String>()
                     roleController["produces"] = ""
                     roleController["description"] = ""
-                    roleController["roles"] = arrayOf("public")
+                    roleController["authorizedRoles"] = arrayOf("public")
 
                     // Order is important! Highest to lowest roles
                     for (superEndpoint in superEndpoints) {
                         val matcher = superEndpoint.toRegex()
                         if (matcher.findAll(key.toString()).count() > 0 && currentUserObj.getAuthority()!! == "ROLE_SUPER") {
-                            roleController["roles"] = arrayOf("super")
+                            roleController["authorizedRoles"] = arrayOf("super")
                             break
                         }
                     }
@@ -372,18 +372,18 @@ class ToolsController {
                         if (matcher.findAll(key.toString()).count() > 0 &&
                             (currentUserObj.getAuthority()!! == "ROLE_SUPER" || currentUserObj.getAuthority()!! == "ROLE_ADMIN")
                         ) {
-                            roleController["roles"] = arrayOf("admin", "super")
+                            roleController["authorizedRoles"] = arrayOf("admin", "super")
                             break
                         }
                     }
 
-                    if ((roleController["roles"]!! as Array<String>).size > 0) {
+                    if ((roleController["authorizedRoles"]!! as Array<String>).size > 0) {
                         for (allRoleEndpoint in allRoleEndpoints) {
                             val matcher = allRoleEndpoint.toRegex()
                             if (matcher.findAll(key.toString()).count() > 0 &&
                                 (currentUserObj.getAuthority()!! == "ROLE_SUPER" || currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_USER")
                             ) {
-                                roleController["roles"] = arrayOf("super", "admin", "user")
+                                roleController["authorizedRoles"] = arrayOf("super", "admin", "user")
                                 break
                             }
                         }
