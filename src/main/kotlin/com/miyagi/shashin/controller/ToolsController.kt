@@ -18,6 +18,7 @@ import net.coobird.thumbnailator.Thumbnails
 import net.coobird.thumbnailator.geometry.Positions
 import org.apache.commons.text.StringEscapeUtils
 import org.jsoup.Jsoup
+import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.health.HealthComponent
@@ -36,6 +37,8 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.context.support.WebApplicationContextUtils
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 import org.springframework.web.socket.messaging.SessionConnectEvent
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import org.springframework.web.socket.messaging.SessionSubscribeEvent
@@ -303,33 +306,156 @@ class ToolsController {
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     @RequestMapping(value = ["/api/v1/endpoints"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    fun getApiEndpoints(model: Model): String {
-        val currentUserObj = model.getAttribute("currentUser") as User?
-        var response = mutableListOf<String>()
+    fun getApiEndpoints(model: Model, request: HttpServletRequest): String {
 
-        if (currentUserObj?.getAuthority() != null) {
-            if (currentUserObj.getAuthority() == "ROLE_SUPER") {
-                val allRoleEndpoints = MultiSecurityConfig.superList
-                allRoleEndpoints.forEachIndexed { i, _ ->
-                    if(allRoleEndpoints[i].startsWith("api/v1/")) {
-                        response.add(allRoleEndpoints[i])
-                    }
-                }
-            } else if (currentUserObj.getAuthority() == "ROLE_ADMIN") {
-                val allRoleEndpoints = MultiSecurityConfig.adminList
-                allRoleEndpoints.forEachIndexed { i, _ ->
-                    if(allRoleEndpoints[i].startsWith("api/v1/")) {
-                        response.add(allRoleEndpoints[i])
-                    }
-                }
-            } else {
-                val allRoleEndpoints = MultiSecurityConfig.allRoleList
-                allRoleEndpoints.forEachIndexed { i, _ ->
-                    if(allRoleEndpoints[i].startsWith("api/v1/")) {
-                        response.add(allRoleEndpoints[i])
-                    }
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        var response = listOf(mutableMapOf<String, Any>())
+
+        if (currentUserObj != null && currentUserObj.getAuthority() != null &&
+                (currentUserObj.getAuthority()!! == "ROLE_SUPER" || currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_USER")) {
+
+            val applicationContext =
+                WebApplicationContextUtils.getRequiredWebApplicationContext(request.session.servletContext)
+
+            val requestMappingHandlerMapping = applicationContext
+                .getBean("requestMappingHandlerMapping", RequestMappingHandlerMapping::class.java)
+            val map = requestMappingHandlerMapping.handlerMethods
+
+            val apiMapList = mutableListOf<MutableMap<String, Any>>()
+
+            // Based on WebSecurityConfig
+            val superEndpoints = MultiSecurityConfig.superList
+            superEndpoints.forEachIndexed { i, _ ->
+                if (superEndpoints[i].contains("**")) {
+                    superEndpoints[i] = superEndpoints[i].replace("**", "(.*)")
                 }
             }
+            val adminEndpoints = MultiSecurityConfig.adminList
+            adminEndpoints.forEachIndexed { i, _ ->
+                if (adminEndpoints[i].contains("**")) {
+                    adminEndpoints[i] = adminEndpoints[i].replace("**", "(.*)")
+                }
+            }
+            val allRoleEndpoints = MultiSecurityConfig.allRoleList
+            allRoleEndpoints.forEachIndexed { i, _ ->
+                if (allRoleEndpoints[i].contains("**")) {
+                    allRoleEndpoints[i] = allRoleEndpoints[i].replace("**", "(.*)")
+                }
+            }
+//        println(allRoleEndpoints.contentToString())
+
+            var roleController = mutableMapOf<String, Any>()
+
+            map.forEach { (key, value) ->
+//            println(key.toString())
+//            println(value.getMethodAnnotation(RouterOperation::class.java)?.operation?.description)
+                if (key.toString().contains("/api/v1/", ignoreCase = true) && !key.toString()
+                        .contains("/docs/", ignoreCase = true)
+                ) {
+                    roleController["requestType"] = ""
+                    roleController["endpoints"] = arrayOf<String>()
+                    roleController["produces"] = ""
+                    roleController["description"] = ""
+                    roleController["roles"] = arrayOf("public")
+
+                    // Order is important! Highest to lowest roles
+                    for (superEndpoint in superEndpoints) {
+                        val matcher = superEndpoint.toRegex()
+                        if (matcher.findAll(key.toString()).count() > 0 && currentUserObj.getAuthority()!! == "ROLE_SUPER") {
+                            roleController["roles"] = arrayOf("super")
+                            break
+                        }
+                    }
+
+                    for (adminEndpoint in adminEndpoints) {
+                        val matcher = adminEndpoint.toRegex()
+                        if (matcher.findAll(key.toString()).count() > 0 &&
+                            (currentUserObj.getAuthority()!! == "ROLE_SUPER" || currentUserObj.getAuthority()!! == "ROLE_ADMIN")
+                        ) {
+                            roleController["roles"] = arrayOf("admin", "super")
+                            break
+                        }
+                    }
+
+                    if ((roleController["roles"]!! as Array<String>).size > 0) {
+                        for (allRoleEndpoint in allRoleEndpoints) {
+                            val matcher = allRoleEndpoint.toRegex()
+                            if (matcher.findAll(key.toString()).count() > 0 &&
+                                (currentUserObj.getAuthority()!! == "ROLE_SUPER" || currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_USER")
+                            ) {
+                                roleController["roles"] = arrayOf("super", "admin", "user")
+                                break
+                            }
+                        }
+                    }
+
+                    val apiRegex = "\\/api\\/v1\\/.*\\]".toRegex()
+
+                    val endpointArray = key.toString().split(",")
+                    if (endpointArray.size > 0) {
+                        for (endpointParts in endpointArray) {
+
+                            // Request Type and API calls
+                            if (endpointParts.contains("GET") ||
+                                endpointParts.contains("DELETE") ||
+                                endpointParts.contains("POST") ||
+                                endpointParts.contains("PUT") ||
+                                endpointParts.contains("PATCH") ||
+                                endpointParts.contains("HEAD"))
+                            {
+                                val requestTypeArray = endpointParts.drop(1).trim().split(" ")
+                                val requestType = requestTypeArray[0]
+                                roleController["requestType"] = requestType
+
+                                val apiMatchResult = apiRegex.find(endpointParts)
+                                val apiCall = apiMatchResult?.value?.dropLast(1)
+                                val apiCalls = apiCall.toString().split("||")
+                                val pathArray = mutableListOf<String>()
+
+                                for (path in apiCalls) {
+                                    if (path.trim().startsWith("/api/v1/")) {
+                                        pathArray.add(path.trim())
+                                    }
+                                }
+
+                                if (pathArray.size > 0) {
+                                    roleController["endpoints"] = pathArray
+                                }
+                            }
+
+                            // Consumes
+                            if (endpointParts.contains("consumes")) {
+                                val consumesStr = endpointParts.drop(11).dropLast(1)
+                                var consumesArray = consumesStr.split("||")
+                                consumesArray = consumesArray.map{it.trim()}
+
+                                roleController["consumes"] = consumesArray
+                            }
+
+                            // Produces
+                            if (endpointParts.contains("produces")) {
+                                val producesStr = endpointParts.drop(11).dropLast(2)
+                                var producesArray = producesStr.split("||")
+                                producesArray = producesArray.map{it.trim()}
+
+                                roleController["produces"] = producesArray
+                            }
+                        }
+
+                        // Description
+                        if (value.getMethodAnnotation(RouterOperation::class.java)?.operation?.description != null) {
+                            roleController["description"] =
+                                value.getMethodAnnotation(RouterOperation::class.java)?.operation?.description.toString()
+                        }
+                    }
+
+                    apiMapList.add(roleController)
+
+                    roleController = mutableMapOf()
+                }
+            }
+
+            response = apiMapList.sortedBy { it["order"].toString() }
         }
 
         return mapper.writeValueAsString(response)
