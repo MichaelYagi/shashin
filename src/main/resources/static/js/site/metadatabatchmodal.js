@@ -238,6 +238,12 @@ async function saveBatchMetadata(e) {
                 }
 
                 $("#metadataBatchModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+                $("#saveBatchMetadata").prop('disabled', true);
+                $('#metadataBatchModalStatus').fadeOut(5000, function () {
+                    $(this).removeClass('bi-check-circle').removeClass('spinner-grow');
+                    $(this).css("display", "block");
+                    $("#saveBatchMetadata").prop('disabled', false);
+                });
                 $("#metadataBatchModalCancel").prop("disabled", false);
 
                 if (activePage !== "timeline") {
