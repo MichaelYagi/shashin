@@ -412,7 +412,6 @@ async function saveMetadata(e) {
 
                 $("#metadataModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                 $("#metadataModalCancel").prop('disabled', false);
-                $("#metadataModalCancel").text("Close");
             } else {
                 $("#metadataModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                 $("#metadataModalStatus").attr("title", shashin.modalStatusFailMessage());
