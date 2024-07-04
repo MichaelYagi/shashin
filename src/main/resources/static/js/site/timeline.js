@@ -64,7 +64,7 @@
         Util.setMetadataLocalStorage();
 
         if (Util.isMobile() === false) {
-            $("#infinite-scroll-gallery").attr('style', 'width: 97%');
+            $("#infinite-scroll-gallery").attr('style', 'max-width: 1440px'); //'width: 97%'
         }
 
         shashin.setLightGalleryElement('infinite-scroll-gallery');
