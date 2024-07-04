@@ -411,8 +411,13 @@ async function saveMetadata(e) {
                 }
 
                 $("#metadataModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+                $("#saveMetadata").prop('disabled', true);
+                $('#metadataModalStatus').fadeOut(5000, function () {
+                    $(this).removeClass('bi-check-circle').removeClass('spinner-grow');
+                    $(this).css("display", "block");
+                    $("#saveMetadata").prop('disabled', false);
+                });
                 $("#metadataModalCancel").prop('disabled', false);
-                $("#metadataModalCancel").text("Close");
             } else {
                 $("#metadataModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                 $("#metadataModalStatus").attr("title", shashin.modalStatusFailMessage());
