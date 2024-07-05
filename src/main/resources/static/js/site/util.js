@@ -889,6 +889,35 @@ class Util {
         shashin.printMessageToConsole(placeJson);
 
         let contextText = "";
+        let settlement = "";
+
+        if (placeJson.hasOwnProperty("address") === true &&
+            placeJson["address"].hasOwnProperty("village") === true &&
+            placeJson["address"]["village"] !== "")
+        {
+            settlement = placeJson["address"]["village"];
+        } else if (placeJson.hasOwnProperty("address") === true &&
+            placeJson["address"].hasOwnProperty("town") === true &&
+            placeJson["address"]["town"] !== "")
+        {
+            settlement = placeJson["address"]["town"];
+        } else if (placeJson.hasOwnProperty("address") === true &&
+            placeJson["address"].hasOwnProperty("city") === true &&
+            placeJson["address"]["city"] !== "")
+        {
+            settlement = placeJson["address"]["city"];
+        } else if (placeJson.hasOwnProperty("address") === true &&
+            placeJson["address"].hasOwnProperty("county") === true &&
+            placeJson["address"]["county"] !== "")
+        {
+            settlement = placeJson["address"]["county"];
+        } else if (placeJson.hasOwnProperty("address") === true &&
+            placeJson["address"].hasOwnProperty("region") === true &&
+            placeJson["address"]["region"] !== "")
+        {
+            settlement = placeJson["address"]["region"];
+        }
+
         if (placeJson.hasOwnProperty("name") === true && placeJson["name"] !== "")
         {
             contextText = placeJson["name"];
@@ -903,6 +932,14 @@ class Util {
             placeJson["address"]["neighbourhood"] !== "")
         {
             contextText = placeJson["address"]["neighbourhood"];
+        }
+
+        if (settlement.length > 0) {
+            if (contextText.length > 0) {
+                contextText += ", " + settlement;
+            } else {
+                contextText += settlement;
+            }
         }
 
         if (contextText.length > 0) {

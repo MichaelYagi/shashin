@@ -358,6 +358,10 @@ class TextUtils {
                             buildPlace += addressObj.get("address").get("town").textValue() + ", "
                         } else if (addressObj.get("address").has("city") && addressObj.get("address").get("city") != null && addressObj.get("address").get("city").textValue() != "") {
                             buildPlace += addressObj.get("address").get("city").textValue() + ", "
+                        } else if (addressObj.get("address").has("county") && addressObj.get("address").get("county") != null && addressObj.get("address").get("county").textValue() != "") {
+                            buildPlace += addressObj.get("address").get("county").textValue() + ", "
+                        } else if (addressObj.get("address").has("region") && addressObj.get("address").get("region") != null && addressObj.get("address").get("region").textValue() != "") {
+                            buildPlace += addressObj.get("address").get("region").textValue() + ", "
                         }
 
                         if (addressObj.get("address").has("province") && addressObj.get("address").get("province") != null && addressObj.get("address").get("province").textValue() != "") {
