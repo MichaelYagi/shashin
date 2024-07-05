@@ -13,11 +13,9 @@ import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.*
 import java.io.File
+import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.imageio.ImageIO
@@ -274,35 +272,41 @@ class TestController {
 
     @Secured("ROLE_SUPER")
     @GetMapping("/fixplacenames")
-    fun fixNPlaceNames(response: HttpServletResponse): String {
-        Thread {
-            val mids = metadataRepository.findAll()
-            val metadataRecordsList = mutableListOf<Metadata>()
+    fun fixNPlaceNames(response: HttpServletResponse, @RequestParam proceed: Optional<Boolean>): String {
+        val proceedRescan = proceed.orElse(false)
 
-            var index = 0;
-            for (metadata in mids) {
-                if (metadata?.getLat() != null && metadata.getLat() != null) {
-                    println(metadata.toString())
-                    val coordinateMap =
-                        TextUtils.processCoordinates(geocodeUrl!!, metadata.getLat() + "," + metadata.getLng())
-                    if (coordinateMap["place"] != null) {
-                        println("iteration ${index + 1} out of ${mids.count()}")
-                        index++
-                        println("metadata ID: ${metadata.getId()}")
-                        println("location: ${coordinateMap["place"]}")
+        if (proceedRescan) {
+            Thread {
+                val mids = metadataRepository.findAll()
+                val metadataRecordsList = mutableListOf<Metadata>()
 
-                        println("------------")
-                        metadata.setPlaceName(coordinateMap["place"])
-                        metadataRecordsList.add(metadata)
+                var index = 0;
+                for (metadata in mids) {
+                    if (metadata?.getLat() != null && metadata.getLat() != null) {
+                        println(metadata.toString())
+                        val coordinateMap =
+                            TextUtils.processCoordinates(geocodeUrl!!, metadata.getLat() + "," + metadata.getLng())
+                        if (coordinateMap["place"] != null) {
+                            println("iteration ${index + 1} out of ${mids.count()}")
+                            index++
+                            println("metadata ID: ${metadata.getId()}")
+                            println("location: ${coordinateMap["place"]}")
+
+                            println("------------")
+                            metadata.setPlaceName(coordinateMap["place"])
+                            metadataRecordsList.add(metadata)
+                        }
                     }
                 }
-            }
 
-            if (metadataRecordsList.size > 0) {
-                metadataRepository.saveAll(metadataRecordsList)
-            }
-            println("# of records with rescanned location data: $index")
-        }.start()
+                if (metadataRecordsList.size > 0) {
+                    metadataRepository.saveAll(metadataRecordsList)
+                }
+                println("# of records with rescanned location data: $index")
+            }.start()
+        } else {
+            println("Proceed flag is false")
+        }
 
         return "test"
     }
