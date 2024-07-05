@@ -271,8 +271,62 @@ class TestController {
     }
 
     @Secured("ROLE_SUPER")
-    @GetMapping("/fixplacenames")
-    fun fixNPlaceNames(response: HttpServletResponse, @RequestParam proceed: Optional<Boolean>): String {
+    @GetMapping("/rescansearchedplacenames")
+    fun rescanSearchedPlaceNames(response: HttpServletResponse, @RequestParam query: Optional<String>): String {
+        val search = query.orElse("")
+
+        if (search.isNotEmpty() && search.isNotBlank()) {
+            Thread {
+                val mids = testRepository.findByPlaceName(query.get())
+                val metadataRecordsList = mutableListOf<Metadata>()
+
+                println("query: ${query.get()}")
+
+                var index = 0
+                val x = 100
+                if (mids != null) {
+                    for (metadata in mids) {
+                        if (metadata.getLat() != null && metadata.getLat() != null) {
+                            println(metadata.toString())
+                            val coordinateMap =
+                                TextUtils.processCoordinates(geocodeUrl!!, metadata.getLat() + "," + metadata.getLng())
+                            if (coordinateMap["place"] != null) {
+                                println("iteration ${index + 1} out of ${mids.count()}")
+                                index++
+                                println("metadata ID: ${metadata.getId()}")
+                                println("location: ${coordinateMap["place"]}")
+
+                                metadata.setPlaceName(coordinateMap["place"])
+                                metadataRecordsList.add(metadata)
+
+                                // Save every 100 records
+                                if (metadataRecordsList.size % x == 0) {
+                                    println("Batch saving $x records")
+                                    metadataRepository.saveAll(metadataRecordsList)
+                                    metadataRecordsList.clear()
+                                }
+
+                                println("------------")
+                            }
+                        }
+                    }
+                }
+
+                if (metadataRecordsList.size > 0) {
+                    metadataRepository.saveAll(metadataRecordsList)
+                }
+                println("# of records with rescanned location data: $index")
+            }.start()
+        } else {
+            println("Proceed flag is false")
+        }
+
+        return "test"
+    }
+
+    @Secured("ROLE_SUPER")
+    @GetMapping("/rescanplacenames")
+    fun rescanAllPlaceNames(response: HttpServletResponse, @RequestParam proceed: Optional<Boolean>): String {
         val proceedRescan = proceed.orElse(false)
 
         if (proceedRescan) {

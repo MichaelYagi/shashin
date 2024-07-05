@@ -13,4 +13,7 @@ import javax.transaction.Transactional
 interface TestRepository : CrudRepository<Metadata?, String?> {
     @Query("SELECT id FROM metadata WHERE lat IS NOT NULL AND place_name IS NULL", nativeQuery = true)
     fun findLocationsWithNullPlace(): MutableList<String>?
+
+    @Query("SELECT * FROM metadata WHERE place_name = :placeName", nativeQuery = true)
+    fun findByPlaceName(@Param("placeName") term: String): MutableList<Metadata>?
 }
