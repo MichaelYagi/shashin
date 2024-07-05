@@ -889,14 +889,18 @@ class Util {
         shashin.printMessageToConsole(placeJson);
 
         let contextText = "";
-        if (placeJson["name"] !== undefined && placeJson["name"] !== "")
+        if (placeJson.hasOwnProperty("name") === true && placeJson["name"] !== "")
         {
             contextText = placeJson["name"];
-        } else if (placeJson["address"]["house_number"] !== undefined && placeJson["address"]["road"] !== undefined &&
+        } else if (placeJson.hasOwnProperty("address") === true &&
+            placeJson["address"].hasOwnProperty("house_number") === true &&
+            placeJson["address"].hasOwnProperty("road") === true &&
             placeJson["address"]["house_number"] !== "" && placeJson["address"]["road"] !== "")
         {
             contextText = placeJson["address"]["house_number"] + " " + placeJson["address"]["road"];
-        } else if (placeJson["address"]["neighbourhood"] !== undefined && placeJson["address"]["neighbourhood"] !== "")
+        } else if (placeJson.hasOwnProperty("address") === true &&
+            placeJson["address"].hasOwnProperty("neighbourhood") === true &&
+            placeJson["address"]["neighbourhood"] !== "")
         {
             contextText = placeJson["address"]["neighbourhood"];
         }
