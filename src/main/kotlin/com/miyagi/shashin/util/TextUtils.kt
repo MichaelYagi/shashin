@@ -337,11 +337,18 @@ class TextUtils {
                     }
 
                     if (addressObj.has("address")) {
+                        var addressFound = false
                         if (addressObj.get("address").has("house_number") && addressObj.get("address").get("house_number") != null && addressObj.get("address").get("house_number").textValue() != "") {
                             buildPlace += addressObj.get("address").get("house_number").textValue() + " "
+                            addressFound = true
                         }
                         if (addressObj.get("address").has("road") && addressObj.get("address").get("road") != null && addressObj.get("address").get("road").textValue() != "") {
                             buildPlace += addressObj.get("address").get("road").textValue() + ", "
+                            addressFound = true
+                        }
+
+                        if (!addressFound && addressObj.get("address").has("neighbourhood") && addressObj.get("address").get("neighbourhood") != null && addressObj.get("address").get("neighbourhood").textValue() != "") {
+                            buildPlace += addressObj.get("address").get("neighbourhood").textValue() + ", "
                         }
 
                         if (addressObj.get("address").has("suburb") && addressObj.get("address").get("suburb") != null && addressObj.get("address").get("suburb").textValue() != "") {
