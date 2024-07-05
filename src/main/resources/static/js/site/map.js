@@ -982,14 +982,6 @@ async function showMap(mapdata, keywordMap) {
     });
 
     function showContextMenu(evt, coordArray, data) {
-        let placeJson = {};
-        if (data.hasOwnProperty("msg") && data.hasOwnProperty("status") && data.hasOwnProperty("placedata") && data["status"] === shashin.apiResponse.SUCCESS) {
-            placeJson = JSON.parse(data["placedata"]);
-        }
-
-        // shashin.printMessageToConsole("Placedata:");
-        // shashin.printMessageToConsole(placeJson);
-
         map.getLayers().forEach(layer => {
             if (layer && layer.getProperties().hasOwnProperty("name") &&
                 (layer.getProperties()["name"] === "tempQpCoordinates" ||
@@ -1006,19 +998,10 @@ async function showMap(mapdata, keywordMap) {
         contextmenu.updatePosition([evt.pixel[0], evt.pixel[1] + 12]);
         const contextValueArray = [];
 
-        if (placeJson.hasOwnProperty("name") && placeJson["name"] !== null && placeJson["name"] !== "") {
-            const contextItem = {
-                text: "<strong>" + placeJson["name"] + "</strong>",
-                // classname: "ol-ctx-menu-separator" // Make unselectable text
-                classname: "context-text-wrap",
-                callback: copyPlacename
-            }
-            contextItem.data = { placename: placeJson["name"] };
-
-            contextValueArray.push(
-                contextItem,
-                "-"
-            );
+        const contextItem = Util.getMapContextHeading(data, copyPlacename);
+        if ($.isEmptyObject(contextItem) === false) {
+            contextValueArray.push(contextItem);
+            contextValueArray.push("-");
         }
 
         contextValueArray.push({
