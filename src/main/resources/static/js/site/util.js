@@ -877,6 +877,50 @@ class Util {
         });
     }
 
+    static getMapContextHeading(data, callback) {
+        let contextItem = {};
+        let placeJson = {};
+
+        if (data.hasOwnProperty("msg") && data.hasOwnProperty("status") && data.hasOwnProperty("placedata") && data["status"] === shashin.apiResponse.SUCCESS) {
+            placeJson = JSON.parse(data["placedata"]);
+        }
+
+        shashin.printMessageToConsole("Placedata:");
+        shashin.printMessageToConsole(placeJson);
+
+        if ((placeJson.hasOwnProperty("name") && placeJson["name"] !== null && placeJson["name"] !== "") ||
+            (placeJson.hasOwnProperty("address") &&
+                placeJson["address"].hasOwnProperty("road") &&
+                placeJson["address"].hasOwnProperty("house_number") &&
+                placeJson["address"] !== null &&
+                placeJson["address"]["house_number"] !== null && placeJson["address"]["house_number"] !== "" &&
+                placeJson["address"]["road"] !== null && placeJson["address"]["road"] !== "") ||
+            (placeJson.hasOwnProperty("address") &&
+                placeJson["address"].hasOwnProperty("neighbourhood") &&
+                placeJson["address"] !== null &&
+                placeJson["address"]["neighbourhood"] !== null && placeJson["address"]["neighbourhood"] !== ""))
+        {
+            let contextText = "";
+            if (placeJson.hasOwnProperty("name") && placeJson["name"] !== null && placeJson["name"] !== "") {
+                contextText = placeJson["name"];
+            } else if (placeJson["address"]["house_number"] !== undefined && placeJson["address"]["road"] !== undefined) {
+                contextText = placeJson["address"]["house_number"] + " " + placeJson["address"]["road"];
+            } else {
+                contextText = placeJson["address"]["neighbourhood"];
+            }
+
+            contextItem = {
+                text: "<strong>" + contextText + "</strong>",
+                // classname: "ol-ctx-menu-separator" // Make unselectable text
+                classname: "context-text-wrap",
+                callback: callback
+            }
+            contextItem.data = { placename: contextText };
+        }
+
+        return contextItem;
+    }
+
     static darkModeToggle(darkmodeEnabled) {
         if (darkmodeEnabled === true) {
             $("LINK[href='/css/bootstrap.min.css']").attr("href", "/css/bootstrap-night.min.css");
