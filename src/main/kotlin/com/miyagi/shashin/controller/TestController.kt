@@ -280,7 +280,8 @@ class TestController {
                 val mids = metadataRepository.findAll()
                 val metadataRecordsList = mutableListOf<Metadata>()
 
-                var index = 0;
+                var index = 0
+                val x = 100
                 for (metadata in mids) {
                     if (metadata?.getLat() != null && metadata.getLat() != null) {
                         println(metadata.toString())
@@ -292,15 +293,17 @@ class TestController {
                             println("metadata ID: ${metadata.getId()}")
                             println("location: ${coordinateMap["place"]}")
 
-                            println("------------")
                             metadata.setPlaceName(coordinateMap["place"])
                             metadataRecordsList.add(metadata)
 
                             // Save every 100 records
-                            if (metadataRecordsList.size % 100 == 0) {
+                            if (metadataRecordsList.size % x == 0) {
+                                println("Batch saving $x records")
                                 metadataRepository.saveAll(metadataRecordsList)
                                 metadataRecordsList.clear()
                             }
+
+                            println("------------")
                         }
                     }
                 }
