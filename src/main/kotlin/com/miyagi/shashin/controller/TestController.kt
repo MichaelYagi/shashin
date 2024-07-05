@@ -295,6 +295,12 @@ class TestController {
                             println("------------")
                             metadata.setPlaceName(coordinateMap["place"])
                             metadataRecordsList.add(metadata)
+
+                            // Save every 100 records
+                            if (metadataRecordsList.size % 100 == 0) {
+                                metadataRepository.saveAll(metadataRecordsList)
+                                metadataRecordsList.clear()
+                            }
                         }
                     }
                 }
