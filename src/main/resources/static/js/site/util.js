@@ -921,17 +921,30 @@ class Util {
         if (placeJson.hasOwnProperty("name") === true && placeJson["name"] !== "")
         {
             contextText = placeJson["name"];
-        } else if (placeJson.hasOwnProperty("address") === true &&
-            placeJson["address"].hasOwnProperty("house_number") === true &&
-            placeJson["address"].hasOwnProperty("road") === true &&
-            placeJson["address"]["house_number"] !== "" && placeJson["address"]["road"] !== "")
-        {
-            contextText = placeJson["address"]["house_number"] + " " + placeJson["address"]["road"];
-        } else if (placeJson.hasOwnProperty("address") === true &&
-            placeJson["address"].hasOwnProperty("neighbourhood") === true &&
-            placeJson["address"]["neighbourhood"] !== "")
-        {
-            contextText = placeJson["address"]["neighbourhood"];
+        } else {
+            let addressFound = false
+            if (placeJson.hasOwnProperty("address") === true &&
+                placeJson["address"].hasOwnProperty("house_number") === true &&
+                placeJson["address"]["house_number"] !== "")
+            {
+                contextText = placeJson["address"]["house_number"];
+                addressFound = true
+            }
+
+            if (placeJson.hasOwnProperty("address") === true &&
+                placeJson["address"].hasOwnProperty("road") === true &&
+                placeJson["address"]["road"] !== "")
+            {
+                contextText += " " + placeJson["address"]["road"];
+                addressFound = true
+            }
+
+            if (addressFound === false && placeJson.hasOwnProperty("address") === true &&
+                placeJson["address"].hasOwnProperty("neighbourhood") === true &&
+                placeJson["address"]["neighbourhood"] !== "")
+            {
+                contextText = placeJson["address"]["neighbourhood"];
+            }
         }
 
         if (settlement.length > 0) {
