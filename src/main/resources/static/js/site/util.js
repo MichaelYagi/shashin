@@ -888,34 +888,27 @@ class Util {
         shashin.printMessageToConsole("Placedata:");
         shashin.printMessageToConsole(placeJson);
 
-        if ((placeJson.hasOwnProperty("name") && placeJson["name"] !== null && placeJson["name"] !== "") ||
-            (placeJson.hasOwnProperty("address") &&
-                placeJson["address"].hasOwnProperty("road") &&
-                placeJson["address"].hasOwnProperty("house_number") &&
-                placeJson["address"] !== null &&
-                placeJson["address"]["house_number"] !== null && placeJson["address"]["house_number"] !== "" &&
-                placeJson["address"]["road"] !== null && placeJson["address"]["road"] !== "") ||
-            (placeJson.hasOwnProperty("address") &&
-                placeJson["address"].hasOwnProperty("neighbourhood") &&
-                placeJson["address"] !== null &&
-                placeJson["address"]["neighbourhood"] !== null && placeJson["address"]["neighbourhood"] !== ""))
+        let contextText = "";
+        if (placeJson["name"] !== undefined && placeJson["name"] !== "")
         {
-            let contextText = "";
-            if (placeJson.hasOwnProperty("name") && placeJson["name"] !== null && placeJson["name"] !== "") {
-                contextText = placeJson["name"];
-            } else if (placeJson["address"]["house_number"] !== undefined && placeJson["address"]["road"] !== undefined) {
-                contextText = placeJson["address"]["house_number"] + " " + placeJson["address"]["road"];
-            } else {
-                contextText = placeJson["address"]["neighbourhood"];
-            }
+            contextText = placeJson["name"];
+        } else if (placeJson["address"]["house_number"] !== undefined && placeJson["address"]["road"] !== undefined &&
+            placeJson["address"]["house_number"] !== "" && placeJson["address"]["road"] !== "")
+        {
+            contextText = placeJson["address"]["house_number"] + " " + placeJson["address"]["road"];
+        } else if (placeJson["address"]["neighbourhood"] !== undefined && placeJson["address"]["neighbourhood"] !== "")
+        {
+            contextText = placeJson["address"]["neighbourhood"];
+        }
 
+        if (contextText.length > 0) {
             contextItem = {
                 text: "<strong>" + contextText + "</strong>",
                 // classname: "ol-ctx-menu-separator" // Make unselectable text
                 classname: "context-text-wrap",
                 callback: callback
             }
-            contextItem.data = { placename: contextText };
+            contextItem.data = {placename: contextText};
         }
 
         return contextItem;
