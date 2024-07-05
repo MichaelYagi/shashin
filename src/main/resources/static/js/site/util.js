@@ -935,10 +935,10 @@ class Util {
         }
 
         if (settlement.length > 0) {
-            if (contextText.length > 0) {
+            if (contextText.length > 0 && contextText !== settlement) {
                 contextText += ", " + settlement;
-            } else {
-                contextText += settlement;
+            } else if (contextText.length === 0 || (contextText.length > 0 && contextText === settlement)) {
+                contextText = settlement;
             }
         }
 
