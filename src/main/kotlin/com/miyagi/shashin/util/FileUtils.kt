@@ -83,6 +83,26 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
             }
         }
 
+        fun createThreadFile(threadName: String?): File? {
+            if (!threadName.isNullOrBlank()) {
+                //Create file with thread name and write file name iterated
+                val tempDir = System.getProperty("java.io.tmpdir")
+                val threadFile = createFile(
+                    tempDir,
+                    tempDir + "/" + Thread.currentThread().name + "." + threadName,
+                    "Thread"
+                )
+                if (threadFile != null && threadFile.exists()) {
+                    return threadFile
+                }
+                logger.log(Level.INFO, "$threadName could not be created")
+            } else {
+                logger.log(Level.INFO, "threadName not specified")
+            }
+
+            return null
+        }
+
         fun threadIsAlive(threadName: String): Boolean {
             for (t in Thread.getAllStackTraces().keys) {
                 if (t.name == threadName) {

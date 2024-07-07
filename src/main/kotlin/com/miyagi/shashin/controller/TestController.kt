@@ -1,7 +1,11 @@
 package com.miyagi.shashin.controller
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.component.Message
+import com.miyagi.shashin.component.ScaperMessage
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.ImageProcessing
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -9,11 +13,18 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.*
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.messaging.handler.annotation.MessageMapping
+import org.springframework.messaging.handler.annotation.SendTo
+import org.springframework.messaging.simp.annotation.SubscribeMapping
 import org.springframework.security.access.annotation.Secured
+import org.springframework.session.web.socket.events.SessionConnectEvent
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.socket.messaging.SessionDisconnectEvent
+import org.springframework.web.socket.messaging.SessionSubscribeEvent
+import org.springframework.context.event.EventListener
 import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -21,6 +32,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import javax.imageio.ImageIO
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+import javax.servlet.http.HttpSession
 
 
 @Controller
@@ -66,82 +78,63 @@ class TestController {
     @Value("\${app.sidecar.path}")
     private val relativeSidecarDir: String? = null
 
+    private var currentIndex = 0
+    private var totalIndex = 0
+    private var activeLink = ""
+    val mapper = ObjectMapper()
+
+    @MessageMapping("/fixscriptmessage")
+    @SendTo("/topic/fixscriptmessages")
+    @Throws(java.lang.Exception::class)
+    fun sendScanMessage(message: ScaperMessage): Message? {
+        //println("message:${message.getMessage()}")
+        val returnMap = mutableMapOf<String,Any>()
+
+        returnMap["currentIndex"] = currentIndex
+        returnMap["totalIndex"] = totalIndex
+        returnMap["activeLink"] = activeLink
+
+        val msg: String = mapper.writeValueAsString(returnMap)
+//        println(msg)
+
+        val messageObj = Message()
+        messageObj.setContent(msg)
+
+        return messageObj
+    }
+
+    @SubscribeMapping("/topic/fixscriptmessages")
+    fun subscribe(
+        session: HttpSession,
+        @PathVariable pipelineId: String,
+        @PathVariable topic: String
+    ) {}
+
+    @EventListener
+    fun onApplicationEvent(event: SessionConnectEvent) {}
+
+    @EventListener
+    fun onApplicationEvent(event: SessionDisconnectEvent) {}
+
+    @EventListener
+    fun handleSubscribeEvent(event: SessionSubscribeEvent) {}
+
     @Secured("ROLE_SUPER")
     @GetMapping("/test")
     fun test(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
         model["somevalue"] = "This is a test"
 
-        return "test"
-    }
-
-    @Secured("ROLE_SUPER")
-    @RequestMapping(value = ["/creategif"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
-    @ResponseBody
-    fun createGif(response: HttpServletResponse?): String? {
-        Thread {
-            // Retroactively create gif
-            val metadataList = metadataRepository.findAllByMediaType("video")
-
-            if (metadataList != null) {
-                var numProcessed = 0
-                val metadataCount = metadataList.count()
-                for ((index, metadata) in metadataList.withIndex()) {
-                    println("iteration ${index+1} out of $metadataCount")
-                    if (metadata.getThumbnailPathSmall() !== null) {
-                        val jpgVersion = metadata.getThumbnailPathSmall()
-                        val gifVersion = jpgVersion?.replace("_225.jpg", "_225.gif")
-                        println("processing $gifVersion")
-
-                        val gifFile = File(gifVersion!!)
-                        if (!gifFile.exists()) {
-                            println("gif doesn't exist")
-
-                            ImageProcessing.createVideoGif(metadata.getId(), metadataRepository)
-                            numProcessed++
-                            println("processed $gifVersion")
-                        } else {
-                            println("already exists $gifVersion")
-                        }
-
-                        println("-------------")
-                    }
-                }
-                println("Number gifs processed: $numProcessed")
-            }
-        }.start()
+        println("repairscripts thread exists: "+FileUtils.checkThreadFileAlive("repairscripts"))
+//        FileUtils.deleteThreadFiles("repairscripts")
 
         return "test"
     }
 
     @Secured("ROLE_SUPER")
-    @RequestMapping(value = ["/createxsmall"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
+    @RequestMapping(value = ["/deletethread"], method = [RequestMethod.GET], consumes = ["application/json"])
     @ResponseBody
-    fun createXSImages(response: HttpServletResponse?): String? {
-        Thread {
-            // Retroactively create xsmall images
-            val allMetadataList = metadataRepository.findAll()
-
-            val metadataCount = allMetadataList.count()
-            var numProcessed = 0
-            val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
-            val sidecarDir = rootPath + relativeSidecarDir
-
-            for ((index, metadata) in allMetadataList.withIndex()) {
-                println("iteration ${index + 1} out of $metadataCount")
-                if (metadata != null) {
-                    if (metadata.getThumbnailPathExtraSmall() == null || !File(metadata.getThumbnailPathExtraSmall()!!).exists()) {
-                        val imageProcessing = ImageProcessing("v1", File(metadata.getPath()!!), sidecarDir, metadata)
-                        val metadataObj = imageProcessing.createThumbnails()
-                        if (metadataObj != null) {
-                            metadataRepository.save(metadataObj)
-                            println("processed thumbnail ${metadataObj.getThumbnailPathExtraSmall()}")
-                            numProcessed++
-                        }
-                    }
-                }
-            }
-            println("Number xs thumbnails processed: $numProcessed")
-        }.start()
+    fun deleteThread(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
+        FileUtils.deleteThreadFiles("repairscripts")
 
         return "test"
     }
@@ -184,115 +177,321 @@ class TestController {
     }
 
     @Secured("ROLE_SUPER")
-    @GetMapping("/fixtakendates")
-    fun reconcileTakenDates(response: HttpServletResponse): String {
-        Thread {
-            val metadataRecords = metadataRepository.findAll()
-            val metadataRecordsList = mutableListOf<Metadata>()
+    @RequestMapping(value = ["/creategif"], method = [RequestMethod.GET], consumes = ["application/json"])
+    @ResponseBody
+    fun createGif(response: HttpServletResponse?): String? {
+        if (activeLink.isBlank()) {
+            activeLink = "creategif"
+        }
 
-            var index = 0;
-            for (metadata in metadataRecords) {
-                if (metadata != null) {
-                    val adjustedTakenDateProp = metadata.getTakenAt()
-                    val adjustedTakenDateArray = adjustedTakenDateProp?.split(" ")?.toTypedArray()
-                    if (adjustedTakenDateArray != null && adjustedTakenDateArray.size == 2) {
-                        val adjustedTakenTime = adjustedTakenDateArray[1]
+        println("repairscripts thread exists: "+FileUtils.checkThreadFileAlive("repairscripts"))
 
-                        val takenDateYear = metadata.getYear()
-                        val takenDateMonth = metadata.getMonth()
-                        val takenDateDay = metadata.getDay()
-                        val month = if (takenDateMonth!!.toInt() > 9) takenDateMonth else "0$takenDateMonth"
-                        val day = if (takenDateDay!!.toInt() > 9) takenDateDay else "0$takenDateDay"
-
-                        val fullDate = takenDateYear.toString() + "-" + month + "-" + day + " " + adjustedTakenTime
-
-                        if (fullDate != adjustedTakenDateProp) {
-                            println("iteration ${index + 1} out of ${metadataRecords.count()}")
-                            index++
-                            println("TakenDates don't match, fixing...")
-                            println("metadata ID: ${metadata.getId()}")
-                            println("originalTaken: $fullDate")
-                            println("adjustedTaken: $adjustedTakenDateProp")
-                            println("------------")
-                            metadata.setTakenAt(fullDate)
-                            metadataRecordsList.add(metadata)
-                        }
-                    }
-                }
-            }
-
-            if (metadataRecordsList.size > 0) {
-                metadataRepository.saveAll(metadataRecordsList)
-            }
-            println("# of records not matching: $index")
-        }.start()
-
-        return "test"
-    }
-
-    @Secured("ROLE_SUPER")
-    @GetMapping("/fixnullplacenames")
-    fun fixNullPlaceNames(response: HttpServletResponse): String {
-        Thread {
-            val mids = testRepository.findLocationsWithNullPlace()
-            val metadataRecordsList = mutableListOf<Metadata>()
-
-            var index = 0;
-            if (mids != null) {
-                for (metadataId in mids) {
-                    val metadata = metadataRepository.findByMetadataId(metadataId)
-
-                    if (metadata?.getLat() != null && metadata.getLat() != null && metadata.getPlaceName() == null) {
-                        println(metadata.toString())
-                        val coordinateMap =
-                            TextUtils.processCoordinates(geocodeUrl!!, metadata.getLat() + "," + metadata.getLng())
-                        if (coordinateMap["place"] != null) {
-                            println("iteration ${index + 1} out of ${mids.count()}")
-                            index++
-                            println("Location not found, fixing...")
-                            println("metadata ID: ${metadata.getId()}")
-                            println("location: ${coordinateMap["place"]}")
-
-                            println("------------")
-                            metadata.setPlaceName(coordinateMap["place"])
-                            metadataRecordsList.add(metadata)
-                        }
-                    }
-                }
-            }
-
-            if (metadataRecordsList.size > 0) {
-                metadataRepository.saveAll(metadataRecordsList)
-            }
-            println("# of records missing location data: $index")
-        }.start()
-
-        return "test"
-    }
-
-    @Secured("ROLE_SUPER")
-    @GetMapping("/rescansearchedplacenames")
-    fun rescanSearchedPlaceNames(response: HttpServletResponse, @RequestParam query: Optional<String>): String {
-        val search = query.orElse("")
-
-        if (search.isNotEmpty() && search.isNotBlank()) {
+        if (!FileUtils.checkThreadFileAlive("repairscripts") && FileUtils.createThreadFile("repairscripts") != null) {
             Thread {
-                val mids = testRepository.findByPlaceName(query.get())
+                // Retroactively create gif
+                val metadataList = metadataRepository.findAllByMediaType("video")
+
+                if (metadataList != null) {
+                    var localIndex = 0
+                    currentIndex = 0
+                    totalIndex = metadataList.count()
+                    for ((index, metadata) in metadataList.withIndex()) {
+                        println("iteration ${index + 1} out of $totalIndex")
+                        if (metadata.getThumbnailPathSmall() !== null) {
+                            val jpgVersion = metadata.getThumbnailPathSmall()
+                            val gifVersion = jpgVersion?.replace("_225.jpg", "_225.gif")
+                            println("processing $gifVersion")
+
+                            val gifFile = File(gifVersion!!)
+                            if (!gifFile.exists()) {
+                                println("gif doesn't exist")
+
+                                ImageProcessing.createVideoGif(metadata.getId(), metadataRepository)
+                                localIndex++
+                                println("processed $gifVersion")
+                            } else {
+                                println("already exists $gifVersion")
+                            }
+
+                            println("-------------")
+                        }
+                        currentIndex++
+                    }
+                    println("Number gifs processed: $localIndex")
+                }
+                activeLink = ""
+                FileUtils.deleteThreadFiles("repairscripts")
+            }.start()
+        } else {
+            println("$activeLink already running")
+        }
+
+        return "test"
+    }
+
+    @Secured("ROLE_SUPER")
+    @RequestMapping(value = ["/createxsmall"], method = [RequestMethod.GET], consumes = ["application/json"])
+    @ResponseBody
+    fun createXSImages(response: HttpServletResponse?): String? {
+        activeLink = "createxsmall"
+
+        if (!FileUtils.checkThreadFileAlive("repairscripts") && FileUtils.createThreadFile("repairscripts") != null) {
+
+            Thread {
+                // Retroactively create xsmall images
+                val allMetadataList = metadataRepository.findAll()
+
+                totalIndex = allMetadataList.count()
+                currentIndex = 0
+                val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+                val sidecarDir = rootPath + relativeSidecarDir
+
+                for ((index, metadata) in allMetadataList.withIndex()) {
+                    println("iteration ${index + 1} out of $totalIndex")
+                    if (metadata != null) {
+                        if (metadata.getThumbnailPathExtraSmall() == null || !File(metadata.getThumbnailPathExtraSmall()!!).exists()) {
+                            val imageProcessing = ImageProcessing("v1", File(metadata.getPath()!!), sidecarDir, metadata)
+                            val metadataObj = imageProcessing.createThumbnails()
+                            if (metadataObj != null) {
+                                metadataRepository.save(metadataObj)
+                                println("processed thumbnail ${metadataObj.getThumbnailPathExtraSmall()}")
+                                currentIndex++
+                            }
+                        }
+                    }
+                }
+                println("Number xs thumbnails processed: $currentIndex")
+                activeLink = ""
+            }.start()
+        } else {
+            println("$activeLink already running")
+        }
+
+        return "test"
+    }
+
+    @Secured("ROLE_SUPER")
+    @RequestMapping(value = ["/fixtakendates"], method = [RequestMethod.GET], consumes = ["application/json"])
+    @ResponseBody
+    fun reconcileTakenDates(response: HttpServletResponse): String {
+        if (activeLink.isBlank()) {
+            activeLink = "fixtakendates"
+        }
+
+        println("repairscripts thread exists: "+FileUtils.checkThreadFileAlive("repairscripts"))
+
+        if (!FileUtils.checkThreadFileAlive("repairscripts") && FileUtils.createThreadFile("repairscripts") != null) {
+
+            Thread {
+                val metadataRecords = metadataRepository.findAll()
                 val metadataRecordsList = mutableListOf<Metadata>()
 
-                println("query: ${query.get()}")
+                var localIndex = 0
+                currentIndex = 0
+                totalIndex = metadataRecords.count()
+                for (metadata in metadataRecords) {
+                    if (metadata != null) {
+                        val adjustedTakenDateProp = metadata.getTakenAt()
+                        val adjustedTakenDateArray = adjustedTakenDateProp?.split(" ")?.toTypedArray()
+                        if (adjustedTakenDateArray != null && adjustedTakenDateArray.size == 2) {
+                            val adjustedTakenTime = adjustedTakenDateArray[1]
 
-                var index = 0
-                val x = 100
+                            val takenDateYear = metadata.getYear()
+                            val takenDateMonth = metadata.getMonth()
+                            val takenDateDay = metadata.getDay()
+                            val month = if (takenDateMonth!!.toInt() > 9) takenDateMonth else "0$takenDateMonth"
+                            val day = if (takenDateDay!!.toInt() > 9) takenDateDay else "0$takenDateDay"
+
+                            val fullDate = takenDateYear.toString() + "-" + month + "-" + day + " " + adjustedTakenTime
+
+                            if (fullDate != adjustedTakenDateProp) {
+                                println("iteration ${localIndex + 1} out of ${metadataRecords.count()}")
+                                localIndex++
+                                println("TakenDates don't match, fixing...")
+                                println("metadata ID: ${metadata.getId()}")
+                                println("originalTaken: $fullDate")
+                                println("adjustedTaken: $adjustedTakenDateProp")
+                                println("------------")
+                                metadata.setTakenAt(fullDate)
+                                metadataRecordsList.add(metadata)
+                            }
+                        }
+                    }
+                    currentIndex++
+                }
+
+                if (metadataRecordsList.size > 0) {
+                    metadataRepository.saveAll(metadataRecordsList)
+                }
+                println("# of records not matching: $currentIndex")
+                activeLink = ""
+                FileUtils.deleteThreadFiles("repairscripts")
+            }.start()
+        } else {
+            println("$activeLink already running")
+        }
+
+        return "test"
+    }
+
+    @Secured("ROLE_SUPER")
+    @RequestMapping(value = ["/fixnullplacenames"], method = [RequestMethod.GET], consumes = ["application/json"])
+    @ResponseBody
+    fun fixNullPlaceNames(response: HttpServletResponse): String {
+        if (activeLink.isBlank()) {
+            activeLink = "fixnullplacenames"
+        }
+
+        println("repairscripts thread exists: "+FileUtils.checkThreadFileAlive("repairscripts"))
+
+        if (!FileUtils.checkThreadFileAlive("repairscripts") && FileUtils.createThreadFile("repairscripts") != null) {
+            Thread {
+                val mids = testRepository.findLocationsWithNullPlace()
+                val metadataRecordsList = mutableListOf<Metadata>()
+
+                var localIndex = 0
+                currentIndex = 0
                 if (mids != null) {
-                    for (metadata in mids) {
-                        if (metadata.getLat() != null && metadata.getLat() != null) {
+                    totalIndex = mids.count()
+                    for (metadataId in mids) {
+                        val metadata = metadataRepository.findByMetadataId(metadataId)
+
+                        if (metadata?.getLat() != null && metadata.getLat() != null && metadata.getPlaceName() == null) {
                             println(metadata.toString())
                             val coordinateMap =
                                 TextUtils.processCoordinates(geocodeUrl!!, metadata.getLat() + "," + metadata.getLng())
                             if (coordinateMap["place"] != null) {
-                                println("iteration ${index + 1} out of ${mids.count()}")
-                                index++
+                                println("iteration ${localIndex + 1} out of ${mids.count()}")
+                                localIndex++
+                                println("Location not found, fixing...")
+                                println("metadata ID: ${metadata.getId()}")
+                                println("location: ${coordinateMap["place"]}")
+
+                                println("------------")
+                                metadata.setPlaceName(coordinateMap["place"])
+                                metadataRecordsList.add(metadata)
+                            }
+                        }
+                        currentIndex++
+                    }
+                }
+
+                if (metadataRecordsList.size > 0) {
+                    metadataRepository.saveAll(metadataRecordsList)
+                }
+                println("# of records missing location data: $currentIndex")
+                activeLink = ""
+                FileUtils.deleteThreadFiles("repairscripts")
+            }.start()
+        } else {
+            println("$activeLink already running")
+        }
+
+        return "test"
+    }
+
+    @Secured("ROLE_SUPER")
+    @RequestMapping(value = ["/rescansearchedplacenames"], method = [RequestMethod.GET], consumes = ["application/json"])
+    @ResponseBody
+    fun rescanSearchedPlaceNames(response: HttpServletResponse, @RequestParam query: Optional<String>): String {
+        if (activeLink.isBlank()) {
+            activeLink = "rescansearchedplacenames"
+        }
+
+        println("repairscripts thread exists: "+FileUtils.checkThreadFileAlive("repairscripts"))
+
+        if (!FileUtils.checkThreadFileAlive("repairscripts") && FileUtils.createThreadFile("repairscripts") != null) {
+
+            val search = query.orElse("")
+
+            if (search.isNotEmpty() && search.isNotBlank()) {
+                Thread {
+                    val mids = testRepository.findByPlaceName(query.get())
+                    val metadataRecordsList = mutableListOf<Metadata>()
+
+                    println("query: ${query.get()}")
+
+                    var localIndex = 0
+                    currentIndex = 0
+                    val x = 100
+                    if (mids != null) {
+                        totalIndex = mids.count()
+                        for (metadata in mids) {
+                            if (metadata.getLat() != null && metadata.getLat() != null) {
+                                println(metadata.toString())
+                                val coordinateMap =
+                                    TextUtils.processCoordinates(geocodeUrl!!, metadata.getLat() + "," + metadata.getLng())
+                                if (coordinateMap["place"] != null) {
+                                    println("iteration ${localIndex + 1} out of ${mids.count()}")
+                                    localIndex++
+                                    println("metadata ID: ${metadata.getId()}")
+                                    println("location: ${coordinateMap["place"]}")
+
+                                    metadata.setPlaceName(coordinateMap["place"])
+                                    metadataRecordsList.add(metadata)
+
+                                    // Save every 100 records
+                                    if (metadataRecordsList.size % x == 0) {
+                                        println("Batch saving $x records")
+                                        metadataRepository.saveAll(metadataRecordsList)
+                                        metadataRecordsList.clear()
+                                    }
+
+                                    println("------------")
+                                }
+                            }
+                            currentIndex++
+                        }
+                    }
+
+                    if (metadataRecordsList.size > 0) {
+                        metadataRepository.saveAll(metadataRecordsList)
+                    }
+                    println("# of records with rescanned location data: $currentIndex")
+                    activeLink = ""
+                    FileUtils.deleteThreadFiles("repairscripts")
+                }.start()
+            } else {
+                println("Proceed flag is false")
+                activeLink = ""
+            }
+        } else {
+            println("$activeLink already running")
+        }
+
+        return "test"
+    }
+
+    @Secured("ROLE_SUPER")
+    @RequestMapping(value = ["/rescanplacenames"], method = [RequestMethod.GET], consumes = ["application/json"])
+    @ResponseBody
+    fun rescanAllPlaceNames(response: HttpServletResponse, @RequestParam proceed: Optional<Boolean>): String {
+        if (activeLink.isBlank()) {
+            activeLink = "rescanplacenames"
+        }
+
+        println("repairscripts thread exists: "+FileUtils.checkThreadFileAlive("repairscripts"))
+
+        if (!FileUtils.checkThreadFileAlive("repairscripts") && FileUtils.createThreadFile("repairscripts") != null) {
+            val proceedRescan = proceed.orElse(false)
+
+            if (proceedRescan) {
+                Thread {
+                    val mids = metadataRepository.findAll()
+                    val metadataRecordsList = mutableListOf<Metadata>()
+
+                    var localIndex = 0
+                    currentIndex = 0
+                    totalIndex = mids.count()
+                    val x = 100
+                    for (metadata in mids) {
+                        if (metadata?.getLat() != null && metadata.getLat() != null) {
+                            println(metadata.toString())
+                            val coordinateMap =
+                                TextUtils.processCoordinates(geocodeUrl!!, metadata.getLat() + "," + metadata.getLng())
+                            if (coordinateMap["place"] != null) {
+                                println("iteration ${localIndex + 1} out of ${mids.count()}")
+                                localIndex++
                                 println("metadata ID: ${metadata.getId()}")
                                 println("location: ${coordinateMap["place"]}")
 
@@ -309,66 +508,22 @@ class TestController {
                                 println("------------")
                             }
                         }
+                        currentIndex++
                     }
-                }
 
-                if (metadataRecordsList.size > 0) {
-                    metadataRepository.saveAll(metadataRecordsList)
-                }
-                println("# of records with rescanned location data: $index")
-            }.start()
-        } else {
-            println("Proceed flag is false")
-        }
-
-        return "test"
-    }
-
-    @Secured("ROLE_SUPER")
-    @GetMapping("/rescanplacenames")
-    fun rescanAllPlaceNames(response: HttpServletResponse, @RequestParam proceed: Optional<Boolean>): String {
-        val proceedRescan = proceed.orElse(false)
-
-        if (proceedRescan) {
-            Thread {
-                val mids = metadataRepository.findAll()
-                val metadataRecordsList = mutableListOf<Metadata>()
-
-                var index = 0
-                val x = 100
-                for (metadata in mids) {
-                    if (metadata?.getLat() != null && metadata.getLat() != null) {
-                        println(metadata.toString())
-                        val coordinateMap =
-                            TextUtils.processCoordinates(geocodeUrl!!, metadata.getLat() + "," + metadata.getLng())
-                        if (coordinateMap["place"] != null) {
-                            println("iteration ${index + 1} out of ${mids.count()}")
-                            index++
-                            println("metadata ID: ${metadata.getId()}")
-                            println("location: ${coordinateMap["place"]}")
-
-                            metadata.setPlaceName(coordinateMap["place"])
-                            metadataRecordsList.add(metadata)
-
-                            // Save every 100 records
-                            if (metadataRecordsList.size % x == 0) {
-                                println("Batch saving $x records")
-                                metadataRepository.saveAll(metadataRecordsList)
-                                metadataRecordsList.clear()
-                            }
-
-                            println("------------")
-                        }
+                    if (metadataRecordsList.size > 0) {
+                        metadataRepository.saveAll(metadataRecordsList)
                     }
-                }
-
-                if (metadataRecordsList.size > 0) {
-                    metadataRepository.saveAll(metadataRecordsList)
-                }
-                println("# of records with rescanned location data: $index")
-            }.start()
+                    println("# of records with rescanned location data: $currentIndex")
+                    activeLink = ""
+                    FileUtils.deleteThreadFiles("repairscripts")
+                }.start()
+            } else {
+                println("Proceed flag is false")
+                activeLink = ""
+            }
         } else {
-            println("Proceed flag is false")
+            println("$activeLink already running")
         }
 
         return "test"
