@@ -11,105 +11,171 @@
     <div class="row">
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})"></div>
         <main role="main" class="col">
-
-<!--            <a data-bs-toggle="offcanvas" data-bs-placement="bottom" href="#offcanvasExample" aria-controls="offcanvasExample">-->
-<!--                Link to open sidebar-->
-<!--            </a>-->
-
-            <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-                <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
-                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-                <div class="offcanvas-body">
-                    <div>
-                        Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
-                    </div>
-                    <div class="dropdown mt-3">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown">
-                            Dropdown button
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-<!--            <br><th:block th:text="${'Using minified JS: '+@environment.getProperty('app.js.useMinified')}"></th:block><br><br>-->
-
-            <h2>Repair Tools</h2>
+            <h2 class="mt-3">Repair Tools</h2>
             <ul>
-<!--                <li><a href="/testvideo" target="_blank">Video test</a></li>-->
-<!--                <li><a href="/testimage" target="_blank">Image test</a></li>-->
-<!--                <li><a href="/testaudio" target="_blank">Audio test</a></li>-->
+<!--                <li><a href="/testvideo">Video test</a></li>-->
+<!--                <li><a href="/testimage">Image test</a></li>-->
+<!--                <li><a href="/testaudio">Audio test</a></li>-->
+                <li><a href="/deletethread">Delete thread file</a></li>
                 <li><a href="/creategif">Scan for missing gif images</a></li>
                 <li><a href="/createxsmall">Scan for missing x-small images</a></li>
                 <li><a href="/fixtakendates">Reconcile taken dates - year/month/day & metadata.takenAt dates</a></li>
                 <li><a href="/fixnullplacenames">Scan for null place names with coordinates</a></li>
-                <li><a href="/rescanplacenames">Rescan all place names with coordinates</a> append proceed=true to query param to proceed</li>
-                <li><a href="/rescansearchedplacenames">Rescan place names with coordinates with query</a> append query=&lt;placename_to_rescan&gt; to query param to proceed</li>
+                <li><a href="/rescanplacenames">Rescan all place names with coordinates</a> type true in input field</li>
+                <li><a href="/rescansearchedplacenames">Rescan location name with coordinates with query</a> type in a place name in the input field</li>
             </ul>
+            <input type="text" id="queryParam">
 
-<!--            <h2>Persistent Tokens</h2>-->
-
-<!--            <th:block th:each="persistentLoginsDetail, iterStat: ${persistentLoginsDetails}">-->
-<!--                <br><th:block th:utext="${'<strong>Username</strong>: '+persistentLoginsDetail.username}"></th:block>-->
-<!--                <br><th:block th:utext="${'<strong>Series</strong>: '+persistentLoginsDetail.series}"></th:block>-->
-<!--                <br><th:block th:utext="${'<strong>Token</strong>: '+persistentLoginsDetail.token}"></th:block>-->
-<!--                <br><th:block th:utext="${'<strong>Expiry</strong>: '+persistentLoginsDetail.expiry}"></th:block> <span class="expiries" th:id="${persistentLoginsDetail.expiry}"></span>-->
-<!--                <br><th:block th:utext="${'<strong>Host</strong>: '+persistentLoginsDetail.host}"></th:block>-->
-<!--                <br><th:block th:utext="${'<strong>Useragent</strong>: '+persistentLoginsDetail.useragent}"></th:block>-->
-<!--                <br>-->
-<!--            </th:block>-->
-
-<!--            <br><br>-->
-<!--            <h2>Decode Persistent Login Cookie</h2>-->
-<!--            <input type="text" id="decodePersistentLogin" size="100">-->
-<!--            <button type="button" id="decode">Decode</button><br>-->
-<!--            <span id="decoded"></span>-->
+            <h2 class="mt-5">Progress</h2>
+            <p>Current index: <span id="currentIndex">0</span></p>
+            <p>Total index: <span id="totalIndex">0</span></p>
+            <p>Active link: <span id="activeLink"></span></p>
+            <p>Message: <span id="scanMessage"></span></p>
 
             <script type="text/javascript">
                 $(document).ready(function() {
-                    // $('.expiries').each(function(i, obj) {
-                    //     const idunixtime = $(obj).attr("id");
-                    //     const localDateTime = timeConverter(parseInt(idunixtime));
-                    //     $("#"+idunixtime).text(" - "+localDateTime);
-                    // });
-                    //
-                    // function timeConverter(UNIX_timestamp) {
-                    //     const date = new Date(UNIX_timestamp).toLocaleDateString("en-US");
-                    //     const time = new Date(UNIX_timestamp).toLocaleTimeString("en-US");
-                    //
-                    //     return date + ' ' + time;
-                    // }
-                    //
-                    // $("#decode").on("click", function (e) {
-                    //     e.preventDefault();
-                    //     $("#decoded").text("");
-                    //
-                    //     const cookieVal = $("#decodePersistentLogin").val();
-                    //     if (cookieVal.length > 0) {
-                    //         let decodedSeriesToken = atob(cookieVal);
-                    //
-                    //         decodedSeriesToken = decodeURIComponent(decodedSeriesToken)
-                    //         const decodedSeriesTokenArray = decodedSeriesToken.split(":")
-                    //         console.log(decodedSeriesTokenArray[0])
-                    //         $("#decoded").text(decodedSeriesTokenArray[0]+":"+decodedSeriesTokenArray[1]);
-                    //     }
-                    // });
-                    //
-                    //
-                    // shashin.showToastMessage("Title 1", "Message 1.");
-                    // shashin.showToastMessage("Title 2", "Message 2", {target:shashin.toast.target.one, delay: 8000, icon:"bi-alt", iconColor:"green"});
-                    // shashin.showToastMessage("Title 3", "Message 3", {autohide: false, target:shashin.toast.target.four, icon:"bi-alt", iconColor:"#ff0000"});
-                    // shashin.showToastMessage("Title 4", "Message 4.", {autohide: false, target:shashin.toast.target.three, icon:"bi-exclamation-triangle", iconColor:"#000000"});
-                    // shashin.showToastMessage("Title 5", "Message 5..", {autohide: false,target:shashin.toast.target.two, delay: 8000, icon:"bi-backpack2", iconColor:"purple"});
-                    // shashin.showToastMessage("Title 6", "Message 6", {autohide: false,target:shashin.toast.target.default, delay: 4000, icon:"bi-backpack", iconColor:"purple", placement: shashin.toast.placement.middle.center});
-                    //
+                    $(document).on("click", "a", function(e) {
+                        e.preventDefault();
 
+                        const url = $(this).attr("href");
+                        const queryParam = $("#queryParam").val();
+                        let data = {};
+
+                        if (url === "/rescanplacenames") {
+                            data = {proceed:queryParam};
+                        } else if (url === "/rescansearchedplacenames") {
+                            data = {query:queryParam};
+                        }
+
+                        $.ajax({
+                            url: url,
+                            type: "GET", //send it through get method
+                            data: data,
+                            contentType: "application/json",
+                            success: function(response) {
+                                //Do Something
+                                setTimeout(function () {
+                                    connectTP();
+                                }, 2000);
+                            },
+                            error: function(xhr) {
+                                //Do Something to handle error
+                                shashin.printMessageToConsole("XHR error");
+                                shashin.printMessageToConsole(xhr);
+                            }
+                        });
+                    });
+
+                    let scanInProgress = false;
+                    let stompClient = null;
+
+                    function scanRefresh() {
+                        sendMessageTP();
+                        let index = parseInt($("#currentIndex").text());
+                        let totalIndex = parseInt($("#totalIndex").text());
+
+                        // if (totalIndex === index) {
+                        //     scanInProgress = false;
+                        //     $("#currentIndex").text("0");
+                        //     $("#totalIndex").text("0");
+                        // // } else if (totalIndex === 0) {
+                        // //     scanInProgress = false;
+                        // //     $("#currentIndex").text("0");
+                        // //     $("#totalIndex").text("0");
+                        // } else {
+                        //     scanInProgress = true;
+                            setTimeout(scanRefresh, 1000);
+                        // }
+                    }
+
+                    function connectTP() {
+                        const socket = new SockJS('/websocket-endpoint');
+                        stompClient = Stomp.over(socket);
+                        if (shashin.showDebug === false) {
+                            stompClient.debug = null
+                        }
+
+                        shashin.printMessageToConsole("Socket Connecting");
+
+                        let counterTP = 0;
+                        stompClient.connect({}, function() {
+                            if (scanInProgress === false) {
+                                scanRefresh();
+                            }
+                            shashin.printMessageToConsole( "Connected STOMP client");
+                            this.subscribe("/topic/fixscriptmessages", function (message) {
+                                let respMessage = JSON.parse(JSON.parse(message.body).content);
+                                shashin.printMessageToConsole("message: "+message);
+                                // console.log(respMessage)
+
+                                const currentIndex = respMessage.hasOwnProperty("currentIndex") ? parseInt(respMessage["currentIndex"]) : 0;
+                                const totalIndex = respMessage.hasOwnProperty("totalIndex") ? parseInt(respMessage["totalIndex"]) : 0;
+                                const activeLink = respMessage.hasOwnProperty("activeLink") ? respMessage["activeLink"] : "";
+
+                                $("#currentIndex").text(currentIndex);
+                                $("#totalIndex").text(totalIndex);
+                                $("#activeLink").text(activeLink);
+
+                                if (activeLink.length > 0) {
+                                    if (currentIndex === totalIndex) {
+                                        showMessageTP("Scan completed for " + activeLink);
+                                        $("#currentIndex").text("0");
+                                        $("#totalIndex").text("0");
+                                        $("#activeLink").text("");
+                                        scanInProgress = false;
+                                        disconnectTP();
+                                    } else {
+                                        scanInProgress = true;
+                                        showMessageTP("Scan in progress for " + activeLink);
+                                    }
+                                } else {
+                                    $("#currentIndex").text("0");
+                                    $("#totalIndex").text("0");
+                                    $("#activeLink").text("");
+                                    counterTP = 0;
+                                    scanInProgress = false;
+                                    showMessageTP("Not scanning");
+                                    disconnectTP();
+                                }
+
+                                counterTP++;
+                            });
+                        }, function(e) {
+                            shashin.printMessageToConsole("Socket connection error in connectTP(): " + e.toString())
+
+                            if (counterTP > 10) {
+                                showMessageTP("Oops, something went wrong! " + e.toString());
+                                counterTP = 0;
+                            } else {
+                                showMessageTP("Oops, something went wrong! " + e.toString());
+                                disconnectTP();
+                                connectTP();
+                            }
+
+                            scanInProgress = false;
+                            counterTP++;
+                        });
+                    }
+
+                    function disconnectTP() {
+                        if (stompClient !== null) {
+                            stompClient.disconnect();
+                        }
+                        shashin.printMessageToConsole("Disconnected");
+                    }
+
+                    function sendMessageTP() {
+                        if (stompClient !== null) {
+                            stompClient.send("/app/fixscriptmessage", {}, JSON.stringify({'message': "getScanMessage"}));
+                        } else {
+                            showMessageTP("Trying to send message but STOMP client is null")
+                            scanInProgress = false;
+                        }
+                    }
+
+                    function showMessageTP(message) {
+                        $("#scanMessage").text(message);
+                    }
                 });
             </script>
 

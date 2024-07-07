@@ -155,11 +155,8 @@ class PeopleController: BaseController() {
         val settings = model.getAttribute("settings") as Settings
 
         if (stopScan) {
-println("test")
             shouldStop.set(true)
         }
-
-        val tempDir = System.getProperty("java.io.tmpdir")
 
         if (!FileUtils.checkThreadFileAlive(threadExtensionName)) {
             // Clean up any existing thread files
@@ -168,12 +165,7 @@ println("test")
             val superAdmins = userRepository?.findAllByAuthorityEquals(superRole)
 
             Thread {
-                val threadFile = FileUtils.createFile(
-                    tempDir,
-                    tempDir + "/" + Thread.currentThread().name + "." + threadExtensionName,
-                    "Thread"
-                )
-
+                val threadFile = FileUtils.createThreadFile(threadExtensionName)
                 val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
                 val vggfaceFileExists = classLoader.getResource("lib/vggface2.pt") != null
                 val retinafaceFileExists = classLoader.getResource("lib/retinaface.zip") != null

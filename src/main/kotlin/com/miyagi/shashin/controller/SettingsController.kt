@@ -1576,12 +1576,7 @@ class SettingsController {
                     // Iterate through directory in another thread
                     Thread {
                         //Create file with thread name and write file name iterated
-                        val tempDir = System.getProperty("java.io.tmpdir")
-                        val threadFile = FileUtils.createFile(
-                            tempDir,
-                            tempDir + "/" + Thread.currentThread().name + ".shashinscan",
-                            "Thread"
-                        )
+                        val threadFile = FileUtils.createThreadFile("shashinscan")
                         if (threadFile != null) {
                             // Check for deleted original files
                             val metadataList = metadataRepository?.findAll()
