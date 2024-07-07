@@ -1231,9 +1231,7 @@
                         callback: copyPlacename
                     }
                     contextItem.data = {placename: data["placename"]};
-                }
 
-                if ($.isEmptyObject(contextItem) === false) {
                     contextValueArray.push(contextItem);
                     contextValueArray.push("-");
                 }
