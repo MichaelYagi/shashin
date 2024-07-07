@@ -323,7 +323,7 @@ class TestController {
                 if (metadataRecordsList.size > 0) {
                     metadataRepository.saveAll(metadataRecordsList)
                 }
-                println("# of records not matching: $currentIndex")
+                println("# of records not matching: $localIndex")
                 activeLink = ""
                 FileUtils.deleteThreadFiles("repairscripts")
             }.start()
@@ -379,7 +379,7 @@ class TestController {
                 if (metadataRecordsList.size > 0) {
                     metadataRepository.saveAll(metadataRecordsList)
                 }
-                println("# of records missing location data: $currentIndex")
+                println("# of records missing location data: $localIndex")
                 activeLink = ""
                 FileUtils.deleteThreadFiles("repairscripts")
             }.start()
@@ -447,7 +447,7 @@ class TestController {
                     if (metadataRecordsList.size > 0) {
                         metadataRepository.saveAll(metadataRecordsList)
                     }
-                    println("# of records with rescanned location data: $currentIndex")
+                    println("# of records with rescanned location data: $localIndex")
                     activeLink = ""
                     FileUtils.deleteThreadFiles("repairscripts")
                 }.start()
@@ -514,7 +514,7 @@ class TestController {
                     if (metadataRecordsList.size > 0) {
                         metadataRepository.saveAll(metadataRecordsList)
                     }
-                    println("# of records with rescanned location data: $currentIndex")
+                    println("# of records with rescanned location data: $localIndex")
                     activeLink = ""
                     FileUtils.deleteThreadFiles("repairscripts")
                 }.start()
