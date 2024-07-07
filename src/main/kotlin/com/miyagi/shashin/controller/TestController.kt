@@ -452,6 +452,7 @@ class TestController {
                     FileUtils.deleteThreadFiles("repairscripts")
                 }.start()
             } else {
+                FileUtils.deleteThreadFiles("repairscripts")
                 println("Proceed flag is false")
                 activeLink = ""
             }
@@ -519,6 +520,7 @@ class TestController {
                     FileUtils.deleteThreadFiles("repairscripts")
                 }.start()
             } else {
+                FileUtils.deleteThreadFiles("repairscripts")
                 println("Proceed flag is false")
                 activeLink = ""
             }
