@@ -243,6 +243,7 @@ class TestController {
 
                 totalIndex = allMetadataList.count()
                 currentIndex = 0
+                var localIndex = 0
                 val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
                 val sidecarDir = rootPath + relativeSidecarDir
 
@@ -255,13 +256,15 @@ class TestController {
                             if (metadataObj != null) {
                                 metadataRepository.save(metadataObj)
                                 println("processed thumbnail ${metadataObj.getThumbnailPathExtraSmall()}")
-                                currentIndex++
+                                localIndex++
                             }
                         }
                     }
+                    currentIndex++
                 }
-                println("Number xs thumbnails processed: $currentIndex")
+                println("Number xs thumbnails processed: $localIndex")
                 activeLink = ""
+                FileUtils.deleteThreadFiles("repairscripts")
             }.start()
         } else {
             println("$activeLink already running")
