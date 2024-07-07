@@ -1222,7 +1222,17 @@
 
                 const contextValueArray = [];
 
-                const contextItem = Util.getMapContextHeading(data, copyPlacename);
+                let contextItem = {};
+                if (data.hasOwnProperty("placename") && data["placename"].length > 0) {
+                    contextItem = {
+                        text: "<strong>" + data["placename"] + "</strong>",
+                        // classname: "ol-ctx-menu-separator" // Make unselectable text
+                        classname: "context-text-wrap",
+                        callback: copyPlacename
+                    }
+                    contextItem.data = {placename: data["placename"]};
+                }
+
                 if ($.isEmptyObject(contextItem) === false) {
                     contextValueArray.push(contextItem);
                     contextValueArray.push("-");
