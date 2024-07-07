@@ -829,6 +829,9 @@ class TimelineController: BaseController() {
                         val originalMetadataAdded = metadata.getAddedAt()
                         val originalMetadataCreated = metadata.getCreatedAt()
                         val originalMetadataTaken = metadata.getTakenAt()
+                        val originalTakenYear = metadata.getYear()
+                        val originalTakenMonth = metadata.getMonth()
+                        val originalTakenDay = metadata.getDay()
 
                         val stringMetadata = Gson().toJson(metadata, Metadata::class.java)
                         var metadataCopy = Gson().fromJson(stringMetadata, Metadata::class.java)
@@ -898,6 +901,9 @@ class TimelineController: BaseController() {
                                 metadataCopy.setAddedAt(originalMetadataAdded)
                                 metadataCopy.setCreatedAt(originalMetadataCreated)
                                 metadataCopy.setTakenAt(originalMetadataTaken)
+                                metadataCopy.setYear(originalTakenYear)
+                                metadataCopy.setMonth(originalTakenMonth)
+                                metadataCopy.setDay(originalTakenDay)
                                 metadataCopy.setLastAccessedAt(getCurrentTimestamp())
                                 metadataCopy.setModifiedAt(getCurrentTimestamp())
 
