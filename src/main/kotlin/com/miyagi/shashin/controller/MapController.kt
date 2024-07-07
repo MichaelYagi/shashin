@@ -304,6 +304,7 @@ class MapController: BaseController() {
         response["msg"] = ""
         response["status"] = ApiResponse.FAIL.status
         response["placedata"] = "{}"
+        response["placename"] = ""
 
         if (currentUserObj != null && coordinateMap.containsKey("lat") && coordinateMap.containsKey("lng") && currentUserObj.getShowPlacename()!!) {
             val lat = coordinateMap["lat"].toString()
@@ -311,6 +312,12 @@ class MapController: BaseController() {
             val geoDataJson = TextUtils.getGeoData(geocodeUrl, lat, lng)
 
             if (geoDataJson != null && geoDataJson != "") {
+                val buildPlace = TextUtils.getPlaceNameFromJson(geoDataJson)
+                if (buildPlace.isNotBlank()) {
+                    val buildPlaceArr = buildPlace.split(";")
+                    val buildPlaceStr = buildPlaceArr[0].trim()
+                    response["placename"] = buildPlaceStr
+                }
                 response["placedata"] = geoDataJson
                 response["msg"] = "Success"
                 response["status"] = ApiResponse.SUCCESS.status
