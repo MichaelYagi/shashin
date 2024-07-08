@@ -10,9 +10,9 @@ import com.miyagi.shashin.util.ImageProcessing
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.event.EventListener
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.*
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.annotation.SubscribeMapping
@@ -24,12 +24,9 @@ import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import org.springframework.web.socket.messaging.SessionSubscribeEvent
-import org.springframework.context.event.EventListener
 import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicBoolean
-import javax.imageio.ImageIO
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpSession
@@ -39,22 +36,7 @@ import javax.servlet.http.HttpSession
 class TestController {
 
     @Autowired
-    private lateinit var persistentLoginsRepository: PersistentLoginsRepository
-
-    @Autowired
     private lateinit var metadataRepository: MetadataRepository
-
-    @Autowired
-    private lateinit var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository
-
-    @Autowired
-    private lateinit var recognitionLabelRepository: RecognitionLabelRepository
-
-    @Autowired
-    private lateinit var notificationRepository: NotificationRepository
-
-    @Autowired
-    private lateinit var userRepository: UserRepository
 
     @Autowired
     private lateinit var testRepository: TestRepository
@@ -62,24 +44,13 @@ class TestController {
     @Value("\${app.endpoint.url.geocode}")
     private var geocodeUrl: String? = null
 
-    @Autowired
-    private val jdbcTemplate: JdbcTemplate? = null
-
-    @Value("\${app.role.super}")
-    private var superRole: String? = null
-
-    @Value("\${app.role.admin}")
-    private var adminRole: String? = null
-
-    private var shouldStop = AtomicBoolean(false)
-
-    private val threadExtensionName: String = "facescan_shashinscan"
-
     @Value("\${app.sidecar.path}")
     private val relativeSidecarDir: String? = null
 
     private var currentIndex = 0
     private var totalIndex = 0
+    private var startTime = System.currentTimeMillis()
+    private var etr: Long = 0
     private var activeLink = ""
     val mapper = ObjectMapper()
 
@@ -93,6 +64,7 @@ class TestController {
         returnMap["currentIndex"] = currentIndex
         returnMap["totalIndex"] = totalIndex
         returnMap["activeLink"] = activeLink
+        returnMap["etr"] = etr
 
         val msg: String = mapper.writeValueAsString(returnMap)
 //        println(msg)
@@ -195,7 +167,10 @@ class TestController {
                     var localIndex = 0
                     currentIndex = 0
                     totalIndex = metadataList.count()
+                    startTime = System.currentTimeMillis()
+                    val timesArray = mutableListOf<Long>()
                     for ((index, metadata) in metadataList.withIndex()) {
+                        val elapsedStartTime = System.currentTimeMillis()
                         println("iteration ${index + 1} out of $totalIndex")
                         if (metadata.getThumbnailPathSmall() !== null) {
                             val jpgVersion = metadata.getThumbnailPathSmall()
@@ -215,6 +190,9 @@ class TestController {
 
                             println("-------------")
                         }
+                        val endTime = System.currentTimeMillis()
+                        timesArray.add((endTime-elapsedStartTime))
+                        etr = progress(currentIndex, totalIndex, timesArray)
                         currentIndex++
                     }
                     println("Number gifs processed: $localIndex")
@@ -243,11 +221,13 @@ class TestController {
 
                 totalIndex = allMetadataList.count()
                 currentIndex = 0
+                startTime = System.currentTimeMillis()
                 var localIndex = 0
                 val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
                 val sidecarDir = rootPath + relativeSidecarDir
-
+                val timesArray = mutableListOf<Long>()
                 for ((index, metadata) in allMetadataList.withIndex()) {
+                    val elapsedStartTime = System.currentTimeMillis()
                     println("iteration ${index + 1} out of $totalIndex")
                     if (metadata != null) {
                         if (metadata.getThumbnailPathExtraSmall() == null || !File(metadata.getThumbnailPathExtraSmall()!!).exists()) {
@@ -260,6 +240,9 @@ class TestController {
                             }
                         }
                     }
+                    val endTime = System.currentTimeMillis()
+                    timesArray.add((endTime-elapsedStartTime))
+                    etr = progress(currentIndex, totalIndex, timesArray)
                     currentIndex++
                 }
                 println("Number xs thumbnails processed: $localIndex")
@@ -291,8 +274,11 @@ class TestController {
 
                 var localIndex = 0
                 currentIndex = 0
+                startTime = System.currentTimeMillis()
                 totalIndex = metadataRecords.count()
+                val timesArray = mutableListOf<Long>()
                 for (metadata in metadataRecords) {
+                    val elapsedStartTime = System.currentTimeMillis()
                     if (metadata != null) {
                         val adjustedTakenDateProp = metadata.getTakenAt()
                         val adjustedTakenDateArray = adjustedTakenDateProp?.split(" ")?.toTypedArray()
@@ -320,6 +306,9 @@ class TestController {
                             }
                         }
                     }
+                    val endTime = System.currentTimeMillis()
+                    timesArray.add((endTime-elapsedStartTime))
+                    etr = progress(currentIndex, totalIndex, timesArray)
                     currentIndex++
                 }
 
@@ -354,9 +343,12 @@ class TestController {
 
                 var localIndex = 0
                 currentIndex = 0
+                startTime = System.currentTimeMillis()
                 if (mids != null) {
                     totalIndex = mids.count()
+                    val timesArray = mutableListOf<Long>()
                     for (metadataId in mids) {
+                        val elapsedStartTime = System.currentTimeMillis()
                         val metadata = metadataRepository.findByMetadataId(metadataId)
 
                         if (metadata?.getLat() != null && metadata.getLat() != null && metadata.getPlaceName() == null) {
@@ -375,6 +367,9 @@ class TestController {
                                 metadataRecordsList.add(metadata)
                             }
                         }
+                        val endTime = System.currentTimeMillis()
+                        timesArray.add((endTime-elapsedStartTime))
+                        etr = progress(currentIndex, totalIndex, timesArray)
                         currentIndex++
                     }
                 }
@@ -416,10 +411,13 @@ class TestController {
 
                     var localIndex = 0
                     currentIndex = 0
+                    startTime = System.currentTimeMillis()
                     val x = 100
                     if (mids != null) {
                         totalIndex = mids.count()
+                        val timesArray = mutableListOf<Long>()
                         for (metadata in mids) {
+                            val elapsedStartTime = System.currentTimeMillis()
                             if (metadata.getLat() != null && metadata.getLat() != null) {
                                 println(metadata.toString())
                                 val coordinateMap =
@@ -443,6 +441,9 @@ class TestController {
                                     println("------------")
                                 }
                             }
+                            val endTime = System.currentTimeMillis()
+                            timesArray.add((endTime-elapsedStartTime))
+                            etr = progress(currentIndex, totalIndex, timesArray)
                             currentIndex++
                         }
                     }
@@ -487,12 +488,16 @@ class TestController {
                     var localIndex = 0
                     currentIndex = 0
                     totalIndex = mids.count()
+                    startTime = System.currentTimeMillis()
                     val x = 100
+                    val timesArray = mutableListOf<Long>()
                     for (metadata in mids) {
+                        val elapsedStartTime = System.currentTimeMillis()
                         if (metadata?.getLat() != null && metadata.getLat() != null) {
                             println(metadata.toString())
                             val coordinateMap =
                                 TextUtils.processCoordinates(geocodeUrl!!, metadata.getLat() + "," + metadata.getLng())
+
                             if (coordinateMap["place"] != null) {
                                 println("iteration ${localIndex + 1} out of ${mids.count()}")
                                 localIndex++
@@ -512,6 +517,9 @@ class TestController {
                                 println("------------")
                             }
                         }
+                        val endTime = System.currentTimeMillis()
+                        timesArray.add((endTime-elapsedStartTime))
+                        etr = progress(currentIndex, totalIndex, timesArray)
                         currentIndex++
                     }
 
@@ -532,5 +540,27 @@ class TestController {
         }
 
         return "test"
+    }
+
+    private fun progress(position: Int, total: Int, times: MutableList<Long>): Long {
+        val elapsedTimeFromStart = System.currentTimeMillis() - startTime
+        var estimatedRemaining: Long = 0
+
+        println("Progress: start time is $startTime")
+
+        if (position > 0 && times.isNotEmpty()) {
+//            estimatedRemaining = (elapsedTimeFromStart / position) * (total - position)
+
+            val sum = times.sum()
+            val average = sum / times.size
+            estimatedRemaining = (total*average)-((position+1)*average)
+
+        }
+
+        val averageTime = times.sum() / times.size
+        println("Average time for each iteration $averageTime ms")
+        println("ETR: $estimatedRemaining")
+
+        return estimatedRemaining
     }
 }

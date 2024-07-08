@@ -29,6 +29,7 @@
             <h2 class="mt-5">Progress</h2>
             <p>Current index: <span id="currentIndex">0</span></p>
             <p>Total index: <span id="totalIndex">0</span></p>
+            <p>Estimated time remaining: <span id="etr">00:00:00.000</span></p>
             <p>Active link: <span id="activeLink"></span></p>
             <p>Message: <span id="scanMessage"></span></p>
 
@@ -110,17 +111,20 @@
 
                                 const currentIndex = respMessage.hasOwnProperty("currentIndex") ? parseInt(respMessage["currentIndex"]) : 0;
                                 const totalIndex = respMessage.hasOwnProperty("totalIndex") ? parseInt(respMessage["totalIndex"]) : 0;
+                                const etr = respMessage.hasOwnProperty("etr") ? parseInt(respMessage["etr"]) : 0;
                                 const activeLink = respMessage.hasOwnProperty("activeLink") ? respMessage["activeLink"] : "";
 
                                 $("#currentIndex").text(currentIndex);
                                 $("#totalIndex").text(totalIndex);
                                 $("#activeLink").text(activeLink);
+                                $("#etr").text(msToTime(etr));
 
                                 if (activeLink.length > 0) {
                                     if (currentIndex === totalIndex) {
                                         showMessageTP("Scan completed for " + activeLink);
                                         $("#currentIndex").text("0");
                                         $("#totalIndex").text("0");
+                                        $("#etr").text("00:00:00.000");
                                         $("#activeLink").text("");
                                         scanInProgress = false;
                                         disconnectTP();
@@ -131,6 +135,7 @@
                                 } else {
                                     $("#currentIndex").text("0");
                                     $("#totalIndex").text("0");
+                                    $("#etr").text("00:00:00.000");
                                     $("#activeLink").text("");
                                     counterTP = 0;
                                     scanInProgress = false;
@@ -175,6 +180,24 @@
 
                     function showMessageTP(message) {
                         $("#scanMessage").text(message);
+                    }
+
+                    function msToTime(s) {
+
+                        // Pad to 2 or 3 digits, default is 2
+                        function pad(n, z) {
+                            z = z || 2;
+                            return ('00' + n).slice(-z);
+                        }
+
+                        const ms = s % 1000;
+                        s = (s - ms) / 1000;
+                        const secs = s % 60;
+                        s = (s - secs) / 60;
+                        const mins = s % 60;
+                        const hrs = (s - mins) / 60;
+
+                        return pad(hrs) + ':' + pad(mins) + ':' + pad(secs);
                     }
                 });
             </script>
