@@ -29,7 +29,7 @@
             <h2 class="mt-5">Progress</h2>
             <p>Current index: <span id="currentIndex">0</span></p>
             <p>Total index: <span id="totalIndex">0</span></p>
-            <p>Estimated time remaining: <span id="etr">00:00:00.000</span></p>
+            <p>Estimated time remaining: <span id="etr">00:00:00</span></p>
             <p>Active link: <span id="activeLink"></span></p>
             <p>Message: <span id="scanMessage"></span></p>
 
@@ -124,7 +124,7 @@
                                         showMessageTP("Scan completed for " + activeLink);
                                         $("#currentIndex").text("0");
                                         $("#totalIndex").text("0");
-                                        $("#etr").text("00:00:00.000");
+                                        $("#etr").text("00:00:00");
                                         $("#activeLink").text("");
                                         scanInProgress = false;
                                         disconnectTP();
@@ -135,7 +135,7 @@
                                 } else {
                                     $("#currentIndex").text("0");
                                     $("#totalIndex").text("0");
-                                    $("#etr").text("00:00:00.000");
+                                    $("#etr").text("00:00:00");
                                     $("#activeLink").text("");
                                     counterTP = 0;
                                     scanInProgress = false;
