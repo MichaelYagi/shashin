@@ -543,7 +543,7 @@ class TestController {
     }
 
     private fun progress(position: Int, total: Int, times: MutableList<Long>): Long {
-        val elapsedTimeFromStart = System.currentTimeMillis() - startTime
+//        val elapsedTimeFromStart = System.currentTimeMillis() - startTime
         var estimatedRemaining: Long = 0
 
         println("Progress: start time is $startTime")
