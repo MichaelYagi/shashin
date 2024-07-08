@@ -395,6 +395,15 @@ class TextUtils {
                             logger.log(Level.INFO, "country found: ${addressObj.get("address").get("country").textValue()}")
                         }
 
+                        // Check if the name is repeated in some other area of the string, remove the name
+                        if (name !== "") {
+                            val buildPlaceArr = buildPlace.split(" • ")
+                            if (buildPlaceArr.size == 2 && buildPlaceArr[1].contains(buildPlaceArr[0])) {
+                                buildPlace = buildPlaceArr[1]
+                                logger.log(Level.INFO, "redundant name found, removing from string: ${buildPlaceArr[0]}")
+                            }
+                        }
+
                         if (buildPlace.trim().isNotBlank()) {
                             buildPlace = buildPlace.replace(", $".toRegex(), "").trim()
                             buildPlace += "; "
@@ -420,14 +429,6 @@ class TextUtils {
                     }
 
                     buildPlace = buildPlace.trim()
-
-                    // Check if the name is repeated in some other area of the string, remove the name
-                    if (name !== "") {
-                        val buildPlaceArr = buildPlace.split(" • ")
-                        if (buildPlaceArr.size == 2 && buildPlaceArr[1].contains(buildPlaceArr[0])) {
-                            buildPlace = buildPlaceArr[1]
-                        }
-                    }
                 }
             }
 
