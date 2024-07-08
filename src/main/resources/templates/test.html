@@ -36,35 +36,44 @@
             <script type="text/javascript">
                 $(document).ready(function() {
                     $(document).on("click", "a", function(e) {
-                        e.preventDefault();
-
                         const url = $(this).attr("href");
-                        const queryParam = $("#queryParam").val();
-                        let data = {};
+                        if (url === "/deletethread" ||
+                            url === "/creategif" ||
+                            url === "/createxsmall" ||
+                            url === "/fixtakendates" ||
+                            url === "/fixnullplacenames" ||
+                            url === "/rescanplacenames" ||
+                            url === "/rescansearchedplacenames")
+                        {
+                            e.preventDefault();
 
-                        if (url === "/rescanplacenames") {
-                            data = {proceed:queryParam};
-                        } else if (url === "/rescansearchedplacenames") {
-                            data = {query:queryParam};
-                        }
+                            const queryParam = $("#queryParam").val();
+                            let data = {};
 
-                        $.ajax({
-                            url: url,
-                            type: "GET", //send it through get method
-                            data: data,
-                            contentType: "application/json",
-                            success: function(response) {
-                                //Do Something
-                                setTimeout(function () {
-                                    connectTP();
-                                }, 2000);
-                            },
-                            error: function(xhr) {
-                                //Do Something to handle error
-                                shashin.printMessageToConsole("XHR error");
-                                shashin.printMessageToConsole(xhr);
+                            if (url === "/rescanplacenames") {
+                                data = {proceed: queryParam};
+                            } else if (url === "/rescansearchedplacenames") {
+                                data = {query: queryParam};
                             }
-                        });
+
+                            $.ajax({
+                                url: url,
+                                type: "GET", //send it through get method
+                                data: data,
+                                contentType: "application/json",
+                                success: function (response) {
+                                    //Do Something
+                                    setTimeout(function () {
+                                        connectTP();
+                                    }, 2000);
+                                },
+                                error: function (xhr) {
+                                    //Do Something to handle error
+                                    shashin.printMessageToConsole("XHR error");
+                                    shashin.printMessageToConsole(xhr);
+                                }
+                            });
+                        }
                     });
 
                     let scanInProgress = false;
