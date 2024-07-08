@@ -218,6 +218,7 @@ class TestController {
             Thread {
                 // Retroactively create xsmall images
                 val allMetadataList = metadataRepository.findAll()
+                val metadataRecordsList = mutableListOf<Metadata>()
 
                 totalIndex = allMetadataList.count()
                 currentIndex = 0
@@ -226,6 +227,7 @@ class TestController {
                 val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
                 val sidecarDir = rootPath + relativeSidecarDir
                 val timesArray = mutableListOf<Long>()
+                val x = 100
                 for ((index, metadata) in allMetadataList.withIndex()) {
                     val elapsedStartTime = System.currentTimeMillis()
                     println("iteration ${index + 1} out of $totalIndex")
@@ -234,8 +236,15 @@ class TestController {
                             val imageProcessing = ImageProcessing("v1", File(metadata.getPath()!!), sidecarDir, metadata)
                             val metadataObj = imageProcessing.createThumbnails()
                             if (metadataObj != null) {
-                                metadataRepository.save(metadataObj)
+                                metadataRecordsList.add(metadataObj)
                                 println("processed thumbnail ${metadataObj.getThumbnailPathExtraSmall()}")
+
+                                // Save every 100 records
+                                if (metadataRecordsList.size % x == 0) {
+                                    println("Batch saving $x records")
+                                    metadataRepository.saveAll(metadataRecordsList)
+                                    metadataRecordsList.clear()
+                                }
                                 localIndex++
                             }
                         }
@@ -245,6 +254,11 @@ class TestController {
                     etr = progress(currentIndex, totalIndex, timesArray)
                     currentIndex++
                 }
+
+                if (metadataRecordsList.size > 0) {
+                    metadataRepository.saveAll(metadataRecordsList)
+                }
+
                 println("Number xs thumbnails processed: $localIndex")
                 activeLink = ""
                 FileUtils.deleteThreadFiles("repairscripts")
@@ -277,6 +291,7 @@ class TestController {
                 startTime = System.currentTimeMillis()
                 totalIndex = metadataRecords.count()
                 val timesArray = mutableListOf<Long>()
+                val x = 100
                 for (metadata in metadataRecords) {
                     val elapsedStartTime = System.currentTimeMillis()
                     if (metadata != null) {
@@ -303,6 +318,13 @@ class TestController {
                                 println("------------")
                                 metadata.setTakenAt(fullDate)
                                 metadataRecordsList.add(metadata)
+
+                                // Save every 100 records
+                                if (metadataRecordsList.size % x == 0) {
+                                    println("Batch saving $x records")
+                                    metadataRepository.saveAll(metadataRecordsList)
+                                    metadataRecordsList.clear()
+                                }
                             }
                         }
                     }
@@ -347,6 +369,7 @@ class TestController {
                 if (mids != null) {
                     totalIndex = mids.count()
                     val timesArray = mutableListOf<Long>()
+                    val x = 100
                     for (metadataId in mids) {
                         val elapsedStartTime = System.currentTimeMillis()
                         val metadata = metadataRepository.findByMetadataId(metadataId)
@@ -365,6 +388,13 @@ class TestController {
                                 println("------------")
                                 metadata.setPlaceName(coordinateMap["place"])
                                 metadataRecordsList.add(metadata)
+
+                                // Save every 100 records
+                                if (metadataRecordsList.size % x == 0) {
+                                    println("Batch saving $x records")
+                                    metadataRepository.saveAll(metadataRecordsList)
+                                    metadataRecordsList.clear()
+                                }
                             }
                         }
                         val endTime = System.currentTimeMillis()
