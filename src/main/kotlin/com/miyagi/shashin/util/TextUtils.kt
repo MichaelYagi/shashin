@@ -328,16 +328,12 @@ class TextUtils {
                 logger.log(Level.INFO, "Creating place name from JSON: $geoDataJsonString")
 
                 if (!addressObj.isNull) {
+                    var name = ""
                     if (addressObj.has("name") && addressObj.get("name") != null &&
                         addressObj.get("name").textValue() != "") {
-                        if ((addressObj.has("address") && (!addressObj.get("address").has("road") || addressObj.get("address").get("road") == null)) ||
-                            (addressObj.has("address") && addressObj.get("address").has("road") && addressObj.get("address").get("road") != null &&
-                            addressObj.get("address").get("road").textValue() != "" && addressObj.get("address").get("road").textValue() != addressObj.get("name").textValue())) {
-                            buildPlace += addressObj.get("name").textValue() + " • "
-                            logger.log(Level.INFO, "name found: ${addressObj.get("name").textValue()}")
-                        } else {
-                            logger.log(Level.INFO, "name found but same as road: ${addressObj.get("name").textValue()}")
-                        }
+                        buildPlace += addressObj.get("name").textValue() + " • "
+                        name = addressObj.get("name").textValue()
+                        logger.log(Level.INFO, "name found: ${addressObj.get("name").textValue()}")
                     }
 
                     if (addressObj.has("address")) {
@@ -424,6 +420,14 @@ class TextUtils {
                     }
 
                     buildPlace = buildPlace.trim()
+
+                    // Check if the name is repeated in some other area of the string, remove the name
+                    if (name !== "") {
+                        val buildPlaceArr = buildPlace.split(" • ")
+                        if (buildPlaceArr.size == 2 && buildPlaceArr[1].contains(buildPlaceArr[0])) {
+                            buildPlace = buildPlaceArr[1]
+                        }
+                    }
                 }
             }
 
