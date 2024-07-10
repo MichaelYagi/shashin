@@ -338,11 +338,13 @@ class TextUtils {
 
                     if (addressObj.has("address")) {
                         var addressFound = false
+
                         if (addressObj.get("address").has("house_number") && addressObj.get("address").get("house_number") != null && addressObj.get("address").get("house_number").textValue() != "") {
                             buildPlace += addressObj.get("address").get("house_number").textValue() + " "
                             logger.log(Level.INFO, "house_number found: ${addressObj.get("address").get("house_number").textValue()}")
                             addressFound = true
                         }
+
                         if (addressObj.get("address").has("road") && addressObj.get("address").get("road") != null && addressObj.get("address").get("road").textValue() != "") {
                             buildPlace += addressObj.get("address").get("road").textValue() + ", "
                             logger.log(Level.INFO, "road found: ${addressObj.get("address").get("road").textValue()}")
