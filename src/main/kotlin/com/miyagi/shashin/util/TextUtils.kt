@@ -398,12 +398,10 @@ class TextUtils {
                         }
 
                         // Check if the name is repeated in some other area of the string, remove the name
-                        if (name !== "") {
-                            val buildPlaceArr = buildPlace.split(" • ")
-                            if (buildPlaceArr.size == 2 && buildPlaceArr[1].contains(buildPlaceArr[0])) {
-                                buildPlace = buildPlaceArr[1]
-                                logger.log(Level.INFO, "redundant name found, removing from string: ${buildPlaceArr[0]}")
-                            }
+                        val buildPlaceArr = buildPlace.split(" • ")
+                        if (name !== "" && buildPlaceArr.size == 2 && buildPlaceArr[1].contains(buildPlaceArr[0])) {
+                            buildPlace = buildPlaceArr[1]
+                            logger.log(Level.INFO, "redundant name found, removing from string: ${buildPlaceArr[0]}")
                         }
 
                         if (buildPlace.trim().isNotBlank()) {
