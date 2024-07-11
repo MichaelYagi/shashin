@@ -1139,7 +1139,7 @@ async function showMap(mapdata, keywordMap) {
                     if (resultsTextEl) {
                         let resultsString = ""
                         if ($("#resultsText").text().trim().length > 0) {
-                            resultsString = " " + $("#resultsText").text();
+                            resultsString = " " + $("#resultsText").text().trim();
                         }
                         shashin.showToastMessage("Filter applied", "Filter applied." + resultsString, {
                             icon: "bi-info-circle",
