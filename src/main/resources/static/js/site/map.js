@@ -654,6 +654,7 @@ async function showMap(mapdata, keywordMap) {
                 }
             } else {
                 map.getView().setZoom(initialZoom);
+                map.getView().setCenter(ol.proj.fromLonLat(initialCoord));
             }
 
             forcedFiltered = false;
@@ -1399,6 +1400,7 @@ async function showMap(mapdata, keywordMap) {
             videoOnly: videoOnlyCheckbox.prop("checked"),
             resetMap: true
         });
+
         shashin.showToastMessage("Map reset", "Map reset", {icon:"bi-info-circle", iconColor:"#777777", delay: 3000});
 
         $("#propMapFilter").modal('hide');
