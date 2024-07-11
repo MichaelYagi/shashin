@@ -1132,17 +1132,43 @@ async function showMap(mapdata, keywordMap) {
         filtered = true;
         shashin.showToastMessage("Applying filter", "Applying filter", {icon:"bi-info-circle", iconColor:"#777777", autohide: false});
         if (true === setLayerInputs(mapSourceChanged)) {
-            setTimeout(function () {
-                let resultsString = ""
-                if ($("#resultsText").text().trim().length > 0) {
-                    resultsString = " " + $("#resultsText").text();
-                }
-                shashin.showToastMessage("Filter applied", "Filter applied." + resultsString, {
-                    icon: "bi-info-circle",
-                    iconColor: "#777777",
-                    delay: 3000
+            if (MutationObserver) {
+                const observer = new MutationObserver(function (mutations, me) {
+                    const resultsTextEl = document.getElementById("resultsText");
+
+                    if (resultsTextEl) {
+                        let resultsString = ""
+                        if ($("#resultsText").text().trim().length > 0) {
+                            resultsString = " " + $("#resultsText").text();
+                        }
+                        shashin.showToastMessage("Filter applied", "Filter applied." + resultsString, {
+                            icon: "bi-info-circle",
+                            iconColor: "#777777",
+                            delay: 3000
+                        });
+
+                        me.disconnect(); // stop observing
+                        return true;
+                    }
                 });
-            }, 1000);
+
+                observer.observe(document, {
+                    childList: true,
+                    subtree: true
+                });
+            } else {
+                setTimeout(function () {
+                    let resultsString = ""
+                    if ($("#resultsText").text().trim().length > 0) {
+                        resultsString = " " + $("#resultsText").text();
+                    }
+                    shashin.showToastMessage("Filter applied", "Filter applied." + resultsString, {
+                        icon: "bi-info-circle",
+                        iconColor: "#777777",
+                        delay: 3000
+                    });
+                }, 1000);
+            }
 
             $("#propMapFilter").modal('hide');
         }
