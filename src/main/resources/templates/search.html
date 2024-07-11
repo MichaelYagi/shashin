@@ -115,6 +115,14 @@
 
         term = term.trim();
         if (term !== "") {
+            if (term.toLowerCase().startsWith("do a barrel roll")) {
+                const a = "-webkit-";
+                const b = 'transform:rotate(1turn);';
+                const c = 'transition:4s;';
+
+                document.head.innerHTML += '<style>body{' + a + b + a + c + b + c
+            }
+
             const section = $("section");
             let lastDate = "";
             if (section.length > 0) {
