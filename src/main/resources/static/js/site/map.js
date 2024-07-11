@@ -653,8 +653,10 @@ async function showMap(mapdata, keywordMap) {
                     }
                 }
             } else {
-                map.getView().setZoom(initialZoom);
+                initialCoord = defaultCoord;
+                initialZoom = 2;
                 map.getView().setCenter(ol.proj.fromLonLat(initialCoord));
+                map.getView().setZoom(initialZoom);
             }
 
             forcedFiltered = false;
