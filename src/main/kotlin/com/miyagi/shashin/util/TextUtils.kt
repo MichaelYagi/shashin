@@ -241,7 +241,11 @@ class TextUtils {
                             val placeName = placeDescriptionArray[0]
                             val placeNameArray = placeName.split(",")
                             if (placeNameArray.size > 2) {
-                                val processedPlaceName = placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
+                                var processedPlaceName = placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
+                                val processedPlaceNameArr = processedPlaceName.split(" • ")
+                                if (processedPlaceNameArr.size > 1) {
+                                    processedPlaceName = processedPlaceNameArr[1]
+                                }
                                 processedPlaceNameArray.add(processedPlaceName)
                             }
                         } else {
