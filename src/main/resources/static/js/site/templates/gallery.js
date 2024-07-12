@@ -2,7 +2,7 @@ class GalleryTemplates {
     static PhotoGalleryItem({activePage, metadata, overlayData, uuid}) { return `
         <div id="photoThumbnailContainer${metadata.id}" class="photo-thumbnail-container photo-thumbnail" style="width:${metadata.thumbnailSmallWidth}px;height:${metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
             <span class="lightGalleryIndexAnchor"></span>
-            <img loading="lazy" data-smallthumb="${encodeURI(metadata.thumbnailUrlSmall)}?v=${uuid}" data-xsmallthumb="${metadata.thumbnailUrlExtraSmall===null?'':encodeURI(metadata.thumbnailUrlExtraSmall)}" src="${encodeURI(metadata.thumbnailUrlSmall)}?v=${uuid}" class="photo-thumbnail-image" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
+            <img loading="lazy" data-smallthumb="${encodeURI(metadata.thumbnailUrlSmall)}?v=${uuid}" data-xsmallthumb="${activePage !== 'timeline' && metadata.thumbnailUrlExtraSmall===null?'':encodeURI(metadata.thumbnailUrlExtraSmall)}" src="${encodeURI(metadata.thumbnailUrlSmall)}?v=${uuid}" class="photo-thumbnail-image" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
             <input type="hidden" name="filename${metadata.id}" id="filename${metadata.id}" value="${metadata.fileName}">
             <input type="hidden" name="thumbnailCentered${metadata.id}" id="thumbnailCentered${metadata.id}" value="${encodeURI(metadata.thumbnailUrlCentered)}">
             
