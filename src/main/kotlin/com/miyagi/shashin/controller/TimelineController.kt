@@ -656,7 +656,7 @@ class TimelineController: BaseController() {
         response["metadataList"] = mutableListOf<Metadata>()
         response["favorites"] = mutableMapOf<String, Any>()
         response["mediaTypeFilter"] = mediaTypeFilter
-        response["placeNameHeaders"] = ""
+        response["placeNameHeaders"] = mutableListOf<String>()
 
         response["msg"] = "Could not get results"
         response["status"] = ApiResponse.FAIL.status
@@ -676,6 +676,8 @@ class TimelineController: BaseController() {
             if (model.getAttribute("currentUser") != "") {
                 val currentUserObj = model.getAttribute("currentUser") as User?
 
+                var metadataList: MutableList<Metadata>
+
                 if (metadataOnly) {
 //                    val metadataList: MutableList<MetadataFocused> = if (mediaTypeFilter == "all") {
 //                        metadataRepository.findTimelineDateFocused(
@@ -688,7 +690,7 @@ class TimelineController: BaseController() {
 //                        ).toMutableList()
 //                    }
 
-                    val metadataList: MutableList<Metadata> = if (mediaTypeFilter == "all") {
+                    metadataList = if (mediaTypeFilter == "all") {
                         metadataRepository.findAllByYearAndMonthAndDayAndHiddenEqualsOrderByYearDescMonthDescDayDescTimeDesc(
                             year, month, day, false
                         ).toMutableList()
@@ -705,7 +707,7 @@ class TimelineController: BaseController() {
                         response["favorites"] = favoritesMap
                     }
                 } else {
-                    val metadataList: MutableList<Metadata> = if (mediaTypeFilter == "all") {
+                    metadataList = if (mediaTypeFilter == "all") {
                         metadataRepository.findAllByYearAndMonthAndDayAndHiddenEqualsOrderByYearDescMonthDescDayDescTimeDesc(
                             year, month, day, false
                         ).toMutableList()
@@ -739,34 +741,44 @@ class TimelineController: BaseController() {
                     }
                 }
 
-                var placeNames = mutableListOf<String>()
-                if (year != null && month != null && day != null) {
-                    placeNames = TextUtils.getPlaceNamesForDate(year, month, day, metadataRepository, mediaTypeFilter)
-                    val metadataDates = getMetadataDates(mediaTypeFilter)
-                    val dates = metadataDates["metadataDates"] as MutableList<MetadataDate>
-                    for (i in 0 until dates.size) {
-                        if (dates[i].getDay() == day && dates[i].getMonth() == month && dates[i].getYear() == year) {
-                            var prevPlaceName: MutableList<String>? = null
-                            if (i > 0) {
-                                prevPlaceName = TextUtils.getPlaceNamesForDate(
-                                    dates[i - 1].getYear()!!,
-                                    dates[i - 1].getMonth()!!,
-                                    dates[i - 1].getDay()!!,
-                                    metadataRepository,
-                                    mediaTypeFilter
-                                )
-                            }
-
-                            if (prevPlaceName != null && prevPlaceName.size == 1 && placeNames.size == 1 && prevPlaceName[0] == placeNames[0]) {
-                                placeNames.clear()
-                                placeNames.add("")
-                            }
-                            break
+                val placeNames = mutableListOf<String>()
+                if (metadataList.isNotEmpty()) {
+                    for (metadata in metadataList) {
+                        val placeNameHeader = TextUtils.formatPlaceNameForHeader(metadata.getPlaceName())
+                        if (placeNameHeader.trim().isNotEmpty() && !placeNames.contains(placeNameHeader)) {
+                            placeNames.add(placeNameHeader)
                         }
                     }
                 }
-                response["placeNameHeaders"] = placeNames
 
+                // Don't repeat date header locations, requires extra db lookups though
+//                if (year != null && month != null && day != null) {
+//                    placeNames = TextUtils.getPlaceNamesForDateHeader(year, month, day, metadataRepository, mediaTypeFilter)
+//                    val metadataDates = getMetadataDates(mediaTypeFilter)
+//                    val dates = metadataDates["metadataDates"] as MutableList<MetadataDate>
+//                    for (i in 0 until dates.size) {
+//                        if (dates[i].getDay() == day && dates[i].getMonth() == month && dates[i].getYear() == year) {
+//                            var prevPlaceName: MutableList<String>? = null
+//                            if (i > 0) {
+//                                prevPlaceName = TextUtils.getPlaceNamesForDateHeader(
+//                                    dates[i - 1].getYear()!!,
+//                                    dates[i - 1].getMonth()!!,
+//                                    dates[i - 1].getDay()!!,
+//                                    metadataRepository,
+//                                    mediaTypeFilter
+//                                )
+//                            }
+//
+//                            if (prevPlaceName != null && prevPlaceName.size == 1 && placeNames.size == 1 && prevPlaceName[0] == placeNames[0]) {
+//                                placeNames.clear()
+//                                placeNames.add("")
+//                            }
+//                            break
+//                        }
+//                    }
+//                }
+
+                response["placeNameHeaders"] = placeNames
                 response["msg"] = "Results"
                 response["status"] = ApiResponse.SUCCESS.status
             }
