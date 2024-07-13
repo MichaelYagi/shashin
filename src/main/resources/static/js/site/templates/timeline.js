@@ -52,7 +52,7 @@ class TimelineTemplates {
         <span class="dateContainer" id="container_${metadata.year}-${metadata.month}-${metadata.day}">
         <br id="br${metadata.year}-${metadata.month}-${metadata.day}">
         <section class="scrollspy" id="${metadata.year}-${metadata.month}-${metadata.day}"><div class="mb-3"><strong class="dateHeading p-1">${Util.getDateString(metadata.year, metadata.month, metadata.day)}</strong>
-        ${(placeNameHeaders.length === 1) ? `<span class="text-muted"><a class="link-unstyled" href="/search?term=`+placeNameHeaders[0]+`" target="_blank">`+placeNameHeaders[0]+`</a></span>` : (placeNameHeaders.length > 1) ? `
+        ${(placeNameHeaders.length === 1) ? `<span class="text-muted"><a class="link-unstyled" href="/search?term=`+placeNameHeaders[0]+`" target="_blank" id="placeNameHeader`+metadata.year+'-'+metadata.month+'-'+metadata.day+`">`+placeNameHeaders[0]+`</a></span>` : (placeNameHeaders.length > 1) ? `
         <span class="text-muted"><div class="dropdown" style="display: inline-block;"><a class="dropdown-toggle link-unstyled" data-bs-toggle="dropdown" href="#">`+placeNameHeaders[0]+`</a>
         <ul class="dropdown-menu">`+listHtml+`</ul></div></span>` : ``}</div></section>
         <div class="row image-group-padding" id="row${metadata.year}-${metadata.month}-${metadata.day}">
