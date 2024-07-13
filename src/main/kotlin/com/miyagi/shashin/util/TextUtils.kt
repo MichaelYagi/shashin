@@ -232,19 +232,29 @@ class TextUtils {
                 val placeDescriptionArray = placeDescription.split(";")
                 if (placeDescriptionArray.size > 1) {
                     val placeName = placeDescriptionArray[0]
+
                     val placeNameArray = placeName.split(",")
                     if (placeNameArray.size > 2) {
-                        var processedPlaceName = placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
+                        val processedPlaceName = placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
+
                         val processedPlaceNameArr = processedPlaceName.split(" • ")
-                        if (processedPlaceNameArr.size > 1) {
-                            placeNameHeader = processedPlaceNameArr[1]
+                        placeNameHeader = if (processedPlaceNameArr.size > 1) {
+                            processedPlaceNameArr[1]
+                        } else {
+                            processedPlaceName
                         }
                     }
                 } else {
                     val placeNameArray = placeDescription.split(",")
                     if (placeNameArray.size > 2) {
-                        placeNameHeader =
-                            placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
+                        val processedPlaceName = placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
+
+                        val processedPlaceNameArr = processedPlaceName.split(" • ")
+                        placeNameHeader = if (processedPlaceNameArr.size > 1) {
+                            processedPlaceNameArr[1]
+                        } else {
+                            processedPlaceName
+                        }
                     }
                 }
             }

@@ -661,7 +661,7 @@ class TimelineController: BaseController() {
         response["msg"] = "Could not get results"
         response["status"] = ApiResponse.FAIL.status
 
-        if (date != null && date.isNotBlank()) {
+        if (!date.isNullOrBlank()) {
             var year: Int? = null
             var month: Int? = null
             var day: Int? = null
@@ -676,20 +676,9 @@ class TimelineController: BaseController() {
             if (model.getAttribute("currentUser") != "") {
                 val currentUserObj = model.getAttribute("currentUser") as User?
 
-                var metadataList: MutableList<Metadata>
+                val metadataList: MutableList<Metadata>
 
                 if (metadataOnly) {
-//                    val metadataList: MutableList<MetadataFocused> = if (mediaTypeFilter == "all") {
-//                        metadataRepository.findTimelineDateFocused(
-//                            year, month, day
-//                        ).toMutableList()
-//                    } else {
-//                        metadataRepository.findAllByTypeAndYearAndMonthAndDayFocused(
-//                            mediaTypeFilter,
-//                            year, month, day
-//                        ).toMutableList()
-//                    }
-
                     metadataList = if (mediaTypeFilter == "all") {
                         metadataRepository.findAllByYearAndMonthAndDayAndHiddenEqualsOrderByYearDescMonthDescDayDescTimeDesc(
                             year, month, day, false
@@ -745,6 +734,7 @@ class TimelineController: BaseController() {
                 if (metadataList.isNotEmpty()) {
                     for (metadata in metadataList) {
                         val placeNameHeader = TextUtils.formatPlaceNameForHeader(metadata.getPlaceName())
+
                         if (placeNameHeader.trim().isNotEmpty() && !placeNames.contains(placeNameHeader)) {
                             placeNames.add(placeNameHeader)
                         }
