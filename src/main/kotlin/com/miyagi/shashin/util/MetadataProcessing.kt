@@ -412,10 +412,8 @@ class MetadataProcessing() {
                                 }
                             }
                             "Focal Length" -> {
-                                val flengthValue = tag.description.filter { it.isDigit() }
-                                if (flengthValue.isNotBlank()) {
-                                    this.metadataObj.setFocalLength(flengthValue.toDouble())
-                                }
+                                val flengthValue = stringToFloatUsingRegex(tag.description)
+                                this.metadataObj.setFocalLength(flengthValue?.toDouble())
                             }
                             "Make" -> {
                                 cameraMake = tag.description
@@ -649,6 +647,17 @@ class MetadataProcessing() {
             }
 
             return count
+        }
+
+        fun stringToFloatUsingRegex(input: String): Float? {
+            val regex = Regex("[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)")
+            val match = regex.find(input)
+            var result: Float? = null
+            if (match != null && match.value.isNotEmpty()) {
+                result = match.value.toFloatOrNull()
+            }
+
+            return result
         }
     }
 }
