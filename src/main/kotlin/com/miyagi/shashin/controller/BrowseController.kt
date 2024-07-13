@@ -687,7 +687,7 @@ class BrowseController: BaseController() {
 
                     val placenameKey = metadata.getYear().toString()+"-"+metadata.getMonth().toString()+"-"+metadata.getDay().toString()
                     if (!placenameMap.containsKey(placenameKey)) {
-                        placenameMap[placenameKey] = TextUtils.getPlaceNamesForDate(metadata.getYear()!!, metadata.getMonth()!!, metadata.getDay()!!, metadataRepository)
+                        placenameMap[placenameKey] = TextUtils.getPlaceNamesForDateHeader(metadata.getYear()!!, metadata.getMonth()!!, metadata.getDay()!!, metadataRepository)
                     }
                 }
                 response["placenameMap"] = placenameMap

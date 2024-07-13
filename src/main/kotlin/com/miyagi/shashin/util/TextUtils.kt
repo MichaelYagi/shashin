@@ -1,5 +1,6 @@
 package com.miyagi.shashin.util
 
+import com.fasterxml.jackson.databind.BeanDescription
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.repository.MetadataRepository
 import net.iakovlev.timeshape.TimeZoneEngine
@@ -225,7 +226,33 @@ class TextUtils {
             return readUrl(geoLookupUrl)
         }
 
-        fun getPlaceNamesForDate(year: Int, month: Int, day: Int, metadataRepository:MetadataRepository, type: String = "all"): MutableList<String> {
+        fun formatPlaceNameForHeader(placeDescription: String?): String {
+            var placeNameHeader = ""
+            if (placeDescription != null) {
+                val placeDescriptionArray = placeDescription.split(";")
+                if (placeDescriptionArray.size > 1) {
+                    val placeName = placeDescriptionArray[0]
+                    val placeNameArray = placeName.split(",")
+                    if (placeNameArray.size > 2) {
+                        var processedPlaceName = placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
+                        val processedPlaceNameArr = processedPlaceName.split(" • ")
+                        if (processedPlaceNameArr.size > 1) {
+                            placeNameHeader = processedPlaceNameArr[1]
+                        }
+                    }
+                } else {
+                    val placeNameArray = placeDescription.split(",")
+                    if (placeNameArray.size > 2) {
+                        placeNameHeader =
+                            placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
+                    }
+                }
+            }
+
+            return placeNameHeader
+        }
+
+        fun getPlaceNamesForDateHeader(year: Int, month: Int, day: Int, metadataRepository:MetadataRepository, type: String = "all"): MutableList<String> {
             val placeList = if (type == "all") {
                 metadataRepository.findTimelinePlaceByDate(year, month, day)
             } else {
@@ -235,30 +262,13 @@ class TextUtils {
             val processedPlaceNameArray = mutableListOf<String>()
             if (placeList != null) {
                 for (placeDescription in placeList) {
-                    if (placeDescription != null) {
-                        val placeDescriptionArray = placeDescription.split(";")
-                        if (placeDescriptionArray.size > 1) {
-                            val placeName = placeDescriptionArray[0]
-                            val placeNameArray = placeName.split(",")
-                            if (placeNameArray.size > 2) {
-                                var processedPlaceName = placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
-                                val processedPlaceNameArr = processedPlaceName.split(" • ")
-                                if (processedPlaceNameArr.size > 1) {
-                                    processedPlaceName = processedPlaceNameArr[1]
-                                }
-                                processedPlaceNameArray.add(processedPlaceName)
-                            }
-                        } else {
-                            val placeNameArray = placeDescription.split(",")
-                            if (placeNameArray.size > 2) {
-                                val processedPlaceName =
-                                    placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
-                                processedPlaceNameArray.add(processedPlaceName)
-                            }
-                        }
+                    val placeNameHeader = formatPlaceNameForHeader(placeDescription)
+                    if (placeNameHeader.isNotEmpty()) {
+                        processedPlaceNameArray.add(placeNameHeader)
                     }
                 }
             }
+
             val sortedPlaces = processedPlaceNameArray
                 .groupingBy{ it }
                 .eachCount()
