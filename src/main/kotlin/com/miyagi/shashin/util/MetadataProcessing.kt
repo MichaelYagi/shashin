@@ -390,6 +390,10 @@ class MetadataProcessing() {
                             }
                             "Compression Type" -> {
                                 this.metadataObj.setCompressionType(tag.description)
+                                logger.log(
+                                    Level.INFO,
+                                    "Compression Type set for " + file.name
+                                )
                             }
                             "Exposure Time" -> {
                                 val exposureArray = tag.description.split(" ")
@@ -399,6 +403,10 @@ class MetadataProcessing() {
                                     fraction = TextUtils.convertDecimalToFraction(exposureTime)
                                 }
                                 this.metadataObj.setExposure(fraction)
+                                logger.log(
+                                    Level.INFO,
+                                    "Exposure Time set for " + file.name
+                                )
                             }
                             "F-Number" -> {
                                 val regex = "\\d+(\\.\\d+)?".toRegex()
@@ -410,13 +418,21 @@ class MetadataProcessing() {
 
                                 if (matchValue.isNotBlank()) {
                                     this.metadataObj.setFstopNumber(matchValue.toDouble())
+                                    logger.log(
+                                        Level.INFO,
+                                        "F-Number set for " + file.name
+                                    )
                                 }
                             }
                             "Focal Length" -> {
                                 val fLengthValue = stringToFloatUsingRegex(tag.description)
                                 val df = DecimalFormat("#.#")
-                                df.roundingMode = RoundingMode.FLOOR
+                                df.roundingMode = RoundingMode.HALF_EVEN
                                 this.metadataObj.setFocalLength(df.format(fLengthValue).toDouble())
+                                logger.log(
+                                    Level.INFO,
+                                    "Focal Length set for " + file.name
+                                )
                             }
                             "Make" -> {
                                 cameraMake = tag.description
