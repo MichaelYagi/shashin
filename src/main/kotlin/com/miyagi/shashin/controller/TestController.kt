@@ -7,6 +7,7 @@ import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.ImageProcessing
+import com.miyagi.shashin.util.MetadataProcessing
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -565,6 +566,89 @@ class TestController {
                 println("Proceed flag is false")
                 activeLink = ""
             }
+        } else {
+            println("$activeLink already running")
+        }
+
+        return "test"
+    }
+
+    @Secured("ROLE_SUPER")
+    @RequestMapping(value = ["/rescanflengths"], method = [RequestMethod.GET], consumes = ["application/json"])
+    @ResponseBody
+    fun rescanFLengths(response: HttpServletResponse): String {
+        if (activeLink.isBlank()) {
+            activeLink = "rescanflengths"
+        }
+
+        println("repairscripts thread exists: "+FileUtils.checkThreadFileAlive("repairscripts"))
+
+        if (!FileUtils.checkThreadFileAlive("repairscripts") && FileUtils.createThreadFile("repairscripts") != null) {
+            Thread {
+                val mids = testRepository.findAllFocalLengths()
+                val metadataRecordsList = mutableListOf<Metadata>()
+
+                if (mids != null && mids.isNotEmpty()) {
+                    var localIndex = 0
+                    currentIndex = 0
+                    totalIndex = mids.count()
+                    startTime = System.currentTimeMillis()
+                    val x = 100
+                    val timesArray = mutableListOf<Long>()
+                    val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+                    val sidecarDir = rootPath + relativeSidecarDir
+                    var rescannedMetadata = Metadata()
+                    var prevFocalLength: Double
+
+                    for (metadata in mids) {
+                        val elapsedStartTime = System.currentTimeMillis()
+                        if (metadata.getFocalLength() != null) {
+                            prevFocalLength = metadata.getFocalLength()!!
+
+                            val metadataProcessing = MetadataProcessing(
+                                "v1",
+                                File(metadata.getPath()!!),
+                                sidecarDir,
+                                metadata,
+                                geocodeUrl!!
+                            )
+                            rescannedMetadata = metadataProcessing.populateMetadata()
+
+                            if (rescannedMetadata.getFocalLength() != prevFocalLength) {
+                                println("iteration ${localIndex + 1} out of ${mids.count()}")
+                                localIndex++
+                                println("metadata ID: ${metadata.getId()}")
+                                println("Old fLength: $prevFocalLength")
+                                println("New fLength: ${rescannedMetadata.getFocalLength()}")
+
+                                metadataRecordsList.add(rescannedMetadata)
+
+                                // Save every 100 records
+                                if (metadataRecordsList.size % x == 0) {
+                                    println("Batch saving $x records")
+                                    metadataRepository.saveAll(metadataRecordsList)
+                                    metadataRecordsList.clear()
+                                }
+
+                                println("------------")
+                            }
+                        }
+                        val endTime = System.currentTimeMillis()
+                        timesArray.add((endTime-elapsedStartTime))
+                        etr = progress(currentIndex, totalIndex, timesArray)
+                        currentIndex++
+                    }
+
+                    if (metadataRecordsList.size > 0) {
+                        metadataRepository.saveAll(metadataRecordsList)
+                    }
+
+                    println("# of records with rescanned focal length data: $localIndex")
+                }
+                activeLink = ""
+                FileUtils.deleteThreadFiles("repairscripts")
+            }.start()
+
         } else {
             println("$activeLink already running")
         }

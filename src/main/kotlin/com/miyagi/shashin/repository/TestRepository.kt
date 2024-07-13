@@ -16,4 +16,7 @@ interface TestRepository : CrudRepository<Metadata?, String?> {
 
     @Query("SELECT * FROM metadata WHERE place_name LIKE :placeName%", nativeQuery = true)
     fun findByPlaceName(@Param("placeName") term: String): MutableList<Metadata>?
+
+    @Query("SELECT * FROM metadata WHERE focal_length IS NOT NULL", nativeQuery = true)
+    fun findAllFocalLengths(): MutableList<Metadata>?
 }
