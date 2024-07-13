@@ -1590,14 +1590,32 @@
                                 let internalHtml = "";
 
                                 let idCheck = "undated";
-                                if (metadataList[0]["year"] === null ||
-                                    metadataList[0]["month"] === null ||
-                                    metadataList[0]["day"] === null)
+                                if (metadataList[0]["year"] !== null &&
+                                    metadataList[0]["month"] !== null &&
+                                    metadataList[0]["day"] !== null)
                                 {
                                     idCheck = metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day;
                                 }
 
                                 const placeNameHeaders = data["placeNameHeaders"];
+
+                                const currentTimelineIndex = timelineSettings.timelineDatesHash[idCheck];
+                                let nextTimelineIndex = currentTimelineIndex-1;
+
+                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                    nextTimelineIndex = currentTimelineIndex+1;
+                                }
+
+                                if (timelineSettings.timelineDates.hasOwnProperty(nextTimelineIndex)) {
+                                    const nextTimeline = timelineSettings.timelineDates[nextTimelineIndex];
+                                    const nextTimelineDate = nextTimeline.year + "-" + nextTimeline.month + "-" + nextTimeline.day;
+
+                                    if (placeNameHeaders.length === 1 &&
+                                        placeNameHeaders[0] === $("#placeNameHeader"+nextTimelineDate).text()
+                                    ) {
+                                        placeNameHeaders[0] = "";
+                                    }
+                                }
 
                                 let listHtml = "";
                                 if (placeNameHeaders.length > 1) {
@@ -1613,7 +1631,7 @@
                                     '<div class="mb-3"><strong class="dateHeading p-1">'+Util.getDateString(metadataList[0].year, metadataList[0].month, metadataList[0].day)+'</strong>';
 
                                 if (placeNameHeaders.length === 1) {
-                                    internalHtml += '<span class="text-muted"><a class="link-unstyled" href="/search?term='+placeNameHeaders[0]+'" target="_blank">'+placeNameHeaders[0]+'</a></span>';
+                                    internalHtml += '<span class="text-muted"><a class="link-unstyled" href="/search?term='+placeNameHeaders[0]+'" target="_blank" id="placeNameHeader'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">'+placeNameHeaders[0]+'</a></span>';
                                 } else if (placeNameHeaders.length > 1) {
                                     internalHtml += '<span class="text-muted"><div class="dropdown" style="display: inline-block;"><a class="dropdown-toggle link-unstyled" data-bs-toggle="dropdown" href="#">'+placeNameHeaders[0]+'</a>\n' +
                                         '    <ul class="dropdown-menu">\n';
