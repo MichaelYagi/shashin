@@ -9,6 +9,7 @@ import com.miyagi.shashin.repository.*
 import net.iakovlev.timeshape.TimeZoneEngine
 import org.apache.commons.lang3.StringUtils
 import java.io.File
+import java.math.RoundingMode
 import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
 import java.text.DecimalFormat
@@ -412,8 +413,10 @@ class MetadataProcessing() {
                                 }
                             }
                             "Focal Length" -> {
-                                val flengthValue = stringToFloatUsingRegex(tag.description)
-                                this.metadataObj.setFocalLength(flengthValue?.toDouble())
+                                val fLengthValue = stringToFloatUsingRegex(tag.description)
+                                val df = DecimalFormat("#.#")
+                                df.roundingMode = RoundingMode.FLOOR
+                                this.metadataObj.setFocalLength(df.format(fLengthValue).toDouble())
                             }
                             "Make" -> {
                                 cameraMake = tag.description
