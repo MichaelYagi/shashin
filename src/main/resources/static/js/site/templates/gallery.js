@@ -51,31 +51,33 @@ class GalleryTemplates {
         ${(activePage === "person") ? `<span id="personmodal${metadata.id}" style="width:0;height:0;padding:0"></span>` : ''}
         
         <script type="text/javascript"${(shashin.nonce.length > 0 ? ' nonce="' + shashin.nonce + '"' : '')}>
+        $(document).ready(function () {
             shashin.setPhotoOverlays({id:"${metadata.id}",type:"${metadata.type}",lat:"${(metadata.lat === null) ? '' : `${metadata.lat}`}", lng:"${(metadata.lng === null) ? '' : `${metadata.lng}`}", year:${metadata.year}, month:${metadata.month}, day:${metadata.day}, fileName:"${metadata.fileName}", thumbnailUrlSmall:"${metadata.thumbnailUrlSmall}"}, "${activePage}");
             Util.activateMetadataListeners("${metadata.id}");
             $("#mediaLink${metadata.id}").attr("tag", "${metadata.id}");
             
             ${(overlayData.hasOwnProperty("data") === false || overlayData["data"].hasOwnProperty("overlayFlags") === false || overlayData["data"]["overlayFlags"].hasOwnProperty("renderBottomLeft") === false || overlayData["data"]["overlayFlags"]["renderBottomLeft"] === false || $.inArray("isInfo", overlayData.overlays) !== -1) ?
-            `
+        `
                 $("#infoModalEdit${metadata.id}").on("click", function (e) {
                     e.preventDefault();
                     shashin.openEditMetadataModal("${metadata.id}");
                 })
                 `
-            :
-            `
+        :
+        `
                 $("#metadataModalEdit${metadata.id}").on("click", function (e) {
                     e.preventDefault();
                     shashin.openEditMetadataModal("${metadata.id}");
                 })
                 `
-        }
+    }
     
             $("#image${metadata.id}").on('load', function () {
                 $(this).css("background-color", "transparent");
             });
             
             // Util.checkErrorImage();
+            });
         </script>        
     `};
 
@@ -155,9 +157,11 @@ class GalleryTemplates {
             </a>
     
             <script type="text/javascript"${(shashin.nonce.length > 0 ? ' nonce="' + shashin.nonce + '"' : '')}>
+            $(document).ready(function () {
                 $("#${data.onClickIdPrefix}${metadata.id}").on("click", function (e) {
                     e.preventDefault();
                     ${data.blOnClickFunction}(e,"${metadata.id}");
+                });
                 });
             </script>
             ` : ''}
@@ -213,9 +217,11 @@ class GalleryTemplates {
             }
     
             <script type="text/javascript"${(shashin.nonce.length > 0 ? ` nonce="${shashin.nonce}"` : '')}>
+            $(document).ready(function () {
                 $("#mediaLink${id}").on("click", function (e) {
                     e.preventDefault();
                     ${data.cOnClickFunction}(e,${data.galleryIndex});
+                });
                 });
             </script>
     
