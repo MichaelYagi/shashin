@@ -21,6 +21,20 @@
             $("#offcanvasInfoSidebarCloseButton").click();
         }
     });
+
+    $('#propInfoSidebar').on('hide.bs.offcanvas', function () {
+        if (shashin.map !== null) {
+            // Set map target to null and reset
+            shashin.map.setTarget(null);
+            shashin.map = null;
+        }
+
+        if (shashin.layer !== null) {
+            shashin.layer.getSource().clear();
+        }
+
+        $("#headerMap").remove();
+    });
 </script>
 </body>
 </html>

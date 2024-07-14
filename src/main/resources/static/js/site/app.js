@@ -491,7 +491,7 @@
                 $("#videoduration").css("display","none");
 
                 if (metadata.thumbnailUrlCentered !== null) {
-                    $("#propMetadataModalThumbnail").html(TimelineTemplates.HeaderThumbnail({metadata: metadata, version: Util.getMetadataLocalStorage()}));
+                    $("#propMetadataModalThumbnail").html(TimelineTemplates.HeaderThumbnail({metadata: metadata, version: Util.getMetadataLocalStorage(), showMap: false}));
                 }
 
                 if (metadata.title !== null) {
@@ -1046,6 +1046,93 @@
         }
     }
 
+    shashin.openHeaderMap = function (metadata) {
+        shashin.printMessageToConsole("Opening Siderbar with Map with metadata");
+        shashin.printMessageToConsole(metadata);
+
+        if (Object.keys(metadata).length > 0 &&
+            metadata.lat !== null && metadata.lng !== null &&
+            metadata.lat !== "" && metadata.lng !== ""
+        ) {
+            if (shashin.map === null) {
+                const duration = 400;
+                const interactions = [
+                    new ol.interaction.DoubleClickZoom({
+                        duration: duration,
+                        useAnchor: false
+                    }),
+                    new ol.interaction.KeyboardZoom({
+                        duration: duration,
+                        useAnchor: false
+                    }),
+                    new ol.interaction.MouseWheelZoom({
+                        duration: duration,
+                        useAnchor: false
+                    }),
+                    new ol.interaction.DblClickDragZoom({
+                        useAnchor: false
+                    }),
+                    new ol.interaction.DragZoom({
+                        useAnchor: false
+                    })
+                ];
+
+                shashin.map = new ol.Map({
+                    controls: [],
+                    layers: [
+                        new ol.layer.Tile({
+                            visible: true,
+                            source: shashin.getMapSource("osm")
+                        })
+                    ],
+                    target: 'headerMap',
+                    interactions: interactions
+                });
+            } else {
+                const baseLayer = new ol.layer.Tile({
+                    visible: true,
+                    source: shashin.getMapSource("osm")
+                });
+                shashin.map.addLayer(baseLayer);
+            }
+
+            if (shashin.layer !== null) {
+                shashin.layer.getSource().clear();
+            }
+
+            shashin.map.getView().setCenter(ol.proj.fromLonLat([metadata.lng, metadata.lat]));
+            shashin.map.getView().setZoom(15);
+
+            shashin.feature = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.fromLonLat([metadata.lng, metadata.lat])),
+                name: metadata.title
+            });
+
+            const iconSize = 30;
+            const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + iconSize + '" height="' + iconSize + '" fill="currentColor" class="bi bi-geo-alt-fill" style="color: orangered;" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg>';
+            const styleIcon = new ol.style.Style({
+                image: new ol.style.Icon({
+                    opacity: 1,
+                    src: 'data:image/svg+xml;utf8,' + svg,
+                    anchor: [0.5, iconSize],
+                    anchorXUnits: 'fraction',
+                    anchorYUnits: 'pixels',
+                    anchorOrigin: 'top-left',
+                    offset: [0, 0]
+                })
+            });
+            shashin.feature.setStyle(styleIcon);
+            shashin.layer = new ol.layer.Vector({
+                source: new ol.source.Vector({
+                    features: [shashin.feature]
+                })
+            });
+            shashin.map.addLayer(shashin.layer);
+
+            setTimeout(fixContentHeight, 1000);
+        }
+    }
+
     shashin.openMap = function (metadata) {
         shashin.printMessageToConsole("Opening Map with metadata");
         shashin.printMessageToConsole(metadata);
@@ -1443,7 +1530,8 @@
             $("#metadataId").val(metadata.id);
 
             if (metadata.thumbnailUrlCentered !== null) {
-                $("#propInfoSidebarThumbnail").html(TimelineTemplates.HeaderThumbnail({metadata:metadata, version: Util.getMetadataLocalStorage()}));
+                $("#propInfoSidebarThumbnail").html(TimelineTemplates.HeaderThumbnail({metadata:metadata, version: Util.getMetadataLocalStorage(), showMap: true}));
+                shashin.openHeaderMap(metadata);
             }
 
             Util.populateDetailsInfo(metadata, "propInfoSidebar");
