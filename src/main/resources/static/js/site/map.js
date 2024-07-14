@@ -29,6 +29,7 @@ async function showMap(mapdata, keywordMap) {
     const filterInputs = $("#filterInputs");
     const albumSelect = $("#albumSelect");
     const progressBarWrapper = $("#progressBarWrapper");
+    const coordZoom = 17;
 
     // Bigger number for better performance, smaller number for better accuracy
     let clusterDistance = 175;
@@ -141,7 +142,7 @@ async function showMap(mapdata, keywordMap) {
     if (qslat !== null && qslng !== null && qslat !== '' && qslng !== '') {
         if (true === Util.isValidLatLon(qslat,qslng)) {
             initialCoord = [qslng, qslat];
-            initialZoom = shashin.initialMapZoom;
+            initialZoom = coordZoom;
             startDateField.val("");
         } else {
             shashin.showToastMessage("Validation error", "Invalid lat/lng format.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
@@ -155,7 +156,7 @@ async function showMap(mapdata, keywordMap) {
 
             if (true === Util.isValidLatLon(qslat, qslng)) {
                 initialCoord = [qslng, qslat];
-                initialZoom = shashin.initialMapZoom;
+                initialZoom = coordZoom;
                 startDateField.val("");
             } else {
                 shashin.showToastMessage("Validation error", "Invalid lat/lng format.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
@@ -431,7 +432,7 @@ async function showMap(mapdata, keywordMap) {
         if (resetMap === true) {
             initialZoom = 2;
             if (qslat !== null && qslng !== null && qslat !== "" && qslng !== "") {
-                initialZoom = shashin.initialMapZoom;
+                initialZoom = coordZoom;
             }
         }
 
@@ -654,7 +655,9 @@ async function showMap(mapdata, keywordMap) {
                 }
             } else {
                 initialCoord = defaultCoord;
-                initialZoom = 2;
+                if (qslat !== null && qslng !== null && qslat !== '' && qslng !== '') {
+                    initialCoord = [qslng, qslat];
+                }
                 map.getView().setCenter(ol.proj.fromLonLat(initialCoord));
                 map.getView().setZoom(initialZoom);
             }
