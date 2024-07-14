@@ -12,28 +12,30 @@
 </div>
 
 <script type="text/javascript" th:nonce="${cspNonce}">
-    $(document).on("click", function(event) {
-        const $target = $(event.target);
-        if (!$target.closest('#propInfoSidebar').length &&
-            !$target.closest('.bi-info-circle.lg-icon').length &&
-            $("#propInfoSidebar").css("visibility") === "visible")
-        {
-            $("#offcanvasInfoSidebarCloseButton").click();
-        }
-    });
+    $(document).ready(function () {
 
-    $('#propInfoSidebar').on('hide.bs.offcanvas', function () {
-        if (shashin.map !== null) {
-            // Set map target to null and reset
-            shashin.map.setTarget(null);
-            shashin.map = null;
-        }
+        $(document).on("click", function (event) {
+            const $target = $(event.target);
+            if (!$target.closest('#propInfoSidebar').length &&
+                !$target.closest('.bi-info-circle.lg-icon').length &&
+                $("#propInfoSidebar").css("visibility") === "visible") {
+                $("#offcanvasInfoSidebarCloseButton").click();
+            }
+        });
 
-        if (shashin.layer !== null) {
-            shashin.layer.getSource().clear();
-        }
+        $('#propInfoSidebar').on('hide.bs.offcanvas', function () {
+            if (shashin.map !== null) {
+                // Set map target to null and reset
+                shashin.map.setTarget(null);
+                shashin.map = null;
+            }
 
-        $("#headerMap").remove();
+            if (shashin.layer !== null) {
+                shashin.layer.getSource().clear();
+            }
+
+            $("#headerMap").remove();
+        });
     });
 </script>
 </body>

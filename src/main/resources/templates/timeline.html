@@ -5,9 +5,11 @@
 
 <div th:replace="fragments/topnav :: topnav(${currentUser},${activePage},'')"></div>
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
-    /*<![CDATA[*/
-    shashin.nonce = /*[[${cspNonce}]]*/ '';
-    /*]]>*/
+    $(document).ready(function () {
+        /*<![CDATA[*/
+        shashin.nonce = /*[[${cspNonce}]]*/ '';
+        /*]]>*/
+    });
 </script>
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
     <div id="subcontainer" class="row flex-grow-sm-1 flex-grow-0">
@@ -29,23 +31,27 @@
                                 <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and (metadataDates[iterStat.index-1].year+'-'+metadataDates[iterStat.index-1].month)==(date.year+'-'+date.month)}">
                                     <a th:id="${'offcanvas_'+date.year+'-'+date.month+'-'+date.day}" th:class="${'list-group-item list-group-item-action'+{iterStat.first ? ' active' : ''}}" th:href="${'#'+date.year+'-'+date.month+'-'+date.day}" th:text="${#dates.format(sdf.parse(date.year+'-'+date.month+'-'+date.day), 'MMM yyyy')}"></a>
                                     <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
-                                        /*<![CDATA[*/
-                                        $(/*[[${'#offcanvas_'+date.year+'-'+date.month+'-'+date.day}]]*/ '').on("click", function (e) {
-                                            e.preventDefault();
-                                            timelineSettings.jumpFromTimelineToc(e,/*[[${date.year+'-'+date.month+'-'+date.day}]]*/ '',/*[[${mediaTypeFilter}]]*/ 'all');
+                                        $(document).ready(function () {
+                                            /*<![CDATA[*/
+                                            $(/*[[${'#offcanvas_'+date.year+'-'+date.month+'-'+date.day}]]*/ '').on("click", function (e) {
+                                                e.preventDefault();
+                                                timelineSettings.jumpFromTimelineToc(e,/*[[${date.year+'-'+date.month+'-'+date.day}]]*/ '',/*[[${mediaTypeFilter}]]*/ 'all');
+                                            });
+                                            /*]]>*/
                                         });
-                                        /*]]>*/
                                     </script>
                                 </th:block>
                                 <th:block th:if="${iterStat.count > 0 and !iterStat.first and (metadataDates[iterStat.index-1].year+'-'+metadataDates[iterStat.index-1].month)==(date.year+'-'+date.month)}">
                                     <a style="display:none" th:id="${'offcanvas_'+date.year+'-'+date.month+'-'+date.day}" th:class="${'list-group-item list-group-item-action'+{iterStat.first ? ' active' : ''}}" th:href="${'#'+date.year+'-'+date.month+'-'+date.day}" th:text="${#dates.format(sdf.parse(date.year+'-'+date.month+'-'+date.day), 'MMM yyyy')}"></a>
                                     <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
-                                        /*<![CDATA[*/
-                                        $(/*[[${'#offcanvas_'+date.year+'-'+date.month+'-'+date.day}]]*/ '').on("click", function (e) {
-                                            e.preventDefault();
-                                            timelineSettings.jumpFromTimelineToc(e,/*[[${date.year+'-'+date.month+'-'+date.day}]]*/ '',/*[[${mediaTypeFilter}]]*/ 'all');
+                                        $(document).ready(function () {
+                                            /*<![CDATA[*/
+                                            $(/*[[${'#offcanvas_'+date.year+'-'+date.month+'-'+date.day}]]*/ '').on("click", function (e) {
+                                                e.preventDefault();
+                                                timelineSettings.jumpFromTimelineToc(e,/*[[${date.year+'-'+date.month+'-'+date.day}]]*/ '',/*[[${mediaTypeFilter}]]*/ 'all');
+                                            });
+                                            /*]]>*/
                                         });
-                                        /*]]>*/
                                     </script>
                                 </th:block>
 

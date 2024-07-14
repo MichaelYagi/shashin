@@ -15,9 +15,11 @@ class TimelineTemplates {
         `}
         
                 <script type="text/javascript"${(shashin.nonce.length > 0) ? ` nonce="${shashin.nonce}"` : ''}>
+                $(document).ready(function () {
                     $("#offcanvas_${year}-${month}-${day}").on("click", function (e) {
                         e.preventDefault();
                         timelineSettings.jumpFromTimelineToc(e,"${year}-${month}-${day}","${mediaTypeFilter}")
+                    });
                     });
                 </script>
     
