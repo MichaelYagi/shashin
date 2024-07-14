@@ -1101,7 +1101,7 @@
             }
 
             shashin.map.getView().setCenter(ol.proj.fromLonLat([metadata.lng, metadata.lat]));
-            shashin.map.getView().setZoom(15);
+            shashin.map.getView().setZoom(17);
 
             shashin.feature = new ol.Feature({
                 geometry: new ol.geom.Point(ol.proj.fromLonLat([metadata.lng, metadata.lat])),
