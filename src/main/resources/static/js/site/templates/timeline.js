@@ -31,8 +31,8 @@ class TimelineTemplates {
         <a href="/map?lat=${metadata.lat}&lng=${metadata.lng}${queryParamDates}" target="_blank" style="text-decoration: none;"><span class="bi-geo-alt-fill" style="font-size:1.0rem;"></span>${placeNameDisplayName}</a>&nbsp;<a href="https://www.google.com/maps/search/?api=1&query=${metadata.lat}%2C${metadata.lng}" target="_blank" class="bi-google" style="text-decoration: none;"></a>
     `};
 
-    static HeaderThumbnail({metadata,version}) { return `
-        <img loading="lazy" src="${encodeURI(metadata.thumbnailUrlCentered)+(version === "" ? "" : "?v=" + version)}" height="100" width="100">
+    static HeaderThumbnail({metadata,version,showMap}) { return `
+        <img loading="lazy" src="${encodeURI(metadata.thumbnailUrlCentered)+(version === "" ? "" : "?v=" + version)}" height="100" width="100" style="float: left;">${(metadata.lat !== null && metadata.lng !== null && showMap === true) ? `<div id="headerMap" class="map ps-2" style="width: 108px; height: 100px; overflow: hidden;"></div>` : ''}
     `};
 
     static BatchHeaderThumbnail({thumbnailImage, title, version}) { return `
