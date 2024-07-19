@@ -32,7 +32,7 @@ async function showMap(mapdata, keywordMap) {
     const coordZoom = 17;
 
     // Bigger number for better performance, smaller number for better accuracy
-    let clusterDistance = 175;
+    let clusterDistance = 100; // 50
     let filtered = false;
     let originalFromInput = "";
     let originalToInput = "";
@@ -608,7 +608,7 @@ async function showMap(mapdata, keywordMap) {
             });
 
             if (showMarkersCheckbox.prop("checked") === true) {
-                clusterDistance = 300;
+                clusterDistance = 250; //200
             }
 
             const clusterSource = new ol.source.Cluster({
