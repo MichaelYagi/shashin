@@ -2077,7 +2077,7 @@
 
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $("#appSearch").hide();
-                if (view === "album" || view === "favorites" || view === "trash") {
+                if (view === "album" || view === "favorites" || view === "archived") {
                     $("#albumAppTools").show();
                     if (view === "album") {
                         $("#albumTools").hide();
@@ -2194,7 +2194,7 @@
 
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $("#appSearch").hide();
-                if (view === "album" || view === "favorites" || view === "trash") {
+                if (view === "album" || view === "favorites" || view === "archived") {
                     $("#albumAppTools").show();
                     if (view === "album") {
                         $("#albumTools").hide();

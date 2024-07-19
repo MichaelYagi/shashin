@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Metadata
-import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.KeywordRepository
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.util.ApiResponse
@@ -22,7 +21,7 @@ import javax.transaction.Transactional
 
 @Controller
 @Secured("ROLE_SUPER","ROLE_ADMIN")
-class TrashController {
+class ArchiveController {
 
     @Autowired
     private lateinit var metadataRepository: MetadataRepository
@@ -33,9 +32,9 @@ class TrashController {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
-    @GetMapping("/trash")
+    @GetMapping("/archived")
     fun getFavorites(model: Model): String {
-        val module = "trash"
+        val module = "archived"
         model["message"] = "Nothing to see here."
         model["metadataList"] = mutableListOf<Metadata>()
         model["keywordMap"] = mutableMapOf<String, String>()
@@ -61,7 +60,7 @@ class TrashController {
     }
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
-    @RequestMapping(value = ["/trash/metadata/list/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/archived/metadata/list/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getTrashMetadataList(model: Model,@PathVariable page: Int): String? {
         val response = mutableMapOf<String, Any?>()
@@ -78,7 +77,7 @@ class TrashController {
         return mapper.writeValueAsString(response)
     }
 
-    @RequestMapping(value = ["/trash/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/archived/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getPagedFavorites(model: Model, @PathVariable page: Int): String {
         val response = mutableMapOf<String, Any?>()
@@ -106,7 +105,7 @@ class TrashController {
         return mapper.writeValueAsString(response)
     }
 
-    @RequestMapping(value = ["/trash/unhide"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/archived/unhide"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
