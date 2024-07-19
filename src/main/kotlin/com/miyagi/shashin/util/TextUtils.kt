@@ -230,30 +230,42 @@ class TextUtils {
             var placeNameHeader = ""
             if (placeDescription != null) {
                 val placeDescriptionArray = placeDescription.split(";")
-                if (placeDescriptionArray.size > 1) {
-                    val placeName = placeDescriptionArray[0]
 
-                    val placeNameArray = placeName.split(",")
-                    if (placeNameArray.size > 2) {
-                        val processedPlaceName = placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
-
-                        val processedPlaceNameArr = processedPlaceName.split(" • ")
-                        placeNameHeader = if (processedPlaceNameArr.size > 1) {
-                            processedPlaceNameArr[1]
-                        } else {
-                            processedPlaceName
-                        }
-                    }
+                val placeName = if (placeDescriptionArray.size > 1) {
+                    placeDescriptionArray[0]
                 } else {
-                    val placeNameArray = placeDescription.split(",")
-                    if (placeNameArray.size > 2) {
-                        val processedPlaceName = placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
+                    placeDescription
+                }
 
-                        val processedPlaceNameArr = processedPlaceName.split(" • ")
-                        placeNameHeader = if (processedPlaceNameArr.size > 1) {
-                            processedPlaceNameArr[1]
-                        } else {
-                            processedPlaceName
+                val placeNameArray = placeName.split(",")
+
+                if (placeNameArray.size > 2) {
+                    val processedPlaceName = placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
+
+                    val processedPlaceNameArr = processedPlaceName.split(" • ")
+                    placeNameHeader = if (processedPlaceNameArr.size > 1) {
+                        processedPlaceNameArr[1]
+                    } else {
+                        processedPlaceName
+                    }
+
+                    // Process city, remove numbers
+                    val placeNameProcessedArray = placeNameHeader.split(",")
+
+                    val city = placeNameProcessedArray[0].trim()
+
+                    if (city.isNotEmpty()) {
+                        val cityArray = city.split(" ")
+                        if (cityArray.size > 1) {
+                            var cityString = ""
+                            for (citySubString in cityArray) {
+                                if (citySubString.toDoubleOrNull() == null) {
+                                    cityString += "$citySubString "
+                                }
+                            }
+                            cityString = cityString.trim()
+
+                            placeNameHeader = cityString + ", " + placeNameProcessedArray[1].trim() + ", " + placeNameProcessedArray[2].trim()
                         }
                     }
                 }
