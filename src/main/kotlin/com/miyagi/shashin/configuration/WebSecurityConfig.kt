@@ -60,7 +60,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "map\\?.*",
             "notifications",
             "dashboard",
-            "trash",
+            "archived",
             "settings",
             "settings\\/users",
             "settings\\/snapshot",

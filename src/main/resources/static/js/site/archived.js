@@ -1,4 +1,4 @@
-class Trash {
+class Archived {
     constructor(activePage, metadataList, lastDate) {
         this.http = new Http(activePage);
         this.page = 1;
@@ -35,7 +35,7 @@ class Trash {
     async loadNextPage() {
         if (this.rendering === false) {
             // console.log(this.page)
-            this.updateTrash(this.page, this.activePage).then(function (additionalMediaContentList) {
+            this.updateArchive(this.page, this.activePage).then(function (additionalMediaContentList) {
                 // console.log(additionalMediaContentList)
                 this.page++;
                 this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
@@ -49,14 +49,14 @@ class Trash {
         return this.eol;
     }
 
-    async updateTrash(nextPage, activePage) {
+    async updateArchive(nextPage, activePage) {
         this.rendering = true;
 
         let data = null
 
         if (false === this.eol) {
             $("#spinner").css("display", "block");
-            data = await this.http.ajax("get", "/trash/" + nextPage);
+            data = await this.http.ajax("get", "/archived/" + nextPage);
         }
 
         const mediaContentList = [];
@@ -110,7 +110,7 @@ class Trash {
                                 const uuid = uuidv4();
 
                                 if ($("#"+currentDate).length === 0 && dateHeadingObj !== null) {
-                                    const headerAndBody = '<section class="dateSection" id="' + currentDate + '"><div class="mb-3" id="dateHeader' + currentDate + '"><span class="text-muted">Removed </span><strong>' + dateHeadingObj.display + '</strong>&nbsp;' + (dateHeadingObj.hasOwnProperty("placename") ? dateHeadingObj.placename : '') + '</div><div id="dateBody' + currentDate + '" class="row" style="margin-left:-2px;"></div></section>';
+                                    const headerAndBody = '<section class="dateSection" id="' + currentDate + '"><div class="mb-3" id="dateHeader' + currentDate + '"><span class="text-muted">Archived </span><strong>' + dateHeadingObj.display + '</strong>&nbsp;' + (dateHeadingObj.hasOwnProperty("placename") ? dateHeadingObj.placename : '') + '</div><div id="dateBody' + currentDate + '" class="row" style="margin-left:-2px;"></div></section>';
                                     $(headerAndBody).insertBefore($("." + appendClass).last());
                                 }
 

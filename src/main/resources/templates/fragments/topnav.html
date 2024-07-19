@@ -203,14 +203,14 @@
                     &nbsp;&nbsp;<span id="favoritesNumberSelected"></span>
                 </div>
             </th:block>
-            <th:block th:if="${activePage == 'trash'}">
+            <th:block th:if="${activePage == 'archived'}">
                 <div id="albumAppTools">
                     <a href="#" id="albumAppToolsRestore" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Restore"><span id="albumAppToolsRestoreIcon" th:class="'bi-arrow-repeat placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
                     <a href="#" id="albumAppToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-x-circle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>
                     &nbsp;&nbsp;<span id="trashNumberSelected"></span>
                 </div>
             </th:block>
-            <th:block th:if="${activePage != 'favorites' and activePage != 'trash'}">
+            <th:block th:if="${activePage != 'favorites' and activePage != 'archived'}">
                 <div id="albumAppTools">
                     <th:block th:if="${authority == 'ROLE_ADMIN' || authority == 'ROLE_SUPER'}">
                         <a href="#" id="appToolsBatchEdit" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit Metadata"><span th:class="'bi-info-circle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;

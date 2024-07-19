@@ -179,9 +179,9 @@ $("#albumAppToolsRestore").on("click", async function (e) {
     });
 
     if (metadataIdList.length > 0) {
-        const http = new Http("trash restore");
+        const http = new Http("archive restore");
         let json = {metadataIdList: metadataIdList}
-        const data = await http.ajax("post", "/trash/unhide", JSON.stringify(json));
+        const data = await http.ajax("post", "/archived/unhide", JSON.stringify(json));
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";

@@ -92,7 +92,7 @@
         activePageLower == 'map' or
         activePageLower == 'search' or
         activePageLower == 'share' or
-        activePageLower == 'trash' or
+        activePageLower == 'archived' or
         activePageLower == 'recent' or
         activePageLower == 'taken' or
         activePageLower == 'modified' or
@@ -182,8 +182,8 @@
             <th:block th:if="${activePageLower == 'search'}">
                 <script src="/js/site/search.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${activePageLower == 'trash'}">
-                <script src="/js/site/trash.js" th:nonce="${cspNonce}"></script>
+            <th:block th:if="${activePageLower == 'archived'}">
+                <script src="/js/site/archived.js" th:nonce="${cspNonce}"></script>
             </th:block>
             <th:block th:if="${activePageLower == 'share'}">
                 <script src="/js/site/share.js" th:nonce="${cspNonce}"></script>
@@ -242,8 +242,8 @@
             <th:block th:if="${activePageLower == 'search'}">
                 <script src="/js/site/min/search.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${activePageLower == 'trash'}">
-                <script src="/js/site/min/trash.min.js" th:nonce="${cspNonce}"></script>
+            <th:block th:if="${activePageLower == 'archived'}">
+                <script src="/js/site/min/archived.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
             <th:block th:if="${activePageLower == 'share'}">
                 <script src="/js/site/min/share.min.js" th:nonce="${cspNonce}"></script>
