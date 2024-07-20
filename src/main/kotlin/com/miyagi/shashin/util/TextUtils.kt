@@ -249,25 +249,26 @@ class TextUtils {
                         processedPlaceName
                     }
 
+                    // REMOVED - messes up searches
                     // Process city, remove numbers
-                    val placeNameProcessedArray = placeNameHeader.split(",")
-
-                    val city = placeNameProcessedArray[0].trim()
-
-                    if (city.isNotEmpty()) {
-                        val cityArray = city.split(" ")
-                        if (cityArray.size > 1) {
-                            var cityString = ""
-                            for (citySubString in cityArray) {
-                                if (!citySubString.contains("[0-9]".toRegex())) {
-                                    cityString += "$citySubString "
-                                }
-                            }
-                            cityString = cityString.trim()
-
-                            placeNameHeader = cityString + ", " + placeNameProcessedArray[1].trim() + ", " + placeNameProcessedArray[2].trim()
-                        }
-                    }
+//                    val placeNameProcessedArray = placeNameHeader.split(",")
+//
+//                    val city = placeNameProcessedArray[0].trim()
+//
+//                    if (city.isNotEmpty()) {
+//                        val cityArray = city.split(" ")
+//                        if (cityArray.size > 1) {
+//                            var cityString = ""
+//                            for (citySubString in cityArray) {
+//                                if (!citySubString.contains("[0-9]".toRegex())) {
+//                                    cityString += "$citySubString "
+//                                }
+//                            }
+//                            cityString = cityString.trim()
+//
+//                            placeNameHeader = cityString + ", " + placeNameProcessedArray[1].trim() + ", " + placeNameProcessedArray[2].trim()
+//                        }
+//                    }
                 }
             }
 
