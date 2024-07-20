@@ -285,7 +285,7 @@ class TextUtils {
             if (placeList != null) {
                 for (placeDescription in placeList) {
                     val placeNameHeader = formatPlaceNameForHeader(placeDescription)
-                    if (placeNameHeader.isNotEmpty()) {
+                    if (placeNameHeader.isNotEmpty() && !processedPlaceNameArray.contains(placeNameHeader)) {
                         processedPlaceNameArray.add(placeNameHeader)
                     }
                 }
