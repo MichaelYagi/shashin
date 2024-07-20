@@ -259,7 +259,7 @@ class TextUtils {
                         if (cityArray.size > 1) {
                             var cityString = ""
                             for (citySubString in cityArray) {
-                                if (citySubString.toDoubleOrNull() == null) {
+                                if (!citySubString.contains("[0-9]".toRegex())) {
                                     cityString += "$citySubString "
                                 }
                             }
