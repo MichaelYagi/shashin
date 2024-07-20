@@ -730,7 +730,7 @@ class TimelineController: BaseController() {
                     }
                 }
 
-                val placeNames = mutableListOf<String>()
+                var placeNames = mutableListOf<String>()
                 if (metadataList.isNotEmpty()) {
                     for (metadata in metadataList) {
                         val placeNameHeader = TextUtils.formatPlaceNameForHeader(metadata.getPlaceName())
@@ -767,6 +767,15 @@ class TimelineController: BaseController() {
 //                        }
 //                    }
 //                }
+
+                val sortedPlaces = placeNames
+                    .sortedBy { it }
+
+                if (sortedPlaces.isNotEmpty()) {
+                    placeNames = sortedPlaces as MutableList<String>
+                } else {
+                    placeNames.add("")
+                }
 
                 response["placeNameHeaders"] = placeNames
                 response["msg"] = "Results"

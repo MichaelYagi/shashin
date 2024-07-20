@@ -292,10 +292,7 @@ class TextUtils {
             }
 
             val sortedPlaces = processedPlaceNameArray
-                .groupingBy{ it }
-                .eachCount()
-                .toList()
-                .sortedByDescending{ it.second }.map{it.first}
+                .sortedBy { it }
 
             if (sortedPlaces.isNotEmpty()) {
                 placeNameHeaders = sortedPlaces as MutableList<String>
