@@ -14,6 +14,7 @@ import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.*
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
+import com.miyagi.shashin.util.TextUtils.Companion.sortPlaceNames
 import io.swagger.v3.oas.annotations.Operation
 import net.coobird.thumbnailator.Thumbnails
 import net.coobird.thumbnailator.geometry.Positions
@@ -51,6 +52,7 @@ import java.util.logging.Logger
 import javax.imageio.ImageIO
 import javax.servlet.http.HttpServletResponse
 import javax.transaction.Transactional
+import kotlin.collections.ArrayList
 import kotlin.io.path.Path
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
@@ -730,54 +732,7 @@ class TimelineController: BaseController() {
                     }
                 }
 
-                var placeNames = mutableListOf<String>()
-                if (metadataList.isNotEmpty()) {
-                    for (metadata in metadataList) {
-                        val placeNameHeader = TextUtils.formatPlaceNameForHeader(metadata.getPlaceName())
-
-                        if (placeNameHeader.trim().isNotEmpty() && !placeNames.contains(placeNameHeader)) {
-                            placeNames.add(placeNameHeader)
-                        }
-                    }
-                }
-
-                // Don't repeat date header locations, requires extra db lookups though
-//                if (year != null && month != null && day != null) {
-//                    placeNames = TextUtils.getPlaceNamesForDateHeader(year, month, day, metadataRepository, mediaTypeFilter)
-//                    val metadataDates = getMetadataDates(mediaTypeFilter)
-//                    val dates = metadataDates["metadataDates"] as MutableList<MetadataDate>
-//                    for (i in 0 until dates.size) {
-//                        if (dates[i].getDay() == day && dates[i].getMonth() == month && dates[i].getYear() == year) {
-//                            var prevPlaceName: MutableList<String>? = null
-//                            if (i > 0) {
-//                                prevPlaceName = TextUtils.getPlaceNamesForDateHeader(
-//                                    dates[i - 1].getYear()!!,
-//                                    dates[i - 1].getMonth()!!,
-//                                    dates[i - 1].getDay()!!,
-//                                    metadataRepository,
-//                                    mediaTypeFilter
-//                                )
-//                            }
-//
-//                            if (prevPlaceName != null && prevPlaceName.size == 1 && placeNames.size == 1 && prevPlaceName[0] == placeNames[0]) {
-//                                placeNames.clear()
-//                                placeNames.add("")
-//                            }
-//                            break
-//                        }
-//                    }
-//                }
-
-                val sortedPlaces = placeNames
-                    .sortedBy { it }
-
-                if (sortedPlaces.isNotEmpty()) {
-                    placeNames = sortedPlaces as MutableList<String>
-                } else {
-                    placeNames.add("")
-                }
-
-                response["placeNameHeaders"] = placeNames
+                response["placeNameHeaders"] = sortPlaceNames(metadataList)
                 response["msg"] = "Results"
                 response["status"] = ApiResponse.SUCCESS.status
             }
