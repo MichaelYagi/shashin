@@ -34,12 +34,12 @@ async function showMap(mapdata, keywordMap) {
     // Bigger number for better performance, smaller number for better accuracy
     let clusterDistance = 100; // 50
     let filtered = false;
-    let originalFromInput = "";
-    let originalToInput = "";
-    let originalAlbumFilter = "";
-    let originalVideoOnly = "";
-    let originalMapMarkers = "";
-    let originalFindNearest = "";
+    let previousFromInput = "";
+    let previousToInput = "";
+    let previousAlbumFilter = "";
+    let previousVideoOnly = "";
+    let previousMapMarkers = "";
+    let previousFindNearest = "";
     let prevMapTile = "osm";
     let prevBingImagery = "AerialWithLabels";
     let prevMaptilerImagery = "maptiler";
@@ -1244,19 +1244,21 @@ async function showMap(mapdata, keywordMap) {
         }
 
         const dateInputsValid = checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()));
+console.log("test1")
 
         // Validate fields
         if (true === dateInputsValid) {
             let inputsChanged = false;
-            if (originalFromInput !== $("#startDateInput").val() ||
-                originalToInput !== $("#endDateInput").val() ||
-                originalAlbumFilter !== $("#albumSelect").val() ||
-                originalVideoOnly !== $('#videoOnlyInput').is(":checked") ||
-                originalMapMarkers !== $('#showMarkersInput').is(":checked")) {
+            if (initialStartDate !== $("#startDateInput").val() ||
+                "" !== $("#endDateInput").val() ||
+                '0' !== $("#albumSelect").val() ||
+                false !== $('#videoOnlyInput').is(":checked") ||
+                false !== $('#showMarkersInput').is(":checked")) {
+console.log("test2")
                 inputsChanged = true;
             }
 
-            if (inputsChanged === false && (mapSourceChanged === true || originalFindNearest !== $("#findNearestRadius").val())) {
+            if (inputsChanged === false && (mapSourceChanged === true || previousFindNearest !== $("#findNearestRadius").val())) {
                 initialZoom = map.getView().getZoom();
             } else {
                 initialZoom = 2;
@@ -1277,7 +1279,7 @@ async function showMap(mapdata, keywordMap) {
     }
 
     function renderAlbumSelected() {
-        if (albumSelect.length > 0 && albumSelect.val() !== "0" && originalAlbumFilter !== albumSelect.val()) {
+        if (albumSelect.length > 0 && albumSelect.val() !== "0") {
             const albumId = albumSelect.val();
             // Query metadata in album with lat/lng
             const http = new Http("get album map data");
@@ -1419,40 +1421,40 @@ async function showMap(mapdata, keywordMap) {
     });
 
     $("#propMapFilter").on('shown.bs.modal', function () {
-        originalFromInput = $("#startDateInput").val();
-        originalToInput = $("#endDateInput").val();
-        originalAlbumFilter = $("#albumSelect").val();
-        originalVideoOnly = $('#videoOnlyInput').is(":checked");
-        originalMapMarkers = $('#showMarkersInput').is(":checked");
-        originalFindNearest = $('#findNearestRadius').val();
+        previousFromInput = $("#startDateInput").val();
+        previousToInput = $("#endDateInput").val();
+        previousAlbumFilter = $("#albumSelect").val();
+        previousVideoOnly = $('#videoOnlyInput').is(":checked");
+        previousMapMarkers = $('#showMarkersInput').is(":checked");
+        previousFindNearest = $('#findNearestRadius').val();
     });
 
     $("#propMapFilter").on('hidden.bs.modal', function () {
         if (filtered === false) {
-            $("#startDateInput").val(originalFromInput);
-            $("#endDateInput").val(originalToInput);
-            $("#findNearestRadius").val(originalFindNearest);
+            $("#startDateInput").val(previousFromInput);
+            $("#endDateInput").val(previousToInput);
+            $("#findNearestRadius").val(previousFindNearest);
             if ($("#albumSelect").length > 0) {
-                $("#albumSelect").val(originalAlbumFilter);
+                $("#albumSelect").val(previousAlbumFilter);
             }
-            if (originalVideoOnly === true) {
+            if (previousVideoOnly === true) {
                 $("#videoOnlyInput").prop("checked", true);
             } else {
                 $("#videoOnlyInput").prop("checked", false);
             }
-            if (originalMapMarkers === true) {
+            if (previousMapMarkers === true) {
                 $("#showMarkersInput").prop("checked", true);
             } else {
                 $("#showMarkersInput").prop("checked", false);
             }
         }
         filtered = false;
-        originalFromInput = "";
-        originalToInput = "";
-        originalAlbumFilter = "";
-        originalVideoOnly = "";
-        originalMapMarkers = "";
-        originalFindNearest = "";
+        previousFromInput = "";
+        previousToInput = "";
+        previousAlbumFilter = "";
+        previousVideoOnly = "";
+        previousMapMarkers = "";
+        previousFindNearest = "";
     });
 
     map.on("pointermove", function (evt) {
