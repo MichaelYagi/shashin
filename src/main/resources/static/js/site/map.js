@@ -1244,7 +1244,6 @@ async function showMap(mapdata, keywordMap) {
         }
 
         const dateInputsValid = checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()));
-console.log("test1")
 
         // Validate fields
         if (true === dateInputsValid) {
@@ -1253,8 +1252,8 @@ console.log("test1")
                 "" !== $("#endDateInput").val() ||
                 '0' !== $("#albumSelect").val() ||
                 false !== $('#videoOnlyInput').is(":checked") ||
-                false !== $('#showMarkersInput').is(":checked")) {
-console.log("test2")
+                false !== $('#showMarkersInput').is(":checked"))
+            {
                 inputsChanged = true;
             }
 
