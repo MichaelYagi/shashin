@@ -2,6 +2,7 @@ package com.miyagi.shashin.util
 
 import com.fasterxml.jackson.databind.BeanDescription
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.MetadataRepository
 import net.iakovlev.timeshape.TimeZoneEngine
 import org.springframework.beans.factory.annotation.Value
@@ -278,33 +279,41 @@ class TextUtils {
             return placeNameHeader
         }
 
+        // Sort by province/state then by city
+        fun sortPlaceNames(metadataList: MutableIterable<Metadata>): MutableList<String> {
+            val placeNamesSplitArray: MutableList<MutableList<String>> = ArrayList()
+
+            for (metadata in metadataList) {
+                val placeNameHeader = formatPlaceNameForHeader(metadata.getPlaceName())
+
+                if (placeNameHeader.trim().isNotEmpty() && !placeNamesSplitArray.joinToString(", ").contains(placeNameHeader)) {
+                    placeNamesSplitArray.add(placeNameHeader.split(", ").toMutableList())
+                }
+            }
+
+            var sortedPlaces: MutableList<String> = ArrayList()
+
+            if (placeNamesSplitArray.size > 0) {
+                val sortedArrayProvinceState = placeNamesSplitArray.sortedBy { it[0] }
+                val sortedArrayCity = sortedArrayProvinceState.sortedBy { it[1] }
+                sortedPlaces = sortedArrayCity.map { it.joinToString(", ") }.toMutableList()
+            }
+
+            if (sortedPlaces.isEmpty()) {
+                sortedPlaces.add("")
+            }
+
+            return sortedPlaces
+        }
+
         fun getPlaceNamesForDateHeader(year: Int, month: Int, day: Int, metadataRepository:MetadataRepository, type: String = "all"): MutableList<String> {
-            val placeList = if (type == "all") {
+            val metadataList = if (type == "all") {
                 metadataRepository.findTimelinePlaceByDate(year, month, day)
             } else {
                 metadataRepository.findTimelinePlaceByDateAndType(year, month, day, type)
             }
-            var placeNameHeaders = mutableListOf<String>()
-            val processedPlaceNameArray = mutableListOf<String>()
-            if (placeList != null) {
-                for (placeDescription in placeList) {
-                    val placeNameHeader = formatPlaceNameForHeader(placeDescription)
-                    if (placeNameHeader.isNotEmpty() && !processedPlaceNameArray.contains(placeNameHeader)) {
-                        processedPlaceNameArray.add(placeNameHeader)
-                    }
-                }
-            }
 
-            val sortedPlaces = processedPlaceNameArray
-                .sortedBy { it }
-
-            if (sortedPlaces.isNotEmpty()) {
-                placeNameHeaders = sortedPlaces as MutableList<String>
-            } else {
-                placeNameHeaders.add("")
-            }
-
-            return placeNameHeaders
+            return sortPlaceNames(metadataList)
         }
 
         fun processCoordinates(geocodeUrl: String, latlngStr: String?): Map<String, String?> {
