@@ -266,22 +266,29 @@ class TextUtilsTest {
     }
 
     @Test
-    fun getSortedPlacename() {
+    fun getSortedPlacenames() {
         val metadataList = mutableListOf(
             com.miyagi.shashin.model.Metadata()
         )
 
         var metadata = com.miyagi.shashin.model.Metadata()
         metadata.setPlaceName("Kohikan • 9 Taito, Japan; amenity, cafe")
-
         metadataList.add(metadata)
 
         metadata = com.miyagi.shashin.model.Metadata()
         metadata.setPlaceName("101A Avenue, Guildford, Surrey, British Columbia, Canada")
         metadataList.add(metadata)
 
-        val sortedPlaceNames = sortPlaceNames(metadataList)
+        metadata = com.miyagi.shashin.model.Metadata()
+        metadata.setPlaceName("レイクサイドビル • 31 Taito, Japan; building")
+        metadataList.add(metadata)
 
+        metadata = com.miyagi.shashin.model.Metadata()
+        metadata.setPlaceName("Atré • 1 Taito, Japan; shop, mall")
+        metadataList.add(metadata)
+
+        val sortedPlaceNames = sortPlaceNames(metadataList)
+        
         Assertions.assertEquals("Surrey, British Columbia, Canada", sortedPlaceNames[0])
         Assertions.assertEquals("Taito, Japan", sortedPlaceNames[1])
     }
