@@ -103,10 +103,10 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    @Query("SELECT id, year, month, day, type, file_name as fileName, thumbnail_small_width as thumbnailSmallWidth, thumbnail_small_height as thumbnailSmallHeight, thumbnail_url_small as thumbnailUrlSmall, thumbnail_url_extra_small as thumbnailUrlExtraSmall, thumbnail_url_centered as thumbnailUrlCentered FROM metadata WHERE year = :year AND month = :month AND day = :day AND hidden = false ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findTimelineDateFocused(year: Int?, month: Int?, day: Int?): MutableIterable<MetadataFocused>
 
-   @Query("SELECT * FROM metadata WHERE year = :year AND month = :month AND day = :day AND hidden = false ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE year = :year AND month = :month AND day = :day AND hidden = false AND place_name IS NOT NULL ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findTimelinePlaceByDate(year: Int?, month: Int?, day: Int?): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE year = :year AND month = :month AND day = :day AND type LIKE %:type% AND hidden = false ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE year = :year AND month = :month AND day = :day AND type LIKE %:type% AND hidden = false AND place_name IS NOT NULL ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findTimelinePlaceByDateAndType(year: Int?, month: Int?, day: Int?, @Param("type") type: String): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = false ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)

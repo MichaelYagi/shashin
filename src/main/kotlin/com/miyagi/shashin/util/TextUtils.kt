@@ -230,7 +230,7 @@ class TextUtils {
         // Sort by province/state then by city
         fun sortPlaceNames(metadataList: MutableIterable<Metadata>): MutableList<String> {
             val placeNamesSplitArray: MutableList<MutableList<String>> = ArrayList()
-
+            
             for (metadata in metadataList) {
                 val placeNameHeader = formatPlaceNameForHeader(metadata.getPlaceName())
 
@@ -243,7 +243,13 @@ class TextUtils {
 
             if (placeNamesSplitArray.size > 0) {
                 val sortedArrayProvinceState = placeNamesSplitArray.sortedBy { it[0] }
-                val sortedArrayCity = sortedArrayProvinceState.sortedBy { it[1] }
+                val sortedArrayCity = sortedArrayProvinceState.sortedBy {
+                    if (it.size == 2) {
+                        it[1]
+                    } else {
+                        it[0]
+                    }
+                }
                 sortedPlaces = sortedArrayCity.map { it.joinToString(", ") }.toMutableList()
             }
 
@@ -793,8 +799,11 @@ class TextUtils {
 
                 val placeNameArray = placeName.split(",")
 
-                if (placeNameArray.size > 2) {
-                    val processedPlaceName = placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
+                if (placeNameArray.size >= 2) {
+                    var processedPlaceName = placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
+                    if (placeNameArray.size > 2) {
+                        processedPlaceName = placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
+                    }
 
                     val processedPlaceNameArr = processedPlaceName.split(" • ")
                     placeNameHeader = if (processedPlaceNameArr.size > 1) {
@@ -821,45 +830,18 @@ class TextUtils {
                             }
                             cityString = cityString.trim()
 
-                            if (cityString.isNotEmpty()) {
-                                placeNameHeader = cityString + ", " + placeNameProcessedArray[1].trim() + ", " + placeNameProcessedArray[2].trim()
-                            } else {
-                                placeNameHeader = placeNameProcessedArray[1].trim() + ", " + placeNameProcessedArray[2].trim()
-                            }
-                        }
-                    }
-                } else if (placeNameArray.size == 2) {
-                    val processedPlaceName = placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
-
-                    val processedPlaceNameArr = processedPlaceName.split(" • ")
-                    placeNameHeader = if (processedPlaceNameArr.size > 1) {
-                        processedPlaceNameArr[1]
-                    } else {
-                        processedPlaceName
-                    }
-
-                    // Process city, remove numbers at start of string
-                    val placeNameProcessedArray = placeNameHeader.split(",")
-
-                    val city = placeNameProcessedArray[0].trim()
-
-                    if (city.isNotEmpty()) {
-                        val cityArray = city.split(" ")
-                        if (cityArray.size > 1) {
-                            var cityString = ""
-                            for ((index, citySubString) in cityArray.withIndex()) {
-                                if (citySubString.contains("[0-9]".toRegex()) && index != cityArray.size - 1) {
-                                    cityString = ""
+                            placeNameHeader = if (cityString.isNotEmpty()) {
+                                if (placeNameArray.size == 2) {
+                                    cityString + ", " + placeNameProcessedArray[1].trim()
                                 } else {
-                                    cityString += "$citySubString "
+                                    cityString + ", " + placeNameProcessedArray[1].trim() + ", " + placeNameProcessedArray[2].trim()
                                 }
-                            }
-                            cityString = cityString.trim()
-
-                            if (cityString.isNotEmpty()) {
-                                placeNameHeader = cityString + ", " + placeNameProcessedArray[1].trim()
                             } else {
-                                placeNameHeader = placeNameProcessedArray[1].trim()
+                                if (placeNameArray.size == 2) {
+                                    placeNameProcessedArray[1].trim()
+                                } else {
+                                    placeNameProcessedArray[1].trim() + ", " + placeNameProcessedArray[2].trim()
+                                }
                             }
                         }
                     }

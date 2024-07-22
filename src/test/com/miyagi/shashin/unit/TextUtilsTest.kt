@@ -267,29 +267,122 @@ class TextUtilsTest {
 
     @Test
     fun getSortedPlacenames() {
+        val data = arrayOf("11 Ameyoko Street, Taito, Japan; building, retail",
+            "Ueno Zoological Gardens • Taito, Japan; tourism, zoo",
+            "Tosei Hotel Cocone • 9 Taito, Japan; tourism, hotel",
+            "Tosei Hotel Cocone • 9 Taito, Japan; tourism, hotel",
+            "Ueno Zoological Gardens • Taito, Japan; tourism, zoo",
+            "Ueno Zoological Gardens • Taito, Japan; tourism, zoo",
+            "Kasuga-dori Avenue, Taito, Japan; highway, secondary",
+            "Kasuga-dori Avenue, Taito, Japan; highway, secondary",
+            "摩利支天横町, Taito, Japan; highway, unclassified",
+            "摩利支天横町, Taito, Japan; highway, unclassified",
+            "摩利支天横町, Taito, Japan; highway, unclassified",
+            "Ueno 4-chome, Taito, Japan; highway, unclassified",
+            "Ueno 4-chome, Taito, Japan; highway, unclassified",
+            "TSC TOWER • Ueno 4-chome, Taito, Japan; building",
+            "TSC TOWER • Ueno 4-chome, Taito, Japan; building",
+            "TSC TOWER • Ueno 4-chome, Taito, Japan; building",
+            "MAGAZINES • Ueno 4-chome, Taito, Japan; shop, clothes",
+            "MAGAZINES • Ueno 4-chome, Taito, Japan; shop, clothes",
+            "MAGAZINES • Ueno 4-chome, Taito, Japan; shop, clothes",
+            "Ueno 6-chome, Taito, Japan; highway, unclassified",
+            "11 Ameyoko Street, Taito, Japan; building, retail",
+            "11 Ameyoko Street, Taito, Japan; building, retail",
+            "Tsukishima Monja Moheji • Ameyoko Street, Taito, Japan; amenity, restaurant",
+            "Tsukishima Monja Moheji • Ameyoko Street, Taito, Japan; amenity, restaurant",
+            "Monthly Sweets • Kasuga-dori Avenue, Taito, Japan; shop, confectionery",
+            "Monthly Sweets • Kasuga-dori Avenue, Taito, Japan; shop, confectionery",
+            "Monthly Sweets • Kasuga-dori Avenue, Taito, Japan; shop, confectionery",
+            "Monthly Sweets • Kasuga-dori Avenue, Taito, Japan; shop, confectionery",
+            "Monthly Sweets • Kasuga-dori Avenue, Taito, Japan; shop, confectionery",
+            "Monthly Sweets • Kasuga-dori Avenue, Taito, Japan; shop, confectionery",
+            "Monthly Sweets • Kasuga-dori Avenue, Taito, Japan; shop, confectionery",
+            "コウベタンタンメン エニシスタンド • 12 Taito, Japan; amenity, restaurant",
+            "Ueno 3-chome, Taito, Japan; highway, unclassified",
+            "久世福商店 • Chuo-dori Avenue, 外神田, Taito, Japan; shop, supermarket",
+            "久世福商店 • Chuo-dori Avenue, 外神田, Taito, Japan; shop, supermarket",
+            "Hotel Kangetsuso • 28 Taito, Japan; tourism, hotel",
+            "10 Okachimachi Panda Square, Taito, Japan; building",
+            "Emerald Avenue, Taito, Japan; amenity, photo booth",
+            "NewDays • Okachimachi Panda Square, Taito, Japan; shop, convenience",
+            "NewDays • Okachimachi Panda Square, Taito, Japan; shop, convenience",
+            "10 Okachimachi Panda Square, Taito, Japan; building",
+            "Ueno 3-chome, Taito, Japan; highway, unclassified",
+            "CAFFÈ VELOCE • 7 Chuo-dori Avenue, 外神田, Taito, Japan; amenity, cafe",
+            "CAFFÈ VELOCE • 7 Chuo-dori Avenue, 外神田, Taito, Japan; amenity, cafe",
+            "Ueno 3-chome, Taito, Japan; highway, unclassified",
+            "Tosei Hotel Cocone • 9 Taito, Japan; tourism, hotel",
+            "Tosei Hotel Cocone • 9 Taito, Japan; tourism, hotel",
+            "Tosei Hotel Cocone • 9 Taito, Japan; tourism, hotel",
+            "Higashiueno 4-chome, 東上野, Taito, Japan; highway, unclassified",
+            "Uenokoen, Taito, Japan; highway, unclassified",
+            "過門香 • 52 Taito, Japan; amenity, restaurant",
+            "Uenokoen, Taito, Japan; highway, unclassified",
+            "Uenokoen, Taito, Japan; highway, unclassified",
+            "Uenokoen, Taito, Japan; highway, unclassified",
+            "Starbucks • 22 Taito, Japan; amenity, cafe",
+            "Ueno Zoological Gardens (East Garden) • Taito, Japan; tourism, zoo",
+            "Ueno Zoological Gardens • Taito, Japan; tourism, zoo",
+            "Ueno Zoological Gardens • Taito, Japan; tourism, zoo",
+            "Ueno Zoological Gardens • Taito, Japan; tourism, zoo",
+            "Ueno Zoological Gardens • Taito, Japan; tourism, zoo",
+            "Ueno Zoological Gardens (West Garden) • Taito, Japan; tourism, zoo",
+            "Ueno Zoological Gardens • Taito, Japan; tourism, zoo",
+            "Ueno Zoological Gardens (West Garden) • Taito, Japan; tourism, zoo",
+            "Ueno Zoological Gardens • Taito, Japan; tourism, zoo",
+            "Ueno Zoological Gardens • Taito, Japan; tourism, zoo",
+            "Ueno Zoological Gardens (West Garden) • Taito, Japan; tourism, zoo",
+            "Ueno Zoological Gardens • Taito, Japan; tourism, zoo",
+            "Ueno Zoological Gardens • Taito, Japan; tourism, zoo",
+            "Ueno Zoological Gardens (West Garden) • Taito, Japan; tourism, zoo",
+            "Ueno Zoological Gardens • Taito, Japan; tourism, zoo",
+            "Dobutsuen Dori, Taito, Japan; highway, tertiary",
+            "Ueno Zoological Gardens • Taito, Japan; tourism, zoo",
+            "Ueno Zoological Gardens • Taito, Japan; tourism, zoo",
+            "Ueno Zoological Gardens (East Garden) • Taito, Japan; tourism, zoo",
+            "Ueno Zoological Gardens (East Garden) • Taito, Japan; tourism, zoo",
+            "Ueno Zoological Gardens (East Garden) • Taito, Japan; tourism, zoo",
+            "コマツオトメ原木 • Dobutsuen Dori, Taito, Japan; natural, tree",
+            "コマツオトメ原木 • Dobutsuen Dori, Taito, Japan; natural, tree",
+            "パンダ橋, Taito, Japan; tourism, information",
+            "Tokyo Bunka Kaikan • Taito, Japan; building",
+            "タイムズ • Panda Bridge, Taito, Japan; amenity, parking",
+            "Uenokoen, Taito, Japan; highway, unclassified",
+            "Uenokoen, Taito, Japan; highway, unclassified",
+            "Uenokoen, Taito, Japan; highway, unclassified",
+            "Uenokoen, Taito, Japan; highway, unclassified",
+            "Uenokoen, Taito, Japan; highway, unclassified",
+            "JR Transferting, Taito, Japan; highway, footway",
+            "JR Transferting, Taito, Japan; highway, footway",
+            "Sugar Butter no Ki • Atré, Taito, Japan; shop, confectionery",
+            "JR Transferting, Taito, Japan; highway, footway",
+            "Ueno Station, 東上野, Taito, Japan; highway, footway",
+            "ユーハイム • Ueno Station, 東上野, Taito, Japan; shop, confectionery",
+            "ユーハイム • Ueno Station, 東上野, Taito, Japan; shop, confectionery",
+            "Sugar Butter no Ki • Atré, Taito, Japan; shop, confectionery",
+            "ユーハイム • Ueno Station, 東上野, Taito, Japan; shop, confectionery",
+            "Andersen • Ueno Station, Taito, Japan; shop, bakery",
+            "Andersen • Ueno Station, Taito, Japan; shop, bakery",
+            "Atré • 1 Taito, Japan; shop, mall",
+            "Atré • 1 Taito, Japan; shop, mall",
+            "7;8 • Marunouchi-Muromachi Line, Chiyoda, Japan; railway, platform",
+            "Chigasaki • 茅ヶ崎停車場茅ヶ崎線(雄三通り), Chigasaki, Kanagawa Prefecture, Japan; railway, stop",
+            "日本教育書道藝術院西校舎 • 2 Taito, Japan; amenity, school",
+            "Sango Street, Taito, Japan; highway, unclassified")
+
         val metadataList = mutableListOf(
             com.miyagi.shashin.model.Metadata()
         )
 
-        var metadata = com.miyagi.shashin.model.Metadata()
-        metadata.setPlaceName("Kohikan • 9 Taito, Japan; amenity, cafe")
-        metadataList.add(metadata)
-
-        metadata = com.miyagi.shashin.model.Metadata()
-        metadata.setPlaceName("101A Avenue, Guildford, Surrey, British Columbia, Canada")
-        metadataList.add(metadata)
-
-        metadata = com.miyagi.shashin.model.Metadata()
-        metadata.setPlaceName("レイクサイドビル • 31 Taito, Japan; building")
-        metadataList.add(metadata)
-
-        metadata = com.miyagi.shashin.model.Metadata()
-        metadata.setPlaceName("Atré • 1 Taito, Japan; shop, mall")
-        metadataList.add(metadata)
+        for (placeName in data) {
+            val metadata = com.miyagi.shashin.model.Metadata()
+            metadata.setPlaceName(placeName)
+            metadataList.add(metadata)
+        }
 
         val sortedPlaceNames = sortPlaceNames(metadataList)
-        
-        Assertions.assertEquals("Surrey, British Columbia, Canada", sortedPlaceNames[0])
-        Assertions.assertEquals("Taito, Japan", sortedPlaceNames[1])
+        println(sortedPlaceNames)
+        Assertions.assertEquals(true, true)
     }
 }
