@@ -792,9 +792,7 @@ class TextUtils {
                 }
 
                 val placeNameArray = placeName.split(",")
-
-                placeNameHeader = placeNameArray[0].trim()
-
+                
                 if (placeNameArray.size > 2) {
                     val processedPlaceName = placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
 
@@ -830,8 +828,8 @@ class TextUtils {
                             }
                         }
                     }
-                } else if (placeNameArray.size == 2) {
-                    placeNameHeader = placeNameArray[0].trim() + ", " + placeNameArray[1].trim()
+                } else {
+                    placeNameHeader = placeDescription
                 }
             }
 
