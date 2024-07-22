@@ -259,12 +259,14 @@ class TextUtils {
                         val cityArray = city.split(" ")
                         if (cityArray.size > 1) {
                             var cityString = ""
+                            var index = 0
                             for (citySubString in cityArray) {
-                                if (citySubString.contains("[0-9]".toRegex())) {
+                                if (citySubString.contains("[0-9]".toRegex()) && index != cityArray.size - 1) {
                                     cityString = ""
                                 } else {
                                     cityString += "$citySubString "
                                 }
+                                index++
                             }
                             cityString = cityString.trim()
 
