@@ -100,6 +100,13 @@ class TestController {
         println("repairscripts thread exists: "+FileUtils.checkThreadFileAlive("repairscripts"))
 //        FileUtils.deleteThreadFiles("repairscripts")
 
+        var test = TextUtils.formatPlaceNameForHeader("Kohikan • 9 Taito, Japan; amenity, cafe")
+        println("test1:"+test)
+        test = TextUtils.formatPlaceNameForHeader("Atré • 1 Taito, Japan; shop, mall")
+        println("test2:"+test)
+        test = TextUtils.formatPlaceNameForHeader("Atré • 1 Taito, asdf, Japan; shop, mall")
+        println("test3:"+test)
+
         return "test"
     }
 

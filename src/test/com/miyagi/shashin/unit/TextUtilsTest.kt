@@ -236,4 +236,31 @@ class TextUtilsTest {
         convertedString = TextUtils.convertDateToYMD("03-3")
         Assertions.assertEquals("2003-03", convertedString)
     }
+
+    @Test
+    fun getProcessedPlacename() {
+        var test = TextUtils.formatPlaceNameForHeader("Japan; amenity, cafe")
+        Assertions.assertEquals("Japan", test)
+
+        test = TextUtils.formatPlaceNameForHeader("Kohikan • Japan; amenity, cafe")
+        Assertions.assertEquals("Japan", test)
+
+        test = TextUtils.formatPlaceNameForHeader("Kohikan • 9 Taito, Japan; amenity, cafe")
+        Assertions.assertEquals("Taito, Japan", test)
+
+        test = TextUtils.formatPlaceNameForHeader("Atré • 1 Taito, Japan; shop, mall")
+        Assertions.assertEquals("Taito, Japan", test)
+
+        test = TextUtils.formatPlaceNameForHeader("Atré • 1 Taito, asdf, Japan; shop, mall")
+        Assertions.assertEquals("Taito, asdf, Japan", test)
+
+        test = TextUtils.formatPlaceNameForHeader("101A Avenue, Guildford, Surrey, British Columbia, Canada")
+        Assertions.assertEquals("Surrey, British Columbia, Canada", test)
+
+        test = TextUtils.formatPlaceNameForHeader("Tendon Kohaku • 190 Smithe Street, Downtown, Vancouver, British Columbia, Canada")
+        Assertions.assertEquals("Vancouver, British Columbia, Canada", test)
+
+        test = TextUtils.formatPlaceNameForHeader("Atré asdf asdf • 12-3 ,1 Taito, asdf, Japan; shop, mall")
+        Assertions.assertEquals("Taito, asdf, Japan", test)
+    }
 }
