@@ -1,6 +1,7 @@
 package com.miyagi.shashin.unit
 
 import com.miyagi.shashin.util.TextUtils
+import com.miyagi.shashin.util.TextUtils.Companion.sortPlaceNames
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.ActiveProfiles
@@ -262,5 +263,26 @@ class TextUtilsTest {
 
         test = TextUtils.formatPlaceNameForHeader("Atré asdf asdf • 12-3 ,1 Taito, asdf, Japan; shop, mall")
         Assertions.assertEquals("Taito, asdf, Japan", test)
+    }
+
+    @Test
+    fun getSortedPlacename() {
+        val metadataList = mutableListOf(
+            com.miyagi.shashin.model.Metadata()
+        )
+
+        var metadata = com.miyagi.shashin.model.Metadata()
+        metadata.setPlaceName("Kohikan • 9 Taito, Japan; amenity, cafe")
+
+        metadataList.add(metadata)
+
+        metadata = com.miyagi.shashin.model.Metadata()
+        metadata.setPlaceName("101A Avenue, Guildford, Surrey, British Columbia, Canada")
+        metadataList.add(metadata)
+
+        val sortedPlaceNames = sortPlaceNames(metadataList)
+
+        Assertions.assertEquals("Surrey, British Columbia, Canada", sortedPlaceNames[0])
+        Assertions.assertEquals("Taito, Japan", sortedPlaceNames[1])
     }
 }
