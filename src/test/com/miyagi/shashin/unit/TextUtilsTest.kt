@@ -267,7 +267,8 @@ class TextUtilsTest {
 
     @Test
     fun getSortedPlacenames() {
-        val data = arrayOf("11 Ameyoko Street, Taito, Japan; building, retail",
+        val data = arrayOf(
+            "11 Ameyoko Street, Taito, Japan; building, retail",
             "Ueno Zoological Gardens • Taito, Japan; tourism, zoo",
             "Tosei Hotel Cocone • 9 Taito, Japan; tourism, hotel",
             "Tosei Hotel Cocone • 9 Taito, Japan; tourism, hotel",
@@ -369,7 +370,9 @@ class TextUtilsTest {
             "7;8 • Marunouchi-Muromachi Line, Chiyoda, Japan; railway, platform",
             "Chigasaki • 茅ヶ崎停車場茅ヶ崎線(雄三通り), Chigasaki, Kanagawa Prefecture, Japan; railway, stop",
             "日本教育書道藝術院西校舎 • 2 Taito, Japan; amenity, school",
-            "Sango Street, Taito, Japan; highway, unclassified")
+            "Sango Street, Taito, Japan; highway, unclassified",
+            "Atré • 1 Taito, Japan; shop, mall"
+        )
 
         val metadataList = mutableListOf(
             com.miyagi.shashin.model.Metadata()
@@ -382,7 +385,11 @@ class TextUtilsTest {
         }
 
         val sortedPlaceNames = sortPlaceNames(metadataList)
-        println(sortedPlaceNames)
-        Assertions.assertEquals(true, true)
+
+//        for (placeName in sortedPlaceNames) {
+//            println(placeName)
+//        }
+
+        Assertions.assertEquals("Marunouchi-Muromachi Line, Chiyoda, Japan", sortedPlaceNames[0])
     }
 }

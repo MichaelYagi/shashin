@@ -230,11 +230,10 @@ class TextUtils {
         // Sort by province/state then by city
         fun sortPlaceNames(metadataList: MutableIterable<Metadata>): MutableList<String> {
             val placeNamesSplitArray: MutableList<MutableList<String>> = ArrayList()
-            
-            for (metadata in metadataList) {
-                val placeNameHeader = formatPlaceNameForHeader(metadata.getPlaceName())
 
-                if (placeNameHeader.trim().isNotEmpty() && !placeNamesSplitArray.joinToString(", ").contains(placeNameHeader)) {
+            for (metadata in metadataList) {
+                val placeNameHeader = formatPlaceNameForHeader(metadata.getPlaceName()).trim()
+                if (placeNameHeader.isNotEmpty()) {
                     placeNamesSplitArray.add(placeNameHeader.split(", ").toMutableList())
                 }
             }
@@ -244,7 +243,7 @@ class TextUtils {
             if (placeNamesSplitArray.size > 0) {
                 val sortedArrayProvinceState = placeNamesSplitArray.sortedBy { it[0] }
                 val sortedArrayCity = sortedArrayProvinceState.sortedBy {
-                    if (it.size == 2) {
+                    if (it.size > 2) {
                         it[1]
                     } else {
                         it[0]
@@ -257,7 +256,7 @@ class TextUtils {
                 sortedPlaces.add("")
             }
 
-            return sortedPlaces
+            return sortedPlaces.distinct().toMutableList()
         }
 
         fun getPlaceNamesForDateHeader(year: Int, month: Int, day: Int, metadataRepository:MetadataRepository, type: String = "all"): MutableList<String> {
@@ -792,7 +791,7 @@ class TextUtils {
                 val placeDescriptionArray = placeDescription.split(";")
 
                 val placeName = if (placeDescriptionArray.size > 1) {
-                    placeDescriptionArray[0]
+                    placeDescriptionArray[placeDescriptionArray.size-2]
                 } else {
                     placeDescription
                 }
@@ -853,6 +852,10 @@ class TextUtils {
                         placeName.trim()
                     }
                 }
+            }
+
+            if (!placeNameHeader.contains(",")) {
+                placeNameHeader = ""
             }
 
             return placeNameHeader
