@@ -237,6 +237,12 @@
 
             if (timelineSettings.isScrolling === true || showSlider === true) {
                 $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
+
+                const dropdownElementList = document.querySelectorAll('.dropdown-toggle')
+                dropdownElementList.forEach(function (dropdownToggleEl, i) {
+                    const dropDown = new bootstrap.Dropdown(dropdownToggleEl)
+                    dropDown.hide();
+                });
             }
 
             // Hack to prevent infinite scroll upwards and throttle scrolling
