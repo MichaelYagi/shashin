@@ -259,11 +259,9 @@ class TextUtils {
                         val cityArray = city.split(" ")
                         if (cityArray.size > 1) {
                             var cityString = ""
-                            var toggle = false
                             for (citySubString in cityArray) {
-                                if (citySubString.toLongOrNull() != null && !toggle) {
-                                    toggle = true
-                                    continue
+                                if (citySubString.contains("[0-9]".toRegex())) {
+                                    cityString = ""
                                 } else {
                                     cityString += "$citySubString "
                                 }
