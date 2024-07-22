@@ -1,11 +1,9 @@
 package com.miyagi.shashin.util
 
-import com.fasterxml.jackson.databind.BeanDescription
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.MetadataRepository
 import net.iakovlev.timeshape.TimeZoneEngine
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import java.lang.management.ManagementFactory
@@ -760,21 +758,11 @@ class TextUtils {
 
         private fun readUrl(urlString: String): String? {
             var place: String? = null
-//            var reader: BufferedReader? = null
             try {
-//                val url = URL(urlString)
-//                reader = BufferedReader(InputStreamReader(url.openStream()))
-//                val buffer = StringBuffer()
-//                var read: Int
-//                val chars = CharArray(1024)
-//                while (reader.read(chars).also { read = it } != -1) buffer.append(chars, 0, read)
                 place = URL(urlString).readText()
             } catch(e: Exception) {
                 logger.log(Level.WARNING, "Could not read URL: " + e.message)
             }
-//            finally {
-//                reader?.close()
-//            }
 
             return place
         }
@@ -792,7 +780,7 @@ class TextUtils {
                 }
 
                 val placeNameArray = placeName.split(",")
-                
+
                 if (placeNameArray.size > 2) {
                     val processedPlaceName = placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
 
