@@ -268,7 +268,11 @@ class TextUtils {
                             }
                             cityString = cityString.trim()
 
-                            placeNameHeader = cityString + ", " + placeNameProcessedArray[1].trim() + ", " + placeNameProcessedArray[2].trim()
+                            if (cityString.isNotEmpty()) {
+                                placeNameHeader = cityString + ", " + placeNameProcessedArray[1].trim() + ", " + placeNameProcessedArray[2].trim()
+                            } else {
+                                placeNameHeader = placeNameProcessedArray[1].trim() + ", " + placeNameProcessedArray[2].trim()
+                            }
                         }
                     }
                 }
