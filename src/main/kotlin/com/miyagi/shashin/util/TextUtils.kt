@@ -122,9 +122,8 @@ class TextUtils {
             return input.toDoubleOrNull() != null
         }
 
-        fun isInteger(input: String) = input.all {
-            val integerChars = '0'..'9'
-            it in integerChars
+        fun isInteger(input: String): Boolean {
+            return input.toIntOrNull() != null
         }
 
         fun formatToLongDate(oldDate: String): String {
