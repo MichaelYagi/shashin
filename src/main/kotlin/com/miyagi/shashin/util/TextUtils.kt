@@ -119,9 +119,7 @@ class TextUtils {
         }
 
         fun isNumber(input: String): Boolean {
-            val integerChars = '0'..'9'
-            var dotOccurred = 0
-            return input.all { it in integerChars || it == '.' && dotOccurred++ < 1 }
+            return input.toDoubleOrNull() != null
         }
 
         fun isInteger(input: String) = input.all {
@@ -764,24 +762,15 @@ class TextUtils {
         }
 
         private fun readUrl(urlString: String): String? {
-            var place: String? = null
-//            var reader: BufferedReader? = null
+            var result: String? = null
+
             try {
-//                val url = URL(urlString)
-//                reader = BufferedReader(InputStreamReader(url.openStream()))
-//                val buffer = StringBuffer()
-//                var read: Int
-//                val chars = CharArray(1024)
-//                while (reader.read(chars).also { read = it } != -1) buffer.append(chars, 0, read)
-                place = URL(urlString).readText()
+                result = URL(urlString).readText()
             } catch(e: Exception) {
                 logger.log(Level.WARNING, "Could not read URL: " + e.message)
             }
-//            finally {
-//                reader?.close()
-//            }
 
-            return place
+            return result
         }
 
         fun formatPlaceNameForHeader(placeDescription: String?): String {
