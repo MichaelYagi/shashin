@@ -77,11 +77,17 @@ class TextUtilsTest {
         isNumber = TextUtils.isNumber("3.a")
         Assertions.assertFalse(isNumber)
 
+        isNumber = TextUtils.isNumber("-12.3")
+        Assertions.assertTrue(isNumber)
+
         var isInteger = TextUtils.isInteger("3")
         Assertions.assertTrue(isInteger)
 
         isInteger = TextUtils.isInteger("3.1")
         Assertions.assertFalse(isInteger)
+
+        isInteger = TextUtils.isInteger("-3")
+        Assertions.assertTrue(isInteger)
     }
 
     @Test
