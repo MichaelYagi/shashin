@@ -1,6 +1,7 @@
 package com.miyagi.shashin.unit
 
 import com.miyagi.shashin.util.TextUtils
+import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import com.miyagi.shashin.util.TextUtils.Companion.sortPlaceNames
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -245,7 +246,43 @@ class TextUtilsTest {
     }
 
     @Test
-    fun getProcessedPlacename() {
+    fun getPlaceNameFromJson() {
+        var test = TextUtils.getPlaceNameFromJson(null)
+        Assertions.assertEquals("Unknown location", test)
+
+        test = TextUtils.getPlaceNameFromJson("{}")
+        Assertions.assertEquals("Unknown location", test)
+
+        test = TextUtils.getPlaceNameFromJson("{\"place_id\":393686709,\"licence\":\"Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright\",\"osm_type\":\"way\",\"osm_id\":1293634847,\"lat\":\"35.7198906\",\"lon\":\"139.863119935947\",\"class\":\"amenity\",\"type\":\"bicycle_parking\",\"place_rank\":30,\"importance\":8.593499656667457e-05,\"addresstype\":\"amenity\",\"name\":\"新小岩東駐車場\",\"display_name\":\"新小岩東駐車場, 新小岩停車場線, Higashi-Shinkoiwa 1-chome, Katsushika, Tokyo, 124-0024, Japan\",\"address\":{\"amenity\":\"新小岩東駐車場\",\"road\":\"新小岩停車場線\",\"neighbourhood\":\"Higashi-Shinkoiwa 1-chome\",\"city\":\"Katsushika\",\"ISO3166-2-lvl4\":\"JP-13\",\"postcode\":\"124-0024\",\"country\":\"Japan\",\"country_code\":\"jp\"},\"extratags\":{\"fee\": \"yes\", \"covered\": \"no\", \"website\": \"https://www.city.katsushika.lg.jp/planning/1030243/1003619/1020233.html\", \"operator\": \"葛飾区\", \"operator:type\": \"public\"},\"namedetails\":{\"name\": \"新小岩東駐車場\"},\"boundingbox\":[\"35.7188020\",\"35.7208012\",\"139.8614596\",\"139.8646542\"]}")
+        Assertions.assertEquals("新小岩東駐車場 • 新小岩停車場線, Katsushika, Japan; amenity, bicycle parking", test)
+    }
+
+    @Test
+    fun getGenerateUUID() {
+        var test = TextUtils.generateUUID("asdf",
+        "1234",
+        "5678",
+        1.2,
+        6,
+        "1357",
+        "asdf")
+
+        Assertions.assertEquals("285803e1-9082-39b4-a819-f318746cf54a", test.toString())
+
+        test = TextUtils.generateUUID(
+            "2",
+            null,
+            null,
+            null,
+            null,
+            null,
+            "random string generated from tests")
+
+        Assertions.assertEquals("e5ae7a0f-0969-3378-83cf-a710c3b707f1", test.toString())
+    }
+
+    @Test
+    fun getProcessedPlaceName() {
         var test = TextUtils.formatPlaceNameForHeader("Japan; amenity, cafe")
         Assertions.assertEquals("Japan", test)
 
