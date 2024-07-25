@@ -306,12 +306,13 @@ class ToolsController {
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     @RequestMapping(value = ["/api/v1/endpoints"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
+    @Suppress("UNCHECKED_CAST")
     fun getApiEndpoints(model: Model, request: HttpServletRequest): String {
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         var response = listOf(mutableMapOf<String, Any>())
 
-        if (currentUserObj != null && currentUserObj.getAuthority() != null &&
+        if (currentUserObj?.getAuthority() != null &&
                 (currentUserObj.getAuthority()!! == "ROLE_SUPER" || currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_USER")) {
 
             val applicationContext =
@@ -377,7 +378,7 @@ class ToolsController {
                         }
                     }
 
-                    if ((roleController["authorizedRoles"]!! as Array<String>).size > 0) {
+                    if ((roleController["authorizedRoles"]!! as Array<String>).isNotEmpty()) {
                         for (allRoleEndpoint in allRoleEndpoints) {
                             val matcher = allRoleEndpoint.toRegex()
                             if (matcher.findAll(key.toString()).count() > 0 &&

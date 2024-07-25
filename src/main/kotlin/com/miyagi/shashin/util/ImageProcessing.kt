@@ -699,15 +699,15 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
         fun buildPersonUpload(settings: Settings, personName: String?, metadata: Metadata?, compreFaceImageIdMap: MutableMap<String, Any?>): MutableMap<String, Any?> {
             val mapper = ObjectMapper()
-            val uploadresponse = mutableMapOf<String, Any?>()
-            uploadresponse["responseData"] = mutableMapOf<String, Any?>()
-            uploadresponse["similarity"] = 0.0
+            val uploadResponse = mutableMapOf<String, Any?>()
+            uploadResponse["responseData"] = mutableMapOf<String, Any?>()
+            uploadResponse["similarity"] = 0.0
 
-            uploadresponse["msg"] = ""
-            uploadresponse["status"] = ApiResponse.FAIL.status
+            uploadResponse["msg"] = ""
+            uploadResponse["status"] = ApiResponse.FAIL.status
 
             if (NetworkUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
-                var response: String?
+                val response: String?
 
                 if (!personName.isNullOrBlank() && !metadata?.getId().isNullOrBlank()) {
 
@@ -716,7 +716,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     val recognizedObj = mapper.writeValueAsString(buildPersonRecognition(settings, metadata))
 
                     val jsonRespObj = mapper.readTree(recognizedObj)
-                    var subjectObj: JsonNode
+                    val subjectObj: JsonNode
                     var subject = ""
                     var similarity = 0.0
                     if (jsonRespObj.has("recognizeData") && jsonRespObj["recognizeData"].has(0)) {
@@ -726,7 +726,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                             similarity = subjectObj["similarity"].asDouble()
                         }
                     }
-                    uploadresponse["similarity"] = similarity
+                    uploadResponse["similarity"] = similarity
 
                     // This means the person has been relabeled
                     if (subject != "" && personName != subject) {
@@ -757,34 +757,29 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     // Uploaded faces
                     if (similarity != 1.0 && (similarity <= 0.0 || similarity >= settings.getRecognitionConfidenceThreshold().toString().toDouble())) {
                         try {
-                            if (metadata != null) {
-                                val builder = MultipartBodyBuilder()
-                                builder.part("file", FileSystemResource(metadata.getThumbnailPathSmall()!!))
+                            val builder = MultipartBodyBuilder()
+                            builder.part("file", FileSystemResource(metadata?.getThumbnailPathSmall()!!))
 
-                                response = webClient.post()
-                                    .uri("api/v1/recognition/faces?subject=${personName}")
-                                    .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA.toString())
-                                    .header("x-api-key", settings.getCompreFaceKey())
-                                    .body(BodyInserters.fromMultipartData(builder.build()))
-                                    .retrieve()
-                                    .bodyToMono(String::class.java)
-                                    .block()
+                            response = webClient.post()
+                                .uri("api/v1/recognition/faces?subject=${personName}")
+                                .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA.toString())
+                                .header("x-api-key", settings.getCompreFaceKey())
+                                .body(BodyInserters.fromMultipartData(builder.build()))
+                                .retrieve()
+                                .bodyToMono(String::class.java)
+                                .block()
 
-                                val jsonObj = mapper.readTree(response)
+                            val jsonObj = mapper.readTree(response)
 
-                                logger.log(
-                                    Level.INFO,
-                                    "Face $personName for ${metadata.getId()} uploaded: " + response
-                                )
+                            logger.log(
+                                Level.INFO,
+                                "Face $personName for ${metadata.getId()} uploaded: " + response
+                            )
 
-                                uploadresponse["responseData"] = jsonObj
+                            uploadResponse["responseData"] = jsonObj
 
-                                uploadresponse["msg"] = ""
-                                uploadresponse["status"] = ApiResponse.SUCCESS.status
-                            } else {
-                                response = "Metadata not found."
-                                uploadresponse["responseData"] = response
-                            }
+                            uploadResponse["msg"] = ""
+                            uploadResponse["status"] = ApiResponse.SUCCESS.status
                         } catch (e: Exception) {
                             logger.log(
                                 Level.WARNING,
@@ -792,36 +787,36 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                             )
                             val errorResponse =
                                 e.localizedMessage.replace("<EOL>", "").replace("400 : ", "").replace("\\s".toRegex(), "")
-                            uploadresponse["responseData"] = errorResponse
+                            uploadResponse["responseData"] = errorResponse
                         }
                     } else {
                         logger.log(
                             Level.INFO,
                             "Not processed - Similarity: $similarity, Threshold: ${settings.getRecognitionConfidenceThreshold().toString().toDouble()}"
                         )
-                        uploadresponse["msg"] = "Not processed - Similarity: $similarity, Threshold: ${settings.getRecognitionConfidenceThreshold().toString().toDouble()}"
-                        uploadresponse["status"] = ApiResponse.FAIL.status
+                        uploadResponse["msg"] = "Not processed - Similarity: $similarity, Threshold: ${settings.getRecognitionConfidenceThreshold().toString().toDouble()}"
+                        uploadResponse["status"] = ApiResponse.FAIL.status
                     }
                 } else {
                     logger.log(
                         Level.WARNING,
                         "Person name or metadata ID blank"
                     )
-                    uploadresponse["msg"] = "Person name or metadata ID blank"
-                    uploadresponse["status"] = ApiResponse.FAIL.status
+                    uploadResponse["msg"] = "Person name or metadata ID blank"
+                    uploadResponse["status"] = ApiResponse.FAIL.status
                 }
             }
 
-            return uploadresponse
+            return uploadResponse
         }
 
         fun buildPersonRecognition(settings: Settings, metadata: Metadata?): MutableMap<String, Any?> {
             val mapper = ObjectMapper()
-            val recogresponse = mutableMapOf<String, Any?>()
+            val recognitionResponse = mutableMapOf<String, Any?>()
 
-            recogresponse["recognizeData"] = mutableMapOf<String, Any?>()
-            recogresponse["msg"] = ""
-            recogresponse["status"] = ApiResponse.FAIL.status
+            recognitionResponse["recognizeData"] = mutableMapOf<String, Any?>()
+            recognitionResponse["msg"] = ""
+            recognitionResponse["status"] = ApiResponse.FAIL.status
 
             if (NetworkUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
 
@@ -852,22 +847,22 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                         if (resultList.isNotEmpty() && resultList[0].containsKey("subjects")) {
                             subjects = resultList[0]["subjects"] as ArrayList<Map<String, Any>>
                         }
-                        recogresponse["recognizeData"] = subjects
-                        recogresponse["msg"] = ""
-                        recogresponse["status"] = ApiResponse.SUCCESS.status
+                        recognitionResponse["recognizeData"] = subjects
+                        recognitionResponse["msg"] = ""
+                        recognitionResponse["status"] = ApiResponse.SUCCESS.status
 
                     } catch (e: Exception) {
                         val errorResponse =
                             e.localizedMessage.replace("<EOL>", "").replace("400 : ", "").replace("\\s".toRegex(), "")
-                        recogresponse["recognizeData"] = errorResponse
+                        recognitionResponse["recognizeData"] = errorResponse
                     }
                 } else {
-                    recogresponse["msg"] = "Metadata ID blank"
-                    recogresponse["status"] = ApiResponse.FAIL.status
+                    recognitionResponse["msg"] = "Metadata ID blank"
+                    recognitionResponse["status"] = ApiResponse.FAIL.status
                 }
             }
 
-            return recogresponse
+            return recognitionResponse
         }
 
         fun subjectRecognizer(metadataRepository: MetadataRepository?, recognitionLabelRepository: RecognitionLabelRepository?, recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?, relativeSidecarDir: String, settings: Settings, threadFile: File?, shouldStop: AtomicBoolean?): Int {
