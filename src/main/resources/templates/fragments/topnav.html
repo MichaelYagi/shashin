@@ -236,7 +236,7 @@
         <div class="flex-shrink-0 dropdown" style="margin-left: 10px; margin-right: 15px; margin-top: -19px;height:38px;width:38px;">
         </th:block>
         <th:block th:unless="${currentUser.profile == null or currentUser.profile == ''}">
-        <div class="flex-shrink-0 dropdown" style="margin-left: 10px; margin-right: 15px;margin-top:-19px;height:38px;width:38px;">
+        <div class="flex-shrink-0 dropdown" style="margin-left: 10px; margin-right: 15px;height:38px;width:38px;">
         </th:block>
             <a id="dLabel" th:class="'d-block link-dark text-decoration-none dropdown-toggle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}+${currentUser.profile == null or currentUser.profile == '' ? ' no-profile-dropdown-toggle' : ''}" role="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
                 <th:block th:if="${currentUser.profile == null or currentUser.profile == ''}">
