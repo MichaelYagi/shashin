@@ -1,25 +1,23 @@
 package com.miyagi.shashin.util
 
 import java.awt.image.RenderedImage
-import java.io.File
 import java.io.IOException
-import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.*
 import javax.imageio.metadata.IIOMetadata
 import javax.imageio.metadata.IIOMetadataNode
-import javax.imageio.stream.FileImageOutputStream
 import javax.imageio.stream.ImageOutputStream
 
-class GifSequenceWriter(
+open class GifSequenceWriter(
     outputStream: ImageOutputStream?,
     imageType: Int,
     timeBetweenFramesMS: Int,
     loopContinuously: Boolean
 ) {
-    protected var gifWriter: ImageWriter
-    protected var imageWriteParam: ImageWriteParam
-    protected var imageMetaData: IIOMetadata
+    // my method to create a writer
+    private var gifWriter: ImageWriter = writer
+    private var imageWriteParam: ImageWriteParam = gifWriter.defaultWriteParam
+    private var imageMetaData: IIOMetadata
 
     /**
      * Creates a new GifSequenceWriter
@@ -33,9 +31,6 @@ class GifSequenceWriter(
      * @author Elliot Kroo (elliot[at]kroo[dot]net)
      */
     init {
-        // my method to create a writer
-        gifWriter = writer
-        imageWriteParam = gifWriter.defaultWriteParam
         val imageTypeSpecifier =
             ImageTypeSpecifier.createFromBufferedImageType(imageType)
 
