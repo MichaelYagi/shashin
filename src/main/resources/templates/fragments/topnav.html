@@ -228,8 +228,8 @@
                     &nbsp;&nbsp;<span id="comprefaceNumberSelected"></span>
                 </div>
             </th:block>
-            <div id="mediaScanSpinner" style="display: none;">
-                <span class="spinner-border spinner-border-sm"></span>
+            <div id="mediaScanSpinner" style="height: 37px; width: 37px;margin-left: 10px;margin-right: -48px;z-index: 9999;display: none;">
+                <span class="spinner-border spinner-border-xl" style="width: 38px; height: 38px;"></span>
             </div>
         </div>
         <th:block th:if="${currentUser.profile == null or currentUser.profile == ''}">
@@ -242,12 +242,14 @@
                 <th:block th:if="${currentUser.profile == null or currentUser.profile == ''}">
                     <span id="profileImagePlaceholder" class="bi-person-circle" style="font-size:37px;"></span>
                     <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII" id="profileImage" style="display:none;width:32px;height:32px" />
+                    <span class="caret" style="margin-left: 2px;"></span>
                 </th:block>
                 <th:block th:unless="${currentUser.profile == null or currentUser.profile == ''}">
                     <span id="profileImagePlaceholder" class="bi-person-circle" style="display:none;font-size:1.5rem;"></span>
                     <img th:src="${currentUser.profile + '?' + randomString}" id="profileImage" style="display:inline-block;width:39px;height:39px" />
+                    <span class="caret"></span>
                 </th:block>
-                <span class="caret"></span>
+
             </a>
             <div class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownMenuButton" style="z-index: 9999">
                 <h6 class="dropdown-header" th:text="${currentUser.username}"></h6>

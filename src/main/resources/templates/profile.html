@@ -84,14 +84,15 @@
         let json = {userId: userId}
         http.ajax("post", "/users/profile/delete", JSON.stringify(json)).then(function (data) {
             if (data.hasOwnProperty("status") && data["status"] === "success" && data.hasOwnProperty("msg")) {
-                shashin.showToastMessage("Profile deleted", data["msg"], {icon:"bi-info-circle", iconColor:"#777777"});
-                profileUrl = "#";
-                $("#profilePictureEdit").attr('src', "#");
-                $("#profilePictureEdit").css("visibility", "hidden");
-                $("#profileImage").attr('src', "#");
-                $("#profileImage").css("display", "none");
-                $("#profileImagePlaceholder").css("display", "");
-                $("#removeProfile").css("display", "none");
+                // shashin.showToastMessage("Profile deleted", data["msg"], {icon:"bi-info-circle", iconColor:"#777777"});
+                // profileUrl = "#";
+                // $("#profilePictureEdit").attr('src', "#");
+                // $("#profilePictureEdit").css("visibility", "hidden");
+                // $("#profileImage").attr('src', "#");
+                // $("#profileImage").css({"display": "none","width":"32px","height":"32px"});
+                // $("#profileImagePlaceholder").css({"display": "block","font-size":"37px"});
+                // $("#removeProfile").css("display", "none");
+                window.top.location = window.top.location
             } else {
                 shashin.showToastMessage("Could not delete profile", "Something went wrong", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
             }
@@ -165,20 +166,21 @@
                         http.ajax("post", "/users/profile", JSON.stringify(json)).then(function (data) {
                             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                                 if (data.hasOwnProperty("imageUrl") && data["imageUrl"] !== "") {
-                                    randomString = data["randomString"];
-                                    profileUrl = data["imageUrl"];
-                                    $("#profileImage").attr("src", profileUrl + '?' + data["randomString"]);
-                                    $("#profileImage").css("display", "inline-block");
-                                    $("#profileImagePlaceholder").css("display", "none");
-
-                                    $("#profilePictureEdit").attr("src", profileUrl + '?' + data["randomString"]);
-                                    $("#profilePictureEdit").css("visibility", "visible");
-                                    $("#profilePictureEdit").croppie('destroy');
-                                    croppieObject = null;
-                                    $("#saveProfile").css("display", "none");
-                                    $("#cancelProfile").css("display", "none");
-                                    $("#chooseProfilePhoto").val("");
-                                    $("#removeProfile").css("display", "block");
+                                    // randomString = data["randomString"];
+                                    // profileUrl = data["imageUrl"];
+                                    // $("#profileImage").attr("src", profileUrl + '?' + data["randomString"]);
+                                    // $("#profileImage").css({"display": "inline-block","width":"39px","height":"39px"});
+                                    // $("#profileImagePlaceholder").css("display", "none");
+                                    //
+                                    // $("#profilePictureEdit").attr("src", profileUrl + '?' + data["randomString"]);
+                                    // $("#profilePictureEdit").css("visibility", "visible");
+                                    // $("#profilePictureEdit").croppie('destroy');
+                                    // croppieObject = null;
+                                    // $("#saveProfile").css("display", "none");
+                                    // $("#cancelProfile").css("display", "none");
+                                    // $("#chooseProfilePhoto").val("");
+                                    // $("#removeProfile").css("display", "block");
+                                    window.top.location = window.top.location
                                 } else {
                                     shashin.showToastMessage("Could not save profile", "Could not save profile. "+data["msg"], {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
                                 }
@@ -199,8 +201,8 @@
 
                 $("#profilePictureEdit").attr('src', "#");
                 $("#profileImage").attr('src', "#");
-                $("#profileImage").css("display", "none");
-                $("#profileImagePlaceholder").css("display", "");
+                $("#profileImage").css({"display": "none","width":"32px","height":"32px"});
+                $("#profileImagePlaceholder").css({"display": "block","font-size":"37px"});
                 $("#removeProfile").css("display", "none");
             } else {
                 $("#profilePictureEdit").css("visibility", "visible");
@@ -208,7 +210,7 @@
 
                 $("#profilePictureEdit").attr('src', profileUrl + '?' + randomString);
                 $("#profileImage").attr('src', profileUrl + '?' + randomString);
-                $("#profileImage").css("display", "");
+                $("#profileImage").css({"display": "inline-block","width":"39px","height":"39px"});
                 $("#profileImagePlaceholder").css("display", "none");
                 $("#removeProfile").css("display", "block");
             }
