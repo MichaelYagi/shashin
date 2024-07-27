@@ -228,7 +228,7 @@
                     &nbsp;&nbsp;<span id="comprefaceNumberSelected"></span>
                 </div>
             </th:block>
-            <div id="mediaScanSpinner" style="height: 37px; width: 37px;margin-left: 10px;margin-right: -48px;z-index: 9999;display: none;">
+            <div id="mediaScanSpinner" style="height: 37px; width: 37px;margin-left: 10px;margin-right: -48px;display: none;">
                 <span class="spinner-border spinner-border-xl" style="width: 38px; height: 38px;"></span>
             </div>
         </div>
@@ -531,11 +531,15 @@
                         shashin.printMessageToConsole("message: "+message);
                         if (respMessage === "Scan Stopped" || respMessage === "No directories configured" || respMessage === "Scan Complete") {
                             $("#mediaScanSpinner").css("display", "none");
+                            $("#profileImage").css("opacity", 1.0);
+                            $("#profileImagePlaceholder").css("opacity", 1.0);
                             if (counterMessage === 1) {
                                 Util.getNotifications(notificationAlerts, timezone);
                             }
                         } else {
                             $("#mediaScanSpinner").css("display", "block");
+                            $("#profileImage").css("opacity", 0.5);
+                            $("#profileImagePlaceholder").css("opacity", 0.5);
                             counterMessage = 0;
                         }
                         showMessageSP(respMessage);
