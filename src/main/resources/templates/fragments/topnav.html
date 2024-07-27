@@ -233,23 +233,22 @@
             </div>
         </div>
         <th:block th:if="${currentUser.profile == null or currentUser.profile == ''}">
-        <div class="flex-shrink-0 dropdown" style="margin-left: 10px; margin-right: 15px; margin-top: -19px;height:38px;width:38px;">
+        <div id="profileDropdown" class="flex-shrink-0 dropdown" style="margin-left: 10px; margin-right: 15px; margin-top: -19px;height:38px;width:38px;">
         </th:block>
         <th:block th:unless="${currentUser.profile == null or currentUser.profile == ''}">
-        <div class="flex-shrink-0 dropdown" style="margin-left: 10px; margin-right: 15px;height:38px;width:38px;">
+        <div id="profileDropdown" class="flex-shrink-0 dropdown" style="margin-left: 10px; margin-right: 15px;height:38px;width:38px;">
         </th:block>
             <a id="dLabel" th:class="'d-block link-dark text-decoration-none dropdown-toggle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}+${currentUser.profile == null or currentUser.profile == '' ? ' no-profile-dropdown-toggle' : ''}" role="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
                 <th:block th:if="${currentUser.profile == null or currentUser.profile == ''}">
                     <span id="profileImagePlaceholder" class="bi-person-circle" style="font-size:37px;"></span>
                     <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII" id="profileImage" style="display:none;width:32px;height:32px" />
-                    <span class="caret" style="margin-left: 2px;"></span>
+                    <span class="caret" style="margin-left: 2px;" id="profileCarat"></span>
                 </th:block>
                 <th:block th:unless="${currentUser.profile == null or currentUser.profile == ''}">
                     <span id="profileImagePlaceholder" class="bi-person-circle" style="display:none;font-size:1.5rem;"></span>
                     <img th:src="${currentUser.profile + '?' + randomString}" id="profileImage" style="display:inline-block;width:39px;height:39px" />
-                    <span class="caret"></span>
+                    <span class="caret" id="profileCarat"></span>
                 </th:block>
-
             </a>
             <div class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownMenuButton" style="z-index: 9999">
                 <h6 class="dropdown-header" th:text="${currentUser.username}"></h6>
