@@ -54,11 +54,11 @@ CREATE TABLE `metadata` (
 );
 
 DROP INDEX IF EXISTS `idx_metadata_datetime`;
-CREATE INDEX `idx_metadata_datetime` ON metadata (`year`, `month`, `day`, `time`);
+CREATE INDEX `idx_metadata_datetime` ON metadata (`year` DESC, `month` DESC, `day` DESC, `time` DESC);
 DROP INDEX IF EXISTS `idx_metadata_datetype`;
-CREATE INDEX `idx_metadata_datetype` ON metadata (`year`, `month`, `day`, `hidden`, `type`);
+CREATE INDEX `idx_metadata_datetype` ON metadata (`year` DESC, `month` DESC, `day` DESC, `hidden`, `type`);
 DROP INDEX IF EXISTS `idx_metadata_date`;
-CREATE INDEX `idx_metadata_date` ON metadata (`year`, `month`, `day`, `hidden`);
+CREATE INDEX `idx_metadata_date` ON metadata (`year` DESC, `month` DESC, `day` DESC, `hidden`);
 
 DROP TABLE IF EXISTS `settings`;
 CREATE TABLE `settings` (
