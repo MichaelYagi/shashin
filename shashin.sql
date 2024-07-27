@@ -53,8 +53,12 @@ CREATE TABLE `metadata` (
                             PRIMARY KEY (`id`)
 );
 
+DROP INDEX IF EXISTS `idx_metadata_datetime`;
+CREATE INDEX `idx_metadata_datetime` ON metadata (`year`, `month`, `day`, `time`);
+DROP INDEX IF EXISTS `idx_metadata_datetype`;
+CREATE INDEX `idx_metadata_datetype` ON metadata (`year`, `month`, `day`, `hidden`, `type`);
 DROP INDEX IF EXISTS `idx_metadata_date`;
-CREATE INDEX `idx_metadata_date` ON metadata (`year`, `month`, `day`, `time`);
+CREATE INDEX `idx_metadata_date` ON metadata (`year`, `month`, `day`, `hidden`);
 
 DROP TABLE IF EXISTS `settings`;
 CREATE TABLE `settings` (
