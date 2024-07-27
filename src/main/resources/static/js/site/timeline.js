@@ -1593,6 +1593,7 @@
 
                             if (metadataList.length > 0) {
                                 let html = "";
+                                // When it's an empty container, create barebones html
                                 let internalHtml = "";
 
                                 let idCheck = "undated";
