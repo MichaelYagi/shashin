@@ -25,7 +25,7 @@ import org.springframework.web.context.WebApplicationContext
 @ActiveProfiles("test")
 class TimelineControllerApiTest {
 
-    private var adminId: Int? = null
+    private var superId: Int? = null
     private var userId: Int? = null
     private var mockMvc: MockMvc? = null
 
@@ -39,15 +39,15 @@ class TimelineControllerApiTest {
 
     @BeforeEach
     fun setup() {
-        val adminObj = User()
-        adminObj.setUsername("testadmin")
+        val superObj = User()
+        superObj.setUsername("testadmin")
         var encodedPassword: String = bcrypt.encode("testadmin")
-        adminObj.setPassword(encodedPassword)
-        adminObj.setAuthority("ROLE_SUPER")
-        adminObj.setIsAuthorized(true)
-        adminObj.setApikey("00000000-00000000-00000000-00000000")
-        userRepository?.save(adminObj)
-        adminId = adminObj.getId()
+        superObj.setPassword(encodedPassword)
+        superObj.setAuthority("ROLE_SUPER")
+        superObj.setIsAuthorized(true)
+        superObj.setApikey("00000000-00000000-00000000-00000000")
+        userRepository?.save(superObj)
+        superId = superObj.getId()
 
         val userObj = User()
         userObj.setUsername("testuser")
@@ -67,7 +67,7 @@ class TimelineControllerApiTest {
 
     @AfterEach
     fun tearDown() {
-        adminId?.let { userRepository?.deleteById(it) }
+        superId?.let { userRepository?.deleteById(it) }
         userId?.let { userRepository?.deleteById(it) }
     }
 
@@ -95,7 +95,7 @@ class TimelineControllerApiTest {
     }
 
     @Test
-    @WithMockUser(username = "testadmin", roles = ["ADMIN"])
+    @WithMockUser(username = "testadmin", roles = ["SUPER"])
     @Throws(Exception::class)
     fun shouldReturnSuccessWhenSendingRequestToTimelineApiWithRoleAdmin() {
         val response = mockMvc!!.perform(
@@ -103,7 +103,7 @@ class TimelineControllerApiTest {
                 .header("Content-Type", "application/json")
                 .header("X-Api-Key", "00000000-00000000-00000000-00000000")
         )
-        //println(response.andReturn().response.contentAsString)
+//        println(response.andReturn().response.contentAsString)
         response
             .andExpect(status().isOk)
             .andExpect(content().string(containsString(ApiResponse.SUCCESS.status)))
