@@ -842,9 +842,9 @@ class TextUtils {
                 }
             }
 
-            if (!placeNameHeader.contains(",")) {
-                placeNameHeader = ""
-            }
+//            if (!placeNameHeader.contains(",")) {
+//                placeNameHeader = ""
+//            }
 
             return placeNameHeader
         }
