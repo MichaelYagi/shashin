@@ -1,11 +1,11 @@
 package com.miyagi.shashin.e2e
 
 import com.miyagi.shashin.repository.*
+import io.github.bonigarcia.wdm.WebDriverManager
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.chrome.ChromeDriver
-import org.openqa.selenium.chrome.ChromeDriverService
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.remote.DesiredCapabilities
 import org.springframework.beans.factory.annotation.Autowired
@@ -69,9 +69,8 @@ abstract class BaseSeleniumTests {
     open fun setUp() {
         deleteRecords()
 
-        val driverFileStr: String = findFile()!!
 //        println(os)
-//        println(driverFileStr)
+        WebDriverManager.chromedriver().setup()
         val capabilities = DesiredCapabilities.chrome()
         val options = ChromeOptions()
         options.addArguments("--no-sandbox") // Bypass OS security model, MUST BE THE VERY FIRST OPTION
@@ -85,46 +84,12 @@ abstract class BaseSeleniumTests {
         options.addArguments("--disable-dev-shm-usage") // overcome limited resource problems
         options.merge(capabilities)
 
-        val driverFile = File(driverFileStr)
-        if (!driverFile.canExecute()) {
-            driverFile.setExecutable(true)
+        if (os.contains("linux", ignoreCase = true)) {
+            System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
         }
-        when {
-            os.contains("windows", ignoreCase = true) -> {
-                val service = ChromeDriverService.Builder()
-                    .usingDriverExecutable(driverFile)
-                    .build()
-                driver = ChromeDriver(service, options)
-            }
-            os.contains("mac", ignoreCase = true) -> {
-                System.setProperty("webdriver.chrome.driver", driverFile.absolutePath);
-                driver = ChromeDriver(options)
-            }
-            os.contains("linux", ignoreCase = true) -> {
-                // CircleCI default location
-                System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
-                driver = ChromeDriver(options)
-            }
-            else -> {
-                System.setProperty("webdriver.chrome.driver", driverFile.absolutePath);
-                driver = ChromeDriver(options)
-            }
-        }
+
+        driver = ChromeDriver(options)
     }
-
-    private fun findFile(): String? {
-        val classLoader = javaClass.classLoader
-
-        val chromeDriver = when {
-            os.contains("windows", ignoreCase = true) -> "cdwindows/chromedriver.exe"
-            os.contains("mac", ignoreCase = true) -> "cdmac64/chromedriver"
-            os.contains("linux", ignoreCase = true) -> "cdlinux/chromedriver"
-            else -> "chromedriver_linux"
-        }
-        val url: URL = classLoader.getResource(chromeDriver)
-        return url.file
-    }
-
 
     @AfterEach
     open fun tearDown() {
@@ -135,7 +100,6 @@ abstract class BaseSeleniumTests {
         }
     }
 
-    @Transactional
     open fun deleteRecords() {
         userRepository?.deleteAll()
         metadataRepository?.deleteAll()
