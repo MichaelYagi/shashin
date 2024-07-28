@@ -2395,6 +2395,7 @@ class SettingsController {
                         FileUtils.writeToThreadFileAndLogMessage(threadText, threadFile)
                     }
                 } else {
+                    threadText = file.path + " already scanned"
                     FileUtils.writeToThreadFileAndLogMessage(threadText, threadFile)
                     logger.log(Level.INFO, "Entry exists: " + file.name)
                 }
