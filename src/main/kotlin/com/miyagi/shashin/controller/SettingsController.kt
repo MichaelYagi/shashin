@@ -2335,7 +2335,7 @@ class SettingsController {
             for (i in files.indices) {
 
                 val file: File = files[i]
-                var threadText = file.path + " already scanned"
+                var threadText = "Scanning " + file.path
 
                 if (shouldStop.get()) {
                     threadText = "Scan Stopped"
