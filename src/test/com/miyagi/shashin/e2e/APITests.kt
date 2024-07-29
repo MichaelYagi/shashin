@@ -32,7 +32,6 @@ import java.util.logging.Level
 @ActiveProfiles("test")
 class APITests: BaseSeleniumTests() {
 
-    @Autowired
     private var adminId: Int? = null
     private var userId: Int? = null
     private var mockMvc: MockMvc? = null
@@ -112,10 +111,58 @@ class APITests: BaseSeleniumTests() {
         // Indicates scanning something
         var scanBeforeAfter: WebElement? = null
         var startTime = System.currentTimeMillis()
-        while ((System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
         this.logger.log(Level.INFO, "APITests - Photos scanned.")
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun browseControllerAPITest() {
+        val webClient = WebClient.create("http://localhost:$port/")
+
+        var jsonString: String? = null
+        var jsonNode: JsonNode? = null
+        val mapper = ObjectMapper()
+
+        try {
+            val response = webClient.get()
+                .uri("/api/v1/recent")
+                .header("x-api-key", "00000000-00000000-00000000-00000000")
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                .retrieve()
+                .bodyToMono(String::class.java)
+                .block()
+
+            jsonString = response
+        } catch (_: Exception) {}
+
+        if (!jsonString.isNullOrBlank()) {
+            jsonNode = mapper.readTree(jsonString)
+        }
+println(jsonString)
+        Assertions.assertTrue(jsonNode!!.has("metadataList"))
+        Assertions.assertTrue(jsonNode.get("metadataList").get(0).get("id").textValue() != "")
+
+        var result: String?
+        try {
+            val response = webClient.get()
+                .uri("api/v1/recent")
+                .header("x-api-key", "00000000-00000000-00000000-00000001")
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                .retrieve()
+                .bodyToMono(String::class.java)
+                .block()
+
+            result = response
+        } catch (e: Exception) {
+            result = e.message
+        }
+
+        // 403 forbidden
+        Assertions.assertTrue(result!!.contains("403"))
     }
 
     @Test
@@ -170,51 +217,5 @@ class APITests: BaseSeleniumTests() {
         }
 
         Assertions.assertTrue(singleStatus == "OK")
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun browseControllerAPITest() {
-        val webClient = WebClient.create("http://localhost:$port/")
-
-        var jsonString: String? = null
-        var jsonNode: JsonNode? = null
-        val mapper = ObjectMapper()
-
-        try {
-            val response = webClient.get()
-                .uri("/api/v1/recent")
-                .header("x-api-key", "00000000-00000000-00000000-00000000")
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-                .retrieve()
-                .bodyToMono(String::class.java)
-                .block()
-
-            jsonString = response
-        } catch (_: Exception) {}
-
-        if (!jsonString.isNullOrBlank()) {
-            jsonNode = mapper.readTree(jsonString)
-        }
-        Assertions.assertTrue(jsonNode!!.has("metadataList"))
-        Assertions.assertTrue(jsonNode.get("metadataList").get(0).get("id").textValue() != "")
-
-        var result: String?
-        try {
-            val response = webClient.get()
-                .uri("api/v1/recent")
-                .header("x-api-key", "00000000-00000000-00000000-00000001")
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-                .retrieve()
-                .bodyToMono(String::class.java)
-                .block()
-
-            result = response
-        } catch (e: Exception) {
-            result = e.message
-        }
-
-        // 403 forbidden
-        Assertions.assertTrue(result!!.contains("403"))
     }
 }
