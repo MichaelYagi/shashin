@@ -112,6 +112,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
         this.logger.log(Level.INFO, "AlbumSeleniumTest - Photos scanned.")
 
         // Clear all notifications so that modal window does not show in next screen
@@ -119,6 +120,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         // Check if UUID present
         this.driver!!.get("http://localhost:$port/timeline")
+//        println(this.driver?.pageSource)
         this.logger.log(Level.INFO, "AlbumSeleniumTest - Redirected to timeline.")
         val scrollContainer = this.driver!!.findElement(By.id("infinite-scroll-gallery"))
         val spanContainerEl = scrollContainer.findElement(By.xpath("./span[1]"))
@@ -136,7 +138,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         this.logger.log(Level.INFO, "3 sec sleep.")
 //        doesn't work
 //        this.driver!!.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
-        Thread.sleep(3000);
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
 
         val timelineBottomLeft = "tnbl$metadataId"
         val timelineBottomLeftEl = this.driver!!.findElement(By.id(timelineBottomLeft))
@@ -151,8 +153,8 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         action.moveToElement(metadataModalEdit).perform()
 //        println(this.driver?.pageSource)
         metadataModalEdit.click()
-        this.logger.log(Level.INFO, "Timeline edit button clicked.")
 
+        this.logger.log(Level.INFO, "Timeline edit button clicked.")
         WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("metadataModalTitle")))
 
         //Save album in timeline
@@ -166,7 +168,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         while (!elementHasClass || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             elementHasClass = elementHasClass(this.driver!!.findElement(By.id("metadataModalStatus")),"bi-check-circle")
         }
-
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
         this.driver!!.get("http://localhost:$port/albums")
 
         //Share album with testuser
@@ -216,8 +218,10 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
 
         val albumEditName = this.driver!!.findElement(By.id("albumEditName"))
+
         albumEditName.clear()
         albumEditName.sendKeys("Album name update")
         startTime = System.currentTimeMillis()
@@ -227,6 +231,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         while (!elementHasClass || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             elementHasClass = elementHasClass(this.driver!!.findElement(By.id("editAlbumNameStatus")),"bi-check-circle")
         }
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
         this.driver?.get("http://localhost:$port/albums")
         val albumNameEl = this.driver!!.findElement(By.id("albumName$albumId"))
         Assertions.assertEquals("Album name update",albumNameEl.text)
@@ -240,6 +245,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
 
         val generateShareAlbumEl = this.driver!!.findElement(By.id("generateLink"))
         startTime = System.currentTimeMillis()
@@ -253,6 +259,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         while (!elementHasClass || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             elementHasClass = elementHasClass(this.driver!!.findElement(By.id("albumsModalStatus")),"bi-check-circle")
         }
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
 
         val fullShareLink = this.driver!!.findElement(By.id("fullShareLink"))
         val linkEl = fullShareLink.findElement(By.xpath("./a[1]"))
@@ -276,6 +283,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         while (scanBeforeBody == scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
 
         val msgEl = this.driver!!.findElement(By.id("msg"))
         Assertions.assertEquals("Nothing to see here.",msgEl.text)
@@ -327,6 +335,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
 
         this.driver?.get("http://localhost:$port/albums")
         val commentCountEl = this.driver!!.findElement(By.id("commentcount$albumId"))
@@ -355,6 +364,8 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
+
         val editCommentTextArea = this.driver!!.findElement(By.id("commenttext$commentId"))
         editCommentTextArea.click()
         editCommentTextArea.sendKeys("Test update")
@@ -368,6 +379,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
 
         Assertions.assertTrue(this.driver!!.findElement(By.id("commentcontent$commentId")).text.contains("Test update"))
 
@@ -380,6 +392,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
 
         Assertions.assertTrue(this.driver!!.findElements(By.id("commentcontent$commentId")).isNotEmpty())
 

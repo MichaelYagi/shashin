@@ -119,6 +119,7 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
         this.logger.log(Level.INFO, "TimelineSeleniumTest - Photos scanned.")
 
         // Check if UUID present
