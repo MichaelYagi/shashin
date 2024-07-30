@@ -50,6 +50,7 @@ CREATE TABLE `metadata` (
                             `createdAt` DATETIME DEFAULT NULL,
                             `modifiedAt` DATETIME DEFAULT NULL,
                             `lastAccessedAt` DATETIME DEFAULT NULL,
+                            `lastAccessedBy` INTEGER DEFAULT NULL,
                             PRIMARY KEY (`id`)
 );
 

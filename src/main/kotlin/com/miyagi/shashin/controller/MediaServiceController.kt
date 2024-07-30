@@ -2,6 +2,7 @@ package com.miyagi.shashin.controller
 
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.Notification
+import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.UserRepository
@@ -63,7 +64,7 @@ class MediaServiceController {
     @RequestMapping(value = ["/api/v1/video/{metadataId}"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
     @ResponseBody
     @Throws(java.io.IOException::class)
-    fun getVideo(response: HttpServletResponse?, request: HttpServletRequest?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
+    fun getVideo(model: Model, response: HttpServletResponse?, request: HttpServletRequest?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
         val metadataObj = metadataRepository.findById(metadataId)
 
         if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("video")!!) {
@@ -190,7 +191,7 @@ class MediaServiceController {
                 logger.log(Level.INFO, "IP $userIp played video ${metadataObj.get().getTitle()}' at ${sdtf.format(Date())}")
             }
 
-            return getVideoFactory(response, metadata, path)
+            return getVideoFactory(request, response, metadata, path)
         } else {
             Thread {
                 val admins = userRepository.findAllAdmins()
@@ -226,7 +227,7 @@ class MediaServiceController {
     @RequestMapping(value = ["/api/v1/video/{metadataId}/download"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
     @ResponseBody
     @Throws(java.io.IOException::class)
-    fun getVideoDownload(response: HttpServletResponse?, request: HttpServletRequest?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource>? {
+    fun getVideoDownload(model: Model, response: HttpServletResponse?, request: HttpServletRequest?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource>? {
         val metadataObj = metadataRepository.findById(metadataId)
 
         if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("video")!!) {
@@ -237,7 +238,7 @@ class MediaServiceController {
                 logger.log(Level.INFO, "IP $userIp downloaded video ${metadataObj.get().getTitle()}' at ${sdtf.format(Date())}")
             }
 
-            return getVideoFactory(response, metadataObj.get(), metadataObj.get().getPath()!!, true)
+            return getVideoFactory(request, response, metadataObj.get(), metadataObj.get().getPath()!!, true)
         } else {
             Thread {
                 val admins = userRepository.findAllAdmins()
@@ -270,8 +271,14 @@ class MediaServiceController {
         }
     }
 
-    private fun getVideoFactory(response: HttpServletResponse?, metadataObj: Metadata, path: String, attachFile: Boolean = false): ResponseEntity<FileSystemResource> {
+    private fun getVideoFactory(request: HttpServletRequest?, response: HttpServletResponse?, metadataObj: Metadata, path: String, attachFile: Boolean = false): ResponseEntity<FileSystemResource> {
         metadataObj.setLastAccessedAt(getCurrentTimestamp())
+
+        val currentUserObj = request?.session?.getAttribute("CurrentUser") as User?
+        if (currentUserObj != null && currentUserObj.getId() > 0) {
+            metadataObj.setLastAccessedBy(currentUserObj.getId())
+        }
+
         metadataRepository.save(metadataObj)
 
         var resource = FileSystemResource(path)
@@ -317,16 +324,16 @@ class MediaServiceController {
     }
 
     @RequestMapping(value = ["/video/{metadataId}/player"], method = [RequestMethod.GET])
-    fun getVideoPlayer(model: Model, @PathVariable metadataId: String): String {
-        return setModel(metadataId,model,"player")
+    fun getVideoPlayer(model: Model, request: HttpServletRequest?, @PathVariable metadataId: String): String {
+        return setModel(metadataId, model, request, "player")
     }
 
     @RequestMapping(value = ["/image/{metadataId}/viewer"], method = [RequestMethod.GET])
-    fun getImageViewer(model: Model, @PathVariable metadataId: String): String {
-        return setModel(metadataId,model,"viewer")
+    fun getImageViewer(model: Model, request: HttpServletRequest?, @PathVariable metadataId: String): String {
+        return setModel(metadataId, model, request, "viewer")
     }
 
-    private fun setModel(metadataId: String,model: Model,module: String): String {
+    private fun setModel(metadataId: String, model: Model, request: HttpServletRequest?, module: String): String {
         model["metadataObj"] = Metadata()
         val metadataObj = metadataRepository.findById(metadataId)
         val metadata = metadataObj.get()
@@ -335,6 +342,12 @@ class MediaServiceController {
         if (metadataObj.isPresent) {
             model["metadataObj"] = metadata
             metadata.setLastAccessedAt(getCurrentTimestamp())
+
+            val currentUserObj = request?.session?.getAttribute("CurrentUser") as User?
+            if (currentUserObj != null && currentUserObj.getId() > 0) {
+                metadata.setLastAccessedBy(currentUserObj.getId())
+            }
+
             metadataRepository.save(metadata)
         }
         
@@ -366,6 +379,11 @@ class MediaServiceController {
             // Updated viewed date
             val metadata = metadataObj.get()
             metadata.setLastAccessedAt(getCurrentTimestamp())
+
+            val currentUserObj = request?.session?.getAttribute("CurrentUser") as User?
+            if (currentUserObj != null && currentUserObj.getId() > 0) {
+                metadata.setLastAccessedBy(currentUserObj.getId())
+            }
             metadataRepository.save(metadata)
 
             val path = metadataObj.get().getPath()!!

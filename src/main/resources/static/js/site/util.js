@@ -1249,6 +1249,7 @@ class Util {
         $(".locationDetails").html("");
         $(".locationTypeDetails").html("");
         $(".accessedAtDetails").html("");
+        $(".lastViewedByDetails").html("");
         $(".albumsDetails").html("");
 
         $(".pathLabel").hide();
@@ -1269,6 +1270,7 @@ class Util {
         $(".takenAtLabel").hide();
         $(".manualTakenAtLabel").hide();
         $(".accessedAtLabel").hide();
+        $(".lastViewedByLabel").hide();
         $(".timeZoneLabel").hide();
         $(".keywordsLabel").hide();
         $(".resolutionLabel").hide();
@@ -1421,6 +1423,11 @@ class Util {
         if (metadata.lastAccessedAt != null) {
             $(".accessedAtLabel").show();
             $(".accessedAtDetails").text(metadata.lastAccessedAt);
+        }
+        if (metadata.lastAccessedByUsername != null) {
+            // $(".lastViewedByLabel").show();
+            // $(".lastViewedByDetails").text(metadata.lastAccessedByUsername);
+            shashin.printMessageToConsole("Last viewed by " + metadata.lastAccessedByUsername);
         }
         if (metadata.takenAt != null) {
             $(".takenAtLabel").show();
