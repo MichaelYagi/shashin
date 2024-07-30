@@ -53,6 +53,7 @@ class Metadata {
     private var createdAt: String? = null
     private var modifiedAt: String? = null
     private var lastAccessedAt: String? = null
+    private var lastAccessedBy: Int? = null
     private var freeFormString: String? = null
 
     // Without a default constructor, Jackson will throw an exception
@@ -144,6 +145,9 @@ class Metadata {
     }
     fun setPlaceName(placeName: String?) {
         this.placeName = placeName
+    }
+    fun setLastAccessedBy(lastAccessedBy: Int?) {
+        this.lastAccessedBy = lastAccessedBy
     }
     fun setYear(year: Int?) {
         this.year = year
@@ -280,6 +284,9 @@ class Metadata {
     }
     fun getPlaceName(): String? {
         return this.placeName
+    }
+    fun getLastAccessedBy(): Int? {
+        return this.lastAccessedBy
     }
     fun getYear(): Int? {
         return this.year
