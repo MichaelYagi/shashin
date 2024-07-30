@@ -2317,7 +2317,7 @@ class TimelineController: BaseController() {
     )
     @RequestMapping(value = ["/api/v1/metadata/{id}", "/metadata/{id}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    //@Cacheable(value = ["singleMetadataRequest"], key = "{#id}")
+    @Cacheable(value = ["singleMetadataRequest"], key = "{#id}")
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     fun getMetadata(model: Model, @PathVariable(required = true) id: String): ResponseEntity<String> {
         val response = mutableMapOf<String, Any?>()
