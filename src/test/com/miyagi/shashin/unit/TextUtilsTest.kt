@@ -3,6 +3,7 @@ package com.miyagi.shashin.unit
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import com.miyagi.shashin.util.TextUtils.Companion.sortPlaceNames
+import org.json.JSONObject
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.ActiveProfiles
@@ -247,10 +248,16 @@ class TextUtilsTest {
 
     @Test
     fun getPlaceNameFromJson() {
+        val jsonObj = mutableMapOf<String, Any?>()
+        val addressObj = mutableMapOf<String, Any?>()
+
         var test = TextUtils.getPlaceNameFromJson(null)
         Assertions.assertEquals("Unknown location", test)
 
         test = TextUtils.getPlaceNameFromJson("{}")
+        Assertions.assertEquals("Unknown location", test)
+
+        test = TextUtils.getPlaceNameFromJson("Weird Thing that's not JSON}")
         Assertions.assertEquals("Unknown location", test)
 
         test = TextUtils.getPlaceNameFromJson("{\"place_id\":393686709,\"licence\":\"Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright\",\"osm_type\":\"way\",\"osm_id\":1293634847,\"lat\":\"35.7198906\",\"lon\":\"139.863119935947\",\"class\":\"amenity\",\"type\":\"bicycle_parking\",\"place_rank\":30,\"importance\":8.593499656667457e-05,\"addresstype\":\"amenity\",\"name\":\"新小岩東駐車場\",\"display_name\":\"新小岩東駐車場, 新小岩停車場線, Higashi-Shinkoiwa 1-chome, Katsushika, Tokyo, 124-0024, Japan\",\"address\":{\"amenity\":\"新小岩東駐車場\",\"road\":\"新小岩停車場線\",\"neighbourhood\":\"Higashi-Shinkoiwa 1-chome\",\"city\":\"Katsushika\",\"ISO3166-2-lvl4\":\"JP-13\",\"postcode\":\"124-0024\",\"country\":\"Japan\",\"country_code\":\"jp\"},\"extratags\":{\"fee\": \"yes\", \"covered\": \"no\", \"website\": \"https://www.city.katsushika.lg.jp/planning/1030243/1003619/1020233.html\", \"operator\": \"葛飾区\", \"operator:type\": \"public\"},\"namedetails\":{\"name\": \"新小岩東駐車場\"},\"boundingbox\":[\"35.7188020\",\"35.7208012\",\"139.8614596\",\"139.8646542\"]}")
@@ -258,6 +265,49 @@ class TextUtilsTest {
 
         test = TextUtils.getPlaceNameFromJson("{\"place_id\":260246161,\"licence\":\"Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright\",\"osm_type\":\"node\",\"osm_id\":4987573157,\"lat\":\"35.7105768\",\"lon\":\"139.7731305\",\"class\":\"amenity\",\"type\":\"cafe\",\"place_rank\":30,\"importance\":9.99999999995449e-06,\"addresstype\":\"amenity\",\"name\":\"Renoir\",\"display_name\":\"Renoir, 31, Ueno 2-chome, Taito, Tokyo, 110-0005, Japan\",\"address\":{\"amenity\":\"Renoir\",\"house_number\":\"31\",\"neighbourhood\":\"Ueno 2-chome\",\"city\":\"Taito\",\"ISO3166-2-lvl4\":\"JP-13\",\"postcode\":\"110-0005\",\"country\":\"Japan\",\"country_code\":\"jp\"},\"extratags\":{\"level\": \"1\", \"cuisine\": \"coffee_shop\", \"brand:en\": \"Renoir\", \"brand:ja\": \"ルノアール\", \"takeaway\": \"yes\", \"brand:wikidata\": \"Q11649991\", \"brand:wikipedia\": \"ja:銀座ルノアール\"},\"namedetails\":{\"name\": \"ルノアール\", \"brand\": \"ルノアール\", \"name:en\": \"Renoir\", \"name:ja\": \"ルノアール\", \"official_name\": \"喫茶室ルノアール\", \"official_name:en\": \"Ginza Renoir\", \"official_name:ja\": \"喫茶室ルノアール\"},\"boundingbox\":[\"35.7105268\",\"35.7106268\",\"139.7730805\",\"139.7731805\"]}")
         Assertions.assertEquals("Renoir • 31 Ueno 2-chome, Taito, Japan; amenity, cafe", test)
+
+        jsonObj.clear()
+        addressObj.clear()
+        jsonObj["name"] = "Mike's Tool Shop"
+        jsonObj["class"] = "amenity"
+        jsonObj["type"] = "garage"
+        jsonObj["display_name"] = "Mike's Tool Shop, 1234 Bright St, Surrey, BC, Canada"
+        addressObj["house_number"] = "1234"
+        addressObj["road"] = "101 Avenue"
+        addressObj["residential"] = "Cobblefield Lane"
+        addressObj["suburb"] = "Guildford"
+        addressObj["neighbourhood"] = "Mr. Rogers"
+        addressObj["city"] = "Surrey"
+        addressObj["county"] = "Metro Vancouver Regional District"
+        addressObj["state"] = "British Columbia"
+        addressObj["ISO3166-2-lvl4"] = "CA-BC"
+        addressObj["postcode"] = "V3R 4J6"
+        addressObj["country"] = "Canada"
+        addressObj["country_code"] = "ca"
+        jsonObj["address"] = addressObj
+        test = TextUtils.getPlaceNameFromJson(JSONObject(jsonObj).toString())
+        Assertions.assertEquals("Mike's Tool Shop • 1234 101 Avenue, Guildford, Surrey, British Columbia, Canada; amenity, garage", test)
+
+        jsonObj.clear()
+        addressObj.clear()
+        jsonObj["name"] = "Mike's Tool Shop"
+        jsonObj["class"] = "amenity"
+        jsonObj["type"] = "garage"
+        jsonObj["display_name"] = "Mike's Tool Shop, 1234 Bright St, Surrey, BC, Canada"
+        addressObj["house_number"] = "1234"
+        addressObj["residential"] = "Cobblefield Lane"
+        addressObj["suburb"] = "Guildford"
+        addressObj["neighbourhood"] = "Mr. Rogers"
+        addressObj["city"] = "Surrey"
+        addressObj["county"] = "Metro Vancouver Regional District"
+        addressObj["state"] = "British Columbia"
+        addressObj["ISO3166-2-lvl4"] = "CA-BC"
+        addressObj["postcode"] = "V3R 4J6"
+        addressObj["country"] = "Canada"
+        addressObj["country_code"] = "ca"
+        jsonObj["address"] = addressObj
+        test = TextUtils.getPlaceNameFromJson(JSONObject(jsonObj).toString())
+        Assertions.assertEquals("Mike's Tool Shop • 1234 Mr. Rogers, Guildford, Surrey, British Columbia, Canada; amenity, garage", test)
     }
 
     @Test
