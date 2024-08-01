@@ -852,29 +852,44 @@ class Util {
     }
 
     static activateDarkModeListener() {
-        const dmCookieName = "shashindmcookie";
-        const darkModeCookie = Util.getCookie(dmCookieName);
+        let useMatchMedia = false;
 
-        Util.darkModeToggle(darkModeCookie !== null && darkModeCookie === "on");
-
-        const mode = Util.getParameterByName("m");
-
-        if (mode === "dark" || (darkModeCookie !== "" && darkModeCookie === "on")) {
-            $("#darkmodeSwitch").prop('checked', true);
+        if (window.matchMedia) {
+            const query = window.matchMedia('prefers-color-scheme: dark');
+            if (query.hasOwnProperty("matches")) {
+                useMatchMedia = true;
+                Util.darkModeToggle(query["matches"] === true);
+            }
         }
 
-        $('#darkmodeSwitch').on("click", function() {
-            let html = $("html");
-            html.hide();
+        if (useMatchMedia === false) {
+            const dmCookieName = "shashindmcookie";
 
-            Util.deleteCookie(dmCookieName, "/");
-            if ($("#darkmodeSwitch").is(':checked')) {
-                // (name, value, path, domain, days)
-                Util.setCookie(dmCookieName, "on", "/", null, 365);
+            $("#darkmodeSwitchContainer").css("display", "block");
+
+            const darkModeCookie = Util.getCookie(dmCookieName);
+
+            Util.darkModeToggle(darkModeCookie !== null && darkModeCookie === "on");
+
+            const mode = Util.getParameterByName("m");
+
+            if (mode === "dark" || (darkModeCookie !== "" && darkModeCookie === "on")) {
+                $("#darkmodeSwitch").prop('checked', true);
             }
-            Util.darkModeToggle($("#darkmodeSwitch").is(':checked'));
-            html.show();
-        });
+
+            $('#darkmodeSwitch').on("click", function () {
+                let html = $("html");
+                html.hide();
+
+                Util.deleteCookie(dmCookieName, "/");
+                if ($("#darkmodeSwitch").is(':checked')) {
+                    // (name, value, path, domain, days)
+                    Util.setCookie(dmCookieName, "on", "/", null, 365);
+                }
+                Util.darkModeToggle($("#darkmodeSwitch").is(':checked'));
+                html.show();
+            });
+        }
     }
 
     static darkModeToggle(darkmodeEnabled) {
