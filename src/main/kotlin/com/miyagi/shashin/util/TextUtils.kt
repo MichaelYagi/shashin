@@ -319,106 +319,181 @@ class TextUtils {
             var buildPlace = ""
             if (geoDataJsonString != null) {
                 val mapper = ObjectMapper()
-                val addressObj = mapper.readTree(geoDataJsonString)
+                try {
+                    val addressObj = mapper.readTree(geoDataJsonString)
 
-                logger.log(Level.INFO, "Creating place name from JSON: $geoDataJsonString")
+                    logger.log(Level.INFO, "Creating place name from JSON: $geoDataJsonString")
 
-                if (!addressObj.isNull) {
-                    var name = ""
-                    if (addressObj.has("name") && addressObj.get("name") != null &&
-                        addressObj.get("name").textValue() != "") {
-                        buildPlace += addressObj.get("name").textValue() + " • "
-                        name = addressObj.get("name").textValue()
-                        logger.log(Level.INFO, "name found: ${addressObj.get("name").textValue()}")
-                    }
-
-                    if (addressObj.has("address")) {
-                        if (addressObj.get("address").has("house_number") && addressObj.get("address").get("house_number") != null && addressObj.get("address").get("house_number").textValue() != "") {
-                            buildPlace += addressObj.get("address").get("house_number").textValue() + " "
-                            logger.log(Level.INFO, "house_number found: ${addressObj.get("address").get("house_number").textValue()}")
-                        }
-
-                        if (addressObj.get("address").has("road") && addressObj.get("address").get("road") != null && addressObj.get("address").get("road").textValue() != "") {
-                            buildPlace += addressObj.get("address").get("road").textValue() + ", "
-                            logger.log(Level.INFO, "road found: ${addressObj.get("address").get("road").textValue()}")
-                        } else if (addressObj.get("address").has("neighbourhood") && addressObj.get("address").get("neighbourhood") != null && addressObj.get("address").get("neighbourhood").textValue() != "") {
-                            buildPlace += addressObj.get("address").get("neighbourhood").textValue() + ", "
-                            logger.log(Level.INFO, "neighbourhood found: ${addressObj.get("address").get("neighbourhood").textValue()}")
-                        }
-
-                        if (addressObj.get("address").has("suburb") && addressObj.get("address").get("suburb") != null && addressObj.get("address").get("suburb").textValue() != "") {
-                            buildPlace += addressObj.get("address").get("suburb").textValue() + ", "
-                            logger.log(Level.INFO, "suburb found: ${addressObj.get("address").get("suburb").textValue()}")
-                        }
-
-                        if (addressObj.get("address").has("village") && addressObj.get("address")
-                                .get("village") != null && addressObj.get("address").get("village").textValue() != ""
+                    if (!addressObj.isNull) {
+                        var name = ""
+                        if (addressObj.has("name") && addressObj.get("name") != null &&
+                            addressObj.get("name").textValue() != ""
                         ) {
-                            buildPlace += addressObj.get("address").get("village").textValue() + ", "
-                            logger.log(Level.INFO, "village found: ${addressObj.get("address").get("village").textValue()}")
-                        } else if (addressObj.get("address").has("town") && addressObj.get("address")
-                                .get("town") != null && addressObj.get("address").get("town").textValue() != ""
+                            buildPlace += addressObj.get("name").textValue() + " • "
+                            name = addressObj.get("name").textValue()
+                            logger.log(Level.INFO, "name found: ${addressObj.get("name").textValue()}")
+                        }
+
+                        if (addressObj.has("address")) {
+                            if (addressObj.get("address").has("house_number") && addressObj.get("address")
+                                    .get("house_number") != null && addressObj.get("address").get("house_number")
+                                    .textValue() != ""
+                            ) {
+                                buildPlace += addressObj.get("address").get("house_number").textValue() + " "
+                                logger.log(
+                                    Level.INFO,
+                                    "house_number found: ${addressObj.get("address").get("house_number").textValue()}"
+                                )
+                            }
+
+                            if (addressObj.get("address").has("road") && addressObj.get("address")
+                                    .get("road") != null && addressObj.get("address").get("road").textValue() != ""
+                            ) {
+                                buildPlace += addressObj.get("address").get("road").textValue() + ", "
+                                logger.log(
+                                    Level.INFO,
+                                    "road found: ${addressObj.get("address").get("road").textValue()}"
+                                )
+                            } else if (addressObj.get("address").has("neighbourhood") && addressObj.get("address")
+                                    .get("neighbourhood") != null && addressObj.get("address").get("neighbourhood")
+                                    .textValue() != ""
+                            ) {
+                                buildPlace += addressObj.get("address").get("neighbourhood").textValue() + ", "
+                                logger.log(
+                                    Level.INFO,
+                                    "neighbourhood found: ${addressObj.get("address").get("neighbourhood").textValue()}"
+                                )
+                            }
+
+                            if (addressObj.get("address").has("suburb") && addressObj.get("address")
+                                    .get("suburb") != null && addressObj.get("address").get("suburb").textValue() != ""
+                            ) {
+                                buildPlace += addressObj.get("address").get("suburb").textValue() + ", "
+                                logger.log(
+                                    Level.INFO,
+                                    "suburb found: ${addressObj.get("address").get("suburb").textValue()}"
+                                )
+                            }
+
+                            if (addressObj.get("address").has("village") && addressObj.get("address")
+                                    .get("village") != null && addressObj.get("address").get("village")
+                                    .textValue() != ""
+                            ) {
+                                buildPlace += addressObj.get("address").get("village").textValue() + ", "
+                                logger.log(
+                                    Level.INFO,
+                                    "village found: ${addressObj.get("address").get("village").textValue()}"
+                                )
+                            } else if (addressObj.get("address").has("town") && addressObj.get("address")
+                                    .get("town") != null && addressObj.get("address").get("town").textValue() != ""
+                            ) {
+                                buildPlace += addressObj.get("address").get("town").textValue() + ", "
+                                logger.log(
+                                    Level.INFO,
+                                    "town found: ${addressObj.get("address").get("town").textValue()}"
+                                )
+                            } else if (addressObj.get("address").has("city") && addressObj.get("address")
+                                    .get("city") != null && addressObj.get("address").get("city").textValue() != ""
+                            ) {
+                                buildPlace += addressObj.get("address").get("city").textValue() + ", "
+                                logger.log(
+                                    Level.INFO,
+                                    "city found: ${addressObj.get("address").get("city").textValue()}"
+                                )
+                            } else if (addressObj.get("address").has("county") && addressObj.get("address")
+                                    .get("county") != null && addressObj.get("address").get("county").textValue() != ""
+                            ) {
+                                buildPlace += addressObj.get("address").get("county").textValue() + ", "
+                                logger.log(
+                                    Level.INFO,
+                                    "county found: ${addressObj.get("address").get("county").textValue()}"
+                                )
+                            } else if (addressObj.get("address").has("region") && addressObj.get("address")
+                                    .get("region") != null && addressObj.get("address").get("region").textValue() != ""
+                            ) {
+                                buildPlace += addressObj.get("address").get("region").textValue() + ", "
+                                logger.log(
+                                    Level.INFO,
+                                    "region found: ${addressObj.get("address").get("region").textValue()}"
+                                )
+                            }
+
+                            if (addressObj.get("address").has("province") && addressObj.get("address")
+                                    .get("province") != null && addressObj.get("address").get("province")
+                                    .textValue() != ""
+                            ) {
+                                buildPlace += addressObj.get("address").get("province").textValue() + ", "
+                                logger.log(
+                                    Level.INFO,
+                                    "province found: ${addressObj.get("address").get("province").textValue()}"
+                                )
+                            } else if (addressObj.get("address").has("state") && addressObj.get("address")
+                                    .get("state") != null && addressObj.get("address").get("state").textValue() != ""
+                            ) {
+                                buildPlace += addressObj.get("address").get("state").textValue() + ", "
+                                logger.log(
+                                    Level.INFO,
+                                    "state found: ${addressObj.get("address").get("state").textValue()}"
+                                )
+                            }
+
+                            if (addressObj.get("address").has("country") && addressObj.get("address")
+                                    .get("country") != null && addressObj.get("address").get("country")
+                                    .textValue() != ""
+                            ) {
+                                buildPlace += addressObj.get("address").get("country").textValue() + ", "
+                                logger.log(
+                                    Level.INFO,
+                                    "country found: ${addressObj.get("address").get("country").textValue()}"
+                                )
+                            }
+
+                            // Check if the name is repeated in some other area of the string, remove the name
+                            val buildPlaceArr = buildPlace.split(" • ")
+                            if (name !== "" && buildPlaceArr.size == 2 && buildPlaceArr[1].contains(buildPlaceArr[0])) {
+                                buildPlace = buildPlaceArr[1]
+                                logger.log(
+                                    Level.INFO,
+                                    "redundant name found, removing from string: ${buildPlaceArr[0]}"
+                                )
+                            }
+
+                            if (buildPlace.trim().isNotBlank()) {
+                                buildPlace = buildPlace.replace(", $".toRegex(), "").trim()
+                                buildPlace += "; "
+                            }
+                        }
+
+                        if (buildPlace == "" && addressObj.has("display_name") && addressObj.get("display_name") != null && addressObj.get(
+                                "display_name"
+                            ).textValue() != ""
                         ) {
-                            buildPlace += addressObj.get("address").get("town").textValue() + ", "
-                            logger.log(Level.INFO, "town found: ${addressObj.get("address").get("town").textValue()}")
-                        } else if (addressObj.get("address").has("city") && addressObj.get("address").get("city") != null && addressObj.get("address").get("city").textValue() != "") {
-                            buildPlace += addressObj.get("address").get("city").textValue() + ", "
-                            logger.log(Level.INFO, "city found: ${addressObj.get("address").get("city").textValue()}")
-                        } else if (addressObj.get("address").has("county") && addressObj.get("address").get("county") != null && addressObj.get("address").get("county").textValue() != "") {
-                            buildPlace += addressObj.get("address").get("county").textValue() + ", "
-                            logger.log(Level.INFO, "county found: ${addressObj.get("address").get("county").textValue()}")
-                        } else if (addressObj.get("address").has("region") && addressObj.get("address").get("region") != null && addressObj.get("address").get("region").textValue() != "") {
-                            buildPlace += addressObj.get("address").get("region").textValue() + ", "
-                            logger.log(Level.INFO, "region found: ${addressObj.get("address").get("region").textValue()}")
+                            buildPlace = addressObj.get("display_name").textValue() + ", "
+                            logger.log(Level.INFO, "display_name found: ${addressObj.get("display_name").textValue()}")
                         }
 
-                        if (addressObj.get("address").has("province") && addressObj.get("address").get("province") != null && addressObj.get("address").get("province").textValue() != "") {
-                            buildPlace += addressObj.get("address").get("province").textValue() + ", "
-                            logger.log(Level.INFO, "province found: ${addressObj.get("address").get("province").textValue()}")
-                        } else if (addressObj.get("address").has("state") && addressObj.get("address").get("state") != null && addressObj.get("address").get("state").textValue() != "") {
-                            buildPlace += addressObj.get("address").get("state").textValue() + ", "
-                            logger.log(Level.INFO, "state found: ${addressObj.get("address").get("state").textValue()}")
-                        }
-
-                        if (addressObj.get("address").has("country") && addressObj.get("address")
-                                .get("country") != null && addressObj.get("address").get("country").textValue() != ""
+                        if (addressObj.has("class") && addressObj.get("class") != null && addressObj.get("class")
+                                .textValue() != ""
                         ) {
-                            buildPlace += addressObj.get("address").get("country").textValue()  + ", "
-                            logger.log(Level.INFO, "country found: ${addressObj.get("address").get("country").textValue()}")
+                            buildPlace += addressObj.get("class").textValue().replace("_", " ") + ", "
                         }
 
-                        // Check if the name is repeated in some other area of the string, remove the name
-                        val buildPlaceArr = buildPlace.split(" • ")
-                        if (name !== "" && buildPlaceArr.size == 2 && buildPlaceArr[1].contains(buildPlaceArr[0])) {
-                            buildPlace = buildPlaceArr[1]
-                            logger.log(Level.INFO, "redundant name found, removing from string: ${buildPlaceArr[0]}")
+                        if (addressObj.has("type") && addressObj.get("type") != null && addressObj.get("type")
+                                .textValue() != "" &&
+                            addressObj.get("type").textValue() != "yes" && addressObj.get("type").textValue() != "no"
+                        ) {
+                            buildPlace += addressObj.get("type").textValue().replace("_", " ") + ", "
                         }
 
                         if (buildPlace.trim().isNotBlank()) {
                             buildPlace = buildPlace.replace(", $".toRegex(), "").trim()
-                            buildPlace += "; "
                         }
-                    }
 
-                    if (buildPlace == "" && addressObj.has("display_name") && addressObj.get("display_name") != null && addressObj.get("display_name").textValue() != "") {
-                        buildPlace = addressObj.get("display_name").textValue() + ", "
-                        logger.log(Level.INFO, "display_name found: ${addressObj.get("display_name").textValue()}")
+                        buildPlace = buildPlace.trim()
                     }
-
-                    if (addressObj.has("class") && addressObj.get("class") != null && addressObj.get("class").textValue() != "") {
-                        buildPlace += addressObj.get("class").textValue().replace("_", " ")  + ", "
-                    }
-
-                    if (addressObj.has("type") && addressObj.get("type") != null && addressObj.get("type").textValue() != "" &&
-                        addressObj.get("type").textValue() != "yes" && addressObj.get("type").textValue() != "no") {
-                        buildPlace += addressObj.get("type").textValue().replace("_", " ")  + ", "
-                    }
-
-                    if (buildPlace.trim().isNotBlank()) {
-                        buildPlace = buildPlace.replace(", $".toRegex(), "").trim()
-                    }
-
-                    buildPlace = buildPlace.trim()
+                } catch (exception: Exception) {
+                    logger.log(Level.WARNING, "Could not parse place name. " + exception.localizedMessage)
+                    buildPlace = ""
                 }
             }
 
