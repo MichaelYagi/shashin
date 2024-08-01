@@ -150,17 +150,18 @@
                         }, function(e) {
                             shashin.printMessageToConsole("Socket connection error in connectTP(): " + e.toString())
 
-                            if (counterTP > 10) {
+                            // if (counterTP > 10) {
+                            //     showMessageTP("Oops, something went wrong! " + e.toString());
+                            //     counterTP = 0;
+                            // } else {
                                 showMessageTP("Oops, something went wrong! " + e.toString());
-                                counterTP = 0;
-                            } else {
-                                showMessageTP("Oops, something went wrong! " + e.toString());
+                                scanInProgress = false;
                                 disconnectTP();
                                 connectTP();
-                            }
+                            // }
 
-                            scanInProgress = false;
-                            counterTP++;
+                            // scanInProgress = false;
+                            // counterTP++;
                         });
                     }
 
