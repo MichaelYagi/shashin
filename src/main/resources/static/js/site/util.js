@@ -852,7 +852,6 @@ class Util {
     }
 
     static activateDarkModeListener() {
-        const dmCookieName = "shashindmcookie";
         let useMatchMedia = false;
 
         if (window.matchMedia) {
@@ -864,6 +863,8 @@ class Util {
         }
 
         if (useMatchMedia === false) {
+            const dmCookieName = "shashindmcookie";
+
             $("#darkmodeSwitchContainer").css("display", "block");
 
             const darkModeCookie = Util.getCookie(dmCookieName);
