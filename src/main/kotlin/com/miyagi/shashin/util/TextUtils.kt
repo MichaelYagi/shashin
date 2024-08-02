@@ -229,50 +229,42 @@ class TextUtils {
             for (metadata in metadataList) {
                 val placeNameHeader = formatPlaceNameForHeader(metadata.getPlaceName()).trim()
                 if (placeNameHeader.isNotEmpty()) {
-                    placeNamesSplitArray.add(placeNameHeader.split(", ").toMutableList())
+                    val placeNameHeaderArray = placeNameHeader.split(", ")
+                    if (placeNameHeaderArray.size > 2) {
+                        placeNamesSplitArray.add(placeNameHeaderArray.toMutableList())
+                    }
                 }
             }
 
             var sortedPlaces: MutableList<String> = ArrayList()
-            var filteredArray: MutableList<String> = ArrayList()
+            val filteredArray: MutableList<String> = ArrayList()
 
             if (placeNamesSplitArray.size > 0) {
                 val sortedArrayProvinceState = placeNamesSplitArray.sortedBy { it[0] }
-                val sortedArrayCity = sortedArrayProvinceState.sortedBy {
-                    if (it.size > 2) {
-                        it[1]
-                    } else {
-                        it[0]
-                    }
-                }
+                val sortedArrayCity = sortedArrayProvinceState.sortedBy { it[1] }
                 sortedPlaces = sortedArrayCity.map { it.joinToString(", ") }.toMutableList()
 
-                // Remove redundant strings
-                if (sortedPlaces.isNotEmpty()) {
-                    var index = 0
-                    for (placeA in sortedPlaces) {
-                        for (placeB in sortedPlaces) {
-                            if (!placeA.contains(placeB) && !filteredArray.contains(placeB)) {
-                                filteredArray.add(placeB)
-                                if (index == 1) {
-                                    filteredArray = filteredArray.reversed().toMutableList()
-                                }
-                                index++
-                                break
-                            }
-                        }
-                    }
-                    if (filteredArray.isNotEmpty()) {
-                        sortedPlaces = filteredArray
-                    }
-                }
+//                // Remove redundant strings
+//                if (sortedPlaces.isNotEmpty()) {
+//                    for (placeA in sortedPlaces) {
+//                        for (placeB in sortedPlaces) {
+//                            if (!placeA.contains(placeB) && !filteredArray.contains(placeB)) {
+//                                filteredArray.add(placeB)
+//                                break
+//                            }
+//                        }
+//                    }
+//                    if (filteredArray.isNotEmpty()) {
+//                        sortedPlaces = filteredArray
+//                    }
+//                }
             }
 
             if (sortedPlaces.isEmpty()) {
                 sortedPlaces.add("")
             }
 
-            return sortedPlaces.toMutableList()
+            return sortedPlaces.distinct().toMutableList()
         }
 
         fun getPlaceNamesForDateHeader(year: Int, month: Int, day: Int, metadataRepository:MetadataRepository, type: String = "all"): MutableList<String> {
