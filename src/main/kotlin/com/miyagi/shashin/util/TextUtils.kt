@@ -1,11 +1,9 @@
 package com.miyagi.shashin.util
 
-import com.fasterxml.jackson.databind.BeanDescription
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.MetadataRepository
 import net.iakovlev.timeshape.TimeZoneEngine
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import java.lang.management.ManagementFactory
@@ -236,6 +234,7 @@ class TextUtils {
             }
 
             var sortedPlaces: MutableList<String> = ArrayList()
+            val filteredArray: MutableList<String> = ArrayList()
 
             if (placeNamesSplitArray.size > 0) {
                 val sortedArrayProvinceState = placeNamesSplitArray.sortedBy { it[0] }
@@ -247,6 +246,21 @@ class TextUtils {
                     }
                 }
                 sortedPlaces = sortedArrayCity.map { it.joinToString(", ") }.toMutableList()
+
+                // Remove redundant strings
+                if (sortedPlaces.isNotEmpty()) {
+                    for (placeA in sortedPlaces) {
+                        for (placeB in sortedPlaces) {
+                            if (!placeA.contains(placeB) && !filteredArray.contains(placeB)) {
+                                filteredArray.add(placeB)
+                                break
+                            }
+                        }
+                    }
+                    if (filteredArray.isNotEmpty()) {
+                        sortedPlaces = filteredArray
+                    }
+                }
             }
 
             if (sortedPlaces.isEmpty()) {
