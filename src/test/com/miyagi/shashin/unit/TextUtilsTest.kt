@@ -294,6 +294,15 @@ class TextUtilsTest {
         jsonObj["class"] = "amenity"
         jsonObj["type"] = "garage"
         jsonObj["display_name"] = "Mike's Tool Shop, 1234 Bright St, Surrey, BC, Canada"
+        test = TextUtils.getPlaceNameFromJson(JSONObject(jsonObj).toString())
+        Assertions.assertEquals("Mike's Tool Shop, 1234 Bright St, Surrey, BC, Canada; amenity, garage", test)
+
+        jsonObj.clear()
+        addressObj.clear()
+        jsonObj["name"] = "Mike's Tool Shop"
+        jsonObj["class"] = "amenity"
+        jsonObj["type"] = "garage"
+        jsonObj["display_name"] = "Mike's Tool Shop, 1234 Bright St, Surrey, BC, Canada"
         addressObj["house_number"] = "1234"
         addressObj["residential"] = "Cobblefield Lane"
         addressObj["suburb"] = "Guildford"
@@ -308,6 +317,24 @@ class TextUtilsTest {
         jsonObj["address"] = addressObj
         test = TextUtils.getPlaceNameFromJson(JSONObject(jsonObj).toString())
         Assertions.assertEquals("Mike's Tool Shop • 1234 Mr. Rogers, Guildford, Surrey, British Columbia, Canada; amenity, garage", test)
+
+        jsonObj.clear()
+        addressObj.clear()
+        jsonObj["name"] = "Mike's Tool Shop"
+        jsonObj["class"] = "amenity"
+        jsonObj["type"] = "garage"
+        jsonObj["display_name"] = "Mike's Tool Shop, 1234 Bright St, Surrey, BC, Canada"
+        addressObj["road"] = "Hillcrest Road"
+        addressObj["suburb"] = "Gidea Park"
+        addressObj["city"] = "London Borough of Havering"
+        addressObj["state_district"] = "Grand Londres"
+        addressObj["state"] = "Angleterre"
+        addressObj["postcode"] = "RM11 1EA"
+        addressObj["country"] = "Royaume-Uni"
+        addressObj["country_code"] = "gb"
+        jsonObj["address"] = addressObj
+        test = TextUtils.getPlaceNameFromJson(JSONObject(jsonObj).toString())
+        Assertions.assertEquals("Mike's Tool Shop • Hillcrest Road, Gidea Park, London Borough of Havering, Angleterre, Royaume-Uni; amenity, garage", test)
     }
 
     @Test

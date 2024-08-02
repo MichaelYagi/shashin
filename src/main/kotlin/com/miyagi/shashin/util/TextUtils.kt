@@ -375,7 +375,16 @@ class TextUtils {
                                 )
                             }
 
-                            if (addressObj.get("address").has("village") && addressObj.get("address")
+                            if (addressObj.get("address").has("hamlet") && addressObj.get("address")
+                                    .get("hamlet") != null && addressObj.get("address").get("hamlet")
+                                    .textValue() != ""
+                            ) {
+                                buildPlace += addressObj.get("address").get("hamlet").textValue() + ", "
+                                logger.log(
+                                    Level.INFO,
+                                    "hamlet found: ${addressObj.get("address").get("hamlet").textValue()}"
+                                )
+                            } else if (addressObj.get("address").has("village") && addressObj.get("address")
                                     .get("village") != null && addressObj.get("address").get("village")
                                     .textValue() != ""
                             ) {
@@ -400,6 +409,14 @@ class TextUtils {
                                     Level.INFO,
                                     "city found: ${addressObj.get("address").get("city").textValue()}"
                                 )
+                            } else if (addressObj.get("address").has("municipality") && addressObj.get("address")
+                                    .get("municipality") != null && addressObj.get("address").get("municipality").textValue() != ""
+                            ) {
+                                buildPlace += addressObj.get("address").get("municipality").textValue() + ", "
+                                logger.log(
+                                    Level.INFO,
+                                    "municipality found: ${addressObj.get("address").get("municipality").textValue()}"
+                                )
                             } else if (addressObj.get("address").has("county") && addressObj.get("address")
                                     .get("county") != null && addressObj.get("address").get("county").textValue() != ""
                             ) {
@@ -407,6 +424,14 @@ class TextUtils {
                                 logger.log(
                                     Level.INFO,
                                     "county found: ${addressObj.get("address").get("county").textValue()}"
+                                )
+                            } else if (addressObj.get("address").has("state_district") && addressObj.get("address")
+                                    .get("state_district") != null && addressObj.get("address").get("state_district").textValue() != ""
+                            ) {
+                                buildPlace += addressObj.get("address").get("state_district").textValue() + ", "
+                                logger.log(
+                                    Level.INFO,
+                                    "state_district found: ${addressObj.get("address").get("state_district").textValue()}"
                                 )
                             } else if (addressObj.get("address").has("region") && addressObj.get("address")
                                     .get("region") != null && addressObj.get("address").get("region").textValue() != ""
@@ -464,11 +489,11 @@ class TextUtils {
                             }
                         }
 
-                        if (buildPlace == "" && addressObj.has("display_name") && addressObj.get("display_name") != null && addressObj.get(
+                        if ((buildPlace == "" || !addressObj.has("address")) && addressObj.has("display_name") && addressObj.get("display_name") != null && addressObj.get(
                                 "display_name"
                             ).textValue() != ""
                         ) {
-                            buildPlace = addressObj.get("display_name").textValue() + ", "
+                            buildPlace = addressObj.get("display_name").textValue() + "; "
                             logger.log(Level.INFO, "display_name found: ${addressObj.get("display_name").textValue()}")
                         }
 
