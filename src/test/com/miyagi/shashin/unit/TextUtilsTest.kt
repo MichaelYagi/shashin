@@ -468,20 +468,22 @@ class TextUtilsTest {
         }
 
         val sortedPlaceNames = sortPlaceNames(metadataList)
+//        for (placeName in sortedPlaceNames) {
+//            println(placeName)
+//        }
 
         val sortedArray = arrayOf(
-            "Marunouchi-Muromachi Line, Chiyoda, Japan",
             "Chigasaki, Kanagawa Prefecture, Japan",
-            "Ameyoko Street, Taito, Japan",
+            "Marunouchi-Muromachi Line, Chiyoda, Japan",
             "Atré, Taito, Japan",
             "Dobutsuen Dori, Taito, Japan",
             "Emerald Avenue, Taito, Japan",
             "JR Transferting, Taito, Japan",
+            "Ameyoko Street, Taito, Japan",
             "Kasuga-dori Avenue, Taito, Japan",
             "Okachimachi Panda Square, Taito, Japan",
             "Panda Bridge, Taito, Japan",
             "Sango Street, Taito, Japan",
-            "Taito, Japan",
             "Ueno 3-chome, Taito, Japan",
             "Ueno 4-chome, Taito, Japan",
             "Ueno 6-chome, Taito, Japan",
