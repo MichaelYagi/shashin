@@ -234,7 +234,7 @@ class TextUtils {
             }
 
             var sortedPlaces: MutableList<String> = ArrayList()
-            val filteredArray: MutableList<String> = ArrayList()
+            var filteredArray: MutableList<String> = ArrayList()
 
             if (placeNamesSplitArray.size > 0) {
                 val sortedArrayProvinceState = placeNamesSplitArray.sortedBy { it[0] }
@@ -249,10 +249,15 @@ class TextUtils {
 
                 // Remove redundant strings
                 if (sortedPlaces.isNotEmpty()) {
+                    var index = 0
                     for (placeA in sortedPlaces) {
                         for (placeB in sortedPlaces) {
                             if (!placeA.contains(placeB) && !filteredArray.contains(placeB)) {
                                 filteredArray.add(placeB)
+                                if (index == 1) {
+                                    filteredArray = filteredArray.reversed().toMutableList()
+                                }
+                                index++
                                 break
                             }
                         }
@@ -267,7 +272,7 @@ class TextUtils {
                 sortedPlaces.add("")
             }
 
-            return sortedPlaces.distinct().toMutableList()
+            return sortedPlaces.toMutableList()
         }
 
         fun getPlaceNamesForDateHeader(year: Int, month: Int, day: Int, metadataRepository:MetadataRepository, type: String = "all"): MutableList<String> {
