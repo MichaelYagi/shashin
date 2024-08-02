@@ -390,7 +390,7 @@ class TextUtilsTest {
 
     @Test
     fun getSortedPlacenames() {
-        val data = arrayOf(
+        var data = arrayOf(
             "11 Ameyoko Street, Taito, Japan; building, retail",
             "Ueno Zoological Gardens • Taito, Japan; tourism, zoo",
             "Tosei Hotel Cocone • 9 Taito, Japan; tourism, hotel",
@@ -457,7 +457,7 @@ class TextUtilsTest {
             "Sango Street, Taito, Japan; highway, unclassified"
         )
 
-        val metadataList = mutableListOf(
+        var metadataList = mutableListOf(
             com.miyagi.shashin.model.Metadata()
         )
 
@@ -467,14 +467,14 @@ class TextUtilsTest {
             metadataList.add(metadata)
         }
 
-        val sortedPlaceNames = sortPlaceNames(metadataList)
+        var sortedPlaceNames = sortPlaceNames(metadataList)
 //        for (placeName in sortedPlaceNames) {
 //            println(placeName)
 //        }
 
-        val sortedArray = arrayOf(
-            "Chigasaki, Kanagawa Prefecture, Japan",
+        var sortedArray = arrayOf(
             "Marunouchi-Muromachi Line, Chiyoda, Japan",
+            "Chigasaki, Kanagawa Prefecture, Japan",
             "Atré, Taito, Japan",
             "Dobutsuen Dori, Taito, Japan",
             "Emerald Avenue, Taito, Japan",
@@ -493,6 +493,35 @@ class TextUtilsTest {
             "外神田, Taito, Japan",
             "摩利支天横町, Taito, Japan",
             "東上野, Taito, Japan"
+        )
+
+        Assertions.assertTrue(sortedPlaceNames.toTypedArray() contentEquals sortedArray)
+
+        // Test 2
+        data = arrayOf(
+            "横浜駅 • Nishi Ward, Yokohama, Kanagawa Prefecture, Japan",
+            "Nakakaigan 2-chome, Chigasaki, Kanagawa Prefecture, Japan",
+            "Yokohama Chinatown • Yamashitacho, Naka Ward, Yokohama, Kanagawa Prefecture, Japan"
+        )
+
+        metadataList = mutableListOf(
+            com.miyagi.shashin.model.Metadata()
+        )
+
+        for (placeName in data) {
+            val metadata = com.miyagi.shashin.model.Metadata()
+            metadata.setPlaceName(placeName)
+            metadataList.add(metadata)
+        }
+
+        sortedPlaceNames = sortPlaceNames(metadataList)
+//        for (placeName in sortedPlaceNames) {
+//            println(placeName)
+//        }
+
+        sortedArray = arrayOf(
+            "Chigasaki, Kanagawa Prefecture, Japan",
+            "Yokohama, Kanagawa Prefecture, Japan"
         )
 
         Assertions.assertTrue(sortedPlaceNames.toTypedArray() contentEquals sortedArray)
