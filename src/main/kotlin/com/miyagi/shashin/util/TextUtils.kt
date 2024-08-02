@@ -237,27 +237,11 @@ class TextUtils {
             }
 
             var sortedPlaces: MutableList<String> = ArrayList()
-            val filteredArray: MutableList<String> = ArrayList()
 
             if (placeNamesSplitArray.size > 0) {
                 val sortedArrayProvinceState = placeNamesSplitArray.sortedBy { it[0] }
                 val sortedArrayCity = sortedArrayProvinceState.sortedBy { it[1] }
                 sortedPlaces = sortedArrayCity.map { it.joinToString(", ") }.toMutableList()
-
-//                // Remove redundant strings
-//                if (sortedPlaces.isNotEmpty()) {
-//                    for (placeA in sortedPlaces) {
-//                        for (placeB in sortedPlaces) {
-//                            if (!placeA.contains(placeB) && !filteredArray.contains(placeB)) {
-//                                filteredArray.add(placeB)
-//                                break
-//                            }
-//                        }
-//                    }
-//                    if (filteredArray.isNotEmpty()) {
-//                        sortedPlaces = filteredArray
-//                    }
-//                }
             }
 
             if (sortedPlaces.isEmpty()) {
