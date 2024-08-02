@@ -475,11 +475,11 @@ class TextUtilsTest {
         var sortedArray = arrayOf(
             "Marunouchi-Muromachi Line, Chiyoda, Japan",
             "Chigasaki, Kanagawa Prefecture, Japan",
+            "Ameyoko Street, Taito, Japan",
             "Atré, Taito, Japan",
             "Dobutsuen Dori, Taito, Japan",
             "Emerald Avenue, Taito, Japan",
             "JR Transferting, Taito, Japan",
-            "Ameyoko Street, Taito, Japan",
             "Kasuga-dori Avenue, Taito, Japan",
             "Okachimachi Panda Square, Taito, Japan",
             "Panda Bridge, Taito, Japan",
