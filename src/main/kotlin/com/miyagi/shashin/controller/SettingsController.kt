@@ -1574,18 +1574,30 @@ class SettingsController {
         totalMediaCount = 0
 
         if (mediaDirs != null && mediaDirs.count() > 0) {
+            Thread {
+                val metricsUtil = MetricsUtil()
+                metricsUtil.start("Counting files in media directories")
+                for (mediaDir in mediaDirs) {
+                    val dir = Paths.get(mediaDir?.getDirectory()!!)
+                    if (Files.exists(dir)) {
+                        totalMediaCount += FileUtils.fileCount(mediaDir.getDirectory()!!)
+                    }
+                }
+                logger.log(
+                    Level.INFO,
+                    "Total file count for media is $totalMediaCount"
+                )
+                metricsUtil.end()
+            }.start()
+
             var mediaDirNotFound = false
-            val metricsUtil = MetricsUtil()
-            metricsUtil.start("Counting files in media directories")
             for (mediaDir in mediaDirs) {
                 val dir = Paths.get(mediaDir?.getDirectory()!!)
                 if (!Files.exists(dir)) {
                     mediaDirNotFound = true
-                } else {
-                    totalMediaCount += FileUtils.fileCount(mediaDir.getDirectory()!!)
+                    break
                 }
             }
-            metricsUtil.end()
 
             if (!mediaDirNotFound) {
 
