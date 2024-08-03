@@ -58,6 +58,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
 
         fun fileCount(dir: String?): Long {
             if (dir.isNullOrBlank()) {
+                logger.log(Level.WARNING, "Error counting files: Paths os null or blank")
                 return 0
             }
 
