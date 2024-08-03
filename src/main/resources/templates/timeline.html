@@ -71,10 +71,10 @@
         <main role="main" class="col overflow-auto h-100" id="timelineMain">
             <th:block th:if="${not #lists.isEmpty(metadataList)}">
                 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
-                    $("#progressBarWrapper").css("visibility","visible");
+                    $("#progressBarWrapper").visible();
                     const totalSize = [[${#lists.size(metadataList)}]];
                     $("#progressBar").attr("aria-valuenow","50");
-                    $("#timelineMain").css("visibility","hidden");
+                    $("#timelineMain").invisible();
                 </script>
             </th:block>
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
@@ -182,8 +182,8 @@
                 </th:block>
             </div>
             <script type="text/javascript" th:nonce="${cspNonce}">
-                $("#progressBarWrapper").css("visibility","hidden");
-                $("#timelineMain").css("visibility","visible");
+                $("#progressBarWrapper").visible();
+                $("#timelineMain").visible();
             </script>
 
             <div th:replace="fragments/metadatabatchmodal :: metadatabatchmodal(${recognitionLabels},${allAlbumList})"></div>

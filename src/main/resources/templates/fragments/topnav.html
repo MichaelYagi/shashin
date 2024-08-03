@@ -355,8 +355,8 @@
         </div>
     </div>
 
-    <div class="progress" id="progressBarWrapper" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 1px;visibility: hidden;">
-        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" id="progressBar" style="width: 0%"></div>
+    <div class="progress" id="progressBarWrapper" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 1px; margin-top: 9px; margin-bottom: -9px; visibility: hidden;">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" id="progressBar" style="width: 0%;"></div>
     </div>
 
     <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
@@ -530,10 +530,19 @@
                         let respMessageJsonString = JSON.parse(message.body).content;
                         const messageMap = JSON.parse(respMessageJsonString);
                         let respMessage = messageMap.hasOwnProperty("message") ? messageMap["message"] : "";
+                        let currentMediaCount = messageMap.hasOwnProperty("currentMediaCount") ? parseInt(messageMap["currentMediaCount"]) : 0;
+                        let totalMediaCount = messageMap.hasOwnProperty("totalMediaCount") ? parseInt(messageMap["totalMediaCount"]) : 0;
+
+                        if (activePage !== "map" && totalMediaCount > 0 && currentMediaCount > 0) {
+                            $("#progressBarWrapper").visible()
+                            let completedPercent = (currentMediaCount/totalMediaCount)*100;
+                            Util.updateProgressBar(completedPercent);
+                        }
 
                         shashin.printMessageToConsole("message: "+message);
                         if (respMessage === "Scan Stopped" || respMessage === "No directories configured" || respMessage === "Scan Complete") {
                             $("#mediaScanSpinner").css("display", "none");
+                            $("#progressBarWrapper").invisible();
                             $("#profileImage").css("opacity", 1.0);
                             $("#profileImagePlaceholder").css("opacity", 1.0);
                             if (counterMessage === 1) {

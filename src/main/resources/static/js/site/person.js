@@ -84,7 +84,7 @@ class Person {
 
         $('#propPersonModal').on('hide.bs.modal', function () {
             $("#personModalStatus").attr("class","spinner-grow me-auto");
-            $("#personModalStatus").css("visibility","hidden");
+            $("#personModalStatus").invisible();
         });
     }
 
