@@ -452,7 +452,7 @@ async function showMap(mapdata, keywordMap) {
             if (progressBarShown === false) {
                 const currentProgress = parseInt(((parseInt(index) + 1) / mapdata.length * 100).toString(), 10);
                 if (currentProgress % 25 === 0) {
-                    Util.updateProgressBar(currentProgress);
+                    Util.updateProgressBar(currentProgress, {autoVisibility: false});
                 }
                 shashin.printMessageToConsole("currentProgress for map: " + currentProgress.toString());
             }
@@ -558,7 +558,7 @@ async function showMap(mapdata, keywordMap) {
 
             if (mapdata.length === parseInt(index)+1) {
                 progressBarWrapper.invisible();
-                Util.updateProgressBar(0);
+                Util.updateProgressBar(0, {autoVisibility: false});
                 progressBarShown = true;
             }
         }
