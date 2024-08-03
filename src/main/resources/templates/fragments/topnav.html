@@ -527,7 +527,10 @@
                     }
                     shashin.printMessageToConsole( "Connected STOMP client");
                     this.subscribe("/topic/messages", function (message) {
-                        let respMessage = JSON.parse(message.body).content;
+                        let respMessageJsonString = JSON.parse(message.body).content;
+                        const messageMap = JSON.parse(respMessageJsonString);
+                        let respMessage = messageMap.hasOwnProperty("message") ? messageMap["message"] : "";
+
                         shashin.printMessageToConsole("message: "+message);
                         if (respMessage === "Scan Stopped" || respMessage === "No directories configured" || respMessage === "Scan Complete") {
                             $("#mediaScanSpinner").css("display", "none");

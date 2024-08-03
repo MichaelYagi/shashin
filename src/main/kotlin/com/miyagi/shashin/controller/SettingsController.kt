@@ -157,6 +157,10 @@ class SettingsController {
 
     private var recognitionCount: Int = 0
 
+    private var totalMediaCount: Long = 0
+
+    private var currentMediaCount: Long = 0
+
     private var metadataIdArray = mutableListOf<String>()
 
     val mapper = ObjectMapper()
@@ -166,6 +170,17 @@ class SettingsController {
     @SendTo("/topic/messages")
     @Throws(java.lang.Exception::class)
     fun sendScanMessage(message: ScanMessage): Message? {
+        val messageMap = mutableMapOf<String,Any>()
+
+        messageMap["message"] = ""
+        messageMap["currentMediaCount"] = currentMediaCount
+        messageMap["totalMediaCount"] = totalMediaCount
+        messageMap["completedPercent"] = 0
+
+        if (currentMediaCount > 0 && totalMediaCount > 0) {
+            messageMap["completedPercent"] = currentMediaCount / totalMediaCount * totalMediaCount
+        }
+
         //println("message:${message.getMessage()}")
         var msg = "Start Scan"
 
@@ -190,8 +205,12 @@ class SettingsController {
             msg = "No directories configured"
         }
 
+        messageMap["message"] = msg
+
+        val response: String = mapper.writeValueAsString(messageMap)
+
         val messageObj = Message()
-        messageObj.setContent(msg)
+        messageObj.setContent(response)
 
         return messageObj
     }
@@ -1557,13 +1576,16 @@ class SettingsController {
         val mediaDirs = mediaDirRepository?.findByExclude(false)
         val mediaExcludeDirs = mediaDirRepository?.findByExclude(true)
 
+        totalMediaCount = 0
+
         if (mediaDirs != null && mediaDirs.count() > 0) {
             var mediaDirNotFound = false
             for (mediaDir in mediaDirs) {
                 val dir = Paths.get(mediaDir?.getDirectory()!!)
                 if (!Files.exists(dir)) {
                     mediaDirNotFound = true
-                    break
+                } else {
+                    totalMediaCount += FileUtils.fileCount(Paths.get(mediaDir.getDirectory()!!))
                 }
             }
 
@@ -2354,7 +2376,10 @@ class SettingsController {
                     }
                 }
 
+                currentMediaCount++
+
                 if (file.isFile && !alreadyScannedFilepaths.contains(file.path)) {
+
                     if (!exclude && FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
 
                         //val mediaProcessingUtils = MediaProcessing(apiVersion,geocodeUrl)
