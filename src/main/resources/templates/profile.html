@@ -113,7 +113,7 @@
 
             reader.onload = function (e) {
                 $("#profilePictureEdit").attr('src', e.target.result);
-                $("#profilePictureEdit").css("visibility", "visible");
+                $("#profilePictureEdit").visible();
                 $("#removeProfile").css("display", "none");
                 $("#saveProfile").css("display", "block");
                 $("#cancelProfile").css("display", "block");
@@ -137,10 +137,10 @@
 
                     $("#profilePictureEdit").attr("src", profileUrl);
                     if (profileUrl === null || profileUrl === "" || profileUrl === "#") {
-                        $("#profilePictureEdit").css("visibility", "hidden");
+                        $("#profilePictureEdit").invisible();
                         $("#removeProfile").css("display", "none");
                     } else {
-                        $("#profilePictureEdit").css("visibility", "visible");
+                        $("#profilePictureEdit").visible();
                         $("#removeProfile").css("display", "block");
                     }
 
@@ -196,7 +196,7 @@
         } else {
             // File dialog cancel pressed
             if (profileUrl === null || profileUrl === "" || profileUrl === "#") {
-                $("#profilePictureEdit").css("visibility", "hidden");
+                $("#profilePictureEdit").invisible();
                 $("#removeProfile").css("display", "none");
 
                 $("#profilePictureEdit").attr('src', "#");
@@ -205,7 +205,7 @@
                 $("#profileImagePlaceholder").css({"display": "block","font-size":"37px"});
                 $("#removeProfile").css("display", "none");
             } else {
-                $("#profilePictureEdit").css("visibility", "visible");
+                $("#profilePictureEdit").visible();
                 $("#removeProfile").css("display", "block");
 
                 $("#profilePictureEdit").attr('src', profileUrl + '?' + randomString);

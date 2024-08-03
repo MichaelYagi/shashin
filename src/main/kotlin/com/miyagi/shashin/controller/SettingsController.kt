@@ -175,11 +175,6 @@ class SettingsController {
         messageMap["message"] = ""
         messageMap["currentMediaCount"] = currentMediaCount
         messageMap["totalMediaCount"] = totalMediaCount
-        messageMap["completedPercent"] = 0
-
-        if (currentMediaCount > 0 && totalMediaCount > 0) {
-            messageMap["completedPercent"] = currentMediaCount / totalMediaCount * totalMediaCount
-        }
 
         //println("message:${message.getMessage()}")
         var msg = "Start Scan"
@@ -2376,11 +2371,12 @@ class SettingsController {
                     }
                 }
 
-                currentMediaCount++
+                if (file.isFile) {
+                    if (currentMediaCount < totalMediaCount) {
+                        currentMediaCount++
+                    }
 
-                if (file.isFile && !alreadyScannedFilepaths.contains(file.path)) {
-
-                    if (!exclude && FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
+                    if (!exclude && !alreadyScannedFilepaths.contains(file.path) && FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
 
                         //val mediaProcessingUtils = MediaProcessing(apiVersion,geocodeUrl)
                         var metadataObj: Metadata? = Metadata()
@@ -2418,11 +2414,11 @@ class SettingsController {
                         }
 
                         FileUtils.writeToThreadFileAndLogMessage(threadText, threadFile)
+                    } else {
+                        threadText = file.path + " already scanned"
+                        FileUtils.writeToThreadFileAndLogMessage(threadText, threadFile)
+                        logger.log(Level.INFO, "Entry exists: " + file.name)
                     }
-                } else {
-                    threadText = file.path + " already scanned"
-                    FileUtils.writeToThreadFileAndLogMessage(threadText, threadFile)
-                    logger.log(Level.INFO, "Entry exists: " + file.name)
                 }
 
                 if (file.isDirectory) {

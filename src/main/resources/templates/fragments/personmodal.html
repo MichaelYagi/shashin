@@ -103,7 +103,7 @@
 
                     personModalBatchSettings.closeBatchTagPeopleDropdown();
                     $("#personBatchModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-                    $("#personBatchModalStatus").css("visibility", "visible");
+                    $("#personBatchModalStatus").visible();
                     $("#personBatchModalStatus").attr("title", "");
                     $("#personBatchModalCancel").prop('disabled', true);
 
@@ -138,7 +138,7 @@
                 // Clear message on modal close
                 $('#propBatchMetadata').on('hide.bs.modal', function () {
                     $("#personBatchModalStatus").attr("class","spinner-grow me-auto");
-                    $("#personBatchModalStatus").css("visibility","hidden");
+                    $("#personBatchModalStatus").invisible();
                     $("#msgBatchMetadata").html("");
                     $('#tagBatchDataInput').val('');
                     $('input:checkbox').prop('checked', false);
@@ -149,7 +149,7 @@
                 // Clear message on input editing
                 $('#propBatchMetadata').bind('keypress', function() {
                     $("#personBatchModalStatus").attr("class","spinner-grow me-auto");
-                    $("#personBatchModalStatus").css("visibility","hidden");
+                    $("#personBatchModalStatus").invisible();
                     $("#msgBatchMetadata").html("");
                 });
             </script>
@@ -227,7 +227,7 @@
 
                 personModalSettings.closeTagPeopleDropdown(metadata.id);
                 $("#personModalStatus" + metadata.id).removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-                $("#personModalStatus" + metadata.id).css("visibility", "visible");
+                $("#personModalStatus" + metadata.id).visible();
                 $("#personModalStatus" + metadata.id).attr("title", "");
                 $("#personModalCancel" + metadata.id).prop('disabled', true);
 
@@ -300,7 +300,7 @@
             // Clear message on modal close
             $('#propperson'+metadata.id).on('hide.bs.modal', function () {
                 $("#personModalStatus" + metadata.id).attr("class","spinner-grow me-auto");
-                $("#personModalStatus" + metadata.id).css("visibility","hidden");
+                $("#personModalStatus" + metadata.id).invisible();
                 personModalSettings.closeTagPeopleDropdown(metadata.id);
                 $("#msg"+metadata.id).html("");
             });
@@ -308,7 +308,7 @@
             // Clear message on input editing
             $('#propperson'+metadata.id+' input').bind('keypress', function() {
                 $("#personModalStatus" + metadata.id).attr("class","spinner-grow me-auto");
-                $("#personModalStatus" + metadata.id).css("visibility","hidden");
+                $("#personModalStatus" + metadata.id).invisible();
                 $("#msg"+metadata.id).html("");
             });
         }
