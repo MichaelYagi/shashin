@@ -11,8 +11,6 @@ import org.springframework.core.io.FileSystemResource
 import org.springframework.stereotype.Component
 import java.io.*
 import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -58,26 +56,35 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
 
         fun fileCount(dir: String?): Long {
             if (dir.isNullOrBlank()) {
-                logger.log(Level.WARNING, "Error counting files: Paths os null or blank")
+                logger.log(Level.WARNING, "Error counting files: Paths is null or blank")
                 return 0
             }
 
             val slashesDir = dir.toString().replace('\\', '/')
+            val directory = File(slashesDir)
+            var count = 0L
 
-            if (File(slashesDir).exists()) {
+            if (directory.exists()) {
+                val files = directory.listFiles()
+
                 try {
-                    val fileCount = Files.walk(Paths.get(slashesDir))
-                        .parallel()
-                        .filter { p -> !p.toFile().isDirectory() }
-                        .count()
+                    if (files != null) {
+                        for (f in files) {
+                            if (f.isDirectory) {
+                                count += fileCount(f.absolutePath)
+                            } else {
+                                count++
+                            }
+                        }
+                    }
 
-                    return fileCount
+                    return count
                 } catch (e: IOException) {
-                    logger.log(Level.SEVERE, "Error counting files: " + e.message)
+                    logger.log(Level.SEVERE, "Error counting files for $slashesDir: " + e.message)
                     return 0
                 }
             } else {
-                logger.log(Level.WARNING, "Error counting files: Paths do not exist")
+                logger.log(Level.WARNING, "Error counting files: $slashesDir does not exist")
                 return 0
             }
         }
