@@ -11,6 +11,7 @@ import org.springframework.core.io.FileSystemResource
 import org.springframework.stereotype.Component
 import java.io.*
 import java.nio.file.Files
+import java.nio.file.Path
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -55,6 +56,13 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                 return true
             }
             return false
+        }
+
+        fun fileCount(dir: Path?): Long {
+            return Files.walk(dir)
+                .parallel()
+                .filter { p -> !p.toFile().isDirectory() }
+                .count()
         }
 
         fun createFile(filePath: String, fileName: String, type: String, overwriteThumbnails: Boolean = false): File? {
