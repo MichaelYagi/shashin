@@ -76,7 +76,7 @@
             let apikey = $("#apikey").val();
 
             if (apikey !== null && apikey !== "") {
-                Util.copyToClipboard(apikey, "API key", {inputFieldId:"copyapikey"}, function (successfullyCopied) {
+                Util.copyToClipboard(apikey, function (successfullyCopied) {
                     if (successfullyCopied) {
                         $("#apikeycopyicon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
                         $('#apikeycopyicon').fadeOut(5000, function () {
