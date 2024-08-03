@@ -1580,7 +1580,7 @@ class SettingsController {
                 if (!Files.exists(dir)) {
                     mediaDirNotFound = true
                 } else {
-                    totalMediaCount += FileUtils.fileCount(Paths.get(mediaDir.getDirectory()!!))
+                    totalMediaCount += FileUtils.fileCount(mediaDir.getDirectory()!!)
                 }
             }
 

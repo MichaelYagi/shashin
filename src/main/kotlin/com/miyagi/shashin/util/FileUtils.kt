@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component
 import java.io.*
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -52,17 +53,32 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
         }
 
         fun isRaw(extension: String): Boolean {
-            if (allowableRawImageFiles().contains(extension.lowercase())) {
-                return true
-            }
-            return false
+            return allowableRawImageFiles().contains(extension.lowercase())
         }
 
-        fun fileCount(dir: Path?): Long {
-            return Files.walk(dir)
-                .parallel()
-                .filter { p -> !p.toFile().isDirectory() }
-                .count()
+        fun fileCount(dir: String?): Long {
+            if (dir.isNullOrBlank()) {
+                return 0
+            }
+
+            val slashesDir = dir.toString().replace('\\', '/')
+
+            if (File(slashesDir).exists()) {
+                try {
+                    val fileCount = Files.walk(Paths.get(slashesDir))
+                        .parallel()
+                        .filter { p -> !p.toFile().isDirectory() }
+                        .count()
+
+                    return fileCount
+                } catch (e: IOException) {
+                    logger.log(Level.SEVERE, "Error counting files: " + e.message)
+                    return 0
+                }
+            } else {
+                logger.log(Level.WARNING, "Error counting files: Paths do not exist")
+                return 0
+            }
         }
 
         fun createFile(filePath: String, fileName: String, type: String, overwriteThumbnails: Boolean = false): File? {
