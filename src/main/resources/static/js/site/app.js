@@ -1220,13 +1220,7 @@
             const copyPlacename = function (obj) {
                 if (obj.hasOwnProperty("data") && obj.data !== null && obj.data !== "" && obj.data.placename !== null && obj.data.placename !== "") {
                     const copyText = obj.data.placename;
-                    let containerId = "propMetadata";
-                    if ($("#propInfoModal").is(':visible')) {
-                        containerId = "propInfoModal";
-                    } else if ($("#propMetadata").is(':visible')) {
-                        containerId = "propMetadata";
-                    }
-                    Util.copyToClipboard(copyText, "location", {containerId: containerId});
+                    Util.copyToClipboard(copyText);
                 }
             }
 
@@ -1234,13 +1228,7 @@
                 const coordArray = ol.proj.toLonLat(obj.coordinate);
                 if (coordArray.length > 1) {
                     const copyText = coordArray[1]+","+coordArray[0];
-                    let containerId = "propMetadata";
-                    if ($("#propInfoModal").is(':visible')) {
-                        containerId = "propInfoModal";
-                    } else if ($("#propMetadata").is(':visible')) {
-                        containerId = "propMetadata";
-                    }
-                    Util.copyToClipboard(copyText, "coordinates", {containerId: containerId});
+                    Util.copyToClipboard(copyText);
                 }
             };
 
