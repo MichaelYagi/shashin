@@ -7,7 +7,7 @@
 
 <script type="text/javascript" th:nonce="${cspNonce}">
     $("#progressBarWrapper").visible();
-    Util.updateProgressBar(0);
+    Util.updateProgressBar(0, {autoVisibility: false});
     $("#mapFilterButton").addClass("disabled");
 </script>
 
@@ -186,7 +186,7 @@
         // $("#bingMapsImagerySet").val("AerialWithLabels");
 
         $("#progressBarWrapper").visible();
-        Util.updateProgressBar(100);
+        Util.updateProgressBar(100, {autoVisibility: false});
 
         const http = new Http("Getting map data");
         Util.setMetadataLocalStorage();
@@ -219,7 +219,7 @@
                     target: shashin.toast.target.two
                 });
                 $("#progressBarWrapper").invisible();
-                Util.updateProgressBar(0);
+                Util.updateProgressBar(0, {autoVisibility: false});
             }
 
             showMap(mapdata, keywordMap);

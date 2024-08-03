@@ -1012,10 +1012,29 @@ class Util {
         }
     }
 
-    static updateProgressBar(value, timeout) {
-        if (timeout === undefined) {
-            timeout = 0;
+    static updateProgressBar(value, options) {
+        let timeout = 0
+        let autoVisibility = true
+
+        if (options !== undefined) {
+            if (options.hasOwnProperty("timeout")) {
+                timeout = options["timeout"];
+            }
+
+            if (options.hasOwnProperty("autoVisibility")) {
+                autoVisibility = options["autoVisibility"];
+            }
         }
+
+        if (autoVisibility === true) {
+            if (value > 0) {
+                $("#progressBarWrapper").visible();
+            }
+            if (value === 100) {
+                $("#progressBarWrapper").invisible();
+            }
+        }
+
         setTimeout(() => {
             $("#progressBarWrapper").attr("aria-valuenow",value.toString());
             $("#progressBar").css("width",value.toString()+"%");

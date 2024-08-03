@@ -191,7 +191,7 @@
 </th:block>
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     $("#appSearchInput").val("Dashboard");
-    Util.updateProgressBar(100);
+    Util.updateProgressBar(100, {autoVisibility: false});
     $("#progressBarWrapper").visible();
 
     $(document).ready(function () {
@@ -282,7 +282,7 @@
                 dashboard.startWebSocket(cpuChart, memoryChart);
 
                 $("#progressBarWrapper").invisible();
-                Util.updateProgressBar(0);
+                Util.updateProgressBar(0, {autoVisibility: false});
                 shashin.closeToastMessage({
                     target: shashin.toast.target.two
                 });
