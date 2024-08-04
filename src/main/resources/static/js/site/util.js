@@ -33,26 +33,27 @@ class Util {
             shashin.printMessageToConsole("copyToClipboard using execCommand");
             const textArea = document.createElement("textarea");
             textArea.value = textToCopy;
+            textArea.innerText = textToCopy;
 
             // Set non-editable to avoid focus and move outside of view
             textArea.setAttribute('readonly', '');
             textArea.style = {position: 'absolute', left: '-9999px'};
 
             document.body.appendChild(textArea);
-            textArea.focus();
             textArea.select();
+            textArea.focus();
 
             try {
                 const successful = document.execCommand('copy');
-                document.body.removeChild(textArea);
-                shashin.showToastMessage("Copied to clipboard", textToCopy + " copied to clipboard", {
+                textArea.remove();
+                shashin.showToastMessage("Copied to clipboard" + textToCopy + " copied to clipboard", {
                     icon: "bi-info-circle",
                     iconColor: "#777777"
                 });
 
                 callbackResponse = successful;
             } catch (err) {
-                shashin.showToastMessage("Could not copy", textToCopy + " could not be copied: " + err, {
+                shashin.showToastMessage("Could not copy" + textToCopy + " could not be copied: " + err, {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000"
                 });
@@ -61,13 +62,13 @@ class Util {
         } else {
             shashin.printMessageToConsole("copyToClipboard using navigator.clipboard");
             navigator.clipboard.writeText(textToCopy).then(function () {
-                shashin.showToastMessage("Copied to clipboard", textToCopy + " copied to clipboard", {
+                shashin.showToastMessage("Copied to clipboard" + textToCopy + " copied to clipboard", {
                     icon: "bi-info-circle",
                     iconColor: "#777777"
                 });
                 callbackResponse = true;
             }, function (err) {
-                shashin.showToastMessage("Could not copy", textToCopy + " could not be copied: " + err, {
+                shashin.showToastMessage("Could not copy" + textToCopy + " could not be copied: " + err, {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000"
                 });
