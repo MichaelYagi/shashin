@@ -44,6 +44,7 @@ class Util {
 
             try {
                 const successful = document.execCommand('copy');
+                document.body.removeChild(textArea);
                 shashin.showToastMessage("Copied to clipboard", textToCopy + " copied to clipboard", {
                     icon: "bi-info-circle",
                     iconColor: "#777777"
@@ -57,8 +58,6 @@ class Util {
                 });
                 callbackResponse = false;
             }
-
-            document.body.removeChild(textArea);
         } else {
             shashin.printMessageToConsole("copyToClipboard using navigator.clipboard");
             navigator.clipboard.writeText(textToCopy).then(function () {
