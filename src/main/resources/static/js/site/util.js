@@ -46,25 +46,34 @@ class Util {
             try {
                 const successful = document.execCommand('copy');
                 textArea.remove();
-                shashin.showToastMessage("Copied to clipboard", textToCopy + " copied to clipboard", {
-                    icon: "bi-info-circle",
-                    iconColor: "#777777"
-                });
 
-                callbackResponse = successful;
-                shashin.printMessageToConsole("copyToClipboard success");
+                let status = false;
+
+                if (successful === false) {
+                    shashin.showToastMessage("Could not copy", textToCopy + " could not be copied", {
+                        icon: "bi-exclamation-triangle",
+                        iconColor: "#FF0000"
+                    });
+                } else {
+                    status = true;
+
+                    shashin.showToastMessage("Copied to clipboard", textToCopy + " copied to clipboard", {
+                        icon: "bi-info-circle",
+                        iconColor: "#777777"
+                    });
+                }
+
                 if (callback !== undefined) {
-                    callback(callbackResponse);
+                    callback(status);
                 }
             } catch (err) {
                 shashin.showToastMessage("Could not copy", textToCopy + " could not be copied: " + err, {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000"
                 });
-                callbackResponse = false;
-                shashin.printMessageToConsole("copyToClipboard failed");
+
                 if (callback !== undefined) {
-                    callback(callbackResponse);
+                    callback(false);
                 }
             }
         } else {
@@ -74,24 +83,18 @@ class Util {
                     icon: "bi-info-circle",
                     iconColor: "#777777"
                 });
-                callbackResponse = true;
-
-                shashin.printMessageToConsole("copyToClipboard success");
 
                 if (callback !== undefined) {
-                    callback(callbackResponse);
+                    callback(true);
                 }
             }).catch(function (err) {
                 shashin.showToastMessage("Could not copy", textToCopy + " could not be copied: " + err, {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000"
                 });
-                callbackResponse = false;
-
-                shashin.printMessageToConsole("copyToClipboard failed");
 
                 if (callback !== undefined) {
-                    callback(callbackResponse);
+                    callback(false);
                 }
             });
         }
