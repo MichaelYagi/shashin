@@ -71,9 +71,6 @@
         <main role="main" class="col overflow-auto h-100" id="timelineMain">
             <th:block th:if="${not #lists.isEmpty(metadataList)}">
                 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
-                    $("#progressBarWrapper").visible();
-                    const totalSize = [[${#lists.size(metadataList)}]];
-                    $("#progressBar").attr("aria-valuenow","50");
                     $("#timelineMain").invisible();
                 </script>
             </th:block>
@@ -182,7 +179,6 @@
                 </th:block>
             </div>
             <script type="text/javascript" th:nonce="${cspNonce}">
-                $("#progressBarWrapper").visible();
                 $("#timelineMain").visible();
             </script>
 
