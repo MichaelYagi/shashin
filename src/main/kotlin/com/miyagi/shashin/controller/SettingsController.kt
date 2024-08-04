@@ -1572,6 +1572,7 @@ class SettingsController {
         val mediaExcludeDirs = mediaDirRepository?.findByExclude(true)
 
         totalMediaCount = 0
+        currentMediaCount = 0
 
         if (mediaDirs != null && mediaDirs.count() > 0) {
             Thread {
