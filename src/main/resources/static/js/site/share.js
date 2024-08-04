@@ -73,9 +73,9 @@ class ShareAlbum {
                             overlayFlags.renderCenter = true;
 
                             let lastDate = albumMetadataList.hasOwnProperty(index-1) ? albumMetadataList[index-1]["year"]+ "-" + albumMetadataList[index-1]["month"] + "-" + albumMetadataList[index-1]["day"] : "";
-                            if (albumSettings.lastDate !== "") {
-                                lastDate = albumSettings.lastDate;
-                                albumSettings.lastDate = "";
+                            if (this.lastDate !== "") {
+                                lastDate = this.lastDate;
+                                this.lastDate = "";
                             }
                             const currentDate = metadata["year"] + "-" + metadata["month"] + "-" + metadata["day"];
                             const nextDate = albumMetadataList.hasOwnProperty(index+1) ? albumMetadataList[index+1]["year"] + "-" + albumMetadataList[index+1]["month"] + "-" + albumMetadataList[index+1]["day"] : "";

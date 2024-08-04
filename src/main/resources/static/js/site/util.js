@@ -27,8 +27,6 @@ class Util {
     };
 
     static copyToClipboard(textToCopy, callback) {
-        let callbackResponse = false;
-
         if (!navigator.clipboard) {
             shashin.printMessageToConsole("copyToClipboard using execCommand");
             const textArea = document.createElement("textarea");

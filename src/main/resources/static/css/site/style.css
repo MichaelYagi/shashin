@@ -33,6 +33,10 @@ body {
  * Sidebar
  */
 
+#container {
+  margin-top: 1px;
+}
+
 .sidebar {
   position: fixed;
   top: 0;
