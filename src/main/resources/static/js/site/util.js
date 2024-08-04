@@ -46,14 +46,14 @@ class Util {
             try {
                 const successful = document.execCommand('copy');
                 textArea.remove();
-                shashin.showToastMessage("Copied to clipboard" + textToCopy + " copied to clipboard", {
+                shashin.showToastMessage("Copied to clipboard", textToCopy + " copied to clipboard", {
                     icon: "bi-info-circle",
                     iconColor: "#777777"
                 });
 
                 callbackResponse = successful;
             } catch (err) {
-                shashin.showToastMessage("Could not copy" + textToCopy + " could not be copied: " + err, {
+                shashin.showToastMessage("Could not copy", textToCopy + " could not be copied: " + err, {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000"
                 });
@@ -62,13 +62,13 @@ class Util {
         } else {
             shashin.printMessageToConsole("copyToClipboard using navigator.clipboard");
             navigator.clipboard.writeText(textToCopy).then(function () {
-                shashin.showToastMessage("Copied to clipboard" + textToCopy + " copied to clipboard", {
+                shashin.showToastMessage("Copied to clipboard", textToCopy + " copied to clipboard", {
                     icon: "bi-info-circle",
                     iconColor: "#777777"
                 });
                 callbackResponse = true;
             }, function (err) {
-                shashin.showToastMessage("Could not copy" + textToCopy + " could not be copied: " + err, {
+                shashin.showToastMessage("Could not copy", textToCopy + " could not be copied: " + err, {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000"
                 });
