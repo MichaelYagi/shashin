@@ -28,7 +28,6 @@ async function showMap(mapdata, keywordMap) {
     const endDateField = $("#endDateInput");
     const filterInputs = $("#filterInputs");
     const albumSelect = $("#albumSelect");
-    const progressBarWrapper = $("#progressBarWrapper");
     const coordZoom = 17;
 
     // Bigger number for better performance, smaller number for better accuracy
@@ -450,10 +449,8 @@ async function showMap(mapdata, keywordMap) {
             const data = mapdata[index];
 
             if (progressBarShown === false) {
-                const currentProgress = parseInt(((parseInt(index) + 1) / mapdata.length * 100).toString(), 10);
-                if (currentProgress % 25 === 0) {
-                    Util.updateProgressBar(currentProgress, {autoVisibility: false});
-                }
+                const currentProgress = parseInt((((parseInt(index) + 1) / mapdata.length) * 100).toString(), 10);
+                Util.updateProgressBar(currentProgress);
                 shashin.printMessageToConsole("currentProgress for map: " + currentProgress.toString());
             }
 
@@ -557,8 +554,7 @@ async function showMap(mapdata, keywordMap) {
             }
 
             if (mapdata.length === parseInt(index)+1) {
-                progressBarWrapper.invisible();
-                Util.updateProgressBar(0, {autoVisibility: false});
+                Util.updateProgressBar(0);
                 progressBarShown = true;
             }
         }

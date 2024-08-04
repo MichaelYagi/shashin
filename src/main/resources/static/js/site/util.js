@@ -1027,11 +1027,10 @@ class Util {
         }
 
         if (autoVisibility === true) {
-            if (value > 0) {
-                $("#progressBarWrapper").visible();
-            }
-            if (value === 100) {
+            if (value === 0 || value === 100) {
                 $("#progressBarWrapper").invisible();
+            } else {
+                $("#progressBarWrapper").visible();
             }
         }
 
