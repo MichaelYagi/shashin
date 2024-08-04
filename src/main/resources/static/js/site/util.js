@@ -52,12 +52,20 @@ class Util {
                 });
 
                 callbackResponse = successful;
+                shashin.printMessageToConsole("copyToClipboard success");
+                if (callback !== undefined) {
+                    callback(callbackResponse);
+                }
             } catch (err) {
                 shashin.showToastMessage("Could not copy", textToCopy + " could not be copied: " + err, {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000"
                 });
                 callbackResponse = false;
+                shashin.printMessageToConsole("copyToClipboard failed");
+                if (callback !== undefined) {
+                    callback(callbackResponse);
+                }
             }
         } else {
             shashin.printMessageToConsole("copyToClipboard using navigator.clipboard");
@@ -67,17 +75,25 @@ class Util {
                     iconColor: "#777777"
                 });
                 callbackResponse = true;
-            }, function (err) {
+
+                shashin.printMessageToConsole("copyToClipboard success");
+
+                if (callback !== undefined) {
+                    callback(callbackResponse);
+                }
+            }).catch(function (err) {
                 shashin.showToastMessage("Could not copy", textToCopy + " could not be copied: " + err, {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000"
                 });
                 callbackResponse = false;
-            });
-        }
 
-        if (callback !== undefined) {
-            callback(callbackResponse);
+                shashin.printMessageToConsole("copyToClipboard failed");
+
+                if (callback !== undefined) {
+                    callback(callbackResponse);
+                }
+            });
         }
     }
 
