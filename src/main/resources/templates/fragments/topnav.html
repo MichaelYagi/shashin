@@ -545,6 +545,7 @@
                             $("#progressBarWrapper").invisible();
                             $("#profileImage").css("opacity", 1.0);
                             $("#profileImagePlaceholder").css("opacity", 1.0);
+                            Util.updateProgressBar(0);
                             if (counterMessage === 1) {
                                 Util.getNotifications(notificationAlerts, timezone);
                             }
