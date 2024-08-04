@@ -33,6 +33,10 @@ body {
  * Sidebar
  */
 
+header {
+  margin-top: 1px;
+}
+
 #container {
   margin-top: 1px;
 }
