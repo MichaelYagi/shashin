@@ -27,6 +27,8 @@ class Util {
     };
 
     static copyToClipboard(textToCopy, callback) {
+        let callbackResponse = false;
+
         if (!navigator.clipboard) {
             const textArea = document.createElement("textarea");
             textArea.value = textToCopy;
@@ -46,13 +48,13 @@ class Util {
                     icon: "bi-info-circle",
                     iconColor: "#777777"
                 });
-                callback(successful);
+                callbackResponse = successful;
             } catch (err) {
                 shashin.showToastMessage("Could not copy", textToCopy + " could not be copied: " + err, {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000"
                 });
-                callback(false);
+                callbackResponse = false;
             }
 
             document.body.removeChild(textArea);
@@ -62,15 +64,17 @@ class Util {
                     icon: "bi-info-circle",
                     iconColor: "#777777"
                 });
-                callback(true);
+                callbackResponse = true;
             }, function (err) {
                 shashin.showToastMessage("Could not copy", textToCopy + " could not be copied: " + err, {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000"
                 });
-                callback(false);
+                callbackResponse = false;
             });
         }
+
+        callback(callbackResponse);
     }
 
     static elementsInViewport(element) {
