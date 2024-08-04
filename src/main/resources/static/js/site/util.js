@@ -30,13 +30,13 @@ class Util {
         let callbackResponse = false;
 
         if (!navigator.clipboard) {
+            shashin.printMessageToConsole("copyToClipboard using execCommand");
             const textArea = document.createElement("textarea");
             textArea.value = textToCopy;
 
-            // Avoid scrolling to bottom
-            textArea.style.top = "0";
-            textArea.style.left = "0";
-            textArea.style.position = "fixed";
+            // Set non-editable to avoid focus and move outside of view
+            textArea.setAttribute('readonly', '');
+            textArea.style = {position: 'absolute', left: '-9999px'};
 
             document.body.appendChild(textArea);
             textArea.focus();
@@ -48,6 +48,7 @@ class Util {
                     icon: "bi-info-circle",
                     iconColor: "#777777"
                 });
+
                 callbackResponse = successful;
             } catch (err) {
                 shashin.showToastMessage("Could not copy", textToCopy + " could not be copied: " + err, {
@@ -59,6 +60,7 @@ class Util {
 
             document.body.removeChild(textArea);
         } else {
+            shashin.printMessageToConsole("copyToClipboard using navigator.clipboard");
             navigator.clipboard.writeText(textToCopy).then(function () {
                 shashin.showToastMessage("Copied to clipboard", textToCopy + " copied to clipboard", {
                     icon: "bi-info-circle",
@@ -74,7 +76,9 @@ class Util {
             });
         }
 
-        callback(callbackResponse);
+        if (callback !== undefined) {
+            callback(callbackResponse);
+        }
     }
 
     static elementsInViewport(element) {
