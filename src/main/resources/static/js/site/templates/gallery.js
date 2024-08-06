@@ -236,7 +236,7 @@ class GalleryTemplates {
             <div class="card-body" style="display: flex;flex-direction: column;">
                 <p class="card-text"><strong>${folder}</strong></p>
                 <span style="margin-top: auto;">
-                    <p class="card-text"><small class="text-muted">${count} items</small></p>
+                    <p class="card-text"><small class="text-muted">${count ((count === 1) ? ` item` : ` items`) }</small></p>
                 </span>
             </div>
         </div>
