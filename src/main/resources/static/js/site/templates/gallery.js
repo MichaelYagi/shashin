@@ -229,7 +229,7 @@ class GalleryTemplates {
     `};
 
     static getFoldersCard({folder, thumbnailUrlCentered, count, appendClass}) { return `
-        <div class="card" style="width:235px;padding-top:10px;">
+        <div class="card" style="width:235px;padding-top:10px;margin-right:-1px;margin-bottom:-1px;">
             <a href="/folder/${encodeURIComponent(encodeURIComponent(folder))}" style="text-decoration: none !important;color: #777777;">
                 <img loading="lazy" class="card-img-top" src="${thumbnailUrlCentered}" width="209" height="209" style="width: 209px;height: 209px;">
             </a>

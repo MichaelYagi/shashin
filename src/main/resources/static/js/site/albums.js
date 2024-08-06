@@ -62,7 +62,7 @@ class Albums {
             if (albumsList !== null && albumsList.length > 0) {
                 albumsList.forEach(function (album) {
                     if ($("#album"+album.id).length === 0) {
-                        let html = '<div class="card" style="width:235px;padding-top:10px;">';
+                        let html = '<div class="card" style="width:235px;padding-top:10px;margin-right:-1px;margin-bottom:-1px;">';
                         html += '<a href="/album/' + album.id + '" style="text-decoration: none !important;color: #777777;" id="album' + album.id + '">';
                         html += '<img loading="lazy" class="card-img-top" src="' + album.coverUrl + '" width="209" height="209" style="width: 209px;height: 209px;">';
                         html += '</a>';

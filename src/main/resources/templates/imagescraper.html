@@ -147,7 +147,7 @@
                         for (let index in imgList) {
                             const imgObj = imgList[index];
 
-                            html += '<div class="card" style="width:235px;padding-top:10px;">';
+                            html += '<div class="card" style="width:235px;padding-top:10px;margin-right:-1px;margin-bottom:-1px;">';
                             html += '<a href="' + imgObj.imgRealSrc + '" target="_blank"><img src="' + imgObj.imgThumbBase64 + '" title="' + imgObj.imgTitle + '" alt="' + imgObj.imgAlt + '" data-src="' + imgObj.imgRealSrc + '" style="width: ' + imgObj.imgThumbWidth + 'px;height: ' + imgObj.imgThumbHeight + 'px;"></a>';
                             html += '<div class="card-body">';
                             html += '<strong>' + ((imgObj.imgTitle !== '') ? imgObj.imgTitle : imgObj.imgAlt) + '</strong><br>';
