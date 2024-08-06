@@ -19,9 +19,11 @@
                             <a th:href="'/folder/'+${#uris.escapePath(#uris.escapePathSegment(folder.folder))}" style="text-decoration: none !important;color: #777777;">
                                 <img loading="lazy" class="card-img-top" th:src="${#uris.escapePath(folder.thumbnailUrlCentered)}" width="209" height="209" style="width: 209px;height: 209px;">
                             </a>
-                            <div class="card-body">
+                            <div class="card-body" style="display: flex;flex-direction: column;">
                                 <p class="card-text"><strong th:text="${folder.folder}"></strong></p>
-                                <p class="card-text"><small class="text-muted" th:text="${folder.count + ' items'}"></small></p>
+                                <span style="margin-top: auto;">
+                                    <p class="card-text"><small class="text-muted" th:text="${folder.count + ' items'}"></small></p>
+                                </span>
                             </div>
                         </div>
 

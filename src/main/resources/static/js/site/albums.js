@@ -66,9 +66,9 @@ class Albums {
                         html += '<a href="/album/' + album.id + '" style="text-decoration: none !important;color: #777777;" id="album' + album.id + '">';
                         html += '<img loading="lazy" class="card-img-top" src="' + album.coverUrl + '" width="209" height="209" style="width: 209px;height: 209px;">';
                         html += '</a>';
-                        html += '<div class="card-body">';
-                        html += '<strong id="albumName' + album.id + '">' + album.name + '</strong><br>';
-                        html += '<a href="#" id="comment' + album.id + '" style="text-decoration: none;" title="Comments">';
+                        html += '<div class="card-body" style="display: flex;flex-direction: column;">';
+                        html += '<strong id="albumName' + album.id + '">' + album.name + '</strong>';
+                        html += '<span style="margin-top: auto;"><a href="#" id="comment' + album.id + '" style="text-decoration: none;" title="Comments">';
                         html += '<span id="commentcount' + album.id + '">' + (album.id in data["albumsCommentsMap"] ? data["albumsCommentsMap"][album.id].length : "0") + '</span>&nbsp;';
                         html += '<span class="bi-chat-square position-relative">';
                         html += '</span></a>';
@@ -87,7 +87,7 @@ class Albums {
                             html += '&nbsp;&nbsp;&nbsp;<a href="#" id="trash' + album.id + '" title="Delete album"><span class="bi-trash"></span></a>';
                         }
 
-                        html += '<p class="card-text"><small class="text-muted">' + album.albumPhotoCount + (album.albumPhotoCount === 1 ? ' photo' : ' photos') + '&nbsp;&nbsp;&nbsp;&nbsp;' + album.albumVideoCount + (album.albumVideoCount === 1 ? ' video' : ' videos') + '</small>&nbsp;&nbsp;&nbsp;&nbsp;<span id="userShare' + album.id + '" title="Shared with other users" style="' + (sharedAlbumMap.hasOwnProperty(album.id) && showControls === true ? "display: inline-block" : "display: none") + '"><span class="bi-person-up text-muted"></span></span></p>';
+                        html += '<p class="card-text"><small class="text-muted">' + album.albumPhotoCount + (album.albumPhotoCount === 1 ? ' photo' : ' photos') + '&nbsp;&nbsp;&nbsp;&nbsp;' + album.albumVideoCount + (album.albumVideoCount === 1 ? ' video' : ' videos') + '</small>&nbsp;&nbsp;&nbsp;&nbsp;<span id="userShare' + album.id + '" title="Shared with other users" style="' + (sharedAlbumMap.hasOwnProperty(album.id) && showControls === true ? "display: inline-block" : "display: none") + '"><span class="bi-person-up text-muted"></span></span></p></span>';
                         html += '</div></div>';
 
                         html += '<script type="text/javascript" nonce="' + cspNonce + '">Albums.setAlbumsEventListeners(' + album.id + ', "' + baseUrl + '", ' + showControls + ', "' + cspNonce + '");<\/script>';
