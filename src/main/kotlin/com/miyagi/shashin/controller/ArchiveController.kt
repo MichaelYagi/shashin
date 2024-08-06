@@ -36,6 +36,7 @@ class ArchiveController {
     fun getFavorites(model: Model): String {
         val module = "archived"
         model["message"] = "Nothing to see here."
+        model["foldersCount"] = metadataRepository.countByFolder()
         model["metadataList"] = mutableListOf<Metadata>()
         model["keywordMap"] = mutableMapOf<String, String>()
 

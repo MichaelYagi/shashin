@@ -739,6 +739,8 @@ class BrowseController: BaseController() {
 
         getAllAttributeData(model)
 
+        model["foldersCount"] = metadataRepository.countByFolder()
+
         return model
     }
 
@@ -747,6 +749,7 @@ class BrowseController: BaseController() {
         val module = "folders"
         buildInitialFoldersPage(model)
 
+        model["foldersCount"] = metadataRepository.countByFolder()
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
