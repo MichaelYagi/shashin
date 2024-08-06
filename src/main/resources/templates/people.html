@@ -16,7 +16,7 @@
                 <div class="row image-group-padding">
                     <th:block th:each="person, iterStat: ${peopleList}">
                         <th:block th:if="${person.name != null and person.name != 'null'}">
-                            <div class="card" style="width:235px;padding-top:10px;">
+                            <div class="card" style="width:235px;padding-top:10px;margin-right:-1px;margin-bottom:-1px;">
                                 <a th:href="'/person/'+${person.id}"  style="text-decoration: none !important;color: #777777;" th:id="'person'+${person.id}">
                                     <img loading="lazy" class="card-img-top" th:src="${person.coverUrl}" width="209" height="209">
                                 </a>
