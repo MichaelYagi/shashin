@@ -20,13 +20,15 @@
                                 <a th:href="'/person/'+${person.id}"  style="text-decoration: none !important;color: #777777;" th:id="'person'+${person.id}">
                                     <img loading="lazy" class="card-img-top" th:src="${person.coverUrl}" width="209" height="209">
                                 </a>
-                                <div class="card-body">
+                                <div class="card-body" style="display: flex;flex-direction: column;">
                                     <p class="card-text"><strong th:text="${person.name}"></strong></p>
                                     <p class="card-text">
-                                        <small class="text-muted" th:text="${person.tagCount + ' items'}"></small>
-                                        <th:block th:if="${#maps.containsKey(counts, person.id)}">
-                                            <br><small class="text-muted" th:text="${counts.get(person.id) + ' matches'}"></small>
-                                        </th:block>
+                                        <span style="margin-top: auto;">
+                                            <small class="text-muted" th:text="${person.tagCount + ' items'}"></small>
+                                            <th:block th:if="${#maps.containsKey(counts, person.id)}">
+                                                <br><small class="text-muted" th:text="${counts.get(person.id) + ' matches'}"></small>
+                                            </th:block>
+                                        </span>
                                     </p>
                                 </div>
                             </div>

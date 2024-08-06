@@ -233,9 +233,11 @@ class GalleryTemplates {
             <a href="/folder/${encodeURIComponent(encodeURIComponent(folder))}" style="text-decoration: none !important;color: #777777;">
                 <img loading="lazy" class="card-img-top" src="${thumbnailUrlCentered}" width="209" height="209" style="width: 209px;height: 209px;">
             </a>
-            <div class="card-body">
+            <div class="card-body" style="display: flex;flex-direction: column;">
                 <p class="card-text"><strong>${folder}</strong></p>
-                <p class="card-text"><small class="text-muted">${count} items</small></p>
+                <span style="margin-top: auto;">
+                    <p class="card-text"><small class="text-muted">${count} items</small></p>
+                </span>
             </div>
         </div>
         
