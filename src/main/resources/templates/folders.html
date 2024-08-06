@@ -22,7 +22,7 @@
                             <div class="card-body" style="display: flex;flex-direction: column;">
                                 <p class="card-text"><strong th:text="${folder.folder}"></strong></p>
                                 <span style="margin-top: auto;">
-                                    <p class="card-text"><small class="text-muted" th:text="${folder.count + ' items'}"></small></p>
+                                    <p class="card-text"><small class="text-muted" th:text="${folder.count + ((folder.count == 1) ? ' item' : ' items')}"></small></p>
                                 </span>
                             </div>
                         </div>
