@@ -138,6 +138,7 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    @Query("SELECT DISTINCT m.* FROM metadata m WHERE m.id NOT IN (SELECT metadata_id FROM recognitionlabelphoto) AND m.hidden = false ORDER BY RANDOM() LIMIT 0, :matchScanLimit",nativeQuery = true)
    fun findNonMatched(@Param("matchScanLimit") matchScanLimit: Int): MutableIterable<Metadata>
 
+   @Cacheable(value = ["foldersCount"])
    @Query("SELECT COUNT(DISTINCT folder) FROM metadata WHERE hidden = false", nativeQuery = true)
    fun countByFolder(): Int
 
