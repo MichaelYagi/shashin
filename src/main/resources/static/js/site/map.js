@@ -1253,7 +1253,7 @@ async function showMap(mapdata, keywordMap) {
                 inputsChanged = true;
             }
 
-            if (inputsChanged === false && (mapSourceChanged === true || previousFindNearest !== $("#findNearestRadius").val())) {
+            if (inputsChanged === false && (mapSourceChanged === true || previousFindNearest !== $("#findNearestRadius").val() && $("#formCoordinates").val() !== "")) {
                 initialZoom = map.getView().getZoom();
             } else {
                 initialZoom = 2;
