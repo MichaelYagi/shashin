@@ -24,6 +24,8 @@ node/
 *.log
 *.DS_Store
 *.bak
+*.db-shm
+*.db-wal
 .DS_Store
 
 ### NetBeans ###
@@ -51,5 +53,3 @@ build/
 /src/main/resources/static/css/site/min/
 /src/main/resources/static/js/site/min/
 /process.yml
-.db-shm
-.db-wal
