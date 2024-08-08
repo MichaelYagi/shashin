@@ -134,6 +134,7 @@ class Search {
 
                         if ($("#dateBody"+currentDate).length > 0) {
                             $(html).appendTo($("#dateBody" + currentDate));
+                            shashin.updateFavorites("#favorite","#brfavoriteicon","#briconcount", metadata.id);
                         }
 
                         if ($("#"+currentDate).length > 0 && nextDate !== "" && currentDate !== nextDate) {
