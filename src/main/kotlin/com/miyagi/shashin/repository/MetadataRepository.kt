@@ -142,7 +142,7 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    @Query("SELECT COUNT(DISTINCT folder) FROM metadata WHERE hidden = false", nativeQuery = true)
    fun countByFolder(): Int
 
-   @Query("SELECT m.folder, m.thumbnail_url_centered as thumbnailUrlCentered, (SELECT COUNT(*) FROM metadata m1 WHERE m1.folder = m.folder AND m1.hidden = false) as count FROM metadata m WHERE m.hidden = false GROUP BY m.folder ORDER BY m.folder DESC LIMIT :offset, :limit", nativeQuery = true)
+   @Query("SELECT m.folder, m.thumbnail_url_centered as thumbnailUrlCentered, (SELECT COUNT(*) FROM metadata m1 WHERE m1.folder = m.folder AND m1.hidden = false) as count FROM metadata m WHERE m.hidden = false GROUP BY m.folder ORDER BY m.folder ASC LIMIT :offset, :limit", nativeQuery = true)
    fun findFoldersOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Folder?>?
 
    @Query("SELECT * FROM metadata WHERE folder = :folder AND hidden = false ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
