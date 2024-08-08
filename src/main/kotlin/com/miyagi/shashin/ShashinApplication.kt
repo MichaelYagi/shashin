@@ -18,6 +18,7 @@ var jdbcTemplate: JdbcTemplate? = null
 
 fun main(args: Array<String>) {
 	System.setProperty("org.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH", "true")
-	jdbcTemplate?.execute("PRAGMA journal_mode=WAL")
+	jdbcTemplate?.execute("PRAGMA journal_mode = WAL")
+	jdbcTemplate?.execute("PRAGMA synchronous = NORMAL")
 	runApplication<ShashinApplication>(*args)
 }

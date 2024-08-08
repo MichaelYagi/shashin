@@ -286,3 +286,4 @@ CREATE TABLE `searchhistory` (
 INSERT INTO `hibernate_sequence` VALUES (362);
 
 PRAGMA journal_mode = WAL;
+PRAGMA synchronous = NORMAL;
