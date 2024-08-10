@@ -41,6 +41,14 @@
 
                                 <div th:replace="fragments/topleftoverlay :: topleftoverlay(${metadata.id})"></div>
 
+                                <div class="thumbnail-br" th:id="'tnbr'+${metadata.id}">
+                                    <a href="#" th:id="'favorite'+${metadata.id}" class="text-decoration-none">
+                                        <span class="overlayIconBackground">
+                                            <span th:id="'briconcount'+${metadata.id}" th:text="${#maps.containsKey(favorites, metadata.id) ? favorites.get(metadata.id).get('count') : '0'}"></span>&nbsp;<span th:id="'brfavoriteicon'+${metadata.id}" th:class="${#maps.containsKey(favorites, metadata.id) and favorites.get(metadata.id).get('favorite')} ? 'bi-suit-heart-fill overlayIcon' : 'bi-suit-heart overlayIcon'"></span>
+                                        </span>
+                                    </a>
+                                </div>
+
                                 <th:block th:if="${authority == 'ROLE_ADMIN' || authority == 'ROLE_SUPER'}">
                                     <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, null, 'personModalEdit', 'personSettings.openPersonModal', 'overlayCommentText')"></div>
                                 </th:block>
@@ -57,6 +65,7 @@
 
                             <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                                 /*<![CDATA[*/
+                                shashin.updateFavorites("#favorite","#brfavoriteicon","#briconcount",/*[[${metadata.id}]]*/"");
                                 shashin.setPhotoOverlays({id:[[${metadata.id}]],lat:[[${metadata.lat}]],lng:[[${metadata.lng}]],year:[[${metadata.year}]],month:[[${metadata.month}]],day:[[${metadata.day}]],fileName:[[${metadata.fileName}]],thumbnailUrlSmall:[[${metadata.thumbnailUrlSmall}]],type:[[${metadata.type}]]}, /*[[${activePage}]]*/'person');
                                 // personModalSettings.renderPersonModal(/*[[${metadata}]]*/{},/*[[${recognitionLabels}]]*/"",/*[[${labelPhotoMap.get(metadata.id).get('labels')}]]*/"");
                                 $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000");

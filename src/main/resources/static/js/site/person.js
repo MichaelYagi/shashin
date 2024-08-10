@@ -123,6 +123,7 @@ class Person {
                     const metadataList = data["metadataList"];
                     const recognitionLabels = data["recognitionLabels"];
                     const labelPhotoMap = data["labelPhotoMap"];
+                    const favoritesMap = data["favorites"];
 
                     if (metadataList.length > 0) {
                         const mediaLinkLength = $(".mediaLink").length;
@@ -140,6 +141,10 @@ class Person {
                                 overlayFlags.renderTopLeft = true;
                                 overlayFlags.renderBottomLeft = true;
                                 overlayFlags.renderCenter = true;
+                                overlayFlags.renderBottomRight = true;
+
+                                const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
+                                const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
 
                                 let overlayData;
 
@@ -150,6 +155,8 @@ class Person {
                                         cOnClickFunction: "shashin.openGallery",
                                         onClickIdPrefix: "personModalEdit",
                                         galleryIndex: currentMediaLinkIndex,
+                                        favoriteCount: favoriteCount,
+                                        favoriteIcon: favoriteIcon,
                                         overlayFlags
                                     });
                                 } else {
@@ -157,6 +164,8 @@ class Person {
                                         labelPhotoMap: labelPhotoMap,
                                         cOnClickFunction: "shashin.openGallery",
                                         galleryIndex: currentMediaLinkIndex,
+                                        favoriteCount: favoriteCount,
+                                        favoriteIcon: favoriteIcon,
                                         overlayFlags
                                     });
                                 }
@@ -172,6 +181,7 @@ class Person {
                                 })).insertBefore($("." + appendClass).last()).ready(function () {
                                     // Call JS and modal
                                     // personModalSettings.renderPersonModal(metadata, recognitionLabels, labelPhotoMap[metadata.id]["labels"]);
+                                    shashin.updateFavorites("#favorite","#brfavoriteicon","#briconcount", metadata.id);
                                 });
                             }
                         }

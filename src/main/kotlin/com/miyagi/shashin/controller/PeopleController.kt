@@ -64,6 +64,9 @@ class PeopleController: BaseController() {
     private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
 
     @Autowired
+    private lateinit var favoriteRepository: FavoriteRepository
+
+    @Autowired
     private val keywordRepository: KeywordRepository? = null
 
     @Autowired
@@ -795,6 +798,7 @@ class PeopleController: BaseController() {
         response["parameter"] = personId
         response["keywordMap"] = mutableMapOf<String, Any>()
         val counts = HashMap<String,Int>()
+        response["favorites"] = HashMap<String, HashMap<String, Any>>()
         counts["person"] = 0
         counts["matches"] = 0
         counts["compreface"] = 0
@@ -806,6 +810,7 @@ class PeopleController: BaseController() {
         response["status"] = ApiResponse.FAIL.status
 
         if (model.getAttribute("currentUser") != "") {
+            val favoritesMap = HashMap<String, HashMap<String, Any>>()
             val currentUserObj = model.getAttribute("currentUser") as User?
             val settings = model.getAttribute("settings") as Settings
             val pageValue = page*size
@@ -876,6 +881,22 @@ class PeopleController: BaseController() {
 
                 val labelPhotoMap = mutableMapOf<String, MutableMap<String,Any>>()
                 for (metadata in metadataList) {
+                    val favorites = favoriteRepository.findAllByMetadataId(metadata.getId())
+                    if (favorites != null) {
+                        for (favorite in favorites) {
+                            if (favorite != null) {
+                                favoritesMap[metadata.getId()] = hashMapOf(
+                                    "favorite" to (favorite.getUserId() == currentUserObj.getId()),
+                                    "count" to favoriteRepository.countAllByMetadataId(metadata.getId())
+                                )
+
+                                if ((favorite.getUserId() == currentUserObj.getId())) {
+                                    break
+                                }
+                            }
+                        }
+                    }
+
                     val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
                     var labelString = ""
                     var isAutoTagged = false
@@ -898,6 +919,7 @@ class PeopleController: BaseController() {
                         labelPhotoMap[metadata.getId()] = nameTaggedMap
                     }
                 }
+
                 response["labelPhotoMap"] = labelPhotoMap
                 response["metadataList"] = metadataList
                 val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
@@ -906,6 +928,7 @@ class PeopleController: BaseController() {
                     keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
                 }
                 response["keywordMap"] = keywordMap
+                response["favorites"] = favoritesMap
             }
 
             response["counts"] = counts
