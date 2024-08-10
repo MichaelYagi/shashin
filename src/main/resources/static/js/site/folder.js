@@ -63,6 +63,7 @@ class Folder {
         const mediaContentList = [];
         if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data["status"] === shashin.apiResponse.SUCCESS) {
             const metadataList = data["metadataList"];
+            const favoritesMap = data["favorites"];
 
             if (metadataList !== null && metadataList.length > 0) {
                 const mediaLinkLength = $(".mediaLink").length;
@@ -78,12 +79,18 @@ class Folder {
                         overlayFlags.renderTopLeft = true;
                         overlayFlags.renderBottomLeft = true;
                         overlayFlags.renderCenter = true;
+                        overlayFlags.renderBottomRight = true;
+
+                        const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
+                        const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
 
                         const overlayData = shashin.getOverlayData(metadata, {
                             editControls: true,
                             editIcon: ((metadata.lat === null || metadata.lng === null) ? 'bi-info-square' : 'bi-info-circle'),
                             cOnClickFunction: "shashin.openGallery",
                             galleryIndex: currentMediaLinkIndex,
+                            favoriteCount: favoriteCount,
+                            favoriteIcon: favoriteIcon,
                             overlayFlags
                         });
 
@@ -96,6 +103,7 @@ class Folder {
                             overlayData,
                             uuid
                         })).insertBefore($("." + appendClass).last());
+                        shashin.updateFavorites("#favorite","#brfavoriteicon","#briconcount", metadata.id);
                     }
                 }
 

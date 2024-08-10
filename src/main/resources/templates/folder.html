@@ -33,9 +33,18 @@
                                 <div th:replace="fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight},${metadata.expectedExtension},false)"></div>
 
                                 <div th:replace="fragments/topleftoverlay :: topleftoverlay(${metadata.id})"></div>
+
                                 <div class="thumbnail-bl" th:id="${'tnbl'+metadata.id}">
                                     <a href="#" th:id="${'metadataModalEdit'+metadata.id}" data-bs-target="#propTimelinModal">
                                         <span th:class="${metadata.lat == null || metadata.lng == null ? 'bi-info-square' : 'bi-info-circle'}" style="font-size: 1rem;color: lightgray;"></span>
+                                    </a>
+                                </div>
+
+                                <div class="thumbnail-br" th:id="'tnbr'+${metadata.id}">
+                                    <a href="#" th:id="'favorite'+${metadata.id}" class="text-decoration-none">
+                                        <span class="overlayIconBackground">
+                                            <span th:id="'briconcount'+${metadata.id}" th:text="${#maps.containsKey(favorites, metadata.id) ? favorites.get(metadata.id).get('count') : '0'}"></span>&nbsp;<span th:id="'brfavoriteicon'+${metadata.id}" th:class="${#maps.containsKey(favorites, metadata.id) and favorites.get(metadata.id).get('favorite')} ? 'bi-suit-heart-fill overlayIcon' : 'bi-suit-heart overlayIcon'"></span>
+                                        </span>
                                     </a>
                                 </div>
 
@@ -45,6 +54,7 @@
 
                             <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                                 /*<![CDATA[*/
+                                shashin.updateFavorites("#favorite","#brfavoriteicon","#briconcount",/*[[${metadata.id}]]*/"");
                                 $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",/*[[${metadata.id}]]*/"");
                                 $("#metadataModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").on("click", function(e) {
                                     e.preventDefault();

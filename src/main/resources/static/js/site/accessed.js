@@ -64,6 +64,7 @@ class Accessed {
         const mediaContentList = [];
         if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data["status"] === shashin.apiResponse.SUCCESS) {
             const metadataList = data["metadataList"];
+            const favoritesMap = data["favorites"];
 
             if (metadataList !== null && metadataList.length > 0) {
                 const mediaLinkLength = $(".mediaLink").length;
@@ -81,6 +82,10 @@ class Accessed {
                         overlayFlags.renderTopLeft = true;
                         overlayFlags.renderBottomLeft = true;
                         overlayFlags.renderCenter = true;
+                        overlayFlags.renderBottomRight = true;
+
+                        const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
+                        const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
 
                         let lastDate = metadataList.hasOwnProperty(index-1) ? dateFormat(metadataList[index-1]["lastAccessedAt"].replace(/-/g, "/"), "yyyy-m-d") : "";
                         if (this.lastDate !== "") {
@@ -100,6 +105,8 @@ class Accessed {
                             editIcon: ((metadata.lat === null || metadata.lng === null) ? 'bi-info-square' : 'bi-info-circle'),
                             cOnClickFunction: "shashin.openGallery",
                             galleryIndex: currentMediaLinkIndex,
+                            favoriteCount: favoriteCount,
+                            favoriteIcon: favoriteIcon,
                             overlayFlags
                         });
 
@@ -121,6 +128,7 @@ class Accessed {
 
                         if ($("#dateBody"+currentDate).length > 0) {
                             $(html).appendTo($("#dateBody" + currentDate));
+                            shashin.updateFavorites("#favorite","#brfavoriteicon","#briconcount", metadata.id);
                         }
 
                         if ($("#"+currentDate).length > 0 && nextDate !== "" && currentDate !== nextDate) {
