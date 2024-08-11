@@ -16,10 +16,11 @@
     <properties>
         <java.version>11</java.version>
         <kotlin.version>2.0.0</kotlin.version>
-        <djl.version>0.21.0</djl.version>
+        <djl.version>0.29.0</djl.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <hibernate.version>5.6.15.Final</hibernate.version>
         <npm.executable>npm</npm.executable>
+        <spring-security.version>5.8.13</spring-security.version>
     </properties>
     <profiles>
         <profile>
@@ -285,6 +286,7 @@
         <dependency>
             <groupId>ai.djl</groupId>
             <artifactId>api</artifactId>
+            <version>${djl.version}</version>
         </dependency>
         <dependency>
             <groupId>ai.djl.pytorch</groupId>
