@@ -211,7 +211,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(AuthenticationFilter(userRepository), UsernamePasswordAuthenticationFilter::class.java)
-                .antMatcher("/api/v1/**")
+                .securityMatcher("/api/v1/**")
                 .authorizeHttpRequests()
                 .anyRequest()
                 .authenticated()
