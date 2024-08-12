@@ -12,6 +12,7 @@ import org.springframework.core.env.Environment
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
@@ -35,7 +36,7 @@ import java.util.*
 import javax.sql.DataSource
 
 
-@EnableGlobalMethodSecurity(securedEnabled = true)
+@EnableMethodSecurity(securedEnabled = true)
 class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
     // Used to validate URL paths for login redirect
     companion object {
@@ -211,7 +212,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .and()
                 .addFilterBefore(AuthenticationFilter(userRepository), UsernamePasswordAuthenticationFilter::class.java)
                 .antMatcher("/api/v1/**")
-                .authorizeRequests()
+                .authorizeHttpRequests()
                 .anyRequest()
                 .authenticated()
 //                .and()
@@ -236,7 +237,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
         }
 
         override fun configure(web: WebSecurity) {
-            web.ignoring().antMatchers("/api/v1/thumbnails/**","/api/v1/image/**","/api/v1/video/**","/api/v1/profile/**")
+            web.ignoring().requestMatchers("/api/v1/thumbnails/**","/api/v1/image/**","/api/v1/video/**","/api/v1/profile/**")
         }
     }
 
@@ -338,7 +339,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .frameOptions()
                 .sameOrigin()
                 .and()
-                .authorizeRequests()
+                .authorizeHttpRequests()
                 .antMatchers(*publicList).permitAll()
                 .antMatchers(*adminList).hasRole(adminRole.toString().replace("ROLE_", ""))
                 .antMatchers(*superList).hasRole(superRole.toString().replace("ROLE_", ""))
