@@ -82,6 +82,7 @@ abstract class BaseSeleniumTests {
         options.addArguments("--disable-extensions") // disabling extensions
         options.addArguments("--disable-gpu") // applicable to windows os only
         options.addArguments("--disable-dev-shm-usage") // overcome limited resource problems
+        options.addArguments("--remote-allow-origins=*")
 //        options.merge(capabilities)
 
         if (os.contains("linux", ignoreCase = true)) {
