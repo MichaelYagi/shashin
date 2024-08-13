@@ -327,7 +327,6 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             }
 
             http
-
                 .addFilterBefore(CSPNonceFilter(), HeaderWriterFilter::class.java)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 .and()
@@ -339,14 +338,15 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .frameOptions()
                 .sameOrigin()
                 .and()
-                .authorizeHttpRequests()
-                .antMatchers(*publicList).permitAll()
-                .antMatchers(*adminList).hasRole(adminRole.toString().replace("ROLE_", ""))
-                .antMatchers(*superList).hasRole(superRole.toString().replace("ROLE_", ""))
-                .antMatchers(*allRoleList)
-                .hasAnyRole(userRole.toString().replace("ROLE_", ""), adminRole.toString().replace("ROLE_", ""), superRole.toString().replace("ROLE_", ""))
-                .anyRequest().authenticated()
-                .and()
+                .authorizeHttpRequests {
+                    it
+                        .antMatchers(*publicList).permitAll()
+                        .antMatchers(*adminList).hasRole(adminRole.toString().replace("ROLE_", ""))
+                        .antMatchers(*superList).hasRole(superRole.toString().replace("ROLE_", ""))
+                        .antMatchers(*allRoleList)
+                        .hasAnyRole(userRole.toString().replace("ROLE_", ""), adminRole.toString().replace("ROLE_", ""), superRole.toString().replace("ROLE_", ""))
+                        .anyRequest().authenticated()
+                }
                 .formLogin()
                 .loginPage("/users/login")
                 .successHandler(authSuccessHandler?.setProfile(profile)/*?.setPersistentTokenRepository(persistentTokenRepository())*/) // Set remember me cookie on successful login
