@@ -21,19 +21,14 @@ class CustomUserDetailsService : UserDetailsService {
 }
 
 
-class CustomUserPrincipal(user: User) : UserDetails {
-    private val user: User
-
-    init {
-        this.user = user
-    } //...
+class CustomUserPrincipal(private val user: User) : UserDetails {
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         TODO("Not yet implemented")
     }
 
     override fun getPassword(): String {
-        TODO("Not yet implemented")
+        return user.getPassword()!!
     }
 
     override fun getUsername(): String {
@@ -41,18 +36,18 @@ class CustomUserPrincipal(user: User) : UserDetails {
     }
 
     override fun isAccountNonExpired(): Boolean {
-        TODO("Not yet implemented")
+        return user.getIsAuthorized()!!
     }
 
     override fun isAccountNonLocked(): Boolean {
-        TODO("Not yet implemented")
+        return user.getIsAuthorized()!!
     }
 
     override fun isCredentialsNonExpired(): Boolean {
-        TODO("Not yet implemented")
+        return user.getIsAuthorized()!!
     }
 
     override fun isEnabled(): Boolean {
-        TODO("Not yet implemented")
+        return user.getIsAuthorized()!!
     }
 }
