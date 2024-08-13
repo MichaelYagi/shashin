@@ -71,7 +71,7 @@ abstract class BaseSeleniumTests {
 
 //        println(os)
         WebDriverManager.chromedriver().setup()
-        val capabilities = DesiredCapabilities.chrome()
+//        val capabilities = DesiredCapabilities.chrome()
         val options = ChromeOptions()
         options.addArguments("--no-sandbox") // Bypass OS security model, MUST BE THE VERY FIRST OPTION
         options.addArguments("--disable-setuid-sandbox")
@@ -82,7 +82,7 @@ abstract class BaseSeleniumTests {
         options.addArguments("--disable-extensions") // disabling extensions
         options.addArguments("--disable-gpu") // applicable to windows os only
         options.addArguments("--disable-dev-shm-usage") // overcome limited resource problems
-        options.merge(capabilities)
+//        options.merge(capabilities)
 
         if (os.contains("linux", ignoreCase = true)) {
             System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")

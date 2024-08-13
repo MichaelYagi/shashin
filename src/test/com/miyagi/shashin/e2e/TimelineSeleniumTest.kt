@@ -11,7 +11,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.context.ActiveProfiles
@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 import java.io.File
 import java.net.URL
+import java.time.Duration
 import java.util.*
 import java.util.logging.Level
 
@@ -105,7 +106,7 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
         saveSettings.click()
 //         println(this.driver?.pageSource)
-        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Settings saved')]")))
+        WebDriverWait(this.driver, Duration.ofSeconds(30)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Settings saved')]")))
 
         // Scan new image
         this.driver!!.get("http://localhost:$port/settings/scan")
@@ -126,7 +127,7 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         this.driver!!.get("http://localhost:$port/timeline")
         //println(this.driver?.pageSource)
         val scrollContainer = this.driver!!.findElement(By.id("infinite-scroll-gallery"))
-        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfAllElements(scrollContainer.findElement(By.xpath("./span[1]"))))
+        WebDriverWait(this.driver, Duration.ofSeconds(30)).until(ExpectedConditions.visibilityOfAllElements(scrollContainer.findElement(By.xpath("./span[1]"))))
         val spanContainerEl = scrollContainer.findElement(By.xpath("./span[1]"))
         val dateId = spanContainerEl.getAttribute("id").substringAfter("container_")
         val parentEl = this.driver!!.findElement(By.id("row$dateId"))
@@ -137,7 +138,7 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         Assertions.assertTrue(isUUID(metadataId!!))
 
         // Check image src
-        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("img[src^='/api/v1/thumbnails']")))
+        WebDriverWait(this.driver, Duration.ofSeconds(30)).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("img[src^='/api/v1/thumbnails']")))
 //        println(this.driver?.pageSource)
         val imageEl = this.driver!!.findElement(By.id("image$metadataId"))
         val imageSrc = imageEl.getAttribute("src")
