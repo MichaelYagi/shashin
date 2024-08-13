@@ -11,11 +11,11 @@ import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.session.SessionRegistry
 import org.springframework.security.core.session.SessionRegistryImpl
@@ -30,9 +30,6 @@ import org.springframework.security.web.firewall.StrictHttpFirewall
 import org.springframework.security.web.header.HeaderWriterFilter
 import org.springframework.security.web.session.HttpSessionEventPublisher
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
-import org.springframework.web.cors.CorsConfiguration
-import org.springframework.web.cors.CorsConfigurationSource
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import java.util.*
 import javax.sql.DataSource
 
@@ -193,18 +190,6 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             return BCryptPasswordEncoder()
         }
 
-        @Throws(java.lang.Exception::class)
-        override fun configure(auth: AuthenticationManagerBuilder) {
-//        auth
-//            .jdbcAuthentication()
-//            .dataSource(dataSource)
-//            .passwordEncoder(passwordApiEncoder())
-//            .usersByUsernameQuery(
-//                "SELECT username, password, TRUE from user where apikey = ?")
-//            .authoritiesByUsernameQuery(
-//                "SELECT username, authority from user where apikey = ?")
-        }
-
         @Throws(Exception::class)
         override fun configure(http: HttpSecurity) {
             http
@@ -216,29 +201,16 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .authorizeHttpRequests()
                 .anyRequest()
                 .authenticated()
-//                .and()
-//                .cors().configurationSource(corsConfigurationSource())
                 .and()
                 .exceptionHandling()
                 .accessDeniedHandler(apiAccessDeniedHandler)
         }
 
-        // This will let any domain through for CORs
-        fun corsConfigurationSource(): CorsConfigurationSource {
-            val configuration = CorsConfiguration()
-            configuration.allowedOrigins = listOf("*")
-            configuration.allowedMethods = listOf("*")
-            configuration.allowedHeaders = listOf("*")
-            configuration.exposedHeaders = listOf("*")
-
-            val source = UrlBasedCorsConfigurationSource()
-            source.registerCorsConfiguration("/**", configuration)
-
-            return source
-        }
-
-        override fun configure(web: WebSecurity) {
-            web.ignoring().requestMatchers("/api/v1/thumbnails/**","/api/v1/image/**","/api/v1/video/**","/api/v1/profile/**")
+        @Bean
+        fun webSecurityCustomizer(): WebSecurityCustomizer {
+            return WebSecurityCustomizer { web: WebSecurity ->
+                web.ignoring().requestMatchers("/api/v1/thumbnails/**","/api/v1/image/**","/api/v1/video/**","/api/v1/profile/**")
+            }
         }
     }
 
