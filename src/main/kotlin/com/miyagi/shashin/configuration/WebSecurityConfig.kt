@@ -29,6 +29,7 @@ import org.springframework.security.web.firewall.HttpFirewall
 import org.springframework.security.web.firewall.StrictHttpFirewall
 import org.springframework.security.web.header.HeaderWriterFilter
 import org.springframework.security.web.session.HttpSessionEventPublisher
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
@@ -340,10 +341,10 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .and()
                 .authorizeHttpRequests {
                     it
-                        .antMatchers(*publicList).permitAll()
-                        .antMatchers(*adminList).hasRole(adminRole.toString().replace("ROLE_", ""))
-                        .antMatchers(*superList).hasRole(superRole.toString().replace("ROLE_", ""))
-                        .antMatchers(*allRoleList)
+                        .requestMatchers(AntPathRequestMatcher(publicList.toString())).permitAll()
+                        .requestMatchers(AntPathRequestMatcher(adminList.toString())).hasRole(adminRole.toString().replace("ROLE_", ""))
+                        .requestMatchers(AntPathRequestMatcher(superList.toString())).hasRole(superRole.toString().replace("ROLE_", ""))
+                        .requestMatchers(AntPathRequestMatcher(allRoleList.toString()))
                         .hasAnyRole(userRole.toString().replace("ROLE_", ""), adminRole.toString().replace("ROLE_", ""), superRole.toString().replace("ROLE_", ""))
                         .anyRequest().authenticated()
                 }
