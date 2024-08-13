@@ -334,10 +334,6 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 http
                     .rememberMe().key(rememberMeKey)
                     .tokenValiditySeconds(expirationSeconds!!)
-
-//                    .rememberMe()
-//                    .tokenRepository(persistentTokenRepository()).key(rememberMeKey)
-//                    .tokenValiditySeconds(expirationSeconds!!) // Persistent Token
             }
 
             http
