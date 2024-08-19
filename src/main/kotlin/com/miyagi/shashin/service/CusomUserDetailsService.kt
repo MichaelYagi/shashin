@@ -4,6 +4,7 @@ import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -12,8 +13,10 @@ import org.springframework.stereotype.Service
 
 @Service
 class CustomUserDetailsService : UserDetailsService {
+
     @Autowired
     private val userRepository: UserRepository? = null
+
     override fun loadUserByUsername(username: String): UserDetails {
         val user = userRepository!!.findByUsername(username) ?: throw UsernameNotFoundException(username)
         return CustomUserPrincipal(user)
@@ -21,38 +24,35 @@ class CustomUserDetailsService : UserDetailsService {
 }
 
 
-class CustomUserPrincipal(user: User) : UserDetails {
-    private val user: User
-
-    init {
-        this.user = user
-    } //...
+class CustomUserPrincipal(private val user: User) : UserDetails {
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        TODO("Not yet implemented")
+        val authorities = mutableListOf<GrantedAuthority>()
+        authorities.add(SimpleGrantedAuthority(user.getAuthority()))
+        return authorities
     }
 
     override fun getPassword(): String {
-        TODO("Not yet implemented")
+        return user.getPassword()!!
     }
 
     override fun getUsername(): String {
-        TODO("Not yet implemented")
+        return user.getUsername()!!
     }
 
     override fun isAccountNonExpired(): Boolean {
-        TODO("Not yet implemented")
+        return user.getIsAuthorized()!!
     }
 
     override fun isAccountNonLocked(): Boolean {
-        TODO("Not yet implemented")
+        return user.getIsAuthorized()!!
     }
 
     override fun isCredentialsNonExpired(): Boolean {
-        TODO("Not yet implemented")
+        return user.getIsAuthorized()!!
     }
 
     override fun isEnabled(): Boolean {
-        TODO("Not yet implemented")
+        return user.getIsAuthorized()!!
     }
 }

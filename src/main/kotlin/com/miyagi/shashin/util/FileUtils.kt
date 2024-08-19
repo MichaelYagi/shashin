@@ -243,7 +243,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                     return json
                 }
             } catch (e: IOException) {
-                logger.log(Level.WARNING, "Yaml to JSON conversion failed: " + e.message)
+                logger.log(Level.WARNING, "Yaml to JSON conversion failed: " + e.message + ". String passed was: " + yaml)
             }
             return ""
         }
