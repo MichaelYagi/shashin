@@ -543,6 +543,10 @@ $("#exifTabLink").on("click", async function (e) {
         exif = JSON.stringify(data["exif"], null, 2);
     }
     $("#exifInfo").val(exif);
+
+    if (exif.trim() === "") {
+        $("#exifInfo").val("EXIF data not available");
+    }
 });
 
 $("#generalTabLink").on("click", function (e) {
