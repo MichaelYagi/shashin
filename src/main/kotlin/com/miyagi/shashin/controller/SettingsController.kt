@@ -20,7 +20,6 @@ import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.service.RestartService
 import com.miyagi.shashin.util.*
-import com.miyagi.shashin.util.ImageProcessing.Companion
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import kotlinx.coroutines.*
 import net.iakovlev.timeshape.TimeZoneEngine
@@ -1980,6 +1979,7 @@ class SettingsController {
                                         .build()
                                 }
 
+                                val totalIndex = metadataIdArray.count()
                                 for ((index, metadataId) in metadataIdArray.withIndex()) {
                                     val metadataObj = metadataRepository?.findByMetadataId(metadataId)
 
@@ -2290,6 +2290,12 @@ class SettingsController {
                                         FileUtils.writeToThreadFileAndLogMessage(threadText, threadFile)
                                     }
                                     ImageProcessing.createVideoGif(metadataId, metadataRepository)
+
+                                    val completedPercent = (index / totalIndex) * 100
+                                    logger.log(
+                                        Level.INFO,
+                                        "$completedPercent% completed scanning location and facial data"
+                                    )
                                 }
 
                                 if (superAdminsUsers != null && recognitionCount > 0) {
