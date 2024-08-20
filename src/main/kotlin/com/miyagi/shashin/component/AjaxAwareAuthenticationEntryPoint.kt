@@ -18,14 +18,8 @@ import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class AjaxAwareAuthenticationEntryPoint(loginFormUrl: String?, apiVersion: String?) : LoginUrlAuthenticationEntryPoint(loginFormUrl) {
+class AjaxAwareAuthenticationEntryPoint(loginFormUrl: String?) : LoginUrlAuthenticationEntryPoint(loginFormUrl) {
 
-    private var apiVersion: String?
-
-    init {
-        this.apiVersion = apiVersion
-    }
-    
     @Throws(IOException::class, ServletException::class)
     override fun commence(
         request: HttpServletRequest,
@@ -34,9 +28,11 @@ class AjaxAwareAuthenticationEntryPoint(loginFormUrl: String?, apiVersion: Strin
     ) {
 
         var requestUri = request.requestURI.toString()
+
         if (request.queryString != null) {
             requestUri = requestUri + "?" + request.queryString
         }
+
         request.session.setAttribute("ShashinReferer", requestUri)
 
         super.commence(request, response, authException)

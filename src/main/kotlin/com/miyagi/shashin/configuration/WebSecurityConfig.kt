@@ -1,6 +1,7 @@
 package com.miyagi.shashin.configuration
 
 import com.miyagi.shashin.component.*
+import com.miyagi.shashin.configuration.MultiSecurityConfig.Companion.publicList
 import com.miyagi.shashin.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -11,17 +12,17 @@ import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.builders.WebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.session.SessionRegistry
 import org.springframework.security.core.session.SessionRegistryImpl
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository
@@ -29,16 +30,15 @@ import org.springframework.security.web.firewall.HttpFirewall
 import org.springframework.security.web.firewall.StrictHttpFirewall
 import org.springframework.security.web.header.HeaderWriterFilter
 import org.springframework.security.web.session.HttpSessionEventPublisher
-import org.springframework.web.cors.CorsConfiguration
-import org.springframework.web.cors.CorsConfigurationSource
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import java.util.*
+import javax.servlet.DispatcherType
 import javax.sql.DataSource
 
 
 @EnableMethodSecurity(securedEnabled = true)
-class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
-    // Used to validate URL paths for login redirect
+// Used to validate URL paths for login redirect
+class MultiSecurityConfig {
     companion object {
         val validWebPaths = arrayOf(
             "timeline",
@@ -81,21 +81,20 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "actuator"
         )
 
-        var publicList = arrayOf(
+        var resourceList = arrayOf(
             "/",
             "/docs/**",
             "/articles/**",
             "/health",
             "/features",
-            "/download/share/**/album/**",
-            "/share/**",
             "/css/**",
             "/js/**",
             "/fonts/**",
             "/images/**",
-            "/users/register",
-            "/users/login",
-            "/users/logout",
+            "/users/register"
+        )
+
+        var publicList = resourceList + arrayOf(
             "/websocket-endpoint",
             "/topic/messages",
             "/topic/matchmessages",
@@ -104,11 +103,15 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "/settings/scanmessage",
             "/dashboard/statmessages",
             "/dashboard/statmessage",
-            "/api/v1/thumbnails/**","/api/v1/image/**","/api/v1/video/**","/api/v1/profile/**",
+            "/download/share/**/album/**",
+            "/share/**",
+            "/api/v1/thumbnails/**", "/api/v1/image/**", "/api/v1/video/**", "/api/v1/profile/**",
             "/image/**",
             "/video/**",
             "/**/rss",
-            "/**/atom"
+            "/**/atom",
+            "/users/login",
+            "/users/logout"
         )
 
         var adminList = arrayOf(
@@ -140,17 +143,16 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "api/v1/rescan/metadata"
         )
 
-        val superList = adminList +
-                arrayOf(
-                    "settings/**",
-                    "settings",
-                    "settings/users",
-                    "settings/scan",
-                    "users/delete",
-                    "api/v1/system/settings",
-                    "api/v1/users/info",
-                    "api/v1/user/info/**"
-                )
+        val superList = adminList + arrayOf(
+            "settings/**",
+            "settings",
+            "settings/users",
+            "settings/scan",
+            "users/delete",
+            "api/v1/system/settings",
+            "api/v1/users/info",
+            "api/v1/user/info/**"
+        )
 
         val allRoleList = arrayOf(
             "comments/**",
@@ -176,236 +178,232 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "api/v1/status"
         )
     }
+}
 
-    @Configuration
-    @Order(1)
-    class ApiSecurityConfig : WebSecurityConfigurerAdapter() {
+@Configuration
+@Order(1)
+class ApiSecurityConfig {
 
-        @Autowired
-        private val userRepository: UserRepository? = null
+    @Autowired
+    private val userRepository: UserRepository? = null
 
-        @Autowired
-        private val apiAccessDeniedHandler: ApiAccessDeniedHandler? = null
+    @Autowired
+    private val apiAccessDeniedHandler: ApiAccessDeniedHandler? = null
 
-        @Bean
-        fun passwordApiEncoder(): PasswordEncoder? {
-            return BCryptPasswordEncoder()
-        }
-
-        @Throws(java.lang.Exception::class)
-        override fun configure(auth: AuthenticationManagerBuilder) {
-//        auth
-//            .jdbcAuthentication()
-//            .dataSource(dataSource)
-//            .passwordEncoder(passwordApiEncoder())
-//            .usersByUsernameQuery(
-//                "SELECT username, password, TRUE from user where apikey = ?")
-//            .authoritiesByUsernameQuery(
-//                "SELECT username, authority from user where apikey = ?")
-        }
-
-        @Throws(Exception::class)
-        override fun configure(http: HttpSecurity) {
-            http
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .addFilterBefore(AuthenticationFilter(userRepository), UsernamePasswordAuthenticationFilter::class.java)
-                .securityMatcher("/api/v1/**")
-                .authorizeHttpRequests()
-                .anyRequest()
-                .authenticated()
-//                .and()
-//                .cors().configurationSource(corsConfigurationSource())
-                .and()
-                .exceptionHandling()
-                .accessDeniedHandler(apiAccessDeniedHandler)
-        }
-
-        // This will let any domain through for CORs
-        fun corsConfigurationSource(): CorsConfigurationSource {
-            val configuration = CorsConfiguration()
-            configuration.allowedOrigins = listOf("*")
-            configuration.allowedMethods = listOf("*")
-            configuration.allowedHeaders = listOf("*")
-            configuration.exposedHeaders = listOf("*")
-
-            val source = UrlBasedCorsConfigurationSource()
-            source.registerCorsConfiguration("/**", configuration)
-
-            return source
-        }
-
-        override fun configure(web: WebSecurity) {
-            web.ignoring().requestMatchers("/api/v1/thumbnails/**","/api/v1/image/**","/api/v1/video/**","/api/v1/profile/**")
-        }
+    @Bean
+    fun passwordApiEncoder(): PasswordEncoder? {
+        return BCryptPasswordEncoder()
     }
 
-    @Configuration
-    @Order(2)
-    class WebSecurityConfig : WebSecurityConfigurerAdapter() {
+    @Bean
+    @Throws(Exception::class)
+    fun configure(http: HttpSecurity): SecurityFilterChain {
+        http
+            .csrf().disable()
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
+            .addFilterBefore(AuthenticationFilter(userRepository), UsernamePasswordAuthenticationFilter::class.java)
+            .securityMatcher("/api/v1/**")
+            .authorizeHttpRequests()
+            .anyRequest()
+            .authenticated()
+            .and()
+            .exceptionHandling()
+            .accessDeniedHandler(apiAccessDeniedHandler)
 
-        @Autowired
-        private val environment: Environment? = null
+        return http.build()
+    }
 
-        @Autowired
-        private val dataSource: DataSource? = null
+    @Bean
+    fun apiSecurityCustomizer(): WebSecurityCustomizer {
+        return WebSecurityCustomizer { web: WebSecurity ->
+            web.ignoring()
+                .requestMatchers("/api/v1/thumbnails/**", "/api/v1/image/**", "/api/v1/video/**", "/api/v1/profile/**")
+        }
+    }
+}
 
-        @Autowired
-        private var userDetailsService: UserDetailsService? = null
+@Configuration
+@Order(2)
+class WebSecurityConfig {
 
-        @Autowired
-        private val authFailureHandler: AuthFailureHandler? = null
+    @Autowired
+    private val environment: Environment? = null
 
-        @Autowired
-        private val authSuccessHandler: AuthSuccessHandler? = null
+    @Autowired
+    private val dataSource: DataSource? = null
 
-        @Value("\${app.role.super}")
-        private var superRole: String? = null
+    @Autowired
+    private var userDetailsService: UserDetailsService? = null
 
-        @Value("\${app.role.admin}")
-        private var adminRole: String? = null
+    @Autowired
+    private val authFailureHandler: AuthFailureHandler? = null
 
-        @Value("\${app.role.user}")
-        private var userRole: String? = null
+    @Autowired
+    private val authSuccessHandler: AuthSuccessHandler? = null
 
-        @Value("\${app.api.version}")
-        private val apiVersion: String? = null
+    @Value("\${app.role.super}")
+    private var superRole: String? = null
 
-        @Value("\${app.rememberme.expiration.seconds}")
-        private var expirationSeconds: Int? = null
+    @Value("\${app.role.admin}")
+    private var adminRole: String? = null
 
-        @Value("\${app.rememberme.key}")
-        private var rememberMeKey: String? = null
+    @Value("\${app.role.user}")
+    private var userRole: String? = null
 
-        @Autowired
-        @Throws(java.lang.Exception::class)
-        fun configAuthentication(auth: AuthenticationManagerBuilder) {
-            auth.userDetailsService(userDetailsService)
+    @Value("\${app.api.version}")
+    private val apiVersion: String? = null
+
+    @Value("\${app.rememberme.expiration.seconds}")
+    private var expirationSeconds: Int? = null
+
+    @Value("\${app.rememberme.key}")
+    private var rememberMeKey: String? = null
+
+    @Autowired
+    @Throws(java.lang.Exception::class)
+    fun configAuthentication(auth: AuthenticationManagerBuilder) {
+        auth.userDetailsService(userDetailsService)
+    }
+
+    //        @Bean
+    fun passEncoder(): PasswordEncoder? {
+        return BCryptPasswordEncoder()
+    }
+
+    @Bean
+    @Throws(java.lang.Exception::class)
+    fun authenticationManager(http: HttpSecurity): AuthenticationManager {
+        return http.getSharedObject(AuthenticationManagerBuilder::class.java)
+            .build()
+    }
+
+    @Bean
+    fun sessionRegistry(): SessionRegistry? {
+        return SessionRegistryImpl()
+    }
+
+    @Bean
+    fun httpSessionEventPublisher(): ServletListenerRegistrationBean<HttpSessionEventPublisher>? {
+        return ServletListenerRegistrationBean(HttpSessionEventPublisher())
+    }
+
+    @Autowired
+    @Throws(java.lang.Exception::class)
+    fun configureGlobal(auth: AuthenticationManagerBuilder) {
+        auth
+            .jdbcAuthentication()
+            .dataSource(dataSource)
+            .passwordEncoder(passEncoder())
+            .usersByUsernameQuery(
+                "SELECT username, password, TRUE from user where lower(username) = lower(?)"
+            )
+            .authoritiesByUsernameQuery(
+                "SELECT username, authority from user where lower(username) = lower(?)"
+            )
+    }
+
+    @Bean
+    @Throws(Exception::class)
+    fun securityFilter(http: HttpSecurity): SecurityFilterChain {
+        var profile = ""
+        if (environment != null && environment.activeProfiles.isNotEmpty()) {
+            profile = environment.activeProfiles[0]
         }
 
-        @Bean
-        fun passwordEncoder(): PasswordEncoder? {
-            return BCryptPasswordEncoder()
-        }
-
-        @Bean("authenticationManager")
-        @Throws(java.lang.Exception::class)
-        override fun authenticationManagerBean(): AuthenticationManager? {
-            return super.authenticationManagerBean()
-        }
-
-        @Bean
-        fun sessionRegistry(): SessionRegistry? {
-            return SessionRegistryImpl()
-        }
-
-        @Bean
-        fun httpSessionEventPublisher(): ServletListenerRegistrationBean<HttpSessionEventPublisher>? {
-            return ServletListenerRegistrationBean(HttpSessionEventPublisher())
-        }
-
-        @Throws(java.lang.Exception::class)
-        override fun configure(auth: AuthenticationManagerBuilder) {
-            auth
-                .jdbcAuthentication()
-                .dataSource(dataSource)
-                .passwordEncoder(passwordEncoder())
-                .usersByUsernameQuery(
-                    "SELECT username, password, TRUE from user where lower(username) = lower(?)"
-                )
-                .authoritiesByUsernameQuery(
-                    "SELECT username, authority from user where lower(username) = lower(?)"
-                )
-        }
-
-        @Throws(Exception::class)
-        override fun configure(http: HttpSecurity) {
-            var profile = ""
-            if (environment != null && environment.activeProfiles.isNotEmpty()) {
-                profile = environment.activeProfiles[0]
+        http
+            .addFilterBefore(CSPNonceFilter(), HeaderWriterFilter::class.java)
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+            .and()
+            .headers()
+            .xssProtection()
+            .and()
+            .contentSecurityPolicy("worker-src 'self' 'nonce-{nonce}' blob:")
+            .and()
+            .frameOptions()
+            .sameOrigin()
+            .and()
+            .authorizeHttpRequests {
+                it
+                    .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
+                    .requestMatchers("/users/login").permitAll()
+                    .requestMatchers(AntPathRequestMatcher(publicList.toString())).permitAll()
+                    .requestMatchers(AntPathRequestMatcher(MultiSecurityConfig.adminList.toString()))
+                    .hasRole(adminRole.toString().replace("ROLE_", ""))
+                    .requestMatchers(AntPathRequestMatcher(MultiSecurityConfig.superList.toString()))
+                    .hasRole(superRole.toString().replace("ROLE_", ""))
+                    .requestMatchers(AntPathRequestMatcher(MultiSecurityConfig.allRoleList.toString()))
+                    .hasAnyRole(
+                        userRole.toString().replace("ROLE_", ""),
+                        adminRole.toString().replace("ROLE_", ""),
+                        superRole.toString().replace("ROLE_", "")
+                    )
+                    .anyRequest().authenticated()
+            }
+            .formLogin {
+                it
+                    .loginPage("/users/login").permitAll()
+                    .successHandler(authSuccessHandler?.setProfile(profile)).permitAll()
+                    .failureHandler(authFailureHandler).permitAll()
             }
 
+        if (profile == "test") {
             http
-
-                .addFilterBefore(CSPNonceFilter(), HeaderWriterFilter::class.java)
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
-                .and()
-                .headers()
-                .xssProtection()
-                .and()
-                .contentSecurityPolicy("worker-src 'self' 'nonce-{nonce}' blob:")
-                .and()
-                .frameOptions()
-                .sameOrigin()
-                .and()
-                .authorizeHttpRequests()
-                .antMatchers(*publicList).permitAll()
-                .antMatchers(*adminList).hasRole(adminRole.toString().replace("ROLE_", ""))
-                .antMatchers(*superList).hasRole(superRole.toString().replace("ROLE_", ""))
-                .antMatchers(*allRoleList)
-                .hasAnyRole(userRole.toString().replace("ROLE_", ""), adminRole.toString().replace("ROLE_", ""), superRole.toString().replace("ROLE_", ""))
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .loginPage("/users/login")
-                .successHandler(authSuccessHandler?.setProfile(profile)/*?.setPersistentTokenRepository(persistentTokenRepository())*/) // Set remember me cookie on successful login
-                .failureHandler(authFailureHandler)
-                .permitAll()
-
-            if (profile == "test") {
-                http
-                    .rememberMe().key(rememberMeKey)
-                    .tokenValiditySeconds(3600) // Use cookie based remember me for tests
-            } else {
-                http
-                    .rememberMe().key(rememberMeKey)
-                    .tokenValiditySeconds(expirationSeconds!!)
-
-//                    .rememberMe()
-//                    .tokenRepository(persistentTokenRepository()).key(rememberMeKey)
-//                    .tokenValiditySeconds(expirationSeconds!!) // Persistent Token
-            }
-
+                .rememberMe().key(rememberMeKey)
+                .tokenValiditySeconds(3600) // Use cookie based remember me for tests
+        } else {
             http
-                .logout()
-                .invalidateHttpSession(true)
-                .clearAuthentication(true)
-                .deleteCookies("JSESSIONID")
-                .and()
-                .csrf().disable()
-                .httpBasic()
-
-            http.exceptionHandling()
-                .authenticationEntryPoint(AjaxAwareAuthenticationEntryPoint("/users/login", apiVersion))
-
-            http.sessionManagement()
-                .maximumSessions(100)
-                .maxSessionsPreventsLogin(false)
-                .expiredUrl("/users/login")
-                .sessionRegistry(sessionRegistry())
+                .rememberMe().key(rememberMeKey)
+                .tokenValiditySeconds(expirationSeconds!!)
         }
 
-        @Bean
-        fun persistentTokenRepository(): PersistentTokenRepository? {
-            val tokenRepo = JdbcTokenRepositoryImpl()
-            tokenRepo.setDataSource(dataSource!!)
-            return tokenRepo
-        }
+        http
+            .logout()
+            .invalidateHttpSession(true)
+            .clearAuthentication(true)
+            .deleteCookies("JSESSIONID")
+            .and()
+            .csrf().disable()
+            .httpBasic()
 
-        @Bean
-        fun allowUrlEncodedSlashHttpFirewall(): HttpFirewall {
-            val firewall = StrictHttpFirewall()
-            firewall.setAllowUrlEncodedPercent(true)
-            firewall.setAllowSemicolon(true)
-            firewall.setAllowUrlEncodedSlash(true)
-            return firewall
-        }
+        http.exceptionHandling()
+            .authenticationEntryPoint(AjaxAwareAuthenticationEntryPoint("/users/login"))
 
-        @Throws(Exception::class)
-        override fun configure(web: WebSecurity) {
-            super.configure(web)
-            web.httpFirewall(allowUrlEncodedSlashHttpFirewall())
+        http.sessionManagement()
+            .maximumSessions(100)
+            .maxSessionsPreventsLogin(false)
+            .expiredUrl("/users/login")
+            .sessionRegistry(sessionRegistry())
+
+        return http.build()
+    }
+
+    @Bean
+    fun persistentTokenRepository(): PersistentTokenRepository? {
+        val tokenRepo = JdbcTokenRepositoryImpl()
+        tokenRepo.setDataSource(dataSource!!)
+        return tokenRepo
+    }
+
+    @Bean
+    fun allowUrlEncodedSlashHttpFirewall(): HttpFirewall {
+        val firewall = StrictHttpFirewall()
+        firewall.setAllowUrlEncodedPercent(true)
+        firewall.setAllowSemicolon(true)
+        firewall.setAllowUrlEncodedSlash(true)
+        return firewall
+    }
+
+    @Bean
+    fun webSecurityCustomizer(): WebSecurityCustomizer {
+        return WebSecurityCustomizer { web: WebSecurity ->
+            web
+                .httpFirewall(allowUrlEncodedSlashHttpFirewall())
+                .ignoring()
+                .requestMatchers(
+                    *MultiSecurityConfig.resourceList
+                )
+
         }
     }
 }
