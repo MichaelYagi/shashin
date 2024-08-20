@@ -71,6 +71,7 @@ import javax.servlet.http.HttpSession
 import javax.transaction.Transactional
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
+import kotlin.math.floor
 
 
 @Suppress("UNCHECKED_CAST")
@@ -1980,6 +1981,7 @@ class SettingsController {
                                 }
 
                                 val totalIndex = metadataIdArray.count()
+
                                 for ((index, metadataId) in metadataIdArray.withIndex()) {
                                     val metadataObj = metadataRepository?.findByMetadataId(metadataId)
 
@@ -2291,10 +2293,11 @@ class SettingsController {
                                     }
                                     ImageProcessing.createVideoGif(metadataId, metadataRepository)
 
-                                    val completedPercent = (index / totalIndex) * 100
+                                    val completedPercent: Double = ((index+1).toDouble() / totalIndex.toDouble()) * 100
+
                                     logger.log(
                                         Level.INFO,
-                                        "$completedPercent% completed scanning location and facial data"
+                                        "${floor(completedPercent).toInt()}% completed scanning location and facial data"
                                     )
                                 }
 
