@@ -1980,8 +1980,6 @@ class SettingsController {
                                         .build()
                                 }
 
-                                val totalIndex = metadataIdArray.count()
-
                                 for ((index, metadataId) in metadataIdArray.withIndex()) {
                                     val metadataObj = metadataRepository?.findByMetadataId(metadataId)
 
@@ -2293,7 +2291,7 @@ class SettingsController {
                                     }
                                     ImageProcessing.createVideoGif(metadataId, metadataRepository)
 
-                                    val completedPercent: Double = ((index+1).toDouble() / totalIndex.toDouble()) * 100
+                                    val completedPercent: Double = ((index+1).toDouble() / metadataArrayCount.toDouble()) * 100
 
                                     logger.log(
                                         Level.INFO,
