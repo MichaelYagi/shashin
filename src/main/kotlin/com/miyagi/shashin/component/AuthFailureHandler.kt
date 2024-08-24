@@ -52,7 +52,12 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
         val admins = userRepository?.findAllAdmins()
         val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
         sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
-        val message = "User '$lastUserName' failed login at "+ sdtf.format(Date())+"."
+        val lastUser = userRepository?.findByUsername(lastUserName)
+
+        var message = "Unknown user '$lastUserName' attempted login at "+ sdtf.format(Date())+"."
+        if (lastUser != null) {
+            message = "User '$lastUserName' failed login at " + sdtf.format(Date()) + "."
+        }
         val logger: Logger = Logger.getLogger(AuthFailureHandler::class.simpleName)
         logger.log(Level.WARNING, message)
 
