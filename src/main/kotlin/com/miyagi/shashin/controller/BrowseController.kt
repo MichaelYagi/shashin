@@ -544,6 +544,7 @@ class BrowseController: BaseController() {
         response["mediaTypeFilter"] = "all"
         response["albumMap"] = mutableMapOf<String, Any>()
         response["keywordMap"] = mutableMapOf<String, Any>()
+        response["placenameMap"] = mutableMapOf<String, MutableList<String>?>()
 
         response["msg"] = "Could not get results"
         response["status"] = ApiResponse.FAIL.status
