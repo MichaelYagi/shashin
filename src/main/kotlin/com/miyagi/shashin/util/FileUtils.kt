@@ -239,7 +239,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                 val jsonWriter = ObjectMapper()
                 val json = jsonWriter.writeValueAsString(obj)
 
-                if ((json.first() == '{' || json.first() == '[') && isJSONValid(json)) {
+                if (isJSONValid(json)) {
                     return json
                 }
             } catch (e: IOException) {
@@ -336,6 +336,10 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
         }
 
         private fun isJSONValid(jsonInString: String): Boolean {
+            if (jsonInString.first() != '{' && jsonInString.first() != '[') {
+                return false
+            }
+
             try {
                 Gson().fromJson(jsonInString, Any::class.java)
                 return true
