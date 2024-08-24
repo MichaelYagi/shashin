@@ -16,8 +16,8 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
-import java.util.ArrayList
-import javax.transaction.Transactional
+import jakarta.transaction.Transactional
+import java.util.*
 
 @Controller
 @Secured("ROLE_SUPER","ROLE_ADMIN")
@@ -36,20 +36,30 @@ class ArchiveController {
     fun getFavorites(model: Model): String {
         val module = "archived"
         model["message"] = "Nothing to see here."
-        model["foldersCount"] = metadataRepository.countByFolder()
+        model["foldersCount"] = 0
+        try {
+            model["foldersCount"] = metadataRepository.countByFolder()
+        } catch (_: Exception) {}
         model["metadataList"] = mutableListOf<Metadata>()
         model["keywordMap"] = mutableMapOf<String, String>()
 
-        val trashList = metadataRepository.findAllByHiddenAndOffsetAndLimit(0, model.getAttribute("queryLimit").toString().toInt())
-        if (trashList.count() > 0) {
-            model["metadataList"] = trashList
-            val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
-            val keywordMap = mutableMapOf<String, String>()
-            for (keywordGroup in keywordList) {
-                keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
+        if (metadataRepository.count() > 0) {
+            var trashList: MutableIterable<Metadata>? = null
+
+            try {
+                trashList = metadataRepository.findAllByHiddenAndOffsetAndLimit(0, model.getAttribute("queryLimit").toString().toInt())
+            } catch (_: Exception) {}
+
+            if (trashList != null && trashList.count() > 0) {
+                model["metadataList"] = trashList
+                val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
+                val keywordMap = mutableMapOf<String, String>()
+                for (keywordGroup in keywordList) {
+                    keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
+                }
+                model["keywordMap"] = keywordMap
+                model["message"] = ""
             }
-            model["keywordMap"] = keywordMap
-            model["message"] = ""
         }
 
         model["msg"] = ""
@@ -68,11 +78,18 @@ class ArchiveController {
         response["msg"] = "No Results"
         response["status"] = ApiResponse.FAIL.status
         response["metadataList"] = ArrayList<Metadata>()
-        val size: Int = model.getAttribute("queryLimit") as Int
 
-        val trashList = metadataRepository.findAllByHiddenAndOffsetAndLimit(page*size, size).toMutableList()
-        if (trashList.count() > 0) {
-            model["metadataList"] = trashList
+        if (metadataRepository.count() > 0) {
+            val size: Int = model.getAttribute("queryLimit") as Int
+            var trashList: MutableIterable<Metadata>? = null
+
+            try {
+                trashList = metadataRepository.findAllByHiddenAndOffsetAndLimit(page*size, size).toMutableList()
+            } catch (_: Exception) {}
+
+            if (trashList != null && trashList.count() > 0) {
+                model["metadataList"] = trashList
+            }
         }
 
         return mapper.writeValueAsString(response)
@@ -86,18 +103,25 @@ class ArchiveController {
         response["keywordMap"] = mutableMapOf<String, String>()
 
         if (page > 0) {
-            val trashList = metadataRepository.findAllByHiddenAndOffsetAndLimit((page*model.getAttribute("queryLimit").toString().toInt()), model.getAttribute("queryLimit").toString().toInt())
-            if (trashList.count() > 0) {
-                response["metadataList"] = trashList
-                val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
-                val keywordMap = mutableMapOf<String, String>()
-                for (keywordGroup in keywordList) {
-                    keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
+            if (metadataRepository.count() > 0) {
+                var trashList: MutableIterable<Metadata>? = null
+                try {
+                    trashList = metadataRepository.findAllByHiddenAndOffsetAndLimit((page*model.getAttribute("queryLimit").toString().toInt()), model.getAttribute("queryLimit").toString().toInt())
+                } catch (_: Exception) {}
+
+                if (trashList != null && trashList.count() > 0) {
+                    model["metadataList"] = trashList
+                    response["metadataList"] = trashList
+                    val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
+                    val keywordMap = mutableMapOf<String, String>()
+                    for (keywordGroup in keywordList) {
+                        keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
+                    }
+                    response["keywordMap"] = keywordMap
+                    response["msg"] = ""
+                    response["status"] = ApiResponse.SUCCESS.status
+                    return mapper.writeValueAsString(response)
                 }
-                response["keywordMap"] = keywordMap
-                response["msg"] = ""
-                response["status"] = ApiResponse.SUCCESS.status
-                return mapper.writeValueAsString(response)
             }
         }
 

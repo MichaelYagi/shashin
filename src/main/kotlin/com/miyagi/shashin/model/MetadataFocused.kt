@@ -1,6 +1,6 @@
 package com.miyagi.shashin.model
 
-import javax.persistence.Column
+import jakarta.persistence.Column
 
 interface MetadataFocused {
     fun getId(): String?

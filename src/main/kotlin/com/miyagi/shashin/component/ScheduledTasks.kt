@@ -8,6 +8,7 @@ import ai.djl.repository.zoo.Criteria
 import ai.djl.training.util.ProgressBar
 import com.miyagi.shashin.ShashinApplication
 import com.miyagi.shashin.controller.TimelineController
+import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.FileUtils
@@ -221,9 +222,12 @@ class ScheduledTasks {
                         "Scheduled scanning for object recognition started at " + TextUtils.getCurrentTimestamp()
                     )
 
-                    val withoutKeywords = metadataRepository?.findWithoutKeywords(settings.getMatchScanLimit()!!)
-                    if (withoutKeywords != null) {
+                    var withoutKeywords: MutableIterable<Metadata>? = null
+                    try {
+                        withoutKeywords = metadataRepository?.findWithoutKeywords(settings.getMatchScanLimit()!!)
+                    } catch (_: Exception) {}
 
+                    if (withoutKeywords != null) {
                         val criteria: Criteria<Image, DetectedObjects> = Criteria.builder()
                             .optApplication(Application.CV.OBJECT_DETECTION)
                             .setTypes(Image::class.java, DetectedObjects::class.java)
@@ -233,7 +237,7 @@ class ScheduledTasks {
                             .build()
 
                         for (withoutKeyword in withoutKeywords) {
-                            val metadataWithoutKeywordsObj = metadataRepository?.findById(withoutKeyword.getId())?.get()
+                            val metadataWithoutKeywordsObj = metadataRepository?.findById(withoutKeyword.getId()!!)?.get()
 
                             ImageProcessing.objectRecognizer(
                                 keywordRepository!!,

@@ -1,5 +1,7 @@
 package com.miyagi.shashin.component
 
+import com.miyagi.shashin.model.AlbumPhoto
+import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.AlbumPhotoRepository
 import com.miyagi.shashin.repository.AlbumRepository
 import com.miyagi.shashin.repository.MetadataRepository
@@ -15,8 +17,8 @@ import org.springframework.web.servlet.view.feed.AbstractAtomFeedView
 import java.nio.file.Files
 import java.text.SimpleDateFormat
 import java.util.*
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import kotlin.io.path.Path
 
 
@@ -95,51 +97,66 @@ class AtomFeedView : AbstractAtomFeedView() {
                 if (randomAlbums != null && randomAlbums.count() > 0) {
                     for (randomAlbum in randomAlbums) {
                         if (randomAlbum.getIsShared() == 1) {
-                            val albumPhotos = albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, 20)
+
+                            var albumPhotos: MutableIterable<AlbumPhoto?>? = null
+                            try {
+                                albumPhotos = albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, 20)
+                            } catch (_: Exception) {}
+
                             if (albumPhotos != null) {
                                 for (albumPhoto in albumPhotos) {
-                                    val metadata = metadataRepository?.findByMetadataId(albumPhoto?.getMetadataId()!!)
-                                    if (metadata != null) {
-                                        val album = albumRepository?.findAlbumById(albumPhoto?.getAlbumId())
 
-                                        val entry = Entry()
-                                        entry.id = "$baseUrl/api/v1/image/${metadata.getId()}"
-                                        entry.title = metadata.getTitle()
+                                    var metadataOpt: Metadata? = null
 
-                                        var place = ""
-                                        var metadataDescription = ""
-                                        var albumName = ""
-                                        if (metadata.getPlaceName() != null && metadata.getPlaceName() != "") {
-                                            val placeArray = metadata.getPlaceName()!!.split(";")
-                                            place = placeArray[0].trim() + " - "
+                                    if (metadataRepository != null && metadataRepository!!.count() > 0) {
+                                        try {
+                                            metadataOpt = metadataRepository?.findByMetadataId(albumPhoto?.getMetadataId()!!)
+                                        } catch (_: Exception) {}
+
+                                        if (metadataOpt != null) {
+                                            val metadata = metadataOpt
+                                            val album = albumRepository?.findAlbumById(albumPhoto?.getAlbumId())
+
+                                            val entry = Entry()
+                                            entry.id = "$baseUrl/api/v1/image/${metadata.getId()}"
+                                            entry.title = metadata.getTitle()
+
+                                            var place = ""
+                                            var metadataDescription = ""
+                                            var albumName = ""
+                                            if (metadata.getPlaceName() != null && metadata.getPlaceName() != "") {
+                                                val placeArray = metadata.getPlaceName()!!.split(";")
+                                                place = placeArray[0].trim() + " - "
+                                            }
+                                            if (metadata.getDescription() != null && metadata.getDescription() != "") {
+                                                metadataDescription = metadata.getDescription()!!.trim() + " - "
+                                            }
+                                            if (album?.getName() != null && album.getName() != "") {
+                                                albumName = album.getName()!!.trim() + " - "
+                                            }
+                                            val descVal = "$albumName$metadataDescription$place"
+
+                                            val content = Content()
+                                            content.value = descVal.dropLast(3)
+                                            entry.summary = content
+
+                                            val link = Link()
+                                            link.href = "$baseUrl/api/v1/image/${metadata.getId()}"
+                                            link.rel = "enclosure"
+                                            link.type = metadata.getType()
+                                            link.length = Files.size(Path(metadata.getPath()!!))
+                                            entry.alternateLinks = listOf(link)
+                                            val author: SyndPerson = Person()
+                                            author.name = metadata.getId()
+                                            entry.authors = listOf(author)
+                                            entry.alternateLinks = listOf(link)
+                                            val pattern = "EEE, MMM d, yyyy 'at' h:mm a";
+                                            val simpleDateFormat = SimpleDateFormat(pattern)
+                                            entry.updated =
+                                                simpleDateFormat.parse(TextUtils.formatToLongDateWithTime((metadata.getCreatedAt()!!)))
+
+                                            atomList.add(entry)
                                         }
-                                        if (metadata.getDescription() != null && metadata.getDescription() != "") {
-                                            metadataDescription = metadata.getDescription()!!.trim() + " - "
-                                        }
-                                        if (album?.getName() != null && album.getName() != "") {
-                                            albumName = album.getName()!!.trim() + " - "
-                                        }
-                                        val descVal = "$albumName$metadataDescription$place"
-
-                                        val content = Content()
-                                        content.value = descVal.dropLast(3)
-                                        entry.summary = content
-
-                                        val link = Link()
-                                        link.href = "$baseUrl/api/v1/image/${metadata.getId()}"
-                                        link.rel = "enclosure"
-                                        link.type = metadata.getType()
-                                        link.length = Files.size(Path(metadata.getPath()!!))
-                                        entry.alternateLinks = listOf(link)
-                                        val author: SyndPerson = Person()
-                                        author.name = metadata.getId()
-                                        entry.authors = listOf(author)
-                                        entry.alternateLinks = listOf(link)
-                                        val pattern = "EEE, MMM d, yyyy 'at' h:mm a";
-                                        val simpleDateFormat = SimpleDateFormat(pattern)
-                                        entry.updated = simpleDateFormat.parse(TextUtils.formatToLongDateWithTime((metadata.getCreatedAt()!!)))
-
-                                        atomList.add(entry)
                                     }
                                 }
                             }

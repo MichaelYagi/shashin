@@ -22,43 +22,41 @@
                 <th:block th:if="${not #lists.isEmpty(metadataDates)}">
                     <th:block th:each="date, iterStat: ${metadataDates}">
                         <th:block th:unless="${date.year == null or date.month == null or date.day == null}">
-                            <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                                <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and (metadataDates[iterStat.index-1].year)==(date.year)}">
-                                    <strong th:text="${#dates.format(sdf.parse(date.year+'-'+date.month+'-'+date.day), 'yyyy')}"></strong>
-                                    <th:block th:utext="'&lt;div class=&quot;list-group&quot;&gt;'" />
-                                </th:block>
+                            <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and (metadataDates[iterStat.index-1].year)==(date.year)}">
+                                <strong th:text="${#dates.format(#dates.create(#numbers.formatInteger(date.year,10),#numbers.formatInteger(date.month,10),#numbers.formatInteger(date.day,10)), 'yyyy')}"></strong>
+                                <th:block th:utext="'&lt;div class=&quot;list-group&quot;&gt;'" />
+                            </th:block>
 
-                                <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and (metadataDates[iterStat.index-1].year+'-'+metadataDates[iterStat.index-1].month)==(date.year+'-'+date.month)}">
-                                    <a th:id="${'offcanvas_'+date.year+'-'+date.month+'-'+date.day}" th:class="${'list-group-item list-group-item-action'+{iterStat.first ? ' active' : ''}}" th:href="${'#'+date.year+'-'+date.month+'-'+date.day}" th:text="${#dates.format(sdf.parse(date.year+'-'+date.month+'-'+date.day), 'MMM yyyy')}"></a>
-                                    <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
-                                        $(document).ready(function () {
-                                            /*<![CDATA[*/
-                                            $(/*[[${'#offcanvas_'+date.year+'-'+date.month+'-'+date.day}]]*/ '').on("click", function (e) {
-                                                e.preventDefault();
-                                                timelineSettings.jumpFromTimelineToc(e,/*[[${date.year+'-'+date.month+'-'+date.day}]]*/ '',/*[[${mediaTypeFilter}]]*/ 'all');
-                                            });
-                                            /*]]>*/
+                            <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and (metadataDates[iterStat.index-1].year+'-'+metadataDates[iterStat.index-1].month)==(date.year+'-'+date.month)}">
+                                <a th:id="${'offcanvas_'+date.year+'-'+date.month+'-'+date.day}" th:class="${'list-group-item list-group-item-action'+{iterStat.first ? ' active' : ''}}" th:href="${'#'+date.year+'-'+date.month+'-'+date.day}" th:text="${#dates.format(#dates.create(#numbers.formatInteger(date.year,10),#numbers.formatInteger(date.month,10),#numbers.formatInteger(date.day,10)), 'MMM yyyy')}"></a>
+                                <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
+                                    $(document).ready(function () {
+                                        /*<![CDATA[*/
+                                        $(/*[[${'#offcanvas_'+date.year+'-'+date.month+'-'+date.day}]]*/ '').on("click", function (e) {
+                                            e.preventDefault();
+                                            timelineSettings.jumpFromTimelineToc(e,/*[[${date.year+'-'+date.month+'-'+date.day}]]*/ '',/*[[${mediaTypeFilter}]]*/ 'all');
                                         });
-                                    </script>
-                                </th:block>
-                                <th:block th:if="${iterStat.count > 0 and !iterStat.first and (metadataDates[iterStat.index-1].year+'-'+metadataDates[iterStat.index-1].month)==(date.year+'-'+date.month)}">
-                                    <a style="display:none" th:id="${'offcanvas_'+date.year+'-'+date.month+'-'+date.day}" th:class="${'list-group-item list-group-item-action'+{iterStat.first ? ' active' : ''}}" th:href="${'#'+date.year+'-'+date.month+'-'+date.day}" th:text="${#dates.format(sdf.parse(date.year+'-'+date.month+'-'+date.day), 'MMM yyyy')}"></a>
-                                    <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
-                                        $(document).ready(function () {
-                                            /*<![CDATA[*/
-                                            $(/*[[${'#offcanvas_'+date.year+'-'+date.month+'-'+date.day}]]*/ '').on("click", function (e) {
-                                                e.preventDefault();
-                                                timelineSettings.jumpFromTimelineToc(e,/*[[${date.year+'-'+date.month+'-'+date.day}]]*/ '',/*[[${mediaTypeFilter}]]*/ 'all');
-                                            });
-                                            /*]]>*/
+                                        /*]]>*/
+                                    });
+                                </script>
+                            </th:block>
+                            <th:block th:if="${iterStat.count > 0 and !iterStat.first and (metadataDates[iterStat.index-1].year+'-'+metadataDates[iterStat.index-1].month)==(date.year+'-'+date.month)}">
+                                <a style="display:none" th:id="${'offcanvas_'+date.year+'-'+date.month+'-'+date.day}" th:class="${'list-group-item list-group-item-action'+{iterStat.first ? ' active' : ''}}" th:href="${'#'+date.year+'-'+date.month+'-'+date.day}" th:text="${#dates.format(#dates.create(#numbers.formatInteger(date.year,10),#numbers.formatInteger(date.month,10),#numbers.formatInteger(date.day,10)), 'MMM yyyy')}"></a>
+                                <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
+                                    $(document).ready(function () {
+                                        /*<![CDATA[*/
+                                        $(/*[[${'#offcanvas_'+date.year+'-'+date.month+'-'+date.day}]]*/ '').on("click", function (e) {
+                                            e.preventDefault();
+                                            timelineSettings.jumpFromTimelineToc(e,/*[[${date.year+'-'+date.month+'-'+date.day}]]*/ '',/*[[${mediaTypeFilter}]]*/ 'all');
                                         });
-                                    </script>
-                                </th:block>
+                                        /*]]>*/
+                                    });
+                                </script>
+                            </th:block>
 
-                                <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.last and (metadataDates[iterStat.index+1].year)==(date.year)}">
-                                    <th:block th:utext="'&lt;/div&gt;'" />
-                                    <br>
-                                </th:block>
+                            <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.last and (metadataDates[iterStat.index+1].year)==(date.year)}">
+                                <th:block th:utext="'&lt;/div&gt;'" />
+                                <br>
                             </th:block>
                         </th:block>
                     </th:block>
@@ -101,23 +99,21 @@
                         <span class="dateContainer" th:id="${'container_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day}">
                         <br th:id="${'br' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day}">
                         <section class="scrollspy metadataprocessed" th:id="${metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day}">
-                            <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                                <div class="mb-3"><strong class="dateHeading p-1" th:text="${#strings.replace(#dates.format(sdf.parse(metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day), 'EEE, MMM d, yyyy'),'.','')}"></strong>
-                                    <th:block th:if="${#lists.size(placeNameHeaders)==1 and placeNameHeaders[0]!=''}"><span class="text-muted" th:utext="${'&lt;a class=&quot;link-unstyled&quot; href=&quot;/search?term='+placeNameHeaders[0]+'&quot; target=&quot;_blank&quot id=&quot;placeNameHeader'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'&quot;&gt;'+placeNameHeaders[0]+'&lt;/a&gt;'}"></span></th:block>
-                                    <th:block th:if="${#lists.size(placeNameHeaders)>1}">
-                                        <span class="text-muted">
-                                            <div class="dropdown" style="display: inline-block;"><a class="dropdown-toggle link-unstyled" data-bs-toggle="dropdown" href="#" th:text="${placeNameHeaders[0]}"></a>
-                                                <ul class="dropdown-menu">
-                                                    <th:block th:each="placeNameHeader, iterStat: ${placeNameHeaders}">
-                                                        <li class="text-muted"><a class="dropdown-item" th:href="${'/search?term='+placeNameHeader}" th:text="${placeNameHeader}" target="_blank"></a></li>
-                                                    </th:block>
-                                                </ul>
-                                            </div>
-                                        </span>
-                                    </th:block>
-                                </div>
+                            <div class="mb-3"><strong class="dateHeading p-1" th:text="${#strings.replace(#dates.format(#dates.create(#numbers.formatInteger(metadataList[0].year,10),#numbers.formatInteger(metadataList[0].month,10),#numbers.formatInteger(metadataList[0].day,10)), 'EEE, MMM d, yyyy'),'.','')}"></strong>
+                                <th:block th:if="${#lists.size(placeNameHeaders)==1 and placeNameHeaders[0]!=''}"><span class="text-muted" th:utext="${'&lt;a class=&quot;link-unstyled&quot; href=&quot;/search?term='+placeNameHeaders[0]+'&quot; target=&quot;_blank&quot id=&quot;placeNameHeader'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'&quot;&gt;'+placeNameHeaders[0]+'&lt;/a&gt;'}"></span></th:block>
+                                <th:block th:if="${#lists.size(placeNameHeaders)>1}">
+                                    <span class="text-muted">
+                                        <div class="dropdown" style="display: inline-block;"><a class="dropdown-toggle link-unstyled" data-bs-toggle="dropdown" href="#" th:text="${placeNameHeaders[0]}"></a>
+                                            <ul class="dropdown-menu">
+                                                <th:block th:each="placeNameHeader, iterStat: ${placeNameHeaders}">
+                                                    <li class="text-muted"><a class="dropdown-item" th:href="${'/search?term='+placeNameHeader}" th:text="${placeNameHeader}" target="_blank"></a></li>
+                                                </th:block>
+                                            </ul>
+                                        </div>
+                                    </span>
+                                </th:block>
+                            </div>
 
-                            </th:block>
                         </section>
                         <div class="row image-group-padding" th:id="${'row'+metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day}">
                             <span style="display: none;" class="yearTaken" th:text="${metadataList[0].year}"></span>

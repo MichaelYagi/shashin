@@ -16,15 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.ResponseBody
 import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.util.*
-import javax.servlet.http.HttpServletResponse
-import javax.transaction.Transactional
+import jakarta.servlet.http.HttpServletResponse
+import jakarta.transaction.Transactional
+import org.springframework.web.bind.annotation.*
 
 @Controller
 class CommentsController {

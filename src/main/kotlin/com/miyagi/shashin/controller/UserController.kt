@@ -15,6 +15,7 @@ import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import io.swagger.v3.oas.annotations.Operation
+import jakarta.annotation.Resource
 import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -40,12 +41,12 @@ import java.time.ZoneId
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
-import javax.annotation.Resource
 import javax.imageio.ImageIO
-import javax.servlet.http.Cookie
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
-import javax.servlet.http.HttpSession
+import jakarta.servlet.http.Cookie
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpSession
+import org.springframework.security.core.Authentication
 import javax.validation.Valid
 
 
@@ -108,7 +109,7 @@ class UserController {
 
     @RequestMapping(value = ["/users/update"], method = [RequestMethod.POST], consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE])
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    fun postUpdateUser(model: Model, redirectAttributes: RedirectAttributes, @RequestBody formData: MultiValueMap<String, String>): String {
+    fun postUpdateUser(model: Model, request: HttpServletRequest, redirectAttributes: RedirectAttributes): String {
         val module = "update"
         model["message"] = ""
         model["msg"] = "Could not save password"
@@ -116,10 +117,10 @@ class UserController {
         model["toastTitle"] = ""
         model["toastBody"] = ""
 
-        if (formData.containsKey("oldpassword") && formData.containsKey("newpassword") && formData.containsKey("newpasswordconfirm")) {
-            val oldPassword = java.lang.String.valueOf(formData.getFirst("oldpassword")).trim()
-            val newPassword = java.lang.String.valueOf(formData.getFirst("newpassword")).trim()
-            val newPasswordConfirm = java.lang.String.valueOf(formData.getFirst("newpasswordconfirm")).trim()
+        if (request.getParameter("oldpassword") != null && request.getParameter("newpassword") != null && request.getParameter("newpasswordconfirm") != null) {
+            val oldPassword = java.lang.String.valueOf(request.getParameter("oldpassword")).trim()
+            val newPassword = java.lang.String.valueOf(request.getParameter("newpassword")).trim()
+            val newPasswordConfirm = java.lang.String.valueOf(request.getParameter("newpasswordconfirm")).trim()
 
             val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
@@ -390,12 +391,9 @@ class UserController {
     }
 
     @RequestMapping(value = ["/users/register"], method = [RequestMethod.POST])
-    fun registerUser(model: Model, @ModelAttribute newUser: @Valid User?): String {
-        val userCount = userRepository?.count()
-
-        val users: List<User?> = userRepository?.findAll() as List<User?>
-
-        logger.log(Level.INFO, "New user: " + newUser.toString())
+    fun registerUser(model: Model, request: HttpServletRequest): String {
+        var newUser: User? = null
+        var userCount: Long? = null
 
         model["user"] = User()
         model["message"] = ""
@@ -405,12 +403,27 @@ class UserController {
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
 
-        for (user in users) {
-            if (user != null && newUser != null) {
-                if (user.getUsername()?.lowercase() == newUser.getUsername()?.lowercase()) {
-                    logger.log(Level.INFO, "Already registered user: $newUser")
-                    model["message"] = "Could not register user"
-                    return module
+        if (request.getParameter("username") != null && request.getParameter("password") != null) {
+            val userName = request.getParameter("username").toString()
+            val passWord = request.getParameter("password").toString()
+
+            newUser = User()
+            newUser.setUsername(userName)
+            newUser.setPassword(passWord)
+
+            userCount = userRepository?.count()
+
+            val users: List<User?> = userRepository?.findAll() as List<User?>
+
+            logger.log(Level.INFO, "New user: " + newUser.toString())
+
+            for (user in users) {
+                if (user != null && newUser != null) {
+                    if (user.getUsername()?.lowercase() == newUser.getUsername()?.lowercase()) {
+                        logger.log(Level.INFO, "Already registered user: $newUser")
+                        model["message"] = "Could not register user"
+                        return module
+                    }
                 }
             }
         }

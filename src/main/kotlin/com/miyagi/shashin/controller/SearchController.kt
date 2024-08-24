@@ -25,7 +25,7 @@ import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import java.util.*
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 
 @Controller
@@ -107,15 +107,26 @@ class SearchController: BaseController() {
             val queryLimit = model.getAttribute("queryLimit").toString().toInt()
             val pageValue = page*queryLimit
             var metadataList: MutableIterable<Metadata>? = null
-            if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) {
-                metadataList = searchRepository?.findMetadataBySearchTerm(updatedTerm,pageValue,queryLimit)
-                response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
-            } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
-                if (currentUserObj != null) {
-                    metadataList = searchRepository?.findMetadataBySearchTermAndUserId(updatedTerm,currentUserObj.getId(),pageValue,queryLimit)
+
+            try {
+                if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute(
+                        "authority"
+                    ).toString() == model.getAttribute("superRole")
+                ) {
+                    metadataList = searchRepository?.findMetadataBySearchTerm(updatedTerm, pageValue, queryLimit)
                     response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
+                } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
+                    if (currentUserObj != null) {
+                        metadataList = searchRepository?.findMetadataBySearchTermAndUserId(
+                            updatedTerm,
+                            currentUserObj.getId(),
+                            pageValue,
+                            queryLimit
+                        )
+                        response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
+                    }
                 }
-            }
+            } catch (_: Exception) {}
 
             if (metadataList != null) {
                 for (metadata in metadataList) {
@@ -123,9 +134,9 @@ class SearchController: BaseController() {
                     if (favorites != null) {
                         for (favorite in favorites) {
                             if (favorite != null) {
-                                val favCount = favoriteRepository.countAllByMetadataId(metadata.getId())
+                                val favCount = favoriteRepository.countAllByMetadataId(metadata.getId()!!)
 
-                                favoritesMap[metadata.getId()] = hashMapOf(
+                                favoritesMap[metadata.getId()!!] = hashMapOf(
                                     "favorite" to (favorite.getUserId() == currentUserObj?.getId()),
                                     "count" to favCount
                                 )
@@ -166,7 +177,11 @@ class SearchController: BaseController() {
             val queryLimit = model.getAttribute("queryLimit").toString().toInt()
             val pageValue = page * queryLimit
             if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) {
-                val metadataList = searchRepository?.findMetadataBySearchTerm(term, pageValue, queryLimit)
+                var metadataList: MutableIterable<Metadata>? = null
+                try {
+                    metadataList = searchRepository?.findMetadataBySearchTerm(term, pageValue, queryLimit)
+                } catch (_: Exception) {}
+
                 response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
                 response["msg"] = "Results"
                 response["status"] = ApiResponse.SUCCESS.status
@@ -181,12 +196,16 @@ class SearchController: BaseController() {
                         updatedTerm = possibleDate
                     }
 
-                    val metadataList = searchRepository?.findMetadataBySearchTermAndUserId(
-                        updatedTerm,
-                        currentUserObj.getId(),
-                        pageValue,
-                        queryLimit
-                    )
+                    var metadataList: MutableIterable<Metadata>? = null
+                    try {
+                        metadataList = searchRepository?.findMetadataBySearchTermAndUserId(
+                            updatedTerm,
+                            currentUserObj.getId(),
+                            pageValue,
+                            queryLimit
+                        )
+                    } catch (_: Exception) {}
+
                     response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
                     response["msg"] = "Results"
                     response["status"] = ApiResponse.SUCCESS.status
@@ -202,15 +221,23 @@ class SearchController: BaseController() {
 
     @RequestMapping(value = ["/search"], method = [RequestMethod.POST], consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE])
     @Transactional
-    fun postSearch(model: Model, redirectAttributes: RedirectAttributes, @RequestBody formData: MultiValueMap<String, String>): String {
+    fun postSearch(model: Model, redirectAttributes: RedirectAttributes, request: HttpServletRequest): String {
         model["term"] = ""
-        if (formData.containsKey("appSearchInput")) {
-            var term: String = java.lang.String.valueOf(formData.getFirst("appSearchInput"))
+        if (request.getParameter("appSearchInput") != null) {
+            var term: String = java.lang.String.valueOf(request.getParameter("appSearchInput"))
             val originalTerm = term
 
             val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
-                val searchTermCount = searchHistoryRepository?.countByUserIdAndTermIgnoreCase(currentUserObj.getId(), term.lowercase(), SearchHistoryTypes.AppHistorySearch.type)
+                var searchTermCount = 0
+                try {
+                    searchTermCount = searchHistoryRepository?.countByUserIdAndTermIgnoreCase(
+                        currentUserObj.getId(),
+                        term.lowercase(),
+                        SearchHistoryTypes.AppHistorySearch.type
+                    )!!
+                } catch (_: Exception) {}
+
                 if (term.isNotBlank()) {
 
                     // If a date is detected, reformat to yyyy-mm-dd
@@ -219,7 +246,7 @@ class SearchController: BaseController() {
                         term = possibleDate
                     }
 
-                    val searchHistory: SearchHistory?
+                    var searchHistory: SearchHistory? = null
                     if (searchTermCount == 0) {
                         searchHistory = SearchHistory()
                         searchHistory.setTerm(term)
@@ -228,23 +255,43 @@ class SearchController: BaseController() {
                         searchHistory.setCreatedAt(TextUtils.getCurrentTimestamp())
                         searchHistory.setModifiedAt(TextUtils.getCurrentTimestamp())
                     } else {
-                        searchHistory =
-                            searchHistoryRepository?.findDistinctByUserIdAndTerm(currentUserObj.getId(), term, SearchHistoryTypes.AppHistorySearch.type)
-                        searchHistory?.setModifiedAt(TextUtils.getCurrentTimestamp())
+                        try {
+                            searchHistory =
+                                searchHistoryRepository?.findDistinctByUserIdAndTerm(
+                                    currentUserObj.getId(),
+                                    term,
+                                    SearchHistoryTypes.AppHistorySearch.type
+                                )
+                            searchHistory?.setModifiedAt(TextUtils.getCurrentTimestamp())
+                        } catch (_: Exception) {}
                     }
 
                     if (searchHistory != null) {
-                        searchHistoryRepository?.save(searchHistory)
+                        try {
+                            searchHistoryRepository?.save(searchHistory)
+                        } catch (_: Exception) {}
                     }
 
-                    val searchHistoryCount = searchHistoryRepository?.countByUserId(currentUserObj.getId(), SearchHistoryTypes.AppHistorySearch.type)
-                    val searchHistoryLimit = model.getAttribute("searchHistoryLimit").toString().toInt()
-                    if (searchHistoryCount != null && searchHistoryCount > searchHistoryLimit) {
-                        val searchHistoryRefresh = searchHistoryRepository?.findTopNByUserIdOrderByIdDesc(currentUserObj.getId(), 1, SearchHistoryTypes.AppHistorySearch.type)
-                        if (searchHistoryRefresh != null && searchHistoryRefresh.count() > 0) {
-                            searchHistoryRepository?.deleteByIdAndSearchType(searchHistoryRefresh.last().getId(), SearchHistoryTypes.AppHistorySearch.type)
+                    try {
+                        val searchHistoryCount = searchHistoryRepository?.countByUserId(
+                            currentUserObj.getId(),
+                            SearchHistoryTypes.AppHistorySearch.type
+                        )
+                        val searchHistoryLimit = model.getAttribute("searchHistoryLimit").toString().toInt()
+                        if (searchHistoryCount != null && searchHistoryCount > searchHistoryLimit) {
+                            val searchHistoryRefresh = searchHistoryRepository?.findTopNByUserIdOrderByIdDesc(
+                                currentUserObj.getId(),
+                                1,
+                                SearchHistoryTypes.AppHistorySearch.type
+                            )
+                            if (searchHistoryRefresh != null && searchHistoryRefresh.count() > 0) {
+                                searchHistoryRepository?.deleteByIdAndSearchType(
+                                    searchHistoryRefresh.last().getId(),
+                                    SearchHistoryTypes.AppHistorySearch.type
+                                )
+                            }
                         }
-                    }
+                    } catch (_: Exception) {}
 
                     redirectAttributes.addAttribute("term", originalTerm)
                 }
@@ -315,11 +362,13 @@ class SearchController: BaseController() {
             response["msg"] = "Success!"
             response["status"] = ApiResponse.SUCCESS.status
 
-            val searchHistoryList =
-                searchHistoryRepository?.findTopNByUserIdOrderByModifiedAtDesc(currentUserObj.getId(), searchHistoryLimit, SearchHistoryTypes.AppHistorySearch.type)
-            if (searchHistoryList != null) {
-                response["searchHistoryList"] = searchHistoryList
-            }
+            try {
+                val searchHistoryList =
+                    searchHistoryRepository?.findTopNByUserIdOrderByModifiedAtDesc(currentUserObj.getId(), searchHistoryLimit, SearchHistoryTypes.AppHistorySearch.type)
+                if (searchHistoryList != null) {
+                    response["searchHistoryList"] = searchHistoryList
+                }
+            } catch (_: Exception) {}
         }
         return mapper.writeValueAsString(response)
     }

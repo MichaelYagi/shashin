@@ -1,5 +1,7 @@
 package com.miyagi.shashin.component
 
+import com.miyagi.shashin.model.AlbumPhoto
+import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.AlbumPhotoRepository
 import com.miyagi.shashin.repository.AlbumRepository
 import com.miyagi.shashin.repository.MetadataRepository
@@ -12,8 +14,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import org.springframework.web.servlet.view.feed.AbstractRssFeedView
 import java.nio.file.Files
 import java.util.*
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import kotlin.io.path.Path
 
 
@@ -80,10 +82,19 @@ class RssFeedView : AbstractRssFeedView() {
                 if (randomAlbums != null && randomAlbums.count() > 0) {
                     for (randomAlbum in randomAlbums) {
                         if (randomAlbum.getIsShared() == 1) {
-                            val albumPhotos = albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, 20)
+                            var albumPhotos: MutableIterable<AlbumPhoto?>? = null
+                            try {
+                                albumPhotos = albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, 20)
+                            } catch (_: Exception) {}
+
                             if (albumPhotos != null) {
                                 for (albumPhoto in albumPhotos) {
-                                    val metadata = metadataRepository?.findByMetadataId(albumPhoto?.getMetadataId()!!)
+                                    var metadata: Metadata? = null
+
+                                    try {
+                                        metadata = metadataRepository?.findByMetadataId(albumPhoto?.getMetadataId()!!)
+                                    } catch (_: Exception) {}
+
                                     if (metadata != null) {
                                         val album = albumRepository?.findAlbumById(albumPhoto?.getAlbumId())
                                         val entry = Item()

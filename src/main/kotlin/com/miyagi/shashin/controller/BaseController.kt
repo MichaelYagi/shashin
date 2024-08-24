@@ -1,6 +1,7 @@
 package com.miyagi.shashin.controller
 
 import com.miyagi.shashin.model.Album
+import com.miyagi.shashin.model.Keyword
 import com.miyagi.shashin.model.RecognitionLabel
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.TextUtils
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
+import org.springframework.web.bind.annotation.RestController
 
 @Controller
 class BaseController {
@@ -28,37 +30,48 @@ class BaseController {
         val response = mutableMapOf<String,Any>()
 
         model["recognitionLabels"] = mutableListOf<RecognitionLabel>()
-        val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
-        if (recognitionLabels != null && recognitionLabels.count() > 0) {
-            model["recognitionLabels"] = recognitionLabels
-        }
+        try {
+            val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
+            if (recognitionLabels != null && recognitionLabels.count() > 0) {
+                model["recognitionLabels"] = recognitionLabels
+            }
+        } catch (_: Exception) {}
 
         model["allAlbumList"] = mutableListOf<Album>()
-        val allAlbumList = albumRepository?.findAllOrderByAlbumName()
-        if (allAlbumList != null && allAlbumList.count() > 0) {
-            model["allAlbumList"] = allAlbumList
-        }
+        try {
+            val allAlbumList = albumRepository?.findAllOrderByAlbumName()
+            if (allAlbumList != null && allAlbumList.count() > 0) {
+                model["allAlbumList"] = allAlbumList
+            }
+        } catch (_: Exception) {}
 
         model["timeOffsets"] = TextUtils.timeOffsets()
 
-        val keywordList = keywordRepository?.findAllDistinctOrderByKeyword()
+        val keywordList: MutableIterable<Keyword>?
         var keywords = ""
-        if (keywordList != null && keywordList.count() > 0) {
-            keywords = keywordList.map { it.getKeyword() }.joinToString(",")
-        }
+        try {
+            keywordList = keywordRepository?.findAllDistinctOrderByKeyword()
+            if (keywordList != null && keywordList.count() > 0) {
+                keywords = keywordList.map { it.getKeyword() }.joinToString(",")
+            }
+        } catch (_: Exception) {}
         model["keywords"] = keywords
 
         model["cameras"] = ""
-        val cameraList = metadataRepository?.findByCameraTypeAlphabetical()
-        if (cameraList != null && cameraList.count() > 0) {
-            model["cameras"] = cameraList.joinToString()
-        }
+        try {
+            val cameraList = metadataRepository?.findByCameraTypeAlphabetical()
+            if (cameraList != null && cameraList.count() > 0) {
+                model["cameras"] = cameraList.joinToString()
+            }
+        } catch (_: Exception) {}
 
         model["lenses"] = ""
-        val lensList = metadataRepository?.findByLensTypeAlphabetical()
-        if (lensList != null && lensList.count() > 0) {
-            model["lenses"] = lensList.joinToString()
-        }
+        try {
+            val lensList = metadataRepository?.findByLensTypeAlphabetical()
+            if (lensList != null && lensList.count() > 0) {
+                model["lenses"] = lensList.joinToString()
+            }
+        } catch (_: Exception) {}
 
         response["recognitionLabels"] = model.getAttribute("recognitionLabels") as Any
         response["allAlbumList"] = model.getAttribute("allAlbumList") as Any

@@ -20,32 +20,30 @@
                     <div class="row image-group-padding">
                         <th:block th:each="metadata, iterStat: ${metadataList}">
 
-                            <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                                <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadata.year!=null and (metadataList[iterStat.index-1].year+'-'+metadataList[iterStat.index-1].month+'-'+metadataList[iterStat.index-1].day)==metadata.year+'-'+metadata.month+'-'+metadata.day}">
-                                    <section class="dateSection" th:id="${metadata.year+'-'+metadata.month+'-'+metadata.day}">
-                                        <div class="mb-3"><span class="text-muted">Taken </span><strong th:text="${#strings.replace(#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM d, yyyy'),'.','')}"></strong>
-                                            <th:block th:if="${#strings.arrayJoin(placenameMap.get(metadata.year+'-'+metadata.month+'-'+metadata.day),',') != '' and (iterStat.first or #strings.arrayJoin(placenameMap.get(metadata.year+'-'+metadata.month+'-'+metadata.day),',') != #strings.arrayJoin(placenameMap.get(metadataList[iterStat.index-1].year+'-'+metadataList[iterStat.index-1].month+'-'+metadataList[iterStat.index-1].day),','))}">
-                                                <th:block th:if="${placenameMap.containsKey(metadata.year+'-'+metadata.month+'-'+metadata.day) and #lists.size(placenameMap.get(metadata.year+'-'+metadata.month+'-'+metadata.day))==1 and placenameMap.get(metadata.year+'-'+metadata.month+'-'+metadata.day)[0]!=''}">
-                                                    <span class="text-muted">
-                                                        <a class="link-unstyled" th:href="${'/search?term='+placenameMap.get(metadata.year+'-'+metadata.month+'-'+metadata.day)[0]}" target="_blank" th:text="${placenameMap.get(metadata.year+'-'+metadata.month+'-'+metadata.day)[0]}"></a>
-                                                    </span>
-                                                </th:block>
-                                                <th:block th:if="${placenameMap.containsKey(metadata.year+'-'+metadata.month+'-'+metadata.day) and #lists.size(placenameMap.get(metadata.year+'-'+metadata.month+'-'+metadata.day))>1 and placenameMap.get(metadata.year+'-'+metadata.month+'-'+metadata.day)[0]!=''}">
-                                                    <span class="text-muted">
-                                                        <span class="dropdown" style="display: inline-block;">
-                                                            <a class="dropdown-toggle link-unstyled" data-bs-toggle="dropdown" href="#" th:text="${placenameMap.get(metadata.year+'-'+metadata.month+'-'+metadata.day)[0]}"></a>
-                                                            <ul class="dropdown-menu">
-                                                                <th:block th:each="placeNameHeader, iterStat: ${placenameMap.get(metadata.year+'-'+metadata.month+'-'+metadata.day)}">
-                                                                    <li class="text-muted"><a class="dropdown-item" th:href="${'/search?term='+placeNameHeader}" th:text="${placeNameHeader}" target="_blank"></a></li>
-                                                                </th:block>
-                                                            </ul>
-                                                        </span>
-                                                    </span>
-                                                </th:block>
+                            <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadata.year!=null and (metadataList[iterStat.index-1].year+'-'+metadataList[iterStat.index-1].month+'-'+metadataList[iterStat.index-1].day)==metadata.year+'-'+metadata.month+'-'+metadata.day}">
+                                <section class="dateSection" th:id="${metadata.year+'-'+metadata.month+'-'+metadata.day}">
+                                    <div class="mb-3"><span class="text-muted">Taken </span><strong th:text="${#strings.replace(#dates.format(#dates.create(#numbers.formatInteger(metadata.year,10),#numbers.formatInteger(metadata.month,10),#numbers.formatInteger(metadata.day,10)), 'EEE, MMM d, yyyy'),'.','')}"></strong>
+                                        <th:block th:if="${#strings.arrayJoin(placenameMap.get(metadata.year+'-'+metadata.month+'-'+metadata.day),',') != '' and (iterStat.first or #strings.arrayJoin(placenameMap.get(metadata.year+'-'+metadata.month+'-'+metadata.day),',') != #strings.arrayJoin(placenameMap.get(metadataList[iterStat.index-1].year+'-'+metadataList[iterStat.index-1].month+'-'+metadataList[iterStat.index-1].day),','))}">
+                                            <th:block th:if="${placenameMap.containsKey(metadata.year+'-'+metadata.month+'-'+metadata.day) and #lists.size(placenameMap.get(metadata.year+'-'+metadata.month+'-'+metadata.day))==1 and placenameMap.get(metadata.year+'-'+metadata.month+'-'+metadata.day)[0]!=''}">
+                                                <span class="text-muted">
+                                                    <a class="link-unstyled" th:href="${'/search?term='+placenameMap.get(metadata.year+'-'+metadata.month+'-'+metadata.day)[0]}" target="_blank" th:text="${placenameMap.get(metadata.year+'-'+metadata.month+'-'+metadata.day)[0]}"></a>
+                                                </span>
                                             </th:block>
-                                        </div>
-                                        <div th:id="'dateBody'+${metadata.year+'-'+metadata.month+'-'+metadata.day}" class="row" style="margin-left: -1px;">
-                                </th:block>
+                                            <th:block th:if="${placenameMap.containsKey(metadata.year+'-'+metadata.month+'-'+metadata.day) and #lists.size(placenameMap.get(metadata.year+'-'+metadata.month+'-'+metadata.day))>1 and placenameMap.get(metadata.year+'-'+metadata.month+'-'+metadata.day)[0]!=''}">
+                                                <span class="text-muted">
+                                                    <span class="dropdown" style="display: inline-block;">
+                                                        <a class="dropdown-toggle link-unstyled" data-bs-toggle="dropdown" href="#" th:text="${placenameMap.get(metadata.year+'-'+metadata.month+'-'+metadata.day)[0]}"></a>
+                                                        <ul class="dropdown-menu">
+                                                            <th:block th:each="placeNameHeader, iterStat: ${placenameMap.get(metadata.year+'-'+metadata.month+'-'+metadata.day)}">
+                                                                <li class="text-muted"><a class="dropdown-item" th:href="${'/search?term='+placeNameHeader}" th:text="${placeNameHeader}" target="_blank"></a></li>
+                                                            </th:block>
+                                                        </ul>
+                                                    </span>
+                                                </span>
+                                            </th:block>
+                                        </th:block>
+                                    </div>
+                                    <div th:id="'dateBody'+${metadata.year+'-'+metadata.month+'-'+metadata.day}" class="row" style="margin-left: -1px;">
                             </th:block>
 
                             <div th:id="${'photoThumbnailContainer'+metadata.id}" class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
@@ -91,15 +89,13 @@
                                 /*]]>*/
                             </script>
 
-                            <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                                <th:block th:if="${iterStat.count > 0 and !iterStat.last and metadata.year!=null and (metadataList[iterStat.index+1].year+'-'+metadataList[iterStat.index+1].month+'-'+metadataList[iterStat.index+1].day)!=metadata.year+'-'+metadata.month+'-'+metadata.day}">
-                                    <th:block th:remove="tag" th:utext="'&lt;/div&gt;&lt;/section&gt;'"></th:block>
-                                    <span class="appendTakenPhotos" style="width:0;height:0;padding:0"></span>
-                                </th:block>
-                                <th:block th:if="${iterStat.last and metadata.year!=null}">
-                                    <th:block th:remove="tag" th:utext="'&lt;/div&gt;&lt;/section&gt;'"></th:block>
-                                    <span class="appendTakenPhotos" style="width:0;height:0;padding:0"></span>
-                                </th:block>
+                            <th:block th:if="${iterStat.count > 0 and !iterStat.last and metadata.year!=null and (metadataList[iterStat.index+1].year+'-'+metadataList[iterStat.index+1].month+'-'+metadataList[iterStat.index+1].day)!=metadata.year+'-'+metadata.month+'-'+metadata.day}">
+                                <th:block th:remove="tag" th:utext="'&lt;/div&gt;&lt;/section&gt;'"></th:block>
+                                <span class="appendTakenPhotos" style="width:0;height:0;padding:0"></span>
+                            </th:block>
+                            <th:block th:if="${iterStat.last and metadata.year!=null}">
+                                <th:block th:remove="tag" th:utext="'&lt;/div&gt;&lt;/section&gt;'"></th:block>
+                                <span class="appendTakenPhotos" style="width:0;height:0;padding:0"></span>
                             </th:block>
                         </th:block>
                     </div>

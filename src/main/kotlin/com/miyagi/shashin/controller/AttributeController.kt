@@ -38,11 +38,11 @@ import java.time.ZoneId
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
-import javax.persistence.EntityNotFoundException
-import javax.servlet.http.Cookie
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
-import javax.transaction.Transactional
+import jakarta.persistence.EntityNotFoundException
+import jakarta.servlet.http.Cookie
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import jakarta.transaction.Transactional
 
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -120,7 +120,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
 //        return buildResponseEntity(ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.localizedMessage, ex))
 //    }
 
-    override fun handleHttpMessageNotReadable(
+    fun handleHttpMessageNotReadable(
         ex: HttpMessageNotReadableException,
         headers: HttpHeaders,
         status: HttpStatus,
@@ -128,6 +128,15 @@ class AttributeController: ResponseEntityExceptionHandler() {
     ): ResponseEntity<Any?> {
         val error = "Malformed JSON request"
         return buildResponseEntity(ApiError(HttpStatus.BAD_REQUEST, error, ex))
+    }
+
+    @ExceptionHandler(Exception::class)
+    protected fun handleException(
+        ex: Exception
+    ): ResponseEntity<Any?>? {
+        val apiError = ApiError(HttpStatus.NOT_FOUND)
+        apiError.setMsg(ex.message)
+        return buildResponseEntity(apiError)
     }
 
     @ExceptionHandler(EntityNotFoundException::class)
@@ -143,7 +152,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
         return ResponseEntity<Any?>(apiError, apiError.getStatus()!!)
     }
 
-    override fun handleHttpMediaTypeNotSupported(
+    fun handleHttpMediaTypeNotSupported(
         ex: HttpMediaTypeNotSupportedException,
         headers: HttpHeaders,
         status: HttpStatus,
@@ -152,7 +161,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
         return buildResponseEntity(ApiError(HttpStatus.METHOD_NOT_ALLOWED, ex.localizedMessage, ex))
     }
 
-    override fun handleHttpRequestMethodNotSupported(
+    fun handleHttpRequestMethodNotSupported(
         ex: HttpRequestMethodNotSupportedException,
         headers: HttpHeaders,
         status: HttpStatus,

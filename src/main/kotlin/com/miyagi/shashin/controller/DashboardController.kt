@@ -20,10 +20,6 @@ import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.socket.messaging.SessionConnectEvent
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import org.springframework.web.socket.messaging.SessionSubscribeEvent
@@ -36,7 +32,8 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.logging.Level
 import java.util.logging.Logger
-import javax.servlet.http.HttpSession
+import jakarta.servlet.http.HttpSession
+import org.springframework.web.bind.annotation.*
 
 
 @Controller
@@ -294,8 +291,14 @@ class DashboardController {
         response["cameraTotalCount"] = cameraCountList.count()
 
         val keywordCount = keywordRepository.count()
-        val browserCount = useragentRepository.countDistinctAgentName()
-        val osCount = useragentRepository.countDistinctOsName()
+        var browserCount = 0
+        try {
+            browserCount = useragentRepository.countDistinctAgentName()
+        } catch (_: Exception) {}
+        var osCount = 0
+        try {
+            osCount = useragentRepository.countDistinctOsName()
+        } catch (_: Exception) {}
         response["keywordCount"] = keywordCount
         response["browserTotalCount"] = browserCount
         response["osTotalCount"] = osCount
