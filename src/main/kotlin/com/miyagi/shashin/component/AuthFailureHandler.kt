@@ -20,9 +20,9 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.*
-import javax.servlet.ServletException
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import jakarta.servlet.ServletException
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 
 
 @Component
@@ -52,12 +52,17 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
         val admins = userRepository?.findAllAdmins()
         val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
         sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
-        val lastUser = userRepository?.findByUsername(lastUserName)
+
+        var lastUser: User? = null
+        try {
+            lastUser = userRepository?.findByUsername(lastUserName)
+        } catch (_: Exception) {}
 
         var message = "Unknown user '$lastUserName' attempted login at "+ sdtf.format(Date())+"."
         if (lastUser != null) {
             message = "User '$lastUserName' failed login at " + sdtf.format(Date()) + "."
         }
+
         val logger: Logger = Logger.getLogger(AuthFailureHandler::class.simpleName)
         logger.log(Level.WARNING, message)
 

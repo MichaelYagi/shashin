@@ -65,6 +65,7 @@ class Taken {
         if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data["status"] === shashin.apiResponse.SUCCESS) {
             const metadataList = data["metadataList"];
             const favoritesMap = data["favorites"];
+            const placenameMap = data["placenameMap"];
 
             if (metadataList !== null && metadataList.length > 0) {
                 const mediaLinkLength = $(".mediaLink").length;
@@ -96,7 +97,7 @@ class Taken {
                     const nextDate = metadataList.hasOwnProperty(index+1) ? metadataList[index+1]["year"] + "-" + metadataList[index+1]["month"] + "-" + metadataList[index+1]["day"] : "";
                     const displayCurrentDate = dateFormat(currentDate.replace(/-/g, "/"), "ddd, mmm d, yyyy");
 
-                    const placenameMap = data["placenameMap"];
+
                     let placename = "";
                     if (index === 0 || (index > 0 && placenameMap[metadataList[index - 1].year + "-" + metadataList[index - 1].month + "-" + metadataList[index - 1].day].join(",") !== placenameMap[metadata.year + '-' + metadata.month + '-' + metadata.day].join(","))) {
                         if (placenameMap[metadata.year + '-' + metadata.month + '-' + metadata.day].length === 1) {

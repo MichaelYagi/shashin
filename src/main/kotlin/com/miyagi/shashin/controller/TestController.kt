@@ -28,9 +28,9 @@ import org.springframework.web.socket.messaging.SessionSubscribeEvent
 import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
-import javax.servlet.http.HttpSession
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpSession
 
 
 @Controller
@@ -162,7 +162,12 @@ class TestController {
         if (!FileUtils.checkThreadFileAlive("repairscripts") && FileUtils.createThreadFile("repairscripts") != null) {
             Thread {
                 // Retroactively create gif
-                val metadataList = metadataRepository.findAllByMediaType("video")
+
+                var metadataList: MutableIterable<Metadata>? = null
+
+                try {
+                    metadataList = metadataRepository.findAllByMediaType("video")
+                } catch (_: Exception) {}
 
                 if (metadataList != null) {
                     var localIndex = 0
@@ -182,7 +187,7 @@ class TestController {
                             if (!gifFile.exists()) {
                                 println("gif doesn't exist")
 
-                                ImageProcessing.createVideoGif(metadata.getId(), metadataRepository)
+                                ImageProcessing.createVideoGif(metadata.getId()!!, metadataRepository)
                                 localIndex++
                                 println("processed $gifVersion")
                             } else {
@@ -373,31 +378,45 @@ class TestController {
                     val x = 100
                     for (metadataId in mids) {
                         val elapsedStartTime = System.currentTimeMillis()
-                        val metadata = metadataRepository.findByMetadataId(metadataId)
 
-                        if (metadata?.getLat() != null && metadata.getLat() != null && metadata.getPlaceName() == null) {
-                            println(metadata.toString())
-                            val coordinateMap =
-                                TextUtils.processCoordinates(geocodeUrl!!, metadata.getLat() + "," + metadata.getLng())
-                            if (coordinateMap["place"] != null) {
-                                println("iteration ${localIndex + 1} out of ${mids.count()}")
-                                localIndex++
-                                println("Location not found, fixing...")
-                                println("metadata ID: ${metadata.getId()}")
-                                println("location: ${coordinateMap["place"]}")
+                        var metadata: Metadata? = null
 
-                                println("------------")
-                                metadata.setPlaceName(coordinateMap["place"])
-                                metadataRecordsList.add(metadata)
+                        if (metadataRepository.count() > 0) {
 
-                                // Save every 100 records
-                                if (metadataRecordsList.size % x == 0) {
-                                    println("Batch saving $x records")
-                                    metadataRepository.saveAll(metadataRecordsList)
-                                    metadataRecordsList.clear()
+                            try {
+                                metadata = metadataRepository.findByMetadataId(metadataId)
+                            } catch (_: Exception) {}
+
+                            if (metadata != null) {
+                                if (metadata.getLat() != null && metadata.getLat() != null && metadata.getPlaceName() == null) {
+                                    println(metadata.toString())
+                                    val coordinateMap =
+                                        TextUtils.processCoordinates(
+                                            geocodeUrl!!,
+                                            metadata.getLat() + "," + metadata.getLng()
+                                        )
+                                    if (coordinateMap["place"] != null) {
+                                        println("iteration ${localIndex + 1} out of ${mids.count()}")
+                                        localIndex++
+                                        println("Location not found, fixing...")
+                                        println("metadata ID: ${metadata.getId()}")
+                                        println("location: ${coordinateMap["place"]}")
+
+                                        println("------------")
+                                        metadata.setPlaceName(coordinateMap["place"])
+                                        metadataRecordsList.add(metadata)
+
+                                        // Save every 100 records
+                                        if (metadataRecordsList.size % x == 0) {
+                                            println("Batch saving $x records")
+                                            metadataRepository.saveAll(metadataRecordsList)
+                                            metadataRecordsList.clear()
+                                        }
+                                    }
                                 }
                             }
                         }
+
                         val endTime = System.currentTimeMillis()
                         timesArray.add((endTime-elapsedStartTime))
                         etr = progress(currentIndex, totalIndex, timesArray)

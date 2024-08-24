@@ -2,13 +2,13 @@ package com.miyagi.shashin.model
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.io.IOException
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity
 @Table(name = "metadata")
 class Metadata {
     @Id
-    private lateinit var id: String
+    private var id: String = "00000000-00000000-00000000-00000000"
     private var path: String? = null
     private var title: String? = null
     private var description: String? = null
@@ -348,14 +348,21 @@ class Metadata {
     override fun toString(): String {
         val map = mutableMapOf<String, Any?>()
         map["id"] = this.id
+        map["path"] = this.path
+        map["title"] = this.title
+        map["description"] = this.description
+        map["thumbnailPathExtraSmall"] = this.thumbnailPathExtraSmall
         map["thumbnailUrlExtraSmall"] = this.thumbnailUrlExtraSmall
+        map["thumbnailPathSmall"] = this.thumbnailPathSmall
         map["thumbnailUrlSmall"] = this.thumbnailUrlSmall
-        map["thumbnailUrlCentered"] = this.thumbnailUrlCentered
-        map["thumbnailUrlOriginal"] = this.thumbnailUrlOriginal
         map["thumbnailSmallWidth"] = this.thumbnailSmallWidth
         map["thumbnailSmallHeight"] = this.thumbnailSmallHeight
         map["originalImageWidth"] = this.originalImageWidth
         map["originalImageHeight"] = this.originalImageHeight
+        map["thumbnailPathCentered"] = this.thumbnailPathCentered
+        map["thumbnailUrlCentered"] = this.thumbnailUrlCentered
+        map["thumbnailUrlOriginal"] = this.thumbnailUrlOriginal
+        map["mapMarkerPath"] = this.mapMarkerPath
         map["mapMarkerUrl"] = this.mapMarkerUrl
         map["folder"] = this.folder
         map["videoUrl"] = this.videoUrl
@@ -363,8 +370,6 @@ class Metadata {
         map["type"] = this.type
         map["fileName"] = this.fileName
         map["expectedExtension"] = this.expectedExtension
-        map["title"] = this.title
-        map["description"] = this.description
         map["timeZone"] = this.timeZone
         map["lat"] = this.lat
         map["lng"] = this.lng
@@ -382,11 +387,13 @@ class Metadata {
         map["quality"] = this.quality
         map["compressionType"] = this.compressionType
         map["hidden"] = this.hidden
-        map["takenAt"] = this.takenAt
         map["addedAt"] = this.addedAt
+        map["takenAt"] = this.takenAt
         map["createdAt"] = this.createdAt
         map["modifiedAt"] = this.modifiedAt
         map["lastAccessedAt"] = this.lastAccessedAt
+        map["lastAccessedBy"] = this.lastAccessedBy
+        map["freeFormString"] = this.freeFormString
 
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"

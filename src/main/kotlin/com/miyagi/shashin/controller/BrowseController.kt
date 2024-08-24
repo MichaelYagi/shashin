@@ -17,7 +17,7 @@ import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.*
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 import kotlin.collections.HashMap
 
 @Controller
@@ -476,39 +476,37 @@ class BrowseController: BaseController() {
     @ResponseBody
     fun getMetadataList(model: Model,@PathVariable module: String,@PathVariable page: Int, @RequestParam folder: Optional<String>): String {
         val response = mutableMapOf<String, Any?>()
-        var metadataList = mutableListOf<Metadata>()
+        var metadataList: MutableIterable<Metadata>? = null
         response["metadataList"] = mutableListOf<Metadata>()
         response["msg"] = "Results"
         response["status"] = ApiResponse.SUCCESS.status
         val size: Int = model.getAttribute("queryLimit") as Int
         val pageValue = page*size
 
-        if (module == "recent") {
-            metadataList = metadataRepository.findRecentByOffsetAndLimit(
-                pageValue,
-                size
-            ).toMutableList()
-        } else if (module == "modified") {
-            metadataList = metadataRepository.findModifiedByOffsetAndLimit(
-                pageValue,
-                size
-            ).toMutableList()
-        } else if (module == "folder") {
-            val decodedValue = URLDecoder.decode(folder.orElse(""), StandardCharsets.UTF_8.toString())
-            if (decodedValue == "") {
-                metadataList = metadataRepository.findAllByFolderOffsetAndLimit(
-                    decodedValue,
+        try {
+            if (module == "recent") {
+                metadataList = metadataRepository.findRecentByOffsetAndLimit(
                     pageValue,
                     size
                 ).toMutableList()
+            } else if (module == "modified") {
+                metadataList = metadataRepository.findModifiedByOffsetAndLimit(
+                    pageValue,
+                    size
+                ).toMutableList()
+            } else if (module == "folder") {
+                val decodedValue = URLDecoder.decode(folder.orElse(""), StandardCharsets.UTF_8.toString())
+                if (decodedValue == "") {
+                    metadataList = metadataRepository.findAllByFolderOffsetAndLimit(
+                        decodedValue,
+                        pageValue,
+                        size
+                    ).toMutableList()
+                }
             }
+        } catch (_: Exception) {}
 
-            if (metadataList.isNotEmpty()) {
-                response["metadataList"] = metadataList
-            }
-        }
-
-        if (metadataList.isNotEmpty()) {
+        if (metadataList != null) {
             response["metadataList"] = metadataList
         }
 
@@ -523,12 +521,14 @@ class BrowseController: BaseController() {
         response["status"] = ApiResponse.FAIL.status
         response["albumList"] = mutableListOf<Album>()
 
-        val albumList = albumRepository.findAllOrderByAlbumName()
-        if (albumList != null && albumList.count() > 0) {
-            response["albumList"] = albumList
-            response["msg"] = "Results"
-            response["status"] = ApiResponse.SUCCESS.status
-        }
+        try {
+            val albumList = albumRepository.findAllOrderByAlbumName()
+            if (albumList != null && albumList.count() > 0) {
+                response["albumList"] = albumList
+                response["msg"] = "Results"
+                response["status"] = ApiResponse.SUCCESS.status
+            }
+        } catch(_: Exception) {}
 
         return mapper.writeValueAsString(response)
     }
@@ -565,53 +565,57 @@ class BrowseController: BaseController() {
 
             var metadataList = mutableListOf<Metadata>()
             if (mediaType == "all") {
-                if (module == "recent") {
-                    metadataList = metadataRepository.findRecentByOffsetAndLimit(
-                        pageValue,
-                        size
-                    ).toMutableList()
-                } else if (module == "modified") {
-                    metadataList = metadataRepository.findModifiedByOffsetAndLimit(
-                        pageValue,
-                        size
-                    ).toMutableList()
-                } else if (module == "taken") {
-                    metadataList = metadataRepository.findTakenByOffsetAndLimit(
-                        pageValue,
-                        size
-                    ).toMutableList()
-                } else if (module == "accessed") {
-                    metadataList = metadataRepository.findLastAccessedByOffsetAndLimit(
-                        pageValue,
-                        size
-                    ).toMutableList()
-                }
+                try {
+                    if (module == "recent") {
+                        metadataList = metadataRepository.findRecentByOffsetAndLimit(
+                            pageValue,
+                            size
+                        ).toMutableList()
+                    } else if (module == "modified") {
+                        metadataList = metadataRepository.findModifiedByOffsetAndLimit(
+                            pageValue,
+                            size
+                        ).toMutableList()
+                    } else if (module == "taken") {
+                        metadataList = metadataRepository.findTakenByOffsetAndLimit(
+                            pageValue,
+                            size
+                        ).toMutableList()
+                    } else if (module == "accessed") {
+                        metadataList = metadataRepository.findLastAccessedByOffsetAndLimit(
+                            pageValue,
+                            size
+                        ).toMutableList()
+                    }
+                } catch (_: Exception) {}
             } else {
-                if (module == "recent") {
-                    metadataList = metadataRepository.findRecentByMediaTypeAndOffsetAndLimit(
-                        pageValue,
-                        mediaType!!,
-                        size
-                    ).toMutableList()
-                } else if (module == "modified") {
-                    metadataList = metadataRepository.findModifiedByMediaTypeAndOffsetAndLimit(
-                        pageValue,
-                        mediaType!!,
-                        size
-                    ).toMutableList()
-                } else if (module == "taken") {
-                    metadataList = metadataRepository.findTakenByMediaTypeAndOffsetAndLimit(
-                        pageValue,
-                        mediaType!!,
-                        size
-                    ).toMutableList()
-                } else if (module == "accessed") {
-                    metadataList = metadataRepository.findLastAccessedByMediaTypeAndOffsetAndLimit(
-                        pageValue,
-                        mediaType!!,
-                        size
-                    ).toMutableList()
-                }
+                try {
+                    if (module == "recent") {
+                        metadataList = metadataRepository.findRecentByMediaTypeAndOffsetAndLimit(
+                            pageValue,
+                            mediaType!!,
+                            size
+                        ).toMutableList()
+                    } else if (module == "modified") {
+                        metadataList = metadataRepository.findModifiedByMediaTypeAndOffsetAndLimit(
+                            pageValue,
+                            mediaType!!,
+                            size
+                        ).toMutableList()
+                    } else if (module == "taken") {
+                        metadataList = metadataRepository.findTakenByMediaTypeAndOffsetAndLimit(
+                            pageValue,
+                            mediaType!!,
+                            size
+                        ).toMutableList()
+                    } else if (module == "accessed") {
+                        metadataList = metadataRepository.findLastAccessedByMediaTypeAndOffsetAndLimit(
+                            pageValue,
+                            mediaType!!,
+                            size
+                        ).toMutableList()
+                    }
+                } catch (_: Exception) {}
             }
 
             if (metadataList.isNotEmpty()) {
@@ -619,10 +623,13 @@ class BrowseController: BaseController() {
                 response["message"] = ""
                 response["favorites"] = favoritesMap
 
-                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
-                if (recognitionLabels != null && recognitionLabels.count() > 0) {
-                    response["recognitionLabels"] = recognitionLabels
-                }
+                try {
+                    val recognitionLabels =
+                        recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
+                    if (recognitionLabels != null && recognitionLabels.count() > 0) {
+                        response["recognitionLabels"] = recognitionLabels
+                    }
+                } catch (_: Exception) {}
 
                 val labelPhotoMap = mutableMapOf<String, String>()
                 val albumMap = mutableMapOf<String, String>()
@@ -630,56 +637,70 @@ class BrowseController: BaseController() {
                 val placenameMap = mutableMapOf<String, MutableList<String>?>()
 
                 for (metadata in metadataList) {
-                    val favorites = favoriteRepository.findAllByMetadataId(metadata.getId())
-                    if (favorites != null) {
-                        for (favorite in favorites) {
-                            if (favorite != null) {
-                                favoritesMap[metadata.getId()] = hashMapOf(
-                                    "favorite" to (favorite.getUserId() == currentUserObj?.getId()),
-                                    "count" to favoriteRepository.countAllByMetadataId(metadata.getId())
-                                )
+                    try {
+                        val favorites = favoriteRepository.findAllByMetadataId(metadata.getId())
+                        if (favorites != null) {
+                            for (favorite in favorites) {
+                                if (favorite != null) {
+                                    favoritesMap[metadata.getId()!!] = hashMapOf(
+                                        "favorite" to (favorite.getUserId() == currentUserObj?.getId()),
+                                        "count" to favoriteRepository.countAllByMetadataId(metadata.getId()!!)
+                                    )
 
-                                if ((favorite.getUserId() == currentUserObj?.getId())) {
-                                    break
+                                    if ((favorite.getUserId() == currentUserObj?.getId())) {
+                                        break
+                                    }
                                 }
                             }
                         }
-                    }
-                    val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
-                    var labelString = ""
-                    if (recognitionLabelPhotos != null && recognitionLabelPhotos.count() > 0) {
-                        for (recognitionLabelPhoto in recognitionLabelPhotos) {
-                            if (recognitionLabelPhoto.getRecognitionLabelId() != null) {
-                                val recognitionLabelObj =
-                                    recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
-                                if (recognitionLabelObj != null) {
-                                    labelString += recognitionLabelObj.get().getName() + ","
+                    } catch (_: Exception) {}
+
+                    try {
+                        val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId()!!)
+                        var labelString = ""
+                        if (recognitionLabelPhotos != null && recognitionLabelPhotos.count() > 0) {
+                            for (recognitionLabelPhoto in recognitionLabelPhotos) {
+                                if (recognitionLabelPhoto.getRecognitionLabelId() != null) {
+                                    val recognitionLabelObj =
+                                        recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
+                                    if (recognitionLabelObj != null) {
+                                        labelString += recognitionLabelObj.get().getName() + ","
+                                    }
                                 }
                             }
                         }
-                    }
-                    if (labelString.isNotBlank()) {
-                        labelString = labelString.dropLast(1)
-                        labelPhotoMap[metadata.getId()] = labelString
-                    }
-
-                    val albumPhotos = albumPhotoRepository.findAlbumPhotoByMetadataId(metadata.getId())
-                    if (albumPhotos != null) {
-                        var albumMetadataList = ""
-                        for (albumPhoto in albumPhotos) {
-                            val album = albumRepository.findById(albumPhoto!!.getAlbumId()!!)
-                            albumMetadataList += album.get().getName()+","
+                        if (labelString.isNotBlank()) {
+                            labelString = labelString.dropLast(1)
+                            labelPhotoMap[metadata.getId()!!] = labelString
                         }
-                        if (albumMetadataList.isNotEmpty()) {
-                            albumMetadataList = albumMetadataList.dropLast(1)
-                            albumMap[metadata.getId()] = albumMetadataList
-                        }
-                    }
+                    } catch (_: Exception) {}
 
-                    val keywords = keywordRepository.findKeywordsByMetadataId(metadata.getId())
+                    try {
+                        val albumPhotos = albumPhotoRepository.findAlbumPhotoByMetadataId(metadata.getId())
+                        if (albumPhotos != null) {
+                            var albumMetadataList = ""
+                            for (albumPhoto in albumPhotos) {
+                                val album = albumRepository.findById(albumPhoto!!.getAlbumId()!!)
+                                albumMetadataList += album.get().getName()+","
+                            }
+                            if (albumMetadataList.isNotEmpty()) {
+                                albumMetadataList = albumMetadataList.dropLast(1)
+                                albumMap[metadata.getId()] = albumMetadataList
+                            }
+                        }
+                    } catch (_: Exception) {}
+
+                    var keywords: MutableIterable<Keyword>? = null
+                    try {
+                        keywords = keywordRepository.findKeywordsByMetadataId(metadata.getId())
+                    } catch (_: Exception) {}
+
                     var keywordMetadataList = ""
-                    for (keyword in keywords) {
-                        keywordMetadataList += keyword.getKeyword()+","
+
+                    if (keywords != null) {
+                        for (keyword in keywords) {
+                            keywordMetadataList += keyword.getKeyword()+","
+                        }
                     }
                     if (keywordMetadataList.isNotEmpty()) {
                         keywordMetadataList = keywordMetadataList.dropLast(1)
@@ -696,10 +717,12 @@ class BrowseController: BaseController() {
                 response["albumMap"] = albumMap
                 response["keywordMap"] = keywordMap
 
-                val albumList = albumRepository.findAllOrderByAlbumName()
-                if (albumList != null && albumList.count() > 0) {
-                    response["albumList"] = albumList
-                }
+                try {
+                    val albumList = albumRepository.findAllOrderByAlbumName()
+                    if (albumList != null && albumList.count() > 0) {
+                        response["albumList"] = albumList
+                    }
+                } catch (_: Exception) {}
 
                 response["favorites"] = favoritesMap
             }
@@ -740,7 +763,10 @@ class BrowseController: BaseController() {
 
         getAllAttributeData(model)
 
-        model["foldersCount"] = metadataRepository.countByFolder()
+        model["foldersCount"] = 0
+        try {
+            model["foldersCount"] = metadataRepository.countByFolder()
+        } catch (_: Exception) {}
 
         return model
     }
@@ -750,7 +776,10 @@ class BrowseController: BaseController() {
         val module = "folders"
         buildInitialFoldersPage(model)
 
-        model["foldersCount"] = metadataRepository.countByFolder()
+        model["foldersCount"] = 0
+        try {
+            model["foldersCount"] = metadataRepository.countByFolder()
+        } catch (_: Exception) {}
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -770,7 +799,11 @@ class BrowseController: BaseController() {
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
             val pageValue = page*size
-            val folderObj = metadataRepository.findFoldersOffsetAndLimit(pageValue, size)
+
+            var folderObj: MutableIterable<Folder?>? = null
+            try {
+                folderObj = metadataRepository.findFoldersOffsetAndLimit(pageValue, size)
+            } catch (_: Exception) {}
 
             if (folderObj != null && folderObj.count() > 0) {
                 response["foldersList"] = folderObj
@@ -1102,21 +1135,27 @@ class BrowseController: BaseController() {
 
             val favoritesMap = HashMap<String, HashMap<String, Any>>()
 
-            val metadataList: MutableList<Metadata> = metadataRepository.findAllByFolderOffsetAndLimit(
+            var metadataList: MutableList<Metadata>? = null
+            try {
+                metadataList = metadataRepository.findAllByFolderOffsetAndLimit(
                 folder,
                 pageValue,
                 size
-            ).toMutableList()
+                ).toMutableList()
+            } catch (_: Exception) {}
 
-            if (metadataList.isNotEmpty()) {
+            if (!metadataList.isNullOrEmpty()) {
                 response["metadataList"] = metadataList
                 response["message"] = ""
                 response["favorites"] = favoritesMap
 
-                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
-                if (recognitionLabels != null && recognitionLabels.count() > 0) {
-                    response["recognitionLabels"] = recognitionLabels
-                }
+                try {
+                    val recognitionLabels =
+                        recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
+                    if (recognitionLabels != null && recognitionLabels.count() > 0) {
+                        response["recognitionLabels"] = recognitionLabels
+                    }
+                } catch (_: Exception) {}
 
                 val labelPhotoMap = mutableMapOf<String, String>()
                 val albumMap = mutableMapOf<String, String>()
@@ -1127,9 +1166,9 @@ class BrowseController: BaseController() {
                     if (favorites != null) {
                         for (favorite in favorites) {
                             if (favorite != null) {
-                                favoritesMap[metadata.getId()] = hashMapOf(
+                                favoritesMap[metadata.getId()!!] = hashMapOf(
                                     "favorite" to (favorite.getUserId() == currentUserObj?.getId()),
-                                    "count" to favoriteRepository.countAllByMetadataId(metadata.getId())
+                                    "count" to favoriteRepository.countAllByMetadataId(metadata.getId()!!)
                                 )
 
                                 if ((favorite.getUserId() == currentUserObj?.getId())) {
@@ -1138,7 +1177,7 @@ class BrowseController: BaseController() {
                             }
                         }
                     }
-                    val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
+                    val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId()!!)
                     var labelString = ""
                     if (recognitionLabelPhotos != null) {
                         for (recognitionLabelPhoto in recognitionLabelPhotos) {
@@ -1150,7 +1189,7 @@ class BrowseController: BaseController() {
                     }
                     if (labelString.isNotBlank()) {
                         labelString = labelString.dropLast(1)
-                        labelPhotoMap[metadata.getId()] = labelString
+                        labelPhotoMap[metadata.getId()!!] = labelString
                     }
 
                     val albumPhotos = albumPhotoRepository.findAlbumPhotoByMetadataId(metadata.getId())
@@ -1162,28 +1201,36 @@ class BrowseController: BaseController() {
                         }
                         if (albumMetadataList.isNotEmpty()) {
                             albumMetadataList = albumMetadataList.dropLast(1)
-                            albumMap[metadata.getId()] = albumMetadataList
+                            albumMap[metadata.getId()!!] = albumMetadataList
                         }
                     }
 
-                    val keywords = keywordRepository.findKeywordsByMetadataId(metadata.getId())
+                    var keywords: MutableIterable<Keyword>? = null
+                    try {
+                        keywords = keywordRepository.findKeywordsByMetadataId(metadata.getId())
+                    } catch (_: Exception) {}
+
                     var keywordMetadataList = ""
-                    for (keyword in keywords) {
-                        keywordMetadataList += keyword.getKeyword()+","
+                    if (keywords != null) {
+                        for (keyword in keywords) {
+                            keywordMetadataList += keyword.getKeyword()+","
+                        }
                     }
                     if (keywordMetadataList.isNotEmpty()) {
                         keywordMetadataList = keywordMetadataList.dropLast(1)
                     }
-                    keywordMap[metadata.getId()] = keywordMetadataList
+                    keywordMap[metadata.getId()!!] = keywordMetadataList
                 }
                 response["labelPhotoMap"] = labelPhotoMap
                 response["albumMap"] = albumMap
                 response["keywordMap"] = keywordMap
 
-                val albumList = albumRepository.findAllOrderByAlbumName()
-                if (albumList != null && albumList.count() > 0) {
-                    response["albumList"] = albumList
-                }
+                try {
+                    val albumList = albumRepository.findAllOrderByAlbumName()
+                    if (albumList != null && albumList.count() > 0) {
+                        response["albumList"] = albumList
+                    }
+                } catch (_: Exception) {}
 
                 response["favorites"] = favoritesMap
             }
