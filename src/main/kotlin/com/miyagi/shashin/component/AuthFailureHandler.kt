@@ -47,6 +47,8 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
         response: HttpServletResponse?,
         exception: AuthenticationException?
     ) {
+        val logger: Logger = Logger.getLogger(AuthFailureHandler::class.simpleName)
+
         val lastUserName: String = request?.getParameter("username") ?: ""
 
         val admins = userRepository?.findAllAdmins()
@@ -56,14 +58,15 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
         var lastUser: User? = null
         try {
             lastUser = userRepository?.findByUsername(lastUserName)
-        } catch (_: Exception) {}
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, "userRepository?.findByUsername error: ${e.message}")
+        }
 
         var message = "Unknown user '$lastUserName' attempted login at "+ sdtf.format(Date())+"."
         if (lastUser != null) {
             message = "User '$lastUserName' failed login at " + sdtf.format(Date()) + "."
         }
 
-        val logger: Logger = Logger.getLogger(AuthFailureHandler::class.simpleName)
         logger.log(Level.WARNING, message)
 
         if (admins != null) {

@@ -222,10 +222,7 @@ class ScheduledTasks {
                         "Scheduled scanning for object recognition started at " + TextUtils.getCurrentTimestamp()
                     )
 
-                    var withoutKeywords: MutableIterable<Metadata>? = null
-                    try {
-                        withoutKeywords = metadataRepository?.findWithoutKeywords(settings.getMatchScanLimit()!!)
-                    } catch (_: Exception) {}
+                    val withoutKeywords = metadataRepository?.findWithoutKeywords(settings.getMatchScanLimit()!!)
 
                     if (withoutKeywords != null) {
                         val criteria: Criteria<Image, DetectedObjects> = Criteria.builder()

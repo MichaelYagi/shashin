@@ -19,6 +19,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import java.util.logging.Level
+import java.util.logging.Logger
 import kotlin.io.path.Path
 
 
@@ -81,6 +83,7 @@ class AtomFeedView : AbstractAtomFeedView() {
         request: HttpServletRequest,
         response: HttpServletResponse
     ): List<Entry> {
+        val logger: Logger = Logger.getLogger(AtomFeedView::class.simpleName)
 
         val atomList = mutableListOf<Entry>()
         var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
@@ -101,7 +104,9 @@ class AtomFeedView : AbstractAtomFeedView() {
                             var albumPhotos: MutableIterable<AlbumPhoto?>? = null
                             try {
                                 albumPhotos = albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, 20)
-                            } catch (_: Exception) {}
+                            } catch (e: Exception) {
+                                logger.log(Level.WARNING, "albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit error: ${e.message}")
+                            }
 
                             if (albumPhotos != null) {
                                 for (albumPhoto in albumPhotos) {
@@ -111,7 +116,9 @@ class AtomFeedView : AbstractAtomFeedView() {
                                     if (metadataRepository != null && metadataRepository!!.count() > 0) {
                                         try {
                                             metadataOpt = metadataRepository?.findByMetadataId(albumPhoto?.getMetadataId()!!)
-                                        } catch (_: Exception) {}
+                                        } catch (e: Exception) {
+                                            logger.log(Level.WARNING, "metadataRepository?.findByMetadataId error: ${e.message}")
+                                        }
 
                                         if (metadataOpt != null) {
                                             val metadata = metadataOpt

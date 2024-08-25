@@ -8,7 +8,7 @@ import jakarta.persistence.*
 @Table(name = "metadata")
 class Metadata {
     @Id
-    private var id: String = "00000000-00000000-00000000-00000000"
+    private lateinit var id: String
     private var path: String? = null
     private var title: String? = null
     private var description: String? = null

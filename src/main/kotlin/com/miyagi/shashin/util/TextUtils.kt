@@ -252,16 +252,11 @@ class TextUtils {
         }
 
         fun getPlaceNamesForDateHeader(year: Int, month: Int, day: Int, metadataRepository:MetadataRepository, type: String = "all"): MutableList<String> {
-
-            var metadataList = mutableListOf(Metadata())
-
-            try {
-                metadataList = if (type == "all") {
-                    metadataRepository.findTimelinePlaceByDate(year, month, day) as MutableList<Metadata>
-                } else {
-                    metadataRepository.findTimelinePlaceByDateAndType(year, month, day, type) as MutableList<Metadata>
-                }
-            } catch (_: Exception) {}
+            val metadataList = if (type == "all") {
+                metadataRepository.findTimelinePlaceByDate(year, month, day) as MutableList<Metadata>
+            } else {
+                metadataRepository.findTimelinePlaceByDateAndType(year, month, day, type) as MutableList<Metadata>
+            }
 
             return sortPlaceNames(metadataList)
         }
