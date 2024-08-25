@@ -55,17 +55,15 @@ class MapController: BaseController() {
 
         // If ROLE_ADMIN get lat lng for timeline
         if (currentUserObj != null) {
-            try {
-                if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute(
-                        "superRole"
-                    )
-                ) {
-                    model["showControls"] = true
-                    albums = albumRepository?.findAllWithLocationOrderByAlbumName()
-                } else {
-                    albums = albumRepository?.findAllWithLocationOrderByAlbumNameAndUserId(currentUserObj.getId())
-                }
-            } catch (_: Exception) {}
+            if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute(
+                    "superRole"
+                )
+            ) {
+                model["showControls"] = true
+                albums = albumRepository?.findAllWithLocationOrderByAlbumName()
+            } else {
+                albums = albumRepository?.findAllWithLocationOrderByAlbumNameAndUserId(currentUserObj.getId())
+            }
         }
 
         getAllAttributeData(model)

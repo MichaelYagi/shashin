@@ -418,7 +418,7 @@ class UserController {
             logger.log(Level.INFO, "New user: " + newUser.toString())
 
             for (user in users) {
-                if (user != null && newUser != null) {
+                if (user != null) {
                     if (user.getUsername()?.lowercase() == newUser.getUsername()?.lowercase()) {
                         logger.log(Level.INFO, "Already registered user: $newUser")
                         model["message"] = "Could not register user"

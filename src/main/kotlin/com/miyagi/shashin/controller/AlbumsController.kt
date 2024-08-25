@@ -316,7 +316,9 @@ class AlbumsController: BaseController() {
                     try {
                         userAlbums =
                             userAlbumRepository.findAllOffsetAndLimit((page * size), size) as MutableList<UserAlbum?>?
-                    } catch (_: Exception) {}
+                    } catch (e: Exception) {
+                        logger.log(Level.WARNING, "userAlbumRepository.findAllOffsetAndLimit error: ${e.message}")
+                    }
                 } else {
                     try {
                         userAlbums =
@@ -325,7 +327,9 @@ class AlbumsController: BaseController() {
                                 (page * size),
                                 size
                             ) as MutableList<UserAlbum?>?
-                    } catch (_: Exception) {}
+                    } catch (e: Exception) {
+                        logger.log(Level.WARNING, "userAlbumRepository.findAllByUserIdAndOffsetAndLimit error: ${e.message}")
+                    }
                 }
             }
 
@@ -340,50 +344,45 @@ class AlbumsController: BaseController() {
                     val albumCommentsList = ArrayList<HashMap<String, Any>>()
                     if (userAlbum?.getAlbumId() != null) {
                         val albumMap = HashMap<String, Any>()
-                        var albumObj: Optional<Album?>? = null
+                        val albumObj = albumRepository.findById(userAlbum.getAlbumId()!!)
+                        albumPhotoCount = albumPhotoRepository.countPhotosByAlbumId(userAlbum.getAlbumId()!!)
 
-                        try {
-                            albumObj = albumRepository.findById(userAlbum.getAlbumId()!!)
-                            albumPhotoCount = albumPhotoRepository.countPhotosByAlbumId(userAlbum.getAlbumId()!!)
-                            if (albumPhotoCount == null) {
-                                albumPhotoCount = 0
-                            }
-                            totalImageCount += albumPhotoCount
-                            albumVideoCount = albumPhotoRepository.countVideosByAlbumId(userAlbum.getAlbumId()!!)
-                            if (albumVideoCount == null) {
-                                albumVideoCount = 0
-                            }
+                        if (albumPhotoCount == null) {
+                            albumPhotoCount = 0
+                        }
+                        totalImageCount += albumPhotoCount
+                        albumVideoCount = albumPhotoRepository.countVideosByAlbumId(userAlbum.getAlbumId()!!)
+                        if (albumVideoCount == null) {
+                            albumVideoCount = 0
+                        }
 
-                            albumMap["id"] = albumObj.get().getId()
-                            albumMap["name"] = if (albumObj.get().getName() == null) "" else albumObj.get().getName()!!
-                            albumMap["coverUrl"] = if (albumObj.get().getCoverUrl() == null) "" else albumObj.get().getCoverUrl()!!
-                            albumMap["shareUrl"] = if (albumObj.get().getShareUrl() == null) "" else albumObj.get().getShareUrl()!!
-                            albumMap["albumPhotoCount"] = albumPhotoCount
-                            albumMap["albumVideoCount"] = albumVideoCount
-                            albums.add(albumMap)
-                        } catch (_: Exception) {}
+                        albumMap["id"] = albumObj.get().getId()
+                        albumMap["name"] = if (albumObj.get().getName() == null) "" else albumObj.get().getName()!!
+                        albumMap["coverUrl"] = if (albumObj.get().getCoverUrl() == null) "" else albumObj.get().getCoverUrl()!!
+                        albumMap["shareUrl"] = if (albumObj.get().getShareUrl() == null) "" else albumObj.get().getShareUrl()!!
+                        albumMap["albumPhotoCount"] = albumPhotoCount
+                        albumMap["albumVideoCount"] = albumVideoCount
+                        albums.add(albumMap)
 
                         // Get comments for this album
-                        try {
-                            val albumComments = commentRepository.findCommentsByAlbumId(albumObj?.get()!!.getId())
-                            for (albumComment in albumComments) {
-                                val albumCommentMap = HashMap<String, Any>()
-                                albumCommentMap["comment"] = albumComment.getComment().toString()
-                                albumCommentMap["commentId"] = albumComment.getCommentId().toString().toInt()
-                                albumCommentMap["albumId"] = albumComment.getAlbumId().toString().toInt()
-                                albumCommentMap["userId"] = albumComment.getUserId().toString().toInt()
-                                albumCommentMap["userProfile"] =
-                                    if (albumComment.getUserProfile() == null) "" else albumComment.getUserProfile()
-                                        .toString()
-                                albumCommentMap["username"] = albumComment.getUsername().toString()
-                                albumCommentMap["createdAt"] =
-                                    TextUtils.formatToLongDateWithTime(albumComment.getCreatedAt().toString())
-                                albumCommentsList.add(albumCommentMap)
-                            }
-                            if (albumCommentsList.isNotEmpty()) {
-                                albumsCommentsMap[albumObj.get().getId()] = albumCommentsList
-                            }
-                        } catch (_: Exception) {}
+                        val albumComments = commentRepository.findCommentsByAlbumId(albumObj?.get()!!.getId())
+                        for (albumComment in albumComments) {
+                            val albumCommentMap = HashMap<String, Any>()
+                            albumCommentMap["comment"] = albumComment.getComment().toString()
+                            albumCommentMap["commentId"] = albumComment.getCommentId().toString().toInt()
+                            albumCommentMap["albumId"] = albumComment.getAlbumId().toString().toInt()
+                            albumCommentMap["userId"] = albumComment.getUserId().toString().toInt()
+                            albumCommentMap["userProfile"] =
+                                if (albumComment.getUserProfile() == null) "" else albumComment.getUserProfile()
+                                    .toString()
+                            albumCommentMap["username"] = albumComment.getUsername().toString()
+                            albumCommentMap["createdAt"] =
+                                TextUtils.formatToLongDateWithTime(albumComment.getCreatedAt().toString())
+                            albumCommentsList.add(albumCommentMap)
+                        }
+                        if (albumCommentsList.isNotEmpty()) {
+                            albumsCommentsMap[albumObj.get().getId()] = albumCommentsList
+                        }
                     }
                 }
 
@@ -1082,10 +1081,7 @@ class AlbumsController: BaseController() {
         val photoObj = albumRepository.findById(albumId)
         if (photoObj.isPresent && photoObj.get().getShareUrl() == shareLink) {
             val resultPage = page*size
-            var albumPhotos: MutableIterable<AlbumPhoto?>? = null
-            try {
-                albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId, resultPage, size)
-            } catch (_: Exception) {}
+            var albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId, resultPage, size)
             val albumMetadataList = ArrayList<Metadata>()
             if (albumPhotos != null) {
                 for (albumPhoto in albumPhotos) {
@@ -1123,10 +1119,7 @@ class AlbumsController: BaseController() {
         val size: Int = model.getAttribute("queryLimit") as Int
         val resultPage = page * size
 
-        var albumPhotos: MutableIterable<AlbumPhoto?>? = null
-        try {
-            albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId, resultPage, size)
-        } catch (_: Exception) {}
+        var albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId, resultPage, size)
         val albumMetadataList = ArrayList<Metadata>()
         if (albumPhotos != null) {
             for (albumPhoto in albumPhotos) {
@@ -1240,10 +1233,7 @@ class AlbumsController: BaseController() {
 
         getAllAttributeData(model)
 
-        model["sharedAlbumUsers"] = mutableListOf<User>()
-        try {
-            model["sharedAlbumUsers"] = userRepository.findAllUserBySharedAlbum(albumId)
-        } catch (_: Exception) {}
+        model["sharedAlbumUsers"] = userRepository.findAllUserBySharedAlbum(albumId)
 
         return model.getAttribute("activePage").toString()
     }
@@ -1413,22 +1403,20 @@ class AlbumsController: BaseController() {
                 // Get album photos
                 var albumPhotos: MutableIterable<AlbumPhoto?>? = null
 
-                try {
-                    if (mediaType == "all") {
-                        albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(
-                            albumId,
-                            page * size,
-                            size
-                        )
-                    } else {
-                        albumPhotos = albumPhotoRepository.findAllByAlbumIdAndMediaTypeAndOffsetAndLimit(
-                            albumId,
-                            mediaType!!,
-                            page * size,
-                            size
-                        )
-                    }
-                } catch (_: Exception) {}
+                if (mediaType == "all") {
+                    albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(
+                        albumId,
+                        page * size,
+                        size
+                    )
+                } else {
+                    albumPhotos = albumPhotoRepository.findAllByAlbumIdAndMediaTypeAndOffsetAndLimit(
+                        albumId,
+                        mediaType!!,
+                        page * size,
+                        size
+                    )
+                }
                 val albumMetadataList = ArrayList<Metadata>()
                 if (albumPhotos != null) {
                     val albumPhotosCommentsMap = HashMap<String, ArrayList<HashMap<String, Any>>>()
@@ -1521,10 +1509,7 @@ class AlbumsController: BaseController() {
 
             if ((currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") || (userAlbums != null && currentUserObj.getAuthority()!! == "ROLE_USER")) {
                 // Get album photos
-                var albumPhotos: MutableIterable<AlbumPhoto?>? = null
-                try {
-                    albumPhotos = albumPhotoRepository.findAllByAlbumId(albumId)
-                } catch (_: Exception) {}
+                var albumPhotos = albumPhotoRepository.findAllByAlbumId(albumId)
 
                 if (albumPhotos != null) {
                     val albumObj = albumRepository.findAlbumById(albumId)
@@ -1601,10 +1586,7 @@ class AlbumsController: BaseController() {
         if (albumId > 0 && (download.isPresent && download.get() == albumId) || (downloadArray.isPresent && downloadArray.get() != "")) {
 
             // Get album photos
-            var albumPhotos: MutableIterable<AlbumPhoto?>? = null
-            try {
-                albumPhotos = albumPhotoRepository.findAllByAlbumId(albumId)
-            } catch (_: Exception) {}
+            var albumPhotos = albumPhotoRepository.findAllByAlbumId(albumId)
             val albumObj = albumRepository.findById(albumId)
 
             if (albumPhotos != null && albumObj.isPresent && albumObj.get().getShareUrl() == shareLink) {
@@ -1751,21 +1733,15 @@ class AlbumsController: BaseController() {
 
                 for (randomAlbum in randomAlbums) {
                     if (randomAlbum.getIsShared() == 1) {
-                        var albumPhotos: MutableIterable<AlbumPhoto?>? = null
-                        try {
-                            albumPhotos = albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, 1000)
-                        } catch (_: Exception) {}
+                        var albumPhotos = albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, 1000)
 
                         if (albumPhotos != null) {
                             for (albumPhoto in albumPhotos) {
-                                var metadataOpt: Metadata? = null
 
                                 if (metadataRepository.count() > 0) {
-                                    try {
-                                        metadataOpt = metadataRepository.findByMetadataId(albumPhoto?.getMetadataId()!!)
-                                    } catch (_: Exception) {}
+                                    var metadataOpt = metadataRepository.findByMetadataId(albumPhoto?.getMetadataId()!!)
 
-                                    val albumObj = albumRepository.findById(albumPhoto?.getAlbumId()!!)
+                                    val albumObj = albumRepository.findById(albumPhoto.getAlbumId()!!)
 
                                     if (metadataOpt != null) {
                                         val metadata = metadataOpt

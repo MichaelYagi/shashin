@@ -484,13 +484,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
         fun createVideoGif(metadataId: String, metadataRepository: MetadataRepository?) {
 
-            var metadataObj: Metadata? = null
-
-            try {
-                metadataObj = metadataRepository?.findByMetadataId(metadataId)
-            } catch (e: Exception) {
-                logger.log(Level.WARNING, "metadataRepository.findByMetadataId error: ${e.message}")
-            }
+            val metadataObj = metadataRepository?.findByMetadataId(metadataId)
 
             if (metadataObj != null && metadataObj.getType()!!.contains("video", ignoreCase = true)) {
                 val gifFilePath = metadataObj.getThumbnailPathSmall()!!.replace("_225.jpg", "_225.gif")
@@ -876,20 +870,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
         fun subjectRecognizer(metadataRepository: MetadataRepository?, recognitionLabelRepository: RecognitionLabelRepository?, recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?, relativeSidecarDir: String, settings: Settings, threadFile: File?, shouldStop: AtomicBoolean?): Int {
             // Scan records of photos that haven't been scanned in a separate thread
-            var testImages: MutableIterable<Metadata>? = null
-            try {
-                testImages = metadataRepository?.findNonMatched(settings.getMatchScanLimit()!!)
-            } catch (e: Exception) {
-                logger.log(Level.WARNING, "metadataRepository?.findNonMatched error: ${e.message}")
-            }
-
-            var distinctLabelRecords: MutableIterable<RecognitionLabelId>? = null
-            try {
-                distinctLabelRecords = recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
-            } catch (e: Exception) {
-                logger.log(Level.WARNING, "recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId error: ${e.message}")
-            }
-
+            val testImages = metadataRepository?.findNonMatched(settings.getMatchScanLimit()!!)
+            val distinctLabelRecords = recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
             var recognitionCount = 0
 
             if (testImages != null && distinctLabelRecords != null && distinctLabelRecords.count() > 0) {
@@ -1119,15 +1101,10 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     val vggfaceFileExists = classLoader.getResource("lib/vggface2.pt") != null
                     val retinafaceFileExists = classLoader.getResource("lib/retinaface.zip") != null
                     if (vggfaceFileExists && retinafaceFileExists) {
-                        var trainingData: MutableIterable<TrainingData>? = null
-                        try {
-                            trainingData = metadataRepository!!.findTrainingData(
-                                settings.getRecognitionConfidenceThreshold()!!,
-                                settings.getTrainingDataLimit()!!
-                            )
-                        } catch (e: Exception) {
-                            logger.log(Level.WARNING, "metadataRepository!!.findTrainingData error: ${e.message}")
-                        }
+                        val trainingData = metadataRepository!!.findTrainingData(
+                            settings.getRecognitionConfidenceThreshold()!!,
+                            settings.getTrainingDataLimit()!!
+                        )
 
                         var stop = AtomicBoolean(false)
                         if (shouldStop != null) {

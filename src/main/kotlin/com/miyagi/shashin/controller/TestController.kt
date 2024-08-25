@@ -163,11 +163,7 @@ class TestController {
             Thread {
                 // Retroactively create gif
 
-                var metadataList: MutableIterable<Metadata>? = null
-
-                try {
-                    metadataList = metadataRepository.findAllByMediaType("video")
-                } catch (_: Exception) {}
+                val metadataList = metadataRepository.findAllByMediaType("video")
 
                 if (metadataList != null) {
                     var localIndex = 0
@@ -379,13 +375,9 @@ class TestController {
                     for (metadataId in mids) {
                         val elapsedStartTime = System.currentTimeMillis()
 
-                        var metadata: Metadata? = null
-
                         if (metadataRepository.count() > 0) {
 
-                            try {
-                                metadata = metadataRepository.findByMetadataId(metadataId)
-                            } catch (_: Exception) {}
+                            val metadata = metadataRepository.findByMetadataId(metadataId)
 
                             if (metadata != null) {
                                 if (metadata.getLat() != null && metadata.getLat() != null && metadata.getPlaceName() == null) {

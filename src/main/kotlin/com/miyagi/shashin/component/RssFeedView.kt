@@ -16,6 +16,8 @@ import java.nio.file.Files
 import java.util.*
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import java.util.logging.Level
+import java.util.logging.Logger
 import kotlin.io.path.Path
 
 
@@ -67,6 +69,8 @@ class RssFeedView : AbstractRssFeedView() {
         request: HttpServletRequest, response: HttpServletResponse
     ): List<Item> {
 
+        val logger: Logger = Logger.getLogger(RssFeedView::class.simpleName)
+
         val rssList = mutableListOf<Item>()
         var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
         if (request.scheme == "https") {
@@ -82,18 +86,11 @@ class RssFeedView : AbstractRssFeedView() {
                 if (randomAlbums != null && randomAlbums.count() > 0) {
                     for (randomAlbum in randomAlbums) {
                         if (randomAlbum.getIsShared() == 1) {
-                            var albumPhotos: MutableIterable<AlbumPhoto?>? = null
-                            try {
-                                albumPhotos = albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, 20)
-                            } catch (_: Exception) {}
+                            val albumPhotos = albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, 20)
 
                             if (albumPhotos != null) {
                                 for (albumPhoto in albumPhotos) {
-                                    var metadata: Metadata? = null
-
-                                    try {
-                                        metadata = metadataRepository?.findByMetadataId(albumPhoto?.getMetadataId()!!)
-                                    } catch (_: Exception) {}
+                                    val metadata = metadataRepository?.findByMetadataId(albumPhoto?.getMetadataId()!!)
 
                                     if (metadata != null) {
                                         val album = albumRepository?.findAlbumById(albumPhoto?.getAlbumId())

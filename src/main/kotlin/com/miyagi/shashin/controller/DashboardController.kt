@@ -291,14 +291,8 @@ class DashboardController {
         response["cameraTotalCount"] = cameraCountList.count()
 
         val keywordCount = keywordRepository.count()
-        var browserCount = 0
-        try {
-            browserCount = useragentRepository.countDistinctAgentName()
-        } catch (_: Exception) {}
-        var osCount = 0
-        try {
-            osCount = useragentRepository.countDistinctOsName()
-        } catch (_: Exception) {}
+        val browserCount = useragentRepository.countDistinctAgentName()
+        val osCount = useragentRepository.countDistinctOsName()
         response["keywordCount"] = keywordCount
         response["browserTotalCount"] = browserCount
         response["osTotalCount"] = osCount

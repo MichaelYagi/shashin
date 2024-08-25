@@ -382,10 +382,7 @@ class SettingsController {
             for (mediaDir in mediaDirs) {
 
                 if (mediaDir.trim().isNotBlank()) {
-                    var mediaDirObj: MediaDirectory? = null
-                    try {
-                        mediaDirObj = mediaDirRepository?.findByExcludeIsAndDirectory(false, mediaDir)
-                    } catch (e: Exception) {}
+                    var mediaDirObj = mediaDirRepository?.findByExcludeIsAndDirectory(false, mediaDir)
 
                     if (mediaDirObj == null) {
                         mediaDirObj = MediaDirectory()
@@ -408,10 +405,7 @@ class SettingsController {
         }
 
         if (!mediaExcludeDirs.isNullOrEmpty()) {
-            var allMediaExcludeDirs: MutableIterable<MediaDirectory?>? = null
-            try {
-                allMediaExcludeDirs = mediaDirRepository?.findByExclude(true)
-            } catch (_: Exception) {}
+            val allMediaExcludeDirs = mediaDirRepository?.findByExclude(true)
 
             val allMediaExcludeDirList: List<String>? = allMediaExcludeDirs?.map { it?.getDirectory()!! }
                 if (scanAutomatically == "on" &&
@@ -425,10 +419,7 @@ class SettingsController {
             mediaDirRepository?.deleteByExclude(true)
             for (mediaDir in mediaExcludeDirs) {
                 if (mediaDir.trim().isNotBlank()) {
-                    var mediaDirObj: MediaDirectory? = null
-                    try {
-                        mediaDirObj = mediaDirRepository?.findByExcludeIsAndDirectory(true, mediaDir)
-                    } catch (_: Exception) {}
+                    var mediaDirObj = mediaDirRepository?.findByExcludeIsAndDirectory(true, mediaDir)
 
                     if (mediaDirObj == null) {
                         mediaDirObj = MediaDirectory()
@@ -1844,17 +1835,15 @@ class SettingsController {
                                                             if (recognitionLabelPhoto.getCompreFaceImageId() != null && recognitionLabelPhoto.getCompreFaceImageId()!!
                                                                     .isNotBlank()
                                                             ) {
-                                                                try {
-                                                                    webClient.delete()
-                                                                        .uri("api/v1/recognition/faces/${recognitionLabelPhoto.getCompreFaceImageId()}")
-                                                                        .header(
-                                                                            "x-api-key",
-                                                                            settings.getCompreFaceKey()
-                                                                        )
-                                                                        .retrieve()
-                                                                        .bodyToMono(String::class.java)
-                                                                        .block()
-                                                                } catch (_: Exception) {}
+                                                                webClient.delete()
+                                                                    .uri("api/v1/recognition/faces/${recognitionLabelPhoto.getCompreFaceImageId()}")
+                                                                    .header(
+                                                                        "x-api-key",
+                                                                        settings.getCompreFaceKey()
+                                                                    )
+                                                                    .retrieve()
+                                                                    .bodyToMono(String::class.java)
+                                                                    .block()
                                                             }
                                                         }
                                                     }
@@ -1995,11 +1984,7 @@ class SettingsController {
                                 }
 
                                 for ((index, metadataId) in metadataIdArray.withIndex()) {
-                                    var metadataObjOpt: Metadata? = null
-
-                                    try {
-                                        metadataObjOpt = metadataRepository?.findByMetadataId(metadataId)
-                                    } catch (_: Exception) {}
+                                    val metadataObjOpt = metadataRepository?.findByMetadataId(metadataId)
 
                                     if (metadataObjOpt != null) {
                                         val metadataObj = metadataObjOpt
@@ -2260,14 +2245,11 @@ class SettingsController {
                                                     if (vggfaceFileExists && retinafaceFileExists) {
                                                         val testImage = mutableListOf<Metadata>()
                                                         testImage.add(metadataObj)
-                                                        var trainingData: MutableIterable<TrainingData>? = null
-                                                        try {
-                                                            trainingData = metadataRepository?.findTrainingData(
-                                                                settings.getRecognitionConfidenceThreshold()!!,
-                                                                settings.getTrainingDataLimit()!!
-                                                            )
-                                                        } catch (_: Exception) {}
-                                                        
+                                                        val trainingData = metadataRepository?.findTrainingData(
+                                                            settings.getRecognitionConfidenceThreshold()!!,
+                                                            settings.getTrainingDataLimit()!!
+                                                        )
+
                                                         val faceRecognizer = DjlFaceRecognizer(
                                                             testImage,
                                                             trainingData!!,

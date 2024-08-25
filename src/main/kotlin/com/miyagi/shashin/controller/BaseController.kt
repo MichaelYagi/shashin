@@ -30,48 +30,38 @@ class BaseController {
         val response = mutableMapOf<String,Any>()
 
         model["recognitionLabels"] = mutableListOf<RecognitionLabel>()
-        try {
-            val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
-            if (recognitionLabels != null && recognitionLabels.count() > 0) {
-                model["recognitionLabels"] = recognitionLabels
-            }
-        } catch (_: Exception) {}
+        val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
+        if (recognitionLabels != null && recognitionLabels.count() > 0) {
+            model["recognitionLabels"] = recognitionLabels
+        }
 
         model["allAlbumList"] = mutableListOf<Album>()
-        try {
-            val allAlbumList = albumRepository?.findAllOrderByAlbumName()
-            if (allAlbumList != null && allAlbumList.count() > 0) {
-                model["allAlbumList"] = allAlbumList
-            }
-        } catch (_: Exception) {}
+        val allAlbumList = albumRepository?.findAllOrderByAlbumName()
+        if (allAlbumList != null && allAlbumList.count() > 0) {
+            model["allAlbumList"] = allAlbumList
+        }
 
         model["timeOffsets"] = TextUtils.timeOffsets()
 
         val keywordList: MutableIterable<Keyword>?
         var keywords = ""
-        try {
-            keywordList = keywordRepository?.findAllDistinctOrderByKeyword()
-            if (keywordList != null && keywordList.count() > 0) {
-                keywords = keywordList.map { it.getKeyword() }.joinToString(",")
-            }
-        } catch (_: Exception) {}
+        keywordList = keywordRepository?.findAllDistinctOrderByKeyword()
+        if (keywordList != null && keywordList.count() > 0) {
+            keywords = keywordList.map { it.getKeyword() }.joinToString(",")
+        }
         model["keywords"] = keywords
 
         model["cameras"] = ""
-        try {
-            val cameraList = metadataRepository?.findByCameraTypeAlphabetical()
-            if (cameraList != null && cameraList.count() > 0) {
-                model["cameras"] = cameraList.joinToString()
-            }
-        } catch (_: Exception) {}
+        val cameraList = metadataRepository?.findByCameraTypeAlphabetical()
+        if (cameraList != null && cameraList.count() > 0) {
+            model["cameras"] = cameraList.joinToString()
+        }
 
         model["lenses"] = ""
-        try {
-            val lensList = metadataRepository?.findByLensTypeAlphabetical()
-            if (lensList != null && lensList.count() > 0) {
-                model["lenses"] = lensList.joinToString()
-            }
-        } catch (_: Exception) {}
+        val lensList = metadataRepository?.findByLensTypeAlphabetical()
+        if (lensList != null && lensList.count() > 0) {
+            model["lenses"] = lensList.joinToString()
+        }
 
         response["recognitionLabels"] = model.getAttribute("recognitionLabels") as Any
         response["allAlbumList"] = model.getAttribute("allAlbumList") as Any

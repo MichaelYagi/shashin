@@ -36,21 +36,14 @@ class ArchiveController {
     fun getFavorites(model: Model): String {
         val module = "archived"
         model["message"] = "Nothing to see here."
-        model["foldersCount"] = 0
-        try {
-            model["foldersCount"] = metadataRepository.countByFolder()
-        } catch (_: Exception) {}
+        model["foldersCount"] = metadataRepository.countByFolder()
         model["metadataList"] = mutableListOf<Metadata>()
         model["keywordMap"] = mutableMapOf<String, String>()
 
         if (metadataRepository.count() > 0) {
-            var trashList: MutableIterable<Metadata>? = null
+            val trashList = metadataRepository.findAllByHiddenAndOffsetAndLimit(0, model.getAttribute("queryLimit").toString().toInt())
 
-            try {
-                trashList = metadataRepository.findAllByHiddenAndOffsetAndLimit(0, model.getAttribute("queryLimit").toString().toInt())
-            } catch (_: Exception) {}
-
-            if (trashList != null && trashList.count() > 0) {
+            if (trashList.count() > 0) {
                 model["metadataList"] = trashList
                 val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
                 val keywordMap = mutableMapOf<String, String>()
@@ -81,11 +74,7 @@ class ArchiveController {
 
         if (metadataRepository.count() > 0) {
             val size: Int = model.getAttribute("queryLimit") as Int
-            var trashList: MutableIterable<Metadata>? = null
-
-            try {
-                trashList = metadataRepository.findAllByHiddenAndOffsetAndLimit(page*size, size).toMutableList()
-            } catch (_: Exception) {}
+            val trashList = metadataRepository.findAllByHiddenAndOffsetAndLimit(page*size, size).toMutableList()
 
             if (trashList != null && trashList.count() > 0) {
                 model["metadataList"] = trashList
@@ -104,12 +93,9 @@ class ArchiveController {
 
         if (page > 0) {
             if (metadataRepository.count() > 0) {
-                var trashList: MutableIterable<Metadata>? = null
-                try {
-                    trashList = metadataRepository.findAllByHiddenAndOffsetAndLimit((page*model.getAttribute("queryLimit").toString().toInt()), model.getAttribute("queryLimit").toString().toInt())
-                } catch (_: Exception) {}
+                val trashList = metadataRepository.findAllByHiddenAndOffsetAndLimit((page*model.getAttribute("queryLimit").toString().toInt()), model.getAttribute("queryLimit").toString().toInt())
 
-                if (trashList != null && trashList.count() > 0) {
+                if (trashList.count() > 0) {
                     model["metadataList"] = trashList
                     response["metadataList"] = trashList
                     val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()

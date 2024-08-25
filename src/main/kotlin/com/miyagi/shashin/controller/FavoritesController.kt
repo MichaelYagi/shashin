@@ -136,22 +136,16 @@ class FavoritesController: BaseController() {
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
-            var favoriteList: MutableIterable<Favorite?>? = null
-
-            try {
-                if (mediaType == "all") {
-                    favoriteList =
-                        favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(), (page * size), size)
-                } else {
-                    favoriteList =
-                        favoriteRepository.findAllByUserIdAndMediaTypeAndOffsetAndLimit(
-                            currentUserObj.getId(),
-                            mediaType!!,
-                            (page * size),
-                            size
-                        )
-                }
-            } catch (_: Exception) {}
+            val favoriteList = if (mediaType == "all") {
+                favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(), (page * size), size)
+            } else {
+                favoriteRepository.findAllByUserIdAndMediaTypeAndOffsetAndLimit(
+                    currentUserObj.getId(),
+                    mediaType!!,
+                    (page * size),
+                    size
+                )
+            }
 
             if (favoriteList != null && favoriteList.count() > 0) {
                 val metadataList = ArrayList<Metadata>()
@@ -167,12 +161,10 @@ class FavoritesController: BaseController() {
                 }
 
                 val keywordMap = mutableMapOf<String, String>()
-                try {
-                    val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
-                    for (keywordGroup in keywordList) {
-                        keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
-                    }
-                } catch (_: Exception) {}
+                val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
+                for (keywordGroup in keywordList) {
+                    keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
+                }
 
                 response["keywordMap"] = keywordMap
                 response["message"] = ""
@@ -198,23 +190,21 @@ class FavoritesController: BaseController() {
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
-            try {
-                val favoriteList =
-                    favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(), (page * size), size)
-                if (favoriteList != null && favoriteList.count() > 0) {
-                    val metadataList = ArrayList<Metadata>()
-                    model["message"] = ""
-                    for (favorite in favoriteList) {
-                        if (favorite != null) {
-                            val metadataObj = metadataRepository.findById(favorite.getMetadataId().toString())
-                            metadataList.add(metadataObj.get())
-                        }
-                    }
-                    if (metadataList.count() > 0) {
-                        response["metadataList"] = metadataList
+            val favoriteList =
+                favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(), (page * size), size)
+            if (favoriteList != null && favoriteList.count() > 0) {
+                val metadataList = ArrayList<Metadata>()
+                model["message"] = ""
+                for (favorite in favoriteList) {
+                    if (favorite != null) {
+                        val metadataObj = metadataRepository.findById(favorite.getMetadataId().toString())
+                        metadataList.add(metadataObj.get())
                     }
                 }
-            } catch (_: Exception) {}
+                if (metadataList.count() > 0) {
+                    response["metadataList"] = metadataList
+                }
+            }
         }
 
         return mapper.writeValueAsString(response)

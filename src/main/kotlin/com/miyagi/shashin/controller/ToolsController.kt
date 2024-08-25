@@ -204,18 +204,16 @@ class ToolsController {
         }
 
         val dbTimingStart = Date()
-        val metadataResult: MutableIterable<Metadata?>
         var sqlLiteQueryCount = 0
 
         try {
-            metadataResult = metaRepository.findAllByOffsetAndLimit(0, 500)
+            val metadataResult = metaRepository.findAllByOffsetAndLimit(0, 500)
             sqlLiteQueryCount = metadataResult.count()
-
             response["sqlLiteAvailable"] = "OK"
-//            response["sqlLiteQueryCount"] = metadataResult.count()
+            response["sqlLiteQueryCount"] = sqlLiteQueryCount
         } catch (e: Exception) {
             response["sqlLiteAvailable"] = "FAIL"
-//            response["sqlLiteQueryCount"] = sqlLiteQueryCount
+            response["sqlLiteQueryCount"] = sqlLiteQueryCount
             status = "FAIL"
             logger.log(Level.WARNING, "HealthEP - Error querying SQLLite: ${e.message}")
         }
