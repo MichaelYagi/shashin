@@ -373,10 +373,8 @@ class PeopleController: BaseController() {
             val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
 
             val keywordMap = mutableMapOf<String, String>()
-            if (keywordList != null) {
-                for (keywordGroup in keywordList) {
-                    keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
-                }
+            for (keywordGroup in keywordList) {
+                keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
             }
             model["keywordMap"] = keywordMap
         }
@@ -887,12 +885,10 @@ class PeopleController: BaseController() {
 
             if (metadataList != null && metadataList.count() > 0) {
                 var personCount = 0
-                if (currentUserObj != null) {
-                    if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
-                        personCount = metadataRepository?.countByPhotoAlbumByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId())!!
-                    } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
-                        personCount = metadataRepository?.countByMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId)!!
-                    }
+                if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
+                    personCount = metadataRepository?.countByPhotoAlbumByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId())!!
+                } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
+                    personCount = metadataRepository?.countByMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId)!!
                 }
                 if (personCount > 0) {
                     counts["person"] = personCount

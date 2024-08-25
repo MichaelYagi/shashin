@@ -2075,7 +2075,7 @@ class TimelineController: BaseController() {
 
             var keywordIdsToDelete = keywordRepository.findAllOrphanedKeywordIds()
 
-            if (keywordIdsToDelete != null && keywordIdsToDelete.count() > 0) {
+            if (keywordIdsToDelete.count() > 0) {
                 keywordRepository.deleteAllById(keywordIdsToDelete)
             }
 
@@ -2339,10 +2339,8 @@ class TimelineController: BaseController() {
         val response = mutableMapOf<String, Any?>()
         val keywordArray = mutableListOf<String>()
         var keywords = keywordRepository.findKeywordsByMetadataId(id)
-        if (keywords != null) {
-            for (keyword in keywords) {
-                keywordArray.add(keyword.getKeyword()!!)
-            }
+        for (keyword in keywords) {
+            keywordArray.add(keyword.getKeyword()!!)
         }
         response["keywordList"] = keywordArray
 
@@ -2376,7 +2374,7 @@ class TimelineController: BaseController() {
 
         var favoriteCounts = favoriteRepository.countByMetadataIdIn(idList)
 
-        if (favoriteCounts != null && favoriteCounts.count() > 0) {
+        if (favoriteCounts.count() > 0) {
             for (favoriteCount in favoriteCounts) {
                 favoritesMap[favoriteCount.getMetadataId()!!] = hashMapOf(
                     "favorite" to (favoriteCount.getUserId() == currentUserObj?.getId()),
@@ -2504,10 +2502,8 @@ class TimelineController: BaseController() {
 
             val keywordArray = mutableListOf<String>()
             var keywords = keywordRepository.findKeywordsByMetadataId(id)
-            if (keywords != null) {
-                for (keyword in keywords) {
-                    keywordArray.add(keyword.getKeyword()!!)
-                }
+            for (keyword in keywords) {
+                keywordArray.add(keyword.getKeyword()!!)
             }
             response["keywordList"] = keywordArray
 
@@ -2611,12 +2607,10 @@ class TimelineController: BaseController() {
 
                 val tempDownloadDir = Files.createTempDirectory("shashin_download")
 
-                if (metadatas != null) {
-                    for (metadata in metadatas) {
-                        val tempFile = File(tempDownloadDir.pathString + "/" + metadata.getId() + "." + metadata.getExpectedExtension())
-                        if (tempFile.createNewFile()) {
-                            Files.copy(Path(metadata.getPath()!!), tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
-                        }
+                for (metadata in metadatas) {
+                    val tempFile = File(tempDownloadDir.pathString + "/" + metadata.getId() + "." + metadata.getExpectedExtension())
+                    if (tempFile.createNewFile()) {
+                        Files.copy(Path(metadata.getPath()!!), tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
                     }
                 }
 

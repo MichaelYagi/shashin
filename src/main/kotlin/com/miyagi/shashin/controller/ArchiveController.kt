@@ -76,7 +76,7 @@ class ArchiveController {
             val size: Int = model.getAttribute("queryLimit") as Int
             val trashList = metadataRepository.findAllByHiddenAndOffsetAndLimit(page*size, size).toMutableList()
 
-            if (trashList != null && trashList.count() > 0) {
+            if (trashList.count() > 0) {
                 model["metadataList"] = trashList
             }
         }
