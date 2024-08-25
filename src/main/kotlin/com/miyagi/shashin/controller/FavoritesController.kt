@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*
 import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.util.*
-import javax.transaction.Transactional
+import jakarta.transaction.Transactional
 
 @Suppress("UNCHECKED_CAST")
 @Controller
@@ -136,14 +136,15 @@ class FavoritesController: BaseController() {
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
-            val favoriteList: MutableIterable<Favorite?>?
-
-            if (mediaType == "all") {
-                favoriteList =
-                    favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(), (page * size), size)
+            val favoriteList = if (mediaType == "all") {
+                favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(), (page * size), size)
             } else {
-                favoriteList =
-                    favoriteRepository.findAllByUserIdAndMediaTypeAndOffsetAndLimit(currentUserObj.getId(), mediaType!!, (page * size), size)
+                favoriteRepository.findAllByUserIdAndMediaTypeAndOffsetAndLimit(
+                    currentUserObj.getId(),
+                    mediaType!!,
+                    (page * size),
+                    size
+                )
             }
 
             if (favoriteList != null && favoriteList.count() > 0) {
@@ -158,11 +159,13 @@ class FavoritesController: BaseController() {
                 if (metadataList.count() > 0) {
                     response["metadataList"] = metadataList
                 }
-                val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
+
                 val keywordMap = mutableMapOf<String, String>()
+                val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
                 for (keywordGroup in keywordList) {
                     keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
                 }
+
                 response["keywordMap"] = keywordMap
                 response["message"] = ""
                 response["msg"] = "Results"
@@ -187,7 +190,8 @@ class FavoritesController: BaseController() {
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
-            val favoriteList = favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(),(page*size), size)
+            val favoriteList =
+                favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(), (page * size), size)
             if (favoriteList != null && favoriteList.count() > 0) {
                 val metadataList = ArrayList<Metadata>()
                 model["message"] = ""

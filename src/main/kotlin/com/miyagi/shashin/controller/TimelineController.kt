@@ -50,8 +50,8 @@ import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
-import javax.servlet.http.HttpServletResponse
-import javax.transaction.Transactional
+import jakarta.servlet.http.HttpServletResponse
+import jakarta.transaction.Transactional
 import kotlin.collections.ArrayList
 import kotlin.io.path.Path
 import kotlin.io.path.isDirectory
@@ -159,8 +159,10 @@ class TimelineController: BaseController() {
             model[k] = v!!
         }
 
-        val countByYearAndMonthList = metadataRepository.countByYearAndMonth()
         val countByYearAndMonthMap = mutableMapOf<String, Int>()
+
+        val countByYearAndMonthList = metadataRepository.countByYearAndMonth()
+
         if (countByYearAndMonthList.count() > 0) {
             for (yearMonthCount in countByYearAndMonthList) {
                 countByYearAndMonthMap[yearMonthCount.getYear().toString() + "-" + yearMonthCount.getMonth().toString()] = yearMonthCount.getCount()!!
@@ -275,8 +277,10 @@ class TimelineController: BaseController() {
             response["metadataDatesHash"] = metadataDateHash
         }
 
-        val countByYearAndMonthList = metadataRepository.countByYearAndMonth()
         val countByYearAndMonthMap = mutableMapOf<String, Int>()
+
+        val countByYearAndMonthList = metadataRepository.countByYearAndMonth()
+
         if (countByYearAndMonthList.count() > 0) {
             for (yearMonthCount in countByYearAndMonthList) {
                 countByYearAndMonthMap[yearMonthCount.getYear().toString() + "-" + yearMonthCount.getMonth().toString()] = yearMonthCount.getCount()!!
@@ -364,22 +368,27 @@ class TimelineController: BaseController() {
             val currentUserObj = model.getAttribute("currentUser") as User?
             val pageValue = page*size
 
-            val metadataList: MutableList<Metadata> = if (mediaTypeFilter == "all") {
-                metadataRepository.findAllByOffsetAndLimit(
-                    pageValue,
-                    size
-                ).toMutableList()
-            } else {
-                metadataRepository.findAllByTypeOffsetAndLimit(
-                    mediaTypeFilter,
-                    pageValue,
-                    size
-                ).toMutableList()
+            var metadataList: MutableList<Metadata?>? = null
+
+            if (metadataRepository.count() > 0) {
+                metadataList = if (mediaTypeFilter == "all") {
+                    metadataRepository.findAllByOffsetAndLimit(
+                        pageValue,
+                        size
+                    ).toMutableList()
+                } else {
+                    metadataRepository.findAllByTypeOffsetAndLimit(
+                        mediaTypeFilter,
+                        pageValue,
+                        size
+                    ).toMutableList()
+                }
             }
 
-            if (metadataList.isNotEmpty()) {
+            if (!metadataList.isNullOrEmpty()) {
                 response["message"] = ""
-                val favoriteCounts = favoriteRepository.countByMetadataIdIn(metadataList.map { it.getId() }.toList())
+                val favoriteCounts = favoriteRepository.countByMetadataIdIn(metadataList.map { it!!.getId() }.toList())
+
                 if (favoriteCounts.count() > 0) {
                     for (favoriteCount in favoriteCounts) {
                         favoritesMap[favoriteCount.getMetadataId()!!] = hashMapOf(
@@ -586,6 +595,7 @@ class TimelineController: BaseController() {
     fun getAllKeywords(model: Model): String {
         val response = mutableMapOf<String, Any?>()
         response["keywords"] = keywordRepository.findAllDistinctOrderByKeyword()
+
         return mapper.writeValueAsString(response)
     }
 
@@ -721,6 +731,7 @@ class TimelineController: BaseController() {
                         response["favorites"] = favoritesMap
 
                         val favoriteCounts = favoriteRepository.countByMetadataIdIn(metadataList.map { it.getId() }.toList())
+
                         if (favoriteCounts.count() > 0) {
                             for (favoriteCount in favoriteCounts) {
                                 favoritesMap[favoriteCount.getMetadataId()!!] = hashMapOf(
@@ -890,8 +901,8 @@ class TimelineController: BaseController() {
                                     // Something was updated that changed the UUID, delete the old record
                                     if (metadataCopy.getId() != metadataId) {
                                         val metadataToDelete = metadataRepository.findByMetadataId(metadataId)
-                                        if (metadataToDelete != null) {
 
+                                        if (metadataToDelete != null) {
                                             // Transfer comments
                                             val albumPhotoComments = mutableListOf(AlbumPhotoComment())
                                             val albumPhotoCommentList =
@@ -989,7 +1000,7 @@ class TimelineController: BaseController() {
                                         }
                                     }
 
-                                    retMap[metadataCopy.getId()] = metadataCopy
+                                    retMap[metadataCopy.getId()!!] = metadataCopy
                                 } else {
                                     logger.log(
                                         Level.WARNING,
@@ -1595,7 +1606,8 @@ class TimelineController: BaseController() {
 
                 adminAlbumsMessage += "<a href='album/$albumId' target='_blank'>${album?.getName()}</a>,"
 
-                val userList = userRepository.findDistinctUserByAlbumId(albumId)
+                var userList = userRepository.findDistinctUserByAlbumId(albumId)
+
                 if (userList != null) {
                     for (user in userList) {
                         if (filteredUserAlbumsMap[user!!.getId()] == null) {
@@ -2061,8 +2073,9 @@ class TimelineController: BaseController() {
                 }
             }
 
-            val keywordIdsToDelete = keywordRepository.findAllOrphanedKeywordIds()
-            if (keywordIdsToDelete.count() > 0) {
+            var keywordIdsToDelete = keywordRepository.findAllOrphanedKeywordIds()
+
+            if (keywordIdsToDelete != null && keywordIdsToDelete.count() > 0) {
                 keywordRepository.deleteAllById(keywordIdsToDelete)
             }
 
@@ -2120,7 +2133,7 @@ class TimelineController: BaseController() {
     }
 
     fun cleanupAlbumCover(metadataId: String) {
-        val metadataObj = metadataRepository.findByMetadataId(metadataId)
+        var metadataObj = metadataRepository.findByMetadataId(metadataId)
 
         if (metadataObj != null) {
             val thumbnailUrlCentered = metadataObj.getThumbnailUrlCentered()
@@ -2133,8 +2146,9 @@ class TimelineController: BaseController() {
                     val albumPhoto = albumPhotoRepository.findFirstByAlbumId(album.getId())
 
                     // Find the next album photo and set as album cover
-                    if (albumPhoto != null) {
-                        val albumPhotoMetadata = metadataRepository.findByMetadataId(albumPhoto.getMetadataId()!!)
+                    if (albumPhoto != null && metadataRepository.count() > 0) {
+
+                        var albumPhotoMetadata = metadataRepository.findByMetadataId(albumPhoto.getMetadataId()!!)
 
                         if (albumPhotoMetadata != null) {
                             album.setCoverUrl(albumPhotoMetadata.getThumbnailUrlCentered())
@@ -2186,25 +2200,27 @@ class TimelineController: BaseController() {
     }
 
     fun cleanupPersonCover(metadataId: String) {
-        val metadataObj = metadataRepository.findByMetadataId(metadataId)
+        if (metadataRepository.count() > 0) {
+            var metadataObj = metadataRepository.findByMetadataId(metadataId)
 
-        if (metadataObj != null) {
-            val thumbnailUrlCentered = metadataObj.getThumbnailUrlCentered()
+            if (metadataObj != null) {
+                val thumbnailUrlCentered = metadataObj.getThumbnailUrlCentered()
 
-            val allPeople = recognitionLabelRepository?.findAll()
-            if (allPeople != null) {
-                for (person in allPeople) {
-                    val personCoverUrl = person?.getCoverUrl()
+                val allPeople = recognitionLabelRepository?.findAll()
+                if (allPeople != null) {
+                    for (person in allPeople) {
+                        val personCoverUrl = person?.getCoverUrl()
 
-                    if (person != null && thumbnailUrlCentered == personCoverUrl) {
-                        val personPhoto = recognitionLabelPhotoRepository?.findFirstByRecognitionLabelId(person.getId())
+                        if (person != null && thumbnailUrlCentered == personCoverUrl) {
+                            val personPhoto = recognitionLabelPhotoRepository?.findFirstByRecognitionLabelId(person.getId())
 
-                        // Find the next person album photo and set as person cover
-                        if (personPhoto != null) {
-                            val personPhotoMetadata = metadataRepository.findByMetadataId(personPhoto.getMetadataId()!!)
+                            // Find the next person album photo and set as person cover
+                            if (personPhoto != null && metadataRepository.count() > 0) {
+                                var personPhotoMetadata = metadataRepository.findByMetadataId(personPhoto.getMetadataId()!!)
 
-                            if (personPhotoMetadata != null) {
-                                person.setCoverUrl(personPhotoMetadata.getThumbnailUrlCentered())
+                                if (personPhotoMetadata != null) {
+                                    person.setCoverUrl(personPhotoMetadata.getThumbnailUrlCentered())
+                                }
                             }
                         }
                     }
@@ -2322,9 +2338,11 @@ class TimelineController: BaseController() {
     fun getMetadata(model: Model, @PathVariable(required = true) id: String): ResponseEntity<String> {
         val response = mutableMapOf<String, Any?>()
         val keywordArray = mutableListOf<String>()
-        val keywords = keywordRepository.findKeywordsByMetadataId(id)
-        for (keyword in keywords) {
-            keywordArray.add(keyword.getKeyword()!!)
+        var keywords = keywordRepository.findKeywordsByMetadataId(id)
+        if (keywords != null) {
+            for (keyword in keywords) {
+                keywordArray.add(keyword.getKeyword()!!)
+            }
         }
         response["keywordList"] = keywordArray
 
@@ -2355,8 +2373,10 @@ class TimelineController: BaseController() {
         val favoritesMap = HashMap<String, HashMap<String, Any>>()
         val idList = mutableListOf<String>()
         idList.add(id)
-        val favoriteCounts = favoriteRepository.countByMetadataIdIn(idList)
-        if (favoriteCounts.count() > 0) {
+
+        var favoriteCounts = favoriteRepository.countByMetadataIdIn(idList)
+
+        if (favoriteCounts != null && favoriteCounts.count() > 0) {
             for (favoriteCount in favoriteCounts) {
                 favoritesMap[favoriteCount.getMetadataId()!!] = hashMapOf(
                     "favorite" to (favoriteCount.getUserId() == currentUserObj?.getId()),
@@ -2483,9 +2503,11 @@ class TimelineController: BaseController() {
             response["albumMap"] = getAlbumMapForUser(currentUserObj, id)
 
             val keywordArray = mutableListOf<String>()
-            val keywords = keywordRepository.findKeywordsByMetadataId(id)
-            for (keyword in keywords) {
-                keywordArray.add(keyword.getKeyword()!!)
+            var keywords = keywordRepository.findKeywordsByMetadataId(id)
+            if (keywords != null) {
+                for (keyword in keywords) {
+                    keywordArray.add(keyword.getKeyword()!!)
+                }
             }
             response["keywordList"] = keywordArray
 
@@ -2510,7 +2532,7 @@ class TimelineController: BaseController() {
         val albumMap = mutableMapOf<Int, String>()
 
         if (currentUserObj != null && metadataId != null) {
-            val albumPhotos = if (currentUserObj.getAuthority() == "ROLE_ADMIN" || currentUserObj.getAuthority() == "ROLE_SUPER") {
+            var albumPhotos = if (currentUserObj.getAuthority() == "ROLE_ADMIN" || currentUserObj.getAuthority() == "ROLE_SUPER") {
                 albumPhotoRepository.findAlbumPhotoByMetadataId(metadataId)
             } else {
                 albumPhotoRepository.findAlbumPhotoByUserIdAndMetadataId(currentUserObj.getId(), metadataId)
@@ -2585,13 +2607,16 @@ class TimelineController: BaseController() {
         if (paramMap.containsKey("batchMetadataIds")) {
             val idArray: Array<String>? = mapper.readValue(paramMap["batchMetadataIds"], object : TypeReference<Array<String>>() {})
             if (idArray != null && idArray.isNotEmpty()) {
-                val metadatas = metadataRepository.findAllByMetadataIds(idArray).toMutableList()
+                var metadatas = metadataRepository.findAllByMetadataIds(idArray).toMutableList()
+
                 val tempDownloadDir = Files.createTempDirectory("shashin_download")
 
-                for (metadata in metadatas) {
-                    val tempFile = File(tempDownloadDir.pathString + "/" + metadata.getId() + "." + metadata.getExpectedExtension())
-                    if (tempFile.createNewFile()) {
-                        Files.copy(Path(metadata.getPath()!!), tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                if (metadatas != null) {
+                    for (metadata in metadatas) {
+                        val tempFile = File(tempDownloadDir.pathString + "/" + metadata.getId() + "." + metadata.getExpectedExtension())
+                        if (tempFile.createNewFile()) {
+                            Files.copy(Path(metadata.getPath()!!), tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                        }
                     }
                 }
 
@@ -2741,7 +2766,7 @@ class TimelineController: BaseController() {
         if (metadataObj != null) {
             val metadataId = metadataObj.getId()
 
-            recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
+            recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId!!)
 
             if (isObject) {
                 val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase(TextUtils.getObjectName())
@@ -2785,7 +2810,7 @@ class TimelineController: BaseController() {
                         val recognitionLabelPhotoCount =
                             recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
                                 recognitionLabelObj.getId(),
-                                metadataId
+                                metadataId!!
                             )
 
                         if (recognitionLabelPhotoCount == 0) {

@@ -44,8 +44,8 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
 import java.util.logging.Logger
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpSession
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpSession
 
 @Suppress("UNCHECKED_CAST")
 @Controller
@@ -230,8 +230,8 @@ class PeopleController: BaseController() {
 
                     if (settings.getObjectDetection() == true) {
                         val withoutKeywords = metadataRepository?.findWithoutKeywords(settings.getMatchScanLimit()!!)
-                        if (withoutKeywords != null) {
 
+                        if (withoutKeywords != null) {
                             val criteria: Criteria<Image, DetectedObjects> = Criteria.builder()
                                 .optApplication(Application.CV.OBJECT_DETECTION)
                                 .setTypes(Image::class.java, DetectedObjects::class.java)
@@ -246,7 +246,7 @@ class PeopleController: BaseController() {
                                 }
 
                                 val metadataWithoutKeywordsObj =
-                                    metadataRepository?.findById(withoutKeyword.getId())?.get()
+                                    metadataRepository?.findById(withoutKeyword.getId()!!)?.get()
 
                                 ImageProcessing.objectRecognizer(
                                     keywordRepository!!,
@@ -342,7 +342,8 @@ class PeopleController: BaseController() {
         }
 
         // Get records of photos that haven't been confirmed - Threshold not 9.0 and greater than threshold configured
-        val lowMatchResults = metadataRepository?.findLowMatchesByPerson(personId,settings.getRecognitionConfidenceThreshold()!!)
+        val lowMatchResults = metadataRepository?.findLowMatchesByPerson(personId, settings.getRecognitionConfidenceThreshold()!!)
+
         if (lowMatchResults != null && lowMatchResults.count() > 0) {
             counts["matches"] = lowMatchResults.count()
             model["lowMatchResults"] = lowMatchResults
@@ -351,7 +352,9 @@ class PeopleController: BaseController() {
             val labelPhotoMap = mutableMapOf<String, String>()
             for (metadata in lowMatchResults) {
                 val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
+
                 var labelString = ""
+
                 if (recognitionLabelPhotos != null) {
                     for (recognitionLabelPhoto in recognitionLabelPhotos) {
                         val recognitionLabelObj = recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
@@ -362,15 +365,18 @@ class PeopleController: BaseController() {
                 }
                 if (labelString.isNotBlank()) {
                     labelString = labelString.dropLast(1)
-                    labelPhotoMap[metadata.getId()] = labelString
+                    labelPhotoMap[metadata.getId()!!] = labelString
                 }
             }
             model["labelPhotoMap"] = labelPhotoMap
 
             val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
+
             val keywordMap = mutableMapOf<String, String>()
-            for (keywordGroup in keywordList) {
-                keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
+            if (keywordList != null) {
+                for (keywordGroup in keywordList) {
+                    keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
+                }
             }
             model["keywordMap"] = keywordMap
         }
@@ -596,10 +602,17 @@ class PeopleController: BaseController() {
                             facesResult["image_base64"] = base64String
                         }
                         if (recognitionLabelPhotoObj != null) {
-                            val metadataObj = metadataRepository?.findByMetadataId(recognitionLabelPhotoObj.getMetadataId().toString())
-                            if (metadataObj != null) {
-                                val metadataDate = "${metadataObj.getYear()}-${metadataObj.getMonth()}-${metadataObj.getDay()}"
-                                facesResult["metadata_date"] = metadataDate
+                            if (metadataRepository != null && metadataRepository!!.count() > 0) {
+                                    val metadataObjOpt = metadataRepository?.findByMetadataId(
+                                        recognitionLabelPhotoObj.getMetadataId().toString()
+                                    )
+
+                                if (metadataObjOpt != null) {
+                                    val metadataObj = metadataObjOpt
+                                    val metadataDate =
+                                        "${metadataObj.getYear()}-${metadataObj.getMonth()}-${metadataObj.getDay()}"
+                                    facesResult["metadata_date"] = metadataDate
+                                }
                             }
                         }
                     }
@@ -684,11 +697,18 @@ class PeopleController: BaseController() {
             if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
                 peopleList = metadataRepository?.findAlbumPhotoByPeople(settings.getRecognitionConfidenceThreshold()!!,currentUserObj.getId(),TextUtils.getObjectName())
             } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
-                peopleList = metadataRepository?.findMetadataByPeople(settings.getRecognitionConfidenceThreshold()!!, TextUtils.getObjectName())
+                peopleList = metadataRepository?.findMetadataByPeople(
+                    settings.getRecognitionConfidenceThreshold()!!,
+                    TextUtils.getObjectName()
+                )
 
                 if (peopleList != null && peopleList.count() > 0) {
                     for (person in peopleList) {
-                        val lowMatchResults = metadataRepository?.findLowMatchesByPerson(person.getId()!!,settings.getRecognitionConfidenceThreshold()!!)
+                        val lowMatchResults = metadataRepository?.findLowMatchesByPerson(
+                            person.getId()!!,
+                            settings.getRecognitionConfidenceThreshold()!!
+                        )
+
                         if (lowMatchResults != null && lowMatchResults.count() > 0) {
                             counts[person.getId()!!] = lowMatchResults.count()
                         }
@@ -753,6 +773,7 @@ class PeopleController: BaseController() {
             val pageValue = page*queryLimit
 
             var metadataList: MutableIterable<Metadata>? = mutableListOf(Metadata())
+
             if (currentUserObj!!.getAuthority() == model.getAttribute("userRole")) {
                 metadataList = metadataRepository?.findAlbumPhotoByPerson(
                     settings.getRecognitionConfidenceThreshold()!!,
@@ -763,7 +784,10 @@ class PeopleController: BaseController() {
                 )
                 response["msg"] = ""
                 response["status"] = ApiResponse.SUCCESS.status
-            } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
+            } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute(
+                    "superRole"
+                )
+            ) {
                 metadataList = metadataRepository?.findMetadataByPerson(
                     settings.getRecognitionConfidenceThreshold()!!,
                     personId,
@@ -832,13 +856,28 @@ class PeopleController: BaseController() {
 
             var metadataList: MutableIterable<Metadata>? = null
             if (currentUserObj!!.getAuthority() == model.getAttribute("userRole")) {
-                metadataList = metadataRepository?.findAlbumPhotoByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId(),pageValue,size)
-            } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
-                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
+                metadataList = metadataRepository?.findAlbumPhotoByPerson(
+                    settings.getRecognitionConfidenceThreshold()!!,
+                    personId,
+                    currentUserObj.getId(),
+                    pageValue,
+                    size
+                )
+            } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute(
+                    "superRole"
+                )
+            ) {
+                val recognitionLabels =
+                    recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
                 if (recognitionLabels != null && recognitionLabels.count() > 0) {
                     response["recognitionLabels"] = recognitionLabels
                 }
-                metadataList = metadataRepository?.findMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,pageValue,size)
+                metadataList = metadataRepository?.findMetadataByPerson(
+                    settings.getRecognitionConfidenceThreshold()!!,
+                    personId,
+                    pageValue,
+                    size
+                )
             }
 
             val albumList = albumRepository?.findAllOrderByAlbumName()
@@ -848,10 +887,12 @@ class PeopleController: BaseController() {
 
             if (metadataList != null && metadataList.count() > 0) {
                 var personCount = 0
-                if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
-                    personCount = metadataRepository?.countByPhotoAlbumByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId())!!
-                } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
-                    personCount = metadataRepository?.countByMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId)!!
+                if (currentUserObj != null) {
+                    if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
+                        personCount = metadataRepository?.countByPhotoAlbumByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId())!!
+                    } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
+                        personCount = metadataRepository?.countByMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId)!!
+                    }
                 }
                 if (personCount > 0) {
                     counts["person"] = personCount
@@ -886,7 +927,7 @@ class PeopleController: BaseController() {
                         for (favorite in favorites) {
                             if (favorite != null) {
                                 favoritesMap[metadata.getId()] = hashMapOf(
-                                    "favorite" to (favorite.getUserId() == currentUserObj.getId()),
+                                    "favorite" to (favorite.getUserId() == currentUserObj!!.getId()),
                                     "count" to favoriteRepository.countAllByMetadataId(metadata.getId())
                                 )
 
@@ -898,6 +939,7 @@ class PeopleController: BaseController() {
                     }
 
                     val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
+
                     var labelString = ""
                     var isAutoTagged = false
                     val nameTaggedMap = mutableMapOf<String,Any>()
@@ -912,12 +954,14 @@ class PeopleController: BaseController() {
                             }
                         }
                     }
+
                     if (labelString.isNotBlank()) {
                         labelString = labelString.dropLast(1)
                         nameTaggedMap["labels"] = labelString
                         nameTaggedMap["isTagged"] = isAutoTagged
                         labelPhotoMap[metadata.getId()] = nameTaggedMap
                     }
+
                 }
 
                 response["labelPhotoMap"] = labelPhotoMap
@@ -961,9 +1005,16 @@ class PeopleController: BaseController() {
                     val recognitionLabelRecord =
                         recognitionLabelRepository?.findByNameIgnoreCase(recognitionLabel.trim())
                     if (recognitionLabelRecord != null) {
-                        val recognitionLabelPhoto = recognitionLabelPhotoRepository?.findByRecognitionLabelIdAndMetadataId(recognitionLabelRecord.getId(), metadataId)
-                        if (recognitionLabelPhoto != null && !recognitionLabelPhoto.getCompreFaceImageId().isNullOrEmpty()) {
-                            compreFaceImageIdMap["${recognitionLabel.replace("\\s".toRegex(), "")}-$metadataId"] = recognitionLabelPhoto.getCompreFaceImageId()!!
+                        val recognitionLabelPhoto =
+                            recognitionLabelPhotoRepository?.findByRecognitionLabelIdAndMetadataId(
+                                recognitionLabelRecord.getId(),
+                                metadataId
+                            )
+                        if (recognitionLabelPhoto != null && !recognitionLabelPhoto.getCompreFaceImageId()
+                                .isNullOrEmpty()
+                        ) {
+                            compreFaceImageIdMap["${recognitionLabel.replace("\\s".toRegex(), "")}-$metadataId"] =
+                                recognitionLabelPhoto.getCompreFaceImageId()!!
                         }
                     }
                 }
@@ -977,10 +1028,13 @@ class PeopleController: BaseController() {
                 }
 
                 for (recognitionLabelString in recognitionLabelArray) {
-                    if (!recognitionLabelString.trim().isNullOrBlank() && recognitionLabelString.trim() != "null") {
+                    if (recognitionLabelString.trim().isNotBlank() && recognitionLabelString.trim() != "null") {
+                        var recognitionLabelPhotoCount = 0
+                        var recognitionLabelObj = RecognitionLabel()
+
                         val recognitionLabelRecord =
                             recognitionLabelRepository?.findByNameIgnoreCase(recognitionLabelString.trim())
-                        var recognitionLabelObj = RecognitionLabel()
+
                         if (recognitionLabelRecord == null) {
                             recognitionLabelObj.setName(recognitionLabelString.trim())
                             recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
@@ -990,11 +1044,12 @@ class PeopleController: BaseController() {
                         } else {
                             recognitionLabelObj = recognitionLabelRecord
                         }
-                        val recognitionLabelPhotoCount =
-                            recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
-                                recognitionLabelObj.getId(),
-                                metadataId
-                            )
+
+                        recognitionLabelPhotoCount =
+                        recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
+                            recognitionLabelObj.getId(),
+                            metadataId
+                        )!!
 
                         if (recognitionLabelPhotoCount == 0) {
                             val uploadResp = mapper.writeValueAsString(
@@ -1027,7 +1082,8 @@ class PeopleController: BaseController() {
                 }
 
                 resp["recognitionLabels"] = mutableListOf<RecognitionLabel>()
-                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
+                val recognitionLabels =
+                    recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
                 if (recognitionLabels != null && recognitionLabels.count() > 0) {
                     resp["recognitionLabels"] = recognitionLabels
                 }
@@ -1037,8 +1093,11 @@ class PeopleController: BaseController() {
                 return mapper.writeValueAsString(resp)
             } else if (isObject) {
                 recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
-                val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase(TextUtils.getObjectName())
+
                 var recognitionLabelObj = RecognitionLabel()
+
+                val recognitionLabelRecord =
+                    recognitionLabelRepository?.findByNameIgnoreCase(TextUtils.getObjectName())
                 if (recognitionLabelRecord == null) {
                     recognitionLabelObj.setName(TextUtils.getObjectName())
                     recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
@@ -1048,14 +1107,16 @@ class PeopleController: BaseController() {
                     recognitionLabelObj = recognitionLabelRecord
                 }
 
+                resp["recognitionLabels"] = mutableListOf<RecognitionLabel>()
+
                 val recognitionLabelPhotoObj = RecognitionLabelPhoto()
                 recognitionLabelPhotoObj.setMetadataId(metadataId)
                 recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
                 recognitionLabelPhotoObj.setConfidence("-0.1")
                 recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
 
-                resp["recognitionLabels"] = mutableListOf<RecognitionLabel>()
-                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
+                val recognitionLabels =
+                    recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
                 if (recognitionLabels != null && recognitionLabels.count() > 0) {
                     resp["recognitionLabels"] = recognitionLabels
                 }
@@ -1064,10 +1125,11 @@ class PeopleController: BaseController() {
                 resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
             } else if (personMap["tagpeople"].toString().isBlank()) {
+                resp["recognitionLabels"] = mutableListOf<RecognitionLabel>()
                 recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
 
-                resp["recognitionLabels"] = mutableListOf<RecognitionLabel>()
-                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
+                val recognitionLabels =
+                    recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
                 if (recognitionLabels != null && recognitionLabels.count() > 0) {
                     resp["recognitionLabels"] = recognitionLabels
                 }
@@ -1085,18 +1147,21 @@ class PeopleController: BaseController() {
             val setCoverPerson = personMap["setCoverPerson"].toString().toBoolean()
 
             if (setCoverPerson) {
-                val personObj = recognitionLabelRepository?.findById(personId)
-                val metadataObj = metadataRepository?.findByMetadataId(metadataId)
-                val coverAlbumUrl = metadataObj?.getThumbnailUrlCentered()
+                if (metadataRepository != null && metadataRepository!!.count() > 0) {
 
-                if (personObj != null && metadataObj != null) {
-                    personObj.get().setCoverUrl(coverAlbumUrl)
-                    personObj.get().setModifiedAt(getCurrentTimestamp())
-                    recognitionLabelRepository?.save(personObj.get())
+                    val personObj = recognitionLabelRepository?.findById(personId)
+                    val metadataObj = metadataRepository?.findByMetadataId(metadataId)
+                    val coverAlbumUrl = metadataObj?.getThumbnailUrlCentered()
 
-                    resp["msg"] = "Saved"
-                    resp["status"] = ApiResponse.SUCCESS.status
-                    return mapper.writeValueAsString(resp)
+                    if (personObj != null && personObj.isPresent && metadataObj != null) {
+                        personObj.get().setCoverUrl(coverAlbumUrl)
+                        personObj.get().setModifiedAt(getCurrentTimestamp())
+                        recognitionLabelRepository?.save(personObj.get())
+
+                        resp["msg"] = "Saved"
+                        resp["status"] = ApiResponse.SUCCESS.status
+                        return mapper.writeValueAsString(resp)
+                    }
                 }
             }
         }
@@ -1152,7 +1217,15 @@ class PeopleController: BaseController() {
         resp["msg"] = ""
         resp["status"] = ApiResponse.FAIL.status
 
-        val metadata = metadataRepository?.findByMetadataId(metadataId)
+        var metadata: Metadata? = null
+
+        if (metadataRepository != null && metadataRepository!!.count() > 0) {
+            val metadataOpt = metadataRepository?.findByMetadataId(metadataId)
+
+            if (metadataOpt != null) {
+                metadata = metadataOpt
+            }
+        }
         return mapper.writeValueAsString(ImageProcessing.buildPersonRecognition(model.getAttribute("settings") as Settings, metadata))
     }
 }

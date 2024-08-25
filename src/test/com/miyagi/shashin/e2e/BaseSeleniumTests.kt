@@ -13,7 +13,7 @@ import org.springframework.core.io.FileSystemResource
 import java.io.File
 import java.net.URL
 import java.util.logging.Logger
-import javax.transaction.Transactional
+import jakarta.transaction.Transactional
 
 abstract class BaseSeleniumTests {
     protected var driver: WebDriver? = null

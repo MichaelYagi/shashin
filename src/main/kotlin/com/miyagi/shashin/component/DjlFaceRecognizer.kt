@@ -175,7 +175,7 @@ class DjlFaceRecognizer {
                     )
 
                     if (numOfTestObject == 0) {
-                        recognitionLabelPhotoRepository?.deleteByMetadataId(testImageObj.getId())
+                        recognitionLabelPhotoRepository?.deleteByMetadataId(testImageObj.getId()!!)
                         val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase(TextUtils.getObjectName())
                         var recognitionLabelObj = RecognitionLabel()
                         if (recognitionLabelRecord == null) {
@@ -258,7 +258,7 @@ class DjlFaceRecognizer {
                                         val recordCount =
                                             this.recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
                                                 trainingImageLabelId,
-                                                testImageObj.getId()
+                                                testImageObj.getId()!!
                                             )
                                         if (recordCount == 0) {
                                             val recognitionLabelPhoto = RecognitionLabelPhoto()
@@ -271,7 +271,7 @@ class DjlFaceRecognizer {
                                             val recognitionLabelPhoto =
                                                 this.recognitionLabelPhotoRepository?.findByRecognitionLabelIdAndMetadataId(
                                                     trainingImageLabelId,
-                                                    testImageObj.getId()
+                                                    testImageObj.getId()!!
                                                 )
                                             if (recognitionLabelPhoto != null) {
                                                 recognitionLabelPhoto.setConfidence(similarity)

@@ -1,5 +1,7 @@
 package com.miyagi.shashin.component
 
+import com.miyagi.shashin.model.AlbumPhoto
+import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.AlbumPhotoRepository
 import com.miyagi.shashin.repository.AlbumRepository
 import com.miyagi.shashin.repository.MetadataRepository
@@ -12,8 +14,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import org.springframework.web.servlet.view.feed.AbstractRssFeedView
 import java.nio.file.Files
 import java.util.*
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import java.util.logging.Level
+import java.util.logging.Logger
 import kotlin.io.path.Path
 
 
@@ -65,6 +69,8 @@ class RssFeedView : AbstractRssFeedView() {
         request: HttpServletRequest, response: HttpServletResponse
     ): List<Item> {
 
+        val logger: Logger = Logger.getLogger(RssFeedView::class.simpleName)
+
         val rssList = mutableListOf<Item>()
         var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
         if (request.scheme == "https") {
@@ -81,9 +87,11 @@ class RssFeedView : AbstractRssFeedView() {
                     for (randomAlbum in randomAlbums) {
                         if (randomAlbum.getIsShared() == 1) {
                             val albumPhotos = albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, 20)
+
                             if (albumPhotos != null) {
                                 for (albumPhoto in albumPhotos) {
                                     val metadata = metadataRepository?.findByMetadataId(albumPhoto?.getMetadataId()!!)
+
                                     if (metadata != null) {
                                         val album = albumRepository?.findAlbumById(albumPhoto?.getAlbumId())
                                         val entry = Item()

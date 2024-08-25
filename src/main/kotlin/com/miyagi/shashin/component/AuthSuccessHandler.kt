@@ -1,7 +1,5 @@
 package com.miyagi.shashin.component
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.configuration.MultiSecurityConfig
 import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.User
@@ -10,14 +8,16 @@ import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.service.CustomUserDetailsService
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import nl.basjes.parse.useragent.UserAgentAnalyzer
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.DefaultRedirectStrategy
+import org.springframework.security.web.RedirectStrategy
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler
 import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices
@@ -25,18 +25,12 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
 import org.springframework.stereotype.Component
 import java.io.File
 import java.io.IOException
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
 import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
-import kotlin.collections.ArrayList
+
 
 @Suppress("UNCHECKED_CAST")
 @Component
@@ -91,6 +85,16 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
         this.profile = profile
 
         return this
+    }
+
+    @Throws(IOException::class)
+    override fun onAuthenticationSuccess(
+        request: HttpServletRequest?,
+        response: HttpServletResponse?,
+        authentication: Authentication?
+    ) {
+        handle(request, response, authentication)
+        clearAuthenticationAttributes(request)
     }
 
     @Throws(IOException::class)
@@ -342,5 +346,9 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                 notificationRepository?.saveAll(notificationObjList)
             }
         }
+    }
+
+    override fun getRedirectStrategy(): RedirectStrategy {
+        return redirectStrategy
     }
 }

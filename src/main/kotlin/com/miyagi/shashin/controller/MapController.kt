@@ -55,7 +55,10 @@ class MapController: BaseController() {
 
         // If ROLE_ADMIN get lat lng for timeline
         if (currentUserObj != null) {
-            if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
+            if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute(
+                    "superRole"
+                )
+            ) {
                 model["showControls"] = true
                 albums = albumRepository?.findAllWithLocationOrderByAlbumName()
             } else {
@@ -156,7 +159,7 @@ class MapController: BaseController() {
             val mapdata: MutableIterable<MapData>
 
             if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
-                mapdata = metadataRepository!!.findTimelineAllForMap()
+                mapdata = metadataRepository!!.findTimelineAllForMap() as MutableIterable<MapData>
             } else {
                 mapdata = metadataRepository!!.findByAlbumMetadataByUserIdForMap(currentUserObj.getId())
             }
