@@ -95,13 +95,15 @@ class APITests: BaseSeleniumTests() {
         val mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
         mediaDirTextArea.sendKeys(testImageFile.parent)
         val scanAutomatically = this.driver!!.findElement(By.id("scanAutomatically"))
+        scanAutomatically.click()
         if (scanAutomatically.isSelected) {
             scanAutomatically.click()
         }
 
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
         saveSettings.click()
-        WebDriverWait(this.driver, Duration.ofSeconds(30)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Settings saved')]")))
+//        println(this.driver?.pageSource)
+        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Settings saved')]")))
 
         // Scan new image
         this.driver!!.get("http://localhost:$port/settings/scan")
@@ -141,7 +143,7 @@ class APITests: BaseSeleniumTests() {
         if (!jsonString.isNullOrBlank()) {
             jsonNode = mapper.readTree(jsonString)
         }
-println(jsonString)
+
         Assertions.assertTrue(jsonNode!!.has("metadataList"))
         Assertions.assertTrue(jsonNode.get("metadataList").get(0).get("id").textValue() != "")
 
