@@ -14,11 +14,13 @@ import java.io.File
 import java.net.URL
 import java.util.logging.Logger
 import jakarta.transaction.Transactional
+import org.springframework.data.jpa.repository.Modifying
 
 abstract class BaseSeleniumTests {
     protected var driver: WebDriver? = null
     protected var logger: Logger = Logger.getLogger(BaseSeleniumTests::class.simpleName)
     protected var elementScanTimeoutMillis = 3000
+    protected var elementWaitSeconds = 60L
     private val os = System.getProperty("os.name")
 
     @Autowired
@@ -92,6 +94,7 @@ abstract class BaseSeleniumTests {
         driver = ChromeDriver(options)
     }
 
+    @Transactional
     @AfterEach
     open fun tearDown() {
         deleteRecords()
@@ -101,7 +104,7 @@ abstract class BaseSeleniumTests {
         }
     }
 
-    @Transactional
+    @Modifying
     open fun deleteRecords() {
         userRepository?.deleteAll()
         metadataRepository?.deleteAll()

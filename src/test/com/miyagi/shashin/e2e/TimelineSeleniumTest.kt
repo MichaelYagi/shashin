@@ -106,7 +106,7 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
         saveSettings.click()
 //         println(this.driver?.pageSource)
-        WebDriverWait(this.driver, Duration.ofSeconds(30)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Settings saved')]")))
+        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Settings saved')]")))
 
         // Scan new image
         this.driver!!.get("http://localhost:$port/settings/scan")
@@ -127,7 +127,7 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         this.driver!!.get("http://localhost:$port/timeline")
         //println(this.driver?.pageSource)
         val scrollContainer = this.driver!!.findElement(By.id("infinite-scroll-gallery"))
-        WebDriverWait(this.driver, Duration.ofSeconds(30)).until(ExpectedConditions.visibilityOfAllElements(scrollContainer.findElement(By.xpath("./span[1]"))))
+        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfAllElements(scrollContainer.findElement(By.xpath("./span[1]"))))
         val spanContainerEl = scrollContainer.findElement(By.xpath("./span[1]"))
         val dateId = spanContainerEl.getAttribute("id").substringAfter("container_")
         val parentEl = this.driver!!.findElement(By.id("row$dateId"))
@@ -138,7 +138,7 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         Assertions.assertTrue(isUUID(metadataId!!))
 
         // Check image src
-        WebDriverWait(this.driver, Duration.ofSeconds(30)).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("img[src^='/api/v1/thumbnails']")))
+        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("img[src^='/api/v1/thumbnails']")))
 //        println(this.driver?.pageSource)
         val imageEl = this.driver!!.findElement(By.id("image$metadataId"))
         val imageSrc = imageEl.getAttribute("src")
