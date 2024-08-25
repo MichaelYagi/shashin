@@ -39,9 +39,9 @@ import java.time.ZoneId
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
-import javax.transaction.Transactional
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import jakarta.transaction.Transactional
 import kotlin.io.path.isDirectory
 
 
@@ -313,15 +313,23 @@ class AlbumsController: BaseController() {
             if (currentUserObj.getAuthority() != null) {
                 if (currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") {
                     showControls = true
-                    userAlbums =
-                        userAlbumRepository.findAllOffsetAndLimit((page * size), size) as MutableList<UserAlbum?>?
+                    try {
+                        userAlbums =
+                            userAlbumRepository.findAllOffsetAndLimit((page * size), size) as MutableList<UserAlbum?>?
+                    } catch (e: Exception) {
+                        logger.log(Level.WARNING, "userAlbumRepository.findAllOffsetAndLimit error: ${e.message}")
+                    }
                 } else {
-                    userAlbums =
-                        userAlbumRepository.findAllByUserIdAndOffsetAndLimit(
-                            currentUserObj.getId(),
-                            (page * size),
-                            size
-                        ) as MutableList<UserAlbum?>?
+                    try {
+                        userAlbums =
+                            userAlbumRepository.findAllByUserIdAndOffsetAndLimit(
+                                currentUserObj.getId(),
+                                (page * size),
+                                size
+                            ) as MutableList<UserAlbum?>?
+                    } catch (e: Exception) {
+                        logger.log(Level.WARNING, "userAlbumRepository.findAllByUserIdAndOffsetAndLimit error: ${e.message}")
+                    }
                 }
             }
 
@@ -333,12 +341,12 @@ class AlbumsController: BaseController() {
                 var albumPhotoCount: Int?
 
                 for (userAlbum in userAlbums) {
-
                     val albumCommentsList = ArrayList<HashMap<String, Any>>()
                     if (userAlbum?.getAlbumId() != null) {
                         val albumMap = HashMap<String, Any>()
                         val albumObj = albumRepository.findById(userAlbum.getAlbumId()!!)
                         albumPhotoCount = albumPhotoRepository.countPhotosByAlbumId(userAlbum.getAlbumId()!!)
+
                         if (albumPhotoCount == null) {
                             albumPhotoCount = 0
                         }
@@ -347,6 +355,7 @@ class AlbumsController: BaseController() {
                         if (albumVideoCount == null) {
                             albumVideoCount = 0
                         }
+
                         albumMap["id"] = albumObj.get().getId()
                         albumMap["name"] = if (albumObj.get().getName() == null) "" else albumObj.get().getName()!!
                         albumMap["coverUrl"] = if (albumObj.get().getCoverUrl() == null) "" else albumObj.get().getCoverUrl()!!
@@ -356,16 +365,19 @@ class AlbumsController: BaseController() {
                         albums.add(albumMap)
 
                         // Get comments for this album
-                        val albumComments = commentRepository.findCommentsByAlbumId(albumObj.get().getId())
+                        val albumComments = commentRepository.findCommentsByAlbumId(albumObj?.get()!!.getId())
                         for (albumComment in albumComments) {
                             val albumCommentMap = HashMap<String, Any>()
                             albumCommentMap["comment"] = albumComment.getComment().toString()
                             albumCommentMap["commentId"] = albumComment.getCommentId().toString().toInt()
                             albumCommentMap["albumId"] = albumComment.getAlbumId().toString().toInt()
                             albumCommentMap["userId"] = albumComment.getUserId().toString().toInt()
-                            albumCommentMap["userProfile"] = if (albumComment.getUserProfile()==null) "" else albumComment.getUserProfile().toString()
+                            albumCommentMap["userProfile"] =
+                                if (albumComment.getUserProfile() == null) "" else albumComment.getUserProfile()
+                                    .toString()
                             albumCommentMap["username"] = albumComment.getUsername().toString()
-                            albumCommentMap["createdAt"] = TextUtils.formatToLongDateWithTime(albumComment.getCreatedAt().toString())
+                            albumCommentMap["createdAt"] =
+                                TextUtils.formatToLongDateWithTime(albumComment.getCreatedAt().toString())
                             albumCommentsList.add(albumCommentMap)
                         }
                         if (albumCommentsList.isNotEmpty()) {
@@ -1069,7 +1081,7 @@ class AlbumsController: BaseController() {
         val photoObj = albumRepository.findById(albumId)
         if (photoObj.isPresent && photoObj.get().getShareUrl() == shareLink) {
             val resultPage = page*size
-            val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId,resultPage,size)
+            var albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId, resultPage, size)
             val albumMetadataList = ArrayList<Metadata>()
             if (albumPhotos != null) {
                 for (albumPhoto in albumPhotos) {
@@ -1107,7 +1119,7 @@ class AlbumsController: BaseController() {
         val size: Int = model.getAttribute("queryLimit") as Int
         val resultPage = page * size
 
-        val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId, resultPage, size)
+        var albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId, resultPage, size)
         val albumMetadataList = ArrayList<Metadata>()
         if (albumPhotos != null) {
             for (albumPhoto in albumPhotos) {
@@ -1389,7 +1401,8 @@ class AlbumsController: BaseController() {
 
             if ((currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") || (userAlbums != null && currentUserObj.getAuthority()!! == "ROLE_USER")) {
                 // Get album photos
-                var albumPhotos: MutableIterable<AlbumPhoto?>?
+                var albumPhotos: MutableIterable<AlbumPhoto?>? = null
+
                 if (mediaType == "all") {
                     albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(
                         albumId,
@@ -1445,7 +1458,7 @@ class AlbumsController: BaseController() {
                                 albumPhotoCommentsList.add(albumPhotoCommentMap)
                             }
                             if (albumPhotoCommentsList.isNotEmpty()) {
-                                albumPhotosCommentsMap[metadata.get().getId()] = albumPhotoCommentsList
+                                albumPhotosCommentsMap[metadata.get().getId()!!] = albumPhotoCommentsList
                             }
                         }
                     }
@@ -1496,7 +1509,8 @@ class AlbumsController: BaseController() {
 
             if ((currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") || (userAlbums != null && currentUserObj.getAuthority()!! == "ROLE_USER")) {
                 // Get album photos
-                val albumPhotos = albumPhotoRepository.findAllByAlbumId(albumId)
+                var albumPhotos = albumPhotoRepository.findAllByAlbumId(albumId)
+
                 if (albumPhotos != null) {
                     val albumObj = albumRepository.findAlbumById(albumId)
                     val tempExportBaseDir = Files.createTempDirectory(albumId.toString())
@@ -1572,7 +1586,7 @@ class AlbumsController: BaseController() {
         if (albumId > 0 && (download.isPresent && download.get() == albumId) || (downloadArray.isPresent && downloadArray.get() != "")) {
 
             // Get album photos
-            val albumPhotos = albumPhotoRepository.findAllByAlbumId(albumId)
+            var albumPhotos = albumPhotoRepository.findAllByAlbumId(albumId)
             val albumObj = albumRepository.findById(albumId)
 
             if (albumPhotos != null && albumObj.isPresent && albumObj.get().getShareUrl() == shareLink) {
@@ -1719,21 +1733,35 @@ class AlbumsController: BaseController() {
 
                 for (randomAlbum in randomAlbums) {
                     if (randomAlbum.getIsShared() == 1) {
-                        val albumPhotos = albumPhotoRepository.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, 1000)
+                        var albumPhotos = albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, 1000)
+
                         if (albumPhotos != null) {
                             for (albumPhoto in albumPhotos) {
-                                val metadata = metadataRepository.findByMetadataId(albumPhoto?.getMetadataId()!!)
-                                val albumId = albumRepository.findById(albumPhoto.getAlbumId()!!)
-                                if (metadata != null) {
-                                    val date = outputFormat.format(sdf.parse(metadata.getYear().toString()+"-"+metadata.getMonth().toString()+"-"+metadata.getDay().toString())).replace(".","")
-                                    var placeNameFormatted = ""
-                                    if (metadata.getPlaceName() != null) {
-                                        val placeNameArray = metadata.getPlaceName()!!.split(";")
-                                        placeNameFormatted = placeNameArray[0]
+
+                                if (metadataRepository.count() > 0) {
+                                    var metadataOpt = metadataRepository.findByMetadataId(albumPhoto?.getMetadataId()!!)
+
+                                    val albumObj = albumRepository.findById(albumPhoto.getAlbumId()!!)
+
+                                    if (metadataOpt != null) {
+                                        val metadata = metadataOpt
+                                        val date = outputFormat.format(
+                                            sdf.parse(
+                                                metadata.getYear().toString() + "-" + metadata.getMonth()
+                                                    .toString() + "-" + metadata.getDay().toString()
+                                            )
+                                        ).replace(".", "")
+                                        var placeNameFormatted = ""
+                                        if (metadata.getPlaceName() != null) {
+                                            val placeNameArray = metadata.getPlaceName()!!.split(";")
+                                            placeNameFormatted = placeNameArray[0]
+                                        }
+                                        val slideshowDescription =
+                                            ((if (metadata.getDescription() != null) ("<h4>" + metadata.getDescription() + "</h4>") else "") + "<p>" + date + (if (placeNameFormatted == "") "" else ", $placeNameFormatted") + " &bull; " + albumObj.get()
+                                                .getName() + "</p>")
+                                        metadata.setFreeFormString(slideshowDescription)
+                                        metadataList.add(metadata)
                                     }
-                                    val slideshowDescription = ((if (metadata.getDescription() != null) ("<h4>" + metadata.getDescription() + "</h4>") else "") + "<p>" + date + (if (placeNameFormatted == "") "" else ", $placeNameFormatted") + " &bull; " + albumId.get().getName() + "</p>")
-                                    metadata.setFreeFormString(slideshowDescription)
-                                    metadataList.add(metadata)
                                 }
                             }
                         }

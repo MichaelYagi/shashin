@@ -65,10 +65,10 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
-import javax.servlet.http.HttpSession
-import javax.transaction.Transactional
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpSession
+import jakarta.transaction.Transactional
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
 import kotlin.math.floor
@@ -370,7 +370,6 @@ class SettingsController {
 
         var dirDneString = ""
         if (!mediaDirs.isNullOrEmpty()) {
-
             val allMediaDirs = mediaDirRepository?.findByExclude(false)
             val allMediaDirList: List<String>? = allMediaDirs?.map { it?.getDirectory()!! }
             if (scanAutomatically == "on" &&
@@ -381,8 +380,10 @@ class SettingsController {
 
             mediaDirRepository?.deleteByExclude(false)
             for (mediaDir in mediaDirs) {
+
                 if (mediaDir.trim().isNotBlank()) {
                     var mediaDirObj = mediaDirRepository?.findByExcludeIsAndDirectory(false, mediaDir)
+
                     if (mediaDirObj == null) {
                         mediaDirObj = MediaDirectory()
                         mediaDirObj.setDirectory(mediaDir)
@@ -405,17 +406,21 @@ class SettingsController {
 
         if (!mediaExcludeDirs.isNullOrEmpty()) {
             val allMediaExcludeDirs = mediaDirRepository?.findByExclude(true)
+
             val allMediaExcludeDirList: List<String>? = allMediaExcludeDirs?.map { it?.getDirectory()!! }
-            if (scanAutomatically == "on" &&
-                (mediaExcludeDirs.isNotEmpty() && (!mediaExcludeDirs.containsAll(allMediaExcludeDirList!!) || !allMediaExcludeDirList.containsAll(mediaExcludeDirs)))
-            ) {
-                resetServer = true
-            }
+                if (scanAutomatically == "on" &&
+                    (mediaExcludeDirs.isNotEmpty() && (!mediaExcludeDirs.containsAll(allMediaExcludeDirList!!) || !allMediaExcludeDirList.containsAll(
+                        mediaExcludeDirs
+                    )))
+                ) {
+                    resetServer = true
+                }
 
             mediaDirRepository?.deleteByExclude(true)
             for (mediaDir in mediaExcludeDirs) {
                 if (mediaDir.trim().isNotBlank()) {
                     var mediaDirObj = mediaDirRepository?.findByExcludeIsAndDirectory(true, mediaDir)
+
                     if (mediaDirObj == null) {
                         mediaDirObj = MediaDirectory()
                         mediaDirObj.setDirectory(mediaDir)
@@ -429,6 +434,7 @@ class SettingsController {
                     if (!Files.exists(path)) {
                         dirDneString += "$mediaDir,"
                     }
+
                 }
             }
             mediaDirRepository?.saveAll(mediaExcludeDirArrayList)
@@ -1296,7 +1302,7 @@ class SettingsController {
                             val inputAsString = stream.bufferedReader().use { it.readText() }
                             val importedMetadata = mapper.readValue(inputAsString, Metadata::class.java)
                             if (importedMetadata != null) {
-                                val foundMetadataRecord = metadataRepository?.findById(importedMetadata.getId())
+                                val foundMetadataRecord = metadataRepository?.findById(importedMetadata.getId()!!)
 
                                 if (foundMetadataRecord != null && foundMetadataRecord.isPresent && !foundMetadataRecord.isEmpty) {
                                     val foundMetadata = foundMetadataRecord.get()
@@ -1514,7 +1520,7 @@ class SettingsController {
             importedMetadata.getLng() != foundMetadata.getLng() ||
             (importedMetadata.getHidden() != foundMetadata.getHidden() && importedMetadata.getHidden() != null && foundMetadata.getHidden() != null))
         ) {
-            val metadataRepo = metadataRepository?.findById(importedMetadata.getId())
+            val metadataRepo = metadataRepository?.findById(importedMetadata.getId()!!)
             if (metadataRepo != null && !metadataRepo.isEmpty) {
                 val metadata = metadataRepo.get()
                 metadata.setTitle(importedMetadata.getTitle())
@@ -1739,7 +1745,7 @@ class SettingsController {
                                                     "File " + metadata.getPath() + " no longer exists. Deleting metadata: " + metadata.getId()
                                                 )
                                                 val albumPhotoCommentList =
-                                                    albumPhotoCommentRepository?.findByMetadataId(metadata.getId())
+                                                    albumPhotoCommentRepository?.findByMetadataId(metadata.getId()!!)
                                                 if (albumPhotoCommentList != null) {
                                                     for (albumPhotoComment in albumPhotoCommentList) {
                                                         if (albumPhotoComment != null) {
@@ -1751,7 +1757,7 @@ class SettingsController {
                                                         }
                                                     }
                                                 }
-                                                albumPhotoCommentRepository?.deleteByMetadataId(metadata.getId())
+                                                albumPhotoCommentRepository?.deleteByMetadataId(metadata.getId()!!)
                                                 logger.log(
                                                     Level.INFO,
                                                     "Removed comment records for: " + metadata.getId()
@@ -1765,7 +1771,7 @@ class SettingsController {
                                                 )
 
                                                 // Delete from keywords
-                                                keywordPhotoRepository?.deleteAllByMetadataId(metadata.getId())
+                                                keywordPhotoRepository?.deleteAllByMetadataId(metadata.getId()!!)
                                                 val keywords = keywordRepository?.findAll()
                                                 if (keywords != null) {
                                                     for (keywordObj in keywords) {
@@ -1821,7 +1827,7 @@ class SettingsController {
 
                                                 // Delete tagged people
                                                 val recognitionLabelPhotos =
-                                                    recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
+                                                    recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId()!!)
                                                 if (settings != null && compreFaceServerConnected) {
                                                     val webClient = WebClient.create(settings.getCompreFaceServer()!!)
                                                     if (recognitionLabelPhotos != null) {
@@ -1829,26 +1835,23 @@ class SettingsController {
                                                             if (recognitionLabelPhoto.getCompreFaceImageId() != null && recognitionLabelPhoto.getCompreFaceImageId()!!
                                                                     .isNotBlank()
                                                             ) {
-                                                                try {
-                                                                    webClient.delete()
-                                                                        .uri("api/v1/recognition/faces/${recognitionLabelPhoto.getCompreFaceImageId()}")
-                                                                        .header(
-                                                                            "x-api-key",
-                                                                            settings.getCompreFaceKey()
-                                                                        )
-                                                                        .retrieve()
-                                                                        .bodyToMono(String::class.java)
-                                                                        .block()
-                                                                } catch (e: Exception) {
-                                                                }
+                                                                webClient.delete()
+                                                                    .uri("api/v1/recognition/faces/${recognitionLabelPhoto.getCompreFaceImageId()}")
+                                                                    .header(
+                                                                        "x-api-key",
+                                                                        settings.getCompreFaceKey()
+                                                                    )
+                                                                    .retrieve()
+                                                                    .bodyToMono(String::class.java)
+                                                                    .block()
                                                             }
                                                         }
                                                     }
                                                 }
-                                                recognitionLabelPhotoRepository?.deleteByMetadataId(metadata.getId())
+                                                recognitionLabelPhotoRepository?.deleteByMetadataId(metadata.getId()!!)
 
                                                 // Delete metadata
-                                                metadataRepository?.deleteById(metadata.getId())
+                                                metadataRepository?.deleteById(metadata.getId()!!)
                                                 logger.log(
                                                     Level.INFO,
                                                     "Removed metadata records for: " + metadata.getId()
@@ -1981,9 +1984,10 @@ class SettingsController {
                                 }
 
                                 for ((index, metadataId) in metadataIdArray.withIndex()) {
-                                    val metadataObj = metadataRepository?.findByMetadataId(metadataId)
+                                    val metadataObjOpt = metadataRepository?.findByMetadataId(metadataId)
 
-                                    if (metadataObj != null) {
+                                    if (metadataObjOpt != null) {
+                                        val metadataObj = metadataObjOpt
                                         val lat = metadataObj.getLat()
                                         val lng = metadataObj.getLng()
                                         if (!lat.isNullOrBlank() && !lng.isNullOrBlank()) {
@@ -1995,7 +1999,10 @@ class SettingsController {
 
                                                 val engine = TimeZoneEngine.initialize()
                                                 val maybeZoneId: Optional<ZoneId> =
-                                                    engine.query(lat.toString().toDouble(), lng.toString().toDouble())
+                                                    engine.query(
+                                                        lat.toString().toDouble(),
+                                                        lng.toString().toDouble()
+                                                    )
                                                 val zone = ZoneId.of(maybeZoneId.get().id)
                                                 val dt = LocalDateTime.now()
                                                 val zdt: ZonedDateTime = dt.atZone(zone)
@@ -2032,7 +2039,10 @@ class SettingsController {
                                                                         HttpHeaders.CONTENT_TYPE,
                                                                         MediaType.MULTIPART_FORM_DATA.toString()
                                                                     )
-                                                                    .header("x-api-key", settings.getCompreFaceKey())
+                                                                    .header(
+                                                                        "x-api-key",
+                                                                        settings.getCompreFaceKey()
+                                                                    )
                                                                     .body(BodyInserters.fromMultipartData(builder.build()))
                                                                     .retrieve()
                                                                     .bodyToMono(String::class.java)
@@ -2044,20 +2054,27 @@ class SettingsController {
                                                                 )
                                                             } catch (e: Exception) {
                                                                 val recognitionLabelRecord =
-                                                                    recognitionLabelRepository?.findByNameIgnoreCase(TextUtils.getObjectName())
+                                                                    recognitionLabelRepository?.findByNameIgnoreCase(
+                                                                        TextUtils.getObjectName()
+                                                                    )
                                                                 var recognitionLabelObj = RecognitionLabel()
                                                                 if (recognitionLabelRecord == null) {
                                                                     recognitionLabelObj.setName(TextUtils.getObjectName())
-                                                                    recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
+                                                                    recognitionLabelObj.setCreatedAt(
+                                                                        getCurrentTimestamp()
+                                                                    )
                                                                     recognitionLabelObj.setModifiedAt(
                                                                         getCurrentTimestamp()
                                                                     )
-                                                                    recognitionLabelRepository?.save(recognitionLabelObj)
+                                                                    recognitionLabelRepository?.save(
+                                                                        recognitionLabelObj
+                                                                    )
                                                                 } else {
                                                                     recognitionLabelObj = recognitionLabelRecord
                                                                 }
 
-                                                                val recognitionLabelPhotoObj = RecognitionLabelPhoto()
+                                                                val recognitionLabelPhotoObj =
+                                                                    RecognitionLabelPhoto()
                                                                 recognitionLabelPhotoObj.setMetadataId(metadataObj.getId())
                                                                 recognitionLabelPhotoObj.setRecognitionLabelId(
                                                                     recognitionLabelObj.getId()
@@ -2139,9 +2156,11 @@ class SettingsController {
                                                                                     )
                                                                                 }
 
-                                                                                var compreFaceImageId: String? = null
+                                                                                var compreFaceImageId: String? =
+                                                                                    null
                                                                                 if (response != null) {
-                                                                                    jsonObj = mapper.readTree(response)
+                                                                                    jsonObj =
+                                                                                        mapper.readTree(response)
                                                                                     if (jsonObj.has("image_id")) {
                                                                                         compreFaceImageId =
                                                                                             jsonObj["image_id"].toString()
@@ -2165,7 +2184,7 @@ class SettingsController {
                                                                                     val recognitionLabelPhoto =
                                                                                         recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
                                                                                             recognitionLabelObj.getId(),
-                                                                                            metadataObj.getId()
+                                                                                            metadataObj.getId()!!
                                                                                         )
 
                                                                                     if (recognitionLabelPhoto == 0) {
@@ -2217,9 +2236,12 @@ class SettingsController {
                                                         )
                                                     }
                                                 } else {
-                                                    val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
-                                                    val vggfaceFileExists = classLoader.getResource("lib/vggface2.pt") != null
-                                                    val retinafaceFileExists = classLoader.getResource("lib/retinaface.zip") != null
+                                                    val classLoader: ClassLoader =
+                                                        ShashinApplication::class.java.classLoader
+                                                    val vggfaceFileExists =
+                                                        classLoader.getResource("lib/vggface2.pt") != null
+                                                    val retinafaceFileExists =
+                                                        classLoader.getResource("lib/retinaface.zip") != null
                                                     if (vggfaceFileExists && retinafaceFileExists) {
                                                         val testImage = mutableListOf<Metadata>()
                                                         testImage.add(metadataObj)
@@ -2227,6 +2249,7 @@ class SettingsController {
                                                             settings.getRecognitionConfidenceThreshold()!!,
                                                             settings.getTrainingDataLimit()!!
                                                         )
+
                                                         val faceRecognizer = DjlFaceRecognizer(
                                                             testImage,
                                                             trainingData!!,
@@ -2243,12 +2266,16 @@ class SettingsController {
                                                             Level.WARNING,
                                                             "Missing lib files for DJL face scan"
                                                         )
-                                                        FileUtils.writeToThreadFileAndLogMessage("Missing lib files for DJL face scan", threadFile)
+                                                        FileUtils.writeToThreadFileAndLogMessage(
+                                                            "Missing lib files for DJL face scan",
+                                                            threadFile
+                                                        )
 
                                                         if (superAdminsUsers != null && index < 1) {
                                                             val notificationObjList = mutableListOf<Notification>()
                                                             val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
-                                                            sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                                                            sdtf.timeZone =
+                                                                TimeZone.getTimeZone(ZoneId.systemDefault())
                                                             for (admin in superAdminsUsers) {
                                                                 val notificationObj = Notification()
                                                                 notificationObj.setUserId(admin.getId())
@@ -2407,9 +2434,9 @@ class SettingsController {
                         if (!shouldStop.get() && FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
                             val metadataProcessing = MetadataProcessing(apiVersion!!, file, sidecarDir, metadataObj!!, geocodeUrl!!)
                             metadataObj = metadataProcessing.populateMetadata()
-                            if (metadataObj.getId().isNotEmpty()) {
+                            if (metadataObj.getId()!!.isNotEmpty()) {
                                 // Check for entry
-                                val metadataCount = metadataRepository?.countMetadataById(metadataObj.getId())
+                                val metadataCount = metadataRepository?.countMetadataById(metadataObj.getId()!!)
 
                                 if (metadataCount == 0) {
                                     val imageProcessing = ImageProcessing(apiVersion, file, sidecarDir, metadataObj)
@@ -2418,7 +2445,7 @@ class SettingsController {
                                         metadataObj.setHidden(false)
 
                                         metadataRepository?.save(metadataObj)
-                                        metadataIdArray.add(metadataObj.getId())
+                                        metadataIdArray.add(metadataObj.getId()!!)
                                     } else {
                                         logger.log(
                                             Level.WARNING,

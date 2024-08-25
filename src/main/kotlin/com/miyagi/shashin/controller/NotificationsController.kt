@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*
 import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.util.*
-import javax.transaction.Transactional
+import jakarta.transaction.Transactional
 
 @Controller
 @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")

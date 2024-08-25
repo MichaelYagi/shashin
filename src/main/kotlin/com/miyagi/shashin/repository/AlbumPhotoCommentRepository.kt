@@ -3,7 +3,7 @@ package com.miyagi.shashin.repository
 import com.miyagi.shashin.model.AlbumPhotoComment
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
-import javax.transaction.Transactional
+import jakarta.transaction.Transactional
 
 @Transactional
 @Repository

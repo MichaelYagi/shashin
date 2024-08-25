@@ -6,12 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScaperMessage
 import com.miyagi.shashin.configuration.MultiSecurityConfig
-import com.miyagi.shashin.model.SearchHistory
-import com.miyagi.shashin.model.Settings
-import com.miyagi.shashin.model.User
-import com.miyagi.shashin.model.UserAlbum
-import com.miyagi.shashin.repository.MetadataRepository
-import com.miyagi.shashin.repository.SearchHistoryRepository
+import com.miyagi.shashin.model.*
+import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.*
 import com.sun.management.OperatingSystemMXBean
 import net.coobird.thumbnailator.Thumbnails
@@ -57,15 +53,24 @@ import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
-import javax.servlet.http.HttpSession
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpSession
 import javax.xml.bind.DatatypeConverter
 import kotlin.io.path.isDirectory
 
 
 @Controller
 class ToolsController {
+
+    @Autowired
+    private lateinit var albumRepository: AlbumRepository
+
+    @Autowired
+    private lateinit var settingsRepository: SettingsRepository
+
+    @Autowired
+    private lateinit var keywordRepository: KeywordRepository
 
     @Autowired
     private lateinit var metaRepository: MetadataRepository
@@ -199,20 +204,20 @@ class ToolsController {
         }
 
         val dbTimingStart = Date()
-        val metadataResult = metaRepository.findAllByOffsetAndLimit(0,500)
-        val dbTimingEnd = Date()
         var sqlLiteQueryCount = 0
 
         try {
-            response["sqlLiteAvailable"] = "OK"
-//            response["sqlLiteQueryCount"] = metadataResult.count()
+            val metadataResult = metaRepository.findAllByOffsetAndLimit(0, 500)
             sqlLiteQueryCount = metadataResult.count()
+            response["sqlLiteAvailable"] = "OK"
+            response["sqlLiteQueryCount"] = sqlLiteQueryCount
         } catch (e: Exception) {
             response["sqlLiteAvailable"] = "FAIL"
-//            response["sqlLiteQueryCount"] = sqlLiteQueryCount
+            response["sqlLiteQueryCount"] = sqlLiteQueryCount
             status = "FAIL"
             logger.log(Level.WARNING, "HealthEP - Error querying SQLLite: ${e.message}")
         }
+        val dbTimingEnd = Date()
 
         val dbTimingDiff: Long = dbTimingEnd.time - dbTimingStart.time
 //        response["sqlLiteQueryTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(dbTimingDiff))

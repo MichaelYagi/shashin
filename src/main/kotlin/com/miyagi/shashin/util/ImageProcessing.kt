@@ -36,10 +36,12 @@ import java.awt.image.ConvolveOp
 import java.awt.image.Kernel
 import java.io.File
 import java.io.IOException
+import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
+import kotlin.collections.ArrayList
 import kotlin.reflect.jvm.internal.impl.types.checker.ClassicTypeSystemContext.DefaultImpls.original
 
 
@@ -481,6 +483,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         private var logger: Logger = Logger.getLogger(FileUtils::class.simpleName)
 
         fun createVideoGif(metadataId: String, metadataRepository: MetadataRepository?) {
+
             val metadataObj = metadataRepository?.findByMetadataId(metadataId)
 
             if (metadataObj != null && metadataObj.getType()!!.contains("video", ignoreCase = true)) {
@@ -562,7 +565,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             val keywordPhotoCount =
                 keywordPhotoRepository.countByKeywordIdAndMetadataId(
                     keywordObj.getId(),
-                    metadataObj.getId()
+                    metadataObj.getId()!!
                 )
             if (keywordPhotoCount == 0) {
                 val keywordPhotoObj = KeywordPhoto()
@@ -886,7 +889,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                             break
                         }
 
-                        val metadataObj = metadataRepository.findById(testImage.getId()).get()
+                        val metadataObj = metadataRepository!!.findById(testImage.getId()!!).get()
 
                         // Facial recognition
                         val faceFsr = FileSystemResource(metadataObj.getThumbnailPathSmall()!!)
@@ -932,7 +935,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                             recognitionLabelPhotoObj.setMetadataId(metadataObj.getId())
                             recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
                             recognitionLabelPhotoObj.setConfidence("-0.1")
-                            recognitionLabelPhotoRepository.save(recognitionLabelPhotoObj)
+                            recognitionLabelPhotoRepository!!.save(recognitionLabelPhotoObj)
 
                             logger.log(
                                 Level.WARNING,
@@ -1037,7 +1040,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
                                                 if (recognitionLabelObj != null) {
                                                     val recognitionLabelPhoto =
-                                                        recognitionLabelPhotoRepository.countByRecognitionLabelIdAndMetadataId(
+                                                        recognitionLabelPhotoRepository!!.countByRecognitionLabelIdAndMetadataId(
                                                             recognitionLabelObj.getId(),
                                                             metadataObj.getId()
                                                         )
@@ -1098,17 +1101,18 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     val vggfaceFileExists = classLoader.getResource("lib/vggface2.pt") != null
                     val retinafaceFileExists = classLoader.getResource("lib/retinaface.zip") != null
                     if (vggfaceFileExists && retinafaceFileExists) {
-                        val trainingData = metadataRepository.findTrainingData(
+                        val trainingData = metadataRepository!!.findTrainingData(
                             settings.getRecognitionConfidenceThreshold()!!,
                             settings.getTrainingDataLimit()!!
                         )
+
                         var stop = AtomicBoolean(false)
                         if (shouldStop != null) {
                             stop = shouldStop
                         }
                         val faceRecognizer = DjlFaceRecognizer(
                             testImages,
-                            trainingData,
+                            trainingData!!,
                             recognitionLabelPhotoRepository,
                             recognitionLabelRepository,
                             settings,

@@ -186,7 +186,7 @@ class MetadataProcessing() {
                                                     val sourceDateFormat =
                                                         SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.ENGLISH)
                                                     date = sourceDateFormat.parse(tag.description)
-                                                } catch (e: Exception) {
+                                                } catch (_: Exception) {
                                                     // Do nothing
                                                 }
                                             }
@@ -262,7 +262,7 @@ class MetadataProcessing() {
                                                 val sourceDateFormat =
                                                     SimpleDateFormat("EEE. MMM. dd HH:mm:ss XXX yyyy", Locale.ENGLISH)
                                                 date = sourceDateFormat.parse(tag.description)
-                                            } catch (e: Exception) {
+                                            } catch (_: Exception) {
                                                 // Do nothing
                                             }
                                         }
@@ -410,11 +410,8 @@ class MetadataProcessing() {
                             }
                             "F-Number" -> {
                                 val regex = "\\d+(\\.\\d+)?".toRegex()
-                                var matchValue = ""
-                                try {
-                                    val match = regex.find(tag.description)!!
-                                    matchValue=match.value
-                                } catch (_: Exception) {}
+                                val match = regex.find(tag.description)!!
+                                val matchValue = match.value
 
                                 if (matchValue.isNotBlank()) {
                                     this.metadataObj.setFstopNumber(matchValue.toDouble())

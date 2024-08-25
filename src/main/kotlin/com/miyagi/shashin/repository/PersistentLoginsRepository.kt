@@ -13,9 +13,9 @@ import org.springframework.transaction.annotation.Transactional
 interface PersistentLoginsRepository : CrudRepository<PersistentLogins?, String?> {
     fun countPersistentLoginsBySeries(series: String): Int
     fun deleteBySeries(series: String): Int
-    @Query("SELECT pl.username, pl.series, pl.token, ple.expiry, ple.host, ple.useragent FROM persistent_logins pl INNER JOIN persistent_logins_expiry ple on pl.series = ple.series WHERE pl.series = :series", nativeQuery = true)
+    @Query("SELECT pl.username, pl.series, pl.token, ple.expiry, ple.host, ple.useragent FROM persistentLogins pl INNER JOIN persistentLoginsExpiry ple on pl.series = ple.series WHERE pl.series = :series", nativeQuery = true)
     fun findPersistentLoginsDetails(series: String): PersistentLoginsDetails
-    @Query("SELECT pl.username, pl.series, pl.token, ple.expiry, ple.host, ple.useragent FROM persistent_logins pl INNER JOIN persistent_logins_expiry ple on pl.series = ple.series", nativeQuery = true)
+    @Query("SELECT pl.username, pl.series, pl.token, ple.expiry, ple.host, ple.useragent FROM persistentLogins pl INNER JOIN persistentLoginsExpiry ple on pl.series = ple.series", nativeQuery = true)
     fun findAllPersistentLoginsDetails(): MutableIterable<PersistentLoginsDetails?>?
 
 }

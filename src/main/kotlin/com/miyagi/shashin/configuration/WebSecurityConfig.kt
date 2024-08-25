@@ -3,6 +3,7 @@ package com.miyagi.shashin.configuration
 import com.miyagi.shashin.component.*
 import com.miyagi.shashin.configuration.MultiSecurityConfig.Companion.publicList
 import com.miyagi.shashin.repository.UserRepository
+import jakarta.servlet.DispatcherType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean
@@ -32,7 +33,6 @@ import org.springframework.security.web.header.HeaderWriterFilter
 import org.springframework.security.web.session.HttpSessionEventPublisher
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import java.util.*
-import javax.servlet.DispatcherType
 import javax.sql.DataSource
 
 

@@ -13,7 +13,8 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.*
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
+import org.springframework.web.bind.annotation.RestController
 
 @Suppress("UNCHECKED_CAST")
 @Controller

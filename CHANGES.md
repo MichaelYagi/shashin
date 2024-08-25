@@ -2,6 +2,17 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.6.0] - 2024-08-24
+### Added
+
+### Changed
+
+- Updated to Spring Boot 3.x.x
+- Updated from Java 11 to 17
+- Updated Hibernate JPA to 6.x.x
+
+### Fixed
+
 ## [2.5.1] - 2024-06-02
 ### Added
 

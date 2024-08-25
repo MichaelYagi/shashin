@@ -17,7 +17,7 @@ import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.*
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 import kotlin.collections.HashMap
 
 @Controller
@@ -476,7 +476,7 @@ class BrowseController: BaseController() {
     @ResponseBody
     fun getMetadataList(model: Model,@PathVariable module: String,@PathVariable page: Int, @RequestParam folder: Optional<String>): String {
         val response = mutableMapOf<String, Any?>()
-        var metadataList = mutableListOf<Metadata>()
+        var metadataList: MutableIterable<Metadata>? = null
         response["metadataList"] = mutableListOf<Metadata>()
         response["msg"] = "Results"
         response["status"] = ApiResponse.SUCCESS.status
@@ -502,13 +502,9 @@ class BrowseController: BaseController() {
                     size
                 ).toMutableList()
             }
-
-            if (metadataList.isNotEmpty()) {
-                response["metadataList"] = metadataList
-            }
         }
 
-        if (metadataList.isNotEmpty()) {
+        if (metadataList != null) {
             response["metadataList"] = metadataList
         }
 
@@ -523,12 +519,14 @@ class BrowseController: BaseController() {
         response["status"] = ApiResponse.FAIL.status
         response["albumList"] = mutableListOf<Album>()
 
-        val albumList = albumRepository.findAllOrderByAlbumName()
-        if (albumList != null && albumList.count() > 0) {
-            response["albumList"] = albumList
-            response["msg"] = "Results"
-            response["status"] = ApiResponse.SUCCESS.status
-        }
+        try {
+            val albumList = albumRepository.findAllOrderByAlbumName()
+            if (albumList != null && albumList.count() > 0) {
+                response["albumList"] = albumList
+                response["msg"] = "Results"
+                response["status"] = ApiResponse.SUCCESS.status
+            }
+        } catch(_: Exception) {}
 
         return mapper.writeValueAsString(response)
     }
@@ -619,7 +617,8 @@ class BrowseController: BaseController() {
                 response["message"] = ""
                 response["favorites"] = favoritesMap
 
-                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
+                val recognitionLabels =
+                    recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
                 if (recognitionLabels != null && recognitionLabels.count() > 0) {
                     response["recognitionLabels"] = recognitionLabels
                 }
@@ -634,9 +633,9 @@ class BrowseController: BaseController() {
                     if (favorites != null) {
                         for (favorite in favorites) {
                             if (favorite != null) {
-                                favoritesMap[metadata.getId()] = hashMapOf(
+                                favoritesMap[metadata.getId()!!] = hashMapOf(
                                     "favorite" to (favorite.getUserId() == currentUserObj?.getId()),
-                                    "count" to favoriteRepository.countAllByMetadataId(metadata.getId())
+                                    "count" to favoriteRepository.countAllByMetadataId(metadata.getId()!!)
                                 )
 
                                 if ((favorite.getUserId() == currentUserObj?.getId())) {
@@ -645,7 +644,8 @@ class BrowseController: BaseController() {
                             }
                         }
                     }
-                    val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
+
+                    val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId()!!)
                     var labelString = ""
                     if (recognitionLabelPhotos != null && recognitionLabelPhotos.count() > 0) {
                         for (recognitionLabelPhoto in recognitionLabelPhotos) {
@@ -660,7 +660,7 @@ class BrowseController: BaseController() {
                     }
                     if (labelString.isNotBlank()) {
                         labelString = labelString.dropLast(1)
-                        labelPhotoMap[metadata.getId()] = labelString
+                        labelPhotoMap[metadata.getId()!!] = labelString
                     }
 
                     val albumPhotos = albumPhotoRepository.findAlbumPhotoByMetadataId(metadata.getId())
@@ -677,7 +677,9 @@ class BrowseController: BaseController() {
                     }
 
                     val keywords = keywordRepository.findKeywordsByMetadataId(metadata.getId())
+
                     var keywordMetadataList = ""
+
                     for (keyword in keywords) {
                         keywordMetadataList += keyword.getKeyword()+","
                     }
@@ -770,6 +772,7 @@ class BrowseController: BaseController() {
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
             val pageValue = page*size
+
             val folderObj = metadataRepository.findFoldersOffsetAndLimit(pageValue, size)
 
             if (folderObj != null && folderObj.count() > 0) {
@@ -1102,18 +1105,19 @@ class BrowseController: BaseController() {
 
             val favoritesMap = HashMap<String, HashMap<String, Any>>()
 
-            val metadataList: MutableList<Metadata> = metadataRepository.findAllByFolderOffsetAndLimit(
+            val metadataList = metadataRepository.findAllByFolderOffsetAndLimit(
                 folder,
                 pageValue,
                 size
             ).toMutableList()
 
-            if (metadataList.isNotEmpty()) {
+            if (!metadataList.isNullOrEmpty()) {
                 response["metadataList"] = metadataList
                 response["message"] = ""
                 response["favorites"] = favoritesMap
 
-                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
+                val recognitionLabels =
+                    recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
                 if (recognitionLabels != null && recognitionLabels.count() > 0) {
                     response["recognitionLabels"] = recognitionLabels
                 }
@@ -1127,9 +1131,9 @@ class BrowseController: BaseController() {
                     if (favorites != null) {
                         for (favorite in favorites) {
                             if (favorite != null) {
-                                favoritesMap[metadata.getId()] = hashMapOf(
+                                favoritesMap[metadata.getId()!!] = hashMapOf(
                                     "favorite" to (favorite.getUserId() == currentUserObj?.getId()),
-                                    "count" to favoriteRepository.countAllByMetadataId(metadata.getId())
+                                    "count" to favoriteRepository.countAllByMetadataId(metadata.getId()!!)
                                 )
 
                                 if ((favorite.getUserId() == currentUserObj?.getId())) {
@@ -1138,7 +1142,7 @@ class BrowseController: BaseController() {
                             }
                         }
                     }
-                    val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
+                    val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId()!!)
                     var labelString = ""
                     if (recognitionLabelPhotos != null) {
                         for (recognitionLabelPhoto in recognitionLabelPhotos) {
@@ -1150,7 +1154,7 @@ class BrowseController: BaseController() {
                     }
                     if (labelString.isNotBlank()) {
                         labelString = labelString.dropLast(1)
-                        labelPhotoMap[metadata.getId()] = labelString
+                        labelPhotoMap[metadata.getId()!!] = labelString
                     }
 
                     val albumPhotos = albumPhotoRepository.findAlbumPhotoByMetadataId(metadata.getId())
@@ -1162,11 +1166,12 @@ class BrowseController: BaseController() {
                         }
                         if (albumMetadataList.isNotEmpty()) {
                             albumMetadataList = albumMetadataList.dropLast(1)
-                            albumMap[metadata.getId()] = albumMetadataList
+                            albumMap[metadata.getId()!!] = albumMetadataList
                         }
                     }
 
                     val keywords = keywordRepository.findKeywordsByMetadataId(metadata.getId())
+
                     var keywordMetadataList = ""
                     for (keyword in keywords) {
                         keywordMetadataList += keyword.getKeyword()+","
@@ -1174,7 +1179,7 @@ class BrowseController: BaseController() {
                     if (keywordMetadataList.isNotEmpty()) {
                         keywordMetadataList = keywordMetadataList.dropLast(1)
                     }
-                    keywordMap[metadata.getId()] = keywordMetadataList
+                    keywordMap[metadata.getId()!!] = keywordMetadataList
                 }
                 response["labelPhotoMap"] = labelPhotoMap
                 response["albumMap"] = albumMap

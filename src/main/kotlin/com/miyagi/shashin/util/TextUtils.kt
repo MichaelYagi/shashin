@@ -15,8 +15,8 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 
 
 @Component
@@ -253,9 +253,9 @@ class TextUtils {
 
         fun getPlaceNamesForDateHeader(year: Int, month: Int, day: Int, metadataRepository:MetadataRepository, type: String = "all"): MutableList<String> {
             val metadataList = if (type == "all") {
-                metadataRepository.findTimelinePlaceByDate(year, month, day)
+                metadataRepository.findTimelinePlaceByDate(year, month, day) as MutableList<Metadata>
             } else {
-                metadataRepository.findTimelinePlaceByDateAndType(year, month, day, type)
+                metadataRepository.findTimelinePlaceByDateAndType(year, month, day, type) as MutableList<Metadata>
             }
 
             return sortPlaceNames(metadataList)

@@ -2,8 +2,8 @@ package com.miyagi.shashin.model
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.io.IOException
-import javax.persistence.*
-import javax.validation.constraints.NotBlank
+import jakarta.persistence.*
+import jakarta.validation.constraints.NotBlank
 
 @Entity
 @Table(name = "useralbum", uniqueConstraints = [UniqueConstraint(columnNames = arrayOf("albumId", "userId"))])

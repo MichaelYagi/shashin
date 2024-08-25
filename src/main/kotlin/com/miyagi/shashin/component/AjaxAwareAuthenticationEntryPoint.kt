@@ -14,9 +14,9 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository
 import org.springframework.ui.set
 import java.io.IOException
-import javax.servlet.ServletException
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import jakarta.servlet.ServletException
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 
 class AjaxAwareAuthenticationEntryPoint(loginFormUrl: String?) : LoginUrlAuthenticationEntryPoint(loginFormUrl) {
 

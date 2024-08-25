@@ -128,17 +128,15 @@ class APITests: BaseSeleniumTests() {
         var jsonNode: JsonNode? = null
         val mapper = ObjectMapper()
 
-        try {
-            val response = webClient.get()
-                .uri("/api/v1/recent")
-                .header("x-api-key", "00000000-00000000-00000000-00000000")
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-                .retrieve()
-                .bodyToMono(String::class.java)
-                .block()
+        val response = webClient.get()
+            .uri("/api/v1/recent")
+            .header("x-api-key", "00000000-00000000-00000000-00000000")
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            .retrieve()
+            .bodyToMono(String::class.java)
+            .block()
 
-            jsonString = response
-        } catch (_: Exception) {}
+        jsonString = response
 
         if (!jsonString.isNullOrBlank()) {
             jsonNode = mapper.readTree(jsonString)
@@ -175,17 +173,15 @@ println(jsonString)
         var jsonNode: JsonNode?
         val mapper = ObjectMapper()
 
-        try {
-            val response = webClient.get()
-                .uri("api/v1/health")
-                .header("x-api-key", "00000000-00000000-00000000-00000000")
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-                .retrieve()
-                .bodyToMono(String::class.java)
-                .block()
+        val response = webClient.get()
+            .uri("api/v1/health")
+            .header("x-api-key", "00000000-00000000-00000000-00000000")
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            .retrieve()
+            .bodyToMono(String::class.java)
+            .block()
 
-            jsonString = response
-        } catch (_: Exception) {}
+        jsonString = response
 
         var status = ""
         var os = ""
@@ -198,18 +194,13 @@ println(jsonString)
         Assertions.assertTrue(status == "OK")
         Assertions.assertTrue(os.isNotEmpty())
 
-        jsonString = ""
-        try {
-            val response = webClient.get()
-                .uri("api/v1/status")
-                .header("x-api-key", "00000000-00000000-00000000-00000001")
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-                .retrieve()
-                .bodyToMono(String::class.java)
-                .block()
-
-            jsonString = response
-        } catch (_: Exception) {}
+        jsonString = webClient.get()
+            .uri("api/v1/status")
+            .header("x-api-key", "00000000-00000000-00000000-00000001")
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            .retrieve()
+            .bodyToMono(String::class.java)
+            .block()
 
         var singleStatus = ""
         if (!jsonString.isNullOrBlank()) {

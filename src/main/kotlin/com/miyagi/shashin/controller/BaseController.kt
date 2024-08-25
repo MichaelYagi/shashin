@@ -1,6 +1,7 @@
 package com.miyagi.shashin.controller
 
 import com.miyagi.shashin.model.Album
+import com.miyagi.shashin.model.Keyword
 import com.miyagi.shashin.model.RecognitionLabel
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.TextUtils
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
+import org.springframework.web.bind.annotation.RestController
 
 @Controller
 class BaseController {
@@ -41,8 +43,9 @@ class BaseController {
 
         model["timeOffsets"] = TextUtils.timeOffsets()
 
-        val keywordList = keywordRepository?.findAllDistinctOrderByKeyword()
+        val keywordList: MutableIterable<Keyword>?
         var keywords = ""
+        keywordList = keywordRepository?.findAllDistinctOrderByKeyword()
         if (keywordList != null && keywordList.count() > 0) {
             keywords = keywordList.map { it.getKeyword() }.joinToString(",")
         }

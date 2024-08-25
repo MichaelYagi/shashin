@@ -17,10 +17,6 @@ import org.springframework.http.*
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.ResponseBody
 import ws.schild.jave.Encoder
 import ws.schild.jave.MultimediaObject
 import ws.schild.jave.encode.AudioAttributes
@@ -37,9 +33,10 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
-import javax.activation.URLDataSource
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import jakarta.activation.URLDataSource
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.web.bind.annotation.*
 
 
 @Controller
