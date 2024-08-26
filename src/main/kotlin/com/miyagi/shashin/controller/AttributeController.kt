@@ -1,6 +1,8 @@
 package com.miyagi.shashin.controller
 
+import com.miyagi.shashin.ShashinApplication
 import com.miyagi.shashin.component.ApiError
+import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.PersistentLoginsExpiryRepository
@@ -9,6 +11,7 @@ import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
+import com.miyagi.shashin.util.NetworkUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
@@ -43,6 +46,10 @@ import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.transaction.Transactional
+import java.io.File
+import java.net.URL
+import java.nio.file.Files
+import java.nio.file.Paths
 
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -258,6 +265,10 @@ class AttributeController: ResponseEntityExceptionHandler() {
             settingsObj.setModifiedAt(getCurrentTimestamp())
             model["settings"] = settingsObj
         }
+
+        // Check for face recog files
+        FileUtils.loadFaceRecogFiles(settings)
+
         model["searchHistoryLimit"] = searchHistoryLimit
         model["queryLimit"] = queryLimit
         model["apiVersion"] = apiVersion

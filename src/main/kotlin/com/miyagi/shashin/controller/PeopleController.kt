@@ -171,7 +171,7 @@ class PeopleController: BaseController() {
                 val threadFile = FileUtils.createThreadFile(threadExtensionName)
                 val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
                 val vggfaceFileExists = classLoader.getResource("lib/vggface2.pt") != null
-                val retinafaceFileExists = classLoader.getResource("lib/retinaface.zip") != null
+                val retinafaceFileExists = classLoader.getResource("lib/retinaface.pt") != null
 
                 if ((!vggfaceFileExists || !retinafaceFileExists) && !NetworkUtils.checkCompreFaceConnection(
                         settings.getCompreFaceServer(),
