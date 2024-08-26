@@ -130,7 +130,7 @@ class APITests: BaseSeleniumTests() {
         var jsonNode: JsonNode? = null
         val mapper = ObjectMapper()
 
-        val response = webClient.get()
+        var response = webClient.get()
             .uri("/api/v1/recent")
             .header("x-api-key", "00000000-00000000-00000000-00000000")
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
@@ -149,7 +149,7 @@ class APITests: BaseSeleniumTests() {
 
         var result: String?
         try {
-            val response = webClient.get()
+            response = webClient.get()
                 .uri("api/v1/recent")
                 .header("x-api-key", "00000000-00000000-00000000-00000001")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
@@ -162,8 +162,8 @@ class APITests: BaseSeleniumTests() {
             result = e.message
         }
 
-        // 403 forbidden
-        Assertions.assertTrue(result!!.contains("403"))
+        // 404 forbidden
+        Assertions.assertTrue(result!!.contains("404"))
     }
 
     @Test

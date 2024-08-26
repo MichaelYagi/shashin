@@ -85,7 +85,7 @@ class TimelineControllerApiTest {
     @Test
     @WithMockUser(username = "testuser", roles = ["USER"])
     @Throws(Exception::class)
-    fun shouldReturn403WhenSendingRequestToTimelineApiWithRoleUser() {
+    fun shouldReturn4xxWhenSendingRequestToTimelineApiWithRoleUser() {
         mockMvc!!.perform(
             get("/api/v1/timeline/0")
                 .header("Content-Type", "application/json")
