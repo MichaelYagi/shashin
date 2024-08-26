@@ -35,8 +35,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import java.util.*
 import javax.sql.DataSource
 
-
-@EnableMethodSecurity(securedEnabled = true)
 // Used to validate URL paths for login redirect
 class MultiSecurityConfig {
     companion object {
@@ -103,13 +101,16 @@ class MultiSecurityConfig {
             "/settings/scanmessage",
             "/dashboard/statmessages",
             "/dashboard/statmessage",
-            "/download/share/**/album/**",
+//            "/download/share/**/album/**",
+            "/download/share/**",
             "/share/**",
             "/api/v1/thumbnails/**", "/api/v1/image/**", "/api/v1/video/**", "/api/v1/profile/**",
             "/image/**",
             "/video/**",
-            "/**/rss",
-            "/**/atom",
+//            "/**/rss",
+//            "/**/atom",
+            "rss",
+            "atom",
             "/users/login",
             "/users/logout"
         )
@@ -161,7 +162,7 @@ class MultiSecurityConfig {
             "slideshow",
             "map/**",
             "search/**",
-            "api/v1/album/**/page/**",
+//            "api/v1/album/**/page/**",
             "api/v1/album/**",
             "api/v1/albums",
             "api/v1/albums/**",
@@ -180,6 +181,7 @@ class MultiSecurityConfig {
     }
 }
 
+@EnableMethodSecurity(securedEnabled = true)
 @Configuration
 @Order(1)
 class ApiSecurityConfig {
@@ -223,6 +225,7 @@ class ApiSecurityConfig {
     }
 }
 
+@EnableMethodSecurity(securedEnabled = true)
 @Configuration
 @Order(2)
 class WebSecurityConfig {
@@ -326,19 +329,20 @@ class WebSecurityConfig {
             .authorizeHttpRequests {
                 it
                     .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
+                    .requestMatchers("/").permitAll()
                     .requestMatchers("/users/login").permitAll()
-                    .requestMatchers(AntPathRequestMatcher(publicList.toString())).permitAll()
-                    .requestMatchers(AntPathRequestMatcher(MultiSecurityConfig.adminList.toString()))
-                    .hasRole(adminRole.toString().replace("ROLE_", ""))
-                    .requestMatchers(AntPathRequestMatcher(MultiSecurityConfig.superList.toString()))
-                    .hasRole(superRole.toString().replace("ROLE_", ""))
-                    .requestMatchers(AntPathRequestMatcher(MultiSecurityConfig.allRoleList.toString()))
-                    .hasAnyRole(
-                        userRole.toString().replace("ROLE_", ""),
-                        adminRole.toString().replace("ROLE_", ""),
-                        superRole.toString().replace("ROLE_", "")
-                    )
-                    .anyRequest().authenticated()
+                    .requestMatchers(publicList.joinToString(",")).permitAll()
+                    .requestMatchers(MultiSecurityConfig.adminList.joinToString(","))
+                        .hasRole(adminRole.toString().replace("ROLE_", ""))
+                    .requestMatchers(MultiSecurityConfig.superList.joinToString(","))
+                        .hasRole(superRole.toString().replace("ROLE_", ""))
+                    .requestMatchers(MultiSecurityConfig.allRoleList.joinToString(","))
+                        .hasAnyRole(
+                            userRole.toString().replace("ROLE_", ""),
+                            adminRole.toString().replace("ROLE_", ""),
+                            superRole.toString().replace("ROLE_", "")
+                        )
+                        .anyRequest().authenticated()
             }
             .formLogin {
                 it
@@ -401,7 +405,7 @@ class WebSecurityConfig {
                 .httpFirewall(allowUrlEncodedSlashHttpFirewall())
                 .ignoring()
                 .requestMatchers(
-                    *MultiSecurityConfig.resourceList
+                    MultiSecurityConfig.resourceList.joinToString(",")
                 )
 
         }
