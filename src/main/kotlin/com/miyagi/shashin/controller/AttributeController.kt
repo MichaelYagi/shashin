@@ -130,14 +130,14 @@ class AttributeController: ResponseEntityExceptionHandler() {
         return buildResponseEntity(ApiError(HttpStatus.BAD_REQUEST, error, ex))
     }
 
-    @ExceptionHandler(Exception::class)
-    protected fun handleException(
-        ex: Exception
-    ): ResponseEntity<Any?>? {
-        val apiError = ApiError(HttpStatus.NOT_FOUND)
-        apiError.setMsg(ex.message)
-        return buildResponseEntity(apiError)
-    }
+//    @ExceptionHandler(Exception::class)
+//    protected fun handleException(
+//        ex: Exception
+//    ): ResponseEntity<Any?>? {
+//        val apiError = ApiError(HttpStatus.NOT_FOUND)
+//        apiError.setMsg(ex.message)
+//        return buildResponseEntity(apiError)
+//    }
 
     @ExceptionHandler(EntityNotFoundException::class)
     protected fun handleEntityNotFound(
