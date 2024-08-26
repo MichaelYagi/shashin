@@ -2241,7 +2241,7 @@ class SettingsController {
                                                     val vggfaceFileExists =
                                                         classLoader.getResource("lib/vggface2.pt") != null
                                                     val retinafaceFileExists =
-                                                        classLoader.getResource("lib/retinaface.zip") != null
+                                                        classLoader.getResource("lib/retinaface.pt") != null
                                                     if (vggfaceFileExists && retinafaceFileExists) {
                                                         val testImage = mutableListOf<Metadata>()
                                                         testImage.add(metadataObj)

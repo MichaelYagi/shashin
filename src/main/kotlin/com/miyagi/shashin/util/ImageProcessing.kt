@@ -1099,7 +1099,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 } else {
                     val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
                     val vggfaceFileExists = classLoader.getResource("lib/vggface2.pt") != null
-                    val retinafaceFileExists = classLoader.getResource("lib/retinaface.zip") != null
+                    val retinafaceFileExists = classLoader.getResource("lib/retinaface.pt") != null
                     if (vggfaceFileExists && retinafaceFileExists) {
                         val trainingData = metadataRepository!!.findTrainingData(
                             settings.getRecognitionConfidenceThreshold()!!,

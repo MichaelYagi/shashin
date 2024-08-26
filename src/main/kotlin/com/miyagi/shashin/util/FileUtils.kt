@@ -5,18 +5,23 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
+import com.miyagi.shashin.ShashinApplication
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import org.springframework.core.io.FileSystemResource
 import org.springframework.stereotype.Component
 import java.io.*
+import java.net.URL
 import java.nio.file.Files
+import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
 import java.util.zip.ZipEntry
+import java.util.zip.ZipException
+import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
 import javax.xml.bind.DatatypeConverter.parseBase64Binary
 
@@ -346,6 +351,110 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
             } catch (ex: JsonSyntaxException) {
                 return false
             }
+        }
+
+        fun loadFaceRecogFiles(settings: Settings?) {
+            val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
+            val vggfaceFileExists = classLoader.getResource("lib/vggface2.pt") != null
+            val retinafaceFileExists = classLoader.getResource("lib/retinaface.pt") != null
+
+            if (settings != null && (!vggfaceFileExists || !retinafaceFileExists) && !NetworkUtils.checkCompreFaceConnection(
+                    settings.getCompreFaceServer(),
+                    settings.getCompreFaceKey()
+                )
+            ) {
+                Thread {
+                    // Download into resource lib folder
+                    // https://github.com/jmformenti/face-recognition-java/raw/master/core/src/main/resources/models/pytorch/vggface2/vggface2.pt
+                    // https://resources.djl.ai/test-models/pytorch/retinaface.zip
+                    val baseDir = File(ClassLoader.getSystemResource("schema.sql").path).parent.replace("\\", "/")
+                    Files.createDirectories(Paths.get("$baseDir/lib"))
+                    val vggFile = File("$baseDir/lib/vggface2.pt")
+                    if (vggFile.createNewFile()) {
+                        org.apache.commons.io.FileUtils.copyURLToFile(
+                            URL("https://github.com/jmformenti/face-recognition-java/raw/master/core/src/main/resources/models/pytorch/vggface2/vggface2.pt"),
+                            File("$baseDir/lib/vggface2.pt")
+                        )
+                        if (!File("$baseDir/lib/vggface2.pt").exists()) {
+                            logger.log(Level.WARNING, "vggface2 does not exist. vggface2 could not be created")
+                        }
+                    } else {
+                        logger.log(Level.WARNING, "vggface2 could not be created")
+                    }
+
+                    val retinaFile = File("$baseDir/lib/retinaface.zip")
+                    if (retinaFile.createNewFile()) {
+                        org.apache.commons.io.FileUtils.copyURLToFile(
+                            URL("https://resources.djl.ai/test-models/pytorch/retinaface.zip"),
+                            File("$baseDir/lib/retinaface.zip")
+                        )
+                        if (!File("$baseDir/lib/retinaface.zip").exists()) {
+                            logger.log(Level.WARNING, "retinaface.zip does not exist")
+                        } else {
+                            // Unzip it
+                            FileUtils.unzip(
+                                File("$baseDir/lib/retinaface.zip"),
+                                File("$baseDir/lib/")
+                            )
+                            if (!File("$baseDir/lib/retinaface.pt").exists()) {
+                                logger.log(
+                                    Level.WARNING,
+                                    "Could not unzip, retinaface.pt does not exist. retinaface could not be created"
+                                )
+                            } else {
+                                logger.log(Level.INFO, "unzip successful for retinaface.pt")
+                            }
+                        }
+                    } else {
+                        logger.log(Level.WARNING, "retinaface could not be created")
+                    }
+                }.start()
+            } else {
+                logger.log(Level.INFO, "face recognition setup")
+            }
+        }
+
+        @Throws(ZipException::class, IOException::class)
+        fun unzip(file: File?, targetDir: File) {
+            targetDir.mkdirs()
+            val zipFile = ZipFile(file)
+
+            if (file != null && file.exists()) {
+                try {
+                    val entries: Enumeration<out ZipEntry> = zipFile.entries()
+                    while (entries.hasMoreElements()) {
+                        val entry = entries.nextElement()
+                        val targetFile = File(targetDir, entry.name)
+                        if (entry.isDirectory) {
+                            targetFile.mkdirs()
+                        } else {
+                            val input: InputStream = zipFile.getInputStream(entry)
+                            try {
+                                val output: OutputStream = FileOutputStream(targetFile)
+                                try {
+                                    copy(input, output)
+                                } finally {
+                                    output.close()
+                                }
+                            } finally {
+                                input.close()
+                            }
+                        }
+                    }
+                } finally {
+                    zipFile.close()
+                }
+            } else {
+                logger.log(Level.WARNING, "Zip file does not exist: " + file?.absolutePath)
+            }
+
+        }
+
+        @Throws(IOException::class)
+        private fun copy(input: InputStream, output: OutputStream) {
+            val buffer = ByteArray(4096)
+            var size: Int
+            while ((input.read(buffer).also { size = it }) != -1) output.write(buffer, 0, size)
         }
 
         /**
