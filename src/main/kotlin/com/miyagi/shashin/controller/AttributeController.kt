@@ -267,7 +267,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
         }
 
         // Check for face recog files
-        FileUtils.loadFaceRecogFiles(settings)
+//        FileUtils.loadFaceRecogFiles(settings)
 
         model["searchHistoryLimit"] = searchHistoryLimit
         model["queryLimit"] = queryLimit

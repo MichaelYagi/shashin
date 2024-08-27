@@ -14,6 +14,7 @@ import java.io.*
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -364,17 +365,17 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                 )
             ) {
                 Thread {
-                    // Download into resource lib folder
-                    // https://github.com/jmformenti/face-recognition-java/raw/master/core/src/main/resources/models/pytorch/vggface2/vggface2.pt
-                    // https://resources.djl.ai/test-models/pytorch/retinaface.zip
-                    val baseDir = File(ClassLoader.getSystemResource("schema.sql").path).parent.replace("\\", "/")
+                    // Download into resource lib folder from myagi.developer
+                    val baseDir = File(ClassLoader.getSystemResource("application.properties").path).parent.replace("\\", "/")
                     Files.createDirectories(Paths.get("$baseDir/lib"))
                     val vggFile = File("$baseDir/lib/vggface2.pt")
                     if (vggFile.createNewFile()) {
-                        org.apache.commons.io.FileUtils.copyURLToFile(
-                            URL("https://github.com/jmformenti/face-recognition-java/raw/master/core/src/main/resources/models/pytorch/vggface2/vggface2.pt"),
-                            File("$baseDir/lib/vggface2.pt")
-                        )
+                        val vggface = URL("https://www.dropbox.com/scl/fi/8mxxha4s6twm8q0oy7pp6/vggface2.pt?rlkey=je048aiock6qsecbdol0f28qk&st=82ne5gzk&dl=1").openStream()
+                        Files.copy(vggface, Paths.get("$baseDir/lib/vggface2.pt"), StandardCopyOption.REPLACE_EXISTING)
+//                        org.apache.commons.io.FileUtils.copyURLToFile(
+//                            URL("https://onedrive.live.com/download?resid=1BD2568B0FB48E20%2188507&authkey=!ANdC9YD9cp12i_w"),
+//                            File("$baseDir/lib/vggface2.pt")
+//                        )
                         if (!File("$baseDir/lib/vggface2.pt").exists()) {
                             logger.log(Level.WARNING, "vggface2 does not exist. vggface2 could not be created")
                         }
@@ -382,28 +383,16 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                         logger.log(Level.WARNING, "vggface2 could not be created")
                     }
 
-                    val retinaFile = File("$baseDir/lib/retinaface.zip")
+                    val retinaFile = File("$baseDir/lib/retinaface.pt")
                     if (retinaFile.createNewFile()) {
-                        org.apache.commons.io.FileUtils.copyURLToFile(
-                            URL("https://resources.djl.ai/test-models/pytorch/retinaface.zip"),
-                            File("$baseDir/lib/retinaface.zip")
-                        )
-                        if (!File("$baseDir/lib/retinaface.zip").exists()) {
-                            logger.log(Level.WARNING, "retinaface.zip does not exist")
-                        } else {
-                            // Unzip it
-                            FileUtils.unzip(
-                                File("$baseDir/lib/retinaface.zip"),
-                                File("$baseDir/lib/")
-                            )
-                            if (!File("$baseDir/lib/retinaface.pt").exists()) {
-                                logger.log(
-                                    Level.WARNING,
-                                    "Could not unzip, retinaface.pt does not exist. retinaface could not be created"
-                                )
-                            } else {
-                                logger.log(Level.INFO, "unzip successful for retinaface.pt")
-                            }
+                        val retinaface = URL("https://www.dropbox.com/scl/fi/ju8md0s2u1pviym0v1yz1/retinaface.pt?rlkey=naegenwnl2ctwja9pd7clje6b&st=f78msn4l&dl=1").openStream()
+                        Files.copy(retinaface, Paths.get("$baseDir/lib/retinaface.pt"), StandardCopyOption.REPLACE_EXISTING)
+//                        org.apache.commons.io.FileUtils.copyURLToFile(
+//                            URL("https://onedrive.live.com/download?resid=1BD2568B0FB48E20%2188506&authkey=!AF6xg1OyaclEwNQ"),
+//                            File("$baseDir/lib/retinaface.pt")
+//                        )
+                        if (!File("$baseDir/lib/retinaface.pt").exists()) {
+                            logger.log(Level.WARNING, "retinaface does not exist. retinaface could not be created")
                         }
                     } else {
                         logger.log(Level.WARNING, "retinaface could not be created")
