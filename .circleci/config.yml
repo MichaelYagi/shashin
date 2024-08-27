@@ -1,12 +1,12 @@
 version: 2.1
 
-executors:
-  java17:
-    docker:
-      - image: 'cimg/openjdk:17.0'
+#executors:
+#  java17:
+#    docker:
+#      - image: 'cimg/openjdk:17.0'
 
 orbs:
-  maven: circleci/maven@1.3.0
+  maven: circleci/maven@1.4.0
   node: circleci/node@5.1.0
   artifactory: circleci/artifactory@1.0.0
   browser-tools: circleci/browser-tools@1.4.8
@@ -89,27 +89,22 @@ workflows:
                 name: Set Version # get version from pom.xml
                 command: |
                   echo 'export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)' >> $BASH_ENV
-# Removed
-#            - run:
-#                name: Compress Artifacts
-#                command: |
-#                  mkdir -p target/artifact/
-#                  tar -cvzf target/artifact/shashin-$VERSION.tar target/**.jar target/**.exe target/test-results
-
+            - run:
+                name: Compress Artifacts
+                command: |
+                  mkdir -p target/artifact/
+                  tar -cvzf target/artifact/shashin-$VERSION.tar target/**.jar target/**.exe target/test-results
 #            - run:
 #                name: Move Artifacts
 #                command: |
 #                  mkdir -p target/artifact/
 #                  mv target/**.jar target/artifact/shashin-$VERSION.jar
-
-# Removed
-#            - persist_to_workspace: # persist across jobs
-#                root: .
-#                paths:
-#                  - target/artifact
-#            - store_artifacts:
-#                path: target/artifact
-
+            - persist_to_workspace: # persist across jobs
+                root: .
+                paths:
+                  - target/artifact
+            - store_artifacts:
+                path: target/artifact
 #      - artifactory/upload: # Upload only when there's a new tag
 #          requires:
 #            - Run junit tests, package to tar and store artifacts
