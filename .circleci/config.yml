@@ -6,7 +6,7 @@ executors:
       - image: 'cimg/openjdk:17.0'
 
 orbs:
-  maven: circleci/maven@1.4.1
+  maven: circleci/maven@1.3.0
   node: circleci/node@5.1.0
   artifactory: circleci/artifactory@1.0.0
   browser-tools: circleci/browser-tools@1.4.8
@@ -37,6 +37,7 @@ workflows:
                   - target/test-results/mocha
       - maven/test: # checkout, build, test, and upload test results
           executor: java17
+          command: '-X compile'
           name: Run junit tests and package to tar # and store artifacts
           requires:
             - Run node tests
