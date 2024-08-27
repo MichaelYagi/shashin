@@ -162,8 +162,8 @@ class APITests: BaseSeleniumTests() {
             result = e.message
         }
 
-        // 404 forbidden
-        Assertions.assertTrue(result!!.contains("404"))
+        // 403 forbidden
+        Assertions.assertTrue(result!!.contains("403"))
     }
 
     @Test
