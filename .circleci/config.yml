@@ -36,7 +36,6 @@ workflows:
                 paths:
                   - target/test-results/mocha
       - maven/test: # checkout, build, test, and upload test results
-          command: '-X compile'
           executor: java17
           name: Run junit tests and package to tar # and store artifacts
           requires:
