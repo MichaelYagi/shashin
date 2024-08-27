@@ -1,5 +1,10 @@
 version: 2.1
 
+executors:
+  java17:
+    docker:
+      - image: 'cimg/openjdk:17.0'
+
 orbs:
   maven: circleci/maven@1.4.0
   node: circleci/node@5.1.0
@@ -31,6 +36,8 @@ workflows:
                 paths:
                   - target/test-results/mocha
       - maven/test: # checkout, build, test, and upload test results
+          command: '-X compile'
+          executor: java17
           name: Run junit tests and package to tar # and store artifacts
           requires:
             - Run node tests
