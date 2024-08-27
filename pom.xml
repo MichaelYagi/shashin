@@ -535,7 +535,7 @@
                 <executions>
                     <execution>
                         <id>default-minify</id>
-<!--                        <phase>package</phase>-->
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>minify</goal>
                         </goals>
