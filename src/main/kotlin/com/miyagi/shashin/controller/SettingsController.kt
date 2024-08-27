@@ -69,6 +69,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
 import jakarta.transaction.Transactional
+import org.springframework.data.jpa.repository.Modifying
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
 import kotlin.math.floor
@@ -333,6 +334,8 @@ class SettingsController {
     @Secured("ROLE_SUPER")
     @CacheEvict(value = ["firstSettingQuery"], allEntries = true)
     @RequestMapping(value = ["/settings"], method = [RequestMethod.POST])
+    @Transactional
+    @Modifying
     fun postSettings(
         model: Model, redirectAttributes: RedirectAttributes,
         request: HttpServletRequest,
@@ -447,7 +450,7 @@ class SettingsController {
             model["status"] = "warning"
         }
 
-        val settings = model.getAttribute("settings") as Settings?
+        val settings = settingsRepository?.findFirstByOrderByIdAsc() //model.getAttribute("settings") as Settings?
 
         settings?.setCompreFaceServer(compreFaceServer)
         settings?.setCompreFaceKey(compreFaceKey)
