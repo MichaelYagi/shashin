@@ -307,11 +307,6 @@
         </dependency>
         <!-- JS minifier -->
         <dependency>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-utils</artifactId>
-            <version>4.0.1</version>
-        </dependency>
-        <dependency>
             <groupId>com.google.javascript</groupId>
             <artifactId>closure-compiler</artifactId>
             <version>v20211006</version>
@@ -533,6 +528,13 @@
                 <groupId>com.samaxes.maven</groupId>
                 <artifactId>minify-maven-plugin</artifactId>
                 <version>1.7.6</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.plexus</groupId>
+                        <artifactId>plexus-utils</artifactId>
+                        <version>4.0.1</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <webappSourceDir>${project.basedir}/src/main/resources/static/css</webappSourceDir>
                     <webappTargetDir>${project.basedir}/src/main/resources/static/css/site</webappTargetDir>
