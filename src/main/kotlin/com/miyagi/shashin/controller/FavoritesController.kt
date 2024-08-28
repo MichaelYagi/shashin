@@ -57,6 +57,11 @@ class FavoritesController: BaseController() {
 
     @RequestMapping(value = ["/favorites", "/favorites/{mediaType}"], method = [RequestMethod.GET])
     fun getFavorites(model: Model,@PathVariable(required = false) mediaType: String?): String {
+        val module = "favorites"
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+
         val response = buildFavorites(model,0,model.getAttribute("queryLimit").toString().toInt(),mediaType)
         for ((k, v) in response) {
             model[k] = v!!
@@ -117,10 +122,6 @@ class FavoritesController: BaseController() {
     private fun buildFavorites(model: Model, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt(), mediaTypeFilter: String?): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
-        val module = "favorites"
-        response["activePage"] = module
-        response["activeSidebar"] = module
-        response["titleDescriptor"] = TextUtils.capitalized(module)
         response["message"] = "Nothing to see here."
         response["metadataList"] = mutableListOf<Metadata>()
         response["mediaTypeFilter"] = "all"
