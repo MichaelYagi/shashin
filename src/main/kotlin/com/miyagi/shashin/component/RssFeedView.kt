@@ -1,7 +1,5 @@
 package com.miyagi.shashin.component
 
-import com.miyagi.shashin.model.AlbumPhoto
-import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.AlbumPhotoRepository
 import com.miyagi.shashin.repository.AlbumRepository
 import com.miyagi.shashin.repository.MetadataRepository
@@ -16,8 +14,6 @@ import java.nio.file.Files
 import java.util.*
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import java.util.logging.Level
-import java.util.logging.Logger
 import kotlin.io.path.Path
 
 
@@ -68,9 +64,6 @@ class RssFeedView : AbstractRssFeedView() {
         model: Map<String, Any>,
         request: HttpServletRequest, response: HttpServletResponse
     ): List<Item> {
-
-        val logger: Logger = Logger.getLogger(RssFeedView::class.simpleName)
-
         val rssList = mutableListOf<Item>()
         var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
         if (request.scheme == "https") {

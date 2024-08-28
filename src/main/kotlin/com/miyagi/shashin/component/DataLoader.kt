@@ -28,9 +28,6 @@ class DataLoader @Autowired constructor(private val settingsRepository: Settings
     @Value("\${app.config.default.searchhistorylimit}")
     private var searchHistoryLimitProperty: Int = 10
 
-    @Value("\${app.endpoint.url.compreface}")
-    private lateinit var comprefaceServer: String
-
     @Value("\${app.config.default.recognitionConfidenceThreshold}")
     private lateinit var recognitionConfidenceThresholdProperty: String
 

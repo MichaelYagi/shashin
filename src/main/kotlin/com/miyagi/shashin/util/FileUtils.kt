@@ -28,7 +28,7 @@ import javax.xml.bind.DatatypeConverter.parseBase64Binary
 
 
 @Component
-class FileUtils(private val metadataRepository: MetadataRepository) {
+class FileUtils {
     companion object {
         private var logger: Logger = Logger.getLogger(FileUtils::class.simpleName)
 
@@ -141,7 +141,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
             return null
         }
 
-        fun threadIsAlive(threadName: String): Boolean {
+        private fun threadIsAlive(threadName: String): Boolean {
             for (t in Thread.getAllStackTraces().keys) {
                 if (t.name == threadName) {
                     return t.isAlive
@@ -309,10 +309,10 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
         }
 
         fun deleteEmptyDirectoriesOfFolder(folder: File) {
-            for (fileEntry in folder.listFiles()) {
+            for (fileEntry in folder.listFiles()!!) {
                 if (fileEntry.isDirectory) {
                     deleteEmptyDirectoriesOfFolder(fileEntry)
-                    if (fileEntry.listFiles() != null && fileEntry.listFiles().isEmpty()) {
+                    if (fileEntry.listFiles() != null && fileEntry.listFiles()!!.isEmpty()) {
                         fileEntry.delete()
                     }
                 }
@@ -322,7 +322,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
         fun parseBase64(url: String): ByteArray? {
             val base64ImageArray = url.split(",")
             if (base64ImageArray.size > 1) {
-                val base64Image = base64ImageArray[1];
+                val base64Image = base64ImageArray[1]
                 if (base64Image.isNotBlank()) {
                     return parseBase64Binary(base64Image)
                 }
@@ -405,33 +405,27 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
 
         @Throws(ZipException::class, IOException::class)
         fun unzip(file: File?, targetDir: File) {
-            targetDir.mkdirs()
-            val zipFile = ZipFile(file)
-
             if (file != null && file.exists()) {
-                try {
-                    val entries: Enumeration<out ZipEntry> = zipFile.entries()
+                targetDir.mkdirs()
+                val zipFile = ZipFile(file)
+
+                zipFile.use { zipF ->
+                    val entries: Enumeration<out ZipEntry> = zipF.entries()
                     while (entries.hasMoreElements()) {
                         val entry = entries.nextElement()
                         val targetFile = File(targetDir, entry.name)
                         if (entry.isDirectory) {
                             targetFile.mkdirs()
                         } else {
-                            val input: InputStream = zipFile.getInputStream(entry)
-                            try {
+                            val input: InputStream = zipF.getInputStream(entry)
+                            input.use { inp ->
                                 val output: OutputStream = FileOutputStream(targetFile)
-                                try {
-                                    copy(input, output)
-                                } finally {
-                                    output.close()
+                                output.use { outp ->
+                                    copy(inp, outp)
                                 }
-                            } finally {
-                                input.close()
                             }
                         }
                     }
-                } finally {
-                    zipFile.close()
                 }
             } else {
                 logger.log(Level.WARNING, "Zip file does not exist: " + file?.absolutePath)

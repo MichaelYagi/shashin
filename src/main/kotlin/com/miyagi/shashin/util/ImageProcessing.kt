@@ -29,20 +29,21 @@ import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.RenderingHints
-import java.awt.geom.AffineTransform
 import java.awt.image.BufferedImage
 import java.awt.image.BufferedImageOp
 import java.awt.image.ConvolveOp
 import java.awt.image.Kernel
 import java.io.File
 import java.io.IOException
-import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
 import kotlin.collections.ArrayList
-import kotlin.reflect.jvm.internal.impl.types.checker.ClassicTypeSystemContext.DefaultImpls.original
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.floor
+import kotlin.math.sin
 
 
 @Suppress("UNCHECKED_CAST")
@@ -55,7 +56,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
         // Check rotation
         var rotation = 0
-        var fileMetadata: com.drew.metadata.Metadata
+        val fileMetadata: com.drew.metadata.Metadata
         try {
             fileMetadata = ImageMetadataReader.readMetadata(file)
         } catch (e: Exception) {
@@ -234,8 +235,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     overwriteThumbnails
                 )
                 if (tnFile != null) {
-                    val imgCopy = img
-                    Thumbnails.of(imgCopy)
+                    Thumbnails.of(img)
                         .size(metadataObj.getOriginalImageWidth()!!, metadataObj.getOriginalImageHeight()!!)
                         .outputQuality(0.4)
                         .toFile(tnFile)
@@ -418,36 +418,6 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         return null
     }
 
-    private fun scaleImageByRatio(source: BufferedImage, ratio: Double): BufferedImage {
-        val w = (source.width * ratio).toInt()
-        val h = (source.height * ratio).toInt()
-        return scaleImage(source, w, h)
-    }
-
-    private fun scaleImageByWidth(source: BufferedImage, w: Int): BufferedImage {
-        val wScale: Float = (w.toFloat() / source.width.toFloat())
-        val h = source.height.toFloat() * wScale //3705*(50/6000)
-        return scaleImage(source, w, h.toInt())
-    }
-
-    private fun scaleImageByHeight(source: BufferedImage, h: Int): BufferedImage {
-        val hScale: Float = (h.toFloat() / source.height.toFloat())
-        val w = source.width.toFloat() * hScale
-        return scaleImage(source, w.toInt(), h)
-    }
-
-    private fun scaleImage(source: BufferedImage, w: Int, h: Int): BufferedImage {
-        val bi = getCompatibleImage(w, h)
-        val g2d = bi.createGraphics()
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
-        val xScale = w.toDouble() / source.width
-        val yScale = h.toDouble() / source.height
-        val at = AffineTransform.getScaleInstance(xScale, yScale)
-        g2d.drawRenderedImage(source, at)
-        g2d.dispose()
-        return bi
-    }
-
     private fun blurImage(img: BufferedImage): BufferedImage {
         val radius = 11
         val size = radius * 2 + 1
@@ -462,21 +432,6 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         val op: BufferedImageOp = ConvolveWithEdgeOp(kernel, 2, null)
         
         return op.filter(img, null)
-    }
-
-    private fun getSquareThumbnail(source: BufferedImage): BufferedImage {
-        // Get a square thumbnail
-        val side = source.width.coerceAtMost(source.height)
-        val x = (source.width - side) / 2
-        val y = (source.height - side) / 2
-        return source.getSubimage(x, y, side, side)
-    }
-
-    private fun getCompatibleImage(w: Int, h: Int): BufferedImage {
-        return BufferedImage(
-            w, h,
-            BufferedImage.TYPE_INT_RGB
-        )
     }
 
     companion object {
@@ -503,12 +458,12 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
         fun rotateImage(buffImage: BufferedImage, angle: Double): BufferedImage {
             val radian = Math.toRadians(angle)
-            val sin = Math.abs(Math.sin(radian))
-            val cos = Math.abs(Math.cos(radian))
+            val sin = abs(sin(radian))
+            val cos = abs(cos(radian))
             val width = buffImage.width
             val height = buffImage.height
-            val nWidth = Math.floor(width.toDouble() * cos + height.toDouble() * sin).toInt()
-            val nHeight = Math.floor(height.toDouble() * cos + width.toDouble() * sin).toInt()
+            val nWidth = floor(width.toDouble() * cos + height.toDouble() * sin).toInt()
+            val nHeight = floor(height.toDouble() * cos + width.toDouble() * sin).toInt()
             val rotatedImage = BufferedImage(
                 nWidth, nHeight, BufferedImage.TYPE_INT_RGB
             )
@@ -565,7 +520,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             val keywordPhotoCount =
                 keywordPhotoRepository.countByKeywordIdAndMetadataId(
                     keywordObj.getId(),
-                    metadataObj.getId()!!
+                    metadataObj.getId()
                 )
             if (keywordPhotoCount == 0) {
                 val keywordPhotoObj = KeywordPhoto()
@@ -585,9 +540,9 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
             try {
                 val file = if (metadataObj.getType()?.contains("video", ignoreCase = true)!!) {
-                    File(metadataObj.getThumbnailPathSmall())
+                    File(metadataObj.getThumbnailPathSmall()!!)
                 } else {
-                    File(metadataObj.getPath())
+                    File(metadataObj.getPath()!!)
                 }
 
                 // Object recognition
@@ -660,7 +615,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                                     )
                                 }
                             } else {
-                                if (keywordArray.size == 0 && !keywordArray.contains(unidentifiedStr)) {
+                                if (!keywordArray.contains(unidentifiedStr)) {
                                     keywordArray.add(unidentifiedStr)
                                     saveObject(
                                         unidentifiedStr,
@@ -725,7 +680,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     if (jsonRespObj.has("recognizeData") && jsonRespObj["recognizeData"].has(0)) {
                         subjectObj = jsonRespObj["recognizeData"].get(0)
                         if (subjectObj.has("subject")) {
-                            subject = subjectObj["subject"].textValue();
+                            subject = subjectObj["subject"].textValue()
                             similarity = subjectObj["similarity"].asDouble()
                         }
                     }
@@ -750,7 +705,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                         } catch (e: Exception) {
                             logger.log(
                                 Level.WARNING,
-                                "Error deleting CompreFace ID ${compreFaceImageId} for ${metadata?.getId()}: " + e.localizedMessage
+                                "Error deleting CompreFace ID $compreFaceImageId for ${metadata?.getId()}: " + e.localizedMessage
                             )
 //                            val errorResponse =
 //                                e.localizedMessage.replace("<EOL>", "").replace("400 : ", "").replace("\\s".toRegex(), "")
@@ -823,7 +778,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
             if (NetworkUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
 
-                var response: String?
+                val response: String?
 
                 if (metadata !== null) {
                     // Recognizing faces
@@ -889,7 +844,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                             break
                         }
 
-                        val metadataObj = metadataRepository!!.findById(testImage.getId()!!).get()
+                        val metadataObj = metadataRepository.findById(testImage.getId()).get()
 
                         // Facial recognition
                         val faceFsr = FileSystemResource(metadataObj.getThumbnailPathSmall()!!)
@@ -935,7 +890,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                             recognitionLabelPhotoObj.setMetadataId(metadataObj.getId())
                             recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
                             recognitionLabelPhotoObj.setConfidence("-0.1")
-                            recognitionLabelPhotoRepository!!.save(recognitionLabelPhotoObj)
+                            recognitionLabelPhotoRepository.save(recognitionLabelPhotoObj)
 
                             logger.log(
                                 Level.WARNING,
@@ -1040,7 +995,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
                                                 if (recognitionLabelObj != null) {
                                                     val recognitionLabelPhoto =
-                                                        recognitionLabelPhotoRepository!!.countByRecognitionLabelIdAndMetadataId(
+                                                        recognitionLabelPhotoRepository.countByRecognitionLabelIdAndMetadataId(
                                                             recognitionLabelObj.getId(),
                                                             metadataObj.getId()
                                                         )
@@ -1101,7 +1056,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     val vggfaceFileExists = classLoader.getResource("lib/vggface2.pt") != null
                     val retinafaceFileExists = classLoader.getResource("lib/retinaface.pt") != null
                     if (vggfaceFileExists && retinafaceFileExists) {
-                        val trainingData = metadataRepository!!.findTrainingData(
+                        val trainingData = metadataRepository.findTrainingData(
                             settings.getRecognitionConfidenceThreshold()!!,
                             settings.getTrainingDataLimit()!!
                         )
@@ -1112,7 +1067,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                         }
                         val faceRecognizer = DjlFaceRecognizer(
                             testImages,
-                            trainingData!!,
+                            trainingData,
                             recognitionLabelPhotoRepository,
                             recognitionLabelRepository,
                             settings,

@@ -6,7 +6,6 @@ import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.DefaultRedirectStrategy
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler
@@ -15,10 +14,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.logging.Level
 import java.util.logging.Logger
-import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import java.util.*
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
@@ -34,12 +30,6 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
 
     @Autowired
     var notificationRepository: NotificationRepository? = null
-
-    @Value("\${app.role.admin}")
-    private var adminRole: String? = null
-
-    @Value("\${app.role.super}")
-    private var superRole: String? = null
 
     @Throws(IOException::class, ServletException::class)
     override fun onAuthenticationFailure(

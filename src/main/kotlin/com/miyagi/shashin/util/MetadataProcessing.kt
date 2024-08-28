@@ -6,7 +6,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.*
-import net.iakovlev.timeshape.TimeZoneEngine
 import org.apache.commons.lang3.StringUtils
 import java.io.File
 import java.math.RoundingMode
@@ -14,9 +13,6 @@ import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger

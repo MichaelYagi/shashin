@@ -17,6 +17,8 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import kotlin.math.abs
+import kotlin.math.floor
 
 
 @Component
@@ -78,7 +80,7 @@ class TextUtils {
                 }
 
                 if (key.lowercase() == "expires" && value.isNotEmpty()) {
-                    val datetime = SimpleDateFormat("EEE, dd-MMM-yyyy HH:mm:ss z").parse(value);
+                    val datetime = SimpleDateFormat("EEE, dd-MMM-yyyy HH:mm:ss z").parse(value)
                     seriesExpiryMap["expires"] = datetime.time.toString()
                 }
             }
@@ -173,7 +175,7 @@ class TextUtils {
             var k2 = 1.0
             var b = x
             do {
-                val a = Math.floor(b)
+                val a = floor(b)
                 var aux = h1
                 h1 = a * h1 + h2
                 h2 = aux
@@ -181,7 +183,7 @@ class TextUtils {
                 k1 = a * k1 + k2
                 k2 = aux
                 b = 1 / (b - a)
-            } while (Math.abs(x - h1 / k1) > x * tolerance)
+            } while (abs(x - h1 / k1) > x * tolerance)
             return "${h1.toInt()}/${k1.toInt()}"
         }
 
@@ -641,17 +643,17 @@ class TextUtils {
         fun metadataInputValidation(day: Int?, month: Int?, year: Int?, time: String?, offset: String?, duration: String?): Boolean {
             val timeValidate = "(\\d{2}:\\d{2}:\\d{2})".toRegex()
 
-            if (day != null && !(day in 1..31)) {
+            if (day != null && day !in 1..31) {
                 logger.log(Level.WARNING, "Invalid day")
                 return false
             }
 
-            if (month != null && !(month in 1..12)) {
+            if (month != null && month !in 1..12) {
                 logger.log(Level.WARNING, "Invalid month")
                 return false
             }
 
-            if (year != null && !(year in 1826..Calendar.getInstance().get(Calendar.YEAR))) {
+            if (year != null && year !in 1826..Calendar.getInstance().get(Calendar.YEAR)) {
                 logger.log(Level.WARNING, "Invalid year")
                 return false
             }
@@ -667,8 +669,8 @@ class TextUtils {
             }
 
             if (duration != null && duration != "") {
-                val isValidWithoutHour = "([1-5]?[0-9])(:[0-5][0-9])?".toRegex().matches(duration);
-                val isValidWithHour = "([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?".toRegex().matches(duration);
+                val isValidWithoutHour = "([1-5]?[0-9])(:[0-5][0-9])?".toRegex().matches(duration)
+                val isValidWithHour = "([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?".toRegex().matches(duration)
 
                 if (!isValidWithoutHour && !isValidWithHour) {
                     logger.log(Level.WARNING, "Invalid duration")
@@ -801,7 +803,7 @@ class TextUtils {
             jsonResponseMap["msg"] = "Access is denied"
             val now = LocalDateTime.now()
             val formatter = DateTimeFormatter.ofPattern(getCommonDateFormat())
-            jsonResponseMap["timestamp"] = now.format(formatter);
+            jsonResponseMap["timestamp"] = now.format(formatter)
             jsonResponseMap["status"] = HttpStatus.FORBIDDEN
             val mapper = ObjectMapper()
 

@@ -1,7 +1,6 @@
 package com.miyagi.shashin.util
 
 import org.springframework.beans.factory.annotation.Value
-import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
 
