@@ -469,7 +469,7 @@
                 <executions>
                     <execution>
                         <id>default-minify</id>
-                        <phase>package</phase>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>minify</goal>
                         </goals>
@@ -509,7 +509,7 @@
                 <executions>
                     <execution>
                         <id>default-minify</id>
-                        <phase>package</phase>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>minify</goal>
                         </goals>
