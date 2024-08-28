@@ -361,7 +361,7 @@ class ToolsController {
                     roleController["requestType"] = ""
                     roleController["endpoints"] = arrayOf<String>()
                     roleController["produces"] = ""
-                    roleController["description"] = ""
+                    roleController["summary"] = ""
                     roleController["authorizedRoles"] = arrayOf("public")
 
                     // Order is important! Highest to lowest roles
@@ -449,9 +449,9 @@ class ToolsController {
                         }
 
                         // Description
-                        if (value.getMethodAnnotation(RouterOperation::class.java)?.operation?.description != null) {
-                            roleController["description"] =
-                                value.getMethodAnnotation(RouterOperation::class.java)?.operation?.description.toString()
+                        if (value.getMethodAnnotation(RouterOperation::class.java)?.operation?.summary != null) {
+                            roleController["summary"] =
+                                value.getMethodAnnotation(RouterOperation::class.java)?.operation?.summary.toString()
                         }
                     }
 

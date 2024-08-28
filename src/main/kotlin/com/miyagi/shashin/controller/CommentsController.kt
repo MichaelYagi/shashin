@@ -63,6 +63,7 @@ class CommentsController {
         operation =
         Operation(
             operationId = "postSaveComment",
+            summary = "Save a comment for an album.",
             description = "<strong>Save a comment for an album.</strong>" +
                     "<pre><code>" +
                     "curl -X POST \"http://127.0.0.1:6624/api/v1/comment/album/save\" \\\n" +
@@ -190,6 +191,7 @@ class CommentsController {
         operation =
         Operation(
             operationId = "postSaveAlbumPhotoComment",
+            summary = "Save a comment for an album photo or video.",
             description = "<strong>Save a comment for an album photo or video.</strong>" +
                     "<pre><code>" +
                     "curl -X POST \"http://127.0.0.1:6624/api/v1/comment/albumphoto/save\" \\\n" +
@@ -315,6 +317,7 @@ class CommentsController {
         operation =
         Operation(
             operationId = "postUpdateComment",
+            summary = "Update a comment for an album, album photo or video.",
             description = "<strong>Update a comment for an album, album photo or video.</strong>" +
                     "<pre><code>" +
                     "curl -X PUT \"http://127.0.0.1:6624/api/v1/comment/update\" \\\n" +
@@ -381,6 +384,7 @@ class CommentsController {
         operation =
         Operation(
             operationId = "postDeleteAlbumPhotoComment",
+            summary = "Delete a comment for an album, album photo or video.",
             description = "<strong>Delete a comment for an album, album photo or video.</strong>" +
                     "<pre><code>" +
                     "curl -X DELETE \"http://127.0.0.1:6624/api/v1/comment/albumphoto/delete\" \\\n" +
@@ -443,6 +447,7 @@ class CommentsController {
         operation =
         Operation(
             operationId = "postDeleteComment",
+            summary = "Delete a comment for an album.",
             description = "<strong>Delete a comment for an album.</strong>" +
                     "<pre><code>" +
                     "curl -X DELETE \"http://127.0.0.1:6624/api/v1/comment/album/delete\" \\\n" +

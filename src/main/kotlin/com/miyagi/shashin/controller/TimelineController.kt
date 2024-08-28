@@ -187,6 +187,7 @@ class TimelineController: BaseController() {
         operation =
         Operation(
             operationId = "getTimelineMediaType",
+            summary = "Get results for timeline content with associated favorites mapping.",
             description = "<strong>Get results for timeline content with associated favorites mapping.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/timeline/mediatype/{mediaType}\" \\\n" +
@@ -296,6 +297,7 @@ class TimelineController: BaseController() {
         operation =
         Operation(
             operationId = "getTimelineJson",
+            summary = "Get paged or all results for timeline content with associated favorites mapping.",
             description = "<strong>Get paged or all results for timeline content with associated favorites mapping.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/timeline/{page}\" \\\n" +
@@ -429,6 +431,7 @@ class TimelineController: BaseController() {
         operation =
         Operation(
             operationId = "getTimelineByDateApi",
+            summary = "Get paged or all results for timeline content with associated favorites mapping.",
             description = "<strong>Get paged or all results for timeline content with associated favorites mapping.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/timeline/mediatype/{mediaType}/date/{date}\" \\\n" +
@@ -495,6 +498,7 @@ class TimelineController: BaseController() {
         operation =
         Operation(
             operationId = "getTimelineMetadataByDateApi",
+            summary = "Get minimal metadata information by date.",
             description = "<strong>Get minimal metadata information by date.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/timeline/mediatype/{mediaType}/date/{date}/metadata\" \\\n" +
@@ -560,6 +564,7 @@ class TimelineController: BaseController() {
         operation =
         Operation(
             operationId = "getAllKeywords",
+            summary = "Get a list of all keywords.",
             description = "<strong>Get a list of all keywords.</strong>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/keywords\" \\\n" +
@@ -603,6 +608,7 @@ class TimelineController: BaseController() {
         operation =
         Operation(
             operationId = "getTimelineDates",
+            summary = "Get a list of all timeline dates by media type.",
             description = "<strong>Get a list of all timeline dates by media type.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/timeline/dates/{mediaType}\" \\\n" +
@@ -762,6 +768,7 @@ class TimelineController: BaseController() {
         operation =
         Operation(
             operationId = "rescanMetadata",
+            summary = "Rescan thumbnails and metadata.",
             description = "<strong>Rescan thumbnails and metadata.</strong><br>" +
                     "<pre><code>" +
                     "curl -X POST \"http://127.0.0.1:6624/api/v1/rescan/metadata\" \\\n" +
@@ -1079,6 +1086,7 @@ class TimelineController: BaseController() {
         operation =
         Operation(
             operationId = "updateMetadata",
+            summary = "Update metadata.",
             description = "<strong>Update metadata.</strong><br>" +
                     "<pre><code>" +
                     "curl -X PUT \"http://127.0.0.1:6624/api/v1/update/metadata/{metadataId}\" \\\n" +
@@ -1734,6 +1742,7 @@ class TimelineController: BaseController() {
         operation =
         Operation(
             operationId = "updateBatchMetadata",
+            summary = "Update a batch of metadata.",
             description = "<strong>Update a batch of metadata.</strong><br>" +
                     "<pre><code>" +
                     "curl -X PUT \"http://127.0.0.1:6624/api/v1/update/metadata/batch\" \\\n" +
@@ -2293,6 +2302,7 @@ class TimelineController: BaseController() {
         operation =
         Operation(
             operationId = "getMetadata",
+            summary = "Get metadata information and associated keyword and favorites data.",
             description = "<strong>Get metadata information and associated keyword and favorites data.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/metadata/{id}\" \\\n" +
@@ -2402,6 +2412,7 @@ class TimelineController: BaseController() {
         operation =
         Operation(
             operationId = "getTimelineMetadata",
+            summary = "Get media info for a timeline view.",
             description = "<strong>Get media info for a timeline view.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/complete/metadata/{id}\" \\\n" +
@@ -2549,6 +2560,7 @@ class TimelineController: BaseController() {
         operation =
         Operation(
             operationId = "getExifData",
+            summary = "Get EXIF data.",
             description = "<strong>Get EXIF data extracted using <a href=\"https://github.com/drewnoakes/metadata-extractor\">Metadata Extractor</a>.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/exif/metadata/{id}\" \\\n" +

@@ -64,6 +64,7 @@ class BrowseController: BaseController() {
         operation =
         Operation(
             operationId = "getPagedModified",
+            summary = "Get paged results for recently added content.",
             description = "<strong>Get paged results for recently added content.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/recent/{page}\" \\\n" +
@@ -155,6 +156,7 @@ class BrowseController: BaseController() {
         operation =
         Operation(
             operationId = "getPagedRecent",
+            summary = "Get paged results for recently added content.",
             description = "<strong>Get paged results for recently added content.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/recent?page={page}&size={size}\" \\\n" +
@@ -276,6 +278,7 @@ class BrowseController: BaseController() {
         operation =
         Operation(
             operationId = "getPagedModified",
+            summary = "Get paged results for recently modified content.",
             description = "<strong>Get paged results for recently modified content.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/modified/{page}\" \\\n" +
@@ -385,6 +388,7 @@ class BrowseController: BaseController() {
         operation =
         Operation(
             operationId = "getPagedModified",
+            summary = "Get paged results for recently modified content.",
             description = "<strong>Get paged results for recently modified content.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/modified?page={page}&size={size}\" \\\n" +
@@ -794,6 +798,7 @@ class BrowseController: BaseController() {
         operation =
         Operation(
             operationId = "getPagedFolders",
+            summary = "Get paged list of all folders.",
             description = "<strong>Get paged list of all folders.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/folders/{page}\" \\\n" +
@@ -839,6 +844,7 @@ class BrowseController: BaseController() {
         operation =
         Operation(
             operationId = "getPagedSizeFolders",
+            summary = "Get list of all folders.",
             description = "<strong>Get list of all folders.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/folders?page={page}&size={size}\" \\\n" +
@@ -905,6 +911,7 @@ class BrowseController: BaseController() {
         operation =
         Operation(
             operationId = "getPagedFolder",
+            summary = "Get paged results for folder content.",
             description = "<strong>Get paged results for folder content.</strong> Pages start from 0. The page size can be configured through the web interface (default 20).<br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/folder/{page}/{folder}\" \\\n" +
@@ -996,6 +1003,7 @@ class BrowseController: BaseController() {
         operation =
         Operation(
             operationId = "getPagedFolder",
+            summary = "Get paged results for folder content.",
             description = "<strong>Get paged results for folder content.</strong> Pages start from 0. The page size can be configured through the web interface (default 20).<br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/folder/{folder}?page={page}&size={size}\" \\\n" +
