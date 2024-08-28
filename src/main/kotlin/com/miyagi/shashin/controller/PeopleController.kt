@@ -246,7 +246,7 @@ class PeopleController: BaseController() {
                                 }
 
                                 val metadataWithoutKeywordsObj =
-                                    metadataRepository?.findById(withoutKeyword.getId()!!)?.get()
+                                    metadataRepository?.findById(withoutKeyword.getId())?.get()
 
                                 ImageProcessing.objectRecognizer(
                                     keywordRepository!!,
@@ -365,7 +365,7 @@ class PeopleController: BaseController() {
                 }
                 if (labelString.isNotBlank()) {
                     labelString = labelString.dropLast(1)
-                    labelPhotoMap[metadata.getId()!!] = labelString
+                    labelPhotoMap[metadata.getId()] = labelString
                 }
             }
             model["labelPhotoMap"] = labelPhotoMap
@@ -601,12 +601,11 @@ class PeopleController: BaseController() {
                         }
                         if (recognitionLabelPhotoObj != null) {
                             if (metadataRepository != null && metadataRepository!!.count() > 0) {
-                                    val metadataObjOpt = metadataRepository?.findByMetadataId(
-                                        recognitionLabelPhotoObj.getMetadataId().toString()
-                                    )
+                                val metadataObj = metadataRepository?.findByMetadataId(
+                                    recognitionLabelPhotoObj.getMetadataId().toString()
+                                )
 
-                                if (metadataObjOpt != null) {
-                                    val metadataObj = metadataObjOpt
+                                if (metadataObj != null) {
                                     val metadataDate =
                                         "${metadataObj.getYear()}-${metadataObj.getMonth()}-${metadataObj.getDay()}"
                                     facesResult["metadata_date"] = metadataDate
@@ -747,7 +746,7 @@ class PeopleController: BaseController() {
         model["activePage"] = module
         model["activeSidebar"] = module
         var title = TextUtils.capitalized(module)
-        var personInfo = response["personInfo"] as RecognitionLabel
+        val personInfo = response["personInfo"] as RecognitionLabel
         if (!personInfo.getName().isNullOrBlank()) {
             title = TextUtils.capitalized(module) + " - " + personInfo.getName()
         }
@@ -923,7 +922,7 @@ class PeopleController: BaseController() {
                         for (favorite in favorites) {
                             if (favorite != null) {
                                 favoritesMap[metadata.getId()] = hashMapOf(
-                                    "favorite" to (favorite.getUserId() == currentUserObj!!.getId()),
+                                    "favorite" to (favorite.getUserId() == currentUserObj.getId()),
                                     "count" to favoriteRepository.countAllByMetadataId(metadata.getId())
                                 )
 
@@ -1025,7 +1024,7 @@ class PeopleController: BaseController() {
 
                 for (recognitionLabelString in recognitionLabelArray) {
                     if (recognitionLabelString.trim().isNotBlank() && recognitionLabelString.trim() != "null") {
-                        var recognitionLabelPhotoCount = 0
+                        var recognitionLabelPhotoCount: Int
                         var recognitionLabelObj = RecognitionLabel()
 
                         val recognitionLabelRecord =

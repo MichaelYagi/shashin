@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
-import org.springframework.web.bind.annotation.RestController
 
 @Controller
 class BaseController {
@@ -42,10 +41,8 @@ class BaseController {
         }
 
         model["timeOffsets"] = TextUtils.timeOffsets()
-
-        val keywordList: MutableIterable<Keyword>?
         var keywords = ""
-        keywordList = keywordRepository?.findAllDistinctOrderByKeyword()
+        val keywordList: MutableIterable<Keyword>? = keywordRepository?.findAllDistinctOrderByKeyword()
         if (keywordList != null && keywordList.count() > 0) {
             keywords = keywordList.map { it.getKeyword() }.joinToString(",")
         }

@@ -31,11 +31,6 @@ import jakarta.transaction.Transactional
 @Controller
 @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
 class FavoritesController: BaseController() {
-    @Value("\${app.role.admin}")
-    private var adminRole: String? = null
-
-    @Value("\${app.role.super}")
-    private var superRole: String? = null
 
     @Autowired
     private lateinit var favoriteRepository: FavoriteRepository

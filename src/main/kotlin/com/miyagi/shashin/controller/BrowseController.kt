@@ -14,7 +14,6 @@ import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import java.net.URLDecoder
-import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.*
 import jakarta.servlet.http.HttpServletRequest
@@ -567,52 +566,62 @@ class BrowseController: BaseController() {
 
             var metadataList = mutableListOf<Metadata>()
             if (mediaType == "all") {
-                if (module == "recent") {
-                    metadataList = metadataRepository.findRecentByOffsetAndLimit(
-                        pageValue,
-                        size
-                    ).toMutableList()
-                } else if (module == "modified") {
-                    metadataList = metadataRepository.findModifiedByOffsetAndLimit(
-                        pageValue,
-                        size
-                    ).toMutableList()
-                } else if (module == "taken") {
-                    metadataList = metadataRepository.findTakenByOffsetAndLimit(
-                        pageValue,
-                        size
-                    ).toMutableList()
-                } else if (module == "accessed") {
-                    metadataList = metadataRepository.findLastAccessedByOffsetAndLimit(
-                        pageValue,
-                        size
-                    ).toMutableList()
+                when (module) {
+                    "recent" -> {
+                        metadataList = metadataRepository.findRecentByOffsetAndLimit(
+                            pageValue,
+                            size
+                        ).toMutableList()
+                    }
+                    "modified" -> {
+                        metadataList = metadataRepository.findModifiedByOffsetAndLimit(
+                            pageValue,
+                            size
+                        ).toMutableList()
+                    }
+                    "taken" -> {
+                        metadataList = metadataRepository.findTakenByOffsetAndLimit(
+                            pageValue,
+                            size
+                        ).toMutableList()
+                    }
+                    "accessed" -> {
+                        metadataList = metadataRepository.findLastAccessedByOffsetAndLimit(
+                            pageValue,
+                            size
+                        ).toMutableList()
+                    }
                 }
             } else {
-                if (module == "recent") {
-                    metadataList = metadataRepository.findRecentByMediaTypeAndOffsetAndLimit(
-                        pageValue,
-                        mediaType!!,
-                        size
-                    ).toMutableList()
-                } else if (module == "modified") {
-                    metadataList = metadataRepository.findModifiedByMediaTypeAndOffsetAndLimit(
-                        pageValue,
-                        mediaType!!,
-                        size
-                    ).toMutableList()
-                } else if (module == "taken") {
-                    metadataList = metadataRepository.findTakenByMediaTypeAndOffsetAndLimit(
-                        pageValue,
-                        mediaType!!,
-                        size
-                    ).toMutableList()
-                } else if (module == "accessed") {
-                    metadataList = metadataRepository.findLastAccessedByMediaTypeAndOffsetAndLimit(
-                        pageValue,
-                        mediaType!!,
-                        size
-                    ).toMutableList()
+                when (module) {
+                    "recent" -> {
+                        metadataList = metadataRepository.findRecentByMediaTypeAndOffsetAndLimit(
+                            pageValue,
+                            mediaType!!,
+                            size
+                        ).toMutableList()
+                    }
+                    "modified" -> {
+                        metadataList = metadataRepository.findModifiedByMediaTypeAndOffsetAndLimit(
+                            pageValue,
+                            mediaType!!,
+                            size
+                        ).toMutableList()
+                    }
+                    "taken" -> {
+                        metadataList = metadataRepository.findTakenByMediaTypeAndOffsetAndLimit(
+                            pageValue,
+                            mediaType!!,
+                            size
+                        ).toMutableList()
+                    }
+                    "accessed" -> {
+                        metadataList = metadataRepository.findLastAccessedByMediaTypeAndOffsetAndLimit(
+                            pageValue,
+                            mediaType!!,
+                            size
+                        ).toMutableList()
+                    }
                 }
             }
 
@@ -637,9 +646,9 @@ class BrowseController: BaseController() {
                     if (favorites != null) {
                         for (favorite in favorites) {
                             if (favorite != null) {
-                                favoritesMap[metadata.getId()!!] = hashMapOf(
+                                favoritesMap[metadata.getId()] = hashMapOf(
                                     "favorite" to (favorite.getUserId() == currentUserObj?.getId()),
-                                    "count" to favoriteRepository.countAllByMetadataId(metadata.getId()!!)
+                                    "count" to favoriteRepository.countAllByMetadataId(metadata.getId())
                                 )
 
                                 if ((favorite.getUserId() == currentUserObj?.getId())) {
@@ -649,7 +658,7 @@ class BrowseController: BaseController() {
                         }
                     }
 
-                    val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId()!!)
+                    val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
                     var labelString = ""
                     if (recognitionLabelPhotos != null && recognitionLabelPhotos.count() > 0) {
                         for (recognitionLabelPhoto in recognitionLabelPhotos) {
@@ -664,7 +673,7 @@ class BrowseController: BaseController() {
                     }
                     if (labelString.isNotBlank()) {
                         labelString = labelString.dropLast(1)
-                        labelPhotoMap[metadata.getId()!!] = labelString
+                        labelPhotoMap[metadata.getId()] = labelString
                     }
 
                     val albumPhotos = albumPhotoRepository.findAlbumPhotoByMetadataId(metadata.getId())
@@ -1119,7 +1128,7 @@ class BrowseController: BaseController() {
                 size
             ).toMutableList()
 
-            if (!metadataList.isNullOrEmpty()) {
+            if (metadataList.isNotEmpty()) {
                 response["metadataList"] = metadataList
                 response["message"] = ""
                 response["favorites"] = favoritesMap
@@ -1139,9 +1148,9 @@ class BrowseController: BaseController() {
                     if (favorites != null) {
                         for (favorite in favorites) {
                             if (favorite != null) {
-                                favoritesMap[metadata.getId()!!] = hashMapOf(
+                                favoritesMap[metadata.getId()] = hashMapOf(
                                     "favorite" to (favorite.getUserId() == currentUserObj?.getId()),
-                                    "count" to favoriteRepository.countAllByMetadataId(metadata.getId()!!)
+                                    "count" to favoriteRepository.countAllByMetadataId(metadata.getId())
                                 )
 
                                 if ((favorite.getUserId() == currentUserObj?.getId())) {
@@ -1150,7 +1159,7 @@ class BrowseController: BaseController() {
                             }
                         }
                     }
-                    val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId()!!)
+                    val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
                     var labelString = ""
                     if (recognitionLabelPhotos != null) {
                         for (recognitionLabelPhoto in recognitionLabelPhotos) {
@@ -1162,7 +1171,7 @@ class BrowseController: BaseController() {
                     }
                     if (labelString.isNotBlank()) {
                         labelString = labelString.dropLast(1)
-                        labelPhotoMap[metadata.getId()!!] = labelString
+                        labelPhotoMap[metadata.getId()] = labelString
                     }
 
                     val albumPhotos = albumPhotoRepository.findAlbumPhotoByMetadataId(metadata.getId())
@@ -1174,7 +1183,7 @@ class BrowseController: BaseController() {
                         }
                         if (albumMetadataList.isNotEmpty()) {
                             albumMetadataList = albumMetadataList.dropLast(1)
-                            albumMap[metadata.getId()!!] = albumMetadataList
+                            albumMap[metadata.getId()] = albumMetadataList
                         }
                     }
 
@@ -1187,7 +1196,7 @@ class BrowseController: BaseController() {
                     if (keywordMetadataList.isNotEmpty()) {
                         keywordMetadataList = keywordMetadataList.dropLast(1)
                     }
-                    keywordMap[metadata.getId()!!] = keywordMetadataList
+                    keywordMap[metadata.getId()] = keywordMetadataList
                 }
                 response["labelPhotoMap"] = labelPhotoMap
                 response["albumMap"] = albumMap

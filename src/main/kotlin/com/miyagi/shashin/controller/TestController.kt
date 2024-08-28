@@ -183,7 +183,7 @@ class TestController {
                             if (!gifFile.exists()) {
                                 println("gif doesn't exist")
 
-                                ImageProcessing.createVideoGif(metadata.getId()!!, metadataRepository)
+                                ImageProcessing.createVideoGif(metadata.getId(), metadataRepository)
                                 localIndex++
                                 println("processed $gifVersion")
                             } else {
@@ -599,7 +599,7 @@ class TestController {
                 val mids = testRepository.findAllFocalLengths()
                 val metadataRecordsList = mutableListOf<Metadata>()
 
-                if (mids != null && mids.isNotEmpty()) {
+                if (!mids.isNullOrEmpty()) {
                     var localIndex = 0
                     currentIndex = 0
                     totalIndex = mids.count()
@@ -608,7 +608,7 @@ class TestController {
                     val timesArray = mutableListOf<Long>()
                     val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
                     val sidecarDir = rootPath + relativeSidecarDir
-                    var rescannedMetadata = Metadata()
+                    var rescannedMetadata: Metadata
                     var prevFocalLength: Double
 
                     for (metadata in mids) {
