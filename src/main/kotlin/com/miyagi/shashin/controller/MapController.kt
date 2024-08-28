@@ -83,6 +83,7 @@ class MapController: BaseController() {
         operation =
         Operation(
             operationId = "getMapData",
+            summary = "Get results used for map data.",
             description = "<strong>Get results used for map data.</strong>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/mapdata\" \\\n" +

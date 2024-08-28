@@ -107,6 +107,7 @@ class AlbumsController: BaseController() {
         operation =
         Operation(
             operationId = "getAlbumsApi",
+            summary = "Get paged list for all albums.",
             description = "<strong>Get paged list for all albums.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/albums/{page}\" \\\n" +
@@ -201,6 +202,7 @@ class AlbumsController: BaseController() {
         operation =
         Operation(
             operationId = "getAlbumsApi",
+            summary = "Get paged list for all albums.",
             description = "<strong>Get paged list for all albums.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/albums?page={page}&size={size}\" \\\n" +
@@ -441,6 +443,7 @@ class AlbumsController: BaseController() {
         operation =
         Operation(
             operationId = "getSharedAlbumsApi",
+            summary = "Get list of shared albums.",
             description = "<strong>Get list of shared albums.</strong>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/sharedalbums\" \\\n" +
@@ -532,6 +535,7 @@ class AlbumsController: BaseController() {
         operation =
         Operation(
             operationId = "getAlbumCommentsApi",
+            summary = "Get comments for an album.",
             description = "<strong>Get comments for an album.</strong>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/albumcomments/{albumId}\" \\\n" +
@@ -609,6 +613,7 @@ class AlbumsController: BaseController() {
         operation =
         Operation(
             operationId = "deleteAlbumPhotos",
+            summary = "Delete album.",
             description = "<strong>Delete album.</strong>" +
                     "<pre><code>" +
                     "curl -X DELETE \"http://127.0.0.1:6624/api/v1/all/album/delete\" \\\n" +
@@ -800,6 +805,7 @@ class AlbumsController: BaseController() {
         operation =
         Operation(
             operationId = "postAnonymousShareAlbum",
+            summary = "Save and generate a sharable public URL.",
             description = "<strong>Save and generate a sharable public URL.</strong> This can be a user generated share link eg. http://127.0.0.1:6624/share/abcd/album/1" +
                     "<pre><code>" +
                     "curl -X POST \"http://127.0.0.1:6624/api/v1/share/album/save\" \\\n" +
@@ -957,6 +963,7 @@ class AlbumsController: BaseController() {
         operation =
         Operation(
             operationId = "getPagedAnonymousShareAlbum",
+            summary = "Get paged results for shared album content.",
             description = "<strong>Get paged results for shared album content.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/share/{shareLink}/album/{albumId}/{page}\" \\\n" +
@@ -1014,6 +1021,7 @@ class AlbumsController: BaseController() {
         operation =
         Operation(
             operationId = "getPagedSizeAnonymousShareAlbum",
+            summary = "Get results for shared album content.",
             description = "<strong>Get results for shared album content.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/share/{shareLink}/album/{albumId}?page={page}&size={size}\" \\\n" +
@@ -1242,6 +1250,7 @@ class AlbumsController: BaseController() {
         operation =
         Operation(
             operationId = "getPagedAlbum",
+            summary = "Get paged results for album content.",
             description = "<strong>Get paged results for album content.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/album/{albumId}/page/{page}\" \\\n" +
@@ -1307,6 +1316,7 @@ class AlbumsController: BaseController() {
         operation =
         Operation(
             operationId = "getPagedSizeAlbum",
+            summary = "Get paged results for album content by specifying the page and size.",
             description = "<strong>Get paged results for album content by specifying the page and size.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/album/{albumId}?page={page}&size={size}\" \\\n" +
