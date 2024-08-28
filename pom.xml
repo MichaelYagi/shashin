@@ -550,15 +550,11 @@
 
                             <charset>UTF-8</charset>
                             <cssSourceDir>site</cssSourceDir>
+                            <cssSourceFiles>
+                                <cssSourceFile>style.css</cssSourceFile>
+                            </cssSourceFiles>
                             <cssTargetDir>min</cssTargetDir>
-                            <cssIncludes>
-                                <include>
-                                    style.css
-                                </include>
-                            </cssIncludes>
-                            <cssExcludes>
-                                <exclude>**/*.min.css</exclude>
-                            </cssExcludes>
+                            <cssFinalFile>style.min.css</cssFinalFile>
                             <cssEngine>YUI</cssEngine>
                             <skipMerge>true</skipMerge>
 
