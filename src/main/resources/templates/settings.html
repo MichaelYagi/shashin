@@ -107,7 +107,7 @@
 
                             <div class="col-2 form-group">
                                 <label for="scheduledTime">Time at which tasks run</label>&nbsp;<span id="scheduledTimeInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Restarts app after updated and saved"></span>
-                                <div class="col-4">
+                                <div class="col-5">
                                     <select class="form-select" id="scheduledTime" name="scheduledTime">
                                         <th:block th:each="time, iterStat: ${timeScheduleList}">
                                             <th:block th:if="${scheduledTime==time}">
