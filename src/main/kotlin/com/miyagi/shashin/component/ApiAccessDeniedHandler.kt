@@ -21,7 +21,7 @@ class ApiAccessDeniedHandler : AccessDeniedHandler {
         jsonResponseMap["msg"] = accessDeniedException?.localizedMessage!!
         val now = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern(TextUtils.getCommonDateFormat())
-        jsonResponseMap["timestamp"] = now.format(formatter);
+        jsonResponseMap["timestamp"] = now.format(formatter)
         jsonResponseMap["status"] = HttpStatus.FORBIDDEN
         val mapper = ObjectMapper()
         val jsonResponse = mapper.writeValueAsString(jsonResponseMap)

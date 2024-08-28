@@ -8,10 +8,8 @@ import ai.djl.repository.zoo.Criteria
 import ai.djl.training.util.ProgressBar
 import com.miyagi.shashin.ShashinApplication
 import com.miyagi.shashin.controller.TimelineController
-import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.repository.*
-import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.ImageProcessing.Companion.subjectRecognizer
 import com.miyagi.shashin.util.ImageProcessing
 import com.miyagi.shashin.util.NetworkUtils
@@ -234,7 +232,7 @@ class ScheduledTasks {
                             .build()
 
                         for (withoutKeyword in withoutKeywords) {
-                            val metadataWithoutKeywordsObj = metadataRepository?.findById(withoutKeyword.getId()!!)?.get()
+                            val metadataWithoutKeywordsObj = metadataRepository?.findById(withoutKeyword.getId())?.get()
 
                             ImageProcessing.objectRecognizer(
                                 keywordRepository!!,

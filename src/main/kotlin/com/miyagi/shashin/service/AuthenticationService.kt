@@ -9,9 +9,7 @@ import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.AuthorityUtils
 import org.springframework.stereotype.Service
-import java.time.Instant
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import jakarta.servlet.http.HttpServletRequest
 
@@ -36,7 +34,7 @@ object AuthenticationService {
             jsonResponseMap["msg"] = "Invalid API Key"
             val now = LocalDateTime.now()
             val formatter = DateTimeFormatter.ofPattern(TextUtils.getCommonDateFormat())
-            jsonResponseMap["timestamp"] = now.format(formatter);
+            jsonResponseMap["timestamp"] = now.format(formatter)
             jsonResponseMap["status"] = HttpStatus.UNAUTHORIZED
             val mapper = ObjectMapper()
             val jsonResponse = mapper.writeValueAsString(jsonResponseMap)

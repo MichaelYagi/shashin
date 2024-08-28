@@ -21,7 +21,7 @@ class NetworkUtils {
     companion object {
         private var logger: Logger = Logger.getLogger(NetworkUtils::class.simpleName)
 
-        fun pingURL(url: String, requestProperties: Map<String,String>? = null, timeoutInMS: Int = 0, requestMethod: String = "HEAD", jsonInputString: String = "", getResponse: Boolean = false): Boolean {
+        private fun pingURL(url: String, requestProperties: Map<String,String>? = null, timeoutInMS: Int = 0, requestMethod: String = "HEAD", jsonInputString: String = "", getResponse: Boolean = false): Boolean {
             var urlcopy = url
             urlcopy = urlcopy.replaceFirst(
                 "^https".toRegex(),
@@ -50,7 +50,7 @@ class NetworkUtils {
                 if (getResponse) {
                     var response = ""
                     BufferedReader(
-                        InputStreamReader(connection.getInputStream(), "utf-8")
+                        InputStreamReader(connection.inputStream, "utf-8")
                     ).use { br ->
                         val responseBuilder = StringBuilder()
                         var responseLine: String?
@@ -93,7 +93,7 @@ class NetworkUtils {
             var passing = false
 
             if (!apiKey.isNullOrBlank()) {
-                var response: ResponseEntity<String>?
+                val response: ResponseEntity<String>?
                 try {
                     val webClient =
                         WebClient.create("https://circleci.com/api/v1.1/project/github/MichaelYagi/shashin?limit=1&offset=0&filter=completed&circle-token=$apiKey")
@@ -126,7 +126,7 @@ class NetworkUtils {
         fun checkNominatimConnection(nominatimUrl: String?): Boolean {
             var available = false
             if (!nominatimUrl.isNullOrBlank()) {
-                var response: ResponseEntity<String>?
+                val response: ResponseEntity<String>?
                 try {
                     val webClient = WebClient.create(nominatimUrl)
                     response = webClient.get()

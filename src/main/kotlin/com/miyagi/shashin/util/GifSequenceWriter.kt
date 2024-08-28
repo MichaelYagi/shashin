@@ -2,12 +2,22 @@ package com.miyagi.shashin.util
 
 import java.awt.image.RenderedImage
 import java.io.IOException
-import java.util.logging.Logger
 import javax.imageio.*
 import javax.imageio.metadata.IIOMetadata
 import javax.imageio.metadata.IIOMetadataNode
 import javax.imageio.stream.ImageOutputStream
 
+/**
+ * Creates a new GifSequenceWriter
+ *
+ * @param outputStream the ImageOutputStream to be written to
+ * @param imageType one of the imageTypes specified in BufferedImage
+ * @param timeBetweenFramesMS the time between frames in miliseconds
+ * @param loopContinuously wether the gif should loop repeatedly
+ * @throws IIOException if no gif ImageWriters are found
+ *
+ * @author Elliot Kroo (elliot[at]kroo[dot]net)
+ */
 open class GifSequenceWriter(
     outputStream: ImageOutputStream?,
     imageType: Int,
@@ -19,17 +29,6 @@ open class GifSequenceWriter(
     private var imageWriteParam: ImageWriteParam = gifWriter.defaultWriteParam
     private var imageMetaData: IIOMetadata
 
-    /**
-     * Creates a new GifSequenceWriter
-     *
-     * @param outputStream the ImageOutputStream to be written to
-     * @param imageType one of the imageTypes specified in BufferedImage
-     * @param timeBetweenFramesMS the time between frames in miliseconds
-     * @param loopContinuously wether the gif should loop repeatedly
-     * @throws IIOException if no gif ImageWriters are found
-     *
-     * @author Elliot Kroo (elliot[at]kroo[dot]net)
-     */
     init {
         val imageTypeSpecifier =
             ImageTypeSpecifier.createFromBufferedImageType(imageType)
@@ -111,8 +110,6 @@ open class GifSequenceWriter(
     }
 
     companion object {
-        private var logger: Logger = Logger.getLogger(GifSequenceWriter::class.simpleName)
-
         @get:Throws(IIOException::class)
         private val writer: ImageWriter
             /**

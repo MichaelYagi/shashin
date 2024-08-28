@@ -32,7 +32,6 @@ import java.util.logging.Level
 import java.util.logging.Logger
 
 
-@Suppress("UNCHECKED_CAST")
 @Component
 class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 
@@ -46,9 +45,6 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 
     @Value("\${app.role.user}")
     private var userRole: String? = null
-
-    @Value("\${app.build.properties.version}")
-    private val appVersion: String? = null
 
     @Value("\${app.sidecar.path}")
     private var relativeSidecarDir: String? = null
@@ -66,20 +62,11 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
     var customUserDetailsService: CustomUserDetailsService? = null
 
     @Autowired
-    private var settingsRepository: SettingsRepository? = null
-
-    @Autowired
     var useragentRepository: UseragentRepository? = null
 
     private var persistentTokenRepository: PersistentTokenRepository? = null
 
     private var profile: String? = null
-
-    fun setPersistentTokenRepository(persistentTokenRepository: PersistentTokenRepository?): AuthSuccessHandler {
-        this.persistentTokenRepository = persistentTokenRepository
-
-        return this
-    }
 
     fun setProfile(profile: String?): AuthSuccessHandler {
         this.profile = profile
@@ -104,10 +91,10 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
         var userId = 0
 
         var uriPath = request!!.session.getAttribute("ShashinReferer")
-        if (uriPath == null || !validSubPaths(uriPath.toString())) {
-            uriPath = ""
+        uriPath = if (uriPath == null || !validSubPaths(uriPath.toString())) {
+            ""
         } else {
-            uriPath = uriPath.toString()
+            uriPath.toString()
         }
         request.session.removeAttribute("ShashinReferer")
 
@@ -320,26 +307,6 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                     notificationObj.setRead(false)
                 }
                 notificationObj.setMessage("$identity logged in at "+sdtf.format(Date())+".")
-                notificationObjList.add(notificationObj)
-            }
-            if (notificationObjList.isNotEmpty()) {
-                notificationRepository?.saveAll(notificationObjList)
-            }
-        }
-    }
-
-    private fun notifyLatestVersion(currentUserObj: User?, version: String) {
-        val admins = userRepository?.findAllAdmins()
-
-        if (admins != null && currentUserObj != null) {
-            val notificationObjList = mutableListOf<Notification>()
-            for (admin in admins) {
-                val notificationObj = Notification()
-                notificationObj.setUserId(admin.getId())
-                notificationObj.setCreatedAt(getCurrentTimestamp())
-                notificationObj.setModifiedAt(getCurrentTimestamp())
-                notificationObj.setRead(false)
-                notificationObj.setMessage("Server update for Shashin version $version is available.")
                 notificationObjList.add(notificationObj)
             }
             if (notificationObjList.isNotEmpty()) {

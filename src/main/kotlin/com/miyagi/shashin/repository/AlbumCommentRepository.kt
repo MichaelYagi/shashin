@@ -1,7 +1,6 @@
 package com.miyagi.shashin.repository
 
 import com.miyagi.shashin.model.AlbumComment
-import com.miyagi.shashin.model.AlbumPhoto
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 import jakarta.transaction.Transactional

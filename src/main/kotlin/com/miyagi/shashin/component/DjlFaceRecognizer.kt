@@ -10,7 +10,6 @@ import ai.djl.modality.cv.transform.Resize
 import ai.djl.modality.cv.transform.ToTensor
 import ai.djl.ndarray.NDList
 import ai.djl.repository.zoo.Criteria
-import ai.djl.training.util.ProgressBar
 import ai.djl.translate.Pipeline
 import ai.djl.translate.TranslateException
 import ai.djl.translate.Translator
@@ -105,13 +104,13 @@ class DjlFaceRecognizer {
                     "Processing training image ${trainingDataCurrentCount+1}/$trainingDataCount - ${trainingImageObj.getRecognitionLabelName()!!} using training image ${trainingImageObj.getPath()}"
                 )
 
-                var trainingImageTn = Thumbnails.of(ImageIO.read(File(trainingImageObj.getPath())))
+                var trainingImageTn = Thumbnails.of(ImageIO.read(File(trainingImageObj.getPath()!!)))
                 if (trainingImageObj.getType()?.contains("video") == true) {
                     trainingImageTn = if (trainingImageObj.getThumbnailUrlOriginal() !== null) {
                         val path = this.sidecarDir + (trainingImageObj.getThumbnailUrlOriginal()!!.replace("/api/v1/",""))
                         Thumbnails.of(ImageIO.read(File(path)))
                     } else {
-                        Thumbnails.of(ImageIO.read(File(trainingImageObj.getThumbnailPathSmall())))
+                        Thumbnails.of(ImageIO.read(File(trainingImageObj.getThumbnailPathSmall()!!)))
                     }
                 }
 
@@ -146,14 +145,14 @@ class DjlFaceRecognizer {
                         "Processing test image ${testImagesCurrentCount+1}/$testImagesCount - ${testImageObj.getPath()}"
                     )
 
-                    var scaledTestImageTn = Thumbnails.of(ImageIO.read(File(testImageObj.getPath())))
+                    var scaledTestImageTn = Thumbnails.of(ImageIO.read(File(testImageObj.getPath()!!)))
                     if (testImageObj.getType()?.contains("video") == true) {
                         if (testImageObj.getThumbnailUrlOriginal() !== null) {
                             val path = this.sidecarDir + (testImageObj.getThumbnailUrlOriginal()!!.replace("/api/v1/",""))
                             scaledTestImageTn = Thumbnails.of(ImageIO.read(File(path)))
                         } else {
                             scaledTestImageTn =
-                                Thumbnails.of(ImageIO.read(File(testImageObj.getThumbnailPathSmall())))
+                                Thumbnails.of(ImageIO.read(File(testImageObj.getThumbnailPathSmall()!!)))
                         }
                     }
 
@@ -175,7 +174,7 @@ class DjlFaceRecognizer {
                     )
 
                     if (numOfTestObject == 0) {
-                        recognitionLabelPhotoRepository?.deleteByMetadataId(testImageObj.getId()!!)
+                        recognitionLabelPhotoRepository?.deleteByMetadataId(testImageObj.getId())
                         val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase(TextUtils.getObjectName())
                         var recognitionLabelObj = RecognitionLabel()
                         if (recognitionLabelRecord == null) {
@@ -258,7 +257,7 @@ class DjlFaceRecognizer {
                                         val recordCount =
                                             this.recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
                                                 trainingImageLabelId,
-                                                testImageObj.getId()!!
+                                                testImageObj.getId()
                                             )
                                         if (recordCount == 0) {
                                             val recognitionLabelPhoto = RecognitionLabelPhoto()
@@ -271,7 +270,7 @@ class DjlFaceRecognizer {
                                             val recognitionLabelPhoto =
                                                 this.recognitionLabelPhotoRepository?.findByRecognitionLabelIdAndMetadataId(
                                                     trainingImageLabelId,
-                                                    testImageObj.getId()!!
+                                                    testImageObj.getId()
                                                 )
                                             if (recognitionLabelPhoto != null) {
                                                 recognitionLabelPhoto.setConfidence(similarity)
@@ -469,8 +468,8 @@ class DjlFaceRecognizer {
         println(detect6.toJson())
 
         // 1st photo - find faces
-        println("i: "+numOfObjects6)
-        println("j: "+numOfObjects3)
+        println("i: $numOfObjects6")
+        println("j: $numOfObjects3")
         for (i in 0 until numOfObjects6) {
             var cornerMin = jsonNode6.get(i).get("boundingBox").get("corners")[0]
             var xMin = cornerMin.get("x").toString().toDouble()

@@ -26,7 +26,7 @@ class CustomUserDetailsService : UserDetailsService {
 
 class CustomUserPrincipal(private val user: User) : UserDetails {
 
-    override fun getAuthorities(): MutableCollection<out GrantedAuthority>? {
+    override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         val authorities = mutableListOf<GrantedAuthority>()
         authorities.add(SimpleGrantedAuthority(user.getAuthority()))
         return authorities
