@@ -29,9 +29,6 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.io.File
 import java.io.FileInputStream
-import java.net.Inet4Address
-import java.net.InetAddress
-import java.net.UnknownHostException
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.text.SimpleDateFormat
@@ -367,7 +364,7 @@ class AlbumsController: BaseController() {
                         albums.add(albumMap)
 
                         // Get comments for this album
-                        val albumComments = commentRepository.findCommentsByAlbumId(albumObj?.get()!!.getId())
+                        val albumComments = commentRepository.findCommentsByAlbumId(albumObj.get().getId())
                         for (albumComment in albumComments) {
                             val albumCommentMap = HashMap<String, Any>()
                             albumCommentMap["comment"] = albumComment.getComment().toString()
@@ -1089,7 +1086,7 @@ class AlbumsController: BaseController() {
         val photoObj = albumRepository.findById(albumId)
         if (photoObj.isPresent && photoObj.get().getShareUrl() == shareLink) {
             val resultPage = page*size
-            var albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId, resultPage, size)
+            val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId, resultPage, size)
             val albumMetadataList = ArrayList<Metadata>()
             if (albumPhotos != null) {
                 for (albumPhoto in albumPhotos) {
@@ -1127,7 +1124,7 @@ class AlbumsController: BaseController() {
         val size: Int = model.getAttribute("queryLimit") as Int
         val resultPage = page * size
 
-        var albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId, resultPage, size)
+        val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId, resultPage, size)
         val albumMetadataList = ArrayList<Metadata>()
         if (albumPhotos != null) {
             for (albumPhoto in albumPhotos) {
@@ -1410,17 +1407,16 @@ class AlbumsController: BaseController() {
             }
 
             if ((currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") || (userAlbums != null && currentUserObj.getAuthority()!! == "ROLE_USER")) {
-                // Get album photos
-                var albumPhotos: MutableIterable<AlbumPhoto?>? = null
 
-                if (mediaType == "all") {
-                    albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(
+                // Get album photos
+                val albumPhotos: MutableIterable<AlbumPhoto?>? = if (mediaType == "all") {
+                    albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(
                         albumId,
                         page * size,
                         size
                     )
                 } else {
-                    albumPhotos = albumPhotoRepository.findAllByAlbumIdAndMediaTypeAndOffsetAndLimit(
+                    albumPhotoRepository.findAllByAlbumIdAndMediaTypeAndOffsetAndLimit(
                         albumId,
                         mediaType!!,
                         page * size,
@@ -1468,7 +1464,7 @@ class AlbumsController: BaseController() {
                                 albumPhotoCommentsList.add(albumPhotoCommentMap)
                             }
                             if (albumPhotoCommentsList.isNotEmpty()) {
-                                albumPhotosCommentsMap[metadata.get().getId()!!] = albumPhotoCommentsList
+                                albumPhotosCommentsMap[metadata.get().getId()] = albumPhotoCommentsList
                             }
                         }
                     }
@@ -1519,7 +1515,7 @@ class AlbumsController: BaseController() {
 
             if ((currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") || (userAlbums != null && currentUserObj.getAuthority()!! == "ROLE_USER")) {
                 // Get album photos
-                var albumPhotos = albumPhotoRepository.findAllByAlbumId(albumId)
+                val albumPhotos = albumPhotoRepository.findAllByAlbumId(albumId)
 
                 if (albumPhotos != null) {
                     val albumObj = albumRepository.findAlbumById(albumId)
@@ -1528,8 +1524,8 @@ class AlbumsController: BaseController() {
                     for (albumPhoto in albumPhotos) {
                         if (albumPhoto != null) {
                             val metadata = metadataRepository.findById(albumPhoto.getMetadataId()!!)
-                            if (!metadata.get().getType()?.contains("video", ignoreCase = true)!!) {
-                                val tempFile = File(metadata.get().getPath())
+                            if (metadata.isPresent && !metadata.get().getType()?.contains("video", ignoreCase = true)!!) {
+                                val tempFile = File(metadata.get().getPath()!!)
                                 if (tempFile.exists()) {
                                     val tempFileTo =
                                         File(tempExportBaseDir.toString() + "/" + metadata.get().getFileName())
@@ -1596,7 +1592,7 @@ class AlbumsController: BaseController() {
         if (albumId > 0 && (download.isPresent && download.get() == albumId) || (downloadArray.isPresent && downloadArray.get() != "")) {
 
             // Get album photos
-            var albumPhotos = albumPhotoRepository.findAllByAlbumId(albumId)
+            val albumPhotos = albumPhotoRepository.findAllByAlbumId(albumId)
             val albumObj = albumRepository.findById(albumId)
 
             if (albumPhotos != null && albumObj.isPresent && albumObj.get().getShareUrl() == shareLink) {
@@ -1607,7 +1603,7 @@ class AlbumsController: BaseController() {
                         if (albumPhoto != null) {
                             val metadata = metadataRepository.findById(albumPhoto.getMetadataId()!!)
                             if (!metadata.get().getType()?.contains("video", ignoreCase = true)!!) {
-                                val tempFile = File(metadata.get().getPath())
+                                val tempFile = File(metadata.get().getPath()!!)
                                 if (tempFile.exists()) {
                                     val tempFileTo =
                                         File(tempExportBaseDir.toString() + "/" + metadata.get().getFileName())
@@ -1636,7 +1632,7 @@ class AlbumsController: BaseController() {
                     if (metadataIdArray != null) {
                         for (metadataId in metadataIdArray) {
                             val metadata = metadataRepository.findById(metadataId)
-                            val tempFile = File(metadata.get().getPath())
+                            val tempFile = File(metadata.get().getPath()!!)
                             if (tempFile.exists()) {
                                 val tempFileTo =
                                     File(tempExportBaseDir.toString() + "/" + metadata.get().getFileName())
@@ -1743,18 +1739,18 @@ class AlbumsController: BaseController() {
 
                 for (randomAlbum in randomAlbums) {
                     if (randomAlbum.getIsShared() == 1) {
-                        var albumPhotos = albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, 1000)
+                        val albumPhotos =
+                            albumPhotoRepository.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, 1000)
 
                         if (albumPhotos != null) {
                             for (albumPhoto in albumPhotos) {
 
                                 if (metadataRepository.count() > 0) {
-                                    var metadataOpt = metadataRepository.findByMetadataId(albumPhoto?.getMetadataId()!!)
+                                    val metadata = metadataRepository.findByMetadataId(albumPhoto?.getMetadataId()!!)
 
                                     val albumObj = albumRepository.findById(albumPhoto.getAlbumId()!!)
 
-                                    if (metadataOpt != null) {
-                                        val metadata = metadataOpt
+                                    if (metadata != null) {
                                         val date = outputFormat.format(
                                             sdf.parse(
                                                 metadata.getYear().toString() + "-" + metadata.getMonth()

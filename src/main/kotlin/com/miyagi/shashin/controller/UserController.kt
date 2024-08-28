@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Notification
-import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.PersistentLoginsExpiryRepository
@@ -15,7 +14,6 @@ import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import io.swagger.v3.oas.annotations.Operation
-import jakarta.annotation.Resource
 import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -23,13 +21,11 @@ import org.springframework.core.io.FileSystemResource
 import org.springframework.data.domain.Sort
 import org.springframework.http.MediaType
 import org.springframework.security.access.annotation.Secured
-import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
-import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.bind.support.SessionStatus
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
@@ -46,8 +42,6 @@ import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
-import org.springframework.security.core.Authentication
-import javax.validation.Valid
 
 
 @Suppress("UNCHECKED_CAST")
@@ -68,9 +62,6 @@ class UserController {
     @Value("\${app.role.super}")
     private var superRole: String? = null
 
-    @Value("\${app.role.admin}")
-    private var adminRole: String? = null
-
     @Autowired
     var userRepository: UserRepository? = null
 
@@ -80,8 +71,6 @@ class UserController {
     @Autowired
     private lateinit var notificationRepository: NotificationRepository
 
-    @Resource(name = "authenticationManager")
-    private val authManager: AuthenticationManager? = null
     @Autowired
     private lateinit var persistentLoginsExpiryRepository: PersistentLoginsExpiryRepository
 
@@ -415,7 +404,7 @@ class UserController {
 
             val users: List<User?> = userRepository?.findAll() as List<User?>
 
-            logger.log(Level.INFO, "New user: " + newUser.toString())
+            logger.log(Level.INFO, "New user: $newUser")
 
             for (user in users) {
                 if (user != null) {

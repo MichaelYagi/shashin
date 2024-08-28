@@ -200,8 +200,8 @@ class MediaServiceController {
                     for (admin in admins) {
                         val notificationObj = Notification()
                         notificationObj.setUserId(admin.getId())
-                        notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
-                        notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                        notificationObj.setCreatedAt(getCurrentTimestamp())
+                        notificationObj.setModifiedAt(getCurrentTimestamp())
                         notificationObj.setRead(false)
                         val message =
                             "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to play invalid video with metadata ID $metadataId at ${
@@ -247,8 +247,8 @@ class MediaServiceController {
                     for (admin in admins) {
                         val notificationObj = Notification()
                         notificationObj.setUserId(admin.getId())
-                        notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
-                        notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                        notificationObj.setCreatedAt(getCurrentTimestamp())
+                        notificationObj.setModifiedAt(getCurrentTimestamp())
                         notificationObj.setRead(false)
                         val message =
                             "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to download video with metadata ID $metadataId at ${
@@ -434,8 +434,8 @@ class MediaServiceController {
                     for (admin in admins) {
                         val notificationObj = Notification()
                         notificationObj.setUserId(admin.getId())
-                        notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
-                        notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                        notificationObj.setCreatedAt(getCurrentTimestamp())
+                        notificationObj.setModifiedAt(getCurrentTimestamp())
                         notificationObj.setRead(false)
                         val message =
                             "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to view invalid image with metadata ID $metadataId at ${

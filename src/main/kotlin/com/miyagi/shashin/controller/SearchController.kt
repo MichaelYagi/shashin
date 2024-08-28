@@ -12,7 +12,6 @@ import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.SearchHistoryTypes
 import com.miyagi.shashin.util.TextUtils
 import io.swagger.v3.oas.annotations.Operation
-import org.apache.commons.text.StringEscapeUtils
 import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Controller
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.ui.Model
 import org.springframework.ui.set
-import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import java.util.*
@@ -132,9 +130,9 @@ class SearchController: BaseController() {
                     if (favorites != null) {
                         for (favorite in favorites) {
                             if (favorite != null) {
-                                val favCount = favoriteRepository.countAllByMetadataId(metadata.getId()!!)
+                                val favCount = favoriteRepository.countAllByMetadataId(metadata.getId())
 
-                                favoritesMap[metadata.getId()!!] = hashMapOf(
+                                favoritesMap[metadata.getId()] = hashMapOf(
                                     "favorite" to (favorite.getUserId() == currentUserObj?.getId()),
                                     "count" to favCount
                                 )
@@ -235,7 +233,7 @@ class SearchController: BaseController() {
                         term = possibleDate
                     }
 
-                    var searchHistory: SearchHistory? = null
+                    val searchHistory: SearchHistory?
                     if (searchTermCount == 0) {
                         searchHistory = SearchHistory()
                         searchHistory.setTerm(term)
@@ -245,7 +243,7 @@ class SearchController: BaseController() {
                         searchHistory.setModifiedAt(TextUtils.getCurrentTimestamp())
                     } else {
                         searchHistory =
-                            searchHistoryRepository?.findDistinctByUserIdAndTerm(
+                            searchHistoryRepository.findDistinctByUserIdAndTerm(
                                 currentUserObj.getId(),
                                 term,
                                 SearchHistoryTypes.AppHistorySearch.type
@@ -263,13 +261,13 @@ class SearchController: BaseController() {
                     )
                     val searchHistoryLimit = model.getAttribute("searchHistoryLimit").toString().toInt()
                     if (searchHistoryCount > searchHistoryLimit) {
-                        val searchHistoryRefresh = searchHistoryRepository?.findTopNByUserIdOrderByIdDesc(
+                        val searchHistoryRefresh = searchHistoryRepository.findTopNByUserIdOrderByIdDesc(
                             currentUserObj.getId(),
                             1,
                             SearchHistoryTypes.AppHistorySearch.type
                         )
                         if (searchHistoryRefresh != null && searchHistoryRefresh.count() > 0) {
-                            searchHistoryRepository?.deleteByIdAndSearchType(
+                            searchHistoryRepository.deleteByIdAndSearchType(
                                 searchHistoryRefresh.last().getId(),
                                 SearchHistoryTypes.AppHistorySearch.type
                             )
@@ -288,7 +286,7 @@ class SearchController: BaseController() {
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
-        return "redirect:/"+module
+        return "redirect:/$module"
     }
 
     @RouterOperation(

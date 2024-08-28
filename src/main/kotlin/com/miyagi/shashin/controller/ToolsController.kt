@@ -3,83 +3,42 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.miyagi.shashin.component.Message
-import com.miyagi.shashin.component.ScaperMessage
 import com.miyagi.shashin.configuration.MultiSecurityConfig
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.*
 import com.sun.management.OperatingSystemMXBean
-import net.coobird.thumbnailator.Thumbnails
-import net.coobird.thumbnailator.geometry.Positions
-import org.apache.commons.text.StringEscapeUtils
-import org.jsoup.Jsoup
 import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.health.HealthComponent
 import org.springframework.boot.actuate.health.HealthEndpoint
 import org.springframework.boot.info.BuildProperties
-import org.springframework.context.event.EventListener
-import org.springframework.core.io.InputStreamResource
-import org.springframework.core.io.UrlResource
-import org.springframework.http.*
-import org.springframework.messaging.handler.annotation.MessageMapping
-import org.springframework.messaging.handler.annotation.SendTo
-import org.springframework.messaging.simp.annotation.SubscribeMapping
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.context.support.WebApplicationContextUtils
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
-import org.springframework.web.socket.messaging.SessionConnectEvent
-import org.springframework.web.socket.messaging.SessionDisconnectEvent
-import org.springframework.web.socket.messaging.SessionSubscribeEvent
-import java.awt.image.BufferedImage
-import java.awt.image.RenderedImage
-import java.io.*
 import java.lang.management.ManagementFactory
 import java.math.RoundingMode
-import java.net.URISyntaxException
-import java.net.URL
-import java.nio.file.Files
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
-import javax.imageio.ImageIO
 import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
-import jakarta.servlet.http.HttpSession
-import javax.xml.bind.DatatypeConverter
-import kotlin.io.path.isDirectory
 
 
 @Controller
 class ToolsController {
 
     @Autowired
-    private lateinit var albumRepository: AlbumRepository
-
-    @Autowired
-    private lateinit var settingsRepository: SettingsRepository
-
-    @Autowired
-    private lateinit var keywordRepository: KeywordRepository
-
-    @Autowired
     private lateinit var metaRepository: MetadataRepository
 
     @Autowired
     private var buildProperties: BuildProperties? = null
-
-    @Autowired
-    private val searchHistoryRepository: SearchHistoryRepository? = null
 
     @Value("\${app.endpoint.url.geocode}")
     private lateinit var geocodeUrl: String
@@ -121,14 +80,14 @@ class ToolsController {
                 settings.getCompreFaceKey()
             )
 
-            if ((settings.getCompreFaceKey() == "" || settings.getCompreFaceKey() == null) && (settings.getCompreFaceServer() == "" || settings.getCompreFaceServer() == null)) {
-                status = true
+            status = if ((settings.getCompreFaceKey() == "" || settings.getCompreFaceKey() == null) && (settings.getCompreFaceServer() == "" || settings.getCompreFaceServer() == null)) {
+                true
             } else if ((settings.getCompreFaceKey() == "" || settings.getCompreFaceKey() == null) && settings.getCompreFaceServer() != "") {
-                status = false
+                false
             } else if (settings.getCompreFaceKey() != "" && (settings.getCompreFaceServer() == "" || settings.getCompreFaceServer() == null)) {
-                status = false
+                false
             } else {
-                status = faceRecogServicesAvailable
+                faceRecogServicesAvailable
             }
         }
 
@@ -395,10 +354,10 @@ class ToolsController {
                         }
                     }
 
-                    val apiRegex = "\\/api\\/v1\\/.*\\]".toRegex()
+                    val apiRegex = "/api/v1/.*]".toRegex()
 
                     val endpointArray = key.toString().split(",")
-                    if (endpointArray.size > 0) {
+                    if (endpointArray.isNotEmpty()) {
                         for (endpointParts in endpointArray) {
 
                             // Request Type and API calls

@@ -3,7 +3,6 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
@@ -18,8 +17,6 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
-import java.text.SimpleDateFormat
-import java.time.ZoneId
 import java.util.*
 import jakarta.transaction.Transactional
 
@@ -28,9 +25,6 @@ import jakarta.transaction.Transactional
 class NotificationsController {
     @Autowired
     private lateinit var notificationRepository: NotificationRepository
-
-    @Autowired
-    private val mediaDirRepository: MediaDirectoryRepository? = null
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()

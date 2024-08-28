@@ -1147,10 +1147,10 @@ class SettingsController {
                     val contentLength = outputZipFile.length()
 
                     val headers = HttpHeaders()
-                    headers.add(HttpHeaders.SET_COOKIE, "ShashinSnapshotName=" + outputZipFile.name)
-                    headers.add(HttpHeaders.SET_COOKIE, "ShashinSnapshotSize=" + contentLength)
-                    headers.add(HttpHeaders.SET_COOKIE, "ShashinDbBackupName=" + dbBackupName)
-                    headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + outputZipFile.name)
+                    headers.add(HttpHeaders.SET_COOKIE, "ShashinSnapshotName=${outputZipFile.name}")
+                    headers.add(HttpHeaders.SET_COOKIE, "ShashinSnapshotSize=$contentLength")
+                    headers.add(HttpHeaders.SET_COOKIE, "ShashinDbBackupName=$dbBackupName")
+                    headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=${outputZipFile.name}")
                     headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
                     headers.add("Pragma", "no-cache")
                     headers.add("Expires", "0")
@@ -1305,7 +1305,7 @@ class SettingsController {
                             val inputAsString = stream.bufferedReader().use { it.readText() }
                             val importedMetadata = mapper.readValue(inputAsString, Metadata::class.java)
                             if (importedMetadata != null) {
-                                val foundMetadataRecord = metadataRepository?.findById(importedMetadata.getId()!!)
+                                val foundMetadataRecord = metadataRepository?.findById(importedMetadata.getId())
 
                                 if (foundMetadataRecord != null && foundMetadataRecord.isPresent && !foundMetadataRecord.isEmpty) {
                                     val foundMetadata = foundMetadataRecord.get()
@@ -1523,7 +1523,7 @@ class SettingsController {
             importedMetadata.getLng() != foundMetadata.getLng() ||
             (importedMetadata.getHidden() != foundMetadata.getHidden() && importedMetadata.getHidden() != null && foundMetadata.getHidden() != null))
         ) {
-            val metadataRepo = metadataRepository?.findById(importedMetadata.getId()!!)
+            val metadataRepo = metadataRepository?.findById(importedMetadata.getId())
             if (metadataRepo != null && !metadataRepo.isEmpty) {
                 val metadata = metadataRepo.get()
                 metadata.setTitle(importedMetadata.getTitle())
@@ -1748,7 +1748,7 @@ class SettingsController {
                                                     "File " + metadata.getPath() + " no longer exists. Deleting metadata: " + metadata.getId()
                                                 )
                                                 val albumPhotoCommentList =
-                                                    albumPhotoCommentRepository?.findByMetadataId(metadata.getId()!!)
+                                                    albumPhotoCommentRepository?.findByMetadataId(metadata.getId())
                                                 if (albumPhotoCommentList != null) {
                                                     for (albumPhotoComment in albumPhotoCommentList) {
                                                         if (albumPhotoComment != null) {
@@ -1760,7 +1760,7 @@ class SettingsController {
                                                         }
                                                     }
                                                 }
-                                                albumPhotoCommentRepository?.deleteByMetadataId(metadata.getId()!!)
+                                                albumPhotoCommentRepository?.deleteByMetadataId(metadata.getId())
                                                 logger.log(
                                                     Level.INFO,
                                                     "Removed comment records for: " + metadata.getId()
@@ -1774,7 +1774,7 @@ class SettingsController {
                                                 )
 
                                                 // Delete from keywords
-                                                keywordPhotoRepository?.deleteAllByMetadataId(metadata.getId()!!)
+                                                keywordPhotoRepository?.deleteAllByMetadataId(metadata.getId())
                                                 val keywords = keywordRepository?.findAll()
                                                 if (keywords != null) {
                                                     for (keywordObj in keywords) {
@@ -1830,7 +1830,7 @@ class SettingsController {
 
                                                 // Delete tagged people
                                                 val recognitionLabelPhotos =
-                                                    recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId()!!)
+                                                    recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
                                                 if (settings != null && compreFaceServerConnected) {
                                                     val webClient = WebClient.create(settings.getCompreFaceServer()!!)
                                                     if (recognitionLabelPhotos != null) {
@@ -1851,10 +1851,10 @@ class SettingsController {
                                                         }
                                                     }
                                                 }
-                                                recognitionLabelPhotoRepository?.deleteByMetadataId(metadata.getId()!!)
+                                                recognitionLabelPhotoRepository?.deleteByMetadataId(metadata.getId())
 
                                                 // Delete metadata
-                                                metadataRepository?.deleteById(metadata.getId()!!)
+                                                metadataRepository?.deleteById(metadata.getId())
                                                 logger.log(
                                                     Level.INFO,
                                                     "Removed metadata records for: " + metadata.getId()
@@ -1987,10 +1987,9 @@ class SettingsController {
                                 }
 
                                 for ((index, metadataId) in metadataIdArray.withIndex()) {
-                                    val metadataObjOpt = metadataRepository?.findByMetadataId(metadataId)
+                                    val metadataObj = metadataRepository?.findByMetadataId(metadataId)
 
-                                    if (metadataObjOpt != null) {
-                                        val metadataObj = metadataObjOpt
+                                    if (metadataObj != null) {
                                         val lat = metadataObj.getLat()
                                         val lng = metadataObj.getLng()
                                         if (!lat.isNullOrBlank() && !lng.isNullOrBlank()) {
@@ -2187,7 +2186,7 @@ class SettingsController {
                                                                                     val recognitionLabelPhoto =
                                                                                         recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
                                                                                             recognitionLabelObj.getId(),
-                                                                                            metadataObj.getId()!!
+                                                                                            metadataObj.getId()
                                                                                         )
 
                                                                                     if (recognitionLabelPhoto == 0) {
@@ -2437,9 +2436,9 @@ class SettingsController {
                         if (!shouldStop.get() && FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
                             val metadataProcessing = MetadataProcessing(apiVersion!!, file, sidecarDir, metadataObj!!, geocodeUrl!!)
                             metadataObj = metadataProcessing.populateMetadata()
-                            if (metadataObj.getId()!!.isNotEmpty()) {
+                            if (metadataObj.getId().isNotEmpty()) {
                                 // Check for entry
-                                val metadataCount = metadataRepository?.countMetadataById(metadataObj.getId()!!)
+                                val metadataCount = metadataRepository?.countMetadataById(metadataObj.getId())
 
                                 if (metadataCount == 0) {
                                     val imageProcessing = ImageProcessing(apiVersion, file, sidecarDir, metadataObj)
@@ -2448,7 +2447,7 @@ class SettingsController {
                                         metadataObj.setHidden(false)
 
                                         metadataRepository?.save(metadataObj)
-                                        metadataIdArray.add(metadataObj.getId()!!)
+                                        metadataIdArray.add(metadataObj.getId())
                                     } else {
                                         logger.log(
                                             Level.WARNING,

@@ -1,17 +1,11 @@
 package com.miyagi.shashin.controller
 
-import com.miyagi.shashin.ShashinApplication
 import com.miyagi.shashin.component.ApiError
-import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
-import com.miyagi.shashin.repository.PersistentLoginsExpiryRepository
-import com.miyagi.shashin.repository.PersistentLoginsRepository
 import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.ApiResponse
-import com.miyagi.shashin.util.FileUtils
-import com.miyagi.shashin.util.NetworkUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,20 +14,14 @@ import org.springframework.boot.info.BuildProperties
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.ui.Model
 import org.springframework.ui.set
-import org.springframework.util.StringUtils.capitalize
-import org.springframework.web.HttpMediaTypeNotSupportedException
-import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.text.SimpleDateFormat
@@ -46,10 +34,6 @@ import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.transaction.Transactional
-import java.io.File
-import java.net.URL
-import java.nio.file.Files
-import java.nio.file.Paths
 
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -64,12 +48,6 @@ class AttributeController: ResponseEntityExceptionHandler() {
 
     @Autowired
     private var settingsRepository: SettingsRepository? = null
-
-    @Autowired
-    private var persistentLoginsRepository: PersistentLoginsRepository? = null
-
-    @Autowired
-    private var persistentLoginsExpiryRepository: PersistentLoginsExpiryRepository? = null
 
     @Autowired
     private var buildProperties: BuildProperties? = null
@@ -88,9 +66,6 @@ class AttributeController: ResponseEntityExceptionHandler() {
 
     @Value("\${app.role.user}")
     private lateinit var userRole: String
-
-    @Value("\${app.endpoint.url.compreface}")
-    private lateinit var comprefaceServer: String
 
     @Value("\${app.endpoint.url.geocode}")
     private lateinit var geocodeUrl: String
@@ -127,15 +102,15 @@ class AttributeController: ResponseEntityExceptionHandler() {
 //        return buildResponseEntity(ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.localizedMessage, ex))
 //    }
 
-    fun handleHttpMessageNotReadable(
-        ex: HttpMessageNotReadableException,
-        headers: HttpHeaders,
-        status: HttpStatus,
-        request: WebRequest
-    ): ResponseEntity<Any?> {
-        val error = "Malformed JSON request"
-        return buildResponseEntity(ApiError(HttpStatus.BAD_REQUEST, error, ex))
-    }
+//    fun handleHttpMessageNotReadable(
+//        ex: HttpMessageNotReadableException,
+//        headers: HttpHeaders,
+//        status: HttpStatus,
+//        request: WebRequest
+//    ): ResponseEntity<Any?> {
+//        val error = "Malformed JSON request"
+//        return buildResponseEntity(ApiError(HttpStatus.BAD_REQUEST, error, ex))
+//    }
 
 //    @ExceptionHandler(Exception::class)
 //    protected fun handleException(
@@ -159,23 +134,23 @@ class AttributeController: ResponseEntityExceptionHandler() {
         return ResponseEntity<Any?>(apiError, apiError.getStatus()!!)
     }
 
-    fun handleHttpMediaTypeNotSupported(
-        ex: HttpMediaTypeNotSupportedException,
-        headers: HttpHeaders,
-        status: HttpStatus,
-        request: WebRequest
-    ): ResponseEntity<Any?> {
-        return buildResponseEntity(ApiError(HttpStatus.METHOD_NOT_ALLOWED, ex.localizedMessage, ex))
-    }
+//    fun handleHttpMediaTypeNotSupported(
+//        ex: HttpMediaTypeNotSupportedException,
+//        headers: HttpHeaders,
+//        status: HttpStatus,
+//        request: WebRequest
+//    ): ResponseEntity<Any?> {
+//        return buildResponseEntity(ApiError(HttpStatus.METHOD_NOT_ALLOWED, ex.localizedMessage, ex))
+//    }
 
-    fun handleHttpRequestMethodNotSupported(
-        ex: HttpRequestMethodNotSupportedException,
-        headers: HttpHeaders,
-        status: HttpStatus,
-        request: WebRequest
-    ): ResponseEntity<Any?> {
-        return buildResponseEntity(ApiError(HttpStatus.METHOD_NOT_ALLOWED, ex.localizedMessage, ex))
-    }
+//    fun handleHttpRequestMethodNotSupported(
+//        ex: HttpRequestMethodNotSupportedException,
+//        headers: HttpHeaders,
+//        status: HttpStatus,
+//        request: WebRequest
+//    ): ResponseEntity<Any?> {
+//        return buildResponseEntity(ApiError(HttpStatus.METHOD_NOT_ALLOWED, ex.localizedMessage, ex))
+//    }
 
     @ModelAttribute
     @Transactional

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Album
-import com.miyagi.shashin.model.KeywordsMetadata
 import com.miyagi.shashin.model.MapData
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.AlbumRepository
@@ -157,12 +156,11 @@ class MapController: BaseController() {
         val currentUserObj = model.getAttribute("currentUser") as User?
 
         if (currentUserObj != null) {
-            val mapdata: MutableIterable<MapData>
 
-            if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
-                mapdata = metadataRepository!!.findTimelineAllForMap() as MutableIterable<MapData>
+            val mapdata: MutableIterable<MapData> = if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
+                metadataRepository!!.findTimelineAllForMap()
             } else {
-                mapdata = metadataRepository!!.findByAlbumMetadataByUserIdForMap(currentUserObj.getId())
+                metadataRepository!!.findByAlbumMetadataByUserIdForMap(currentUserObj.getId())
             }
 
             response["mapdata"] = mapdata
@@ -214,13 +212,13 @@ class MapController: BaseController() {
                 val mapdata: MutableList<MapData>
 
                 if (startDate != "" && endDate != "") {
-                    if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute(
+                    mapdata = if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute(
                             "superRole"
                         )
                     ) {
-                        mapdata = metadataRepository!!.findTimelineDatesForMap(offset, limit, startDate, endDate) as MutableList<MapData>
+                        metadataRepository!!.findTimelineDatesForMap(offset, limit, startDate, endDate) as MutableList<MapData>
                     } else {
-                        mapdata = metadataRepository!!.findByAlbumMetadataByUserIdDatesForMapWithLimit(
+                        metadataRepository!!.findByAlbumMetadataByUserIdDatesForMapWithLimit(
                             currentUserObj.getId(),
                             offset,
                             limit,
@@ -229,13 +227,13 @@ class MapController: BaseController() {
                         ) as MutableList<MapData>
                     }
                 } else {
-                    if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute(
+                    mapdata = if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute(
                             "superRole"
                         )
                     ) {
-                        mapdata = metadataRepository!!.findTimelineForMap(offset, limit) as MutableList<MapData>
+                        metadataRepository!!.findTimelineForMap(offset, limit) as MutableList<MapData>
                     } else {
-                        mapdata = metadataRepository!!.findByAlbumMetadataByUserIdForMapWithLimit(
+                        metadataRepository!!.findByAlbumMetadataByUserIdForMapWithLimit(
                             currentUserObj.getId(),
                             offset,
                             limit

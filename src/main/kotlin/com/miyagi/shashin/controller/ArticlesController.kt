@@ -10,13 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.context.support.WebApplicationContextUtils
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
-import java.util.*
 import jakarta.servlet.http.HttpServletRequest
-import org.springframework.web.bind.annotation.RestController
 
-@Suppress("UNCHECKED_CAST")
 @Controller
 class ArticlesController {
     @RequestMapping(value = ["/articles","/articles/quickstart"], method = [RequestMethod.GET])
@@ -123,7 +118,7 @@ class ArticlesController {
 
                 roleController["rolePath"] = TextUtils.generateUUID(key.toString(),"","",0.0,0,"","endpoint article creation").toString()
                 roleController["controller"] = value.toString()
-                val apiRegex = "\\/api\\/v1\\/.*\\]".toRegex()
+                val apiRegex = "/api/v1/.*]".toRegex()
                 var apiMatchResult = apiRegex.find(key.toString())
                 roleController["order"] = roleController["role"]+apiMatchResult!!.value
 
