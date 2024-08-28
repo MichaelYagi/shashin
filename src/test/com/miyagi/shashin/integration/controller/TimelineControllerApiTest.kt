@@ -1,4 +1,4 @@
-package com.miyagi.shashin.controller
+package com.miyagi.shashin.integration.controller
 
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.*
