@@ -82,10 +82,10 @@ workflows:
 #                paths:
 #                  - target/test-results/junit-selenium
             - store_artifacts:
-                path: target/*.jar
+                path: target/shashin-2.6.0.jar
                 destination: shashin.jar
             - store_artifacts:
-                path: target/*.exe
+                path: target/Shashin-2.6.0.exe
                 destination: Shashin.exe
             - attach_workspace: # attach from another job
                 at: .
