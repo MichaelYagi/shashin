@@ -347,6 +347,8 @@ class TimelineController: BaseController() {
         response["metadataList"] = mutableListOf<Metadata>()
         response["favorites"] = mutableMapOf<String, Any>()
         response["mediaTypeFilter"] = mediaTypeFilter
+        response["page"] = page
+        response["size"] = size
 
         response["msg"] = "Could not get results"
         response["status"] = ApiResponse.FAIL.status

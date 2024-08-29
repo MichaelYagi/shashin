@@ -725,28 +725,48 @@ class UserController {
         return mapper.writeValueAsString(response)
     }
 
-    @RequestMapping(value = ["/api/v1/users/info","/api/v1/users/info/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/users/info"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER")
-    fun getUsersInfo(model: Model, @PathVariable(required = false) page: Int?): String {
+    fun getUsersInfo(model: Model): String {
         val response: JsonNode?
-        val usersObj: MutableIterable<User?>?
 
-        if (page != null) {
-            val size: Int = model.getAttribute("queryLimit").toString().toInt()
-            val pageValue = page * size
-
-            usersObj = userRepository?.findAllByOffsetAndLimit(pageValue, size)
-        } else {
-            usersObj = userRepository?.findAll(Sort.by(Sort.Direction.DESC, "id"))
-        }
+        val usersObj: MutableIterable<User?>? = userRepository?.findAll(Sort.by(Sort.Direction.DESC, "id"))
 
         val currentUserObj = model.getAttribute("currentUser") as User?
 
         if (currentUserObj != null && usersObj != null) {
             response = mapper.readTree(usersObj.toString())
         } else {
-            response = mapper.readTree(User().toString())
+            response = mapper.readTree(mutableListOf<User>().toString())
+            logger.log(Level.INFO, "Could not access users info")
+        }
+
+        return mapper.writeValueAsString(response)
+    }
+
+    @RequestMapping(value = ["/api/v1/users/info/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    @Secured("ROLE_SUPER")
+    fun getUsersInfoPaged(model: Model, @PathVariable page: Int): String {
+        val response = mutableMapOf<String, Any?>()
+        val usersObj: MutableIterable<User?>?
+
+        val size: Int = model.getAttribute("queryLimit").toString().toInt()
+        val pageValue = page * size
+
+        response["page"] = page
+        response["size"] = size
+
+        usersObj = userRepository?.findAllByOffsetAndLimit(pageValue, size)
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+
+        if (currentUserObj != null && usersObj != null) {
+            // toString avoids printing password
+            response["userList"] = mapper.readTree(usersObj.toString())
+        } else {
+            response["userList"] = mapper.readTree(mutableListOf<User>().toString())
             logger.log(Level.INFO, "Could not access users info")
         }
 

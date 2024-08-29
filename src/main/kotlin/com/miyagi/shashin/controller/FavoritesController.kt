@@ -122,6 +122,8 @@ class FavoritesController: BaseController() {
         response["metadataList"] = mutableListOf<Metadata>()
         response["mediaTypeFilter"] = "all"
         response["keywordMap"] = mutableMapOf<String, String>()
+        response["page"] = page
+        response["size"] = size
 
         var mediaType = mediaTypeFilter
 
