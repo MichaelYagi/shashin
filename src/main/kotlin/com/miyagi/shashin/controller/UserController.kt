@@ -328,7 +328,19 @@ class UserController {
                 // Generate a new key
                 val updatedUserObj = userRepository?.findById(currentUserObj.getId())
                 if (updatedUserObj != null && updatedUserObj.isPresent) {
-                    val updatedApikey = TextUtils.generateUUID(currentUserObj.getUsername(),System.currentTimeMillis().toString(),"",0.0,0,"","API key generated from UserController").toString()
+                    var updatedApikey = TextUtils.generateUUID(currentUserObj.getUsername(),System.currentTimeMillis().toString(),"",0.0,0,"","API key generated from UserController").toString()
+                    var foundDuplicate = true
+
+                    // Ensure no dupes
+                    while (foundDuplicate) {
+                        val apiKeyCheck = userRepository?.findByApikey(updatedApikey)
+                        if (updatedApikey == currentApikey || (apiKeyCheck != null && apiKeyCheck.getId() > 0)) {
+                            updatedApikey = TextUtils.generateUUID(currentUserObj.getUsername(),System.currentTimeMillis().toString(),"",0.0,0,"","API key generated from UserController").toString()
+                        } else {
+                            foundDuplicate = false
+                        }
+                    }
+
                     updatedUserObj.get().setApikey(updatedApikey)
                     userRepository?.save(updatedUserObj.get())
 
