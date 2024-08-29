@@ -338,6 +338,7 @@ class SearchController: BaseController() {
         response["searchHistoryList"] = mutableListOf<SearchHistory>()
         response["msg"] = "Not authorized"
         response["status"] = ApiResponse.FAIL.status
+        response["size"] = searchHistoryLimit
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {

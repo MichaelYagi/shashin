@@ -303,6 +303,9 @@ class AlbumsController: BaseController() {
         response["sharedAlbums"] = ArrayList<HashMap<String, Any>>()
         response["sharedAlbumsMap"] = HashMap<Int, Int>()
         response["albumsCommentsMap"] = mutableMapOf<Int, ArrayList<HashMap<String, Any>>>()
+        response["page"] = page
+        response["size"] = size
+
         var showControls = false
         var totalImageCount = 0
 
@@ -1080,6 +1083,8 @@ class AlbumsController: BaseController() {
         response["albumMetadataList"] = mutableListOf<Metadata>()
         response["albumMetadataSize"] = 0
         response["shareLink"] = ""
+        response["page"] = page
+        response["size"] = size
         response["msg"] = "No results"
         response["status"] = ApiResponse.FAIL.status
 
@@ -1377,6 +1382,8 @@ class AlbumsController: BaseController() {
         response["activePage"] = module
         response["activeSidebar"] = module
         response["titleDescriptor"] = TextUtils.capitalized(module)
+        response["page"] = page
+        response["size"] = size
 
         response["album"] = Album()
         response["albumId"] = 0

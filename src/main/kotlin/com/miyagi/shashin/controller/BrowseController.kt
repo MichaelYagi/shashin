@@ -546,6 +546,8 @@ class BrowseController: BaseController() {
         response["albumMap"] = mutableMapOf<String, Any>()
         response["keywordMap"] = mutableMapOf<String, Any>()
         response["placenameMap"] = mutableMapOf<String, MutableList<String>?>()
+        response["page"] = page
+        response["size"] = size
 
         response["msg"] = "Could not get results"
         response["status"] = ApiResponse.FAIL.status
@@ -781,6 +783,8 @@ class BrowseController: BaseController() {
         response["msg"] = "Nothing to see here."
         response["message"] = "Nothing to see here."
         response["foldersList"] = mutableListOf<Folder>()
+        response["page"] = page
+        response["size"] = size
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -1112,6 +1116,8 @@ class BrowseController: BaseController() {
         response["albumMap"] = mutableMapOf<String, Any>()
         response["keywordMap"] = mutableMapOf<String, Any>()
         response["folder"] = folder
+        response["page"] = page
+        response["size"] = size
 
         response["msg"] = "Could not get results"
         response["status"] = ApiResponse.FAIL.status
