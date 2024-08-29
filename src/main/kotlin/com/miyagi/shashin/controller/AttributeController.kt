@@ -34,6 +34,14 @@ import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.transaction.Transactional
+import org.springframework.beans.TypeMismatchException
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatusCode
+import org.springframework.web.HttpMediaTypeNotSupportedException
+import org.springframework.web.HttpRequestMethodNotSupportedException
+import org.springframework.web.context.request.WebRequest
+import org.springframework.web.servlet.NoHandlerFoundException
+import org.springframework.web.servlet.resource.NoResourceFoundException
 
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -97,60 +105,72 @@ class AttributeController: ResponseEntityExceptionHandler() {
     @Value("\${app.config.default.scheduledTime}")
     private lateinit var scheduledTime: String
 
-//    @ExceptionHandler(Exception::class)
-//    fun globeExceptionHandler(ex: java.lang.Exception, request: WebRequest): ResponseEntity<*>? {
-//        return buildResponseEntity(ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.localizedMessage, ex))
-//    }
+    override fun handleHttpRequestMethodNotSupported(
+        ex: HttpRequestMethodNotSupportedException,
+        headers: HttpHeaders,
+        status: HttpStatusCode,
+        request: WebRequest
+    ): ResponseEntity<Any>? {
+        return buildResponseEntity(ApiError(HttpStatus.METHOD_NOT_ALLOWED, ex.localizedMessage, ex))
+    }
 
-//    fun handleHttpMessageNotReadable(
-//        ex: HttpMessageNotReadableException,
-//        headers: HttpHeaders,
-//        status: HttpStatus,
-//        request: WebRequest
-//    ): ResponseEntity<Any?> {
-//        val error = "Malformed JSON request"
-//        return buildResponseEntity(ApiError(HttpStatus.BAD_REQUEST, error, ex))
-//    }
+    override fun handleNoHandlerFoundException(
+        ex: NoHandlerFoundException,
+        headers: HttpHeaders,
+        status: HttpStatusCode,
+        request: WebRequest
+    ): ResponseEntity<Any>? {
+        return buildResponseEntity(ApiError(HttpStatus.NOT_FOUND, ex.localizedMessage, ex))
+    }
 
-//    @ExceptionHandler(Exception::class)
-//    protected fun handleException(
-//        ex: Exception
-//    ): ResponseEntity<Any?>? {
-//        val apiError = ApiError(HttpStatus.NOT_FOUND)
-//        apiError.setMsg(ex.message)
-//        return buildResponseEntity(apiError)
-//    }
+    override fun handleNoResourceFoundException(
+        ex: NoResourceFoundException,
+        headers: HttpHeaders,
+        status: HttpStatusCode,
+        request: WebRequest
+    ): ResponseEntity<Any>? {
+        return buildResponseEntity(ApiError(HttpStatus.NOT_FOUND, ex.localizedMessage, ex))
+    }
 
-    @ExceptionHandler(EntityNotFoundException::class)
-    protected fun handleEntityNotFound(
-        ex: EntityNotFoundException
-    ): ResponseEntity<Any?>? {
+    override fun handleTypeMismatch(
+        ex: TypeMismatchException,
+        headers: HttpHeaders,
+        status: HttpStatusCode,
+        request: WebRequest
+    ): ResponseEntity<Any>? {
+        return buildResponseEntity(ApiError(HttpStatus.BAD_REQUEST, ex.localizedMessage, ex))
+    }
+
+    override fun handleHttpMediaTypeNotSupported(
+        ex: HttpMediaTypeNotSupportedException,
+        headers: HttpHeaders,
+        status: HttpStatusCode,
+        request: WebRequest
+    ): ResponseEntity<Any>? {
+        return buildResponseEntity(ApiError(HttpStatus.UNSUPPORTED_MEDIA_TYPE, ex.localizedMessage, ex))
+    }
+
+    private fun buildResponseEntity(apiError: ApiError): ResponseEntity<Any> {
+        return ResponseEntity<Any>(apiError, apiError.getStatus()!!)
+    }
+
+    @ExceptionHandler(Exception::class)
+    protected fun handleException(
+        ex: Exception
+    ): ResponseEntity<Any>? {
         val apiError = ApiError(HttpStatus.NOT_FOUND)
         apiError.setMsg(ex.message)
         return buildResponseEntity(apiError)
     }
 
-    private fun buildResponseEntity(apiError: ApiError): ResponseEntity<Any?> {
-        return ResponseEntity<Any?>(apiError, apiError.getStatus()!!)
+    @ExceptionHandler(EntityNotFoundException::class)
+    protected fun handleEntityNotFound(
+        ex: EntityNotFoundException
+    ): ResponseEntity<Any>? {
+        val apiError = ApiError(HttpStatus.NOT_FOUND)
+        apiError.setMsg(ex.message)
+        return buildResponseEntity(apiError)
     }
-
-//    fun handleHttpMediaTypeNotSupported(
-//        ex: HttpMediaTypeNotSupportedException,
-//        headers: HttpHeaders,
-//        status: HttpStatus,
-//        request: WebRequest
-//    ): ResponseEntity<Any?> {
-//        return buildResponseEntity(ApiError(HttpStatus.METHOD_NOT_ALLOWED, ex.localizedMessage, ex))
-//    }
-
-//    fun handleHttpRequestMethodNotSupported(
-//        ex: HttpRequestMethodNotSupportedException,
-//        headers: HttpHeaders,
-//        status: HttpStatus,
-//        request: WebRequest
-//    ): ResponseEntity<Any?> {
-//        return buildResponseEntity(ApiError(HttpStatus.METHOD_NOT_ALLOWED, ex.localizedMessage, ex))
-//    }
 
     @ModelAttribute
     @Transactional
