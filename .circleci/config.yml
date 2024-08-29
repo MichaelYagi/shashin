@@ -24,17 +24,17 @@ workflows:
             - run:
                 name: Save JS test results
                 command: |
-                  mkdir -p target/test-results/mocha/
-                  find . -type f -regex ".*/test-results.xml" -exec cp {} target/test-results/mocha/ \;
+                  mkdir -p test-results/mocha/
+                  find . -type f -regex ".*/test-results.xml" -exec cp {} test-results/mocha/ \;
                 when: always
             - store_test_results:
-                path: target/test-results
+                path: test-results
             - store_artifacts:
-                path: target/test-results/mocha
+                path: test-results/mocha
             - persist_to_workspace: # persist across jobs
                 root: .
                 paths:
-                  - target/test-results/mocha
+                  - test-results/mocha
       - maven/test: # checkout, build, test, and upload test results
           executor: java17
           name: Run junit tests and package to tar # and store artifacts
@@ -66,8 +66,8 @@ workflows:
             - run:
                 name: Save test results
                 command: |
-                  mkdir -p target/test-results/junit/
-                  find . -type f -regex ".*/target/surefire-reports/.*" -exec cp {} target/test-results/junit/ \;
+                  mkdir -p test-results/junit/
+                  find . -type f -regex ".*/target/surefire-reports/.*" -exec cp {} test-results/junit/ \;
                 when: always
 #            - store_test_results:
 #                path: ~/test-results
@@ -77,12 +77,12 @@ workflows:
 #                root: .
 #                paths:
 #                  - target/test-results/junit-selenium
-#            - store_artifacts:
-#                path: target/shashin-1.0.0.jar
-#                destination: shashin-1.0.0.jar
-#            - store_artifacts:
-#                path: target/Shashin-1.0.0.exe
-#                destination: Shashin-1.0.0.exe
+            - store_artifacts:
+                path: target/shashin-$VERSION.jar
+                destination: shashin-$VERSION.jar
+            - store_artifacts:
+                path: target/Shashin-$VERSION.exe
+                destination: Shashin-$VERSION.exe
             - attach_workspace: # attach from another job
                 at: .
             - run:
@@ -93,7 +93,7 @@ workflows:
                 name: Compress Artifacts
                 command: |
                   mkdir -p target/artifact/
-                  tar -cvzf target/artifact/shashin-$VERSION.tar target/**.jar target/**.exe target/test-results
+                  tar -cvzf target/artifact/shashin-$VERSION.tar **.jar **.exe test-results
 #            - run:
 #                name: Move Artifacts
 #                command: |
