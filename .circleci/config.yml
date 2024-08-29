@@ -53,9 +53,6 @@ workflows:
             # Install latest
             - browser-tools/install-chrome
             - browser-tools/install-chromedriver
-            # Install version based on https://chromedriver.chromium.org/downloads
-#            - browser-tools/install-browser-tools:
-#                chrome-version: 114.0.5735.90
             - run:
                 command: |
                   google-chrome --version
@@ -69,20 +66,6 @@ workflows:
                   mkdir -p test-results/junit/
                   find . -type f -regex ".*/target/surefire-reports/.*" -exec cp {} test-results/junit/ \;
                 when: always
-#            - store_test_results:
-#                path: ~/test-results
-#            - store_artifacts:
-#                path: ~/test-results/junit
-#            - persist_to_workspace: # persist across jobs
-#                root: .
-#                paths:
-#                  - target/test-results/junit-selenium
-#            - store_artifacts:
-#                path: target/shashin-1.0.0.jar
-#                destination: shashin-1.0.0.jar
-#            - store_artifacts:
-#                path: target/Shashin-1.0.0.exe
-#                destination: Shashin-1.0.0.exe
             - attach_workspace: # attach from another job
                 at: .
             - run:
