@@ -853,7 +853,7 @@ class BrowseController: BaseController() {
         operation =
         Operation(
             operationId = "getPagedSizeFolders",
-            summary = "Get list of all folders.",
+            summary = "Get paged list of all folders with page/size query params.",
             description = "<strong>Get list of all folders.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/folders?page={page}&size={size}\" \\\n" +
