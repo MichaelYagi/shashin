@@ -3,8 +3,7 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.miyagi.shashin.model.Notification
-import com.miyagi.shashin.model.User
+import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.PersistentLoginsExpiryRepository
 import com.miyagi.shashin.repository.PersistentLoginsRepository
@@ -714,14 +713,23 @@ class UserController {
         return mapper.writeValueAsString(response)
     }
 
-    @RequestMapping(value = ["/api/v1/users/info"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/users/info","/api/v1/users/info/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER")
-    fun getAllUsersInfo(model: Model): String {
+    fun getUsersInfo(model: Model, @PathVariable(required = false) page: Int?): String {
         val response: JsonNode?
+        val usersObj: MutableIterable<User?>?
+
+        if (page != null) {
+            val size: Int = model.getAttribute("queryLimit").toString().toInt()
+            val pageValue = page * size
+
+            usersObj = userRepository?.findAllByOffsetAndLimit(pageValue, size)
+        } else {
+            usersObj = userRepository?.findAll(Sort.by(Sort.Direction.DESC, "id"))
+        }
 
         val currentUserObj = model.getAttribute("currentUser") as User?
-        val usersObj = userRepository?.findAll(Sort.by(Sort.Direction.DESC, "id"))
 
         if (currentUserObj != null && usersObj != null) {
             response = mapper.readTree(usersObj.toString())
