@@ -24,17 +24,17 @@ workflows:
             - run:
                 name: Save JS test results
                 command: |
-                  mkdir -p target/test-results/mocha/
-                  find . -type f -regex ".*/test-results.xml" -exec cp {} target/test-results/mocha/ \;
+                  mkdir -p test-results/mocha/
+                  find . -type f -regex ".*/test-results.xml" -exec cp {} test-results/mocha/ \;
                 when: always
             - store_test_results:
-                path: target/test-results
+                path: test-results
             - store_artifacts:
-                path: target/test-results/mocha
+                path: test-results/mocha
             - persist_to_workspace: # persist across jobs
                 root: .
                 paths:
-                  - target/test-results/mocha
+                  - test-results/mocha
       - maven/test: # checkout, build, test, and upload test results
           executor: java17
           name: Run junit tests and package to tar # and store artifacts
@@ -66,8 +66,8 @@ workflows:
             - run:
                 name: Save test results
                 command: |
-                  mkdir -p target/test-results/junit/
-                  find . -type f -regex ".*/target/surefire-reports/.*" -exec cp {} target/test-results/junit/ \;
+                  mkdir -p test-results/junit/
+                  find . -type f -regex ".*/target/surefire-reports/.*" -exec cp {} test-results/junit/ \;
                 when: always
 #            - store_test_results:
 #                path: ~/test-results
@@ -90,15 +90,20 @@ workflows:
                 command: |
                   echo 'export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)' >> $BASH_ENV
             - run:
+                name: Move jar Artifacts
+                command: |
+                  mkdir -p target/artifact/
+                  mv target/**.jar shashin-$VERSION.jar
+            - run:
+                name: Move exe Artifacts
+                command: |
+                  mkdir -p target/artifact/
+                  mv target/**.exe Shashin-$VERSION.exe
+            - run:
                 name: Compress Artifacts
                 command: |
                   mkdir -p target/artifact/
-                  tar -cvzf target/artifact/shashin-$VERSION.tar target/**.jar target/**.exe target/test-results
-#            - run:
-#                name: Move Artifacts
-#                command: |
-#                  mkdir -p target/artifact/
-#                  mv target/**.jar target/artifact/shashin-$VERSION.jar
+                  tar -cvzf target/artifact/shashin-$VERSION.tar **.jar **.exe test-results
             - persist_to_workspace: # persist across jobs
                 root: .
                 paths:
