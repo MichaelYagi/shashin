@@ -64,6 +64,10 @@ workflows:
                 name: Check install
           post-steps: # steps to run after steps
             - run:
+                name: Set Version # get version from pom.xml
+                command: |
+                  echo 'export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)' >> $BASH_ENV
+            - run:
                 name: Save test results
                 command: |
                   mkdir -p test-results/junit/
@@ -77,10 +81,6 @@ workflows:
 #                root: .
 #                paths:
 #                  - target/test-results/junit-selenium
-            - run:
-                name: Set Version # get version from pom.xml
-                command: |
-                  echo 'export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)' >> $BASH_ENV
             - store_artifacts:
                 path: target/shashin-$VERSION.jar
                 destination: shashin-$VERSION.jar
