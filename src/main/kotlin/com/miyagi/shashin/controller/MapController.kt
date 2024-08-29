@@ -142,6 +142,13 @@ class MapController: BaseController() {
             .body(json)
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "getAllMapDataWithKeywords",
+            summary = "Get results used for map data with keywords."
+        )
+    )
     @Suppress("UNCHECKED_CAST")
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/mapdata/keywords", "mapdata/keywords"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
@@ -188,6 +195,13 @@ class MapController: BaseController() {
             .body(json)
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "getMapDataWithKeywords",
+            summary = "Get paged results used for map data with keywords."
+        )
+    )
     @Suppress("UNCHECKED_CAST")
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/mapdata/keywords"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
