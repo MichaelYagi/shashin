@@ -8,40 +8,39 @@ import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.info.BuildProperties
-import org.springframework.core.Ordered
-import org.springframework.core.annotation.Order
-import org.springframework.core.env.Environment
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
-import org.springframework.security.core.Authentication
-import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.ui.Model
-import org.springframework.ui.set
-import org.springframework.web.bind.annotation.*
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder
-import java.text.SimpleDateFormat
-import java.time.ZoneId
-import java.util.*
-import java.util.logging.Level
-import java.util.logging.Logger
 import jakarta.persistence.EntityNotFoundException
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.transaction.Transactional
 import org.springframework.beans.TypeMismatchException
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatusCode
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.info.BuildProperties
+import org.springframework.core.Ordered
+import org.springframework.core.annotation.Order
+import org.springframework.core.env.Environment
+import org.springframework.http.*
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.ui.Model
+import org.springframework.ui.set
 import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.HttpRequestMethodNotSupportedException
+import org.springframework.web.bind.annotation.ControllerAdvice
+import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.NoHandlerFoundException
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import org.springframework.web.servlet.resource.NoResourceFoundException
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder
+import java.text.SimpleDateFormat
+import java.time.ZoneId
+import java.util.*
+import java.util.logging.Level
+import java.util.logging.Logger
 
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -111,7 +110,11 @@ class AttributeController: ResponseEntityExceptionHandler() {
         status: HttpStatusCode,
         request: WebRequest
     ): ResponseEntity<Any>? {
-        return buildResponseEntity(ApiError(HttpStatus.METHOD_NOT_ALLOWED, ex.localizedMessage, ex))
+        val acceptHeader = request.getHeader("accept")?.lowercase()
+        if (acceptHeader != null && acceptHeader.contains("text/html")) {
+            headers.contentType = MediaType.TEXT_HTML
+        }
+        return buildResponseEntity(ApiError(HttpStatus.METHOD_NOT_ALLOWED, ex.localizedMessage, ex), headers)
     }
 
     override fun handleNoHandlerFoundException(
@@ -120,7 +123,11 @@ class AttributeController: ResponseEntityExceptionHandler() {
         status: HttpStatusCode,
         request: WebRequest
     ): ResponseEntity<Any>? {
-        return buildResponseEntity(ApiError(HttpStatus.NOT_FOUND, ex.localizedMessage, ex))
+        val acceptHeader = request.getHeader("accept")?.lowercase()
+        if (acceptHeader != null && acceptHeader.contains("text/html")) {
+            headers.contentType = MediaType.TEXT_HTML
+        }
+        return buildResponseEntity(ApiError(HttpStatus.NOT_FOUND, ex.localizedMessage, ex), headers)
     }
 
     override fun handleNoResourceFoundException(
@@ -129,7 +136,11 @@ class AttributeController: ResponseEntityExceptionHandler() {
         status: HttpStatusCode,
         request: WebRequest
     ): ResponseEntity<Any>? {
-        return buildResponseEntity(ApiError(HttpStatus.NOT_FOUND, ex.localizedMessage, ex))
+        val acceptHeader = request.getHeader("accept")?.lowercase()
+        if (acceptHeader != null && acceptHeader.contains("text/html")) {
+            headers.contentType = MediaType.TEXT_HTML
+        }
+        return buildResponseEntity(ApiError(HttpStatus.NOT_FOUND, ex.localizedMessage, ex), headers)
     }
 
     override fun handleTypeMismatch(
@@ -138,7 +149,11 @@ class AttributeController: ResponseEntityExceptionHandler() {
         status: HttpStatusCode,
         request: WebRequest
     ): ResponseEntity<Any>? {
-        return buildResponseEntity(ApiError(HttpStatus.BAD_REQUEST, ex.localizedMessage, ex))
+        val acceptHeader = request.getHeader("accept")?.lowercase()
+        if (acceptHeader != null && acceptHeader.contains("text/html")) {
+            headers.contentType = MediaType.TEXT_HTML
+        }
+        return buildResponseEntity(ApiError(HttpStatus.BAD_REQUEST, ex.localizedMessage, ex), headers)
     }
 
     override fun handleHttpMediaTypeNotSupported(
@@ -147,29 +162,45 @@ class AttributeController: ResponseEntityExceptionHandler() {
         status: HttpStatusCode,
         request: WebRequest
     ): ResponseEntity<Any>? {
-        return buildResponseEntity(ApiError(HttpStatus.UNSUPPORTED_MEDIA_TYPE, ex.localizedMessage, ex))
+        val acceptHeader = request.getHeader("accept")?.lowercase()
+        if (acceptHeader != null && acceptHeader.contains("text/html")) {
+            headers.contentType = MediaType.TEXT_HTML
+        }
+        return buildResponseEntity(ApiError(HttpStatus.UNSUPPORTED_MEDIA_TYPE, ex.localizedMessage, ex), headers)
     }
 
-    private fun buildResponseEntity(apiError: ApiError): ResponseEntity<Any> {
-        return ResponseEntity<Any>(apiError, apiError.getStatus()!!)
+    private fun buildResponseEntity(apiError: ApiError, headers: HttpHeaders): ResponseEntity<Any> {
+        return ResponseEntity<Any>(apiError, headers, apiError.getStatus()!!)
     }
 
     @ExceptionHandler(Exception::class)
     protected fun handleException(
+        headers: HttpHeaders,
+        request: WebRequest,
         ex: Exception
     ): ResponseEntity<Any>? {
+        val acceptHeader = request.getHeader("accept")?.lowercase()
+        if (acceptHeader != null && acceptHeader.contains("text/html")) {
+            headers.contentType = MediaType.TEXT_HTML
+        }
         val apiError = ApiError(HttpStatus.NOT_FOUND)
         apiError.setMsg(ex.message)
-        return buildResponseEntity(apiError)
+        return buildResponseEntity(apiError, headers)
     }
 
     @ExceptionHandler(EntityNotFoundException::class)
     protected fun handleEntityNotFound(
+        headers: HttpHeaders,
+        request: WebRequest,
         ex: EntityNotFoundException
     ): ResponseEntity<Any>? {
+        val acceptHeader = request.getHeader("accept")?.lowercase()
+        if (acceptHeader != null && acceptHeader.contains("text/html")) {
+            headers.contentType = MediaType.TEXT_HTML
+        }
         val apiError = ApiError(HttpStatus.NOT_FOUND)
         apiError.setMsg(ex.message)
-        return buildResponseEntity(apiError)
+        return buildResponseEntity(apiError, headers)
     }
 
     @ModelAttribute
