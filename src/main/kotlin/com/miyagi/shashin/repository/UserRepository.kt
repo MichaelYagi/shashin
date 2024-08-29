@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository
 @Repository
 interface UserRepository : CrudRepository<User?, Int?> {
     fun findAll(sort: Sort?): MutableIterable<User?>?
-    @Query("SELECT * FROM user ORDER BY id LIMIT :offset, :limit", nativeQuery = true)
+    @Query("SELECT * FROM user ORDER BY id DESC LIMIT :offset, :limit", nativeQuery = true)
     fun findAllByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<User?>?
     fun findByUsername(username: String?): User?
     fun findById(userId: Int?): User?
