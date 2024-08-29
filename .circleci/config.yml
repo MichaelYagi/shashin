@@ -64,10 +64,6 @@ workflows:
                 name: Check install
           post-steps: # steps to run after steps
             - run:
-                name: Set Version # get version from pom.xml
-                command: |
-                  echo 'export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)' >> $BASH_ENV
-            - run:
                 name: Save test results
                 command: |
                   mkdir -p test-results/junit/
@@ -81,24 +77,33 @@ workflows:
 #                root: .
 #                paths:
 #                  - target/test-results/junit-selenium
-            - store_artifacts:
-                path: target/shashin-2.6.0.jar
-                destination: shashin.jar
-            - store_artifacts:
-                path: target/Shashin-2.6.0.exe
-                destination: Shashin.exe
+#            - store_artifacts:
+#                path: target/shashin-1.0.0.jar
+#                destination: shashin-1.0.0.jar
+#            - store_artifacts:
+#                path: target/Shashin-1.0.0.exe
+#                destination: Shashin-1.0.0.exe
             - attach_workspace: # attach from another job
                 at: .
+            - run:
+                name: Set Version # get version from pom.xml
+                command: |
+                  echo 'export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)' >> $BASH_ENV
+            - run:
+                name: Move jar Artifacts
+                command: |
+                  mkdir -p target/artifact/
+                  mv target/**.jar shashin-$VERSION.jar
+            - run:
+                name: Move exe Artifacts
+                command: |
+                  mkdir -p target/artifact/
+                  mv target/**.exe Shashin-$VERSION.exe
             - run:
                 name: Compress Artifacts
                 command: |
                   mkdir -p target/artifact/
-                  tar -cvzf target/artifact/shashin-$VERSION.tar shashin.jar Shashin.exe test-results
-#            - run:
-#                name: Move Artifacts
-#                command: |
-#                  mkdir -p target/artifact/
-#                  mv target/**.jar target/artifact/shashin-$VERSION.jar
+                  tar -cvzf target/artifact/shashin-$VERSION.tar **.jar **.exe test-results
             - persist_to_workspace: # persist across jobs
                 root: .
                 paths:
