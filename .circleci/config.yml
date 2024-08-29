@@ -77,6 +77,10 @@ workflows:
 #                root: .
 #                paths:
 #                  - target/test-results/junit-selenium
+            - run:
+                name: Set Version # get version from pom.xml
+                command: |
+                  echo 'export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)' >> $BASH_ENV
             - store_artifacts:
                 path: target/shashin-$VERSION.jar
                 destination: shashin-$VERSION.jar
@@ -85,10 +89,6 @@ workflows:
                 destination: Shashin-$VERSION.exe
             - attach_workspace: # attach from another job
                 at: .
-            - run:
-                name: Set Version # get version from pom.xml
-                command: |
-                  echo 'export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)' >> $BASH_ENV
             - run:
                 name: Compress Artifacts
                 command: |
