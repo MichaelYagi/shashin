@@ -2,7 +2,6 @@ package com.miyagi.shashin.repository
 
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.model.UserSharedAlbums
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
@@ -12,6 +11,8 @@ import org.springframework.stereotype.Repository
 @Repository
 interface UserRepository : CrudRepository<User?, Int?> {
     fun findAll(sort: Sort?): MutableIterable<User?>?
+    @Query("SELECT * FROM user ORDER BY id LIMIT :offset, :limit", nativeQuery = true)
+    fun findAllByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<User?>?
     fun findByUsername(username: String?): User?
     fun findById(userId: Int?): User?
     fun findByApikey(apikey: String?): User?
