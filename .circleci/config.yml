@@ -82,18 +82,18 @@ workflows:
 #                paths:
 #                  - target/test-results/junit-selenium
             - store_artifacts:
-                path: target/shashin-$VERSION.jar
-                destination: shashin-$VERSION.jar
+                path: target/*.jar
+                destination: shashin.jar
             - store_artifacts:
-                path: target/Shashin-$VERSION.exe
-                destination: Shashin-$VERSION.exe
+                path: target/*.exe
+                destination: Shashin.exe
             - attach_workspace: # attach from another job
                 at: .
             - run:
                 name: Compress Artifacts
                 command: |
                   mkdir -p target/artifact/
-                  tar -cvzf target/artifact/shashin-$VERSION.tar **.jar **.exe test-results
+                  tar -cvzf target/artifact/shashin-$VERSION.tar shashin.jar Shashin.exe test-results
 #            - run:
 #                name: Move Artifacts
 #                command: |
