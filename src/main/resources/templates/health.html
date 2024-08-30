@@ -8,16 +8,16 @@
 
 <h1>Health Check</h1>
 
-<th:block th:text="${'Status: '+status}"></th:block><br><br>
+<th:block th:utext="${'Status: '+ (status == 'OK' ? status : '<span style=&quot;color: red;&quot;>'+status+'</span>')}"></th:block><br><br>
 <th:block th:text="${'Uptime: '+uptime}"></th:block><br>
 <th:block th:text="${'Local server time: '+localServerTime}"></th:block><br>
 <!--<th:block th:text="${'Request elapsed time: '+requestTiming}"></th:block><br>-->
-<th:block th:text="${'SQLite connection: '+sqlLiteAvailable}"></th:block><br>
+<th:block th:utext="${'SQLite connection: '+(sqlLiteAvailable == 'OK' ? sqlLiteAvailable : '<span style=&quot;color: red;&quot;>'+sqlLiteAvailable+'</span>')}"></th:block><br>
 <!--<th:block th:text="${'SQLite lookup for '+sqlLiteQueryCount+' metadata record'+(sqlLiteQueryCount != 1 ? 's' : '')+' elapsed time: '+sqlLiteQueryTiming}"></th:block><br>-->
-<th:block th:text="${'Nominatim connection: '+nominatimAvailable}"></th:block><br>
+<th:block th:utext="${'Nominatim connection: '+(nominatimAvailable == 'OK' ? nominatimAvailable : '<span style=&quot;color: red;&quot;>'+nominatimAvailable+'</span>')}"></th:block><br>
 <!--<th:block th:text="${'Nominatim elapsed time: '+nominatimTiming}"></th:block><br>-->
 <th:block th:if="${compreFaceAvailable != null}">
-<th:block th:text="${'CompreFace connection: '+compreFaceAvailable}"></th:block><br>
+<th:block th:utext="${'CompreFace connection: '+(compreFaceAvailable == 'OK' ? compreFaceAvailable : '<span style=&quot;color: red;&quot;>'+compreFaceAvailable+'</span>')}"></th:block><br>
 <!--<th:block th:text="${'CompreFace elapsed time: '+compreFaceTiming}"></th:block><br>-->
 </th:block>
 <!--<th:block th:text="${'CircleCI elapsed time: '+circleCIBuildTiming}"></th:block><br>-->
@@ -28,7 +28,7 @@
 <th:block th:text="${'JVM CPU Usage: '+system.processCpuLoadPercent+'%'}"></th:block><br>
 <th:block th:text="${'Available cores: '+system.availableCores}"></th:block><br>
 <th:block th:text="${'OS: '+system.os}"></th:block><br>
-<th:block th:text="${'Build Status: '+circleCIBuild}"></th:block><br>
+<th:block th:utext="${'Build Status: '+(circleCIBuild == 'OK' ? circleCIBuild : '<span style=&quot;color: red;&quot;>'+circleCIBuild+'</span>')}}"></th:block><br>
 <th:block th:text="${'Build Version: '+buildVersion}"></th:block><br>
 
 </body>
