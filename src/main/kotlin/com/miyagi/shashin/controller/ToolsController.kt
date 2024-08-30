@@ -118,8 +118,6 @@ class ToolsController {
 
         response["serverTiming"] = "00:00:000"
 
-        response["utcTimestampMS"] = System.currentTimeMillis()
-
         val health: HealthComponent? = healthEndpoint!!.health()
         if (health == null || health.status.code != "UP") {
             status = "FAIL"
@@ -206,7 +204,8 @@ class ToolsController {
         systemMap["usedHeapMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.used.toDouble() / 1073741824)
         systemMap["maxHeapMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.max.toDouble() / 1073741824)
         systemMap["committedMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.committed.toDouble() / 1073741824)
-
+        systemMap["utcTimestampMS"] = System.currentTimeMillis()
+        
         val osMXBean: OperatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
 
         val cores = Runtime.getRuntime().availableProcessors()
