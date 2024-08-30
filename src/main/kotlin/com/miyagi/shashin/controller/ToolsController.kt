@@ -110,13 +110,13 @@ class ToolsController {
     private fun buildHealthData(model: Model): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
-        val requestTimingStart = Date()
+        val serverTimingStart = Date()
 
         var status = "OK"
 
         response["status"] = status
 
-        response["responseTime"] = "00:00:000"
+        response["serverTiming"] = "00:00:000"
 
         response["utcTimestampMS"] = System.currentTimeMillis()
 
@@ -223,12 +223,12 @@ class ToolsController {
         systemMap["os"] = System.getProperty("os.name") + " v" + System.getProperty("os.version") + " " + System.getProperty("os.arch")
         response["system"] = systemMap
 
-        val requestTimingEnd = Date()
+        val serverTimingEnd = Date()
 
-        val requestTimingDiff: Long = requestTimingEnd.time - requestTimingStart.time
+        val serverTimingDiff: Long = serverTimingEnd.time - serverTimingStart.time
 
-        response["responseTime"] = SimpleDateFormat("mm:ss:SSS").format(Date(requestTimingDiff))
-        logger.log(Level.INFO, "HealthEP - Total request time: ${SimpleDateFormat("mm:ss:SSS").format(Date(requestTimingDiff))}")
+        response["serverTiming"] = SimpleDateFormat("mm:ss:SSS").format(Date(serverTimingDiff))
+        logger.log(Level.INFO, "HealthEP - Total request time: ${SimpleDateFormat("mm:ss:SSS").format(Date(serverTimingDiff))}")
 
         response["status"] = status
 
