@@ -140,7 +140,7 @@ class Settings {
                     $("#propDeleteContent").modal('hide');
                     // message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                 } else {
-                    shashin.showToastMessage("Could delete content", data["msg"], {icon:"bi-exclamation-triangle", iconColor:"#FF0000", autohide: false});
+                    shashin.showToastMessage("Could delete content", data["msg"], {icon:"bi-exclamation-triangle", iconColor:"#FF0000", autohide: false, borderColor:"danger"});
                     $("#propDeleteContent").modal('hide');
                     // message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                 }

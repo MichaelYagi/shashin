@@ -50,7 +50,8 @@ class Util {
                 if (successful === false) {
                     shashin.showToastMessage("Could not copy", textToCopy + " could not be copied", {
                         icon: "bi-exclamation-triangle",
-                        iconColor: "#FF0000"
+                        iconColor: "#FF0000",
+                        borderColor:"danger"
                     });
                 } else {
                     status = true;
@@ -67,7 +68,8 @@ class Util {
             } catch (err) {
                 shashin.showToastMessage("Could not copy", textToCopy + " could not be copied: " + err, {
                     icon: "bi-exclamation-triangle",
-                    iconColor: "#FF0000"
+                    iconColor: "#FF0000",
+                    borderColor:"danger"
                 });
 
                 if (callback !== undefined) {
@@ -88,7 +90,8 @@ class Util {
             }).catch(function (err) {
                 shashin.showToastMessage("Could not copy", textToCopy + " could not be copied: " + err, {
                     icon: "bi-exclamation-triangle",
-                    iconColor: "#FF0000"
+                    iconColor: "#FF0000",
+                    borderColor:"danger"
                 });
 
                 if (callback !== undefined) {
@@ -289,8 +292,9 @@ class Util {
                 } else {
                     shashin.showToastMessage("Error Rescanning Metadata", "There was an error rescanning metadata!", {
                         icon:"bi-exclamation-triangle",
-                        iconColor:"#FF0000"}
-                    );
+                        iconColor:"#FF0000",
+                        borderColor:"danger"
+                    });
 
                     if (modalId === "propMetadata") {
                         $("#metadataModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
@@ -627,7 +631,7 @@ class Util {
         if (msg !== "") {
             if (test === false) {
                 // $("#"+msgId).html('<div class="alert alert-danger" role="alert">'+msg+'</div>');
-                shashin.showToastMessage("Input errors", msg, {icon: "bi-exclamation-triangle", iconColor: "#FF0000"});
+                shashin.showToastMessage("Input errors", msg, {icon: "bi-exclamation-triangle", iconColor: "#FF0000", borderColor:"danger"});
             }
             return false;
         } else {
@@ -1191,7 +1195,8 @@ class Util {
                                     iconColor: "#FF8C00",
                                     headerSubtext: Util.getMessageSubText(createdAtDate, timezone),
                                     autohide: false,
-                                    target: shashin.toast.target.four
+                                    target: shashin.toast.target.four,
+                                    borderColor:"warning"
                                 });
 
                                 if (notificationCount === 1) {
