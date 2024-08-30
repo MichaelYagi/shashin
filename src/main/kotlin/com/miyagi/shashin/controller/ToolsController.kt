@@ -204,8 +204,7 @@ class ToolsController {
         systemMap["usedHeapMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.used.toDouble() / 1073741824)
         systemMap["maxHeapMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.max.toDouble() / 1073741824)
         systemMap["committedMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.committed.toDouble() / 1073741824)
-        systemMap["utcTimestampMS"] = System.currentTimeMillis()
-        
+
         val osMXBean: OperatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
 
         val cores = Runtime.getRuntime().availableProcessors()
@@ -220,6 +219,7 @@ class ToolsController {
         @Suppress("DEPRECATION")
         systemMap["systemCpuLoadPercent"] = (osMXBean.systemCpuLoad * 100).toInt()
         systemMap["os"] = System.getProperty("os.name") + " v" + System.getProperty("os.version") + " " + System.getProperty("os.arch")
+        systemMap["utcTimestampMS"] = System.currentTimeMillis()
         response["system"] = systemMap
 
         val serverTimingEnd = Date()
