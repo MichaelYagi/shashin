@@ -188,7 +188,8 @@ $("#albumAppToolsRestore").on("click", async function (e) {
             if (data["status"] === shashin.apiResponse.SUCCESS) {
                 shashin.showToastMessage("Success!", "Media restored", {
                     icon: "bi-info-circle",
-                    iconColor: "#777777"
+                    iconColor: "#777777",
+                    borderColor:"success"
                 });
 
                 $('#'+shashin.toast.target.default).on('hidden.bs.toast', function () {
@@ -201,7 +202,7 @@ $("#albumAppToolsRestore").on("click", async function (e) {
                     location.replace(location.href.split('#')[0]);
                 });
             } else {
-                shashin.showToastMessage("Could not restore media", data["msg"], {icon: "bi-exclamation-triangle", iconColor: "#FF0000"});
+                shashin.showToastMessage("Could not restore media", data["msg"], {icon: "bi-exclamation-triangle", iconColor: "#FF0000", borderColor:"danger"});
 
                 $("#albumAppToolsRestoreIcon").removeClass("spinner-border spinner-border-sm").addClass("bi-arrow-repeat");
                 $("#albumAppToolsRestoreIcon").css({

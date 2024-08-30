@@ -90,7 +90,8 @@
                 $("#apikeycopyicon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
                 shashin.showToastMessage("Operation failed", "API key must not be blank", {
                     icon: "bi-exclamation-triangle",
-                    iconColor: "#FF0000"
+                    iconColor: "#FF0000",
+                    borderColor:"danger"
                 });
             }
         });
@@ -127,14 +128,16 @@
                 } else {
                     shashin.showToastMessage("Operation failed", "Could not regenerate API key", {
                         icon: "bi-exclamation-triangle",
-                        iconColor: "#FF0000"
+                        iconColor: "#FF0000",
+                        borderColor:"danger"
                     });
                     // $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Could not regenerate API key</div>");
                 }
             } else {
                 shashin.showToastMessage("Operation failed", "API key must not be blank", {
                     icon: "bi-exclamation-triangle",
-                    iconColor: "#FF0000"
+                    iconColor: "#FF0000",
+                    borderColor:"danger"
                 });
                 // $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Link must not be blank</div>");
             }

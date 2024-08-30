@@ -66,6 +66,7 @@
     delay = in ms
     target = default defaultToastTarget, or one of toastTarget1,toastTarget2,toastTarget3,toastTarget4
     autohide = boolean
+    borderColor = one of primary, secondary, success, danger, warning, info, light, dark, white
     */
     shashin.showToastMessage = function(title, message, options) {
         let titleField = null;
@@ -80,6 +81,7 @@
         let headerSubtext = null;
         let delay = 5000;
         let placement = shashin.toast.placement.bottom.center;
+        let borderColor = null;
 
         if (options === undefined || options === null) {
             target = shashin.toast.target.default;
@@ -165,6 +167,11 @@
             } else {
                 autohide = true;
             }
+            if (options.hasOwnProperty("borderColor")) {
+                borderColor = options["borderColor"];
+            } else {
+                borderColor = null;
+            }
         }
 
         if (target === shashin.toast.target.one) {
@@ -220,6 +227,23 @@
             iconField.css(cssStyle);
             iconField.addClass(icon);
             spacerField.html("&nbsp;");
+        }
+
+        $("#" + target).removeClass (function (index, className) {
+            return (className.match (/(^|\s)border-\S+/g) || []).join(' ');
+        });
+        $("#" + target).removeClass("border");
+        if (borderColor === "primary" ||
+            borderColor === "secondary" ||
+            borderColor === "success" ||
+            borderColor === "danger" ||
+            borderColor === "warning" ||
+            borderColor === "info" ||
+            borderColor === "light" ||
+            borderColor === "dark" ||
+            borderColor === "white")
+        {
+            $("#" + target).addClass("border border-"+borderColor);
         }
 
         if (autohide === false || autohide === true) {
@@ -355,7 +379,7 @@
 
     shashin.onFail = function(xhr, textStatus, ajaxParams, description, failFunction) {
         $("#spinner").hide();
-        shashin.showToastMessage("AJAX error", "AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+        shashin.showToastMessage("AJAX error", "AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
         shashin.printMessageToConsole("AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".", {
             type: shashin.consoleTypes.error
         });
@@ -1448,7 +1472,8 @@
                             shashin.showToastMessage("Thumbnail image updated", "Thumbnails have been updated.", {
                                 icon: "bi-info-circle",
                                 iconColor: "#777777",
-                                delay: 2000
+                                delay: 2000,
+                                borderColor:"success"
                             });
 
                             if (shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null && mediaContentList.length > 0) {
@@ -1473,7 +1498,8 @@
                         } else {
                             shashin.showToastMessage("Could not update thumbnail", "Could not update thumbnails", {
                                 icon: "bi-exclamation-triangle",
-                                iconColor: "#FF0000"
+                                iconColor: "#FF0000",
+                                borderColor:"danger"
                             });
                             $(".lg-current").css("background-color", "transparent");
                         }
@@ -1485,7 +1511,8 @@
                 } else {
                     shashin.showToastMessage("Could not update thumbnails", "Could not update thumbnails. Failed to capture image.", {
                         icon: "bi-exclamation-triangle",
-                        iconColor: "#FF0000"
+                        iconColor: "#FF0000",
+                        borderColor:"danger"
                     });
                     $("#captureThumbnail").show();
                     $("#captureThumbnailSpinner").hide();
@@ -1496,7 +1523,8 @@
                 $(".lg-current").css("background-color", "transparent");
                 shashin.showToastMessage("Could not update thumbnails", "Could not update thumbnails. "+metadata.fileName+" not a video.", {
                     icon: "bi-exclamation-triangle",
-                    iconColor: "#FF0000"
+                    iconColor: "#FF0000",
+                    borderColor:"danger"
                 });
                 $("#captureThumbnail").show();
                 $("#captureThumbnailSpinner").hide();

@@ -116,7 +116,7 @@ async function showMap(mapdata, keywordMap) {
             albumSelect.val(albumId);
             renderAlbumSelected();
         } else {
-            shashin.showToastMessage("Album does not exist", "Invalid album ID " + qsaid + ".", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+            shashin.showToastMessage("Album does not exist", "Invalid album ID " + qsaid + ".", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
         }
     } else if (qsan !== null && qsan !== "") {
         let albumId = -1;
@@ -134,7 +134,7 @@ async function showMap(mapdata, keywordMap) {
             albumSelect.val(albumId);
             renderAlbumSelected();
         } else {
-            shashin.showToastMessage("Album does not exist", "Invalid album name " + qsan + ".", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+            shashin.showToastMessage("Album does not exist", "Invalid album name " + qsan + ".", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
         }
     }
 
@@ -144,7 +144,7 @@ async function showMap(mapdata, keywordMap) {
             initialZoom = coordZoom;
             startDateField.val("");
         } else {
-            shashin.showToastMessage("Validation error", "Invalid lat/lng format.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+            shashin.showToastMessage("Validation error", "Invalid lat/lng format.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
         }
     } else if (qslatlng !== null && qslatlng !== "") {
         const latlngArr = qslatlng.split(",");
@@ -158,10 +158,10 @@ async function showMap(mapdata, keywordMap) {
                 initialZoom = coordZoom;
                 startDateField.val("");
             } else {
-                shashin.showToastMessage("Validation error", "Invalid lat/lng format.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+                shashin.showToastMessage("Validation error", "Invalid lat/lng format.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
             }
         } else {
-            shashin.showToastMessage("Validation error", "Invalid lat/lng format.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+            shashin.showToastMessage("Validation error", "Invalid lat/lng format.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
         }
     } else if (Util.localStorageAvailable() === true && "lat" in localStorage && "lng" in localStorage) {
         initialCoord = [localStorage.getItem("lng"), localStorage.getItem("lat")];
@@ -190,7 +190,7 @@ async function showMap(mapdata, keywordMap) {
             if (qssd !== null && true === Util.isValidDate(qssd)) {
                 startDateField.val(qssd);
             } else {
-                shashin.showToastMessage("Validation error", "Start date is invalid or format not yyyy-mm-dd.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+                shashin.showToastMessage("Validation error", "Start date is invalid or format not yyyy-mm-dd.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
             }
         }
         if (qsed !== null && qsed !== "") {
@@ -198,7 +198,7 @@ async function showMap(mapdata, keywordMap) {
             if (qsed !== null && true === Util.isValidDate(qsed)) {
                 endDateField.val(qsed);
             } else {
-                shashin.showToastMessage("Validation error", "End date is invalid or format not yyyy-mm-dd.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+                shashin.showToastMessage("Validation error", "End date is invalid or format not yyyy-mm-dd.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
             }
         }
         if (qsvo !== null) {
@@ -242,27 +242,31 @@ async function showMap(mapdata, keywordMap) {
             } else if (startDateField.val() !== "" && startDateFormat == null && endDateField.val() !== "" && endDateFormat === null) {
                 shashin.showToastMessage("Validation error", "Invalid dates.", {
                     icon: "bi-exclamation-triangle",
-                    iconColor: "#FF0000"
+                    iconColor: "#FF0000",
+                    borderColor:"danger"
                 });
                 return false;
             } else if (startDateFormat && endDateFormat) {
                 if (endDateFormat < startDateFormat) {
                     shashin.showToastMessage("Validation error", "Start date must be before end date.", {
                         icon: "bi-exclamation-triangle",
-                        iconColor: "#FF0000"
+                        iconColor: "#FF0000",
+                        borderColor:"danger"
                     });
                 }
                 return endDateFormat >= startDateFormat;
             } else if (startDateField.val() !== "" && startDateFormat === null) {
                 shashin.showToastMessage("Validation error", "Invalid start date.", {
                     icon: "bi-exclamation-triangle",
-                    iconColor: "#FF0000"
+                    iconColor: "#FF0000",
+                    borderColor:"danger"
                 });
                 return false;
             } else if (endDateField.val() !== "" && endDateFormat === null) {
                 shashin.showToastMessage("Validation error", "Invalid end date.", {
                     icon: "bi-exclamation-triangle",
-                    iconColor: "#FF0000"
+                    iconColor: "#FF0000",
+                    borderColor:"danger"
                 });
                 return false;
             }
@@ -1228,7 +1232,7 @@ async function showMap(mapdata, keywordMap) {
     function validateAndChangeDateType(singleDateInput, el) {
         singleDateInput.val(Util.formatDate(singleDateInput.val()));
         if (false === Util.isValidDate(singleDateInput.val())) {
-            shashin.showToastMessage("Validation error", singleDateInput.val() + " is invalid or format not yyyy-mm-dd.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+            shashin.showToastMessage("Validation error", singleDateInput.val() + " is invalid or format not yyyy-mm-dd.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
         }
         el.type = "date";
         el.placeholder = "mm/dd/yyyy";
