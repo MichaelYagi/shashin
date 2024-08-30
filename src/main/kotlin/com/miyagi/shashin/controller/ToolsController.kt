@@ -112,6 +112,8 @@ class ToolsController {
 
         val requestTimingStart = Date()
 
+        response["responseTime"] = "00:00:000"
+
         var status = "OK"
 
         response["status"] = status
