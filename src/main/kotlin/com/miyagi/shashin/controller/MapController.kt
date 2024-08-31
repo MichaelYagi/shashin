@@ -210,9 +210,9 @@ class MapController: BaseController() {
         val mapKeywordsMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         val response = mutableMapOf<String, Any?>()
 
-        if (mapKeywordsMap.containsKey("offset") && mapKeywordsMap.containsKey("limit") && mapKeywordsMap.containsKey("startDate") && mapKeywordsMap.containsKey("endDate")) {
-            val offset = mapKeywordsMap["offset"].toString().toInt()
-            val limit = mapKeywordsMap["limit"].toString().toInt()
+        if (mapKeywordsMap.containsKey("page") && mapKeywordsMap.containsKey("size") && mapKeywordsMap.containsKey("startDate") && mapKeywordsMap.containsKey("endDate")) {
+            val page = mapKeywordsMap["page"].toString().toInt()
+            val size = mapKeywordsMap["size"].toString().toInt()
             val startDate = mapKeywordsMap["startDate"].toString()
             val endDate = mapKeywordsMap["endDate"].toString()
 
@@ -230,12 +230,11 @@ class MapController: BaseController() {
                             "superRole"
                         )
                     ) {
-                        metadataRepository!!.findTimelineDatesForMap(offset, limit, startDate, endDate) as MutableList<MapData>
+                        metadataRepository!!.findTimelineDatesForMap((page * size), size, startDate, endDate) as MutableList<MapData>
                     } else {
                         metadataRepository!!.findByAlbumMetadataByUserIdDatesForMapWithLimit(
                             currentUserObj.getId(),
-                            offset,
-                            limit,
+                            (page * size), size,
                             startDate,
                             endDate
                         ) as MutableList<MapData>
@@ -245,12 +244,11 @@ class MapController: BaseController() {
                             "superRole"
                         )
                     ) {
-                        metadataRepository!!.findTimelineForMap(offset, limit) as MutableList<MapData>
+                        metadataRepository!!.findTimelineForMap((page * size), size) as MutableList<MapData>
                     } else {
                         metadataRepository!!.findByAlbumMetadataByUserIdForMapWithLimit(
                             currentUserObj.getId(),
-                            offset,
-                            limit
+                            (page * size), size
                         ) as MutableList<MapData>
                     }
                 }
