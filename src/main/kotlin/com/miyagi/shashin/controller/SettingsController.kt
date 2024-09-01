@@ -1902,20 +1902,7 @@ class SettingsController {
 
                                 var criteria: Criteria<Image, DetectedObjects>? = null
                                 if (settings?.getObjectDetection() == true) {
-                                    try {
-                                        criteria = Criteria.builder()
-                                            .optApplication(Application.CV.OBJECT_DETECTION)
-                                            .setTypes(Image::class.java, DetectedObjects::class.java)
-                                            .optEngine(Engine.getDefaultEngineName())
-                                            .optFilter("backbone", "resnet50")
-                                            .optProgress(ProgressBar())
-                                            .build()
-                                    } catch (e: Exception) {
-                                        logger.log(
-                                            Level.WARNING,
-                                            "Could not initialize criteria for object recognizer: ${e.message}"
-                                        )
-                                    }
+                                    criteria = buildObjectRecognitionCriteria()
                                 }
 
                                 for (mediaDir in mediaDirs) {
