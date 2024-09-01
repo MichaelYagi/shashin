@@ -173,20 +173,20 @@ class AttributeController: ResponseEntityExceptionHandler() {
         return ResponseEntity<Any>(apiError, headers, apiError.getStatus()!!)
     }
 
-    @ExceptionHandler(Exception::class)
-    protected fun handleException(
-        headers: HttpHeaders,
-        request: WebRequest,
-        ex: Exception
-    ): ResponseEntity<Any>? {
-        val acceptHeader = request.getHeader("accept")?.lowercase()
-        if (acceptHeader != null && acceptHeader.contains("text/html")) {
-            headers.contentType = MediaType.TEXT_HTML
-        }
-        val apiError = ApiError(HttpStatus.NOT_FOUND)
-        apiError.setMsg(ex.message)
-        return buildResponseEntity(apiError, headers)
-    }
+//    @ExceptionHandler(Exception::class)
+//    protected fun handleException(
+//        headers: HttpHeaders,
+//        request: WebRequest,
+//        ex: Exception
+//    ): ResponseEntity<Any>? {
+//        val acceptHeader = request.getHeader("accept")?.lowercase()
+//        if (acceptHeader != null && acceptHeader.contains("text/html")) {
+//            headers.contentType = MediaType.TEXT_HTML
+//        }
+//        val apiError = ApiError(HttpStatus.NOT_FOUND)
+//        apiError.setMsg(ex.message)
+//        return buildResponseEntity(apiError, headers)
+//    }
 
     @ExceptionHandler(EntityNotFoundException::class)
     protected fun handleEntityNotFound(
