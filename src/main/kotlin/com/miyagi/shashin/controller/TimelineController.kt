@@ -1010,7 +1010,7 @@ class TimelineController: BaseController() {
 
                 Thread {
                     for (metadataId in metadataIdArray) {
-                        ImageProcessing.createVideoGif(metadataId, metadataRepository)
+                        ImageProcessing.createVideoGif(metadataId, metadataRepository, true)
                     }
                 }.start()
 
