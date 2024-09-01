@@ -17,7 +17,7 @@ interface KeywordRepository : CrudRepository<Keyword?, Int?> {
     fun findAllKeywordsGroupedByMetadataIds(metadataIds: MutableList<String>): MutableIterable<KeywordsMetadata>
     @Query("SELECT kp.metadata_id AS metadataId, GROUP_CONCAT(k.keyword) AS keywords FROM keyword k INNER JOIN keywordphoto kp on k.id = kp.keyword_id WHERE k.keyword != 'unidentified objects' GROUP BY kp.metadata_id", nativeQuery = true)
     fun findAllKeywordsGroupedByMetadataId(): MutableIterable<KeywordsMetadata>
-    @Query("SELECT id FROM keyword WHERE id NOT IN (SELECT DISTINCT keyword_id FROM keywordphoto)", nativeQuery = true)
+    @Query("SELECT DISTINCT k.id FROM keyword k LEFT JOIN keywordphoto kp ON kp.keyword_id = k.id WHERE kp.keyword_id IS NULL", nativeQuery = true)
     fun findAllOrphanedKeywordIds(): MutableIterable<Int>
     @Query("SELECT DISTINCT * FROM keyword ORDER BY keyword COLLATE NOCASE ASC", nativeQuery = true)
     fun findAllDistinctOrderByKeyword(): MutableIterable<Keyword>
