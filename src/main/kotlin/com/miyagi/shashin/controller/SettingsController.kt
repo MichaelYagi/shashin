@@ -20,6 +20,7 @@ import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.service.RestartService
 import com.miyagi.shashin.util.*
+import com.miyagi.shashin.util.ImageProcessing.Companion.buildObjectRecognitionCriteria
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import kotlinx.coroutines.*
 import net.iakovlev.timeshape.TimeZoneEngine
@@ -1901,13 +1902,20 @@ class SettingsController {
 
                                 var criteria: Criteria<Image, DetectedObjects>? = null
                                 if (settings?.getObjectDetection() == true) {
-                                    criteria = Criteria.builder()
-                                        .optApplication(Application.CV.OBJECT_DETECTION)
-                                        .setTypes(Image::class.java, DetectedObjects::class.java)
-                                        .optEngine(Engine.getDefaultEngineName())
-                                        .optFilter("backbone", "resnet50")
-                                        .optProgress(ProgressBar())
-                                        .build()
+                                    try {
+                                        criteria = Criteria.builder()
+                                            .optApplication(Application.CV.OBJECT_DETECTION)
+                                            .setTypes(Image::class.java, DetectedObjects::class.java)
+                                            .optEngine(Engine.getDefaultEngineName())
+                                            .optFilter("backbone", "resnet50")
+                                            .optProgress(ProgressBar())
+                                            .build()
+                                    } catch (e: Exception) {
+                                        logger.log(
+                                            Level.WARNING,
+                                            "Could not initialize criteria for object recognizer: ${e.message}"
+                                        )
+                                    }
                                 }
 
                                 for (mediaDir in mediaDirs) {
@@ -1977,13 +1985,7 @@ class SettingsController {
 
                                 var criteria: Criteria<Image, DetectedObjects>? = null
                                 if (settings?.getObjectDetection() == true) {
-                                    criteria = Criteria.builder()
-                                        .optApplication(Application.CV.OBJECT_DETECTION)
-                                        .setTypes(Image::class.java, DetectedObjects::class.java)
-                                        .optEngine(Engine.getDefaultEngineName())
-                                        .optFilter("backbone", "resnet50")
-                                        .optProgress(ProgressBar())
-                                        .build()
+                                    criteria = buildObjectRecognitionCriteria()
                                 }
 
                                 for ((index, metadataId) in metadataIdArray.withIndex()) {

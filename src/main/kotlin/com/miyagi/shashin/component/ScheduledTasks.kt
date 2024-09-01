@@ -12,6 +12,7 @@ import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ImageProcessing.Companion.subjectRecognizer
 import com.miyagi.shashin.util.ImageProcessing
+import com.miyagi.shashin.util.ImageProcessing.Companion.buildObjectRecognitionCriteria
 import com.miyagi.shashin.util.NetworkUtils
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -223,27 +224,24 @@ class ScheduledTasks {
                     val withoutKeywords = metadataRepository?.findWithoutKeywords(settings.getMatchScanLimit()!!)
 
                     if (withoutKeywords != null) {
-                        val criteria: Criteria<Image, DetectedObjects> = Criteria.builder()
-                            .optApplication(Application.CV.OBJECT_DETECTION)
-                            .setTypes(Image::class.java, DetectedObjects::class.java)
-                            .optEngine(Engine.getDefaultEngineName())
-                            .optFilter("backbone", "resnet50")
-                            .optProgress(ProgressBar())
-                            .build()
+                        val criteria = buildObjectRecognitionCriteria()
 
-                        for (withoutKeyword in withoutKeywords) {
-                            val metadataWithoutKeywordsObj = metadataRepository?.findById(withoutKeyword.getId())?.get()
+                        if (criteria != null) {
+                            for (withoutKeyword in withoutKeywords) {
+                                val metadataWithoutKeywordsObj =
+                                    metadataRepository?.findById(withoutKeyword.getId())?.get()
 
-                            ImageProcessing.objectRecognizer(
-                                keywordRepository!!,
-                                keywordPhotoRepository!!,
-                                metadataRepository!!,
-                                metadataWithoutKeywordsObj!!,
-                                criteria,
-                                settings,
-                                null,
-                                null
-                            )
+                                ImageProcessing.objectRecognizer(
+                                    keywordRepository!!,
+                                    keywordPhotoRepository!!,
+                                    metadataRepository!!,
+                                    metadataWithoutKeywordsObj!!,
+                                    criteria,
+                                    settings,
+                                    null,
+                                    null
+                                )
+                            }
                         }
                     }
                 }

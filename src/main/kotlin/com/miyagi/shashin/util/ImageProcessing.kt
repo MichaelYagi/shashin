@@ -1,11 +1,14 @@
 package com.miyagi.shashin.util
 
+import ai.djl.Application
+import ai.djl.engine.Engine
 import ai.djl.modality.Classifications
 import ai.djl.modality.cv.Image
 import ai.djl.modality.cv.ImageFactory
 import ai.djl.modality.cv.output.DetectedObjects
 import ai.djl.repository.zoo.Criteria
 import ai.djl.repository.zoo.ModelZoo
+import ai.djl.training.util.ProgressBar
 import com.drew.imaging.ImageMetadataReader
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
@@ -647,7 +650,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 }
             } catch (e: Exception) {
                 logger.log(
-                    Level.INFO,
+                    Level.WARNING,
                     "Object recognition could not process file for " + metadataObj.getPath()!! + " error " + e.message
                 )
             }
@@ -1092,6 +1095,26 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             }
 
             return recognitionCount
+        }
+
+        fun buildObjectRecognitionCriteria(): Criteria<Image, DetectedObjects>? {
+            var criteria: Criteria<Image, DetectedObjects>? = null
+            try {
+                criteria = Criteria.builder()
+                    .optApplication(Application.CV.OBJECT_DETECTION)
+                    .setTypes(Image::class.java, DetectedObjects::class.java)
+                    .optEngine(Engine.getDefaultEngineName())
+                    .optFilter("backbone", "resnet50")
+                    .optProgress(ProgressBar())
+                    .build()
+            } catch (e: Exception) {
+                logger.log(
+                    Level.WARNING,
+                    "Could not initialize criteria for object recognizer: ${e.message}"
+                )
+            }
+
+            return criteria
         }
     }
 }

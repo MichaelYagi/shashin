@@ -15,6 +15,7 @@ import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.*
+import com.miyagi.shashin.util.ImageProcessing.Companion.buildObjectRecognitionCriteria
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.apache.commons.text.StringEscapeUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -232,32 +233,28 @@ class PeopleController: BaseController() {
                         val withoutKeywords = metadataRepository?.findWithoutKeywords(settings.getMatchScanLimit()!!)
 
                         if (withoutKeywords != null) {
-                            val criteria: Criteria<Image, DetectedObjects> = Criteria.builder()
-                                .optApplication(Application.CV.OBJECT_DETECTION)
-                                .setTypes(Image::class.java, DetectedObjects::class.java)
-                                .optEngine(Engine.getDefaultEngineName())
-                                .optFilter("backbone", "resnet50")
-                                .optProgress(ProgressBar())
-                                .build()
+                            val criteria = buildObjectRecognitionCriteria()
 
-                            for (withoutKeyword in withoutKeywords) {
-                                if (shouldStop.get()) {
-                                    break
+                            if (criteria != null) {
+                                for (withoutKeyword in withoutKeywords) {
+                                    if (shouldStop.get()) {
+                                        break
+                                    }
+
+                                    val metadataWithoutKeywordsObj =
+                                        metadataRepository?.findById(withoutKeyword.getId())?.get()
+
+                                    ImageProcessing.objectRecognizer(
+                                        keywordRepository!!,
+                                        keywordPhotoRepository!!,
+                                        metadataRepository!!,
+                                        metadataWithoutKeywordsObj!!,
+                                        criteria,
+                                        settings,
+                                        threadFile,
+                                        shouldStop.get()
+                                    )
                                 }
-
-                                val metadataWithoutKeywordsObj =
-                                    metadataRepository?.findById(withoutKeyword.getId())?.get()
-
-                                ImageProcessing.objectRecognizer(
-                                    keywordRepository!!,
-                                    keywordPhotoRepository!!,
-                                    metadataRepository!!,
-                                    metadataWithoutKeywordsObj!!,
-                                    criteria,
-                                    settings,
-                                    threadFile,
-                                    shouldStop.get()
-                                )
                             }
                         }
                     }
