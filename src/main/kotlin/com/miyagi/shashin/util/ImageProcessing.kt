@@ -440,7 +440,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
     companion object {
         private var logger: Logger = Logger.getLogger(FileUtils::class.simpleName)
 
-        fun createVideoGif(metadataId: String, metadataRepository: MetadataRepository?) {
+        fun createVideoGif(metadataId: String, metadataRepository: MetadataRepository?, overwrite: Boolean = false) {
 
             val metadataObj = metadataRepository?.findByMetadataId(metadataId)
 
@@ -448,7 +448,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 val gifFilePath = metadataObj.getThumbnailPathSmall()!!.replace("_225.jpg", "_225.gif")
                 val gifFile = File(gifFilePath)
 
-                if (metadataObj.getPath() != null) {
+                if (((overwrite && gifFile.exists()) || !gifFile.exists()) && metadataObj.getPath() != null) {
                     val videoProcessing = VideoProcessing(File(metadataObj.getPath()!!))
                     val processedGifFile = videoProcessing.getVideoGifFile()
 
