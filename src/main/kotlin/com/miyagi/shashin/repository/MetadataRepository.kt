@@ -140,9 +140,9 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
 
    @Query("SELECT DISTINCT m.* FROM metadata m INNER JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id WHERE m.hidden = 0 AND confidence > :recognitionConfidenceThreshold AND confidence < 1.0 AND confidence != 0.0 AND rlp.recognition_label_id = :recognitionLabelId", nativeQuery = true) //  LIMIT 0, :matchScanLimit - ,@Param("matchScanLimit") matchScanLimit: Int
    fun findLowMatchesByPerson(@Param("recognitionLabelId") recognitionLabelId: Int,@Param("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String): MutableIterable<Metadata>
-   @Query("SELECT DISTINCT m.* FROM metadata m WHERE m.id NOT IN (SELECT metadata_id FROM keywordphoto) AND m.hidden = 0 ORDER BY RANDOM() LIMIT 0, :matchScanLimit",nativeQuery = true)
+   @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN keywordphoto kp ON kp.metadata_id = m.id WHERE kp.metadata_id IS NULL AND m.hidden = 0 ORDER BY RANDOM() LIMIT 0, :matchScanLimit",nativeQuery = true)
    fun findWithoutKeywords(@Param("matchScanLimit") matchScanLimit: Int): MutableIterable<Metadata>
-   @Query("SELECT DISTINCT m.* FROM metadata m WHERE m.id NOT IN (SELECT metadata_id FROM recognitionlabelphoto) AND m.hidden = 0 ORDER BY RANDOM() LIMIT 0, :matchScanLimit",nativeQuery = true)
+   @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON rlp.metadata_id = m.id WHERE rlp.metadata_id IS NULL AND m.hidden = 0 ORDER BY RANDOM() LIMIT 0, :matchScanLimit",nativeQuery = true)
    fun findNonMatched(@Param("matchScanLimit") matchScanLimit: Int): MutableIterable<Metadata>
 
    @Cacheable(value = ["foldersCount"])
