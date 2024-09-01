@@ -448,7 +448,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 val gifFilePath = metadataObj.getThumbnailPathSmall()!!.replace("_225.jpg", "_225.gif")
                 val gifFile = File(gifFilePath)
 
-                if (!gifFile.exists() && metadataObj.getPath() != null) {
+                if (metadataObj.getPath() != null) {
                     val videoProcessing = VideoProcessing(File(metadataObj.getPath()!!))
                     val processedGifFile = videoProcessing.getVideoGifFile()
 

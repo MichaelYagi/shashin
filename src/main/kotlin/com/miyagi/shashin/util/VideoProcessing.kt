@@ -12,11 +12,33 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.stream.FileImageOutputStream
 import javax.imageio.stream.ImageOutputStream
+import kotlin.text.filter
+
 class VideoProcessing(private val videoFile: File) {
 
     private val frameGrabber: FFmpegFrameGrabber = FFmpegFrameGrabber(videoFile.path)
 
     private var logger: Logger = Logger.getLogger(VideoProcessing::class.simpleName)
+
+    private fun getVideoRotation(frameGrabber: FFmpegFrameGrabber): Double {
+        var rotation: Double = 0.0
+
+        var rotationStr: String? = frameGrabber.getVideoMetadata("rotate")
+        if (rotationStr.isNullOrBlank()) {
+            rotationStr = frameGrabber.displayRotation.toString()
+        }
+
+        var rotationDouble = rotationStr.toDouble()
+        var rotationInt = rotationDouble.toInt()
+
+        val rotationFiltered = rotationInt.toString().filter { it.isDigit() }
+
+        if (TextUtils.isInteger(rotationFiltered)) {
+            rotation = rotationFiltered.toDouble()
+        }
+
+        return rotation
+    }
 
     fun getVideoScreenshot(): BufferedImage? {
         var bi: BufferedImage? = null
@@ -28,12 +50,10 @@ class VideoProcessing(private val videoFile: File) {
             val f = frameGrabber.grabImage()
             bi = aa.convert(f)
 
-            val rotationStr = frameGrabber.getVideoMetadata("rotate")
-            if (!rotationStr.isNullOrBlank() && bi != null) {
-                val rotation = rotationStr.toDouble()
-                if (rotation > 0) {
-                    bi = ImageProcessing.rotateImage(bi, rotation)
-                }
+            val rotation = getVideoRotation(frameGrabber)
+
+            if (rotation != 0.0 && bi != null) {
+                bi = ImageProcessing.rotateImage(bi, rotation)
             }
         } catch (e: Exception) {
             logger.log(Level.WARNING, "Could not capture screenshot for video ${videoFile.name}: ${e.message}")
@@ -79,12 +99,9 @@ class VideoProcessing(private val videoFile: File) {
                     bi = frameConverter.convert(imageGrabber)
 
                     if (bi != null) {
-                        val rotationStr = frameGrabber.getVideoMetadata("rotate")
-                        if (!rotationStr.isNullOrBlank()) {
-                            val rotation = rotationStr.toDouble()
-                            if (rotation > 0) {
-                                bi = ImageProcessing.rotateImage(bi, rotation)
-                            }
+                        val rotation = getVideoRotation(frameGrabber)
+                        if (rotation != 0.0) {
+                            bi = ImageProcessing.rotateImage(bi, rotation)
                         }
 
                         val thumbnails = Thumbnails.of(bi)
