@@ -221,6 +221,7 @@ class ScheduledTasks {
                         "Scheduled scanning for object recognition started at " + TextUtils.getCurrentTimestamp()
                     )
 
+                    val threshold = settings.getObjectRecognitionConfidenceThreshold()
                     val withoutKeywords = metadataRepository?.findWithoutKeywords(settings.getMatchScanLimit()!!)
 
                     if (withoutKeywords != null) {
@@ -234,9 +235,7 @@ class ScheduledTasks {
                                 val keywordArray = ImageProcessing.objectRecognizer(
                                     metadataWithoutKeywordsObj!!,
                                     criteria,
-                                    settings,
-                                    null,
-                                    null
+                                    threshold.toString().toDouble()
                                 )
 
                                 ImageProcessing.processObjects(keywordArray, metadataWithoutKeywordsObj, keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!)

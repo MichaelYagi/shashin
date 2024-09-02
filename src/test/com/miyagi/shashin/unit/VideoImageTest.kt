@@ -44,14 +44,10 @@ class VideoImageTest {
         metadata.setPath(testImageUrl.path)
 
         val criteria = buildObjectRecognitionCriteria()
-        val settings = Settings()
-        settings.setObjectRecognitionConfidenceThreshold("0.45")
         val keywordArray = ImageProcessing.objectRecognizer(
             metadata,
             criteria!!,
-            settings,
-            null,
-            null
+            0.45
         )
 
         Assertions.assertTrue(keywordArray.isNotEmpty())
