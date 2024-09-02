@@ -124,8 +124,8 @@ class DjlFaceRecognizer {
 
                 val trainingImage = ImageFactory.getInstance().fromImage(scaledTrainingImage)
                 val detectedTrainingImages = detect(trainingImage)
-                val numOfTrainingObject = detectedTrainingImages.numberOfObjects
-                val trainingImageJsonNode = mapper.readTree(detectedTrainingImages.toJson())
+                val numOfTrainingObject = detectedTrainingImages?.numberOfObjects
+                val trainingImageJsonNode = mapper.readTree(detectedTrainingImages?.toJson())
 
                 FileUtils.writeToThreadFileAndLogMessage("$numOfTrainingObject faces detected in ${trainingImageObj.getPath()} training image",this.threadFile)
                 logger.log(
@@ -164,8 +164,8 @@ class DjlFaceRecognizer {
 
                     val testImage = ImageFactory.getInstance().fromImage(scaledTestImage)
                     val detectedTestImages = detect(testImage)
-                    val numOfTestObject = detectedTestImages.numberOfObjects
-                    val testImageJsonNode = mapper.readTree(detectedTestImages.toJson())
+                    val numOfTestObject = detectedTestImages?.numberOfObjects
+                    val testImageJsonNode = mapper.readTree(detectedTestImages?.toJson())
 
                     FileUtils.writeToThreadFileAndLogMessage("$numOfTestObject faces detected in ${testImageObj.getPath()} test image",this.threadFile)
                     logger.log(
@@ -193,7 +193,7 @@ class DjlFaceRecognizer {
                         recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
                     }
 
-                    for (i in 0 until numOfTrainingObject) {
+                    for (i in 0 until numOfTrainingObject!!) {
                         if (this.shouldStop.get()) {
                             break
                         }
@@ -214,7 +214,7 @@ class DjlFaceRecognizer {
                         try {
                             val trainingFeature = predict(trainingSubImage)
 
-                            for (j in 0 until numOfTestObject) {
+                            for (j in 0 until numOfTestObject!!) {
                                 if (this.shouldStop.get()) {
                                     break
                                 }
@@ -308,49 +308,67 @@ class DjlFaceRecognizer {
         return recognitionCount
     }
 
-    private fun calculateSimilar(feature1: FloatArray, feature2: FloatArray): Float {
-        var ret = 0.0f
-        var mod1 = 0.0f
-        var mod2 = 0.0f
-        val length = feature1.size
-        for (i in 0 until length) {
-            ret += feature1[i] * feature2[i]
-            mod1 += feature1[i] * feature1[i]
-            mod2 += feature2[i] * feature2[i]
+    private fun calculateSimilar(feature1: FloatArray?, feature2: FloatArray?): Float {
+        if (feature1 != null && feature2 != null) {
+            var ret = 0.0f
+            var mod1 = 0.0f
+            var mod2 = 0.0f
+            val length = feature1.size
+            for (i in 0 until length) {
+                ret += feature1[i] * feature2[i]
+                mod1 += feature1[i] * feature1[i]
+                mod2 += feature2[i] * feature2[i]
+            }
+            return ((ret / sqrt(mod1.toDouble()) / sqrt(mod2.toDouble()) + 1) / 2.0f).toFloat()
+        } else {
+            return 0.0f
         }
-        return ((ret / sqrt(mod1.toDouble()) / sqrt(mod2.toDouble()) + 1) / 2.0f).toFloat()
     }
 
     @Throws(IOException::class, ModelException::class, TranslateException::class)
-    fun predict(img: Image): FloatArray {
+    fun predict(img: Image): FloatArray? {
         val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
 
         img.wrappedImage
-        val criteria: Criteria<Image, FloatArray> =
-            Criteria.builder()
-                .setTypes(Image::class.java, FloatArray::class.java)
-                .optTranslator(FaceFeatureTranslator())
+
+        var criteria: Criteria<Image, FloatArray>? = null
+
+        try {
+            criteria =
+                Criteria.builder()
+                    .setTypes(Image::class.java, FloatArray::class.java)
+                    .optTranslator(FaceFeatureTranslator())
 //                .optProgress(ProgressBar())
 //                .optModelUrls(
 //                    classLoader.getResource("lib/face_feature.zip").path
 //                )
 //                .optModelName("face_feature") // specify model file prefix
-                .optModelUrls(
-                    classLoader.getResource("lib/vggface2.pt")!!.path
+                    .optModelUrls(
+                        classLoader.getResource("lib/vggface2.pt")!!.path
 //                    "https://github.com/jmformenti/face-recognition-java/raw/master/core/src/main/resources/models/pytorch/vggface2/vggface2.pt"
-                )
+                    )
 //                .optModelName("vggface2") // specify model file prefix
-                .optEngine("PyTorch") // Use PyTorch engine
-                .build()
+                    .optEngine("PyTorch") // Use PyTorch engine
+                    .build()
+        } catch (e: Exception) {
+            logger.log(
+                Level.WARNING,
+                "Could not build criteria for prediction. ${e.message}"
+            )
+        }
 
-        criteria.loadModel().use { model ->
-            val predictor: Predictor<Image, FloatArray> = model.newPredictor()
-            return predictor.predict(img)
+        if (criteria == null) {
+            return null
+        } else {
+            criteria.loadModel().use { model ->
+                val predictor: Predictor<Image, FloatArray> = model.newPredictor()
+                return predictor.predict(img)
+            }
         }
     }
 
     @Throws(IOException::class, ModelException::class, TranslateException::class)
-    fun detect(img: Image): DetectedObjects {
+    fun detect(img: Image): DetectedObjects? {
         val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
         val confThresh = 0.85
         val nmsThresh = 0.45
@@ -361,21 +379,34 @@ class DjlFaceRecognizer {
         val translator =
             FaceDetectionTranslator(confThresh, nmsThresh, variance, topK, scales, steps)
 
-        val criteria =
-            Criteria.builder()
-                .setTypes(Image::class.java, DetectedObjects::class.java)
-                .optModelUrls(classLoader.getResource("lib/retinaface.pt")!!.path) // Load model from local file, e.g:
+        var criteria: Criteria<Image, DetectedObjects>? = null
+
+        try {
+            criteria =
+                Criteria.builder()
+                    .setTypes(Image::class.java, DetectedObjects::class.java)
+                    .optModelUrls(classLoader.getResource("lib/retinaface.pt")!!.path) // Load model from local file, e.g:
 //                .optModelUrls("https://resources.djl.ai/test-models/pytorch/retinaface.zip")
 //                .optModelName("retinaface") // specify model file prefix
-                .optTranslator(translator)
+                    .optTranslator(translator)
 //                .optProgress(ProgressBar())
-                .optEngine("PyTorch") // Use PyTorch engine
-                .build()
+                    .optEngine("PyTorch") // Use PyTorch engine
+                    .build()
+        } catch (e: Exception) {
+            logger.log(
+                Level.WARNING,
+                "Could not build criteria for detection. ${e.message}"
+            )
+        }
 
-        criteria.loadModel().use { model ->
-            model.newPredictor().use { predictor ->
-                val detection = predictor.predict(img)
-                return detection
+        if (criteria == null) {
+            return null
+        } else {
+            criteria.loadModel().use { model ->
+                model.newPredictor().use { predictor ->
+                    val detection = predictor.predict(img)
+                    return detection
+                }
             }
         }
     }
@@ -454,23 +485,23 @@ class DjlFaceRecognizer {
         val mapper = ObjectMapper()
 
         val detect3 = detect(img3)
-        val numOfObjects3 = detect3.numberOfObjects
+        val numOfObjects3 = detect3?.numberOfObjects
         val imageWidth3 = image3.width
         val imageHeight3 = image3.height
-        val jsonNode3 = mapper.readTree(detect3.toJson())
-        println(detect3.toJson())
+        val jsonNode3 = mapper.readTree(detect3?.toJson())
+        println(detect3?.toJson())
 
         val detect6 = detect(img6)
-        val numOfObjects6 = detect6.numberOfObjects
+        val numOfObjects6 = detect6?.numberOfObjects
         val imageWidth6 = image6.width
         val imageHeight6 = image6.height
-        val jsonNode6 = mapper.readTree(detect6.toJson())
-        println(detect6.toJson())
+        val jsonNode6 = mapper.readTree(detect6?.toJson())
+        println(detect6?.toJson())
 
         // 1st photo - find faces
         println("i: $numOfObjects6")
         println("j: $numOfObjects3")
-        for (i in 0 until numOfObjects6) {
+        for (i in 0 until numOfObjects6!!) {
             var cornerMin = jsonNode6.get(i).get("boundingBox").get("corners")[0]
             var xMin = cornerMin.get("x").toString().toDouble()
             var yMin = cornerMin.get("y").toString().toDouble()
@@ -497,7 +528,7 @@ class DjlFaceRecognizer {
             val tempFeature6 = predict(tempImage6)
 
             // 2nd photo - find faces
-            for (j in 0 until numOfObjects3) {
+            for (j in 0 until numOfObjects3!!) {
                 cornerMin = jsonNode3.get(j).get("boundingBox").get("corners")[0]
                 xMin = cornerMin.get("x").toString().toDouble()
                 yMin = cornerMin.get("y").toString().toDouble()
@@ -519,7 +550,7 @@ class DjlFaceRecognizer {
                 // Compare with other profiles
                 val tempFeature3 = predict(tempImage3)
 
-                println("testing iteration $i-$j: "+calculateSimilar(tempFeature3, tempFeature6).toString())
+                println("testing iteration $i-$j: "+calculateSimilar(tempFeature3!!, tempFeature6!!).toString())
             }
 
         }
