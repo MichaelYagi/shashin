@@ -4,6 +4,7 @@ import ai.djl.modality.Classifications
 import ai.djl.modality.cv.ImageFactory
 import ai.djl.repository.zoo.ModelZoo
 import com.miyagi.shashin.component.DjlFaceRecognizer
+import com.miyagi.shashin.e2e.BaseSeleniumTests
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.util.ImageProcessing
 import com.miyagi.shashin.util.ImageProcessing.Companion.buildObjectRecognitionCriteria
@@ -13,10 +14,14 @@ import org.junit.jupiter.api.Test
 import org.springframework.test.context.ActiveProfiles
 import java.io.File
 import java.net.URL
+import java.util.logging.Level
+import java.util.logging.Logger
 import javax.imageio.ImageIO
 
 @ActiveProfiles("test")
 class VideoImageTest {
+
+    var logger: Logger = Logger.getLogger(BaseSeleniumTests::class.simpleName)
 
     @Test
     fun processScreenshotTest() {
@@ -67,6 +72,8 @@ class VideoImageTest {
             0.45
         )
 
+        this.logger.log(Level.INFO, "keywords: ${keywordArray.joinToString(", ")}")
+
         Assertions.assertTrue(keywordArray.isNotEmpty())
     }
 
@@ -116,6 +123,8 @@ class VideoImageTest {
 
                         Assertions.assertTrue(objSubject.isNotEmpty())
                         Assertions.assertTrue(objProbability > 0)
+
+                        this.logger.log(Level.INFO, "Iteration ${i+1}: p - $objProbability; s - $objSubject")
                     }
                 }
             }
