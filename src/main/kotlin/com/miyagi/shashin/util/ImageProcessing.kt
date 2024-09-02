@@ -520,7 +520,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             }
         }
 
-        fun objectRecognizer(metadataObj: Metadata, criteria: Criteria<Image, DetectedObjects>, settings: Settings, threadFile: File?, shouldStop: Boolean?): List<String> {
+        fun objectRecognizer(metadataObj: Metadata, criteria: Criteria<Image, DetectedObjects>, threshold: Double, threadFile: File? = null, shouldStop: Boolean? = null): List<String> {
             val keywordArray = mutableListOf<String>()
             val unidentifiedStr = "unidentified objects"
 
@@ -549,9 +549,6 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                                         detection.item<Classifications.Classification?>(i).probability
                                     val objSubject =
                                         detection.item<Classifications.Classification?>(i).className
-
-                                    val threshold =
-                                        settings.getObjectRecognitionConfidenceThreshold().toString().toDouble()
 
                                     if (objSubject.trim() != "person" && objProbability >= threshold
                                     ) {

@@ -234,6 +234,7 @@ class PeopleController: BaseController() {
 
                         if (withoutKeywords != null) {
                             val criteria = buildObjectRecognitionCriteria()
+                            val threshold = settings.getObjectRecognitionConfidenceThreshold()
 
                             if (criteria != null) {
                                 for (withoutKeyword in withoutKeywords) {
@@ -247,7 +248,7 @@ class PeopleController: BaseController() {
                                     val keywordArray = ImageProcessing.objectRecognizer(
                                         metadataWithoutKeywordsObj!!,
                                         criteria,
-                                        settings,
+                                        threshold.toString().toDouble(),
                                         threadFile,
                                         shouldStop.get()
                                     )

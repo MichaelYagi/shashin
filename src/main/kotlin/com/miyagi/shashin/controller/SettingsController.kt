@@ -2285,10 +2285,12 @@ class SettingsController {
                                             }
 
                                             if (settings?.getObjectDetection() == true && criteria != null) {
+                                                val threshold = settings.getObjectRecognitionConfidenceThreshold()
+
                                                 val keywordArray = ImageProcessing.objectRecognizer(
                                                     metadataObj,
                                                     criteria,
-                                                    settings,
+                                                    threshold.toString().toDouble(),
                                                     threadFile,
                                                     shouldStop.get()
                                                 )
