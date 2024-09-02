@@ -146,10 +146,11 @@ class VideoImageTest {
         val detectedTrainingImages = DjlFaceRecognizer().detect(img)
         val numOfObjects = detectedTrainingImages?.numberOfObjects
         Assertions.assertTrue(numOfObjects!! > 0)
-        val trainingImageJsonNode = mapper.readTree(detectedTrainingImages?.toJson())
+        val trainingImageJsonNode = mapper.readTree(detectedTrainingImages.toJson())
+        val limit = 2
 
         // Test against same image against different faces detected
-        for (i in 0 until 2) {
+        for (i in 0 until limit) {
 
             // Get sub images
             val trainingSubImageBi = DjlFaceRecognizer().getSubImage(imageBi, trainingImageJsonNode, i)
@@ -158,7 +159,7 @@ class VideoImageTest {
             try {
                 val trainingFeature = DjlFaceRecognizer().predict(trainingSubImage)
 
-                for (j in 0 until 2) {
+                for (j in 0 until limit) {
 
                     val testSubImageBi = DjlFaceRecognizer().getSubImage(imageBi, trainingImageJsonNode, j)
                     val testSubImage = ImageFactory.getInstance().fromImage(testSubImageBi)
