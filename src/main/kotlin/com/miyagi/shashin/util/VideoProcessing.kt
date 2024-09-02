@@ -20,7 +20,7 @@ class VideoProcessing(private val videoFile: File) {
 
     private var logger: Logger = Logger.getLogger(VideoProcessing::class.simpleName)
 
-    private fun getVideoRotation(frameGrabber: FFmpegFrameGrabber): Double {
+    fun getVideoRotation(): Double {
         var rotation: Double = 0.0
 
         var rotationStr: String? = frameGrabber.getVideoMetadata("rotate")
@@ -42,6 +42,7 @@ class VideoProcessing(private val videoFile: File) {
 
     fun getVideoScreenshot(): BufferedImage? {
         var bi: BufferedImage? = null
+
         try {
             frameGrabber.start()
 
@@ -50,7 +51,7 @@ class VideoProcessing(private val videoFile: File) {
             val f = frameGrabber.grabImage()
             bi = aa.convert(f)
 
-            val rotation = getVideoRotation(frameGrabber)
+            val rotation = getVideoRotation()
 
             if (rotation != 0.0 && bi != null) {
                 bi = ImageProcessing.rotateImage(bi, rotation)
@@ -64,7 +65,7 @@ class VideoProcessing(private val videoFile: File) {
         return bi
     }
 
-    fun getVideoGifFile(): File? {
+    fun getVideoGifFile(frameLimit: Double = 0.0): File? {
         val metricsUtil = MetricsUtil()
         metricsUtil.start("converting video to gif")
 
@@ -86,7 +87,11 @@ class VideoProcessing(private val videoFile: File) {
             val totalFrameCount = frameGrabber.lengthInFrames
             // Skip every x frames
             val skipFrame = framerate/12
-            val limit = framerate*skipFrame
+
+            var limit = framerate*skipFrame
+            if (frameLimit != 0.0) {
+                limit = frameLimit
+            }
 
             for (frameCount in 0 until totalFrameCount) {
                 if (frameCount > limit) {
@@ -99,7 +104,7 @@ class VideoProcessing(private val videoFile: File) {
                     bi = frameConverter.convert(imageGrabber)
 
                     if (bi != null) {
-                        val rotation = getVideoRotation(frameGrabber)
+                        val rotation = getVideoRotation()
                         if (rotation != 0.0) {
                             bi = ImageProcessing.rotateImage(bi, rotation)
                         }
@@ -126,7 +131,7 @@ class VideoProcessing(private val videoFile: File) {
             writer.close()
             output.close()
         } catch (e: Exception) {
-            logger.log(Level.WARNING, "Could not capture screenshot for video ${videoFile.name}: ${e.message}")
+            logger.log(Level.WARNING, "Could not capture gif for video ${videoFile.name}: ${e.message}")
             return null
         }
 
