@@ -39,11 +39,11 @@ class VideoImageTest {
         val testImageUrl: URL = classLoader.getResource("tablecup.jpg")!!
 
         // Create thumbnails
-        var metadata = Metadata()
+        val metadata = Metadata()
         metadata.setId("00000000-00000000-00000000-00000012")
         metadata.setPath(testImageUrl.path)
 
-        var criteria = buildObjectRecognitionCriteria()
+        val criteria = buildObjectRecognitionCriteria()
         val settings = Settings()
         settings.setObjectRecognitionConfidenceThreshold("0.45")
         val keywordArray = ImageProcessing.objectRecognizer(
