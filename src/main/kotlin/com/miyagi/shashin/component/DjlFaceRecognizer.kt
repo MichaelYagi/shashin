@@ -64,7 +64,7 @@ class DjlFaceRecognizer {
         this.shouldStop = shouldStop
     }
 
-    private fun getSubImage(image: BufferedImage, jsonNode: JsonNode, index: Int): BufferedImage {
+    fun getSubImage(image: BufferedImage, jsonNode: JsonNode, index: Int): BufferedImage {
         val cornerMin = jsonNode.get(index).get("boundingBox").get("corners")[0]
         val xMin = cornerMin.get("x").toString().toDouble()
         val yMin = cornerMin.get("y").toString().toDouble()
@@ -308,7 +308,7 @@ class DjlFaceRecognizer {
         return recognitionCount
     }
 
-    private fun calculateSimilar(feature1: FloatArray?, feature2: FloatArray?): Float {
+    fun calculateSimilar(feature1: FloatArray?, feature2: FloatArray?): Float {
         if (feature1 != null && feature2 != null) {
             var ret = 0.0f
             var mod1 = 0.0f
