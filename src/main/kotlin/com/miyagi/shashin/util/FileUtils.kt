@@ -95,28 +95,29 @@ class FileUtils {
             }
         }
 
-        fun createFile(filePath: String, fileName: String, type: String, overwriteThumbnails: Boolean = false): File? {
+        fun createFile(fileName: String, overwriteThumbnails: Boolean = false): File? {
+            val someFile = File(fileName)
+
             try {
                 // Create directory if dne
-                val someFileDir = File(filePath)
+                val someFileDir = File(someFile.parent)
                 if (!someFileDir.exists()) {
                     someFileDir.mkdirs()
                 }
                 // Create file
-                val someFile = File(fileName)
                 if (overwriteThumbnails) {
-                    logger.log(Level.INFO, type + " overwriting: " + someFile.name)
+                    logger.log(Level.INFO, "Overwriting file: $fileName")
                     return someFile
                 } else if (someFile.createNewFile()) {
-                    logger.log(Level.INFO, type + " created: " + someFile.name)
+                    logger.log(Level.INFO, "Created file: $fileName")
                     return someFile
                 } else {
-                    logger.log(Level.INFO, type + " already exists: " + someFile.name)
+                    logger.log(Level.INFO, "File already exists: $fileName")
                     //return someFile
                     return null
                 }
             } catch (e: IOException) {
-                logger.log(Level.SEVERE, type + " creation error: " + e.message)
+                logger.log(Level.SEVERE, "Error creating $fileName: " + e.message)
                 return null
             }
         }
@@ -126,9 +127,7 @@ class FileUtils {
                 //Create file with thread name and write file name iterated
                 val tempDir = System.getProperty("java.io.tmpdir")
                 val threadFile = createFile(
-                    tempDir,
-                    tempDir + "/" + Thread.currentThread().name + "." + threadName,
-                    "Thread"
+                    tempDir + "/" + Thread.currentThread().name + "." + threadName
                 )
                 if (threadFile != null && threadFile.exists()) {
                     return threadFile

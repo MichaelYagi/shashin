@@ -232,9 +232,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             if (isRawOrVideo) {
                 thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_original." + extension
                 tnFile = FileUtils.createFile(
-                    thumbnailDirectory + fileRootDir,
                     thumbnailFileStr,
-                    "Thumbnail",
                     overwriteThumbnails
                 )
                 if (tnFile != null) {
@@ -250,9 +248,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             thumbnailFileStr =
                 thumbnailDirectory + fileRootDir + "/" + file.name + "_" + FileUtils.thumbnailHeight() + "." + extension
             tnFile = FileUtils.createFile(
-                thumbnailDirectory + fileRootDir,
                 thumbnailFileStr,
-                "Thumbnail",
                 overwriteThumbnails
             )
 
@@ -296,9 +292,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             thumbnailFileStr =
                 thumbnailDirectory + fileRootDir + "/" + file.name + "_" + xsHeight + "." + extension
             tnFile = FileUtils.createFile(
-                thumbnailDirectory + fileRootDir,
                 thumbnailFileStr,
-                "XS Thumbnail",
                 overwriteThumbnails
             )
 
@@ -339,9 +333,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             // Square image thumbnail
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_centered." + extension
             tnFile = FileUtils.createFile(
-                thumbnailDirectory + fileRootDir,
                 thumbnailFileStr,
-                "Thumbnail",
                 overwriteThumbnails
             )
             if (tnFile != null) {
@@ -368,9 +360,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             // Map marker thumbnail
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_mapmarker." + extension
             tnFile = FileUtils.createFile(
-                thumbnailDirectory + fileRootDir,
                 thumbnailFileStr,
-                "Thumbnail",
                 overwriteThumbnails
             )
             if (tnFile != null) {
@@ -404,15 +394,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
     private fun getVideoRotation(file: File): Double? {
         try {
-            val frameGrabber = FFmpegFrameGrabber(file.path)
-            frameGrabber.start()
-
-            val rotationStr = frameGrabber.getVideoMetadata("rotate")
-            frameGrabber.stop()
-
-            if (!rotationStr.isNullOrBlank()) {
-                return rotationStr.toDouble()
-            }
+            val videoProcessing = VideoProcessing(file)
+            return videoProcessing.getVideoRotation()
         } catch (e: IOException) {
             logger.log(Level.WARNING, "Could not get rotation for video " + file.name + ": " + e.message)
             return null

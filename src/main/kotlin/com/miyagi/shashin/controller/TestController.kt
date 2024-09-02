@@ -1,6 +1,7 @@
 package com.miyagi.shashin.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.javascript.jscomp.jarjar.com.google.common.io.Files
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScaperMessage
 import com.miyagi.shashin.model.Metadata
@@ -9,6 +10,7 @@ import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.ImageProcessing
 import com.miyagi.shashin.util.MetadataProcessing
 import com.miyagi.shashin.util.TextUtils
+import com.miyagi.shashin.util.VideoProcessing
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.event.EventListener
@@ -31,6 +33,7 @@ import java.util.concurrent.TimeUnit
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
+import kotlin.String
 
 
 @Controller
@@ -99,6 +102,36 @@ class TestController {
 
         println("repairscripts thread exists: "+FileUtils.checkThreadFileAlive("repairscripts"))
 //        FileUtils.deleteThreadFiles("repairscripts")
+
+        return "test"
+    }
+
+    @Secured("ROLE_SUPER")
+    @GetMapping("/sandbox")
+    fun sandbox(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
+        model["somevalue"] = "This is a test"
+
+//        val fileName = "C:/Users/Michael/Downloads/testpics/PXL_20240505_203632083.TS.mp4"
+//        val file = File(fileName)
+//
+//        // Create thumbnails
+//        var metadata: Metadata? = Metadata()
+//        metadata?.setId("00000000-00000000-00000000-00000012")
+//        metadata?.setType("video")
+//        val imageProcessing = ImageProcessing("v1", file, "C:/Users/Michael/Downloads/thumbs/", metadata)
+//        metadata = imageProcessing.createThumbnails()
+//
+//        // Create GIF from video
+//        val videoProcessing = VideoProcessing(file)
+//        val rotation = videoProcessing.getVideoRotation()
+//        val processedGifFile = videoProcessing.getVideoGifFile()
+//        if (processedGifFile != null) {
+//            val gifFile = FileUtils.createFile(
+//                "C:/Users/Michael/Downloads/thumbs/test.gif",
+//                true
+//            )
+//            Files.copy(processedGifFile, gifFile)
+//        }
 
         return "test"
     }

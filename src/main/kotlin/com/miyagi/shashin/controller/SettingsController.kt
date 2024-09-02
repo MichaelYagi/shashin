@@ -2435,7 +2435,7 @@ class SettingsController {
                                     if (metadataObj?.getThumbnailSmallWidth() != null && metadataObj.getThumbnailSmallHeight() != null && metadataObj.getThumbnailUrlSmall() != null) {
                                         metadataObj.setHidden(false)
 
-                                        metadataRepository?.save(metadataObj)
+                                        metadataRepository.save(metadataObj)
                                         metadataIdArray.add(metadataObj.getId())
                                     } else {
                                         logger.log(

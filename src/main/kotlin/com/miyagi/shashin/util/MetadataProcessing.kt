@@ -582,9 +582,7 @@ class MetadataProcessing() {
             val photoFile = File(path)
             val fileRootDir: String = FileUtils.getRootDir(photoFile)
             val exifFile = FileUtils.createFile(
-                "$metadataDirectory/$fileRootDir",
-                "$metadataDirectory/$fileRootDir/" + photoFile.name + ".exif.yaml",
-                "Exif"
+                "$metadataDirectory/$fileRootDir/" + photoFile.name + ".exif.yaml"
             )
             if (exifFile != null) {
                 val yamlFactory: YAMLFactory = YAMLFactory.builder()

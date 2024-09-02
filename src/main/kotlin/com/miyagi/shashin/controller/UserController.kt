@@ -200,7 +200,7 @@ class UserController {
                     if (File(profileFileStr).exists()) {
                         File(profileFileStr).delete()
                     }
-                    val profileFile = FileUtils.createFile(profileDirectory, profileFileStr, "Profile")
+                    val profileFile = FileUtils.createFile(profileFileStr)
                     if (profileFile != null) {
                         val tempFile = File(System.getProperty("java.io.tmpdir") + ".$extension")
                         ImageIO.write(img, extension, profileFile)
