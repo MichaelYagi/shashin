@@ -525,7 +525,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             val unidentifiedStr = "unidentified objects"
 
             try {
-                val file = if (metadataObj.getType()?.contains("video", ignoreCase = true)!!) {
+                val file = if (metadataObj.getType() != null && metadataObj.getType()?.contains("video", ignoreCase = true)!! && File(metadataObj.getThumbnailPathSmall()!!).exists()) {
                     File(metadataObj.getThumbnailPathSmall()!!)
                 } else {
                     File(metadataObj.getPath()!!)

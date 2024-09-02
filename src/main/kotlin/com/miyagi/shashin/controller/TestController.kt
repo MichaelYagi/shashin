@@ -1,10 +1,12 @@
 package com.miyagi.shashin.controller
 
 import ai.djl.modality.cv.Image
+import ai.djl.modality.cv.ImageFactory
 import ai.djl.modality.cv.output.DetectedObjects
 import ai.djl.repository.zoo.Criteria
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.javascript.jscomp.jarjar.com.google.common.io.Files
+import com.miyagi.shashin.component.DjlFaceRecognizer
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScaperMessage
 import com.miyagi.shashin.model.Metadata
@@ -38,6 +40,7 @@ import java.util.concurrent.TimeUnit
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
+import javax.imageio.ImageIO
 import kotlin.String
 
 
@@ -133,17 +136,12 @@ class TestController {
 //        metadata?.setType("video")
 //        var imageProcessing = ImageProcessing("v1", file, "C:/Users/Michael/Downloads/thumbs/", metadata)
 //        metadata = imageProcessing.createThumbnails()
-//
-//        // Create GIF from video
+
+        // Create GIF from video
 //        val videoProcessing = VideoProcessing(file)
-//        val rotation = videoProcessing.getVideoRotation()
-//        val processedGifFile = videoProcessing.getVideoGifFile()
-//        if (processedGifFile != null) {
-//            val gifFile = FileUtils.createFile(
-//                "C:/Users/Michael/Downloads/thumbs/test.gif",
-//                true
-//            )
-//            Files.copy(processedGifFile, gifFile)
+//        val processedGifFile = videoProcessing.getVideoGifFile(10.0)
+//        if (processedGifFile != null && processedGifFile.exists() && processedGifFile.length() > 0) {
+//            println("gif exists")
 //        }
 //
 //
@@ -151,22 +149,35 @@ class TestController {
 //        file = File(fileName)
 //
 //        // Create thumbnails
-//        metadata = Metadata()
+//        var metadata = Metadata()
 //        metadata.setId("00000000-00000000-00000000-00000012")
-//        metadata.setType("video")
-//        imageProcessing = ImageProcessing("v1", file, "C:/Users/Michael/Downloads/thumbs/", metadata)
-//        metadata = imageProcessing.createThumbnails()
-//
+//        metadata.setPath(fileName)
+//        val imageProcessing = ImageProcessing("v1", file, "C:/Users/Michael/Downloads/thumbs/", metadata)
+//        metadata = imageProcessing.createThumbnails()!!
+
 //        var criteria = buildObjectRecognitionCriteria()
 //        val settings = model.getAttribute("settings") as Settings
 //        val keywordArray = ImageProcessing.objectRecognizer(
-//            metadata!!,
+//            metadata,
 //            criteria!!,
 //            settings,
 //            null,
 //            null
 //        )
 //        println("keywords: ${keywordArray.joinToString(", ")}")
+
+//        fileName = "C:/Users/Michael/Downloads/testpics/PXL_20240505_193019519.jpg"
+//        val imageBi = ImageIO.read(File(fileName))
+//        val img = ImageFactory.getInstance().fromImage(imageBi)
+//
+//        val djlFaceRecognizer = DjlFaceRecognizer()
+//        val detect = djlFaceRecognizer.detect(img)
+//        println("numberOfObjects: "+detect.numberOfObjects)
+//        println(detect.toString())
+//
+//        val predict = djlFaceRecognizer.predict(img)
+//        println("size: "+predict.size)
+
 
         return "test"
     }
