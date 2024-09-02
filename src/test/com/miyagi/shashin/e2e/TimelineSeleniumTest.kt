@@ -94,7 +94,7 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
 
         // Get test image data and populate in settings
         val classLoader = javaClass.classLoader
-        val testImageUrl: URL = classLoader.getResource("testscreen.jpg")
+        val testImageUrl: URL = classLoader.getResource("testscreen.jpg")!!
         val testImageFile = File(testImageUrl.file)
         val mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
         mediaDirTextArea.sendKeys(testImageFile.parent)
