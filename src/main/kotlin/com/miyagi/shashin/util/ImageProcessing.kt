@@ -540,7 +540,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                             val detection = predictor.predict(img)
                             val numOfObjects = detection.numberOfObjects
                             if (numOfObjects > 0) {
-                                for (i in 0..numOfObjects) {
+                                for (i in 0 until numOfObjects) {
                                     if (shouldStop != null && shouldStop) {
                                         break
                                     }
