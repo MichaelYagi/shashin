@@ -566,26 +566,26 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
                                         if (threadFile != null) {
                                             FileUtils.writeToThreadFileAndLogMessage(
-                                                "Objects identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability,
+                                                "Objects identified for " + metadataObj.getPath() + ": S-" + objSubject + " P-" + objProbability,
                                                 threadFile
                                             )
                                         }
 
                                         logger.log(
                                             Level.INFO,
-                                            "Objects identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability
+                                            "Objects identified for " + metadataObj.getPath() + ": S-" + objSubject + " P-" + objProbability
                                         )
                                     } else {
                                         if (threadFile != null) {
                                             FileUtils.writeToThreadFileAndLogMessage(
-                                                "Objects identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability,
+                                                "Objects identified for " + metadataObj.getPath() + ": S-" + objSubject + " P-" + objProbability,
                                                 threadFile
                                             )
                                         }
 
                                         logger.log(
                                             Level.INFO,
-                                            "Objects identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability
+                                            "Objects identified for " + metadataObj.getPath() + ": S-" + objSubject + " P-" + objProbability
                                         )
                                     }
                                 }
@@ -626,7 +626,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
                             logger.log(
                                 Level.INFO,
-                                "Could not identify objects for " + metadataObj.getThumbnailUrlSmall()
+                                "Could not identify objects for " + metadataObj.getPath()
                             )
                         }
                     }
