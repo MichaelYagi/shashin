@@ -71,7 +71,7 @@ class VideoImageTest {
     }
 
     @Test
-    fun processObjectsTest() {
+    fun processFaceRecognitionTest() {
         val classLoader = javaClass.classLoader
         val testImageUrl: URL = classLoader.getResource("people.jpg")!!
         val testVideoFile = File(testImageUrl.file)
