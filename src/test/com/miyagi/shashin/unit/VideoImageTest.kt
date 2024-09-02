@@ -20,7 +20,7 @@ class VideoImageTest {
     @Test
     fun processGifTest() {
         val classLoader = javaClass.classLoader
-        val testVideoUrl: URL = classLoader.getResource("circus.mp4")!!
+        val testVideoUrl: URL = classLoader.getResource("earth.mp4")!!
         val testVideoFile = File(testVideoUrl.file)
 
         val videoProcessing = VideoProcessing(testVideoFile)
