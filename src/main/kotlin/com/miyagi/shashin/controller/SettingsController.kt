@@ -2285,16 +2285,15 @@ class SettingsController {
                                             }
 
                                             if (settings?.getObjectDetection() == true && criteria != null) {
-                                                ImageProcessing.objectRecognizer(
-                                                    keywordRepository!!,
-                                                    keywordPhotoRepository!!,
-                                                    metadataRepository!!,
+                                                val keywordArray = ImageProcessing.objectRecognizer(
                                                     metadataObj,
-                                                    criteria!!,
+                                                    criteria,
                                                     settings,
                                                     threadFile,
                                                     shouldStop.get()
                                                 )
+
+                                                ImageProcessing.processObjects(keywordArray, metadataObj, keywordRepository!!, keywordPhotoRepository!!, metadataRepository)
                                             }
 
                                             threadText = metadataObj.getPath() + " indexed"

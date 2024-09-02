@@ -1,13 +1,18 @@
 package com.miyagi.shashin.controller
 
+import ai.djl.modality.cv.Image
+import ai.djl.modality.cv.output.DetectedObjects
+import ai.djl.repository.zoo.Criteria
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.javascript.jscomp.jarjar.com.google.common.io.Files
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScaperMessage
 import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.ImageProcessing
+import com.miyagi.shashin.util.ImageProcessing.Companion.buildObjectRecognitionCriteria
 import com.miyagi.shashin.util.MetadataProcessing
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.VideoProcessing
@@ -41,6 +46,12 @@ class TestController {
 
     @Autowired
     private lateinit var metadataRepository: MetadataRepository
+
+    @Autowired
+    private lateinit var keywordRepository: KeywordRepository
+
+    @Autowired
+    private lateinit var keywordPhotoRepository: KeywordPhotoRepository
 
     @Autowired
     private lateinit var testRepository: TestRepository
@@ -111,14 +122,16 @@ class TestController {
     fun sandbox(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
         model["somevalue"] = "This is a test"
 
-//        val fileName = "C:/Users/Michael/Downloads/testpics/PXL_20240505_203632083.TS.mp4"
-//        val file = File(fileName)
+
+
+//        var fileName = "C:/Users/Michael/Downloads/testpics/PXL_20240505_203632083.TS.mp4"
+//        var file = File(fileName)
 //
 //        // Create thumbnails
 //        var metadata: Metadata? = Metadata()
 //        metadata?.setId("00000000-00000000-00000000-00000012")
 //        metadata?.setType("video")
-//        val imageProcessing = ImageProcessing("v1", file, "C:/Users/Michael/Downloads/thumbs/", metadata)
+//        var imageProcessing = ImageProcessing("v1", file, "C:/Users/Michael/Downloads/thumbs/", metadata)
 //        metadata = imageProcessing.createThumbnails()
 //
 //        // Create GIF from video
@@ -132,6 +145,28 @@ class TestController {
 //            )
 //            Files.copy(processedGifFile, gifFile)
 //        }
+//
+//
+//        fileName = "C:/Users/Michael/Downloads/testpics/PXL_20240724_181651592.jpg"
+//        file = File(fileName)
+//
+//        // Create thumbnails
+//        metadata = Metadata()
+//        metadata.setId("00000000-00000000-00000000-00000012")
+//        metadata.setType("video")
+//        imageProcessing = ImageProcessing("v1", file, "C:/Users/Michael/Downloads/thumbs/", metadata)
+//        metadata = imageProcessing.createThumbnails()
+//
+//        var criteria = buildObjectRecognitionCriteria()
+//        val settings = model.getAttribute("settings") as Settings
+//        val keywordArray = ImageProcessing.objectRecognizer(
+//            metadata!!,
+//            criteria!!,
+//            settings,
+//            null,
+//            null
+//        )
+//        println("keywords: ${keywordArray.joinToString(", ")}")
 
         return "test"
     }

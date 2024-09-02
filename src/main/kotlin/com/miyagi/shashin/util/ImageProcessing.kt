@@ -520,7 +520,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             }
         }
 
-        fun objectRecognizer(keywordRepository: KeywordRepository, keywordPhotoRepository: KeywordPhotoRepository, metadataRepository: MetadataRepository, metadataObj: Metadata, criteria: Criteria<Image, DetectedObjects>, settings: Settings, threadFile: File?, shouldStop: Boolean?): List<String> {
+        fun objectRecognizer(metadataObj: Metadata, criteria: Criteria<Image, DetectedObjects>, settings: Settings, threadFile: File?, shouldStop: Boolean?): List<String> {
             val keywordArray = mutableListOf<String>()
             val unidentifiedStr = "unidentified objects"
 
@@ -555,25 +555,25 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
                                     if (objSubject.trim() != "person" && objProbability >= threshold
                                     ) {
-                                        saveObject(
-                                            objSubject,
-                                            metadataObj,
-                                            keywordRepository,
-                                            keywordPhotoRepository,
-                                            metadataRepository
-                                        )
+//                                        saveObject(
+//                                            objSubject,
+//                                            metadataObj,
+//                                            keywordRepository,
+//                                            keywordPhotoRepository,
+//                                            metadataRepository
+//                                        )
                                         keywordArray.add(objSubject)
 
                                         if (threadFile != null) {
                                             FileUtils.writeToThreadFileAndLogMessage(
-                                                "Objects saved for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability,
+                                                "Objects identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability,
                                                 threadFile
                                             )
                                         }
 
                                         logger.log(
                                             Level.INFO,
-                                            "Objects saved for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability
+                                            "Objects identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability
                                         )
                                     } else {
                                         if (threadFile != null) {
@@ -585,43 +585,43 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
                                         logger.log(
                                             Level.INFO,
-                                            "Objects not saved but identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability
+                                            "Objects identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability
                                         )
                                     }
                                 }
 
                                 if (keywordArray.size == 0 && !keywordArray.contains(unidentifiedStr)) {
                                     keywordArray.add(unidentifiedStr)
-                                    saveObject(
-                                        unidentifiedStr,
-                                        metadataObj,
-                                        keywordRepository,
-                                        keywordPhotoRepository,
-                                        metadataRepository
-                                    )
+//                                    saveObject(
+//                                        unidentifiedStr,
+//                                        metadataObj,
+//                                        keywordRepository,
+//                                        keywordPhotoRepository,
+//                                        metadataRepository
+//                                    )
                                 }
                             } else {
                                 if (!keywordArray.contains(unidentifiedStr)) {
                                     keywordArray.add(unidentifiedStr)
-                                    saveObject(
-                                        unidentifiedStr,
-                                        metadataObj,
-                                        keywordRepository,
-                                        keywordPhotoRepository,
-                                        metadataRepository
-                                    )
+//                                    saveObject(
+//                                        unidentifiedStr,
+//                                        metadataObj,
+//                                        keywordRepository,
+//                                        keywordPhotoRepository,
+//                                        metadataRepository
+//                                    )
                                 }
                             }
                         } catch (e: Exception) {
                             if (keywordArray.size == 0 && !keywordArray.contains(unidentifiedStr)) {
                                 keywordArray.add(unidentifiedStr)
-                                saveObject(
-                                    unidentifiedStr,
-                                    metadataObj,
-                                    keywordRepository,
-                                    keywordPhotoRepository,
-                                    metadataRepository
-                                )
+//                                saveObject(
+//                                    unidentifiedStr,
+//                                    metadataObj,
+//                                    keywordRepository,
+//                                    keywordPhotoRepository,
+//                                    metadataRepository
+//                                )
                             }
 
                             logger.log(
@@ -639,6 +639,20 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             }
 
             return keywordArray.distinct()
+        }
+
+        fun processObjects(keywordArray: List<String>, metadataObj: Metadata, keywordRepository: KeywordRepository, keywordPhotoRepository: KeywordPhotoRepository, metadataRepository: MetadataRepository) {
+            if (keywordArray.isNotEmpty()) {
+                for (keyword in keywordArray) {
+                    saveObject(
+                        keyword,
+                        metadataObj,
+                        keywordRepository,
+                        keywordPhotoRepository,
+                        metadataRepository
+                    )
+                }
+            }
         }
 
         fun buildPersonUpload(settings: Settings, personName: String?, metadata: Metadata?, compreFaceImageIdMap: MutableMap<String, Any?>): MutableMap<String, Any?> {
