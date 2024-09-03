@@ -147,45 +147,35 @@ class VideoImageTest {
         val numOfObjects = detectedTrainingImages?.numberOfObjects
         Assertions.assertTrue(numOfObjects!! > 0)
         val trainingImageJsonNode = mapper.readTree(detectedTrainingImages.toJson())
-        val limit = 2
+        val metadata = Metadata()
+        metadata.setId("asdf")
+        metadata.setPath(testImageUrl.path)
 
-        // Test against same image against different faces detected
-        for (i in 0 until limit) {
+        val limit = 3
 
-            // Get sub images
-            val trainingSubImageBi = DjlFaceRecognizer().getSubImage(imageBi, trainingImageJsonNode, i)
-            val trainingSubImage = ImageFactory.getInstance().fromImage(trainingSubImageBi)
+        // Test similarity
+        val similarityArrays: MutableList<MutableList<Any>> = DjlFaceRecognizer().getSimilarities(
+            limit,
+            limit,
+            imageBi,
+            imageBi,
+            trainingImageJsonNode,
+            trainingImageJsonNode)
 
-            try {
-                val trainingFeature = DjlFaceRecognizer().predict(trainingSubImage)
+        Assertions.assertTrue(similarityArrays.isNotEmpty())
 
-                for (j in 0 until limit) {
+        var index = 0
+        for (similarityArray in similarityArrays) {
+            val similarity = similarityArray[0].toString().toFloat()
 
-                    val testSubImageBi = DjlFaceRecognizer().getSubImage(imageBi, trainingImageJsonNode, j)
-                    val testSubImage = ImageFactory.getInstance().fromImage(testSubImageBi)
-
-                    try {
-                        val testFeature = DjlFaceRecognizer().predict(testSubImage)
-
-                        // Compare images
-                        val similarity =
-                            DjlFaceRecognizer().calculateSimilar(trainingFeature, testFeature)
-
-                        this.logger.log(Level.INFO, "Iteration $i-$j: s - $similarity")
-
-                        if (i == j) {
-                            Assertions.assertTrue(similarity == 1.0F)
-                        } else {
-                            Assertions.assertTrue(similarity > 0)
-                        }
-
-                    } catch (_: Exception) {
-                        Assertions.assertTrue(false)
-                    }
-                }
-            } catch (_: Exception) {
-                Assertions.assertTrue(false)
+            if (index%(limit+1) == 0) {
+                Assertions.assertTrue(similarity == 1.0F)
+            } else {
+                Assertions.assertTrue(similarity > 0)
             }
+
+            this.logger.log(Level.INFO, "Iteration $index: s - $similarity")
+            index++
         }
     }
 }
