@@ -193,110 +193,57 @@ class DjlFaceRecognizer {
                         recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
                     }
 
-                    for (i in 0 until numOfTrainingObject!!) {
-                        if (this.shouldStop.get()) {
-                            break
-                        }
+                    val similarityArrays: MutableList<MutableList<Any>> = getSimilarities(
+                        numOfTrainingObject!!,
+                        numOfTestObject!!,
+                        scaledTrainingImage,
+                        scaledTestImage,
+                        trainingImageJsonNode,
+                        testImageJsonNode,
+                        trainingImageObj.getRecognitionLabelId()!!,
+                        testImageObj.getId(),
+                        trainingImageObj,
+                        testImageObj,
+                        shouldStop)
 
-                        // Get sub images
-                        val trainingSubImageBi = getSubImage(scaledTrainingImage, trainingImageJsonNode, i)
-                        val trainingSubImage = ImageFactory.getInstance().fromImage(trainingSubImageBi)
+                    for (similarityArray in similarityArrays) {
+                        val similarity = similarityArray[0] as Double
+                        val trainingImageLabelId = similarityArray[1] as Int
+                        val testImageLabelId = similarityArray[2] as String
 
-                        // Training output
-                        // val tempTrainingFilePath = "C:\\Users\\Michael\\Downloads\\outputfolder\\training-${trainingImageObj.getMetadataId()}-i-$i.jpg"
-                        // ImageIO.write(trainingSubImageBi, "jpg", File(tempTrainingFilePath))
+                        // Save record if greater than threshold
+                        if (similarity >= this.settings.getRecognitionConfidenceThreshold()!!.toDouble()) {
+                            recognitionCount++
 
-                        FileUtils.writeToThreadFileAndLogMessage("Predicting faces detected in ${trainingImageObj.getPath()} training image",this.threadFile)
-                        logger.log(
-                            Level.INFO,
-                            "Predicting faces detected in ${trainingImageObj.getPath()} training image"
-                        )
-                        try {
-                            val trainingFeature = predict(trainingSubImage)
-
-                            for (j in 0 until numOfTestObject!!) {
-                                if (this.shouldStop.get()) {
-                                    break
-                                }
-
-                                val testSubImageBi = getSubImage(scaledTestImage, testImageJsonNode, j)
-                                val testSubImage = ImageFactory.getInstance().fromImage(testSubImageBi)
-
-                                // Testing output
-                                // val tempTestFilePath = "C:\\Users\\Michael\\Downloads\\outputfolder\\test-${testImageObj.getId()}-j-$j.jpg"
-                                // ImageIO.write(testSubImageBi, "jpg", File(tempTestFilePath))
-
-                                FileUtils.writeToThreadFileAndLogMessage(
-                                    "Predicting faces detected in ${testImageObj.getPath()} test image",
-                                    this.threadFile
+                            val recordCount =
+                                this.recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
+                                    trainingImageLabelId,
+                                    testImageLabelId
                                 )
-                                logger.log(
-                                    Level.INFO,
-                                    "Predicting faces detected in ${testImageObj.getPath()} test image"
-                                )
-
-                                try {
-                                    val testFeature = predict(testSubImage)
-
-                                    // Compare images
-                                    val similarity =
-                                        calculateSimilar(trainingFeature, testFeature).toString()
-
-                                    val message =
-                                        "Similarity $similarity for person ${trainingImageObj.getRecognitionLabelId()} ${trainingImageObj.getRecognitionLabelName()} between training image ${trainingImageObj.getPath()} face ${i+1}/$numOfTrainingObject and test image ${testImageObj.getPath()} face ${j+1}/$numOfTestObject"
-                                    FileUtils.writeToThreadFileAndLogMessage(message, this.threadFile)
-                                    logger.log(
-                                        Level.INFO,
-                                        message
+                            if (recordCount == 0) {
+                                val recognitionLabelPhoto = RecognitionLabelPhoto()
+                                recognitionLabelPhoto.setMetadataId(testImageLabelId)
+                                recognitionLabelPhoto.setRecognitionLabelId(trainingImageLabelId)
+                                recognitionLabelPhoto.setConfidence(similarity.toString())
+                                recognitionLabelPhoto.setAutoTagged(true)
+                                this.recognitionLabelPhotoRepository?.save(recognitionLabelPhoto)
+                            } else {
+                                val recognitionLabelPhoto =
+                                    this.recognitionLabelPhotoRepository?.findByRecognitionLabelIdAndMetadataId(
+                                        trainingImageLabelId,
+                                        testImageLabelId
                                     )
-
-                                    // Save record if greater than threshold
-                                    if (similarity.toDouble() >= this.settings.getRecognitionConfidenceThreshold()!!.toDouble()) {
-                                        recognitionCount++
-
-                                        val recordCount =
-                                            this.recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
-                                                trainingImageLabelId,
-                                                testImageObj.getId()
-                                            )
-                                        if (recordCount == 0) {
-                                            val recognitionLabelPhoto = RecognitionLabelPhoto()
-                                            recognitionLabelPhoto.setMetadataId(testImageObj.getId())
-                                            recognitionLabelPhoto.setRecognitionLabelId(trainingImageLabelId)
-                                            recognitionLabelPhoto.setConfidence(similarity)
-                                            recognitionLabelPhoto.setAutoTagged(true)
-                                            this.recognitionLabelPhotoRepository?.save(recognitionLabelPhoto)
-                                        } else {
-                                            val recognitionLabelPhoto =
-                                                this.recognitionLabelPhotoRepository?.findByRecognitionLabelIdAndMetadataId(
-                                                    trainingImageLabelId,
-                                                    testImageObj.getId()
-                                                )
-                                            if (recognitionLabelPhoto != null) {
-                                                recognitionLabelPhoto.setConfidence(similarity)
-                                                recognitionLabelPhoto.setAutoTagged(true)
-                                                this.recognitionLabelPhotoRepository?.save(
-                                                    recognitionLabelPhoto
-                                                )
-                                            }
-                                        }
-                                    }
-                                } catch (e: Exception) {
-                                    logger.log(
-                                        Level.WARNING,
-                                        "Could not predict for test image ${testImageObj.getPath()}. ${e.message}"
+                                if (recognitionLabelPhoto != null) {
+                                    recognitionLabelPhoto.setConfidence(similarity.toString())
+                                    recognitionLabelPhoto.setAutoTagged(true)
+                                    this.recognitionLabelPhotoRepository?.save(
+                                        recognitionLabelPhoto
                                     )
-                                    continue
                                 }
                             }
-                        } catch (e: Exception) {
-                            logger.log(
-                                Level.WARNING,
-                                "Could not predict for training image ${trainingImageObj.getPath()}. ${e.message}"
-                            )
-                            continue
                         }
                     }
+
                     testImagesCurrentCount++
                 }
                 trainingDataCurrentCount++
@@ -306,6 +253,123 @@ class DjlFaceRecognizer {
         metricsUtil.end()
 
         return recognitionCount
+    }
+
+    fun getSimilarities(numOfTrainingObject: Int,
+                        numOfTestObject: Int,
+                        trainingImage: BufferedImage,
+                        testImage: BufferedImage,
+                        trainingImageJsonNode: JsonNode,
+                        testImageJsonNode: JsonNode,
+                        recognitionLabelId: Int = 0,
+                        testImageId: String = "test",
+                        trainingImageObj: TrainingData? = null,
+                        testImageObj: Metadata? = null,
+                        shouldStop: AtomicBoolean? = null): MutableList<MutableList<Any>>
+    {
+        val similarityArray = mutableListOf<MutableList<Any>>()
+
+        for (i in 0 until numOfTrainingObject) {
+            if (shouldStop != null && shouldStop.get()) {
+                break
+            }
+
+            // Get sub images
+            val trainingSubImageBi = getSubImage(trainingImage, trainingImageJsonNode, i)
+            val trainingSubImage = ImageFactory.getInstance().fromImage(trainingSubImageBi)
+
+            if (trainingImageObj != null) {
+                FileUtils.writeToThreadFileAndLogMessage("Predicting faces detected in ${trainingImageObj.getPath()} training image",this.threadFile)
+                logger.log(
+                    Level.INFO,
+                    "Predicting faces detected in ${trainingImageObj.getPath()} training image"
+                )
+            } else {
+                logger.log(
+                    Level.INFO,
+                    "Predicting faces detected in training image"
+                )
+            }
+
+            try {
+                val trainingFeature = predict(trainingSubImage)
+
+                for (j in 0 until numOfTestObject) {
+                    if (shouldStop != null && shouldStop.get()) {
+                        break
+                    }
+
+                    val testSubImageBi = getSubImage(testImage, testImageJsonNode, j)
+                    val testSubImage = ImageFactory.getInstance().fromImage(testSubImageBi)
+
+                    if (testImageObj != null) {
+                        FileUtils.writeToThreadFileAndLogMessage(
+                            "Predicting faces detected in ${testImageObj.getPath()} test image",
+                            this.threadFile
+                        )
+                    }
+                    logger.log(
+                        Level.INFO,
+                        "Predicting faces detected in test image"
+                    )
+
+                    try {
+                        val testFeature = predict(testSubImage)
+
+                        // Compare images
+                        val similarity =
+                            calculateSimilar(trainingFeature, testFeature).toString()
+
+                        var message =
+                            "Similarity $similarity for ${i + 1}/$numOfTrainingObject test image face ${j + 1}/$numOfTestObject"
+                        if (trainingImageObj != null && testImageObj != null) {
+                            message =
+                                "Similarity $similarity for person ${trainingImageObj.getRecognitionLabelId()} ${trainingImageObj.getRecognitionLabelName()} between training image ${trainingImageObj.getPath()} face ${i + 1}/$numOfTrainingObject and test image ${testImageObj.getPath()} face ${j + 1}/$numOfTestObject"
+                            FileUtils.writeToThreadFileAndLogMessage(message, this.threadFile)
+                        }
+                        logger.log(
+                            Level.INFO,
+                            message
+                        )
+
+                        val similarityData = mutableListOf<Any>()
+                        similarityData.add(similarity.toDouble())
+                        similarityData.add(recognitionLabelId.toInt())
+                        similarityData.add(testImageId.toString())
+                        similarityArray.add(similarityData)
+
+                    } catch (e: Exception) {
+                        if (testImageObj != null) {
+                            logger.log(
+                                Level.WARNING,
+                                "Could not predict for test image ${testImageObj.getPath()}. ${e.message}"
+                            )
+                        } else {
+                            logger.log(
+                                Level.WARNING,
+                                "Could not predict for test image. ${e.message}"
+                            )
+                        }
+                        continue
+                    }
+                }
+            } catch (e: Exception) {
+                if (trainingImageObj != null) {
+                    logger.log(
+                        Level.WARNING,
+                        "Could not predict for training image ${trainingImageObj.getPath()}. ${e.message}"
+                    )
+                } else {
+                    logger.log(
+                        Level.WARNING,
+                        "Could not predict for training image. ${e.message}"
+                    )
+                }
+                continue
+            }
+        }
+
+        return similarityArray
     }
 
     fun calculateSimilar(feature1: FloatArray?, feature2: FloatArray?): Float {
