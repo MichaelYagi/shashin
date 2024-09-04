@@ -81,6 +81,7 @@ class VideoImageTest {
             metadata,
             criteria
         )
+        Assertions.assertTrue(objectMap2.isNotEmpty())
         Assertions.assertTrue(objectMap2.size != objectMap.size)
         this.logger.log(Level.INFO, "Objects with confidence map: ${objectMap2.map { "${it.key}: ${it.value}" }.joinToString(", ")}")
     }
