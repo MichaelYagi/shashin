@@ -520,8 +520,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             }
         }
 
-        fun objectRecognizer(metadataObj: Metadata, criteria: Criteria<Image, DetectedObjects>, threshold: Double, threadFile: File? = null, shouldStop: Boolean? = null): List<String> {
-            val keywordArray = mutableListOf<String>()
+        fun objectRecognizer(metadataObj: Metadata, criteria: Criteria<Image, DetectedObjects>, threshold: Double? = null, threadFile: File? = null, shouldStop: Boolean? = null): MutableMap<String, Double> {
+            val keywordMap = mutableMapOf<String, Double>()
             val unidentifiedStr = "unidentified objects"
 
             try {
@@ -550,75 +550,51 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                                     val objSubject =
                                         detection.item<Classifications.Classification?>(i).className
 
-                                    if (objSubject.trim() != "person" && objProbability >= threshold
-                                    ) {
-//                                        saveObject(
-//                                            objSubject,
-//                                            metadataObj,
-//                                            keywordRepository,
-//                                            keywordPhotoRepository,
-//                                            metadataRepository
-//                                        )
-                                        keywordArray.add(objSubject)
+                                    if (threshold != null) {
+                                        if (objSubject.trim() != "person" && objProbability >= threshold
+                                        ) {
+                                            keywordMap[objSubject] = objProbability
 
-                                        if (threadFile != null) {
-                                            FileUtils.writeToThreadFileAndLogMessage(
-                                                "Objects identified for " + metadataObj.getPath() + ": S-" + objSubject + " P-" + objProbability,
-                                                threadFile
+                                            if (threadFile != null) {
+                                                FileUtils.writeToThreadFileAndLogMessage(
+                                                    "Objects identified for " + metadataObj.getPath() + ": S-" + objSubject + " P-" + objProbability,
+                                                    threadFile
+                                                )
+                                            }
+
+                                            logger.log(
+                                                Level.INFO,
+                                                "Objects identified for " + metadataObj.getPath() + ": S-" + objSubject + " P-" + objProbability
+                                            )
+                                        } else {
+                                            if (threadFile != null) {
+                                                FileUtils.writeToThreadFileAndLogMessage(
+                                                    "Objects identified for " + metadataObj.getPath() + ": S-" + objSubject + " P-" + objProbability,
+                                                    threadFile
+                                                )
+                                            }
+
+                                            logger.log(
+                                                Level.INFO,
+                                                "Objects identified for " + metadataObj.getPath() + ": S-" + objSubject + " P-" + objProbability
                                             )
                                         }
-
-                                        logger.log(
-                                            Level.INFO,
-                                            "Objects identified for " + metadataObj.getPath() + ": S-" + objSubject + " P-" + objProbability
-                                        )
                                     } else {
-                                        if (threadFile != null) {
-                                            FileUtils.writeToThreadFileAndLogMessage(
-                                                "Objects identified for " + metadataObj.getPath() + ": S-" + objSubject + " P-" + objProbability,
-                                                threadFile
-                                            )
-                                        }
-
-                                        logger.log(
-                                            Level.INFO,
-                                            "Objects identified for " + metadataObj.getPath() + ": S-" + objSubject + " P-" + objProbability
-                                        )
+                                        keywordMap[objSubject] = objProbability
                                     }
                                 }
 
-                                if (keywordArray.size == 0 && !keywordArray.contains(unidentifiedStr)) {
-                                    keywordArray.add(unidentifiedStr)
-//                                    saveObject(
-//                                        unidentifiedStr,
-//                                        metadataObj,
-//                                        keywordRepository,
-//                                        keywordPhotoRepository,
-//                                        metadataRepository
-//                                    )
+                                if (keywordMap.isEmpty() && !keywordMap.keys.toTypedArray().contains(unidentifiedStr)) {
+                                    keywordMap[unidentifiedStr] = -1.0
                                 }
                             } else {
-                                if (!keywordArray.contains(unidentifiedStr)) {
-                                    keywordArray.add(unidentifiedStr)
-//                                    saveObject(
-//                                        unidentifiedStr,
-//                                        metadataObj,
-//                                        keywordRepository,
-//                                        keywordPhotoRepository,
-//                                        metadataRepository
-//                                    )
+                                if (!keywordMap.keys.toTypedArray().contains(unidentifiedStr)) {
+                                    keywordMap[unidentifiedStr] = -1.0
                                 }
                             }
-                        } catch (e: Exception) {
-                            if (keywordArray.size == 0 && !keywordArray.contains(unidentifiedStr)) {
-                                keywordArray.add(unidentifiedStr)
-//                                saveObject(
-//                                    unidentifiedStr,
-//                                    metadataObj,
-//                                    keywordRepository,
-//                                    keywordPhotoRepository,
-//                                    metadataRepository
-//                                )
+                        } catch (_: Exception) {
+                            if (keywordMap.isEmpty() && !keywordMap.keys.toTypedArray().contains(unidentifiedStr)) {
+                                keywordMap[unidentifiedStr] = -1.0
                             }
 
                             logger.log(
@@ -635,7 +611,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 )
             }
 
-            return keywordArray.distinct()
+            return keywordMap
         }
 
         fun processObjects(keywordArray: List<String>, metadataObj: Metadata, keywordRepository: KeywordRepository, keywordPhotoRepository: KeywordPhotoRepository, metadataRepository: MetadataRepository) {

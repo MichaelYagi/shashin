@@ -2287,7 +2287,7 @@ class SettingsController {
                                             if (settings?.getObjectDetection() == true && criteria != null) {
                                                 val threshold = settings.getObjectRecognitionConfidenceThreshold()
 
-                                                val keywordArray = ImageProcessing.objectRecognizer(
+                                                val keywordMap = ImageProcessing.objectRecognizer(
                                                     metadataObj,
                                                     criteria,
                                                     threshold.toString().toDouble(),
@@ -2295,7 +2295,7 @@ class SettingsController {
                                                     shouldStop.get()
                                                 )
 
-                                                ImageProcessing.processObjects(keywordArray, metadataObj, keywordRepository!!, keywordPhotoRepository!!, metadataRepository)
+                                                ImageProcessing.processObjects(keywordMap.keys.toTypedArray().toList(), metadataObj, keywordRepository!!, keywordPhotoRepository!!, metadataRepository)
                                             }
 
                                             threadText = metadataObj.getPath() + " indexed"

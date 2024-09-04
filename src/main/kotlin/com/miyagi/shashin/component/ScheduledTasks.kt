@@ -232,13 +232,13 @@ class ScheduledTasks {
                                 val metadataWithoutKeywordsObj =
                                     metadataRepository?.findById(withoutKeyword.getId())?.get()
 
-                                val keywordArray = ImageProcessing.objectRecognizer(
+                                val keywordMap = ImageProcessing.objectRecognizer(
                                     metadataWithoutKeywordsObj!!,
                                     criteria,
                                     threshold.toString().toDouble()
                                 )
 
-                                ImageProcessing.processObjects(keywordArray, metadataWithoutKeywordsObj, keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!)
+                                ImageProcessing.processObjects(keywordMap.keys.toTypedArray().toList(), metadataWithoutKeywordsObj, keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!)
                             }
                         }
                     }
