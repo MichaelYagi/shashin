@@ -57,7 +57,7 @@ class VideoImageTest {
     }
 
     @Test
-    fun processKeywordsTest() {
+    fun processObjectRecognitionTest() {
         val classLoader = javaClass.classLoader
         val testImageUrl: URL = classLoader.getResource("tablecup.jpg")!!
 
@@ -65,17 +65,24 @@ class VideoImageTest {
         val metadata = Metadata()
         metadata.setId("00000000-00000000-00000000-00000012")
         metadata.setPath(testImageUrl.path)
-
         val criteria = buildObjectRecognitionCriteria()
-        val keywordArray = ImageProcessing.objectRecognizer(
+        val threshold = 0.70
+
+        val objectMap = ImageProcessing.objectRecognizer(
             metadata,
             criteria!!,
-            0.45
+            threshold
         )
 
-        this.logger.log(Level.INFO, "keywords: ${keywordArray.joinToString(", ")}")
+        Assertions.assertTrue(objectMap.isNotEmpty())
+        this.logger.log(Level.INFO, "Objects with confidence map and threshold $threshold: ${objectMap.map { "${it.key}: ${it.value}" }.joinToString(", ")}")
 
-        Assertions.assertTrue(keywordArray.isNotEmpty())
+        val objectMap2 = ImageProcessing.objectRecognizer(
+            metadata,
+            criteria
+        )
+        Assertions.assertTrue(objectMap2.size != objectMap.size)
+        this.logger.log(Level.INFO, "Objects with confidence map: ${objectMap2.map { "${it.key}: ${it.value}" }.joinToString(", ")}")
     }
 
     @Test
@@ -93,43 +100,6 @@ class VideoImageTest {
 
         val predict = djlFaceRecognizer.predict(img)
         Assertions.assertTrue(predict != null && predict.isNotEmpty())
-    }
-
-    @Test
-    fun processObjectRecognitionTest() {
-        val classLoader = javaClass.classLoader
-        val testImageUrl: URL = classLoader.getResource("people.jpg")!!
-        val testImageFile = File(testImageUrl.file)
-
-        val imageBi = ImageIO.read(testImageFile)
-        val img = ImageFactory.getInstance().fromImage(imageBi)
-
-        val criteria = buildObjectRecognitionCriteria()
-        Assertions.assertNotNull(criteria)
-
-        ModelZoo.loadModel(criteria).use { objmodel ->
-            objmodel.newPredictor().use { predictor ->
-                val detection = predictor.predict(img)
-                val numOfObjects = detection.numberOfObjects
-
-                Assertions.assertTrue(numOfObjects > 0)
-
-                if (numOfObjects > 0) {
-                    for (i in 0 until numOfObjects) {
-
-                        val objProbability =
-                            detection.item<Classifications.Classification?>(i).probability
-                        val objSubject =
-                            detection.item<Classifications.Classification?>(i).className
-
-                        Assertions.assertTrue(objSubject.isNotEmpty())
-                        Assertions.assertTrue(objProbability > 0)
-
-                        this.logger.log(Level.INFO, "Iteration ${i+1}: p - $objProbability; s - $objSubject")
-                    }
-                }
-            }
-        }
     }
 
     @Test
