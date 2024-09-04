@@ -1173,6 +1173,11 @@ class Util {
             let http = new Http("check notifications");
             http.ajax("get", "/notifications/check").then(function (data) {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("hasNotifications")) {
+                    if (data["uncheckedPersonMatches"] > 0) {
+                        $("#sidebarMenuDrawer").html('<span id="topNavAlertBadge" class="position-absolute top-0 start-50 p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
+                        $("#sidebarPeople").html('<span id="sideBarAlertPersonBadge" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
+                    }
+
                     if (data["hasNotifications"] === true) {
                         $("#sidebarMenuDrawer").html('<span id="topNavAlertBadge" class="position-absolute top-0 start-50 p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
                         $("#sidebarNotification").html('<span id="sideBarAlertBadge" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
@@ -1231,9 +1236,13 @@ class Util {
                                 setInterval(Util.getNotifications, (pollMinutes * 60 * 1000));
                             }
                         }
-                    } else {
+                    }
+
+                    if (data["hasNotifications"] === false && data["uncheckedPersonMatches"] === 0) {
                         $("#sidebarMenuDrawer").html('');
                         $("#sidebarNotification").html('');
+                        $("#sidebarPeople").html('');
+
                         shashin.closeToastMessage({
                             target: shashin.toast.target.four
                         });
