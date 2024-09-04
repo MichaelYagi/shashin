@@ -7,6 +7,7 @@ import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.MediaDirectoryRepository
+import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
@@ -25,6 +26,9 @@ import jakarta.transaction.Transactional
 class NotificationsController {
     @Autowired
     private lateinit var notificationRepository: NotificationRepository
+
+    @Autowired
+    private var metadataRepository: MetadataRepository? = null
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
@@ -232,9 +236,11 @@ class NotificationsController {
         response["status"] = ApiResponse.FAIL.status
         response["hasNotifications"] = false
         response["unreadNotifications"] = mutableListOf<Notification>()
+        response["uncheckedPersonMatches"] = 0
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
+            val settings = model.getAttribute("settings") as Settings
             response["msg"] = "Results"
             response["status"] = ApiResponse.SUCCESS.status
 
@@ -245,6 +251,9 @@ class NotificationsController {
                 count = unreadNotifications.count()
             }
             response["hasNotifications"] = count > 0
+            response["uncheckedPersonMatches"] = metadataRepository?.findAllLowMatches(
+                settings.getRecognitionConfidenceThreshold()!!
+            )
         }
 
         return mapper.writeValueAsString(response)
