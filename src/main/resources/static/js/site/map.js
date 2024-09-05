@@ -325,16 +325,16 @@ async function showMap(mapdata, keywordMap) {
         const radAngle = (Math.PI / 180) * 45;
         const distance = hypotenuseEachQuardilator / 100;
 
-        //left-top
+        //top-left
         const x1 = lat - (distance * Math.cos(radAngle));
         const y1 = lng + (distance * Math.sin(radAngle));
-        //right-top
+        //top-right
         const x2 = lat + (distance * Math.cos(radAngle));
         const y2 = lng + (distance * Math.sin(radAngle));
-        //right-bottom
+        //bottom-right
         const x3 = lat + (distance * Math.cos(radAngle));
         const y3 = lng - (distance * Math.sin(radAngle));
-        //left-bottom
+        //bottom-left
         const x4 = lat - (distance * Math.cos(radAngle));
         const y4 = lng - (distance * Math.sin(radAngle));
 
