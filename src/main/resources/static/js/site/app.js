@@ -949,19 +949,20 @@
                 }
 
                 // Replace with small dot image or blur image
-                const elementsImagesNotInViewport = Util.elementsNotInViewport($('img[src*="_225.jpg"].photo-thumbnail-image'));
-                $(elementsImagesNotInViewport).attr("src", "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=");
-                $(elementsImagesNotInViewport).css("z-index", -1);
-
-                const elementsNotInViewport = Util.elementsNotInViewport($('img[src*="data:image/gif"].photo-thumbnail-image'));
-                $.map(elementsNotInViewport, function (element) {
-                    if ($(element).attr("data-xsmallthumb") !== "") {
-                        $(element).attr("src", $(element).attr("data-xsmallthumb"));
-                    }
-                });
+                // const elementsImagesNotInViewport = Util.elementsNotInViewport($('img[src*="_225.jpg"].photo-thumbnail-image'));
+                // $(elementsImagesNotInViewport).attr("src", "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=");
+                // $(elementsImagesNotInViewport).css("z-index", -1);
+                //
+                // const elementsNotInViewport = Util.elementsNotInViewport($('img[src*="data:image/gif"].photo-thumbnail-image'));
+                // $.map(elementsNotInViewport, function (element) {
+                //     if ($(element).attr("data-xsmallthumb") !== "") {
+                //         $(element).attr("src", $(element).attr("data-xsmallthumb"));
+                //     }
+                // });
             }
         }
 
+        // xsmall/blurry images when scrolling
         createOnScrollListener($("#container"),eol);
         createOnScrollListener($("main"),eol);
 
