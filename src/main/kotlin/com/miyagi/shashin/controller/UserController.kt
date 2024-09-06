@@ -30,7 +30,6 @@ import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.bind.support.SessionStatus
-import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.io.ByteArrayInputStream
 import java.io.File
@@ -110,7 +109,7 @@ class UserController {
 
     @RequestMapping(value = ["/users/update"], method = [RequestMethod.POST], consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE])
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    fun postUpdateUser(model: Model, request: HttpServletRequest, redirectAttributes: RedirectAttributes): String {
+    fun postUpdateUser(model: Model, request: HttpServletRequest): String {
         val module = "update"
         model["message"] = ""
         model["msg"] = "Could not save password"
@@ -186,7 +185,7 @@ class UserController {
     @RequestMapping(value = ["/users/profile"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    fun postUpdateProfile(model: Model, redirectAttributes: RedirectAttributes, @RequestBody requestBody: JsonNode): String {
+    fun postUpdateProfile(model: Model, @RequestBody requestBody: JsonNode): String {
         val base64Map = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
         val response = mutableMapOf<String, Any?>()
         response["randomString"] = TextUtils.generateUUID(getCurrentTimestamp(),null,null,null,null,null,"random string generated from UserController")
@@ -246,7 +245,7 @@ class UserController {
     @RequestMapping(value = ["/users/profile/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    fun postDeleteProfile(model: Model, redirectAttributes: RedirectAttributes, @RequestBody requestBody: JsonNode): String {
+    fun postDeleteProfile(model: Model, @RequestBody requestBody: JsonNode): String {
         val requestMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
         val response = mutableMapOf<String, Any?>()
         response["randomString"] = TextUtils.generateUUID(getCurrentTimestamp(),null,null,null,null,null,"random string generated from UserController")
@@ -323,7 +322,7 @@ class UserController {
     @RequestMapping(value = ["/users/apikey/update"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    fun postWebUpdateApikey(model: Model, request: HttpServletRequest, redirectAttributes: RedirectAttributes, @RequestBody requestBody: JsonNode): String {
+    fun postWebUpdateApikey(model: Model, request: HttpServletRequest, @RequestBody requestBody: JsonNode): String {
         val apikeyMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
         val response = mutableMapOf<String, Any?>()
         response["msg"] = "Could not update API key"
@@ -708,7 +707,8 @@ class UserController {
 
             if (usersDeleted.count() > 0) {
                 response["status"] = ApiResponse.SUCCESS.status
-                response["msg"] = "Successfully removed user ID's ${usersDeleted.joinToString(", ")}"
+                response["msg"] = "Successfully removed user ID's"
+                logger.log(Level.INFO, "Deleted user's ${usersDeleted.joinToString(", ")}")
             } else {
                 response["status"] = ApiResponse.FAIL.status
                 response["msg"] = "Failed removing users"
