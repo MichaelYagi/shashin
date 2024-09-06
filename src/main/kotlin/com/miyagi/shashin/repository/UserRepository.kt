@@ -25,6 +25,8 @@ interface UserRepository : CrudRepository<User?, Int?> {
     @Query("SELECT * FROM user WHERE (authority = 'ROLE_ADMIN' OR authority = 'ROLE_SUPER') AND is_authorized = 1", nativeQuery = true)
     fun findAllAdmins(): MutableIterable<User>
     fun findAllByAuthorityEquals(authority: String): MutableIterable<User>
+    @Query("SELECT * FROM user WHERE is_authorized = :authorized", nativeQuery = true)
+    fun findAllByAuthorized(authorized: Boolean): MutableIterable<User>
     fun countAllByIsAuthorizedIsFalseAndAuthorityEquals(authority: String): Int
     fun countAllByIsAuthorizedIsTrueAndAuthorityEquals(authority: String): Int
 }

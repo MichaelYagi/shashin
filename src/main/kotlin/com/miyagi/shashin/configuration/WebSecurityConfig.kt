@@ -153,6 +153,7 @@ class MultiSecurityConfig {
             "api/v1/system/settings",
             "api/v1/users/info",
             "api/v1/users/authority/**",
+            "api/v1/users/authorized/**",
             "api/v1/user/info/**"
         )
 

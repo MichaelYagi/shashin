@@ -725,6 +725,26 @@ class UserController {
         return mapper.writeValueAsString(response)
     }
 
+    @RequestMapping(value = ["/api/v1/users/info/authorized/{authorized}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    @Secured("ROLE_SUPER")
+    fun getUsersInfoByAuthorized(model: Model, @PathVariable authorized: Boolean): String {
+        val response: JsonNode?
+
+        val usersObj: MutableIterable<User?>? = userRepository?.findAllByAuthorized(authorized)
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+
+        if (currentUserObj != null && usersObj != null) {
+            response = mapper.readTree(usersObj.toString())
+        } else {
+            response = mapper.readTree(mutableListOf<User>().toString())
+            logger.log(Level.INFO, "Could not access users info")
+        }
+
+        return mapper.writeValueAsString(response)
+    }
+
     @RequestMapping(value = ["/api/v1/users/info/authority/{authority}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER")
