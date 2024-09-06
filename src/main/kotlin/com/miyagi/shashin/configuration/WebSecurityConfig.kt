@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
 import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -30,9 +31,8 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
 import org.springframework.security.web.firewall.HttpFirewall
 import org.springframework.security.web.firewall.StrictHttpFirewall
 import org.springframework.security.web.header.HeaderWriterFilter
+import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter
 import org.springframework.security.web.session.HttpSessionEventPublisher
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher
-import java.util.*
 import javax.sql.DataSource
 
 // Used to validate URL paths for login redirect
@@ -201,17 +201,12 @@ class ApiSecurityConfig {
     @Throws(Exception::class)
     fun configure(http: HttpSecurity): SecurityFilterChain {
         http
-            .csrf().disable()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
+            .csrf{ it.disable() }
+            .sessionManagement{ it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .addFilterBefore(AuthenticationFilter(userRepository), UsernamePasswordAuthenticationFilter::class.java)
             .securityMatcher("/api/v1/**")
-            .authorizeHttpRequests()
-            .anyRequest()
-            .authenticated()
-            .and()
-            .exceptionHandling()
-            .accessDeniedHandler(apiAccessDeniedHandler)
+            .authorizeHttpRequests{ it.anyRequest().authenticated() }
+            .exceptionHandling{ it.accessDeniedHandler(apiAccessDeniedHandler) }
 
         return http.build()
     }
@@ -253,9 +248,6 @@ class WebSecurityConfig {
 
     @Value("\${app.role.user}")
     private var userRole: String? = null
-
-    @Value("\${app.api.version}")
-    private val apiVersion: String? = null
 
     @Value("\${app.rememberme.expiration.seconds}")
     private var expirationSeconds: Int? = null
@@ -316,16 +308,13 @@ class WebSecurityConfig {
 
         http
             .addFilterBefore(CSPNonceFilter(), HeaderWriterFilter::class.java)
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
-            .and()
-            .headers()
-            .xssProtection()
-            .and()
-            .contentSecurityPolicy("worker-src 'self' 'nonce-{nonce}' blob:")
-            .and()
-            .frameOptions()
-            .sameOrigin()
-            .and()
+            .sessionManagement{ it.sessionCreationPolicy(SessionCreationPolicy.ALWAYS) }
+            .headers{
+                it
+                    .xssProtection{ it.headerValue(XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK) }
+                    .contentSecurityPolicy{ it.policyDirectives("worker-src 'self' 'nonce-{nonce}' blob:") }
+                    .frameOptions{ it.sameOrigin() }
+            }
             .authorizeHttpRequests {
                 it
                     .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
@@ -342,16 +331,16 @@ class WebSecurityConfig {
                     .requestMatchers("/images/**").permitAll()
                     .requestMatchers(publicList.joinToString(",")).permitAll()
                     .requestMatchers(MultiSecurityConfig.adminList.joinToString(","))
-                        .hasRole(adminRole.toString().replace("ROLE_", ""))
+                    .hasRole(adminRole.toString().replace("ROLE_", ""))
                     .requestMatchers(MultiSecurityConfig.superList.joinToString(","))
-                        .hasRole(superRole.toString().replace("ROLE_", ""))
+                    .hasRole(superRole.toString().replace("ROLE_", ""))
                     .requestMatchers(MultiSecurityConfig.allRoleList.joinToString(","))
-                        .hasAnyRole(
-                            userRole.toString().replace("ROLE_", ""),
-                            adminRole.toString().replace("ROLE_", ""),
-                            superRole.toString().replace("ROLE_", "")
-                        )
-                        .anyRequest().authenticated()
+                    .hasAnyRole(
+                        userRole.toString().replace("ROLE_", ""),
+                        adminRole.toString().replace("ROLE_", ""),
+                        superRole.toString().replace("ROLE_", "")
+                    )
+                    .anyRequest().authenticated()
             }
             .formLogin {
                 it
@@ -362,31 +351,32 @@ class WebSecurityConfig {
 
         if (profile == "test") {
             http
-                .rememberMe().key(rememberMeKey)
-                .tokenValiditySeconds(3600) // Use cookie based remember me for tests
+                .rememberMe{ it.key(rememberMeKey).tokenValiditySeconds(3600) } // Use cookie based remember me for tests
         } else {
             http
-                .rememberMe().key(rememberMeKey)
-                .tokenValiditySeconds(expirationSeconds!!)
+                .rememberMe{ it.key(rememberMeKey).tokenValiditySeconds(expirationSeconds!!) }
         }
 
         http
-            .logout()
-            .invalidateHttpSession(true)
-            .clearAuthentication(true)
-            .deleteCookies("JSESSIONID")
-            .and()
-            .csrf().disable()
-            .httpBasic()
+            .logout{
+                it
+                    .invalidateHttpSession(true)
+                    .clearAuthentication(true)
+                    .deleteCookies("JSESSIONID")
+            }
+            .csrf{
+                it.disable()
+            }.httpBasic(Customizer.withDefaults())
 
-        http.exceptionHandling()
-            .authenticationEntryPoint(AjaxAwareAuthenticationEntryPoint("/users/login"))
+        http.exceptionHandling{ it.authenticationEntryPoint(AjaxAwareAuthenticationEntryPoint("/users/login")) }
 
-        http.sessionManagement()
-            .maximumSessions(100)
-            .maxSessionsPreventsLogin(false)
-            .expiredUrl("/users/login")
-            .sessionRegistry(sessionRegistry())
+        http.sessionManagement{
+            it
+                .maximumSessions(100)
+                .maxSessionsPreventsLogin(false)
+                .expiredUrl("/users/login")
+                .sessionRegistry(sessionRegistry())
+        }
 
         return http.build()
     }
