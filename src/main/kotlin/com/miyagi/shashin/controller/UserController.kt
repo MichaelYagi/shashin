@@ -725,6 +725,35 @@ class UserController {
         return mapper.writeValueAsString(response)
     }
 
+    @RequestMapping(value = ["/api/v1/users/info/authority/{authority}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    @Secured("ROLE_SUPER")
+    fun getUsersInfoByAuthority(model: Model, @PathVariable authority: String): String {
+        val response: JsonNode?
+
+        var authorityStr = "user"
+        if (authority == "user") {
+            authorityStr = "ROLE_USER"
+        } else if (authority == "admin") {
+            authorityStr = "ROLE_ADMIN"
+        } else if (authority == "super") {
+            authorityStr = "ROLE_SUPER"
+        }
+
+        val usersObj: MutableIterable<User?>? = userRepository?.findAllByAuthorityEquals(authorityStr)
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+
+        if (currentUserObj != null && usersObj != null) {
+            response = mapper.readTree(usersObj.toString())
+        } else {
+            response = mapper.readTree(mutableListOf<User>().toString())
+            logger.log(Level.INFO, "Could not access users info")
+        }
+
+        return mapper.writeValueAsString(response)
+    }
+
     @RequestMapping(value = ["/api/v1/users/info"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER")

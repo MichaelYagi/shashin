@@ -152,6 +152,7 @@ class MultiSecurityConfig {
             "users/delete",
             "api/v1/system/settings",
             "api/v1/users/info",
+            "api/v1/users/authority/**",
             "api/v1/user/info/**"
         )
 
