@@ -1,10 +1,13 @@
-package com.miyagi.shashin.integration.controller
+package com.miyagi.shashin.integration
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
 import org.hamcrest.CoreMatchers.containsString
+import org.junit.Assert
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,11 +26,14 @@ import org.springframework.web.context.WebApplicationContext
 
 @SpringBootTest
 @ActiveProfiles("test")
-class TimelineControllerApiTest {
+class APITest {
 
     private var superId: Int? = null
     private var adminId: Int? = null
     private var userId: Int? = null
+    private var superKey: String? = null
+    private var adminKey: String? = null
+    private var userKey: String? = null
     private var mockMvc: MockMvc? = null
 
     @Autowired
@@ -46,7 +52,8 @@ class TimelineControllerApiTest {
         superObj.setPassword(encodedPassword)
         superObj.setAuthority("ROLE_SUPER")
         superObj.setIsAuthorized(true)
-        superObj.setApikey("00000000-00000000-00000000-00000000")
+        superKey = "00000000-00000000-00000000-00000000"
+        superObj.setApikey(superKey)
         userRepository?.save(superObj)
         superId = superObj.getId()
 
@@ -56,7 +63,8 @@ class TimelineControllerApiTest {
         adminObj.setPassword(encodedPassword)
         adminObj.setAuthority("ROLE_ADMIN")
         adminObj.setIsAuthorized(true)
-        adminObj.setApikey("00000000-00000000-00000000-00000001")
+        adminKey = "00000000-00000000-00000000-00000001"
+        adminObj.setApikey(adminKey)
         userRepository?.save(adminObj)
         adminId = adminObj.getId()
 
@@ -66,7 +74,8 @@ class TimelineControllerApiTest {
         userObj.setPassword(encodedPassword)
         userObj.setAuthority("ROLE_USER")
         userObj.setIsAuthorized(true)
-        userObj.setApikey("00000000-00000000-00000000-00000002")
+        userKey = "00000000-00000000-00000000-00000002"
+        userObj.setApikey(userKey)
         userRepository?.save(userObj)
         userId = userObj.getId()
 
@@ -79,6 +88,7 @@ class TimelineControllerApiTest {
     @AfterEach
     fun tearDown() {
         superId?.let { userRepository?.deleteById(it) }
+        adminId?.let { userRepository?.deleteById(it) }
         userId?.let { userRepository?.deleteById(it) }
     }
 
@@ -88,7 +98,7 @@ class TimelineControllerApiTest {
     fun shouldReturn401WhenSendingRequestToTimelineApiWithRoleUser() {
         mockMvc!!.perform(
             get("/api/v1/timeline/0")
-                .header("X-Api-Key", "00000000-00000000-00000000-00000000")
+                .header("X-Api-Key", superKey)
         )
             .andExpect(status().is4xxClientError)
     }
@@ -100,7 +110,7 @@ class TimelineControllerApiTest {
         mockMvc!!.perform(
             get("/api/v1/timeline/0")
                 .header("Content-Type", "application/json")
-                .header("X-Api-Key", "00000000-00000000-00000000-00000002")
+                .header("X-Api-Key", userKey)
         )
             .andExpect(status().is4xxClientError)
     }
@@ -112,11 +122,34 @@ class TimelineControllerApiTest {
         val response = mockMvc!!.perform(
             get("/api/v1/timeline/0")
                 .header("Content-Type", "application/json")
-                .header("X-Api-Key", "00000000-00000000-00000000-00000000")
+                .header("X-Api-Key", superKey)
         )
 //        println(response.andReturn().response.contentAsString)
         response
             .andExpect(status().isOk)
             .andExpect(content().string(containsString(ApiResponse.SUCCESS.status)))
+    }
+
+    @Test
+    @WithMockUser(username = "testsuper", roles = ["SUPER"])
+    @Throws(Exception::class)
+    fun shouldReturnProperEndpointsForSuper() {
+        val response = mockMvc!!.perform(
+            get("/api/v1/endpoints")
+                .header("Content-Type", "application/json")
+                .header("X-Api-Key", superKey)
+        )
+//        println(response.andReturn().response.contentAsString)
+        response
+            .andExpect(status().isOk)
+            .andExpect(content().string(containsString("super")))
+
+        val jsonStr = response.andReturn().response.contentAsString
+        val mapper = ObjectMapper()
+        val jsonNode = mapper.readTree(jsonStr)
+
+        for (jsonObj in jsonNode) {
+            Assertions.assertTrue(jsonObj.get("authorizedRoles").toString().contains("super") || jsonObj.get("authorizedRoles").toString().contains("public"))
+        }
     }
 }

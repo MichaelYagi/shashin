@@ -33,7 +33,7 @@ import java.util.logging.Level
 @ActiveProfiles("test")
 class APITests: BaseSeleniumTests() {
 
-    private var adminId: Int? = null
+    private var superId: Int? = null
     private var userId: Int? = null
     private var mockMvc: MockMvc? = null
 
@@ -51,14 +51,14 @@ class APITests: BaseSeleniumTests() {
     @BeforeEach
     fun setup() {
         val adminObj = User()
-        adminObj.setUsername("testadmin")
-        var encodedPassword: String = bcrypt.encode("testadmin")
+        adminObj.setUsername("testsuper")
+        var encodedPassword: String = bcrypt.encode("testsuper")
         adminObj.setPassword(encodedPassword)
         adminObj.setAuthority("ROLE_SUPER")
         adminObj.setIsAuthorized(true)
         adminObj.setApikey("00000000-00000000-00000000-00000000")
         userRepository?.save(adminObj)
-        adminId = adminObj.getId()
+        superId = adminObj.getId()
 
         val userObj = User()
         userObj.setUsername("testuser")
@@ -82,8 +82,8 @@ class APITests: BaseSeleniumTests() {
         val rememberMe = this.driver!!.findElement(By.id("remember-me"))
         val login = this.driver!!.findElement(By.id("submit-loginreg"))
         rememberMe.click()
-        username.sendKeys("testadmin")
-        password.sendKeys("testadmin")
+        username.sendKeys("testsuper")
+        password.sendKeys("testsuper")
         login.click()
 
         this.driver!!.get("http://localhost:$port/settings")
