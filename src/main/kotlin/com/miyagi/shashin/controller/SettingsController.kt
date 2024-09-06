@@ -689,49 +689,6 @@ class SettingsController {
     }
 
     @Secured("ROLE_SUPER")
-    @RequestMapping(value = ["/settings/user/delete/{userId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
-    @ResponseBody
-    @Transactional
-    fun deleteUser(model: Model, @RequestBody requestBody: JsonNode, @PathVariable userId: Int): String? {
-        val userDeleteMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
-        if (userDeleteMap.containsKey("userId") && userDeleteMap.containsKey("delete")) {
-            val userIdRequest = userDeleteMap["userId"].toString().toInt()
-            val deleteFlag = userDeleteMap["delete"].toString().toBoolean()
-
-            if (deleteFlag && userId == userIdRequest) {
-                // Delete profile picture
-                val user = userRepository?.findById(userId)
-                if (user != null && user.isPresent) {
-                    val profileImage =
-                        if (user.get().getProfile() == null) "" else user.get().getProfile()!!.replace("/api/v1/profile/", "")
-                    if (profileImage.isNotEmpty()) {
-                        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
-                        val sidecarDir = rootPath + relativeSidecarDir
-                        val profileDirectory = sidecarDir.dropLast(1) + "/profile"
-                        val profileFileStr = "$profileDirectory/$profileImage"
-                        if (File(profileFileStr).exists()) {
-                            File(profileFileStr).delete()
-                        }
-                    }
-                }
-
-                userRepository?.deleteById(userId)
-                userAlbumRepository?.deleteByUserId(userId)
-                favoriteRepository?.deleteByUserId(userId)
-                commentRepository?.deleteByUserId(userId)
-            }
-
-            resp["msg"] = "Success!"
-            resp["status"] = ApiResponse.SUCCESS.status
-            return mapper.writeValueAsString(resp)
-        }
-
-        resp["msg"] = "Could not save"
-        resp["status"] = ApiResponse.FAIL.status
-        return mapper.writeValueAsString(resp)
-    }
-
-    @Secured("ROLE_SUPER")
     @RequestMapping(value = ["/settings/user/changepassword/{userId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional

@@ -4,9 +4,12 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.*
+import com.miyagi.shashin.repository.CommentRepository
+import com.miyagi.shashin.repository.FavoriteRepository
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.PersistentLoginsExpiryRepository
 import com.miyagi.shashin.repository.PersistentLoginsRepository
+import com.miyagi.shashin.repository.UserAlbumRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
@@ -41,6 +44,7 @@ import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
+import org.springframework.transaction.annotation.Transactional
 
 
 @Suppress("UNCHECKED_CAST")
@@ -63,6 +67,15 @@ class UserController {
 
     @Autowired
     var userRepository: UserRepository? = null
+
+    @Autowired
+    private val userAlbumRepository: UserAlbumRepository? = null
+
+    @Autowired
+    private val favoriteRepository: FavoriteRepository? = null
+
+    @Autowired
+    private val commentRepository: CommentRepository? = null
 
     @Autowired
     var persistentLoginsRepository: PersistentLoginsRepository? = null
@@ -648,6 +661,63 @@ class UserController {
         }
 
         return mapper.writeValueAsString(resp)
+    }
+
+    @RequestMapping(value = ["/api/v1/users/delete", "/users/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    @Transactional
+    @Secured("ROLE_SUPER")
+    fun postApiDeleteUsers(@RequestBody requestBody: JsonNode): String {
+        val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        val response = mutableMapOf<String, Any?>()
+        response["userIds"] = mutableListOf<String>()
+        response["status"] = ApiResponse.FAIL.status
+        response["msg"] = ""
+        val usersDeleted = mutableListOf<Int>()
+
+        if (userMap.containsKey("userIds")) {
+            val userIds: Array<String>? = mapper.readValue(userMap["userIds"].toString(), Array<String>::class.java)
+            for (userIdStr in userIds!!) {
+                val userId = userIdStr.toInt()
+
+                // Delete profile picture
+                val user = userRepository?.findById(userId)
+                if (user != null && user.isPresent) {
+                    val profileImage =
+                        if (user.get().getProfile() == null) "" else user.get().getProfile()!!.replace("/api/v1/profile/", "")
+                    if (profileImage.isNotEmpty()) {
+                        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+                        val sidecarDir = rootPath + relativeSidecarDir
+                        val profileDirectory = sidecarDir.dropLast(1) + "/profile"
+                        val profileFileStr = "$profileDirectory/$profileImage"
+                        if (File(profileFileStr).exists()) {
+                            File(profileFileStr).delete()
+                        }
+                    }
+
+                    usersDeleted.add(userId)
+                }
+
+                userRepository?.deleteById(userId)
+                userAlbumRepository?.deleteByUserId(userId)
+                favoriteRepository?.deleteByUserId(userId)
+                commentRepository?.deleteByUserId(userId)
+            }
+
+            response["userIds"] = usersDeleted
+
+            if (usersDeleted.count() > 0) {
+                response["status"] = ApiResponse.SUCCESS.status
+                response["msg"] = "Successfully removed user ID's ${usersDeleted.joinToString(", ")}"
+            } else {
+                response["status"] = ApiResponse.FAIL.status
+                response["msg"] = "Failed removing users"
+            }
+        } else {
+            response["msg"] = "No user IDs detected"
+        }
+
+        return mapper.writeValueAsString(response)
     }
 
     @RouterOperation(
