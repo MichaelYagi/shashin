@@ -26,6 +26,7 @@ import org.springframework.web.context.WebApplicationContext
 class TimelineControllerApiTest {
 
     private var superId: Int? = null
+    private var adminId: Int? = null
     private var userId: Int? = null
     private var mockMvc: MockMvc? = null
 
@@ -40,8 +41,8 @@ class TimelineControllerApiTest {
     @BeforeEach
     fun setup() {
         val superObj = User()
-        superObj.setUsername("testadmin")
-        var encodedPassword: String = bcrypt.encode("testadmin")
+        superObj.setUsername("testsuper")
+        var encodedPassword: String = bcrypt.encode("testsuper")
         superObj.setPassword(encodedPassword)
         superObj.setAuthority("ROLE_SUPER")
         superObj.setIsAuthorized(true)
@@ -49,13 +50,23 @@ class TimelineControllerApiTest {
         userRepository?.save(superObj)
         superId = superObj.getId()
 
+        val adminObj = User()
+        adminObj.setUsername("testadmin")
+        encodedPassword = bcrypt.encode("testadmin")
+        adminObj.setPassword(encodedPassword)
+        adminObj.setAuthority("ROLE_ADMIN")
+        adminObj.setIsAuthorized(true)
+        adminObj.setApikey("00000000-00000000-00000000-00000001")
+        userRepository?.save(adminObj)
+        adminId = adminObj.getId()
+
         val userObj = User()
         userObj.setUsername("testuser")
         encodedPassword = bcrypt.encode("testuser")
         userObj.setPassword(encodedPassword)
         userObj.setAuthority("ROLE_USER")
         userObj.setIsAuthorized(true)
-        userObj.setApikey("00000000-00000000-00000000-00000001")
+        userObj.setApikey("00000000-00000000-00000000-00000002")
         userRepository?.save(userObj)
         userId = userObj.getId()
 
@@ -89,13 +100,13 @@ class TimelineControllerApiTest {
         mockMvc!!.perform(
             get("/api/v1/timeline/0")
                 .header("Content-Type", "application/json")
-                .header("X-Api-Key", "00000000-00000000-00000000-00000003")
+                .header("X-Api-Key", "00000000-00000000-00000000-00000002")
         )
             .andExpect(status().is4xxClientError)
     }
 
     @Test
-    @WithMockUser(username = "testadmin", roles = ["SUPER"])
+    @WithMockUser(username = "testsuper", roles = ["SUPER"])
     @Throws(Exception::class)
     fun shouldReturnSuccessWhenSendingRequestToTimelineApiWithRoleAdmin() {
         val response = mockMvc!!.perform(
