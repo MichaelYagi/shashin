@@ -662,11 +662,18 @@ class UserController {
         return mapper.writeValueAsString(resp)
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "postDeleteUsers",
+            summary = "Delete users from a list of valid user ID's.",
+        )
+    )
     @RequestMapping(value = ["/api/v1/users/delete", "/users/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
     @Secured("ROLE_SUPER")
-    fun postApiDeleteUsers(@RequestBody requestBody: JsonNode): String {
+    fun postDeleteUsers(@RequestBody requestBody: JsonNode): String {
         val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         val response = mutableMapOf<String, Any?>()
         response["userIds"] = mutableListOf<String>()
