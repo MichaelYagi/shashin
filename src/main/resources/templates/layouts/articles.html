@@ -19,7 +19,7 @@
             </button>
         </main>
 
-        <th:block th:if="${activePage == 'articles/endpoints'}">
+        <th:block th:if="${(authority == 'ROLE_SUPER' || authority == 'ROLE_ADMIN' || authority == 'ROLE_USER') and activePage == 'articles/endpoints'}">
             <nav class="d-none d-xl-block col-xl-4 float-end">
                 <ul class="section-nav">
                     <li class="toc-entry toc-h2"><a href="#apiendpoints">API Endpoints</a>

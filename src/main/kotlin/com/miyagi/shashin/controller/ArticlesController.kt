@@ -1,6 +1,7 @@
 package com.miyagi.shashin.controller
 
 import com.miyagi.shashin.configuration.MultiSecurityConfig
+import com.miyagi.shashin.model.User
 import com.miyagi.shashin.util.TextUtils
 import org.springdoc.core.annotations.RouterOperation
 import org.springframework.stereotype.Controller
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.context.support.WebApplicationContextUtils
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 import jakarta.servlet.http.HttpServletRequest
+import org.springframework.security.access.annotation.Secured
 
 @Controller
 class ArticlesController {
@@ -38,9 +40,15 @@ class ArticlesController {
         return module
     }
 
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["articles/endpoints"], method = [RequestMethod.GET])
     fun getEndpoints(model: Model, request: HttpServletRequest): String {
         val module = "articles/endpoints"
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+
+        if (currentUserObj?.getAuthority() != null &&
+            (currentUserObj.getAuthority()!! == "ROLE_SUPER" || currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_USER")) {
 
         val applicationContext =
             WebApplicationContextUtils.getRequiredWebApplicationContext(request.session.servletContext)
@@ -172,13 +180,29 @@ class ArticlesController {
                     }
                 }
 
-                apiMapList.add(roleController)
+                if ((roleController["role"] as String).lowercase().contains("public")) {
+                    apiMapList.add(roleController)
+                }
+
+                if (currentUserObj.getAuthority()!! == "ROLE_SUPER" && (roleController["role"] as String).lowercase().contains("super")) {
+                    apiMapList.add(roleController)
+                }
+
+                if (currentUserObj.getAuthority()!! == "ROLE_ADMIN" && (roleController["role"] as String).lowercase().contains("admin")) {
+                    apiMapList.add(roleController)
+                }
+
+                if (currentUserObj.getAuthority()!! == "ROLE_USER" && (roleController["role"] as String).lowercase().contains("user")) {
+                    apiMapList.add(roleController)
+                }
 
                 roleController = mutableMapOf()
             }
         }
 
         model["apiEndpointsMapList"] = apiMapList.sortedBy { it["order"] }
+
+            }
 
         val moduleArray = module.split("/")
         model["activePage"] = module
