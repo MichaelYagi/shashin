@@ -271,168 +271,18 @@ class ToolsController {
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     @RequestMapping(value = ["/api/v1/endpoints"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    @Suppress("UNCHECKED_CAST")
     fun getApiEndpoints(model: Model, request: HttpServletRequest): String {
 
         val currentUserObj = model.getAttribute("currentUser") as User?
-        var response = listOf(mutableMapOf<String, Any>())
+        var apiMapList = mutableListOf<MutableMap<String, Any>>()
 
         if (currentUserObj?.getAuthority() != null &&
-                (currentUserObj.getAuthority()!! == "ROLE_SUPER" || currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_USER")) {
+            (currentUserObj.getAuthority()!! == "ROLE_SUPER" || currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_USER")) {
 
-            val applicationContext =
-                WebApplicationContextUtils.getRequiredWebApplicationContext(request.session.servletContext)
-
-            val requestMappingHandlerMapping = applicationContext
-                .getBean("requestMappingHandlerMapping", RequestMappingHandlerMapping::class.java)
-            val map = requestMappingHandlerMapping.handlerMethods
-
-            val apiMapList = mutableListOf<MutableMap<String, Any>>()
-
-            // Based on WebSecurityConfig
-            val superEndpoints = MultiSecurityConfig.superList
-            superEndpoints.forEachIndexed { i, _ ->
-                if (superEndpoints[i].contains("**")) {
-                    superEndpoints[i] = superEndpoints[i].replace("**", "(.*)")
-                }
-            }
-            val adminEndpoints = MultiSecurityConfig.adminList
-            adminEndpoints.forEachIndexed { i, _ ->
-                if (adminEndpoints[i].contains("**")) {
-                    adminEndpoints[i] = adminEndpoints[i].replace("**", "(.*)")
-                }
-            }
-            val allRoleEndpoints = MultiSecurityConfig.allRoleList
-            allRoleEndpoints.forEachIndexed { i, _ ->
-                if (allRoleEndpoints[i].contains("**")) {
-                    allRoleEndpoints[i] = allRoleEndpoints[i].replace("**", "(.*)")
-                }
-            }
-//        println(allRoleEndpoints.contentToString())
-
-            var roleController = mutableMapOf<String, Any>()
-
-            map.forEach { (key, value) ->
-//            println(key.toString())
-//            println(value.getMethodAnnotation(RouterOperation::class.java)?.operation?.description)
-                if (key.toString().contains("/api/v1/", ignoreCase = true) && !key.toString().contains("/docs/", ignoreCase = true)) {
-                    roleController["requestType"] = ""
-                    roleController["endpoints"] = arrayOf<String>()
-                    roleController["produces"] = ""
-                    roleController["summary"] = ""
-                    roleController["authorizedRoles"] = arrayOf("public")
-
-                    // Order is important! Highest to lowest roles
-                    for (superEndpoint in superEndpoints) {
-                        val matcher = superEndpoint.toRegex()
-                        if (matcher.findAll(key.toString()).count() > 0) {
-                            roleController["authorizedRoles"] = arrayOf("super")
-                            break
-                        }
-                    }
-
-                    for (adminEndpoint in adminEndpoints) {
-                        val matcher = adminEndpoint.toRegex()
-                        if (matcher.findAll(key.toString()).count() > 0) {
-                            roleController["authorizedRoles"] = arrayOf("admin", "super")
-                            break
-                        }
-                    }
-
-                    if ((roleController["authorizedRoles"]!! as Array<String>).isNotEmpty()) {
-                        for (allRoleEndpoint in allRoleEndpoints) {
-                            val matcher = allRoleEndpoint.toRegex()
-                            if (matcher.findAll(key.toString()).count() > 0) {
-                                roleController["authorizedRoles"] = arrayOf("super", "admin", "user")
-                                break
-                            }
-                        }
-                    }
-
-                    val apiRegex = "/api/v1/.*]".toRegex()
-
-                    val endpointArray = key.toString().split(",")
-                    if (endpointArray.isNotEmpty()) {
-                        for (endpointParts in endpointArray) {
-
-                            // Request Type and API calls
-                            if (endpointParts.contains("GET") ||
-                                endpointParts.contains("DELETE") ||
-                                endpointParts.contains("POST") ||
-                                endpointParts.contains("PUT") ||
-                                endpointParts.contains("PATCH") ||
-                                endpointParts.contains("HEAD"))
-                            {
-                                val requestTypeArray = endpointParts.drop(1).trim().split(" ")
-                                val requestType = requestTypeArray[0]
-                                roleController["requestType"] = requestType
-
-                                val apiMatchResult = apiRegex.find(endpointParts)
-                                val apiCall = apiMatchResult?.value?.dropLast(1)
-                                val apiCalls = apiCall.toString().split("||")
-                                val pathArray = mutableListOf<String>()
-
-                                for (path in apiCalls) {
-                                    if (path.trim().startsWith("/api/v1/")) {
-                                        pathArray.add(path.trim())
-                                    }
-                                }
-
-                                if (pathArray.size > 0) {
-                                    roleController["endpoints"] = pathArray
-                                }
-                            }
-
-                            // Consumes
-                            if (endpointParts.contains("consumes")) {
-                                val consumesStr = endpointParts.drop(11).dropLast(1)
-                                var consumesArray = consumesStr.split("||")
-                                consumesArray = consumesArray.map{it.trim()}
-
-                                roleController["consumes"] = consumesArray
-                            }
-
-                            // Produces
-                            if (endpointParts.contains("produces")) {
-                                val producesStr = endpointParts.drop(11).dropLast(2)
-                                var producesArray = producesStr.split("||")
-                                producesArray = producesArray.map{it.trim()}
-
-                                roleController["produces"] = producesArray
-                            }
-                        }
-
-                        // Description
-                        if (value.getMethodAnnotation(RouterOperation::class.java)?.operation?.summary != null) {
-                            roleController["summary"] =
-                                value.getMethodAnnotation(RouterOperation::class.java)?.operation?.summary.toString()
-                        }
-                    }
-
-                    if ((roleController["authorizedRoles"] as Array<String>).contains("public")) {
-                        apiMapList.add(roleController)
-                    }
-
-                    if (currentUserObj.getAuthority()!! == "ROLE_SUPER" && (roleController["authorizedRoles"] as Array<String>).contains("super")) {
-                        apiMapList.add(roleController)
-                    }
-
-                    if (currentUserObj.getAuthority()!! == "ROLE_ADMIN" && (roleController["authorizedRoles"] as Array<String>).contains("admin")) {
-                        apiMapList.add(roleController)
-                    }
-
-                    if (currentUserObj.getAuthority()!! == "ROLE_USER" && (roleController["authorizedRoles"] as Array<String>).contains("user")) {
-                        apiMapList.add(roleController)
-                    }
-
-                    roleController = mutableMapOf<String, Any>()
-                }
-            }
-
-            response = apiMapList.sortedBy { it["order"].toString() }
+            apiMapList = TextUtils.getEndpointData(currentUserObj.getAuthority()!!,request)
         }
 
-        return mapper.writeValueAsString(response)
+        return mapper.writeValueAsString(apiMapList)
     }
 
     private fun roundOffDecimal(number: Double): Any {

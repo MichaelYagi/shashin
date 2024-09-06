@@ -1,11 +1,18 @@
 package com.miyagi.shashin.util
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.configuration.MultiSecurityConfig
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.MetadataRepository
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import net.iakovlev.timeshape.TimeZoneEngine
+import org.springdoc.core.annotations.RouterOperation
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
+import org.springframework.web.context.support.WebApplicationContextUtils
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 import java.lang.management.ManagementFactory
 import java.net.*
 import java.nio.charset.StandardCharsets
@@ -15,8 +22,30 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.List
+import kotlin.collections.Map
+import kotlin.collections.MutableIterable
+import kotlin.collections.MutableList
+import kotlin.collections.MutableMap
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.count
+import kotlin.collections.distinct
+import kotlin.collections.dropLastWhile
+import kotlin.collections.forEach
+import kotlin.collections.forEachIndexed
+import kotlin.collections.joinToString
+import kotlin.collections.listOf
+import kotlin.collections.map
+import kotlin.collections.mutableListOf
+import kotlin.collections.mutableMapOf
+import kotlin.collections.set
+import kotlin.collections.sortedBy
+import kotlin.collections.toMutableList
+import kotlin.collections.toTypedArray
+import kotlin.collections.withIndex
 import kotlin.math.abs
 import kotlin.math.floor
 
@@ -849,6 +878,229 @@ class TextUtils {
             val hours = minutes / 60
             val days = hours / 24
             return (if (days > 0) (days.toString() + " day"+(if (days.toInt() == 1) "" else "s")+ " ") else "") + (if ((hours % 24) < 10) "0" else "") + (hours % 24) + ":" + (if ((minutes % 60) < 10) "0" else "") + (minutes % 60) + ":" + (if ((seconds % 60) < 10) "0" else "") + (seconds % 60)
+        }
+
+        fun getEndpointData(role: String, request: HttpServletRequest): MutableList<MutableMap<String, Any>> {
+            val requestURL = StringBuilder(request.requestURL.toString())
+            var requestOrigin = "web"
+            if (requestURL.contains("api/v1")) {
+                requestOrigin = "api"
+            }
+
+            val apiMapList = mutableListOf<MutableMap<String, Any>>()
+            var data = mutableMapOf<String, Any>()
+
+            val applicationContext =
+                WebApplicationContextUtils.getRequiredWebApplicationContext(request.session.servletContext)
+            val requestMappingHandlerMapping = applicationContext
+                .getBean("requestMappingHandlerMapping", RequestMappingHandlerMapping::class.java)
+            val requestMap = requestMappingHandlerMapping.handlerMethods
+
+            // Get lists from WebSecurityConfig
+            val superEndpoints = MultiSecurityConfig.superList
+            superEndpoints.forEachIndexed { i, _ ->
+                if(superEndpoints[i].contains("**")) {
+                    superEndpoints[i] = superEndpoints[i].replace("**", "(.*)")
+                }
+            }
+            val adminEndpoints = MultiSecurityConfig.adminList
+            adminEndpoints.forEachIndexed { i, _ ->
+                if(adminEndpoints[i].contains("**")) {
+                    adminEndpoints[i] = adminEndpoints[i].replace("**", "(.*)")
+                }
+            }
+            val allRoleEndpoints = MultiSecurityConfig.allRoleList
+            allRoleEndpoints.forEachIndexed { i, _ ->
+                if(allRoleEndpoints[i].contains("**")) {
+                    allRoleEndpoints[i] = allRoleEndpoints[i].replace("**", "(.*)")
+                }
+            }
+
+            requestMap.forEach { (key, value) ->
+
+                if (key.toString().contains("/api/v1/", ignoreCase = true) && !key.toString().contains("/docs/", ignoreCase = true)) {
+                    data[""] = ""
+
+                    data["apiCall"] = ""
+                    data["endpoints"] = arrayOf<String>()
+
+                    data["rolePath"] = ""
+                    data["produces"] = ""
+
+                    data["description"] = ""
+                    data["summary"] = ""
+
+                    data["role"] = "Public"
+                    data["authorizedRoles"] = arrayOf("public")
+
+
+                    // Order is important! Highest to lowest roles
+                    for (superEndpoint in superEndpoints) {
+                        val matcher = superEndpoint.toRegex()
+                        if (matcher.findAll(key.toString()).count() > 0) {
+                            data["role"] = "Super"
+                            data["authorizedRoles"] = arrayOf("super")
+                            break
+                        }
+                    }
+
+                    for (adminEndpoint in adminEndpoints) {
+                        val matcher = adminEndpoint.toRegex()
+                        if (matcher.findAll(key.toString()).count() > 0) {
+                            data["role"] = "Admin and Super"
+                            data["authorizedRoles"] = arrayOf("admin", "super")
+                            break
+                        }
+                    }
+
+                    if ((data["authorizedRoles"]!! as Array<*>).isNotEmpty()) {
+                        for (allRoleEndpoint in allRoleEndpoints) {
+                            val matcher = allRoleEndpoint.toRegex()
+                            if (matcher.findAll(key.toString()).count() > 0) {
+                                data["role"] = "Super, Admin and User"
+                                data["authorizedRoles"] = arrayOf("super", "admin", "user")
+                                break
+                            }
+                        }
+                    }
+
+                    if (requestOrigin == "web") {
+                        data["roleAnchor"] = data["role"].toString().lowercase().replace("\\s".toRegex(), "")
+
+                        data["rolePath"] =
+                            generateUUID(key.toString(), "", "", 0.0, 0, "", "endpoint article creation")
+                                .toString()
+                        data["controller"] = value.toString()
+                        val apiRegex = "/api/v1/.*]".toRegex()
+                        var apiMatchResult = apiRegex.find(key.toString())
+                        data["order"] = data["role"].toString() + apiMatchResult!!.value
+
+                        val endpointArray = key.toString().split(",")
+                        if (endpointArray.size > 0) {
+                            if (endpointArray.size == 2) {
+                                data["produces"] = endpointArray[1].drop(11).dropLast(2).replace(" || ", ", ")
+                            }
+
+                            apiMatchResult = apiRegex.find(endpointArray[0])
+                            val apiCall = apiMatchResult?.value?.dropLast(1)
+                            val apiCalls = apiCall.toString().split("||")
+                            val pathArray = mutableListOf<String>()
+                            for (path in apiCalls) {
+                                if (path.trim().startsWith("/api/v1/")) {
+                                    pathArray.add(path.trim())
+                                }
+                            }
+
+                            if (pathArray.size > 0) {
+                                data["apiCall"] = pathArray.joinToString(separator = ", ")
+                            }
+                            if (value.getMethodAnnotation(RouterOperation::class.java)?.operation?.description != null) {
+                                data["description"] =
+                                    value.getMethodAnnotation(RouterOperation::class.java)?.operation?.description.toString()
+                            }
+
+                            val apiCallArray = endpointArray[0].split(" ")
+                            if (apiCallArray.size > 0) {
+                                val requestType = apiCallArray[0].drop(1).trim()
+                                data["requestType"] = requestType
+
+                                var badgeStyle = "badge bg-success"
+                                if (requestType.lowercase() == "get") {
+                                    badgeStyle = "badge bg-primary"
+                                } else if (requestType.lowercase() == "post") {
+                                    badgeStyle = "badge bg-success"
+                                } else if (requestType.lowercase() == "put") {
+                                    badgeStyle = "badge bg-warning"
+                                } else if (requestType.lowercase() == "delete") {
+                                    badgeStyle = "badge bg-danger"
+                                }
+
+                                data["badgeStyle"] = badgeStyle
+                            }
+                        }
+                    } else {
+                        val apiRegex = "/api/v1/.*]".toRegex()
+
+                        val endpointArray = key.toString().split(",")
+                        if (endpointArray.isNotEmpty()) {
+                            for (endpointParts in endpointArray) {
+
+                                // Request Type and API calls
+                                if (endpointParts.contains("GET") ||
+                                    endpointParts.contains("DELETE") ||
+                                    endpointParts.contains("POST") ||
+                                    endpointParts.contains("PUT") ||
+                                    endpointParts.contains("PATCH") ||
+                                    endpointParts.contains("HEAD"))
+                                {
+                                    val requestTypeArray = endpointParts.drop(1).trim().split(" ")
+                                    val requestType = requestTypeArray[0]
+                                    data["requestType"] = requestType
+
+                                    val apiMatchResult = apiRegex.find(endpointParts)
+                                    val apiCall = apiMatchResult?.value?.dropLast(1)
+                                    val apiCalls = apiCall.toString().split("||")
+                                    val pathArray = mutableListOf<String>()
+
+                                    for (path in apiCalls) {
+                                        if (path.trim().startsWith("/api/v1/")) {
+                                            pathArray.add(path.trim())
+                                        }
+                                    }
+
+                                    if (pathArray.size > 0) {
+                                        data["endpoints"] = pathArray
+                                    }
+                                }
+
+                                // Consumes
+                                if (endpointParts.contains("consumes")) {
+                                    val consumesStr = endpointParts.drop(11).dropLast(1)
+                                    var consumesArray = consumesStr.split("||")
+                                    consumesArray = consumesArray.map{it.trim()}
+
+                                    data["consumes"] = consumesArray
+                                }
+
+                                // Produces
+                                if (endpointParts.contains("produces")) {
+                                    val producesStr = endpointParts.drop(11).dropLast(2)
+                                    var producesArray = producesStr.split("||")
+                                    producesArray = producesArray.map{it.trim()}
+
+                                    data["produces"] = producesArray
+                                }
+                            }
+
+                            // Description
+                            if (value.getMethodAnnotation(RouterOperation::class.java)?.operation?.summary != null) {
+                                data["summary"] =
+                                    value.getMethodAnnotation(RouterOperation::class.java)?.operation?.summary.toString()
+                            }
+                        }
+                    }
+
+                    if ((data["role"] as String).lowercase().contains("public")) {
+                        apiMapList.add(data)
+                    }
+
+                    if (role == "ROLE_SUPER" && (data["role"] as String).lowercase().contains("super")) {
+                        apiMapList.add(data)
+                    }
+
+                    if (role == "ROLE_ADMIN" && (data["role"] as String).lowercase().contains("admin")) {
+                        apiMapList.add(data)
+                    }
+
+                    if (role == "ROLE_USER" && (data["role"] as String).lowercase().contains("user")) {
+                        apiMapList.add(data)
+                    }
+
+                    data = mutableMapOf()
+                }
+            }
+
+            return apiMapList.sortedBy { it["order"].toString() } as MutableList<MutableMap<String, Any>>
         }
 
         private fun readUrl(urlString: String): String? {
