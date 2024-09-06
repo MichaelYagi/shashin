@@ -288,47 +288,46 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             }
 
             // Gallery x-small thumbnail
-            val xsHeight = 112
-            thumbnailFileStr =
-                thumbnailDirectory + fileRootDir + "/" + file.name + "_" + xsHeight + "." + extension
-            tnFile = FileUtils.createFile(
-                thumbnailFileStr,
-                overwriteThumbnails
-            )
-
-            if (tnFile != null) {
-                val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp.jpg")
-
-                val thumbnails = Thumbnails.of(img)
-                    .outputQuality(1.0)
-                if (file.extension.lowercase() == "gif") {
-                    thumbnails
-                        .imageType(BufferedImage.TYPE_INT_ARGB)
-                }
-                // If panorama dimensions
-                if (img.width > img.height * 2) {
-                    thumbnails
-                        .crop(Positions.CENTER)
-                        .size(xsHeight, xsHeight)
-                } else {
-                    thumbnails
-                        .height(xsHeight)
-                }
-                thumbnails.toFile(tempFile)
-
-                val scaledImage: BufferedImage?
-                try {
-//                    scaledImage = sharpenAndBrightenImage(ImageIO.read(tempFile))
-                    scaledImage = blurImage(ImageIO.read(tempFile))
-                    tempFile.delete()
-                    ImageIO.write(scaledImage, "jpg", tnFile)
-                    metadataObj.setThumbnailPathExtraSmall(thumbnailFileStr)
-                    metadataObj.setThumbnailUrlExtraSmall("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_" + xsHeight + "." + extension)
-                    logger.log(Level.INFO, "X-Small thumbnail created: " + file.path)
-                } catch (e: IOException) {
-                    logger.log(Level.WARNING, "Could not read file: " + tnFile.path)
-                }
-            }
+//            val xsHeight = 112
+//            thumbnailFileStr =
+//                thumbnailDirectory + fileRootDir + "/" + file.name + "_" + xsHeight + "." + extension
+//            tnFile = FileUtils.createFile(
+//                thumbnailFileStr,
+//                overwriteThumbnails
+//            )
+//
+//            if (tnFile != null) {
+//                val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp.jpg")
+//
+//                val thumbnails = Thumbnails.of(img)
+//                    .outputQuality(1.0)
+//                if (file.extension.lowercase() == "gif") {
+//                    thumbnails
+//                        .imageType(BufferedImage.TYPE_INT_ARGB)
+//                }
+//                // If panorama dimensions
+//                if (img.width > img.height * 2) {
+//                    thumbnails
+//                        .crop(Positions.CENTER)
+//                        .size(xsHeight, xsHeight)
+//                } else {
+//                    thumbnails
+//                        .height(xsHeight)
+//                }
+//                thumbnails.toFile(tempFile)
+//
+//                val scaledImage: BufferedImage?
+//                try {
+//                    scaledImage = blurImage(ImageIO.read(tempFile))
+//                    tempFile.delete()
+//                    ImageIO.write(scaledImage, "jpg", tnFile)
+//                    metadataObj.setThumbnailPathExtraSmall(thumbnailFileStr)
+//                    metadataObj.setThumbnailUrlExtraSmall("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_" + xsHeight + "." + extension)
+//                    logger.log(Level.INFO, "X-Small thumbnail created: " + file.path)
+//                } catch (e: IOException) {
+//                    logger.log(Level.WARNING, "Could not read file: " + tnFile.path)
+//                }
+//            }
 
             // Square image thumbnail
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_centered." + extension
