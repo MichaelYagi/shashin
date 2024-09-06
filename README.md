@@ -35,7 +35,24 @@ Published to https://hub.docker.com/repository/docker/michaeltyagi/shashin
 To use unminified JS assets, set the following VM options:
 ```-Dspring.profiles.active=dev```
 
-Frameworks
+## Frontend Debugging
+In the browser console, use ```shashin.enableDebug()``` to debug the frontend. You can pass different options:
+
+| Option          | Value                                                                                                                                       | Default                          | Description           |
+|-----------------|---------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------|-----------------------|
+| ```filter```    | Array of ```shashin.consoleTypes.log```, ```shashin.consoleTypes.error```, ```shashin.consoleTypes.info```, ```shashin.consoleTypes.warn``` | ```[shashin.consoleTypes.log]``` | Include log types     |
+| ```showTrace``` | ```boolean```                                                                                                                               | ```false```                      | Show stack trace      |
+| ```writeLog```  | ```boolean```                                                                                                                               | ```false```                      | Write to backend logs |
+
+eg. ```shashin.enableDebug({
+            filter:[shashin.consoleTypes.log,shashin.consoleTypes.error],
+            showTrace:true,
+            writeLog:true}
+    )```
+
+Example above dumps the stack trace and writes log and error to the backend logs.
+
+## Frameworks Used
 * [Spring Boot](https://spring.io/) - Java framework to create micro services and web apps
 * [Thymeleaf](https://www.thymeleaf.org/) - Server-side Java template engine for both web and standalone environments
 
