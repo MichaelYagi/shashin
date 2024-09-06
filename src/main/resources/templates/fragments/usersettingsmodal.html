@@ -22,8 +22,10 @@
                     let userId = "[[${user.id}]]";
 
                     const http = new Http("marking notification saving album");
-                    let json = {userId: userId, delete: true}
-                    const data = await http.ajax("post", "/settings/user/delete/" + userId, JSON.stringify(json));
+                    let json = {
+                        userIds: [userId]
+                    }
+                    const data = await http.ajax("post", "/users/delete", JSON.stringify(json));
 
                     if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                         let message = "Error";
