@@ -237,7 +237,7 @@ class ToolsController {
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     @RequestMapping(value = ["/console/log"], method = [RequestMethod.POST], consumes = ["application/json"])
     @ResponseBody
-    fun writeConsoleToLog(model: Model, @RequestBody requestBody: JsonNode): String {
+    fun writeConsoleToLog(@RequestBody requestBody: JsonNode): String {
         val consoleLogMapper = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (consoleLogMapper.containsKey("type") && consoleLogMapper.containsKey("log")) {
             // error: 0, info: 1, log: 2, warn: 3
@@ -315,9 +315,7 @@ class ToolsController {
             map.forEach { (key, value) ->
 //            println(key.toString())
 //            println(value.getMethodAnnotation(RouterOperation::class.java)?.operation?.description)
-                if (key.toString().contains("/api/v1/", ignoreCase = true) && !key.toString()
-                        .contains("/docs/", ignoreCase = true)
-                ) {
+                if (key.toString().contains("/api/v1/", ignoreCase = true) && !key.toString().contains("/docs/", ignoreCase = true)) {
                     roleController["requestType"] = ""
                     roleController["endpoints"] = arrayOf<String>()
                     roleController["produces"] = ""
@@ -327,7 +325,7 @@ class ToolsController {
                     // Order is important! Highest to lowest roles
                     for (superEndpoint in superEndpoints) {
                         val matcher = superEndpoint.toRegex()
-                        if (matcher.findAll(key.toString()).count() > 0 && currentUserObj.getAuthority()!! == "ROLE_SUPER") {
+                        if (matcher.findAll(key.toString()).count() > 0) {
                             roleController["authorizedRoles"] = arrayOf("super")
                             break
                         }
@@ -335,9 +333,7 @@ class ToolsController {
 
                     for (adminEndpoint in adminEndpoints) {
                         val matcher = adminEndpoint.toRegex()
-                        if (matcher.findAll(key.toString()).count() > 0 &&
-                            (currentUserObj.getAuthority()!! == "ROLE_SUPER" || currentUserObj.getAuthority()!! == "ROLE_ADMIN")
-                        ) {
+                        if (matcher.findAll(key.toString()).count() > 0) {
                             roleController["authorizedRoles"] = arrayOf("admin", "super")
                             break
                         }
@@ -346,9 +342,7 @@ class ToolsController {
                     if ((roleController["authorizedRoles"]!! as Array<String>).isNotEmpty()) {
                         for (allRoleEndpoint in allRoleEndpoints) {
                             val matcher = allRoleEndpoint.toRegex()
-                            if (matcher.findAll(key.toString()).count() > 0 &&
-                                (currentUserObj.getAuthority()!! == "ROLE_SUPER" || currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_USER")
-                            ) {
+                            if (matcher.findAll(key.toString()).count() > 0) {
                                 roleController["authorizedRoles"] = arrayOf("super", "admin", "user")
                                 break
                             }
@@ -415,9 +409,23 @@ class ToolsController {
                         }
                     }
 
-                    apiMapList.add(roleController)
+                    if ((roleController["authorizedRoles"] as Array<String>).contains("public")) {
+                        apiMapList.add(roleController)
+                    }
 
-                    roleController = mutableMapOf()
+                    if (currentUserObj.getAuthority()!! == "ROLE_SUPER" && (roleController["authorizedRoles"] as Array<String>).contains("super")) {
+                        apiMapList.add(roleController)
+                    }
+
+                    if (currentUserObj.getAuthority()!! == "ROLE_ADMIN" && (roleController["authorizedRoles"] as Array<String>).contains("admin")) {
+                        apiMapList.add(roleController)
+                    }
+
+                    if (currentUserObj.getAuthority()!! == "ROLE_USER" && (roleController["authorizedRoles"] as Array<String>).contains("user")) {
+                        apiMapList.add(roleController)
+                    }
+
+                    roleController = mutableMapOf<String, Any>()
                 }
             }
 
