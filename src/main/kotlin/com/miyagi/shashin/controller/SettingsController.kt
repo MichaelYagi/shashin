@@ -2289,13 +2289,13 @@ class SettingsController {
 
                                                 val keywordMap = ImageProcessing.objectRecognizer(
                                                     metadataObj,
-                                                    criteria,
+                                                    criteria!!,
                                                     threshold.toString().toDouble(),
                                                     threadFile,
                                                     shouldStop.get()
                                                 )
 
-                                                ImageProcessing.processObjects(keywordMap.keys.toTypedArray().toList(), metadataObj, keywordRepository!!, keywordPhotoRepository!!, metadataRepository)
+                                                ImageProcessing.processObjects(keywordMap.keys.toTypedArray().toList(), metadataObj, keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!)
                                             }
 
                                             threadText = metadataObj.getPath() + " indexed"
@@ -2436,7 +2436,7 @@ class SettingsController {
                                     if (metadataObj?.getThumbnailSmallWidth() != null && metadataObj.getThumbnailSmallHeight() != null && metadataObj.getThumbnailUrlSmall() != null) {
                                         metadataObj.setHidden(false)
 
-                                        metadataRepository.save(metadataObj)
+                                        metadataRepository?.save(metadataObj)
                                         metadataIdArray.add(metadataObj.getId())
                                     } else {
                                         logger.log(

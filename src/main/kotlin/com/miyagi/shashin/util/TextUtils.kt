@@ -919,27 +919,22 @@ class TextUtils {
             requestMap.forEach { (key, value) ->
 
                 if (key.toString().contains("/api/v1/", ignoreCase = true) && !key.toString().contains("/docs/", ignoreCase = true)) {
-                    data[""] = ""
-
-                    data["apiCall"] = ""
-                    data["endpoints"] = arrayOf<String>()
-
-                    data["rolePath"] = ""
-                    data["produces"] = ""
-
-                    data["description"] = ""
-                    data["summary"] = ""
-
-                    data["role"] = "Public"
-                    data["authorizedRoles"] = arrayOf("public")
+                    if (requestOrigin == "web") {
+                        data["role"] = "Public"
+                    } else {
+                        data["authorizedRoles"] = arrayOf("public")
+                    }
 
 
                     // Order is important! Highest to lowest roles
                     for (superEndpoint in superEndpoints) {
                         val matcher = superEndpoint.toRegex()
                         if (matcher.findAll(key.toString()).count() > 0) {
-                            data["role"] = "Super"
-                            data["authorizedRoles"] = arrayOf("super")
+                            if (requestOrigin == "web") {
+                                data["role"] = "Super"
+                            } else {
+                                data["authorizedRoles"] = arrayOf("super")
+                            }
                             break
                         }
                     }
@@ -947,24 +942,33 @@ class TextUtils {
                     for (adminEndpoint in adminEndpoints) {
                         val matcher = adminEndpoint.toRegex()
                         if (matcher.findAll(key.toString()).count() > 0) {
-                            data["role"] = "Admin and Super"
-                            data["authorizedRoles"] = arrayOf("admin", "super")
+                            if (requestOrigin == "web") {
+                                data["role"] = "Admin and Super"
+                            } else {
+                                data["authorizedRoles"] = arrayOf("admin", "super")
+                            }
                             break
                         }
                     }
 
-                    if ((data["authorizedRoles"]!! as Array<*>).isNotEmpty()) {
+                    if ((data["role"].toString()).isNotBlank() || (data["authorizedRoles"]!! as Array<*>).isNotEmpty()) {
                         for (allRoleEndpoint in allRoleEndpoints) {
                             val matcher = allRoleEndpoint.toRegex()
                             if (matcher.findAll(key.toString()).count() > 0) {
-                                data["role"] = "Super, Admin and User"
-                                data["authorizedRoles"] = arrayOf("super", "admin", "user")
+                                if (requestOrigin == "web") {
+                                    data["role"] = "Super, Admin and User"
+                                } else {
+                                    data["authorizedRoles"] = arrayOf("super", "admin", "user")
+                                }
                                 break
                             }
                         }
                     }
 
                     if (requestOrigin == "web") {
+                        data["produces"] = ""
+                        data["description"] = ""
+
                         data["roleAnchor"] = data["role"].toString().lowercase().replace("\\s".toRegex(), "")
 
                         data["rolePath"] =
@@ -1019,6 +1023,12 @@ class TextUtils {
                             }
                         }
                     } else {
+                        data["requestType"] = ""
+                        data["endpoints"] = ""
+                        data["consumes"] = ""
+                        data["produces"] = ""
+                        data["summary"] = ""
+
                         val apiRegex = "/api/v1/.*]".toRegex()
 
                         val endpointArray = key.toString().split(",")
@@ -1080,19 +1090,30 @@ class TextUtils {
                         }
                     }
 
-                    if ((data["role"] as String).lowercase().contains("public")) {
+                    if ((requestOrigin == "web" && data["role"].toString().lowercase().contains("public")) ||
+                        (data["authorizedRoles"] != null && (data["authorizedRoles"] as Array<*>).contains("public"))
+                    ) {
                         apiMapList.add(data)
                     }
 
-                    if (role == "ROLE_SUPER" && (data["role"] as String).lowercase().contains("super")) {
+                    if (role == "ROLE_SUPER" &&
+                        ((requestOrigin == "web" && data["role"].toString().lowercase().contains("super")) ||
+                        (data["authorizedRoles"] != null && (data["authorizedRoles"] as Array<*>).contains("super")))
+                    ) {
                         apiMapList.add(data)
                     }
 
-                    if (role == "ROLE_ADMIN" && (data["role"] as String).lowercase().contains("admin")) {
+                    if (role == "ROLE_ADMIN" &&
+                        ((requestOrigin == "web" && data["role"].toString().lowercase().contains("admin")) ||
+                        (data["authorizedRoles"] != null && (data["authorizedRoles"] as Array<*>).contains("admin")))
+                    ) {
                         apiMapList.add(data)
                     }
 
-                    if (role == "ROLE_USER" && (data["role"] as String).lowercase().contains("user")) {
+                    if (role == "ROLE_USER" &&
+                        ((requestOrigin == "web" && data["role"].toString().lowercase().contains("user")) ||
+                        (data["authorizedRoles"] != null && (data["authorizedRoles"] as Array<*>).contains("user")))
+                    ) {
                         apiMapList.add(data)
                     }
 
