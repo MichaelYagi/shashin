@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import net.iakovlev.timeshape.TimeZoneEngine
 import org.springdoc.core.annotations.RouterOperation
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.context.support.WebApplicationContextUtils
@@ -22,7 +21,6 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
-import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.List
 import kotlin.collections.Map
