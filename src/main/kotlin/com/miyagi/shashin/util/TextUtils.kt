@@ -718,79 +718,79 @@ class TextUtils {
                 val sourceDateFormat =
                     SimpleDateFormat("yy/MM/dd", Locale.ENGLISH)
                 date = sourceDateFormat.parse(inDate)
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 try {
                     val sourceDateFormat =
                         SimpleDateFormat("yy-M-d", Locale.ENGLISH)
                     date = sourceDateFormat.parse(inDate)
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     try {
                         val sourceDateFormat =
                             SimpleDateFormat("yy/M/d", Locale.ENGLISH)
                         date = sourceDateFormat.parse(inDate)
-                    } catch (e: Exception) {
+                    } catch (_: Exception) {
                         try {
                             val sourceDateFormat =
                                 SimpleDateFormat("yy/M", Locale.ENGLISH)
                             date = sourceDateFormat.parse(inDate)
                             isShort = true
-                        } catch (e: Exception) {
+                        } catch (_: Exception) {
                             try {
                                 val sourceDateFormat =
                                     SimpleDateFormat("yy-M", Locale.ENGLISH)
                                 date = sourceDateFormat.parse(inDate)
                                 isShort = true
-                            } catch (e: Exception) {
+                            } catch (_: Exception) {
                                 try {
                                     val sourceDateFormat =
                                         SimpleDateFormat("yy/MM", Locale.ENGLISH)
                                     date = sourceDateFormat.parse(inDate)
                                     isShort = true
-                                } catch (e: Exception) {
+                                } catch (_: Exception) {
                                     try {
                                         val sourceDateFormat =
                                             SimpleDateFormat("yy-MM", Locale.ENGLISH)
                                         date = sourceDateFormat.parse(inDate)
                                         isShort = true
-                                    } catch (e: Exception) {
+                                    } catch (_: Exception) {
                                         try {
                                             val sourceDateFormat =
                                                 SimpleDateFormat("yyyy/MM/dd", Locale.ENGLISH)
                                             date = sourceDateFormat.parse(inDate)
-                                        } catch (e: Exception) {
+                                        } catch (_: Exception) {
                                             try {
                                                 val sourceDateFormat =
                                                     SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
                                                 date = sourceDateFormat.parse(inDate)
-                                            } catch (e: Exception) {
+                                            } catch (_: Exception) {
                                                 try {
                                                     val sourceDateFormat =
                                                         SimpleDateFormat("yyyy-M-d", Locale.ENGLISH)
                                                     date = sourceDateFormat.parse(inDate)
-                                                } catch (e: Exception) {
+                                                } catch (_: Exception) {
                                                     try {
                                                         val sourceDateFormat =
                                                             SimpleDateFormat("yyyy/M/d", Locale.ENGLISH)
                                                         date = sourceDateFormat.parse(inDate)
-                                                    } catch (e: Exception) {
+                                                    } catch (_: Exception) {
                                                         try {
                                                             val sourceDateFormat =
                                                                 SimpleDateFormat("yyyy/M", Locale.ENGLISH)
                                                             date = sourceDateFormat.parse(inDate)
                                                             isShort = true
-                                                        } catch (e: Exception) {
+                                                        } catch (_: Exception) {
                                                             try {
                                                                 val sourceDateFormat =
                                                                     SimpleDateFormat("yyyy-M", Locale.ENGLISH)
                                                                 date = sourceDateFormat.parse(inDate)
                                                                 isShort = true
-                                                            } catch (e: Exception) {
+                                                            } catch (_: Exception) {
                                                                 try {
                                                                     val sourceDateFormat =
                                                                         SimpleDateFormat("yyyy/MM", Locale.ENGLISH)
                                                                     date = sourceDateFormat.parse(inDate)
                                                                     isShort = true
-                                                                } catch (e: Exception) {
+                                                                } catch (_: Exception) {
                                                                     try {
                                                                         val sourceDateFormat =
                                                                             SimpleDateFormat(
@@ -799,7 +799,7 @@ class TextUtils {
                                                                             )
                                                                         date = sourceDateFormat.parse(inDate)
                                                                         isShort = true
-                                                                    } catch (e: Exception) {
+                                                                    } catch (_: Exception) {
                                                                         return null
                                                                     }
                                                                 }
@@ -998,10 +998,11 @@ class TextUtils {
                             if (pathArray.size > 0) {
                                 data["apiCall"] = pathArray.joinToString(separator = ", ")
                             }
-                            if (value.getMethodAnnotation(RouterOperation::class.java)?.operation?.description != null) {
+
+                            if (!value.getMethodAnnotation(RouterOperation::class.java)?.operation?.description.isNullOrBlank()) {
                                 data["description"] =
                                     value.getMethodAnnotation(RouterOperation::class.java)?.operation?.description.toString()
-                            } else if (value.getMethodAnnotation(RouterOperation::class.java)?.operation?.summary != null) {
+                            } else if (!value.getMethodAnnotation(RouterOperation::class.java)?.operation?.summary.isNullOrBlank()) {
                                 data["description"] =
                                     value.getMethodAnnotation(RouterOperation::class.java)?.operation?.summary.toString()
                             }
