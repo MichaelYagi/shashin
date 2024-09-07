@@ -98,7 +98,7 @@
 
                     const http = new Http("marking notification saving user");
                     let json = {userId: userId, password: $("#password[[${user.id}]]").val()}
-                    const data = await http.ajax("post", "/settings/user/changepassword/" + userId, JSON.stringify(json), function () {
+                    const data = await http.ajax("post", "/user/update/password", JSON.stringify(json), function () {
                         $("#resetPasswordUserStatus[[${user.id}]]").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
                         $("#resetPasswordUserStatus[[${user.id}]]").attr("title", shashin.modalStatusFailMessage());
                         $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', false);
@@ -185,9 +185,9 @@
                     }
 
                     if (changeTo !== "" && currentRole !== changeTo) {
-                        let json = {userId: userId, changeTo: changeTo};
+                        let json = {userIds: [userId], role: changeTo};
                         const http = new Http("setting user");
-                        const data = await http.ajax("post", "/settings/user/role/" + userId, JSON.stringify(json));
+                        const data = await http.ajax("post", "/users/update/role", JSON.stringify(json));
 
                         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                             let message = "Error";
@@ -241,8 +241,8 @@
                     let changeTo = currentPermission !== true;
 
                     const http = new Http("allowing user registration");
-                    let json = {userId: userId, changeTo: changeTo}
-                    const data = await http.ajax("post", "/settings/user/permission/" + userId, JSON.stringify(json));
+                    let json = {userIds: [userId], authorized: changeTo}
+                    const data = await http.ajax("post", "/users/update/authorized", JSON.stringify(json));
 
                     if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                         let message;
