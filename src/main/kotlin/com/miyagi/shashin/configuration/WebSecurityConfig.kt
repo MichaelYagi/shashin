@@ -174,7 +174,7 @@ class MultiSecurityConfig {
             "api/v1/album/**",
             "api/v1/albums",
             "api/v1/albums/**",
-            "api/v1/users/apikey/update",
+            "api/v1/users/update/apikey",
             "api/v1/mapdata",
             "api/v1/placedata",
             "api/v1/profile/**",

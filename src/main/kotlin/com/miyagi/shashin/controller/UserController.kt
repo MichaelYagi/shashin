@@ -319,7 +319,7 @@ class UserController {
         return module
     }
 
-    @RequestMapping(value = ["/users/apikey/update"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/users/update/apikey"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     fun postWebUpdateApikey(model: Model, request: HttpServletRequest, @RequestBody requestBody: JsonNode): String {

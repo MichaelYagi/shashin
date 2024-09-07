@@ -109,7 +109,7 @@
                 const http = new Http("apikey update");
                 const json = {currentApikey: currentApikey};
 
-                let data = await http.ajax("post", "/users/apikey/update", JSON.stringify(json));
+                let data = await http.ajax("post", "/users/update/apikey", JSON.stringify(json));
                 if (data.hasOwnProperty("updatedApikey") && data["updatedApikey"] !== "" &&
                     data.hasOwnProperty("rssFeedLink") && data["rssFeedLink"] !== "") {
                     $("#apikey").val(data["updatedApikey"]);
