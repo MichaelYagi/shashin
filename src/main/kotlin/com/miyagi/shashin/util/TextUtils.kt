@@ -1001,6 +1001,9 @@ class TextUtils {
                             if (value.getMethodAnnotation(RouterOperation::class.java)?.operation?.description != null) {
                                 data["description"] =
                                     value.getMethodAnnotation(RouterOperation::class.java)?.operation?.description.toString()
+                            } else if (value.getMethodAnnotation(RouterOperation::class.java)?.operation?.summary != null) {
+                                data["description"] =
+                                    value.getMethodAnnotation(RouterOperation::class.java)?.operation?.summary.toString()
                             }
 
                             val apiCallArray = endpointArray[0].split(" ")
