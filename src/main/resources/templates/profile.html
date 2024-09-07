@@ -82,7 +82,7 @@
     $("#removeProfileConfirmation").on("click", function() {
         const http = new Http("delete profile picture");
         let json = {userId: userId}
-        http.ajax("post", "/users/profile/delete", JSON.stringify(json)).then(function (data) {
+        http.ajax("post", "/users/delete/profile", JSON.stringify(json)).then(function (data) {
             if (data.hasOwnProperty("status") && data["status"] === "success" && data.hasOwnProperty("msg")) {
                 // shashin.showToastMessage("Profile deleted", data["msg"], {icon:"bi-info-circle", iconColor:"#777777"});
                 // profileUrl = "#";

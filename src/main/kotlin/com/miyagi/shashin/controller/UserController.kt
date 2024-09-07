@@ -242,7 +242,7 @@ class UserController {
         return mapper.writeValueAsString(response)
     }
 
-    @RequestMapping(value = ["/users/profile/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/users/delete/profile"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     fun postDeleteProfile(model: Model, @RequestBody requestBody: JsonNode): String {
