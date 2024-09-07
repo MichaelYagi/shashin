@@ -43,6 +43,8 @@ import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
+import org.springframework.transaction.annotation.Transactional
+
 
 @Suppress("UNCHECKED_CAST")
 @Controller
@@ -801,8 +803,16 @@ class UserController {
         return mapper.writeValueAsString(response)
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "postDeleteUsers",
+            summary = "Delete users from a list of valid user ID's.",
+        )
+    )
     @RequestMapping(value = ["/api/v1/users/delete", "/users/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
+    @Transactional
     @Secured("ROLE_SUPER")
     fun postDeleteUsers(@RequestBody requestBody: JsonNode): String {
         val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
