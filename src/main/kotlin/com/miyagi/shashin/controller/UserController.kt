@@ -43,8 +43,6 @@ import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
-import org.springframework.transaction.annotation.Transactional
-
 
 @Suppress("UNCHECKED_CAST")
 @Controller
@@ -662,11 +660,151 @@ class UserController {
         return mapper.writeValueAsString(resp)
     }
 
+    private fun getRandomString(length: Int) : String {
+        val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
+        return (1..length)
+            .map { allowedChars.random() }
+            .joinToString("")
+    }
+
+    @Secured("ROLE_SUPER")
+    @RequestMapping(value = ["/user/update/password", "/api/v1/user/update/password"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun resetPasswordUser(@RequestBody requestBody: JsonNode): String? {
+        val response = mutableMapOf<String, Any?>()
+        val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        if (userMap.containsKey("userId")) {
+            val userIdRequest = userMap["userId"].toString().toInt()
+
+            val userObjOpt = userRepository?.findById(userIdRequest)
+            if (userObjOpt != null) {
+                val userObj = userObjOpt.get()
+                userObj.setModifiedAt(getCurrentTimestamp())
+                if (userMap.containsKey("password") && userMap["password"].toString().isNotBlank()) {
+                    userObj.setPassword(bcrypt.encode(userMap["password"].toString()))
+                } else {
+                    val generatedPassword = getRandomString(8)
+                    userObj.setModifiedAt(getCurrentTimestamp())
+                    userObj.setPassword(bcrypt.encode(generatedPassword))
+                    response["password"] = generatedPassword
+                }
+
+                userRepository?.save(userObj)
+                response["msg"] = "Success!"
+                response["status"] = ApiResponse.SUCCESS.status
+                return mapper.writeValueAsString(response)
+            }
+        }
+
+        response["msg"] = "Could not save"
+        response["status"] = ApiResponse.FAIL.status
+        return mapper.writeValueAsString(response)
+    }
+
+    @RequestMapping(value = ["/api/v1/users/update/authorized", "/users/update/authorized"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    @Secured("ROLE_SUPER")
+    fun postUpdateUsersAuthorized(@RequestBody requestBody: JsonNode): String {
+        val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        val response = mutableMapOf<String, Any?>()
+        response["userIds"] = mutableListOf<String>()
+        response["status"] = ApiResponse.FAIL.status
+        response["msg"] = ""
+        val usersUpdated = mutableListOf<Int>()
+
+        if (userMap.containsKey("userIds") && userMap.containsKey("authorized")) {
+            val userIds: Array<String>? = mapper.readValue(userMap["userIds"].toString(), Array<String>::class.java)
+            val authorized: Boolean = userMap["authorized"].toString().toBoolean()
+            val usersArray = mutableListOf<User>()
+
+            for (userIdStr in userIds!!) {
+                val userId = userIdStr.toInt()
+
+                // Delete profile picture
+                val user = userRepository?.findById(userId)
+                if (user != null && user.isPresent) {
+                    user.get().setModifiedAt(getCurrentTimestamp())
+                    user.get().setIsAuthorized(authorized)
+                    usersArray.add(user.get())
+                    usersUpdated.add(userId)
+                }
+            }
+
+            if (usersArray.isNotEmpty()) {
+                userRepository?.saveAll(usersArray)
+
+                response["userIds"] = usersUpdated
+
+                response["status"] = ApiResponse.SUCCESS.status
+                response["msg"] = "Successfully updated authorized"
+                logger.log(Level.INFO, "Updated authorized for user's ${usersUpdated.joinToString(", ")}")
+            } else {
+                response["status"] = ApiResponse.FAIL.status
+                response["msg"] = "Failed updating authorized"
+            }
+        } else {
+            response["msg"] = "No user IDs detected"
+        }
+
+        return mapper.writeValueAsString(response)
+    }
+
+    @RequestMapping(value = ["/api/v1/users/update/role", "/users/update/role"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    @Secured("ROLE_SUPER")
+    fun postUpdateUsersRole(@RequestBody requestBody: JsonNode): String {
+        val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        val response = mutableMapOf<String, Any?>()
+        response["userIds"] = mutableListOf<String>()
+        response["status"] = ApiResponse.FAIL.status
+        response["msg"] = ""
+        val usersUpdated = mutableListOf<Int>()
+
+        if (userMap.containsKey("userIds") && userMap.containsKey("role") &&
+            (userMap["role"].toString().lowercase().contains("super") || userMap["role"].toString().lowercase().contains("admin") || userMap["role"].toString().lowercase().contains("user"))) {
+            val userIds: Array<String>? = mapper.readValue(userMap["userIds"].toString(), Array<String>::class.java)
+            var role = "ROLE_${userMap["role"].toString().uppercase()}"
+            if (userMap["role"].toString().startsWith("ROLE_")) {
+                role = userMap["role"].toString().uppercase()
+            }
+            val usersArray = mutableListOf<User>()
+
+            for (userIdStr in userIds!!) {
+                val userId = userIdStr.toInt()
+
+                // Delete profile picture
+                val user = userRepository?.findById(userId)
+                if (user != null && user.isPresent) {
+                    user.get().setAuthority(role)
+                    user.get().setModifiedAt(getCurrentTimestamp())
+                    usersArray.add(user.get())
+                    usersUpdated.add(userId)
+                }
+            }
+
+            if (usersArray.isNotEmpty()) {
+                userRepository?.saveAll(usersArray)
+
+                response["userIds"] = usersUpdated
+
+                response["status"] = ApiResponse.SUCCESS.status
+                response["msg"] = "Successfully updated roles"
+                logger.log(Level.INFO, "Updated roles for user's ${usersUpdated.joinToString(", ")}")
+            } else {
+                response["status"] = ApiResponse.FAIL.status
+                response["msg"] = "Failed updating roles"
+            }
+        } else {
+            response["msg"] = "No user IDs detected"
+        }
+
+        return mapper.writeValueAsString(response)
+    }
+
     @RequestMapping(value = ["/api/v1/users/delete", "/users/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    @Transactional
     @Secured("ROLE_SUPER")
-    fun postApiDeleteUsers(@RequestBody requestBody: JsonNode): String {
+    fun postDeleteUsers(@RequestBody requestBody: JsonNode): String {
         val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         val response = mutableMapOf<String, Any?>()
         response["userIds"] = mutableListOf<String>()

@@ -150,12 +150,16 @@ class MultiSecurityConfig {
             "settings/users",
             "settings/scan",
             "users/delete",
+            "user/update/password",
+            "users/update/**",
             "api/v1/system/settings",
             "api/v1/users/info",
-            "api/v1/users/authority/**",
+            "api/v1/users/role/**",
             "api/v1/users/authorized/**",
             "api/v1/users/delete",
-            "api/v1/user/info/**"
+            "api/v1/user/update/password",
+            "api/v1/user/info/**",
+            "api/v1/users/update/**"
         )
 
         val allRoleList = arrayOf(
