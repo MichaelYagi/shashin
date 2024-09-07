@@ -669,6 +669,13 @@ class UserController {
             .joinToString("")
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "resetPasswordUser",
+            summary = "Update users password with a chosen or generated password from a valid user ID's.",
+        )
+    )
     @Secured("ROLE_SUPER")
     @RequestMapping(value = ["/user/update/password", "/api/v1/user/update/password"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
@@ -686,10 +693,10 @@ class UserController {
                     userObj.setPassword(bcrypt.encode(userMap["password"].toString()))
                 } else {
                     val generatedPassword = getRandomString(8)
-                    userObj.setModifiedAt(getCurrentTimestamp())
                     userObj.setPassword(bcrypt.encode(generatedPassword))
                     response["password"] = generatedPassword
                 }
+                userObj.setModifiedAt(getCurrentTimestamp())
 
                 userRepository?.save(userObj)
                 response["msg"] = "Success!"
@@ -703,6 +710,13 @@ class UserController {
         return mapper.writeValueAsString(response)
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "postUpdateUsersAuthorized",
+            summary = "Update users authorized status from a list of valid user ID's.",
+        )
+    )
     @RequestMapping(value = ["/api/v1/users/update/authorized", "/users/update/authorized"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER")
@@ -751,6 +765,13 @@ class UserController {
         return mapper.writeValueAsString(response)
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "postUpdateUsersRole",
+            summary = "Update users roles from a list of valid user ID's.",
+        )
+    )
     @RequestMapping(value = ["/api/v1/users/update/role", "/users/update/role"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER")
