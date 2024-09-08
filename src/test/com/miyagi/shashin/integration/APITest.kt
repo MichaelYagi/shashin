@@ -5,19 +5,20 @@ import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
 import org.hamcrest.CoreMatchers.containsString
-import org.junit.Assert
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.MediaType
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
@@ -151,5 +152,114 @@ class APITest {
         for (jsonObj in jsonNode) {
             Assertions.assertTrue(jsonObj.get("authorizedRoles").toString().contains("super") || jsonObj.get("authorizedRoles").toString().contains("public"))
         }
+    }
+
+    @Test
+    @WithMockUser(username = "testsuper", roles = ["SUPER"])
+    @Throws(Exception::class)
+    fun shouldUpdateAuthorized() {
+        var userUser = userRepository?.findById(userId!!.toInt())
+        var userAdmin = userRepository?.findById(adminId!!.toInt())
+
+        Assertions.assertTrue(userUser?.get()?.getIsAuthorized()!!)
+        Assertions.assertTrue(userAdmin?.get()?.getIsAuthorized()!!)
+
+        val payload: Any = object : Any() {
+            val userIds: MutableList<Int> = mutableListOf(adminId!!.toInt(), userId!!.toInt())
+            val authorized = false
+        }
+
+        val objectMapper = ObjectMapper()
+        val json = objectMapper.writeValueAsString(payload)
+
+        val response = mockMvc!!.perform(
+            post("/api/v1/users/update/authorized")
+                .header("Content-Type", "application/json")
+                .header("X-Api-Key", superKey)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+        )
+//println(response.andReturn().response.contentAsString)
+        response
+            .andExpect(status().isOk)
+            .andExpect(content().string(containsString(userId!!.toInt().toString())))
+
+        userUser = userRepository?.findById(userId!!.toInt())
+        userAdmin = userRepository?.findById(adminId!!.toInt())
+
+        Assertions.assertFalse(userUser?.get()?.getIsAuthorized()!!)
+        Assertions.assertFalse(userAdmin?.get()?.getIsAuthorized()!!)
+    }
+
+    @Test
+    @WithMockUser(username = "testsuper", roles = ["SUPER"])
+    @Throws(Exception::class)
+    fun shouldUpdateAuthority() {
+        var userUser = userRepository?.findById(userId!!.toInt())
+        var userAdmin = userRepository?.findById(adminId!!.toInt())
+
+        Assertions.assertTrue(userUser?.get()?.getAuthority() == "ROLE_USER")
+        Assertions.assertTrue(userAdmin?.get()?.getAuthority() == "ROLE_ADMIN")
+
+        val payload: Any = object : Any() {
+            val userIds: MutableList<Int> = mutableListOf(adminId!!.toInt(), userId!!.toInt())
+            val role = "ROLE_SUPER"
+        }
+
+        val objectMapper = ObjectMapper()
+        val json = objectMapper.writeValueAsString(payload)
+
+        val response = mockMvc!!.perform(
+            post("/api/v1/users/update/role")
+                .header("Content-Type", "application/json")
+                .header("X-Api-Key", superKey)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+        )
+//println(response.andReturn().response.contentAsString)
+        response
+            .andExpect(status().isOk)
+            .andExpect(content().string(containsString(userId!!.toInt().toString())))
+
+        userUser = userRepository?.findById(userId!!.toInt())
+        userAdmin = userRepository?.findById(adminId!!.toInt())
+
+        Assertions.assertTrue(userUser?.get()?.getAuthority() == "ROLE_SUPER")
+        Assertions.assertTrue(userAdmin?.get()?.getAuthority() == "ROLE_SUPER")
+    }
+
+    @Test
+    @WithMockUser(username = "testsuper", roles = ["SUPER"])
+    @Throws(Exception::class)
+    fun shouldDeleteUsers() {
+        val userUser = userRepository?.findById(userId!!.toInt())
+        val userAdmin = userRepository?.findById(adminId!!.toInt())
+
+        Assertions.assertTrue(userUser?.get()?.getAuthority() == "ROLE_USER")
+        Assertions.assertTrue(userAdmin?.get()?.getAuthority() == "ROLE_ADMIN")
+
+        val payload: Any = object : Any() {
+            val userIds: MutableList<Int> = mutableListOf(adminId!!.toInt(), userId!!.toInt())
+        }
+
+        val objectMapper = ObjectMapper()
+        val json = objectMapper.writeValueAsString(payload)
+
+        val response = mockMvc!!.perform(
+            post("/api/v1/users/delete")
+                .header("Content-Type", "application/json")
+                .header("X-Api-Key", superKey)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+        )
+//println(response.andReturn().response.contentAsString)
+        response
+            .andExpect(status().isOk)
+            .andExpect(content().string(containsString(userId!!.toInt().toString())))
+
+        val users = userRepository?.findAll()
+
+        Assertions.assertTrue(users!!.count() == 1)
+        Assertions.assertTrue(users.first()!!.getId() == superId)
     }
 }
