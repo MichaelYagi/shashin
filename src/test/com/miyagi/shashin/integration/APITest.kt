@@ -109,6 +109,7 @@ class APITest {
         response
             .andExpect(status().is4xxClientError)
 
+        // Forbidden
         Assertions.assertTrue(response.andReturn().response.status == 403)
     }
 
@@ -127,6 +128,7 @@ class APITest {
         response
             .andExpect(status().is4xxClientError)
 
+        // Unsupported Media Type
         Assertions.assertTrue(response.andReturn().response.status == 415)
     }
 
