@@ -29,6 +29,7 @@ import java.net.URL
 import java.time.Duration
 import java.util.logging.Level
 
+// API tests that require image scans
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 class APITests: BaseSeleniumTests() {
@@ -146,70 +147,5 @@ class APITests: BaseSeleniumTests() {
 
         Assertions.assertTrue(jsonNode!!.has("metadataList"))
         Assertions.assertTrue(jsonNode.get("metadataList").get(0).get("id").textValue() != "")
-
-        var result: String?
-        try {
-            response = webClient.get()
-                .uri("api/v1/recent")
-                .header("x-api-key", "00000000-00000000-00000000-00000001")
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-                .retrieve()
-                .bodyToMono(String::class.java)
-                .block()
-
-            result = response
-        } catch (e: Exception) {
-            result = e.message
-        }
-
-        // 403 forbidden
-        Assertions.assertTrue(result!!.contains("403"))
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun toolsControllerAPITest() {
-        val webClient = WebClient.create("http://localhost:$port/")
-
-        var jsonString: String? = null
-        var jsonNode: JsonNode?
-        val mapper = ObjectMapper()
-
-        val response = webClient.get()
-            .uri("api/v1/health")
-            .header("x-api-key", "00000000-00000000-00000000-00000000")
-            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-            .retrieve()
-            .bodyToMono(String::class.java)
-            .block()
-
-        jsonString = response
-
-        var status = ""
-        var os = ""
-        if (!jsonString.isNullOrBlank()) {
-            jsonNode = mapper.readTree(jsonString)
-            status = jsonNode.get("status").textValue()
-            os = jsonNode.get("system").get("os").textValue()
-        }
-
-        Assertions.assertTrue(status == "OK")
-        Assertions.assertTrue(os.isNotEmpty())
-
-        jsonString = webClient.get()
-            .uri("api/v1/status")
-            .header("x-api-key", "00000000-00000000-00000000-00000001")
-            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-            .retrieve()
-            .bodyToMono(String::class.java)
-            .block()
-
-        var singleStatus = ""
-        if (!jsonString.isNullOrBlank()) {
-            jsonNode = mapper.readTree(jsonString)
-            singleStatus = jsonNode.get("status").textValue()
-        }
-
-        Assertions.assertTrue(singleStatus == "OK")
     }
 }
