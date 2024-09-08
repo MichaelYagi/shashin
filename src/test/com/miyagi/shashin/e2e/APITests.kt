@@ -29,6 +29,7 @@ import java.net.URL
 import java.time.Duration
 import java.util.logging.Level
 
+// API tests that require image scans
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 class APITests: BaseSeleniumTests() {
@@ -146,23 +147,5 @@ class APITests: BaseSeleniumTests() {
 
         Assertions.assertTrue(jsonNode!!.has("metadataList"))
         Assertions.assertTrue(jsonNode.get("metadataList").get(0).get("id").textValue() != "")
-
-        var result: String?
-        try {
-            response = webClient.get()
-                .uri("api/v1/recent")
-                .header("x-api-key", "00000000-00000000-00000000-00000001")
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-                .retrieve()
-                .bodyToMono(String::class.java)
-                .block()
-
-            result = response
-        } catch (e: Exception) {
-            result = e.message
-        }
-
-        // 403 forbidden
-        Assertions.assertTrue(result!!.contains("403"))
     }
 }
