@@ -2,7 +2,6 @@ package com.miyagi.shashin.configuration
 
 import com.miyagi.shashin.component.*
 import com.miyagi.shashin.configuration.MultiSecurityConfig.Companion.adminApiList
-import com.miyagi.shashin.configuration.MultiSecurityConfig.Companion.allApiList
 import com.miyagi.shashin.configuration.MultiSecurityConfig.Companion.publicList
 import com.miyagi.shashin.repository.UserRepository
 import jakarta.servlet.DispatcherType
@@ -225,20 +224,20 @@ class ApiSecurityConfig {
             .csrf{ it.disable() }
             .sessionManagement{ it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .addFilterBefore(AuthenticationFilter(userRepository), UsernamePasswordAuthenticationFilter::class.java)
-            .securityMatcher(*allApiList)
+            .securityMatcher("/api/v1/**")
             .authorizeHttpRequests{ it.anyRequest().authenticated() }
             .exceptionHandling{ it.accessDeniedHandler(apiAccessDeniedHandler) }
 
         return http.build()
     }
 
-    @Bean
-    fun apiSecurityCustomizer(): WebSecurityCustomizer {
-        return WebSecurityCustomizer { web: WebSecurity ->
-            web.ignoring()
-                .requestMatchers("/api/v1/thumbnails/**", "/api/v1/image/**", "/api/v1/video/**", "/api/v1/profile/**")
-        }
-    }
+//    @Bean
+//    fun apiSecurityCustomizer(): WebSecurityCustomizer {
+//        return WebSecurityCustomizer { web: WebSecurity ->
+//            web.ignoring()
+//                .requestMatchers("/api/v1/thumbnails/**", "/api/v1/image/**", "/api/v1/video/**", "/api/v1/profile/**")
+//        }
+//    }
 }
 
 @EnableMethodSecurity(securedEnabled = true)
