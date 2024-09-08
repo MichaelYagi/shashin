@@ -240,9 +240,6 @@ class WebSecurityConfig {
     private val dataSource: DataSource? = null
 
     @Autowired
-    private var userDetailsService: UserDetailsService? = null
-
-    @Autowired
     private val authFailureHandler: AuthFailureHandler? = null
 
     @Autowired
