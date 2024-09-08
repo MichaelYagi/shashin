@@ -220,10 +220,20 @@ class ApiSecurityConfig {
         return BCryptPasswordEncoder()
     }
 
+    // Permit all for resources
     @Bean
     @Throws(Exception::class)
-    fun configure(http: HttpSecurity): SecurityFilterChain {
+    fun publicSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
+        http
+            .securityMatcher("/api/v1/thumbnails/**", "/api/v1/image/**", "/api/v1/video/**", "/api/v1/profile/**")
+            .authorizeHttpRequests { it.anyRequest().permitAll() }
 
+        return http.build();
+    }
+
+    @Bean
+    @Throws(Exception::class)
+    fun apiSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .csrf{ it.disable() }
             .sessionManagement{ it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
@@ -233,14 +243,6 @@ class ApiSecurityConfig {
             .exceptionHandling{ it.accessDeniedHandler(apiAccessDeniedHandler) }
 
         return http.build()
-    }
-
-    @Bean
-    fun apiSecurityCustomizer(): WebSecurityCustomizer {
-        return WebSecurityCustomizer { web: WebSecurity ->
-            web.ignoring()
-                .requestMatchers("/api/v1/thumbnails/**", "/api/v1/image/**", "/api/v1/video/**", "/api/v1/profile/**")
-        }
     }
 }
 
@@ -284,6 +286,17 @@ class WebSecurityConfig {
     @Bean
     fun httpSessionEventPublisher(): ServletListenerRegistrationBean<HttpSessionEventPublisher>? {
         return ServletListenerRegistrationBean(HttpSessionEventPublisher())
+    }
+
+    // Permit all for resources
+    @Bean
+    @Throws(Exception::class)
+    fun resourceSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
+        http
+            .securityMatcher(*MultiSecurityConfig.resourceList)
+            .authorizeHttpRequests { it.anyRequest().permitAll() }
+
+        return http.build();
     }
 
     @Bean
@@ -372,18 +385,5 @@ class WebSecurityConfig {
         firewall.setAllowSemicolon(true)
         firewall.setAllowUrlEncodedSlash(true)
         return firewall
-    }
-
-    @Bean
-    fun webSecurityCustomizer(): WebSecurityCustomizer {
-        return WebSecurityCustomizer { web: WebSecurity ->
-            web
-                .httpFirewall(allowUrlEncodedSlashHttpFirewall())
-                .ignoring()
-                .requestMatchers(
-                    MultiSecurityConfig.resourceList.joinToString(",")
-                )
-
-        }
     }
 }
