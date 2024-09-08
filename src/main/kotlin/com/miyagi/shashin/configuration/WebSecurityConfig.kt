@@ -1,8 +1,8 @@
 package com.miyagi.shashin.configuration
 
 import com.miyagi.shashin.component.*
-import com.miyagi.shashin.configuration.MultiSecurityConfig.Companion.adminApiList
 import com.miyagi.shashin.configuration.MultiSecurityConfig.Companion.allApiList
+import com.miyagi.shashin.configuration.MultiSecurityConfig.Companion.publicApiList
 import com.miyagi.shashin.configuration.MultiSecurityConfig.Companion.publicList
 import com.miyagi.shashin.repository.UserRepository
 import jakarta.servlet.DispatcherType
@@ -13,17 +13,12 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
-import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.Customizer
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.builders.WebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.session.SessionRegistry
 import org.springframework.security.core.session.SessionRegistryImpl
-import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
@@ -94,7 +89,11 @@ class MultiSecurityConfig {
             "/users/register"
         )
 
-        var publicList = resourceList + arrayOf(
+        var publicApiList = arrayOf(
+            "/api/v1/thumbnails/**", "/api/v1/image/**", "/api/v1/video/**", "/api/v1/profile/**"
+        )
+
+        var publicList = publicApiList + resourceList + arrayOf(
             "/websocket-endpoint",
             "/topic/messages",
             "/topic/matchmessages",
@@ -106,7 +105,6 @@ class MultiSecurityConfig {
 //            "/download/share/**/album/**",
             "/download/share/**",
             "/share/**",
-            "/api/v1/thumbnails/**", "/api/v1/image/**", "/api/v1/video/**", "/api/v1/profile/**",
             "/image/**",
             "/video/**",
 //            "/**/rss",
@@ -225,7 +223,7 @@ class ApiSecurityConfig {
     @Throws(Exception::class)
     fun publicSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
-            .securityMatcher("/api/v1/thumbnails/**", "/api/v1/image/**", "/api/v1/video/**", "/api/v1/profile/**")
+            .securityMatcher(*publicApiList)
             .authorizeHttpRequests { it.anyRequest().permitAll() }
 
         return http.build();

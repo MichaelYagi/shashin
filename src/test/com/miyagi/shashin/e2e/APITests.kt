@@ -20,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
@@ -147,5 +148,39 @@ class APITests: BaseSeleniumTests() {
 
         Assertions.assertTrue(jsonNode!!.has("metadataList"))
         Assertions.assertTrue(jsonNode.get("metadataList").get(0).get("id").textValue() != "")
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun publicAPITest() {
+        val webClient = WebClient.create("http://localhost:$port/")
+
+        var jsonString: String? = null
+        var jsonNode: JsonNode? = null
+        val mapper = ObjectMapper()
+
+        // Get metadata
+        var response = webClient.get()
+            .uri("/api/v1/recent")
+            .header("x-api-key", "00000000-00000000-00000000-00000000")
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            .retrieve()
+            .bodyToMono(String::class.java)
+            .block()
+
+        jsonString = response
+
+        if (!jsonString.isNullOrBlank()) {
+            jsonNode = mapper.readTree(jsonString)
+        }
+
+        Assertions.assertTrue(jsonNode!!.get("metadataList").get(0).get("id").textValue() != "")
+        val metadataId = jsonNode.get("metadataList").get(0).get("id").textValue()
+
+        val imageResponse = mockMvc!!.perform(
+            get("/api/v1/image/$metadataId")
+        )
+
+        Assertions.assertTrue(imageResponse.andReturn().response.contentType == "image/jpeg")
     }
 }
