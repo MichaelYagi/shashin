@@ -3,8 +3,8 @@ package com.miyagi.shashin.model
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.io.IOException
 import jakarta.persistence.*
-import jakarta.validation.constraints.NotBlank;
-import java.util.Objects;
+import jakarta.validation.constraints.NotBlank
+import java.util.Objects
 
 @Entity
 @Table(name = "user")

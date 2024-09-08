@@ -226,7 +226,7 @@ class ApiSecurityConfig {
             .securityMatcher(*publicApiList)
             .authorizeHttpRequests { it.anyRequest().permitAll() }
 
-        return http.build();
+        return http.build()
     }
 
     @Bean
@@ -294,7 +294,7 @@ class WebSecurityConfig {
             .securityMatcher(*MultiSecurityConfig.resourceList)
             .authorizeHttpRequests { it.anyRequest().permitAll() }
 
-        return http.build();
+        return http.build()
     }
 
     @Bean
