@@ -263,24 +263,6 @@ class WebSecurityConfig {
     @Value("\${app.rememberme.key}")
     private var rememberMeKey: String? = null
 
-    @Autowired
-    @Throws(java.lang.Exception::class)
-    fun configAuthentication(auth: AuthenticationManagerBuilder) {
-        auth.userDetailsService(userDetailsService)
-    }
-
-    //        @Bean
-    fun passEncoder(): PasswordEncoder? {
-        return BCryptPasswordEncoder()
-    }
-
-    @Bean
-    @Throws(java.lang.Exception::class)
-    fun authenticationManager(http: HttpSecurity): AuthenticationManager {
-        return http.getSharedObject(AuthenticationManagerBuilder::class.java)
-            .build()
-    }
-
     @Bean
     fun sessionRegistry(): SessionRegistry? {
         return SessionRegistryImpl()
@@ -289,21 +271,6 @@ class WebSecurityConfig {
     @Bean
     fun httpSessionEventPublisher(): ServletListenerRegistrationBean<HttpSessionEventPublisher>? {
         return ServletListenerRegistrationBean(HttpSessionEventPublisher())
-    }
-
-    @Autowired
-    @Throws(java.lang.Exception::class)
-    fun configureGlobal(auth: AuthenticationManagerBuilder) {
-        auth
-            .jdbcAuthentication()
-            .dataSource(dataSource)
-            .passwordEncoder(passEncoder())
-            .usersByUsernameQuery(
-                "SELECT username, password, TRUE from user where lower(username) = lower(?)"
-            )
-            .authoritiesByUsernameQuery(
-                "SELECT username, authority from user where lower(username) = lower(?)"
-            )
     }
 
     @Bean
