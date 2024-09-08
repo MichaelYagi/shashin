@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
@@ -91,6 +92,21 @@ class APITests {
         superId?.let { userRepository?.deleteById(it) }
         adminId?.let { userRepository?.deleteById(it) }
         userId?.let { userRepository?.deleteById(it) }
+    }
+
+    @Test
+    fun shouldReturn403ForRecentRequest() {
+        val response = mockMvc!!.perform(
+            get("/api/v1/recent")
+                .header("Content-Type", "application/json")
+                .header("X-Api-Key", userKey)
+        )
+
+        response
+            .andExpect(status().is4xxClientError)
+
+        // Forbidden
+        Assertions.assertTrue(response.andReturn().response.status == 403)
     }
 
     @Test
