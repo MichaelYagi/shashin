@@ -238,7 +238,7 @@ class APITests {
 
         val response = mockMvc!!.perform(
             post("/api/v1/users/update/role")
-                .header("Content-Type", "application/json")
+                .header("CONTENT-TYPE", "application/json")
                 .header("X-Api-Key", superKey)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
@@ -274,8 +274,8 @@ class APITests {
 
         val response = mockMvc!!.perform(
             post("/api/v1/users/delete")
-                .header("Content-Type", "application/json")
-                .header("X-Api-Key", superKey)
+                .header("content-type", "application/json")
+                .header("x-api-key", superKey)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
         )
@@ -296,7 +296,7 @@ class APITests {
         var response = mockMvc!!.perform(
             get("/api/v1/health")
                 .header("Content-Type", "application/json")
-                .header("X-Api-Key", userKey)
+                .header("X-API-KEY", userKey)
         )
 
 //        println(response.andReturn().response.contentAsString)
@@ -320,7 +320,7 @@ class APITests {
         response = mockMvc!!.perform(
             get("/api/v1/status")
                 .header("Content-Type", "application/json")
-                .header("X-Api-Key", adminKey)
+                .header("X-API-Key", adminKey)
         )
 
         jsonString = response.andReturn().response.contentAsString
