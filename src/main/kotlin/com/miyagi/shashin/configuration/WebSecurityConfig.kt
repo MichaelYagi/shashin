@@ -200,15 +200,6 @@ class ApiSecurityConfig {
     @Autowired
     private val apiAccessDeniedHandler: ApiAccessDeniedHandler? = null
 
-    @Value("\${app.role.super}")
-    private var superRole: String? = null
-
-    @Value("\${app.role.admin}")
-    private var adminRole: String? = null
-
-    @Value("\${app.role.user}")
-    private var userRole: String? = null
-
     @Bean
     fun passwordApiEncoder(): PasswordEncoder? {
         return BCryptPasswordEncoder()
@@ -221,15 +212,8 @@ class ApiSecurityConfig {
             .csrf{ it.disable() }
             .sessionManagement{ it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .addFilterBefore(AuthenticationFilter(userRepository), UsernamePasswordAuthenticationFilter::class.java)
-            .authorizeHttpRequests{
-                it
-                    .requestMatchers("/api/v1/**").hasAnyRole(
-                        userRole.toString().replace("ROLE_", ""),
-                        adminRole.toString().replace("ROLE_", ""),
-                        superRole.toString().replace("ROLE_", "")
-                    )
-                    .anyRequest().authenticated()
-            }
+            .securityMatcher("/api/v1/**")
+            .authorizeHttpRequests{ it.anyRequest().authenticated() }
             .exceptionHandling{ it.accessDeniedHandler(apiAccessDeniedHandler) }
 
         return http.build()
