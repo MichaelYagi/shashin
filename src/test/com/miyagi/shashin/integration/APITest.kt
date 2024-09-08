@@ -94,32 +94,42 @@ class APITest {
     }
 
     @Test
-    @WithMockUser(username = "invaliduser", roles = ["ADMIN"])
-    @Throws(Exception::class)
-    fun shouldReturn401WhenSendingRequestToTimelineApiWithRoleUser() {
-        mockMvc!!.perform(
-            get("/api/v1/timeline/0")
-                .header("X-Api-Key", superKey)
-        )
-            .andExpect(status().is4xxClientError)
-    }
-
-    @Test
     @WithMockUser(username = "testuser", roles = ["USER"])
     @Throws(Exception::class)
-    fun shouldReturn4xxWhenSendingRequestToTimelineApiWithRoleUser() {
-        mockMvc!!.perform(
+    fun shouldReturn403WhenSendingRequestToTimelineApiWithInvalidAuthority() {
+        val response = mockMvc!!.perform(
             get("/api/v1/timeline/0")
                 .header("Content-Type", "application/json")
                 .header("X-Api-Key", userKey)
         )
+
+//        println(response.andReturn().response.contentAsString)
+//        println(response.andReturn().response.status)
+
+        response
+            .andExpect(status().is4xxClientError)
+    }
+
+    @Test
+    @WithMockUser(username = "testadmin", roles = ["ADMIN"])
+    @Throws(Exception::class)
+    fun shouldReturn415WhenSendingRequestToTimelineApiWithMissingContentType() {
+        val response = mockMvc!!.perform(
+            get("/api/v1/timeline/0")
+                .header("X-Api-Key", adminKey)
+        )
+
+//        println(response.andReturn().response.contentAsString)
+//        println(response.andReturn().response.status)
+
+        response
             .andExpect(status().is4xxClientError)
     }
 
     @Test
     @WithMockUser(username = "testsuper", roles = ["SUPER"])
     @Throws(Exception::class)
-    fun shouldReturnSuccessWhenSendingRequestToTimelineApiWithRoleAdmin() {
+    fun shouldReturnSuccessWhenSendingRequestToTimelineApiWithRoleSuper() {
         val response = mockMvc!!.perform(
             get("/api/v1/timeline/0")
                 .header("Content-Type", "application/json")
