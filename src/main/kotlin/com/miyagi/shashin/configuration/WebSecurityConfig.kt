@@ -1,6 +1,8 @@
 package com.miyagi.shashin.configuration
 
 import com.miyagi.shashin.component.*
+import com.miyagi.shashin.configuration.MultiSecurityConfig.Companion.adminApiList
+import com.miyagi.shashin.configuration.MultiSecurityConfig.Companion.allApiList
 import com.miyagi.shashin.configuration.MultiSecurityConfig.Companion.publicList
 import com.miyagi.shashin.repository.UserRepository
 import jakarta.servlet.DispatcherType
@@ -115,14 +117,7 @@ class MultiSecurityConfig {
             "/users/logout"
         )
 
-        var adminList = arrayOf(
-            "timeline",
-            "timeline/**",
-            "actuator/**",
-            "health",
-            "complete/metadata/**",
-            "albums/add",
-            "rescan/metadata",
+        val adminApiList = arrayOf(
             "api/v1/update/**",
             "api/v1/folders",
             "api/v1/folders/**",
@@ -144,14 +139,17 @@ class MultiSecurityConfig {
             "api/v1/rescan/metadata"
         )
 
-        val superList = adminList + arrayOf(
-            "settings/**",
-            "settings",
-            "settings/users",
-            "settings/scan",
-            "users/delete",
-            "user/update/password",
-            "users/update/**",
+        var adminList = adminApiList + arrayOf(
+            "timeline",
+            "timeline/**",
+            "actuator/**",
+            "health",
+            "complete/metadata/**",
+            "albums/add",
+            "rescan/metadata"
+        )
+
+        val superApiList = arrayOf(
             "api/v1/system/settings",
             "api/v1/users/info",
             "api/v1/users/role/**",
@@ -162,14 +160,17 @@ class MultiSecurityConfig {
             "api/v1/users/update/**"
         )
 
-        val allRoleList = arrayOf(
-            "comments/**",
-            "albums",
-            "favorites",
-            "slideshow",
-            "map/**",
-            "search/**",
-            "articles/endpoints",
+        val superList = adminList + superApiList + arrayOf(
+            "settings/**",
+            "settings",
+            "settings/users",
+            "settings/scan",
+            "users/delete",
+            "user/update/password",
+            "users/update/**"
+        )
+
+        val userApiList = arrayOf(
             "api/v1/endpoints",
             "api/v1/album/**",
             "api/v1/albums",
@@ -186,6 +187,18 @@ class MultiSecurityConfig {
             "api/v1/health",
             "api/v1/status"
         )
+
+        val allRoleList = userApiList + arrayOf(
+            "comments/**",
+            "albums",
+            "favorites",
+            "slideshow",
+            "map/**",
+            "search/**",
+            "articles/endpoints"
+        )
+
+        val allApiList = userApiList + adminApiList + superApiList
     }
 }
 
@@ -212,7 +225,7 @@ class ApiSecurityConfig {
             .csrf{ it.disable() }
             .sessionManagement{ it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .addFilterBefore(AuthenticationFilter(userRepository), UsernamePasswordAuthenticationFilter::class.java)
-            .securityMatcher("/api/v1/**")
+            .securityMatcher(*allApiList)
             .authorizeHttpRequests{ it.anyRequest().authenticated() }
             .exceptionHandling{ it.accessDeniedHandler(apiAccessDeniedHandler) }
 
