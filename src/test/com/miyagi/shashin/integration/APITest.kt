@@ -108,6 +108,8 @@ class APITest {
 
         response
             .andExpect(status().is4xxClientError)
+
+        Assertions.assertTrue(response.andReturn().response.status == 403)
     }
 
     @Test
@@ -124,6 +126,8 @@ class APITest {
 
         response
             .andExpect(status().is4xxClientError)
+
+        Assertions.assertTrue(response.andReturn().response.status == 415)
     }
 
     @Test
