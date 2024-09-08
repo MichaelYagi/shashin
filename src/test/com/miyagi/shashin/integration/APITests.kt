@@ -1,5 +1,6 @@
 package com.miyagi.shashin.integration
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.*
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
@@ -27,7 +27,7 @@ import org.springframework.web.context.WebApplicationContext
 
 @SpringBootTest
 @ActiveProfiles("test")
-class APITest {
+class APITests {
 
     private var superId: Int? = null
     private var adminId: Int? = null
@@ -94,7 +94,6 @@ class APITest {
     }
 
     @Test
-    @WithMockUser(username = "testuser", roles = ["USER"])
     @Throws(Exception::class)
     fun shouldReturn403WhenSendingRequestToTimelineApiWithInvalidAuthority() {
         val response = mockMvc!!.perform(
@@ -114,7 +113,6 @@ class APITest {
     }
 
     @Test
-    @WithMockUser(username = "testadmin", roles = ["ADMIN"])
     @Throws(Exception::class)
     fun shouldReturn415WhenSendingRequestToTimelineApiWithMissingContentType() {
         val response = mockMvc!!.perform(
@@ -133,7 +131,6 @@ class APITest {
     }
 
     @Test
-    @WithMockUser(username = "testsuper", roles = ["SUPER"])
     @Throws(Exception::class)
     fun shouldReturnSuccessWhenSendingRequestToTimelineApiWithRoleSuper() {
         val response = mockMvc!!.perform(
@@ -148,7 +145,6 @@ class APITest {
     }
 
     @Test
-    @WithMockUser(username = "testsuper", roles = ["SUPER"])
     @Throws(Exception::class)
     fun shouldReturnProperEndpointsForSuper() {
         val response = mockMvc!!.perform(
@@ -171,7 +167,6 @@ class APITest {
     }
 
     @Test
-    @WithMockUser(username = "testsuper", roles = ["SUPER"])
     @Throws(Exception::class)
     fun shouldUpdateAuthorized() {
         var userUser = userRepository?.findById(userId!!.toInt())
@@ -209,7 +204,6 @@ class APITest {
     }
 
     @Test
-    @WithMockUser(username = "testsuper", roles = ["SUPER"])
     @Throws(Exception::class)
     fun shouldUpdateAuthority() {
         var userUser = userRepository?.findById(userId!!.toInt())
@@ -247,7 +241,6 @@ class APITest {
     }
 
     @Test
-    @WithMockUser(username = "testsuper", roles = ["SUPER"])
     @Throws(Exception::class)
     fun shouldDeleteUsers() {
         val userUser = userRepository?.findById(userId!!.toInt())
@@ -280,5 +273,49 @@ class APITest {
 
         Assertions.assertTrue(users!!.count() == 1)
         Assertions.assertTrue(users.first()!!.getId() == superId)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun shouldDisplayHeathStatus() {
+        var response = mockMvc!!.perform(
+            get("/api/v1/health")
+                .header("Content-Type", "application/json")
+                .header("X-Api-Key", userKey)
+        )
+
+//        println(response.andReturn().response.contentAsString)
+//        println(response.andReturn().response.status)
+
+        var jsonString = response.andReturn().response.contentAsString
+        var jsonNode: JsonNode?
+        val mapper = ObjectMapper()
+
+        var status = ""
+        var os = ""
+        if (jsonString.isNotBlank()) {
+            jsonNode = mapper.readTree(jsonString)
+            status = jsonNode.get("status").textValue()
+            os = jsonNode.get("system").get("os").textValue()
+        }
+
+        Assertions.assertTrue(status == "OK")
+        Assertions.assertTrue(os.isNotEmpty())
+
+        response = mockMvc!!.perform(
+            get("/api/v1/status")
+                .header("Content-Type", "application/json")
+                .header("X-Api-Key", adminKey)
+        )
+
+        jsonString = response.andReturn().response.contentAsString
+
+        var singleStatus = ""
+        if (jsonString.isNotBlank()) {
+            jsonNode = mapper.readTree(jsonString)
+            singleStatus = jsonNode.get("status").textValue()
+        }
+
+        Assertions.assertTrue(singleStatus == "OK")
     }
 }
