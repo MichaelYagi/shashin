@@ -2,6 +2,7 @@ package com.miyagi.shashin.configuration
 
 import com.miyagi.shashin.component.*
 import com.miyagi.shashin.configuration.MultiSecurityConfig.Companion.adminApiList
+import com.miyagi.shashin.configuration.MultiSecurityConfig.Companion.allApiList
 import com.miyagi.shashin.configuration.MultiSecurityConfig.Companion.publicList
 import com.miyagi.shashin.repository.UserRepository
 import jakarta.servlet.DispatcherType
@@ -117,84 +118,86 @@ class MultiSecurityConfig {
         )
 
         val adminApiList = arrayOf(
-            "api/v1/update/**",
-            "api/v1/folders",
-            "api/v1/folders/**",
-            "api/v1/folder",
-            "api/v1/folder/**",
-            "api/v1/recent",
-            "api/v1/recent/**",
-            "api/v1/taken",
-            "api/v1/taken/**",
-            "api/v1/accessed",
-            "api/v1/accessed/**",
-            "api/v1/modified",
-            "api/v1/modified/**",
-            "api/v1/share/album/save",
-            "api/v1/exif/metadata/**",
-            "api/v1/folders",
-            "api/v1/all/album/delete",
-            "api/v1/keywords",
-            "api/v1/rescan/metadata"
+            "/api/v1/timeline",
+            "/api/v1/timeline/**",
+            "/api/v1/update/**",
+            "/api/v1/folders",
+            "/api/v1/folders/**",
+            "/api/v1/folder",
+            "/api/v1/folder/**",
+            "/api/v1/recent",
+            "/api/v1/recent/**",
+            "/api/v1/taken",
+            "/api/v1/taken/**",
+            "/api/v1/accessed",
+            "/api/v1/accessed/**",
+            "/api/v1/modified",
+            "/api/v1/modified/**",
+            "/api/v1/share/album/save",
+            "/api/v1/exif/metadata/**",
+            "/api/v1/folders",
+            "/api/v1/all/album/delete",
+            "/api/v1/keywords",
+            "/api/v1/rescan/metadata"
         )
 
         var adminList = adminApiList + arrayOf(
-            "timeline",
-            "timeline/**",
-            "actuator/**",
-            "health",
-            "complete/metadata/**",
-            "albums/add",
-            "rescan/metadata"
+            "/timeline",
+            "/timeline/**",
+            "/actuator/**",
+            "/health",
+            "/complete/metadata/**",
+            "/albums/add",
+            "/rescan/metadata"
         )
 
         val superApiList = arrayOf(
-            "api/v1/system/settings",
-            "api/v1/users/info",
-            "api/v1/users/role/**",
-            "api/v1/users/authorized/**",
-            "api/v1/users/delete",
-            "api/v1/user/update/password",
-            "api/v1/user/info/**",
-            "api/v1/users/update/**"
+            "/api/v1/system/settings",
+            "/api/v1/users/info",
+            "/api/v1/users/role/**",
+            "/api/v1/users/authorized/**",
+            "/api/v1/users/delete",
+            "/api/v1/user/update/password",
+            "/api/v1/user/info/**",
+            "/api/v1/users/update/**"
         )
 
         val superList = adminList + superApiList + arrayOf(
-            "settings/**",
-            "settings",
-            "settings/users",
-            "settings/scan",
-            "users/delete",
-            "user/update/password",
-            "users/update/**"
+            "/settings/**",
+            "/settings",
+            "/settings/users",
+            "/settings/scan",
+            "/users/delete",
+            "/user/update/password",
+            "/users/update/**"
         )
 
         val userApiList = arrayOf(
-            "api/v1/endpoints",
-            "api/v1/album/**",
-            "api/v1/albums",
-            "api/v1/albums/**",
-            "api/v1/users/update/apikey",
-            "api/v1/mapdata",
-            "api/v1/placedata",
-            "api/v1/profile/**",
-            "api/v1/metadata/**",
-            "api/v1/user/self",
-            "api/v1/comment/**",
-            "api/v1/favorites/**",
-            "api/v1/complete/metadata/**",
-            "api/v1/health",
-            "api/v1/status"
+            "/api/v1/endpoints",
+            "/api/v1/album/**",
+            "/api/v1/albums",
+            "/api/v1/albums/**",
+            "/api/v1/users/update/apikey",
+            "/api/v1/mapdata",
+            "/api/v1/placedata",
+            "/api/v1/profile/**",
+            "/api/v1/metadata/**",
+            "/api/v1/user/self",
+            "/api/v1/comment/**",
+            "/api/v1/favorites/**",
+            "/api/v1/complete/metadata/**",
+            "/api/v1/health",
+            "/api/v1/status"
         )
 
         val allRoleList = userApiList + arrayOf(
-            "comments/**",
-            "albums",
-            "favorites",
-            "slideshow",
-            "map/**",
-            "search/**",
-            "articles/endpoints"
+            "/comments/**",
+            "/albums",
+            "/favorites",
+            "/slideshow",
+            "/map/**",
+            "/search/**",
+            "/articles/endpoints"
         )
 
         val allApiList = userApiList + adminApiList + superApiList
@@ -220,24 +223,25 @@ class ApiSecurityConfig {
     @Bean
     @Throws(Exception::class)
     fun configure(http: HttpSecurity): SecurityFilterChain {
+
         http
             .csrf{ it.disable() }
             .sessionManagement{ it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .addFilterBefore(AuthenticationFilter(userRepository), UsernamePasswordAuthenticationFilter::class.java)
-            .securityMatcher("/api/v1/**")
+            .securityMatcher(*allApiList)
             .authorizeHttpRequests{ it.anyRequest().authenticated() }
             .exceptionHandling{ it.accessDeniedHandler(apiAccessDeniedHandler) }
 
         return http.build()
     }
 
-//    @Bean
-//    fun apiSecurityCustomizer(): WebSecurityCustomizer {
-//        return WebSecurityCustomizer { web: WebSecurity ->
-//            web.ignoring()
-//                .requestMatchers("/api/v1/thumbnails/**", "/api/v1/image/**", "/api/v1/video/**", "/api/v1/profile/**")
-//        }
-//    }
+    @Bean
+    fun apiSecurityCustomizer(): WebSecurityCustomizer {
+        return WebSecurityCustomizer { web: WebSecurity ->
+            web.ignoring()
+                .requestMatchers("/api/v1/thumbnails/**", "/api/v1/image/**", "/api/v1/video/**", "/api/v1/profile/**")
+        }
+    }
 }
 
 @EnableMethodSecurity(securedEnabled = true)
@@ -302,18 +306,7 @@ class WebSecurityConfig {
             .authorizeHttpRequests {
                 it
                     .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-                    .requestMatchers("/").permitAll()
-                    .requestMatchers("/users/login").permitAll()
-                    .requestMatchers("/users/register").permitAll()
-                    .requestMatchers("/docs/**").permitAll()
-                    .requestMatchers("/articles/**").permitAll()
-                    .requestMatchers("/health").permitAll()
-                    .requestMatchers("/features").permitAll()
-                    .requestMatchers("/css/**").permitAll()
-                    .requestMatchers("/js/**").permitAll()
-                    .requestMatchers("/fonts/**").permitAll()
-                    .requestMatchers("/images/**").permitAll()
-                    .requestMatchers(publicList.joinToString(",")).permitAll()
+                    .requestMatchers(*publicList).permitAll()
                     .requestMatchers(MultiSecurityConfig.adminList.joinToString(","))
                     .hasRole(adminRole.toString().replace("ROLE_", ""))
                     .requestMatchers(MultiSecurityConfig.superList.joinToString(","))
