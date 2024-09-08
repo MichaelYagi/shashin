@@ -1,7 +1,6 @@
 package com.miyagi.shashin.configuration
 
 import com.miyagi.shashin.component.*
-import com.miyagi.shashin.configuration.MultiSecurityConfig.Companion.allApiList
 import com.miyagi.shashin.configuration.MultiSecurityConfig.Companion.publicApiList
 import com.miyagi.shashin.configuration.MultiSecurityConfig.Companion.publicList
 import com.miyagi.shashin.repository.UserRepository
@@ -176,8 +175,6 @@ class MultiSecurityConfig {
             "/api/v1/albums",
             "/api/v1/albums/**",
             "/api/v1/users/update/apikey",
-            "/api/v1/mapdata",
-            "/api/v1/mapdata/**",
             "/api/v1/placedata",
             "/api/v1/profile/**",
             "/api/v1/metadata/**",
@@ -198,8 +195,6 @@ class MultiSecurityConfig {
             "/search/**",
             "/articles/endpoints"
         )
-
-        val allApiList = userApiList + adminApiList + superApiList
     }
 }
 
@@ -237,7 +232,7 @@ class ApiSecurityConfig {
             .csrf{ it.disable() }
             .sessionManagement{ it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .addFilterBefore(AuthenticationFilter(userRepository), UsernamePasswordAuthenticationFilter::class.java)
-            .securityMatcher(*allApiList)
+            .securityMatcher("/api/v1/**")
             .authorizeHttpRequests{ it.anyRequest().authenticated() }
             .exceptionHandling{ it.accessDeniedHandler(apiAccessDeniedHandler) }
 
