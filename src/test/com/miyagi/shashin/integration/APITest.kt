@@ -183,6 +183,7 @@ class APITest {
         val payload: Any = object : Any() {
             val userIds: MutableList<Int> = mutableListOf(adminId!!.toInt(), userId!!.toInt())
             val authorized = false
+            override fun toString() = "$authorized ${userIds.joinToString(",")}"
         }
 
         val objectMapper = ObjectMapper()
@@ -220,6 +221,7 @@ class APITest {
         val payload: Any = object : Any() {
             val userIds: MutableList<Int> = mutableListOf(adminId!!.toInt(), userId!!.toInt())
             val role = "ROLE_SUPER"
+            override fun toString() = "$role ${userIds.joinToString(",")}"
         }
 
         val objectMapper = ObjectMapper()
@@ -256,6 +258,7 @@ class APITest {
 
         val payload: Any = object : Any() {
             val userIds: MutableList<Int> = mutableListOf(adminId!!.toInt(), userId!!.toInt())
+            override fun toString() = userIds.joinToString(",")
         }
 
         val objectMapper = ObjectMapper()
