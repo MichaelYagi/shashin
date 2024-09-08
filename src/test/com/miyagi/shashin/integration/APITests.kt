@@ -176,8 +176,75 @@ class APITests {
         val mapper = ObjectMapper()
         val jsonNode = mapper.readTree(jsonStr)
 
+        var assertTriggered = false
         for (jsonObj in jsonNode) {
-            Assertions.assertTrue(jsonObj.get("authorizedRoles").toString().contains("super") || jsonObj.get("authorizedRoles").toString().contains("public"))
+            val authorizedRoleList = jsonObj.get("authorizedRoles").asIterable().toList()
+            if (authorizedRoleList.size == 1 && authorizedRoleList[0].textValue() != "public") {
+                assertTriggered = true
+                Assertions.assertTrue(authorizedRoleList[0].textValue() == "super")
+                break
+            }
+        }
+        Assertions.assertTrue(assertTriggered)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun shouldReturnProperEndpointsForAdmin() {
+        val response = mockMvc!!.perform(
+            get("/api/v1/endpoints")
+                .header("Content-Type", "application/json")
+                .header("X-Api-Key", adminKey)
+        )
+//        println(response.andReturn().response.contentAsString)
+        response
+            .andExpect(status().isOk)
+            .andExpect(content().string(containsString("admin")))
+
+        val jsonStr = response.andReturn().response.contentAsString
+        val mapper = ObjectMapper()
+        val jsonNode = mapper.readTree(jsonStr)
+
+        var assertTriggered = false
+        for (jsonObj in jsonNode) {
+            val authorizedRoleList = jsonObj.get("authorizedRoles").asIterable().toList()
+            if (authorizedRoleList.size == 2) {
+                assertTriggered = true
+                Assertions.assertTrue(authorizedRoleList[0].textValue() == "admin")
+                Assertions.assertTrue(authorizedRoleList[1].textValue() == "super")
+                break
+            }
+        }
+        Assertions.assertTrue(assertTriggered)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun shouldReturnProperEndpointsForUser() {
+        val response = mockMvc!!.perform(
+            get("/api/v1/endpoints")
+                .header("Content-Type", "application/json")
+                .header("X-Api-Key", userKey)
+        )
+//        println(response.andReturn().response.contentAsString)
+        response
+            .andExpect(status().isOk)
+            .andExpect(content().string(containsString("user")))
+
+        val jsonStr = response.andReturn().response.contentAsString
+        val mapper = ObjectMapper()
+        val jsonNode = mapper.readTree(jsonStr)
+
+        for (jsonObj in jsonNode) {
+            val authorizedRoleList = jsonObj.get("authorizedRoles").asIterable().toList()
+            Assertions.assertTrue(authorizedRoleList.size == 1 || authorizedRoleList.size == 3)
+            if (authorizedRoleList.size == 1) {
+                Assertions.assertTrue(authorizedRoleList[0].textValue() == "public")
+            } else {
+                Assertions.assertTrue(authorizedRoleList[0].textValue() == "super")
+                Assertions.assertTrue(authorizedRoleList[1].textValue() == "admin")
+                Assertions.assertTrue(authorizedRoleList[2].textValue() == "user")
+            }
         }
     }
 
