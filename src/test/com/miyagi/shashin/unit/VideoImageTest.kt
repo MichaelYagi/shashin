@@ -27,8 +27,8 @@ class VideoImageTest {
     @Test
     fun processScreenshotTest() {
         val classLoader = javaClass.classLoader
-        val testVideoUrl: URL = classLoader.getResource("dice.mp4")!!
-        val testVideoFile = File(testVideoUrl.file)
+        val testVideoUrl: String = (classLoader.getResource("subdir")!!.path)+"\\dice.mp4"
+        val testVideoFile = File(testVideoUrl)
 
         val videoProcessing = VideoProcessing(testVideoFile)
         val screenshotImage = videoProcessing.getVideoScreenshot()
@@ -43,8 +43,8 @@ class VideoImageTest {
     @Test
     fun processGifTest() {
         val classLoader = javaClass.classLoader
-        val testVideoUrl: URL = classLoader.getResource("dice.mp4")!!
-        val testVideoFile = File(testVideoUrl.file)
+        val testVideoUrl: String = (classLoader.getResource("subdir")!!.path)+"\\dice.mp4"
+        val testVideoFile = File(testVideoUrl)
 
         val videoProcessing = VideoProcessing(testVideoFile)
         val processedGifFile = videoProcessing.getVideoGifFile(10.0)
@@ -59,12 +59,13 @@ class VideoImageTest {
     @Test
     fun processObjectRecognitionTest() {
         val classLoader = javaClass.classLoader
-        val testImageUrl: URL = classLoader.getResource("tablecup.jpg")!!
+        val testImageUrl: String = (classLoader.getResource("subdir")!!.path)+"\\tablecup.jpg"
+        val testImageFile = File(testImageUrl)
 
         // Create thumbnails
         val metadata = Metadata()
         metadata.setId("00000000-00000000-00000000-00000012")
-        metadata.setPath(testImageUrl.path)
+        metadata.setPath(testImageFile.path)
         val criteria = buildObjectRecognitionCriteria()
         val threshold = 0.70
 
@@ -89,8 +90,8 @@ class VideoImageTest {
     @Test
     fun processDetectPredictTest() {
         val classLoader = javaClass.classLoader
-        val testImageUrl: URL = classLoader.getResource("people.jpg")!!
-        val testImageFile = File(testImageUrl.file)
+        val testImageUrl: String = (classLoader.getResource("subdir")!!.path)+"\\people.jpg"
+        val testImageFile = File(testImageUrl)
 
         val imageBi = ImageIO.read(testImageFile)
         val img = ImageFactory.getInstance().fromImage(imageBi)
@@ -108,8 +109,8 @@ class VideoImageTest {
         val mapper = ObjectMapper()
 
         val classLoader = javaClass.classLoader
-        val testImageUrl: URL = classLoader.getResource("people.jpg")!!
-        val testImageFile = File(testImageUrl.file)
+        val testImageUrl: String = (classLoader.getResource("subdir")!!.path)+"\\people.jpg"
+        val testImageFile = File(testImageUrl)
 
         val imageBi = ImageIO.read(testImageFile)
         val img = ImageFactory.getInstance().fromImage(imageBi)
@@ -120,7 +121,7 @@ class VideoImageTest {
         val trainingImageJsonNode = mapper.readTree(detectedTrainingImages.toJson())
         val metadata = Metadata()
         metadata.setId("asdf")
-        metadata.setPath(testImageUrl.path)
+        metadata.setPath(testImageFile.path)
 
         val limit = 3
 
