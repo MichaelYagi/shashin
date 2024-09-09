@@ -109,7 +109,6 @@ class APITests: BaseSeleniumTests() {
         mediaDirTextArea.sendKeys(testImageFile.parent+"\\subdir")
         val mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
         mediaExcludeDirTextArea.sendKeys("${testImageFile.parent}\\subdir\\dice.mp4, ${testImageFile.parent}\\subdir\\people.jpg")
-        // TODO: Doesn't seem to work if selected
         val objectDetectionCheck = this.driver!!.findElement(By.id("objectDetection"))
         objectDetectionCheck.sendKeys(Keys.SPACE)
         if (!objectDetectionCheck.isSelected) {
@@ -224,7 +223,6 @@ class APITests: BaseSeleniumTests() {
             jsonNode = mapper.readTree(jsonString)
         }
 
-        // TODO: Fix
         Assertions.assertTrue(jsonNode!!.get("keywords").get(0).get("keyword").textValue() != "")
     }
 
