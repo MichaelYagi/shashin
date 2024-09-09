@@ -47,7 +47,7 @@ class VideoImageTest {
         val testVideoFile = File(testVideoUrl)
 
         val videoProcessing = VideoProcessing(testVideoFile)
-        val processedGifFile = videoProcessing.getVideoGifFile(10.0)
+        val processedGifFile = videoProcessing.getVideoGifFile(5.0)
         var gifExists = false
         if (processedGifFile != null && processedGifFile.exists() && processedGifFile.length() > 0) {
             gifExists = true
