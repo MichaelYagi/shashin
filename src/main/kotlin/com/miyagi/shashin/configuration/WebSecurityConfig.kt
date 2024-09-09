@@ -170,7 +170,13 @@ class MultiSecurityConfig {
             "/users/update/**"
         )
 
-        private val userApiList = arrayOf(
+        private val allRoleApiList = arrayOf(
+            "/api/v1/sharedalbums",
+            "/api/v1/sharedalbums/**",
+            "/api/v1/mapdata",
+            "/api/v1/mapdata/**",
+            "/api/v1/albumcomments",
+            "/api/v1/albumcomments/**",
             "/api/v1/endpoints",
             "/api/v1/album/**",
             "/api/v1/albums",
@@ -187,16 +193,7 @@ class MultiSecurityConfig {
             "/api/v1/status"
         )
 
-        private val allRoleApiList = arrayOf(
-            "/api/v1/sharedalbums",
-            "/api/v1/sharedalbums/**",
-            "/api/v1/mapdata",
-            "/api/v1/mapdata/**",
-            "/api/v1/albumcomments",
-            "/api/v1/albumcomments/**"
-        )
-
-        val allRoleList = userApiList + allRoleApiList + arrayOf(
+        val allRoleList = allRoleApiList + arrayOf(
             "/comments/**",
             "/albums",
             "/favorites",

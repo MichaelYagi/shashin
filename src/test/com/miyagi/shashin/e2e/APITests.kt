@@ -96,11 +96,11 @@ class APITests: BaseSeleniumTests() {
         val testImageFile = File(testImageUrl.file)
         val mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
         mediaDirTextArea.sendKeys(testImageFile.parent)
-        val scanAutomatically = this.driver!!.findElement(By.id("scanAutomatically"))
-        scanAutomatically.click()
-        if (scanAutomatically.isSelected) {
-            scanAutomatically.click()
-        }
+//        val scanAutomatically = this.driver!!.findElement(By.id("scanAutomatically"))
+//        scanAutomatically.click()
+//        if (scanAutomatically.isSelected) {
+//            scanAutomatically.click()
+//        }
 
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
         saveSettings.click()
@@ -132,7 +132,7 @@ class APITests: BaseSeleniumTests() {
         var jsonNode: JsonNode? = null
         val mapper = ObjectMapper()
 
-        var response = webClient.get()
+        val response = webClient.get()
             .uri("/api/v1/recent")
             .header("x-api-key", "00000000-00000000-00000000-00000000")
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
@@ -160,7 +160,7 @@ class APITests: BaseSeleniumTests() {
         val mapper = ObjectMapper()
 
         // Get metadata
-        var response = webClient.get()
+        val response = webClient.get()
             .uri("/api/v1/recent")
             .header("x-api-key", "00000000-00000000-00000000-00000000")
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
