@@ -98,6 +98,8 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         val testImageFile = File(testImageUrl.file)
         val mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
         mediaDirTextArea.sendKeys(testImageFile.parent)
+        val mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
+        mediaExcludeDirTextArea.sendKeys(testImageFile.parent+"\\subdir")
 //        val scanAutomatically = this.driver!!.findElement(By.id("scanAutomatically"))
 //        if (scanAutomatically.isSelected) {
 //            scanAutomatically.click()
@@ -143,7 +145,7 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         val imageEl = this.driver!!.findElement(By.id("image$metadataId"))
         val imageSrc = imageEl.getAttribute("src")
 
-        Assertions.assertTrue(imageSrc.contains("testscreen") || imageSrc.contains("tablecup") || imageSrc.contains("people") || imageSrc.contains("dice"))
+        Assertions.assertTrue(imageSrc.contains("testscreen"))
     }
 
     private fun isUUID(someUUID: String): Boolean {
