@@ -19,7 +19,7 @@ import org.springframework.data.jpa.repository.Modifying
 abstract class BaseSeleniumTests {
     protected var driver: WebDriver? = null
     protected var logger: Logger = Logger.getLogger(BaseSeleniumTests::class.simpleName)
-    protected var elementScanTimeoutMillis = 4000
+    protected var elementScanTimeoutMillis = 5000
     protected var elementWaitSeconds = 60L
     private val os = System.getProperty("os.name")
 

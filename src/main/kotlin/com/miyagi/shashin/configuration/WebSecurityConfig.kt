@@ -89,7 +89,7 @@ class MultiSecurityConfig {
         )
 
         var publicApiList = arrayOf(
-            "/api/v1/thumbnails/**", "/api/v1/image/**", "/api/v1/video/**", "/api/v1/profile/**"
+            "/api/v1/thumbnails/**", "/api/v1/image/**", "/api/v1/video/**", "/api/v1/profile/**", "/api/v1/share/**"
         )
 
         var publicList = publicApiList + resourceList + arrayOf(
@@ -114,7 +114,7 @@ class MultiSecurityConfig {
             "/users/logout"
         )
 
-        val adminApiList = arrayOf(
+        private val adminApiList = arrayOf(
             "/api/v1/timeline",
             "/api/v1/timeline/**",
             "/api/v1/update/**",
@@ -135,7 +135,8 @@ class MultiSecurityConfig {
             "/api/v1/folders",
             "/api/v1/all/album/delete",
             "/api/v1/keywords",
-            "/api/v1/rescan/metadata"
+            "/api/v1/rescan/metadata",
+            "/api/v1/dashboard/data"
         )
 
         var adminList = adminApiList + arrayOf(
@@ -148,7 +149,7 @@ class MultiSecurityConfig {
             "/rescan/metadata"
         )
 
-        val superApiList = arrayOf(
+        private val superApiList = arrayOf(
             "/api/v1/system/settings",
             "/api/v1/users/info",
             "/api/v1/users/role/**",
@@ -169,7 +170,7 @@ class MultiSecurityConfig {
             "/users/update/**"
         )
 
-        val userApiList = arrayOf(
+        private val userApiList = arrayOf(
             "/api/v1/endpoints",
             "/api/v1/album/**",
             "/api/v1/albums",
@@ -186,7 +187,16 @@ class MultiSecurityConfig {
             "/api/v1/status"
         )
 
-        val allRoleList = userApiList + arrayOf(
+        private val allRoleApiList = arrayOf(
+            "/api/v1/sharedalbums",
+            "/api/v1/sharedalbums/**",
+            "/api/v1/mapdata",
+            "/api/v1/mapdata/**",
+            "/api/v1/albumcomments",
+            "/api/v1/albumcomments/**"
+        )
+
+        val allRoleList = userApiList + allRoleApiList + arrayOf(
             "/comments/**",
             "/albums",
             "/favorites",
