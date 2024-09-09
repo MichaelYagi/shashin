@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.core.io.FileSystemResource
 import org.springframework.http.MediaType
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
@@ -24,6 +25,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
+import java.io.File
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -42,6 +44,60 @@ class APITests {
 
     @Autowired
     private val userRepository: UserRepository? = null
+
+    @Autowired
+    private val metadataRepository: MetadataRepository? = null
+
+    @Autowired
+    private val mediaDirRepository: MediaDirectoryRepository? = null
+
+    @Autowired
+    private val userAlbumRepository: UserAlbumRepository? = null
+
+    @Autowired
+    private val favoriteRepository: FavoriteRepository? = null
+
+    @Autowired
+    private val commentRepository: CommentRepository? = null
+
+    @Autowired
+    private val albumPhotoCommentRepository: AlbumPhotoCommentRepository? = null
+
+    @Autowired
+    private val albumCommentRepository: AlbumCommentRepository? = null
+
+    @Autowired
+    private val albumRepository: AlbumRepository? = null
+
+    @Autowired
+    private val albumPhotoRepository: AlbumPhotoRepository? = null
+
+    @Autowired
+    private val notificationRepository: NotificationRepository? = null
+
+    @Autowired
+    private val recognitionLabelRepository: RecognitionLabelRepository? = null
+
+    @Autowired
+    private val recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
+
+    @Autowired
+    private val settingsRepository: SettingsRepository? = null
+
+    @Autowired
+    private val keywordPhotoRepository: KeywordPhotoRepository? = null
+
+    @Autowired
+    private val keywordRepository: KeywordRepository? = null
+
+    @Autowired
+    private val searchHistoryRepository: SearchHistoryRepository? = null
+
+    @Autowired
+    private val searchRepository: SearchRepository? = null
+
+    @Autowired
+    private val useragentRepository: UseragentRepository? = null
 
     private var bcrypt = BCryptPasswordEncoder()
 
@@ -88,9 +144,41 @@ class APITests {
 
     @AfterEach
     fun tearDown() {
-        superId?.let { userRepository?.deleteById(it) }
-        adminId?.let { userRepository?.deleteById(it) }
-        userId?.let { userRepository?.deleteById(it) }
+        userRepository?.deleteAll()
+        metadataRepository?.deleteAll()
+        mediaDirRepository?.deleteAll()
+        userAlbumRepository?.deleteAll()
+        favoriteRepository?.deleteAll()
+        commentRepository?.deleteAll()
+        albumPhotoCommentRepository?.deleteAll()
+        albumCommentRepository?.deleteAll()
+        albumRepository?.deleteAll()
+        albumPhotoRepository?.deleteAll()
+        notificationRepository?.deleteAll()
+        recognitionLabelRepository?.deleteAll()
+        recognitionLabelPhotoRepository?.deleteAll()
+        settingsRepository?.deleteAll()
+        keywordPhotoRepository?.deleteAll()
+        keywordRepository?.deleteAll()
+        searchHistoryRepository?.deleteAll()
+        searchRepository?.deleteAll()
+        useragentRepository?.deleteAll()
+
+        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+        val sidecarDir = File("$rootPath/sidecar_test")
+        if (sidecarDir.exists()) {
+            //sidecarDir.deleteRecursively()
+            purgeDirectory(sidecarDir)
+        }
+    }
+
+    private fun purgeDirectory(dir: File) {
+        for (file in dir.listFiles()!!) {
+            if (file.isDirectory) {
+                purgeDirectory(file)
+            }
+            file.delete()
+        }
     }
 
     @Test

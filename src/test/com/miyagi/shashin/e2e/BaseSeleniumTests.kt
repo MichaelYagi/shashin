@@ -65,6 +65,20 @@ abstract class BaseSeleniumTests {
     @Autowired
     private val settingsRepository: SettingsRepository? = null
 
+    @Autowired
+    private val keywordPhotoRepository: KeywordPhotoRepository? = null
+
+    @Autowired
+    private val keywordRepository: KeywordRepository? = null
+
+    @Autowired
+    private val searchHistoryRepository: SearchHistoryRepository? = null
+
+    @Autowired
+    private val searchRepository: SearchRepository? = null
+
+    @Autowired
+    private val useragentRepository: UseragentRepository? = null
 
     @Transactional
     @BeforeEach
@@ -120,6 +134,11 @@ abstract class BaseSeleniumTests {
         recognitionLabelRepository?.deleteAll()
         recognitionLabelPhotoRepository?.deleteAll()
         settingsRepository?.deleteAll()
+        keywordPhotoRepository?.deleteAll()
+        keywordRepository?.deleteAll()
+        searchHistoryRepository?.deleteAll()
+        searchRepository?.deleteAll()
+        useragentRepository?.deleteAll()
 
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
         val sidecarDir = File("$rootPath/sidecar_test")
