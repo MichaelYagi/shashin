@@ -62,6 +62,28 @@ class APITests: BaseSeleniumTests() {
 
     @BeforeEach
     fun setup() {
+        // Enable object scanning
+        var settingsObjCount = settingsRepository?.count()
+        if (settingsObjCount?.toInt() == 0) {
+            val settingsObj = Settings()
+            settingsObj.setSearchHistoryLimit(10)
+            settingsObj.setQueryLimit(30)
+            settingsObj.setObjectRecognitionConfidenceThreshold(0.20.toString())
+            settingsObj.setRecognitionConfidenceThreshold(0.20.toString())
+            settingsObj.setObjectDetection(true)
+            settingsObj.setTrainingDataLimit(10)
+            settingsObj.setScheduledTime("2:00")
+            settingsObj.setCompreFaceServer(null)
+            settingsObj.setMatchScanLimit(10)
+            settingsObj.setNotificationLimit(10)
+            settingsObj.setPort(6624.toString())
+            settingsObj.setScanAutomatically(false)
+            settingsObj.setScheduledMatching(false)
+            settingsObj.setCreatedAt(TextUtils.getCurrentTimestamp())
+            settingsObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+            settingsRepository?.save(settingsObj)
+        }
+
         val adminObj = User()
         adminObj.setUsername("testsuper")
         var encodedPassword: String = bcrypt.encode("testsuper")
@@ -194,20 +216,6 @@ class APITests: BaseSeleniumTests() {
     @Test
     @Throws(Exception::class)
     fun metadataKeywordAPITest() {
-        // Enable object scanning
-        var settingsObj = settingsRepository?.findFirstByOrderByIdAsc()
-        if (settingsObj == null) {
-            settingsObj = Settings()
-            settingsObj.setSearchHistoryLimit(10)
-            settingsObj.setQueryLimit(30)
-            settingsObj.setObjectRecognitionConfidenceThreshold(0.20.toString())
-            settingsObj.setRecognitionConfidenceThreshold(0.20.toString())
-            settingsObj.setObjectDetection(true)
-            settingsObj.setTrainingDataLimit(10)
-            settingsObj.setScheduledTime("2:00")
-            settingsRepository?.save(settingsObj)
-        }
-
         val webClient = WebClient.create("http://localhost:$port/")
 
         val jsonString: String?
