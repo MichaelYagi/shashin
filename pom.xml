@@ -35,6 +35,12 @@
             </activation>
         </profile>
         <profile>
+            <id>test</id>
+            <properties>
+                <activatedProperties>test</activatedProperties>
+            </properties>
+        </profile>
+        <profile>
             <id>prod</id>
             <properties>
                 <activatedProperties>prod</activatedProperties>
