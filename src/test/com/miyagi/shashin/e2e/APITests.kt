@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test
 import org.openqa.selenium.By
 import org.openqa.selenium.Keys
 import org.openqa.selenium.WebElement
-import org.openqa.selenium.interactions.Actions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.springframework.beans.factory.annotation.Autowired
@@ -32,13 +31,11 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import org.springframework.ui.set
 import org.springframework.web.context.WebApplicationContext
 import org.springframework.web.reactive.function.client.WebClient
 import java.io.File
 import java.net.URL
 import java.time.Duration
-import java.time.ZoneId
 import java.util.logging.Level
 
 // API tests that require image scans
