@@ -133,7 +133,7 @@ abstract class BaseSeleniumTests {
         notificationRepository?.deleteAll()
         recognitionLabelRepository?.deleteAll()
         recognitionLabelPhotoRepository?.deleteAll()
-        settingsRepository?.deleteAll()
+//        settingsRepository?.deleteAll()
         keywordPhotoRepository?.deleteAll()
         keywordRepository?.deleteAll()
         searchHistoryRepository?.deleteAll()

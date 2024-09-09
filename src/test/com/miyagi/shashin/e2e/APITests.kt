@@ -7,7 +7,10 @@ import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
+import jakarta.transaction.Transactional
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.openqa.selenium.By
@@ -55,12 +58,10 @@ class APITests: BaseSeleniumTests() {
     @Autowired
     private val userRepository: UserRepository? = null
 
-    @Autowired
-    private val settingsRepository: SettingsRepository? = null
-
     private var bcrypt = BCryptPasswordEncoder()
 
     @BeforeEach
+    @Transactional
     fun setup() {
         val adminObj = User()
         adminObj.setUsername("testsuper")
@@ -118,6 +119,7 @@ class APITests: BaseSeleniumTests() {
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
         saveSettings.click()
 //        println(this.driver?.pageSource)
+
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Settings saved')]")))
 
         // Scan new image
@@ -223,6 +225,49 @@ class APITests: BaseSeleniumTests() {
         }
 
         // TODO: Fix
-//        Assertions.assertTrue(jsonNode!!.get("keywords").get(0).get("keyword").textValue() != "")
+        Assertions.assertTrue(jsonNode!!.get("keywords").get(0).get("keyword").textValue() != "")
+    }
+
+    companion object {
+
+        @Autowired
+        private val settingsRepository: SettingsRepository? = null
+
+        private fun saveSettings() {
+
+            var settings = settingsRepository?.findFirstByOrderByIdAsc()
+            if (settings == null) {
+                settings = Settings()
+            }
+            settings.setSearchHistoryLimit(10)
+            settings.setQueryLimit(30)
+            settings.setObjectRecognitionConfidenceThreshold(0.20.toString())
+            settings.setRecognitionConfidenceThreshold(0.20.toString())
+            settings.setObjectDetection(true)
+            settings.setTrainingDataLimit(10)
+            settings.setScheduledTime("2:00")
+            settings.setCompreFaceServer("")
+            settings.setCompreFaceKey("")
+            settings.setMatchScanLimit(10)
+            settings.setNotificationLimit(10)
+            settings.setPort(6624.toString())
+            settings.setScanAutomatically(false)
+            settings.setScheduledMatching(false)
+            settings.setCreatedAt(TextUtils.getCurrentTimestamp())
+            settings.setModifiedAt(TextUtils.getCurrentTimestamp())
+            settingsRepository?.save(settings)
+        }
+
+        @JvmStatic
+        @BeforeAll
+        fun beforeAll(): Unit {
+            saveSettings()
+        }
+
+        @JvmStatic
+        @AfterAll
+        fun afterAll(): Unit {
+            settingsRepository?.deleteAll()
+        }
     }
 }
