@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
+import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
@@ -57,6 +58,9 @@ class APITests: BaseSeleniumTests() {
 
     @Autowired
     private val userRepository: UserRepository? = null
+
+    @Autowired
+    private val metadataRepository: MetadataRepository? = null
 
     private var bcrypt = BCryptPasswordEncoder()
 
@@ -204,13 +208,12 @@ class APITests: BaseSeleniumTests() {
     fun metadataKeywordAPITest() {
         val webClient = WebClient.create("http://localhost:$port/")
 
-        val jsonString: String?
+        var jsonString: String?
         var jsonNode: JsonNode? = null
         val mapper = ObjectMapper()
 
-        // Get metadata
-        val response = webClient.get()
-            .uri("/api/v1/keywords")
+        var response = webClient.get()
+            .uri("/api/v1/recent")
             .header("x-api-key", "00000000-00000000-00000000-00000000")
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
             .retrieve()
@@ -223,7 +226,34 @@ class APITests: BaseSeleniumTests() {
             jsonNode = mapper.readTree(jsonString)
         }
 
-        Assertions.assertTrue(jsonNode!!.get("keywords").get(0).get("keyword").textValue() != "")
+        Assertions.assertTrue(jsonNode!!.has("metadataList"))
+        Assertions.assertTrue(jsonNode.get("metadataList").get(0).get("id").textValue() != "")
+        val metadataId = jsonNode.get("metadataList").get(0).get("id").textValue()
+        val metadataObj = metadataRepository?.findById(metadataId)
+        var metadata: com.miyagi.shashin.model.Metadata = com.miyagi.shashin.model.Metadata()
+        if (metadataObj != null && metadataObj.isPresent) {
+            metadata = metadataObj.get()
+            metadata.setLat("1.1111")
+            metadata.setLng("1.1111")
+            metadataRepository.save(metadata)
+        }
+
+        // Get metadata
+        response = webClient.get()
+            .uri("/api/v1/mapdata/keywords")
+            .header("x-api-key", "00000000-00000000-00000000-00000000")
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            .retrieve()
+            .bodyToMono(String::class.java)
+            .block()
+
+        jsonString = response
+
+        if (!jsonString.isNullOrBlank()) {
+            jsonNode = mapper.readTree(jsonString)
+        }
+
+        Assertions.assertTrue(jsonNode.get("keywordMap").get(metadataId).textValue() != "")
     }
 
     companion object {
@@ -232,7 +262,6 @@ class APITests: BaseSeleniumTests() {
         private val settingsRepository: SettingsRepository? = null
 
         private fun saveSettings() {
-
             var settings = settingsRepository?.findFirstByOrderByIdAsc()
             if (settings == null) {
                 settings = Settings()
@@ -258,13 +287,13 @@ class APITests: BaseSeleniumTests() {
 
         @JvmStatic
         @BeforeAll
-        fun beforeAll(): Unit {
+        fun beforeAll() {
             saveSettings()
         }
 
         @JvmStatic
         @AfterAll
-        fun afterAll(): Unit {
+        fun afterAll() {
             settingsRepository?.deleteAll()
         }
     }
