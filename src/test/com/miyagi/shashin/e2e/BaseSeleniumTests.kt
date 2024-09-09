@@ -15,7 +15,9 @@ import java.net.URL
 import java.util.logging.Logger
 import jakarta.transaction.Transactional
 import org.springframework.data.jpa.repository.Modifying
+import org.springframework.test.context.ActiveProfiles
 
+@ActiveProfiles("test")
 abstract class BaseSeleniumTests {
     protected var driver: WebDriver? = null
     protected var logger: Logger = Logger.getLogger(BaseSeleniumTests::class.simpleName)
