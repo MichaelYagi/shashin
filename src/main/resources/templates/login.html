@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" class="h-100">
-<head th:insert="fragments/head :: head(${activePage},${titleDescriptor})"></head>
+<head th:insert="~{fragments/head :: head(${activePage},${titleDescriptor})}"></head>
 <body class="d-flex h-100 text-center">
 
-<div th:replace="fragments/loginregcontent :: loginregcontent(${activePage}, ${message})"></div>
+<div th:replace="~{fragments/loginregcontent :: loginregcontent(${activePage}, ${message})}"></div>
 
 </body>
 </html>

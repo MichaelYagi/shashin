@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="page(title,activePage)">
-<head th:insert="fragments/docshead :: docshead(${title})"></head>
+<head th:insert="~{fragments/docshead :: docshead(${title})}"></head>
 
 <body>
 
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto" style="margin-top: 1px;">
 
-    <div class="row px-4 py-3 ml-3 mr-3" th:insert="fragments/docstopnav :: docstopnav()"></div>
+    <div class="row px-4 py-3 ml-3 mr-3" th:insert="~{fragments/docstopnav :: docstopnav()}"></div>
 
     <div class="row">
-        <div class="col-12 col-md-2 col-xl-1 bd-sidebar" th:insert="fragments/articlessidebar :: articlessidebar(${activePage})"></div>
+        <div class="col-12 col-md-2 col-xl-1 bd-sidebar" th:insert="~{fragments/articlessidebar :: articlessidebar(${activePage})}"></div>
 
         <main class="col overflow-auto h-100" role="main">
-            <div th:replace="this :: content"></div>
+            <div th:replace="~{this :: content}"></div>
 
             <button type="button" class="btn btn-primary btn-floating btn-lg" id="btn-back-to-top">
                 <i class="bi-arrow-up-circle"></i>

@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="page(title,activePage)">
-<head th:insert="fragments/docshead :: docshead(${title})"></head>
+<head th:insert="~{fragments/docshead :: docshead(${title})}"></head>
 
 <body>
 
-<div th:replace="docs/docsmodal :: docsmodal()"></div>
+<div th:replace="~{docs/docsmodal :: docsmodal()}"></div>
 
 <div class="container-fluid flex-xl-nowrap">
 
-    <div class="row px-4 py-3 ml-3 mr-3" th:insert="fragments/docstopnav :: docstopnav()"></div>
+    <div class="row px-4 py-3 ml-3 mr-3" th:insert="~{fragments/docstopnav :: docstopnav()}"></div>
 
     <div class="row">
-        <div class="col-12 col-md-2 col-xl-1 bd-sidebar" th:insert="fragments/docssidebar :: docssidebar(${activePage})"></div>
+        <div class="col-12 col-md-2 col-xl-1 bd-sidebar" th:insert="~{fragments/docssidebar :: docssidebar(${activePage})}"></div>
 
         <main class="col-12 col-md-10 col-xl-11 py-md-3 pl-md-5 bd-content" role="main">
-            <div th:replace="this :: content"></div>
+            <div th:replace="~{this :: content}"></div>
         </main>
     </div>
 

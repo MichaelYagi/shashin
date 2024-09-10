@@ -155,7 +155,7 @@
                     </div>
                     </th:block>
                     <div th:class="'tab-pane container fade'+${(authority == 'ROLE_USER' or activePage == 'archived') ? ' show active':''}" id="detailsTab">
-                        <div th:replace="fragments/detailsinfo :: detailsinfo(${currentUser}, true)"></div>
+                        <div th:replace="~{fragments/detailsinfo :: detailsinfo(${currentUser}, true)}"></div>
                     </div>
                     <th:block th:if="${authority == 'ROLE_SUPER' || authority == 'ROLE_ADMIN'}">
                     <div class="tab-pane container fade" id="exifTab">

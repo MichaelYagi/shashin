@@ -27,7 +27,7 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane container show active" id="detailsTab">
-                        <div th:replace="fragments/detailsinfo :: detailsinfo(${currentUser}, true)"></div>
+                        <div th:replace="~{fragments/detailsinfo :: detailsinfo(${currentUser}, true)}"></div>
                     </div>
                     <div class="tab-pane container fade" id="exifTab">
                         <textarea class="form-control" id="exifInfo" rows="20" readonly></textarea>
