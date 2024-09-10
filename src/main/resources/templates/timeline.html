@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="fragments/head :: head(${activePage},${titleDescriptor})"></head>
+<head th:insert="~{fragments/head :: head(${activePage},${titleDescriptor})}"></head>
 <body class="thumb d-flex flex-column vh-100 overflow-hidden">
 
-<div th:replace="fragments/topnav :: topnav(${currentUser},${activePage},'')"></div>
+<div th:replace="~{fragments/topnav :: topnav(${currentUser},${activePage},'')}"></div>
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     $(document).ready(function () {
         /*<![CDATA[*/
@@ -64,7 +64,7 @@
             </div>
 
         </div>
-        <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})"></div>
+        <div th:replace="~{fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})}"></div>
 
         <main role="main" class="col overflow-auto h-100" id="timelineMain">
             <th:block th:if="${not #lists.isEmpty(metadataList)}">
@@ -72,13 +72,13 @@
                     $("#timelineMain").invisible();
                 </script>
             </th:block>
-            <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
+            <div th:replace="~{fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})}" class="col-sm p-3 min-vh-100"></div>
             <input type="hidden" id="mediaTypeFilter" name="mediaTypeFilter" th:value="${mediaTypeFilter}">
             <input type="hidden" id="initialLgData" name="initialLgData" value="[]">
 
-            <div th:replace="fragments/metadatamodal :: metadatamodal(${currentUser})"></div>
+            <div th:replace="~{fragments/metadatamodal :: metadatamodal(${currentUser})}"></div>
 
-            <div th:replace="fragments/infosidebar :: infosidebar(${currentUser})"></div>
+            <div th:replace="~{fragments/infosidebar :: infosidebar(${currentUser})}"></div>
 
             <div id="spinner_top" class="spinner-border justify-content-center align-items-center" role="status" style="display: none"></div>
 
@@ -178,13 +178,13 @@
                 $("#timelineMain").visible();
             </script>
 
-            <div th:replace="fragments/metadatabatchmodal :: metadatabatchmodal(${recognitionLabels},${allAlbumList})"></div>
+            <div th:replace="~{fragments/metadatabatchmodal :: metadatabatchmodal(${recognitionLabels},${allAlbumList})}"></div>
 
             <!-- <div id="msgTimeline"></div> -->
             <div id="spinner_bottom" class="spinner-border justify-content-center align-items-center mt-2" role="status" style="display: none"></div>
 
             <div id="subfooter"></div>
-            <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>
+            <div id="footer" th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})}"></div>
         </main>
     </div>
 </div>

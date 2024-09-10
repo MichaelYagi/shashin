@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="fragments/head :: head(${activePage},${titleDescriptor})"></head>
+<head th:insert="~{fragments/head :: head(${activePage},${titleDescriptor})}"></head>
 <body class="thumb d-flex flex-column vh-100">
 
-<div th:replace="fragments/topnav :: topnav(${currentUser},${activePage},'')"></div>
+<div th:replace="~{fragments/topnav :: topnav(${currentUser},${activePage},'')}"></div>
 
-<div th:replace="fragments/metadatamodal :: metadatamodal(${currentUser})"></div>
+<div th:replace="~{fragments/metadatamodal :: metadatamodal(${currentUser})}"></div>
 
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
     <div class="row flex-grow-sm-1 flex-grow-0">
-        <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})"></div>
+        <div th:replace="~{fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})}"></div>
         <main role="main" class="col overflow-auto h-100">
 
-            <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},${counts},${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
+            <div th:replace="~{fragments/content :: content(${message},${activePage},${authority},${parameter},${counts},${faceRecogServicesAvailable},${objectRecogEnabled})}" class="col-sm p-3 min-vh-100"></div>
 
 <!--            <h1>Slideshow</h1>-->
             <th:block th:if="${not #lists.isEmpty(metadataList)}"><button class="btn btn-secondary mt-3" type="button" id="playSlideshow">Play Slideshow</button></th:block>
@@ -45,11 +45,11 @@
                                     </span>
                                 </th:block>
 
-                                <div th:replace="fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight},${metadata.expectedExtension},false)"></div>
+                                <div th:replace="~{fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight},${metadata.expectedExtension},false)}"></div>
 
-                                <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, null, null, null, null)"></div>
+                                <div th:replace="~{fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, null, null, null, null)}"></div>
 
-                                <div th:replace="fragments/centeredoverlay :: centeredoverlay(${metadata},${activePage},'shashin.openGallery',${iterStat.index})"></div>
+                                <div th:replace="~{fragments/centeredoverlay :: centeredoverlay(${metadata},${activePage},'shashin.openGallery',${iterStat.index})}"></div>
                             </div>
 
                             <span th:id="'slideshow'+${metadata.id}" style="width:0;height:0;padding:0"></span>
@@ -79,7 +79,7 @@
                 <i class="bi-arrow-up-circle"></i>
             </button>
 
-            <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>
+            <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})}"></div>
         </main>
     </div>
 </div>

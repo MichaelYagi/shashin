@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="fragments/head :: head('error', 'Error')"></head>
+<head th:insert="~{fragments/head :: head('error', 'Error')}"></head>
 <body>
 
 <div class="container-fluid">
     <div class="row">
         <main role="main" class="col">
-            <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
-            <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>
+            <div th:replace="~{fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})}" class="col-sm p-3 min-vh-100"></div>
+            <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})}"></div>
         </main>
     </div>
 </div>

@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="fragments/head :: head(${activePage},${titleDescriptor})"></head>
+<head th:insert="~{fragments/head :: head(${activePage},${titleDescriptor})}"></head>
 <body class="thumb d-flex flex-column vh-100">
 
-<div th:replace="fragments/topnav :: topnav(${currentUser},${activePage},'')"></div>
+<div th:replace="~{fragments/topnav :: topnav(${currentUser},${activePage},'')}"></div>
 
-<!--<div th:replace="fragments/infomodal :: infomodal(${currentUser})"></div>-->
+<!--<div th:replace="~{fragments/infomodal :: infomodal(${currentUser})}"></div>-->
 
-<div th:replace="fragments/metadatamodal :: metadatamodal(${currentUser})"></div>
+<div th:replace="~{fragments/metadatamodal :: metadatamodal(${currentUser})}"></div>
 
-<div th:replace="fragments/infosidebar :: infosidebar(${currentUser})"></div>
+<div th:replace="~{fragments/infosidebar :: infosidebar(${currentUser})}"></div>
 
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
     <div class="row flex-grow-sm-1 flex-grow-0">
-        <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})"></div>
+        <div th:replace="~{fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})}"></div>
         <main role="main" class="col overflow-auto h-100">
-            <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
+            <div th:replace="~{fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})}" class="col-sm p-3 min-vh-100"></div>
 
             <div id="trashMessage"></div>
             <div id="infinite-scroll-gallery">
@@ -32,13 +32,13 @@
 
                                 <img loading="lazy" th:data-smallthumb="${#uris.escapePath(metadata.thumbnailUrlSmall)}" th:data-xsmallthumb="${metadata.thumbnailUrlExtraSmall==null?'':#uris.escapePath(metadata.thumbnailUrlExtraSmall)}" th:src="${#uris.escapePath(metadata.thumbnailUrlSmall)}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" th:height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
 
-                                <div th:replace="fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight},${metadata.expectedExtension},false)"></div>
+                                <div th:replace="~{fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight},${metadata.expectedExtension},false)}"></div>
 
-                                <div th:replace="fragments/topleftoverlay :: topleftoverlay(${metadata.id})"></div>
+                                <div th:replace="~{fragments/topleftoverlay :: topleftoverlay(${metadata.id})}"></div>
 
-                                <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, null, null, null, null)"></div>
+                                <div th:replace="~{fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, null, null, null, null)}"></div>
 
-                                <div th:replace="fragments/centeredoverlay :: centeredoverlay(${metadata},${activePage},'shashin.openGallery',${iterStat.index})"></div>
+                                <div th:replace="~{fragments/centeredoverlay :: centeredoverlay(${metadata},${activePage},'shashin.openGallery',${iterStat.index})}"></div>
                             </div>
 
                             <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
@@ -74,7 +74,7 @@
             </button>
 
             <div id="spinner" class="spinner-border justify-content-center align-items-center" role="status" style="display: none"></div>
-            <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>
+            <div id="footer" th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})}"></div>
         </main>
     </div>
 </div>

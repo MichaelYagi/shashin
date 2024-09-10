@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="fragments/head :: head(${activePage},${titleDescriptor})"></head>
+<head th:insert="~{fragments/head :: head(${activePage},${titleDescriptor})}"></head>
 <body>
 
-<div th:replace="fragments/topnav :: topnav(${currentUser},${activePage},'')"></div>
+<div th:replace="~{fragments/topnav :: topnav(${currentUser},${activePage},'')}"></div>
 
 <div class="container-fluid">
     <div class="row">
-        <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})"></div>
+        <div th:replace="~{fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})}"></div>
         <main role="main" class="col">
 
             <!--            <a data-bs-toggle="offcanvas" data-bs-placement="bottom" href="#offcanvasExample" aria-controls="offcanvasExample">-->
@@ -106,8 +106,8 @@
                 });
             </script>
 
-            <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
-            <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>
+            <div th:replace="~{fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})}" class="col-sm p-3 min-vh-100"></div>
+            <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})}"></div>
         </main>
     </div>
 </div>
