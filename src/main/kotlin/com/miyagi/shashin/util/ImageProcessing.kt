@@ -21,7 +21,6 @@ import com.miyagi.shashin.repository.*
 import com.twelvemonkeys.image.ConvolveWithEdgeOp
 import net.coobird.thumbnailator.Thumbnails
 import net.coobird.thumbnailator.geometry.Positions
-import org.bytedeco.javacv.FFmpegFrameGrabber
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
