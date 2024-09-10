@@ -1,8 +1,6 @@
 package com.miyagi.shashin.unit
 
-import ai.djl.modality.Classifications
 import ai.djl.modality.cv.ImageFactory
-import ai.djl.repository.zoo.ModelZoo
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.component.DjlFaceRecognizer
 import com.miyagi.shashin.e2e.BaseSeleniumTests
@@ -14,7 +12,6 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.ActiveProfiles
 import java.io.File
-import java.net.URL
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
@@ -38,6 +35,7 @@ class VideoImageTest {
         }
 
         Assertions.assertTrue(ssImageExists)
+        logger.log(Level.INFO, "processScreenshotTest passed")
     }
 
     @Test
@@ -54,6 +52,7 @@ class VideoImageTest {
         }
 
         Assertions.assertTrue(gifExists)
+        logger.log(Level.INFO, "processGifTest passed")
     }
 
     @Test
@@ -84,7 +83,7 @@ class VideoImageTest {
         )
         Assertions.assertTrue(objectMap2.isNotEmpty())
         Assertions.assertTrue(objectMap2.size != objectMap.size)
-        this.logger.log(Level.INFO, "Objects with confidence map: ${objectMap2.map { "${it.key}: ${it.value}" }.joinToString(", ")}")
+        this.logger.log(Level.INFO, "processObjectRecognitionTest - Objects with confidence map: ${objectMap2.map { "${it.key}: ${it.value}" }.joinToString(", ")}")
     }
 
     @Test
@@ -102,6 +101,7 @@ class VideoImageTest {
 
         val predict = djlFaceRecognizer.predict(img)
         Assertions.assertTrue(predict != null && predict.isNotEmpty())
+        logger.log(Level.INFO, "processDetectPredictTest passed")
     }
 
     @Test
@@ -149,5 +149,6 @@ class VideoImageTest {
             this.logger.log(Level.INFO, "Iteration $index: s - $similarity")
             index++
         }
+        logger.log(Level.INFO, "processFaceRecognitionTest passed")
     }
 }

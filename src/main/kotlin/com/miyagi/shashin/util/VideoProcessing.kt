@@ -2,6 +2,7 @@ package com.miyagi.shashin.util
 
 import net.coobird.thumbnailator.Thumbnails
 import net.coobird.thumbnailator.geometry.Positions
+import org.bytedeco.ffmpeg.global.avutil
 import org.bytedeco.javacv.FFmpegFrameGrabber
 import org.bytedeco.javacv.Java2DFrameConverter
 import java.awt.image.BufferedImage
@@ -15,6 +16,11 @@ import javax.imageio.stream.ImageOutputStream
 import kotlin.text.filter
 
 class VideoProcessing(private val videoFile: File) {
+
+    init {
+        // No log output
+        avutil.av_log_set_level(avutil.AV_LOG_QUIET)
+    }
 
     private val frameGrabber: FFmpegFrameGrabber = FFmpegFrameGrabber(videoFile.path)
 
