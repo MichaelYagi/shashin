@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
+import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
@@ -16,7 +17,6 @@ import org.junit.jupiter.api.Test
 import org.openqa.selenium.By
 import org.openqa.selenium.Keys
 import org.openqa.selenium.WebElement
-import org.openqa.selenium.interactions.Actions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,13 +31,11 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import org.springframework.ui.set
 import org.springframework.web.context.WebApplicationContext
 import org.springframework.web.reactive.function.client.WebClient
 import java.io.File
 import java.net.URL
 import java.time.Duration
-import java.time.ZoneId
 import java.util.logging.Level
 
 // API tests that require image scans
@@ -57,6 +55,9 @@ class APITests: BaseSeleniumTests() {
 
     @Autowired
     private val userRepository: UserRepository? = null
+
+    @Autowired
+    private val metadataRepository: MetadataRepository? = null
 
     private var bcrypt = BCryptPasswordEncoder()
 
@@ -204,13 +205,12 @@ class APITests: BaseSeleniumTests() {
     fun metadataKeywordAPITest() {
         val webClient = WebClient.create("http://localhost:$port/")
 
-        val jsonString: String?
+        var jsonString: String?
         var jsonNode: JsonNode? = null
         val mapper = ObjectMapper()
 
-        // Get metadata
-        val response = webClient.get()
-            .uri("/api/v1/keywords")
+        var response = webClient.get()
+            .uri("/api/v1/recent")
             .header("x-api-key", "00000000-00000000-00000000-00000000")
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
             .retrieve()
@@ -223,7 +223,34 @@ class APITests: BaseSeleniumTests() {
             jsonNode = mapper.readTree(jsonString)
         }
 
-        Assertions.assertTrue(jsonNode!!.get("keywords").get(0).get("keyword").textValue() != "")
+        Assertions.assertTrue(jsonNode!!.has("metadataList"))
+        Assertions.assertTrue(jsonNode.get("metadataList").get(0).get("id").textValue() != "")
+        val metadataId = jsonNode.get("metadataList").get(0).get("id").textValue()
+        val metadataObj = metadataRepository?.findById(metadataId)
+        var metadata: com.miyagi.shashin.model.Metadata = com.miyagi.shashin.model.Metadata()
+        if (metadataObj != null && metadataObj.isPresent) {
+            metadata = metadataObj.get()
+            metadata.setLat("1.1111")
+            metadata.setLng("1.1111")
+            metadataRepository.save(metadata)
+        }
+
+        // Get metadata
+        response = webClient.get()
+            .uri("/api/v1/mapdata/keywords")
+            .header("x-api-key", "00000000-00000000-00000000-00000000")
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            .retrieve()
+            .bodyToMono(String::class.java)
+            .block()
+
+        jsonString = response
+
+        if (!jsonString.isNullOrBlank()) {
+            jsonNode = mapper.readTree(jsonString)
+        }
+
+        Assertions.assertTrue(jsonNode.get("keywordMap").get(metadataId).textValue() != "")
     }
 
     companion object {
@@ -232,7 +259,6 @@ class APITests: BaseSeleniumTests() {
         private val settingsRepository: SettingsRepository? = null
 
         private fun saveSettings() {
-
             var settings = settingsRepository?.findFirstByOrderByIdAsc()
             if (settings == null) {
                 settings = Settings()
@@ -258,13 +284,13 @@ class APITests: BaseSeleniumTests() {
 
         @JvmStatic
         @BeforeAll
-        fun beforeAll(): Unit {
+        fun beforeAll() {
             saveSettings()
         }
 
         @JvmStatic
         @AfterAll
-        fun afterAll(): Unit {
+        fun afterAll() {
             settingsRepository?.deleteAll()
         }
     }
