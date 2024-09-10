@@ -60,25 +60,6 @@
         </profile>
     </profiles>
 
-<!--    <repositories>-->
-<!--        <repository>-->
-<!--            <id>djl.ai</id>-->
-<!--            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>-->
-<!--        </repository>-->
-<!--    </repositories>-->
-
-<!--    <dependencyManagement>-->
-<!--        <dependencies>-->
-<!--            <dependency>-->
-<!--                <groupId>ai.djl</groupId>-->
-<!--                <artifactId>bom</artifactId>-->
-<!--                <version>${djl.version}</version>-->
-<!--                <type>pom</type>-->
-<!--                <scope>import</scope>-->
-<!--            </dependency>-->
-<!--        </dependencies>-->
-<!--    </dependencyManagement>-->
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
