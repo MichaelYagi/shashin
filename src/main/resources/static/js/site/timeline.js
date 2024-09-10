@@ -129,6 +129,10 @@
             firsthovered = true;
             timelineSettings.isScrolling = false;
 
+            if ($(".attachMetadataPhotos").last().text() !== "EOL" && $("#spinner_bottom").css("display") === "block") {
+                timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
+            }
+
             // Prevent getting stuck scrolling up
             if ($("#container").position().top === $("#infinite-scroll-gallery").position().top) {
                 setTimeout(() => {
@@ -235,6 +239,10 @@
 
             lastDate = e.timeStamp;
             lastOffset = $(e.target).scrollTop();
+
+            if ($(".attachMetadataPhotos").last().text() !== "EOL" && $("#spinner_bottom").css("display") === "block") {
+                timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
+            }
 
             if (timelineSettings.isScrolling === true || showSlider === true) {
                 $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
@@ -775,12 +783,7 @@
             if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
                 let startIndex = timelineSettings.timelineDatesHash[firstVisibleId];
                 let timelineObjArr = timelineDates.slice().reverse();
-                // let firstVisibleArr = firstVisibleId.split("-");
-                // timelineObjArr.map(function(item, i) {
-                //     if (item.year === parseInt(firstVisibleArr[0]) && item.month === parseInt(firstVisibleArr[1]) && item.day === parseInt(firstVisibleArr[2])) {
-                //         startIndex = i;
-                //     }
-                // })
+
                 for (let index = startIndex; index < timelineObjArr.length; index++) {
                     const timelineDateObj = timelineObjArr[index];
                     ignoreTimelineDate = timelineDateObj.year + "-" + timelineDateObj.month + "-" + timelineDateObj.day;
@@ -889,27 +892,6 @@
                 if (currentDate === firstDate) {
                     timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
                 }
-
-                // let startingIndexTop = 0;
-                // let startingIndexBottom = 0;
-                // let firstVisibleDateArr = $(firstVisibleContainer).attr("id").split("-");
-                // let lastVisibleDateArr = $(lastVisibleContainer).attr("id").split("-");
-                //
-                // for (let i = 0; i < timelineDateArr.length; i ++) {
-                //     if (timelineDateArr[i].year === parseInt(firstVisibleDateArr[0]) && timelineDateArr[i].month === parseInt(firstVisibleDateArr[1]) && timelineDateArr[i].day === parseInt(firstVisibleDateArr[2])) {
-                //         startingIndexTop = i;
-                //         if (reversed === true) {
-                //             break;
-                //         }
-                //     }
-                //
-                //     if (timelineDates[i].year === parseInt(lastVisibleDateArr[0]) && timelineDates[i].month === parseInt(lastVisibleDateArr[1]) && timelineDates[i].day === parseInt(lastVisibleDateArr[2])) {
-                //         startingIndexBottom = i;
-                //         if (reversed === false) {
-                //             break;
-                //         }
-                //     }
-                // }
 
                 let startingIndexTop = timelineSettings.timelineDatesHash[$(firstVisibleContainer).attr("id")];
                 let startingIndexBottom = timelineSettings.timelineDatesHash[$(lastVisibleContainer).attr("id")];
