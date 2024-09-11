@@ -228,6 +228,7 @@ class FavoritesController: BaseController() {
                 if (favoriteObj != null) {
                     val favoriteId = favoriteObj.getId()
                     favorite.setId(favoriteId)
+                    favorite.setModifiedAt(getCurrentTimestamp())
 
                     if (isFavorite) {
                         favoriteRepository.save(favorite)
@@ -243,6 +244,7 @@ class FavoritesController: BaseController() {
                 val admins = userRepository.findAllAdmins()
 
                 val metadata = metadataRepository.findById(metadataId)
+
                 val notificationObjList = mutableListOf<Notification>()
                 val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                 sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
@@ -264,6 +266,9 @@ class FavoritesController: BaseController() {
                     }
                 }
                 notificationRepository.saveAll(notificationObjList)
+
+                metadata.get().setModifiedAt(getCurrentTimestamp())
+                metadataRepository.save(metadata.get())
 
                 resp["count"] = favoriteRepository.countAllByMetadataId(metadataId)
                 resp["msg"] = "Saved!"
