@@ -131,36 +131,41 @@
 
             if ($(".attachMetadataPhotos").last().text() !== "EOL" && $("#spinner_bottom").css("display") === "block") {
                 timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
+
+                setTimeout(function () {
+                    if ($(".attachMetadataPhotos").last().text() !== "EOL" && $("#spinner_bottom").css("display") === "block") {
+                        timelineSettings.enableScrollSpy = true;
+                        renderViewport();
+
+                    }
+                }, 1000);
             }
+
+            renderViewport();
 
             // Prevent getting stuck scrolling up
             if ($("#container").position().top === $("#infinite-scroll-gallery").position().top ||
                 $("#container").position().top === ($("#infinite-scroll-gallery").position().top-1) ||
                 $("#container").position().top === ($("#infinite-scroll-gallery").position().top+1)
             ) {
-                timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
+                // timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
                 // setTimeout(() => {
                 scrollByN(1);
                 // }, 500);
-            }
 
-            if (timelineSettings.enableScrollSpy === true) {
-                topScroll = false;
-                const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
-                timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
-                timelineSettings.isScrolling = false;
+                timelineSettings.enableScrollSpy = true;
+                renderViewport();
 
-                // Only show overlays when scrolling stopped for current hovered image
-                let hovered = false;
-                $(".photo-thumbnail-image").mousemove(function () {
-                    timelineSettings.rescanElements();
-                    if (hovered === false) {
-                        const attrId = $(this).attr("id");
-                        const metadataId = attrId.substring(5, attrId.length);
-                        shashin.imageHover(this, metadataId);
+                setTimeout(function () {
+                    if ($("#container").position().top === $("#infinite-scroll-gallery").position().top ||
+                        $("#container").position().top === ($("#infinite-scroll-gallery").position().top-1) ||
+                        $("#container").position().top === ($("#infinite-scroll-gallery").position().top+1)
+                    ) {
+                        timelineSettings.enableScrollSpy = true;
+                        renderViewport();
+
                     }
-                    hovered = true;
-                });
+                }, 1000);
             }
 
             if (Util.isMobile() === false && $("#dateSliderWrapper:not(:hover)").length > 0) {
@@ -194,6 +199,27 @@
                 });
             }
         });
+
+        function renderViewport() {
+            if (timelineSettings.enableScrollSpy === true) {
+                topScroll = false;
+                const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
+                timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
+                timelineSettings.isScrolling = false;
+
+                // Only show overlays when scrolling stopped for current hovered image
+                let hovered = false;
+                $(".photo-thumbnail-image").mousemove(function () {
+                    timelineSettings.rescanElements();
+                    if (hovered === false) {
+                        const attrId = $(this).attr("id");
+                        const metadataId = attrId.substring(5, attrId.length);
+                        shashin.imageHover(this, metadataId);
+                    }
+                    hovered = true;
+                });
+            }
+        }
 
         // Scroll event handler
         let lastOffset = $("#container").scrollTop();
