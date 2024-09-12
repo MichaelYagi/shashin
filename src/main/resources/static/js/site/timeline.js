@@ -132,13 +132,13 @@
             if ($(".attachMetadataPhotos").last().text() !== "EOL" && $("#spinner_bottom").css("display") === "block") {
                 timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
 
-                setTimeout(function () {
-                    if ($(".attachMetadataPhotos").last().text() !== "EOL" && $("#spinner_bottom").css("display") === "block") {
-                        timelineSettings.enableScrollSpy = true;
-                        renderViewport();
-                        timelineSettings.enableScrollSpy = false;
-                    }
-                }, 1500);
+                // setTimeout(function () {
+                //     if ($(".attachMetadataPhotos").last().text() !== "EOL" && $("#spinner_bottom").css("display") === "block") {
+                //         timelineSettings.enableScrollSpy = true;
+                //         renderViewport();
+                //         timelineSettings.enableScrollSpy = false;
+                //     }
+                // }, 1500);
             }
 
             renderViewport();
