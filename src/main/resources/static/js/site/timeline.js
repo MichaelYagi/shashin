@@ -136,7 +136,7 @@
                     if ($(".attachMetadataPhotos").last().text() !== "EOL" && $("#spinner_bottom").css("display") === "block") {
                         timelineSettings.enableScrollSpy = true;
                         renderViewport();
-
+                        scrollByN(-1);
                     }
                 }, 1000);
             }
