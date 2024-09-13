@@ -374,12 +374,12 @@ class MediaServiceController {
     @RequestMapping(value = ["/api/v1/random/image"], method = [(RequestMethod.GET)], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Throws(java.io.IOException::class)
-    fun getRandomImage(model: Model, response: HttpServletResponse?, request: HttpServletRequest?): String {
+    fun getRandomImage(model: Model, request: HttpServletRequest?): String {
         val mapper = ObjectMapper()
         val response = mutableMapOf<String, Any?>()
         val currentUser = model.getAttribute("currentUser") as User?
-        var randomMetadata: Metadata? = null
-        response["metadataId"] = ""
+        val randomMetadata: Metadata?
+        response["metadataId"] = Metadata()
 
         if (currentUser != null) {
             randomMetadata = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
@@ -389,7 +389,7 @@ class MediaServiceController {
             })
 
             if (randomMetadata != null && randomMetadata.getId() != "") {
-                response["metadataId"] = randomMetadata
+                response["metadata"] = randomMetadata
                 logger.log(Level.INFO, "Random image metadata ID ${randomMetadata.getId()}")
             }
         }
@@ -401,12 +401,12 @@ class MediaServiceController {
     @RequestMapping(value = ["/api/v1/random/video"], method = [(RequestMethod.GET)], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Throws(java.io.IOException::class)
-    fun getRandomVideo(model: Model, response: HttpServletResponse?, request: HttpServletRequest?): String {
+    fun getRandomVideo(model: Model, request: HttpServletRequest?): String {
         val mapper = ObjectMapper()
         val response = mutableMapOf<String, Any?>()
         val currentUser = model.getAttribute("currentUser") as User?
         var randomMetadata: Metadata? = null
-        response["metadataId"] = ""
+        response["metadataId"] = Metadata()
 
         if (currentUser != null) {
             randomMetadata = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
@@ -416,7 +416,7 @@ class MediaServiceController {
             })
 
             if (randomMetadata != null && randomMetadata.getId() != "") {
-                response["metadataId"] = randomMetadata
+                response["metadata"] = randomMetadata
                 logger.log(Level.INFO, "Random image metadata ID ${randomMetadata.getId()}")
             }
         }
