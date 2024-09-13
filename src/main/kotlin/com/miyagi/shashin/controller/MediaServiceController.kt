@@ -376,25 +376,24 @@ class MediaServiceController {
     @Throws(java.io.IOException::class)
     fun getRandomImage(model: Model, request: HttpServletRequest?): String {
         val mapper = ObjectMapper()
-        val response = mutableMapOf<String, Any?>()
+        val resp = mutableMapOf<String, Any?>()
         val currentUser = model.getAttribute("currentUser") as User?
-        val randomMetadata: Metadata?
-        response["metadataId"] = Metadata()
+        resp["metadata"] = Metadata()
 
         if (currentUser != null) {
-            randomMetadata = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+            val randomMetadata = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
                 metadataRepository.findRandomAlbumMedia("image")
             } else {
                 albumRepository.findRandomAlbumMediaByUser(currentUser.getId(), "image")
             })
 
             if (randomMetadata != null && randomMetadata.getId() != "") {
-                response["metadata"] = randomMetadata
+                resp["metadata"] = randomMetadata
                 logger.log(Level.INFO, "Random image metadata ID ${randomMetadata.getId()}")
             }
         }
 
-        return mapper.writeValueAsString(response)
+        return mapper.writeValueAsString(resp)
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
@@ -403,25 +402,24 @@ class MediaServiceController {
     @Throws(java.io.IOException::class)
     fun getRandomVideo(model: Model, request: HttpServletRequest?): String {
         val mapper = ObjectMapper()
-        val response = mutableMapOf<String, Any?>()
+        val resp = mutableMapOf<String, Any?>()
         val currentUser = model.getAttribute("currentUser") as User?
-        var randomMetadata: Metadata? = null
-        response["metadataId"] = Metadata()
+        resp["metadata"] = Metadata()
 
         if (currentUser != null) {
-            randomMetadata = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+            val randomMetadata = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
                 metadataRepository.findRandomAlbumMedia("video")
             } else {
                 albumRepository.findRandomAlbumMediaByUser(currentUser.getId(), "video")
             })
 
             if (randomMetadata != null && randomMetadata.getId() != "") {
-                response["metadata"] = randomMetadata
+                resp["metadata"] = randomMetadata
                 logger.log(Level.INFO, "Random image metadata ID ${randomMetadata.getId()}")
             }
         }
 
-        return mapper.writeValueAsString(response)
+        return mapper.writeValueAsString(resp)
     }
 
     @RequestMapping(value = ["/api/v1/image/{metadataId}","/api/v1/image/{metadataId}.jpg"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
