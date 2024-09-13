@@ -380,7 +380,7 @@ class MediaServiceController {
 
         if (currentUser != null) {
             randomMetadataId = if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
-                albumRepository.findRandomAlbumMedia("image")
+                metadataRepository.findRandomAlbumMedia("image")
             } else {
                 albumRepository.findRandomAlbumMediaByUser(currentUser.getId(), "image")
             }
@@ -405,7 +405,7 @@ class MediaServiceController {
 
         if (currentUser != null) {
             randomMetadataId = if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
-                albumRepository.findRandomAlbumMedia("video")
+                metadataRepository.findRandomAlbumMedia("video")
             } else {
                 albumRepository.findRandomAlbumMediaByUser(currentUser.getId(), "video")
             }
