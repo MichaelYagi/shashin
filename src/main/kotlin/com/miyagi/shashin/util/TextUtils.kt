@@ -858,15 +858,20 @@ class TextUtils {
                 return "0.0.0.0"
             }
 
-            for (header in IP_HEADER_CANDIDATES) {
-                val ipList = request.getHeader(header)
-                if (ipList != null && ipList.isNotEmpty() && !"unknown".equals(ipList, ignoreCase = true)) {
-                    val ip = ipList.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
-                    return ip
+            try {
+                for (header in IP_HEADER_CANDIDATES) {
+                    val ipList = request.getHeader(header)
+                    if (ipList != null && ipList.isNotEmpty() && !"unknown".equals(ipList, ignoreCase = true)) {
+                        val ip = ipList.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
+                        return ip
+                    }
                 }
-            }
 
-            return request.remoteAddr
+                return request.remoteAddr
+            } catch (e: Exception) {
+                logger.log(Level.WARNING, "Could not get IP: " + e.message)
+                return "0.0.0.0"
+            }
         }
 
         fun getServerUptime(): String {

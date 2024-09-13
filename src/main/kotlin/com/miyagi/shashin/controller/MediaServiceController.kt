@@ -3,6 +3,7 @@ package com.miyagi.shashin.controller
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.User
+import com.miyagi.shashin.repository.AlbumRepository
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.UserRepository
@@ -36,7 +37,9 @@ import java.util.logging.Logger
 import jakarta.activation.URLDataSource
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
+import kotlin.text.split
 
 
 @Controller
@@ -44,6 +47,9 @@ class MediaServiceController {
 
     @Autowired
     private lateinit var metadataRepository: MetadataRepository
+
+    @Autowired
+    private lateinit var albumRepository: AlbumRepository
 
     @Autowired
     private lateinit var userRepository: UserRepository
@@ -61,10 +67,17 @@ class MediaServiceController {
     @RequestMapping(value = ["/api/v1/video/{metadataId}"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
     @ResponseBody
     @Throws(java.io.IOException::class)
-    fun getVideo(model: Model, response: HttpServletResponse?, request: HttpServletRequest?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
-        val metadataObj = metadataRepository.findById(metadataId)
+    fun getVideo(response: HttpServletResponse?, request: HttpServletRequest?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
+        return processVideo(metadataId, request, response)
+    }
 
-        if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("video")!!) {
+    private fun processVideo(metadataId: String?, request: HttpServletRequest?, response: HttpServletResponse?): ResponseEntity<FileSystemResource> {
+        var metadataObj: Optional<Metadata>? = null
+        if (metadataId != null) {
+            metadataObj = metadataRepository.findById(metadataId) as Optional<Metadata>?
+        }
+
+        if (metadataObj != null && metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("video")!!) {
             var path = metadataObj.get().getPath()!!
             val metadata = metadataObj.get()
 
@@ -204,7 +217,7 @@ class MediaServiceController {
                         notificationObj.setModifiedAt(getCurrentTimestamp())
                         notificationObj.setRead(false)
                         val message =
-                            "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to play invalid video with metadata ID $metadataId at ${
+                            "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to play invalid video at ${
                                 sdtf.format(Date())
                             }"
                         notificationObj.setMessage(message)
@@ -293,6 +306,7 @@ class MediaServiceController {
                 val filename = resource.filename.replace(validFileNameRegex, "_")
                 response?.setHeader("Content-Disposition", "attachment; filename=$filename")
             }
+
             headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
             return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
         } catch (e: Exception) {
@@ -355,6 +369,50 @@ class MediaServiceController {
         return module
     }
 
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
+    @RequestMapping(value = ["/api/v1/random/image"], method = [(RequestMethod.GET)])
+    @ResponseBody
+    @Throws(java.io.IOException::class)
+    fun getRandomImage(model: Model, response: HttpServletResponse?, request: HttpServletRequest?): ResponseEntity<FileSystemResource> {
+
+        val currentUser = model.getAttribute("currentUser") as User?
+        var randomMetadataId: String? = null
+
+        if (currentUser != null) {
+            randomMetadataId = if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+                albumRepository.findRandomAlbumMedia("image")
+            } else {
+                albumRepository.findRandomAlbumMediaByUser(currentUser.getId(), "image")
+            }
+
+            if (randomMetadataId != null && randomMetadataId.isNotEmpty()) {
+                return getImageFactory(request, response, randomMetadataId)
+            }
+        }
+
+        return getImageFactory(request, response, randomMetadataId.toString())
+    }
+
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
+    @RequestMapping(value = ["/api/v1/random/video"], method = [(RequestMethod.GET)])
+    @ResponseBody
+    @Throws(java.io.IOException::class)
+    fun getRandomVideo(model: Model, response: HttpServletResponse?, request: HttpServletRequest?): ResponseEntity<FileSystemResource> {
+
+        val currentUser = model.getAttribute("currentUser") as User?
+        var randomMetadataId: String? = null
+
+        if (currentUser != null) {
+            randomMetadataId = if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+                albumRepository.findRandomAlbumMedia("video")
+            } else {
+                albumRepository.findRandomAlbumMediaByUser(currentUser.getId(), "video")
+            }
+        }
+
+        return processVideo(randomMetadataId, request, response)
+    }
+
     @RequestMapping(value = ["/api/v1/image/{metadataId}","/api/v1/image/{metadataId}.jpg"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
     @Throws(java.io.IOException::class)
@@ -369,10 +427,13 @@ class MediaServiceController {
         return getImageFactory(request, response, metadataId, true)
     }
 
-    private fun getImageFactory(request: HttpServletRequest?, response: HttpServletResponse?, metadataId: String, attachFile: Boolean = false): ResponseEntity<FileSystemResource> {
-        val metadataObj = metadataRepository.findById(metadataId)
+    private fun getImageFactory(request: HttpServletRequest?, response: HttpServletResponse?, metadataId: String?, attachFile: Boolean = false): ResponseEntity<FileSystemResource> {
+        var metadataObj: Optional<Metadata>? = null
+        if (metadataId != null) {
+            metadataObj = metadataRepository.findById(metadataId) as Optional<Metadata>?
+        }
 
-        if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("image")!!) {
+        if (metadataObj != null && metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("image")!!) {
             // Updated viewed date
             val metadata = metadataObj.get()
             metadata.setLastAccessedAt(getCurrentTimestamp())
