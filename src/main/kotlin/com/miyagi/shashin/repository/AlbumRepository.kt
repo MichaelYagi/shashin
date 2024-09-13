@@ -25,5 +25,5 @@ interface AlbumRepository : CrudRepository<Album?, Int?> {
     @Query("SELECT DISTINCT u.id as userId, u.username, a.id as albumId, CASE WHEN (ua.user_id IS NULL OR a.share_url IS NULL) THEN FALSE ELSE TRUE END AS isShared FROM user u, album a LEFT JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id WHERE u.id = :userId ORDER BY RANDOM()", nativeQuery = true)
     fun findRandomAlbumsByUser(@Param("userId") userId: Int): MutableIterable<UserSharedAlbums>
     @Query("SELECT DISTINCT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
-    fun findRandomAlbumMediaByUser(@Param("userId") userId: Int, @Param("type") type: String): String?
+    fun findRandomAlbumMediaByUser(@Param("userId") userId: Int, @Param("type") type: String): Metadata?
 }
