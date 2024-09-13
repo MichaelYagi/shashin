@@ -384,10 +384,10 @@ class MediaServiceController {
             val randomMetadata = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
                 metadataRepository.findRandomAlbumMedia("image")
             } else {
-                albumRepository.findRandomAlbumMediaByUser(currentUser.getId(), "image")
+                metadataRepository.findRandomAlbumMediaByUser(currentUser.getId(), "image")
             })
 
-            if (randomMetadata != null && randomMetadata.getId() != "") {
+            if (randomMetadata != null) {
                 resp["metadata"] = randomMetadata
                 logger.log(Level.INFO, "Random image metadata ID ${randomMetadata.getId()}")
             }
@@ -410,10 +410,10 @@ class MediaServiceController {
             val randomMetadata = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
                 metadataRepository.findRandomAlbumMedia("video")
             } else {
-                albumRepository.findRandomAlbumMediaByUser(currentUser.getId(), "video")
+                metadataRepository.findRandomAlbumMediaByUser(currentUser.getId(), "video")
             })
 
-            if (randomMetadata != null && randomMetadata.getId() != "") {
+            if (randomMetadata != null) {
                 resp["metadata"] = randomMetadata
                 logger.log(Level.INFO, "Random image metadata ID ${randomMetadata.getId()}")
             }

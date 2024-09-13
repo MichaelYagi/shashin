@@ -177,4 +177,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
 
    @Query("SELECT m.* FROM metadata m WHERE m.type LIKE %:type% ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMedia(@Param("type") type: String): Metadata?
+
+   @Query("SELECT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   fun findRandomAlbumMediaByUser(@Param("userId") userId: Int, @Param("type") type: String): Metadata?
 }
