@@ -386,7 +386,7 @@ class MediaServiceController {
                 metadataRepository.findRandomAlbumMedia("image")
             } else {
                 albumRepository.findRandomAlbumMediaByUser(currentUser.getId(), "image")
-            }) as Metadata?
+            })
 
             if (randomMetadata != null && randomMetadata.getId() != "") {
                 response["metadataId"] = randomMetadata
@@ -413,7 +413,7 @@ class MediaServiceController {
                 metadataRepository.findRandomAlbumMedia("video")
             } else {
                 albumRepository.findRandomAlbumMediaByUser(currentUser.getId(), "video")
-            }) as Metadata?
+            })
 
             if (randomMetadata != null && randomMetadata.getId() != "") {
                 response["metadataId"] = randomMetadata
