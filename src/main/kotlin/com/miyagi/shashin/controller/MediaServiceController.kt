@@ -386,6 +386,7 @@ class MediaServiceController {
             }
 
             if (randomMetadataId != null && randomMetadataId.isNotEmpty()) {
+                logger.log(Level.INFO, "Random image metadata ID $randomMetadataId")
                 return getImageFactory(request, response, randomMetadataId)
             }
         }
@@ -408,6 +409,8 @@ class MediaServiceController {
             } else {
                 albumRepository.findRandomAlbumMediaByUser(currentUser.getId(), "video")
             }
+
+            logger.log(Level.INFO, "Random video metadata ID $randomMetadataId")
         }
 
         return processVideo(randomMetadataId, request, response)
