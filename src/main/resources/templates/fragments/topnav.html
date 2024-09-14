@@ -444,19 +444,34 @@
                 }
             }
 
+            $("body").on("dblclick", function( e ) {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+
+                $("#slideshowGallery").css({
+                    "display": "none"
+                });
+
+                if (topnavIntervalId) {
+                    clearInterval(topnavIntervalId);
+                    topnavIntervalId = 0;
+                }
+            });
+
             $("body").on("keyup", function( e ) {
                 if (e.code === "Escape" || e.keyCode === 27) {
                     if (document.exitFullscreen) {
                         document.exitFullscreen();
                     }
 
+                    $("#slideshowGallery").css({
+                        "display": "none"
+                    });
+
                     if (topnavIntervalId) {
                         clearInterval(topnavIntervalId);
                         topnavIntervalId = 0;
-
-                        $("#slideshowGallery").css({
-                            "display": "none"
-                        });
                     }
                 }
 
