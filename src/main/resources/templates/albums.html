@@ -21,18 +21,18 @@
             <th:block th:if="${not #lists.isEmpty(albumsList)}">
                 <div class="row image-group-padding">
 
-                    <th:block th:if="${totalImageCount > 0}">
-                        <div class="card" style="width:235px;padding-top:10px;margin-right:-1px;margin-bottom:-1px;">
-                            <a href="/slideshow" class="text-center" style="text-decoration: none !important;color: #777777;width: 209px;height: 209px;" id="albumslideshow">
-                                <span class="bi-collection-play" style="font-size: 150px;" title="View Album Slideshow"></span>
-                            </a>
-                            <div class="card-body text-center">
-                                <strong id="albumNameslideshow">Slideshow</strong><br>
-                            </div>
-                        </div>
+<!--                    <th:block th:if="${totalImageCount > 0}">-->
+<!--                        <div class="card" style="width:235px;padding-top:10px;margin-right:-1px;margin-bottom:-1px;">-->
+<!--                            <a href="/slideshow" class="text-center" style="text-decoration: none !important;color: #777777;width: 209px;height: 209px;" id="albumslideshow">-->
+<!--                                <span class="bi-collection-play" style="font-size: 150px;" title="View Album Slideshow"></span>-->
+<!--                            </a>-->
+<!--                            <div class="card-body text-center">-->
+<!--                                <strong id="albumNameslideshow">Slideshow</strong><br>-->
+<!--                            </div>-->
+<!--                        </div>-->
 
-                        <span class="appendAlbumsPhotos" style="width:0;height:0;padding:0"></span>
-                    </th:block>
+<!--                        <span class="appendAlbumsPhotos" style="width:0;height:0;padding:0"></span>-->
+<!--                    </th:block>-->
 
                     <th:block th:each="album, iterStat: ${albumsList}">
                         <div class="card" style="width:235px;padding-top:10px;margin-right:-1px;margin-bottom:-1px;">
