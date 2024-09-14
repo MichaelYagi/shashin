@@ -260,7 +260,7 @@
                 <a th:class="'dropdown-item'+${activePage=='update'?' active':''}" href="/users/update">Change password</a>
                 <a th:class="'dropdown-item'+${activePage=='apikey'?' active':''}" href="/users/apikey">Manage API key</a>
                 <th:block th:if="${hasAlbums}">
-                    <a class="dropdown-item" id="viewAllSlideshow">View slideshow</a>
+                    <a href="#" class="dropdown-item" id="viewAllSlideshow">View slideshow</a>
                 </th:block>
                 <div class="dropdown-item">
                     <div class="form-check form-switch">
@@ -485,6 +485,8 @@
             });
 
             $("#viewAllSlideshow").on("click", function (e) {
+                e.preventDefault();
+                
                 document.body.style.overflow = 'hidden';
 
                 if (!document.fullscreenElement) {
