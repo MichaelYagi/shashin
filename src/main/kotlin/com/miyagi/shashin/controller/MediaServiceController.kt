@@ -75,12 +75,9 @@ class MediaServiceController {
     }
 
     private fun processVideo(metadataId: String?, request: HttpServletRequest?, response: HttpServletResponse?): ResponseEntity<FileSystemResource> {
-        var metadataObj: Optional<Metadata>? = null
-        if (metadataId != null) {
-            metadataObj = metadataRepository.findById(metadataId) as Optional<Metadata>?
-        }
+        var metadataObj = metadataRepository.findById(metadataId!!)
 
-        if (metadataObj != null && metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("video")!!) {
+        if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("video")!!) {
             var path = metadataObj.get().getPath()!!
             val metadata = metadataObj.get()
 
@@ -461,12 +458,9 @@ class MediaServiceController {
     }
 
     private fun getImageFactory(request: HttpServletRequest?, response: HttpServletResponse?, metadataId: String?, attachFile: Boolean = false): ResponseEntity<FileSystemResource> {
-        var metadataObj: Optional<Metadata>? = null
-        if (metadataId != null) {
-            metadataObj = metadataRepository.findById(metadataId) as Optional<Metadata>?
-        }
+        val metadataObj = metadataRepository.findById(metadataId!!)
 
-        if (metadataObj != null && metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("image")!!) {
+        if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("image")!!) {
             // Updated viewed date
             val metadata = metadataObj.get()
             metadata.setLastAccessedAt(getCurrentTimestamp())
