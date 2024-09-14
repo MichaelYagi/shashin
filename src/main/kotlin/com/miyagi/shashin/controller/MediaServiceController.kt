@@ -374,11 +374,11 @@ class MediaServiceController {
     @RequestMapping(value = ["/api/v1/random/image"], method = [(RequestMethod.GET)], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Throws(java.io.IOException::class)
-    fun getRandomImage(model: Model, request: HttpServletRequest?): String {
+    fun getRandomImage(model: Model): String {
         val mapper = ObjectMapper()
         val resp = mutableMapOf<String, Any?>()
         val currentUser = model.getAttribute("currentUser") as User?
-        resp["metadata"] = Metadata()
+        resp["metadata"] = mutableMapOf<String, Any?>()
 
         if (currentUser != null) {
             val randomMetadata = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
@@ -400,11 +400,11 @@ class MediaServiceController {
     @RequestMapping(value = ["/api/v1/random/video"], method = [(RequestMethod.GET)], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Throws(java.io.IOException::class)
-    fun getRandomVideo(model: Model, request: HttpServletRequest?): String {
+    fun getRandomVideo(model: Model): String {
         val mapper = ObjectMapper()
         val resp = mutableMapOf<String, Any?>()
         val currentUser = model.getAttribute("currentUser") as User?
-        resp["metadata"] = Metadata()
+        resp["metadata"] = mutableMapOf<String, Any?>()
 
         if (currentUser != null) {
             val randomMetadata = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
