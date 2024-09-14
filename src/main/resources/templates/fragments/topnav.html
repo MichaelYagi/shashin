@@ -449,6 +449,8 @@
                     document.exitFullscreen();
                 }
 
+                document.body.style.overflow = 'visible';
+
                 $("#slideshowGallery").css({
                     "display": "none"
                 });
@@ -464,6 +466,8 @@
                     if (document.exitFullscreen) {
                         document.exitFullscreen();
                     }
+
+                    document.body.style.overflow = 'visible';
 
                     $("#slideshowGallery").css({
                         "display": "none"
@@ -481,6 +485,8 @@
             });
 
             $("#viewAllSlideshow").on("click", function (e) {
+                document.body.style.overflow = 'hidden';
+
                 if (!document.fullscreenElement) {
                     document.documentElement.requestFullscreen();
                 }
@@ -491,11 +497,13 @@
 
                 getRandomImage();
                 $("#slideshowGallery").css({
-                    "width": "100%",
-                    "height": "100%",
+                    "width": "101%",
+                    "height": "101%",
                     "display": "block",
                     "z-index": 9999,
-                    "background-color": "black"
+                    "background-color": "black",
+                    "line-height": 1,
+                    "overflow": "hidden"
                 });
             });
 
