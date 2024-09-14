@@ -200,6 +200,7 @@ class MultiSecurityConfig {
             "/albums",
             "/favorites",
             "/slideshow",
+            "/random/image",
             "/map/**",
             "/search/**",
             "/articles/endpoints"

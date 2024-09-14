@@ -57,6 +57,10 @@
     </div>
 </div>
 
+<div id="slideshowGallery" class="imgbox" style="display: none;">
+    <img class="center-fit" id="mediaSrc" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII">
+</div>
+
 <header class="py-2"> <!--  mb-1 border-bottom shadow -->
     <div class="container-fluid align-items-center d-flex">
         <div class="flex-shrink-0">
@@ -255,6 +259,9 @@
                 <a th:class="'dropdown-item'+${activePage=='profile'?' active':''}" href="/users/profile">View profile</a>
                 <a th:class="'dropdown-item'+${activePage=='update'?' active':''}" href="/users/update">Change password</a>
                 <a th:class="'dropdown-item'+${activePage=='apikey'?' active':''}" href="/users/apikey">Manage API key</a>
+                <th:block th:if="${hasAlbums}">
+                    <a class="dropdown-item" id="viewAllSlideshow">View slideshow</a>
+                </th:block>
                 <div class="dropdown-item">
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" id="darkModeSwitch" th:checked="${currentUser.darkMode}">
@@ -393,6 +400,89 @@
                     })
                 }, 0);
             }
+
+            let topnavIntervalId;
+            function getRandomImage() {
+                const http = new Http("show slideshow");
+                http.ajax("get", "/random/image").then(function (data) {
+                    if (data.hasOwnProperty("metadata") === true &&
+                        data["metadata"].hasOwnProperty("thumbnailUrlOriginal") === true &&
+                        data["metadata"]["thumbnailUrlOriginal"] != "" &&
+                        data.hasOwnProperty("baseUrl") === true &&
+                        data["baseUrl"] !== ""
+                    ) {
+                        $("#mediaSrc").css("display", "block");
+                        const photoUrl = data["baseUrl"] + data["metadata"]["thumbnailUrlOriginal"];
+
+                        // Prevent gaps in transitions while next image loads
+                        const tempImage = new Image();
+
+                        tempImage.onload = function() {
+                            $("#mediaSrc").attr("src", photoUrl);
+
+                            $(".center-fit").css({
+                                "max-width": $(window).innerWidth(),
+                                "height": "auto",
+                                "max-height": $(window).innerHeight(),
+                                "position": "absolute",
+                                "top": "50%",
+                                "left": "50%",
+                                "transform": "translate(-50%, -50%)"
+                            });
+                        }
+
+                        tempImage.src = photoUrl;
+                    }
+                })
+            }
+
+            function toggleSlideshowFullScreen() {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+
+            $("body").on("keyup", function( e ) {
+                if (e.code === "Escape" || e.keyCode === 27) {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    }
+
+                    if (topnavIntervalId) {
+                        clearInterval(topnavIntervalId);
+                        topnavIntervalId = 0;
+
+                        $("#slideshowGallery").css({
+                            "display": "none"
+                        });
+                    }
+                }
+
+                if (e.key === " " || e.code === "Space" || e.keyCode === 32) {
+                    toggleSlideshowFullScreen();
+                }
+            });
+
+            $("#viewAllSlideshow").on("click", function (e) {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                }
+
+                topnavIntervalId = window.setInterval(function(){
+                    getRandomImage();
+                }, (10*1000));
+
+                getRandomImage();
+                $("#slideshowGallery").css({
+                    "width": "100%",
+                    "height": "100%",
+                    "display": "block",
+                    "z-index": 9999,
+                    "background-color": "black"
+                });
+            });
 
             // Clear live toast message on close
             $('#'+shashin.toast.target.default).on('hidden.bs.toast', function () {
