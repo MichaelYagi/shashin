@@ -3,6 +3,7 @@ package com.miyagi.shashin.controller
 import com.miyagi.shashin.component.ApiError
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
+import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.ApiResponse
@@ -55,6 +56,9 @@ class AttributeController: ResponseEntityExceptionHandler() {
 
     @Autowired
     private var settingsRepository: SettingsRepository? = null
+
+    @Autowired
+    private var metadataRepository: MetadataRepository? = null
 
     @Autowired
     private var buildProperties: BuildProperties? = null
@@ -327,7 +331,9 @@ class AttributeController: ResponseEntityExceptionHandler() {
 
 //        timingStart = Date()
 
+        model["hasAlbums"] = false
         val currentUser: User?
+        var currentUserId = 0
 
         if (!request.getHeader("X-API-KEY").isNullOrBlank()) {
             currentUser = userRepository.findByApikey(request.getHeader("X-API-KEY"))
@@ -348,6 +354,16 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 }
                 if (currentUser.getNotificationAlerts() == null) {
                     currentUser.setNotificationAlerts(false)
+                }
+
+                val mediaCount = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+                    metadataRepository?.countAllByTypeContains("image")
+                } else {
+                    metadataRepository?.countAlbumByMedia(currentUser.getId(), "image")
+                })
+
+                if (mediaCount != null) {
+                    model["hasAlbums"] = mediaCount > 0
                 }
             } else {
                 logger.log(Level.INFO, "{\"message\":\"Invalid API Key\"}")
@@ -401,7 +417,18 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 if (!currentUser.getApikey().isNullOrBlank()) {
                     model["apikey"] = currentUser.getApikey()!!
                 }
+                currentUserId = currentUser.getId()
                 model["currentUser"] = currentUser
+            }
+
+            val mediaCount = (if (currentUser?.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+                metadataRepository?.countAllByTypeContains("image")
+            } else {
+                metadataRepository?.countAlbumByMedia(currentUser.getId(), "image")
+            })
+
+            if (mediaCount != null) {
+                model["hasAlbums"] = mediaCount > 0
             }
         }
 
@@ -432,6 +459,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
         model["titleDescriptor"] = ""
         model["msg"] = "Response status not set. Defaulting to status fail."
         model["status"] = ApiResponse.FAIL.status
+
 
 //        timingEnd = Date()
 //        diff = timingEnd.time - timingStart.time
