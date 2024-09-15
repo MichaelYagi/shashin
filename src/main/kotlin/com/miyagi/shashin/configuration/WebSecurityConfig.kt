@@ -191,6 +191,7 @@ class MultiSecurityConfig {
             "/api/v1/complete/metadata/**",
             "/api/v1/health",
             "/api/v1/status",
+            "/api/v1/metadata/image/**",
             "/api/v1/random/image",
             "/api/v1/random/video"
         )
@@ -201,6 +202,7 @@ class MultiSecurityConfig {
             "/favorites",
             "/slideshow",
             "/random/image",
+            "/metadata/image/**",
             "/map/**",
             "/search/**",
             "/articles/endpoints"
