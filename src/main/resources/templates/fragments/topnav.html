@@ -60,6 +60,7 @@
 <div id="slideshowGallery" class="imgbox" style="display: none;">
     <img class="centerFit" id="mediaSrc" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII">
     <span class="bi-play-circle" id="playPause"></span>
+    <span id="mediaInfo" style="font-size:1.7rem;color:#FFFFFF;position:fixed;left:50%;bottom:20px;transform: translate(-50%, -50%);margin: 0 auto;display:none;"></span>
 </div>
 
 <header class="py-2"> <!--  mb-1 border-bottom shadow -->
@@ -416,6 +417,12 @@
                         $("#mediaSrc").css("display", "block");
                         const photoUrl = data["baseUrl"] + data["metadata"]["thumbnailUrlOriginal"];
 
+                        const takenDate = new Date(data["metadata"]["year"] + "-" + data["metadata"]["month"] + "-" + data["metadata"]["day"]);
+                        const options = {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'};
+
+                        const description = takenDate.toLocaleDateString('en-us', options)
+                        $("#mediaInfo").text(description);
+
                         // Prevent gaps in transitions while next image loads
                         const tempImage = new Image();
 
@@ -493,9 +500,11 @@
                         if (topnavIsPaused === false) {
                             $("#playPause").removeClass("bi-play-circle").addClass("bi-pause-circle");
                             topnavIsPaused = true;
+                            $("#mediaInfo").css("display", "block");
                         } else {
                             $("#playPause").removeClass("bi-pause-circle").addClass("bi-play-circle");
                             topnavIsPaused = false;
+                            $("#mediaInfo").css("display", "none");
                         }
 
                         $("#playPause").show();
