@@ -58,7 +58,8 @@
 </div>
 
 <div id="slideshowGallery" class="imgbox" style="display: none;">
-    <img class="center-fit" id="mediaSrc" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII">
+    <img class="centerFit" id="mediaSrc" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII">
+    <span class="bi-play-circle" id="playPause"></span>
 </div>
 
 <header class="py-2"> <!--  mb-1 border-bottom shadow -->
@@ -421,7 +422,20 @@
                         tempImage.onload = function() {
                             $("#mediaSrc").attr("src", photoUrl);
 
-                            $(".center-fit").css({
+                            $("#playPause").css({
+                                "font-size": "10rem",
+                                "color": "#FFFFFF",
+                                "z-index": 99999,
+                                "max-width": $(window).innerWidth()+1,
+                                "height": "auto",
+                                "max-height": $(window).innerHeight()+1,
+                                "position": "absolute",
+                                "top": "50%",
+                                "left": "50%",
+                                "transform": "translate(-50%, -50%)"
+                            });
+
+                            $(".centerFit").css({
                                 "max-width": $(window).innerWidth()+1,
                                 "height": "auto",
                                 "max-height": $(window).innerHeight()+1,
@@ -473,7 +487,16 @@
                 }
 
                 if (e.key === " " || e.code === "Space" || e.keyCode === 32) {
-                    topnavIsPaused = topnavIsPaused === false;
+                    if (topnavIsPaused === false) {
+                        $("#playPause").removeClass("bi-play-circle").addClass("bi-pause-circle");
+                        topnavIsPaused = true;
+                    } else {
+                        $("#playPause").removeClass("bi-pause-circle").addClass("bi-play-circle");
+                        topnavIsPaused = false;
+                    }
+
+                    $("#playPause").show();
+                    $("#playPause").fadeOut(3000);
                 }
             });
 
@@ -486,13 +509,8 @@
                     document.documentElement.requestFullscreen();
                 }
 
-                topnavIntervalId = window.setInterval(function() {
-                    if (topnavIsPaused === false) {
-                        getRandomImage();
-                    }
-                }, (15*1000)); // Every 15 seconds
+                $("#playPause").fadeOut(3000);
 
-                getRandomImage();
                 $("#slideshowGallery").css({
                     "width": "101%",
                     "height": "101%",
@@ -502,6 +520,14 @@
                     "line-height": 1,
                     "overflow": "hidden"
                 });
+
+                topnavIntervalId = window.setInterval(function() {
+                    if (topnavIsPaused === false) {
+                        getRandomImage();
+                    }
+                }, (15*1000)); // Every 15 seconds
+
+                getRandomImage();
             });
 
             // Clear live toast message on close
