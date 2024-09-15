@@ -418,15 +418,6 @@
                         $("#mediaSrc").css("display", "block");
                         const photoUrl = data["baseUrl"] + data["metadata"]["thumbnailUrlOriginal"];
 
-                        const takenDate = new Date(data["metadata"]["year"] + "-" + data["metadata"]["month"] + "-" + data["metadata"]["day"]);
-                        const options = {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'};
-
-                        let description = takenDate.toLocaleDateString('en-us', options)
-                        if (data["shortPlaceName"] !== "") {
-                            description += " • " + data["shortPlaceName"];
-                        }
-                        $("#mediaInfo").html(description);
-
                         // Prevent gaps in transitions while next image loads
                         const tempImage = new Image();
 
@@ -455,6 +446,14 @@
                                 "left": "50%",
                                 "transform": "translate(-50%, -50%)"
                             });
+
+                            const takenDate = new Date(data["metadata"]["year"] + "-" + data["metadata"]["month"] + "-" + data["metadata"]["day"]);
+                            const options = {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'};
+                            let description = takenDate.toLocaleDateString('en-us', options)
+                            if (data["shortPlaceName"] !== "") {
+                                description += " • " + data["shortPlaceName"];
+                            }
+                            $("#mediaInfo").html(description);
                         }
 
                         tempImage.src = photoUrl;
