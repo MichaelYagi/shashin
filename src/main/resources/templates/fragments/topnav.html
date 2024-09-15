@@ -421,7 +421,7 @@
                         const options = {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'};
 
                         let description = takenDate.toLocaleDateString('en-us', options)
-                        if (data["shortPlaceName"] !== null) {
+                        if (data["shortPlaceName"] !== "") {
                             description += " • " + data["shortPlaceName"];
                         }
                         $("#mediaInfo").html(description);
@@ -521,9 +521,11 @@
                     if (topnavIsPaused === false) {
                         $("#playPause").removeClass("bi-play-circle").addClass("bi-pause-circle");
                         topnavIsPaused = true;
+                        $("#mediaInfo").css("display", "block");
                     } else {
                         $("#playPause").removeClass("bi-pause-circle").addClass("bi-play-circle");
                         topnavIsPaused = false;
+                        $("#mediaInfo").css("display", "none");
                     }
 
                     $("#playPause").show();
