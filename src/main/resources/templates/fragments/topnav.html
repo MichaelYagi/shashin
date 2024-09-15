@@ -452,24 +452,7 @@
             }
 
             $("body").on("dblclick", function( e ) {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
-
-                document.body.style.overflow = 'visible';
-
-                $("#slideshowGallery").css({
-                    "display": "none"
-                });
-
-                if (topnavIntervalId) {
-                    clearInterval(topnavIntervalId);
-                    topnavIntervalId = 0;
-                }
-            });
-
-            $("body").on("keyup", function( e ) {
-                if (e.code === "Escape" || e.keyCode === 27) {
+                if ($("#slideshowGallery").css("display") === "block") {
                     if (document.exitFullscreen) {
                         document.exitFullscreen();
                     }
@@ -485,8 +468,44 @@
                         topnavIntervalId = 0;
                     }
                 }
+            });
 
-                if (e.key === " " || e.code === "Space" || e.keyCode === 32) {
+            $("body").on("keyup", function( e ) {
+                if ($("#slideshowGallery").css("display") === "block") {
+                    if (e.code === "Escape" || e.keyCode === 27) {
+                        if (document.exitFullscreen) {
+                            document.exitFullscreen();
+                        }
+
+                        document.body.style.overflow = 'visible';
+
+                        $("#slideshowGallery").css({
+                            "display": "none"
+                        });
+
+                        if (topnavIntervalId) {
+                            clearInterval(topnavIntervalId);
+                            topnavIntervalId = 0;
+                        }
+                    }
+
+                    if (e.key === " " || e.code === "Space" || e.keyCode === 32) {
+                        if (topnavIsPaused === false) {
+                            $("#playPause").removeClass("bi-play-circle").addClass("bi-pause-circle");
+                            topnavIsPaused = true;
+                        } else {
+                            $("#playPause").removeClass("bi-pause-circle").addClass("bi-play-circle");
+                            topnavIsPaused = false;
+                        }
+
+                        $("#playPause").show();
+                        $("#playPause").fadeOut(3000);
+                    }
+                }
+            });
+
+            $("#mediaSrc").on("click", function( e ) {
+                if ($("#slideshowGallery").css("display") === "block") {
                     if (topnavIsPaused === false) {
                         $("#playPause").removeClass("bi-play-circle").addClass("bi-pause-circle");
                         topnavIsPaused = true;
@@ -509,6 +528,7 @@
                     document.documentElement.requestFullscreen();
                 }
 
+                $("#playPause").show();
                 $("#playPause").fadeOut(3000);
 
                 $("#slideshowGallery").css({
