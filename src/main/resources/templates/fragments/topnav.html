@@ -544,6 +544,7 @@
                             clearInterval(topnavIntervalId);
                             topnavIntervalId = window.setInterval(function () {
                                 if (topnavIsPaused === false) {
+                                    topnavCurrentIndex++;
                                     getSlideshowImage();
                                 }
                             }, (topnavIsElapsed*1000));
@@ -598,6 +599,7 @@
 
                 topnavIntervalId = window.setInterval(function() {
                     if (topnavIsPaused === false) {
+                        topnavCurrentIndex++;
                         getSlideshowImage();
                     }
                 }, (topnavIsElapsed*1000));
