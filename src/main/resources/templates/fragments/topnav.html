@@ -421,10 +421,10 @@
                         const options = {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'};
 
                         let description = takenDate.toLocaleDateString('en-us', options)
-                        if (data["metadata"]["placeName"] !== null) {
-                            description += " &#x2022; " + data["metadata"]["placeName"];
+                        if (data["shortPlaceName"] !== null) {
+                            description += " &#x2022; " + data["shortPlaceName"];
                         }
-                        $("#mediaInfo").text(description);
+                        $("#mediaInfo").html(description);
 
                         // Prevent gaps in transitions while next image loads
                         const tempImage = new Image();
