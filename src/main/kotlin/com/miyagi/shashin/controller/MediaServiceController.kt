@@ -1,6 +1,7 @@
 package com.miyagi.shashin.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.model.Album
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.User
@@ -379,6 +380,7 @@ class MediaServiceController {
         val currentUser = model.getAttribute("currentUser") as User?
         resp["metadata"] = mutableMapOf<String, Any?>()
         resp["status"] = ApiResponse.FAIL.status
+        resp["albumIds"] = mutableListOf<Int>()
         resp["msg"] = ""
 
         var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
@@ -396,6 +398,7 @@ class MediaServiceController {
             })
 
             if (randomMetadata != null) {
+                resp["albumIds"] = albumRepository.findAlbumIdsByMetadataId(randomMetadata.getId())
                 resp["metadata"] = randomMetadata
                 resp["shortPlaceName"] = TextUtils.formatPlaceNameForHeader(randomMetadata.getPlaceName())
                 resp["status"] = ApiResponse.SUCCESS.status

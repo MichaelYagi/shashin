@@ -407,6 +407,10 @@
             let topnavIsPaused = false;
             let topnavIsElapsed = 15; // Seconds
             function getRandomImage() {
+                /*<![CDATA[*/
+                const accessTimelineView = /*[[${authority == "ROLE_SUPER" || authority == "ROLE_ADMIN"}]]*/ false;
+                /*]]>*/
+
                 const http = new Http("show slideshow");
                 http.ajax("get", "/random/image").then(function (data) {
                     if (data.hasOwnProperty("metadata") === true &&
@@ -447,9 +451,17 @@
                                 "transform": "translate(-50%, -50%)"
                             });
 
-                            const takenDate = new Date(data["metadata"]["year"] + "-" + data["metadata"]["month"] + "-" + data["metadata"]["day"]);
+                            const takenDateString = data["metadata"]["year"] + "-" + data["metadata"]["month"] + "-" + data["metadata"]["day"];
+                            const takenDate = new Date(takenDateString);
                             const options = {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'};
                             let description = takenDate.toLocaleDateString('en-us', options)
+
+                            if (accessTimelineView === false && data.hasOwnProperty("albumIds") === true && data["albumIds"].hasOwnProperty(0) === true) {
+                                description = "<a style='color:#DBE9F4;text-decoration:none;' href='/album/"+data["albumIds"][0]+"' target='_blank'>"+takenDate.toLocaleDateString('en-us', options)+"</a>"
+                            } else if (accessTimelineView === true) {
+                                description = "<a style='color:#DBE9F4;text-decoration:none;' href='/timeline#"+takenDateString+"' target='_blank'>"+takenDate.toLocaleDateString('en-us', options)+"</a>"
+                            }
+
                             if (data["shortPlaceName"] !== "") {
                                 description += " • " + data["shortPlaceName"];
                             }
