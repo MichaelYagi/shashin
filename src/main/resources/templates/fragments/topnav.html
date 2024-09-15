@@ -469,6 +469,10 @@
                             "transform": "translate(-50%, -50%)"
                         });
 
+                        $("#mediaInfo").css({
+                            "max-width": $(window).innerWidth()+1
+                        });
+
                         if (type === "new") {
                             topnavMetadataIds.push(data["metadata"]["id"]);
                         }
@@ -561,14 +565,6 @@
                 }
             });
 
-            function toggleFullScreen() {
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen();
-                } else if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
-            }
-
             $("#mediaSrc").on("click", function( e ) {
                 if ($("#slideshowGallery").css("display") === "block") {
                     slideshowGalleryPlayPause();
@@ -614,9 +610,8 @@
                 });
 
                 $("#mediaInfo").css({
-                    "max-width": $(window).innerWidth() + 1
+                    "max-width": $(window).width() + 1
                 });
-
 
                 topnavIntervalId = window.setInterval(function() {
                     if (topnavIsPaused === false) {
