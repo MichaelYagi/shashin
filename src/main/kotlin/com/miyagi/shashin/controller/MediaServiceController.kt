@@ -397,6 +397,13 @@ class MediaServiceController {
 
             if (randomMetadata != null) {
                 resp["metadata"] = randomMetadata
+                val metadataList = mutableListOf<Metadata>()
+                metadataList.add(randomMetadata)
+                val placeNamesList = TextUtils.sortPlaceNames(metadataList)
+                resp["shortPlaceName"] = ""
+                if (placeNamesList.isNotEmpty()) {
+                    resp["shortPlaceName"] = placeNamesList[0]
+                }
                 resp["status"] = ApiResponse.SUCCESS.status
                 resp["msg"] = ""
                 logger.log(Level.INFO, "Random image metadata ID ${randomMetadata.getId()}")
@@ -434,6 +441,13 @@ class MediaServiceController {
 
             if (randomMetadata != null) {
                 resp["metadata"] = randomMetadata
+                val metadataList = mutableListOf<Metadata>()
+                metadataList.add(randomMetadata)
+                val placeNamesList = TextUtils.sortPlaceNames(metadataList)
+                resp["shortPlaceName"] = ""
+                if (placeNamesList.isNotEmpty()) {
+                    resp["shortPlaceName"] = placeNamesList[0]
+                }
                 resp["status"] = ApiResponse.SUCCESS.status
                 resp["msg"] = ""
                 logger.log(Level.INFO, "Random image metadata ID ${randomMetadata.getId()}")
