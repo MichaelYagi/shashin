@@ -420,7 +420,10 @@
                         const takenDate = new Date(data["metadata"]["year"] + "-" + data["metadata"]["month"] + "-" + data["metadata"]["day"]);
                         const options = {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'};
 
-                        const description = takenDate.toLocaleDateString('en-us', options)
+                        let description = takenDate.toLocaleDateString('en-us', options)
+                        if (data["metadata"]["placeName"] !== null) {
+                            description += " &#x2022; " + data["metadata"]["placeName"];
+                        }
                         $("#mediaInfo").text(description);
 
                         // Prevent gaps in transitions while next image loads
