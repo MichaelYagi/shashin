@@ -402,6 +402,7 @@
             }
 
             let topnavIntervalId;
+            let topnavIsPaused = false;
             function getRandomImage() {
                 const http = new Http("show slideshow");
                 http.ajax("get", "/random/image").then(function (data) {
@@ -421,9 +422,9 @@
                             $("#mediaSrc").attr("src", photoUrl);
 
                             $(".center-fit").css({
-                                "max-width": $(window).innerWidth(),
+                                "max-width": $(window).innerWidth()+1,
                                 "height": "auto",
-                                "max-height": $(window).innerHeight(),
+                                "max-height": $(window).innerHeight()+1,
                                 "position": "absolute",
                                 "top": "50%",
                                 "left": "50%",
@@ -434,14 +435,6 @@
                         tempImage.src = photoUrl;
                     }
                 })
-            }
-
-            function toggleSlideshowFullScreen() {
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen();
-                } else if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
             }
 
             $("body").on("dblclick", function( e ) {
@@ -480,7 +473,7 @@
                 }
 
                 if (e.key === " " || e.code === "Space" || e.keyCode === 32) {
-                    toggleSlideshowFullScreen();
+                    topnavIsPaused = topnavIsPaused === false;
                 }
             });
 
@@ -493,8 +486,10 @@
                     document.documentElement.requestFullscreen();
                 }
 
-                topnavIntervalId = window.setInterval(function(){
-                    getRandomImage();
+                topnavIntervalId = window.setInterval(function() {
+                    if (topnavIsPaused === false) {
+                        getRandomImage();
+                    }
                 }, (15*1000)); // Every 15 seconds
 
                 getRandomImage();
@@ -503,7 +498,7 @@
                     "height": "101%",
                     "display": "block",
                     "z-index": 9999,
-                    "background-color": "black",
+                    "background-color": "#000000",
                     "line-height": 1,
                     "overflow": "hidden"
                 });
