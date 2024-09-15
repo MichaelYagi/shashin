@@ -405,6 +405,7 @@
 
             let topnavIntervalId;
             let topnavIsPaused = false;
+            let topnavIsElapsed = 15; // Seconds
             function getRandomImage() {
                 const http = new Http("show slideshow");
                 http.ajax("get", "/random/image").then(function (data) {
@@ -495,6 +496,19 @@
                     if (e.key === " " || e.code === "Space" || e.keyCode === 32) {
                         slideshowGalleryPlayPause();
                     }
+
+                    // Right
+                    if (e.keyCode === 39) {
+                        getRandomImage();
+                        if (topnavIsPaused === false) {
+                            clearInterval(topnavIntervalId);
+                            topnavIntervalId = window.setInterval(function () {
+                                if (topnavIsPaused === false) {
+                                    getRandomImage();
+                                }
+                            }, (topnavIsElapsed*1000));
+                        }
+                    }
                 }
             });
 
@@ -546,7 +560,7 @@
                     if (topnavIsPaused === false) {
                         getRandomImage();
                     }
-                }, (15*1000)); // Every 15 seconds
+                }, (topnavIsElapsed*1000));
 
                 getRandomImage();
             });
