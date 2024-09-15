@@ -371,6 +371,42 @@ class MediaServiceController {
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
+    @RequestMapping(value = ["/api/v1/metadata/image/{metadataId}", "/metadata/image/{metadataId}"], method = [(RequestMethod.GET)], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    @Throws(java.io.IOException::class)
+    fun getMetadataImage(model: Model, request: HttpServletRequest, @PathVariable metadataId: String): String {
+        val mapper = ObjectMapper()
+        val resp = mutableMapOf<String, Any?>()
+        val currentUser = model.getAttribute("currentUser") as User?
+        resp["metadata"] = mutableMapOf<String, Any?>()
+        resp["status"] = ApiResponse.FAIL.status
+        resp["albumIds"] = mutableListOf<Int>()
+        resp["msg"] = ""
+
+        var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
+        if (request.scheme == "https") {
+            baseUrlBuilder = baseUrlBuilder.scheme("https")
+        }
+        val baseUrl = baseUrlBuilder.build().toUriString()
+        resp["baseUrl"] = baseUrl
+
+        if (currentUser != null) {
+            val metadata = metadataRepository.findByMetadataId(metadataId)
+
+            if (metadata != null) {
+                resp["albumIds"] = albumRepository.findAlbumIdsByMetadataId(metadata.getId())
+                resp["metadata"] = metadata
+                resp["shortPlaceName"] = TextUtils.formatPlaceNameForHeader(metadata.getPlaceName())
+                resp["status"] = ApiResponse.SUCCESS.status
+                resp["msg"] = ""
+                logger.log(Level.INFO, "Image metadata ID ${metadata.getId()}")
+            }
+        }
+
+        return mapper.writeValueAsString(resp)
+    }
+
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/random/image", "/random/image"], method = [(RequestMethod.GET)], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Throws(java.io.IOException::class)

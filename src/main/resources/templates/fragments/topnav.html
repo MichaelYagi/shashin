@@ -406,76 +406,100 @@
             let topnavIntervalId;
             let topnavIsPaused = false;
             let topnavIsElapsed = 15; // Seconds
-            function getRandomImage() {
+            let topnavCurrentIndex = 0;
+            let topnavMetadataIds = [];
+            function getSlideshowImage() {
+                const http = new Http("show slideshow");
+
+                if (topnavMetadataIds.length > 0 && topnavCurrentIndex >= 0 && topnavCurrentIndex <= topnavMetadataIds.length-1) {
+                    http.ajax("get", "/metadata/image/"+topnavMetadataIds[topnavCurrentIndex]).then(function (data) {
+                        processSlideData(data, "existing");
+                    })
+                } else {
+                    http.ajax("get", "/random/image").then(function (data) {
+                        processSlideData(data, "new");
+                    })
+                }
+            }
+
+            function processSlideData(data, type) {
                 /*<![CDATA[*/
-                const accessTimelineView = /*[[${authority == "ROLE_SUPER" || authority == "ROLE_ADMIN"}]]*/ false;
+                const limit = /*[[${searchHistoryLimit}]]*/ 10;
                 /*]]>*/
 
-                const http = new Http("show slideshow");
-                http.ajax("get", "/random/image").then(function (data) {
-                    if (data.hasOwnProperty("metadata") === true &&
-                        data["metadata"].hasOwnProperty("thumbnailUrlOriginal") === true &&
-                        data["metadata"]["thumbnailUrlOriginal"] != "" &&
-                        data.hasOwnProperty("baseUrl") === true &&
-                        data["baseUrl"] !== ""
-                    ) {
-                        $("#mediaSrc").css("display", "block");
-                        const photoUrl = data["baseUrl"] + data["metadata"]["thumbnailUrlOriginal"];
+                if (data.hasOwnProperty("metadata") === true &&
+                    data["metadata"].hasOwnProperty("thumbnailUrlOriginal") === true &&
+                    data["metadata"]["thumbnailUrlOriginal"] != "" &&
+                    data.hasOwnProperty("baseUrl") === true &&
+                    data["baseUrl"] !== ""
+                ) {
+                    /*<![CDATA[*/
+                    const accessTimelineView = /*[[${authority == "ROLE_SUPER" || authority == "ROLE_ADMIN"}]]*/ false;
+                    /*]]>*/
 
-                        // Prevent gaps in transitions while next image loads
-                        const tempImage = new Image();
+                    $("#mediaSrc").css("display", "block");
+                    const photoUrl = data["baseUrl"] + data["metadata"]["thumbnailUrlOriginal"];
 
-                        tempImage.onload = function() {
-                            $("#mediaSrc").attr("src", photoUrl);
+                    // Prevent gaps in transitions while next image loads
+                    const tempImage = new Image();
 
-                            $("#playPause").css({
-                                "font-size": "10rem",
-                                "color": "#FFFFFF",
-                                "z-index": 99999,
-                                "max-width": $(window).innerWidth()+1,
-                                "height": "auto",
-                                "max-height": $(window).innerHeight()+1,
-                                "position": "absolute",
-                                "top": "50%",
-                                "left": "50%",
-                                "transform": "translate(-50%, -50%)"
-                            });
+                    tempImage.onload = function() {
+                        $("#mediaSrc").attr("src", photoUrl);
 
-                            $(".centerFit").css({
-                                "max-width": $(window).innerWidth()+1,
-                                "height": "auto",
-                                "max-height": $(window).innerHeight()+1,
-                                "position": "absolute",
-                                "top": "50%",
-                                "left": "50%",
-                                "transform": "translate(-50%, -50%)"
-                            });
+                        $("#playPause").css({
+                            "font-size": "10rem",
+                            "color": "#FFFFFF",
+                            "z-index": 99999,
+                            "max-width": $(window).innerWidth()+1,
+                            "height": "auto",
+                            "max-height": $(window).innerHeight()+1,
+                            "position": "absolute",
+                            "top": "50%",
+                            "left": "50%",
+                            "transform": "translate(-50%, -50%)"
+                        });
 
-                            const takenDateString = data["metadata"]["year"] + "-" + data["metadata"]["month"] + "-" + data["metadata"]["day"];
-                            const takenDate = new Date(takenDateString);
-                            const options = {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'};
-                            let description = takenDate.toLocaleDateString('en-us', options)
+                        $(".centerFit").css({
+                            "max-width": $(window).innerWidth()+1,
+                            "height": "auto",
+                            "max-height": $(window).innerHeight()+1,
+                            "position": "absolute",
+                            "top": "50%",
+                            "left": "50%",
+                            "transform": "translate(-50%, -50%)"
+                        });
 
-                            if (accessTimelineView === false && data.hasOwnProperty("albumIds") === true && data["albumIds"].hasOwnProperty(0) === true) {
-                                description = "<a style='color:#DBE9F4;text-decoration:none;' href='/album/"+data["albumIds"][0]+"' target='_blank'>"+takenDate.toLocaleDateString('en-us', options)+"</a>"
-                            } else if (accessTimelineView === true) {
-                                description = "<a style='color:#DBE9F4;text-decoration:none;' href='/timeline#"+takenDateString+"' target='_blank'>"+takenDate.toLocaleDateString('en-us', options)+"</a>"
-                            }
-
-                            if (data["shortPlaceName"] !== "") {
-                                description += " • " + data["shortPlaceName"];
-                            }
-                            $("#mediaInfo").html(description);
+                        if (type === "new") {
+                            topnavMetadataIds.push(data["metadata"]["id"]);
+                        }
+                        if (topnavMetadataIds.length > limit) {
+                            topnavMetadataIds.splice(topnavMetadataIds.length, 1); // Remove 1 element at index x
                         }
 
-                        tempImage.src = photoUrl;
+                        const takenDateString = data["metadata"]["year"] + "-" + data["metadata"]["month"] + "-" + data["metadata"]["day"];
+                        const takenDate = new Date(takenDateString);
+                        const options = {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'};
+                        let description = takenDate.toLocaleDateString('en-us', options)
+
+                        if (accessTimelineView === false && data.hasOwnProperty("albumIds") === true && data["albumIds"].hasOwnProperty(0) === true) {
+                            description = "<a style='color:#DBE9F4;text-decoration:none;' href='/album/"+data["albumIds"][0]+"' target='_blank'>"+takenDate.toLocaleDateString('en-us', options)+"</a>"
+                        } else if (accessTimelineView === true) {
+                            description = "<a style='color:#DBE9F4;text-decoration:none;' href='/timeline#"+takenDateString+"' target='_blank'>"+takenDate.toLocaleDateString('en-us', options)+"</a>"
+                        }
+
+                        if (data["shortPlaceName"] !== "") {
+                            description += " • " + data["shortPlaceName"];
+                        }
+                        $("#mediaInfo").html(description);
                     }
-                })
+
+                    tempImage.src = photoUrl;
+                }
             }
 
             function exitSlideshowGallery() {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
+                if (document.documentElement.exitFullscreen) {
+                    document.documentElement.exitFullscreen();
                 }
 
                 document.body.style.overflow = 'visible';
@@ -508,14 +532,19 @@
                         slideshowGalleryPlayPause();
                     }
 
-                    // Right
-                    if (e.keyCode === 39) {
-                        getRandomImage();
+                    if (e.keyCode === 39 || e.keyCode === 37) {
+                        if (topnavCurrentIndex > 0 && e.keyCode === 37) {
+                            topnavCurrentIndex--;
+                        } else if (topnavCurrentIndex <= topnavMetadataIds.length-1 && e.keyCode === 39) {
+                            topnavCurrentIndex++;
+                        }
+
+                        getSlideshowImage();
                         if (topnavIsPaused === false) {
                             clearInterval(topnavIntervalId);
                             topnavIntervalId = window.setInterval(function () {
                                 if (topnavIsPaused === false) {
-                                    getRandomImage();
+                                    getSlideshowImage();
                                 }
                             }, (topnavIsElapsed*1000));
                         }
@@ -569,11 +598,11 @@
 
                 topnavIntervalId = window.setInterval(function() {
                     if (topnavIsPaused === false) {
-                        getRandomImage();
+                        getSlideshowImage();
                     }
                 }, (topnavIsElapsed*1000));
 
-                getRandomImage();
+                getSlideshowImage();
             });
 
             // Clear live toast message on close
