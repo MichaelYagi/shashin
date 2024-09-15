@@ -422,7 +422,7 @@
 
                         let description = takenDate.toLocaleDateString('en-us', options)
                         if (data["shortPlaceName"] !== null) {
-                            description += " &#x2022; " + data["shortPlaceName"];
+                            description += " • " + data["shortPlaceName"];
                         }
                         $("#mediaInfo").html(description);
 
