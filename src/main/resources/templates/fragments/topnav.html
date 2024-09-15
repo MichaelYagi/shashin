@@ -476,6 +476,8 @@
                     clearInterval(topnavIntervalId);
                     topnavIntervalId = 0;
                 }
+
+                $("#mediaSrc").attr("src", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII");
             }
 
             $("body").on("dblclick", function( e ) {
@@ -503,6 +505,7 @@
             });
 
             function slideshowGalleryPlayPause() {
+                $("#playPause").stop(true, true);
                 if (topnavIsPaused === false) {
                     $("#playPause").removeClass("bi-play-circle").addClass("bi-pause-circle");
                     topnavIsPaused = true;
