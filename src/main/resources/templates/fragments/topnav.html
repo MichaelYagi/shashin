@@ -583,7 +583,7 @@
             }
 
             $("body").on("mousemove", function() {
-                if ($("#slideshowGallery").css("display") === "block") {
+                if (Util.isMobile() === false && $("#slideshowGallery").css("display") === "block") {
                     if (topnavMouseTimer) {
                         clearTimeout(topnavMouseTimer);
                     }
@@ -655,7 +655,7 @@
                 }, (topnavIsElapsed*1000));
 
                 getSlideshowImage();
-            });
+            })
 
             // Clear live toast message on close
             $('#'+shashin.toast.target.default).on('hidden.bs.toast', function () {
