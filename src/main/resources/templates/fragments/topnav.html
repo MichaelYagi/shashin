@@ -638,6 +638,15 @@
                     document.documentElement.requestFullscreen();
                 }
 
+                topnavIntervalId = window.setInterval(function() {
+                    if (topnavIsPaused === false) {
+                        topnavCurrentIndex++;
+                        getSlideshowImage();
+                    }
+                }, (topnavIsElapsed*1000));
+
+                getSlideshowImage();
+
                 $("#playPause").show();
                 $("#playPause").fadeOut(3000);
 
@@ -657,15 +666,6 @@
                         "white-space": "nowrap"
                     });
                 }
-
-                topnavIntervalId = window.setInterval(function() {
-                    if (topnavIsPaused === false) {
-                        topnavCurrentIndex++;
-                        getSlideshowImage();
-                    }
-                }, (topnavIsElapsed*1000));
-
-                getSlideshowImage();
             })
 
             // Clear live toast message on close
