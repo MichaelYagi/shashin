@@ -531,6 +531,12 @@
                 $("#mediaSrc").attr("src", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII");
             }
 
+            $("body").on("dblclick", function( e ) {
+                if (Util.isMobile() === true && $("#slideshowGallery").css("display") === "block") {
+                    exitSlideshowGallery();
+                }
+            })
+
             $("body").on("keyup", function( e ) {
                 if ($("#slideshowGallery").css("display") === "block") {
                     if (e.code === "Escape" || e.keyCode === 27) {
