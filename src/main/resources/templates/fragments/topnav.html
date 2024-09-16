@@ -403,20 +403,20 @@
                 }, 0);
             }
 
-            let topnavIntervalId;
-            let topnavIsPaused = false;
-            let topnavIsElapsed = 30; // Seconds
-            let topnavCurrentIndex = 0;
-            let topnavMetadataIds = [];
-            let topnavMouseTimer = null;
-            let topnavCursorVisible = true;
-            let topnavXDown = null;
-            let topnavYDown = null;
+            let slideshowIntervalId;
+            let slideshowIsPaused = false;
+            let slideshowIsElapsed = 30; // Seconds
+            let slideshowCurrentIndex = 0;
+            let slideshowMetadataIds = [];
+            let slideshowMouseTimer = null;
+            let slideshowCursorVisible = true;
+            let slideshowXDown = null;
+            let slideshowYDown = null;
             function getSlideshowImage() {
                 const http = new Http("show slideshow");
 
-                if (topnavMetadataIds.length > 0 && topnavCurrentIndex >= 0 && topnavCurrentIndex <= topnavMetadataIds.length-1) {
-                    http.ajax("get", "/metadata/image/"+topnavMetadataIds[topnavCurrentIndex]).then(function (data) {
+                if (slideshowMetadataIds.length > 0 && slideshowCurrentIndex >= 0 && slideshowCurrentIndex <= slideshowMetadataIds.length-1) {
+                    http.ajax("get", "/metadata/image/"+slideshowMetadataIds[slideshowCurrentIndex]).then(function (data) {
                         processSlideData(data, "existing");
                     })
                 } else {
@@ -480,10 +480,10 @@
                         }
 
                         if (type === "new") {
-                            topnavMetadataIds.push(data["metadata"]["id"]);
+                            slideshowMetadataIds.push(data["metadata"]["id"]);
                         }
-                        if (topnavMetadataIds.length > limit) {
-                            topnavMetadataIds.splice(topnavMetadataIds.length, 1); // Remove 1 element at index x
+                        if (slideshowMetadataIds.length > limit) {
+                            slideshowMetadataIds.splice(slideshowMetadataIds.length, 1); // Remove 1 element at index x
                         }
 
                         const takenDateString = data["metadata"]["year"] + "-" + data["metadata"]["month"] + "-" + data["metadata"]["day"];
@@ -518,19 +518,19 @@
                     "display": "none"
                 });
 
-                topnavMetadataIds = [];
+                slideshowMetadataIds = [];
 
-                if (topnavIntervalId) {
-                    clearInterval(topnavIntervalId);
-                    topnavIntervalId = 0;
+                if (slideshowIntervalId) {
+                    clearInterval(slideshowIntervalId);
+                    slideshowIntervalId = 0;
                 }
 
-                if (topnavMouseTimer) {
-                    clearTimeout(topnavMouseTimer);
+                if (slideshowMouseTimer) {
+                    clearTimeout(slideshowMouseTimer);
                 }
 
                 document.body.style.cursor = "default";
-                topnavCursorVisible = true;
+                slideshowCursorVisible = true;
 
                 $("#mediaInfo").html("");
 
@@ -562,21 +562,21 @@
                     }
 
                     if (e.keyCode === 39 || e.keyCode === 37) {
-                        if (topnavCurrentIndex > 0 && e.keyCode === 37) {
-                            topnavCurrentIndex--;
-                        } else if (topnavCurrentIndex <= topnavMetadataIds.length-1 && e.keyCode === 39) {
-                            topnavCurrentIndex++;
+                        if (slideshowCurrentIndex > 0 && e.keyCode === 37) {
+                            slideshowCurrentIndex--;
+                        } else if (slideshowCurrentIndex <= slideshowMetadataIds.length-1 && e.keyCode === 39) {
+                            slideshowCurrentIndex++;
                         }
 
                         getSlideshowImage();
-                        if (topnavIsPaused === false) {
-                            clearInterval(topnavIntervalId);
-                            topnavIntervalId = window.setInterval(function () {
-                                if (topnavIsPaused === false) {
-                                    topnavCurrentIndex++;
+                        if (slideshowIsPaused === false) {
+                            clearInterval(slideshowIntervalId);
+                            slideshowIntervalId = window.setInterval(function () {
+                                if (slideshowIsPaused === false) {
+                                    slideshowCurrentIndex++;
                                     getSlideshowImage();
                                 }
-                            }, (topnavIsElapsed*1000));
+                            }, (slideshowIsElapsed*1000));
                         }
                     }
 
@@ -587,33 +587,33 @@
             });
 
             function handleTouchMove(evt) {
-                if (!topnavXDown || !topnavYDown) {
+                if (!slideshowXDown || !slideshowYDown) {
                     return;
                 }
 
                 const xUp = evt.touches[0].clientX;
                 const yUp = evt.touches[0].clientY;
 
-                const xDiff = topnavXDown - xUp;
-                const yDiff = topnavYDown - yUp;
+                const xDiff = slideshowXDown - xUp;
+                const yDiff = slideshowYDown - yUp;
 
                 if (Math.abs(xDiff) > Math.abs(yDiff)) {
                     // Swipe left/right
-                    if (topnavCurrentIndex > 0 && xDiff > 0) {
-                        topnavCurrentIndex--;
-                    } else if (topnavCurrentIndex <= topnavMetadataIds.length-1 && xDiff <= 0) {
-                        topnavCurrentIndex++;
+                    if (slideshowCurrentIndex > 0 && xDiff > 0) {
+                        slideshowCurrentIndex--;
+                    } else if (slideshowCurrentIndex <= slideshowMetadataIds.length-1 && xDiff <= 0) {
+                        slideshowCurrentIndex++;
                     }
 
                     getSlideshowImage();
-                    if (topnavIsPaused === false) {
-                        clearInterval(topnavIntervalId);
-                        topnavIntervalId = window.setInterval(function () {
-                            if (topnavIsPaused === false) {
-                                topnavCurrentIndex++;
+                    if (slideshowIsPaused === false) {
+                        clearInterval(slideshowIntervalId);
+                        slideshowIntervalId = window.setInterval(function () {
+                            if (slideshowIsPaused === false) {
+                                slideshowCurrentIndex++;
                                 getSlideshowImage();
                             }
-                        }, (topnavIsElapsed*1000));
+                        }, (slideshowIsElapsed*1000));
                     }
                 } else {
                     // Swipe up/down
@@ -624,14 +624,14 @@
                     }
                 }
                 /* reset values */
-                topnavXDown = null;
-                topnavYDown = null;
+                slideshowXDown = null;
+                slideshowYDown = null;
             };
 
             function handleTouchStart(evt) {
                 const firstTouch = getTouches(evt)[0];
-                topnavXDown = firstTouch.clientX;
-                topnavYDown = firstTouch.clientY;
+                slideshowXDown = firstTouch.clientX;
+                slideshowYDown = firstTouch.clientY;
             }
 
             function getTouches(evt) {
@@ -652,23 +652,23 @@
             })
 
             function disappearCursor() {
-                topnavMouseTimer = null;
+                slideshowMouseTimer = null;
                 document.body.style.cursor = "none";
-                topnavCursorVisible = false;
+                slideshowCursorVisible = false;
             }
 
             $("body").on("mousemove", function() {
                 if (Util.isMobile() === false && $("#slideshowGallery").css("display") === "block") {
-                    if (topnavMouseTimer) {
-                        clearTimeout(topnavMouseTimer);
+                    if (slideshowMouseTimer) {
+                        clearTimeout(slideshowMouseTimer);
                     }
 
-                    if (topnavCursorVisible === false) {
+                    if (slideshowCursorVisible === false) {
                         document.body.style.cursor = "default";
-                        topnavCursorVisible = true;
+                        slideshowCursorVisible = true;
                     }
 
-                    topnavMouseTimer = setTimeout(disappearCursor, 5000);
+                    slideshowMouseTimer = setTimeout(disappearCursor, 5000);
                 }
             });
 
@@ -680,15 +680,15 @@
 
             function slideshowGalleryPlayPause() {
                 $("#playPause").stop(true, true);
-                if (topnavIsPaused === false) {
+                if (slideshowIsPaused === false) {
                     $("#playPause").removeClass("bi-play-circle").addClass("bi-pause-circle");
-                    topnavIsPaused = true;
+                    slideshowIsPaused = true;
                     $("#mediaInfo").css({
                         "display": "block"
                     });
                 } else {
                     $("#playPause").removeClass("bi-pause-circle").addClass("bi-play-circle");
-                    topnavIsPaused = false;
+                    slideshowIsPaused = false;
                     $("#mediaInfo").css("display", "none");
                 }
 
@@ -705,12 +705,12 @@
                     document.documentElement.requestFullscreen();
                 }
 
-                topnavIntervalId = window.setInterval(function() {
-                    if (topnavIsPaused === false) {
-                        topnavCurrentIndex++;
+                slideshowIntervalId = window.setInterval(function() {
+                    if (slideshowIsPaused === false) {
+                        slideshowCurrentIndex++;
                         getSlideshowImage();
                     }
-                }, (topnavIsElapsed*1000));
+                }, (slideshowIsElapsed*1000));
 
                 getSlideshowImage();
 
