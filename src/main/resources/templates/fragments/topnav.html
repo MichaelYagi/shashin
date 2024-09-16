@@ -408,6 +408,8 @@
             let topnavIsElapsed = 15; // Seconds
             let topnavCurrentIndex = 0;
             let topnavMetadataIds = [];
+            let topnavMouseTimer = null;
+            let topnavCursorVisible = true;
             function getSlideshowImage() {
                 const http = new Http("show slideshow");
 
@@ -519,14 +521,15 @@
                     topnavIntervalId = 0;
                 }
 
+                if (topnavMouseTimer) {
+                    clearTimeout(topnavMouseTimer);
+                }
+
+                document.body.style.cursor = "default";
+                topnavCursorVisible = true;
+
                 $("#mediaSrc").attr("src", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII");
             }
-
-            $("body").on("dblclick", function( e ) {
-                if ($("#slideshowGallery").css("display") === "block") {
-                    exitSlideshowGallery();
-                }
-            });
 
             $("body").on("keyup", function( e ) {
                 if ($("#slideshowGallery").css("display") === "block") {
@@ -564,6 +567,27 @@
                     if ((e.code === "f" || e.keyCode === 70) && !document.fullscreenElement) {
                         document.documentElement.requestFullscreen();
                     }
+                }
+            });
+
+            function disappearCursor() {
+                topnavMouseTimer = null;
+                document.body.style.cursor = "none";
+                topnavCursorVisible = false;
+            }
+
+            $("body").on("mousemove", function() {
+                if ($("#slideshowGallery").css("display") === "block") {
+                    if (topnavMouseTimer) {
+                        clearTimeout(topnavMouseTimer);
+                    }
+
+                    if (topnavCursorVisible === false) {
+                        document.body.style.cursor = "default";
+                        topnavCursorVisible = true;
+                    }
+
+                    topnavMouseTimer = setTimeout(disappearCursor, 5000);
                 }
             });
 
