@@ -533,8 +533,8 @@
 
             $("body").on("dblclick", function( e ) {
                 if (Util.isMobile() === true && $("#slideshowGallery").css("display") === "block") {
-                    if (document.fullscreenElement !== null && document.documentElement.exitFullscreen) {
-                        document.documentElement.exitFullscreen();
+                    if (document.fullscreenElement !== null && document.exitFullscreen) {
+                        document.exitFullscreen();
                     } else {
                         exitSlideshowGallery();
                     }
