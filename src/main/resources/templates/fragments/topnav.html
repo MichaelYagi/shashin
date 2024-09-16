@@ -475,6 +475,10 @@
                             $("#mediaInfo").css({
                                 "max-width": ($(window).width() + 1)
                             });
+                        } else {
+                            $("#mediaInfo").css({
+                                "width": $(window).width()
+                            });
                         }
 
                         if (type === "new") {
@@ -529,6 +533,8 @@
 
                 document.body.style.cursor = "default";
                 topnavCursorVisible = true;
+
+                $("#mediaInfo").html("");
 
                 $("#mediaSrc").attr("src", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII");
             }
@@ -653,6 +659,10 @@
                     $("#mediaInfo").css({
                         "max-width": ($(window).width() + 1),
                         "white-space": "nowrap"
+                    });
+                } else {
+                    $("#mediaInfo").css({
+                        "width": $(window).width()
                     });
                 }
 
