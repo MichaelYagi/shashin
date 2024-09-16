@@ -471,9 +471,11 @@
                             "transform": "translate(-50%, -50%)"
                         });
 
-                        $("#mediaInfo").css({
-                            "max-width": $(window).innerWidth()+1
-                        });
+                        if (Util.isMobile() === false) {
+                            $("#mediaInfo").css({
+                                "max-width": ($(window).width() + 1)
+                            });
+                        }
 
                         if (type === "new") {
                             topnavMetadataIds.push(data["metadata"]["id"]);
@@ -647,10 +649,12 @@
                     "overflow": "hidden"
                 });
 
-                $("#mediaInfo").css({
-                    "max-width": ($(window).width() + 1),
-                    "white-space": "nowrap"
-                });
+                if (Util.isMobile() === false) {
+                    $("#mediaInfo").css({
+                        "max-width": ($(window).width() + 1),
+                        "white-space": "nowrap"
+                    });
+                }
 
                 topnavIntervalId = window.setInterval(function() {
                     if (topnavIsPaused === false) {
