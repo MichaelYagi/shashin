@@ -413,21 +413,21 @@
             let slideshowCursorVisible = true;
             let slideshowXDown = null;
             let slideshowYDown = null;
-            function getSlideshowImage() {
+            function getSlideshowImage(callback) {
                 const http = new Http("show slideshow");
 
                 if (slideshowMetadataIds.length > 0 && slideshowCurrentIndex >= 0 && slideshowCurrentIndex <= slideshowMetadataIds.length-1) {
                     http.ajax("get", "/media/metadata/"+slideshowMetadataIds[slideshowCurrentIndex]).then(function (data) {
-                        processSlideData(data, "existing");
+                        processSlideData(data, "existing", callback);
                     })
                 } else {
                     http.ajax("get", "/random/image").then(function (data) {
-                        processSlideData(data, "new");
+                        processSlideData(data, "new", callback);
                     })
                 }
             }
 
-            function processSlideData(data, type) {
+            function processSlideData(data, type, callback) {
                 /*<![CDATA[*/
                 const limit = /*[[${searchHistoryLimit}]]*/ 10;
                 /*]]>*/
@@ -509,10 +509,18 @@
                             $("#mediaInfo").html(description);
 
                             slideshowStarted = true;
+
+                            if (callback !== undefined && typeof callback === 'function') {
+                                callback(true);
+                            }
                         });
                     }
 
                     tempImage.src = photoUrl;
+                }
+
+                if (callback !== undefined && typeof callback === 'function') {
+                    callback(false);
                 }
             }
 
@@ -722,29 +730,31 @@
                     }
                 }, (slideshowIsElapsed*1000));
 
-                getSlideshowImage();
+                getSlideshowImage(function (loaded) {
+                    if (loaded === true) {
+                        $("#playPause").show();
+                        $("#playPause").fadeOut(3000);
 
-                $("#playPause").show();
-                $("#playPause").fadeOut(3000);
+                        $("#slideshowGallery").css({
+                            "width": "101%",
+                            "height": "101%",
+                            "display": "block",
+                            "z-index": 9999,
+                            "background-color": "#000000",
+                            "line-height": 1,
+                            "overflow": "hidden"
+                        });
 
-                $("#slideshowGallery").css({
-                    "width": "101%",
-                    "height": "101%",
-                    "display": "block",
-                    "z-index": 9999,
-                    "background-color": "#000000",
-                    "line-height": 1,
-                    "overflow": "hidden"
+                        if (Util.isMobile() === false) {
+                            $("#mediaInfo").css({
+                                "max-width": ($(window).width() + 1),
+                                "white-space": "nowrap"
+                            });
+                        }
+
+                        $("#playPause").css("display", "block");
+                    }
                 });
-
-                if (Util.isMobile() === false) {
-                    $("#mediaInfo").css({
-                        "max-width": ($(window).width() + 1),
-                        "white-space": "nowrap"
-                    });
-                }
-
-                $("#playPause").css("display", "block");
             })
 
             // Clear live toast message on close
