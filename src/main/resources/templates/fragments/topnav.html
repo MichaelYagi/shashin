@@ -599,22 +599,17 @@
                 }
             });
 
-            function handleTouchMove(evt) {
-                if (!slideshowXDown || !slideshowYDown) {
-                    return;
-                }
-
-                const xUp = evt.touches[0].clientX;
-                const yUp = evt.touches[0].clientY;
-
-                const xDiff = slideshowXDown - xUp;
-                const yDiff = slideshowYDown - yUp;
-
-                if (Math.abs(xDiff) > Math.abs(yDiff)) {
-                    // Swipe left/right
-                    if (slideshowCurrentIndex > 0 && xDiff <= 0) {
+            Util.detectSwipe("#slideshowGallery", function (direction) {
+                if (direction === "up" || direction === "down") {
+                    if (document.fullscreenElement !== null && document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else {
+                        exitSlideshowGallery();
+                    }
+                } else if (direction === "left" || direction === "right") {
+                    if (slideshowCurrentIndex > 0 && direction === "left") {
                         slideshowCurrentIndex--;
-                    } else if (slideshowCurrentIndex <= slideshowMetadataIds.length-1 && xDiff > 0) {
+                    } else if (slideshowCurrentIndex <= slideshowMetadataIds.length-1 && direction === "right") {
                         slideshowCurrentIndex++;
                     }
 
@@ -628,41 +623,8 @@
                             }
                         }, (slideshowIsElapsed*1000));
                     }
-                } else {
-                    // Swipe up/down
-                    if (document.fullscreenElement !== null && document.exitFullscreen) {
-                        document.exitFullscreen();
-                    } else {
-                        exitSlideshowGallery();
-                    }
                 }
-                /* reset values */
-                slideshowXDown = null;
-                slideshowYDown = null;
-            }
-
-            function handleTouchStart(evt) {
-                const firstTouch = getTouches(evt)[0];
-                slideshowXDown = firstTouch.clientX;
-                slideshowYDown = firstTouch.clientY;
-            }
-
-            function getTouches(evt) {
-                return evt.touches ||             // browser API
-                    evt.originalEvent.touches; // jQuery
-            }
-
-            $("body").on('touchstart', e => {
-                if ($("#slideshowGallery").css("display") === "block") {
-                    handleTouchStart(e);
-                }
-            })
-
-            $("body").on('touchmove', e => {
-                if ($("#slideshowGallery").css("display") === "block") {
-                    handleTouchMove(e);
-                }
-            })
+            });
 
             function disappearCursor() {
                 slideshowMouseTimer = null;

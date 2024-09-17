@@ -43,6 +43,8 @@
     shashin.apiResponse.WARN = "warn";
     shashin.apiResponse.FAIL = "fail";
     shashin.objectName = "shashinobject";
+    shashin.slideshowXDown = null;
+    shashin.slideshowYDown = null;
     shashin.consoleTypes = Object.freeze({
         error: 0,
         info: 1,
