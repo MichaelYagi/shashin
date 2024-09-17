@@ -607,9 +607,9 @@
                         exitSlideshowGallery();
                     }
                 } else if (direction === "left" || direction === "right") {
-                    if (slideshowCurrentIndex > 0 && direction === "left") {
+                    if (slideshowCurrentIndex > 0 && direction === "right") {
                         slideshowCurrentIndex--;
-                    } else if (slideshowCurrentIndex <= slideshowMetadataIds.length-1 && direction === "right") {
+                    } else if (slideshowCurrentIndex <= slideshowMetadataIds.length-1 && direction === "left") {
                         slideshowCurrentIndex++;
                     }
 
