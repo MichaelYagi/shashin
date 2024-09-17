@@ -477,7 +477,7 @@
                         });
 
                         if (Util.isMobile() === false) {
-                            $("#mediaInfo").css({
+                            $(this).css({
                                 "max-width": ($(window).width() + 1)
                             });
                         }
@@ -503,7 +503,7 @@
                         if (data["shortPlaceName"] !== "") {
                             description += " • " + data["shortPlaceName"];
                         }
-                        $("#mediaInfo").html(description);
+                        $(this).html(description);
 
                         slideshowStarted = true;
                     });
