@@ -445,68 +445,74 @@
                     $("#mediaSrc").css("display", "block");
                     const photoUrl = data["baseUrl"] + data["metadata"]["thumbnailUrlOriginal"];
 
-                    let speed = "fast";
+                    let speed = 300;
                     if (slideshowStarted === false) {
                         speed = 0;
                     }
 
-                    $("#mediaSrc").fadeOut(speed, function() {
-                        $("#mediaSrc").attr("src", photoUrl).fadeIn((slideshowStarted === false)?0:1500);
+                    const tempImage = new Image();
 
-                        $("#playPause").css({
-                            "font-size": "10rem",
-                            "color": "#FFFFFF",
-                            "z-index": 99999,
-                            "max-width": $(window).innerWidth()+1,
-                            "height": "auto",
-                            "max-height": $(window).innerHeight()+1,
-                            "position": "absolute",
-                            "top": "50%",
-                            "left": "50%",
-                            "transform": "translate(-50%, -50%)"
-                        });
+                    tempImage.onload = function() {
+                        $("#mediaSrc").fadeOut(speed, function () {
+                            $("#mediaSrc").attr("src", photoUrl).fadeIn((slideshowStarted === false) ? 0 : 600);
 
-                        $(".centerFit").css({
-                            "max-width": $(window).innerWidth()+1,
-                            "height": "auto",
-                            "max-height": $(window).innerHeight()+1,
-                            "position": "absolute",
-                            "top": "50%",
-                            "left": "50%",
-                            "transform": "translate(-50%, -50%)"
-                        });
-
-                        if (Util.isMobile() === false) {
-                            $("#mediaInfo").css({
-                                "max-width": ($(window).width() + 1)
+                            $("#playPause").css({
+                                "font-size": "10rem",
+                                "color": "#FFFFFF",
+                                "z-index": 99999,
+                                "max-width": $(window).innerWidth() + 1,
+                                "height": "auto",
+                                "max-height": $(window).innerHeight() + 1,
+                                "position": "absolute",
+                                "top": "50%",
+                                "left": "50%",
+                                "transform": "translate(-50%, -50%)"
                             });
-                        }
 
-                        if (type === "new") {
-                            slideshowMetadataIds.push(data["metadata"]["id"]);
-                        }
-                        if (slideshowMetadataIds.length > limit) {
-                            slideshowMetadataIds.splice(slideshowMetadataIds.length, 1); // Remove 1 element at index x
-                        }
+                            $(".centerFit").css({
+                                "max-width": $(window).innerWidth() + 1,
+                                "height": "auto",
+                                "max-height": $(window).innerHeight() + 1,
+                                "position": "absolute",
+                                "top": "50%",
+                                "left": "50%",
+                                "transform": "translate(-50%, -50%)"
+                            });
 
-                        const takenDateString = data["metadata"]["year"] + "-" + data["metadata"]["month"] + "-" + data["metadata"]["day"];
-                        const takenDate = new Date(takenDateString);
-                        const options = {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'};
-                        let description = takenDate.toLocaleDateString('en-us', options)
+                            if (Util.isMobile() === false) {
+                                $("#mediaInfo").css({
+                                    "max-width": ($(window).width() + 1)
+                                });
+                            }
 
-                        if (accessTimelineView === false && data.hasOwnProperty("albumIds") === true && data["albumIds"].hasOwnProperty(0) === true) {
-                            description = "<a style='color:#DBE9F4;text-decoration:none;' href='/album/"+data["albumIds"][0]+"' target='_blank'>"+takenDate.toLocaleDateString('en-us', options)+"</a>"
-                        } else if (accessTimelineView === true) {
-                            description = "<a style='color:#DBE9F4;text-decoration:none;' href='/timeline#"+takenDateString+"' target='_blank'>"+takenDate.toLocaleDateString('en-us', options)+"</a>"
-                        }
+                            if (type === "new") {
+                                slideshowMetadataIds.push(data["metadata"]["id"]);
+                            }
+                            if (slideshowMetadataIds.length > limit) {
+                                slideshowMetadataIds.splice(slideshowMetadataIds.length, 1); // Remove 1 element at index x
+                            }
 
-                        if (data["shortPlaceName"] !== "") {
-                            description += " • " + data["shortPlaceName"];
-                        }
-                        $("#mediaInfo").html(description);
+                            const takenDateString = data["metadata"]["year"] + "-" + data["metadata"]["month"] + "-" + data["metadata"]["day"];
+                            const takenDate = new Date(takenDateString);
+                            const options = {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'};
+                            let description = takenDate.toLocaleDateString('en-us', options)
 
-                        slideshowStarted = true;
-                    });
+                            if (accessTimelineView === false && data.hasOwnProperty("albumIds") === true && data["albumIds"].hasOwnProperty(0) === true) {
+                                description = "<a style='color:#DBE9F4;text-decoration:none;' href='/album/" + data["albumIds"][0] + "' target='_blank'>" + takenDate.toLocaleDateString('en-us', options) + "</a>"
+                            } else if (accessTimelineView === true) {
+                                description = "<a style='color:#DBE9F4;text-decoration:none;' href='/timeline#" + takenDateString + "' target='_blank'>" + takenDate.toLocaleDateString('en-us', options) + "</a>"
+                            }
+
+                            if (data["shortPlaceName"] !== "") {
+                                description += " • " + data["shortPlaceName"];
+                            }
+                            $("#mediaInfo").html(description);
+
+                            slideshowStarted = true;
+                        });
+                    }
+
+                    tempImage.src = photoUrl;
                 }
             }
 
