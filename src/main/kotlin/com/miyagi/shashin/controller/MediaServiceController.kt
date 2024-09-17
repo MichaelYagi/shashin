@@ -371,7 +371,7 @@ class MediaServiceController {
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/api/v1/metadata/image/{metadataId}", "/metadata/image/{metadataId}"], method = [(RequestMethod.GET)], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/media/metadata/{metadataId}", "/media/metadata/{metadataId}"], method = [(RequestMethod.GET)], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Throws(java.io.IOException::class)
     fun getMetadataImage(model: Model, request: HttpServletRequest, @PathVariable metadataId: String): String {
