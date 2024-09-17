@@ -599,9 +599,9 @@
 
                 if (Math.abs(xDiff) > Math.abs(yDiff)) {
                     // Swipe left/right
-                    if (slideshowCurrentIndex > 0 && xDiff > 0) {
+                    if (slideshowCurrentIndex > 0 && xDiff <= 0) {
                         slideshowCurrentIndex--;
-                    } else if (slideshowCurrentIndex <= slideshowMetadataIds.length-1 && xDiff <= 0) {
+                    } else if (slideshowCurrentIndex <= slideshowMetadataIds.length-1 && xDiff > 0) {
                         slideshowCurrentIndex++;
                     }
 
