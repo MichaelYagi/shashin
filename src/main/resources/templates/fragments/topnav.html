@@ -444,11 +444,8 @@
                     $("#mediaSrc").css("display", "block");
                     const photoUrl = data["baseUrl"] + data["metadata"]["thumbnailUrlOriginal"];
 
-                    // Prevent gaps in transitions while next image loads
-                    const tempImage = new Image();
-
-                    tempImage.onload = function() {
-                        $("#mediaSrc").attr("src", photoUrl);
+                    $("#mediaSrc").fadeOut("slow", function() {
+                        $(this).attr("src", photoUrl).fadeIn("slow");
 
                         $("#playPause").css({
                             "font-size": "10rem",
@@ -501,9 +498,70 @@
                             description += " • " + data["shortPlaceName"];
                         }
                         $("#mediaInfo").html(description);
-                    }
+                    });
 
-                    tempImage.src = photoUrl;
+
+
+                    // Prevent gaps in transitions while next image loads
+                    // const tempImage = new Image();
+                    //
+                    // tempImage.onload = function() {
+                    //     $("#mediaSrc").attr("src", photoUrl);
+                    //
+                    //     $("#playPause").css({
+                    //         "font-size": "10rem",
+                    //         "color": "#FFFFFF",
+                    //         "z-index": 99999,
+                    //         "max-width": $(window).innerWidth()+1,
+                    //         "height": "auto",
+                    //         "max-height": $(window).innerHeight()+1,
+                    //         "position": "absolute",
+                    //         "top": "50%",
+                    //         "left": "50%",
+                    //         "transform": "translate(-50%, -50%)"
+                    //     });
+                    //
+                    //     $(".centerFit").css({
+                    //         "max-width": $(window).innerWidth()+1,
+                    //         "height": "auto",
+                    //         "max-height": $(window).innerHeight()+1,
+                    //         "position": "absolute",
+                    //         "top": "50%",
+                    //         "left": "50%",
+                    //         "transform": "translate(-50%, -50%)"
+                    //     });
+                    //
+                    //     if (Util.isMobile() === false) {
+                    //         $("#mediaInfo").css({
+                    //             "max-width": ($(window).width() + 1)
+                    //         });
+                    //     }
+                    //
+                    //     if (type === "new") {
+                    //         slideshowMetadataIds.push(data["metadata"]["id"]);
+                    //     }
+                    //     if (slideshowMetadataIds.length > limit) {
+                    //         slideshowMetadataIds.splice(slideshowMetadataIds.length, 1); // Remove 1 element at index x
+                    //     }
+                    //
+                    //     const takenDateString = data["metadata"]["year"] + "-" + data["metadata"]["month"] + "-" + data["metadata"]["day"];
+                    //     const takenDate = new Date(takenDateString);
+                    //     const options = {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'};
+                    //     let description = takenDate.toLocaleDateString('en-us', options)
+                    //
+                    //     if (accessTimelineView === false && data.hasOwnProperty("albumIds") === true && data["albumIds"].hasOwnProperty(0) === true) {
+                    //         description = "<a style='color:#DBE9F4;text-decoration:none;' href='/album/"+data["albumIds"][0]+"' target='_blank'>"+takenDate.toLocaleDateString('en-us', options)+"</a>"
+                    //     } else if (accessTimelineView === true) {
+                    //         description = "<a style='color:#DBE9F4;text-decoration:none;' href='/timeline#"+takenDateString+"' target='_blank'>"+takenDate.toLocaleDateString('en-us', options)+"</a>"
+                    //     }
+                    //
+                    //     if (data["shortPlaceName"] !== "") {
+                    //         description += " • " + data["shortPlaceName"];
+                    //     }
+                    //     $("#mediaInfo").html(description);
+                    // }
+                    //
+                    // tempImage.src = photoUrl;
                 }
             }
 
