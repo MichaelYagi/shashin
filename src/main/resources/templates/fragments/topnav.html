@@ -445,15 +445,10 @@
                     $("#mediaSrc").css("display", "block");
                     const photoUrl = data["baseUrl"] + data["metadata"]["thumbnailUrlOriginal"];
 
-                    let speed = 300;
-                    if (slideshowStarted === false) {
-                        speed = 0;
-                    }
-
                     const tempImage = new Image();
 
                     tempImage.onload = function() {
-                        $("#mediaSrc").fadeOut(speed, function () {
+                        $("#mediaSrc").fadeOut((slideshowStarted === false) ? 0 : 300, function () {
                             $("#mediaSrc").attr("src", photoUrl).fadeIn((slideshowStarted === false) ? 0 : 600);
 
                             $("#playPause").css({
