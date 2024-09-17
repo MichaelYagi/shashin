@@ -451,7 +451,7 @@
                     }
 
                     $("#mediaSrc").fadeOut(speed, function() {
-                        $(this).attr("src", photoUrl).fadeIn("slow");
+                        $("#mediaSrc").attr("src", photoUrl).fadeIn((slideshowStarted === false)?0:1000);
 
                         $("#playPause").css({
                             "font-size": "10rem",
