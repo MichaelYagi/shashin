@@ -374,13 +374,14 @@ class MediaServiceController {
     @RequestMapping(value = ["/api/v1/media/metadata/{metadataId}", "/media/metadata/{metadataId}"], method = [(RequestMethod.GET)], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Throws(java.io.IOException::class)
-    fun getMetadataImage(model: Model, request: HttpServletRequest, @PathVariable metadataId: String): String {
+    fun getMediaMetadata(model: Model, request: HttpServletRequest, @PathVariable metadataId: String): String {
         val mapper = ObjectMapper()
         val resp = mutableMapOf<String, Any?>()
         val currentUser = model.getAttribute("currentUser") as User?
         resp["metadata"] = mutableMapOf<String, Any?>()
         resp["status"] = ApiResponse.FAIL.status
         resp["albumIds"] = mutableListOf<Int>()
+        resp["shortPlaceName"] = ""
         resp["msg"] = ""
 
         var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
