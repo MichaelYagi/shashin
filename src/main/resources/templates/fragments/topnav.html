@@ -416,7 +416,7 @@
                 const http = new Http("show slideshow");
 
                 if (slideshowMetadataIds.length > 0 && slideshowCurrentIndex >= 0 && slideshowCurrentIndex <= slideshowMetadataIds.length-1) {
-                    http.ajax("get", "/metadata/image/"+slideshowMetadataIds[slideshowCurrentIndex]).then(function (data) {
+                    http.ajax("get", "/media/metadata/"+slideshowMetadataIds[slideshowCurrentIndex]).then(function (data) {
                         processSlideData(data, "existing");
                     })
                 } else {
