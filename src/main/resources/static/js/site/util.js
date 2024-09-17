@@ -12,6 +12,68 @@ class Util {
         return "A8E2CC75-7F9D45CA-9CE65C4E-FFF50CE3";
     }
 
+    static detectSwipe(element, callback) {
+        function handleTouchStart(evt) {
+            const firstTouch = getTouches(evt)[0];
+            shashin.slideshowXDown = firstTouch.clientX;
+            shashin.slideshowYDown = firstTouch.clientY;
+        }
+
+        function getTouches(evt) {
+            return evt.touches ||          // browser API
+                evt.originalEvent.touches; // jQuery
+        }
+
+        $(element).on('touchstart', e => {
+            handleTouchStart(e);
+        })
+
+        $(element).on('touchmove', e => {
+            handleTouchMove(e, callback);
+        })
+
+        function handleTouchMove(evt, callback) {
+            if (!shashin.slideshowXDown || !shashin.slideshowYDown) {
+                if (callback !== undefined && typeof callback === 'function') {
+                    callback(null);
+                }
+                return;
+            }
+
+            const xUp = evt.touches[0].clientX;
+            const yUp = evt.touches[0].clientY;
+
+            const xDiff = shashin.slideshowXDown - xUp;
+            const yDiff = shashin.slideshowYDown - yUp;
+
+            if (Math.abs(xDiff) > Math.abs(yDiff)) {
+                if (xDiff > 0) {
+                    if (callback !== undefined && typeof callback === 'function') {
+                        callback("left");
+                    }
+                } else {
+                    if (callback !== undefined && typeof callback === 'function') {
+                        callback("right");
+                    }
+                }
+            } else {
+                if (yDiff > 0) {
+                    if (callback !== undefined && typeof callback === 'function') {
+                        callback("up");
+                    }
+                } else {
+                    if (callback !== undefined && typeof callback === 'function') {
+                        callback("down");
+                    }
+                }
+            }
+
+            // Reset values
+            shashin.slideshowXDown = null;
+            shashin.slideshowYDown = null;
+        }
+    }
+
     static isInViewport(element) {
         if (element.length > 0) {
             const header = $('header');
