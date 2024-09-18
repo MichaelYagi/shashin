@@ -77,21 +77,24 @@ class NotificationsController {
     fun markNotificationsRead(model: Model): String {
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
-            val notificationList = notificationRepository.findAllByUserIdOrderByCreatedAtDesc(currentUserObj.getId())
-            if (notificationList != null && notificationList.count() > 0) {
-                val notifications = mutableListOf<Notification>()
-                for (notification in notificationList) {
-                    if (notification != null) {
-                        if (!notification.getRead()!!) {
-                            notification.setRead(true)
-                            notifications.add(notification)
+            Thread {
+                val notificationList =
+                    notificationRepository.findAllByUserIdOrderByCreatedAtDesc(currentUserObj.getId())
+                if (notificationList != null && notificationList.count() > 0) {
+                    val notifications = mutableListOf<Notification>()
+                    for (notification in notificationList) {
+                        if (notification != null) {
+                            if (!notification.getRead()!!) {
+                                notification.setRead(true)
+                                notifications.add(notification)
+                            }
                         }
                     }
+                    if (notifications.isNotEmpty()) {
+                        notificationRepository.saveAll(notifications)
+                    }
                 }
-                if (notifications.isNotEmpty()) {
-                    notificationRepository.saveAll(notifications)
-                }
-            }
+            }.start()
         } else {
             return "{\"msg\":\"\",\"status\":\"fail\"}"
         }
@@ -124,21 +127,27 @@ class NotificationsController {
     fun markNotificationsReadByAlbum(model: Model,@PathVariable albumId: Int): String {
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null && albumId > 0) {
-            val notificationList = notificationRepository.findAllByAlbumIdAndUserIdAndMetadataIdIsNullOrderByCreatedAtDesc(albumId,currentUserObj.getId())
-            if (notificationList != null && notificationList.count() > 0) {
-                val notifications = mutableListOf<Notification>()
-                for (notification in notificationList) {
-                    if (notification != null) {
-                        if (!notification.getRead()!!) {
-                            notification.setRead(true)
-                            notifications.add(notification)
+            Thread {
+                val notificationList =
+                    notificationRepository.findAllByAlbumIdAndUserIdAndMetadataIdIsNullOrderByCreatedAtDesc(
+                        albumId,
+                        currentUserObj.getId()
+                    )
+                if (notificationList != null && notificationList.count() > 0) {
+                    val notifications = mutableListOf<Notification>()
+                    for (notification in notificationList) {
+                        if (notification != null) {
+                            if (!notification.getRead()!!) {
+                                notification.setRead(true)
+                                notifications.add(notification)
+                            }
                         }
                     }
+                    if (notifications.isNotEmpty()) {
+                        notificationRepository.saveAll(notifications)
+                    }
                 }
-                if (notifications.isNotEmpty()) {
-                    notificationRepository.saveAll(notifications)
-                }
-            }
+            }.start()
         } else {
             return "{\"msg\":\"\",\"status\":\"fail\"}"
         }
@@ -151,21 +160,26 @@ class NotificationsController {
     fun markNotificationsReadByMetadata(model: Model,@PathVariable metadataId: String): String {
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null && metadataId.length > 0) {
-            val notificationList = notificationRepository.findAllByMetadataIdAndUserIdOrderByCreatedAtDesc(metadataId,currentUserObj.getId())
-            if (notificationList != null && notificationList.count() > 0) {
-                val notifications = mutableListOf<Notification>()
-                for (notification in notificationList) {
-                    if (notification != null) {
-                        if (!notification.getRead()!!) {
-                            notification.setRead(true)
-                            notifications.add(notification)
+            Thread {
+                val notificationList = notificationRepository.findAllByMetadataIdAndUserIdOrderByCreatedAtDesc(
+                    metadataId,
+                    currentUserObj.getId()
+                )
+                if (notificationList != null && notificationList.count() > 0) {
+                    val notifications = mutableListOf<Notification>()
+                    for (notification in notificationList) {
+                        if (notification != null) {
+                            if (!notification.getRead()!!) {
+                                notification.setRead(true)
+                                notifications.add(notification)
+                            }
                         }
                     }
+                    if (notifications.isNotEmpty()) {
+                        notificationRepository.saveAll(notifications)
+                    }
                 }
-                if (notifications.isNotEmpty()) {
-                    notificationRepository.saveAll(notifications)
-                }
-            }
+            }.start()
         } else {
             return "{\"msg\":\"\",\"status\":\"fail\"}"
         }
@@ -178,21 +192,24 @@ class NotificationsController {
     fun markNotificationsReadByFavorites(model: Model): String {
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
-            val notificationList = notificationRepository.findAllByUserIdAndFavoriteIdIsNotNull(currentUserObj.getId())
-            if (notificationList != null && notificationList.count() > 0) {
-                val notifications = mutableListOf<Notification>()
-                for (notification in notificationList) {
-                    if (notification != null) {
-                        if (!notification.getRead()!!) {
-                            notification.setRead(true)
-                            notifications.add(notification)
+            Thread {
+                val notificationList =
+                    notificationRepository.findAllByUserIdAndFavoriteIdIsNotNull(currentUserObj.getId())
+                if (notificationList != null && notificationList.count() > 0) {
+                    val notifications = mutableListOf<Notification>()
+                    for (notification in notificationList) {
+                        if (notification != null) {
+                            if (!notification.getRead()!!) {
+                                notification.setRead(true)
+                                notifications.add(notification)
+                            }
                         }
                     }
+                    if (notifications.isNotEmpty()) {
+                        notificationRepository.saveAll(notifications)
+                    }
                 }
-                if (notifications.isNotEmpty()) {
-                    notificationRepository.saveAll(notifications)
-                }
-            }
+            }.start()
         } else {
             return "{\"msg\":\"\",\"status\":\"fail\"}"
         }
@@ -267,19 +284,21 @@ class NotificationsController {
         val currentUserObj = model.getAttribute("currentUser") as User?
 
         if (currentUserObj != null && notificationIdList.containsKey("notificationIds")) {
-            val notificationIds = notificationIdList["notificationIds"] as ArrayList<*>
-            val notificationObjList = mutableListOf<Notification>()
+            Thread {
+                val notificationIds = notificationIdList["notificationIds"] as ArrayList<*>
+                val notificationObjList = mutableListOf<Notification>()
 
-            for (notificationId in notificationIds) {
-                if (notificationId != null && notificationId as Int > 0) {
-                    val notificationObj = notificationRepository.findById(notificationId)
-                    notificationObj.get().setRead(true)
-                    notificationObjList.add(notificationObj.get())
+                for (notificationId in notificationIds) {
+                    if (notificationId != null && notificationId as Int > 0) {
+                        val notificationObj = notificationRepository.findById(notificationId)
+                        notificationObj.get().setRead(true)
+                        notificationObjList.add(notificationObj.get())
+                    }
                 }
-            }
-            if (notificationObjList.isNotEmpty()) {
-                notificationRepository.saveAll(notificationObjList)
-            }
+                if (notificationObjList.isNotEmpty()) {
+                    notificationRepository.saveAll(notificationObjList)
+                }
+            }.start()
         } else {
             return "{\"msg\":\"\",\"status\":\"fail\"}"
         }
@@ -296,16 +315,18 @@ class NotificationsController {
             val notificationList = notificationRepository.findAllByUserIdAndReadIsFalse(currentUserObj.getId())
 
             if (notificationList != null && notificationList.count() > 0) {
-                val notificationObjList = mutableListOf<Notification>()
-                for (notificationObj in notificationList) {
-                    if (notificationObj != null) {
-                        notificationObj.setRead(true)
-                        notificationObjList.add(notificationObj)
+                Thread {
+                    val notificationObjList = mutableListOf<Notification>()
+                    for (notificationObj in notificationList) {
+                        if (notificationObj != null) {
+                            notificationObj.setRead(true)
+                            notificationObjList.add(notificationObj)
+                        }
                     }
-                }
-                if (notificationObjList.isNotEmpty()) {
-                    notificationRepository.saveAll(notificationObjList)
-                }
+                    if (notificationObjList.isNotEmpty()) {
+                        notificationRepository.saveAll(notificationObjList)
+                    }
+                }.start()
             }
         } else {
             return "{\"msg\":\"\",\"status\":\"fail\"}"

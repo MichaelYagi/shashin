@@ -236,8 +236,6 @@ class TestController {
             activeLink = "creategif"
         }
 
-        println("repairscripts thread exists: "+FileUtils.checkThreadFileAlive("repairscripts"))
-
         if (!FileUtils.checkThreadFileAlive("repairscripts") && FileUtils.createThreadFile("repairscripts") != null) {
             Thread {
                 // Retroactively create gif
