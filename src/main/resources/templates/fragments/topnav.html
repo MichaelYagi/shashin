@@ -431,7 +431,7 @@
 
             function processSlideData(data, type, callback) {
                 /*<![CDATA[*/
-                const limit = /*[[${searchHistoryLimit}]]*/ 10;
+                const limit = /*[[${queryLimit}]]*/ 10;
                 /*]]>*/
 
                 if (data.hasOwnProperty("metadata") === true &&
@@ -491,7 +491,8 @@
                                 slideshowMetadataIds.push(data["metadata"]["id"]);
                             }
                             if (slideshowMetadataIds.length > limit) {
-                                slideshowMetadataIds.splice(slideshowMetadataIds.length, 1); // Remove 1 element at index x
+                                slideshowMetadataIds.splice(0, 1); // At position 0, remove 1
+                                slideshowCurrentIndex--;
                             }
 
                             const takenDateString = data["metadata"]["year"] + "-" + data["metadata"]["month"] + "-" + data["metadata"]["day"];
