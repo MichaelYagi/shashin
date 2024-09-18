@@ -419,10 +419,12 @@
                 shashin.printMessageToConsole(slideshowMetadataIds);
 
                 if (slideshowMetadataIds.length > 0 && slideshowCurrentIndex >= 0 && slideshowCurrentIndex <= slideshowMetadataIds.length-1) {
+                    shashin.printMessageToConsole("Looking up " + slideshowMetadataIds[slideshowCurrentIndex]);
                     http.ajax("get", "/media/metadata/"+slideshowMetadataIds[slideshowCurrentIndex]).then(function (data) {
                         processSlideData(data, "existing", callback);
                     })
                 } else {
+                    shashin.printMessageToConsole("New random image");
                     http.ajax("get", "/random/image").then(function (data) {
                         processSlideData(data, "new", callback);
                     })
@@ -538,6 +540,7 @@
                     "display": "none"
                 });
 
+                slideshowCurrentIndex = 0;
                 slideshowMetadataIds = [];
 
                 if (slideshowIntervalId) {
