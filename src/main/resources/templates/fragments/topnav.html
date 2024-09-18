@@ -414,6 +414,10 @@
             function getSlideshowImage(callback) {
                 const http = new Http("show slideshow");
 
+                shashin.printMessageToConsole("slideshowCurrentIndex: " + slideshowCurrentIndex);
+                shashin.printMessageToConsole("slideshowMetadataIds:");
+                shashin.printMessageToConsole(slideshowMetadataIds);
+
                 if (slideshowMetadataIds.length > 0 && slideshowCurrentIndex >= 0 && slideshowCurrentIndex <= slideshowMetadataIds.length-1) {
                     http.ajax("get", "/media/metadata/"+slideshowMetadataIds[slideshowCurrentIndex]).then(function (data) {
                         processSlideData(data, "existing", callback);
