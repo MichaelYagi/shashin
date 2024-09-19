@@ -2,30 +2,29 @@ $(window).bind("load", function () {
     $("header .placeholder").removeClass("placeholder");
 });
 
-let activePageVar = '';
-let timezoneVar = "America/Los_Angeles";
-let notificationAlertsVar = false;
-let searchHistoryLimitVar = 10;
-let queryLimitVar = 30;
-let accessTimelineViewVar = false;
+const topNavActivePageVar = $("#activePage").val();
+let topNavTimezoneVar = "America/Los_Angeles";
+let topNavNotificationAlertsVar = false;
+let topNavSearchHistoryLimitVar = 10;
+let topNavQueryLimitVar = 30;
+let topNavAccessTimelineViewVar = false;
 
-function setVarsTopnav(darkMode, placeNames, activePage, timezone, notificationAlerts, searchHistoryLimit, queryLimit, accessTimelineView) {
+function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts, searchHistoryLimit, queryLimit, accessTimelineView) {
     shashin.darkMode = darkMode;
     shashin.showPlacename = placeNames;
-    activePageVar = activePage;
-    timezoneVar = timezone;
-    notificationAlertsVar = notificationAlerts;
-    searchHistoryLimitVar = searchHistoryLimit;
-    queryLimitVar = queryLimit;
-    accessTimelineViewVar = accessTimelineView;
+    topNavTimezoneVar = timezone;
+    topNavNotificationAlertsVar = notificationAlerts;
+    topNavSearchHistoryLimitVar = searchHistoryLimit;
+    topNavQueryLimitVar = queryLimit;
+    topNavAccessTimelineViewVar = accessTimelineView;
 }
 
 $(document).ready(async function () {
-    if (activePageVar !== "notifications") {
-        await Util.getNotifications(notificationAlertsVar, timezoneVar);
+    if (topNavActivePageVar !== "notifications") {
+        await Util.getNotifications(topNavNotificationAlertsVar, topNavTimezoneVar);
     }
 
-    if (notificationAlertsVar === true) {
+    if (topNavNotificationAlertsVar === true) {
         setTimeout(function () {
             const http = new Http("check compreface status");
             http.ajax("get", "/status/compreface").then(function (data) {
@@ -63,7 +62,7 @@ $(document).ready(async function () {
             }
 
             /*<![CDATA[*/
-            shashin.createAutocomplete("#appSearchInput", searchHistoryData, false, searchHistoryLimitVar, function () {
+            shashin.createAutocomplete("#appSearchInput", searchHistoryData, false, topNavSearchHistoryLimitVar, function () {
                 $("#appSearchSubmit").click();
             });
             /*]]>*/
@@ -89,9 +88,9 @@ $(document).ready(async function () {
     });
 
     $("#showNotificationAlertsSwitch").change(async function () {
-        const notificationAlertsVar = this.checked;
-        const http = new Http("show notificationAlertsVar");
-        const json = {notificationAlertsVar: notificationAlertsVar};
+        const topNavNotificationAlertsVar = this.checked;
+        const http = new Http("show topNavNotificationAlertsVar");
+        const json = {topNavNotificationAlertsVar: topNavNotificationAlertsVar};
         const data = await http.ajax("post", "/users/shownotificationalerts", JSON.stringify(json));
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
@@ -102,7 +101,6 @@ $(document).ready(async function () {
     });
 
     $("#showPlacenameSwitch").change(async function () {
-        const activePageVar = $("#activePageVar").val();
         const showPlacename = this.checked;
         shashin.showPlacename = showPlacename;
         const http = new Http("show placename");
@@ -111,7 +109,7 @@ $(document).ready(async function () {
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             if (data["status"] === "success") {
-                if (activePageVar === "timeline") {
+                if (topNavActivePageVar === "timeline") {
                     Util.reinitLightGalleryInstance();
                 } else {
                     window.location.reload();
@@ -121,7 +119,6 @@ $(document).ready(async function () {
     });
 
     $("#autoplayVideoSwitch").change(async function () {
-        const activePageVar = $("#activePageVar").val();
         const autoplayVideo = this.checked;
         shashin.autoplayVideo = autoplayVideo;
         const http = new Http("autoplay video");
@@ -130,7 +127,7 @@ $(document).ready(async function () {
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             if (data["status"] === "success") {
-                if (activePageVar === "timeline") {
+                if (topNavActivePageVar === "timeline") {
                     Util.reinitLightGalleryInstance();
                 } else {
                     window.location.reload();
@@ -220,7 +217,7 @@ $(document).ready(async function () {
                     if (type === "new") {
                         slideshowMetadataIds.push(data["metadata"]["id"]);
                     }
-                    if (slideshowMetadataIds.length > queryLimitVar) {
+                    if (slideshowMetadataIds.length > topNavQueryLimitVar) {
                         slideshowMetadataIds.splice(0, 1); // At position 0, remove 1
                         slideshowCurrentIndex--;
                     }
@@ -230,9 +227,9 @@ $(document).ready(async function () {
                     const options = {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'};
                     let description = takenDate.toLocaleDateString('en-us', options)
 
-                    if (accessTimelineViewVar === false && data.hasOwnProperty("albumIds") === true && data["albumIds"].hasOwnProperty(0) === true) {
+                    if (topNavAccessTimelineViewVar === false && data.hasOwnProperty("albumIds") === true && data["albumIds"].hasOwnProperty(0) === true) {
                         description = "<a style='color:#DBE9F4;text-decoration:none;' href='/album/" + data["albumIds"][0] + "' target='_blank'>" + takenDate.toLocaleDateString('en-us', options) + "</a>"
-                    } else if (accessTimelineViewVar === true) {
+                    } else if (topNavAccessTimelineViewVar === true) {
                         description = "<a style='color:#DBE9F4;text-decoration:none;' href='/timeline#" + takenDateString + "' target='_blank'>" + takenDate.toLocaleDateString('en-us', options) + "</a>"
                     }
 
@@ -496,7 +493,7 @@ $(document).ready(async function () {
     let stompClient = null;
     let scanInProgress = false;
 
-    if (activePageVar !== "timeline") {
+    if (topNavActivePageVar !== "timeline") {
         connectSP();
     }
 
@@ -558,7 +555,7 @@ $(document).ready(async function () {
     function scanRefresh() {
         sendMessageSP();
         let msgVal = $("#scanPhotoMsg").val();
-        if (activePageVar === "scan") {
+        if (topNavActivePageVar === "scan") {
             msgVal = $("#msg").text();
         }
 
@@ -593,7 +590,7 @@ $(document).ready(async function () {
                 let currentMediaCount = messageMap.hasOwnProperty("currentMediaCount") ? parseInt(messageMap["currentMediaCount"]) : 0;
                 let totalMediaCount = messageMap.hasOwnProperty("totalMediaCount") ? parseInt(messageMap["totalMediaCount"]) : 0;
 
-                if (activePageVar !== "map" && totalMediaCount > 0 && currentMediaCount > 0) {
+                if (topNavActivePageVar !== "map" && totalMediaCount > 0 && currentMediaCount > 0) {
                     $("#progressBarWrapper").visible()
                     let completedPercent = (currentMediaCount/totalMediaCount)*100;
                     Util.updateProgressBar(completedPercent);
@@ -607,7 +604,7 @@ $(document).ready(async function () {
                     $("#profileImagePlaceholder").css("opacity", 1.0);
                     Util.updateProgressBar(0);
                     if (counterMessage === 1) {
-                        Util.getNotifications(notificationAlertsVar, timezoneVar);
+                        Util.getNotifications(topNavNotificationAlertsVar, topNavTimezoneVar);
                     }
                 } else {
                     $("#mediaScanSpinner").css("display", "block");
@@ -623,7 +620,7 @@ $(document).ready(async function () {
 
             if (counterSP > 10) {
                 showMessageSP("Oops, something went wrong! " + e.toString() + ". Probably already scanning.");
-                if (activePageVar === "scan") {
+                if (topNavActivePageVar === "scan") {
                     window.top.location = window.top.location
                 }
                 counterSP = 0;
@@ -656,7 +653,7 @@ $(document).ready(async function () {
 
     function showMessageSP(message) {
         $("#scanPhotoMsg").val(message);
-        if (activePageVar === "scan") {
+        if (topNavActivePageVar === "scan") {
             $("#msg").text(message);
         }
     }
