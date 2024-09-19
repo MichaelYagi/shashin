@@ -23,7 +23,7 @@ class Settings {
                 let mediaDirArray = [];
 
                 if (mediaDirStr.length > 0) {
-                    mediaDirArray = mediaDirStr.split("|").map(element => element.trim());
+                    mediaDirArray = mediaDirStr.split("\\n").map(element => element.trim());
                 }
 
                 if (mediaDirArray.indexOf(path) === -1) {
