@@ -2,21 +2,40 @@ $(window).bind("load", function () {
     $("header .placeholder").removeClass("placeholder");
 });
 
-async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notificationAlerts, searchHistoryLimit, queryLimit, accessTimelineView) {
+const topNavActivePageVar = $("#activePage").val();
+let topNavTimezoneVar = "America/Los_Angeles";
+let topNavNotificationAlertsVar = false;
+let topNavSearchHistoryLimitVar = 10;
+let topNavQueryLimitVar = 30;
+let topNavAccessTimelineViewVar = false;
+
+let slideshowIntervalId;
+let slideshowStarted = false;
+let slideshowIsPaused = false;
+let slideshowIsElapsed = 30; // Seconds
+let slideshowCurrentIndex = 0;
+let slideshowMetadataIds = [];
+let slideshowMouseTimer = null;
+let slideshowCursorVisible = true;
+
+let mediaScanCounterSP = 0;
+
+function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts, searchHistoryLimit, queryLimit, accessTimelineView) {
     shashin.darkMode = darkMode;
     shashin.showPlacename = placeNames;
-    let activePageVar = activePage;
-    let timezoneVar = timezone;
-    let notificationAlertsVar = notificationAlerts;
-    let searchHistoryLimitVar = searchHistoryLimit;
-    let queryLimitVar = queryLimit;
-    let accessTimelineViewVar = accessTimelineView;
+    topNavTimezoneVar = timezone;
+    topNavNotificationAlertsVar = notificationAlerts;
+    topNavSearchHistoryLimitVar = searchHistoryLimit;
+    topNavQueryLimitVar = queryLimit;
+    topNavAccessTimelineViewVar = accessTimelineView;
+}
 
-    if (activePageVar !== "notifications") {
-        await Util.getNotifications(notificationAlertsVar, timezoneVar);
+$(document).ready(async function () {
+    if (topNavActivePageVar !== "notifications") {
+        await Util.getNotifications(topNavNotificationAlertsVar, topNavTimezoneVar);
     }
 
-    if (notificationAlertsVar === true) {
+    if (topNavNotificationAlertsVar === true) {
         setTimeout(function () {
             const http = new Http("check compreface status");
             http.ajax("get", "/status/compreface").then(function (data) {
@@ -26,7 +45,7 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
                         iconColor: "#FF0000",
                         autohide: false,
                         target: shashin.toast.target.three,
-                        borderColor: "danger"
+                        borderColor:"danger"
                     });
                 }
             })
@@ -54,7 +73,7 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
             }
 
             /*<![CDATA[*/
-            shashin.createAutocomplete("#appSearchInput", searchHistoryData, false, searchHistoryLimitVar, function () {
+            shashin.createAutocomplete("#appSearchInput", searchHistoryData, false, topNavSearchHistoryLimitVar, function () {
                 $("#appSearchSubmit").click();
             });
             /*]]>*/
@@ -80,9 +99,9 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
     });
 
     $("#showNotificationAlertsSwitch").change(async function () {
-        const notificationAlertsVar = this.checked;
-        const http = new Http("show notificationAlertsVar");
-        const json = {notificationAlertsVar: notificationAlertsVar};
+        const topNavNotificationAlertsVar = this.checked;
+        const http = new Http("show topNavNotificationAlertsVar");
+        const json = {topNavNotificationAlertsVar: topNavNotificationAlertsVar};
         const data = await http.ajax("post", "/users/shownotificationalerts", JSON.stringify(json));
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
@@ -93,7 +112,6 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
     });
 
     $("#showPlacenameSwitch").change(async function () {
-        const activePageVar = $("#activePageVar").val();
         const showPlacename = this.checked;
         shashin.showPlacename = showPlacename;
         const http = new Http("show placename");
@@ -102,7 +120,7 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             if (data["status"] === "success") {
-                if (activePageVar === "timeline") {
+                if (topNavActivePageVar === "timeline") {
                     Util.reinitLightGalleryInstance();
                 } else {
                     window.location.reload();
@@ -112,7 +130,6 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
     });
 
     $("#autoplayVideoSwitch").change(async function () {
-        const activePageVar = $("#activePageVar").val();
         const autoplayVideo = this.checked;
         shashin.autoplayVideo = autoplayVideo;
         const http = new Http("autoplay video");
@@ -121,7 +138,7 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             if (data["status"] === "success") {
-                if (activePageVar === "timeline") {
+                if (topNavActivePageVar === "timeline") {
                     Util.reinitLightGalleryInstance();
                 } else {
                     window.location.reload();
@@ -130,29 +147,20 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
         }
     });
 
-    let slideshowIntervalId;
-    let slideshowStarted = false;
-    let slideshowIsPaused = false;
-    let slideshowIsElapsed = 30; // Seconds
-    let slideshowCurrentIndex = 0;
-    let slideshowMetadataIds = [];
-    let slideshowMouseTimer = null;
-    let slideshowCursorVisible = true;
-
     function getSlideshowImage(callback) {
         const http = new Http("show slideshow");
 
-        shashin.printMessageToConsole("slideshowCurrentIndex: " + slideshowCurrentIndex, {tag: "slideshow"});
-        shashin.printMessageToConsole("slideshowMetadataIds:", {tag: "slideshow"});
-        shashin.printMessageToConsole(slideshowMetadataIds, {tag: "slideshow"});
+        shashin.printMessageToConsole("slideshowCurrentIndex: " + slideshowCurrentIndex, {tag:"slideshow"});
+        shashin.printMessageToConsole("slideshowMetadataIds:", {tag:"slideshow"});
+        shashin.printMessageToConsole(slideshowMetadataIds, {tag:"slideshow"});
 
-        if (slideshowMetadataIds.length > 0 && slideshowCurrentIndex >= 0 && slideshowCurrentIndex <= slideshowMetadataIds.length - 1) {
-            shashin.printMessageToConsole("Looking up " + slideshowMetadataIds[slideshowCurrentIndex], {tag: "slideshow"});
-            http.ajax("get", "/media/metadata/" + slideshowMetadataIds[slideshowCurrentIndex]).then(function (data) {
+        if (slideshowMetadataIds.length > 0 && slideshowCurrentIndex >= 0 && slideshowCurrentIndex <= slideshowMetadataIds.length-1) {
+            shashin.printMessageToConsole("Looking up " + slideshowMetadataIds[slideshowCurrentIndex], {tag:"slideshow"});
+            http.ajax("get", "/media/metadata/"+slideshowMetadataIds[slideshowCurrentIndex]).then(function (data) {
                 processSlideData(data, "existing", callback);
             })
         } else {
-            shashin.printMessageToConsole("New random image", {tag: "slideshow"});
+            shashin.printMessageToConsole("New random image", {tag:"slideshow"});
             http.ajax("get", "/random/image").then(function (data) {
                 processSlideData(data, "new", callback);
             })
@@ -171,7 +179,7 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
 
             const tempImage = new Image();
 
-            tempImage.onload = function () {
+            tempImage.onload = function() {
                 $("#mediaSrc").fadeOut((slideshowStarted === false) ? 0 : 300, function () {
                     $("#mediaSrc").attr("src", photoUrl).fadeIn((slideshowStarted === false) ? 0 : 600);
 
@@ -212,7 +220,7 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
                     if (type === "new") {
                         slideshowMetadataIds.push(data["metadata"]["id"]);
                     }
-                    if (slideshowMetadataIds.length > queryLimitVar) {
+                    if (slideshowMetadataIds.length > topNavQueryLimitVar) {
                         slideshowMetadataIds.splice(0, 1); // At position 0, remove 1
                         slideshowCurrentIndex--;
                     }
@@ -222,9 +230,9 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
                     const options = {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'};
                     let description = takenDate.toLocaleDateString('en-us', options)
 
-                    if (accessTimelineViewVar === false && data.hasOwnProperty("albumIds") === true && data["albumIds"].hasOwnProperty(0) === true) {
+                    if (topNavAccessTimelineViewVar === false && data.hasOwnProperty("albumIds") === true && data["albumIds"].hasOwnProperty(0) === true) {
                         description = "<a style='color:#DBE9F4;text-decoration:none;' href='/album/" + data["albumIds"][0] + "' target='_blank'>" + takenDate.toLocaleDateString('en-us', options) + "</a>"
-                    } else if (accessTimelineViewVar === true) {
+                    } else if (topNavAccessTimelineViewVar === true) {
                         description = "<a style='color:#DBE9F4;text-decoration:none;' href='/timeline#" + takenDateString + "' target='_blank'>" + takenDate.toLocaleDateString('en-us', options) + "</a>"
                     }
 
@@ -281,7 +289,7 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
         $("#mediaSrc").attr("src", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII");
     }
 
-    $("body").on("dblclick", function (e) {
+    $("body").on("dblclick", function( e ) {
         if (Util.isMobile() === true && $("#slideshowGallery").css("display") === "block") {
             if (document.fullscreenElement !== null && document.exitFullscreen) {
                 document.exitFullscreen();
@@ -291,7 +299,7 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
         }
     })
 
-    $("body").on("keyup", function (e) {
+    $("body").on("keyup", function( e ) {
         if ($("#slideshowGallery").css("display") === "block") {
             if (e.code === "Escape" || e.keyCode === 27) {
                 if (document.fullscreenElement !== null && document.documentElement.exitFullscreen) {
@@ -308,7 +316,7 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
             if (e.keyCode === 39 || e.keyCode === 37) {
                 if (slideshowCurrentIndex > 0 && e.keyCode === 37) {
                     slideshowCurrentIndex--;
-                } else if (slideshowCurrentIndex <= slideshowMetadataIds.length - 1 && e.keyCode === 39) {
+                } else if (slideshowCurrentIndex <= slideshowMetadataIds.length-1 && e.keyCode === 39) {
                     slideshowCurrentIndex++;
                 }
 
@@ -320,7 +328,7 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
                             slideshowCurrentIndex++;
                             getSlideshowImage();
                         }
-                    }, (slideshowIsElapsed * 1000));
+                    }, (slideshowIsElapsed*1000));
                 }
             }
 
@@ -340,7 +348,7 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
         } else if (direction === "left" || direction === "right") {
             if (slideshowCurrentIndex > 0 && direction === "right") {
                 slideshowCurrentIndex--;
-            } else if (slideshowCurrentIndex <= slideshowMetadataIds.length - 1 && direction === "left") {
+            } else if (slideshowCurrentIndex <= slideshowMetadataIds.length-1 && direction === "left") {
                 slideshowCurrentIndex++;
             }
 
@@ -352,7 +360,7 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
                         slideshowCurrentIndex++;
                         getSlideshowImage();
                     }
-                }, (slideshowIsElapsed * 1000));
+                }, (slideshowIsElapsed*1000));
             }
         }
     });
@@ -363,7 +371,7 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
         slideshowCursorVisible = false;
     }
 
-    $("body").on("mousemove", function () {
+    $("body").on("mousemove", function() {
         if (Util.isMobile() === false && $("#slideshowGallery").css("display") === "block") {
             if (slideshowMouseTimer) {
                 clearTimeout(slideshowMouseTimer);
@@ -378,7 +386,7 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
         }
     });
 
-    $("#mediaSrc").on("click", function (e) {
+    $("#mediaSrc").on("click", function( e ) {
         if ($("#slideshowGallery").css("display") === "block") {
             slideshowGalleryPlayPause();
         }
@@ -411,12 +419,12 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
             document.documentElement.requestFullscreen();
         }
 
-        slideshowIntervalId = window.setInterval(function () {
+        slideshowIntervalId = window.setInterval(function() {
             if (slideshowIsPaused === false) {
                 slideshowCurrentIndex++;
                 getSlideshowImage();
             }
-        }, (slideshowIsElapsed * 1000));
+        }, (slideshowIsElapsed*1000));
 
         getSlideshowImage(function (loaded) {
             if (loaded === true) {
@@ -446,35 +454,35 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
     })
 
     // Clear live toast message on close
-    $('#' + shashin.toast.target.default).on('hidden.bs.toast', function () {
+    $('#'+shashin.toast.target.default).on('hidden.bs.toast', function () {
         $("#toastIcon").removeClass();
         $("#toastIcon").removeAttr('style');
         $("#toastTitle").text("");
         $("#toastMessage").text("");
     });
 
-    $('#' + shashin.toast.target.one).on('hidden.bs.toast', function () {
+    $('#'+shashin.toast.target.one).on('hidden.bs.toast', function () {
         $("#toastIcon1").removeClass();
         $("#toastIcon1").removeAttr('style');
         $("#toastTitle1").text("");
         $("#toastMessage1").text("");
     });
 
-    $('#' + shashin.toast.target.two).on('hidden.bs.toast', function () {
+    $('#'+shashin.toast.target.two).on('hidden.bs.toast', function () {
         $("#toastIcon2").removeClass();
         $("#toastIcon2").removeAttr('style');
         $("#toastTitle2").text("");
         $("#toastMessage2").text("");
     });
 
-    $('#' + shashin.toast.target.three).on('hidden.bs.toast', function () {
+    $('#'+shashin.toast.target.three).on('hidden.bs.toast', function () {
         $("#toastIcon3").removeClass();
         $("#toastIcon3").removeAttr('style');
         $("#toastTitle3").text("");
         $("#toastMessage3").text("");
     });
 
-    $('#' + shashin.toast.target.four).on('hidden.bs.toast', function () {
+    $('#'+shashin.toast.target.four).on('hidden.bs.toast', function () {
         $("#toastIcon4").removeClass();
         $("#toastIcon4").removeAttr('style');
         $("#toastTitle4").text("");
@@ -482,15 +490,13 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
     });
 
     // Focus and select search input
-    $("#appSearchInput").focus(function () {
-        $(this).select();
-    });
+    $("#appSearchInput").focus(function() { $(this).select(); } );
 
     // Get updates from media scans
     let stompClient = null;
     let scanInProgress = false;
 
-    if (activePageVar !== "timeline") {
+    if (topNavActivePageVar !== "timeline") {
         connectSP();
     }
 
@@ -531,12 +537,7 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
     function postToScan(deleteThread) {
         let posting = $.post(
             "/settings/scan",
-            {
-                "submit": "Scan",
-                "deleteThread": deleteThread,
-                "stopScan": false,
-                "reindexFiles": $('#reindexFiles').prop("checked")
-            }
+            {"submit": "Scan", "deleteThread": deleteThread, "stopScan": false, "reindexFiles": $('#reindexFiles').prop("checked")}
         );
 
         posting.done(function (data) {
@@ -557,7 +558,7 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
     function scanRefresh() {
         sendMessageSP();
         let msgVal = $("#scanPhotoMsg").val();
-        if (activePageVar === "scan") {
+        if (topNavActivePageVar === "scan") {
             msgVal = $("#msg").text();
         }
 
@@ -569,8 +570,6 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
         }
     }
 
-    let counterSP = 0;
-
     function connectSP() {
         const socket = new SockJS('/websocket-endpoint');
         stompClient = Stomp.over(socket);
@@ -581,11 +580,11 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
         shashin.printMessageToConsole("Socket Connecting");
 
         let counterMessage = 0;
-        stompClient.connect({}, function () {
+        stompClient.connect({}, function() {
             if (scanInProgress === false) {
                 scanRefresh();
             }
-            shashin.printMessageToConsole("Connected STOMP client");
+            shashin.printMessageToConsole( "Connected STOMP client");
             this.subscribe("/topic/messages", function (message) {
                 let respMessageJsonString = JSON.parse(message.body).content;
                 const messageMap = JSON.parse(respMessageJsonString);
@@ -593,13 +592,13 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
                 let currentMediaCount = messageMap.hasOwnProperty("currentMediaCount") ? parseInt(messageMap["currentMediaCount"]) : 0;
                 let totalMediaCount = messageMap.hasOwnProperty("totalMediaCount") ? parseInt(messageMap["totalMediaCount"]) : 0;
 
-                if (activePageVar !== "map" && totalMediaCount > 0 && currentMediaCount > 0) {
+                if (topNavActivePageVar !== "map" && totalMediaCount > 0 && currentMediaCount > 0) {
                     $("#progressBarWrapper").visible()
-                    let completedPercent = (currentMediaCount / totalMediaCount) * 100;
+                    let completedPercent = (currentMediaCount/totalMediaCount)*100;
                     Util.updateProgressBar(completedPercent);
                 }
 
-                shashin.printMessageToConsole("message: " + message);
+                shashin.printMessageToConsole("message: "+message);
                 if (respMessage === "Scan Stopped" || respMessage === "No directories configured" || respMessage === "Scan Complete") {
                     $("#mediaScanSpinner").css("display", "none");
                     $("#progressBarWrapper").invisible();
@@ -607,7 +606,7 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
                     $("#profileImagePlaceholder").css("opacity", 1.0);
                     Util.updateProgressBar(0);
                     if (counterMessage === 1) {
-                        Util.getNotifications(notificationAlertsVar, timezoneVar);
+                        Util.getNotifications(topNavNotificationAlertsVar, topNavTimezoneVar);
                     }
                 } else {
                     $("#mediaScanSpinner").css("display", "block");
@@ -618,15 +617,15 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
                 showMessageSP(respMessage);
                 counterMessage++;
             });
-        }, function (e) {
+        }, function(e) {
             shashin.printMessageToConsole("Socket connection error in connectSP(): " + e.toString())
 
-            if (counterSP > 10) {
+            if (mediaScanCounterSP > 10) {
                 showMessageSP("Oops, something went wrong! " + e.toString() + ". Probably already scanning.");
-                if (activePageVar === "scan") {
+                if (topNavActivePageVar === "scan") {
                     window.top.location = window.top.location
                 }
-                counterSP = 0;
+                mediaScanCounterSP = 0;
             } else {
                 showMessageSP("Oops, something went wrong! " + e.toString() + ". Click the Scan button once, to proceed with indexing.");
                 disconnectSP();
@@ -634,7 +633,7 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
             }
 
             scanInProgress = false;
-            counterSP++;
+            mediaScanCounterSP++;
         });
     }
 
@@ -656,8 +655,8 @@ async function setVarsTopnav(darkMode, placeNames, activePage, timezone, notific
 
     function showMessageSP(message) {
         $("#scanPhotoMsg").val(message);
-        if (activePageVar === "scan") {
+        if (topNavActivePageVar === "scan") {
             $("#msg").text(message);
         }
     }
-}
+});
