@@ -259,13 +259,17 @@ class SettingsController {
 
         var dirDneString = ""
         if (model.getAttribute("authority").toString() == model.getAttribute("superRole") && mediaDirectories != null && mediaExcludeDirectories != null) {
-            model["mediaDirList"] = mediaDirectories.joinToString { "${it?.getDirectory()}" }
-            model["mediaExcludeDirList"] = mediaExcludeDirectories.joinToString { "${it?.getDirectory()}" }
+            model["mediaDirList"] = mediaDirectories.joinToString("\n") { "${it?.getDirectory()}" }
+            model["mediaExcludeDirList"] = mediaExcludeDirectories.joinToString("\n") { "${it?.getDirectory()}" }
 
             for (mediaDir in mediaDirectories) {
                 if (mediaDir != null) {
-                    val path: Path = Paths.get(mediaDir.getDirectory()!!)
-                    if (!Files.exists(path)) {
+                    try {
+                        val path: Path = Paths.get(mediaDir.getDirectory()!!)
+                        if (!Files.exists(path)) {
+                            dirDneString += "${mediaDir.getDirectory()},"
+                        }
+                    } catch (_: Exception) {
                         dirDneString += "${mediaDir.getDirectory()},"
                     }
                 }
@@ -273,8 +277,12 @@ class SettingsController {
 
             for (mediaDir in mediaExcludeDirectories) {
                 if (mediaDir != null) {
-                    val path: Path = Paths.get(mediaDir.getDirectory()!!)
-                    if (!Files.exists(path)) {
+                    try {
+                        val path: Path = Paths.get(mediaDir.getDirectory()!!)
+                        if (!Files.exists(path)) {
+                            dirDneString += "${mediaDir.getDirectory()},"
+                        }
+                    } catch (_: Exception) {
                         dirDneString += "${mediaDir.getDirectory()},"
                     }
                 }
@@ -360,13 +368,15 @@ class SettingsController {
         var resetServer = false
         var mediaDirs: List<String>? = null
         val mediaDirArrayList: ArrayList<MediaDirectory> = ArrayList()
+
         if (mediaDirList.isNotBlank()) {
-            mediaDirs = mediaDirList.trim().split(",").map { it.trim() }
+            mediaDirs = mediaDirList.trim().split("\\r\\n","\\n","\\r","\r\n","\n","\r").map { it.trim() }
         }
+
         var mediaExcludeDirs: List<String>? = null
         val mediaExcludeDirArrayList: ArrayList<MediaDirectory> = ArrayList()
         if (mediaExcludeDirList.isNotBlank()) {
-            mediaExcludeDirs = mediaExcludeDirList.trim().split(",").map { it.trim() }
+            mediaExcludeDirs = mediaExcludeDirList.trim().split("\\r\\n","\\n","\\r","\r\n","\n","\r").map { it.trim() }
         }
 
         model["status"] = ApiResponse.SUCCESS.status
@@ -397,8 +407,12 @@ class SettingsController {
                     mediaDirObj.setModifiedAt(getCurrentTimestamp())
                     mediaDirArrayList.add(mediaDirObj)
 
-                    val path: Path = Paths.get(mediaDir)
-                    if (!Files.exists(path)) {
+                    try {
+                        val path: Path = Paths.get(mediaDir)
+                        if (!Files.exists(path)) {
+                            dirDneString += "$mediaDir,"
+                        }
+                    } catch (_: Exception) {
                         dirDneString += "$mediaDir,"
                     }
                 }
@@ -412,13 +426,14 @@ class SettingsController {
             val allMediaExcludeDirs = mediaDirRepository?.findByExclude(true)
 
             val allMediaExcludeDirList: List<String>? = allMediaExcludeDirs?.map { it?.getDirectory()!! }
-                if (scanAutomatically == "on" &&
-                    (mediaExcludeDirs.isNotEmpty() && (!mediaExcludeDirs.containsAll(allMediaExcludeDirList!!) || !allMediaExcludeDirList.containsAll(
-                        mediaExcludeDirs
-                    )))
-                ) {
-                    resetServer = true
-                }
+
+            if (scanAutomatically == "on" &&
+                (mediaExcludeDirs.isNotEmpty() && (!mediaExcludeDirs.containsAll(allMediaExcludeDirList!!) || !allMediaExcludeDirList.containsAll(
+                    mediaExcludeDirs
+                )))
+            ) {
+                resetServer = true
+            }
 
             mediaDirRepository?.deleteByExclude(true)
             for (mediaDir in mediaExcludeDirs) {
@@ -434,11 +449,14 @@ class SettingsController {
                     mediaDirObj.setModifiedAt(getCurrentTimestamp())
                     mediaExcludeDirArrayList.add(mediaDirObj)
 
-                    val path: Path = Paths.get(mediaDir)
-                    if (!Files.exists(path)) {
+                    try {
+                        val path: Path = Paths.get(mediaDir)
+                        if (!Files.exists(path)) {
+                            dirDneString += "$mediaDir,"
+                        }
+                    } catch (_: Exception) {
                         dirDneString += "$mediaDir,"
                     }
-
                 }
             }
             mediaDirRepository?.saveAll(mediaExcludeDirArrayList)
@@ -499,7 +517,7 @@ class SettingsController {
         }
 
         if (settings != null) {
-            settingsRepository.save(settings)
+            settingsRepository?.save(settings)
             model["settings"] = settings
 
             val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())

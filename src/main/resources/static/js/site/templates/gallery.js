@@ -2,7 +2,7 @@ class GalleryTemplates {
     static PhotoGalleryItem({activePage, metadata, overlayData, uuid}) { return `
         <div id="photoThumbnailContainer${metadata.id}" class="photo-thumbnail-container photo-thumbnail" style="width:${metadata.thumbnailSmallWidth}px;height:${metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
             <span class="lightGalleryIndexAnchor"></span>
-            <img loading="lazy" data-smallthumb="${encodeURI(metadata.thumbnailUrlSmall)}?v=${uuid}" data-xsmallthumb="${activePage !== 'timeline' && metadata.thumbnailUrlExtraSmall===null?'':encodeURI(metadata.thumbnailUrlExtraSmall)}" src="${encodeURI(metadata.thumbnailUrlSmall)}?v=${uuid}" class="photo-thumbnail-image" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
+            <img loading="lazy" data-smallthumb="${encodeURI(metadata.thumbnailUrlSmall).replace(";", "%3B")}?v=${uuid}" data-xsmallthumb="${activePage !== 'timeline' && metadata.thumbnailUrlExtraSmall===null?'':encodeURI(metadata.thumbnailUrlExtraSmall)}" src="${encodeURI(metadata.thumbnailUrlSmall)}?v=${uuid}" class="photo-thumbnail-image" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
             <input type="hidden" name="filename${metadata.id}" id="filename${metadata.id}" value="${metadata.fileName}">
             <input type="hidden" name="thumbnailCentered${metadata.id}" id="thumbnailCentered${metadata.id}" value="${encodeURI(metadata.thumbnailUrlCentered)}">
             
@@ -196,10 +196,10 @@ class GalleryTemplates {
     
             ${($.inArray("isVideo", overlays) !== -1) ?
                 `
-                <a class="mediaLink" id="mediaLink${id}" data-download-url="${encodeURI(data.metadata.videoUrl)}/download" 
+                <a class="mediaLink" id="mediaLink${id}" data-download-url="${encodeURI(data.metadata.videoUrl).replace(";", "%3B")}/download" 
                     ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}
                     data-metadata-id="${data.metadata.id}"
-                    data-poster="${(data.metadata.thumbnailUrlOriginal === null || data.metadata.thumbnailUrlOriginal === "") ? data.metadata.thumbnailUrlSmall : encodeURI(data.metadata.thumbnailUrlOriginal)}?v=${uuid}"
+                    data-poster="${(data.metadata.thumbnailUrlOriginal === null || data.metadata.thumbnailUrlOriginal === "") ? data.metadata.thumbnailUrlSmall : encodeURI(data.metadata.thumbnailUrlOriginal).replace(";", "%3B")}?v=${uuid}"
                     data-lg-size="${(data.metadata.originalImageWidth === null || data.metadata.originalImageWidth === "") ? `${data.metadata.thumbnailSmallWidth}-${data.metadata.thumbnailSmallHeight}` : `${data.metadata.originalImageWidth}-${data.metadata.originalImageHeight}`}"
                     data-video=\'{"source": [{"src":"${data.metadata.videoUrl}", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true, "autoplay": true}}\'>
                     ${(activePage !== "slideshow" ? `<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>` : '')}
@@ -208,7 +208,7 @@ class GalleryTemplates {
                 :
                 `
                 <a class="mediaLink" id="mediaLink${id}" data-src="${data.metadata.thumbnailUrlOriginal}" href="${data.metadata.thumbnailUrlOriginal}"
-                    data-download-url="${encodeURI(data.metadata.thumbnailUrlOriginal)}/download"
+                    data-download-url="${encodeURI(data.metadata.thumbnailUrlOriginal).replace(";", "%3B")}/download"
                     data-metadata-id="${data.metadata.id}"
                     ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}>
                     ${(activePage !== "slideshow" ? `<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>` : '')}
@@ -230,7 +230,7 @@ class GalleryTemplates {
 
     static getFoldersCard({folder, thumbnailUrlCentered, count, appendClass}) { return `
         <div class="card" style="width:235px;padding-top:10px;margin-right:-1px;margin-top:-1px;">
-            <a href="/folder/${encodeURIComponent(encodeURIComponent(folder))}" style="text-decoration: none !important;color: #777777;">
+            <a href="/folder/${encodeURIComponent(encodeURIComponent(folder)).replace(";", "%3B")}" style="text-decoration: none !important;color: #777777;">
                 <img loading="lazy" class="card-img-top" src="${thumbnailUrlCentered}" width="209" height="209" style="width: 209px;height: 209px;">
             </a>
             <div class="card-body" style="display: flex;flex-direction: column;">

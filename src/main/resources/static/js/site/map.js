@@ -515,7 +515,7 @@ async function showMap(mapdata, keywordMap) {
                             anchorXUnits: 'fraction',
                             anchorYUnits: 'pixels',
                             opacity: 1.0,
-                            src: encodeURI(data["mapMarkerUrl"]) + (version === "" ? "" : "?v=" + version)
+                            src: encodeURI(data["mapMarkerUrl"]).replace(";", "%3B") + (version === "" ? "" : "?v=" + version)
                         }))
                     });
 
@@ -797,7 +797,7 @@ async function showMap(mapdata, keywordMap) {
 
                 if (featureProperties.type.includes("image")) {
                     mediaContent.src = featureProperties.thumbnailUrlOriginal;
-                    mediaContent.downloadUrl = encodeURI(featureProperties.thumbnailUrlOriginal) + "/download";
+                    mediaContent.downloadUrl = encodeURI(featureProperties.thumbnailUrlOriginal).replace(";", "%3B") + "/download";
                 } else if (featureProperties.type.includes("video")) {
                     mediaContent.video = {
                         "source": [{"src": featureProperties.videoUrl, "type": "video/mp4"}],
@@ -809,9 +809,9 @@ async function showMap(mapdata, keywordMap) {
                         }
                     }
 
-                    mediaContent.poster = ((featureProperties.thumbnailUrlOriginal === null || featureProperties.thumbnailUrlOriginal === "") ? featureProperties.thumbnailUrlSmall : encodeURI(featureProperties.thumbnailUrlOriginal)) + "?v=" + Util.getMetadataLocalStorage();
+                    mediaContent.poster = ((featureProperties.thumbnailUrlOriginal === null || featureProperties.thumbnailUrlOriginal === "") ? featureProperties.thumbnailUrlSmall : encodeURI(featureProperties.thumbnailUrlOriginal).replace(";", "%3B")) + "?v=" + Util.getMetadataLocalStorage();
                     mediaContent.lgSize = featureProperties.originalImageWidth+"-"+featureProperties.originalImageHeight;
-                    mediaContent.downloadUrl = encodeURI(featureProperties.videoUrl) + "/download";
+                    mediaContent.downloadUrl = encodeURI(featureProperties.videoUrl).replace(";", "%3B") + "/download";
                 }
                 mediaContent.metadataId = featureProperties.metadataId;
                 mediaContent.subHtml = featureProperties.description;
