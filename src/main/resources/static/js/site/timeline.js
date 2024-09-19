@@ -1440,7 +1440,7 @@
 
         if ($("#image" + metadata.id).length === 1) {
             const version = Util.getMetadataLocalStorage();
-            $("#image" + metadata.id).attr("src", encodeURI(metadata.thumbnailUrlSmall)+(version === "" ? "" : "?v=" + version));
+            $("#image" + metadata.id).attr("src", encodeURI(metadata.thumbnailUrlSmall).replace(";", "%3B")+(version === "" ? "" : "?v=" + version));
             $("#image" + metadata.id).css("background-color", "lightgray");
         }
 
@@ -1456,17 +1456,17 @@
         mediaContent.metadataDetailFun = shashin.openInfoSidebar;
         mediaContent.videoThumbnailFun = shashin.processVideoThumbnail;
         mediaContent.args = metadata.id;
-        mediaContent.thumb = encodeURI(metadata.thumbnailUrlSmall);
+        mediaContent.thumb = encodeURI(metadata.thumbnailUrlSmall).replace(";", "%3B");
         mediaContent.metadataId = metadata.id;
 
         if (metadata.type.indexOf("video") >= 0) {
-            mediaContent.video = '{"source": [{"src":"' + encodeURI(metadata.videoUrl) + '", "type":"video/mp4"}], "attributes": {"preload": "auto", "controls": true, "autoplay": true}}';
-            mediaContent.downloadUrl = encodeURI(metadata.videoUrl) + "/download";
+            mediaContent.video = '{"source": [{"src":"' + encodeURI(metadata.videoUrl).replace(";", "%3B") + '", "type":"video/mp4"}], "attributes": {"preload": "auto", "controls": true, "autoplay": true}}';
+            mediaContent.downloadUrl = encodeURI(metadata.videoUrl).replace(";", "%3B") + "/download";
             mediaContent.lgSize = metadata.originalImageWidth+"-"+metadata.originalImageHeight;
-            mediaContent.poster = ((null === metadata.thumbnailUrlOriginal || "" === metadata.thumbnailUrlOriginal) ? metadata.thumbnailUrlSmall : encodeURI(metadata.thumbnailUrlOriginal)) + "?v=" + Util.getMetadataLocalStorage();
+            mediaContent.poster = ((null === metadata.thumbnailUrlOriginal || "" === metadata.thumbnailUrlOriginal) ? metadata.thumbnailUrlSmall : encodeURI(metadata.thumbnailUrlOriginal).replace(";", "%3B")) + "?v=" + Util.getMetadataLocalStorage();
         } else {
             mediaContent.src = metadata.thumbnailUrlOriginal;
-            mediaContent.downloadUrl = encodeURI(metadata.thumbnailUrlOriginal) + "/download";
+            mediaContent.downloadUrl = encodeURI(metadata.thumbnailUrlOriginal).replace(";", "%3B") + "/download";
         }
 
         if (metadata.originalImageWidth !== null) {

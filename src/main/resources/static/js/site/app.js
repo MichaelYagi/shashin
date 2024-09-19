@@ -332,11 +332,11 @@
                 }
             };
             mediaContent.lgSize = metadata.originalImageWidth+"-"+metadata.originalImageHeight;
-            mediaContent.poster = ((null === metadata.thumbnailUrlOriginal || "" === metadata.thumbnailUrlOriginal) ? metadata.thumbnailUrlSmall : encodeURI(metadata.thumbnailUrlOriginal)) + "?v=" + Util.getMetadataLocalStorage();
-            mediaContent.downloadUrl = encodeURI(metadata.videoUrl) + "/download";
+            mediaContent.poster = ((null === metadata.thumbnailUrlOriginal || "" === metadata.thumbnailUrlOriginal) ? metadata.thumbnailUrlSmall : encodeURI(metadata.thumbnailUrlOriginal).replace(";", "%3B")) + "?v=" + Util.getMetadataLocalStorage();
+            mediaContent.downloadUrl = encodeURI(metadata.videoUrl).replace(";", "%3B") + "/download";
         } else {
             mediaContent.src = metadata.thumbnailUrlOriginal;
-            mediaContent.downloadUrl = encodeURI(metadata.thumbnailUrlOriginal) + "/download";
+            mediaContent.downloadUrl = encodeURI(metadata.thumbnailUrlOriginal).replace(";", "%3B") + "/download";
         }
 
         if (metadata.description !== null && metadata.description !== "") {
@@ -1491,7 +1491,7 @@
                                     mediaContentList[lightGalleryIndex].poster = data["posterUrl"];
                                     const mediaLinkId = "#mediaLink"+metadataId;
                                     if ($(mediaLinkId).length > 0) {
-                                        $(mediaLinkId).attr("data-poster", encodeURI(data["posterUrl"])+"?v="+Util.getMetadataLocalStorage());
+                                        $(mediaLinkId).attr("data-poster", encodeURI(data["posterUrl"]).replace(";", "%3B")+"?v="+Util.getMetadataLocalStorage());
                                     }
                                 }
 

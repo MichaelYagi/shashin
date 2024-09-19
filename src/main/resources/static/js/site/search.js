@@ -63,7 +63,7 @@ class Search {
 
         if (false === this.eol) {
             $("#spinner").css("display", "block");
-            data = await this.http.ajax("get", "/search/" + nextPage + "?term=" + encodeURIComponent(term));
+            data = await this.http.ajax("get", "/search/" + nextPage + "?term=" + encodeURIComponent(term).replace(";", "%3B"));
         }
 
         const mediaContentList = [];

@@ -134,7 +134,7 @@ class Dashboard {
             if (datasetIndex >= 0) {
                 let label = cameraCountObj[datasetIndex].y;
                 if (typeof label !== "undefined" && label !== "" && label !== "Unknown") {
-                    window.open("/search?term=" + encodeURI(label.split(' ').join('+')), '_blank').focus();
+                    window.open("/search?term=" + encodeURI(label.split(' ').join('+')).replace(";", "%3B"), '_blank').focus();
                 }
             }
         };
@@ -196,7 +196,7 @@ class Dashboard {
             if (datasetIndex >= 0) {
                 let label = agentNameCountObj[datasetIndex].y;
                 if (typeof label !== "undefined" && label !== "" && label !== "Unknown") {
-                    window.open("/search?term=" + encodeURI(label.split(' ').join('+')), '_blank').focus();
+                    window.open("/search?term=" + encodeURI(label.split(' ').join('+')).replace(";", "%3B"), '_blank').focus();
                 }
             }
         };
@@ -258,7 +258,7 @@ class Dashboard {
             if (datasetIndex >= 0) {
                 let label = osNameCountObj[datasetIndex].y;
                 if (typeof label !== "undefined" && label !== "" && label !== "Unknown") {
-                    window.open("/search?term=" + encodeURI(label.split(' ').join('+')), '_blank').focus();
+                    window.open("/search?term=" + encodeURI(label.split(' ').join('+')).replace(";", "%3B"), '_blank').focus();
                 }
             }
         };
@@ -320,7 +320,7 @@ class Dashboard {
             if (datasetIndex >= 0) {
                 let label = keywordCountObj[datasetIndex].y;
                 if (typeof label !== "undefined" && label !== "" && label !== "Unknown") {
-                    window.open("/search?term=" + encodeURI(label.split(' ').join('+')), '_blank').focus();
+                    window.open("/search?term=" + encodeURI(label.split(' ').join('+')).replace(";", "%3B"), '_blank').focus();
                 }
             }
         }

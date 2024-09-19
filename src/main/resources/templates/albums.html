@@ -37,7 +37,7 @@
                     <th:block th:each="album, iterStat: ${albumsList}">
                         <div class="card" style="width:235px;padding-top:10px;margin-right:-1px;margin-bottom:-1px;">
                             <a th:href="'/album/'+${album.id}" style="text-decoration: none !important;color: #777777;" th:id="'album'+${album.id}">
-                                <img loading="lazy" class="card-img-top" th:src="${#uris.escapePath(album.coverUrl)}" width="209" height="209" style="width: 209px;height: 209px;">
+                                <img loading="lazy" class="card-img-top" th:src="${#strings.replace(#uris.escapePath(album.coverUrl),';','%3B')}" width="209" height="209" style="width: 209px;height: 209px;">
                             </a>
                             <div class="card-body" style="display: flex;flex-direction: column;">
                                 <p class="card-text"><strong th:id="'albumName'+${album.id}" th:text="${album.name}"></strong></p>
