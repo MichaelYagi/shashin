@@ -259,8 +259,8 @@ class SettingsController {
 
         var dirDneString = ""
         if (model.getAttribute("authority").toString() == model.getAttribute("superRole") && mediaDirectories != null && mediaExcludeDirectories != null) {
-            model["mediaDirList"] = mediaDirectories.joinToString("\\r\\n") { "${it?.getDirectory()}" }
-            model["mediaExcludeDirList"] = mediaExcludeDirectories.joinToString("\\r\\n") { "${it?.getDirectory()}" }
+            model["mediaDirList"] = mediaDirectories.joinToString("\n") { "${it?.getDirectory()}" }
+            model["mediaExcludeDirList"] = mediaExcludeDirectories.joinToString("\n") { "${it?.getDirectory()}" }
 
             for (mediaDir in mediaDirectories) {
                 if (mediaDir != null) {
