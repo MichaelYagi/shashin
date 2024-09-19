@@ -15,6 +15,12 @@ class Settings {
         const seperator = (os.toLowerCase().indexOf('windows') !== -1 ? "\\" : "/");
         // $("#selectFolder").hide();
 
+        $("#mediaDirTextArea").on("keyup", function (e) {
+            if (e.key === " " || e.code === "Space" || e.keyCode === 32) {
+                $("#mediaDirTextArea").val($("#mediaDirTextArea").val() + "\n");
+            }
+        })
+
         $("#selectFolder").on("click", function (e) {
             e.preventDefault();
             const path = $("#selectedPath").val().trim();
