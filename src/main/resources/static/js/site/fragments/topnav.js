@@ -5,13 +5,8 @@ $(window).bind("load", function () {
 async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts, searchHistoryLimit, queryLimit, accessTimelineView) {
     shashin.darkMode = darkMode;
     shashin.showPlacename = placeNames;
-    const topNavTimezoneVar = timezone;
-    const topNavNotificationAlertsVar = notificationAlerts;
-    const topNavSearchHistoryLimitVar = searchHistoryLimit;
-    const topNavQueryLimitVar = queryLimit;
-    const topNavAccessTimelineViewVar = accessTimelineView;
 
-    const topNavActivePageVar = $("#activePage").val();
+    const activePage = $("#activePage").val();
 
     let slideshowIntervalId;
     let slideshowStarted = false;
@@ -24,11 +19,11 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
 
     let mediaScanCounterSP = 0;
 
-    if (topNavActivePageVar !== "notifications") {
-        await Util.getNotifications(topNavNotificationAlertsVar, topNavTimezoneVar);
+    if (activePage !== "notifications") {
+        await Util.getNotifications(notificationAlerts, timezone);
     }
 
-    if (topNavNotificationAlertsVar === true) {
+    if (notificationAlerts === true) {
         setTimeout(function () {
             const http = new Http("check compreface status");
             http.ajax("get", "/status/compreface").then(function (data) {
@@ -66,7 +61,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
             }
 
             /*<![CDATA[*/
-            shashin.createAutocomplete("#appSearchInput", searchHistoryData, false, topNavSearchHistoryLimitVar, function () {
+            shashin.createAutocomplete("#appSearchInput", searchHistoryData, false, searchHistoryLimit, function () {
                 $("#appSearchSubmit").click();
             });
             /*]]>*/
@@ -92,9 +87,9 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
     });
 
     $("#showNotificationAlertsSwitch").change(async function () {
-        const topNavNotificationAlertsVar = this.checked;
-        const http = new Http("show topNavNotificationAlertsVar");
-        const json = {topNavNotificationAlertsVar: topNavNotificationAlertsVar};
+        const notificationAlerts = this.checked;
+        const http = new Http("show notificationAlerts");
+        const json = {notificationAlerts: notificationAlerts};
         const data = await http.ajax("post", "/users/shownotificationalerts", JSON.stringify(json));
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
@@ -113,7 +108,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             if (data["status"] === "success") {
-                if (topNavActivePageVar === "timeline") {
+                if (activePage === "timeline") {
                     Util.reinitLightGalleryInstance();
                 } else {
                     window.location.reload();
@@ -131,7 +126,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             if (data["status"] === "success") {
-                if (topNavActivePageVar === "timeline") {
+                if (activePage === "timeline") {
                     Util.reinitLightGalleryInstance();
                 } else {
                     window.location.reload();
@@ -213,7 +208,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
                     if (type === "new") {
                         slideshowMetadataIds.push(data["metadata"]["id"]);
                     }
-                    if (slideshowMetadataIds.length > topNavQueryLimitVar) {
+                    if (slideshowMetadataIds.length > queryLimit) {
                         slideshowMetadataIds.splice(0, 1); // At position 0, remove 1
                         slideshowCurrentIndex--;
                     }
@@ -223,9 +218,9 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
                     const options = {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'};
                     let description = takenDate.toLocaleDateString('en-us', options)
 
-                    if (topNavAccessTimelineViewVar === false && data.hasOwnProperty("albumIds") === true && data["albumIds"].hasOwnProperty(0) === true) {
+                    if (accessTimelineView === false && data.hasOwnProperty("albumIds") === true && data["albumIds"].hasOwnProperty(0) === true) {
                         description = "<a style='color:#DBE9F4;text-decoration:none;' href='/album/" + data["albumIds"][0] + "' target='_blank'>" + takenDate.toLocaleDateString('en-us', options) + "</a>"
-                    } else if (topNavAccessTimelineViewVar === true) {
+                    } else if (accessTimelineView === true) {
                         description = "<a style='color:#DBE9F4;text-decoration:none;' href='/timeline#" + takenDateString + "' target='_blank'>" + takenDate.toLocaleDateString('en-us', options) + "</a>"
                     }
 
@@ -491,7 +486,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
     let stompClient = null;
     let scanInProgress = false;
 
-    if (topNavActivePageVar !== "timeline") {
+    if (activePage !== "timeline") {
         connectSP();
     }
 
@@ -558,7 +553,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
     function scanRefresh() {
         sendMessageSP();
         let msgVal = $("#scanPhotoMsg").val();
-        if (topNavActivePageVar === "scan") {
+        if (activePage === "scan") {
             msgVal = $("#msg").text();
         }
 
@@ -592,7 +587,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
                 let currentMediaCount = messageMap.hasOwnProperty("currentMediaCount") ? parseInt(messageMap["currentMediaCount"]) : 0;
                 let totalMediaCount = messageMap.hasOwnProperty("totalMediaCount") ? parseInt(messageMap["totalMediaCount"]) : 0;
 
-                if (topNavActivePageVar !== "map" && totalMediaCount > 0 && currentMediaCount > 0) {
+                if (activePage !== "map" && totalMediaCount > 0 && currentMediaCount > 0) {
                     $("#progressBarWrapper").visible()
                     let completedPercent = (currentMediaCount / totalMediaCount) * 100;
                     Util.updateProgressBar(completedPercent);
@@ -606,7 +601,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
                     $("#profileImagePlaceholder").css("opacity", 1.0);
                     Util.updateProgressBar(0);
                     if (counterMessage === 1) {
-                        Util.getNotifications(topNavNotificationAlertsVar, topNavTimezoneVar);
+                        Util.getNotifications(notificationAlerts, timezone);
                     }
                 } else {
                     $("#mediaScanSpinner").css("display", "block");
@@ -622,7 +617,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
 
             if (mediaScanCounterSP > 10) {
                 showMessageSP("Oops, something went wrong! " + e.toString() + ". Probably already scanning.");
-                if (topNavActivePageVar === "scan") {
+                if (activePage === "scan") {
                     window.top.location = window.top.location
                 }
                 mediaScanCounterSP = 0;
@@ -655,7 +650,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
 
     function showMessageSP(message) {
         $("#scanPhotoMsg").val(message);
-        if (topNavActivePageVar === "scan") {
+        if (activePage === "scan") {
             $("#msg").text(message);
         }
     }
