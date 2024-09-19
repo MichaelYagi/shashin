@@ -414,17 +414,17 @@
             function getSlideshowImage(callback) {
                 const http = new Http("show slideshow");
 
-                shashin.printMessageToConsole("slideshowCurrentIndex: " + slideshowCurrentIndex);
-                shashin.printMessageToConsole("slideshowMetadataIds:");
-                shashin.printMessageToConsole(slideshowMetadataIds);
+                shashin.printMessageToConsole("slideshowCurrentIndex: " + slideshowCurrentIndex, {tag:"slideshow"});
+                shashin.printMessageToConsole("slideshowMetadataIds:", {tag:"slideshow"});
+                shashin.printMessageToConsole(slideshowMetadataIds, {tag:"slideshow"});
 
                 if (slideshowMetadataIds.length > 0 && slideshowCurrentIndex >= 0 && slideshowCurrentIndex <= slideshowMetadataIds.length-1) {
-                    shashin.printMessageToConsole("Looking up " + slideshowMetadataIds[slideshowCurrentIndex]);
+                    shashin.printMessageToConsole("Looking up " + slideshowMetadataIds[slideshowCurrentIndex], {tag:"slideshow"});
                     http.ajax("get", "/media/metadata/"+slideshowMetadataIds[slideshowCurrentIndex]).then(function (data) {
                         processSlideData(data, "existing", callback);
                     })
                 } else {
-                    shashin.printMessageToConsole("New random image");
+                    shashin.printMessageToConsole("New random image", {tag:"slideshow"});
                     http.ajax("get", "/random/image").then(function (data) {
                         processSlideData(data, "new", callback);
                     })
