@@ -416,13 +416,14 @@ class SettingsController {
             val allMediaExcludeDirs = mediaDirRepository?.findByExclude(true)
 
             val allMediaExcludeDirList: List<String>? = allMediaExcludeDirs?.map { it?.getDirectory()!! }
-                if (scanAutomatically == "on" &&
-                    (mediaExcludeDirs.isNotEmpty() && (!mediaExcludeDirs.containsAll(allMediaExcludeDirList!!) || !allMediaExcludeDirList.containsAll(
-                        mediaExcludeDirs
-                    )))
-                ) {
-                    resetServer = true
-                }
+
+            if (scanAutomatically == "on" &&
+                (mediaExcludeDirs.isNotEmpty() && (!mediaExcludeDirs.containsAll(allMediaExcludeDirList!!) || !allMediaExcludeDirList.containsAll(
+                    mediaExcludeDirs
+                )))
+            ) {
+                resetServer = true
+            }
 
             mediaDirRepository?.deleteByExclude(true)
             for (mediaDir in mediaExcludeDirs) {
@@ -438,11 +439,14 @@ class SettingsController {
                     mediaDirObj.setModifiedAt(getCurrentTimestamp())
                     mediaExcludeDirArrayList.add(mediaDirObj)
 
-                    val path: Path = Paths.get(mediaDir)
-                    if (!Files.exists(path)) {
+                    try {
+                        val path: Path = Paths.get(mediaDir)
+                        if (!Files.exists(path)) {
+                            dirDneString += "$mediaDir,"
+                        }
+                    } catch (_: Exception) {
                         dirDneString += "$mediaDir,"
                     }
-
                 }
             }
             mediaDirRepository?.saveAll(mediaExcludeDirArrayList)
