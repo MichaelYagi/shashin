@@ -3,6 +3,7 @@
     shashin.showTrace = false;
     shashin.writeLog = false;
     shashin.consoleFilterTypes = [];
+    shashin.consoleTags = ["all"];
     shashin.map = null;
     shashin.layer = null;
     shashin.feature = null;
@@ -2724,11 +2725,13 @@
         let showTrace = false;
         //[shashin.consoleTypes.error, shashin.consoleTypes.info, shashin.consoleTypes.log, shashin.consoleTypes.warn]
         let filters = [];
+        let tags = ["all"];
 
         if (options === undefined || options === null) {
             showTrace = false;
             filters = [];
             shashin.writeLog = false;
+            tags = ["all"];
         } else {
             if (options.hasOwnProperty("showTrace")) {
                 showTrace = options["showTrace"];
@@ -2741,10 +2744,15 @@
             if (options.hasOwnProperty("writeLog")) {
                 shashin.writeLog = options["writeLog"];
             }
+
+            if (options.hasOwnProperty("tags")) {
+                tags = options["tags"];
+            }
         }
 
         shashin.showTrace = showTrace;
         shashin.consoleFilterTypes = filters;
+        shashin.consoleTags = tags;
 
         if (Util.localStorageAvailable() === true) {
             localStorage.setItem("showDebug", "on");
@@ -2757,6 +2765,7 @@
         shashin.showTrace = false;
         shashin.writeLog = false;
         shashin.consoleFilterTypes = [];
+        shashin.consoleTags = ["all"];
 
         if (Util.localStorageAvailable() === true && localStorage.getItem("showDebug") !== null) {
             localStorage.removeItem("showDebug");
@@ -2780,12 +2789,18 @@
     shashin.printMessageToConsole = function (msg, options) {
         // error, info, log, warn
         let type = shashin.consoleTypes.log;
+        let tag = "all";
 
         if (options === undefined || options === null) {
             type = shashin.consoleTypes.log;
+            tag = "all";
         } else {
             if (options.hasOwnProperty("type")) {
                 type = options["type"];
+            }
+
+            if (options.hasOwnProperty("tag")) {
+                tag = options["tag"];
             }
         }
 
@@ -2797,7 +2812,7 @@
             }
         }
 
-        if (shashin.showDebug === true || localStorageDebugFlag === true) {
+        if (($.inArray(tag, shashin.consoleTags) !== -1 || $.inArray("all", shashin.consoleTags) !== -1) && (shashin.showDebug === true || localStorageDebugFlag === true)) {
             if (type === shashin.consoleTypes.log && (shashin.consoleFilterTypes.length === 0 || $.inArray(shashin.consoleTypes.log, shashin.consoleFilterTypes) !== -1)) {
                 console.log(msg);
             } else if (type === shashin.consoleTypes.error && (shashin.consoleFilterTypes.length === 0 || $.inArray(shashin.consoleTypes.error, shashin.consoleFilterTypes) !== -1)) {
