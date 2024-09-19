@@ -259,13 +259,17 @@ class SettingsController {
 
         var dirDneString = ""
         if (model.getAttribute("authority").toString() == model.getAttribute("superRole") && mediaDirectories != null && mediaExcludeDirectories != null) {
-            model["mediaDirList"] = mediaDirectories.joinToString("|") { "${it?.getDirectory()}" }
-            model["mediaExcludeDirList"] = mediaExcludeDirectories.joinToString("|") { "${it?.getDirectory()}" }
+            model["mediaDirList"] = mediaDirectories.joinToString("\\r\\n") { "${it?.getDirectory()}" }
+            model["mediaExcludeDirList"] = mediaExcludeDirectories.joinToString("\\r\\n") { "${it?.getDirectory()}" }
 
             for (mediaDir in mediaDirectories) {
                 if (mediaDir != null) {
-                    val path: Path = Paths.get(mediaDir.getDirectory()!!)
-                    if (!Files.exists(path)) {
+                    try {
+                        val path: Path = Paths.get(mediaDir.getDirectory()!!)
+                        if (!Files.exists(path)) {
+                            dirDneString += "${mediaDir.getDirectory()},"
+                        }
+                    } catch (_: Exception) {
                         dirDneString += "${mediaDir.getDirectory()},"
                     }
                 }
@@ -273,8 +277,12 @@ class SettingsController {
 
             for (mediaDir in mediaExcludeDirectories) {
                 if (mediaDir != null) {
-                    val path: Path = Paths.get(mediaDir.getDirectory()!!)
-                    if (!Files.exists(path)) {
+                    try {
+                        val path: Path = Paths.get(mediaDir.getDirectory()!!)
+                        if (!Files.exists(path)) {
+                            dirDneString += "${mediaDir.getDirectory()},"
+                        }
+                    } catch (_: Exception) {
                         dirDneString += "${mediaDir.getDirectory()},"
                     }
                 }
@@ -360,13 +368,15 @@ class SettingsController {
         var resetServer = false
         var mediaDirs: List<String>? = null
         val mediaDirArrayList: ArrayList<MediaDirectory> = ArrayList()
+
         if (mediaDirList.isNotBlank()) {
-            mediaDirs = mediaDirList.trim().split("|").map { it.trim() }
+            mediaDirs = mediaDirList.trim().split("\\r\\n","\\n","\\r","\r\n","\n","\r").map { it.trim() }
         }
+
         var mediaExcludeDirs: List<String>? = null
         val mediaExcludeDirArrayList: ArrayList<MediaDirectory> = ArrayList()
         if (mediaExcludeDirList.isNotBlank()) {
-            mediaExcludeDirs = mediaExcludeDirList.trim().split("|").map { it.trim() }
+            mediaExcludeDirs = mediaExcludeDirList.trim().split("\\r\\n","\\n","\\r","\r\n","\n","\r").map { it.trim() }
         }
 
         model["status"] = ApiResponse.SUCCESS.status

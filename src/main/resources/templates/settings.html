@@ -18,7 +18,7 @@
                     <input type="hidden" id="selectedPathInput" value="">
                     <div class="row">
                         <div class="col-12">
-                            <label for="mediaDirTextArea" class="form-label"><strong>Media directories and files</strong> (pipe | separated)</label>&nbsp;<span id="inclusionListInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="When Automatic Media Indexing is enabled, changing this value will restart the app"></span>
+                            <label for="mediaDirTextArea" class="form-label"><strong>Media directories and files</strong> (separate by line)</label>&nbsp;<span id="inclusionListInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="When Automatic Media Indexing is enabled, changing this value will restart the app"></span>
                             <div>
                                 <textarea class="form-control" id="mediaDirTextArea" name="mediaDirList" rows="5"><th:block th:text="${mediaDirList}"></th:block></textarea>
                             </div>
@@ -38,7 +38,7 @@
                                 </div>
                             </div>
 
-                            <label for="mediaExcludeDirTextArea" class="form-label"><strong>Excluded media directories and files</strong> (pipe | separated)</label>&nbsp;<span id="exclusionListInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Exclusion list takes precedence over inclusion list"></span>
+                            <label for="mediaExcludeDirTextArea" class="form-label"><strong>Excluded media directories and files</strong> (separate by line)</label>&nbsp;<span id="exclusionListInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Exclusion list takes precedence over inclusion list"></span>
                             <div>
                                 <textarea class="form-control" id="mediaExcludeDirTextArea" name="mediaExcludeDirList" rows="3"><th:block th:text="${mediaExcludeDirList}"></th:block></textarea>
                             </div>
