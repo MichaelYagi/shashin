@@ -23,14 +23,14 @@ class Settings {
                 let mediaDirArray = [];
 
                 if (mediaDirStr.length > 0) {
-                    mediaDirArray = mediaDirStr.split(",").map(element => element.trim());
+                    mediaDirArray = mediaDirStr.split("|").map(element => element.trim());
                 }
 
                 if (mediaDirArray.indexOf(path) === -1) {
                     mediaDirArray.push(path);
                 }
 
-                $("#mediaDirTextArea").val(mediaDirArray.join(', '));
+                $("#mediaDirTextArea").val(mediaDirArray.join('|'));
             }
         });
 

@@ -9,6 +9,17 @@ let topNavSearchHistoryLimitVar = 10;
 let topNavQueryLimitVar = 30;
 let topNavAccessTimelineViewVar = false;
 
+let slideshowIntervalId;
+let slideshowStarted = false;
+let slideshowIsPaused = false;
+let slideshowIsElapsed = 30; // Seconds
+let slideshowCurrentIndex = 0;
+let slideshowMetadataIds = [];
+let slideshowMouseTimer = null;
+let slideshowCursorVisible = true;
+
+let mediaScanCounterSP = 0;
+
 function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts, searchHistoryLimit, queryLimit, accessTimelineView) {
     shashin.darkMode = darkMode;
     shashin.showPlacename = placeNames;
@@ -136,14 +147,6 @@ $(document).ready(async function () {
         }
     });
 
-    let slideshowIntervalId;
-    let slideshowStarted = false;
-    let slideshowIsPaused = false;
-    let slideshowIsElapsed = 30; // Seconds
-    let slideshowCurrentIndex = 0;
-    let slideshowMetadataIds = [];
-    let slideshowMouseTimer = null;
-    let slideshowCursorVisible = true;
     function getSlideshowImage(callback) {
         const http = new Http("show slideshow");
 
@@ -567,7 +570,6 @@ $(document).ready(async function () {
         }
     }
 
-    let counterSP = 0;
     function connectSP() {
         const socket = new SockJS('/websocket-endpoint');
         stompClient = Stomp.over(socket);
@@ -618,12 +620,12 @@ $(document).ready(async function () {
         }, function(e) {
             shashin.printMessageToConsole("Socket connection error in connectSP(): " + e.toString())
 
-            if (counterSP > 10) {
+            if (mediaScanCounterSP > 10) {
                 showMessageSP("Oops, something went wrong! " + e.toString() + ". Probably already scanning.");
                 if (topNavActivePageVar === "scan") {
                     window.top.location = window.top.location
                 }
-                counterSP = 0;
+                mediaScanCounterSP = 0;
             } else {
                 showMessageSP("Oops, something went wrong! " + e.toString() + ". Click the Scan button once, to proceed with indexing.");
                 disconnectSP();
@@ -631,7 +633,7 @@ $(document).ready(async function () {
             }
 
             scanInProgress = false;
-            counterSP++;
+            mediaScanCounterSP++;
         });
     }
 

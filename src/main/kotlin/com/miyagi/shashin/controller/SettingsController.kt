@@ -259,8 +259,8 @@ class SettingsController {
 
         var dirDneString = ""
         if (model.getAttribute("authority").toString() == model.getAttribute("superRole") && mediaDirectories != null && mediaExcludeDirectories != null) {
-            model["mediaDirList"] = mediaDirectories.joinToString { "${it?.getDirectory()}" }
-            model["mediaExcludeDirList"] = mediaExcludeDirectories.joinToString { "${it?.getDirectory()}" }
+            model["mediaDirList"] = mediaDirectories.joinToString("|") { "${it?.getDirectory()}" }
+            model["mediaExcludeDirList"] = mediaExcludeDirectories.joinToString("|") { "${it?.getDirectory()}" }
 
             for (mediaDir in mediaDirectories) {
                 if (mediaDir != null) {
@@ -361,12 +361,12 @@ class SettingsController {
         var mediaDirs: List<String>? = null
         val mediaDirArrayList: ArrayList<MediaDirectory> = ArrayList()
         if (mediaDirList.isNotBlank()) {
-            mediaDirs = mediaDirList.trim().split(",").map { it.trim() }
+            mediaDirs = mediaDirList.trim().split("|").map { it.trim() }
         }
         var mediaExcludeDirs: List<String>? = null
         val mediaExcludeDirArrayList: ArrayList<MediaDirectory> = ArrayList()
         if (mediaExcludeDirList.isNotBlank()) {
-            mediaExcludeDirs = mediaExcludeDirList.trim().split(",").map { it.trim() }
+            mediaExcludeDirs = mediaExcludeDirList.trim().split("|").map { it.trim() }
         }
 
         model["status"] = ApiResponse.SUCCESS.status
@@ -397,8 +397,12 @@ class SettingsController {
                     mediaDirObj.setModifiedAt(getCurrentTimestamp())
                     mediaDirArrayList.add(mediaDirObj)
 
-                    val path: Path = Paths.get(mediaDir)
-                    if (!Files.exists(path)) {
+                    try {
+                        val path: Path = Paths.get(mediaDir)
+                        if (!Files.exists(path)) {
+                            dirDneString += "$mediaDir,"
+                        }
+                    } catch (_: Exception) {
                         dirDneString += "$mediaDir,"
                     }
                 }
@@ -499,7 +503,7 @@ class SettingsController {
         }
 
         if (settings != null) {
-            settingsRepository.save(settings)
+            settingsRepository?.save(settings)
             model["settings"] = settings
 
             val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())
