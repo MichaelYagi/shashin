@@ -2,35 +2,28 @@ $(window).bind("load", function () {
     $("header .placeholder").removeClass("placeholder");
 });
 
-const topNavActivePageVar = $("#activePage").val();
-let topNavTimezoneVar = "America/Los_Angeles";
-let topNavNotificationAlertsVar = false;
-let topNavSearchHistoryLimitVar = 10;
-let topNavQueryLimitVar = 30;
-let topNavAccessTimelineViewVar = false;
-
-let slideshowIntervalId;
-let slideshowStarted = false;
-let slideshowIsPaused = false;
-let slideshowIsElapsed = 30; // Seconds
-let slideshowCurrentIndex = 0;
-let slideshowMetadataIds = [];
-let slideshowMouseTimer = null;
-let slideshowCursorVisible = true;
-
-let mediaScanCounterSP = 0;
-
-function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts, searchHistoryLimit, queryLimit, accessTimelineView) {
+async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts, searchHistoryLimit, queryLimit, accessTimelineView) {
     shashin.darkMode = darkMode;
     shashin.showPlacename = placeNames;
-    topNavTimezoneVar = timezone;
-    topNavNotificationAlertsVar = notificationAlerts;
-    topNavSearchHistoryLimitVar = searchHistoryLimit;
-    topNavQueryLimitVar = queryLimit;
-    topNavAccessTimelineViewVar = accessTimelineView;
-}
+    const topNavTimezoneVar = timezone;
+    const topNavNotificationAlertsVar = notificationAlerts;
+    const topNavSearchHistoryLimitVar = searchHistoryLimit;
+    const topNavQueryLimitVar = queryLimit;
+    const topNavAccessTimelineViewVar = accessTimelineView;
 
-$(document).ready(async function () {
+    const topNavActivePageVar = $("#activePage").val();
+
+    let slideshowIntervalId;
+    let slideshowStarted = false;
+    let slideshowIsPaused = false;
+    let slideshowIsElapsed = 30; // Seconds
+    let slideshowCurrentIndex = 0;
+    let slideshowMetadataIds = [];
+    let slideshowMouseTimer = null;
+    let slideshowCursorVisible = true;
+
+    let mediaScanCounterSP = 0;
+
     if (topNavActivePageVar !== "notifications") {
         await Util.getNotifications(topNavNotificationAlertsVar, topNavTimezoneVar);
     }
@@ -45,7 +38,7 @@ $(document).ready(async function () {
                         iconColor: "#FF0000",
                         autohide: false,
                         target: shashin.toast.target.three,
-                        borderColor:"danger"
+                        borderColor: "danger"
                     });
                 }
             })
@@ -150,17 +143,17 @@ $(document).ready(async function () {
     function getSlideshowImage(callback) {
         const http = new Http("show slideshow");
 
-        shashin.printMessageToConsole("slideshowCurrentIndex: " + slideshowCurrentIndex, {tag:"slideshow"});
-        shashin.printMessageToConsole("slideshowMetadataIds:", {tag:"slideshow"});
-        shashin.printMessageToConsole(slideshowMetadataIds, {tag:"slideshow"});
+        shashin.printMessageToConsole("slideshowCurrentIndex: " + slideshowCurrentIndex, {tag: "slideshow"});
+        shashin.printMessageToConsole("slideshowMetadataIds:", {tag: "slideshow"});
+        shashin.printMessageToConsole(slideshowMetadataIds, {tag: "slideshow"});
 
-        if (slideshowMetadataIds.length > 0 && slideshowCurrentIndex >= 0 && slideshowCurrentIndex <= slideshowMetadataIds.length-1) {
-            shashin.printMessageToConsole("Looking up " + slideshowMetadataIds[slideshowCurrentIndex], {tag:"slideshow"});
-            http.ajax("get", "/media/metadata/"+slideshowMetadataIds[slideshowCurrentIndex]).then(function (data) {
+        if (slideshowMetadataIds.length > 0 && slideshowCurrentIndex >= 0 && slideshowCurrentIndex <= slideshowMetadataIds.length - 1) {
+            shashin.printMessageToConsole("Looking up " + slideshowMetadataIds[slideshowCurrentIndex], {tag: "slideshow"});
+            http.ajax("get", "/media/metadata/" + slideshowMetadataIds[slideshowCurrentIndex]).then(function (data) {
                 processSlideData(data, "existing", callback);
             })
         } else {
-            shashin.printMessageToConsole("New random image", {tag:"slideshow"});
+            shashin.printMessageToConsole("New random image", {tag: "slideshow"});
             http.ajax("get", "/random/image").then(function (data) {
                 processSlideData(data, "new", callback);
             })
@@ -179,7 +172,7 @@ $(document).ready(async function () {
 
             const tempImage = new Image();
 
-            tempImage.onload = function() {
+            tempImage.onload = function () {
                 $("#mediaSrc").fadeOut((slideshowStarted === false) ? 0 : 300, function () {
                     $("#mediaSrc").attr("src", photoUrl).fadeIn((slideshowStarted === false) ? 0 : 600);
 
@@ -289,7 +282,7 @@ $(document).ready(async function () {
         $("#mediaSrc").attr("src", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII");
     }
 
-    $("body").on("dblclick", function( e ) {
+    $("body").on("dblclick", function (e) {
         if (Util.isMobile() === true && $("#slideshowGallery").css("display") === "block") {
             if (document.fullscreenElement !== null && document.exitFullscreen) {
                 document.exitFullscreen();
@@ -299,7 +292,7 @@ $(document).ready(async function () {
         }
     })
 
-    $("body").on("keyup", function( e ) {
+    $("body").on("keyup", function (e) {
         if ($("#slideshowGallery").css("display") === "block") {
             if (e.code === "Escape" || e.keyCode === 27) {
                 if (document.fullscreenElement !== null && document.documentElement.exitFullscreen) {
@@ -316,7 +309,7 @@ $(document).ready(async function () {
             if (e.keyCode === 39 || e.keyCode === 37) {
                 if (slideshowCurrentIndex > 0 && e.keyCode === 37) {
                     slideshowCurrentIndex--;
-                } else if (slideshowCurrentIndex <= slideshowMetadataIds.length-1 && e.keyCode === 39) {
+                } else if (slideshowCurrentIndex <= slideshowMetadataIds.length - 1 && e.keyCode === 39) {
                     slideshowCurrentIndex++;
                 }
 
@@ -328,7 +321,7 @@ $(document).ready(async function () {
                             slideshowCurrentIndex++;
                             getSlideshowImage();
                         }
-                    }, (slideshowIsElapsed*1000));
+                    }, (slideshowIsElapsed * 1000));
                 }
             }
 
@@ -348,7 +341,7 @@ $(document).ready(async function () {
         } else if (direction === "left" || direction === "right") {
             if (slideshowCurrentIndex > 0 && direction === "right") {
                 slideshowCurrentIndex--;
-            } else if (slideshowCurrentIndex <= slideshowMetadataIds.length-1 && direction === "left") {
+            } else if (slideshowCurrentIndex <= slideshowMetadataIds.length - 1 && direction === "left") {
                 slideshowCurrentIndex++;
             }
 
@@ -360,7 +353,7 @@ $(document).ready(async function () {
                         slideshowCurrentIndex++;
                         getSlideshowImage();
                     }
-                }, (slideshowIsElapsed*1000));
+                }, (slideshowIsElapsed * 1000));
             }
         }
     });
@@ -371,7 +364,7 @@ $(document).ready(async function () {
         slideshowCursorVisible = false;
     }
 
-    $("body").on("mousemove", function() {
+    $("body").on("mousemove", function () {
         if (Util.isMobile() === false && $("#slideshowGallery").css("display") === "block") {
             if (slideshowMouseTimer) {
                 clearTimeout(slideshowMouseTimer);
@@ -386,7 +379,7 @@ $(document).ready(async function () {
         }
     });
 
-    $("#mediaSrc").on("click", function( e ) {
+    $("#mediaSrc").on("click", function (e) {
         if ($("#slideshowGallery").css("display") === "block") {
             slideshowGalleryPlayPause();
         }
@@ -419,12 +412,12 @@ $(document).ready(async function () {
             document.documentElement.requestFullscreen();
         }
 
-        slideshowIntervalId = window.setInterval(function() {
+        slideshowIntervalId = window.setInterval(function () {
             if (slideshowIsPaused === false) {
                 slideshowCurrentIndex++;
                 getSlideshowImage();
             }
-        }, (slideshowIsElapsed*1000));
+        }, (slideshowIsElapsed * 1000));
 
         getSlideshowImage(function (loaded) {
             if (loaded === true) {
@@ -454,35 +447,35 @@ $(document).ready(async function () {
     })
 
     // Clear live toast message on close
-    $('#'+shashin.toast.target.default).on('hidden.bs.toast', function () {
+    $('#' + shashin.toast.target.default).on('hidden.bs.toast', function () {
         $("#toastIcon").removeClass();
         $("#toastIcon").removeAttr('style');
         $("#toastTitle").text("");
         $("#toastMessage").text("");
     });
 
-    $('#'+shashin.toast.target.one).on('hidden.bs.toast', function () {
+    $('#' + shashin.toast.target.one).on('hidden.bs.toast', function () {
         $("#toastIcon1").removeClass();
         $("#toastIcon1").removeAttr('style');
         $("#toastTitle1").text("");
         $("#toastMessage1").text("");
     });
 
-    $('#'+shashin.toast.target.two).on('hidden.bs.toast', function () {
+    $('#' + shashin.toast.target.two).on('hidden.bs.toast', function () {
         $("#toastIcon2").removeClass();
         $("#toastIcon2").removeAttr('style');
         $("#toastTitle2").text("");
         $("#toastMessage2").text("");
     });
 
-    $('#'+shashin.toast.target.three).on('hidden.bs.toast', function () {
+    $('#' + shashin.toast.target.three).on('hidden.bs.toast', function () {
         $("#toastIcon3").removeClass();
         $("#toastIcon3").removeAttr('style');
         $("#toastTitle3").text("");
         $("#toastMessage3").text("");
     });
 
-    $('#'+shashin.toast.target.four).on('hidden.bs.toast', function () {
+    $('#' + shashin.toast.target.four).on('hidden.bs.toast', function () {
         $("#toastIcon4").removeClass();
         $("#toastIcon4").removeAttr('style');
         $("#toastTitle4").text("");
@@ -490,7 +483,9 @@ $(document).ready(async function () {
     });
 
     // Focus and select search input
-    $("#appSearchInput").focus(function() { $(this).select(); } );
+    $("#appSearchInput").focus(function () {
+        $(this).select();
+    });
 
     // Get updates from media scans
     let stompClient = null;
@@ -537,7 +532,12 @@ $(document).ready(async function () {
     function postToScan(deleteThread) {
         let posting = $.post(
             "/settings/scan",
-            {"submit": "Scan", "deleteThread": deleteThread, "stopScan": false, "reindexFiles": $('#reindexFiles').prop("checked")}
+            {
+                "submit": "Scan",
+                "deleteThread": deleteThread,
+                "stopScan": false,
+                "reindexFiles": $('#reindexFiles').prop("checked")
+            }
         );
 
         posting.done(function (data) {
@@ -580,11 +580,11 @@ $(document).ready(async function () {
         shashin.printMessageToConsole("Socket Connecting");
 
         let counterMessage = 0;
-        stompClient.connect({}, function() {
+        stompClient.connect({}, function () {
             if (scanInProgress === false) {
                 scanRefresh();
             }
-            shashin.printMessageToConsole( "Connected STOMP client");
+            shashin.printMessageToConsole("Connected STOMP client");
             this.subscribe("/topic/messages", function (message) {
                 let respMessageJsonString = JSON.parse(message.body).content;
                 const messageMap = JSON.parse(respMessageJsonString);
@@ -594,11 +594,11 @@ $(document).ready(async function () {
 
                 if (topNavActivePageVar !== "map" && totalMediaCount > 0 && currentMediaCount > 0) {
                     $("#progressBarWrapper").visible()
-                    let completedPercent = (currentMediaCount/totalMediaCount)*100;
+                    let completedPercent = (currentMediaCount / totalMediaCount) * 100;
                     Util.updateProgressBar(completedPercent);
                 }
 
-                shashin.printMessageToConsole("message: "+message);
+                shashin.printMessageToConsole("message: " + message);
                 if (respMessage === "Scan Stopped" || respMessage === "No directories configured" || respMessage === "Scan Complete") {
                     $("#mediaScanSpinner").css("display", "none");
                     $("#progressBarWrapper").invisible();
@@ -617,7 +617,7 @@ $(document).ready(async function () {
                 showMessageSP(respMessage);
                 counterMessage++;
             });
-        }, function(e) {
+        }, function (e) {
             shashin.printMessageToConsole("Socket connection error in connectSP(): " + e.toString())
 
             if (mediaScanCounterSP > 10) {
@@ -659,4 +659,4 @@ $(document).ready(async function () {
             $("#msg").text(message);
         }
     }
-});
+}
