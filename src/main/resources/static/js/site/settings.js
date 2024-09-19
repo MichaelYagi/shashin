@@ -17,7 +17,7 @@ class Settings {
 
         $("#mediaDirTextArea").on("keyup", function (e) {
             if (e.key === " " || e.code === "Space" || e.keyCode === 32) {
-                $("#mediaDirTextArea").val($("#mediaDirTextArea").val() + "\n");
+                $("#mediaDirTextArea").val($("#mediaDirTextArea").val().trim() + "\n");
             }
         })
 
