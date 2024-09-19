@@ -797,7 +797,7 @@ class Util {
             if (typeof width !== 'undefined' && width !== false && typeof height !== 'undefined' && height !== false) {
                 dimensions = "/"+width+"x"+height;
             }
-            const imagePlaceholder = "https://via.placeholder.com"+dimensions+"?text="+encodeURI($(this).attr('src'));
+            const imagePlaceholder = "https://via.placeholder.com"+dimensions+"?text="+encodeURI($(this).attr('src')).replace(";", "%3B");
             $(this).attr("src", imagePlaceholder);
         });
     }
