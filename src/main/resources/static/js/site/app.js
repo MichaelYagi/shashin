@@ -2814,15 +2814,15 @@
 
         if (($.inArray(tag, shashin.consoleTags) !== -1 || $.inArray("all", shashin.consoleTags) !== -1) && (shashin.showDebug === true || localStorageDebugFlag === true)) {
             if (type === shashin.consoleTypes.log && (shashin.consoleFilterTypes.length === 0 || $.inArray(shashin.consoleTypes.log, shashin.consoleFilterTypes) !== -1)) {
-                console.log(msg);
+                console.log(msg+". Tag: " + tag);
             } else if (type === shashin.consoleTypes.error && (shashin.consoleFilterTypes.length === 0 || $.inArray(shashin.consoleTypes.error, shashin.consoleFilterTypes) !== -1)) {
-                console.error(msg);
+                console.error(msg+". Tag: " + tag);
             } else if (type === shashin.consoleTypes.info && (shashin.consoleFilterTypes.length === 0 || $.inArray(shashin.consoleTypes.info, shashin.consoleFilterTypes) !== -1)) {
-                console.info(msg);
+                console.info(msg+". Tag: " + tag);
             } else if (type === shashin.consoleTypes.warn && (shashin.consoleFilterTypes.length === 0 || $.inArray(shashin.consoleTypes.warn, shashin.consoleFilterTypes) !== -1)) {
-                console.warn(msg);
+                console.warn(msg+". Tag: " + tag);
             } else {
-                console.log(msg);
+                console.log(msg+". Tag: " + tag);
             }
 
             if (shashin.showTrace === true) {
@@ -2851,7 +2851,7 @@
                         }
 
                         setTimeout(function () {
-                            let json = {type: type, log: log}
+                            let json = {type: type, log: log, tag: tag}
                             http.ajax("post", "/console/log", JSON.stringify(json)).then(function (data) {
                                 if (data.hasOwnProperty("status") && data["status"] === "fail" && data.hasOwnProperty("msg")) {
                                     console.error("Could not log console output");
