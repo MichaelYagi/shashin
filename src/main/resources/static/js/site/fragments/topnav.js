@@ -359,6 +359,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     let slideshowMetadataIds = [];
     let slideshowMouseTimer = null;
     let slideshowCursorVisible = true;
+    let slideshowProceed = true;
     
     function getSlideshowImage(callback) {
         const http = new Http("show slideshow");
@@ -367,16 +368,19 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         shashin.printMessageToConsole("slideshowMetadataIds:", {tag: "slideshow"});
         shashin.printMessageToConsole(slideshowMetadataIds, {tag: "slideshow"});
 
-        if (slideshowMetadataIds.length > 0 && slideshowCurrentIndex >= 0 && slideshowCurrentIndex <= slideshowMetadataIds.length - 1) {
-            shashin.printMessageToConsole("Looking up " + slideshowMetadataIds[slideshowCurrentIndex], {tag: "slideshow"});
-            http.ajax("get", "/media/metadata/" + slideshowMetadataIds[slideshowCurrentIndex]).then(function (data) {
-                processSlideData(data, "existing", callback);
-            })
-        } else {
-            shashin.printMessageToConsole("New random image", {tag: "slideshow"});
-            http.ajax("get", "/random/image").then(function (data) {
-                processSlideData(data, "new", callback);
-            })
+        if (slideshowProceed === true) {
+            slideshowProceed = false;
+            if (slideshowMetadataIds.length > 0 && slideshowCurrentIndex >= 0 && slideshowCurrentIndex <= slideshowMetadataIds.length - 1) {
+                shashin.printMessageToConsole("Looking up " + slideshowMetadataIds[slideshowCurrentIndex], {tag: "slideshow"});
+                http.ajax("get", "/media/metadata/" + slideshowMetadataIds[slideshowCurrentIndex]).then(function (data) {
+                    processSlideData(data, "existing", callback);
+                })
+            } else {
+                shashin.printMessageToConsole("New random image", {tag: "slideshow"});
+                http.ajax("get", "/random/image").then(function (data) {
+                    processSlideData(data, "new", callback);
+                })
+            }
         }
     }
 
@@ -391,6 +395,11 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             const photoUrl = data["baseUrl"] + data["metadata"]["thumbnailUrlOriginal"];
 
             const tempImage = new Image();
+
+            tempImage.onerror = function (error) {
+                shashin.printMessageToConsole("Error: " + error, {tag: "slideshow"});
+                slideshowProceed = true;
+            }
 
             tempImage.onload = function () {
                 $("#mediaSrc").fadeOut((slideshowStarted === false) ? 0 : 300, function () {
@@ -455,6 +464,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                     $("#mediaInfo").html(description);
 
                     slideshowStarted = true;
+                    slideshowProceed = true;
 
                     if (callback !== undefined && typeof callback === 'function') {
                         callback(true);
@@ -527,21 +537,24 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             }
 
             if (e.keyCode === 39 || e.keyCode === 37) {
-                if (slideshowCurrentIndex > 0 && e.keyCode === 37) {
-                    slideshowCurrentIndex--;
-                } else if (slideshowCurrentIndex <= slideshowMetadataIds.length - 1 && e.keyCode === 39) {
-                    slideshowCurrentIndex++;
-                }
+                if ((e.keyCode === 37 && slideshowCurrentIndex === 0) === false && slideshowProceed === true) {
+                    if (slideshowCurrentIndex > 0 && e.keyCode === 37) {
+                        slideshowCurrentIndex--;
+                    } else if (slideshowCurrentIndex <= slideshowMetadataIds.length - 1 && e.keyCode === 39) {
+                        slideshowCurrentIndex++;
+                    }
 
-                getSlideshowImage();
-                if (slideshowIsPaused === false) {
-                    clearInterval(slideshowIntervalId);
-                    slideshowIntervalId = window.setInterval(function () {
-                        if (slideshowIsPaused === false) {
-                            slideshowCurrentIndex++;
-                            getSlideshowImage();
-                        }
-                    }, (slideshowIsElapsed * 1000));
+                    getSlideshowImage();
+                    if (slideshowIsPaused === false) {
+                        clearInterval(slideshowIntervalId);
+                        slideshowIntervalId = window.setInterval(function () {
+                            if (slideshowIsPaused === false) {
+                                slideshowProceed = true;
+                                slideshowCurrentIndex++;
+                                getSlideshowImage();
+                            }
+                        }, (slideshowIsElapsed * 1000));
+                    }
                 }
             }
 
@@ -559,21 +572,24 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 exitSlideshowGallery();
             }
         } else if (direction === "left" || direction === "right") {
-            if (slideshowCurrentIndex > 0 && direction === "right") {
-                slideshowCurrentIndex--;
-            } else if (slideshowCurrentIndex <= slideshowMetadataIds.length - 1 && direction === "left") {
-                slideshowCurrentIndex++;
-            }
+            if ((direction === "right" && slideshowCurrentIndex === 0) === false && slideshowProceed === true) {
+                if (slideshowCurrentIndex > 0 && direction === "right") {
+                    slideshowCurrentIndex--;
+                } else if (slideshowCurrentIndex <= slideshowMetadataIds.length - 1 && direction === "left") {
+                    slideshowCurrentIndex++;
+                }
 
-            getSlideshowImage();
-            if (slideshowIsPaused === false) {
-                clearInterval(slideshowIntervalId);
-                slideshowIntervalId = window.setInterval(function () {
-                    if (slideshowIsPaused === false) {
-                        slideshowCurrentIndex++;
-                        getSlideshowImage();
-                    }
-                }, (slideshowIsElapsed * 1000));
+                getSlideshowImage();
+                if (slideshowIsPaused === false) {
+                    clearInterval(slideshowIntervalId);
+                    slideshowIntervalId = window.setInterval(function () {
+                        if (slideshowIsPaused === false) {
+                            slideshowProceed = true;
+                            slideshowCurrentIndex++;
+                            getSlideshowImage();
+                        }
+                    }, (slideshowIsElapsed * 1000));
+                }
             }
         }
     });
@@ -634,6 +650,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
         slideshowIntervalId = window.setInterval(function () {
             if (slideshowIsPaused === false) {
+                slideshowProceed = true;
                 slideshowCurrentIndex++;
                 getSlideshowImage();
             }
@@ -641,6 +658,8 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
         getSlideshowImage(function (loaded) {
             if (loaded === true) {
+                slideshowProceed = true;
+
                 $("#playPause").show();
                 $("#playPause").fadeOut(3000);
 
