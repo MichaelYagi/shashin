@@ -624,6 +624,8 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
     function slideshowGalleryPlayPause() {
         $("#playPause").stop(true, true);
+        slideshowProceed = true;
+        
         if (slideshowIsPaused === false) {
             $("#playPause").removeClass("bi-play-circle").addClass("bi-pause-circle");
             slideshowIsPaused = true;
