@@ -506,6 +506,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         document.body.style.cursor = "default";
         slideshowCursorVisible = true;
         slideshowStarted = false;
+        slideshowProceed = true;
 
         $("#mediaInfo").html("");
 
