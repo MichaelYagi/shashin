@@ -402,6 +402,8 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             }
 
             tempImage.onload = function () {
+                slideshowProceed = true;
+
                 $("#mediaSrc").fadeOut((slideshowStarted === false) ? 0 : 300, function () {
                     $("#mediaSrc").attr("src", photoUrl).fadeIn((slideshowStarted === false) ? 0 : 600);
 
@@ -464,7 +466,6 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                     $("#mediaInfo").html(description);
 
                     slideshowStarted = true;
-                    slideshowProceed = true;
 
                     if (callback !== undefined && typeof callback === 'function') {
                         callback(true);
@@ -552,7 +553,6 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                         clearInterval(slideshowIntervalId);
                         slideshowIntervalId = window.setInterval(function () {
                             if (slideshowIsPaused === false) {
-                                slideshowProceed = true;
                                 slideshowCurrentIndex++;
                                 getSlideshowImage(function () {
                                     slideshowProceed = true;
@@ -591,7 +591,6 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                     clearInterval(slideshowIntervalId);
                     slideshowIntervalId = window.setInterval(function () {
                         if (slideshowIsPaused === false) {
-                            slideshowProceed = true;
                             slideshowCurrentIndex++;
                             getSlideshowImage(function () {
                                 slideshowProceed = true;
@@ -632,7 +631,6 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
     function slideshowGalleryPlayPause() {
         $("#playPause").stop(true, true);
-        slideshowProceed = true;
 
         if (slideshowIsPaused === false) {
             $("#playPause").removeClass("bi-play-circle").addClass("bi-pause-circle");
@@ -661,7 +659,6 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
         slideshowIntervalId = window.setInterval(function () {
             if (slideshowIsPaused === false) {
-                slideshowProceed = true;
                 slideshowCurrentIndex++;
                 getSlideshowImage(function () {
                     slideshowProceed = true;
