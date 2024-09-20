@@ -545,14 +545,18 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                         slideshowCurrentIndex++;
                     }
 
-                    getSlideshowImage();
+                    getSlideshowImage(function () {
+                        slideshowProceed = true;
+                    });
                     if (slideshowIsPaused === false) {
                         clearInterval(slideshowIntervalId);
                         slideshowIntervalId = window.setInterval(function () {
                             if (slideshowIsPaused === false) {
                                 slideshowProceed = true;
                                 slideshowCurrentIndex++;
-                                getSlideshowImage();
+                                getSlideshowImage(function () {
+                                    slideshowProceed = true;
+                                });
                             }
                         }, (slideshowIsElapsed * 1000));
                     }
@@ -580,14 +584,18 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                     slideshowCurrentIndex++;
                 }
 
-                getSlideshowImage();
+                getSlideshowImage(function () {
+                    slideshowProceed = true;
+                });
                 if (slideshowIsPaused === false) {
                     clearInterval(slideshowIntervalId);
                     slideshowIntervalId = window.setInterval(function () {
                         if (slideshowIsPaused === false) {
                             slideshowProceed = true;
                             slideshowCurrentIndex++;
-                            getSlideshowImage();
+                            getSlideshowImage(function () {
+                                slideshowProceed = true;
+                            });
                         }
                     }, (slideshowIsElapsed * 1000));
                 }
@@ -625,7 +633,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     function slideshowGalleryPlayPause() {
         $("#playPause").stop(true, true);
         slideshowProceed = true;
-        
+
         if (slideshowIsPaused === false) {
             $("#playPause").removeClass("bi-play-circle").addClass("bi-pause-circle");
             slideshowIsPaused = true;
@@ -655,14 +663,16 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             if (slideshowIsPaused === false) {
                 slideshowProceed = true;
                 slideshowCurrentIndex++;
-                getSlideshowImage();
+                getSlideshowImage(function () {
+                    slideshowProceed = true;
+                });
             }
         }, (slideshowIsElapsed * 1000));
 
         getSlideshowImage(function (loaded) {
-            if (loaded === true) {
-                slideshowProceed = true;
+            slideshowProceed = true;
 
+            if (loaded === true) {
                 $("#playPause").show();
                 $("#playPause").fadeOut(3000);
 
