@@ -175,7 +175,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT DISTINCT m.id as metadataId,m.type,m.path,m.thumbnail_path_small as thumbnailPathSmall,m.thumbnail_url_original as thumbnailUrlOriginal,rlp.recognition_label_id as recognitionLabelId,rl.name as recognitionLabelName FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON rlp.metadata_id = m.id LEFT JOIN recognitionlabel rl ON rlp.recognition_label_id = rl.id WHERE m.hidden = 0 AND rlp.id IN (SELECT rlp2.id FROM recognitionlabelphoto rlp2 WHERE rlp.recognition_label_id = rlp2.recognition_label_id LIMIT :trainingDataLimit) AND rlp.confidence >= 0.0 AND rlp.confidence <= :recognitionConfidenceThreshold ORDER BY rlp.recognition_label_id, RANDOM()",nativeQuery = true)
    fun findTrainingData(@Param("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String, @Param("trainingDataLimit") trainingDataLimit: Int): MutableIterable<TrainingData>
 
-   @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = 0 AND id IN (SELECT id FROM metadata ORDER BY RANDOM() LIMIT 1)", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomMetadataMedia(@Param("type") type: String): Metadata?
 
    @Query("SELECT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% AND hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
