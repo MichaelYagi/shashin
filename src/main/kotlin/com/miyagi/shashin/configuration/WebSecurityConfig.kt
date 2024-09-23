@@ -192,8 +192,7 @@ class MultiSecurityConfig {
             "/api/v1/health",
             "/api/v1/status",
             "/api/v1/media/metadata/**",
-            "/api/v1/random/image",
-            "/api/v1/random/video"
+            "/api/v1/random/**"
         )
 
         val allRoleList = allRoleApiList + arrayOf(
@@ -201,7 +200,7 @@ class MultiSecurityConfig {
             "/albums",
             "/favorites",
             "/slideshow",
-            "/random/image",
+            "/random/**",
             "/media/metadata/**",
             "/map/**",
             "/search/**",
