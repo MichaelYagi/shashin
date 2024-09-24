@@ -526,7 +526,7 @@ class MediaServiceController {
                     resource = FileSystemResource(source.url.path)
                     headers.contentLength = resource.contentLength()
                     headers.contentType = MediaType("image", "png")
-                    headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
+                    headers.setCacheControl(CacheControl.noCache())
                     return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
                 }
             }
@@ -543,7 +543,7 @@ class MediaServiceController {
         headers.contentLength = resource.contentLength()
         headers.contentType = MediaType("image", "png")
 
-        headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
+        headers.setCacheControl(CacheControl.noCache())
         return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
     }
 
