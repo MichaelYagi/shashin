@@ -477,7 +477,7 @@ class MediaServiceController {
                 val img = ImageIO.read(file)
 
                 val thumbnails = Thumbnails.of(img).outputQuality(1.0)
-                
+
                 if (file.extension.lowercase() == "gif") {
                     thumbnails
                         .imageType(BufferedImage.TYPE_INT_ARGB)
@@ -514,7 +514,6 @@ class MediaServiceController {
                         }
                     }
 
-                    headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
                     return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
                 } catch (e: Exception) {
                     logger.log(
