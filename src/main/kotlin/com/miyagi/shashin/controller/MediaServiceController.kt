@@ -476,7 +476,8 @@ class MediaServiceController {
                 val file = File(randomMetadata.getPath()!!)
                 val img = ImageIO.read(file)
 
-                val thumbnails = Thumbnails.of(img)
+                val thumbnails = Thumbnails.of(img).outputQuality(1.0)
+                
                 if (file.extension.lowercase() == "gif") {
                     thumbnails
                         .imageType(BufferedImage.TYPE_INT_ARGB)
