@@ -514,6 +514,7 @@ class MediaServiceController {
                         }
                     }
 
+                    headers.setCacheControl(CacheControl.noCache())
                     return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
                 } catch (e: Exception) {
                     logger.log(
