@@ -377,7 +377,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 })
             } else {
                 shashin.printMessageToConsole("New random image", {tag: "slideshow"});
-                http.ajax("get", "/random/image").then(function (data) {
+                http.ajax("get", "/random/metadata/image").then(function (data) {
                     processSlideData(data, "new", callback);
                 })
             }
