@@ -178,8 +178,14 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomMetadataMedia(@Param("type") type: String): Metadata?
 
-   @Query("SELECT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% AND hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND file_name LIKE %:filter% AND hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   fun findRandomMetadataMediaAndFilter(@Param("type") type: String, @Param("filter") filter: String): Metadata?
+
+   @Query("SELECT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% AND m.hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMediaByUser(@Param("userId") userId: Int, @Param("type") type: String): Metadata?
+
+   @Query("SELECT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% AND m.file_name LIKE %:filter% AND m.hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   fun findRandomAlbumMediaAndFilterByUser(@Param("userId") userId: Int, @Param("type") type: String, @Param("filter") filter: String): Metadata?
 
    @Query("SELECT COUNT(*) FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type%", nativeQuery = true)
    fun countAlbumByMedia(@Param("userId") userId: Int, @Param("type") type: String): Int
