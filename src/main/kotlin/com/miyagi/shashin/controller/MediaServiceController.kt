@@ -414,6 +414,46 @@ class MediaServiceController {
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
+    @RequestMapping(value = ["/api/v1/random/filename/{filename}", "/random/filename/{filename}"], method = [(RequestMethod.GET)], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    @Throws(java.io.IOException::class)
+    fun getRandomImageByFilename(model: Model, request: HttpServletRequest, @PathVariable filename: String): String {
+        val mapper = ObjectMapper()
+        val resp = mutableMapOf<String, Any?>()
+        val currentUser = model.getAttribute("currentUser") as User?
+        resp["metadata"] = mutableMapOf<String, Any?>()
+        resp["status"] = ApiResponse.FAIL.status
+        resp["albumIds"] = mutableListOf<Int>()
+        resp["msg"] = ""
+
+        var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
+        if (request.scheme == "https") {
+            baseUrlBuilder = baseUrlBuilder.scheme("https")
+        }
+        val baseUrl = baseUrlBuilder.build().toUriString()
+        resp["baseUrl"] = baseUrl
+
+        if (currentUser != null) {
+            val randomMetadata = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+                metadataRepository.findRandomMetadataMediaAndFilter(filename)
+            } else {
+                metadataRepository.findRandomAlbumMediaAndFilterByUser(currentUser.getId(), filename)
+            })
+
+            if (randomMetadata != null) {
+                resp["albumIds"] = albumRepository.findAlbumIdsByMetadataId(randomMetadata.getId())
+                resp["metadata"] = randomMetadata
+                resp["shortPlaceName"] = TextUtils.formatPlaceNameForHeader(randomMetadata.getPlaceName())
+                resp["status"] = ApiResponse.SUCCESS.status
+                resp["msg"] = ""
+                logger.log(Level.INFO, "Random media metadata ID ${randomMetadata.getId()}")
+            }
+        }
+
+        return mapper.writeValueAsString(resp)
+    }
+
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/random/metadata/{type}", "/random/metadata/{type}"], method = [(RequestMethod.GET)], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Throws(java.io.IOException::class)
