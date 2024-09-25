@@ -401,6 +401,15 @@ class MediaServiceController {
             val metadata = metadataRepository.findByMetadataId(metadataId)
 
             if (metadata != null) {
+                // Updated viewed date
+                metadata.setLastAccessedAt(getCurrentTimestamp())
+
+                val currentUserObj = request?.session?.getAttribute("CurrentUser") as User?
+                if (currentUserObj != null && currentUserObj.getId() > 0) {
+                    metadata.setLastAccessedBy(currentUserObj.getId())
+                }
+                metadataRepository.save(metadata)
+
                 resp["albumIds"] = albumRepository.findAlbumIdsByMetadataId(metadata.getId())
                 resp["metadata"] = metadata
                 resp["shortPlaceName"] = TextUtils.formatPlaceNameForHeader(metadata.getPlaceName())
@@ -441,6 +450,15 @@ class MediaServiceController {
             })
 
             if (randomMetadata != null) {
+                // Updated viewed date
+                randomMetadata.setLastAccessedAt(getCurrentTimestamp())
+
+                val currentUserObj = request?.session?.getAttribute("CurrentUser") as User?
+                if (currentUserObj != null && currentUserObj.getId() > 0) {
+                    randomMetadata.setLastAccessedBy(currentUserObj.getId())
+                }
+                metadataRepository.save(randomMetadata)
+
                 resp["albumIds"] = albumRepository.findAlbumIdsByMetadataId(randomMetadata.getId())
                 resp["metadata"] = randomMetadata
                 resp["shortPlaceName"] = TextUtils.formatPlaceNameForHeader(randomMetadata.getPlaceName())
@@ -481,6 +499,15 @@ class MediaServiceController {
             })
 
             if (randomMetadata != null) {
+                // Updated viewed date
+                randomMetadata.setLastAccessedAt(getCurrentTimestamp())
+
+                val currentUserObj = request?.session?.getAttribute("CurrentUser") as User?
+                if (currentUserObj != null && currentUserObj.getId() > 0) {
+                    randomMetadata.setLastAccessedBy(currentUserObj.getId())
+                }
+                metadataRepository.save(randomMetadata)
+
                 resp["albumIds"] = albumRepository.findAlbumIdsByMetadataId(randomMetadata.getId())
                 resp["metadata"] = randomMetadata
                 resp["shortPlaceName"] = TextUtils.formatPlaceNameForHeader(randomMetadata.getPlaceName())
@@ -508,6 +535,15 @@ class MediaServiceController {
             })
 
             if (randomMetadata != null) {
+                // Updated viewed date
+                randomMetadata.setLastAccessedAt(getCurrentTimestamp())
+
+                val currentUserObj = request?.session?.getAttribute("CurrentUser") as User?
+                if (currentUserObj != null && currentUserObj.getId() > 0) {
+                    randomMetadata.setLastAccessedBy(currentUserObj.getId())
+                }
+                metadataRepository.save(randomMetadata)
+
                 val imageHeight = height.orElse(randomMetadata.getOriginalImageHeight())
                 val imageWidth = width.orElse(randomMetadata.getOriginalImageWidth())
 
