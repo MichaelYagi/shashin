@@ -401,6 +401,9 @@ class MediaServiceController {
             val metadata = metadataRepository.findByMetadataId(metadataId)
 
             if (metadata != null) {
+                metadata.setLastAccessedAt(getCurrentTimestamp())
+                metadata.setLastAccessedBy(currentUser.getId())
+
                 resp["albumIds"] = albumRepository.findAlbumIdsByMetadataId(metadata.getId())
                 resp["metadata"] = metadata
                 resp["shortPlaceName"] = TextUtils.formatPlaceNameForHeader(metadata.getPlaceName())
@@ -441,6 +444,9 @@ class MediaServiceController {
             })
 
             if (randomMetadata != null) {
+                randomMetadata.setLastAccessedAt(getCurrentTimestamp())
+                randomMetadata.setLastAccessedBy(currentUser.getId())
+
                 resp["albumIds"] = albumRepository.findAlbumIdsByMetadataId(randomMetadata.getId())
                 resp["metadata"] = randomMetadata
                 resp["shortPlaceName"] = TextUtils.formatPlaceNameForHeader(randomMetadata.getPlaceName())
@@ -481,6 +487,9 @@ class MediaServiceController {
             })
 
             if (randomMetadata != null) {
+                randomMetadata.setLastAccessedAt(getCurrentTimestamp())
+                randomMetadata.setLastAccessedBy(currentUser.getId())
+
                 resp["albumIds"] = albumRepository.findAlbumIdsByMetadataId(randomMetadata.getId())
                 resp["metadata"] = randomMetadata
                 resp["shortPlaceName"] = TextUtils.formatPlaceNameForHeader(randomMetadata.getPlaceName())
@@ -508,6 +517,9 @@ class MediaServiceController {
             })
 
             if (randomMetadata != null) {
+                randomMetadata.setLastAccessedAt(getCurrentTimestamp())
+                randomMetadata.setLastAccessedBy(currentUser.getId())
+
                 val imageHeight = height.orElse(randomMetadata.getOriginalImageHeight())
                 val imageWidth = width.orElse(randomMetadata.getOriginalImageWidth())
 
