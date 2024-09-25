@@ -379,7 +379,7 @@ class MediaServiceController {
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/media/metadata/{metadataId}", "/media/metadata/{metadataId}"], method = [(RequestMethod.GET)], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    @Throws(java.io.IOException::class)
+    @Throws(IOException::class)
     fun getMediaMetadata(model: Model, request: HttpServletRequest, @PathVariable metadataId: String): String {
         val mapper = ObjectMapper()
         val resp = mutableMapOf<String, Any?>()
@@ -416,7 +416,7 @@ class MediaServiceController {
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/random/metadata/filename/{filename}", "/random/metadata/filename/{filename}"], method = [(RequestMethod.GET)], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    @Throws(java.io.IOException::class)
+    @Throws(IOException::class)
     fun getRandomImageByFilename(model: Model, request: HttpServletRequest, @PathVariable filename: String): String {
         val mapper = ObjectMapper()
         val resp = mutableMapOf<String, Any?>()
@@ -446,7 +446,7 @@ class MediaServiceController {
                 resp["shortPlaceName"] = TextUtils.formatPlaceNameForHeader(randomMetadata.getPlaceName())
                 resp["status"] = ApiResponse.SUCCESS.status
                 resp["msg"] = ""
-                logger.log(Level.INFO, "Random media metadata ID ${randomMetadata.getId()}")
+                logger.log(Level.INFO, "Random media metadata ID ${randomMetadata.getId()} - metadata output by filename")
             }
         }
 
@@ -486,7 +486,7 @@ class MediaServiceController {
                 resp["shortPlaceName"] = TextUtils.formatPlaceNameForHeader(randomMetadata.getPlaceName())
                 resp["status"] = ApiResponse.SUCCESS.status
                 resp["msg"] = ""
-                logger.log(Level.INFO, "Random media metadata ID ${randomMetadata.getId()}")
+                logger.log(Level.INFO, "Random media metadata ID ${randomMetadata.getId()} - metadata output by type")
             }
         }
 
@@ -496,8 +496,8 @@ class MediaServiceController {
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/random/image", "/random/image"], method = [(RequestMethod.GET)], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
-    @Throws(java.io.IOException::class)
-    fun getRandomImageByDimension(model: Model, request: HttpServletRequest, @RequestParam height: Optional<Int>, @RequestParam width: Optional<Int>): ResponseEntity<FileSystemResource> {
+    @Throws(IOException::class)
+    fun getRandomImageByDimension(model: Model, @RequestParam height: Optional<Int>, @RequestParam width: Optional<Int>): ResponseEntity<FileSystemResource> {
         val currentUser = model.getAttribute("currentUser") as User?
 
         if (currentUser != null) {
@@ -508,6 +508,8 @@ class MediaServiceController {
             })
 
             if (randomMetadata != null) {
+                logger.log(Level.INFO, "Random image metadata ID ${randomMetadata.getId()} - image output by width/height")
+
                 val imageHeight = height.orElse(randomMetadata.getOriginalImageHeight())
                 val imageWidth = width.orElse(randomMetadata.getOriginalImageWidth())
 
