@@ -401,8 +401,11 @@ class MediaServiceController {
             val metadata = metadataRepository.findByMetadataId(metadataId)
 
             if (metadata != null) {
-                metadata.setLastAccessedAt(getCurrentTimestamp())
-                metadata.setLastAccessedBy(currentUser.getId())
+                Thread {
+                    metadata.setLastAccessedAt(getCurrentTimestamp())
+                    metadata.setLastAccessedBy(currentUser.getId())
+                    metadataRepository.save(metadata)
+                }.start()
 
                 resp["albumIds"] = albumRepository.findAlbumIdsByMetadataId(metadata.getId())
                 resp["metadata"] = metadata
@@ -444,8 +447,11 @@ class MediaServiceController {
             })
 
             if (randomMetadata != null) {
-                randomMetadata.setLastAccessedAt(getCurrentTimestamp())
-                randomMetadata.setLastAccessedBy(currentUser.getId())
+                Thread {
+                    randomMetadata.setLastAccessedAt(getCurrentTimestamp())
+                    randomMetadata.setLastAccessedBy(currentUser.getId())
+                    metadataRepository.save(randomMetadata)
+                }.start()
 
                 resp["albumIds"] = albumRepository.findAlbumIdsByMetadataId(randomMetadata.getId())
                 resp["metadata"] = randomMetadata
@@ -487,8 +493,11 @@ class MediaServiceController {
             })
 
             if (randomMetadata != null) {
-                randomMetadata.setLastAccessedAt(getCurrentTimestamp())
-                randomMetadata.setLastAccessedBy(currentUser.getId())
+                Thread {
+                    randomMetadata.setLastAccessedAt(getCurrentTimestamp())
+                    randomMetadata.setLastAccessedBy(currentUser.getId())
+                    metadataRepository.save(randomMetadata)
+                }.start()
 
                 resp["albumIds"] = albumRepository.findAlbumIdsByMetadataId(randomMetadata.getId())
                 resp["metadata"] = randomMetadata
@@ -517,8 +526,11 @@ class MediaServiceController {
             })
 
             if (randomMetadata != null) {
-                randomMetadata.setLastAccessedAt(getCurrentTimestamp())
-                randomMetadata.setLastAccessedBy(currentUser.getId())
+                Thread {
+                    randomMetadata.setLastAccessedAt(getCurrentTimestamp())
+                    randomMetadata.setLastAccessedBy(currentUser.getId())
+                    metadataRepository.save(randomMetadata)
+                }.start()
 
                 val imageHeight = height.orElse(randomMetadata.getOriginalImageHeight())
                 val imageWidth = width.orElse(randomMetadata.getOriginalImageWidth())
