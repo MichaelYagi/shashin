@@ -1,7 +1,6 @@
 package com.miyagi.shashin.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.miyagi.shashin.model.Album
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.User
@@ -11,7 +10,6 @@ import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
-import com.miyagi.shashin.util.ImageProcessing.Companion.sharpenAndBrightenImage
 import com.miyagi.shashin.util.MetricsUtil
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
@@ -42,7 +40,6 @@ import jakarta.activation.URLDataSource
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import net.coobird.thumbnailator.Thumbnails
-import net.coobird.thumbnailator.geometry.Positions
 import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
@@ -82,7 +79,7 @@ class MediaServiceController {
     }
 
     private fun processVideo(metadataId: String?, request: HttpServletRequest?, response: HttpServletResponse?): ResponseEntity<FileSystemResource> {
-        var metadataObj = metadataRepository.findById(metadataId!!)
+        val metadataObj = metadataRepository.findById(metadataId!!)
 
         if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("video")!!) {
             var path = metadataObj.get().getPath()!!
@@ -515,16 +512,14 @@ class MediaServiceController {
         val currentUser = model.getAttribute("currentUser") as User?
 
         if (currentUser != null) {
-            var randomMetadata: Metadata? = Metadata()
-            if (type == "filename") {
-                randomMetadata =
-                    (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
-                        metadataRepository.findRandomMetadataMediaAndFilter(filter)
-                    } else {
-                        metadataRepository.findRandomAlbumMediaAndFilterByUser(currentUser.getId(), filter)
-                    })
+            val randomMetadata: Metadata? = if (type == "filename") {
+                (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+                    metadataRepository.findRandomMetadataMediaAndFilter(filter)
+                } else {
+                    metadataRepository.findRandomAlbumMediaAndFilterByUser(currentUser.getId(), filter)
+                })
             } else {
-                randomMetadata = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+                (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
                     metadataRepository.findRandomMetadataMedia(filter)
                 } else {
                     metadataRepository.findRandomAlbumMediaByUser(currentUser.getId(), filter)
@@ -541,41 +536,51 @@ class MediaServiceController {
                 val imageHeight = height.orElse(randomMetadata.getOriginalImageHeight())
                 val imageWidth = width.orElse(randomMetadata.getOriginalImageWidth())
 
-                val outputExtension = "jpg"
+                var resource: FileSystemResource?
+                val path: String?
 
-                val file = File(randomMetadata.getPath()!!)
-                val img = ImageIO.read(file)
-
-                val thumbnails = Thumbnails.of(img).outputQuality(1.0)
-
-                if (file.extension.lowercase() == "gif") {
-                    thumbnails
-                        .imageType(BufferedImage.TYPE_INT_ARGB)
-                }
-
-                val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp." + outputExtension)
-
-                if (imageHeight <= randomMetadata.getOriginalImageHeight()!!) {
-                    thumbnails.height(imageHeight)
+                if (imageHeight == randomMetadata.getOriginalImageHeight() && imageWidth == randomMetadata.getOriginalImageWidth()) {
+                    resource = FileSystemResource(File(randomMetadata.getPath()!!))
+                    path = randomMetadata.getPath()!!
                 } else {
-                    thumbnails.height(randomMetadata.getOriginalImageHeight()!!)
+                    val outputExtension = "jpg"
+
+                    val file = File(randomMetadata.getPath()!!)
+                    val img = ImageIO.read(file)
+
+                    val thumbnails = Thumbnails.of(img).outputQuality(1.0)
+
+                    if (file.extension.lowercase() == "gif") {
+                        thumbnails
+                            .imageType(BufferedImage.TYPE_INT_ARGB)
+                    }
+
+                    val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp." + outputExtension)
+
+                    if (imageHeight <= randomMetadata.getOriginalImageHeight()!!) {
+                        thumbnails.height(imageHeight)
+                    } else {
+                        thumbnails.height(randomMetadata.getOriginalImageHeight()!!)
+                    }
+
+                    if (imageWidth <= randomMetadata.getOriginalImageWidth()!!) {
+                        thumbnails.width(imageWidth)
+                    } else {
+                        thumbnails.width(randomMetadata.getOriginalImageWidth()!!)
+                    }
+
+                    thumbnails.toFile(tempFile)
+
+                    try {
+                        ImageIO.write(ImageIO.read(tempFile), outputExtension, tempFile)
+                    } catch (e: IOException) {
+                        logger.log(Level.WARNING, "Could not read file: " + tempFile.path)
+                    }
+
+                    resource = FileSystemResource(tempFile)
+                    path = tempFile.path
                 }
 
-                if (imageWidth <= randomMetadata.getOriginalImageWidth()!!) {
-                    thumbnails.width(imageWidth)
-                } else {
-                    thumbnails.width(randomMetadata.getOriginalImageWidth()!!)
-                }
-
-                thumbnails.toFile(tempFile)
-
-                try {
-                    ImageIO.write(ImageIO.read(tempFile), outputExtension, tempFile)
-                } catch (e: IOException) {
-                    logger.log(Level.WARNING, "Could not read file: " + tempFile.path)
-                }
-
-                var resource = FileSystemResource(tempFile)
                 val headers = HttpHeaders()
                 try {
                     headers.contentLength = resource.contentLength()
@@ -591,7 +596,7 @@ class MediaServiceController {
                 } catch (e: Exception) {
                     logger.log(
                         Level.SEVERE,
-                        "Error setting image ResponseEntity for "+tempFile.path+": " + e.message
+                        "Error setting image ResponseEntity for "+path+": " + e.message
                     )
 
                     val source = URLDataSource(this.javaClass.getResource("/static/images/fnf.png"))
