@@ -575,6 +575,10 @@ class MediaServiceController {
 
                     if (rotation != 0) {
                         img = ImageProcessing.rotateImage(img, rotation.toDouble())
+                        logger.log(
+                            Level.INFO,
+                            "Rotation applied: $rotation"
+                        )
                     }
 
                     val thumbnails = Thumbnails.of(img).outputQuality(1.0)
