@@ -545,7 +545,7 @@ class MediaServiceController {
 
                     val file = File(randomMetadata.getPath()!!)
 
-                    var rotation = 0.0
+                    var rotation = 0
                     val fileMetadata: com.drew.metadata.Metadata
                     try {
                         fileMetadata = ImageMetadataReader.readMetadata(file)
@@ -557,7 +557,7 @@ class MediaServiceController {
                                         if (tag.description.contains("Rotate")) {
                                             val digit = tag.description.filter { it.isDigit() }
                                             if (TextUtils.isInteger(digit)) {
-                                                rotation = digit.toDouble()
+                                                rotation = digit.toInt()
                                             }
                                         }
                                     }
@@ -573,8 +573,8 @@ class MediaServiceController {
 
                     var img = ImageIO.read(file)
 
-                    if (rotation != 0.0) {
-                        img = ImageProcessing.rotateImage(img, rotation)
+                    if (rotation != 0) {
+                        img = ImageProcessing.rotateImage(img, rotation.toDouble())
                     }
 
                     val thumbnails = Thumbnails.of(img).outputQuality(1.0)
