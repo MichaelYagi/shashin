@@ -148,7 +148,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         if (FileUtils.isRaw(file.extension.lowercase())) {
             try {
                 img = ImageIO.read(file)
-                if (rotation > 0) {
+                if (rotation != 0) {
                     img = rotateImage(img, rotation.toDouble())
                 }
             } catch (e: Exception) {
@@ -164,7 +164,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     tempImg.createGraphics().drawImage(img, 0, 0, img.width, img.height, Color.WHITE, null)
                     img = tempImg
 //                }
-                if (rotation > 0) {
+                if (rotation != 0) {
                     img = rotateImage(img, rotation.toDouble())
                 }
             } catch (e: Exception) {
