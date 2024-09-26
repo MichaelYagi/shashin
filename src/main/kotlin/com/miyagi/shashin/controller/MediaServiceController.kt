@@ -534,7 +534,7 @@ class MediaServiceController {
                 val imageHeight = height.orElse(randomMetadata.getOriginalImageHeight())
                 val imageWidth = width.orElse(randomMetadata.getOriginalImageWidth())
 
-                val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp.jpg")
+                var outputExtension = "jpg"
 
                 val file = File(randomMetadata.getPath()!!)
                 val img = ImageIO.read(file)
@@ -542,9 +542,12 @@ class MediaServiceController {
                 val thumbnails = Thumbnails.of(img).outputQuality(1.0)
 
                 if (file.extension.lowercase() == "gif") {
+                    outputExtension = file.extension.lowercase()
                     thumbnails
                         .imageType(BufferedImage.TYPE_INT_ARGB)
                 }
+
+                val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp." + outputExtension)
 
                 if (imageHeight <= randomMetadata.getOriginalImageHeight()!!) {
                     thumbnails.height(imageHeight)
@@ -561,7 +564,7 @@ class MediaServiceController {
                 thumbnails.toFile(tempFile)
 
                 try {
-                    ImageIO.write(ImageIO.read(tempFile), "jpg", tempFile)
+                    ImageIO.write(ImageIO.read(tempFile), outputExtension, tempFile)
                 } catch (e: IOException) {
                     logger.log(Level.WARNING, "Could not read file: " + tempFile.path)
                 }
@@ -634,7 +637,7 @@ class MediaServiceController {
                 val imageHeight = height.orElse(randomMetadata.getOriginalImageHeight())
                 val imageWidth = width.orElse(randomMetadata.getOriginalImageWidth())
 
-                val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp.jpg")
+                var outputExtension = "jpg"
 
                 val file = File(randomMetadata.getPath()!!)
                 val img = ImageIO.read(file)
@@ -642,9 +645,12 @@ class MediaServiceController {
                 val thumbnails = Thumbnails.of(img).outputQuality(1.0)
 
                 if (file.extension.lowercase() == "gif") {
+                    outputExtension = file.extension.lowercase()
                     thumbnails
                         .imageType(BufferedImage.TYPE_INT_ARGB)
                 }
+
+                val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp." + outputExtension)
 
                 if (imageHeight <= randomMetadata.getOriginalImageHeight()!!) {
                     thumbnails.height(imageHeight)
@@ -661,7 +667,7 @@ class MediaServiceController {
                 thumbnails.toFile(tempFile)
 
                 try {
-                    ImageIO.write(ImageIO.read(tempFile), "jpg", tempFile)
+                    ImageIO.write(ImageIO.read(tempFile), outputExtension, tempFile)
                 } catch (e: IOException) {
                     logger.log(Level.WARNING, "Could not read file: " + tempFile.path)
                 }
