@@ -534,7 +534,7 @@ class MediaServiceController {
                 val imageHeight = height.orElse(randomMetadata.getOriginalImageHeight())
                 val imageWidth = width.orElse(randomMetadata.getOriginalImageWidth())
 
-                var outputExtension = "jpg"
+                val outputExtension = "jpg"
 
                 val file = File(randomMetadata.getPath()!!)
                 val img = ImageIO.read(file)
@@ -542,7 +542,6 @@ class MediaServiceController {
                 val thumbnails = Thumbnails.of(img).outputQuality(1.0)
 
                 if (file.extension.lowercase() == "gif") {
-                    outputExtension = file.extension.lowercase()
                     thumbnails
                         .imageType(BufferedImage.TYPE_INT_ARGB)
                 }
@@ -637,7 +636,7 @@ class MediaServiceController {
                 val imageHeight = height.orElse(randomMetadata.getOriginalImageHeight())
                 val imageWidth = width.orElse(randomMetadata.getOriginalImageWidth())
 
-                var outputExtension = "jpg"
+                val outputExtension = "jpg"
 
                 val file = File(randomMetadata.getPath()!!)
                 val img = ImageIO.read(file)
@@ -645,7 +644,6 @@ class MediaServiceController {
                 val thumbnails = Thumbnails.of(img).outputQuality(1.0)
 
                 if (file.extension.lowercase() == "gif") {
-                    outputExtension = file.extension.lowercase()
                     thumbnails
                         .imageType(BufferedImage.TYPE_INT_ARGB)
                 }
