@@ -506,23 +506,58 @@ class MediaServiceController {
         return mapper.writeValueAsString(resp)
     }
 
-    private fun getRandomImageBy(type: String, model: Model, filter: String, height: Optional<Int>, width: Optional<Int>): ResponseEntity<FileSystemResource> {
+    private fun getRandomImageBy(type: String, model: Model, filter: String, height: Optional<Int>, width: Optional<Int>, orientationImage: Optional<Int>): ResponseEntity<FileSystemResource> {
         val currentUser = model.getAttribute("currentUser") as User?
 
         if (currentUser != null) {
-            val randomMetadata: Metadata? = if (type == "filename") {
-                (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
-                    metadataRepository.findRandomMetadataMediaAndFilter(filter)
+            val orientation = orientationImage.orElse(2)
+
+
+
+            val randomMetadata: Metadata? =
+                if (orientation == 0) { // landscape
+                    if (type == "filename") {
+                        (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+                            metadataRepository.findRandomMetadataMediaAndFilterLandscape(filter)
+                        } else {
+                            metadataRepository.findRandomAlbumMediaAndFilterByUserLandscape(currentUser.getId(), filter)
+                        })
+                    } else {
+                        (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+                            metadataRepository.findRandomMetadataMediaLandscape(filter)
+                        } else {
+                            metadataRepository.findRandomAlbumMediaByUserLandscape(currentUser.getId(), filter)
+                        })
+                    }
+                } else if (orientation == 1) { // portrait
+                    if (type == "filename") {
+                        (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+                            metadataRepository.findRandomMetadataMediaAndFilterPortrait(filter)
+                        } else {
+                            metadataRepository.findRandomAlbumMediaAndFilterByUserPortrait(currentUser.getId(), filter)
+                        })
+                    } else {
+                        (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+                            metadataRepository.findRandomMetadataMediaPortrait(filter)
+                        } else {
+                            metadataRepository.findRandomAlbumMediaByUserPortrait(currentUser.getId(), filter)
+                        })
+                    }
                 } else {
-                    metadataRepository.findRandomAlbumMediaAndFilterByUser(currentUser.getId(), filter)
-                })
-            } else {
-                (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
-                    metadataRepository.findRandomMetadataMedia(filter)
-                } else {
-                    metadataRepository.findRandomAlbumMediaByUser(currentUser.getId(), filter)
-                })
-            }
+                    if (type == "filename") {
+                        (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+                            metadataRepository.findRandomMetadataMediaAndFilter(filter)
+                        } else {
+                            metadataRepository.findRandomAlbumMediaAndFilterByUser(currentUser.getId(), filter)
+                        })
+                    } else {
+                        (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+                            metadataRepository.findRandomMetadataMedia(filter)
+                        } else {
+                            metadataRepository.findRandomAlbumMediaByUser(currentUser.getId(), filter)
+                        })
+                    }
+                }
 
             if (randomMetadata != null) {
                 Thread {
@@ -660,16 +695,16 @@ class MediaServiceController {
     @RequestMapping(value = ["/api/v1/random/image/filename/{filename}", "/random/image/filename/{filename}"], method = [(RequestMethod.GET)], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
     @Throws(java.io.IOException::class)
-    fun getRandomImageByDimensionAndFilename(model: Model, request: HttpServletRequest, @PathVariable filename: String, @RequestParam height: Optional<Int>, @RequestParam width: Optional<Int>): ResponseEntity<FileSystemResource> {
-        return getRandomImageBy("filename", model, filename, height, width)
+    fun getRandomImageByDimensionAndFilename(model: Model, request: HttpServletRequest, @PathVariable filename: String, @RequestParam height: Optional<Int>, @RequestParam width: Optional<Int>, @RequestParam orientation: Optional<Int>): ResponseEntity<FileSystemResource> {
+        return getRandomImageBy("filename", model, filename, height, width, orientation)
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/random/image/type/{type}", "/random/image/type/{type}"], method = [(RequestMethod.GET)], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
     @Throws(java.io.IOException::class)
-    fun getRandomImageByDimensionAndType(model: Model, request: HttpServletRequest, @PathVariable type: String, @RequestParam height: Optional<Int>, @RequestParam width: Optional<Int>): ResponseEntity<FileSystemResource> {
-        return getRandomImageBy("type", model, type, height, width)
+    fun getRandomImageByDimensionAndType(model: Model, request: HttpServletRequest, @PathVariable type: String, @RequestParam height: Optional<Int>, @RequestParam width: Optional<Int>, @RequestParam orientation: Optional<Int>): ResponseEntity<FileSystemResource> {
+        return getRandomImageBy("type", model, type, height, width, orientation)
     }
 
     @RequestMapping(value = ["/api/v1/image/{metadataId}","/api/v1/image/{metadataId}.jpg"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
