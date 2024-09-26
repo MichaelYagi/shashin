@@ -1,5 +1,6 @@
 package com.miyagi.shashin.controller
 
+import com.drew.imaging.ImageMetadataReader
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.Notification
@@ -8,10 +9,7 @@ import com.miyagi.shashin.repository.AlbumRepository
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.UserRepository
-import com.miyagi.shashin.util.ApiResponse
-import com.miyagi.shashin.util.FileUtils
-import com.miyagi.shashin.util.MetricsUtil
-import com.miyagi.shashin.util.TextUtils
+import com.miyagi.shashin.util.*
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -546,7 +544,38 @@ class MediaServiceController {
                     val outputExtension = "jpg"
 
                     val file = File(randomMetadata.getPath()!!)
-                    val img = ImageIO.read(file)
+
+                    var rotation = 0.0
+                    val fileMetadata: com.drew.metadata.Metadata
+                    try {
+                        fileMetadata = ImageMetadataReader.readMetadata(file)
+
+                        for (directory in fileMetadata.directories) {
+                            for (tag in directory.tags) {
+                                when (tag.tagName) {
+                                    "Orientation", "Rotation" -> {
+                                        if (tag.description.contains("Rotate")) {
+                                            val digit = tag.description.filter { it.isDigit() }
+                                            if (TextUtils.isInteger(digit)) {
+                                                rotation = digit.toDouble()
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } catch (e: Exception) {
+                        logger.log(
+                            Level.SEVERE,
+                            "Error reading Metadata for " + file.name + ": " + e.message
+                        )
+                    }
+
+                    var img = ImageIO.read(file)
+
+                    if (rotation != 0.0) {
+                        img = ImageProcessing.rotateImage(img, rotation)
+                    }
 
                     val thumbnails = Thumbnails.of(img).outputQuality(1.0)
 
