@@ -511,18 +511,25 @@ class MediaServiceController {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/api/v1/random/image/filename/{filename}", "/random/image/filename/{filename}"], method = [(RequestMethod.GET)], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
-    @ResponseBody
-    @Throws(java.io.IOException::class)
-    fun getRandomImageByDimensionAndFilename(model: Model, request: HttpServletRequest, @PathVariable filename: String, @RequestParam height: Optional<Int>, @RequestParam width: Optional<Int>): ResponseEntity<FileSystemResource> {
+    private fun getRandomImageBy(type: String, model: Model, filter: String, height: Optional<Int>, width: Optional<Int>): ResponseEntity<FileSystemResource> {
         val currentUser = model.getAttribute("currentUser") as User?
 
         if (currentUser != null) {
-            val randomMetadata = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
-                metadataRepository.findRandomMetadataMediaAndFilter(filename)
+            var randomMetadata: Metadata? = Metadata()
+            if (type == "filename") {
+                randomMetadata =
+                    (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+                        metadataRepository.findRandomMetadataMediaAndFilter(filter)
+                    } else {
+                        metadataRepository.findRandomAlbumMediaAndFilterByUser(currentUser.getId(), filter)
+                    })
             } else {
-                metadataRepository.findRandomAlbumMediaAndFilterByUser(currentUser.getId(), filename)
-            })
+                randomMetadata = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+                    metadataRepository.findRandomMetadataMedia(filter)
+                } else {
+                    metadataRepository.findRandomAlbumMediaByUser(currentUser.getId(), filter)
+                })
+            }
 
             if (randomMetadata != null) {
                 Thread {
@@ -612,106 +619,19 @@ class MediaServiceController {
         return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
     }
 
+    @RequestMapping(value = ["/api/v1/random/image/filename/{filename}", "/random/image/filename/{filename}"], method = [(RequestMethod.GET)], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
+    @ResponseBody
+    @Throws(java.io.IOException::class)
+    fun getRandomImageByDimensionAndFilename(model: Model, request: HttpServletRequest, @PathVariable filename: String, @RequestParam height: Optional<Int>, @RequestParam width: Optional<Int>): ResponseEntity<FileSystemResource> {
+        return getRandomImageBy("filename", model, filename, height, width)
+    }
+
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/random/image/type/{type}", "/random/image/type/{type}"], method = [(RequestMethod.GET)], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
     @Throws(java.io.IOException::class)
     fun getRandomImageByDimensionAndType(model: Model, request: HttpServletRequest, @PathVariable type: String, @RequestParam height: Optional<Int>, @RequestParam width: Optional<Int>): ResponseEntity<FileSystemResource> {
-        val currentUser = model.getAttribute("currentUser") as User?
-
-        if (currentUser != null) {
-            val randomMetadata = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
-                metadataRepository.findRandomMetadataMedia(type)
-            } else {
-                metadataRepository.findRandomAlbumMediaByUser(currentUser.getId(), type)
-            })
-
-            if (randomMetadata != null) {
-                Thread {
-                    randomMetadata.setLastAccessedAt(getCurrentTimestamp())
-                    randomMetadata.setLastAccessedBy(currentUser.getId())
-                    metadataRepository.save(randomMetadata)
-                }.start()
-
-                val imageHeight = height.orElse(randomMetadata.getOriginalImageHeight())
-                val imageWidth = width.orElse(randomMetadata.getOriginalImageWidth())
-
-                val outputExtension = "jpg"
-
-                val file = File(randomMetadata.getPath()!!)
-                val img = ImageIO.read(file)
-
-                val thumbnails = Thumbnails.of(img).outputQuality(1.0)
-
-                if (file.extension.lowercase() == "gif") {
-                    thumbnails
-                        .imageType(BufferedImage.TYPE_INT_ARGB)
-                }
-
-                val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp." + outputExtension)
-
-                if (imageHeight <= randomMetadata.getOriginalImageHeight()!!) {
-                    thumbnails.height(imageHeight)
-                } else {
-                    thumbnails.height(randomMetadata.getOriginalImageHeight()!!)
-                }
-
-                if (imageWidth <= randomMetadata.getOriginalImageWidth()!!) {
-                    thumbnails.width(imageWidth)
-                } else {
-                    thumbnails.width(randomMetadata.getOriginalImageWidth()!!)
-                }
-
-                thumbnails.toFile(tempFile)
-
-                try {
-                    ImageIO.write(ImageIO.read(tempFile), outputExtension, tempFile)
-                } catch (e: IOException) {
-                    logger.log(Level.WARNING, "Could not read file: " + tempFile.path)
-                }
-
-                var resource = FileSystemResource(tempFile)
-                val headers = HttpHeaders()
-                try {
-                    headers.contentLength = resource.contentLength()
-                    if (randomMetadata.getType() != null && "/" in randomMetadata.getType()!!) {
-                        val typeList = randomMetadata.getType()!!.split("/")
-                        if (typeList.count() == 2) {
-                            headers.contentType = MediaType(typeList[0], typeList[1])
-                        }
-                    }
-
-                    headers.setCacheControl(CacheControl.noCache())
-                    return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
-                } catch (e: Exception) {
-                    logger.log(
-                        Level.SEVERE,
-                        "Error setting image ResponseEntity for "+tempFile.path+": " + e.message
-                    )
-
-                    val source = URLDataSource(this.javaClass.getResource("/static/images/fnf.png"))
-                    resource = FileSystemResource(source.url.path)
-                    headers.contentLength = resource.contentLength()
-                    headers.contentType = MediaType("image", "png")
-                    headers.setCacheControl(CacheControl.noCache())
-                    return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
-                }
-            }
-        }
-
-        logger.log(
-            Level.SEVERE,
-            "Error setting image ResponseEntity for random image"
-        )
-
-        val source = URLDataSource(this.javaClass.getResource("/static/images/fnf.png"))
-        val resource = FileSystemResource(source.url.path)
-        val headers = HttpHeaders()
-        headers.contentLength = resource.contentLength()
-        headers.contentType = MediaType("image", "png")
-
-        headers.setCacheControl(CacheControl.noCache())
-        return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
+        return getRandomImageBy("type", model, type, height, width)
     }
 
     @RequestMapping(value = ["/api/v1/image/{metadataId}","/api/v1/image/{metadataId}.jpg"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
