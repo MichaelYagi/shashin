@@ -389,6 +389,39 @@ class TextUtilsTest {
     }
 
     @Test
+    fun getCacheControl() {
+        var test = TextUtils.getCacheControl("23h")
+        Assertions.assertEquals("CacheControl [max-age=82800]", test.toString())
+
+        test = TextUtils.getCacheControl("1s")
+        Assertions.assertEquals("CacheControl [max-age=1]", test.toString())
+
+        test = TextUtils.getCacheControl("1d")
+        Assertions.assertEquals("CacheControl [max-age=86400]", test.toString())
+
+        test = TextUtils.getCacheControl("24h")
+        Assertions.assertEquals("CacheControl [max-age=86400]", test.toString())
+
+        test = TextUtils.getCacheControl("60m")
+        Assertions.assertEquals("CacheControl [max-age=3600]", test.toString())
+
+        test = TextUtils.getCacheControl("1h")
+        Assertions.assertEquals("CacheControl [max-age=3600]", test.toString())
+
+        test = TextUtils.getCacheControl("0202S")
+        Assertions.assertEquals("CacheControl [max-age=202]", test.toString())
+
+        test = TextUtils.getCacheControl("1l")
+        Assertions.assertEquals("CacheControl [no-cache]", test.toString())
+
+        test = TextUtils.getCacheControl("none")
+        Assertions.assertEquals("CacheControl [no-cache]", test.toString())
+
+        test = TextUtils.getCacheControl("asdh")
+        Assertions.assertEquals("CacheControl [no-cache]", test.toString())
+    }
+
+    @Test
     fun getSortedPlacenames() {
         var data = arrayOf(
             "11 Ameyoko Street, Taito, Japan; building, retail",

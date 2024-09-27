@@ -10,6 +10,7 @@ import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.*
+import com.miyagi.shashin.util.TextUtils.Companion.getCacheControl
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -374,7 +375,7 @@ class MediaServiceController {
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/media/metadata/{metadataId}", "/media/metadata/{metadataId}"], method = [(RequestMethod.GET)], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    @Throws(java.io.IOException::class)
+    @Throws(IOException::class)
     fun getMediaMetadata(model: Model, request: HttpServletRequest, @PathVariable metadataId: String): String {
         val mapper = ObjectMapper()
         val resp = mutableMapOf<String, Any?>()
@@ -417,7 +418,7 @@ class MediaServiceController {
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/random/metadata/filename/{filename}", "/random/metadata/filename/{filename}"], method = [(RequestMethod.GET)], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    @Throws(java.io.IOException::class)
+    @Throws(IOException::class)
     fun getRandomImageByFilename(model: Model, request: HttpServletRequest, @PathVariable filename: String): String {
         val mapper = ObjectMapper()
         val resp = mutableMapOf<String, Any?>()
@@ -463,7 +464,7 @@ class MediaServiceController {
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/random/metadata/type/{type}", "/random/metadata/type/{type}"], method = [(RequestMethod.GET)], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    @Throws(java.io.IOException::class)
+    @Throws(IOException::class)
     fun getRandomImageByType(model: Model, request: HttpServletRequest, @PathVariable type: String): String {
         val mapper = ObjectMapper()
         val resp = mutableMapOf<String, Any?>()
@@ -506,13 +507,11 @@ class MediaServiceController {
         return mapper.writeValueAsString(resp)
     }
 
-    private fun getRandomImageBy(type: String, model: Model, filter: String, height: Optional<Int>, width: Optional<Int>, orientationImage: Optional<Int>): ResponseEntity<FileSystemResource> {
+    private fun getRandomImageBy(type: String, model: Model, filter: String, height: Optional<Int>, width: Optional<Int>, orientationImage: Optional<Int>, ttl: Optional<String>): ResponseEntity<FileSystemResource> {
         val currentUser = model.getAttribute("currentUser") as User?
 
         if (currentUser != null) {
             val orientation = orientationImage.orElse(2)
-
-
 
             val randomMetadata: Metadata? =
                 if (orientation == 0) { // landscape
@@ -641,7 +640,7 @@ class MediaServiceController {
 
                     try {
                         ImageIO.write(ImageIO.read(tempFile), outputExtension, tempFile)
-                    } catch (e: IOException) {
+                    } catch (_: IOException) {
                         logger.log(Level.WARNING, "Could not read file: " + tempFile.path)
                     }
 
@@ -659,7 +658,9 @@ class MediaServiceController {
                         }
                     }
 
-                    headers.setCacheControl(CacheControl.noCache())
+                    val cacheTime = ttl.orElse("none")
+                    headers.setCacheControl(getCacheControl(cacheTime))
+
                     return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
                 } catch (e: Exception) {
                     logger.log(
@@ -694,22 +695,22 @@ class MediaServiceController {
 
     @RequestMapping(value = ["/api/v1/random/image/filename/{filename}", "/random/image/filename/{filename}"], method = [(RequestMethod.GET)], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
-    @Throws(java.io.IOException::class)
-    fun getRandomImageByDimensionAndFilename(model: Model, request: HttpServletRequest, @PathVariable filename: String, @RequestParam height: Optional<Int>, @RequestParam width: Optional<Int>, @RequestParam orientation: Optional<Int>): ResponseEntity<FileSystemResource> {
-        return getRandomImageBy("filename", model, filename, height, width, orientation)
+    @Throws(IOException::class)
+    fun getRandomImageByDimensionAndFilename(model: Model, @PathVariable filename: String, @RequestParam height: Optional<Int>, @RequestParam width: Optional<Int>, @RequestParam orientation: Optional<Int>, @RequestParam ttl: Optional<String>): ResponseEntity<FileSystemResource> {
+        return getRandomImageBy("filename", model, filename, height, width, orientation, ttl)
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/random/image/type/{type}", "/random/image/type/{type}"], method = [(RequestMethod.GET)], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
-    @Throws(java.io.IOException::class)
-    fun getRandomImageByDimensionAndType(model: Model, request: HttpServletRequest, @PathVariable type: String, @RequestParam height: Optional<Int>, @RequestParam width: Optional<Int>, @RequestParam orientation: Optional<Int>): ResponseEntity<FileSystemResource> {
-        return getRandomImageBy("type", model, type, height, width, orientation)
+    @Throws(IOException::class)
+    fun getRandomImageByDimensionAndType(model: Model, @PathVariable type: String, @RequestParam height: Optional<Int>, @RequestParam width: Optional<Int>, @RequestParam orientation: Optional<Int>, @RequestParam ttl: Optional<String>): ResponseEntity<FileSystemResource> {
+        return getRandomImageBy("type", model, type, height, width, orientation, ttl)
     }
 
     @RequestMapping(value = ["/api/v1/image/{metadataId}","/api/v1/image/{metadataId}.jpg"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
-    @Throws(java.io.IOException::class)
+    @Throws(IOException::class)
     fun getImage(response: HttpServletResponse?, request: HttpServletRequest?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
         return getImageFactory(request, response, metadataId)
     }

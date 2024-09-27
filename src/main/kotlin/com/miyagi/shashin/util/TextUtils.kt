@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import net.iakovlev.timeshape.TimeZoneEngine
 import org.springdoc.core.annotations.RouterOperation
+import org.springframework.http.CacheControl
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.context.support.WebApplicationContextUtils
@@ -19,6 +20,7 @@ import java.text.SimpleDateFormat
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.util.*
+import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
 import kotlin.collections.HashMap
@@ -1141,6 +1143,33 @@ class TextUtils {
             }
 
             return result
+        }
+
+        // 1l - 1ms
+        fun getCacheControl(ttl: String): CacheControl {
+            var cache = CacheControl.noCache()
+
+            if (ttl != "none" && ttl.length > 1) {
+                var measure = ttl.last().lowercase()
+                var unit = ttl.dropLast(1).toLongOrNull()
+
+                var timeUnit: TimeUnit? = null
+                if (measure == "d") {
+                    timeUnit = TimeUnit.DAYS
+                } else if (measure == "h") {
+                    timeUnit = TimeUnit.HOURS
+                } else if (measure == "m") {
+                    timeUnit = TimeUnit.MINUTES
+                } else if (measure == "s") {
+                    timeUnit = TimeUnit.SECONDS
+                }
+
+                if (timeUnit != null && unit != null) {
+                    cache = CacheControl.maxAge(unit, timeUnit)
+                }
+            }
+
+            return cache
         }
 
         fun formatPlaceNameForHeader(placeDescription: String?): String {
