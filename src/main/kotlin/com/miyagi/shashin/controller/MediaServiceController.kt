@@ -605,15 +605,15 @@ class MediaServiceController {
                         )
                     }
 
-                    var img = ImageIO.read(file)
+                    val img = ImageIO.read(file)
 
-                    if (rotation != 0) {
-                        img = ImageProcessing.rotateImage(img, rotation.toDouble())
-                        logger.log(
-                            Level.INFO,
-                            "Rotation applied: $rotation"
-                        )
-                    }
+//                    if (rotation != 0) {
+//                        img = ImageProcessing.rotateImage(img, rotation.toDouble())
+//                        logger.log(
+//                            Level.INFO,
+//                            "Rotation applied: $rotation"
+//                        )
+//                    }
 
                     val thumbnails = Thumbnails.of(img).outputQuality(1.0)
 
