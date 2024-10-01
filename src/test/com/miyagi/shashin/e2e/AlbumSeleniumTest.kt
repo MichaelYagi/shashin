@@ -177,7 +177,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         //Share album with testuser
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class=\"card\"][1]")))
 
-        val albumCard = this.driver!!.findElement(By.xpath("//div[@class=\"card\"][2]"))
+        val albumCard = this.driver!!.findElement(By.xpath("//div[@class=\"card\"][1]"))
         val albumLink = albumCard.findElement(By.xpath("./a[1]"))
         val albumIdentifier = albumLink.getAttribute("id")
         albumId = albumIdentifier.substringAfter("album").toInt()
