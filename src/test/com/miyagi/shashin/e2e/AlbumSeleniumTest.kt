@@ -93,7 +93,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
         mediaDirTextArea.sendKeys(testImageFile.parent)
         val mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
-        mediaExcludeDirTextArea.sendKeys(testImageFile.parent+"\\subdir")
+        mediaExcludeDirTextArea.sendKeys(testImageFile.parent+"/subdir")
 //        val scanAutomatically = this.driver!!.findElement(By.id("scanAutomatically"))
 //        if (scanAutomatically.isSelected) {
 //            scanAutomatically.click()

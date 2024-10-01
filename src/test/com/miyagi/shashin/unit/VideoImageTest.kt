@@ -24,7 +24,7 @@ class VideoImageTest {
     @Test
     fun processScreenshotTest() {
         val classLoader = javaClass.classLoader
-        val testVideoUrl: String = (classLoader.getResource("subdir")!!.path)+"\\dice.mp4"
+        val testVideoUrl: String = (classLoader.getResource("subdir")!!.path)+"/dice.mp4"
         val testVideoFile = File(testVideoUrl)
 
         val videoProcessing = VideoProcessing(testVideoFile)
@@ -41,7 +41,7 @@ class VideoImageTest {
     @Test
     fun processGifTest() {
         val classLoader = javaClass.classLoader
-        val testVideoUrl: String = (classLoader.getResource("subdir")!!.path)+"\\dice.mp4"
+        val testVideoUrl: String = (classLoader.getResource("subdir")!!.path)+"/dice.mp4"
         val testVideoFile = File(testVideoUrl)
 
         val videoProcessing = VideoProcessing(testVideoFile)
@@ -58,7 +58,7 @@ class VideoImageTest {
     @Test
     fun processObjectRecognitionTest() {
         val classLoader = javaClass.classLoader
-        val testImageUrl: String = (classLoader.getResource("subdir")!!.path)+"\\tablecup.jpg"
+        val testImageUrl: String = (classLoader.getResource("subdir")!!.path)+"/tablecup.jpg"
         val testImageFile = File(testImageUrl)
 
         // Create thumbnails
@@ -89,7 +89,7 @@ class VideoImageTest {
     @Test
     fun processDetectPredictTest() {
         val classLoader = javaClass.classLoader
-        val testImageUrl: String = (classLoader.getResource("subdir")!!.path)+"\\people.jpg"
+        val testImageUrl: String = (classLoader.getResource("subdir")!!.path)+"/people.jpg"
         val testImageFile = File(testImageUrl)
 
         val imageBi = ImageIO.read(testImageFile)
@@ -109,7 +109,7 @@ class VideoImageTest {
         val mapper = ObjectMapper()
 
         val classLoader = javaClass.classLoader
-        val testImageUrl: String = (classLoader.getResource("subdir")!!.path)+"\\people.jpg"
+        val testImageUrl: String = (classLoader.getResource("subdir")!!.path)+"/people.jpg"
         val testImageFile = File(testImageUrl)
 
         val imageBi = ImageIO.read(testImageFile)

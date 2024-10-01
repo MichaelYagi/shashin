@@ -107,9 +107,9 @@ class APITests: BaseSeleniumTests() {
         val testImageUrl: URL = classLoader.getResource("testscreen.jpg")!!
         val testImageFile = File(testImageUrl.file)
         val mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
-        mediaDirTextArea.sendKeys(testImageFile.parent+"\\subdir")
+        mediaDirTextArea.sendKeys(testImageFile.parent+"/subdir")
         val mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
-        mediaExcludeDirTextArea.sendKeys("${testImageFile.parent}\\subdir\\dice.mp4\n${testImageFile.parent}\\subdir\\people.jpg")
+        mediaExcludeDirTextArea.sendKeys("${testImageFile.parent}/subdir/dice.mp4\n${testImageFile.parent}/subdir/people.jpg")
         val objectDetectionCheck = this.driver!!.findElement(By.id("objectDetection"))
         objectDetectionCheck.sendKeys(Keys.SPACE)
         if (!objectDetectionCheck.isSelected) {
