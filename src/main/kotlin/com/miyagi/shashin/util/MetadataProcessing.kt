@@ -6,6 +6,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.apache.commons.lang3.StringUtils
 import java.io.File
 import java.math.RoundingMode
@@ -85,13 +86,7 @@ class MetadataProcessing() {
             this.metadataObj.setTime(dateArray[1])
         }
 
-        val accessTime = attr.lastAccessTime().toString()
-        date = if (accessTime.contains(".")) {
-            sourceFormatMS.parse(accessTime)
-        } else {
-            sourceFormat.parse(accessTime)
-        }
-        this.metadataObj.setLastAccessedAt(destFormat.format(date))
+        this.metadataObj.setLastAccessedAt(getCurrentTimestamp())
         val exifMap = hashMapOf<String, String>()
 
 //        println("=================")
@@ -157,26 +152,26 @@ class MetadataProcessing() {
 
                                 try {
                                     date = takenFormat.parse(tag.description)
-                                } catch (e: Exception) {
+                                } catch (_: Exception) {
                                     try {
                                         // Sun Jul 25 14:34:09 PDT 2021
                                         val sourceDateFormat =
                                             SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH)
                                         date = sourceDateFormat.parse(tag.description)
 
-                                    } catch (e: Exception) {
+                                    } catch (_: Exception) {
                                         try {
                                             // Sun Jul 25 14:34:09 -07:00 2021
                                             val sourceDateFormat =
                                                 SimpleDateFormat("EEE MMM dd HH:mm:ss XXX yyyy", Locale.ENGLISH)
                                             date = sourceDateFormat.parse(tag.description)
-                                        } catch (e: Exception) {
+                                        } catch (_: Exception) {
                                             try {
                                                 // Sun. Jul. 25 14:34:09 -07:00 2021
                                                 val sourceDateFormat =
                                                     SimpleDateFormat("EEE. MMM. dd HH:mm:ss XXX yyyy", Locale.ENGLISH)
                                                 date = sourceDateFormat.parse(tag.description)
-                                            } catch (e: Exception) {
+                                            } catch (_: Exception) {
                                                 try {
                                                     // Sun. Jul. 25 14:34:09 -07:00 2021
                                                     val sourceDateFormat =
@@ -240,19 +235,19 @@ class MetadataProcessing() {
 
                                 try {
                                     date = modificationFormat.parse(tag.description)
-                                } catch (e: Exception) {
+                                } catch (_: Exception) {
                                     try {
                                         // Sun Jul 25 14:34:09 PDT 2021
                                         val sourceDateFormat =
                                             SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH)
                                         date = sourceDateFormat.parse(tag.description)
-                                    } catch (e: Exception) {
+                                    } catch (_: Exception) {
                                         try {
                                             // Sun Jul 25 14:34:09 -07:00 2021
                                             val sourceDateFormat =
                                                 SimpleDateFormat("EEE MMM dd HH:mm:ss XXX yyyy", Locale.ENGLISH)
                                             date = sourceDateFormat.parse(tag.description)
-                                        } catch (e: Exception) {
+                                        } catch (_: Exception) {
                                             try {
                                                 // Sun. Jul. 25 14:34:09 -07:00 2021
                                                 val sourceDateFormat =
