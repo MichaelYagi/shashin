@@ -99,7 +99,7 @@ class AtomFeedView : AbstractAtomFeedView() {
                 val randomAlbums = albumRepository?.findRandomAlbumsByUser(currentUser.getId())
                 if (randomAlbums != null && randomAlbums.count() > 0) {
                     for (randomAlbum in randomAlbums) {
-                        if (randomAlbum.getIsShared() == 1) {
+//                        if (randomAlbum.getIsShared() == 1) {
 
                             var albumPhotos: MutableIterable<AlbumPhoto?>? = null
                             try {
@@ -167,7 +167,7 @@ class AtomFeedView : AbstractAtomFeedView() {
                                     }
                                 }
                             }
-                        }
+//                        }
                     }
                 }
             }

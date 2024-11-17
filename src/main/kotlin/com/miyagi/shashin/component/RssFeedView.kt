@@ -37,7 +37,7 @@ class RssFeedView : AbstractRssFeedView() {
 
     override fun buildFeedMetadata(model: MutableMap<String, Any>, feed: Channel, request: HttpServletRequest) {
         feed.title = "$appName RSS Feed"
-        feed.description = "$appName images"
+        feed.description = "$appName images - Invalid key"
         feed.feedType = "rss_2.0"
 
         if (model.containsKey("apiKey")) {
@@ -78,7 +78,7 @@ class RssFeedView : AbstractRssFeedView() {
                 val randomAlbums = albumRepository?.findRandomAlbumsByUser(currentUser.getId())
                 if (randomAlbums != null && randomAlbums.count() > 0) {
                     for (randomAlbum in randomAlbums) {
-                        if (randomAlbum.getIsShared() == 1) {
+//                        if (randomAlbum.getIsShared() == 1) {
                             val albumPhotos = albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, 20)
 
                             if (albumPhotos != null) {
@@ -121,7 +121,7 @@ class RssFeedView : AbstractRssFeedView() {
                                     }
                                 }
                             }
-                        }
+//                        }
                     }
                 }
             }
