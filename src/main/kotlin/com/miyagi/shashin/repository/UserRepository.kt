@@ -18,7 +18,7 @@ interface UserRepository : CrudRepository<User?, Int?> {
     fun findByApikey(apikey: String?): User?
     @Query("SELECT DISTINCT u.* FROM useralbum ua INNER JOIN user u ON u.id = ua.user_id INNER JOIN album a ON a.id = ua.album_id WHERE u.authority != 'ROLE_SUPER' AND u.authority != 'ROLE_ADMIN' AND ua.album_id = :albumId", nativeQuery = true)
     fun findDistinctUserByAlbumId(@Param("albumId") albumId: Int): MutableIterable<User?>?
-    @Query("SELECT DISTINCT u.id as userId, u.username, a.id as albumId, CASE WHEN ua.user_id IS NULL THEN FALSE ELSE TRUE END AS isShared FROM user u, album a LEFT JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id WHERE u.id != :userId AND u.is_authorized = 1 AND u.authority = 'ROLE_USER'", nativeQuery = true)
+    @Query("SELECT DISTINCT u.id as userId, u.username, a.id as albumId, CASE WHEN ua.user_id IS NULL THEN FALSE ELSE TRUE END AS isShared FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id WHERE u.id != :userId AND u.is_authorized = 1 AND u.authority = 'ROLE_USER'", nativeQuery = true)
     fun findUserBySharedAlbum(@Param("userId") userId: Int): MutableIterable<UserSharedAlbums>
     @Query("SELECT DISTINCT u.* FROM user u LEFT JOIN useralbum ua ON u.id = ua.user_id WHERE (ua.album_id = :albumId OR u.authority = 'ROLE_ADMIN' OR u.authority = 'ROLE_SUPER') AND is_authorized = 1", nativeQuery = true)
     fun findAllUserBySharedAlbum(@Param("albumId") albumId: Int): MutableIterable<User>

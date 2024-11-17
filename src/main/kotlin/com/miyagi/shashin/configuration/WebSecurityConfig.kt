@@ -106,10 +106,10 @@ class MultiSecurityConfig {
             "/share/**",
             "/image/**",
             "/video/**",
-//            "/**/rss",
-//            "/**/atom",
-            "rss",
-            "atom",
+            "/**/rss",
+            "/**/atom",
+//            "rss",
+//            "atom",
             "/users/login",
             "/users/logout"
         )
