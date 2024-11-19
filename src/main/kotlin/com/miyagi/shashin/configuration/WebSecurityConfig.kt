@@ -197,7 +197,6 @@ class MultiSecurityConfig {
             "/comments/**",
             "/albums",
             "/favorites",
-            "/slideshow",
             "/random/**",
             "/media/metadata/**",
             "/map/**",

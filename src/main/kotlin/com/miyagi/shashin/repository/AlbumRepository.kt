@@ -22,7 +22,7 @@ interface AlbumRepository : CrudRepository<Album?, Int?> {
     @Query("SELECT DISTINCT a.* FROM album a LEFT JOIN albumphoto ap ON ap.album_id = a.id LEFT JOIN metadata m ON ap.metadata_id = m.id LEFT JOIN useralbum ua ON a.id = ua.album_id WHERE ua.user_id = :userId AND m.lat IS NOT NULL AND m.lng IS NOT NULL ORDER BY a.name COLLATE NOCASE ASC", nativeQuery = true)
     fun findAllWithLocationOrderByAlbumNameAndUserId(@Param("userId") userId: Int): MutableIterable<Album>?
     fun findAlbumByNameIgnoreCase(name: String): Album?
-    @Query("SELECT DISTINCT u.id as userId, u.username, a.id as albumId, CASE WHEN (ua.user_id IS NULL OR a.share_url IS NULL) THEN FALSE ELSE TRUE END AS isShared FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id WHERE u.id = :userId ORDER BY RANDOM()", nativeQuery = true)
+    @Query("SELECT DISTINCT u.id as userId, u.username, a.id as albumId FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id WHERE u.id = :userId ORDER BY RANDOM()", nativeQuery = true)
     fun findRandomAlbumsByUser(@Param("userId") userId: Int): MutableIterable<UserSharedAlbums>
     @Query("SELECT DISTINCT a.id FROM album a LEFT JOIN albumphoto ap ON a.id = ap.album_id LEFT JOIN metadata m ON ap.metadata_id = m.id WHERE m.id = :metadataId", nativeQuery = true)
     fun findAlbumIdsByMetadataId(@Param("metadataId") metadataId: String): MutableIterable<Int>?
