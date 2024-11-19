@@ -78,50 +78,48 @@ class RssFeedView : AbstractRssFeedView() {
                 val randomAlbums = albumRepository?.findRandomAlbumsByUser(currentUser.getId())
                 if (randomAlbums != null && randomAlbums.count() > 0) {
                     for (randomAlbum in randomAlbums) {
-//                        if (randomAlbum.getIsShared() == 1) {
-                            val albumPhotos = albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, 20)
+                        val albumPhotos = albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, 20)
 
-                            if (albumPhotos != null) {
-                                for (albumPhoto in albumPhotos) {
-                                    val metadata = metadataRepository?.findByMetadataId(albumPhoto?.getMetadataId()!!)
+                        if (albumPhotos != null) {
+                            for (albumPhoto in albumPhotos) {
+                                val metadata = metadataRepository?.findByMetadataId(albumPhoto?.getMetadataId()!!)
 
-                                    if (metadata != null) {
-                                        val album = albumRepository?.findAlbumById(albumPhoto?.getAlbumId())
-                                        val entry = Item()
-                                        entry.title = metadata.getTitle()
-                                        val description = Description()
-                                        var place = ""
-                                        var metadataDescription = ""
-                                        var albumName = ""
-                                        if (metadata.getPlaceName() != null && metadata.getPlaceName() != "") {
-                                            val placeArray = metadata.getPlaceName()!!.split(";")
-                                            place = placeArray[0].trim() + " - "
-                                        }
-                                        if (metadata.getDescription() != null && metadata.getDescription() != "") {
-                                            metadataDescription = metadata.getDescription()!!.trim() + " - "
-                                        }
-                                        if (album?.getName() != null && album.getName() != "") {
-                                            albumName = album.getName()!!.trim() + " - "
-                                        }
-                                        val descVal = "$albumName$metadataDescription$place"
-
-                                        description.value = descVal.dropLast(3)
-                                        entry.description = description
-                                        entry.link = "$baseUrl/api/v1/image/${metadata.getId()}"
-                                        entry.uri = "$baseUrl/api/v1/image/${metadata.getId()}"
-                                        val guid = Guid()
-                                        guid.value = "$baseUrl/api/v1/image/${metadata.getId()}"
-                                        entry.guid = guid
-                                        val enc = Enclosure()
-                                        enc.url = "$baseUrl/api/v1/image/${metadata.getId()}"
-                                        enc.type = metadata.getType()
-                                        enc.length = Files.size(Path(metadata.getPath()!!))
-                                        entry.enclosures = mutableListOf(enc)
-                                        rssList.add(entry)
+                                if (metadata != null) {
+                                    val album = albumRepository?.findAlbumById(albumPhoto?.getAlbumId())
+                                    val entry = Item()
+                                    entry.title = metadata.getTitle()
+                                    val description = Description()
+                                    var place = ""
+                                    var metadataDescription = ""
+                                    var albumName = ""
+                                    if (metadata.getPlaceName() != null && metadata.getPlaceName() != "") {
+                                        val placeArray = metadata.getPlaceName()!!.split(";")
+                                        place = placeArray[0].trim() + " - "
                                     }
+                                    if (metadata.getDescription() != null && metadata.getDescription() != "") {
+                                        metadataDescription = metadata.getDescription()!!.trim() + " - "
+                                    }
+                                    if (album?.getName() != null && album.getName() != "") {
+                                        albumName = album.getName()!!.trim() + " - "
+                                    }
+                                    val descVal = "$albumName$metadataDescription$place"
+
+                                    description.value = descVal.dropLast(3)
+                                    entry.description = description
+                                    entry.link = "$baseUrl/api/v1/image/${metadata.getId()}"
+                                    entry.uri = "$baseUrl/api/v1/image/${metadata.getId()}"
+                                    val guid = Guid()
+                                    guid.value = "$baseUrl/api/v1/image/${metadata.getId()}"
+                                    entry.guid = guid
+                                    val enc = Enclosure()
+                                    enc.url = "$baseUrl/api/v1/image/${metadata.getId()}"
+                                    enc.type = metadata.getType()
+                                    enc.length = Files.size(Path(metadata.getPath()!!))
+                                    entry.enclosures = mutableListOf(enc)
+                                    rssList.add(entry)
                                 }
                             }
-//                        }
+                        }
                     }
                 }
             }

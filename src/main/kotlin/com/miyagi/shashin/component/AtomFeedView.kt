@@ -99,75 +99,72 @@ class AtomFeedView : AbstractAtomFeedView() {
                 val randomAlbums = albumRepository?.findRandomAlbumsByUser(currentUser.getId())
                 if (randomAlbums != null && randomAlbums.count() > 0) {
                     for (randomAlbum in randomAlbums) {
-//                        if (randomAlbum.getIsShared() == 1) {
+                        var albumPhotos: MutableIterable<AlbumPhoto?>? = null
+                        try {
+                            albumPhotos = albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, 20)
+                        } catch (e: Exception) {
+                            logger.log(Level.WARNING, "albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit error: ${e.message}")
+                        }
 
-                            var albumPhotos: MutableIterable<AlbumPhoto?>? = null
-                            try {
-                                albumPhotos = albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, 20)
-                            } catch (e: Exception) {
-                                logger.log(Level.WARNING, "albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit error: ${e.message}")
-                            }
+                        if (albumPhotos != null) {
+                            for (albumPhoto in albumPhotos) {
 
-                            if (albumPhotos != null) {
-                                for (albumPhoto in albumPhotos) {
+                                var metadataOpt: Metadata? = null
 
-                                    var metadataOpt: Metadata? = null
+                                if (metadataRepository != null && metadataRepository!!.count() > 0) {
+                                    try {
+                                        metadataOpt = metadataRepository?.findByMetadataId(albumPhoto?.getMetadataId()!!)
+                                    } catch (e: Exception) {
+                                        logger.log(Level.WARNING, "metadataRepository?.findByMetadataId error: ${e.message}")
+                                    }
 
-                                    if (metadataRepository != null && metadataRepository!!.count() > 0) {
-                                        try {
-                                            metadataOpt = metadataRepository?.findByMetadataId(albumPhoto?.getMetadataId()!!)
-                                        } catch (e: Exception) {
-                                            logger.log(Level.WARNING, "metadataRepository?.findByMetadataId error: ${e.message}")
+                                    if (metadataOpt != null) {
+                                        val metadata = metadataOpt
+                                        val album = albumRepository?.findAlbumById(albumPhoto?.getAlbumId())
+
+                                        val entry = Entry()
+                                        entry.id = "$baseUrl/api/v1/image/${metadata.getId()}"
+                                        entry.title = metadata.getTitle()
+
+                                        var place = ""
+                                        var metadataDescription = ""
+                                        var albumName = ""
+                                        if (metadata.getPlaceName() != null && metadata.getPlaceName() != "") {
+                                            val placeArray = metadata.getPlaceName()!!.split(";")
+                                            place = placeArray[0].trim() + " - "
                                         }
-
-                                        if (metadataOpt != null) {
-                                            val metadata = metadataOpt
-                                            val album = albumRepository?.findAlbumById(albumPhoto?.getAlbumId())
-
-                                            val entry = Entry()
-                                            entry.id = "$baseUrl/api/v1/image/${metadata.getId()}"
-                                            entry.title = metadata.getTitle()
-
-                                            var place = ""
-                                            var metadataDescription = ""
-                                            var albumName = ""
-                                            if (metadata.getPlaceName() != null && metadata.getPlaceName() != "") {
-                                                val placeArray = metadata.getPlaceName()!!.split(";")
-                                                place = placeArray[0].trim() + " - "
-                                            }
-                                            if (metadata.getDescription() != null && metadata.getDescription() != "") {
-                                                metadataDescription = metadata.getDescription()!!.trim() + " - "
-                                            }
-                                            if (album?.getName() != null && album.getName() != "") {
-                                                albumName = album.getName()!!.trim() + " - "
-                                            }
-                                            val descVal = "$albumName$metadataDescription$place"
-
-                                            val content = Content()
-                                            content.value = descVal.dropLast(3)
-                                            entry.summary = content
-
-                                            val link = Link()
-                                            link.href = "$baseUrl/api/v1/image/${metadata.getId()}"
-                                            link.rel = "enclosure"
-                                            link.type = metadata.getType()
-                                            link.length = Files.size(Path(metadata.getPath()!!))
-                                            entry.alternateLinks = listOf(link)
-                                            val author: SyndPerson = Person()
-                                            author.name = metadata.getId()
-                                            entry.authors = listOf(author)
-                                            entry.alternateLinks = listOf(link)
-                                            val pattern = "EEE, MMM d, yyyy 'at' h:mm a"
-                                            val simpleDateFormat = SimpleDateFormat(pattern)
-                                            entry.updated =
-                                                simpleDateFormat.parse(TextUtils.formatToLongDateWithTime((metadata.getCreatedAt()!!)))
-
-                                            atomList.add(entry)
+                                        if (metadata.getDescription() != null && metadata.getDescription() != "") {
+                                            metadataDescription = metadata.getDescription()!!.trim() + " - "
                                         }
+                                        if (album?.getName() != null && album.getName() != "") {
+                                            albumName = album.getName()!!.trim() + " - "
+                                        }
+                                        val descVal = "$albumName$metadataDescription$place"
+
+                                        val content = Content()
+                                        content.value = descVal.dropLast(3)
+                                        entry.summary = content
+
+                                        val link = Link()
+                                        link.href = "$baseUrl/api/v1/image/${metadata.getId()}"
+                                        link.rel = "enclosure"
+                                        link.type = metadata.getType()
+                                        link.length = Files.size(Path(metadata.getPath()!!))
+                                        entry.alternateLinks = listOf(link)
+                                        val author: SyndPerson = Person()
+                                        author.name = metadata.getId()
+                                        entry.authors = listOf(author)
+                                        entry.alternateLinks = listOf(link)
+                                        val pattern = "EEE, MMM d, yyyy 'at' h:mm a"
+                                        val simpleDateFormat = SimpleDateFormat(pattern)
+                                        entry.updated =
+                                            simpleDateFormat.parse(TextUtils.formatToLongDateWithTime((metadata.getCreatedAt()!!)))
+
+                                        atomList.add(entry)
                                     }
                                 }
                             }
-//                        }
+                        }
                     }
                 }
             }
