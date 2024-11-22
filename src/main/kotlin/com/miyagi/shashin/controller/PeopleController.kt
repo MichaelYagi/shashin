@@ -857,35 +857,23 @@ class PeopleController: BaseController() {
                     pageValue,
                     size
                 )
-            }
-            if (module == "person") {
-                if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute(
-                        "superRole"
-                    )
-                ) {
-                    val recognitionLabels =
-                        recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
-                    if (recognitionLabels != null && recognitionLabels.count() > 0) {
-                        response["recognitionLabels"] = recognitionLabels
-                    }
-                    metadataList = metadataRepository?.findMetadataByPersonByModified(
+            } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
+                val recognitionLabels =
+                    recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
+
+                if (recognitionLabels != null && recognitionLabels.count() > 0) {
+                    response["recognitionLabels"] = recognitionLabels
+                }
+
+                metadataList = if (module == "person") {
+                    metadataRepository?.findMetadataByPersonByModified(
                         settings.getRecognitionConfidenceThreshold()!!,
                         personId,
                         pageValue,
                         size
                     )
-                }
-            } else {
-                if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute(
-                        "superRole"
-                    )
-                ) {
-                    val recognitionLabels =
-                        recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
-                    if (recognitionLabels != null && recognitionLabels.count() > 0) {
-                        response["recognitionLabels"] = recognitionLabels
-                    }
-                    metadataList = metadataRepository?.findMetadataByPerson(
+                } else {
+                    metadataRepository?.findMetadataByPerson(
                         settings.getRecognitionConfidenceThreshold()!!,
                         personId,
                         pageValue,
