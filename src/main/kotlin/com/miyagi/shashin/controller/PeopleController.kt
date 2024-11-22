@@ -729,7 +729,7 @@ class PeopleController: BaseController() {
     fun getPerson(model: Model, @PathVariable personId: Int,request: HttpServletRequest): String {
         val module = "person"
         val page = 0
-        val response = buildPersonAlbum(model,personId,page)
+        val response = buildPersonAlbum(model,module,personId,page)
         for ((k, v) in response) {
             model[k] = v!!
         }
@@ -801,10 +801,10 @@ class PeopleController: BaseController() {
     @RequestMapping(value = ["/person/{personId}/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getPagedPerson(model: Model, request: HttpServletRequest, @PathVariable personId: Int, @PathVariable page: Int): String {
-        return mapper.writeValueAsString(buildPersonAlbum(model,personId,page))
+        return mapper.writeValueAsString(buildPersonAlbum(model,"person",personId,page))
     }
 
-    private fun buildPersonAlbum(model: Model,personId: Int,page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
+    private fun buildPersonAlbum(model: Model,module: String,personId: Int,page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         response["message"] = "Nothing to see here."
@@ -857,21 +857,41 @@ class PeopleController: BaseController() {
                     pageValue,
                     size
                 )
-            } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute(
-                    "superRole"
-                )
-            ) {
-                val recognitionLabels =
-                    recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
-                if (recognitionLabels != null && recognitionLabels.count() > 0) {
-                    response["recognitionLabels"] = recognitionLabels
+            }
+            if (module == "person") {
+                if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute(
+                        "superRole"
+                    )
+                ) {
+                    val recognitionLabels =
+                        recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
+                    if (recognitionLabels != null && recognitionLabels.count() > 0) {
+                        response["recognitionLabels"] = recognitionLabels
+                    }
+                    metadataList = metadataRepository?.findMetadataByPersonByModified(
+                        settings.getRecognitionConfidenceThreshold()!!,
+                        personId,
+                        pageValue,
+                        size
+                    )
                 }
-                metadataList = metadataRepository?.findMetadataByPerson(
-                    settings.getRecognitionConfidenceThreshold()!!,
-                    personId,
-                    pageValue,
-                    size
-                )
+            } else {
+                if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute(
+                        "superRole"
+                    )
+                ) {
+                    val recognitionLabels =
+                        recognitionLabelRepository?.findAllByNameNotContaining(TextUtils.getObjectName())
+                    if (recognitionLabels != null && recognitionLabels.count() > 0) {
+                        response["recognitionLabels"] = recognitionLabels
+                    }
+                    metadataList = metadataRepository?.findMetadataByPerson(
+                        settings.getRecognitionConfidenceThreshold()!!,
+                        personId,
+                        pageValue,
+                        size
+                    )
+                }
             }
 
             val albumList = albumRepository?.findAllOrderByAlbumName()
