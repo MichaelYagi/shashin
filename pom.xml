@@ -5,7 +5,7 @@
     <parent> <!-- lookup parent from repository -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.3</version>
+        <version>3.4.0</version>
         <relativePath/>
     </parent>
     <groupId>com.miyagi</groupId>
@@ -20,7 +20,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <npm.executable>npm</npm.executable>
         <hibernate.version>6.6.0.Final</hibernate.version>
-        <spring-security.version>6.3.3</spring-security.version>
+        <spring-security.version>6.4.1</spring-security.version>
         <thymeleaf-extras.version>3.0.1.RELEASE</thymeleaf-extras.version>
         <jackson.version>2.17.2</jackson.version>
     </properties>
@@ -190,7 +190,7 @@
         <dependency>
             <groupId>net.iakovlev</groupId>
             <artifactId>timeshape</artifactId>
-            <version>2022g.17</version>
+            <version>2024a.24</version>
         </dependency>
         <dependency>
             <groupId>net.coobird</groupId>
