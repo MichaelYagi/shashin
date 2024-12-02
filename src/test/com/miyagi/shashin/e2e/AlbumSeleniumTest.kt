@@ -127,11 +127,11 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         this.logger.log(Level.INFO, "AlbumSeleniumTest - Redirected to timeline.")
         val scrollContainer = this.driver!!.findElement(By.id("infinite-scroll-gallery"))
         val spanContainerEl = scrollContainer.findElement(By.xpath("./span[1]"))
-        val dateId = spanContainerEl.getAttribute("id").substringAfter("container_")
+        val dateId = spanContainerEl.getAttribute("id")?.substringAfter("container_")
         val parentEl = this.driver!!.findElement(By.id("row$dateId"))
         val childEl = parentEl.findElement(By.xpath("./div[1]"))
         val imageId = childEl.getAttribute("id")
-        metadataId = imageId.substringAfter("photoThumbnailContainer")
+        metadataId = imageId?.substringAfter("photoThumbnailContainer")
 
         // Check image src
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("img[src^='/api/v1/thumbnails']")))
@@ -180,7 +180,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val albumCard = this.driver!!.findElement(By.xpath("//div[@class=\"card\"][1]"))
         val albumLink = albumCard.findElement(By.xpath("./a[1]"))
         val albumIdentifier = albumLink.getAttribute("id")
-        albumId = albumIdentifier.substringAfter("album").toInt()
+        albumId = albumIdentifier?.substringAfter("album").toInt()
 
         val shareLink = this.driver!!.findElement(By.id("share$albumId"))
         shareLink.click()
@@ -352,7 +352,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         // Check comment
         val commentList = this.driver!!.findElement(By.id("commentList"))
         val commentEl = commentList.findElement(By.xpath("./li[1]"))
-        val commentId = commentEl.getAttribute("id").substringAfter("comment")
+        val commentId = commentEl.getAttribute("id")?.substringAfter("comment")
 
 //        println(this.driver?.pageSource)
 
@@ -407,6 +407,6 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
     }
 
     private fun elementHasClass(element: WebElement, active: String?): Boolean {
-        return element.getAttribute("class").contains(active!!)
+        return element.getAttribute("class")!!.contains(active!!)
     }
 }

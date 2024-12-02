@@ -131,11 +131,11 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         val scrollContainer = this.driver!!.findElement(By.id("infinite-scroll-gallery"))
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfAllElements(scrollContainer.findElement(By.xpath("./span[1]"))))
         val spanContainerEl = scrollContainer.findElement(By.xpath("./span[1]"))
-        val dateId = spanContainerEl.getAttribute("id").substringAfter("container_")
+        val dateId = spanContainerEl.getAttribute("id")?.substringAfter("container_")
         val parentEl = this.driver!!.findElement(By.id("row$dateId"))
         val childEl = parentEl.findElement(By.xpath("./div[1]"))
         val imageId = childEl.getAttribute("id")
-        metadataId = imageId.substringAfter("photoThumbnailContainer")
+        metadataId = imageId?.substringAfter("photoThumbnailContainer")
 
         Assertions.assertTrue(isUUID(metadataId!!))
 
@@ -145,7 +145,7 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         val imageEl = this.driver!!.findElement(By.id("image$metadataId"))
         val imageSrc = imageEl.getAttribute("src")
 
-        Assertions.assertTrue(imageSrc.contains("testscreen"))
+        Assertions.assertTrue(imageSrc!!.contains("testscreen"))
     }
 
     private fun isUUID(someUUID: String): Boolean {
