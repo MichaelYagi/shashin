@@ -172,6 +172,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
             elementHasClass = elementHasClass(this.driver!!.findElement(By.id("metadataModalStatus")),"bi-check-circle")
         }
         Thread.sleep(this.elementScanTimeoutMillis.toLong())
+        this.logger.log(Level.INFO, "Relocating to albums view.")
         this.driver!!.get("http://localhost:$port/albums")
 
         //Share album with testuser
@@ -185,12 +186,16 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val shareLink = this.driver!!.findElement(By.id("share$albumId"))
         shareLink.click()
 
+        this.logger.log(Level.INFO, "Share link created.")
+
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.id("id-$userId-$albumId")))
         val userShareCheckbox = this.driver!!.findElement(By.id("id-$userId-$albumId"))
         userShareCheckbox.click()
 
         val saveUserShare = this.driver!!.findElement(By.id("saveUserShare"))
         saveUserShare.click()
+
+        this.logger.log(Level.INFO, "Share link saved.")
 
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.id("albumsModalStatus")))
     }
@@ -231,6 +236,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         var elementHasClass = elementHasClass(this.driver!!.findElement(By.id("editAlbumNameStatus")),"bi-check-circle")
         val albumEditNameButton = this.driver!!.findElement(By.id("editAlbum"))
         albumEditNameButton.click()
+        this.logger.log(Level.INFO, "Changed album name as admin.")
         while (!elementHasClass || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             elementHasClass = elementHasClass(this.driver!!.findElement(By.id("editAlbumNameStatus")),"bi-check-circle")
         }
@@ -254,6 +260,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         startTime = System.currentTimeMillis()
         elementHasClass = elementHasClass(this.driver!!.findElement(By.id("albumsModalStatus")),"bi-check-circle")
         generateShareAlbumEl.click()
+        this.logger.log(Level.INFO, "Shared album as admin.")
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Generate')]")))
 
         val shareConfirmation = this.driver!!.findElement(By.id("shareConfirmation"))
@@ -281,6 +288,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         val deleteAlbumButton = this.driver!!.findElement(By.id("deleteAlbum"))
         deleteAlbumButton.click()
+        this.logger.log(Level.INFO, "Deleted album as admin.")
         startTime = System.currentTimeMillis()
         scanBeforeAfter = null
         while (scanBeforeBody == scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
@@ -333,6 +341,8 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val saveComment = this.driver!!.findElement(By.id("saveCommentAlbum"))
         saveComment.click()
 
+        this.logger.log(Level.INFO, "Shared comment as user.")
+
         var scanBeforeAfter: WebElement? = null
         var startTime = System.currentTimeMillis()
         while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
@@ -362,6 +372,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val editCommentEl = this.driver!!.findElement(By.id("editcomment$commentId"))
         scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
         editCommentEl.click()
+        this.logger.log(Level.INFO, "Shared comment edited as user.")
         startTime = System.currentTimeMillis()
         scanBeforeAfter = null
         while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
@@ -390,6 +401,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val deleteCommentEl = this.driver!!.findElement(By.id("deletecomment$commentId"))
         scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
         deleteCommentEl.click()
+        this.logger.log(Level.INFO, "Deleted comment as user.")
         startTime = System.currentTimeMillis()
         scanBeforeAfter = null
         while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
