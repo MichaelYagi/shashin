@@ -65,12 +65,18 @@ class DjlFaceRecognizer {
     }
 
     fun getSubImage(image: BufferedImage, jsonNode: JsonNode, index: Int): BufferedImage {
-        val cornerMin = jsonNode.get(index).get("boundingBox").get("corners")[0]
-        val xMin = cornerMin.get("x").toString().toDouble()
-        val yMin = cornerMin.get("y").toString().toDouble()
-        val cornerMax = jsonNode.get(index).get("boundingBox").get("corners")[2]
-        val xMax = cornerMax.get("x").toString().toDouble()
-        val yMax = cornerMax.get("y").toString().toDouble()
+//        val cornerMin = jsonNode.get(index).get("boundingBox").get("corners")[0]
+//        val xMin = cornerMin.get("x").toString().toDouble()
+//        val yMin = cornerMin.get("y").toString().toDouble()
+//        val cornerMax = jsonNode.get(index).get("boundingBox").get("corners")[2]
+//        val xMax = cornerMax.get("x").toString().toDouble()
+//        val yMax = cornerMax.get("y").toString().toDouble()
+
+        val rectangle = jsonNode.get(index).get("boundingBox").get("rect")
+        val xMin = rectangle.get(0).toString().toDouble()
+        val yMin = rectangle.get(1).toString().toDouble()
+        val xMax = rectangle.get(2).toString().toDouble()
+        val yMax = rectangle.get(3).toString().toDouble()
 
         val y1 = yMin * image.height
         val x1 = xMin * image.width
