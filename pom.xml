@@ -284,7 +284,7 @@
             <artifactId>yauaa</artifactId>
             <version>7.20.0</version>
         </dependency>
-        <!-- Facial Recog-->
+        <!-- Facial Recog -->
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>javacpp</artifactId>
@@ -310,7 +310,7 @@
             <artifactId>ffmpeg</artifactId>
             <version>6.1.1-1.5.10</version>
         </dependency>
-        <!-- Object Recog-->
+        <!-- Object Recog -->
         <dependency>
             <groupId>ai.djl</groupId>
             <artifactId>api</artifactId>
