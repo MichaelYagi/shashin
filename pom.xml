@@ -21,7 +21,6 @@
         <npm.executable>npm</npm.executable>
         <hibernate.version>6.6.0.Final</hibernate.version>
         <spring-security.version>6.4.1</spring-security.version>
-        <thymeleaf-extras.version>3.0.1.RELEASE</thymeleaf-extras.version>
         <jackson.version>2.18.1</jackson.version>
         <selenium.version>4.25.0</selenium.version>
     </properties>
