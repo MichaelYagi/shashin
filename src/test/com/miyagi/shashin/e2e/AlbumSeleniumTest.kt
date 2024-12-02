@@ -180,7 +180,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val albumCard = this.driver!!.findElement(By.xpath("//div[@class=\"card\"][1]"))
         val albumLink = albumCard.findElement(By.xpath("./a[1]"))
         val albumIdentifier = albumLink.getAttribute("id")
-        albumId = albumIdentifier?.substringAfter("album").toInt()
+        albumId = albumIdentifier?.substringAfter("album")?.toInt()
 
         val shareLink = this.driver!!.findElement(By.id("share$albumId"))
         shareLink.click()
