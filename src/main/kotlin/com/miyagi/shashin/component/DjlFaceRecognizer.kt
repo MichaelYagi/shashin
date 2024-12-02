@@ -126,8 +126,6 @@ class DjlFaceRecognizer {
                     .height(1000)
                     .asBufferedImage()
 
-                val trainingImageLabelId = trainingImageObj.getRecognitionLabelId()!!
-
                 val trainingImage = ImageFactory.getInstance().fromImage(scaledTrainingImage)
                 val detectedTrainingImages = detect(trainingImage)
                 val numOfTrainingObject = detectedTrainingImages?.numberOfObjects
