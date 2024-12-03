@@ -128,6 +128,13 @@ class DjlFaceRecognizer {
 
                 val trainingImage = ImageFactory.getInstance().fromImage(scaledTrainingImage)
                 val detectedTrainingImages = detect(trainingImage)
+                if (detectedTrainingImages == null) {
+                    logger.log(
+                        Level.WARNING,
+                        "Something went wrong. Faces could not be recognized in ${trainingImageObj.getPath()} training image"
+                    )
+                    break
+                }
                 val numOfTrainingObject = detectedTrainingImages?.numberOfObjects
                 val trainingImageJsonNode = mapper.readTree(detectedTrainingImages?.toJson())
 
@@ -428,9 +435,14 @@ class DjlFaceRecognizer {
         if (criteria == null) {
             return null
         } else {
-            criteria.loadModel().use { model ->
-                val predictor: Predictor<Image, FloatArray> = model.newPredictor()
-                return predictor.predict(img)
+            try {
+                criteria.loadModel().use { model ->
+                    val predictor: Predictor<Image, FloatArray> = model.newPredictor()
+                    return predictor.predict(img)
+                }
+            } catch (e: Exception) {
+                logger.log(Level.WARNING, "Could not predict for prediction. ${e.message}")
+                return null
             }
         }
     }
@@ -470,11 +482,16 @@ class DjlFaceRecognizer {
         if (criteria == null) {
             return null
         } else {
-            criteria.loadModel().use { model ->
-                model.newPredictor().use { predictor ->
-                    val detection = predictor.predict(img)
-                    return detection
+            try {
+                criteria.loadModel().use { model ->
+                    model.newPredictor().use { predictor ->
+                        val detection = predictor.predict(img)
+                        return detection
+                    }
                 }
+            } catch (e: Exception) {
+                logger.log(Level.WARNING, "Could not predict for detection. ${e.message}")
+                return null
             }
         }
     }
