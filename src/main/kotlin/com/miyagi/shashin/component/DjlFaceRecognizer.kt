@@ -27,9 +27,13 @@ import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import net.coobird.thumbnailator.Thumbnails
 import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.FileSystemResource
+import org.springframework.util.ResourceUtils
 import java.awt.image.BufferedImage
 import java.io.File
 import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -403,11 +407,16 @@ class DjlFaceRecognizer {
 
     @Throws(IOException::class, ModelException::class, TranslateException::class)
     fun predict(img: Image): FloatArray? {
-        val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
-
         img.wrappedImage
 
         var criteria: Criteria<Image, FloatArray>? = null
+
+        val tempFilePath = System.getProperty("java.io.tmpdir") + "/vggface2.pt"
+        var vggStream = ClassPathResource("lib/vggface2.pt").inputStream
+        val tempFile = File(tempFilePath)
+        tempFile.deleteOnExit()
+        org.apache.commons.io.FileUtils.copyInputStreamToFile(vggStream, tempFile)
+        val vggPath = tempFile.path
 
         try {
             criteria =
@@ -419,8 +428,9 @@ class DjlFaceRecognizer {
 //                    classLoader.getResource("lib/face_feature.zip").path
 //                )
 //                .optModelName("face_feature") // specify model file prefix
-                    .optModelUrls(
-                        classLoader.getResource("lib/vggface2.pt")!!.path
+                    .optModelPath(
+                        Paths.get(vggPath)
+//                        classLoader.getResource("lib/vggface2.pt")!!.path
 //                        ClassPathResource("lib/vggface2.pt").path
 //                    "https://github.com/jmformenti/face-recognition-java/raw/master/core/src/main/resources/models/pytorch/vggface2/vggface2.pt"
                     )
@@ -451,7 +461,6 @@ class DjlFaceRecognizer {
 
     @Throws(IOException::class, ModelException::class, TranslateException::class)
     fun detect(img: Image): DetectedObjects? {
-        val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
         val confThresh = 0.85
         val nmsThresh = 0.45
         val variance = doubleArrayOf(0.1, 0.2)
@@ -463,12 +472,21 @@ class DjlFaceRecognizer {
 
         var criteria: Criteria<Image, DetectedObjects>? = null
 
+        val tempFilePath = System.getProperty("java.io.tmpdir") + "/retinaface.pt"
+        // Use inputStream to get file
+        var retinaStream = ClassPathResource("lib/retinaface.pt").inputStream
+        val tempFile = File(tempFilePath)
+        tempFile.deleteOnExit()
+        org.apache.commons.io.FileUtils.copyInputStreamToFile(retinaStream, tempFile)
+        var retinaPath = tempFile.path
+
         try {
             criteria =
                 Criteria.builder()
                     .setTypes(Image::class.java, DetectedObjects::class.java)
-                    .optModelUrls(
-                        classLoader.getResource("lib/retinaface.pt")!!.path
+                    .optModelPath(
+                        Paths.get(retinaPath)
+//                        classLoader.getResource("lib/retinaface.pt")!!.path
 //                        ClassPathResource("lib/retinaface.pt").path
                     ) // Load model from local file, e.g:
 //                .optModelUrls("https://resources.djl.ai/test-models/pytorch/retinaface.zip")
