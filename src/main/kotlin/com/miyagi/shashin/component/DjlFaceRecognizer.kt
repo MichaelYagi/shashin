@@ -25,6 +25,7 @@ import com.miyagi.shashin.util.MetricsUtil
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import net.coobird.thumbnailator.Thumbnails
+import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.FileSystemResource
 import java.awt.image.BufferedImage
 import java.io.File
@@ -402,7 +403,7 @@ class DjlFaceRecognizer {
 
     @Throws(IOException::class, ModelException::class, TranslateException::class)
     fun predict(img: Image): FloatArray? {
-        val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
+//        val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
 
         img.wrappedImage
 
@@ -419,7 +420,8 @@ class DjlFaceRecognizer {
 //                )
 //                .optModelName("face_feature") // specify model file prefix
                     .optModelUrls(
-                        classLoader.getResource("lib/vggface2.pt")!!.path
+//                        classLoader.getResource("lib/vggface2.pt")!!.path
+                        ClassPathResource("lib/vggface2.pt").path
 //                    "https://github.com/jmformenti/face-recognition-java/raw/master/core/src/main/resources/models/pytorch/vggface2/vggface2.pt"
                     )
 //                .optModelName("vggface2") // specify model file prefix
@@ -449,7 +451,7 @@ class DjlFaceRecognizer {
 
     @Throws(IOException::class, ModelException::class, TranslateException::class)
     fun detect(img: Image): DetectedObjects? {
-        val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
+//        val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
         val confThresh = 0.85
         val nmsThresh = 0.45
         val variance = doubleArrayOf(0.1, 0.2)
@@ -465,7 +467,10 @@ class DjlFaceRecognizer {
             criteria =
                 Criteria.builder()
                     .setTypes(Image::class.java, DetectedObjects::class.java)
-                    .optModelUrls(classLoader.getResource("lib/retinaface.pt")!!.path) // Load model from local file, e.g:
+                    .optModelUrls(
+//                        classLoader.getResource("lib/retinaface.pt")!!.path
+                        ClassPathResource("lib/retinaface.pt").path
+                    ) // Load model from local file, e.g:
 //                .optModelUrls("https://resources.djl.ai/test-models/pytorch/retinaface.zip")
 //                .optModelName("retinaface") // specify model file prefix
                     .optTranslator(translator)
