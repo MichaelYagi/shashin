@@ -7,6 +7,7 @@ import org.bytedeco.javacv.FFmpegFrameGrabber
 import org.bytedeco.javacv.Java2DFrameConverter
 import java.awt.image.BufferedImage
 import java.io.File
+import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.logging.Level
@@ -19,7 +20,9 @@ class VideoProcessing(private val videoFile: File) {
 
     init {
         // No log output
-        avutil.av_log_set_level(avutil.AV_LOG_QUIET)
+        try {
+            avutil.av_log_set_level(avutil.AV_LOG_QUIET)
+        } catch (_: IOException) {}
     }
 
     private val frameGrabber: FFmpegFrameGrabber = FFmpegFrameGrabber(videoFile.path)
