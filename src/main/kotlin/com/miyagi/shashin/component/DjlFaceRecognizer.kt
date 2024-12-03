@@ -388,7 +388,7 @@ class DjlFaceRecognizer {
         return similarityArray
     }
 
-    fun calculateSimilar(feature1: FloatArray?, feature2: FloatArray?): Float {
+    private fun calculateSimilar(feature1: FloatArray?, feature2: FloatArray?): Float {
         if (feature1 != null && feature2 != null) {
             var ret = 0.0f
             var mod1 = 0.0f
@@ -412,10 +412,12 @@ class DjlFaceRecognizer {
         var criteria: Criteria<Image, FloatArray>? = null
 
         val tempFilePath = System.getProperty("java.io.tmpdir") + "/vggface2.pt"
-        var vggStream = ClassPathResource("lib/vggface2.pt").inputStream
         val tempFile = File(tempFilePath)
-        tempFile.deleteOnExit()
-        org.apache.commons.io.FileUtils.copyInputStreamToFile(vggStream, tempFile)
+        if (!tempFile.exists()) {
+            val vggStream = ClassPathResource("lib/vggface2.pt").inputStream
+            tempFile.deleteOnExit()
+            org.apache.commons.io.FileUtils.copyInputStreamToFile(vggStream, tempFile)
+        }
         val vggPath = tempFile.path
 
         try {
@@ -473,12 +475,14 @@ class DjlFaceRecognizer {
         var criteria: Criteria<Image, DetectedObjects>? = null
 
         val tempFilePath = System.getProperty("java.io.tmpdir") + "/retinaface.pt"
-        // Use inputStream to get file
-        var retinaStream = ClassPathResource("lib/retinaface.pt").inputStream
         val tempFile = File(tempFilePath)
-        tempFile.deleteOnExit()
-        org.apache.commons.io.FileUtils.copyInputStreamToFile(retinaStream, tempFile)
-        var retinaPath = tempFile.path
+        if (!tempFile.exists()) {
+            // Use inputStream to get file
+            val retinaStream = ClassPathResource("lib/retinaface.pt").inputStream
+            tempFile.deleteOnExit()
+            org.apache.commons.io.FileUtils.copyInputStreamToFile(retinaStream, tempFile)
+        }
+        val retinaPath = tempFile.path
 
         try {
             criteria =
