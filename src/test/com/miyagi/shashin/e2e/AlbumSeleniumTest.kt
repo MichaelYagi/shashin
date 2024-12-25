@@ -75,10 +75,10 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         this.driver?.get("http://localhost:$port/users/login")
         //println(this.driver?.pageSource)
-        val username = this.driver!!.findElement(By.id("username"))
-        val password = this.driver!!.findElement(By.id("password"))
-        val rememberMe = this.driver!!.findElement(By.id("remember-me"))
-        val login = this.driver!!.findElement(By.id("submit-loginreg"))
+        var username = this.driver!!.findElement(By.id("username"))
+        var password = this.driver!!.findElement(By.id("password"))
+        var rememberMe = this.driver!!.findElement(By.id("remember-me"))
+        var login = this.driver!!.findElement(By.id("submit-loginreg"))
         rememberMe.click()
         username.sendKeys("testadmin")
         password.sendKeys("testadmin")
@@ -105,7 +105,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         // Scan new image
         this.driver!!.get("http://localhost:$port/settings/scan")
-        val scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
+        var scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
         val scanPhotos = this.driver!!.findElement(By.id("scanPhotos"))
         scanPhotos.click()
 
@@ -179,7 +179,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class=\"card\"][1]")))
 
         val albumCard = this.driver!!.findElement(By.xpath("//div[@class=\"card\"][1]"))
-        val albumLink = albumCard.findElement(By.xpath("./a[1]"))
+        var albumLink = albumCard.findElement(By.xpath("./a[1]"))
         val albumIdentifier = albumLink.getAttribute("id")
         albumId = albumIdentifier?.substringAfter("album")?.toInt()
 
@@ -198,6 +198,133 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         this.logger.log(Level.INFO, "Share link saved.")
 
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.id("albumsModalStatus")))
+
+        this.driver!!.get("http://localhost:$port/users/logout")
+//        this.driver!!.get("http://localhost:$port/users/logout")
+//        this.driver?.get("http://localhost:$port/users/login")
+//        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Please Login')]")))
+        username = this.driver!!.findElement(By.id("username"))
+        password = this.driver!!.findElement(By.id("password"))
+        rememberMe = this.driver!!.findElement(By.id("remember-me"))
+        login = this.driver!!.findElement(By.id("submit-loginreg"))
+        rememberMe.click()
+        username.sendKeys("testuser")
+        password.sendKeys("testuser")
+        login.click()
+
+        Assertions.assertEquals("http://localhost:$port/albums", this.driver!!.currentUrl)
+
+        var isPresent = this.driver!!.findElements(By.id("share$albumId")).isNotEmpty()
+        Assertions.assertFalse(isPresent)
+
+        isPresent = this.driver!!.findElements(By.id("trash$albumId")).isNotEmpty()
+        Assertions.assertFalse(isPresent)
+
+        isPresent = this.driver!!.findElements(By.id("edit$albumId")).isNotEmpty()
+        Assertions.assertFalse(isPresent)
+
+        val postCommentElement = this.driver!!.findElements(By.id("comment$albumId"))
+        isPresent = postCommentElement.isNotEmpty()
+        Assertions.assertTrue(isPresent)
+
+        // Post comment on albums view
+        postCommentElement[0].click()
+        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Comments for')]")))
+        scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
+        val commentTextArea = this.driver!!.findElement(By.id("commentText"))
+        commentTextArea.click()
+        commentTextArea.sendKeys("Test comment")
+
+        val saveComment = this.driver!!.findElement(By.id("saveCommentAlbum"))
+        saveComment.click()
+
+        this.logger.log(Level.INFO, "Shared comment as user.")
+
+        startTime = System.currentTimeMillis()
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
+            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
+        }
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
+
+        this.driver?.get("http://localhost:$port/albums")
+        val commentCountEl = this.driver!!.findElement(By.id("commentcount$albumId"))
+        val commentCountStr = commentCountEl.text
+        Assertions.assertEquals(1,commentCountStr.toInt())
+
+        val postCommentEl = this.driver!!.findElement(By.id("comment$albumId"))
+        postCommentEl.click()
+        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Comments for')]")))
+
+        // Check comment
+        val commentList = this.driver!!.findElement(By.id("commentList"))
+        val commentEl = commentList.findElement(By.xpath("./li[1]"))
+        val commentId = commentEl.getAttribute("id")?.substringAfter("comment")
+
+//        println(this.driver?.pageSource)
+
+        Assertions.assertTrue(this.driver!!.findElement(By.id("commentcontent$commentId")).text.contains("Test comment"))
+
+        // Update comment
+        val editCommentEl = this.driver!!.findElement(By.id("editcomment$commentId"))
+        scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
+        editCommentEl.click()
+        this.logger.log(Level.INFO, "Shared comment edited as user.")
+        startTime = System.currentTimeMillis()
+        scanBeforeAfter = null
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
+            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
+        }
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
+
+        val editCommentTextArea = this.driver!!.findElement(By.id("commenttext$commentId"))
+        editCommentTextArea.click()
+        editCommentTextArea.sendKeys("Test update")
+
+        val updateComment = this.driver!!.findElement(By.id("updateCommentAlbum"))
+        scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
+        updateComment.click()
+
+        scanBeforeAfter = null
+        startTime = System.currentTimeMillis()
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
+            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
+        }
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
+
+        Assertions.assertTrue(this.driver!!.findElement(By.id("commentcontent$commentId")).text.contains("Test update"))
+
+        // Delete comment
+        val deleteCommentEl = this.driver!!.findElement(By.id("deletecomment$commentId"))
+        scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
+        deleteCommentEl.click()
+        this.logger.log(Level.INFO, "Deleted comment as user.")
+        startTime = System.currentTimeMillis()
+        scanBeforeAfter = null
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
+            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
+        }
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
+
+        Assertions.assertTrue(this.driver!!.findElements(By.id("commentcontent$commentId")).isNotEmpty())
+
+        this.driver?.get("http://localhost:$port/albums")
+        albumLink = this.driver!!.findElement(By.id("album$albumId"))
+        albumLink.click()
+
+        Assertions.assertEquals("testalbum - Shashin", this.driver!!.title)
+
+        this.driver!!.get("http://localhost:$port/users/logout")
+//        this.driver!!.get("http://localhost:$port/users/logout")
+//        this.driver?.get("http://localhost:$port/users/login")
+//        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Please Login')]")))
+        username = this.driver!!.findElement(By.id("username"))
+        password = this.driver!!.findElement(By.id("password"))
+        rememberMe = this.driver!!.findElement(By.id("remember-me"))
+        login = this.driver!!.findElement(By.id("submit-loginreg"))
+        rememberMe.click()
+        username.sendKeys("testadmin")
+        password.sendKeys("testadmin")
+        login.click()
     }
 
     @Test
@@ -298,127 +425,6 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         val msgEl = this.driver!!.findElement(By.id("msg"))
         Assertions.assertEquals("Nothing to see here.",msgEl.text)
-    }
-
-    // TODO: Fix test failure in CircleCI
-//    @Test
-    @Throws(Exception::class)
-    fun shouldViewInAlbumAndCommentAsUser() {
-        //Login as testuser
-        this.driver!!.get("http://localhost:$port/users/logout")
-//        this.driver!!.get("http://localhost:$port/users/logout")
-//        this.driver?.get("http://localhost:$port/users/login")
-//        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Please Login')]")))
-        val username = this.driver!!.findElement(By.id("username"))
-        val password = this.driver!!.findElement(By.id("password"))
-        val rememberMe = this.driver!!.findElement(By.id("remember-me"))
-        val login = this.driver!!.findElement(By.id("submit-loginreg"))
-        rememberMe.click()
-        username.sendKeys("testuser")
-        password.sendKeys("testuser")
-        login.click()
-
-        Assertions.assertEquals("http://localhost:$port/albums", this.driver!!.currentUrl)
-
-        var isPresent = this.driver!!.findElements(By.id("share$albumId")).isNotEmpty()
-        Assertions.assertFalse(isPresent)
-
-        isPresent = this.driver!!.findElements(By.id("trash$albumId")).isNotEmpty()
-        Assertions.assertFalse(isPresent)
-
-        isPresent = this.driver!!.findElements(By.id("edit$albumId")).isNotEmpty()
-        Assertions.assertFalse(isPresent)
-
-        val postCommentElement = this.driver!!.findElements(By.id("comment$albumId"))
-        isPresent = postCommentElement.isNotEmpty()
-        Assertions.assertTrue(isPresent)
-
-        // Post comment on albums view
-        postCommentElement[0].click()
-        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Comments for')]")))
-        var scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
-        val commentTextArea = this.driver!!.findElement(By.id("commentText"))
-        commentTextArea.click()
-        commentTextArea.sendKeys("Test comment")
-
-        val saveComment = this.driver!!.findElement(By.id("saveCommentAlbum"))
-        saveComment.click()
-
-        this.logger.log(Level.INFO, "Shared comment as user.")
-
-        var scanBeforeAfter: WebElement? = null
-        var startTime = System.currentTimeMillis()
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
-            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
-        }
-        Thread.sleep(this.elementScanTimeoutMillis.toLong())
-
-        this.driver?.get("http://localhost:$port/albums")
-        val commentCountEl = this.driver!!.findElement(By.id("commentcount$albumId"))
-        val commentCountStr = commentCountEl.text
-        Assertions.assertEquals(1,commentCountStr.toInt())
-
-        val postCommentEl = this.driver!!.findElement(By.id("comment$albumId"))
-        postCommentEl.click()
-        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Comments for')]")))
-
-        // Check comment
-        val commentList = this.driver!!.findElement(By.id("commentList"))
-        val commentEl = commentList.findElement(By.xpath("./li[1]"))
-        val commentId = commentEl.getAttribute("id")?.substringAfter("comment")
-
-//        println(this.driver?.pageSource)
-
-        Assertions.assertTrue(this.driver!!.findElement(By.id("commentcontent$commentId")).text.contains("Test comment"))
-
-        // Update comment
-        val editCommentEl = this.driver!!.findElement(By.id("editcomment$commentId"))
-        scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
-        editCommentEl.click()
-        this.logger.log(Level.INFO, "Shared comment edited as user.")
-        startTime = System.currentTimeMillis()
-        scanBeforeAfter = null
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
-            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
-        }
-        Thread.sleep(this.elementScanTimeoutMillis.toLong())
-
-        val editCommentTextArea = this.driver!!.findElement(By.id("commenttext$commentId"))
-        editCommentTextArea.click()
-        editCommentTextArea.sendKeys("Test update")
-
-        val updateComment = this.driver!!.findElement(By.id("updateCommentAlbum"))
-        scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
-        updateComment.click()
-
-        scanBeforeAfter = null
-        startTime = System.currentTimeMillis()
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
-            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
-        }
-        Thread.sleep(this.elementScanTimeoutMillis.toLong())
-
-        Assertions.assertTrue(this.driver!!.findElement(By.id("commentcontent$commentId")).text.contains("Test update"))
-
-        // Delete comment
-        val deleteCommentEl = this.driver!!.findElement(By.id("deletecomment$commentId"))
-        scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
-        deleteCommentEl.click()
-        this.logger.log(Level.INFO, "Deleted comment as user.")
-        startTime = System.currentTimeMillis()
-        scanBeforeAfter = null
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
-            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
-        }
-        Thread.sleep(this.elementScanTimeoutMillis.toLong())
-
-        Assertions.assertTrue(this.driver!!.findElements(By.id("commentcontent$commentId")).isNotEmpty())
-
-        this.driver?.get("http://localhost:$port/albums")
-        val albumLink = this.driver!!.findElement(By.id("album$albumId"))
-        albumLink.click()
-
-        Assertions.assertEquals("testalbum - Shashin", this.driver!!.title)
     }
 
     private fun elementHasClass(element: WebElement, active: String?): Boolean {
