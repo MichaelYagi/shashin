@@ -305,9 +305,10 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
     fun shouldViewInAlbumAndCommentAsUser() {
         //Login as testuser
         this.driver!!.get("http://localhost:$port/users/logout")
-        this.driver!!.get("http://localhost:$port/users/logout")
+        println(this.driver?.pageSource)
+//        this.driver!!.get("http://localhost:$port/users/logout")
 //        this.driver?.get("http://localhost:$port/users/login")
-//        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Please Login')]")))
+        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Please Login')]")))
         val username = this.driver!!.findElement(By.id("username"))
         val password = this.driver!!.findElement(By.id("password"))
         val rememberMe = this.driver!!.findElement(By.id("remember-me"))
