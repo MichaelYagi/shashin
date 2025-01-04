@@ -64,7 +64,7 @@
             </div>
 
         </div>
-        <div th:replace="~{fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})}"></div>
+        <div th:replace="~{fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})}"></div>
 
         <main role="main" class="col overflow-auto h-100" id="timelineMain">
             <th:block th:if="${not #lists.isEmpty(metadataList)}">
