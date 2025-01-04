@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="sidebaroffcanvas(activeSidebar,currentUser)">
+<body th:fragment="sidebaroffcanvas(activeSidebar,currentUser,copyrightYear,operatingSystemInfo,buildProperties,activeProfile)">
 
 <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
     <div class="offcanvas-header">
@@ -75,6 +75,10 @@
 <!--                </li>-->
             </th:block>
         </ul>
+
+        <div style="position : absolute;bottom: 10px;" class="me-2">
+            &copy; <span th:text="'2021-'+${copyrightYear}+' '+${@environment.getProperty('app.build.properties.name')}+${activeProfile != 'prod' ? ' '+#strings.capitalize(activeProfile)+' Build ': ' '}+${operatingSystemInfo != '' ? '('+operatingSystemInfo+') ' : ''}+${buildProperties.getVersion()}"></span>
+        </div>
     </div>
 </div>
 
