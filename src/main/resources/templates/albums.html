@@ -238,7 +238,13 @@
 
 <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
     $(document).ready(function() {
-        $("#appSearchInput").val("Albums");
+        const initASI = "Albums";
+        $("#appSearchInput").val(initASI);
+        $("#appSearchInput").on('blur', function() {
+            if ($(this).val().length === 0) {
+                $("#appSearchInput").val(initASI);
+            }
+        });
 
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';

@@ -67,7 +67,13 @@
 
         let startTime, endTime;
 
-        $("#appSearchInput").val("Image Scraper");
+        const initASI = "Image Scraper";
+        $("#appSearchInput").val(initASI);
+        $("#appSearchInput").on('blur', function() {
+            if ($(this).val().length === 0) {
+                $("#appSearchInput").val(initASI);
+            }
+        });
 
         $("#pageUrl").on('keypress',function(e) {
             if(e.which === 13) {

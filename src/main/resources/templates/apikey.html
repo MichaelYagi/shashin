@@ -68,7 +68,13 @@
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         /*]]>*/
 
-        $("#appSearchInput").val("Manage API Key");
+        const initASI = "Manage API Key";
+        $("#appSearchInput").val(initASI);
+        $("#appSearchInput").on('blur', function() {
+            if ($(this).val().length === 0) {
+                $("#appSearchInput").val(initASI);
+            }
+        });
 
         $("#copyapikey").on("click", function (e) {
             e.preventDefault();

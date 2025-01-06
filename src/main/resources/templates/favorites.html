@@ -109,7 +109,14 @@
             lastDate = dateFormat(lastDate.replace(/-/g, "/"), "yyyy-m-d");
         }
 
-        $("#appSearchInput").val("Favorites");
+        const initASI = "Favorites";
+        $("#appSearchInput").val(initASI);
+        $("#appSearchInput").on('blur', function() {
+            if ($(this).val().length === 0) {
+                $("#appSearchInput").val(initASI);
+            }
+        });
+
         const http = new Http(activePage);
         http.ajax("get", "/favorites/metadata/list/0").then(function (data) {
             if (data.hasOwnProperty("metadataList") === true) {

@@ -73,7 +73,13 @@
         profileUrl = "#";
     }
 
-    $("#appSearchInput").val("View Profile");
+    const initASI = "View Profile";
+    $("#appSearchInput").val(initASI);
+    $("#appSearchInput").on('blur', function() {
+        if ($(this).val().length === 0) {
+            $("#appSearchInput").val(initASI);
+        }
+    });
 
     $("#removeProfile").on("click", function() {
         $("#removeProfileConfirmationModal").modal('show');

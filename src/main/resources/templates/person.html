@@ -144,6 +144,12 @@
         /*]]>*/
 
         $("#appSearchInput").val(personName);
+        $("#appSearchInput").on('blur', function() {
+            if ($(this).val().length === 0) {
+                $("#appSearchInput").val(personName);
+            }
+        });
+
         const http = new Http("check notifications");
 
         http.ajax("get", "/person/metadata/"+personId+"/0").then(function (metadataList) {
