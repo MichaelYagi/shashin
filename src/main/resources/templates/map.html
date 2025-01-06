@@ -152,7 +152,13 @@
 </th:block>
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     $(document).ready(async function () {
-        $("#appSearchInput").val("Map");
+        const initASI = "Map";
+        $("#appSearchInput").val(initASI);
+        $("#appSearchInput").on('blur', function() {
+            if ($(this).val().length === 0) {
+                $("#appSearchInput").val(initASI);
+            }
+        });
 
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';

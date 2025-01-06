@@ -50,7 +50,13 @@
         }
     }
 
-    $("#appSearchInput").val("Change Password");
+    const initASI = "Change Password";
+    $("#appSearchInput").val(initASI);
+    $("#appSearchInput").on('blur', function() {
+        if ($(this).val().length === 0) {
+            $("#appSearchInput").val(initASI);
+        }
+    });
 
     $("#passwordForm").on("submit", function (e) {
         e.preventDefault();

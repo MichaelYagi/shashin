@@ -207,6 +207,12 @@
         }
 
         $("#appSearchInput").val(albumName);
+        $("#appSearchInput").on('blur', function() {
+            if ($(this).val().length === 0) {
+                $("#appSearchInput").val(albumName);
+            }
+        });
+
         const http = new Http(activePage);
         http.ajax("get", "/album/metadata/list/"+albumId+"/0").then(function (data) {
             if (data.hasOwnProperty("albumMetadataList") === true && data["albumMetadataList"].length > 0) {
