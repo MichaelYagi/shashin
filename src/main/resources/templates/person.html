@@ -143,12 +143,7 @@
         const canEdit = /*[[${canEdit == "true" || canEdit == true}]]*/ false;
         /*]]>*/
 
-        $("#appSearchInput").val(personName);
-        $("#appSearchInput").on('blur', function() {
-            if ($(this).val().length === 0) {
-                $("#appSearchInput").val(personName);
-            }
-        });
+        shashin.updateSearchInput(personName);
 
         const http = new Http("check notifications");
 

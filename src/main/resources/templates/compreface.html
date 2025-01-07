@@ -283,12 +283,7 @@
         const personName = /*[[${personInfo.name}]]*/ '';
         /*]]>*/
 
-        $("#appSearchInput").val(personName);
-        $("#appSearchInput").on('blur', function() {
-            if ($(this).val().length === 0) {
-                $("#appSearchInput").val(personName);
-            }
-        });
+        shashin.updateSearchInput(personName);
 
         $("#comprefaceBatchDelete").on("click", function(e) {
             e.preventDefault();

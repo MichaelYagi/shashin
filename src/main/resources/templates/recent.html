@@ -143,13 +143,7 @@
 </th:block>
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     $(document).ready(function() {
-        const initASI = "Recently Added";
-        $("#appSearchInput").val(initASI);
-        $("#appSearchInput").on('blur', function() {
-            if ($(this).val().length === 0) {
-                $("#appSearchInput").val(initASI);
-            }
-        });
+        shashin.updateSearchInput("Recently Added");
 
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';

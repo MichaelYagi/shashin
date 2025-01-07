@@ -206,13 +206,7 @@
 </th:block>
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     $(document).ready(function () {
-        const initASI = "Timeline";
-        $("#appSearchInput").val(initASI);
-        $("#appSearchInput").on('blur', function() {
-            if ($(this).val().length === 0) {
-                $("#appSearchInput").val(initASI);
-            }
-        });
+        shashin.updateSearchInput("Timeline");
 
         /*<![CDATA[*/
         const mediaTypeFilter = /*[[${mediaTypeFilter}]]*/ 'all';

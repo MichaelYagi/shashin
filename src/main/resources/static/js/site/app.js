@@ -62,6 +62,15 @@
         }
     }
 
+    shashin.updateSearchInput = function(title) {
+        $("#appSearchInput").val(title);
+        $("#appSearchInput").on('blur', function() {
+            if ($(this).val().length === 0) {
+                $("#appSearchInput").val(title);
+            }
+        });
+    }
+
     /*
     options:
     icon = bootstrap icon

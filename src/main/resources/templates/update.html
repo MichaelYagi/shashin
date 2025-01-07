@@ -50,13 +50,7 @@
         }
     }
 
-    const initASI = "Change Password";
-    $("#appSearchInput").val(initASI);
-    $("#appSearchInput").on('blur', function() {
-        if ($(this).val().length === 0) {
-            $("#appSearchInput").val(initASI);
-        }
-    });
+    shashin.updateSearchInput("Change Password");
 
     $("#passwordForm").on("submit", function (e) {
         e.preventDefault();

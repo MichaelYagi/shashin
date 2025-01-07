@@ -190,13 +190,7 @@
     <script src="/js/site/min/dashboard.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
-    const initASI = "Dashboard";
-    $("#appSearchInput").val(initASI);
-    $("#appSearchInput").on('blur', function() {
-        if ($(this).val().length === 0) {
-            $("#appSearchInput").val(initASI);
-        }
-    });
+    shashin.updateSearchInput("Dashboard");
 
     Util.updateProgressBar(100, {autoVisibility: false});
     $("#progressBarWrapper").visible();
