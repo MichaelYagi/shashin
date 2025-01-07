@@ -80,12 +80,7 @@
         const personName = /*[[${personInfo.name}]]*/ '';
         /*]]>*/
 
-        $("#appSearchInput").val(personName);
-        $("#appSearchInput").on('blur', function() {
-            if ($(this).val().length === 0) {
-                $("#appSearchInput").val(personName);
-            }
-        });
+        shashin.updateSearchInput(personName);
 
         const $infiniteScrollGallery = document.getElementById(
             'infinite-scroll-gallery',

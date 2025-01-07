@@ -141,12 +141,7 @@
         const folderName = /*[[${folder}]]*/ '';
         /*]]>*/
 
-        $("#appSearchInput").val(folderName);
-        $("#appSearchInput").on('blur', function() {
-            if ($(this).val().length === 0) {
-                $("#appSearchInput").val(folderName);
-            }
-        });
+        shashin.updateSearchInput(folderName);
 
         const http = new Http(activePage);
         http.ajax("get", "/metadata/list/"+activePage+"/0?folder="+encodeURI(folderName).replace(";", "%3B")).then(function (data) {

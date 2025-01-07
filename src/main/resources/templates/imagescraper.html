@@ -67,13 +67,7 @@
 
         let startTime, endTime;
 
-        const initASI = "Image Scraper";
-        $("#appSearchInput").val(initASI);
-        $("#appSearchInput").on('blur', function() {
-            if ($(this).val().length === 0) {
-                $("#appSearchInput").val(initASI);
-            }
-        });
+        shashin.updateSearchInput("Image Scraper");
 
         $("#pageUrl").on('keypress',function(e) {
             if(e.which === 13) {

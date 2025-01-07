@@ -31,13 +31,7 @@
     shashin.nonce = /*[[${cspNonce}]]*/ '';
     /*]]>*/
 
-    const initASI = "Notifications";
-    $("#appSearchInput").val(initASI);
-    $("#appSearchInput").on('blur', function() {
-        if ($(this).val().length === 0) {
-            $("#appSearchInput").val(initASI);
-        }
-    });
+    shashin.updateSearchInput("Notifications");
 
     $.ajax({
         type: 'get',

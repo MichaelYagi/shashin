@@ -96,13 +96,7 @@
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         /*]]>*/
 
-        const initASI = "Slideshow";
-        $("#appSearchInput").val(initASI);
-        $("#appSearchInput").on('blur', function() {
-            if ($(this).val().length === 0) {
-                $("#appSearchInput").val(initASI);
-            }
-        });
+        shashin.updateSearchInput("Slideshow");
 
         const $infiniteScrollGallery = document.getElementById('infinite-scroll-gallery');
         let lg = null;

@@ -73,13 +73,7 @@
         profileUrl = "#";
     }
 
-    const initASI = "View Profile";
-    $("#appSearchInput").val(initASI);
-    $("#appSearchInput").on('blur', function() {
-        if ($(this).val().length === 0) {
-            $("#appSearchInput").val(initASI);
-        }
-    });
+    shashin.updateSearchInput("View Profile");
 
     $("#removeProfile").on("click", function() {
         $("#removeProfileConfirmationModal").modal('show');

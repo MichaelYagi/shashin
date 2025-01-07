@@ -206,12 +206,7 @@
             lastDate = dateFormat(lastDate.replace(/-/g, "/"), "yyyy-m-d");
         }
 
-        $("#appSearchInput").val(albumName);
-        $("#appSearchInput").on('blur', function() {
-            if ($(this).val().length === 0) {
-                $("#appSearchInput").val(albumName);
-            }
-        });
+        shashin.updateSearchInput(albumName);
 
         const http = new Http(activePage);
         http.ajax("get", "/album/metadata/list/"+albumId+"/0").then(function (data) {
