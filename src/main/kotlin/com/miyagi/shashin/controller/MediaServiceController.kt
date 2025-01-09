@@ -482,11 +482,12 @@ class MediaServiceController {
         resp["baseUrl"] = baseUrl
 
         if (currentUser != null) {
-            val randomMetadata = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
-                metadataRepository.findRandomMetadataMedia(type)
-            } else {
-                metadataRepository.findRandomAlbumMediaByUser(currentUser.getId(), type)
-            })
+            val randomMetadata =
+//                (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+//                    metadataRepository.findRandomMetadataMedia(type)
+//                } else {
+                    metadataRepository.findRandomAlbumMediaByUser(currentUser.getId(), type)
+//                })
 
             if (randomMetadata != null) {
                 Thread {
