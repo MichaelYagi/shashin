@@ -648,7 +648,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         $("#playPause").fadeOut(3000);
     }
 
-    $("#viewAllSlideshow").on("click", function (e) {
+    $("#viewAlbumSlideshow").on("click", function (e) {
         e.preventDefault();
 
         document.body.style.overflow = 'hidden';
