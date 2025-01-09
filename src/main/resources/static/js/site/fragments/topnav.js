@@ -377,7 +377,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 })
             } else {
                 shashin.printMessageToConsole("New random image", {tag: "slideshow"});
-                http.ajax("get", "/random/metadata/type/image").then(function (data) {
+                http.ajax("get", "/random/metadata/type/image?albumsOnly=true").then(function (data) {
                     processSlideData(data, "new", callback);
                 })
             }
@@ -385,7 +385,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     }
 
     function processSlideData(data, type, callback) {
-        if (data.hasOwnProperty("metadata") === true &&
+        if (data && data.hasOwnProperty("metadata") === true &&
             data["metadata"].hasOwnProperty("thumbnailUrlOriginal") === true &&
             data["metadata"]["thumbnailUrlOriginal"] !== "" &&
             data.hasOwnProperty("baseUrl") === true &&
@@ -474,9 +474,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             }
 
             tempImage.src = photoUrl;
-        }
-
-        if (callback !== undefined && typeof callback === 'function') {
+        } else if (callback !== undefined && typeof callback === 'function') {
             callback(false);
         }
     }
