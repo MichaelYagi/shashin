@@ -465,7 +465,7 @@ class MediaServiceController {
     @RequestMapping(value = ["/api/v1/random/metadata/type/{type}", "/random/metadata/type/{type}"], method = [(RequestMethod.GET)], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Throws(IOException::class)
-    fun getRandomImageByType(model: Model, request: HttpServletRequest, @PathVariable type: String): String {
+    fun getRandomImageByType(model: Model, request: HttpServletRequest, @PathVariable type: String, @RequestParam albumsOnly: Optional<Boolean>): String {
         val mapper = ObjectMapper()
         val resp = mutableMapOf<String, Any?>()
         val currentUser = model.getAttribute("currentUser") as User?
@@ -483,11 +483,13 @@ class MediaServiceController {
 
         if (currentUser != null) {
             val randomMetadata =
-//                (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
-//                    metadataRepository.findRandomMetadataMedia(type)
-//                } else {
+                (if (!(albumsOnly.isPresent && albumsOnly.get()) && (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER")) {
+                    metadataRepository.findRandomMetadataMedia(type)
+                } else if (!albumsOnly.isPresent || (albumsOnly.isPresent && albumsOnly.get())) {
                     metadataRepository.findRandomAlbumMediaByUser(currentUser.getId(), type)
-//                })
+                } else {
+                    null
+                })
 
             if (randomMetadata != null) {
                 Thread {
@@ -502,6 +504,8 @@ class MediaServiceController {
                 resp["status"] = ApiResponse.SUCCESS.status
                 resp["msg"] = ""
                 logger.log(Level.INFO, "Random media metadata ID ${randomMetadata.getId()}")
+            } else {
+                logger.log(Level.INFO, "Album photos not detected")
             }
         }
 
