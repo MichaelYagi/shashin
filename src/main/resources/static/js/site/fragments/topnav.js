@@ -377,7 +377,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 })
             } else {
                 shashin.printMessageToConsole("New random image", {tag: "slideshow"});
-                http.ajax("get", "/random/metadata/type/image?albumsOnly=true").then(function (data) {
+                http.ajax("get", "/random/metadata/type/image").then(function (data) {
                     processSlideData(data, "new", callback);
                 })
             }
@@ -646,7 +646,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         $("#playPause").fadeOut(3000);
     }
 
-    $("#viewAlbumSlideshow").on("click", function (e) {
+    $("#viewSlideshow").on("click", function (e) {
         e.preventDefault();
 
         document.body.style.overflow = 'hidden';
