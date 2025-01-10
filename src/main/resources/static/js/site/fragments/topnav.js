@@ -532,21 +532,28 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 }
             }
 
+            // Pause/play slideshow
             if (e.key === " " || e.code === "Space" || e.keyCode === 32) {
                 slideshowGalleryPlayPause();
             }
 
-            if (e.keyCode === 39 || e.keyCode === 37) {
-                if ((e.keyCode === 37 && slideshowCurrentIndex === 0) === false && slideshowProceed === true) {
-                    if (slideshowCurrentIndex > 0 && e.keyCode === 37) {
+            // Show info
+            if (e.key === "i" || e.code === "KeyI" || e.keyCode === 73) {
+                slideshowInfo();
+            }
+
+            if (e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.keyCode === "37" || e.key === "ArrowRight" || e.code === "ArrowRight" || e.keyCode === "39") {
+                if (((e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.keyCode === "37") && slideshowCurrentIndex === 0) === false && slideshowProceed === true) {
+                    if ((e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.keyCode === "37") && slideshowCurrentIndex > 0) {
                         slideshowCurrentIndex--;
-                    } else if (slideshowCurrentIndex <= slideshowMetadataIds.length - 1 && e.keyCode === 39) {
+                    } else if ((e.key === "ArrowRight" || e.code === "ArrowRight" || e.keyCode === "39") && slideshowCurrentIndex <= slideshowMetadataIds.length - 1) {
                         slideshowCurrentIndex++;
                     }
 
                     getSlideshowImage(function () {
                         slideshowProceed = true;
                     });
+
                     if (slideshowIsPaused === false) {
                         clearInterval(slideshowIntervalId);
                         slideshowIntervalId = window.setInterval(function () {
@@ -561,7 +568,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 }
             }
 
-            if ((e.code === "f" || e.keyCode === 70) && !document.fullscreenElement) {
+            if ((e.key === "f" || e.code === "KeyF" || e.keyCode === 70) && !document.fullscreenElement) {
                 document.documentElement.requestFullscreen();
             }
         }
@@ -627,19 +634,25 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         }
     });
 
+    function slideshowInfo() {
+        if ($("#mediaInfo").is(":visible")) {
+            $("#mediaInfo").css("display", "none");
+        } else {
+            $("#mediaInfo").css("display", "block");
+        }
+    }
+
     function slideshowGalleryPlayPause() {
         $("#playPause").stop(true, true);
 
         if (slideshowIsPaused === false) {
             $("#playPause").removeClass("bi-play-circle").addClass("bi-pause-circle");
             slideshowIsPaused = true;
-            $("#mediaInfo").css({
-                "display": "block"
-            });
+            // $("#mediaInfo").css("display", "block");
         } else {
             $("#playPause").removeClass("bi-pause-circle").addClass("bi-play-circle");
             slideshowIsPaused = false;
-            $("#mediaInfo").css("display", "none");
+            // $("#mediaInfo").css("display", "none");
         }
 
         $("#playPause").show();
