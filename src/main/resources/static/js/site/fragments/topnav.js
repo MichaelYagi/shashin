@@ -512,7 +512,24 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         $("#mediaSrc").attr("src", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII");
     }
 
-    function showInstruction() {
+    function showInstruction(autoHide) {
+        let options = {
+            icon: "bi-info-circle",
+            target:"toastTarget4",
+            autohide: false
+        };
+
+        if (autoHide === "undefined" || autoHide === null) {
+            autoHide = false;
+        }
+
+        if (autoHide === true) {
+            options = {
+                icon: "bi-info-circle",
+                target:"toastTarget4"
+            };
+        }
+
         shashin.showToastMessage("Key bindings",
             "<div class='container'>" +
             "<div class='row'><div class='col-4'><strong>d</strong></div><div class='col-8'>Show/close this window</div></div>" +
@@ -522,11 +539,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             "<div class='row'><div class='col-4'><strong>i</strong></div><div class='col-8'>Slide info</div></div>" +
             "<div class='row'><div class='col-4'><strong>Left/Right</strong></div><div class='col-8'>Got to next/previous slide</div></div>" +
             "</div>",
-            {
-                icon: "bi-info-circle",
-                target:"toastTarget4",
-                autohide: false
-            }
+            options
         );
     }
 
@@ -738,7 +751,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
                 $("#playPause").css("display", "block");
 
-                showInstruction();
+                showInstruction(true);
             }
         });
     })
