@@ -530,17 +530,30 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             };
         }
 
-        shashin.showToastMessage("Key bindings",
-            "<div class='container'>" +
-            "<div class='row'><div class='col-4'><strong>d</strong></div><div class='col-8'>Show/close this window</div></div>" +
-            "<div class='row'><div class='col-4'><strong>Esc</strong></div><div class='col-8'>Exit fullscreen. Press Esc again to exit slideshow.</div></div>" +
-            "<div class='row'><div class='col-4'><strong>f</strong></div><div class='col-8'>Fullscreen</div></div>" +
-            "<div class='row'><div class='col-4'><strong>Space</strong></div><div class='col-8'>Play/pause</div></div>" +
-            "<div class='row'><div class='col-4'><strong>i</strong></div><div class='col-8'>Slide info</div></div>" +
-            "<div class='row'><div class='col-4'><strong>Left/Right</strong></div><div class='col-8'>Got to next/previous slide</div></div>" +
-            "</div>",
-            options
-        );
+        if (Util.isMobile() === false) {
+            shashin.showToastMessage("Key bindings",
+                "<div class='container'>" +
+                "<div class='row'><div class='col-4'><strong>d</strong></div><div class='col-8'>Show/close this window</div></div>" +
+                "<div class='row'><div class='col-4'><strong>Esc</strong></div><div class='col-8'>Exit fullscreen. Press Esc again to exit slideshow.</div></div>" +
+                "<div class='row'><div class='col-4'><strong>f</strong></div><div class='col-8'>Fullscreen</div></div>" +
+                "<div class='row'><div class='col-4'><strong>Space</strong></div><div class='col-8'>Play/pause</div></div>" +
+                "<div class='row'><div class='col-4'><strong>i</strong></div><div class='col-8'>Slide info</div></div>" +
+                "<div class='row'><div class='col-4'><strong>Left/Right</strong></div><div class='col-8'>Got to next/previous slide</div></div>" +
+                "</div>",
+                options
+            );
+        } else {
+            shashin.showToastMessage("Touch bindings",
+                "<div class='container'>" +
+                "<div class='row'><div class='col-4'><strong>Swipe Up</strong></div><div class='col-8'>Show/close this window</div></div>" +
+                "<div class='row'><div class='col-4'><strong>Swipe Down</strong></div><div class='col-8'>Slide info</div></div>" +
+                "<div class='row'><div class='col-4'><strong>Single Tap</strong></div><div class='col-8'>Play/pause</div></div>" +
+                "<div class='row'><div class='col-4'><strong>Double Tap</strong></div><div class='col-8'>Exit fullscreen. Double tap again to exit slideshow</div></div>" +
+                "<div class='row'><div class='col-4'><strong>Swipe Left/Right</strong></div><div class='col-8'>Got to next/previous slide</div></div>" +
+                "</div>",
+                options
+            );
+        }
     }
 
     $("body").on("dblclick", function (e) {
@@ -624,10 +637,16 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
     Util.detectSwipe("#slideshowGallery", function (direction) {
         if (direction === "up" || direction === "down") {
-            if (document.fullscreenElement !== null && document.exitFullscreen) {
-                document.exitFullscreen();
+            if (direction === "up") {
+                if ($("#" + shashin.toast.target.four).css('display') === 'none' || $("#" + shashin.toast.target.four).css("visibility") === "hidden") {
+                    showInstruction();
+                } else {
+                    shashin.closeToastMessage({
+                        target: shashin.toast.target.four
+                    });
+                }
             } else {
-                exitSlideshowGallery();
+                slideshowInfo();
             }
         } else if (direction === "left" || direction === "right") {
             if ((direction === "right" && slideshowCurrentIndex === 0) === false && slideshowProceed === true) {
