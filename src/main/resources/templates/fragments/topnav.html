@@ -227,7 +227,7 @@
                 <a th:class="'dropdown-item'+${activePage=='update'?' active':''}" href="/users/update">Change password</a>
                 <a th:class="'dropdown-item'+${activePage=='apikey'?' active':''}" href="/users/apikey">Manage API key</a>
                 <th:block th:if="${hasAlbums}">
-                    <a href="#" class="dropdown-item" id="viewSlideshow">View slideshow&nbsp;<span id="slideInfo" style="font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" data-bs-html="true" data-bs-container="#viewSlideshow" title="<strong>Esc</strong> - exit fullscreen<br><strong>f</strong> - fullscreen<br><strong>Space</strong> - play/pause<br><strong>i</strong> - show slide info<br><strong>left/right</strong> - got to next/previous slide"></span></a>
+                    <a href="#" class="dropdown-item" id="viewSlideshow">View slideshow&nbsp;<span id="slideInfo" style="font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" data-bs-html="true" data-bs-container="#viewSlideshow" title="<strong>Esc</strong> - exit fullscreen. Press Esc again to exit slideshow.<br><strong>f</strong> - fullscreen<br><strong>Space</strong> - play/pause<br><strong>i</strong> - show slide info<br><strong>left/right</strong> - got to next/previous slide"></span></a>
                 </th:block>
                 <div class="dropdown-item">
                     <div class="form-check form-switch">
