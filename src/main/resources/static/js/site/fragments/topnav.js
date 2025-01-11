@@ -561,6 +561,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             if (document.fullscreenElement !== null && document.exitFullscreen) {
                 document.exitFullscreen();
             } else {
+                $("#mediaInfo").css("display", "none");
                 exitSlideshowGallery();
                 shashin.closeToastMessage({
                     target: shashin.toast.target.four
@@ -575,6 +576,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 if (document.fullscreenElement !== null && document.documentElement.exitFullscreen) {
                     document.documentElement.exitFullscreen();
                 } else {
+                    $("#mediaInfo").css("display", "none");
                     exitSlideshowGallery();
                     shashin.closeToastMessage({
                         target: shashin.toast.target.four
