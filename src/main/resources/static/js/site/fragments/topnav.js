@@ -545,7 +545,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         } else {
             shashin.showToastMessage("Touch bindings",
                 "<div class='container'>" +
-                "<div class='row'><div class='col-4'><strong>Swipe Up</strong></div><div class='col-8'>Show/close this window</div></div>" +
+                "<div class='row'><div class='col-4'><strong>Swipe Up</strong></div><div class='col-8'>Show/close this window when in fullscreen</div></div>" +
                 "<div class='row'><div class='col-4'><strong>Swipe Down</strong></div><div class='col-8'>Slide info</div></div>" +
                 "<div class='row'><div class='col-4'><strong>Single Tap</strong></div><div class='col-8'>Play/pause</div></div>" +
                 "<div class='row'><div class='col-4'><strong>Double Tap</strong></div><div class='col-8'>Exit fullscreen. Double tap again to exit slideshow or swipe up to go back to fullscreen</div></div>" +
