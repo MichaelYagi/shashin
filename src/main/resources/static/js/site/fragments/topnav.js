@@ -638,10 +638,10 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     Util.detectSwipe("#slideshowGallery", function (direction) {
         if (direction === "up" || direction === "down") {
             if (direction === "up") {
-                if ($("#" + shashin.toast.target.four).css('display') === 'none' || $("#" + shashin.toast.target.four).css("visibility") === "hidden") {
-                    showInstruction();
-                } else if (document.fullscreenElement === null) { // Not full screen, return to full screen
+                if (document.fullscreenElement === null) { // Not full screen, return to full screen
                     document.documentElement.requestFullscreen();
+                } else if ($("#" + shashin.toast.target.four).css('display') === 'none' || $("#" + shashin.toast.target.four).css("visibility") === "hidden") {
+                    showInstruction();
                 } else {
                     shashin.closeToastMessage({
                         target: shashin.toast.target.four
