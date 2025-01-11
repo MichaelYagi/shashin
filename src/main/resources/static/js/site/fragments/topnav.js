@@ -548,7 +548,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 "<div class='row'><div class='col-4'><strong>Swipe Up</strong></div><div class='col-8'>Show/close this window</div></div>" +
                 "<div class='row'><div class='col-4'><strong>Swipe Down</strong></div><div class='col-8'>Slide info</div></div>" +
                 "<div class='row'><div class='col-4'><strong>Single Tap</strong></div><div class='col-8'>Play/pause</div></div>" +
-                "<div class='row'><div class='col-4'><strong>Double Tap</strong></div><div class='col-8'>Exit fullscreen. Double tap again to exit slideshow</div></div>" +
+                "<div class='row'><div class='col-4'><strong>Double Tap</strong></div><div class='col-8'>Exit fullscreen. Double tap again to exit slideshow or swipe up to go back to fullscreen</div></div>" +
                 "<div class='row'><div class='col-4'><strong>Swipe Left/Right</strong></div><div class='col-8'>Got to next/previous slide</div></div>" +
                 "</div>",
                 options
@@ -629,7 +629,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 }
             }
 
-            if ((e.key === "f" || e.code === "KeyF" || e.keyCode === 70) && !document.fullscreenElement) {
+            if ((e.key === "f" || e.code === "KeyF" || e.keyCode === 70) && document.fullscreenElement === null) {
                 document.documentElement.requestFullscreen();
             }
         }
@@ -640,6 +640,8 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             if (direction === "up") {
                 if ($("#" + shashin.toast.target.four).css('display') === 'none' || $("#" + shashin.toast.target.four).css("visibility") === "hidden") {
                     showInstruction();
+                } else if (document.fullscreenElement === null) { // Not full screen, return to full screen
+                    document.documentElement.requestFullscreen();
                 } else {
                     shashin.closeToastMessage({
                         target: shashin.toast.target.four
