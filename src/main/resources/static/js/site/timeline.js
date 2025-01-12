@@ -185,7 +185,7 @@
             }, 2500);
 
             // Clean up
-            if (timelineSettings.didJumpFromTimelineToc === true) {
+            if (Util.isMobile() === false && timelineSettings.didJumpFromTimelineToc === true) {
                 let prevClass = "";
                 let deleteElements = false;
                 $('#infinite-scroll-gallery').children().each(function () {
@@ -302,7 +302,7 @@
 
             if (timelineSettings.enableScrollSpy === true) {
                 // Clean up
-                if (timelineSettings.didJumpFromTimelineToc === true) {
+                if (Util.isMobile() === false && timelineSettings.didJumpFromTimelineToc === true) {
                     let prevClass = "";
                     let deleteElements = false;
                     $('#infinite-scroll-gallery').children().each(function () {
@@ -1266,6 +1266,7 @@
         timelineSettings.heightCounter = 0;
         timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
         timelineSettings.enableScrollSpy = false;
+
         const timelineDates = timelineSettings.timelineDates;
 
         if (Util.isMobile() === false) {
