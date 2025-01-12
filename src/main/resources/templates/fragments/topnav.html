@@ -89,10 +89,10 @@
                     <a class="align-items-center mb-lg-0 link-dark text-decoration-none" id="timelineTocToggle" data-bs-toggle="offcanvas" data-bs-placement="bottom" href="#offcanvasToc" aria-controls="offcanvasToc" title="Show timeline" style="display: none">
                         <span th:class="'bi-calendar3 placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem"></span>
                     </a>
-                    &nbsp;
-                    <a class="align-items-center mb-lg-0 link-dark text-decoration-none" id="timelineMediaTypeToggle" data-bs-placement="bottom" href="#mediaTypeToggle" aria-controls="mediaTypeToggle" title="Toggle media type">
-                        <span id="timelineMediaTypeToggleIcon" th:class="'bi-camera-video placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span>
-                    </a>
+<!--                    &nbsp;-->
+<!--                    <a class="align-items-center mb-lg-0 link-dark text-decoration-none" id="timelineMediaTypeToggle" data-bs-placement="bottom" href="#mediaTypeToggle" aria-controls="mediaTypeToggle" title="Toggle media type">-->
+<!--                        <span id="timelineMediaTypeToggleIcon" th:class="'bi-camera-video placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span>-->
+<!--                    </a>-->
                     </th:block>
                     <th:block th:if="${activePage == 'folder'}">
                     &nbsp;
@@ -114,12 +114,12 @@
                     <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" href="/albums" aria-controls="back" title="Go back to albums">
                         <span th:class="'bi-arrow-left placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span>
                     </a>
-                    <th:block th:if="${activePage == 'album'}">
-                    &nbsp;
-                    <a class="align-items-center mb-lg-0 link-dark text-decoration-none" id="albumMediaTypeToggle" data-bs-placement="bottom" href="#mediaTypeToggle" aria-controls="mediaTypeToggle" title="Toggle media type">
-                        <span id="albumMediaTypeToggleIcon" th:class="'bi-camera-video placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span>
-                    </a>
-                    </th:block>
+<!--                    <th:block th:if="${activePage == 'album'}">-->
+<!--                    &nbsp;-->
+<!--                    <a class="align-items-center mb-lg-0 link-dark text-decoration-none" id="albumMediaTypeToggle" data-bs-placement="bottom" href="#mediaTypeToggle" aria-controls="mediaTypeToggle" title="Toggle media type">-->
+<!--                        <span id="albumMediaTypeToggleIcon" th:class="'bi-camera-video placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span>-->
+<!--                    </a>-->
+<!--                    </th:block>-->
                 </span>
             </th:block>
             <th:block th:if="${activePage == 'map'}">
