@@ -185,7 +185,7 @@
             }, 2500);
 
             // Clean up
-            if (Util.isMobile() === false && timelineSettings.didJumpFromTimelineToc === true) {
+            if (timelineSettings.didJumpFromTimelineToc === true) {
                 let prevClass = "";
                 let deleteElements = false;
                 $('#infinite-scroll-gallery').children().each(function () {
@@ -302,7 +302,7 @@
 
             if (timelineSettings.enableScrollSpy === true) {
                 // Clean up
-                if (Util.isMobile() === false && timelineSettings.didJumpFromTimelineToc === true) {
+                if (timelineSettings.didJumpFromTimelineToc === true) {
                     let prevClass = "";
                     let deleteElements = false;
                     $('#infinite-scroll-gallery').children().each(function () {
@@ -1266,7 +1266,6 @@
         timelineSettings.heightCounter = 0;
         timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
         timelineSettings.enableScrollSpy = false;
-
         const timelineDates = timelineSettings.timelineDates;
 
         if (Util.isMobile() === false) {
@@ -1292,7 +1291,7 @@
         if (msg === timelineSettings.success && $("#" + anchor).length === 1) {
             await timelineSettings.attachAssociatedMetadata(anchor, mediaTypeFilter);
 
-            timelineSettings.isScrolling = Util.isMobile() === true;
+            timelineSettings.isScrolling = Util.isMobile() === false;
 
             const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
             await timelineSettings.renderThumbnails(elementsInViewport, mediaTypeFilter, timelineDates, true);
@@ -1330,9 +1329,10 @@
             }
         }
 
-        timelineSettings.enableScrollSpy = true;
         timelineSettings.setScrollSpyActive(anchor);
         timelineSettings.scrollToTimelineToc(Util.elementsInViewport($(".scrollspy")));
+
+        timelineSettings.enableScrollSpy = true;
     }
 
     timelineSettings.observeAnchorChange = function(id, functionCall) {
