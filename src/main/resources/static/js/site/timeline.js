@@ -1268,6 +1268,23 @@
         timelineSettings.enableScrollSpy = false;
         const timelineDates = timelineSettings.timelineDates;
 
+        const anchorArray = anchor.split("-");
+        // check if last date and change to media close to end
+        if (timelineDates.length > 2 &&
+            parseInt(anchorArray[0]) === timelineDates[timelineDates.length - 1].year &&
+            parseInt(anchorArray[1]) === timelineDates[timelineDates.length - 1].month &&
+            parseInt(anchorArray[2]) === timelineDates[timelineDates.length - 1].day
+        ) {
+            anchor = timelineDates[timelineDates.length - 3].year + "-" + timelineDates[timelineDates.length - 3].month + "-" + timelineDates[timelineDates.length - 3].day;
+        }
+
+        shashin.printMessageToConsole("jumpFromTimelineToc anchor:" + anchor);
+        shashin.printMessageToConsole("jumpFromTimelineToc mediaTypeFilter:" + mediaTypeFilter);
+
+        $('section').each(function (index, element) {
+            Util.removeDateGallery(element.id);
+        });
+
         if (Util.isMobile() === true) {
             let depth = 7;
             let currAnchor = anchor;
@@ -1312,23 +1329,6 @@
                 }
             }
         } else {
-            const anchorArray = anchor.split("-");
-            // check if last date and change to media close to end
-            if (timelineDates.length > 2 &&
-                parseInt(anchorArray[0]) === timelineDates[timelineDates.length - 1].year &&
-                parseInt(anchorArray[1]) === timelineDates[timelineDates.length - 1].month &&
-                parseInt(anchorArray[2]) === timelineDates[timelineDates.length - 1].day
-            ) {
-                anchor = timelineDates[timelineDates.length - 3].year + "-" + timelineDates[timelineDates.length - 3].month + "-" + timelineDates[timelineDates.length - 3].day;
-            }
-
-            shashin.printMessageToConsole("jumpFromTimelineToc anchor:" + anchor);
-            shashin.printMessageToConsole("jumpFromTimelineToc mediaTypeFilter:" + mediaTypeFilter);
-
-            $('section').each(function (index, element) {
-                Util.removeDateGallery(element.id);
-            });
-
             const msg = await timelineSettings.updateTimeline(anchor, mediaTypeFilter, "new", null);
             if (msg === timelineSettings.success && $("#" + anchor).length === 1) {
                 await timelineSettings.attachAssociatedMetadata(anchor, mediaTypeFilter);
