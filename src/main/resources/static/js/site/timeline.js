@@ -1287,7 +1287,7 @@
             Util.removeDateGallery(element.id);
         });
 
-        const msg = await timelineSettings.updateTimeline(anchor, mediaTypeFilter, "new", null);
+        let msg = await timelineSettings.updateTimeline(anchor, mediaTypeFilter, "new", null);
         if (msg === timelineSettings.success && $("#" + anchor).length === 1) {
             await timelineSettings.attachAssociatedMetadata(anchor, mediaTypeFilter);
 
@@ -1296,6 +1296,17 @@
 
                 const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
                 await timelineSettings.renderThumbnails(elementsInViewport, mediaTypeFilter, timelineDates, true);
+            } else {
+                // Render 1 before on mobile
+                let currentDateIndex = timelineSettings.timelineDatesHash[anchor];
+                let previousAnchor = anchor;
+                if (currentDateIndex > 0) {
+                    previousAnchor = timelineDates[currentDateIndex-1].year + "-" + timelineDates[currentDateIndex-1].month + "-" + timelineDates[currentDateIndex-1].day;
+                }
+                msg = await timelineSettings.updateTimeline(previousAnchor, mediaTypeFilter, "above", anchor);
+                if (msg === timelineSettings.success && $("#" + previousAnchor).length === 1) {
+                    await timelineSettings.attachAssociatedMetadata(previousAnchor, mediaTypeFilter);
+                }
             }
         }
 
