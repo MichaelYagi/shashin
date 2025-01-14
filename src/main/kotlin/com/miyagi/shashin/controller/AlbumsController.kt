@@ -898,7 +898,7 @@ class AlbumsController: BaseController() {
 
         val album = response["album"] as Album?
 
-        if (userIp !== null && !TextUtils.isLocalIp(userIp)) {
+        if (!TextUtils.isLocalIp(userIp)) {
             val notificationObjList = mutableListOf<Notification>()
             val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
             sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())

@@ -813,7 +813,7 @@ class MediaServiceController {
             Thread {
                 val admins = userRepository.findAllAdmins()
                 val userIp = model.getAttribute("clientIP").toString()
-                if (userIp !== null && !TextUtils.isLocalIp(userIp)) {
+                if (!TextUtils.isLocalIp(userIp)) {
                     val notificationObjList = mutableListOf<Notification>()
                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                     sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
