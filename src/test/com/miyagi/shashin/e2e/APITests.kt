@@ -149,7 +149,7 @@ class APITests: BaseSeleniumTests() {
         val mapper = ObjectMapper()
 
         val response = webClient.get()
-            .uri("/api/v1/recent")
+            .uri("/api/v1/recent/0")
             .header("x-api-key", "00000000-00000000-00000000-00000000")
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
             .retrieve()
@@ -177,7 +177,7 @@ class APITests: BaseSeleniumTests() {
 
         // Get metadata
         val response = webClient.get()
-            .uri("/api/v1/recent")
+            .uri("/api/v1/recent/0")
             .header("x-api-key", "00000000-00000000-00000000-00000000")
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
             .retrieve()
@@ -197,6 +197,8 @@ class APITests: BaseSeleniumTests() {
             get("/api/v1/image/$metadataId")
         )
 
+//        println(imageResponse.andReturn().response.contentType)
+
         Assertions.assertTrue(imageResponse.andReturn().response.contentType == "image/jpeg")
     }
 
@@ -210,7 +212,7 @@ class APITests: BaseSeleniumTests() {
         val mapper = ObjectMapper()
 
         var response = webClient.get()
-            .uri("/api/v1/recent")
+            .uri("/api/v1/recent/0")
             .header("x-api-key", "00000000-00000000-00000000-00000000")
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
             .retrieve()
