@@ -290,10 +290,8 @@ class MediaServiceController {
         val currentUserObj = request?.session?.getAttribute("CurrentUser") as User?
         if (currentUserObj != null && currentUserObj.getId() > 0) {
             metadataObj.setLastAccessedBy(currentUserObj.getId())
-            metadataObj.setLastAccessedByUsername(currentUserObj.getUsername())
         } else {
             metadataObj.setLastAccessedBy(0)
-            metadataObj.setLastAccessedByUsername(TextUtils.getClientIp(request))
         }
 
         metadataRepository.save(metadataObj)
@@ -364,10 +362,8 @@ class MediaServiceController {
             val currentUserObj = request?.session?.getAttribute("CurrentUser") as User?
             if (currentUserObj != null && currentUserObj.getId() > 0) {
                 metadata.setLastAccessedBy(currentUserObj.getId())
-                metadata.setLastAccessedByUsername(currentUserObj.getUsername())
             } else {
                 metadata.setLastAccessedBy(0)
-                metadata.setLastAccessedByUsername(TextUtils.getClientIp(request))
             }
 
             metadataRepository.save(metadata)
@@ -408,7 +404,6 @@ class MediaServiceController {
                 Thread {
                     metadata.setLastAccessedAt(getCurrentTimestamp())
                     metadata.setLastAccessedBy(currentUser.getId())
-                    metadata.setLastAccessedByUsername(currentUser.getUsername())
                     metadataRepository.save(metadata)
                 }.start()
 
@@ -455,7 +450,6 @@ class MediaServiceController {
                 Thread {
                     randomMetadata.setLastAccessedAt(getCurrentTimestamp())
                     randomMetadata.setLastAccessedBy(currentUser.getId())
-                    randomMetadata.setLastAccessedByUsername(currentUser.getUsername())
                     metadataRepository.save(randomMetadata)
                 }.start()
 
@@ -505,7 +499,6 @@ class MediaServiceController {
                 Thread {
                     randomMetadata.setLastAccessedAt(getCurrentTimestamp())
                     randomMetadata.setLastAccessedBy(currentUser.getId())
-                    randomMetadata.setLastAccessedByUsername(currentUser.getUsername())
                     metadataRepository.save(randomMetadata)
                 }.start()
 
@@ -590,7 +583,6 @@ class MediaServiceController {
                 Thread {
                     randomMetadata.setLastAccessedAt(getCurrentTimestamp())
                     randomMetadata.setLastAccessedBy(currentUser.getId())
-                    randomMetadata.setLastAccessedByUsername(currentUser.getUsername())
                     metadataRepository.save(randomMetadata)
                 }.start()
 
@@ -762,10 +754,8 @@ class MediaServiceController {
             val currentUserObj = request?.session?.getAttribute("CurrentUser") as User?
             if (currentUserObj != null && currentUserObj.getId() > 0) {
                 metadata.setLastAccessedBy(currentUserObj.getId())
-                metadata.setLastAccessedByUsername(currentUserObj.getUsername())
             } else {
                 metadata.setLastAccessedBy(0)
-                metadata.setLastAccessedByUsername(TextUtils.getClientIp(request))
             }
             metadataRepository.save(metadata)
 
