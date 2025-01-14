@@ -86,13 +86,11 @@ class MapController: BaseController() {
             description = "<strong>Get results used for map data.</strong>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/mapdata\" \\\n" +
-                    "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
                     "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
                     "</thead><tbody>" +
-                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
                     "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
                     "</tbody></table><br>" +
                     "Response body on success:<br>" +
@@ -114,7 +112,7 @@ class MapController: BaseController() {
         )
     )
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/api/v1/mapdata", "/mapdata"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/mapdata", "/mapdata"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getMapData(model: Model): ResponseEntity<String> {
         val response = mutableMapOf<String, Any?>()
@@ -151,7 +149,7 @@ class MapController: BaseController() {
     )
     @Suppress("UNCHECKED_CAST")
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/api/v1/mapdata/keywords", "mapdata/keywords"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/mapdata/keywords", "mapdata/keywords"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getAllMapDataWithKeywords(model: Model): ResponseEntity<String> {
         val response = mutableMapOf<String, Any?>()
@@ -280,7 +278,7 @@ class MapController: BaseController() {
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/album/mapdata/{id}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/album/mapdata/{id}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getAlbumMapData(model: Model, @PathVariable(required = true) id: Int): ResponseEntity<String> {
         val response = mutableMapOf<String, Any?>()

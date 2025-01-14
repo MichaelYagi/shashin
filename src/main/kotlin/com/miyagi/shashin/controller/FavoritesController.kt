@@ -75,13 +75,11 @@ class FavoritesController: BaseController() {
             description = "<strong>Get paged results used for your favorites.</strong>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/favorites/{page}\" \\\n" +
-                    "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
                     "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
                     "</thead><tbody>" +
-                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
                     "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
                     "<tr><td>page</td><td>param</td><td>int</td><td>required</td><td>page number of results to return used for pagination. Page index starts from 0. The default query/page size is 20. Admins can set the query/page size in the <a href=\"/settings\">settings</a></td></tr>" +
                     "</tbody></table><br>" +
@@ -109,7 +107,7 @@ class FavoritesController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/favorites/{page}","/favorites/mediatype/{mediaType}/page/{page}","/api/v1/favorites/{page}","/api/v1/favorites/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/favorites/{page}","/favorites/mediatype/{mediaType}/page/{page}","/api/v1/favorites/{page}","/api/v1/favorites/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedFavorites(model: Model, @PathVariable page: Int, @RequestParam size: Optional<Int>,@PathVariable(required = false) mediaType: String?): String {
         return mapper.writeValueAsString(buildFavorites(model,page,size.orElse(model.getAttribute("queryLimit").toString().toInt()),mediaType))
@@ -178,7 +176,7 @@ class FavoritesController: BaseController() {
 
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/favorites/metadata/list/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/favorites/metadata/list/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getFavoritesMetadataList(model: Model,@PathVariable page: Int): String? {
         val response = mutableMapOf<String, Any?>()

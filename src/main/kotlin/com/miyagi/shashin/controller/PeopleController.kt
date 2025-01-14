@@ -534,7 +534,7 @@ class PeopleController: BaseController() {
         return module
     }
 
-    @RequestMapping(value = ["/person/compreface/{personId}/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/person/compreface/{personId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedComprefaceList(model: Model, request: HttpServletRequest, @PathVariable personId: Int, @PathVariable page: Int): String {
         var response = mutableMapOf<String, Any?>()
@@ -751,7 +751,7 @@ class PeopleController: BaseController() {
         return module
     }
 
-    @RequestMapping(value = ["/person/metadata/{personId}/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/person/metadata/{personId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedPersonMetadataList(model: Model, request: HttpServletRequest, @PathVariable personId: Int, @PathVariable page: Int): String {
         val response = mutableMapOf<String, Any?>()
@@ -798,7 +798,7 @@ class PeopleController: BaseController() {
         return mapper.writeValueAsString(response)
     }
 
-    @RequestMapping(value = ["/person/{personId}/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/person/{personId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedPerson(model: Model, request: HttpServletRequest, @PathVariable personId: Int, @PathVariable page: Int): String {
         return mapper.writeValueAsString(buildPersonAlbum(model,"person",personId,page))
@@ -1209,7 +1209,7 @@ class PeopleController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/person/recognition/recognize/{metadataId}"], consumes = ["application/json"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/person/recognition/recognize/{metadataId}"], method = [RequestMethod.GET], produces = ["application/json"])
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @ResponseBody
     fun postPersonRecognize(model: Model, @PathVariable metadataId: String): String {

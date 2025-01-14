@@ -64,7 +64,7 @@ class ArchiveController {
     }
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
-    @RequestMapping(value = ["/archived/metadata/list/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/archived/metadata/list/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getTrashMetadataList(model: Model,@PathVariable page: Int): String? {
         val response = mutableMapOf<String, Any?>()
@@ -84,7 +84,7 @@ class ArchiveController {
         return mapper.writeValueAsString(response)
     }
 
-    @RequestMapping(value = ["/archived/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/archived/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedFavorites(model: Model, @PathVariable page: Int): String {
         val response = mutableMapOf<String, Any?>()

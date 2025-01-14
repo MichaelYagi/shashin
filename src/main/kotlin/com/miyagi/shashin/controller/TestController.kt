@@ -183,7 +183,7 @@ class TestController {
     }
 
     @Secured("ROLE_SUPER")
-    @RequestMapping(value = ["/deletethread"], method = [RequestMethod.GET], consumes = ["application/json"])
+    @RequestMapping(value = ["/deletethread"], method = [RequestMethod.GET])
     @ResponseBody
     fun deleteThread(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
         FileUtils.deleteThreadFiles("repairscripts")
@@ -229,7 +229,7 @@ class TestController {
     }
 
     @Secured("ROLE_SUPER")
-    @RequestMapping(value = ["/creategif"], method = [RequestMethod.GET], consumes = ["application/json"])
+    @RequestMapping(value = ["/creategif"], method = [RequestMethod.GET])
     @ResponseBody
     fun createGif(response: HttpServletResponse?): String? {
         if (activeLink.isBlank()) {
@@ -287,7 +287,7 @@ class TestController {
     }
 
     @Secured("ROLE_SUPER")
-    @RequestMapping(value = ["/createxsmall"], method = [RequestMethod.GET], consumes = ["application/json"])
+    @RequestMapping(value = ["/createxsmall"], method = [RequestMethod.GET])
     @ResponseBody
     fun createXSImages(response: HttpServletResponse?): String? {
         activeLink = "createxsmall"
@@ -350,7 +350,7 @@ class TestController {
     }
 
     @Secured("ROLE_SUPER")
-    @RequestMapping(value = ["/fixtakendates"], method = [RequestMethod.GET], consumes = ["application/json"])
+    @RequestMapping(value = ["/fixtakendates"], method = [RequestMethod.GET])
     @ResponseBody
     fun reconcileTakenDates(response: HttpServletResponse): String {
         if (activeLink.isBlank()) {
@@ -428,7 +428,7 @@ class TestController {
     }
 
     @Secured("ROLE_SUPER")
-    @RequestMapping(value = ["/fixnullplacenames"], method = [RequestMethod.GET], consumes = ["application/json"])
+    @RequestMapping(value = ["/fixnullplacenames"], method = [RequestMethod.GET])
     @ResponseBody
     fun fixNullPlaceNames(response: HttpServletResponse): String {
         if (activeLink.isBlank()) {
@@ -508,7 +508,7 @@ class TestController {
     }
 
     @Secured("ROLE_SUPER")
-    @RequestMapping(value = ["/rescansearchedplacenames"], method = [RequestMethod.GET], consumes = ["application/json"])
+    @RequestMapping(value = ["/rescansearchedplacenames"], method = [RequestMethod.GET])
     @ResponseBody
     fun rescanSearchedPlaceNames(response: HttpServletResponse, @RequestParam query: Optional<String>): String {
         if (activeLink.isBlank()) {
@@ -587,7 +587,7 @@ class TestController {
     }
 
     @Secured("ROLE_SUPER")
-    @RequestMapping(value = ["/rescanplacenames"], method = [RequestMethod.GET], consumes = ["application/json"])
+    @RequestMapping(value = ["/rescanplacenames"], method = [RequestMethod.GET])
     @ResponseBody
     fun rescanAllPlaceNames(response: HttpServletResponse, @RequestParam proceed: Optional<Boolean>): String {
         if (activeLink.isBlank()) {
@@ -662,7 +662,7 @@ class TestController {
     }
 
     @Secured("ROLE_SUPER")
-    @RequestMapping(value = ["/rescanflengths"], method = [RequestMethod.GET], consumes = ["application/json"])
+    @RequestMapping(value = ["/rescanflengths"], method = [RequestMethod.GET])
     @ResponseBody
     fun rescanFLengths(response: HttpServletResponse): String {
         if (activeLink.isBlank()) {
