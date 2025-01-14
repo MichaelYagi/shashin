@@ -108,13 +108,11 @@ class AlbumsController: BaseController() {
             description = "<strong>Get paged list for all albums.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/albums/{page}\" \\\n" +
-                    "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
                     "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
                     "</thead><tbody>" +
-                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
                     "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
                     "<tr><td>page</td><td>param</td><td>int</td><td>required</td><td>page number of results to return used for pagination. Page index starts from 0. The default query/page size is 20. Admins can set the query/page size in the <a href=\"/settings\">settings</a></td></tr>" +
                     "</tbody></table><br>" +
@@ -189,7 +187,7 @@ class AlbumsController: BaseController() {
         )
     )
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/api/v1/albums/{page}","/albums/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/albums/{page}","/albums/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getAlbumsApi(model: Model, @PathVariable page: Int): String {
         return mapper.writeValueAsString(buildAlbums(model, page))
@@ -203,13 +201,11 @@ class AlbumsController: BaseController() {
             description = "<strong>Get paged list for all albums.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/albums?page={page}&size={size}\" \\\n" +
-                    "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
                     "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
                     "</thead><tbody>" +
-                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
                     "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
                     "<tr><td>page</td><td>param</td><td>int</td><td>optional</td><td>page number of results to return used for pagination. Default is 0.</td></tr>" +
                     "<tr><td>size</td><td>param</td><td>int</td><td>optional</td><td>The default query/page size is 20. Admins can set the default query/page size in the <a href=\"/settings\">settings</a></td></tr>" +
@@ -285,7 +281,7 @@ class AlbumsController: BaseController() {
         )
     )
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/api/v1/albums"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/albums"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getAlbumsApi(model: Model, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>): String {
         return mapper.writeValueAsString(buildAlbums(model, page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt())))
@@ -447,13 +443,11 @@ class AlbumsController: BaseController() {
             description = "<strong>Get list of shared albums.</strong>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/sharedalbums\" \\\n" +
-                    "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
                     "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
                     "</thead><tbody>" +
-                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
                     "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
                     "</tbody></table><br>" +
                     "Response body on success:<br>" +
@@ -493,7 +487,7 @@ class AlbumsController: BaseController() {
         )
     )
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/api/v1/sharedalbums","/sharedalbums"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/sharedalbums","/sharedalbums"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getSharedAlbumsApi(model: Model): String {
         return mapper.writeValueAsString(buildSharedAlbumsList(model))
@@ -539,13 +533,11 @@ class AlbumsController: BaseController() {
             description = "<strong>Get comments for an album.</strong>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/albumcomments/{albumId}\" \\\n" +
-                    "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
                     "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
                     "</thead><tbody>" +
-                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
                     "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
                     "<tr><td>albumId</td><td>param</td><td>int</td><td>required</td><td>Comments associated with this album Id</td></tr>" +
                     "</tbody></table><br>" +
@@ -576,7 +568,7 @@ class AlbumsController: BaseController() {
         )
     )
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/api/v1/albumcomments/{albumId}","/albumcomments/{albumId}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/albumcomments/{albumId}","/albumcomments/{albumId}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getAlbumCommentsApi(@PathVariable albumId: Int): String {
         return mapper.writeValueAsString(buildAlbumComments(albumId))
@@ -967,13 +959,11 @@ class AlbumsController: BaseController() {
             description = "<strong>Get paged results for shared album content.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/share/{shareLink}/album/{albumId}/{page}\" \\\n" +
-                    "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
                     "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
                     "</thead><tbody>" +
-                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
                     "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
                     "<tr><td>shareLink</td><td>param</td><td>string</td><td>required</td><td>The relative share URL you'd like to save</td></tr>" +
                     "<tr><td>albumId</td><td>param</td><td>int</td><td>required</td><td>The album ID</td></tr>" +
@@ -1009,7 +999,7 @@ class AlbumsController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/share/{shareLink}/album/{albumId}/{page}","/api/v1/share/{shareLink}/album/{albumId}/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/share/{shareLink}/album/{albumId}/{page}","/api/v1/share/{shareLink}/album/{albumId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedAnonymousShareAlbum(model: Model, @PathVariable shareLink: String, @PathVariable albumId: Int, @PathVariable page: Int): String? {
         val queryLimit = model.getAttribute("queryLimit").toString().toInt()
@@ -1025,13 +1015,11 @@ class AlbumsController: BaseController() {
             description = "<strong>Get results for shared album content.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/share/{shareLink}/album/{albumId}?page={page}&size={size}\" \\\n" +
-                    "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
                     "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
                     "</thead><tbody>" +
-                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
                     "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
                     "<tr><td>shareLink</td><td>param</td><td>string</td><td>required</td><td>The relative share URL you'd like to save</td></tr>" +
                     "<tr><td>albumId</td><td>param</td><td>int</td><td>required</td><td>The album ID</td></tr>" +
@@ -1067,7 +1055,7 @@ class AlbumsController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/api/v1/share/{shareLink}/album/{albumId}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/share/{shareLink}/album/{albumId}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedSizeAnonymousShareAlbum(model: Model, @PathVariable shareLink: String, @PathVariable albumId: Int, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>): String? {
         val response = buildShareData(albumId,StringEscapeUtils.escapeHtml4(shareLink), size.orElse(model.getAttribute("queryLimit").toString().toInt()), page.orElse(0))
@@ -1119,7 +1107,7 @@ class AlbumsController: BaseController() {
 
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/album/metadata/list/{albumId}/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/album/metadata/list/{albumId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getAlbumMetadataList(model: Model, @PathVariable albumId: Int,@PathVariable page: Int): String? {
         val response = mutableMapOf<String, Any?>()
@@ -1256,13 +1244,11 @@ class AlbumsController: BaseController() {
             description = "<strong>Get paged results for album content.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/album/{albumId}/page/{page}\" \\\n" +
-                    "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
                     "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
                     "</thead><tbody>" +
-                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
                     "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
                     "<tr><td>albumId</td><td>param</td><td>int</td><td>required</td><td>The album ID</td></tr>" +
                     "<tr><td>page</td><td>param</td><td>int</td><td>required</td><td>page number of results to return used for pagination. Page index starts from 0. The default query/page size is 20. Admins can set the query/page size in the <a href=\"/settings\">settings</a></td></tr>" +
@@ -1301,14 +1287,14 @@ class AlbumsController: BaseController() {
         )
     )
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/album/{albumId}/page/{page}","/api/v1/album/{albumId}/page/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/album/{albumId}/page/{page}","/api/v1/album/{albumId}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedAlbum(model: Model, @PathVariable albumId: Int, @PathVariable page: Int): String {
         return mapper.writeValueAsString(buildAlbum(model,albumId,page,model.getAttribute("queryLimit").toString().toInt(),"all"))
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/album/{albumId}/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/album/{albumId}/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedAlbumWithMediaType(model: Model, @PathVariable albumId: Int, @PathVariable page: Int,@PathVariable mediaType: String): String {
         return mapper.writeValueAsString(buildAlbum(model,albumId,page,model.getAttribute("queryLimit").toString().toInt(),mediaType))
@@ -1322,13 +1308,11 @@ class AlbumsController: BaseController() {
             description = "<strong>Get paged results for album content by specifying the page and size.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/album/{albumId}?page={page}&size={size}\" \\\n" +
-                    "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
                     "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
                     "</thead><tbody>" +
-                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
                     "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
                     "<tr><td>albumId</td><td>param</td><td>int</td><td>required</td><td>The album ID</td></tr>" +
                     "<tr><td>page</td><td>param</td><td>int</td><td>optional</td><td>page number of results to return used for pagination. Default is 0.</td></tr>" +
@@ -1368,7 +1352,7 @@ class AlbumsController: BaseController() {
         )
     )
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/api/v1/album/{albumId}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/album/{albumId}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedSizeAlbum(model: Model, @PathVariable albumId: Int, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>): String {
         return mapper.writeValueAsString(buildAlbum(model, albumId, page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt()), "all"))

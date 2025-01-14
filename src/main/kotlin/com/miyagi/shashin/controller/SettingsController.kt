@@ -1089,7 +1089,7 @@ class SettingsController {
         return mapper.writeValueAsString(dirs)
     }
 
-    @RequestMapping(value = ["/api/v1/system/settings"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/system/settings"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER")
     fun getSystemSettings(model: Model): String {

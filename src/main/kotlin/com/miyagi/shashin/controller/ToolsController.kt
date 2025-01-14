@@ -66,7 +66,7 @@ class ToolsController {
         return "health"
     }
 
-    @RequestMapping(value = ["/status/compreface"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/status/compreface"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun checkComprefacestatus(model: Model): String {
         val settings = model.getAttribute("settings") as Settings?
@@ -94,14 +94,14 @@ class ToolsController {
         return "{\"status\":$status,\"msg\":\"\"}"
     }
 
-    @RequestMapping(value = ["/api/v1/status"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/status"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getStatusApi(model: Model): String {
         val healthData = buildHealthData(model)
         return "{\"status\":\""+healthData["status"]+"\"}"
     }
 
-    @RequestMapping(value = ["/api/v1/health"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/health"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getHealthApi(model: Model): String {
         return mapper.writeValueAsString(buildHealthData(model))
@@ -270,7 +270,7 @@ class ToolsController {
     }
 
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    @RequestMapping(value = ["/api/v1/endpoints"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/endpoints"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getApiEndpoints(model: Model, request: HttpServletRequest): String {
 

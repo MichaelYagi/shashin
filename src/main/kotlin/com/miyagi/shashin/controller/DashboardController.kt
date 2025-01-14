@@ -149,7 +149,7 @@ class DashboardController {
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
-    @RequestMapping(value = ["/dashboard/data","/api/v1/dashboard/data"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/dashboard/data","/api/v1/dashboard/data"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getSharedAlbumsApi(model: Model): String {
         return mapper.writeValueAsString(buildDashboardData(model))

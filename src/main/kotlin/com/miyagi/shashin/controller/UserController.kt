@@ -897,13 +897,11 @@ class UserController {
             description = "<strong>See your user information including your user ID.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/user/self\" \\\n" +
-                    "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
                     "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
                     "</thead><tbody>" +
-                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
                     "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
                     "</tbody></table><br>" +
                     "Response body on success:<br>" +
@@ -928,7 +926,7 @@ class UserController {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/api/v1/user/self"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/user/self"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     fun getMyUserInfo(model: Model): String {
@@ -945,7 +943,7 @@ class UserController {
         return mapper.writeValueAsString(response)
     }
 
-    @RequestMapping(value = ["/api/v1/user/info/{userId}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/user/info/{userId}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER")
     fun getUserInfoById(model: Model, @PathVariable userId: Int): String {
@@ -964,7 +962,7 @@ class UserController {
         return mapper.writeValueAsString(response)
     }
 
-    @RequestMapping(value = ["/api/v1/users/info/authorized/{authorized}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/users/info/authorized/{authorized}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER")
     fun getUsersInfoByAuthorized(model: Model, @PathVariable authorized: Boolean): String {
@@ -984,7 +982,7 @@ class UserController {
         return mapper.writeValueAsString(response)
     }
 
-    @RequestMapping(value = ["/api/v1/users/info/authority/{authority}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/users/info/authority/{authority}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER")
     fun getUsersInfoByAuthority(model: Model, @PathVariable authority: String): String {
@@ -1013,7 +1011,7 @@ class UserController {
         return mapper.writeValueAsString(response)
     }
 
-    @RequestMapping(value = ["/api/v1/users/info"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/users/info"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER")
     fun getUsersInfo(model: Model): String {
@@ -1033,7 +1031,7 @@ class UserController {
         return mapper.writeValueAsString(response)
     }
 
-    @RequestMapping(value = ["/api/v1/users/info/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/users/info/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER")
     fun getUsersInfoPaged(model: Model, @PathVariable page: Int): String {

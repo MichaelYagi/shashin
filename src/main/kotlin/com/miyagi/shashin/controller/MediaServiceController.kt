@@ -373,7 +373,7 @@ class MediaServiceController {
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/api/v1/media/metadata/{metadataId}", "/media/metadata/{metadataId}"], method = [(RequestMethod.GET)], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/media/metadata/{metadataId}", "/media/metadata/{metadataId}"], method = [(RequestMethod.GET)], produces = ["application/json"])
     @ResponseBody
     @Throws(IOException::class)
     fun getMediaMetadata(model: Model, request: HttpServletRequest, @PathVariable metadataId: String): String {
@@ -416,7 +416,7 @@ class MediaServiceController {
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/api/v1/random/metadata/filename/{filename}", "/random/metadata/filename/{filename}"], method = [(RequestMethod.GET)], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/random/metadata/filename/{filename}", "/random/metadata/filename/{filename}"], method = [(RequestMethod.GET)], produces = ["application/json"])
     @ResponseBody
     @Throws(IOException::class)
     fun getRandomImageByFilename(model: Model, request: HttpServletRequest, @PathVariable filename: String): String {
@@ -462,7 +462,7 @@ class MediaServiceController {
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/api/v1/random/metadata/type/{type}", "/random/metadata/type/{type}"], method = [(RequestMethod.GET)], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/random/metadata/type/{type}", "/random/metadata/type/{type}"], method = [(RequestMethod.GET)], produces = ["application/json"])
     @ResponseBody
     @Throws(IOException::class)
     fun getRandomImageByType(model: Model, request: HttpServletRequest, @PathVariable type: String, @RequestParam albumsOnly: Optional<Boolean>): String {

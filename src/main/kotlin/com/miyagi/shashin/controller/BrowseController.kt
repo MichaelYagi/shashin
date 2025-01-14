@@ -67,13 +67,11 @@ class BrowseController: BaseController() {
             description = "<strong>Get paged results for recently added content.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/recent/{page}\" \\\n" +
-                    "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
                     "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
                     "</thead><tbody>" +
-                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
                     "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
                     "<tr><td>folder</td><td>param</td><td>string</td><td>required</td><td>URL encoded name of the folder path</td></tr>" +
                     "<tr><td>page</td><td>param</td><td>int</td><td>required</td><td>page number of results to return used for pagination. Page index starts from 0. The default query/page size is 20. Admins can set the query/page size in the <a href=\"/settings\">settings</a></td></tr>" +
@@ -145,7 +143,7 @@ class BrowseController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/recent/{page}","/recent/mediatype/{mediaType}/page/{page}","/api/v1/recent/{page}","/api/v1/recent/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/recent/{page}","/recent/mediatype/{mediaType}/page/{page}","/api/v1/recent/{page}","/api/v1/recent/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedRecent(model: Model, request: HttpServletRequest, @PathVariable page: Int,@PathVariable(required = false) mediaType: String?): String {
         return mapper.writeValueAsString(buildBrowseRecord("recent",model,page, model.getAttribute("queryLimit").toString().toInt(), mediaType))
@@ -163,7 +161,7 @@ class BrowseController: BaseController() {
         return module
     }
 
-    @RequestMapping(value = ["/taken/{page}","/taken/mediatype/{mediaType}/page/{page}","/api/v1/taken/{page}", "/api/v1/taken/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/taken/{page}","/taken/mediatype/{mediaType}/page/{page}","/api/v1/taken/{page}", "/api/v1/taken/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedTaken(model: Model, request: HttpServletRequest, @PathVariable page: Int, @PathVariable(required = false) mediaType: String?): String {
         return mapper.writeValueAsString(buildBrowseRecord("taken",model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType))
@@ -189,13 +187,11 @@ class BrowseController: BaseController() {
             description = "<strong>Get paged results for recently modified content.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/modified/{page}\" \\\n" +
-                    "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
                     "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
                     "</thead><tbody>" +
-                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
                     "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
                     "<tr><td>folder</td><td>param</td><td>string</td><td>required</td><td>URL encoded name of the folder path</td></tr>" +
                     "<tr><td>page</td><td>param</td><td>int</td><td>required</td><td>page number of results to return used for pagination. Page index starts from 0. The default query/page size is 20. Admins can set the query/page size in the <a href=\"/settings\">settings</a></td></tr>" +
@@ -267,7 +263,7 @@ class BrowseController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/modified/{page}","/modified/mediatype/{mediaType}/page/{page}","/api/v1/modified/{page}","/api/v1/modified/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/modified/{page}","/modified/mediatype/{mediaType}/page/{page}","/api/v1/modified/{page}","/api/v1/modified/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedModified(model: Model, request: HttpServletRequest, @PathVariable page: Int,@PathVariable(required = false) mediaType: String?): String {
         return mapper.writeValueAsString(buildBrowseRecord("modified",model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType))
@@ -285,7 +281,7 @@ class BrowseController: BaseController() {
         return module
     }
 
-    @RequestMapping(value = ["/accessed/{page}","/accessed/mediatype/{mediaType}/page/{page}","/api/v1/accessed/{page}","/api/v1/accessed/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/accessed/{page}","/accessed/mediatype/{mediaType}/page/{page}","/api/v1/accessed/{page}","/api/v1/accessed/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedAccessed(model: Model, request: HttpServletRequest, @PathVariable page: Int,@PathVariable(required = false) mediaType: String?): String {
         return mapper.writeValueAsString(buildBrowseRecord("accessed",model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType))
@@ -299,13 +295,11 @@ class BrowseController: BaseController() {
             description = "<strong>Get paged results for recently modified content.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/modified?page={page}&size={size}\" \\\n" +
-                    "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
                     "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
                     "</thead><tbody>" +
-                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
                     "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
                     "<tr><td>folder</td><td>param</td><td>string</td><td>required</td><td>URL encoded name of the folder path</td></tr>" +
                     "<tr><td>page</td><td>param</td><td>int</td><td>optional</td><td>page number of results to return used for pagination. Default is 0.</td></tr>" +
@@ -377,13 +371,13 @@ class BrowseController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/api/v1/modified","/api/v1/modified/{mediaType}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/modified","/api/v1/modified/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedSizeModified(model: Model, request: HttpServletRequest, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>, @PathVariable(required = false) mediaType: String?): String {
         return mapper.writeValueAsString(buildBrowseRecord("modified", model ,page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt()), mediaType))
     }
 
-    @RequestMapping(value = ["/metadata/list/{module}/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/metadata/list/{module}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getMetadataList(model: Model,@PathVariable module: String,@PathVariable page: Int, @RequestParam folder: Optional<String>): String {
         val response = mutableMapOf<String, Any?>()
@@ -422,7 +416,7 @@ class BrowseController: BaseController() {
         return mapper.writeValueAsString(response)
     }
 
-    @RequestMapping(value = ["/browse/album/list"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/browse/album/list"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getBrowseAlbumList(model: Model): String? {
         val response = mutableMapOf<String, Any?>()
@@ -723,13 +717,11 @@ class BrowseController: BaseController() {
             description = "<strong>Get paged list of all folders.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/folders/{page}\" \\\n" +
-                    "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
                     "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
                     "</thead><tbody>" +
-                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
                     "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
                     "<tr><td>page</td><td>param</td><td>int</td><td>required</td><td>page number of results to return used for pagination. Page index starts from 0. The default query/page size is 20. Admins can set the query/page size in the <a href=\"/settings\">settings</a></td></tr>" +
                     "</tbody></table><br>" +
@@ -755,7 +747,7 @@ class BrowseController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/folders/{page}","/api/v1/folders/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/folders/{page}","/api/v1/folders/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedFolders(model: Model, request: HttpServletRequest, @PathVariable page: Int): String {
         return mapper.writeValueAsString(buildPagedFolders(model,page))
@@ -769,13 +761,11 @@ class BrowseController: BaseController() {
             description = "<strong>Get list of all folders.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/folders?page={page}&size={size}\" \\\n" +
-                    "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
                     "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
                     "</thead><tbody>" +
-                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
                     "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
                     "<tr><td>page</td><td>param</td><td>int</td><td>optional</td><td>page number of results to return used for pagination. Default is 0.</td></tr>" +
                     "<tr><td>size</td><td>param</td><td>int</td><td>optional</td><td>The default query/page size is 20. Admins can set the default query/page size in the <a href=\"/settings\">settings</a></td></tr>" +
@@ -802,7 +792,7 @@ class BrowseController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/api/v1/folders"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/folders"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedSizeFolders(model: Model, request: HttpServletRequest, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>): String {
         return mapper.writeValueAsString(buildPagedFolders(model, page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt())))
@@ -836,13 +826,11 @@ class BrowseController: BaseController() {
             description = "<strong>Get paged results for folder content.</strong> Pages start from 0. The page size can be configured through the web interface (default 20).<br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/folder/{page}/{folder}\" \\\n" +
-                    "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
                     "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
                     "</thead><tbody>" +
-                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
                     "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
                     "<tr><td>folder</td><td>param</td><td>string</td><td>required</td><td>URL encoded name of the folder path</td></tr>" +
                     "<tr><td>page</td><td>param</td><td>int</td><td>required</td><td>page number of results to return used for pagination. Page index starts from 0. The default query/page size is 20. Admins can set the query/page size in the <a href=\"/settings\">settings</a></td></tr>" +
@@ -914,7 +902,7 @@ class BrowseController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/folder/{page}/{folder}","/api/v1/folder/{page}/{folder}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/folder/{page}/{folder}","/api/v1/folder/{page}/{folder}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedFolder(model: Model, request: HttpServletRequest, @PathVariable page: Int, @PathVariable folder: String): String {
         return mapper.writeValueAsString(buildFolder(model,URLDecoder.decode(folder, StandardCharsets.UTF_8.toString()),page))
@@ -928,13 +916,11 @@ class BrowseController: BaseController() {
             description = "<strong>Get paged results for folder content.</strong> Pages start from 0. The page size can be configured through the web interface (default 20).<br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/folder/{folder}?page={page}&size={size}\" \\\n" +
-                    "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
                     "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
                     "</thead><tbody>" +
-                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
                     "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
                     "<tr><td>folder</td><td>param</td><td>string</td><td>required</td><td>URL encoded name of the folder path</td></tr>" +
                     "<tr><td>page</td><td>param</td><td>int</td><td>optional</td><td>page number of results to return used for pagination. Default is 0.</td></tr>" +
@@ -1006,7 +992,7 @@ class BrowseController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/api/v1/folder/{folder}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/folder/{folder}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedFolder(model: Model, request: HttpServletRequest, @PathVariable folder: String, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>): String {
         return mapper.writeValueAsString(buildFolder(model,URLDecoder.decode(folder, StandardCharsets.UTF_8.toString()), page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt())))

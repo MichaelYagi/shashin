@@ -72,7 +72,7 @@ class NotificationsController {
         return module
     }
 
-    @GetMapping("/notifications/markread", consumes = ["application/json"], produces = ["application/json"])
+    @GetMapping("/notifications/markread", produces = ["application/json"])
     @ResponseBody
     fun markNotificationsRead(model: Model): String {
         val currentUserObj = model.getAttribute("currentUser") as User?
@@ -102,7 +102,7 @@ class NotificationsController {
         return "{\"msg\":\"\",\"status\":\"success\"}"
     }
 
-    @GetMapping("/notifications/mediascan", consumes = ["application/json"], produces = ["application/json"])
+    @GetMapping("/notifications/mediascan", produces = ["application/json"])
     @ResponseBody
     fun getMediaScanStatus(model: Model): String {
         val currentUserObj = model.getAttribute("currentUser") as User?
@@ -122,7 +122,7 @@ class NotificationsController {
         return "{\"msg\":\"\",\"status\":\"fail\"}"
     }
 
-    @GetMapping("/notifications/markread/album/{albumId}", consumes = ["application/json"], produces = ["application/json"])
+    @GetMapping("/notifications/markread/album/{albumId}", produces = ["application/json"])
     @ResponseBody
     fun markNotificationsReadByAlbum(model: Model,@PathVariable albumId: Int): String {
         val currentUserObj = model.getAttribute("currentUser") as User?
@@ -155,7 +155,7 @@ class NotificationsController {
         return "{\"msg\":\"\",\"status\":\"success\"}"
     }
 
-    @GetMapping("/notifications/markread/metadata/{metadataId}", consumes = ["application/json"], produces = ["application/json"])
+    @GetMapping("/notifications/markread/metadata/{metadataId}", produces = ["application/json"])
     @ResponseBody
     fun markNotificationsReadByMetadata(model: Model,@PathVariable metadataId: String): String {
         val currentUserObj = model.getAttribute("currentUser") as User?
@@ -187,7 +187,7 @@ class NotificationsController {
         return "{\"msg\":\"\",\"status\":\"success\"}"
     }
 
-    @GetMapping("/notifications/markread/favorites", consumes = ["application/json"], produces = ["application/json"])
+    @GetMapping("/notifications/markread/favorites", produces = ["application/json"])
     @ResponseBody
     fun markNotificationsReadByFavorites(model: Model): String {
         val currentUserObj = model.getAttribute("currentUser") as User?
@@ -217,7 +217,7 @@ class NotificationsController {
         return "{\"msg\":\"\",\"status\":\"success\"}"
     }
 
-    @GetMapping("/notifications/markread/users", consumes = ["application/json"], produces = ["application/json"])
+    @GetMapping("/notifications/markread/users", produces = ["application/json"])
     @ResponseBody
     fun markNotificationsReadByUsers(model: Model): String {
         val currentUserObj = model.getAttribute("currentUser") as User?
@@ -244,7 +244,7 @@ class NotificationsController {
         return "{\"msg\":\"\",\"status\":\"success\"}"
     }
 
-    @GetMapping("/notifications/check", consumes = ["application/json"], produces = ["application/json"])
+    @GetMapping("/notifications/check", produces = ["application/json"])
     @ResponseBody
     fun checkHasNotifications(model: Model): String {
         val response = mutableMapOf<String, Any?>()
@@ -305,7 +305,7 @@ class NotificationsController {
         return "{\"msg\":\"\",\"status\":\"success\"}"
     }
 
-    @RequestMapping(value = ["/notifications/markallread/notification"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/notifications/markallread/notification"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun markAllNotificationsReadByUsers(model: Model): String? {
