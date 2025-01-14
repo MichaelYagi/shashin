@@ -72,12 +72,12 @@ class MediaServiceController {
 
     @RequestMapping(value = ["/api/v1/video/{metadataId}"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
     @ResponseBody
-    @Throws(java.io.IOException::class)
-    fun getVideo(response: HttpServletResponse?, request: HttpServletRequest?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
-        return processVideo(metadataId, request, response)
+    @Throws(IOException::class)
+    fun getVideo(model: Model, response: HttpServletResponse?, request: HttpServletRequest?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
+        return processVideo(model, metadataId, request, response)
     }
 
-    private fun processVideo(metadataId: String?, request: HttpServletRequest?, response: HttpServletResponse?): ResponseEntity<FileSystemResource> {
+    private fun processVideo(model: Model, metadataId: String?, request: HttpServletRequest?, response: HttpServletResponse?): ResponseEntity<FileSystemResource> {
         val metadataObj = metadataRepository.findById(metadataId!!)
 
         if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("video")!!) {
@@ -197,8 +197,8 @@ class MediaServiceController {
                 metricsUtil.end()
             }
 
-            val userIp = TextUtils.getClientIp(request)
-            if (userIp !== null && !TextUtils.isLocalIp(userIp)) {
+            val userIp = model.getAttribute("clientIP").toString()
+            if (!TextUtils.isLocalIp(userIp)) {
                 val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                 sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
                 logger.log(Level.INFO, "IP $userIp played video ${metadataObj.get().getTitle()}' at ${sdtf.format(Date())}")
@@ -208,8 +208,8 @@ class MediaServiceController {
         } else {
             Thread {
                 val admins = userRepository.findAllAdmins()
-                val userIp = TextUtils.getClientIp(request)
-                if (userIp !== null && !TextUtils.isLocalIp(userIp)) {
+                val userIp = model.getAttribute("clientIP").toString()
+                if (!TextUtils.isLocalIp(userIp)) {
                     val notificationObjList = mutableListOf<Notification>()
                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                     sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
@@ -239,13 +239,13 @@ class MediaServiceController {
 
     @RequestMapping(value = ["/api/v1/video/{metadataId}/download"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
     @ResponseBody
-    @Throws(java.io.IOException::class)
+    @Throws(IOException::class)
     fun getVideoDownload(model: Model, response: HttpServletResponse?, request: HttpServletRequest?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource>? {
         val metadataObj = metadataRepository.findById(metadataId)
 
         if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("video")!!) {
-            val userIp = TextUtils.getClientIp(request)
-            if (userIp !== null && !TextUtils.isLocalIp(userIp)) {
+            val userIp = model.getAttribute("clientIP").toString()
+            if (!TextUtils.isLocalIp(userIp)) {
                 val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                 sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
                 logger.log(Level.INFO, "IP $userIp downloaded video ${metadataObj.get().getTitle()}' at ${sdtf.format(Date())}")
@@ -255,8 +255,8 @@ class MediaServiceController {
         } else {
             Thread {
                 val admins = userRepository.findAllAdmins()
-                val userIp = TextUtils.getClientIp(request)
-                if (userIp !== null && !TextUtils.isLocalIp(userIp)) {
+                val userIp = model.getAttribute("clientIP").toString()
+                if (!TextUtils.isLocalIp(userIp)) {
                     val notificationObjList = mutableListOf<Notification>()
                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                     sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
@@ -290,6 +290,10 @@ class MediaServiceController {
         val currentUserObj = request?.session?.getAttribute("CurrentUser") as User?
         if (currentUserObj != null && currentUserObj.getId() > 0) {
             metadataObj.setLastAccessedBy(currentUserObj.getId())
+            metadataObj.setLastAccessedByUsername(currentUserObj.getUsername())
+        } else {
+            metadataObj.setLastAccessedBy(0)
+            metadataObj.setLastAccessedByUsername(TextUtils.getClientIp(request))
         }
 
         metadataRepository.save(metadataObj)
@@ -360,6 +364,10 @@ class MediaServiceController {
             val currentUserObj = request?.session?.getAttribute("CurrentUser") as User?
             if (currentUserObj != null && currentUserObj.getId() > 0) {
                 metadata.setLastAccessedBy(currentUserObj.getId())
+                metadata.setLastAccessedByUsername(currentUserObj.getUsername())
+            } else {
+                metadata.setLastAccessedBy(0)
+                metadata.setLastAccessedByUsername(TextUtils.getClientIp(request))
             }
 
             metadataRepository.save(metadata)
@@ -400,6 +408,7 @@ class MediaServiceController {
                 Thread {
                     metadata.setLastAccessedAt(getCurrentTimestamp())
                     metadata.setLastAccessedBy(currentUser.getId())
+                    metadata.setLastAccessedByUsername(currentUser.getUsername())
                     metadataRepository.save(metadata)
                 }.start()
 
@@ -446,6 +455,7 @@ class MediaServiceController {
                 Thread {
                     randomMetadata.setLastAccessedAt(getCurrentTimestamp())
                     randomMetadata.setLastAccessedBy(currentUser.getId())
+                    randomMetadata.setLastAccessedByUsername(currentUser.getUsername())
                     metadataRepository.save(randomMetadata)
                 }.start()
 
@@ -495,6 +505,7 @@ class MediaServiceController {
                 Thread {
                     randomMetadata.setLastAccessedAt(getCurrentTimestamp())
                     randomMetadata.setLastAccessedBy(currentUser.getId())
+                    randomMetadata.setLastAccessedByUsername(currentUser.getUsername())
                     metadataRepository.save(randomMetadata)
                 }.start()
 
@@ -579,6 +590,7 @@ class MediaServiceController {
                 Thread {
                     randomMetadata.setLastAccessedAt(getCurrentTimestamp())
                     randomMetadata.setLastAccessedBy(currentUser.getId())
+                    randomMetadata.setLastAccessedByUsername(currentUser.getUsername())
                     metadataRepository.save(randomMetadata)
                 }.start()
 
@@ -728,18 +740,18 @@ class MediaServiceController {
     @RequestMapping(value = ["/api/v1/image/{metadataId}","/api/v1/image/{metadataId}.jpg"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
     @Throws(IOException::class)
-    fun getImage(response: HttpServletResponse?, request: HttpServletRequest?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
-        return getImageFactory(request, response, metadataId)
+    fun getImage(model: Model, response: HttpServletResponse?, request: HttpServletRequest?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
+        return getImageFactory(model, request, response, metadataId)
     }
 
     @RequestMapping(value = ["/api/v1/image/{metadataId}/download"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
-    @Throws(java.io.IOException::class)
-    fun getImageDownload(response: HttpServletResponse?,request: HttpServletRequest?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
-        return getImageFactory(request, response, metadataId, true)
+    @Throws(IOException::class)
+    fun getImageDownload(model: Model, response: HttpServletResponse?,request: HttpServletRequest?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
+        return getImageFactory(model, request, response, metadataId, true)
     }
 
-    private fun getImageFactory(request: HttpServletRequest?, response: HttpServletResponse?, metadataId: String?, attachFile: Boolean = false): ResponseEntity<FileSystemResource> {
+    private fun getImageFactory(model: Model,request: HttpServletRequest?, response: HttpServletResponse?, metadataId: String?, attachFile: Boolean = false): ResponseEntity<FileSystemResource> {
         val metadataObj = metadataRepository.findById(metadataId!!)
 
         if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("image")!!) {
@@ -750,6 +762,10 @@ class MediaServiceController {
             val currentUserObj = request?.session?.getAttribute("CurrentUser") as User?
             if (currentUserObj != null && currentUserObj.getId() > 0) {
                 metadata.setLastAccessedBy(currentUserObj.getId())
+                metadata.setLastAccessedByUsername(currentUserObj.getUsername())
+            } else {
+                metadata.setLastAccessedBy(0)
+                metadata.setLastAccessedByUsername(TextUtils.getClientIp(request))
             }
             metadataRepository.save(metadata)
 
@@ -796,7 +812,7 @@ class MediaServiceController {
         } else {
             Thread {
                 val admins = userRepository.findAllAdmins()
-                val userIp = TextUtils.getClientIp(request)
+                val userIp = model.getAttribute("clientIP").toString()
                 if (userIp !== null && !TextUtils.isLocalIp(userIp)) {
                     val notificationObjList = mutableListOf<Notification>()
                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")

@@ -893,7 +893,7 @@ class AlbumsController: BaseController() {
         val queryLimit = model.getAttribute("queryLimit").toString().toInt()
         val response = buildShareData(albumId,shareLink, queryLimit, 0)
 
-        val userIp = TextUtils.getClientIp(request)
+        val userIp = model.getAttribute("clientIP").toString()
         val admins = userRepository.findAllAdmins()
 
         val album = response["album"] as Album?

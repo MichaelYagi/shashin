@@ -1533,10 +1533,10 @@ class Util {
             $(".accessedAtLabel").show();
             $(".accessedAtDetails").text(metadata.lastAccessedAt);
         }
-        if (metadata.lastAccessedByUsername != null) {
-            // $(".lastViewedByLabel").show();
-            // $(".lastViewedByDetails").text(metadata.lastAccessedByUsername);
-            shashin.printMessageToConsole("Last viewed by " + metadata.lastAccessedByUsername);
+        if (metadata.lastAccessedByUsername != null && activePage === "accessed") {
+            $(".lastViewedByLabel").show();
+            $(".lastViewedByDetails").text(metadata.lastAccessedByUsername);
+            // shashin.printMessageToConsole("Last viewed by " + metadata.lastAccessedByUsername, {tag: "access"});
         }
         if (metadata.takenAt != null) {
             $(".takenAtLabel").show();
