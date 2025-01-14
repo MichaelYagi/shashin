@@ -10,6 +10,7 @@ import com.miyagi.shashin.util.*
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import com.miyagi.shashin.util.TextUtils.Companion.sortPlaceNames
 import io.swagger.v3.oas.annotations.Operation
+import jakarta.servlet.http.HttpServletRequest
 import org.apache.commons.text.StringEscapeUtils
 import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
@@ -2316,7 +2317,7 @@ class TimelineController: BaseController() {
     @ResponseBody
     @Cacheable(value = ["singleMetadataRequest"], key = "{#id}")
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    fun getMetadata(model: Model, @PathVariable(required = true) id: String): ResponseEntity<String> {
+    fun getMetadata(model: Model, request: HttpServletRequest, @PathVariable(required = true) id: String): ResponseEntity<String> {
         val response = mutableMapOf<String, Any?>()
         val keywordArray = mutableListOf<String>()
         val keywords = keywordRepository.findKeywordsByMetadataId(id)
@@ -2340,6 +2341,17 @@ class TimelineController: BaseController() {
         if (metadataRecord.isPresent) {
             response["metadata"] = metadataRecord.get()
             response["albumMap"] = getAlbumMapForUser(currentUserObj, id)
+
+            if (metadataRecord.get().getLastAccessedBy() != null && metadataRecord.get().getLastAccessedBy()!! > 0) {
+                val userObj = userRepository.findById(metadataRecord.get().getLastAccessedBy())
+                if (userObj != null) {
+                    response["lastAccessedByUsername"] = userObj.getUsername()
+                } else {
+                    response["lastAccessedByUsername"] = TextUtils.getClientIp(request)
+                }
+            } else {
+                response["lastAccessedByUsername"] = TextUtils.getClientIp(request)
+            }
         }
 
         val favoritesMap = HashMap<String, HashMap<String, Any>>()
@@ -2441,7 +2453,6 @@ class TimelineController: BaseController() {
         val labelArray = mutableListOf<String>()
         response["taggedPeopleList"] = labelArray
         response["albumMap"] = mutableMapOf<Int, String>()
-        response["lastAccessedByUsername"] = null
 
         val emptyJson = "{}"
         val mapper = ObjectMapper()
