@@ -449,13 +449,11 @@
         let metadata = {};
         metadata["keywords"] = [];
         metadata["albumMap"] = {};
-        metadata["lastAccessedByUsername"] = "";
 
-        if (data.hasOwnProperty("metadata") && data.hasOwnProperty("keywordList") && data.hasOwnProperty("albumMap") && data.hasOwnProperty("lastAccessedByUsername")) {
+        if (data.hasOwnProperty("metadata") && data.hasOwnProperty("keywordList") && data.hasOwnProperty("albumMap")) {
             metadata = data["metadata"];
             metadata["keywords"] = data["keywordList"];
             metadata["albumMap"] = data["albumMap"];
-            metadata["lastAccessedByUsername"] = data["lastAccessedByUsername"];
         }
 
         return metadata;
@@ -468,8 +466,7 @@
                 data.hasOwnProperty("keywordList") &&
                 data.hasOwnProperty("allRecognitionLabels") &&
                 data.hasOwnProperty("allAlbumList") &&
-                data.hasOwnProperty("albumMap") &&
-                data.hasOwnProperty("lastAccessedByUsername")
+                data.hasOwnProperty("albumMap")
             ) {
                 const metadata = data["metadata"];
 

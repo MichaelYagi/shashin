@@ -876,10 +876,6 @@ class TimelineController: BaseController() {
                                 metadataCopy.setLastAccessedAt(getCurrentTimestamp())
                                 metadataCopy.setModifiedAt(getCurrentTimestamp())
 
-                                if (currentUserObj != null) {
-                                    metadata.setLastAccessedBy(currentUserObj.getId())
-                                }
-
                                 if (metadataCopy.getId().isNotEmpty() && metadataCopy.getThumbnailSmallWidth() != null && metadataCopy.getThumbnailSmallHeight() != null && metadataCopy.getThumbnailUrlSmall() != null) {
                                     metadataRepository.save(metadataCopy)
 
@@ -2342,13 +2338,6 @@ class TimelineController: BaseController() {
         val currentUserObj = model.getAttribute("currentUser") as User?
 
         if (metadataRecord.isPresent) {
-            if (currentUserObj != null && metadataRecord.get().getLastAccessedBy() != null && metadataRecord.get().getLastAccessedBy()!! > 0 && (currentUserObj.getAuthority() == superRole || currentUserObj.getAuthority() == adminRole)) {
-                val userObj = userRepository.findById(metadataRecord.get().getLastAccessedBy())
-                if (userObj != null) {
-                    response["lastAccessedByUsername"] = userObj.getUsername()
-                }
-            }
-
             response["metadata"] = metadataRecord.get()
             response["albumMap"] = getAlbumMapForUser(currentUserObj, id)
         }
@@ -2461,14 +2450,6 @@ class TimelineController: BaseController() {
         val metadataRecord = metadataRepository.findById(id)
         if (metadataRecord.isPresent) {
 
-            val currentUserObj = model.getAttribute("currentUser") as User?
-            if (currentUserObj != null && metadataRecord.get().getLastAccessedBy() != null && metadataRecord.get().getLastAccessedBy()!! > 0 && (currentUserObj.getAuthority() == superRole || currentUserObj.getAuthority() == adminRole)) {
-                val userObj = userRepository.findById(metadataRecord.get().getLastAccessedBy())
-                if (userObj != null) {
-                    response["lastAccessedByUsername"] = userObj.getUsername()
-                }
-            }
-
             response["metadata"] = metadataRecord.get()
 
             val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(id)
@@ -2482,6 +2463,7 @@ class TimelineController: BaseController() {
             }
             response["taggedPeopleList"] = labelArray
 
+            val currentUserObj = model.getAttribute("currentUser") as User?
             response["albumMap"] = getAlbumMapForUser(currentUserObj, id)
 
             val keywordArray = mutableListOf<String>()

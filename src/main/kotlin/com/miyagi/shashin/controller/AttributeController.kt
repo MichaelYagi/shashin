@@ -245,6 +245,8 @@ class AttributeController: ResponseEntityExceptionHandler() {
 //        logger.log(Level.INFO,"Browser Name: $browser")
         model["agentName"] = browser.lowercase()
 
+        model["clientIP"] = TextUtils.getClientIp(request)
+
 //        var timingEnd = Date()
 //        var diff: Long = timingEnd.time - timingStart.time
 
