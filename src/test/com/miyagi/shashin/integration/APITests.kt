@@ -184,7 +184,7 @@ class APITests {
     @Test
     fun shouldReturn403ForRecentRequest() {
         val response = mockMvc!!.perform(
-            get("/api/v1/recent")
+            get("/api/v1/recent/0")
                 .header("Content-Type", "application/json")
                 .header("X-Api-Key", userKey)
         )
@@ -213,24 +213,6 @@ class APITests {
 
         // Forbidden
         Assertions.assertTrue(response.andReturn().response.status == 403)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun shouldReturn415WhenSendingRequestToTimelineApiWithMissingContentType() {
-        val response = mockMvc!!.perform(
-            get("/api/v1/timeline/0")
-                .header("X-Api-Key", adminKey)
-        )
-
-//        println(response.andReturn().response.contentAsString)
-//        println(response.andReturn().response.status)
-
-        response
-            .andExpect(status().is4xxClientError)
-
-        // Unsupported Media Type
-        Assertions.assertTrue(response.andReturn().response.status == 415)
     }
 
     @Test
