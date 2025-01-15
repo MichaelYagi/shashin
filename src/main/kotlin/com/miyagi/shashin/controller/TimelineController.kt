@@ -2346,7 +2346,7 @@ class TimelineController: BaseController() {
             val accessInfoArray = accessInfo?.split("|")
             var accessInfoString = ""
             var accessClientIP = ""
-            if (accessInfoArray != null && accessInfoArray.isNotEmpty()) {
+            if (accessInfoArray != null && accessInfoArray.size > 1) {
                 accessInfoString = " - " + accessInfoArray[1] + " " + accessInfoArray[2].uppercase()
                 accessClientIP = accessInfoArray[0]
             }
@@ -2360,10 +2360,14 @@ class TimelineController: BaseController() {
                     if (userObj != null) {
                         response["lastAccessedByDetails"] = userObj.getUsername() + accessInfoString
                     } else {
-                        response["lastAccessedByDetails"] = accessClientIP + accessInfoString
+                        if (accessInfoString != "") {
+                            response["lastAccessedByDetails"] = accessClientIP + accessInfoString
+                        }
                     }
                 } else {
-                    response["lastAccessedByDetails"] = accessClientIP + accessInfoString
+                    if (accessInfoString != "") {
+                        response["lastAccessedByDetails"] = accessClientIP + accessInfoString
+                    }
                 }
             }
         }
