@@ -2328,7 +2328,7 @@ class TimelineController: BaseController() {
 
         response["albumMap"] = mutableMapOf<Int, String>()
 
-        response["lastAccessedByUsername"] = null
+        response["lastAccessedByDetails"] = null
 
         val emptyJson = "{}"
         val mapper = ObjectMapper()
@@ -2345,12 +2345,12 @@ class TimelineController: BaseController() {
             if (metadataRecord.get().getLastAccessedBy() != null && metadataRecord.get().getLastAccessedBy()!! > 0) {
                 val userObj = userRepository.findById(metadataRecord.get().getLastAccessedBy())
                 if (userObj != null) {
-                    response["lastAccessedByUsername"] = userObj.getUsername()
+                    response["lastAccessedByDetails"] = userObj.getUsername() + " - " + model.getAttribute("agentName").toString()
                 } else {
-                    response["lastAccessedByUsername"] = TextUtils.getClientIp(request)
+                    response["lastAccessedByDetails"] = model.getAttribute("clientIP").toString() + " - " + model.getAttribute("agentName").toString()
                 }
             } else {
-                response["lastAccessedByUsername"] = TextUtils.getClientIp(request)
+                response["lastAccessedByDetails"] = model.getAttribute("clientIP").toString() + " - " + model.getAttribute("agentName").toString()
             }
         }
 
