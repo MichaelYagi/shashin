@@ -2342,22 +2342,28 @@ class TimelineController: BaseController() {
             response["metadata"] = metadataRecord.get()
             response["albumMap"] = getAlbumMapForUser(currentUserObj, id)
 
+            val accessInfo = metadataRecord.get().getFreeFormString()
+            val accessInfoArray = accessInfo?.split("|")
+            var accessInfoString = ""
+            var accessClientIP = ""
+            if (accessInfoArray != null && accessInfoArray.isNotEmpty()) {
+                accessInfoString = " - " + accessInfoArray[1] + " " + accessInfoArray[2].uppercase()
+                accessClientIP = accessInfoArray[0]
+            }
+
             if (currentUserObj?.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") {
                 if (metadataRecord.get().getLastAccessedBy() != null && metadataRecord.get()
                         .getLastAccessedBy()!! > 0
                 ) {
                     val userObj = userRepository.findById(metadataRecord.get().getLastAccessedBy())
+
                     if (userObj != null) {
-                        response["lastAccessedByDetails"] =
-                            userObj.getUsername() + " - " + model.getAttribute("agentName").toString() + " " + model.getAttribute("requestResourceType").toString().uppercase()
+                        response["lastAccessedByDetails"] = userObj.getUsername() + accessInfoString
                     } else {
-                        response["lastAccessedByDetails"] =
-                            model.getAttribute("clientIP").toString() + " - " + model.getAttribute("agentName").toString() + " " + model.getAttribute("requestResourceType").toString().uppercase()
-                                .toString()
+                        response["lastAccessedByDetails"] = accessClientIP + accessInfoString
                     }
                 } else {
-                    response["lastAccessedByDetails"] =
-                        model.getAttribute("clientIP").toString() + " - " + model.getAttribute("agentName").toString() + " " + model.getAttribute("requestResourceType").toString().uppercase()
+                    response["lastAccessedByDetails"] = accessClientIP + accessInfoString
                 }
             }
         }
