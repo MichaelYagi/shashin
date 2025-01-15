@@ -2342,15 +2342,23 @@ class TimelineController: BaseController() {
             response["metadata"] = metadataRecord.get()
             response["albumMap"] = getAlbumMapForUser(currentUserObj, id)
 
-            if (metadataRecord.get().getLastAccessedBy() != null && metadataRecord.get().getLastAccessedBy()!! > 0) {
-                val userObj = userRepository.findById(metadataRecord.get().getLastAccessedBy())
-                if (userObj != null) {
-                    response["lastAccessedByDetails"] = userObj.getUsername() + " - " + model.getAttribute("agentName").toString()
+            if (currentUserObj?.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") {
+                if (metadataRecord.get().getLastAccessedBy() != null && metadataRecord.get()
+                        .getLastAccessedBy()!! > 0
+                ) {
+                    val userObj = userRepository.findById(metadataRecord.get().getLastAccessedBy())
+                    if (userObj != null) {
+                        response["lastAccessedByDetails"] =
+                            userObj.getUsername() + " - " + model.getAttribute("agentName").toString()
+                    } else {
+                        response["lastAccessedByDetails"] =
+                            model.getAttribute("clientIP").toString() + " - " + model.getAttribute("agentName")
+                                .toString()
+                    }
                 } else {
-                    response["lastAccessedByDetails"] = model.getAttribute("clientIP").toString() + " - " + model.getAttribute("agentName").toString()
+                    response["lastAccessedByDetails"] =
+                        model.getAttribute("clientIP").toString() + " - " + model.getAttribute("agentName").toString()
                 }
-            } else {
-                response["lastAccessedByDetails"] = model.getAttribute("clientIP").toString() + " - " + model.getAttribute("agentName").toString()
             }
         }
 
