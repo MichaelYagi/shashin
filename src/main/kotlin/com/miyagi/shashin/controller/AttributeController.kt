@@ -337,7 +337,9 @@ class AttributeController: ResponseEntityExceptionHandler() {
         val currentUser: User?
         var currentUserId = 0
 
+        model["requestResourceType"] = "web"
         if (!request.getHeader("X-API-KEY").isNullOrBlank()) {
+            model["requestResourceType"] = "api"
             currentUser = userRepository.findByApikey(request.getHeader("X-API-KEY"))
             if (currentUser != null) {
                 model["currentUser"] = currentUser
