@@ -1533,7 +1533,7 @@ class Util {
             $(".accessedAtLabel").show();
             $(".accessedAtDetails").text(metadata.lastAccessedAt);
         }
-        if (metadata.lastAccessedByDetails != null && activePage === "accessed") {
+        if (metadata.lastAccessedByDetails != null) {
             $(".lastViewedByLabel").show();
             $(".lastViewedByDetails").text(metadata.lastAccessedByDetails);
             // shashin.printMessageToConsole("Last viewed by " + metadata.lastAccessedByDetails, {tag: "access"});
