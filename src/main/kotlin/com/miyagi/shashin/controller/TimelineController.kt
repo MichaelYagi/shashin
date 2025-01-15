@@ -2349,15 +2349,15 @@ class TimelineController: BaseController() {
                     val userObj = userRepository.findById(metadataRecord.get().getLastAccessedBy())
                     if (userObj != null) {
                         response["lastAccessedByDetails"] =
-                            userObj.getUsername() + " - " + model.getAttribute("agentName").toString()
+                            userObj.getUsername() + " - " + model.getAttribute("agentName").toString() + " " + model.getAttribute("requestResourceType").toString().uppercase()
                     } else {
                         response["lastAccessedByDetails"] =
-                            model.getAttribute("clientIP").toString() + " - " + model.getAttribute("agentName")
+                            model.getAttribute("clientIP").toString() + " - " + model.getAttribute("agentName").toString() + " " + model.getAttribute("requestResourceType").toString().uppercase()
                                 .toString()
                     }
                 } else {
                     response["lastAccessedByDetails"] =
-                        model.getAttribute("clientIP").toString() + " - " + model.getAttribute("agentName").toString()
+                        model.getAttribute("clientIP").toString() + " - " + model.getAttribute("agentName").toString() + " " + model.getAttribute("requestResourceType").toString().uppercase()
                 }
             }
         }
