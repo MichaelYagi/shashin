@@ -204,7 +204,7 @@ class MediaServiceController {
                 logger.log(Level.INFO, "IP $userIp played video ${metadataObj.get().getTitle()}' at ${sdtf.format(Date())}")
             }
 
-            return getVideoFactory(request, response, metadata, path)
+            return getVideoFactory(model, request, response, metadata, path)
         } else {
             Thread {
                 val admins = userRepository.findAllAdmins()
@@ -251,7 +251,7 @@ class MediaServiceController {
                 logger.log(Level.INFO, "IP $userIp downloaded video ${metadataObj.get().getTitle()}' at ${sdtf.format(Date())}")
             }
 
-            return getVideoFactory(request, response, metadataObj.get(), metadataObj.get().getPath()!!, true)
+            return getVideoFactory(model, request, response, metadataObj.get(), metadataObj.get().getPath()!!, true)
         } else {
             Thread {
                 val admins = userRepository.findAllAdmins()
@@ -284,7 +284,7 @@ class MediaServiceController {
         }
     }
 
-    private fun getVideoFactory(request: HttpServletRequest?, response: HttpServletResponse?, metadataObj: Metadata, path: String, attachFile: Boolean = false): ResponseEntity<FileSystemResource> {
+    private fun getVideoFactory(model: Model, request: HttpServletRequest?, response: HttpServletResponse?, metadataObj: Metadata, path: String, attachFile: Boolean = false): ResponseEntity<FileSystemResource> {
         metadataObj.setLastAccessedAt(getCurrentTimestamp())
 
         val currentUserObj = request?.session?.getAttribute("CurrentUser") as User?
@@ -293,7 +293,7 @@ class MediaServiceController {
         } else {
             metadataObj.setLastAccessedBy(0)
         }
-
+        metadataObj.setFreeFormString(getMetadataFreeformString(model))
         metadataRepository.save(metadataObj)
 
         var resource = FileSystemResource(path)
@@ -365,7 +365,7 @@ class MediaServiceController {
             } else {
                 metadata.setLastAccessedBy(0)
             }
-
+            metadata.setFreeFormString(getMetadataFreeformString(model))
             metadataRepository.save(metadata)
         }
 
@@ -404,6 +404,7 @@ class MediaServiceController {
                 Thread {
                     metadata.setLastAccessedAt(getCurrentTimestamp())
                     metadata.setLastAccessedBy(currentUser.getId())
+                    metadata.setFreeFormString(getMetadataFreeformString(model))
                     metadataRepository.save(metadata)
                 }.start()
 
@@ -450,6 +451,7 @@ class MediaServiceController {
                 Thread {
                     randomMetadata.setLastAccessedAt(getCurrentTimestamp())
                     randomMetadata.setLastAccessedBy(currentUser.getId())
+                    randomMetadata.setFreeFormString(getMetadataFreeformString(model))
                     metadataRepository.save(randomMetadata)
                 }.start()
 
@@ -499,6 +501,7 @@ class MediaServiceController {
                 Thread {
                     randomMetadata.setLastAccessedAt(getCurrentTimestamp())
                     randomMetadata.setLastAccessedBy(currentUser.getId())
+                    randomMetadata.setFreeFormString(getMetadataFreeformString(model))
                     metadataRepository.save(randomMetadata)
                 }.start()
 
@@ -514,6 +517,10 @@ class MediaServiceController {
         }
 
         return mapper.writeValueAsString(resp)
+    }
+
+    private fun getMetadataFreeformString(model: Model): String {
+        return model.getAttribute("clientIP").toString()+"|"+model.getAttribute("agentName").toString()+"|"+model.getAttribute("requestResourceType").toString()
     }
 
     private fun getRandomImageBy(type: String, model: Model, filter: String, height: Optional<Int>, width: Optional<Int>, orientationImage: Optional<Int>, albumsOnly: Optional<Boolean>, ttl: Optional<String>): ResponseEntity<FileSystemResource> {
@@ -583,6 +590,7 @@ class MediaServiceController {
                 Thread {
                     randomMetadata.setLastAccessedAt(getCurrentTimestamp())
                     randomMetadata.setLastAccessedBy(currentUser.getId())
+                    randomMetadata.setFreeFormString(getMetadataFreeformString(model))
                     metadataRepository.save(randomMetadata)
                 }.start()
 
@@ -757,6 +765,7 @@ class MediaServiceController {
             } else {
                 metadata.setLastAccessedBy(0)
             }
+            metadata.setFreeFormString(getMetadataFreeformString(model))
             metadataRepository.save(metadata)
 
             val path = metadataObj.get().getPath()!!
