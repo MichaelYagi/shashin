@@ -40,6 +40,7 @@ import jakarta.activation.URLDataSource
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import net.coobird.thumbnailator.Thumbnails
+import nl.basjes.parse.useragent.UserAgentAnalyzer
 import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
@@ -75,11 +76,11 @@ class MediaServiceController {
     @RequestMapping(value = ["/api/v1/video/{metadataId}"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
     @ResponseBody
     @Throws(IOException::class)
-    fun getVideo(model: Model, response: HttpServletResponse?, request: HttpServletRequest?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
+    fun getVideo(model: Model, response: HttpServletResponse, request: HttpServletRequest, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
         return processVideo(model, metadataId, request, response)
     }
 
-    private fun processVideo(model: Model, metadataId: String?, request: HttpServletRequest?, response: HttpServletResponse?): ResponseEntity<FileSystemResource> {
+    private fun processVideo(model: Model, metadataId: String?, request: HttpServletRequest, response: HttpServletResponse): ResponseEntity<FileSystemResource> {
         val metadataObj = metadataRepository.findById(metadataId!!)
 
         if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("video")!!) {
@@ -242,7 +243,7 @@ class MediaServiceController {
     @RequestMapping(value = ["/api/v1/video/{metadataId}/download"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
     @ResponseBody
     @Throws(IOException::class)
-    fun getVideoDownload(model: Model, response: HttpServletResponse?, request: HttpServletRequest?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource>? {
+    fun getVideoDownload(model: Model, response: HttpServletResponse, request: HttpServletRequest, @PathVariable metadataId: String): ResponseEntity<FileSystemResource>? {
         val metadataObj = metadataRepository.findById(metadataId)
 
         if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("video")!!) {
@@ -286,16 +287,16 @@ class MediaServiceController {
         }
     }
 
-    private fun getVideoFactory(model: Model, request: HttpServletRequest?, response: HttpServletResponse?, metadataObj: Metadata, path: String, attachFile: Boolean = false): ResponseEntity<FileSystemResource> {
+    private fun getVideoFactory(model: Model, request: HttpServletRequest, response: HttpServletResponse, metadataObj: Metadata, path: String, attachFile: Boolean = false): ResponseEntity<FileSystemResource> {
         metadataObj.setLastAccessedAt(getCurrentTimestamp())
 
-        val currentUserObj = request?.session?.getAttribute("CurrentUser") as User?
+        val currentUserObj = request.session?.getAttribute("CurrentUser") as User?
         if (currentUserObj != null && currentUserObj.getId() > 0) {
             metadataObj.setLastAccessedBy(currentUserObj.getId())
         } else {
             metadataObj.setLastAccessedBy(0)
         }
-        metadataObj.setFreeFormString(getMetadataFreeformString(model))
+        metadataObj.setFreeFormString(getMetadataFreeformString(model, request))
         metadataRepository.save(metadataObj)
 
         var resource = FileSystemResource(path)
@@ -311,7 +312,7 @@ class MediaServiceController {
 
             if (attachFile) {
                 val filename = resource.filename.replace(validFileNameRegex, "_")
-                response?.setHeader("Content-Disposition", "attachment; filename=$filename")
+                response.setHeader("Content-Disposition", "attachment; filename=$filename")
             }
 
             headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
@@ -342,16 +343,16 @@ class MediaServiceController {
     }
 
     @RequestMapping(value = ["/video/{metadataId}/player"], method = [RequestMethod.GET])
-    fun getVideoPlayer(model: Model, request: HttpServletRequest?, @PathVariable metadataId: String): String {
+    fun getVideoPlayer(model: Model, request: HttpServletRequest, @PathVariable metadataId: String): String {
         return setModel(metadataId, model, request, "player")
     }
 
     @RequestMapping(value = ["/image/{metadataId}/viewer"], method = [RequestMethod.GET])
-    fun getImageViewer(model: Model, request: HttpServletRequest?, @PathVariable metadataId: String): String {
+    fun getImageViewer(model: Model, request: HttpServletRequest, @PathVariable metadataId: String): String {
         return setModel(metadataId, model, request, "viewer")
     }
 
-    private fun setModel(metadataId: String, model: Model, request: HttpServletRequest?, module: String): String {
+    private fun setModel(metadataId: String, model: Model, request: HttpServletRequest, module: String): String {
         model["metadataObj"] = Metadata()
         val metadataObj = metadataRepository.findById(metadataId)
         val metadata = metadataObj.get()
@@ -361,13 +362,13 @@ class MediaServiceController {
             model["metadataObj"] = metadata
             metadata.setLastAccessedAt(getCurrentTimestamp())
 
-            val currentUserObj = request?.session?.getAttribute("CurrentUser") as User?
+            val currentUserObj = request.session?.getAttribute("CurrentUser") as User?
             if (currentUserObj != null && currentUserObj.getId() > 0) {
                 metadata.setLastAccessedBy(currentUserObj.getId())
             } else {
                 metadata.setLastAccessedBy(0)
             }
-            metadata.setFreeFormString(getMetadataFreeformString(model))
+            metadata.setFreeFormString(getMetadataFreeformString(model, request))
             metadataRepository.save(metadata)
         }
 
@@ -406,7 +407,7 @@ class MediaServiceController {
                 Thread {
                     metadata.setLastAccessedAt(getCurrentTimestamp())
                     metadata.setLastAccessedBy(currentUser.getId())
-                    metadata.setFreeFormString(getMetadataFreeformString(model))
+                    metadata.setFreeFormString(getMetadataFreeformString(model, request))
                     metadataRepository.save(metadata)
                 }.start()
 
@@ -453,7 +454,7 @@ class MediaServiceController {
                 Thread {
                     randomMetadata.setLastAccessedAt(getCurrentTimestamp())
                     randomMetadata.setLastAccessedBy(currentUser.getId())
-                    randomMetadata.setFreeFormString(getMetadataFreeformString(model))
+                    randomMetadata.setFreeFormString(getMetadataFreeformString(model, request))
                     metadataRepository.save(randomMetadata)
                 }.start()
 
@@ -503,7 +504,7 @@ class MediaServiceController {
                 Thread {
                     randomMetadata.setLastAccessedAt(getCurrentTimestamp())
                     randomMetadata.setLastAccessedBy(currentUser.getId())
-                    randomMetadata.setFreeFormString(getMetadataFreeformString(model))
+                    randomMetadata.setFreeFormString(getMetadataFreeformString(model, request))
                     metadataRepository.save(randomMetadata)
                 }.start()
 
@@ -521,12 +522,24 @@ class MediaServiceController {
         return mapper.writeValueAsString(resp)
     }
 
-    private fun getMetadataFreeformString(model: Model): String {
-        val osMXBean: OperatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
-        return model.getAttribute("clientIP").toString()+"|"+model.getAttribute("agentName").toString()+"|"+model.getAttribute("requestResourceType").toString()+"|"+osMXBean.name
+    private fun getMetadataFreeformString(model: Model, request: HttpServletRequest): String {
+        // Capture UA data
+        val userAgent = request.getHeader("User-Agent")
+        val uaa = UserAgentAnalyzer
+            .newBuilder()
+            .hideMatcherLoadStats()
+            .withCache(10000)
+            .build()
+        val agentObj = uaa.parse(userAgent)
+
+        // eg. mobile
+        val osClass = if (agentObj.getValue("OperatingSystemClass") == "??") null else agentObj.getValue("OperatingSystemClass").lowercase()
+        // eg. android
+        val osName = if (agentObj.getValue("OperatingSystemName") == "??") null else agentObj.getValue("OperatingSystemName").lowercase()
+        return model.getAttribute("clientIP").toString()+"|"+model.getAttribute("agentName").toString()+"|"+model.getAttribute("requestResourceType").toString()+"|"+osClass+" "+osName
     }
 
-    private fun getRandomImageBy(type: String, model: Model, filter: String, height: Optional<Int>, width: Optional<Int>, orientationImage: Optional<Int>, albumsOnly: Optional<Boolean>, ttl: Optional<String>): ResponseEntity<FileSystemResource> {
+    private fun getRandomImageBy(type: String, model: Model, request: HttpServletRequest, filter: String, height: Optional<Int>, width: Optional<Int>, orientationImage: Optional<Int>, albumsOnly: Optional<Boolean>, ttl: Optional<String>): ResponseEntity<FileSystemResource> {
         val currentUser = model.getAttribute("currentUser") as User?
 
         if (currentUser != null) {
@@ -593,7 +606,7 @@ class MediaServiceController {
                 Thread {
                     randomMetadata.setLastAccessedAt(getCurrentTimestamp())
                     randomMetadata.setLastAccessedBy(currentUser.getId())
-                    randomMetadata.setFreeFormString(getMetadataFreeformString(model))
+                    randomMetadata.setFreeFormString(getMetadataFreeformString(model, request))
                     metadataRepository.save(randomMetadata)
                 }.start()
 
@@ -728,33 +741,33 @@ class MediaServiceController {
     @RequestMapping(value = ["/api/v1/random/image/filename/{filename}", "/random/image/filename/{filename}"], method = [(RequestMethod.GET)], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
     @Throws(IOException::class)
-    fun getRandomImageByDimensionAndFilename(model: Model, @PathVariable filename: String, @RequestParam height: Optional<Int>, @RequestParam width: Optional<Int>, @RequestParam orientation: Optional<Int>, @RequestParam albumsOnly: Optional<Boolean>, @RequestParam ttl: Optional<String>): ResponseEntity<FileSystemResource> {
-        return getRandomImageBy("filename", model, filename, height, width, orientation, albumsOnly, ttl)
+    fun getRandomImageByDimensionAndFilename(model: Model, request: HttpServletRequest, @PathVariable filename: String, @RequestParam height: Optional<Int>, @RequestParam width: Optional<Int>, @RequestParam orientation: Optional<Int>, @RequestParam albumsOnly: Optional<Boolean>, @RequestParam ttl: Optional<String>): ResponseEntity<FileSystemResource> {
+        return getRandomImageBy("filename", model, request, filename, height, width, orientation, albumsOnly, ttl)
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/random/image/type/{type}", "/random/image/type/{type}"], method = [(RequestMethod.GET)], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
     @Throws(IOException::class)
-    fun getRandomImageByDimensionAndType(model: Model, @PathVariable type: String, @RequestParam height: Optional<Int>, @RequestParam width: Optional<Int>, @RequestParam orientation: Optional<Int>, @RequestParam albumsOnly: Optional<Boolean>, @RequestParam ttl: Optional<String>): ResponseEntity<FileSystemResource> {
-        return getRandomImageBy("type", model, type, height, width, orientation, albumsOnly, ttl)
+    fun getRandomImageByDimensionAndType(model: Model, request: HttpServletRequest, @PathVariable type: String, @RequestParam height: Optional<Int>, @RequestParam width: Optional<Int>, @RequestParam orientation: Optional<Int>, @RequestParam albumsOnly: Optional<Boolean>, @RequestParam ttl: Optional<String>): ResponseEntity<FileSystemResource> {
+        return getRandomImageBy("type", model, request, type, height, width, orientation, albumsOnly, ttl)
     }
 
     @RequestMapping(value = ["/api/v1/image/{metadataId}","/api/v1/image/{metadataId}.jpg"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
     @Throws(IOException::class)
-    fun getImage(model: Model, response: HttpServletResponse?, request: HttpServletRequest?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
+    fun getImage(model: Model, response: HttpServletResponse, request: HttpServletRequest, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
         return getImageFactory(model, request, response, metadataId)
     }
 
     @RequestMapping(value = ["/api/v1/image/{metadataId}/download"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
     @Throws(IOException::class)
-    fun getImageDownload(model: Model, response: HttpServletResponse?,request: HttpServletRequest?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
+    fun getImageDownload(model: Model, response: HttpServletResponse,request: HttpServletRequest, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
         return getImageFactory(model, request, response, metadataId, true)
     }
 
-    private fun getImageFactory(model: Model,request: HttpServletRequest?, response: HttpServletResponse?, metadataId: String?, attachFile: Boolean = false): ResponseEntity<FileSystemResource> {
+    private fun getImageFactory(model: Model,request: HttpServletRequest, response: HttpServletResponse, metadataId: String?, attachFile: Boolean = false): ResponseEntity<FileSystemResource> {
         val metadataObj = metadataRepository.findById(metadataId!!)
 
         if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("image")!!) {
@@ -762,13 +775,13 @@ class MediaServiceController {
             val metadata = metadataObj.get()
             metadata.setLastAccessedAt(getCurrentTimestamp())
 
-            val currentUserObj = request?.session?.getAttribute("CurrentUser") as User?
+            val currentUserObj = request.session?.getAttribute("CurrentUser") as User?
             if (currentUserObj != null && currentUserObj.getId() > 0) {
                 metadata.setLastAccessedBy(currentUserObj.getId())
             } else {
                 metadata.setLastAccessedBy(0)
             }
-            metadata.setFreeFormString(getMetadataFreeformString(model))
+            metadata.setFreeFormString(getMetadataFreeformString(model, request))
             metadataRepository.save(metadata)
 
             val path = metadataObj.get().getPath()!!
