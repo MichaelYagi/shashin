@@ -2346,9 +2346,15 @@ class TimelineController: BaseController() {
             val accessInfoArray = accessInfo?.split("|")
             var accessInfoString = ""
             var accessClientIP = ""
+            var accessAgentName = ""
+            var accessOSName = ""
+            var accessRequestResourceType = ""
             if (accessInfoArray != null && accessInfoArray.size > 1) {
-                accessInfoString = " - " + accessInfoArray[1] + " " + accessInfoArray[2].uppercase()
                 accessClientIP = accessInfoArray[0]
+                accessAgentName = accessInfoArray[1]
+                accessRequestResourceType = accessInfoArray[2].uppercase()
+                accessOSName = accessInfoArray[3]
+                accessInfoString = " - $accessAgentName $accessOSName $accessRequestResourceType"
             }
 
             if (currentUserObj?.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") {
