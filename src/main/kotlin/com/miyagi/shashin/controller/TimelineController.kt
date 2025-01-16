@@ -2364,7 +2364,7 @@ class TimelineController: BaseController() {
                     val userObj = userRepository.findById(metadataRecord.get().getLastAccessedBy())
 
                     if (userObj != null) {
-                        response["lastAccessedByDetails"] = userObj.getUsername() + accessInfoString
+                        response["lastAccessedByDetails"] = userObj.getUsername() + " " + accessClientIP + accessInfoString
                     } else {
                         if (accessInfoString != "") {
                             response["lastAccessedByDetails"] = accessClientIP + accessInfoString
