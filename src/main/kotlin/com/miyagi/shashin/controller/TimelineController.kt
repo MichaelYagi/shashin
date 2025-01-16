@@ -2346,15 +2346,15 @@ class TimelineController: BaseController() {
             val accessInfoArray = accessInfo?.split("|")
             var accessInfoString = ""
             var accessClientIP = ""
-            var accessUserAgent = ""
+            var accessBrowser = ""
             var accessRequestResourceType = ""
-            var accessOsPlatform = ""
+            var accessOS = ""
             if (accessInfoArray != null && accessInfoArray.size > 1) {
                 accessClientIP = accessInfoArray[0]
-                accessUserAgent = accessInfoArray[1]
+                accessBrowser = accessInfoArray[1]
                 accessRequestResourceType = accessInfoArray[2].uppercase()
-                accessOsPlatform = accessInfoArray[3]
-                accessInfoString = " - $accessOsPlatform $accessUserAgent $accessRequestResourceType"
+                accessOS = accessInfoArray[3]
+                accessInfoString = " - $accessOS $accessBrowser $accessRequestResourceType"
             }
 
             if (currentUserObj?.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") {

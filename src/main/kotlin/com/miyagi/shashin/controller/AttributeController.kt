@@ -218,8 +218,24 @@ class AttributeController: ResponseEntityExceptionHandler() {
 
         val browserDetails = request.getHeader("User-Agent")
         var browser = ""
+        var os = ""
         if (browserDetails != null) {
             val user = browserDetails.lowercase(Locale.getDefault())
+
+            //===============Platform===========================
+            os = if (user.lowercase().contains("windows")) {
+                "Windows";
+            } else if(user.lowercase().contains("mac")) {
+                "Mac";
+            } else if(user.lowercase().contains("x11")) {
+                "Unix";
+            } else if(user.lowercase().contains("android")) {
+                "Android";
+            } else if(user.lowercase().contains("iphone")) {
+                "IPhone";
+            } else {
+                "UnKnown, More-Info: " + user.lowercase();
+            }
 
 //            logger.log(Level.INFO, "User Agent: $browserDetails")
             //===============Browser===========================
@@ -245,12 +261,11 @@ class AttributeController: ResponseEntityExceptionHandler() {
             }
         }
 //        logger.log(Level.INFO,"Browser Name: $browser")
-        model["agentName"] = browser.lowercase()
+        model["agentName"] = browser
+
+        model["agentOS"] = os
 
         model["clientIP"] = TextUtils.getClientIp(request)
-
-        val osMXBean: OperatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
-        model["osPlatform"] = osMXBean.name
 
 //        var timingEnd = Date()
 //        var diff: Long = timingEnd.time - timingStart.time
