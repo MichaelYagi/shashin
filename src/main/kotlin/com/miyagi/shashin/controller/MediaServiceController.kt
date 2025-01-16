@@ -523,7 +523,7 @@ class MediaServiceController {
     }
 
     private fun getMetadataFreeformString(model: Model): String {
-        return model.getAttribute("clientIP").toString()+"|"+model.getAttribute("agentName").toString()+"|"+model.getAttribute("requestResourceType").toString()+"|"+model.getAttribute("osPlatform").toString()
+        return model.getAttribute("clientIP").toString()+"|"+model.getAttribute("agentName").toString()+"|"+model.getAttribute("requestResourceType").toString()+"|"+model.getAttribute("agentOS").toString()
     }
 
     private fun getRandomImageBy(type: String, model: Model, request: HttpServletRequest, filter: String, height: Optional<Int>, width: Optional<Int>, orientationImage: Optional<Int>, albumsOnly: Optional<Boolean>, ttl: Optional<String>): ResponseEntity<FileSystemResource> {
