@@ -15,22 +15,48 @@ class Settings {
         const seperator = (os.toLowerCase().indexOf('windows') !== -1 ? "\\" : "/");
         // $("#selectFolder").hide();
 
+        let lastFieldFocused = "mediaDirTextArea";
+        $("#"+lastFieldFocused).focus();
+        $("#selectFolder").text("Select Media Folder");
+
+        $("#mediaDirTextArea").on("focus", function () {
+            lastFieldFocused = "mediaDirTextArea";
+            $("#selectFolder").text("Select Media Folder");
+        });
+        $("#mediaExcludeDirTextArea").on("focus", function () {
+            lastFieldFocused = "mediaExcludeDirTextArea";
+            $("#selectFolder").text("Select Exclude Media Folder");
+        });
+        $("#uploadMediaDirectory").on("focus", function () {
+            lastFieldFocused = "uploadMediaDirectory";
+            $("#selectFolder").text("Select Upload Media Folder");
+        });
+
         $("#selectFolder").on("click", function (e) {
             e.preventDefault();
             const path = $("#selectedPath").val().trim();
             if (path.length > 0) {
-                let mediaDirStr = $("#mediaDirTextArea").val().trim();
-                let mediaDirArray = [];
+                if (lastFieldFocused === "mediaDirTextArea" || lastFieldFocused === "mediaExcludeDirTextArea") {
+                    let mediaDirStr = $("#"+lastFieldFocused).val().trim();
 
-                if (mediaDirStr.length > 0) {
-                    mediaDirArray = mediaDirStr.split("\\n").map(element => element.trim());
+                    let mediaDirArray = mediaDirStr.split('\n');
+
+                    if ($.inArray(path, mediaDirArray) === -1) {
+                        let mediaDirArray = [];
+
+                        if (mediaDirStr.length > 0) {
+                            mediaDirArray = mediaDirStr.split("\\n").map(element => element.trim());
+                        }
+
+                        if (mediaDirArray.indexOf(path) === -1) {
+                            mediaDirArray.push(path);
+                        }
+
+                        $("#" + lastFieldFocused).val(mediaDirArray.join('\n'));
+                    }
+                } else if (lastFieldFocused === "uploadMediaDirectory") {
+                    $("#"+lastFieldFocused).val(path);
                 }
-
-                if (mediaDirArray.indexOf(path) === -1) {
-                    mediaDirArray.push(path);
-                }
-
-                $("#mediaDirTextArea").val(mediaDirArray.join('|'));
             }
         });
 
