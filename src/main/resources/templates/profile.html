@@ -20,7 +20,7 @@
                     </div>
 
                     <div class="input-group mb-2">
-                        <input type="file" th:accept="${'.'+#strings.listJoin(acceptedFileTypes, ',.')}" class="form-control" id="chooseProfilePhoto" name="chooseProfilePhoto" aria-describedby="chooseProfilePhoto" aria-label="Upload">
+                        <input type="file" th:accept="${'.'+#strings.listJoin(acceptedImageTypes, ',.')}" class="form-control" id="chooseProfilePhoto" name="chooseProfilePhoto" aria-describedby="chooseProfilePhoto" aria-label="Upload">
                         <button type="button" class="btn btn-danger rounded-end" id="removeProfile" th:style="${'display: '+{user.profile==null or user.profile==''?'none;':'block;'}}">Delete Profile Picture</button>
                         <button type="button" class="btn btn-secondary rounded-end" id="saveProfile" style="display: none;">Save</button>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

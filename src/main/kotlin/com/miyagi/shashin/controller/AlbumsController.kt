@@ -3,6 +3,8 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.component.Message
+import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
@@ -38,7 +40,18 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpSession
 import jakarta.transaction.Transactional
+import org.springframework.context.event.EventListener
+import org.springframework.messaging.handler.annotation.MessageMapping
+import org.springframework.messaging.handler.annotation.SendTo
+import org.springframework.messaging.simp.annotation.SubscribeMapping
+import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.socket.messaging.SessionConnectEvent
+import org.springframework.web.socket.messaging.SessionDisconnectEvent
+import org.springframework.web.socket.messaging.SessionSubscribeEvent
+import java.io.FileOutputStream
+import kotlin.collections.count
 import kotlin.io.path.isDirectory
 
 
@@ -79,16 +92,53 @@ class AlbumsController: BaseController() {
     @Autowired
     private val keywordRepository: KeywordRepository? = null
 
+    @Autowired
+    private lateinit var settingsController: SettingsController
+
     @Value("\${app.role.super}")
     private var superRole: String? = null
 
     @Value("\${app.role.admin}")
     private var adminRole: String? = null
 
+    private var uploadedFiles: Boolean = false
+
     private var logger: Logger = Logger.getLogger(AlbumsController::class.simpleName)
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
+
+    @MessageMapping("/scanalbumuploadmessages")
+    @SendTo("/topic/albumuploadmessages")
+    @Throws(java.lang.Exception::class)
+    fun sendAlbumUploadMessage(message: ScanMessage): Message? {
+        val messageMap = mutableMapOf<String,Any>()
+
+        messageMap["uploadedFiles"] = uploadedFiles
+
+        val response: String = mapper.writeValueAsString(messageMap)
+
+        val messageObj = Message()
+        messageObj.setContent(response)
+
+        return messageObj
+    }
+
+    @SubscribeMapping("/topic/albumuploadmessages")
+    fun subscribe(
+        session: HttpSession,
+        @PathVariable pipelineId: String,
+        @PathVariable topic: String
+    ) {}
+
+    @EventListener
+    fun onApplicationEvent(event: SessionConnectEvent) {}
+
+    @EventListener
+    fun onApplicationEvent(event: SessionDisconnectEvent) {}
+
+    @EventListener
+    fun handleSubscribeEvent(event: SessionSubscribeEvent) {}
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @GetMapping("/albums")
@@ -689,6 +739,33 @@ class AlbumsController: BaseController() {
 
         resp["msg"] = "Could not save"
         resp["status"] = ApiResponse.FAIL.status
+        return mapper.writeValueAsString(resp)
+    }
+
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
+    @RequestMapping(value = ["/album/media/upload/batch/{albumId}"], method = [RequestMethod.POST], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = ["application/json"])
+    @ResponseBody
+    fun postUploadToAlbum(model: Model, @PathVariable albumId: Int, @RequestParam("uploadMediaAlbum") media: List<MultipartFile>): String {
+        resp["msg"] = "Could not save"
+        resp["status"] = ApiResponse.FAIL.status
+
+        uploadedFiles = false
+
+        val hasMediaUploadDirectory = model.getAttribute("hasMediaUploadDirectory") as Boolean?
+
+        val settings = model.getAttribute("settings") as Settings?
+
+        if (!media.isEmpty() && albumId > 0 && hasMediaUploadDirectory != null && hasMediaUploadDirectory && !settings?.getUploadMediaDirectory().isNullOrBlank()) {
+            FileUtils.copyMultipartFiles(media, settings)
+
+            uploadedFiles = true
+
+            settingsController.scanMediaDirectories(false, albumId)
+
+            resp["msg"] = "Saved to album"
+            resp["status"] = ApiResponse.SUCCESS.status
+        }
+
         return mapper.writeValueAsString(resp)
     }
 

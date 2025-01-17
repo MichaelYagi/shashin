@@ -7,6 +7,7 @@ import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.ApiResponse
+import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import jakarta.persistence.EntityNotFoundException
@@ -292,10 +293,18 @@ class AttributeController: ResponseEntityExceptionHandler() {
         var queryLimit = queryLimitProperty
         var searchHistoryLimit = searchHistoryLimitProperty
 
+        model["acceptedMediaTypes"] = FileUtils.allowableMediaFiles()
+        model["acceptedImageTypes"] = FileUtils.allowableImageFiles()
+
+        model["hasMediaUploadDirectory"] = false
+
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
         if (settings != null) {
             queryLimit = settings.getQueryLimit()!!
             searchHistoryLimit = settings.getSearchHistoryLimit()!!
+            if (settings.getUploadMediaDirectory() != null && settings.getUploadMediaDirectory() != "") {
+                model["hasMediaUploadDirectory"] = true
+            }
             model["settings"] = settings
         } else {
             val settingsObj = Settings()

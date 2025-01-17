@@ -79,6 +79,7 @@ CREATE TABLE `settings` (
                             `objectDetection` BOOLEAN DEFAULT FALSE,
                             `compreFaceKey` VARCHAR(36),
                             `compreFaceServer` VARCHAR(150),
+                            `uploadMediaDirectory` VARCHAR(255) DEFAULT NULL,
                             `createdAt` DATETIME DEFAULT NULL,
                             `modifiedAt` DATETIME DEFAULT NULL
 );

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
+import com.miyagi.shashin.component.Message
+import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.*
@@ -38,7 +40,17 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
 import jakarta.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpSession
 import jakarta.transaction.Transactional
+import org.springframework.context.event.EventListener
+import org.springframework.messaging.handler.annotation.MessageMapping
+import org.springframework.messaging.handler.annotation.SendTo
+import org.springframework.messaging.simp.annotation.SubscribeMapping
+import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.socket.messaging.SessionConnectEvent
+import org.springframework.web.socket.messaging.SessionDisconnectEvent
+import org.springframework.web.socket.messaging.SessionSubscribeEvent
+import java.io.FileOutputStream
 import kotlin.collections.ArrayList
 import kotlin.io.path.Path
 import kotlin.io.path.isDirectory
@@ -46,7 +58,6 @@ import kotlin.io.path.pathString
 
 @Suppress("UNCHECKED_CAST")
 @Controller
-@Secured("ROLE_SUPER", "ROLE_ADMIN")
 class TimelineController: BaseController() {
 
     @Autowired
@@ -91,6 +102,11 @@ class TimelineController: BaseController() {
     @Autowired
     private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
 
+    @Autowired
+    private lateinit var settingsController: SettingsController
+
+    private var uploadedFiles: Boolean = false
+
     @Value("\${app.endpoint.url.geocode}")
     private var geocodeUrl: String? = null
 
@@ -111,6 +127,39 @@ class TimelineController: BaseController() {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
 
+    @MessageMapping("/scantimelineuploadmessages")
+    @SendTo("/topic/timelineuploadmessages")
+    @Throws(java.lang.Exception::class)
+    fun sendTimelineUploadMessage(message: ScanMessage): Message? {
+        val messageMap = mutableMapOf<String,Any>()
+
+        messageMap["uploadedFiles"] = uploadedFiles
+
+        val response: String = mapper.writeValueAsString(messageMap)
+
+        val messageObj = Message()
+        messageObj.setContent(response)
+
+        return messageObj
+    }
+
+    @SubscribeMapping("/topic/timelineuploadmessages")
+    fun subscribe(
+        session: HttpSession,
+        @PathVariable pipelineId: String,
+        @PathVariable topic: String
+    ) {}
+
+    @EventListener
+    fun onApplicationEvent(event: SessionConnectEvent) {}
+
+    @EventListener
+    fun onApplicationEvent(event: SessionDisconnectEvent) {}
+
+    @EventListener
+    fun handleSubscribeEvent(event: SessionSubscribeEvent) {}
+
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/timeline", "/timeline/{mediaType}"], method = [RequestMethod.GET])
     fun getTimelineMediaTypeByDate(model: Model,@PathVariable(required = false) mediaType: String?): String {
         return buildTimelineModel(model,mediaType)
@@ -217,6 +266,7 @@ class TimelineController: BaseController() {
                     "</tbody></table>"
         )
     )
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/timeline/mediatype/{mediaType}"], method = [RequestMethod.GET])
     fun getTimelineMediaType(model: Model,@PathVariable mediaType: String): String {
         val module = "timeline"
@@ -231,12 +281,14 @@ class TimelineController: BaseController() {
         return module
     }
 
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/timeline/mediatype/{mediaType}/{page}","/api/v1/timeline/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedTimeline(model: Model, @PathVariable page: Int,@PathVariable mediaType: String): String {
         return mapper.writeValueAsString(buildTimelineData(model,mediaType,page))
     }
 
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/timeline/yearmonthcounts/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getMetadataYearMonthCounts(model: Model, @PathVariable mediaType: String): String {
@@ -325,6 +377,7 @@ class TimelineController: BaseController() {
                     "</tbody></table>"
         )
     )
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/api/v1/timeline","/api/v1/timeline/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getTimelineJson(model: Model, @PathVariable(required = false) page: Int?): String {
@@ -403,6 +456,7 @@ class TimelineController: BaseController() {
         return response
     }
 
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataAndAttributesByDate"], key = "{#date, #mediaType}")
@@ -460,6 +514,7 @@ class TimelineController: BaseController() {
                     "</tbody></table>"
         )
     )
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/api/v1/timeline/mediatype/{mediaType}/date/{date}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataAndAttributesByDate"], key = "{#date, #mediaType}")
@@ -467,6 +522,7 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,false))
     }
 
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}/metadata"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataOnlyByDate"], key = "{#date, #mediaType}")
@@ -535,6 +591,7 @@ class TimelineController: BaseController() {
                     "</tbody></table>"
         )
     )
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/api/v1/timeline/mediatype/{mediaType}/date/{date}/metadata"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataOnlyByDate"], key = "{#date, #mediaType}")
@@ -576,6 +633,7 @@ class TimelineController: BaseController() {
                     "</tbody></table>"
         )
     )
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/api/v1/keywords"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getAllKeywords(model: Model): String {
@@ -621,6 +679,7 @@ class TimelineController: BaseController() {
                     "</tbody></table>"
         )
     )
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/timeline/dates/{mediaType}","/api/v1/timeline/dates/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getTimelineDates(model: Model, @PathVariable mediaType: String): String {
@@ -776,6 +835,7 @@ class TimelineController: BaseController() {
                     "</tbody></table>"
         )
     )
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/rescan/metadata", "/api/v1/rescan/metadata"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
@@ -1021,6 +1081,7 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/metadata/remove/{metadataId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
@@ -1187,6 +1248,7 @@ class TimelineController: BaseController() {
                     "</tbody></table>"
         )
     )
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/metadata/update/{metadataId}","/api/v1/update/metadata/{metadataId}"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
@@ -1650,6 +1712,7 @@ class TimelineController: BaseController() {
         }
     }
 
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/metadata/remove/batch"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
@@ -1837,6 +1900,7 @@ class TimelineController: BaseController() {
                     "</tbody></table>"
         )
     )
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/metadata/update/batch","/api/v1/update/metadata/batch"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
@@ -2227,6 +2291,7 @@ class TimelineController: BaseController() {
         }
     }
 
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/timeline/sync/{metadataId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun postSyncData(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String): String? {
@@ -2566,6 +2631,7 @@ class TimelineController: BaseController() {
                     "Different outputs depending on media. See <a href=\"https://github.com/drewnoakes/metadata-extractor\">Metadata Extractor</a> for more details."
         )
     )
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/api/v1/exif/metadata/{id}","/exif/metadata/{id}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getExifData(model: Model, @PathVariable(required = true) id: String, response: HttpServletResponse): String {
@@ -2644,6 +2710,34 @@ class TimelineController: BaseController() {
         return null
     }
 
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @RequestMapping(value = ["/timeline/media/upload/batch"], method = [RequestMethod.POST], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = ["application/json"])
+    @ResponseBody
+    fun postUploadToTimeline(model: Model, @RequestParam("uploadMediaTimeline") media: List<MultipartFile>): String {
+        resp["msg"] = "Could not save"
+        resp["status"] = ApiResponse.FAIL.status
+
+        uploadedFiles = false
+
+        val hasMediaUploadDirectory = model.getAttribute("hasMediaUploadDirectory") as Boolean?
+
+        val settings = model.getAttribute("settings") as Settings?
+
+        if (!media.isEmpty() && hasMediaUploadDirectory != null && hasMediaUploadDirectory && !settings?.getUploadMediaDirectory().isNullOrBlank()) {
+            FileUtils.copyMultipartFiles(media, settings)
+
+            uploadedFiles = true
+
+            settingsController.scanMediaDirectories(false)
+
+            resp["msg"] = "Saved to album"
+            resp["status"] = ApiResponse.SUCCESS.status
+        }
+
+        return mapper.writeValueAsString(resp)
+    }
+
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/metadata/update/videothumbs"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)

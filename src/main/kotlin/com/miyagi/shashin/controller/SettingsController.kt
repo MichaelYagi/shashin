@@ -363,7 +363,8 @@ class SettingsController {
         @RequestParam("scanAutomatically") scanAutomatically: String?,
         @RequestParam("objectDetection") objectDetection: String?,
         @RequestParam("scheduledMatching") scheduledMatching: String?,
-        @RequestParam("scheduledTime") scheduledTime: String?
+        @RequestParam("scheduledTime") scheduledTime: String?,
+        @RequestParam("uploadMediaDirectory") uploadMediaDirectory: String?
     ): String {
         var resetServer = false
         var mediaDirs: List<String>? = null
@@ -465,7 +466,24 @@ class SettingsController {
         }
 
         if (dirDneString.isNotBlank()) {
-            statusMessage = "Could not find directory: "+dirDneString.dropLast(1)
+            statusMessage = "Could not find Media directory: "+dirDneString.dropLast(1)
+            model["status"] = "warning"
+        }
+
+        var uploadDirDneString = ""
+        if (uploadMediaDirectory != null && uploadMediaDirectory.isNotBlank()) {
+            try {
+                val path: Path = Paths.get(uploadMediaDirectory)
+                if (!Files.exists(path)) {
+                    uploadDirDneString = uploadMediaDirectory
+                }
+            } catch (_: Exception) {
+                uploadDirDneString = uploadMediaDirectory
+            }
+        }
+
+        if (uploadDirDneString.isNotBlank()) {
+            statusMessage = "Could not find Upload directory: $uploadDirDneString"
             model["status"] = "warning"
         }
 
@@ -474,6 +492,12 @@ class SettingsController {
         settings?.setCompreFaceServer(compreFaceServer)
         settings?.setCompreFaceKey(compreFaceKey)
 
+        if (uploadDirDneString == "" && uploadMediaDirectory != null && uploadMediaDirectory.isNotBlank()) {
+            settings?.setUploadMediaDirectory(uploadMediaDirectory)
+        }
+        if (uploadMediaDirectory?.isBlank() == true) {
+            settings?.setUploadMediaDirectory(null)
+        }
         if (recognitionConfidenceThreshold.isNotEmpty()) {
             settings?.setRecognitionConfidenceThreshold(recognitionConfidenceThreshold)
         }
@@ -517,7 +541,7 @@ class SettingsController {
         }
 
         if (settings != null) {
-            settingsRepository?.save(settings)
+            settingsRepository.save(settings)
             model["settings"] = settings
 
             val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())
@@ -1429,7 +1453,7 @@ class SettingsController {
     }
 
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
-    fun scanMediaDirectories(reindexFiles: Boolean): String {
+    fun scanMediaDirectories(reindexFiles: Boolean, addToAlbum: Int = 0): String {
         recognitionCount = 0
         val superAdmins = userRepository?.findAllByAuthorityEquals(superRole!!)
 
@@ -1454,8 +1478,14 @@ class SettingsController {
             return "Scan cancellation in progress, please wait"
         }
 
-        val mediaDirs = mediaDirRepository?.findByExclude(false)
+        var mediaDirs = mediaDirRepository?.findByExclude(false)
         val mediaExcludeDirs = mediaDirRepository?.findByExclude(true)
+
+        if (!settings?.getUploadMediaDirectory().isNullOrBlank() && mediaDirs != null) {
+            val mediaUploadDirectory = MediaDirectory()
+            mediaUploadDirectory.setDirectory(settings.getUploadMediaDirectory())
+            mediaDirs.add(mediaUploadDirectory)
+        }
 
         totalMediaCount = 0
         currentMediaCount = 0
@@ -1793,7 +1823,8 @@ class SettingsController {
                                             criteria,
                                             webClient,
                                             recognitionLabelPhotoLabels,
-                                            compreFaceServerConnected
+                                            compreFaceServerConnected,
+                                            addToAlbum
                                         )
                                     }
                                 }
@@ -2262,7 +2293,7 @@ class SettingsController {
         logger.log(Level.INFO, "shashinscan thread file deleted")
     }
 
-    private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, settings: Settings?, criteria: Criteria<Image, DetectedObjects>?, webClient: WebClient?, recognitionLabelPhotoLabels: MutableIterable<RecognitionLabelId>?, compreFaceServerConnected: Boolean) {
+    private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, settings: Settings?, criteria: Criteria<Image, DetectedObjects>?, webClient: WebClient?, recognitionLabelPhotoLabels: MutableIterable<RecognitionLabelId>?, compreFaceServerConnected: Boolean, addToAlbum: Int = 0) {
         val f = File(dirPath)
         val files = f.listFiles()
 
@@ -2312,7 +2343,23 @@ class SettingsController {
                                     if (metadataObj?.getThumbnailSmallWidth() != null && metadataObj.getThumbnailSmallHeight() != null && metadataObj.getThumbnailUrlSmall() != null) {
                                         metadataObj.setHidden(false)
 
-                                        metadataRepository?.save(metadataObj)
+                                        metadataRepository.save(metadataObj)
+
+                                        // Add to album from album view
+                                        if (addToAlbum > 0) {
+                                            val albumObj = albumRepository?.findAlbumById(addToAlbum)
+                                            if (albumObj != null) {
+                                                val albumPhotoCount = albumPhotoRepository?.countByMetadataIdAndAlbumId(metadataObj.getId(), addToAlbum)
+                                                if (albumPhotoCount == 0) {
+                                                    val newAlbumPhotoObj = AlbumPhoto()
+                                                    newAlbumPhotoObj.setMetadataId(metadataObj.getId())
+                                                    newAlbumPhotoObj.setAlbumId(albumObj.getId())
+                                                    newAlbumPhotoObj.setCreatedAt(getCurrentTimestamp())
+                                                    newAlbumPhotoObj.setModifiedAt(getCurrentTimestamp())
+                                                    albumPhotoRepository.save(newAlbumPhotoObj)
+                                                }
+                                            }
+                                        }
                                         metadataIdArray.add(metadataObj.getId())
                                     } else {
                                         logger.log(
@@ -2340,7 +2387,7 @@ class SettingsController {
                 }
 
                 if (file.isDirectory) {
-                    getFile(file.absolutePath, threadFile, sidecarDir, rootDir, mediaExcludeDirs, settings, criteria, webClient, recognitionLabelPhotoLabels, compreFaceServerConnected)
+                    getFile(file.absolutePath, threadFile, sidecarDir, rootDir, mediaExcludeDirs, settings, criteria, webClient, recognitionLabelPhotoLabels, compreFaceServerConnected, addToAlbum)
                 }
             }
         }

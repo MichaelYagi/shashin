@@ -139,6 +139,10 @@ class TextUtils {
             return ""
         }
 
+        fun getUnformattedDateFormat(): String {
+            return "yyyyMMddHHmmss"
+        }
+
         fun getCommonDateFormat(): String {
             return "yyyy-MM-dd HH:mm:ss"
         }
@@ -214,6 +218,12 @@ class TextUtils {
                 b = 1 / (b - a)
             } while (abs(x - h1 / k1) > x * tolerance)
             return "${h1.toInt()}/${k1.toInt()}"
+        }
+
+        fun getUnformattedCurrentTimestamp(): String {
+            val dtf = DateTimeFormatter.ofPattern(getUnformattedDateFormat())
+            val now = LocalDateTime.now()
+            return dtf.format(now)
         }
 
         fun getCurrentTimestamp(): String {

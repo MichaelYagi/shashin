@@ -39,6 +39,8 @@ class Settings {
     private var scheduledMatching: Boolean? = null
     @NotBlank
     private var scheduledTime: String? = null
+    @NotBlank
+    private var uploadMediaDirectory: String? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
 
@@ -176,6 +178,14 @@ class Settings {
         this.modifiedAt = modifiedAt
     }
 
+    fun getUploadMediaDirectory(): String? {
+        return this.uploadMediaDirectory
+    }
+
+    fun setUploadMediaDirectory(uploadMediaDirectory: String?) {
+        this.uploadMediaDirectory = uploadMediaDirectory
+    }
+
     override fun toString(): String {
         val map = mutableMapOf<String, Any?>()
         map["id"] = this.id
@@ -193,6 +203,7 @@ class Settings {
         map["scanAutomatically"] = this.scanAutomatically
         map["scheduledMatching"] = this.scheduledMatching
         map["scheduledTime"] = this.scheduledTime
+        map["uploadMediaDirectory"] = this.uploadMediaDirectory
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {
