@@ -127,37 +127,37 @@ class TimelineController: BaseController() {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
 
-    @MessageMapping("/scantimelineuploadmessages")
-    @SendTo("/topic/timelineuploadmessages")
-    @Throws(java.lang.Exception::class)
-    fun sendTimelineUploadMessage(message: ScanMessage): Message? {
-        val messageMap = mutableMapOf<String,Any>()
-
-        messageMap["uploadedFiles"] = uploadedFiles
-
-        val response: String = mapper.writeValueAsString(messageMap)
-
-        val messageObj = Message()
-        messageObj.setContent(response)
-
-        return messageObj
-    }
-
-    @SubscribeMapping("/topic/timelineuploadmessages")
-    fun subscribe(
-        session: HttpSession,
-        @PathVariable pipelineId: String,
-        @PathVariable topic: String
-    ) {}
-
-    @EventListener
-    fun onApplicationEvent(event: SessionConnectEvent) {}
-
-    @EventListener
-    fun onApplicationEvent(event: SessionDisconnectEvent) {}
-
-    @EventListener
-    fun handleSubscribeEvent(event: SessionSubscribeEvent) {}
+//    @MessageMapping("/scantimelineuploadmessages")
+//    @SendTo("/topic/timelineuploadmessages")
+//    @Throws(java.lang.Exception::class)
+//    fun sendTimelineUploadMessage(message: ScanMessage): Message? {
+//        val messageMap = mutableMapOf<String,Any>()
+//
+//        messageMap["uploadedFiles"] = uploadedFiles
+//
+//        val response: String = mapper.writeValueAsString(messageMap)
+//
+//        val messageObj = Message()
+//        messageObj.setContent(response)
+//
+//        return messageObj
+//    }
+//
+//    @SubscribeMapping("/topic/timelineuploadmessages")
+//    fun subscribe(
+//        session: HttpSession,
+//        @PathVariable pipelineId: String,
+//        @PathVariable topic: String
+//    ) {}
+//
+//    @EventListener
+//    fun onApplicationEvent(event: SessionConnectEvent) {}
+//
+//    @EventListener
+//    fun onApplicationEvent(event: SessionDisconnectEvent) {}
+//
+//    @EventListener
+//    fun handleSubscribeEvent(event: SessionSubscribeEvent) {}
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/timeline", "/timeline/{mediaType}"], method = [RequestMethod.GET])
