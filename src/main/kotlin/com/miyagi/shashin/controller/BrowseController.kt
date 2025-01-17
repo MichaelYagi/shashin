@@ -1,9 +1,12 @@
 package com.miyagi.shashin.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.component.Message
+import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
+import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import io.swagger.v3.oas.annotations.Operation
 import org.springdoc.core.annotations.RouterOperation
@@ -17,10 +20,19 @@ import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 import java.util.*
 import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpSession
+import org.springframework.context.event.EventListener
+import org.springframework.http.MediaType
+import org.springframework.messaging.handler.annotation.MessageMapping
+import org.springframework.messaging.handler.annotation.SendTo
+import org.springframework.messaging.simp.annotation.SubscribeMapping
+import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.socket.messaging.SessionConnectEvent
+import org.springframework.web.socket.messaging.SessionDisconnectEvent
+import org.springframework.web.socket.messaging.SessionSubscribeEvent
 import kotlin.collections.HashMap
 
 @Controller
-@Secured("ROLE_SUPER","ROLE_ADMIN")
 class BrowseController: BaseController() {
 
     @Autowired
@@ -44,9 +56,74 @@ class BrowseController: BaseController() {
     @Autowired
     private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
 
+    @Autowired
+    private lateinit var settingsController: SettingsController
+
+    private var uploadedFiles: Boolean = false
+
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
+    @MessageMapping("/scanbrowseuploadmessages")
+    @SendTo("/topic/browseuploadmessages")
+    @Throws(java.lang.Exception::class)
+    fun sendTimelineUploadMessage(message: ScanMessage): Message? {
+        val messageMap = mutableMapOf<String,Any>()
+
+        messageMap["uploadedFiles"] = uploadedFiles
+
+        val response: String = mapper.writeValueAsString(messageMap)
+
+        val messageObj = Message()
+        messageObj.setContent(response)
+
+        return messageObj
+    }
+
+    @SubscribeMapping("/topic/browseuploadmessages")
+    fun subscribe(
+        session: HttpSession,
+        @PathVariable pipelineId: String,
+        @PathVariable topic: String
+    ) {}
+
+    @EventListener
+    fun onApplicationEvent(event: SessionConnectEvent) {}
+
+    @EventListener
+    fun onApplicationEvent(event: SessionDisconnectEvent) {}
+
+    @EventListener
+    fun handleSubscribeEvent(event: SessionSubscribeEvent) {}
+
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @RequestMapping(value = ["/browse/media/upload/batch"], method = [RequestMethod.POST], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = ["application/json"])
+    @ResponseBody
+    fun postUploadToTimeline(model: Model, @RequestParam("uploadMedia") media: List<MultipartFile>): String {
+        resp["msg"] = "Could not save"
+        resp["status"] = ApiResponse.FAIL.status
+
+        uploadedFiles = false
+
+        val hasMediaUploadDirectory = model.getAttribute("hasMediaUploadDirectory") as Boolean?
+
+        val settings = model.getAttribute("settings") as Settings?
+
+        if (!media.isEmpty() && hasMediaUploadDirectory != null && hasMediaUploadDirectory && !settings?.getUploadMediaDirectory().isNullOrBlank()) {
+            FileUtils.copyMultipartFiles(media, settings)
+
+            uploadedFiles = true
+
+            settingsController.scanMediaDirectories(false)
+
+            resp["msg"] = "Saved to album"
+            resp["status"] = ApiResponse.SUCCESS.status
+        }
+
+        return mapper.writeValueAsString(resp)
+    }
+
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/recent","/recent/{mediaType}"], method = [RequestMethod.GET])
     fun getRecentlyAdded(model: Model,@PathVariable(required = false) mediaType: String?): String {
         val module = "recent"
@@ -143,12 +220,14 @@ class BrowseController: BaseController() {
                     "</tbody></table>"
         )
     )
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/recent/{page}","/recent/mediatype/{mediaType}/page/{page}","/api/v1/recent/{page}","/api/v1/recent/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedRecent(model: Model, request: HttpServletRequest, @PathVariable page: Int,@PathVariable(required = false) mediaType: String?): String {
         return mapper.writeValueAsString(buildBrowseRecord("recent",model,page, model.getAttribute("queryLimit").toString().toInt(), mediaType))
     }
 
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/taken","/taken/{mediaType}"], method = [RequestMethod.GET])
     fun getTaken(model: Model,@PathVariable(required = false) mediaType: String?): String {
         val module = "taken"
@@ -161,12 +240,14 @@ class BrowseController: BaseController() {
         return module
     }
 
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/taken/{page}","/taken/mediatype/{mediaType}/page/{page}","/api/v1/taken/{page}", "/api/v1/taken/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedTaken(model: Model, request: HttpServletRequest, @PathVariable page: Int, @PathVariable(required = false) mediaType: String?): String {
         return mapper.writeValueAsString(buildBrowseRecord("taken",model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType))
     }
 
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/modified","/modified/{mediaType}"], method = [RequestMethod.GET])
     fun getModified(model: Model,@PathVariable(required = false) mediaType: String?): String {
         val module = "modified"
@@ -263,12 +344,14 @@ class BrowseController: BaseController() {
                     "</tbody></table>"
         )
     )
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/modified/{page}","/modified/mediatype/{mediaType}/page/{page}","/api/v1/modified/{page}","/api/v1/modified/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedModified(model: Model, request: HttpServletRequest, @PathVariable page: Int,@PathVariable(required = false) mediaType: String?): String {
         return mapper.writeValueAsString(buildBrowseRecord("modified",model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType))
     }
 
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/accessed","/accessed/{mediaType}"], method = [RequestMethod.GET])
     fun getAccessed(model: Model,@PathVariable(required = false) mediaType: String?): String {
         val module = "accessed"
@@ -281,6 +364,7 @@ class BrowseController: BaseController() {
         return module
     }
 
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/accessed/{page}","/accessed/mediatype/{mediaType}/page/{page}","/api/v1/accessed/{page}","/api/v1/accessed/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedAccessed(model: Model, request: HttpServletRequest, @PathVariable page: Int,@PathVariable(required = false) mediaType: String?): String {
@@ -371,12 +455,14 @@ class BrowseController: BaseController() {
                     "</tbody></table>"
         )
     )
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/api/v1/modified","/api/v1/modified/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedSizeModified(model: Model, request: HttpServletRequest, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>, @PathVariable(required = false) mediaType: String?): String {
         return mapper.writeValueAsString(buildBrowseRecord("modified", model ,page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt()), mediaType))
     }
 
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/metadata/list/{module}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getMetadataList(model: Model,@PathVariable module: String,@PathVariable page: Int, @RequestParam folder: Optional<String>): String {
@@ -416,6 +502,7 @@ class BrowseController: BaseController() {
         return mapper.writeValueAsString(response)
     }
 
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/browse/album/list"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getBrowseAlbumList(model: Model): String? {
@@ -664,6 +751,7 @@ class BrowseController: BaseController() {
         return model
     }
 
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
     @GetMapping("/folders")
     fun getFolders(model: Model): String {
         val module = "folders"
@@ -747,6 +835,7 @@ class BrowseController: BaseController() {
                     "</tbody></table>"
         )
     )
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/folders/{page}","/api/v1/folders/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedFolders(model: Model, request: HttpServletRequest, @PathVariable page: Int): String {
@@ -792,12 +881,14 @@ class BrowseController: BaseController() {
                     "</tbody></table>"
         )
     )
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/api/v1/folders"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedSizeFolders(model: Model, request: HttpServletRequest, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>): String {
         return mapper.writeValueAsString(buildPagedFolders(model, page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt())))
     }
 
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/folder/{folder}"], method = [RequestMethod.GET])
     fun getFolder(model: Model, @PathVariable folder: String): String {
         val module = "folder"
@@ -902,6 +993,7 @@ class BrowseController: BaseController() {
                     "</tbody></table>"
         )
     )
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/folder/{page}/{folder}","/api/v1/folder/{page}/{folder}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedFolder(model: Model, request: HttpServletRequest, @PathVariable page: Int, @PathVariable folder: String): String {
@@ -992,6 +1084,7 @@ class BrowseController: BaseController() {
                     "</tbody></table>"
         )
     )
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/api/v1/folder/{folder}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedFolder(model: Model, request: HttpServletRequest, @PathVariable folder: String, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>): String {

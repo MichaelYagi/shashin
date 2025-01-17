@@ -134,6 +134,10 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
     initializeSlideshow(accessTimelineView, queryLimit);
 
     captureMessages(activePage, notificationAlerts, timezone);
+
+    if (activePage === "recent" || activePage === "modified" || activePage === "taken" || activePage === "accessed" || activePage === "archived" || activePage === "folders" || activePage === "folder" || activePage === "album") {
+        initializeUploads();
+    }
 }
 
 function toastClosureListeners() {
@@ -778,22 +782,81 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             }
         });
     })
+}
+
+function initializeUploads() {
+    function initializeWebSocket(appMessageEndpoint, topic) {
+        let stompClient = null;
+        connect();
+
+        function disconnect() {
+            if (stompClient !== null) {
+                stompClient.disconnect();
+            }
+            shashin.printMessageToConsole("Disconnected");
+        }
+
+        function sendMessage() {
+            if (stompClient !== null) {
+                stompClient.send("/app/"+appMessageEndpoint, {}, JSON.stringify({'message': "getScanMessage"}));
+            }
+        }
+
+        function connect() {
+            const socket = new SockJS('/websocket-endpoint');
+            stompClient = Stomp.over(socket);
+            if (shashin.showDebug === false) {
+                stompClient.debug = null
+            }
+
+            shashin.printMessageToConsole("Socket Connecting");
+
+            stompClient.connect({}, function () {
+                shashin.printMessageToConsole("Connected STOMP client");
+
+                sendMessage();
+
+                this.subscribe("/topic/"+topic, function (message) {
+                    let respMessageJsonString = JSON.parse(message.body).content;
+                    const messageMap = JSON.parse(respMessageJsonString);
+                    let uploadedFiles = messageMap.hasOwnProperty("uploadedFiles") ? messageMap["uploadedFiles"] : null;
+
+                    shashin.printMessageToConsole("message: " + message);
+                    if (uploadedFiles === true) {
+                        shashin.showToastMessage("Media uploaded", "Media upload complete. Processing media.", {
+                            icon: "bi-info-circle",
+                            target:shashin.toast.target.three,
+                            iconColor: "#777777",
+                            delay: 5000,
+                            borderColor: "success"
+                        });
+                        disconnect();
+                    } else {
+                        setTimeout(connect, 1000);
+                    }
+                });
+            }, function (e) {
+                shashin.printMessageToConsole("Socket connection error in connectSP(): " + e.toString())
+                disconnect();
+            });
+        }
+    }
 
     $("#uploadToAlbum").on("click", function (e) {
         e.preventDefault();
         chooseMedia("album");
     });
 
-    $("#uploadToTimeline").on("click", function (e) {
+    $("#uploadToMedia").on("click", function (e) {
         e.preventDefault();
-        chooseMedia("timeline");
+        chooseMedia("browse");
     });
 
     function chooseMedia(destination) {
         if (destination === "album") {
             $("#uploadMediaAlbum").trigger('click');
-        } else if (destination === "timeline") {
-            $("#uploadMediaTimeline").trigger('click');
+        } else if (destination === "browse") {
+            $("#uploadMedia").trigger('click');
         }
     }
 
@@ -820,71 +883,18 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 borderColor: "success"
             });
 
-            let stompClient = null;
-            connect();
-
-            function disconnect() {
-                if (stompClient !== null) {
-                    stompClient.disconnect();
-                }
-                shashin.printMessageToConsole("Disconnected");
-            }
-
-            function sendMessage() {
-                if (stompClient !== null) {
-                    stompClient.send("/app/scanalbumuploadmessages", {}, JSON.stringify({'message': "getScanMessage"}));
-                }
-            }
-
-            function connect() {
-                const socket = new SockJS('/websocket-endpoint');
-                stompClient = Stomp.over(socket);
-                if (shashin.showDebug === false) {
-                    stompClient.debug = null
-                }
-
-                shashin.printMessageToConsole("Socket Connecting");
-
-                stompClient.connect({}, function () {
-                    shashin.printMessageToConsole("Connected STOMP client");
-
-                    sendMessage();
-
-                    this.subscribe("/topic/albumuploadmessages", function (message) {
-                        let respMessageJsonString = JSON.parse(message.body).content;
-                        const messageMap = JSON.parse(respMessageJsonString);
-                        let uploadedFiles = messageMap.hasOwnProperty("uploadedFiles") ? messageMap["uploadedFiles"] : null;
-
-                        shashin.printMessageToConsole("message: " + message);
-                        if (uploadedFiles === true) {
-                            shashin.showToastMessage("Media uploaded to album", "Media upload complete. Processing media.", {
-                                icon: "bi-info-circle",
-                                target:shashin.toast.target.three,
-                                iconColor: "#777777",
-                                delay: 5000,
-                                borderColor: "success"
-                            });
-                            disconnect();
-                        } else {
-                            setTimeout(connect, 1000);
-                        }
-                    });
-                }, function (e) {
-                    shashin.printMessageToConsole("Socket connection error in connect(): " + e.toString())
-                    disconnect();
-                });
-            }
+            initializeWebSocket("scanalbumuploadmessages", "albumuploadmessages");
         }
     });
 
-    $("#uploadMediaTimeline").on("change", function (e) {
+    $("#uploadMedia").on("change", function (e) {
         e.preventDefault();
-        $("#uploadToTimelineForm").submit();
+        $("#uploadForm").submit();
     });
 
-    $("#uploadToTimelineForm").on("submit", function (e) {
+    $("#uploadForm").on("submit", function (e) {
         //console.log("timeline submitted")
-        const fi = document.getElementById('uploadMediaTimeline');
+        const fi = document.getElementById('uploadMedia');
         if (fi.files.length > 0) {
             let filelist = "";
             for (let i = 0; i <= fi.files.length - 1; i++) {
@@ -900,60 +910,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 borderColor: "success"
             });
 
-            let stompClient = null;
-            connect();
-
-            function disconnect() {
-                if (stompClient !== null) {
-                    stompClient.disconnect();
-                }
-                shashin.printMessageToConsole("Disconnected");
-            }
-
-            function sendMessage() {
-                if (stompClient !== null) {
-                    stompClient.send("/app/scantimelineuploadmessages", {}, JSON.stringify({'message': "getScanMessage"}));
-                }
-            }
-
-            function connect() {
-                const socket = new SockJS('/websocket-endpoint');
-                stompClient = Stomp.over(socket);
-                if (shashin.showDebug === false) {
-                    stompClient.debug = null
-                }
-
-                shashin.printMessageToConsole("Socket Connecting");
-
-                stompClient.connect({}, function () {
-                    shashin.printMessageToConsole("Connected STOMP client");
-
-                    sendMessage();
-
-                    this.subscribe("/topic/timelineuploadmessages", function (message) {
-                        let respMessageJsonString = JSON.parse(message.body).content;
-                        const messageMap = JSON.parse(respMessageJsonString);
-                        let uploadedFiles = messageMap.hasOwnProperty("uploadedFiles") ? messageMap["uploadedFiles"] : null;
-
-                        shashin.printMessageToConsole("message: " + message);
-                        if (uploadedFiles === true) {
-                            shashin.showToastMessage("Media uploaded", "Media upload complete. Processing media.", {
-                                icon: "bi-info-circle",
-                                target:shashin.toast.target.three,
-                                iconColor: "#777777",
-                                delay: 5000,
-                                borderColor: "success"
-                            });
-                            disconnect();
-                        } else {
-                            setTimeout(connect, 1000);
-                        }
-                    });
-                }, function (e) {
-                    shashin.printMessageToConsole("Socket connection error in connectSP(): " + e.toString())
-                    disconnect();
-                });
-            }
+            initializeWebSocket("scanbrowseuploadmessages", "browseuploadmessages");
         }
     });
 }
