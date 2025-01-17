@@ -23,21 +23,6 @@
                                 <textarea class="form-control" id="mediaDirTextArea" name="mediaDirList" rows="5"><th:block th:text="${mediaDirList}"></th:block></textarea>
                             </div>
 
-                            <div class="card mt-2">
-                                <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDirectories" aria-expanded="false" aria-controls="collapseDirectories">
-                                    Browse Directories
-                                </button>
-                                <div class="collapse" id="collapseDirectories">
-                                    <input class="form-control" type="text" id="selectedPath" placeholder="Select Directory" readonly>
-                                    <button id="parentFolder" type="button" class="btn btn-secondary btn-sm mt-1"><i class="bi-arrow-90deg-up"></i></button>&nbsp;<button type="button" id="selectFolder" class="btn btn-primary btn-sm mt-1">Select Folder</button>
-
-                                    <div class="card-body scroll" style="height: 300px">
-                                        <ul class="card-body list-group list-group-flush" id="dirList" style="list-style-type: none;">
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-
                             <label for="mediaExcludeDirTextArea" class="form-label"><strong>Excluded media directories and files</strong> (separate by line)</label>&nbsp;<span id="exclusionListInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Exclusion list takes precedence over inclusion list"></span>
                             <div>
                                 <textarea class="form-control" id="mediaExcludeDirTextArea" name="mediaExcludeDirList" rows="3"><th:block th:text="${mediaExcludeDirList}"></th:block></textarea>
@@ -49,6 +34,20 @@
                             <div class="col-12">
                                 <label for="uploadMediaDirectory" class="form-label"><strong>Media upload directory</strong></label>&nbsp;<span id="mediaUploadInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Must be defined with valid directory to allow media uploads"></span>
                                 <input class="form-control" id="uploadMediaDirectory" name="uploadMediaDirectory" th:value="${settings.uploadMediaDirectory}">
+                            </div>
+                        </div>
+                        <div class="card mt-2">
+                            <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDirectories" aria-expanded="false" aria-controls="collapseDirectories">
+                                Browse Directories
+                            </button>
+                            <div class="collapse" id="collapseDirectories">
+                                <input class="form-control" type="text" id="selectedPath" placeholder="Select Directory" readonly>
+                                <button id="parentFolder" type="button" class="btn btn-secondary btn-sm mt-1"><i class="bi-arrow-90deg-up"></i></button>&nbsp;<button type="button" id="selectFolder" class="btn btn-primary btn-sm mt-1">Select</button>
+
+                                <div class="card-body scroll" style="height: 300px">
+                                    <ul class="card-body list-group list-group-flush" id="dirList" style="list-style-type: none;">
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
