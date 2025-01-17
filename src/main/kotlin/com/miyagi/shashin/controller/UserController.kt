@@ -155,7 +155,6 @@ class UserController {
         model["message"] = ""
         model["user"] = User()
         model["alertClass"] = ""
-        model["acceptedFileTypes"] = FileUtils.allowableImageFiles()
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {

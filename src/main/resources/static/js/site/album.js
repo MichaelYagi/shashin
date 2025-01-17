@@ -25,6 +25,7 @@
         }
 
         let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery', lgConfig, '.mediaLink');
+        $("#uploadToAlbumForm").attr("action", "/album/media/upload/batch/"+albumId);
 
         async function loadNextPage() {
             if (albumSettings.rendering === false) {

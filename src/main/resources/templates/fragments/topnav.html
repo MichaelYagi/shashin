@@ -85,26 +85,36 @@
             <th:block th:if="${activePage == 'timeline' || activePage == 'folder' || activePage == 'person' || activePage == 'matches' || activePage == 'compreface'}">
                 <span id="timelineTools">
                     <th:block th:if="${activePage == 'timeline'}">
-                    &nbsp;
-                    <a class="align-items-center mb-lg-0 link-dark text-decoration-none" id="timelineTocToggle" data-bs-toggle="offcanvas" data-bs-placement="bottom" href="#offcanvasToc" aria-controls="offcanvasToc" title="Show timeline" style="display: none">
-                        <span th:class="'bi-calendar3 placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem"></span>
-                    </a>
+                        &nbsp;
+                        <a class="align-items-center mb-lg-0 link-dark text-decoration-none" id="timelineTocToggle" data-bs-toggle="offcanvas" data-bs-placement="bottom" href="#offcanvasToc" aria-controls="offcanvasToc" title="Show timeline" style="display: none">
+                            <span th:class="'bi-calendar3 placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem"></span>
+                        </a>
+                        <th:block th:if="${hasMediaUploadDirectory == true}">
+                            &nbsp;
+                            <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" id="uploadToTimeline" aria-controls="back" title="Upload to Timeline">
+                                <span th:class="'bi-upload placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span>
+                            </a>
+                            <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
+                            <form style="display: none" id="uploadToTimelineForm" action="/timeline/media/upload/batch" method="post" enctype="multipart/form-data" target="dummyframe">
+                                <input type="file" id="uploadMediaTimeline" name="uploadMediaTimeline" th:accept="${'.'+#strings.listJoin(acceptedMediaTypes, ',.')}" multiple>
+                            </form>
+                        </th:block>
 <!--                    &nbsp;-->
 <!--                    <a class="align-items-center mb-lg-0 link-dark text-decoration-none" id="timelineMediaTypeToggle" data-bs-placement="bottom" href="#mediaTypeToggle" aria-controls="mediaTypeToggle" title="Toggle media type">-->
 <!--                        <span id="timelineMediaTypeToggleIcon" th:class="'bi-camera-video placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span>-->
 <!--                    </a>-->
                     </th:block>
                     <th:block th:if="${activePage == 'folder'}">
-                    &nbsp;
-                    <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" href="/folders" aria-controls="back" title="Go back to folders">
-                        <span th:class="'bi-arrow-left placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span>
-                    </a>
+                        &nbsp;
+                        <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" href="/folders" aria-controls="back" title="Go back to folders">
+                            <span th:class="'bi-arrow-left placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span>
+                        </a>
                     </th:block>
                     <th:block th:if="${activePage == 'person' || activePage == 'matches' || activePage == 'compreface'}">
-                    &nbsp;
-                    <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" href="/people" aria-controls="back" title="Go back">
-                        <span th:class="'bi-arrow-left placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span>
-                    </a>
+                        &nbsp;
+                        <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" href="/people" aria-controls="back" title="Go back">
+                            <span th:class="'bi-arrow-left placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span>
+                        </a>
                     </th:block>
                 </span>
             </th:block>
@@ -114,12 +124,23 @@
                     <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" href="/albums" aria-controls="back" title="Go back to albums">
                         <span th:class="'bi-arrow-left placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span>
                     </a>
-<!--                    <th:block th:if="${activePage == 'album'}">-->
+                    <th:block th:if="${activePage == 'album'}">
+                        <th:block th:if="${hasMediaUploadDirectory == true}">
+                            &nbsp;
+                            <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" id="uploadToAlbum" aria-controls="back" title="Upload to albums">
+                                <span th:class="'bi-upload placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span>
+                            </a>
+                            <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
+                            <form style="display: none" id="uploadToAlbumForm" action="" method="post" enctype="multipart/form-data" target="dummyframe">
+                                <input type="file" id="uploadMediaAlbum" name="uploadMediaAlbum" th:accept="${'.'+#strings.listJoin(acceptedMediaTypes, ',.')}" multiple>
+                            </form>
+                        </th:block>
+
 <!--                    &nbsp;-->
 <!--                    <a class="align-items-center mb-lg-0 link-dark text-decoration-none" id="albumMediaTypeToggle" data-bs-placement="bottom" href="#mediaTypeToggle" aria-controls="mediaTypeToggle" title="Toggle media type">-->
 <!--                        <span id="albumMediaTypeToggleIcon" th:class="'bi-camera-video placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span>-->
 <!--                    </a>-->
-<!--                    </th:block>-->
+                    </th:block>
                 </span>
             </th:block>
             <th:block th:if="${activePage == 'map'}">

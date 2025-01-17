@@ -9,7 +9,7 @@ import jakarta.transaction.Transactional
 
 @Repository
 interface MediaDirectoryRepository : CrudRepository<MediaDirectory?, Int?> {
-    fun findByExclude(exclude: Boolean): MutableIterable<MediaDirectory?>
+    fun findByExclude(exclude: Boolean): MutableList<MediaDirectory?>
 
     @Query("SELECT * FROM mediadir WHERE exclude = :exclude AND directory= :directory", nativeQuery = true)
     fun findByExcludeIsAndDirectory(exclude: Boolean, directory: String?): MediaDirectory?

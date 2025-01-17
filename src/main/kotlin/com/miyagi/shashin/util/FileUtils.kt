@@ -10,6 +10,7 @@ import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import org.springframework.core.io.FileSystemResource
 import org.springframework.stereotype.Component
+import org.springframework.web.multipart.MultipartFile
 import java.io.*
 import java.net.URL
 import java.nio.file.Files
@@ -351,6 +352,52 @@ class FileUtils {
             } catch (ex: JsonSyntaxException) {
                 return false
             }
+        }
+
+        fun copyMultipartFiles(media: List<MultipartFile>, settings: Settings): MutableMap<String, MutableList<String>> {
+            var uploadDirectory = settings.getUploadMediaDirectory()?.replace('\\', '/')
+            if (uploadDirectory?.last() != '/') {
+                uploadDirectory = "$uploadDirectory/"
+            }
+
+            val ret = mutableMapOf<String, MutableList<String>>()
+            val uploadedFiles = mutableListOf<String>()
+            val notUploadedFiles = mutableListOf<String>()
+
+            for (file in media) {
+                if (!File(uploadDirectory + TextUtils.getUnformattedCurrentTimestamp()).exists()) {
+                    Files.createDirectories(Paths.get(uploadDirectory + TextUtils.getUnformattedCurrentTimestamp()))
+                }
+
+                val copyToFile = File(uploadDirectory + TextUtils.getUnformattedCurrentTimestamp() + "/" +file.originalFilename)
+                if (!copyToFile.exists()) {
+
+                    try {
+                        copyToFile.createNewFile()
+                        val outputStream = FileOutputStream(copyToFile)
+                        outputStream.write(file.bytes)
+                        outputStream.close()
+                        uploadedFiles.add(file.originalFilename.toString())
+                    } catch (e: Exception) {
+                        logger.log(
+                            Level.WARNING,
+                            file.originalFilename + ": " + e.localizedMessage
+                        )
+                        notUploadedFiles.add(file.originalFilename.toString())
+                    }
+                } else {
+                    logger.log(
+                        Level.WARNING,
+                        file.originalFilename + " already exists"
+                    )
+                    notUploadedFiles.add(file.originalFilename.toString())
+                }
+            }
+
+            ret["uploadedFiles"] = uploadedFiles
+            ret["notUploadedFiles"] = notUploadedFiles
+
+            return ret
         }
 
         fun loadFaceRecogFiles(settings: Settings?) {

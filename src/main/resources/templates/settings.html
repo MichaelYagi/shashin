@@ -46,6 +46,12 @@
                     </div>
                     <th:block th:if="${settings != null}">
                         <div class="row">
+                            <div class="col-12">
+                                <label for="uploadMediaDirectory" class="form-label"><strong>Media upload directory</strong></label>&nbsp;<span id="mediaUploadInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Must be defined with valid directory to allow media uploads"></span>
+                                <input class="form-control" id="uploadMediaDirectory" name="uploadMediaDirectory" th:value="${settings.uploadMediaDirectory}">
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-3">
                                 <label for="recognitionConfidenceThreshold" class="form-label"><strong>Facial Recognition Confidence Threshold</strong> (Default 0.8)</label>
                                 <input class="form-control" id="recognitionConfidenceThreshold" name="recognitionConfidenceThreshold" th:value="${settings.recognitionConfidenceThreshold}">
