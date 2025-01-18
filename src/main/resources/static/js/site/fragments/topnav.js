@@ -784,65 +784,70 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     })
 }
 
-function initializeUploads() {
-    function initializeWebSocket(appMessageEndpoint, topic) {
-        let stompClient = null;
-        connect();
+const EventUtil = {
+    addHandler: function(element, type, handler) {
+        if (element.addEventListener) {
+            element.addEventListener(type, handler, false);
+        } else if (element.attachEvent) {
+            element.attachEvent("on" + type, handler);
+        } else {
+            element["on" + type] = handler;
+        }
+    },
+    removeHandler: function(element, type, handler) {
+        if (element.removeEventListener) {
+            element.removeEventListener(type, handler, false);
+        } else if (element.detachEvent) {
+            element.detachEvent("on" + type, handler);
+        } else {
+            element["on" + type] = null;
+        }
+    },
+    getCurrentTarget: function(e) {
+        if (e.toElement) {
+            return e.toElement;
+        } else if (e.currentTarget) {
+            return e.currentTarget;
+        } else if (e.srcElement) {
+            return e.srcElement;
+        } else {
+            return null;
+        }
+    },
+    preventDefault: function(e) {
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+    },
 
-        function disconnect() {
-            if (stompClient !== null) {
-                stompClient.disconnect();
-            }
-            shashin.printMessageToConsole("Disconnected");
+    /**
+     * @author http://www.quirksmode.org/js/events_properties.html
+     * @method getMousePosition
+     * @param e
+     */
+    getMousePosition: function(e) {
+        var posx = 0,
+            posy = 0;
+        if (!e) {
+            e = window.event;
         }
 
-        function sendMessage() {
-            if (stompClient !== null) {
-                stompClient.send("/app/"+appMessageEndpoint, {}, JSON.stringify({'message': "getScanMessage"}));
-            }
+        if (e.pageX || e.pageY) {
+            posx = e.pageX;
+            posy = e.pageY;
+        }
+        else if (e.clientX || e.clientY) {
+            posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+            posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
         }
 
-        function connect() {
-            const socket = new SockJS('/websocket-endpoint');
-            stompClient = Stomp.over(socket);
-            if (shashin.showDebug === false) {
-                stompClient.debug = null
-            }
-
-            shashin.printMessageToConsole("Socket Connecting");
-
-            stompClient.connect({}, function () {
-                shashin.printMessageToConsole("Connected STOMP client");
-
-                sendMessage();
-
-                this.subscribe("/topic/"+topic, function (message) {
-                    let respMessageJsonString = JSON.parse(message.body).content;
-                    const messageMap = JSON.parse(respMessageJsonString);
-                    let uploadedFiles = messageMap.hasOwnProperty("uploadedFiles") ? messageMap["uploadedFiles"] : null;
-
-                    shashin.printMessageToConsole("message: " + message);
-                    if (uploadedFiles === true) {
-                        shashin.showToastMessage("Media uploaded", "Media upload complete. Processing media.", {
-                            icon: "bi-info-circle",
-                            placement: shashin.toast.placement.top.center,
-                            target:shashin.toast.target.three,
-                            iconColor: "#777777",
-                            delay: 5000,
-                            borderColor: "success"
-                        });
-                        disconnect();
-                    } else {
-                        setTimeout(connect, 1000);
-                    }
-                });
-            }, function (e) {
-                shashin.printMessageToConsole("Socket connection error in connectSP(): " + e.toString())
-                disconnect();
-            });
-        }
+        return {
+            x: posx,
+            y: posy
+        };
     }
 
+};
+
+function initializeUploads() {
     $("#uploadToAlbum").on("click", function (e) {
         e.preventDefault();
         chooseMedia("album");
@@ -863,57 +868,101 @@ function initializeUploads() {
 
     $("#uploadMediaAlbum").on("change", function (e) {
         e.preventDefault();
-        $("#uploadToAlbumForm").submit();
-    });
-
-    $("#uploadToAlbumForm").on("submit", function (e) {
-        //console.log("album submitted")
-        const fi = document.getElementById('uploadMediaAlbum');
-        if (fi.files.length > 0) {
-            let filelist = "";
-            for (let i = 0; i <= fi.files.length - 1; i++) {
-                const fsize = fi.files.item(i).size;
-                if (fsize > 0) {
-                    filelist += fi.files.item(i).name + "\n";
-                }
-            }
-            shashin.showToastMessage("Media being uploaded to album", "Media being uploaded to album:\n\n" + filelist, {
-                icon: "bi-info-circle",
-                placement: shashin.toast.placement.top.center,
-                iconColor: "#777777",
-                delay: 5000,
-                borderColor: "success"
-            });
-
-            initializeWebSocket("scanalbumuploadmessages", "albumuploadmessages");
-        }
+        const fi = document.getElementById("uploadMediaAlbum");
+        uploadData(fi, "uploadToAlbumForm");
     });
 
     $("#uploadMedia").on("change", function (e) {
         e.preventDefault();
-        $("#uploadForm").submit();
+        const fi = document.getElementById("uploadMedia");
+        uploadData(fi, "uploadForm");
     });
 
-    $("#uploadForm").on("submit", function (e) {
-        //console.log("timeline submitted")
-        const fi = document.getElementById('uploadMedia');
-        if (fi.files.length > 0) {
-            let filelist = "";
-            for (let i = 0; i <= fi.files.length - 1; i++) {
-                const fsize = fi.files.item(i).size;
-                if (fsize > 0) {
-                    filelist += fi.files.item(i).name + "\n";
-                }
-            }
-            shashin.showToastMessage("Media being uploaded", "Photos being uploaded:\n\n" + filelist, {
-                icon: "bi-info-circle",
-                placement: shashin.toast.placement.top.center,
-                iconColor: "#777777",
-                delay: 5000,
-                borderColor: "success"
-            });
-
-            initializeWebSocket("scanbrowseuploadmessages", "browseuploadmessages");
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    $("#uploadAlbumIcon").on('dragover', function (e) {
+        preventDefaults(e);
+        $("#uploadAlbumIcon").addClass('bi-cloud-upload').removeClass('bi-upload');
+    });
+    $("#uploadAlbumIcon").on('dragenter', function (e) {
+        preventDefaults(e);
+        $("#uploadAlbumIcon").addClass('bi-cloud-upload').removeClass('bi-upload');
+    });
+    $("#uploadAlbumIcon").on('dragleave', function (e) {
+        preventDefaults(e);
+        $("#uploadAlbumIcon").addClass('bi-upload').removeClass('bi-cloud-upload');
+    });
+    $("#uploadAlbumIcon").on("drop", function (e) {
+        e.preventDefault();
+        const dt = e.originalEvent.dataTransfer;
+        if (dt.types && (dt.types.indexOf ? dt.types.indexOf('Files') !== -1 : dt.types.includes('Files'))) {
+            uploadData(dt, "uploadToAlbumForm");
+            $("#uploadAlbumIcon").addClass('bi-upload').removeClass('bi-cloud-upload');
         }
     });
+    $("#uploadMediaIcon").on('dragover', function (e) {
+        preventDefaults(e);
+        $("#uploadMediaIcon").addClass('bi-cloud-upload').removeClass('bi-upload');
+    });
+    $("#uploadMediaIcon").on('dragenter', function (e) {
+        preventDefaults(e);
+        $("#uploadMediaIcon").addClass('bi-cloud-upload').removeClass('bi-upload');
+    });
+    $("#uploadMediaIcon").on('dragleave', function (e) {
+        preventDefaults(e);
+        $("#uploadMediaIcon").addClass('bi-upload').removeClass('bi-cloud-upload');
+    });
+    $("#uploadMediaIcon").on("drop", function (e) {
+        e.preventDefault();
+        const dt = e.originalEvent.dataTransfer;
+        if (dt.types && (dt.types.indexOf ? dt.types.indexOf('Files') !== -1 : dt.types.includes('Files'))) {
+            uploadData(dt, "uploadForm");
+            $("#uploadMediaIcon").addClass('bi-upload').removeClass('bi-cloud-upload');
+        }
+    });
+
+    function uploadData(fi, uploadForm) {
+        if (fi.files.length > 0) {
+            const formData  = new FormData();
+            let filelist = "";
+            for (let i = 0; i <= fi.files.length - 1; i++) {
+                formData.append('files[]', fi.files.item(i), fi.files.item(i).name);
+                const fsize = fi.files.item(i).size;
+                if (fsize > 0) {
+                    filelist += fi.files.item(i).name + "<br>";
+                }
+            }
+
+            const uploadUrl = $("#"+uploadForm).attr("action");
+
+            fetch(uploadUrl, {
+                method: 'POST',
+                body: formData
+            }).then(
+                response => response.json()
+            ).then(
+                success => {
+                    shashin.showToastMessage("Media uploaded", success["msg"]+":<br>" + filelist, {
+                        icon: "bi-info-circle",
+                        placement: shashin.toast.placement.top.center,
+                        iconColor: "#777777",
+                        delay: 5000,
+                        borderColor: "success"
+                    });
+                }
+            ).catch(
+                error => {
+                    shashin.showToastMessage("Something went wrong", error, {
+                        icon: "bi-exclamation-triangle",
+                        placement: shashin.toast.placement.top.center,
+                        iconColor: "#FF0000",
+                        delay: 5000,
+                        borderColor: "danger"
+                    });
+                }
+            );
+        }
+    }
 }

@@ -118,7 +118,7 @@
                         <th:block th:if="${hasMediaUploadDirectory == true}">
                             &nbsp;
                             <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" id="uploadToAlbum" aria-controls="back" title="Upload to albums">
-                                <span th:class="'bi-upload placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span>
+                                <span th:class="'bi-upload placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" id="uploadAlbumIcon" style="font-size: 1.5rem;"></span>
                             </a>
                             <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
                             <form style="display: none" id="uploadToAlbumForm" action="" method="post" enctype="multipart/form-data" target="dummyframe">
@@ -151,7 +151,7 @@
                 <th:block th:if="${hasMediaUploadDirectory == true}">
                     &nbsp;
                     <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" id="uploadToMedia" aria-controls="back" title="Upload Media">
-                        <span th:class="'bi-upload placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span>
+                        <span th:class="'bi-upload placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" id="uploadMediaIcon" style="font-size: 1.5rem;"></span>
                     </a>
                     <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
                     <form style="display: none" id="uploadForm" action="/browse/media/upload/batch" method="post" enctype="multipart/form-data" target="dummyframe">
