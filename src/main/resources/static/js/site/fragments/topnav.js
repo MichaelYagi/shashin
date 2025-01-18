@@ -136,7 +136,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
     captureMessages(activePage, notificationAlerts, timezone);
 
     if (activePage === "recent" || activePage === "modified" || activePage === "taken" || activePage === "accessed" || activePage === "archived" || activePage === "folders" || activePage === "folder" || activePage === "album") {
-        initializeUploads();
+        initializeUploads(activePage);
     }
 }
 
@@ -847,7 +847,7 @@ const EventUtil = {
 
 };
 
-function initializeUploads() {
+function initializeUploads(activePage) {
     $("#uploadToAlbum").on("click", function (e) {
         e.preventDefault();
         chooseMedia("album");
@@ -882,44 +882,32 @@ function initializeUploads() {
         e.preventDefault();
         e.stopPropagation();
     }
-    $("#uploadAlbumIcon").on('dragover', function (e) {
+    $("body").on('dragover', function (e) {
         preventDefaults(e);
         $("#uploadAlbumIcon").addClass('bi-cloud-upload').removeClass('bi-upload');
+        $("#uploadMediaIcon").addClass('bi-cloud-upload').removeClass('bi-upload');
     });
-    $("#uploadAlbumIcon").on('dragenter', function (e) {
+    $("body").on('dragenter', function (e) {
         preventDefaults(e);
         $("#uploadAlbumIcon").addClass('bi-cloud-upload').removeClass('bi-upload');
+        $("#uploadMediaIcon").addClass('bi-cloud-upload').removeClass('bi-upload');
     });
-    $("#uploadAlbumIcon").on('dragleave', function (e) {
+    $("body").on('dragleave', function (e) {
         preventDefaults(e);
         $("#uploadAlbumIcon").addClass('bi-upload').removeClass('bi-cloud-upload');
-    });
-    $("#uploadAlbumIcon").on("drop", function (e) {
-        e.preventDefault();
-        const dt = e.originalEvent.dataTransfer;
-        if (dt.types && (dt.types.indexOf ? dt.types.indexOf('Files') !== -1 : dt.types.includes('Files'))) {
-            uploadData(dt, "uploadToAlbumForm");
-            $("#uploadAlbumIcon").addClass('bi-upload').removeClass('bi-cloud-upload');
-        }
-    });
-    $("#uploadMediaIcon").on('dragover', function (e) {
-        preventDefaults(e);
-        $("#uploadMediaIcon").addClass('bi-cloud-upload').removeClass('bi-upload');
-    });
-    $("#uploadMediaIcon").on('dragenter', function (e) {
-        preventDefaults(e);
-        $("#uploadMediaIcon").addClass('bi-cloud-upload').removeClass('bi-upload');
-    });
-    $("#uploadMediaIcon").on('dragleave', function (e) {
-        preventDefaults(e);
         $("#uploadMediaIcon").addClass('bi-upload').removeClass('bi-cloud-upload');
     });
-    $("#uploadMediaIcon").on("drop", function (e) {
+    $("body").on("drop", function (e) {
         e.preventDefault();
         const dt = e.originalEvent.dataTransfer;
         if (dt.types && (dt.types.indexOf ? dt.types.indexOf('Files') !== -1 : dt.types.includes('Files'))) {
-            uploadData(dt, "uploadForm");
-            $("#uploadMediaIcon").addClass('bi-upload').removeClass('bi-cloud-upload');
+            if (activePage === "album") {
+                uploadData(dt, "uploadToAlbumForm");
+                $("#uploadAlbumIcon").addClass('bi-upload').removeClass('bi-cloud-upload');
+            } else {
+                uploadData(dt, "uploadForm");
+                $("#uploadMediaIcon").addClass('bi-upload').removeClass('bi-cloud-upload');
+            }
         }
     });
 
