@@ -101,44 +101,10 @@ class AlbumsController: BaseController() {
     @Value("\${app.role.admin}")
     private var adminRole: String? = null
 
-    private var uploadedFiles: Boolean = false
-
     private var logger: Logger = Logger.getLogger(AlbumsController::class.simpleName)
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
-
-    @MessageMapping("/scanalbumuploadmessages")
-    @SendTo("/topic/albumuploadmessages")
-    @Throws(java.lang.Exception::class)
-    fun sendAlbumUploadMessage(message: ScanMessage): Message? {
-        val messageMap = mutableMapOf<String,Any>()
-
-        messageMap["uploadedFiles"] = uploadedFiles
-
-        val response: String = mapper.writeValueAsString(messageMap)
-
-        val messageObj = Message()
-        messageObj.setContent(response)
-
-        return messageObj
-    }
-
-    @SubscribeMapping("/topic/albumuploadmessages")
-    fun subscribe(
-        session: HttpSession,
-        @PathVariable pipelineId: String,
-        @PathVariable topic: String
-    ) {}
-
-    @EventListener
-    fun onApplicationEvent(event: SessionConnectEvent) {}
-
-    @EventListener
-    fun onApplicationEvent(event: SessionDisconnectEvent) {}
-
-    @EventListener
-    fun handleSubscribeEvent(event: SessionSubscribeEvent) {}
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @GetMapping("/albums")
@@ -745,11 +711,9 @@ class AlbumsController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/album/media/upload/batch/{albumId}"], method = [RequestMethod.POST], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = ["application/json"])
     @ResponseBody
-    fun postUploadToAlbum(model: Model, @PathVariable albumId: Int, @RequestParam("uploadMediaAlbum") media: List<MultipartFile>): String {
+    fun postUploadToAlbum(model: Model, @PathVariable albumId: Int, @RequestParam("files[]") media: List<MultipartFile>): String {
         resp["msg"] = "Could not save"
         resp["status"] = ApiResponse.FAIL.status
-
-        uploadedFiles = false
 
         val hasMediaUploadDirectory = model.getAttribute("hasMediaUploadDirectory") as Boolean?
 
@@ -758,11 +722,9 @@ class AlbumsController: BaseController() {
         if (!media.isEmpty() && albumId > 0 && hasMediaUploadDirectory != null && hasMediaUploadDirectory && !settings?.getUploadMediaDirectory().isNullOrBlank()) {
             FileUtils.copyMultipartFiles(media, settings)
 
-            uploadedFiles = true
-
             settingsController.scanMediaDirectories(false, albumId)
 
-            resp["msg"] = "Saved to album"
+            resp["msg"] = "Files uploaded. Processing files"
             resp["status"] = ApiResponse.SUCCESS.status
         }
 

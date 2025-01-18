@@ -59,51 +59,15 @@ class BrowseController: BaseController() {
     @Autowired
     private lateinit var settingsController: SettingsController
 
-    private var uploadedFiles: Boolean = false
-
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
-
-    @MessageMapping("/scanbrowseuploadmessages")
-    @SendTo("/topic/browseuploadmessages")
-    @Throws(java.lang.Exception::class)
-    fun sendTimelineUploadMessage(message: ScanMessage): Message? {
-        val messageMap = mutableMapOf<String,Any>()
-
-        messageMap["uploadedFiles"] = uploadedFiles
-
-        val response: String = mapper.writeValueAsString(messageMap)
-
-        val messageObj = Message()
-        messageObj.setContent(response)
-
-        return messageObj
-    }
-
-    @SubscribeMapping("/topic/browseuploadmessages")
-    fun subscribe(
-        session: HttpSession,
-        @PathVariable pipelineId: String,
-        @PathVariable topic: String
-    ) {}
-
-    @EventListener
-    fun onApplicationEvent(event: SessionConnectEvent) {}
-
-    @EventListener
-    fun onApplicationEvent(event: SessionDisconnectEvent) {}
-
-    @EventListener
-    fun handleSubscribeEvent(event: SessionSubscribeEvent) {}
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/browse/media/upload/batch"], method = [RequestMethod.POST], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = ["application/json"])
     @ResponseBody
-    fun postUploadToTimeline(model: Model, @RequestParam("uploadMedia") media: List<MultipartFile>): String {
+    fun postUploadToTimeline(model: Model, @RequestParam("files[]") media: List<MultipartFile>): String {
         resp["msg"] = "Could not save"
         resp["status"] = ApiResponse.FAIL.status
-
-        uploadedFiles = false
 
         val hasMediaUploadDirectory = model.getAttribute("hasMediaUploadDirectory") as Boolean?
 
@@ -111,8 +75,6 @@ class BrowseController: BaseController() {
 
         if (!media.isEmpty() && hasMediaUploadDirectory != null && hasMediaUploadDirectory && !settings?.getUploadMediaDirectory().isNullOrBlank()) {
             FileUtils.copyMultipartFiles(media, settings)
-
-            uploadedFiles = true
 
             settingsController.scanMediaDirectories(false)
 
