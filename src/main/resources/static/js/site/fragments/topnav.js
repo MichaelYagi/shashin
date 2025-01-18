@@ -825,6 +825,7 @@ function initializeUploads() {
                     if (uploadedFiles === true) {
                         shashin.showToastMessage("Media uploaded", "Media upload complete. Processing media.", {
                             icon: "bi-info-circle",
+                            placement: shashin.toast.placement.top.center,
                             target:shashin.toast.target.three,
                             iconColor: "#777777",
                             delay: 5000,
@@ -878,6 +879,7 @@ function initializeUploads() {
             }
             shashin.showToastMessage("Media being uploaded to album", "Media being uploaded to album:\n\n" + filelist, {
                 icon: "bi-info-circle",
+                placement: shashin.toast.placement.top.center,
                 iconColor: "#777777",
                 delay: 5000,
                 borderColor: "success"
@@ -905,6 +907,7 @@ function initializeUploads() {
             }
             shashin.showToastMessage("Media being uploaded", "Photos being uploaded:\n\n" + filelist, {
                 icon: "bi-info-circle",
+                placement: shashin.toast.placement.top.center,
                 iconColor: "#777777",
                 delay: 5000,
                 borderColor: "success"
