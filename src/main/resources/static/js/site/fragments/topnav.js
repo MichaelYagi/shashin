@@ -2,7 +2,7 @@ $(window).bind("load", function () {
     $("header .placeholder").removeClass("placeholder");
 });
 
-async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts, searchHistoryLimit, queryLimit, accessTimelineView) {
+async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts, searchHistoryLimit, queryLimit, accessTimelineView, hasMediaUploadDirectory) {
     shashin.darkMode = darkMode;
     shashin.showPlacename = placeNames;
 
@@ -135,7 +135,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
 
     captureMessages(activePage, notificationAlerts, timezone);
 
-    if (activePage === "recent" || activePage === "modified" || activePage === "taken" || activePage === "accessed" || activePage === "archived" || activePage === "folders" || activePage === "folder" || activePage === "album") {
+    if (hasMediaUploadDirectory === true && (activePage === "recent" || activePage === "modified" || activePage === "taken" || activePage === "accessed" || activePage === "archived" || activePage === "folders" || activePage === "folder" || activePage === "album")) {
         initializeUploads(activePage);
     }
 }
@@ -932,13 +932,24 @@ function initializeUploads(activePage) {
                 response => response.json()
             ).then(
                 success => {
-                    shashin.showToastMessage("Media uploaded", success["msg"]+":<br>" + filelist, {
-                        icon: "bi-info-circle",
-                        placement: shashin.toast.placement.top.center,
-                        iconColor: "#777777",
-                        delay: 5000,
-                        borderColor: "success"
-                    });
+                    const status = success.hasOwnProperty("status") === true ? success["status"] : "fail";
+                    if (status === "success") {
+                        shashin.showToastMessage("Media uploaded", success["msg"] + ":<br>" + filelist, {
+                            icon: "bi-info-circle",
+                            placement: shashin.toast.placement.top.center,
+                            iconColor: "#777777",
+                            delay: 5000,
+                            borderColor: "success"
+                        });
+                    } else {
+                        shashin.showToastMessage("Something went wrong", "Check media upload directory in settings", {
+                            icon: "bi-exclamation-triangle",
+                            placement: shashin.toast.placement.top.center,
+                            iconColor: "#FF0000",
+                            delay: 5000,
+                            borderColor: "danger"
+                        });
+                    }
                 }
             ).catch(
                 error => {
