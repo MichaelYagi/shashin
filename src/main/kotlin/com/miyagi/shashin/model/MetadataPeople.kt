@@ -5,6 +5,5 @@ interface MetadataPeople {
     fun getName(): String?
     fun getCoverUrl(): String?
     fun getTagCount(): Int?
-    fun getMetadataId(): String?
     fun getThumbnailUrlCentered(): String?
 }
