@@ -893,7 +893,7 @@ function initializeUploads(activePage) {
         $("#uploadAlbumIcon").addClass('bi-cloud-upload').removeClass('bi-upload');
         $("#uploadMediaIcon").addClass('bi-cloud-upload').removeClass('bi-upload');
         $("header,#container").css({"background-color": "white", "opacity": ".5"});
-        if ($("#defaultToastTarget").hasClass("show") === false) {
+        if ($("#"+shashin.toast.target.default).hasClass("show") === false) {
             shashin.showToastMessage("Drop Media", "Drag and drop media anywhere to upload.", {
                 placement: shashin.toast.placement.top.center,
                 autohide: false
