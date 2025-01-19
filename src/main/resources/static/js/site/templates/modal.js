@@ -6,7 +6,7 @@ class ModalTemplates {
                     <div class="modal-header">
                         <h5 class="modal-title" id="commentModalLabel${metadata.id}">
                             <div id="thumbImage${metadata.id}">
-                                <img loading="lazy" src="${encodeURI(metadata.thumbnailUrlCentered).replace(";", "%3B")}" width="100" height="100">
+                                <img loading="lazy" src="${"/api/v1/thumbnails/centered/"+metadata.id}" width="100" height="100">
                             </div>Comments for ${metadata.fileName}
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -66,7 +66,7 @@ class ModalTemplates {
                     <div class="modal-header">
                         <h5 class="modal-title" id="propEditLabel">Edit "${metadata.title}"
                             <div id="prop${module}Thumbnail${metadata.id}">
-                                <img loading="lazy" src="${encodeURI(metadata.thumbnailUrlCentered).replace(";", "%3B")}" width="100" height="100">
+                                <img loading="lazy" src="${"/api/v1/thumbnails/centered/"+metadata.id}" width="100" height="100">
                             </div>
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

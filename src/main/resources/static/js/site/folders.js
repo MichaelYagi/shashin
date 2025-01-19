@@ -47,7 +47,7 @@ class Folders {
                 for (const index in foldersList) {
                     const folderObj = foldersList[index];
                     const folder = folderObj.folder;
-                    const thumbnailUrlCentered = folderObj.thumbnailUrlCentered;
+                    const thumbnailUrlCentered = "/api/v1/thumbnails/centered/"+folderObj.metadataId;
                     const count = folderObj.count;
 
                     $(GalleryTemplates.getFoldersCard({

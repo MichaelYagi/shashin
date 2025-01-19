@@ -40,6 +40,9 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT metadata.id, metadata.type, metadata.lat, metadata.lng, metadata.year, metadata.month, metadata.day, metadata.thumbnail_url_small as thumbnailUrlSmall, metadata.thumbnail_url_original as thumbnailUrlOriginal, metadata.video_url as videoUrl, metadata.original_image_width as originalImageWidth, metadata.original_image_height as originalImageHeight, metadata.map_marker_url as mapMarkerUrl, metadata.place_name as placeName FROM metadata WHERE metadata.taken_at >= :startDate AND metadata.taken_at <= :endDate AND hidden = 0 AND lat IS NOT NULL AND lat != \"\" AND lng IS NOT NULL AND lng != \"\" ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findTimelineDatesForMap(@Param("offset") offset: Int, @Param("limit") limit: Int, @Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<MapData>
 
+   @Query("SELECT * FROM metadata WHERE thumbnail_url_centered = :thumbnailUrlCentered", nativeQuery = true)
+   fun findByThumbnailCentered(@Param("thumbnailUrlCentered") thumbnailUrlCentered: String): Metadata?
+
    @Query("SELECT * FROM metadata WHERE hidden = 0 ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
@@ -112,7 +115,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND year = :year AND month = :month AND day = :day AND hidden = 0 ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findAllByTypeAndYearAndMonthAndDay(@Param("type") type: String?,@Param("year") year: Int?,@Param("month") month: Int?,@Param("day") day: Int?): MutableIterable<Metadata>
 
-   @Query("SELECT rl.id,rl.name,rl.cover_url as coverUrl, COUNT(*) AS tagCount, m.thumbnail_url_centered AS thumbnailUrlCentered FROM metadata m INNER JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id INNER JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id WHERE rl.name != :objectName AND m.hidden = 0 AND rlp.confidence >= 0.0 AND rlp.confidence <= :recognitionConfidenceThreshold GROUP BY rl.id", nativeQuery = true)
+   @Query("SELECT rl.id,rl.name,rl.cover_url as coverUrl, COUNT(*) AS tagCount, m.id as metadataId, m.thumbnail_url_centered AS thumbnailUrlCentered FROM metadata m INNER JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id INNER JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id WHERE rl.name != :objectName AND m.hidden = 0 AND rlp.confidence >= 0.0 AND rlp.confidence <= :recognitionConfidenceThreshold GROUP BY rl.id", nativeQuery = true)
    fun findMetadataByPeople(@Param("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String, @Param("objectName") objectName: String): MutableIterable<MetadataPeople>
 
    @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp on m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl on rlp.recognition_label_id = rl.id WHERE m.hidden = 0 AND rl.id = :recognitionLabelId AND rlp.confidence >= 0.0 AND rlp.confidence <= :recognitionConfidenceThreshold ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC LIMIT :offset, :limit", nativeQuery = true)
@@ -120,7 +123,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp on m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl on rlp.recognition_label_id = rl.id WHERE m.hidden = 0 AND rl.id = :recognitionLabelId AND rlp.confidence >= 0.0 AND rlp.confidence <= :recognitionConfidenceThreshold ORDER BY m.modified_at DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findMetadataByPersonByModified(@Param("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String, @Param("recognitionLabelId") recognitionLabelId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT rl.id,rl.name,rl.cover_url as coverUrl, COUNT(distinct m.id || rl.id) AS tagCount, m.thumbnail_url_centered AS thumbnailUrlCentered FROM metadata m LEFT JOIN albumphoto ap on m.id = ap.metadata_id LEFT JOIN useralbum ua on ap.album_id = ua.album_id LEFT JOIN recognitionlabelphoto rlp on m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl on rlp.recognition_label_id = rl.id WHERE m.hidden = 0 AND rl.name != :objectName AND rlp.confidence >= 0.0 AND rlp.confidence <= :recognitionConfidenceThreshold AND ua.user_id = :userId GROUP BY rl.id", nativeQuery = true)
+   @Query("SELECT rl.id,rl.name,rl.cover_url as coverUrl, COUNT(distinct m.id || rl.id) AS tagCount, m.id as metadataId, m.thumbnail_url_centered AS thumbnailUrlCentered FROM metadata m LEFT JOIN albumphoto ap on m.id = ap.metadata_id LEFT JOIN useralbum ua on ap.album_id = ua.album_id LEFT JOIN recognitionlabelphoto rlp on m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl on rlp.recognition_label_id = rl.id WHERE m.hidden = 0 AND rl.name != :objectName AND rlp.confidence >= 0.0 AND rlp.confidence <= :recognitionConfidenceThreshold AND ua.user_id = :userId GROUP BY rl.id", nativeQuery = true)
    fun findAlbumPhotoByPeople(@Param("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String,@Param("userId") userId: Int, @Param("objectName") objectName: String): MutableIterable<MetadataPeople>
 
    @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN albumphoto ap on m.id = ap.metadata_id LEFT JOIN useralbum ua on ap.album_id = ua.album_id LEFT JOIN recognitionlabelphoto rlp on m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl on rlp.recognition_label_id = rl.id WHERE m.hidden = 0 AND rl.id = :recognitionLabelId AND rlp.confidence >= 0.0 AND rlp.confidence <= :recognitionConfidenceThreshold AND ua.user_id = :userId ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC LIMIT :offset, :limit", nativeQuery = true)
@@ -139,7 +142,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT COUNT(DISTINCT folder) FROM metadata WHERE hidden = 0", nativeQuery = true)
    fun countByFolder(): Int
 
-   @Query("SELECT m.folder, m.thumbnail_url_centered as thumbnailUrlCentered, (SELECT COUNT(*) FROM metadata m1 WHERE m1.folder = m.folder AND m1.hidden = 0) as count FROM metadata m WHERE m.hidden = 0 GROUP BY m.folder ORDER BY m.folder ASC LIMIT :offset, :limit", nativeQuery = true)
+   @Query("SELECT m.folder, m.id as metadataId, m.thumbnail_url_centered as thumbnailUrlCentered, (SELECT COUNT(*) FROM metadata m1 WHERE m1.folder = m.folder AND m1.hidden = 0) as count FROM metadata m WHERE m.hidden = 0 GROUP BY m.folder ORDER BY m.folder ASC LIMIT :offset, :limit", nativeQuery = true)
    fun findFoldersOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Folder?>?
 
    @Query("SELECT * FROM metadata WHERE folder = :folder AND hidden = 0 ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)

@@ -467,7 +467,7 @@ async function showMap(mapdata, keywordMap) {
             }
 
             const placeName = data["placeName"] !== null ? data["placeName"] : "";
-            const mapMarkerUrl = data["mapMarkerUrl"] !== null ? data["mapMarkerUrl"] : "";
+            const mapMarkerUrl = data["mapMarkerUrl"] !== null ? "/api/v1/thumbnails/map/"+data["id"] : "";
             const type = data["type"] !== null ? data["type"] : "";
             const keywords = keywordMap.hasOwnProperty(data["id"]) && keywordMap[data["id"]].length > 0 ? keywordMap[data["id"]] : "";
 
@@ -515,15 +515,15 @@ async function showMap(mapdata, keywordMap) {
                             anchorXUnits: 'fraction',
                             anchorYUnits: 'pixels',
                             opacity: 1.0,
-                            src: encodeURI(data["mapMarkerUrl"]).replace(";", "%3B") + (version === "" ? "" : "?v=" + version)
+                            src: "/api/v1/thumbnails/map/"+data["id"] + (version === "" ? "" : "?v=" + version)
                         }))
                     });
 
                     const iconFeature = new ol.Feature({
                         geometry: new ol.geom.Point(ol.proj.transform([data["lng"], data["lat"]], 'EPSG:4326', 'EPSG:900913')),
-                        thumbnailUrlSmall: data["thumbnailUrlSmall"],
+                        thumbnailUrlSmall: "/api/v1/thumbnails/225/"+data["id"],
                         thumbnailUrlOriginal: data["thumbnailUrlOriginal"],
-                        mapMarkerUrl: data["mapMarkerUrl"],
+                        mapMarkerUrl: "/api/v1/thumbnails/map/"+data["id"],
                         mapMarkerIcon: mapMarkerIcon,
                         videoUrl: data["videoUrl"],
                         originalImageWidth: data["originalImageWidth"],
