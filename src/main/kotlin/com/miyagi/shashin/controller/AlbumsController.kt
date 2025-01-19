@@ -709,7 +709,7 @@ class AlbumsController: BaseController() {
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/album/media/upload/batch/{albumId}"], method = [RequestMethod.POST], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = ["application/json"])
+    @RequestMapping(value = ["/album/media/upload/batch/{albumId}","/api/v1/album/media/upload/batch/{albumId}"], method = [RequestMethod.POST], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = ["application/json"])
     @ResponseBody
     fun postUploadToAlbum(model: Model, @PathVariable albumId: Int, @RequestParam("files[]") media: List<MultipartFile>): String {
         resp["msg"] = "Could not save"
