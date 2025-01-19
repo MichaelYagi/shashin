@@ -63,7 +63,7 @@ class BrowseController: BaseController() {
     val resp = mutableMapOf<String, String?>()
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
-    @RequestMapping(value = ["/browse/media/upload/batch"], method = [RequestMethod.POST], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = ["application/json"])
+    @RequestMapping(value = ["/metadata/media/upload/batch","/api/v1/metadata/media/upload/batch"], method = [RequestMethod.POST], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = ["application/json"])
     @ResponseBody
     fun postUploadToTimeline(model: Model, @RequestParam("files[]") media: List<MultipartFile>): String {
         resp["msg"] = "Could not save"

@@ -154,7 +154,7 @@
                         <span th:class="'bi-upload placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" id="uploadMediaIcon" style="font-size: 1.5rem;"></span>
                     </a>
                     <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
-                    <form style="display: none" id="uploadForm" action="/browse/media/upload/batch" method="post" enctype="multipart/form-data" target="dummyframe">
+                    <form style="display: none" id="uploadForm" action="/metadata/media/upload/batch" method="post" enctype="multipart/form-data" target="dummyframe">
                         <input type="file" id="uploadMedia" name="uploadMedia" th:accept="${'.'+#strings.listJoin(acceptedMediaTypes, ',.')}" multiple>
                     </form>
                 </th:block>
