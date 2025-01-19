@@ -357,21 +357,21 @@ class FileUtils {
         fun copyMultipartFiles(media: List<MultipartFile>, settings: Settings): MutableMap<String, MutableList<String>> {
             var uploadDirectory = settings.getUploadMediaDirectory()?.replace('\\', '/')
             if (uploadDirectory?.last() != '/') {
-                uploadDirectory = "$uploadDirectory/"
+                uploadDirectory = "$uploadDirectory/shashin/"
             }
 
             val ret = mutableMapOf<String, MutableList<String>>()
             val uploadedFiles = mutableListOf<String>()
             val notUploadedFiles = mutableListOf<String>()
 
+            val simpleTimestamp = TextUtils.getUnformattedCurrentTimestamp()
+            if (!File(uploadDirectory + simpleTimestamp).exists()) {
+                Files.createDirectories(Paths.get(uploadDirectory + simpleTimestamp))
+            }
+
             for (file in media) {
-                if (!File(uploadDirectory + TextUtils.getUnformattedCurrentTimestamp()).exists()) {
-                    Files.createDirectories(Paths.get(uploadDirectory + TextUtils.getUnformattedCurrentTimestamp()))
-                }
-
-                val copyToFile = File(uploadDirectory + TextUtils.getUnformattedCurrentTimestamp() + "/" +file.originalFilename)
+                val copyToFile = File(uploadDirectory + simpleTimestamp + "/" +file.originalFilename)
                 if (!copyToFile.exists()) {
-
                     try {
                         copyToFile.createNewFile()
                         val outputStream = FileOutputStream(copyToFile)
