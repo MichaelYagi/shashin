@@ -372,7 +372,14 @@ class AlbumsController: BaseController() {
 
                         albumMap["id"] = albumObj.get().getId()
                         albumMap["name"] = if (albumObj.get().getName() == null) "" else albumObj.get().getName()!!
-                        albumMap["coverUrl"] = if (albumObj.get().getCoverUrl() == null) "" else albumObj.get().getCoverUrl()!!
+                        var coverUrl = ""
+                        if (albumObj.get().getCoverUrl() != null) {
+                            val metadata = metadataRepository.findByThumbnailCentered(albumObj.get().getCoverUrl().toString())
+                            if (metadata != null) {
+                                coverUrl = "/api/v1/thumbnails/centered/"+metadata.getId()
+                            }
+                        }
+                        albumMap["coverUrl"] = coverUrl
                         albumMap["shareUrl"] = if (albumObj.get().getShareUrl() == null) "" else albumObj.get().getShareUrl()!!
                         albumMap["albumPhotoCount"] = albumPhotoCount
                         albumMap["albumVideoCount"] = albumVideoCount

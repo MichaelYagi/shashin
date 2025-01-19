@@ -73,6 +73,97 @@ class MediaServiceController {
 
     private var validFileNameRegex = "[^a-zA-Z0-9.-]".toRegex()
 
+    @RequestMapping(value = ["/api/v1/thumbnails/{type}/{metadataId}"], method = [RequestMethod.GET])
+    fun getThumbnail(model: Model, request: HttpServletRequest, @PathVariable type: String, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
+        val metadataObj = metadataRepository.findById(metadataId)
+
+        if (metadataObj.isPresent) {
+            // Updated viewed date
+            val metadata = metadataObj.get()
+            metadata.setLastAccessedAt(getCurrentTimestamp())
+
+            val currentUserObj = request.session?.getAttribute("CurrentUser") as User?
+            if (currentUserObj != null && currentUserObj.getId() > 0) {
+                metadata.setLastAccessedBy(currentUserObj.getId())
+            } else {
+                metadata.setLastAccessedBy(0)
+            }
+            metadata.setFreeFormString(getMetadataFreeformString(model))
+            metadataRepository.save(metadata)
+
+            var path = metadata.getThumbnailPathSmall()
+            if (type == "225") {
+                path = metadata.getThumbnailPathSmall()
+            } else if (type == "112") {
+                path = metadata.getThumbnailUrlExtraSmall()
+            } else if (type == "centered") {
+                path = metadata.getThumbnailPathCentered()
+            } else if (type == "map") {
+                path = metadata.getMapMarkerPath()
+            }
+
+            var resource = FileSystemResource(path!!)
+            val headers = HttpHeaders()
+            try {
+                headers.contentLength = resource.contentLength()
+                if (metadataObj.get().getType() != null && "/" in metadataObj.get().getType()!!) {
+                    val typeList = metadataObj.get().getType()!!.split("/")
+                    if (typeList.count() == 2) {
+                        headers.contentType = MediaType(typeList[0], typeList[1])
+                    }
+                }
+                headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
+                return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
+            } catch (e: Exception) {
+                logger.log(
+                    Level.SEVERE,
+                    "Error setting image ResponseEntity for "+path+": " + e.message
+                )
+
+                val source = URLDataSource(this.javaClass.getResource("/static/images/fnf.png"))
+                resource = FileSystemResource(source.url.path)
+                headers.contentLength = resource.contentLength()
+                if (metadataObj.get().getType() != null && "/" in metadataObj.get().getType()!!) {
+                    val typeList = metadataObj.get().getType()!!.split("/")
+                    if (typeList.count() == 2) {
+                        headers.contentType = MediaType(typeList[0], typeList[1])
+                    }
+                }
+                headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
+                return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
+            }
+        } else {
+            Thread {
+                val admins = userRepository.findAllAdmins()
+                val userIp = model.getAttribute("clientIP").toString()
+                if (!TextUtils.isLocalIp(userIp)) {
+                    val notificationObjList = mutableListOf<Notification>()
+                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                    sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                    for (admin in admins) {
+                        val notificationObj = Notification()
+                        notificationObj.setUserId(admin.getId())
+                        notificationObj.setCreatedAt(getCurrentTimestamp())
+                        notificationObj.setModifiedAt(getCurrentTimestamp())
+                        notificationObj.setRead(false)
+                        val message =
+                            "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to view invalid image with metadata ID $metadataId at ${
+                                sdtf.format(Date())
+                            }"
+                        notificationObj.setMessage(message)
+                        notificationObjList.add(notificationObj)
+                    }
+
+                    if (notificationObjList.isNotEmpty()) {
+                        notificationRepository.saveAll(notificationObjList)
+                    }
+                }
+            }.start()
+
+            return ResponseEntity<FileSystemResource>(null, null, HttpStatus.NOT_FOUND)
+        }
+    }
+
     @RequestMapping(value = ["/api/v1/video/{metadataId}"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
     @ResponseBody
     @Throws(IOException::class)

@@ -145,6 +145,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
     ): ResponseEntity<Any>? {
         val acceptHeader = request.getHeader("accept")?.lowercase()
         if (acceptHeader != null && acceptHeader.contains("text/html")) {
+            // Causes an UnsupportedOperationException for some reason
             headers.contentType = MediaType.TEXT_HTML
         }
         return buildResponseEntity(ApiError(HttpStatus.NOT_FOUND, ex.localizedMessage, ex), headers)

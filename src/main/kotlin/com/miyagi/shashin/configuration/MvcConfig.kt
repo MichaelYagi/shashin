@@ -20,15 +20,18 @@ class MvcConfig : WebMvcConfigurer {
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         val rootPath = FileSystemResource("").file.absolutePath
-        var thumbnailDir = "file:///$rootPath$relativeSidecarDir"+"thumbnails/"
-        thumbnailDir = thumbnailDir.replace('\\', '/').lowercase()
+
+//        var thumbnailDir = "file:///$rootPath$relativeSidecarDir"+"thumbnails/"
+//        thumbnailDir = thumbnailDir.replace('\\', '/').lowercase()
 
         var profileDir = "file:///$rootPath$relativeSidecarDir"+"profile/"
         profileDir = profileDir.replace('\\', '/').lowercase()
 
         registry
-            .addResourceHandler("/api/$apiVersion/thumbnails/**", "/api/$apiVersion/profile/**")
-            .addResourceLocations(thumbnailDir, profileDir)
+//            .addResourceHandler("/api/$apiVersion/thumbnails/**", "/api/$apiVersion/profile/**")
+//            .addResourceLocations(thumbnailDir, profileDir)
+            .addResourceHandler("/api/$apiVersion/profile/**")
+            .addResourceLocations(profileDir)
             .setCachePeriod(3600)
             .resourceChain(true)
             .addResolver(PathResourceResolver())
@@ -36,7 +39,7 @@ class MvcConfig : WebMvcConfigurer {
 
     override fun configurePathMatch(configurer: PathMatchConfigurer) {
         val urlPathHelper = UrlPathHelper()
-        urlPathHelper.isUrlDecode = false
+        urlPathHelper.isUrlDecode = true
         configurer.setUrlPathHelper(urlPathHelper)
     }
 }

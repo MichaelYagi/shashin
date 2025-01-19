@@ -34,7 +34,7 @@ class TimelineTemplates {
     `};
 
     static HeaderThumbnail({metadata,version,showMap}) { return `
-        <img loading="lazy" src="${encodeURI(metadata.thumbnailUrlCentered).replace(";", "%3B")+(version === "" ? "" : "?v=" + version)}" height="100" width="100" style="float: left;">${(metadata.lat !== null && metadata.lng !== null && showMap === true) ? `<div id="headerMap" class="map ps-2" style="width: 108px; height: 100px; overflow: hidden;"></div>` : ''}
+        <img loading="lazy" src="${"/api/v1/thumbnails/centered/"+metadata.id+(version === "" ? "" : "?v=" + version)}" height="100" width="100" style="float: left;">${(metadata.lat !== null && metadata.lng !== null && showMap === true) ? `<div id="headerMap" class="map ps-2" style="width: 108px; height: 100px; overflow: hidden;"></div>` : ''}
     `};
 
     static BatchHeaderThumbnail({thumbnailImage, title, version}) { return `
@@ -68,14 +68,14 @@ class TimelineTemplates {
         <div id="photoThumbnailContainer${metadata.id}" class="photo-thumbnail-container photo-thumbnail ${(metadata.type.includes('video') ? `is-video` : `is-not-video`)}" style="width:${metadata.thumbnailSmallWidth}px;height:${metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
             <a class="lightGalleryIndexAnchor" id="lightGalleryIndex${metadata.id}"></a>
             <input type="hidden" name="filename${metadata.id}" id="filename${metadata.id}" value="${metadata.fileName}">
-            <input type="hidden" name="thumbnailCentered${metadata.id}" id="thumbnailCentered${metadata.id}" value="${encodeURI(metadata.thumbnailUrlCentered).replace(";", "%3B")}">
+            <input type="hidden" name="thumbnailCentered${metadata.id}" id="thumbnailCentered${metadata.id}" value="${"/api/v1/thumbnails/centered/"+metadata.id}">
             ${(metadata.year == null || metadata.month == null || metadata.day == null) ?
             `
-            <input type="hidden" name="thumbnailUrl-undated[]" id="thumbnailUrl_${metadata.id}" value="${encodeURI(metadata.thumbnailUrlSmall).replace(";", "%3B")}">
+            <input type="hidden" name="thumbnailUrl-undated[]" id="thumbnailUrl_${metadata.id}" value="${"/api/v1/thumbnails/225/"+metadata.id }">
             <img loading="lazy" class="photo-thumbnail-image thumbnailTag_undated" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=">
             ` :
             `
-            <input type="hidden" name="thumbnailUrl-${metadata.year}-${metadata.month}-${metadata.day}[]" id="thumbnailUrl_${metadata.id}" value="${encodeURI(metadata.thumbnailUrlSmall).replace(";", "%3B")}">
+            <input type="hidden" name="thumbnailUrl-${metadata.year}-${metadata.month}-${metadata.day}[]" id="thumbnailUrl_${metadata.id}" value="${"/api/v1/thumbnails/225/"+metadata.id}">
             <img loading="lazy" class="photo-thumbnail-image thumbnailTag_${metadata.year}-${metadata.month}-${metadata.day}" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=">
             `}
             
@@ -166,15 +166,15 @@ class TimelineTemplates {
             data-download-url="${(metadata.type.indexOf("video") >= 0) ? encodeURI(metadata.videoUrl) : encodeURI(metadata.thumbnailUrlOriginal).replace(";", "%3B")}/download"
             data-metadata-id="${metadata.id}"
             data-lg-size="${(metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? `${metadata.thumbnailSmallWidth}-${metadata.thumbnailSmallHeight}` : `${metadata.originalImageWidth}-${metadata.originalImageHeight}`}"
-            ${(metadata.type.indexOf("video") >= 0) ? `data-video="${Util.encodeHtml(mediaContent.video)}" data-poster="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? metadata.thumbnailUrlSmall : encodeURI(metadata.thumbnailUrlOriginal).replace(";", "%3B")}?v=${uuid}"` : `data-src="${encodeURI(metadata.thumbnailUrlOriginal)}"`}
+            ${(metadata.type.indexOf("video") >= 0) ? `data-video="${Util.encodeHtml(mediaContent.video)}" data-poster="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/225/"+metadata.id : encodeURI(metadata.thumbnailUrlOriginal).replace(";", "%3B")}?v=${uuid}"` : `data-src="${encodeURI(metadata.thumbnailUrlOriginal)}"`}
             ${(metadata.description != null) ? `data-sub-html="${Util.encodeHtml(metadata.description)}"` : ''}
     
             ${(metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
             metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) ?
             `
             data-lg-size="${metadata.thumbnailSmallWidth}-${metadata.thumbnailSmallHeight}-${metadata.thumbnailSmallWidth},${metadata.originalImageWidth}-${metadata.originalImageHeight}"
-            data-responsive="${encodeURI(metadata.thumbnailUrlSmall).replace(";", "%3B")} ${metadata.thumbnailSmallWidth}"
-            data-thumb="${encodeURI(metadata.thumbnailUrlSmall).replace(";", "%3B")}"
+            data-responsive="${"/api/v1/thumbnails/225/"+metadata.id} ${metadata.thumbnailSmallWidth}"
+            data-thumb="${"/api/v1/thumbnails/225/"+metadata.id}"
             data-width="${metadata.originalImageWidth}"
             ` : ''}
             >

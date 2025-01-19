@@ -1332,7 +1332,7 @@ class SettingsController {
                                                 .getHidden()!!
                                         ) {
                                             albumObj.get().setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
-                                            albumRepository?.save(albumObj.get())
+                                            albumRepository.save(albumObj.get())
                                             logger.log(
                                                 Level.INFO,
                                                 "Set the album cover in /settings/snapshot"
@@ -1723,7 +1723,7 @@ class SettingsController {
                                                                     albumObj.get().setCoverUrl(
                                                                         metadataObj.get().getThumbnailUrlCentered()
                                                                     )
-                                                                    albumRepository?.save(albumObj.get())
+                                                                    albumRepository.save(albumObj.get())
                                                                     logger.log(
                                                                         Level.INFO,
                                                                         "Set the album cover in scanning new files"

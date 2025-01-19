@@ -2,9 +2,9 @@ class GalleryTemplates {
     static PhotoGalleryItem({activePage, metadata, overlayData, uuid}) { return `
         <div id="photoThumbnailContainer${metadata.id}" class="photo-thumbnail-container photo-thumbnail" style="width:${metadata.thumbnailSmallWidth}px;height:${metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
             <span class="lightGalleryIndexAnchor"></span>
-            <img loading="lazy" data-smallthumb="${encodeURI(metadata.thumbnailUrlSmall).replace(";", "%3B")}?v=${uuid}" data-xsmallthumb="${activePage !== 'timeline' && metadata.thumbnailUrlExtraSmall===null?'':encodeURI(metadata.thumbnailUrlExtraSmall)}" src="${encodeURI(metadata.thumbnailUrlSmall)}?v=${uuid}" class="photo-thumbnail-image" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
+            <img loading="lazy" data-smallthumb="${"/api/v1/thumbnails/225/"+metadata.id}?v=${uuid}" data-xsmallthumb="${activePage !== 'timeline' && metadata.thumbnailUrlExtraSmall===null?'':"/api/v1/thumbnails/112/"+metadata.id}" src="${"/api/v1/thumbnails/225/"+metadata.id}?v=${uuid}" class="photo-thumbnail-image" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
             <input type="hidden" name="filename${metadata.id}" id="filename${metadata.id}" value="${metadata.fileName}">
-            <input type="hidden" name="thumbnailCentered${metadata.id}" id="thumbnailCentered${metadata.id}" value="${encodeURI(metadata.thumbnailUrlCentered)}">
+            <input type="hidden" name="thumbnailCentered${metadata.id}" id="thumbnailCentered${metadata.id}" value="${"/api/v1/thumbnails/centered/"+metadata.id}">
             
             ${(activePage === "share")?
             `<div class="thumbnail-bl" id="tnbl${metadata.id}">
@@ -52,7 +52,7 @@ class GalleryTemplates {
         
         <script type="text/javascript"${(shashin.nonce.length > 0 ? ' nonce="' + shashin.nonce + '"' : '')}>
         $(document).ready(function () {
-            shashin.setPhotoOverlays({id:"${metadata.id}",type:"${metadata.type}",lat:"${(metadata.lat === null) ? '' : `${metadata.lat}`}", lng:"${(metadata.lng === null) ? '' : `${metadata.lng}`}", year:${metadata.year}, month:${metadata.month}, day:${metadata.day}, fileName:"${metadata.fileName}", thumbnailUrlSmall:"${metadata.thumbnailUrlSmall}"}, "${activePage}");
+            shashin.setPhotoOverlays({id:"${metadata.id}",type:"${metadata.type}",lat:"${(metadata.lat === null) ? '' : `${metadata.lat}`}", lng:"${(metadata.lng === null) ? '' : `${metadata.lng}`}", year:${metadata.year}, month:${metadata.month}, day:${metadata.day}, fileName:"${metadata.fileName}", thumbnailUrlSmall:"${"/api/v1/thumbnails/225/"+metadata.id}"}, "${activePage}");
             Util.activateMetadataListeners("${metadata.id}");
             $("#mediaLink${metadata.id}").attr("tag", "${metadata.id}");
             
@@ -199,7 +199,7 @@ class GalleryTemplates {
                 <a class="mediaLink" id="mediaLink${id}" data-download-url="${encodeURI(data.metadata.videoUrl).replace(";", "%3B")}/download" 
                     ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}
                     data-metadata-id="${data.metadata.id}"
-                    data-poster="${(data.metadata.thumbnailUrlOriginal === null || data.metadata.thumbnailUrlOriginal === "") ? data.metadata.thumbnailUrlSmall : encodeURI(data.metadata.thumbnailUrlOriginal).replace(";", "%3B")}?v=${uuid}"
+                    data-poster="${(data.metadata.thumbnailUrlOriginal === null || data.metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/225/"+data.metadata.id : encodeURI(data.metadata.thumbnailUrlOriginal).replace(";", "%3B")}?v=${uuid}"
                     data-lg-size="${(data.metadata.originalImageWidth === null || data.metadata.originalImageWidth === "") ? `${data.metadata.thumbnailSmallWidth}-${data.metadata.thumbnailSmallHeight}` : `${data.metadata.originalImageWidth}-${data.metadata.originalImageHeight}`}"
                     data-video=\'{"source": [{"src":"${data.metadata.videoUrl}", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true, "autoplay": true}}\'>
                     ${(activePage !== "slideshow" ? `<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>` : '')}

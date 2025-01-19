@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="robots" content="noindex">
     <meta property="og:type" content="image.photo">
-    <meta property="og:image" th:content="${baseUrl + #strings.substring(#strings.replace(#uris.escapePath(metadataObj.thumbnailUrlCentered),';','%3B'), 1, #strings.length(#strings.replace(#uris.escapePath(metadataObj.thumbnailUrlCentered),';','%3B')))}">
+    <meta property="og:image" th:content="${baseUrl + #strings.substring(#strings.replace('/api/v1/thumbnails/centered/'+metadataObj.id, 1, #strings.length(#strings.replace(#uris.escapePath(metadataObj.thumbnailUrlCentered),';','%3B')))}">
     <meta property="og:url" th:content="${baseUrl + 'image/' + metadataObj.id + '/viewer'}">
     <meta property="og:title" th:content="${metadataObj.title}">
     <meta property="og:description" th:content="${#strings.isEmpty(metadataObj.description)?metadataObj.title:metadataObj.description}">
@@ -46,7 +46,7 @@
        th:data-sub-html="${metadataObj.description}"
        th:data-metadata-id="${metadataObj.id}"
        th:data-download-url="${metadataObj.thumbnailUrlOriginal + '/download'}">
-        <img id="photoImage" th:src="${metadataObj.thumbnailUrlSmall}" />
+        <img id="photoImage" th:src="'/api/v1/thumbnails/225/'+${metadata.id}" />
     </a>
 </div>
 
