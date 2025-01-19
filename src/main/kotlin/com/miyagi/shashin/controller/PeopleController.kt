@@ -682,6 +682,8 @@ class PeopleController: BaseController() {
         model["peopleList"] = mutableListOf<MetadataPeople>()
         val counts = HashMap<Int,Int>()
         model["counts"] = counts
+        val coverUrls = HashMap<Int, String>()
+        model["coverUrls"] = coverUrls
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -698,6 +700,15 @@ class PeopleController: BaseController() {
 
                 if (peopleList != null && peopleList.count() > 0) {
                     for (person in peopleList) {
+                        var coverUrl = ""
+                        if (person.getCoverUrl() != null) {
+                            val metadata = metadataRepository?.findByThumbnailCentered(person.getCoverUrl().toString())
+                            if (metadata != null) {
+                                coverUrl = "/api/v1/thumbnails/centered/"+metadata.getId()
+                            }
+                        }
+                        coverUrls[person.getId() as Int] = coverUrl
+
                         val lowMatchResults = metadataRepository?.findLowMatchesByPerson(
                             person.getId()!!,
                             settings.getRecognitionConfidenceThreshold()!!
@@ -707,6 +718,7 @@ class PeopleController: BaseController() {
                             counts[person.getId()!!] = lowMatchResults.count()
                         }
                     }
+                    model["coverUrls"] = coverUrls
                     model["counts"] = counts
                 }
             }
