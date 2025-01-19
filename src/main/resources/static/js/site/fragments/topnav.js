@@ -894,7 +894,7 @@ function initializeUploads(activePage) {
         $("#uploadMediaIcon").addClass('bi-cloud-upload').removeClass('bi-upload');
         $("header,#container").css({"background-color": "white", "opacity": ".5"});
         if ($("#defaultToastTarget").hasClass("show") === false) {
-            shashin.showToastMessage("Drop Media", "Drag and drop media anywhere to upload", {
+            shashin.showToastMessage("Drop Media", "Drag and drop media anywhere to upload.", {
                 placement: shashin.toast.placement.top.center,
                 autohide: false
             });
@@ -951,7 +951,7 @@ function initializeUploads(activePage) {
                 success => {
                     const status = success.hasOwnProperty("status") === true ? success["status"] : "fail";
                     if (status === "success") {
-                        shashin.showToastMessage("Media uploaded", success["msg"] + ":<br>" + filelist, {
+                        shashin.showToastMessage("Media uploaded", success["msg"] + ":<br>" + filelist + "Refresh page to view.", {
                             icon: "bi-info-circle",
                             placement: shashin.toast.placement.top.center,
                             iconColor: "#777777",
