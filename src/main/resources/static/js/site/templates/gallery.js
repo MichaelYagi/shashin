@@ -199,7 +199,7 @@ class GalleryTemplates {
                 <a class="mediaLink" id="mediaLink${id}" data-download-url="${encodeURI(data.metadata.videoUrl).replace(";", "%3B")}/download" 
                     ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}
                     data-metadata-id="${data.metadata.id}"
-                    data-poster="${(data.metadata.thumbnailUrlOriginal === null || data.metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/225/"+data.metadata.id : encodeURI(data.metadata.thumbnailUrlOriginal).replace(";", "%3B")}?v=${uuid}"
+                    data-poster="${(data.metadata.thumbnailUrlOriginal === null || data.metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/225/"+data.metadata.id : "/api/v1/thumbnails/original/"+data.metadata.id}?v=${uuid}"
                     data-lg-size="${(data.metadata.originalImageWidth === null || data.metadata.originalImageWidth === "") ? `${data.metadata.thumbnailSmallWidth}-${data.metadata.thumbnailSmallHeight}` : `${data.metadata.originalImageWidth}-${data.metadata.originalImageHeight}`}"
                     data-video=\'{"source": [{"src":"${data.metadata.videoUrl}", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true, "autoplay": true}}\'>
                     ${(activePage !== "slideshow" ? `<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>` : '')}
@@ -207,8 +207,8 @@ class GalleryTemplates {
                 `
                 :
                 `
-                <a class="mediaLink" id="mediaLink${id}" data-src="${data.metadata.thumbnailUrlOriginal}" href="${data.metadata.thumbnailUrlOriginal}"
-                    data-download-url="${encodeURI(data.metadata.thumbnailUrlOriginal).replace(";", "%3B")}/download"
+                <a class="mediaLink" id="mediaLink${id}" data-src="${"/api/v1/thumbnails/original/"+data.metadata.id}" href="${"/api/v1/thumbnails/original/"+data.metadata.id}"
+                    data-download-url="${"/api/v1/thumbnails/original/"+data.metadata.id}/download"
                     data-metadata-id="${data.metadata.id}"
                     ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}>
                     ${(activePage !== "slideshow" ? `<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>` : '')}

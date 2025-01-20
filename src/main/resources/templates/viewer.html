@@ -42,10 +42,10 @@
 </head>
 <body>
 <div id="photo" style="display: none;">
-    <a th:href="${metadataObj.thumbnailUrlOriginal}"
+    <a th:href="'/api/v1/thumbnails/original/'+${metadata.id}"
        th:data-sub-html="${metadataObj.description}"
        th:data-metadata-id="${metadataObj.id}"
-       th:data-download-url="${metadataObj.thumbnailUrlOriginal + '/download'}">
+       th:data-download-url="${'/api/v1/thumbnails/original/'+ metadata.id + '/download'}">
         <img id="photoImage" th:src="'/api/v1/thumbnails/225/'+${metadata.id}" />
     </a>
 </div>
