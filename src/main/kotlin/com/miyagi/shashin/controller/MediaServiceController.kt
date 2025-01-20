@@ -105,57 +105,71 @@ class MediaServiceController {
             } else if (type == "centered") {
                 metadata.getThumbnailPathCentered().toString()
             } else if (type == "original") {
-//                val small = metadata.getThumbnailPathSmall().toString()
-//                val smallFile = File(small)
-//                println(small)
-//                val original = small.replace("_225.jpg", "_original.jpg")
-//                val gifOriginal = small.replace("_225.gif", "_original.gif")
-//                if (smallFile.extension == "jpg" && File(original).exists()) {
-//                    println("test1")
-//                    println(original)
-//                    metadata.getThumbnailPathSmall().toString().replace("_225.jpg", "_original.jpg")
-//                } else if (smallFile.extension == "gif" && (File(gifOriginal).exists())) {
-//                    println("test2")
-//                    println(gifOriginal)
-//                    metadata.getThumbnailPathSmall().toString().replace("_225.gif", "_original.gif")
-//                } else {
-//                    println("test3")
-//                    println(metadata.getPath())
-//                    metadata.getPath().toString()
-//                }
+                val small = metadata.getThumbnailPathSmall().toString()
+                val smallFile = File(small)
 
-                metadata.getPath().toString()
+                val original = small.replace("_225.jpg", "_original.jpg")
+                val gifOriginal = small.replace("_225.gif", "_original.gif")
+                if (smallFile.extension == "jpg" && File(original).exists()) {
+                    metadata.getThumbnailPathSmall().toString().replace("_225.jpg", "_original.jpg")
+                } else if (smallFile.extension == "gif" && (File(gifOriginal).exists())) {
+                    metadata.getThumbnailPathSmall().toString().replace("_225.gif", "_original.gif")
+                } else {
+                    metadata.getPath().toString()
+                }
             } else {
                 metadata.getMapMarkerPath().toString()
             }
 
-            var resource = FileSystemResource(path)
             val headers = HttpHeaders()
-            try {
-                headers.contentLength = resource.contentLength()
-                if (metadataObj.get().getType() != null && "/" in metadataObj.get().getType()!!) {
-                    val typeList = metadataObj.get().getType()!!.split("/")
-                    if (typeList.count() == 2) {
-                        headers.contentType = MediaType(typeList[0], typeList[1])
+
+            if (File(path).exists()) {
+                var resource = FileSystemResource(path)
+
+                try {
+                    headers.contentLength = resource.contentLength()
+
+                    val metadataType = if (type == "225" || type == "112" || type == "centered" || type == "map") {
+                        "image/jpg"
+                    } else if (type == "gif") {
+                        "image/gif"
+                    } else {
+                        metadataObj.get().getType().toString()
                     }
+
+                    if ("/" in metadataType) {
+                        val metadataTypeList = metadataType.split("/")
+                        if (metadataTypeList.count() == 2) {
+                            headers.contentType = MediaType(metadataTypeList[0], metadataTypeList[1])
+                            println(metadataTypeList[0])
+                            println(metadataTypeList[1])
+                        }
+                    }
+                    headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
+                    return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
+                } catch (e: Exception) {
+                    logger.log(
+                        Level.SEVERE,
+                        "Error setting image ResponseEntity for " + path + ": " + e.message
+                    )
+
+                    val source = URLDataSource(this.javaClass.getResource("/static/images/fnf.png"))
+                    resource = FileSystemResource(source.url.path)
+                    headers.contentLength = resource.contentLength()
+                    headers.contentType = MediaType("image", "png")
+                    headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
+                    return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
                 }
-                headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
-                return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
-            } catch (e: Exception) {
+            } else {
                 logger.log(
                     Level.SEVERE,
-                    "Error setting image ResponseEntity for "+path+": " + e.message
+                    "Error setting image ResponseEntity for $path"
                 )
 
                 val source = URLDataSource(this.javaClass.getResource("/static/images/fnf.png"))
-                resource = FileSystemResource(source.url.path)
+                val resource = FileSystemResource(source.url.path)
                 headers.contentLength = resource.contentLength()
-                if (metadataObj.get().getType() != null && "/" in metadataObj.get().getType()!!) {
-                    val typeList = metadataObj.get().getType()!!.split("/")
-                    if (typeList.count() == 2) {
-                        headers.contentType = MediaType(typeList[0], typeList[1])
-                    }
-                }
+                headers.contentType = MediaType("image", "png")
                 headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
                 return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
             }
