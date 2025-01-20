@@ -37,9 +37,9 @@
 <!--                                </th:block>-->
                                 <th:block th:unless="${metadata.type.contains('video')}">
                                     <span class="mediaLink" th:id="'mediaLink'+${metadata.id}"
-                                          th:data-download-url="${'/api/v1/'+ metadata.id + '/download'}"
+                                          th:data-download-url="${'/api/v1/image/'+ metadata.id + '/download'}"
                                           th:data-sub-html="${metadata.freeFormString}"
-                                          th:data-src="'/api/v1/thumbnails/original/'+${metadata.id}"
+                                          th:data-src="'/api/v1/image/'+${metadata.id}"
                                           th:data-metadata-id="${metadata.id}"
                                           th:href="'/api/v1/thumbnails/original/'+${metadata.id}">
                                     </span>

@@ -8,9 +8,9 @@
             <th:block th:if="${activePage == 'slideshow'}">
                 <a class="mediaLink" th:id="'mediaLink'+${metadata.id}"
                    th:data-metadata-id="${metadata.id}"
-                   th:data-download-url="${'/api/v1/'+ metadata.id + '/download'}"
+                   th:data-download-url="${'/api/v1/image/'+ metadata.id + '/download'}"
                    th:data-sub-html="${metadata.freeFormString}"
-                   th:data-src="'/api/v1/thumbnails/original/'+${metadata.id}" th:href="'/api/v1/thumbnails/original/'+${metadata.id}">
+                   th:data-src="'/api/v1/image/'+${metadata.id}" th:href="'/api/v1/thumbnails/original/'+${metadata.id}">
                     <th:block th:if="${activePage!='slideshow'}">
                         <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>
                     </th:block>
@@ -19,9 +19,9 @@
             <th:block th:unless="${activePage == 'slideshow'}">
                 <a class="mediaLink" th:id="'mediaLink'+${metadata.id}"
                    th:data-metadata-id="${metadata.id}"
-                   th:data-download-url="${'/api/v1/'+ metadata.id + '/download'}"
+                   th:data-download-url="${'/api/v1/image/'+ metadata.id + '/download'}"
                    th:data-sub-html="${metadata.description}"
-                   th:data-src="'/api/v1/thumbnails/original/'+${metadata.id}" th:href="'/api/v1/thumbnails/original/'+${metadata.id}">
+                   th:data-src="'/api/v1/image/'+${metadata.id}" th:href="'/api/v1/thumbnails/original/'+${metadata.id}">
                     <th:block th:if="${activePage!='slideshow'}">
                         <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>
                     </th:block>
@@ -33,9 +33,9 @@
             <th:block th:if="${activePage == 'slideshow'}">
                 <a class="mediaLink" th:id="'mediaLink'+${metadata.id}"
                    th:data-metadata-id="${metadata.id}"
-                   th:data-download-url="${'/api/v1/'+ metadata.id + '/download'}"
+                   th:data-download-url="${'/api/v1/image/'+ metadata.id + '/download'}"
                    th:data-sub-html="${metadata.freeFormString}"
-                   th:data-src="'/api/v1/thumbnails/original/'+${metadata.id}" th:href="'/api/v1/thumbnails/original/'+${metadata.id}">
+                   th:data-src="'/api/v1/image/'+${metadata.id}" th:href="'/api/v1/thumbnails/original/'+${metadata.id}">
                     <th:block th:if="${activePage!='slideshow'}">
                         <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>
                     </th:block>
@@ -44,9 +44,9 @@
             <th:block th:unless="${activePage == 'slideshow'}">
                 <a class="mediaLink" th:id="'mediaLink'+${metadata.id}"
                    th:data-metadata-id="${metadata.id}"
-                   th:data-download-url="${'/api/v1/'+ metadata.id + '/download'}"
+                   th:data-download-url="${'/api/v1/image/'+ metadata.id + '/download'}"
                    th:data-sub-html="${metadata.description}"
-                   th:data-src="'/api/v1/thumbnails/original/'+${metadata.id}" th:href="'/api/v1/thumbnails/original/'+${metadata.id}">
+                   th:data-src="'/api/v1/image/'+${metadata.id}" th:href="'/api/v1/thumbnails/original/'+${metadata.id}">
                     <th:block th:if="${activePage!='slideshow'}">
                         <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>
                     </th:block>
