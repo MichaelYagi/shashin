@@ -77,7 +77,7 @@ class MediaServiceController {
     fun getThumbnail(model: Model, request: HttpServletRequest, @PathVariable type: String, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
         val metadataObj = metadataRepository.findById(metadataId)
 
-        if (metadataObj.isPresent && (type == "225" || type == "112" || type == "centered" || type == "map" || type == "gif")) {
+        if (metadataObj.isPresent && (type == "original" || type == "225" || type == "112" || type == "centered" || type == "map" || type == "gif")) {
             // Updated viewed date
             val metadata = metadataObj.get()
             metadata.setLastAccessedAt(getCurrentTimestamp())
@@ -101,9 +101,17 @@ class MediaServiceController {
                     metadata.getThumbnailPathSmall().toString()
                 }
             } else if (type == "112") {
-                metadata.getThumbnailUrlExtraSmall().toString()
+                metadata.getThumbnailPathExtraSmall().toString()
             } else if (type == "centered") {
                 metadata.getThumbnailPathCentered().toString()
+            } else if (type == "original") {
+                val small = metadata.getThumbnailPathSmall().toString()
+                val original = small.replace("_225.jpg", "_original.jpg")
+                if (File(original).exists()) {
+                    metadata.getThumbnailPathSmall().toString().replace("_225.jpg", "_original.jpg")
+                } else {
+                    metadata.getThumbnailPathSmall().toString()
+                }
             } else {
                 metadata.getMapMarkerPath().toString()
             }

@@ -1523,10 +1523,10 @@
             mediaContent.video = '{"source": [{"src":"' + encodeURI(metadata.videoUrl).replace(";", "%3B") + '", "type":"video/mp4"}], "attributes": {"preload": "auto", "controls": true, "autoplay": true}}';
             mediaContent.downloadUrl = encodeURI(metadata.videoUrl).replace(";", "%3B") + "/download";
             mediaContent.lgSize = metadata.originalImageWidth+"-"+metadata.originalImageHeight;
-            mediaContent.poster = ((null === metadata.thumbnailUrlOriginal || "" === metadata.thumbnailUrlOriginal) ? "/api/v1/thumbnails/225/"+metadata.id : encodeURI(metadata.thumbnailUrlOriginal).replace(";", "%3B")) + "?v=" + Util.getMetadataLocalStorage();
+            mediaContent.poster = ((null === metadata.thumbnailUrlOriginal || "" === metadata.thumbnailUrlOriginal) ? "/api/v1/thumbnails/225/"+metadata.id : "/api/v1/thumbnails/original/"+metadata.id) + "?v=" + Util.getMetadataLocalStorage();
         } else {
-            mediaContent.src = metadata.thumbnailUrlOriginal;
-            mediaContent.downloadUrl = encodeURI(metadata.thumbnailUrlOriginal).replace(";", "%3B") + "/download";
+            mediaContent.src = "/api/v1/thumbnails/original/"+metadata.id;
+            mediaContent.downloadUrl = "/api/v1/thumbnails/original/"+metadata.id + "/download";
         }
 
         if (metadata.originalImageWidth !== null) {

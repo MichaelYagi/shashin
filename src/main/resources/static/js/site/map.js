@@ -522,7 +522,7 @@ async function showMap(mapdata, keywordMap) {
                     const iconFeature = new ol.Feature({
                         geometry: new ol.geom.Point(ol.proj.transform([data["lng"], data["lat"]], 'EPSG:4326', 'EPSG:900913')),
                         thumbnailUrlSmall: "/api/v1/thumbnails/225/"+data["id"],
-                        thumbnailUrlOriginal: data["thumbnailUrlOriginal"],
+                        thumbnailUrlOriginal: "/api/v1/thumbnails/original/"+data["id"],
                         mapMarkerUrl: "/api/v1/thumbnails/map/"+data["id"],
                         mapMarkerIcon: mapMarkerIcon,
                         videoUrl: data["videoUrl"],
@@ -797,7 +797,7 @@ async function showMap(mapdata, keywordMap) {
 
                 if (featureProperties.type.includes("image")) {
                     mediaContent.src = featureProperties.thumbnailUrlOriginal;
-                    mediaContent.downloadUrl = encodeURI(featureProperties.thumbnailUrlOriginal).replace(";", "%3B") + "/download";
+                    mediaContent.downloadUrl = "/api/v1/thumbnails/original/"+featureProperties["metadataId"] + "/download";
                 } else if (featureProperties.type.includes("video")) {
                     mediaContent.video = {
                         "source": [{"src": featureProperties.videoUrl, "type": "video/mp4"}],
@@ -809,7 +809,7 @@ async function showMap(mapdata, keywordMap) {
                         }
                     }
 
-                    mediaContent.poster = ((featureProperties.thumbnailUrlOriginal === null || featureProperties.thumbnailUrlOriginal === "") ? featureProperties.thumbnailUrlSmall : encodeURI(featureProperties.thumbnailUrlOriginal).replace(";", "%3B")) + "?v=" + Util.getMetadataLocalStorage();
+                    mediaContent.poster = ((featureProperties.thumbnailUrlOriginal === null || featureProperties.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/225/"+featureProperties.metadataId : "/api/v1/thumbnails/original/"+featureProperties.metadataId) + "?v=" + Util.getMetadataLocalStorage();
                     mediaContent.lgSize = featureProperties.originalImageWidth+"-"+featureProperties.originalImageHeight;
                     mediaContent.downloadUrl = encodeURI(featureProperties.videoUrl).replace(";", "%3B") + "/download";
                 }

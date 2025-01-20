@@ -396,7 +396,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             data["baseUrl"] !== ""
         ) {
             $("#mediaSrc").css("display", "block");
-            const photoUrl = data["baseUrl"] + data["metadata"]["thumbnailUrlOriginal"];
+            const photoUrl = data["baseUrl"] + "/api/v1/thumbnails/original/"+data["metadata"]["id"];
 
             const tempImage = new Image();
 
