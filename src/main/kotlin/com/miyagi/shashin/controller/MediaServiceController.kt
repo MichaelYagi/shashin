@@ -141,8 +141,6 @@ class MediaServiceController {
                         val metadataTypeList = metadataType.split("/")
                         if (metadataTypeList.count() == 2) {
                             headers.contentType = MediaType(metadataTypeList[0], metadataTypeList[1])
-                            println(metadataTypeList[0])
-                            println(metadataTypeList[1])
                         }
                     }
                     headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
