@@ -92,7 +92,7 @@
 
                             <div th:id="${'photoThumbnailContainer'+metadata.id}" class="photo-thumbnail-container photo-thumbnail"
                                  th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
-                                <img loading="lazy" th:data-smallthumb="'/api/v1/thumbnails/225/'+${metadata.id}" th:data-xsmallthumb="${metadata.thumbnailUrlExtraSmall==null?'':'/api/v1/thumbnails/112/'+metadata.id}" th:src="${#uris.escapePath(metadata.thumbnailUrlSmall)}" class="photo-thumbnail-image"
+                                <img loading="lazy" th:data-smallthumb="'/api/v1/thumbnails/225/'+${metadata.id}" th:data-xsmallthumb="${metadata.thumbnailUrlExtraSmall==null?'':'/api/v1/thumbnails/112/'+metadata.id}" th:src="'/api/v1/thumbnails/225/'+${metadata.id}" class="photo-thumbnail-image"
                                      th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" th:height="${metadata.thumbnailSmallHeight}">
 
                                 <div th:replace="~{fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight},${metadata.expectedExtension},false)}"></div>

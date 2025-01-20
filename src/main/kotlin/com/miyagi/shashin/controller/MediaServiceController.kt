@@ -77,7 +77,7 @@ class MediaServiceController {
     fun getThumbnail(model: Model, request: HttpServletRequest, @PathVariable type: String, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
         val metadataObj = metadataRepository.findById(metadataId)
 
-        if (metadataObj.isPresent) {
+        if (metadataObj.isPresent && (type == "225" || type == "112" || type == "centered" || type == "map" || type == "gif")) {
             // Updated viewed date
             val metadata = metadataObj.get()
             metadata.setLastAccessedAt(getCurrentTimestamp())
@@ -91,18 +91,24 @@ class MediaServiceController {
             metadata.setFreeFormString(getMetadataFreeformString(model))
             metadataRepository.save(metadata)
 
-            var path = metadata.getThumbnailPathSmall()
-            if (type == "225") {
-                path = metadata.getThumbnailPathSmall()
+            val path = if (type == "225") {
+                metadata.getThumbnailPathSmall().toString()
+            } else if (type == "gif") {
+                val gif = metadata.getThumbnailPathSmall().toString().replace("_225.jpg", "_225.gif")
+                if (File(gif).exists()) {
+                    metadata.getThumbnailPathSmall().toString().replace("_225.jpg", "_225.gif")
+                } else {
+                    metadata.getThumbnailPathSmall().toString()
+                }
             } else if (type == "112") {
-                path = metadata.getThumbnailUrlExtraSmall()
+                metadata.getThumbnailUrlExtraSmall().toString()
             } else if (type == "centered") {
-                path = metadata.getThumbnailPathCentered()
-            } else if (type == "map") {
-                path = metadata.getMapMarkerPath()
+                metadata.getThumbnailPathCentered().toString()
+            } else {
+                metadata.getMapMarkerPath().toString()
             }
 
-            var resource = FileSystemResource(path!!)
+            var resource = FileSystemResource(path)
             val headers = HttpHeaders()
             try {
                 headers.contentLength = resource.contentLength()
