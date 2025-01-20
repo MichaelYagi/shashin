@@ -1596,7 +1596,7 @@ class Util {
             });
         }
         if (metadata.thumbnailUrlOriginal != null || metadata.videoUrl != null) {
-            let relativeShareLink = "/api/v1/thumbnails/original/"+metadata.id;
+            let relativeShareLink = "/api/v1/image/"+metadata.id;
             if (metadata.videoUrl != null) {
                 relativeShareLink = metadata.videoUrl;
             }

@@ -1511,6 +1511,14 @@ class AlbumsController: BaseController() {
                         response["favorites"] = favoritesMap
                         response["albumPhotoCommentsMap"] = albumPhotosCommentsMap
                         response["album"] = album.get()
+                        var coverUrl = ""
+                        if (album.get().getCoverUrl() != null) {
+                            val metadata = metadataRepository.findByThumbnailCentered(album.get().getCoverUrl().toString())
+                            if (metadata != null) {
+                                coverUrl = "/api/v1/thumbnails/centered/"+metadata.getId()
+                            }
+                        }
+                        response["coverUrl"] = coverUrl
                         response["albumId"] = album.get().getId()
                         val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
                         val keywordMap = mutableMapOf<String, String>()

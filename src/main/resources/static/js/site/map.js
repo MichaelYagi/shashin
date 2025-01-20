@@ -797,7 +797,7 @@ async function showMap(mapdata, keywordMap) {
 
                 if (featureProperties.type.includes("image")) {
                     mediaContent.src = featureProperties.thumbnailUrlOriginal;
-                    mediaContent.downloadUrl = "/api/v1/thumbnails/original/"+featureProperties["metadataId"] + "/download";
+                    mediaContent.downloadUrl = "/api/v1/"+featureProperties["metadataId"] + "/download";
                 } else if (featureProperties.type.includes("video")) {
                     mediaContent.video = {
                         "source": [{"src": featureProperties.videoUrl, "type": "video/mp4"}],
