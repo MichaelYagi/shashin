@@ -345,7 +345,7 @@
             mediaContent.downloadUrl = encodeURI(metadata.videoUrl).replace(";", "%3B") + "/download";
         } else {
             mediaContent.src = "/api/v1/thumbnails/original/"+metadata.id;
-            mediaContent.downloadUrl = "/api/v1/thumbnails/original/"+metadata.id + "/download";
+            mediaContent.downloadUrl = "/api/v1/"+metadata.id + "/download";
         }
 
         if (metadata.description !== null && metadata.description !== "") {

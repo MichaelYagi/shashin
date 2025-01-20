@@ -110,7 +110,7 @@ class MediaServiceController {
                 if (File(original).exists()) {
                     metadata.getThumbnailPathSmall().toString().replace("_225.jpg", "_original.jpg")
                 } else {
-                    metadata.getThumbnailPathSmall().toString()
+                    metadata.getPath().toString()
                 }
             } else {
                 metadata.getMapMarkerPath().toString()

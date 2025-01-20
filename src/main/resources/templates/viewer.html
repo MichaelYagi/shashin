@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="robots" content="noindex">
     <meta property="og:type" content="image.photo">
-    <meta property="og:image" th:content="${baseUrl + #strings.substring(#strings.replace('/api/v1/thumbnails/centered/'+metadataObj.id, 1, #strings.length(#strings.replace(#uris.escapePath(metadataObj.thumbnailUrlCentered),';','%3B')))}">
+    <meta property="og:image" th:content="${baseUrl + '/api/v1/thumbnails/centered/' + metadataObj.id}">
     <meta property="og:url" th:content="${baseUrl + 'image/' + metadataObj.id + '/viewer'}">
     <meta property="og:title" th:content="${metadataObj.title}">
     <meta property="og:description" th:content="${#strings.isEmpty(metadataObj.description)?metadataObj.title:metadataObj.description}">
@@ -42,11 +42,11 @@
 </head>
 <body>
 <div id="photo" style="display: none;">
-    <a th:href="'/api/v1/thumbnails/original/'+${metadata.id}"
+    <a th:href="'/api/v1/thumbnails/original/'+${metadataObj.id}"
        th:data-sub-html="${metadataObj.description}"
        th:data-metadata-id="${metadataObj.id}"
-       th:data-download-url="${'/api/v1/thumbnails/original/'+ metadata.id + '/download'}">
-        <img id="photoImage" th:src="'/api/v1/thumbnails/225/'+${metadata.id}" />
+       th:data-download-url="${'/api/v1/'+ metadataObj.id + '/download'}">
+        <img id="photoImage" th:src="'/api/v1/thumbnails/225/'+${metadataObj.id}" />
     </a>
 </div>
 

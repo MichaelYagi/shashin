@@ -1526,7 +1526,7 @@
             mediaContent.poster = ((null === metadata.thumbnailUrlOriginal || "" === metadata.thumbnailUrlOriginal) ? "/api/v1/thumbnails/225/"+metadata.id : "/api/v1/thumbnails/original/"+metadata.id) + "?v=" + Util.getMetadataLocalStorage();
         } else {
             mediaContent.src = "/api/v1/thumbnails/original/"+metadata.id;
-            mediaContent.downloadUrl = "/api/v1/thumbnails/original/"+metadata.id + "/download";
+            mediaContent.downloadUrl = "/api/v1/"+metadata.id + "/download";
         }
 
         if (metadata.originalImageWidth !== null) {

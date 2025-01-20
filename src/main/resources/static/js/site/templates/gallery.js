@@ -208,7 +208,7 @@ class GalleryTemplates {
                 :
                 `
                 <a class="mediaLink" id="mediaLink${id}" data-src="${"/api/v1/thumbnails/original/"+data.metadata.id}" href="${"/api/v1/thumbnails/original/"+data.metadata.id}"
-                    data-download-url="${"/api/v1/thumbnails/original/"+data.metadata.id}/download"
+                    data-download-url="${"/api/v1/"+data.metadata.id}/download"
                     data-metadata-id="${data.metadata.id}"
                     ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}>
                     ${(activePage !== "slideshow" ? `<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>` : '')}

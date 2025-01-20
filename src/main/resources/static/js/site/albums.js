@@ -130,10 +130,11 @@ class Albums {
                 if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("album")) {
                     if (data["status"] === shashin.apiResponse.SUCCESS) {
                         let album = data["album"];
+                        console.log(data)
 
                         $("#albumName").text(album["name"]);
                         const version = Util.getMetadataLocalStorage();
-                        $("#albumCoverThumb").attr("src", album["coverUrl"]+(version === "" ? "" : "?v=" + version));
+                        $("#albumCoverThumb").attr("src", data["coverUrl"]+(version === "" ? "" : "?v=" + version));
                         $("#fullShareLinkContainer").css("display", "none");
                         $("#fullShareLink").text("");
                         $("#shareLink").val("");
