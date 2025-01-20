@@ -105,13 +105,26 @@ class MediaServiceController {
             } else if (type == "centered") {
                 metadata.getThumbnailPathCentered().toString()
             } else if (type == "original") {
-                val small = metadata.getThumbnailPathSmall().toString()
-                val original = small.replace("_225.jpg", "_original.jpg")
-                if (File(original).exists()) {
-                    metadata.getThumbnailPathSmall().toString().replace("_225.jpg", "_original.jpg")
-                } else {
-                    metadata.getPath().toString()
-                }
+//                val small = metadata.getThumbnailPathSmall().toString()
+//                val smallFile = File(small)
+//                println(small)
+//                val original = small.replace("_225.jpg", "_original.jpg")
+//                val gifOriginal = small.replace("_225.gif", "_original.gif")
+//                if (smallFile.extension == "jpg" && File(original).exists()) {
+//                    println("test1")
+//                    println(original)
+//                    metadata.getThumbnailPathSmall().toString().replace("_225.jpg", "_original.jpg")
+//                } else if (smallFile.extension == "gif" && (File(gifOriginal).exists())) {
+//                    println("test2")
+//                    println(gifOriginal)
+//                    metadata.getThumbnailPathSmall().toString().replace("_225.gif", "_original.gif")
+//                } else {
+//                    println("test3")
+//                    println(metadata.getPath())
+//                    metadata.getPath().toString()
+//                }
+
+                metadata.getPath().toString()
             } else {
                 metadata.getMapMarkerPath().toString()
             }
