@@ -2371,35 +2371,27 @@ class TimelineController: BaseController() {
             response["albumMap"] = getAlbumMapForUser(currentUserObj, id)
 
             val accessInfo = metadataRecord.get().getFreeFormString()
-            val accessInfoArray = accessInfo?.split("|")
-            var accessInfoString = ""
-            var accessClientIP = ""
-            var accessBrowser = ""
-            var accessRequestResourceType = ""
-            var accessOS = ""
-            if (accessInfoArray != null && accessInfoArray.size > 1) {
-                accessClientIP = accessInfoArray[0]
-                accessBrowser = accessInfoArray[1]
-                accessRequestResourceType = accessInfoArray[2].uppercase()
-                accessOS = accessInfoArray[3]
-                accessInfoString = " - $accessOS $accessBrowser $accessRequestResourceType"
-            }
+            val freeFormObj = TextUtils.parseMetadataFreeformString(accessInfo)
+            if (freeFormObj != null) {
+                val accessClientIP = freeFormObj.getClientIP()
+                val accessBrowser = freeFormObj.getBrowser()
+                val accessRequestResourceType = freeFormObj.getRequestResourceType()
+                val accessOS = freeFormObj.getOperatingSystem()
+                val accessInfoString = " - $accessOS $accessBrowser $accessRequestResourceType"
 
-            if (currentUserObj?.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") {
-                if (metadataRecord.get().getLastAccessedBy() != null && metadataRecord.get()
-                        .getLastAccessedBy()!! > 0
-                ) {
-                    val userObj = userRepository.findById(metadataRecord.get().getLastAccessedBy())
+                if (currentUserObj?.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") {
+                    if (metadataRecord.get().getLastAccessedBy() != null && metadataRecord.get()
+                            .getLastAccessedBy()!! > 0
+                    ) {
+                        val userObj = userRepository.findById(metadataRecord.get().getLastAccessedBy())
 
-                    if (userObj != null) {
-                        response["lastAccessedByDetails"] = userObj.getUsername() + " " + accessClientIP + accessInfoString
-                    } else {
-                        if (accessInfoString != "") {
+                        if (userObj != null) {
+                            response["lastAccessedByDetails"] =
+                                userObj.getUsername() + " " + accessClientIP + accessInfoString
+                        } else {
                             response["lastAccessedByDetails"] = accessClientIP + accessInfoString
                         }
-                    }
-                } else {
-                    if (accessInfoString != "") {
+                    } else {
                         response["lastAccessedByDetails"] = accessClientIP + accessInfoString
                     }
                 }

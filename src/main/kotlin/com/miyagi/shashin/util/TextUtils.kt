@@ -2,6 +2,7 @@ package com.miyagi.shashin.util
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.configuration.MultiSecurityConfig
+import com.miyagi.shashin.model.FreeFormText
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.MetadataRepository
 import jakarta.servlet.http.HttpServletRequest
@@ -11,6 +12,7 @@ import org.springdoc.core.annotations.RouterOperation
 import org.springframework.http.CacheControl
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
+import org.springframework.ui.Model
 import org.springframework.web.context.support.WebApplicationContextUtils
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 import java.lang.management.ManagementFactory
@@ -58,6 +60,26 @@ class TextUtils {
 
         fun getObjectName(): String {
             return "shashinobject"
+        }
+
+        fun getMetadataFreeformString(model: Model): String {
+            return model.getAttribute("clientIP").toString()+"|"+model.getAttribute("agentName").toString()+"|"+model.getAttribute("requestResourceType").toString()+"|"+model.getAttribute("agentOS").toString()
+        }
+
+        fun parseMetadataFreeformString(freeformString: String?): FreeFormText? {
+            val infoArray = freeformString?.split("|")
+            var freeFormText: FreeFormText? = null
+
+            if (infoArray != null && infoArray.size > 1) {
+                val freeForm = FreeFormText()
+                freeForm.setClientIP(infoArray[0])
+                freeForm.setBrowser(infoArray[1])
+                freeForm.setRequestResourceType(infoArray[2])
+                freeForm.setOperatingSystem(infoArray[3])
+                freeFormText = freeForm
+            }
+
+            return freeFormText
         }
 
         fun isLocalIp(testAddress: String?): Boolean {
