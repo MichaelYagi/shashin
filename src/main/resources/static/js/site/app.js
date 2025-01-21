@@ -879,12 +879,12 @@
             }
             if ($(this).attr("data-src")) {
                 mediaContent.src = $(this).attr("data-src");
-                mediaContent.downloadUrl = $(this).attr("data-src")+"/download";
+                mediaContent.downloadUrl = $(this).attr("data-download-url");
             } else if ($(this).attr("data-video")) {
                 mediaContent.video = $(this).attr("data-video");
                 mediaContent.poster = $(this).attr("data-poster");
                 mediaContent.lgSize = $(this).attr("data-lg-size");
-                mediaContent.downloadUrl = $(this).attr("data-video")+"/download";
+                mediaContent.downloadUrl = $(this).attr("data-download-url");
             }
             mediaContent.metadataId = $(this).attr("data-metadata-id");
             mediaContentList.push(mediaContent);
