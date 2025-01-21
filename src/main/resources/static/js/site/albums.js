@@ -193,11 +193,12 @@ class Albums {
 
                 if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("album") && data["status"] === shashin.apiResponse.SUCCESS) {
                     let album = data["album"];
+
                     $("#albumNameEdit").text(album["name"]);
                     $("#albumEditName").val(album["name"]);
                     $("#originalAlbumName").val(album["name"]);
                     const version = Util.getMetadataLocalStorage();
-                    $("#albumCoverEditThumb").attr("src", album["coverUrl"]+(version === "" ? "" : "?v=" + version));
+                    $("#albumCoverEditThumb").attr("src", data["coverUrl"]+(version === "" ? "" : "?v=" + version));
                     $("#editAlbum").prop('disabled', true);
 
                     $("#propeditalbums").modal('show');
@@ -220,7 +221,7 @@ class Albums {
 
                         $("#albumNameTrash").text(album["name"]);
                         const version = Util.getMetadataLocalStorage();
-                        $("#albumCoverTrashThumb").attr("src", album["coverUrl"]+(version === "" ? "" : "?v=" + version));
+                        $("#albumCoverTrashThumb").attr("src", data["coverUrl"]+(version === "" ? "" : "?v=" + version));
 
                         $("#proptrashalbums").modal('show');
 
@@ -245,7 +246,7 @@ class Albums {
 
                 $("#albumNameComments").text(album["name"]);
                 const version = Util.getMetadataLocalStorage();
-                $("#albumCoverCommentThumb").attr("src", album["coverUrl"]+(version === "" ? "" : "?v=" + version));
+                $("#albumCoverCommentThumb").attr("src", data["coverUrl"]+(version === "" ? "" : "?v=" + version));
 
                 let albumCommentsList = await http.ajax("get", "/albumcomments/"+albumId);
 
