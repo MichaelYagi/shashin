@@ -2098,8 +2098,7 @@
                 shashin.removeFromMetadataIdList(metadata.id);
                 shashin.removeFromMetadataFilenamesList($('#filename' + metadata.id).val());
                 shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
-                if (metadata.type.includes("video") && view !== "timeline"
-                    //&& (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
+                if (metadata.type.includes("video") && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
                 ) {
                     const gifUrl = $("#image" + metadata.id).attr("src").replace("/225/" + metadata.id, "/gif/" + metadata.id);
                     $("#image" + metadata.id).attr("src", gifUrl);
@@ -2216,8 +2215,7 @@
                     shashin.removeFromMetadataIdList(metadata.id);
                     shashin.removeFromMetadataFilenamesList($('#filename' + metadata.id).val());
                     shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
-                    if (metadata.type.includes("video") && view !== "timeline"
-                        //&& (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
+                    if (metadata.type.includes("video") && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
                     ) {
                         const gifUrl = $("#image" + metadata.id).attr("src").replace("/225/" + metadata.id, "/gif/" + metadata.id);
                         $("#image" + metadata.id).attr("src", gifUrl);
@@ -2302,8 +2300,7 @@
         });
 
         $("#photoThumbnailContainer" + metadata.id).hover(function () {
-            if (metadata.type.includes("video") && view !== "timeline"
-                //&& (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
+            if (metadata.type.includes("video") && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
             ) {
                 if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
                     const gifUrl = $("#image" + metadata.id).attr("src").replace("/225/" + metadata.id, "/gif/" + metadata.id);
