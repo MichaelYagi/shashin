@@ -141,7 +141,7 @@
                 // }, 1500);
             }
 
-            renderViewport();
+            //renderViewport();
 
             // Prevent getting stuck scrolling up
             if ($("#container").position().top === $("#infinite-scroll-gallery").position().top ||
