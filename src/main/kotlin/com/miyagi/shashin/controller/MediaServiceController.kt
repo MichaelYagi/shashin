@@ -88,7 +88,7 @@ class MediaServiceController {
             } else {
                 metadata.setLastAccessedBy(0)
             }
-            metadata.setFreeFormString(getMetadataFreeformString(model))
+            metadata.setFreeFormString(TextUtils.getMetadataFreeformString(model))
             metadataRepository.save(metadata)
 
             val path = if (type == "225") {
@@ -426,7 +426,7 @@ class MediaServiceController {
         } else {
             metadataObj.setLastAccessedBy(0)
         }
-        metadataObj.setFreeFormString(getMetadataFreeformString(model))
+        metadataObj.setFreeFormString(TextUtils.getMetadataFreeformString(model))
         metadataRepository.save(metadataObj)
 
         var resource = FileSystemResource(path)
@@ -498,7 +498,7 @@ class MediaServiceController {
             } else {
                 metadata.setLastAccessedBy(0)
             }
-            metadata.setFreeFormString(getMetadataFreeformString(model))
+            metadata.setFreeFormString(TextUtils.getMetadataFreeformString(model))
             metadataRepository.save(metadata)
         }
 
@@ -537,7 +537,7 @@ class MediaServiceController {
                 Thread {
                     metadata.setLastAccessedAt(getCurrentTimestamp())
                     metadata.setLastAccessedBy(currentUser.getId())
-                    metadata.setFreeFormString(getMetadataFreeformString(model))
+                    metadata.setFreeFormString(TextUtils.getMetadataFreeformString(model))
                     metadataRepository.save(metadata)
                 }.start()
 
@@ -584,7 +584,7 @@ class MediaServiceController {
                 Thread {
                     randomMetadata.setLastAccessedAt(getCurrentTimestamp())
                     randomMetadata.setLastAccessedBy(currentUser.getId())
-                    randomMetadata.setFreeFormString(getMetadataFreeformString(model))
+                    randomMetadata.setFreeFormString(TextUtils.getMetadataFreeformString(model))
                     metadataRepository.save(randomMetadata)
                 }.start()
 
@@ -634,7 +634,7 @@ class MediaServiceController {
                 Thread {
                     randomMetadata.setLastAccessedAt(getCurrentTimestamp())
                     randomMetadata.setLastAccessedBy(currentUser.getId())
-                    randomMetadata.setFreeFormString(getMetadataFreeformString(model))
+                    randomMetadata.setFreeFormString(TextUtils.getMetadataFreeformString(model))
                     metadataRepository.save(randomMetadata)
                 }.start()
 
@@ -650,10 +650,6 @@ class MediaServiceController {
         }
 
         return mapper.writeValueAsString(resp)
-    }
-
-    private fun getMetadataFreeformString(model: Model): String {
-        return model.getAttribute("clientIP").toString()+"|"+model.getAttribute("agentName").toString()+"|"+model.getAttribute("requestResourceType").toString()+"|"+model.getAttribute("agentOS").toString()
     }
 
     private fun getRandomImageBy(type: String, model: Model, request: HttpServletRequest, filter: String, height: Optional<Int>, width: Optional<Int>, orientationImage: Optional<Int>, albumsOnly: Optional<Boolean>, ttl: Optional<String>): ResponseEntity<FileSystemResource> {
@@ -723,7 +719,7 @@ class MediaServiceController {
                 Thread {
                     randomMetadata.setLastAccessedAt(getCurrentTimestamp())
                     randomMetadata.setLastAccessedBy(currentUser.getId())
-                    randomMetadata.setFreeFormString(getMetadataFreeformString(model))
+                    randomMetadata.setFreeFormString(TextUtils.getMetadataFreeformString(model))
                     metadataRepository.save(randomMetadata)
                 }.start()
 
@@ -898,7 +894,7 @@ class MediaServiceController {
             } else {
                 metadata.setLastAccessedBy(0)
             }
-            metadata.setFreeFormString(getMetadataFreeformString(model))
+            metadata.setFreeFormString(TextUtils.getMetadataFreeformString(model))
             metadataRepository.save(metadata)
 
             val path = metadataObj.get().getPath()!!
