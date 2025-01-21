@@ -1166,6 +1166,10 @@ class Util {
         return dateString;
     }
 
+    static getPlaceholderBackground() {
+        return "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
+    }
+
     // Validates yyy-mm-dd format
     static isValidDate(dateString) {
         if (dateString === "" || dateString === null) {

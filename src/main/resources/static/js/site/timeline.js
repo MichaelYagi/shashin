@@ -1500,7 +1500,7 @@
 
         if ($("#image" + metadata.id).length === 1) {
             const version = Util.getMetadataLocalStorage();
-            if ($("#image" + metadata.id).attr("src") === "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=") {
+            if ($("#image" + metadata.id).attr("src") === Util.getPlaceholderBackground()) {
                 $("#image" + metadata.id).attr("src", "/api/v1/thumbnails/225/" + metadata.id + (version === "" ? "" : "?v=" + version));
             }
             $("#image" + metadata.id).css("background-color", "lightgray");
