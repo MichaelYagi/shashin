@@ -17,4 +17,5 @@ class BatchMetadataInput {
     var batchhidden: String? = null
     var addtoexistingalbums: String? = null
     var addtoexistingpeople: String? = null
+    var addtoexistingkeywords: String? = null
 }

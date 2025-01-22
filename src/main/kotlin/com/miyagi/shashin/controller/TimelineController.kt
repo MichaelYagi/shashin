@@ -1877,7 +1877,7 @@ class TimelineController: BaseController() {
     @ResponseBody
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     fun updateBatchMetadata(model: Model, @RequestBody requestBody: JsonNode): String? {
-         println(requestBody)
+//         println(requestBody)
         val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<BatchMetadataInput>() {})
 
         val idArray: Array<String>? = batchMetadataMap.batchMetadataIds
@@ -1894,6 +1894,7 @@ class TimelineController: BaseController() {
 //        println(albumNames)
         val addToAlbums = batchMetadataMap.addtoexistingalbums == "on"
         val addToPeople = batchMetadataMap.addtoexistingpeople == "on"
+        val addToKeywords = batchMetadataMap.addtoexistingkeywords == "on"
 
         val isObject = batchMetadataMap.batchisobject == "on"
         val isHidden = batchMetadataMap.batchhidden == "on"
@@ -2086,7 +2087,9 @@ class TimelineController: BaseController() {
                         }
 
                         if (keywordList.isNotEmpty()) {
-                            keywordPhotoRepository.deleteAllByMetadataId(metadata.getId())
+                            if (addToKeywords == false) {
+                                keywordPhotoRepository.deleteAllByMetadataId(metadata.getId())
+                            }
                             processKeywords(keywordList, metadata.getId())
                         }
                     }
@@ -2783,12 +2786,15 @@ class TimelineController: BaseController() {
                     keywordObj = keywordRepository.findByKeywordIgnoreCase(keywordTerm)!!
                 }
 
-                val keywordPhotoObj = KeywordPhoto()
-                keywordPhotoObj.setKeywordId(keywordObj.getId())
-                keywordPhotoObj.setMetadataId(metadataId)
-                keywordPhotoObj.setCreatedAt(getCurrentTimestamp())
-                keywordPhotoObj.setModifiedAt(getCurrentTimestamp())
-                keywordPhotoRepository.save(keywordPhotoObj)
+                val keywordPhotoCount = keywordPhotoRepository.countByKeywordIdAndMetadataId(keywordObj.getId(), metadataId)
+                if (keywordPhotoCount == 0) {
+                    val keywordPhotoObj = KeywordPhoto()
+                    keywordPhotoObj.setKeywordId(keywordObj.getId())
+                    keywordPhotoObj.setMetadataId(metadataId)
+                    keywordPhotoObj.setCreatedAt(getCurrentTimestamp())
+                    keywordPhotoObj.setModifiedAt(getCurrentTimestamp())
+                    keywordPhotoRepository.save(keywordPhotoObj)
+                }
             }
         }
     }

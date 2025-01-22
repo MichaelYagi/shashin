@@ -1232,6 +1232,7 @@ class Util {
         jsonData.batchhidden = batchObj.hasOwnProperty("batchhidden") ? batchObj["batchhidden"] : null;
         jsonData.addtoexistingalbums = batchObj.hasOwnProperty("addtoexistingalbums") ? batchObj["addtoexistingalbums"] : null;
         jsonData.addtoexistingpeople = batchObj.hasOwnProperty("addtoexistingpeople") ? batchObj["addtoexistingpeople"] : null;
+        jsonData.addtoexistingkeywords = batchObj.hasOwnProperty("addtoexistingkeywords") ? batchObj["addtoexistingkeywords"] : null;
 
         return jsonData;
     }
