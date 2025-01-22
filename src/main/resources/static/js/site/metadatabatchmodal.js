@@ -145,6 +145,9 @@ async function saveBatchMetadata(e) {
         if ($("#addtoexistingpeople").is(':checked')) {
             $("#addtoexistingpeople").val("on");
         }
+        if ($("#addtoexistingkeywords").is(':checked')) {
+            $("#addtoexistingkeywords").val("on");
+        }
 
         const http = new Http("batch save timeline");
         const batchObj = Util.serializeObject($('#saveBatchData'));
