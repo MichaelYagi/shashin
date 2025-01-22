@@ -1631,6 +1631,14 @@ class TimelineController: BaseController() {
 
         adminAlbumsMessage = adminAlbumsMessage.dropLast(1)
 
+        var coverUrl = ""
+        if (imageUrl != null) {
+            val metadata = metadataRepository.findByThumbnailCentered(imageUrl)
+            if (metadata != null) {
+                coverUrl = "/api/v1/thumbnails/centered/"+metadata.getId()
+            }
+        }
+
         val notificationObjList = mutableListOf<Notification>()
         if (adminAlbumsMessage.isNotEmpty()) {
             val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
@@ -1641,7 +1649,7 @@ class TimelineController: BaseController() {
                 notificationObj.setUserId(admin.getId())
                 notificationObj.setCreatedAt(getCurrentTimestamp())
                 notificationObj.setModifiedAt(getCurrentTimestamp())
-                notificationObj.setImageUrl(imageUrl)
+                notificationObj.setImageUrl(coverUrl)
                 notificationObj.setRead(false)
                 notificationObj.setMessage("Photos added to album $adminAlbumsMessage at ${sdtf.format(Date())}.")
                 notificationObjList.add(notificationObj)

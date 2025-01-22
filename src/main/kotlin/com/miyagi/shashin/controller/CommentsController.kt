@@ -137,6 +137,13 @@ class CommentsController {
                 val notificationObjList = mutableListOf<Notification>()
                 val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                 sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                var coverUrl = ""
+                if (albumObj.get().getCoverUrl() != null) {
+                    val metadata = metadataRepository.findByThumbnailCentered(albumObj.get().getCoverUrl().toString())
+                    if (metadata != null) {
+                        coverUrl = "/api/v1/thumbnails/centered/"+metadata.getId()
+                    }
+                }
                 for (user in users) {
                     val notificationObj = Notification()
                     var createEntry = false
@@ -152,7 +159,7 @@ class CommentsController {
 
                         if (createEntry) {
                             notificationObj.setUserId(user.getId())
-                            notificationObj.setImageUrl(albumObj.get().getCoverUrl())
+                            notificationObj.setImageUrl(coverUrl)
                             notificationObj.setCommentId(albumComment.getId())
                             notificationObj.setAlbumId(albumId)
                             notificationObj.setCreatedAt(getCurrentTimestamp())
@@ -265,7 +272,14 @@ class CommentsController {
                 val notificationObjList = mutableListOf<Notification>()
                 val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                 sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
-                    for (user in users) {
+                var coverUrl = ""
+                if (albumObj.get().getCoverUrl() != null) {
+                    val metadata = metadataRepository.findByThumbnailCentered(albumObj.get().getCoverUrl().toString())
+                    if (metadata != null) {
+                        coverUrl = "/api/v1/thumbnails/centered/"+metadata.getId()
+                    }
+                }
+                for (user in users) {
                     val notificationObj = Notification()
                     var createEntry = false
                     if (user != null && user.getId() != currentUserObj.getId()) {
@@ -283,7 +297,7 @@ class CommentsController {
                             notificationObj.setCommentId(savedCommentObj.getId())
                             notificationObj.setMetadataId(metadataId)
                             notificationObj.setAlbumId(albumId)
-                            notificationObj.setImageUrl(albumObj.get().getCoverUrl())
+                            notificationObj.setImageUrl(coverUrl)
                             notificationObj.setRead(false)
                             notificationObj.setCreatedAt(getCurrentTimestamp())
                             notificationObj.setModifiedAt(getCurrentTimestamp())
