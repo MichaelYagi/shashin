@@ -139,6 +139,12 @@ async function saveBatchMetadata(e) {
         if ($("#batchhidden").is(':checked')) {
             $("#batchhidden").val("on");
         }
+        if ($("#addtoexistingalbums").is(':checked')) {
+            $("#addtoexistingalbums").val("on");
+        }
+        if ($("#addtoexistingpeople").is(':checked')) {
+            $("#addtoexistingpeople").val("on");
+        }
 
         const http = new Http("batch save timeline");
         const batchObj = Util.serializeObject($('#saveBatchData'));

@@ -1362,7 +1362,8 @@ class TimelineController: BaseController() {
                     model.getAttribute("settings") as Settings,
                     metadataObj.get(),
                     taggedPeople,
-                    isObject
+                    isObject,
+                    false
                 )
 
                 cleanupOrphanedSubjects()
@@ -1876,7 +1877,7 @@ class TimelineController: BaseController() {
     @ResponseBody
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     fun updateBatchMetadata(model: Model, @RequestBody requestBody: JsonNode): String? {
-//         println(requestBody)
+         println(requestBody)
         val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<BatchMetadataInput>() {})
 
         val idArray: Array<String>? = batchMetadataMap.batchMetadataIds
@@ -1891,6 +1892,9 @@ class TimelineController: BaseController() {
         val recognitionLabelNames: String? = batchMetadataMap.tagBatchDataInput
         val albumNames: String? = batchMetadataMap.albumNameInput
 //        println(albumNames)
+        val addToAlbums = batchMetadataMap.addtoexistingalbums == "on"
+        val addToPeople = batchMetadataMap.addtoexistingpeople == "on"
+
         val isObject = batchMetadataMap.batchisobject == "on"
         val isHidden = batchMetadataMap.batchhidden == "on"
 
@@ -2018,7 +2022,9 @@ class TimelineController: BaseController() {
                     } else {
                         // Add album photo
                         if (albumIdList.isNotEmpty()) {
-                            albumPhotoRepository.deleteByMetadataId(metadata.getId())
+                            if (addToAlbums == false) {
+                                albumPhotoRepository.deleteByMetadataId(metadata.getId())
+                            }
 
                             for (albumId in albumIdList) {
                                 val albumPhotoCount =
@@ -2041,7 +2047,8 @@ class TimelineController: BaseController() {
                             model.getAttribute("settings") as Settings,
                             metadata,
                             recognitionLabelNames.toString(),
-                            isObject
+                            isObject,
+                            addToPeople
                         )
 
                         if (dayTaken != null) {
@@ -2786,11 +2793,13 @@ class TimelineController: BaseController() {
         }
     }
 
-    private fun processPeople(settings: Settings, metadataObj: Metadata?, taggedPeople: String?, isObject: Boolean) {
+    private fun processPeople(settings: Settings, metadataObj: Metadata?, taggedPeople: String?, isObject: Boolean, addPerson: Boolean) {
         if (metadataObj != null) {
             val metadataId = metadataObj.getId()
 
-            recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
+            if (addPerson == false) {
+                recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
+            }
 
             if (isObject) {
                 val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase(TextUtils.getObjectName())
