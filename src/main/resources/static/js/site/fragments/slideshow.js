@@ -1,0 +1,429 @@
+function initializeSlideshow(accessTimelineView, queryLimit) {
+    let slideshowIntervalId;
+    let slideshowStarted = false;
+    let slideshowIsPaused = false;
+    let slideshowIsElapsed = 30; // Seconds
+    let slideshowCurrentIndex = 0;
+    let slideshowMetadataIds = [];
+    let slideshowMouseTimer = null;
+    let slideshowCursorVisible = true;
+    let slideshowProceed = true;
+
+    function getSlideshowImage(callback) {
+        const http = new Http("show slideshow");
+
+        shashin.printMessageToConsole("slideshowCurrentIndex: " + slideshowCurrentIndex, {tag: "slideshow"});
+        shashin.printMessageToConsole("slideshowMetadataIds:", {tag: "slideshow"});
+        shashin.printMessageToConsole(slideshowMetadataIds, {tag: "slideshow"});
+
+        if (slideshowProceed === true) {
+            slideshowProceed = false;
+            if (slideshowMetadataIds.length > 0 && slideshowCurrentIndex >= 0 && slideshowCurrentIndex <= slideshowMetadataIds.length - 1) {
+                shashin.printMessageToConsole("Looking up " + slideshowMetadataIds[slideshowCurrentIndex], {tag: "slideshow"});
+                http.ajax("get", "/media/metadata/" + slideshowMetadataIds[slideshowCurrentIndex]).then(function (data) {
+                    processSlideData(data, "existing", callback);
+                })
+            } else {
+                shashin.printMessageToConsole("New random image", {tag: "slideshow"});
+                http.ajax("get", "/random/metadata/type/image").then(function (data) {
+                    processSlideData(data, "new", callback);
+                })
+            }
+        }
+    }
+
+    function processSlideData(data, type, callback) {
+        if (data && data.hasOwnProperty("metadata") === true &&
+            data["metadata"].hasOwnProperty("thumbnailUrlOriginal") === true &&
+            data["metadata"]["thumbnailUrlOriginal"] !== "" &&
+            data.hasOwnProperty("baseUrl") === true &&
+            data["baseUrl"] !== ""
+        ) {
+            $("#mediaSrc").css("display", "block");
+            const photoUrl = data["baseUrl"] + "/api/v1/thumbnails/original/"+data["metadata"]["id"];
+
+            const tempImage = new Image();
+
+            tempImage.onerror = function (error) {
+                shashin.printMessageToConsole("Error: " + error, {tag: "slideshow"});
+                slideshowProceed = true;
+            }
+
+            tempImage.onload = function () {
+                slideshowProceed = true;
+
+                $("#mediaSrc").fadeOut((slideshowStarted === false) ? 0 : 300, function () {
+                    $("#mediaSrc").attr("src", photoUrl).fadeIn((slideshowStarted === false) ? 0 : 600);
+
+                    $("#playPause").css({
+                        "font-size": "10rem",
+                        "color": "#FFFFFF",
+                        "z-index": 99999,
+                        "max-width": $(window).innerWidth() + 1,
+                        "height": "auto",
+                        "max-height": $(window).innerHeight() + 1,
+                        "position": "absolute",
+                        "top": "50%",
+                        "left": "50%",
+                        "transform": "translate(-50%, -50%)"
+                    });
+
+                    $(".centerFit").css({
+                        "max-width": $(window).innerWidth() + 1,
+                        "height": "auto",
+                        "max-height": $(window).innerHeight() + 1,
+                        "position": "absolute",
+                        "top": "50%",
+                        "left": "50%",
+                        "transform": "translate(-50%, -50%)"
+                    });
+
+                    if (Util.isMobile() === false) {
+                        $("#mediaInfo").css({
+                            "max-width": ($(window).width() + 1),
+                            "font-size": "1.7rem"
+                        });
+                    } else {
+                        $("#mediaInfo").css({
+                            "font-size": "1rem"
+                        });
+                    }
+
+                    if (type === "new") {
+                        slideshowMetadataIds.push(data["metadata"]["id"]);
+                    }
+                    if (slideshowMetadataIds.length > queryLimit) {
+                        slideshowMetadataIds.splice(0, 1); // At position 0, remove 1
+                        slideshowCurrentIndex--;
+                    }
+
+                    const takenDateString = data["metadata"]["year"] + "-" + data["metadata"]["month"] + "-" + data["metadata"]["day"];
+                    const takenDate = new Date(takenDateString);
+                    const options = {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'};
+                    let description = takenDate.toLocaleDateString('en-us', options)
+
+                    if (accessTimelineView === false && data.hasOwnProperty("albumIds") === true && data["albumIds"].hasOwnProperty(0) === true) {
+                        description = "<a style='color:#DBE9F4;text-decoration:none;' href='/album/" + data["albumIds"][0] + "' target='_blank'>" + takenDate.toLocaleDateString('en-us', options) + "</a>"
+                    } else if (accessTimelineView === true) {
+                        description = "<a style='color:#DBE9F4;text-decoration:none;' href='/timeline#" + takenDateString + "' target='_blank'>" + takenDate.toLocaleDateString('en-us', options) + "</a>"
+                    }
+
+                    if (data["shortPlaceName"] !== "") {
+                        description += " • " + data["shortPlaceName"];
+                    }
+                    $("#mediaInfo").html(description);
+
+                    slideshowStarted = true;
+
+                    if (callback !== undefined && typeof callback === 'function') {
+                        callback(true);
+                    }
+                });
+            }
+
+            tempImage.src = photoUrl;
+        } else if (callback !== undefined && typeof callback === 'function') {
+            callback(false);
+        }
+    }
+
+    function exitSlideshowGallery() {
+        if (document.documentElement.exitFullscreen) {
+            document.documentElement.exitFullscreen();
+        }
+
+        document.body.style.overflow = 'visible';
+
+        $("#slideshowGallery").css({
+            "display": "none"
+        });
+
+        slideshowCurrentIndex = 0;
+        slideshowMetadataIds = [];
+
+        if (slideshowIntervalId) {
+            clearInterval(slideshowIntervalId);
+            slideshowIntervalId = 0;
+        }
+
+        if (slideshowMouseTimer) {
+            clearTimeout(slideshowMouseTimer);
+        }
+
+        document.body.style.cursor = "default";
+        slideshowCursorVisible = true;
+        slideshowStarted = false;
+        slideshowProceed = true;
+
+        $("#mediaInfo").html("");
+
+        $("#mediaSrc").attr("src", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII");
+    }
+
+    function showInstruction(autoHide) {
+        let options = {
+            icon: "bi-info-circle",
+            target:"toastTarget4",
+            autohide: false
+        };
+
+        if (autoHide === "undefined" || autoHide === null) {
+            autoHide = false;
+        }
+
+        if (autoHide === true) {
+            options = {
+                icon: "bi-info-circle",
+                target:"toastTarget4"
+            };
+        }
+
+        if (Util.isMobile() === false) {
+            shashin.showToastMessage("Key bindings",
+                "<div class='container'>" +
+                "<div class='row'><div class='col-4'><strong>d</strong></div><div class='col-8'>Show/close this window</div></div>" +
+                "<div class='row'><div class='col-4'><strong>Esc</strong></div><div class='col-8'>Exit fullscreen. Press Esc again to exit slideshow.</div></div>" +
+                "<div class='row'><div class='col-4'><strong>f</strong></div><div class='col-8'>Fullscreen</div></div>" +
+                "<div class='row'><div class='col-4'><strong>Space</strong></div><div class='col-8'>Play/pause</div></div>" +
+                "<div class='row'><div class='col-4'><strong>i</strong></div><div class='col-8'>Slide info</div></div>" +
+                "<div class='row'><div class='col-4'><strong>Left/Right</strong></div><div class='col-8'>Got to next/previous slide</div></div>" +
+                "</div>",
+                options
+            );
+        } else {
+            shashin.showToastMessage("Touch bindings",
+                "<div class='container'>" +
+                "<div class='row'><div class='col-4'><strong>Swipe Up</strong></div><div class='col-8'>Show/close this window when in fullscreen</div></div>" +
+                "<div class='row'><div class='col-4'><strong>Swipe Down</strong></div><div class='col-8'>Slide info</div></div>" +
+                "<div class='row'><div class='col-4'><strong>Single Tap</strong></div><div class='col-8'>Play/pause</div></div>" +
+                "<div class='row'><div class='col-4'><strong>Double Tap</strong></div><div class='col-8'>Exit fullscreen. Double tap again to exit slideshow or swipe up to go back to fullscreen</div></div>" +
+                "<div class='row'><div class='col-4'><strong>Swipe Left/Right</strong></div><div class='col-8'>Got to next/previous slide</div></div>" +
+                "</div>",
+                options
+            );
+        }
+    }
+
+    $("body").on("dblclick", function (e) {
+        if (Util.isMobile() === true && $("#slideshowGallery").css("display") === "block") {
+            if (document.fullscreenElement !== null && document.exitFullscreen) {
+                document.exitFullscreen();
+            } else {
+                $("#mediaInfo").css("display", "none");
+                exitSlideshowGallery();
+                shashin.closeToastMessage({
+                    target: shashin.toast.target.four
+                });
+            }
+        }
+    })
+
+    $("body").on("keyup", function (e) {
+        if ($("#slideshowGallery").css("display") === "block") {
+            if (e.code === "Escape" || e.keyCode === 27) {
+                if (document.fullscreenElement !== null && document.documentElement.exitFullscreen) {
+                    document.documentElement.exitFullscreen();
+                } else {
+                    $("#mediaInfo").css("display", "none");
+                    exitSlideshowGallery();
+                    shashin.closeToastMessage({
+                        target: shashin.toast.target.four
+                    });
+                }
+            }
+
+            // Pause/play slideshow
+            if (e.key === " " || e.code === "Space" || e.keyCode === 32) {
+                slideshowGalleryPlayPause();
+            }
+
+            // Show info
+            if (e.key === "i" || e.code === "KeyI" || e.keyCode === 73) {
+                slideshowInfo();
+            }
+
+            // Show key binding toast
+            if (e.key === "d" || e.code === "KeyD" || e.keyCode === 68) {
+                if ($("#" + shashin.toast.target.four).css('display') === 'none' || $("#" + shashin.toast.target.four).css("visibility") === "hidden") {
+                    showInstruction();
+                } else {
+                    shashin.closeToastMessage({
+                        target: shashin.toast.target.four
+                    });
+                }
+            }
+
+            if (e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.keyCode === "37" || e.key === "ArrowRight" || e.code === "ArrowRight" || e.keyCode === "39") {
+                if (((e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.keyCode === "37") && slideshowCurrentIndex === 0) === false && slideshowProceed === true) {
+                    if ((e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.keyCode === "37") && slideshowCurrentIndex > 0) {
+                        slideshowCurrentIndex--;
+                    } else if ((e.key === "ArrowRight" || e.code === "ArrowRight" || e.keyCode === "39") && slideshowCurrentIndex <= slideshowMetadataIds.length - 1) {
+                        slideshowCurrentIndex++;
+                    }
+
+                    getSlideshowImage(function () {
+                        slideshowProceed = true;
+                    });
+
+                    if (slideshowIsPaused === false) {
+                        clearInterval(slideshowIntervalId);
+                        slideshowIntervalId = window.setInterval(function () {
+                            if (slideshowIsPaused === false) {
+                                slideshowCurrentIndex++;
+                                getSlideshowImage(function () {
+                                    slideshowProceed = true;
+                                });
+                            }
+                        }, (slideshowIsElapsed * 1000));
+                    }
+                }
+            }
+
+            if ((e.key === "f" || e.code === "KeyF" || e.keyCode === 70) && document.fullscreenElement === null) {
+                document.documentElement.requestFullscreen();
+            }
+        }
+    });
+
+    Util.detectSwipe("#slideshowGallery", function (direction) {
+        if (direction === "up" || direction === "down") {
+            if (direction === "up") {
+                if (document.fullscreenElement === null) { // Not full screen, return to full screen
+                    document.documentElement.requestFullscreen();
+                } else if ($("#" + shashin.toast.target.four).css('display') === 'none' || $("#" + shashin.toast.target.four).css("visibility") === "hidden") {
+                    showInstruction();
+                } else {
+                    shashin.closeToastMessage({
+                        target: shashin.toast.target.four
+                    });
+                }
+            } else {
+                slideshowInfo();
+            }
+        } else if (direction === "left" || direction === "right") {
+            if ((direction === "right" && slideshowCurrentIndex === 0) === false && slideshowProceed === true) {
+                if (slideshowCurrentIndex > 0 && direction === "right") {
+                    slideshowCurrentIndex--;
+                } else if (slideshowCurrentIndex <= slideshowMetadataIds.length - 1 && direction === "left") {
+                    slideshowCurrentIndex++;
+                }
+
+                getSlideshowImage(function () {
+                    slideshowProceed = true;
+                });
+                if (slideshowIsPaused === false) {
+                    clearInterval(slideshowIntervalId);
+                    slideshowIntervalId = window.setInterval(function () {
+                        if (slideshowIsPaused === false) {
+                            slideshowCurrentIndex++;
+                            getSlideshowImage(function () {
+                                slideshowProceed = true;
+                            });
+                        }
+                    }, (slideshowIsElapsed * 1000));
+                }
+            }
+        }
+    });
+
+    function disappearCursor() {
+        slideshowMouseTimer = null;
+        document.body.style.cursor = "none";
+        slideshowCursorVisible = false;
+    }
+
+    $("body").on("mousemove", function () {
+        if (Util.isMobile() === false && $("#slideshowGallery").css("display") === "block") {
+            if (slideshowMouseTimer) {
+                clearTimeout(slideshowMouseTimer);
+            }
+
+            if (slideshowCursorVisible === false) {
+                document.body.style.cursor = "default";
+                slideshowCursorVisible = true;
+            }
+
+            slideshowMouseTimer = setTimeout(disappearCursor, 5000);
+        }
+    });
+
+    $("#mediaSrc").on("click", function (e) {
+        if ($("#slideshowGallery").css("display") === "block") {
+            slideshowGalleryPlayPause();
+        }
+    });
+
+    function slideshowInfo() {
+        if ($("#mediaInfo").is(":visible")) {
+            $("#mediaInfo").css("display", "none");
+        } else {
+            $("#mediaInfo").css("display", "block");
+        }
+    }
+
+    function slideshowGalleryPlayPause() {
+        $("#playPause").stop(true, true);
+
+        if (slideshowIsPaused === false) {
+            $("#playPause").removeClass("bi-play-circle").addClass("bi-pause-circle");
+            slideshowIsPaused = true;
+            // $("#mediaInfo").css("display", "block");
+        } else {
+            $("#playPause").removeClass("bi-pause-circle").addClass("bi-play-circle");
+            slideshowIsPaused = false;
+            // $("#mediaInfo").css("display", "none");
+        }
+
+        $("#playPause").show();
+        $("#playPause").fadeOut(3000);
+    }
+
+    $("#viewSlideshow").on("click", function (e) {
+        e.preventDefault();
+
+        document.body.style.overflow = 'hidden';
+
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+        }
+
+        slideshowIntervalId = window.setInterval(function () {
+            if (slideshowIsPaused === false) {
+                slideshowCurrentIndex++;
+                getSlideshowImage(function () {
+                    slideshowProceed = true;
+                });
+            }
+        }, (slideshowIsElapsed * 1000));
+
+        getSlideshowImage(function (loaded) {
+            slideshowProceed = true;
+
+            if (loaded === true) {
+                $("#playPause").show();
+                $("#playPause").fadeOut(3000);
+
+                $("#slideshowGallery").css({
+                    "width": "101%",
+                    "height": "101%",
+                    "display": "block",
+                    "z-index": 9999,
+                    "background-color": "#000000",
+                    "line-height": 1,
+                    "overflow": "hidden"
+                });
+
+                if (Util.isMobile() === false) {
+                    $("#mediaInfo").css({
+                        "max-width": ($(window).width() + 1),
+                        "white-space": "nowrap"
+                    });
+                }
+
+                $("#playPause").css("display", "block");
+
+                showInstruction(true);
+            }
+        });
+    })
+}

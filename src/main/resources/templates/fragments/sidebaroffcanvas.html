@@ -24,7 +24,7 @@
                 </th:block>
             </th:block>
             <li class="nav-item">
-                <a th:attr="class='nav-link list-group-item list-group-item-action rounded' + ${activeSidebar=='albums' or activeSidebar=='album' or activeSidebar=='slideshow'? ' active' : ''}" href="/albums">
+                <a th:attr="class='nav-link list-group-item list-group-item-action rounded' + ${activeSidebar=='albums' or activeSidebar=='album'? ' active' : ''}" href="/albums">
                     <span class="bi-images" style="font-size: 1rem;"></span> Albums
                 </a>
             </li>

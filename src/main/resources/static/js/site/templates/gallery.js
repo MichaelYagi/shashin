@@ -202,7 +202,7 @@ class GalleryTemplates {
                     data-poster="${(data.metadata.thumbnailUrlOriginal === null || data.metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/225/"+data.metadata.id : "/api/v1/thumbnails/original/"+data.metadata.id}?v=${uuid}"
                     data-lg-size="${(data.metadata.originalImageWidth === null || data.metadata.originalImageWidth === "") ? `${data.metadata.thumbnailSmallWidth}-${data.metadata.thumbnailSmallHeight}` : `${data.metadata.originalImageWidth}-${data.metadata.originalImageHeight}`}"
                     data-video=\'{"source": [{"src":"${data.metadata.videoUrl}", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true, "autoplay": true}}\'>
-                    ${(activePage !== "slideshow" ? `<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>` : '')}
+                    <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                 </a>
                 `
                 :
@@ -211,7 +211,7 @@ class GalleryTemplates {
                     data-download-url="${"/api/v1/image/"+data.metadata.id}/download"
                     data-metadata-id="${data.metadata.id}"
                     ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}>
-                    ${(activePage !== "slideshow" ? `<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>` : '')}
+                    <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                 </a>
                 `
             }
