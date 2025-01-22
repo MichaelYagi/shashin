@@ -10,7 +10,7 @@
             </div>
             <div class="modal-body ui-front" id="propBatchMetadataBody">
                 <span id="editPhotosNamesModalLabel"></span><br><br>
-                <p class="text-muted">Empty fields will be ignored</p>
+                <p class="text-muted">Empty fields will be ignored. Data will be overwritten.</p>
                 <form id="saveBatchData">
                     <input type="hidden" id="batchMetadataIds" name="batchMetadataIds" value="">
                     <input type="hidden" id="batchFilenames" name="batchFilenames" value="">
@@ -129,6 +129,16 @@
                                     </div>
                                 </th:block>
                             </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm">
+                            <input type="checkbox" name="addtoexistingalbums" id="addtoexistingalbums">
+                            <label class="form-check-label" for="addtoexistingalbums">Do not overwrite data and add to existing albums</label>
+                        </div>
+                        <div class="col-sm">
+                            <input type="checkbox" name="addtoexistingpeople" id="addtoexistingpeople">
+                            <label class="form-check-label" for="addtoexistingpeople">Do not overwrite data and add to existing people</label>
                         </div>
                     </div>
                     <button class="btn btn-secondary col-12 mt-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBatchMetadata" aria-expanded="false" aria-controls="collapseBatchMetadata">
