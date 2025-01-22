@@ -902,9 +902,16 @@ class AlbumsController: BaseController() {
                         action = "cleared"
                     }
 
+                    var coverUrl = ""
+                    if (albumObj.get().getCoverUrl() != null) {
+                        val metadata = metadataRepository.findByThumbnailCentered(albumObj.get().getCoverUrl().toString())
+                        if (metadata != null) {
+                            coverUrl = "/api/v1/thumbnails/centered/"+metadata.getId()
+                        }
+                    }
                     for (admin in admins) {
                         val notificationObj = Notification()
-                        notificationObj.setImageUrl(albumObj.get().getCoverUrl())
+                        notificationObj.setImageUrl(coverUrl)
                         notificationObj.setUserId(admin.getId())
                         notificationObj.setCreatedAt(getCurrentTimestamp())
                         notificationObj.setModifiedAt(getCurrentTimestamp())
@@ -948,9 +955,17 @@ class AlbumsController: BaseController() {
             val notificationObjList = mutableListOf<Notification>()
             val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
             sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+
+            var coverUrl = ""
+            if (album != null && album.getCoverUrl() != null) {
+                val metadata = metadataRepository.findByThumbnailCentered(album.getCoverUrl().toString())
+                if (metadata != null) {
+                    coverUrl = "/api/v1/thumbnails/centered/"+metadata.getId()
+                }
+            }
             for (admin in admins) {
                 val notificationObj = Notification()
-                notificationObj.setImageUrl(album?.getCoverUrl())
+                notificationObj.setImageUrl(coverUrl)
                 notificationObj.setUserId(admin.getId())
                 notificationObj.setCreatedAt(getCurrentTimestamp())
                 notificationObj.setModifiedAt(getCurrentTimestamp())
@@ -1200,6 +1215,14 @@ class AlbumsController: BaseController() {
             val admins = userRepository.findAllAdmins()
             val userList = mutableListOf<String>()
 
+            var coverUrl = ""
+            if (albumObj != null && albumObj.getCoverUrl() != null) {
+                val metadata = metadataRepository.findByThumbnailCentered(albumObj.getCoverUrl().toString())
+                if (metadata != null) {
+                    coverUrl = "/api/v1/thumbnails/centered/"+metadata.getId()
+                }
+            }
+
             for ((userId, share) in userMap) {
                 if (share) {
                     val countUserAlbum = userAlbumRepository.countByUserIdAndAlbumId(userId.toInt(), albumId)
@@ -1214,7 +1237,7 @@ class AlbumsController: BaseController() {
                         userAlbumList.add(userAlbumObj)
 
                         val notificationObj = Notification()
-                        notificationObj.setImageUrl(albumObj?.getCoverUrl())
+                        notificationObj.setImageUrl(coverUrl)
                         notificationObj.setUserId(userId.toInt())
                         notificationObj.setCreatedAt(getCurrentTimestamp())
                         notificationObj.setModifiedAt(getCurrentTimestamp())
@@ -1234,9 +1257,17 @@ class AlbumsController: BaseController() {
 
             if (userList.size > 0) {
                 val userListString = userList.joinToString(",")
+                var coverUrl = ""
+                if (albumObj != null && albumObj.getCoverUrl() != null) {
+                    val metadata = metadataRepository.findByThumbnailCentered(albumObj.getCoverUrl().toString())
+                    if (metadata != null) {
+                        coverUrl = "/api/v1/thumbnails/centered/"+metadata.getId()
+                    }
+                }
+
                 for (admin in admins) {
                     val notificationObj = Notification()
-                    notificationObj.setImageUrl(albumObj?.getCoverUrl())
+                    notificationObj.setImageUrl(coverUrl)
                     notificationObj.setUserId(admin.getId())
                     notificationObj.setCreatedAt(getCurrentTimestamp())
                     notificationObj.setModifiedAt(getCurrentTimestamp())
