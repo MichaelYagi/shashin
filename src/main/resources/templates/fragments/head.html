@@ -75,11 +75,6 @@
         <th:block th:if="${activePageLower == 'profile'}">
             <link rel="stylesheet" href="/css/croppie.css">
         </th:block>
-        <!-- lightgallery plugins at https://cdnjs.com/libraries/lightgallery -->
-        <th:block th:if="${activePageLower == 'slideshow'}">
-            <script src="/js/lg-autoplay.js" th:nonce="${cspNonce}"></script>
-            <link rel="stylesheet" href="/css/lg-autoplay.css">
-        </th:block>
         <th:block th:if="${activePageLower == 'person' or
         activePageLower == 'matches' or
         activePageLower == 'timeline' or
@@ -93,7 +88,6 @@
         activePageLower == 'taken' or
         activePageLower == 'modified' or
         activePageLower == 'accessed' or
-        activePageLower == 'slideshow' or
         activePageLower == 'folder'}">
             <script src="/js/lightgallery.min.js" th:nonce="${cspNonce}"></script>
             <script src="/js/lg-video.min.js" th:nonce="${cspNonce}"></script>
