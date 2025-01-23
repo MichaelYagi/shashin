@@ -450,12 +450,14 @@
         metadata["keywords"] = [];
         metadata["albumMap"] = {};
         metadata["lastAccessedByDetails"] = "";
+        metadata["uploadedByDetails"] = "";
 
-        if (data.hasOwnProperty("metadata") && data.hasOwnProperty("keywordList") && data.hasOwnProperty("albumMap") && data.hasOwnProperty("lastAccessedByDetails")) {
+        if (data.hasOwnProperty("metadata") && data.hasOwnProperty("keywordList") && data.hasOwnProperty("albumMap") && data.hasOwnProperty("lastAccessedByDetails") && data.hasOwnProperty("uploadedByDetails")) {
             metadata = data["metadata"];
             metadata["keywords"] = data["keywordList"];
             metadata["albumMap"] = data["albumMap"];
             metadata["lastAccessedByDetails"] = data["lastAccessedByDetails"];
+            metadata["uploadedByDetails"] = data["uploadedByDetails"];
         }
 
         return metadata;

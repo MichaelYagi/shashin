@@ -2376,6 +2376,8 @@ class TimelineController: BaseController() {
 
         response["lastAccessedByDetails"] = null
 
+        response["uploadedByDetails"] = null
+
         val emptyJson = "{}"
         val mapper = ObjectMapper()
         response["metadata"] = mapper.readTree(emptyJson)
@@ -2398,6 +2400,12 @@ class TimelineController: BaseController() {
                 val accessInfoString = " - $accessOS $accessBrowser $accessRequestResourceType"
 
                 if (currentUserObj?.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") {
+                    val uploadedByUserId = metadataRecord.get().getUploadedBy()
+                    if (uploadedByUserId != null && uploadedByUserId > 0) {
+                        val userUploaded = userRepository.findById(uploadedByUserId)
+                        response["uploadedByDetails"] = userUploaded.get().getUsername()
+                    }
+
                     if (metadataRecord.get().getLastAccessedBy() != null && metadataRecord.get()
                             .getLastAccessedBy()!! > 0
                     ) {

@@ -1453,7 +1453,7 @@ class SettingsController {
     }
 
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
-    fun scanMediaDirectories(reindexFiles: Boolean, addToAlbum: Int = 0): String {
+    fun scanMediaDirectories(reindexFiles: Boolean, addToAlbum: Int = 0, uploadUserId: Int = 0): String {
         recognitionCount = 0
         val superAdmins = userRepository?.findAllByAuthorityEquals(superRole!!)
 
@@ -1824,7 +1824,8 @@ class SettingsController {
                                             webClient,
                                             recognitionLabelPhotoLabels,
                                             compreFaceServerConnected,
-                                            addToAlbum
+                                            addToAlbum,
+                                            uploadUserId
                                         )
                                     }
                                 }
@@ -2293,7 +2294,7 @@ class SettingsController {
         logger.log(Level.INFO, "shashinscan thread file deleted")
     }
 
-    private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, settings: Settings?, criteria: Criteria<Image, DetectedObjects>?, webClient: WebClient?, recognitionLabelPhotoLabels: MutableIterable<RecognitionLabelId>?, compreFaceServerConnected: Boolean, addToAlbum: Int = 0) {
+    private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, settings: Settings?, criteria: Criteria<Image, DetectedObjects>?, webClient: WebClient?, recognitionLabelPhotoLabels: MutableIterable<RecognitionLabelId>?, compreFaceServerConnected: Boolean, addToAlbum: Int = 0, uploadUserId: Int = 0) {
         val f = File(dirPath)
         val files = f.listFiles()
 
@@ -2342,6 +2343,7 @@ class SettingsController {
                                     metadataObj = imageProcessing.createThumbnails()
                                     if (metadataObj?.getThumbnailSmallWidth() != null && metadataObj.getThumbnailSmallHeight() != null && metadataObj.getThumbnailUrlSmall() != null) {
                                         metadataObj.setHidden(false)
+                                        metadataObj.setUploadedBy(uploadUserId)
 
                                         metadataRepository.save(metadataObj)
 
@@ -2387,7 +2389,7 @@ class SettingsController {
                 }
 
                 if (file.isDirectory) {
-                    getFile(file.absolutePath, threadFile, sidecarDir, rootDir, mediaExcludeDirs, settings, criteria, webClient, recognitionLabelPhotoLabels, compreFaceServerConnected, addToAlbum)
+                    getFile(file.absolutePath, threadFile, sidecarDir, rootDir, mediaExcludeDirs, settings, criteria, webClient, recognitionLabelPhotoLabels, compreFaceServerConnected, addToAlbum, uploadUserId)
                 }
             }
         }
