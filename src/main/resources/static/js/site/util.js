@@ -1328,14 +1328,10 @@ class Util {
 
     static populateDetailsInfo(metadata,containerModalId) {
         if (typeof containerModalId === "undefined" || containerModalId.length === 0) {
-            if ($("#propInfoModal").hasClass('show') === true) {
-                containerModalId = "propInfoModal";
-            } else if ($("#propMetadata").hasClass('show') === true) {
+            if ($("#propMetadata").hasClass('show') === true) {
                 containerModalId = "propMetadata";
             } else if ($("#propInfoSidebar").hasClass('show') === true) {
                 containerModalId = "propInfoSidebar";
-            } else if ($("#propMetadataLocation").hasClass('show') === true) {
-                containerModalId = "propMetadataLocation";
             }
         }
 
