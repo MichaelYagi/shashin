@@ -204,8 +204,8 @@
                 });
             </script>
 
-            <div th:replace="~{fragments/hiddenfields :: hiddenfields()}"></div>
-            <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})}"></div>
+            <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
+            <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
         </main>
     </div>
 </div>

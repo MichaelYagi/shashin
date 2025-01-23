@@ -11,7 +11,7 @@
     <div class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="~{fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})}"></div>
         <main role="main" class="col overflow-auto h-100">
-            <div th:replace="~{fragments/hiddenfields :: hiddenfields()}"></div>
+            <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
 
             <th:block th:if="${not #lists.isEmpty(logList)}">
                 <br>
@@ -68,7 +68,7 @@
                 <i class="bi-arrow-down-circle"></i>
             </button>
 
-            <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})}"></div>
+            <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
         </main>
     </div>
 </div>

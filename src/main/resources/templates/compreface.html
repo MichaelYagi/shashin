@@ -14,7 +14,7 @@
         <div th:replace="~{fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})}"></div>
         <main role="main" class="col overflow-auto h-100">
 
-            <div th:replace="~{fragments/hiddenfields :: hiddenfields()}"></div>
+            <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
             <input type="hidden" id="currentPerson" th:value="${personInfo.name}">
 
 <!--            <h1 th:inline="text">[[${personInfo.name}]]</h1>-->
@@ -226,7 +226,7 @@
                     <i class="bi-arrow-up-circle"></i>
                 </button>
                 <div id="spinner" class="spinner-border justify-content-center align-items-center" role="status" style="display: none"></div>
-                <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})}"></div>
+                <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
             </div>
         </main>
 

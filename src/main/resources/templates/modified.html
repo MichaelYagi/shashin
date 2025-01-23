@@ -11,7 +11,7 @@
     <div class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="~{fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})}"></div>
         <main role="main" class="col overflow-auto h-100">
-            <div th:replace="~{fragments/hiddenfields :: hiddenfields()}"></div>
+            <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
 
             <div th:replace="~{fragments/metadatamodal :: metadatamodal(${currentUser})}"></div>
 
@@ -131,7 +131,7 @@
             </button>
 
             <div id="spinner" class="spinner-border justify-content-center align-items-center" role="status" style="display: none"></div>
-            <div id="footer" th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})}"></div>
+            <div id="footer" th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
         </main>
     </div>
 </div>

@@ -12,7 +12,7 @@
     <div class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="~{fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})}"></div>
         <main role="main" class="col overflow-auto h-100 table-responsive">
-            <div th:replace="~{fragments/hiddenfields :: hiddenfields()}"></div>
+            <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
             <table class="table">
                 <th:block th:if="${not #lists.isEmpty(users)}">
                     <thead>
@@ -106,7 +106,7 @@
                     </tbody>
                 </th:block>
             </table>
-            <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})}"></div>
+            <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
         </main>
     </div>
 </div>

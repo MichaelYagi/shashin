@@ -59,7 +59,7 @@
         </form>
     </main>
 
-    <span class="mt-auto" th:insert="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})}"></span>
+    <span class="mt-auto" th:insert="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></span>
 </div>
 
 <script type="text/javascript" th:nonce="${cspNonce}">

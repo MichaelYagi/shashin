@@ -43,14 +43,18 @@ import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
 import jakarta.transaction.Transactional
 import org.springframework.context.event.EventListener
+import org.springframework.http.HttpStatus
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.annotation.SubscribeMapping
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.server.ResponseStatusException
 import org.springframework.web.socket.messaging.SessionConnectEvent
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import org.springframework.web.socket.messaging.SessionSubscribeEvent
 import java.io.FileOutputStream
+import java.io.IOException
 import kotlin.collections.count
 import kotlin.io.path.isDirectory
 
@@ -942,75 +946,84 @@ class AlbumsController: BaseController() {
     }
 
     @RequestMapping(value = ["/share/{shareLink}/album/{albumId}"], method = [RequestMethod.GET])
-    fun getAnonymousShareAlbum(model: Model, request: HttpServletRequest, @PathVariable shareLink: String, @PathVariable albumId: Int): String? {
+    fun getAnonymousShareAlbum(model: Model, res: HttpServletResponse, @PathVariable shareLink: String, @PathVariable albumId: Int): String? {
         val module = "share"
 
         val queryLimit = model.getAttribute("queryLimit").toString().toInt()
         val response = buildShareData(albumId,shareLink, queryLimit, 0)
 
-        val userIp = model.getAttribute("clientIP").toString()
-        val admins = userRepository.findAllAdmins()
+        if (response["status"] === ApiResponse.SUCCESS.status) {
+            val userIp = model.getAttribute("clientIP").toString()
+            val admins = userRepository.findAllAdmins()
 
-        val album = response["album"] as Album?
+            val album = response["album"] as Album?
 
-        if (!TextUtils.isLocalIp(userIp)) {
-            val notificationObjList = mutableListOf<Notification>()
-            val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
-            sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+            if (!TextUtils.isLocalIp(userIp)) {
+                val notificationObjList = mutableListOf<Notification>()
+                val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
 
-            var coverUrl = ""
-            if (album != null && album.getCoverUrl() != null) {
-                val metadata = metadataRepository.findByThumbnailCentered(album.getCoverUrl().toString())
-                if (metadata != null) {
-                    coverUrl = "/api/v1/thumbnails/centered/"+metadata.getId()
+                var coverUrl = ""
+                if (album != null && album.getCoverUrl() != null) {
+                    val metadata = metadataRepository.findByThumbnailCentered(album.getCoverUrl().toString())
+                    if (metadata != null) {
+                        coverUrl = "/api/v1/thumbnails/centered/"+metadata.getId()
+                    }
                 }
-            }
-            for (admin in admins) {
-                val notificationObj = Notification()
-                notificationObj.setImageUrl(coverUrl)
-                notificationObj.setUserId(admin.getId())
-                notificationObj.setCreatedAt(getCurrentTimestamp())
-                notificationObj.setModifiedAt(getCurrentTimestamp())
-                notificationObj.setRead(false)
-                var message =
-                    "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> viewed shared album '<a href='/share/$shareLink/album/$albumId' target='_blank'>${album?.getName()}</a>' at ${
-                        sdtf.format(Date())
-                    }"
-                if (album == null || album.getId() == 0) {
-                    message =
-                        "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to access non existent shared album at shareLink <strong>$shareLink</strong> and albumId <strong>$albumId</strong> at ${
+
+                for (admin in admins) {
+                    val notificationObj = Notification()
+                    notificationObj.setImageUrl(coverUrl)
+                    notificationObj.setUserId(admin.getId())
+                    notificationObj.setCreatedAt(getCurrentTimestamp())
+                    notificationObj.setModifiedAt(getCurrentTimestamp())
+                    notificationObj.setRead(false)
+                    var message =
+                        "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> viewed shared album '<a href='/share/$shareLink/album/$albumId' target='_blank'>${album?.getName()}</a>' at ${
                             sdtf.format(Date())
                         }"
+                    if (album == null || album.getId() == 0) {
+                        message =
+                            "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to access non existent shared album at shareLink <strong>$shareLink</strong> and albumId <strong>$albumId</strong> at ${
+                                sdtf.format(Date())
+                            }"
+                    }
+                    notificationObj.setMessage(message)
+                    notificationObjList.add(notificationObj)
                 }
-                notificationObj.setMessage(message)
-                notificationObjList.add(notificationObj)
+
+                if (notificationObjList.isNotEmpty()) {
+                    notificationRepository.saveAll(notificationObjList)
+                }
             }
 
-            if (notificationObjList.isNotEmpty()) {
-                notificationRepository.saveAll(notificationObjList)
+            model["album"] = response["album"]!!
+            model["albumMetadataList"] = response["albumMetadataList"]!!
+            model["albumMetadataSize"] = response["albumMetadataSize"]!!
+            model["shareLink"] = response["shareLink"]!!
+            model["message"] = response["message"]!!
+            model["msg"] = response["msg"]!!
+            model["status"] = response["status"]!!
+            val currentUserObj = model.getAttribute("currentUser") as User?
+            model["darkMode"] = false
+            if (currentUserObj != null) {
+                model["darkMode"] = currentUserObj.getDarkMode()!!
             }
-        }
 
-        model["album"] = response["album"]!!
-        model["albumMetadataList"] = response["albumMetadataList"]!!
-        model["albumMetadataSize"] = response["albumMetadataSize"]!!
-        model["shareLink"] = response["shareLink"]!!
-        model["message"] = response["message"]!!
-        model["msg"] = response["msg"]!!
-        model["status"] = response["status"]!!
-        val currentUserObj = model.getAttribute("currentUser") as User?
-        model["darkMode"] = false
-        if (currentUserObj != null) {
-            model["darkMode"] = currentUserObj.getDarkMode()!!
-        }
-
-        model["activePage"] = module
-        model["activeSidebar"] = module
-        if (album?.getName() != null) {
-            model["titleDescriptor"] = album.getName() as String
+            model["activePage"] = module
+            model["activeSidebar"] = module
+            if (album?.getName() != null) {
+                model["titleDescriptor"] = album.getName() as String
+            } else {
+                model["titleDescriptor"] = TextUtils.capitalized(module)
+            }
         } else {
-            model["titleDescriptor"] = TextUtils.capitalized(module)
+            for ((k, v) in response) {
+                model[k] = v!!
+            }
+            model["message"] = "Resource not found."
         }
+
         return module
     }
 
