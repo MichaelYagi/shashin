@@ -1355,6 +1355,7 @@ class Util {
         $(".accessedAtDetails").html("");
         $(".lastViewedByDetails").html("");
         $(".albumsDetails").html("");
+        $(".uploadedByDetails").html("");
 
         $(".pathLabel").hide();
         $(".descriptionLabel").hide();
@@ -1384,6 +1385,7 @@ class Util {
         $(".locationTypeLabel").hide();
         $(".metadataIdLabel").hide();
         $(".albumsLabel").hide();
+        $(".uploadedByLabel").hide();
 
         $(".linkCopyStatus").invisible();
 
@@ -1532,6 +1534,10 @@ class Util {
             $(".lastViewedByLabel").show();
             $(".lastViewedByDetails").text(metadata.lastAccessedByDetails);
             // shashin.printMessageToConsole("Last viewed by " + metadata.lastAccessedByDetails, {tag: "access"});
+        }
+        if (metadata.uploadedByDetails != null) {
+            $(".uploadedByLabel").show();
+            $(".uploadedByDetails").text(metadata.uploadedByDetails);
         }
         if (metadata.takenAt != null) {
             $(".takenAtLabel").show();

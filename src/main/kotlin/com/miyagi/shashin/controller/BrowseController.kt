@@ -73,10 +73,12 @@ class BrowseController: BaseController() {
 
         val settings = model.getAttribute("settings") as Settings?
 
-        if (!media.isEmpty() && hasMediaUploadDirectory != null && hasMediaUploadDirectory && !settings?.getUploadMediaDirectory().isNullOrBlank()) {
+        val currentUserObj = model.getAttribute("currentUser") as User?
+
+        if (currentUserObj != null && !media.isEmpty() && hasMediaUploadDirectory != null && hasMediaUploadDirectory && !settings?.getUploadMediaDirectory().isNullOrBlank()) {
             FileUtils.copyMultipartFiles(media, settings)
 
-            settingsController.scanMediaDirectories(false)
+            settingsController.scanMediaDirectories(false, 0, currentUserObj.getId())
 
             resp["msg"] = "Saved to album"
             resp["status"] = ApiResponse.SUCCESS.status

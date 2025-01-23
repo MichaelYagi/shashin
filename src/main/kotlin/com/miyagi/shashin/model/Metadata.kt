@@ -54,6 +54,7 @@ class Metadata {
     private var modifiedAt: String? = null
     private var lastAccessedAt: String? = null
     private var lastAccessedBy: Int? = null
+    private var uploadedBy: Int? = null
     private var freeFormString: String? = null
 
     // Without a default constructor, Jackson will throw an exception
@@ -148,6 +149,9 @@ class Metadata {
     }
     fun setLastAccessedBy(lastAccessedBy: Int?) {
         this.lastAccessedBy = lastAccessedBy
+    }
+    fun setUploadedBy(uploadedBy: Int?) {
+        this.uploadedBy = uploadedBy
     }
     fun setYear(year: Int?) {
         this.year = year
@@ -288,6 +292,9 @@ class Metadata {
     fun getLastAccessedBy(): Int? {
         return this.lastAccessedBy
     }
+    fun getUploadedBy(): Int? {
+        return this.uploadedBy
+    }
     fun getYear(): Int? {
         return this.year
     }
@@ -393,6 +400,7 @@ class Metadata {
         map["modifiedAt"] = this.modifiedAt
         map["lastAccessedAt"] = this.lastAccessedAt
         map["lastAccessedBy"] = this.lastAccessedBy
+        map["uploadedBy"] = this.uploadedBy
         map["freeFormString"] = this.freeFormString
 
         val mapper = ObjectMapper()
