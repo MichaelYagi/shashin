@@ -40,7 +40,8 @@ function initializeUploads(activePage) {
     $("header,#container").on('dragenter', function (e) {
         preventDefaults(e);
         $("header,#container").css({"background-color": "white", "opacity": ".5"});
-        if ($("#"+shashin.toast.target.default).hasClass("show") === false) {
+        const isModalShown = ($('.modal').hasClass('in') || $('.modal').hasClass('show'));
+        if (isModalShown === false && $("#"+shashin.toast.target.default).hasClass("show") === false) {
             shashin.showToastMessage("Drop Media", "Drag and drop media anywhere to upload.", {
                 placement: shashin.toast.placement.top.center,
                 autohide: false
