@@ -5,14 +5,18 @@
 
 <div th:replace="~{fragments/topnav :: topnav(${currentUser},${activePage},'')}"></div>
 
+<div th:replace="~{fragments/settingsgroup :: settings(${activePage},${faceRecogServicesAvailable},${objectRecogEnabled})}"></div>
+
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
     <div class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="~{fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})}"></div>
+
         <main role="main" class="col overflow-auto h-100">
             <th:block th:if="${authority == 'ROLE_SUPER'}">
                 <div th:replace="~{fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})}" class="col-sm p-3 min-vh-100"></div>
 
                 <br>
+
                 <form id="saveSettingsForm" method="post" action="/settings">
                     <input type="hidden" id="pathInput" value="">
                     <input type="hidden" id="selectedPathInput" value="">
