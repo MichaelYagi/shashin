@@ -13,7 +13,7 @@
 
         <main role="main" class="col overflow-auto h-100">
             <th:block th:if="${authority == 'ROLE_SUPER'}">
-                <div th:replace="~{fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})}" class="col-sm p-3 min-vh-100"></div>
+                <div th:replace="~{fragments/hiddenfields :: hiddenfields()}"></div>
 
                 <br>
 
