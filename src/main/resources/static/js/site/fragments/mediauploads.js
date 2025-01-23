@@ -33,33 +33,43 @@ function initializeUploads(activePage) {
         e.preventDefault();
         e.stopPropagation();
     }
-    $("header,#container").on('dragover', function (e) {
+    $("header,#container,.nav").on('dragover', function (e) {
         preventDefaults(e);
-        $("header,#container").css({"background-color": "white", "opacity": ".5"});
-    });
-    $("header,#container").on('dragenter', function (e) {
-        preventDefaults(e);
-        $("header,#container").css({"background-color": "white", "opacity": ".5"});
+
         const isModalShown = ($('.modal').hasClass('in') || $('.modal').hasClass('show'));
-        if (isModalShown === false && $("#"+shashin.toast.target.default).hasClass("show") === false) {
+        const isOffcanvasShown = ($('.offcanvas').hasClass('in') || $('.offcanvas').hasClass('show'));
+
+        if (isOffcanvasShown === false && isModalShown === false && $("#"+shashin.toast.target.default).hasClass("show") === false) {
+            $("header,#container,.nav").css({"background-color": "white", "opacity": ".5"});
+        }
+    });
+    $("header,#container,.nav").on('dragenter', function (e) {
+        preventDefaults(e);
+
+        const isModalShown = ($('.modal').hasClass('in') || $('.modal').hasClass('show'));
+        const isOffcanvasShown = ($('.offcanvas').hasClass('in') || $('.offcanvas').hasClass('show'));
+
+        if (isOffcanvasShown === false && isModalShown === false && $("#"+shashin.toast.target.default).hasClass("show") === false) {
+            $("header,#container,.nav").css({"background-color": "white", "opacity": ".5"});
+
             shashin.showToastMessage("Drop Media", "Drag and drop media anywhere to upload.", {
                 placement: shashin.toast.placement.top.center,
                 autohide: false
             });
         }
     });
-    $("header,#container").on('dragleave', function (e) {
+    $("header,#container,.nav").on('dragleave', function (e) {
         preventDefaults(e);
         if (e.originalEvent.pageX !== 0 && e.originalEvent.pageY !== 0) {
             return false;
         }
 
-        $("header,#container").css({"background-color": "white", "opacity": "1"});
+        $("header,#container,.nav").css({"background-color": "white", "opacity": "1"});
         shashin.closeToastMessage();
     });
-    $("header,#container").on("drop", function (e) {
+    $("header,#container,.nav").on("drop", function (e) {
         e.preventDefault();
-        $("header,#container").css({"background-color": "white", "opacity": "1"});
+        $("header,#container,.nav").css({"background-color": "white", "opacity": "1"});
         shashin.closeToastMessage();
 
         const dt = e.originalEvent.dataTransfer;

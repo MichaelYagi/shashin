@@ -5,6 +5,8 @@
 
 <div th:replace="~{fragments/topnav :: topnav(${currentUser},${activePage},'')}"></div>
 
+<div th:replace="~{fragments/settingsgroup :: settings(${activePage},${faceRecogServicesAvailable},${objectRecogEnabled})}"></div>
+
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
     <div class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="~{fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})}"></div>
@@ -61,7 +63,7 @@
             </button>
 
             <!-- To bottom button -->
-            <button type="button" class="btn btn-primary btn-floating btn-lg" id="btn-to-bottom">
+            <button type="button" class="btn btn-primary btn-floating btn-lg mt-3" id="btn-to-bottom">
                 <i class="bi-arrow-down-circle"></i>
             </button>
 
