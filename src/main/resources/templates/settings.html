@@ -13,7 +13,7 @@
 
         <main role="main" class="col overflow-auto h-100">
             <th:block th:if="${authority == 'ROLE_SUPER'}">
-                <div th:replace="~{fragments/hiddenfields :: hiddenfields()}"></div>
+                <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
 
                 <br>
 
@@ -152,7 +152,7 @@
                 </form>
             </th:block>
 
-            <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})}"></div>
+            <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
         </main>
     </div>
 </div>

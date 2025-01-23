@@ -15,7 +15,7 @@
     <div th:replace="~{fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})}"></div>
 
     <main role="main" class="col overflow-auto h-100">
-        <div th:replace="~{fragments/hiddenfields :: hiddenfields()}"></div>
+        <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
 
         <div id="map" class="map" style="z-index: 0">
             <div id="light-gallery-photo"></div>

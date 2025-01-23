@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
-<footer th:fragment="footer(copyrightYear,operatingSystemInfo,buildProperties,activeProfile)">
-<!-- Copyright moved to sidebar -->
+<footer th:fragment="footer(copyrightYear,operatingSystemInfo,buildProperties,activeProfile,activePage)">
+<!-- Copyright moved to sidebar except share -->
+    <th:block th:if="${activePage == 'share'}">
+        &copy; <span th:text="'2021-'+${copyrightYear}+' '+${@environment.getProperty('app.build.properties.name')}+${activeProfile != 'prod' ? ' '+#strings.capitalize(activeProfile)+' Build ': ' '}+${operatingSystemInfo != '' ? '('+operatingSystemInfo+') ' : ''}+${buildProperties.getVersion()}"></span>
+    </th:block>
 </footer>
 </body>
 </html>

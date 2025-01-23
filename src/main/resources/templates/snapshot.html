@@ -11,7 +11,7 @@
     <div class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="~{fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})}"></div>
         <main role="main" class="col overflow-auto h-100">
-            <div th:replace="~{fragments/hiddenfields :: hiddenfields()}"></div>
+            <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
 
             <div class="row mt-4">
                 <div class="col-md-auto">
@@ -34,7 +34,7 @@
                 </div>
             </div>
             <span class="bi-info-circle" style="font-size: 1rem;color: blue;"></span> Export or import metadata zip file and backup database. People and keywords will not be exported.
-            <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})}"></div>
+            <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
         </main>
     </div>
 </div>

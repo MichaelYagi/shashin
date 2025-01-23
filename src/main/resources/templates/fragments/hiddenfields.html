@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="hiddenfields()">
+<body th:fragment="hiddenfields(message)">
+<th:block th:if="${message != ''}">
+    <br>
+    <div class="card">
+        <div class="card-body">
+            <span id="msg" th:utext="${message}"></span>
+        </div>
+    </div>
+</th:block>
 
 <input type="hidden" id="multiSelectMetadataIds" name="multiSelectMetadataIds" value="[]">
 <input type="hidden" id="multiSelectFilenames" name="multiSelectFilenames" value="[]">
