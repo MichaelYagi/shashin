@@ -504,7 +504,7 @@ $("#detailsTabLink").on("click", function (e) {
 
     const metadataId = $("#metadataId").val();
     shashin.getMetadata(metadataId).then(function (metadataObj) {
-        Util.populateDetailsInfo(metadataObj, "propMetadata");
+        Util.populateDetailsInfo(metadataObj);
     });
 });
 

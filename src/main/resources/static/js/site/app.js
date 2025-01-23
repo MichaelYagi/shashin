@@ -750,7 +750,7 @@
                 }
 
                 $("#albumDetailRow").remove();
-                Util.populateDetailsInfo(metadata, "propMetadata");
+                Util.populateDetailsInfo(metadata);
 
                 if ($("#keywordsString").length > 0) {
                     const keywordAvailableList = $($("#keywordsString").val().split(",")).not($("#keywords").val().split(",")).get().filter(function (v) {
@@ -1553,7 +1553,7 @@
                 shashin.openHeaderMap(metadata);
             }
 
-            Util.populateDetailsInfo(metadata, "propInfoSidebar");
+            Util.populateDetailsInfo(metadata);
 
             // Open info sidebar
             $("#propInfoSidebar").css('z-index', 9999);

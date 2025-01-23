@@ -1326,15 +1326,7 @@ class Util {
         }, 0);
     }
 
-    static populateDetailsInfo(metadata,containerModalId) {
-        if (typeof containerModalId === "undefined" || containerModalId.length === 0) {
-            if ($("#propMetadata").hasClass('show') === true) {
-                containerModalId = "propMetadata";
-            } else if ($("#propInfoSidebar").hasClass('show') === true) {
-                containerModalId = "propInfoSidebar";
-            }
-        }
-
+    static populateDetailsInfo(metadata) {
         // Clear data
         $(".descriptionDetails").text("");
         $(".pathDetails").text("");
