@@ -19,11 +19,14 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
+import java.awt.image.BufferedImage
 import java.io.File
+import java.io.IOException
 import java.net.URL
 import java.time.Duration
 import java.util.*
 import java.util.logging.Level
+import javax.imageio.ImageIO
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -144,8 +147,22 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
 //        println(this.driver?.pageSource)
         val imageEl = this.driver!!.findElement(By.id("image$metadataId"))
         val imageSrc = imageEl.getAttribute("src")
-//        println(imageSrc!!)
-        Assertions.assertTrue(imageSrc!!.contains("/225/91e01341-0370-3d48-ac6c-a9684b82c1b9"))
+        val imgSrcArray = imageSrc?.split("/")
+        val length = imgSrcArray?.size
+
+        var metadataId = ""
+        if (length != null && length > 0) {
+            val metadata = imgSrcArray[length-1]
+            val metadataArray = metadata.split("?")
+            metadataId = metadataArray[0]
+        }
+        Assertions.assertTrue(metadataId != "")
+        var image: BufferedImage? = null
+        try {
+            val url = URL("http://localhost:$port/api/v1/image/$metadataId")
+            image = ImageIO.read(url)
+        } catch (_: IOException) {}
+        Assertions.assertTrue(image?.type == BufferedImage.TYPE_3BYTE_BGR)
     }
 
     private fun isUUID(someUUID: String): Boolean {
