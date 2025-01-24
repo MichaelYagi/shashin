@@ -18,6 +18,7 @@
                     <thead>
                         <tr>
                             <th scope="col">Profile</th>
+                            <th scope="col">User ID</th>
                             <th scope="col">Username</th>
                             <th scope="col">Role</th>
                             <th scope="col">Authorized</th>
@@ -37,6 +38,7 @@
                                 <th:block th:unless="${user.profile==null or user.profile==''}">
                                     <td><img th:src="${user.profile}" style="display:inline-block;width:24px;height:24px;" /></td>
                                 </th:block>
+                                <td><span th:text="${user.id}"></span></td>
                                 <td><span th:text="${user.username}"></span></td>
                                 <td>
                                     <a href="#" th:id="${'permissiontoggle' + user.id}">
