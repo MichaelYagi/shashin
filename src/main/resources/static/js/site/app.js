@@ -433,6 +433,9 @@
         const http = new Http("get timeline metadata");
         const data = await http.ajax("get", "/complete/metadata/"+metadataId+"?v="+uuidv4());
 
+        shashin.printMessageToConsole("shashin.getCompleteMetadata");
+        shashin.printMessageToConsole(data);
+
         let ret = {};
 
         if (data.hasOwnProperty("metadata")) {
@@ -446,6 +449,9 @@
     shashin.getMetadata = async function(metadataId) {
         const http = new Http("get metadata");
         const data = await http.ajax("get", "/metadata/"+metadataId+"?v="+uuidv4());
+
+        shashin.printMessageToConsole("shashin.getMetadata");
+        shashin.printMessageToConsole(data);
 
         let metadata = {};
         metadata["keywords"] = [];
