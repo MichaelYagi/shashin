@@ -29,6 +29,7 @@ import org.springframework.security.web.firewall.StrictHttpFirewall
 import org.springframework.security.web.header.HeaderWriterFilter
 import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter
 import org.springframework.security.web.session.HttpSessionEventPublisher
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import javax.sql.DataSource
 
 // Used to validate URL paths for login redirect
@@ -352,6 +353,8 @@ class WebSecurityConfig {
         http
             .logout{
                 it
+                    .logoutRequestMatcher(AntPathRequestMatcher("/users/logout"))
+                    .logoutSuccessUrl("/users/login")
                     .invalidateHttpSession(true)
                     .clearAuthentication(true)
                     .deleteCookies("JSESSIONID")
