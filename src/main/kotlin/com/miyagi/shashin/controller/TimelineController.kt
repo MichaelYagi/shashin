@@ -2378,6 +2378,8 @@ class TimelineController: BaseController() {
 
         response["uploadedByDetails"] = null
 
+        response["lastAccessedAt"] = null
+
         val emptyJson = "{}"
         val mapper = ObjectMapper()
         response["metadata"] = mapper.readTree(emptyJson)
@@ -2389,6 +2391,10 @@ class TimelineController: BaseController() {
         if (metadataRecord.isPresent) {
             response["metadata"] = metadataRecord.get()
             response["albumMap"] = getAlbumMapForUser(currentUserObj, id)
+
+            if (currentUserObj?.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") {
+                response["lastAccessedAt"] = metadataRecord.get().getLastAccessedAt()
+            }
 
             val accessInfo = metadataRecord.get().getFreeFormString()
             val freeFormObj = TextUtils.parseMetadataFreeformString(accessInfo)
@@ -2523,15 +2529,22 @@ class TimelineController: BaseController() {
         val labelArray = mutableListOf<String>()
         response["taggedPeopleList"] = labelArray
         response["albumMap"] = mutableMapOf<Int, String>()
+        response["lastAccessedAt"] = null
 
         val emptyJson = "{}"
         val mapper = ObjectMapper()
         response["metadata"] = mapper.readTree(emptyJson)
 
+        val currentUserObj = model.getAttribute("currentUser") as User?
+
         val metadataRecord = metadataRepository.findById(id)
         if (metadataRecord.isPresent) {
 
             response["metadata"] = metadataRecord.get()
+
+            if (currentUserObj?.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") {
+                response["lastAccessedAt"] = metadataRecord.get().getLastAccessedAt()
+            }
 
             val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(id)
             if (recognitionLabelPhotos != null) {
@@ -2543,8 +2556,6 @@ class TimelineController: BaseController() {
                 }
             }
             response["taggedPeopleList"] = labelArray
-
-            val currentUserObj = model.getAttribute("currentUser") as User?
             response["albumMap"] = getAlbumMapForUser(currentUserObj, id)
 
             val keywordArray = mutableListOf<String>()
