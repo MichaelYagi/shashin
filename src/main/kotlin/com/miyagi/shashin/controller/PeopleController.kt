@@ -697,31 +697,32 @@ class PeopleController: BaseController() {
                     settings.getRecognitionConfidenceThreshold()!!,
                     TextUtils.getObjectName()
                 )
+            }
 
-                if (peopleList != null && peopleList.count() > 0) {
-                    for (person in peopleList) {
-                        var coverUrl = ""
-                        if (person.getCoverUrl() != null) {
-                            val metadata = metadataRepository?.findByThumbnailCentered(person.getCoverUrl().toString())
-                            if (metadata != null) {
-                                coverUrl = "/api/v1/thumbnails/centered/"+metadata.getId()
-                            }
-                        }
-                        coverUrls[person.getId() as Int] = coverUrl
-
-                        val lowMatchResults = metadataRepository?.findLowMatchesByPerson(
-                            person.getId()!!,
-                            settings.getRecognitionConfidenceThreshold()!!
-                        )
-
-                        if (lowMatchResults != null && lowMatchResults.count() > 0) {
-                            counts[person.getId()!!] = lowMatchResults.count()
+            if (peopleList != null && peopleList.count() > 0) {
+                for (person in peopleList) {
+                    var coverUrl = ""
+                    if (person.getCoverUrl() != null) {
+                        val metadata = metadataRepository?.findByThumbnailCentered(person.getCoverUrl().toString())
+                        if (metadata != null) {
+                            coverUrl = "/api/v1/thumbnails/centered/"+metadata.getId()
                         }
                     }
-                    model["coverUrls"] = coverUrls
-                    model["counts"] = counts
+                    coverUrls[person.getId() as Int] = coverUrl
+
+                    val lowMatchResults = metadataRepository?.findLowMatchesByPerson(
+                        person.getId()!!,
+                        settings.getRecognitionConfidenceThreshold()!!
+                    )
+
+                    if (lowMatchResults != null && lowMatchResults.count() > 0) {
+                        counts[person.getId()!!] = lowMatchResults.count()
+                    }
                 }
+                model["coverUrls"] = coverUrls
+                model["counts"] = counts
             }
+
             if (peopleList != null && peopleList.count() > 0) {
                 model["peopleList"] = peopleList
                 model["message"] = ""
