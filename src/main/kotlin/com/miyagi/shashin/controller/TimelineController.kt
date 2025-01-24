@@ -2417,9 +2417,7 @@ class TimelineController: BaseController() {
                         response["uploadedByDetails"] = userUploaded.get().getUsername()
                     }
 
-                    if (metadataRecord.get().getLastAccessedBy() != null && metadataRecord.get()
-                            .getLastAccessedBy()!! > 0
-                    ) {
+                    if (metadataObj.getLastAccessedBy() != null && metadataObj.getLastAccessedBy()!! > 0) {
                         val userObj = userRepository.findById(metadataRecord.get().getLastAccessedBy())
 
                         if (userObj != null) {
