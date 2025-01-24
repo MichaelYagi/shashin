@@ -2394,14 +2394,14 @@ class TimelineController: BaseController() {
 
             val metadataObj = metadataRecord.get()
             var metadataObjCopy: Metadata? = null
+            metadataObjCopy = metadataObj
             // Hide info from users
             if (currentUserObj?.getAuthority()!! == "ROLE_USER") {
-                metadataObj.setLastAccessedAt(null)
-                metadataObj.setLastAccessedBy(null)
-                metadataObj.setUploadedBy(null)
-                metadataObj.setFreeFormString(null)
+                metadataObjCopy.setLastAccessedAt(null)
+                metadataObjCopy.setLastAccessedBy(null)
+                metadataObjCopy.setUploadedBy(null)
+                metadataObjCopy.setFreeFormString(null)
             }
-            metadataObjCopy = metadataObj
             response["metadata"] = metadataObjCopy
 
             val accessInfo = metadataRecord.get().getFreeFormString()
@@ -2550,14 +2550,14 @@ class TimelineController: BaseController() {
 
             val metadataObj = metadataRecord.get()
             var metadataObjCopy: Metadata? = null
+            metadataObjCopy = metadataObj
             // Hide info from users
             if (currentUserObj?.getAuthority()!! == "ROLE_USER") {
-                metadataObj.setLastAccessedAt(null)
-                metadataObj.setLastAccessedBy(null)
-                metadataObj.setUploadedBy(null)
-                metadataObj.setFreeFormString(null)
+                metadataObjCopy.setLastAccessedAt(null)
+                metadataObjCopy.setLastAccessedBy(null)
+                metadataObjCopy.setUploadedBy(null)
+                metadataObjCopy.setFreeFormString(null)
             }
-            metadataObjCopy = metadataObj
             response["metadata"] = metadataObjCopy
 
             val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(id)
