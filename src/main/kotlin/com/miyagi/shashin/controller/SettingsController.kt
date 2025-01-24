@@ -615,8 +615,22 @@ class SettingsController {
             Sort.Order.asc("username")
         )
         val users = userRepository?.findAll(sort)
+        val userList = mutableListOf<User>()
         if (users != null) {
-            model["users"] = users
+            // Self first in list
+            val currentUser = model.getAttribute("currentUser") as User?
+            if (currentUser != null) {
+                userList.add(currentUser)
+            }
+
+            // Then the rest
+            for (user in users) {
+                if (user != null && user.getId() != currentUser?.getId()) {
+                    userList.add(user)
+                }
+            }
+
+            model["users"] = userList
         }
 
         val settings = model.getAttribute("settings") as Settings?
