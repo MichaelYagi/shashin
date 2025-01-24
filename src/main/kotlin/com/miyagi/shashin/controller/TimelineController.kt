@@ -2553,35 +2553,6 @@ class TimelineController: BaseController() {
                 metadataObjCopy.setLastAccessedBy(null)
                 metadataObjCopy.setUploadedBy(null)
                 metadataObjCopy.setFreeFormString(null)
-            } else if (currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") {
-                val accessInfo = metadataRecord.get().getFreeFormString()
-                val freeFormObj = TextUtils.parseMetadataFreeformString(accessInfo)
-                if (freeFormObj != null) {
-                    val accessClientIP = freeFormObj.getClientIP()
-                    val accessBrowser = freeFormObj.getBrowser()
-                    val accessRequestResourceType = freeFormObj.getRequestResourceType()
-                    val accessOS = freeFormObj.getOperatingSystem()
-                    val accessInfoString = " - $accessOS $accessBrowser $accessRequestResourceType"
-
-                    val uploadedByUserId = metadataRecord.get().getUploadedBy()
-                    if (uploadedByUserId != null && uploadedByUserId > 0) {
-                        val userUploaded = userRepository.findById(uploadedByUserId)
-                        response["uploadedByDetails"] = userUploaded.get().getUsername()
-                    }
-
-                    if (metadataObj.getLastAccessedBy() != null && metadataObj.getLastAccessedBy()!! > 0) {
-                        val userObj = userRepository.findById(metadataRecord.get().getLastAccessedBy())
-
-                        if (userObj != null) {
-                            response["lastAccessedByDetails"] =
-                                userObj.getUsername() + " " + accessClientIP + accessInfoString
-                        } else {
-                            response["lastAccessedByDetails"] = accessClientIP + accessInfoString
-                        }
-                    } else {
-                        response["lastAccessedByDetails"] = accessClientIP + accessInfoString
-                    }
-                }
             }
             response["metadata"] = metadataObjCopy
 
