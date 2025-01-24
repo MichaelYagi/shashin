@@ -2401,19 +2401,16 @@ class TimelineController: BaseController() {
                 metadataObjCopy.setLastAccessedBy(null)
                 metadataObjCopy.setUploadedBy(null)
                 metadataObjCopy.setFreeFormString(null)
-            }
-            response["metadata"] = metadataObjCopy
+            } else if (currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "super") {
+                val accessInfo = metadataRecord.get().getFreeFormString()
+                val freeFormObj = TextUtils.parseMetadataFreeformString(accessInfo)
+                if (freeFormObj != null) {
+                    val accessClientIP = freeFormObj.getClientIP()
+                    val accessBrowser = freeFormObj.getBrowser()
+                    val accessRequestResourceType = freeFormObj.getRequestResourceType()
+                    val accessOS = freeFormObj.getOperatingSystem()
+                    val accessInfoString = " - $accessOS $accessBrowser $accessRequestResourceType"
 
-            val accessInfo = metadataRecord.get().getFreeFormString()
-            val freeFormObj = TextUtils.parseMetadataFreeformString(accessInfo)
-            if (freeFormObj != null) {
-                val accessClientIP = freeFormObj.getClientIP()
-                val accessBrowser = freeFormObj.getBrowser()
-                val accessRequestResourceType = freeFormObj.getRequestResourceType()
-                val accessOS = freeFormObj.getOperatingSystem()
-                val accessInfoString = " - $accessOS $accessBrowser $accessRequestResourceType"
-
-                if (currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") {
                     val uploadedByUserId = metadataRecord.get().getUploadedBy()
                     if (uploadedByUserId != null && uploadedByUserId > 0) {
                         val userUploaded = userRepository.findById(uploadedByUserId)
@@ -2436,6 +2433,7 @@ class TimelineController: BaseController() {
                     }
                 }
             }
+            response["metadata"] = metadataObjCopy
         }
 
         val favoritesMap = HashMap<String, HashMap<String, Any>>()
