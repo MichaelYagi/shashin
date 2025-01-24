@@ -39,10 +39,7 @@ import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
-import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
-import jakarta.servlet.http.HttpSession
 import org.springframework.transaction.annotation.Transactional
 
 
@@ -522,50 +519,6 @@ class UserController {
             return module
         }
     }
-
-    // User websecurityconfig to logout: https://stackoverflow.com/a/65022017
-//    @GetMapping("/users/logout")
-//    fun logUserOut(httpsession: HttpSession, status: SessionStatus, request: HttpServletRequest, response: HttpServletResponse): String {
-//        logoutProcedure(httpsession, status, request, response)
-//        return "redirect:/users/login"
-//    }
-//
-//    private fun logoutProcedure(httpsession: HttpSession, status: SessionStatus, request: HttpServletRequest, response: HttpServletResponse) {
-//        val authentication = SecurityContextHolder.getContext().authentication
-//        if (authentication != null && !authentication.name.isNullOrBlank()) {
-//            val user = userRepository?.findByUsername(authentication.name)
-//
-//            if (user != null) {
-//                user.setModifiedAt(getCurrentTimestamp())
-//                userRepository?.save(user)
-//
-//                for (cookie in request.cookies!!) {
-//                    if (cookie.name.contains("remember-me")) {
-//                        val series = TextUtils.decodePersistenceToken(cookie.value)
-//                        if (series.isNotEmpty()) {
-//                            persistentLoginsExpiryRepository.deleteBySeries(series)
-//                            persistentLoginsRepository?.deleteBySeries(series)
-//                        }
-//
-//                        break
-//                    }
-//                }
-//
-//                //DatabaseUtil.cleanupPersistence(persistentLoginsExpiryRepository, persistentLoginsRepository)
-//            }
-//        }
-//
-//        status.setComplete()
-//        httpsession.invalidate()
-//        SecurityContextHolder.clearContext()
-//        request.logout()
-//
-//        val cookie = Cookie("remember-me", null) // Not necessary, but saves bandwidth.
-//        cookie.path = "/"
-//        cookie.isHttpOnly = true
-//        cookie.maxAge = 0
-//        response.addCookie(cookie)
-//    }
 
     @RequestMapping(value = ["/users/darkmode"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody

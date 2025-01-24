@@ -22,6 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.security.web.authentication.logout.LogoutHandler
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository
 import org.springframework.security.web.firewall.HttpFirewall
@@ -266,6 +267,9 @@ class WebSecurityConfig {
     @Autowired
     private val authSuccessHandler: AuthSuccessHandler? = null
 
+    @Autowired
+    private val customLogoutHandler: CustomLogoutHandler? = null
+
     @Value("\${app.role.super}")
     private var superRole: String? = null
 
@@ -353,7 +357,8 @@ class WebSecurityConfig {
         http
             .logout{
                 it
-                    .logoutRequestMatcher(AntPathRequestMatcher("/users/logout"))
+                    .logoutUrl("/users/logout")
+                    .addLogoutHandler(customLogoutHandler)
                     .logoutSuccessUrl("/users/login")
                     .invalidateHttpSession(true)
                     .clearAuthentication(true)
