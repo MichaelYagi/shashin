@@ -523,6 +523,7 @@ class UserController {
         }
     }
 
+    // User websecurityconfig to logout: https://stackoverflow.com/a/65022017
 //    @GetMapping("/users/logout")
 //    fun logUserOut(httpsession: HttpSession, status: SessionStatus, request: HttpServletRequest, response: HttpServletResponse): String {
 //        logoutProcedure(httpsession, status, request, response)
