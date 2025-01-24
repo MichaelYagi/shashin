@@ -300,8 +300,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         Assertions.assertEquals("Nothing to see here.",msgEl.text)
     }
 
-    // TODO: Fix test failure in CircleCI
-//    @Test
+    @Test
     @Throws(Exception::class)
     fun shouldViewInAlbumAndCommentAsUser() {
         //Login as testuser
