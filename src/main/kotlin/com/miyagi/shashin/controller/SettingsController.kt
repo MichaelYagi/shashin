@@ -612,7 +612,7 @@ class SettingsController {
         model["users"] = mutableListOf<User>()
 
         val sort = Sort.by(
-            Sort.Order.asc("username")
+            Sort.Order.asc("id")
         )
         val users = userRepository?.findAll(sort)
         if (users != null) {
