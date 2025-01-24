@@ -2389,12 +2389,20 @@ class TimelineController: BaseController() {
         val currentUserObj = model.getAttribute("currentUser") as User?
 
         if (metadataRecord.isPresent) {
-            response["metadata"] = metadataRecord.get()
+
             response["albumMap"] = getAlbumMapForUser(currentUserObj, id)
 
-            if (currentUserObj?.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") {
-                response["lastAccessedAt"] = metadataRecord.get().getLastAccessedAt()
+            val metadataObj = metadataRecord.get()
+            var metadataObjCopy: Metadata? = null
+            // Hide info from users
+            if (currentUserObj?.getAuthority()!! == "ROLE_USER") {
+                metadataObj.setLastAccessedAt(null)
+                metadataObj.setLastAccessedBy(null)
+                metadataObj.setUploadedBy(null)
+                metadataObj.setFreeFormString(null)
             }
+            metadataObjCopy = metadataObj
+            response["metadata"] = metadataObjCopy
 
             val accessInfo = metadataRecord.get().getFreeFormString()
             val freeFormObj = TextUtils.parseMetadataFreeformString(accessInfo)
@@ -2405,7 +2413,7 @@ class TimelineController: BaseController() {
                 val accessOS = freeFormObj.getOperatingSystem()
                 val accessInfoString = " - $accessOS $accessBrowser $accessRequestResourceType"
 
-                if (currentUserObj?.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") {
+                if (currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") {
                     val uploadedByUserId = metadataRecord.get().getUploadedBy()
                     if (uploadedByUserId != null && uploadedByUserId > 0) {
                         val userUploaded = userRepository.findById(uploadedByUserId)
@@ -2540,11 +2548,17 @@ class TimelineController: BaseController() {
         val metadataRecord = metadataRepository.findById(id)
         if (metadataRecord.isPresent) {
 
-            response["metadata"] = metadataRecord.get()
-
-            if (currentUserObj?.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") {
-                response["lastAccessedAt"] = metadataRecord.get().getLastAccessedAt()
+            val metadataObj = metadataRecord.get()
+            var metadataObjCopy: Metadata? = null
+            // Hide info from users
+            if (currentUserObj?.getAuthority()!! == "ROLE_USER") {
+                metadataObj.setLastAccessedAt(null)
+                metadataObj.setLastAccessedBy(null)
+                metadataObj.setUploadedBy(null)
+                metadataObj.setFreeFormString(null)
             }
+            metadataObjCopy = metadataObj
+            response["metadata"] = metadataObjCopy
 
             val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(id)
             if (recognitionLabelPhotos != null) {
