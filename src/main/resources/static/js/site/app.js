@@ -434,13 +434,8 @@
         const data = await http.ajax("get", "/complete/metadata/"+metadataId+"?v="+uuidv4());
 
         let ret = {};
-        const metadata = {};
-        metadata["lastAccessedAt"] = ""
 
-        if (data.hasOwnProperty("metadata") && data.hasOwnProperty("lastAccessedAt")) {
-            const metadata = data["metadata"];
-            metadata["lastAccessedAt"] = data["lastAccessedAt"];
-            data["metadata"] = metadata;
+        if (data.hasOwnProperty("metadata")) {
             ret = data;
         }
 
@@ -457,15 +452,13 @@
         metadata["albumMap"] = {};
         metadata["lastAccessedByDetails"] = "";
         metadata["uploadedByDetails"] = "";
-        metadata["lastAccessedAt"] = ""
 
-        if (data.hasOwnProperty("metadata") && data.hasOwnProperty("keywordList") && data.hasOwnProperty("albumMap") && data.hasOwnProperty("lastAccessedByDetails") && data.hasOwnProperty("uploadedByDetails") && data.hasOwnProperty("lastAccessedAt")) {
+        if (data.hasOwnProperty("metadata") && data.hasOwnProperty("keywordList") && data.hasOwnProperty("albumMap") && data.hasOwnProperty("lastAccessedByDetails") && data.hasOwnProperty("uploadedByDetails")) {
             metadata = data["metadata"];
             metadata["keywords"] = data["keywordList"];
             metadata["albumMap"] = data["albumMap"];
             metadata["lastAccessedByDetails"] = data["lastAccessedByDetails"];
             metadata["uploadedByDetails"] = data["uploadedByDetails"];
-            metadata["lastAccessedAt"] = data["lastAccessedAt"];
         }
 
         return metadata;
