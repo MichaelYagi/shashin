@@ -38,8 +38,8 @@
                                 <th:block th:unless="${user.profile==null or user.profile==''}">
                                     <td><img th:src="${user.profile}" style="display:inline-block;width:24px;height:24px;" /></td>
                                 </th:block>
-                                <td><span th:text="${user.id}"></span></td>
-                                <td><span th:text="${user.username}"></span></td>
+                                <td><span th:utext="'&lt;strong&gt;'+${user.id}+'&lt;/strong&gt;'"></span></td>
+                                <td><span th:utext="'&lt;strong&gt;'+${user.username}+'&lt;/strong&gt;'"></span></td>
                                 <td>
                                     <th:block th:if="${user.authority == 'ROLE_SUPER'}">
                                         <span class="bi-person-badge-fill" style="font-size: 1rem;" data-bs-toggle="tooltip" data-bs-placement="right" title="Currently a Super Admin."></span>
@@ -54,8 +54,8 @@
                                 <td>
                                     <span class="bi-check" style="font-size: 1rem;" data-bs-toggle="tooltip" data-bs-placement="right" title="You are authorized"></span>
                                 </td>
-                                <td><span th:text="${user.createdAt}"></span></td>
-                                <td><span th:text="${user.modifiedAt}"></span></td>
+                                <td><span th:utext="'&lt;strong&gt;'+${user.createdAt}+'&lt;/strong&gt;'"></span></td>
+                                <td><span th:utext="'&lt;strong&gt;'+${user.modifiedAt}+'&lt;/strong&gt;'"></span></td>
                                 <td></td>
                                 <td></td>
                             </tr>
