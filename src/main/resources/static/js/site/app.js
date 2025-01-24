@@ -434,7 +434,7 @@
         const data = await http.ajax("get", "/complete/metadata/"+metadataId+"?v="+uuidv4());
 
         shashin.printMessageToConsole("shashin.getCompleteMetadata");
-        shashin.printMessageToConsole(data);
+        shashin.printMessageToConsole(JSON.stringify(data),{tag: "metadata"});
 
         let ret = {};
 
@@ -451,7 +451,7 @@
         const data = await http.ajax("get", "/metadata/"+metadataId+"?v="+uuidv4());
 
         shashin.printMessageToConsole("shashin.getMetadata");
-        shashin.printMessageToConsole(data);
+        shashin.printMessageToConsole(JSON.stringify(data),{tag: "metadata"});
 
         let metadata = {};
         metadata["keywords"] = [];
