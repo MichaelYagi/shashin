@@ -42,10 +42,12 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
 import kotlin.collections.ArrayList
+import kotlin.io.path.Path
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.floor
 import kotlin.math.sin
+import kotlin.text.split
 
 
 @Suppress("UNCHECKED_CAST")
@@ -142,10 +144,11 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         val fileRootDir: String = FileUtils.getRootDir(file)
         val supportedImageFormats = FileUtils.allowableImageFiles()
         val supportedVideoFormats = FileUtils.allowableVideoFiles()
+        var mediaExtension = FileUtils.probeFileExtension(file)
         var extension = "jpg"
 
         var img: BufferedImage? = null
-        if (FileUtils.isRaw(file.extension.lowercase())) {
+        if (FileUtils.isRaw(mediaExtension)) {
             try {
                 img = ImageIO.read(file)
                 if (rotation != 0) {
@@ -154,8 +157,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             } catch (e: Exception) {
                 logger.log(Level.WARNING, "Could not read file: " + file.path)
             }
-        } else if (supportedImageFormats.contains(file.extension.lowercase())) {
-            extension = file.extension.lowercase()
+        } else if (supportedImageFormats.contains(mediaExtension)) {
+            extension = mediaExtension
             try {
                 img = ImageIO.read(file)
 //                if (extension == "png" || extension == "gif") {
@@ -170,14 +173,14 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             } catch (e: Exception) {
                 logger.log(Level.WARNING, "Could not read file: " + file.path)
             }
-        } else if (supportedVideoFormats.contains(file.extension.lowercase())) {
+        } else if (supportedVideoFormats.contains(mediaExtension)) {
             // Grab screenshot
             val videoProcessing = VideoProcessing(file)
             img = videoProcessing.getVideoScreenshot()
 //            _metadataObj?.setVideoUrl("/api/$apiVersion/original/video$fileRootDir/" + file.name)
         }
 
-        if (supportedVideoFormats.contains(file.extension.lowercase()) && !rotationFromExif && rotation == 0) {
+        if (supportedVideoFormats.contains(mediaExtension) && !rotationFromExif && rotation == 0) {
             rotation = getVideoRotation(file)?.toInt() ?: 0
         }
 
@@ -203,7 +206,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             _metadataObj = setThumbnails(
                 img,
                 _metadataObj,
-                (FileUtils.isRaw(file.extension.lowercase()) || supportedVideoFormats.contains(file.extension.lowercase())),
+                (FileUtils.isRaw(mediaExtension) || supportedVideoFormats.contains(mediaExtension)),
                 extension
             )
         } else {
@@ -222,6 +225,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         overwriteThumbnails: Boolean = false
     ): Metadata {
         if (file.exists()) {
+            val mediaExtension = FileUtils.probeFileExtension(file)
+
             val thumbnailDirectory = sidecarDir.dropLast(1) + "/thumbnails"
             val fileRootDir: String = FileUtils.getRootDir(file)
 
@@ -256,7 +261,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
                 val thumbnails = Thumbnails.of(img)
                     .outputQuality(1.0)
-                if (file.extension.lowercase() == "gif") {
+                if (mediaExtension == "gif") {
                     thumbnails
                         .imageType(BufferedImage.TYPE_INT_ARGB)
                 }

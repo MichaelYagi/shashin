@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.multipart.MultipartFile
 import java.io.*
 import java.net.URL
+import java.net.URLConnection
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
@@ -27,6 +28,7 @@ import java.util.zip.ZipException
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
 import javax.xml.bind.DatatypeConverter.parseBase64Binary
+import kotlin.io.path.Path
 
 
 @Component
@@ -60,6 +62,32 @@ class FileUtils {
 
         fun isRaw(extension: String): Boolean {
             return allowableRawImageFiles().contains(extension.lowercase())
+        }
+
+        fun probeFileExtension(file: File): String {
+            var mediaExtension = file.extension.lowercase()
+            if (mediaExtension == "") {
+                val mediaMimeType = Files.probeContentType(Path(file.path))
+
+                if (mediaMimeType != null) {
+                    val mediaMimeTypeArray = mediaMimeType.split("/")
+                    if (mediaMimeTypeArray.size > 1) {
+                        mediaExtension = mediaMimeTypeArray[1].lowercase()
+                    }
+                } else {
+                    val inputStream: InputStream = BufferedInputStream(FileInputStream(file))
+                    val mimeType: String? = URLConnection.guessContentTypeFromStream(inputStream)
+                    inputStream.close()
+                    if (mimeType != null) {
+                        val mediaMimeTypeArray = mimeType.split("/")
+                        if (mediaMimeTypeArray.size > 1) {
+                            mediaExtension = mediaMimeTypeArray[1].lowercase()
+                        }
+                    }
+                }
+            }
+
+            return mediaExtension
         }
 
         fun fileCount(dir: String?): Long {
@@ -371,7 +399,9 @@ class FileUtils {
             }
 
             for (file in media) {
-                if (!allowableMediaFiles().contains(FilenameUtils.getExtension(file.originalFilename).lowercase())) {
+                val extension = FilenameUtils.getExtension(file.originalFilename).lowercase()
+
+                if (extension != "" && !allowableMediaFiles().contains(extension)) {
                     notUploadedFiles.add(file.originalFilename.toString())
                 } else {
                     val copyToFile = File(uploadDirectory + simpleTimestamp + "/" + file.originalFilename)
@@ -381,7 +411,23 @@ class FileUtils {
                             val outputStream = FileOutputStream(copyToFile)
                             outputStream.write(file.bytes)
                             outputStream.close()
-                            uploadedFiles.add(file.originalFilename.toString())
+
+                            val probeExtension = probeFileExtension(copyToFile)
+
+                            if (allowableMediaFiles().contains(probeExtension)) {
+                                uploadedFiles.add(file.originalFilename.toString())
+                                logger.log(
+                                    Level.INFO,
+                                    file.originalFilename + " uploaded"
+                                )
+                            } else {
+                                Files.deleteIfExists(Paths.get(copyToFile.absolutePath))
+                                notUploadedFiles.add(file.originalFilename.toString())
+                                logger.log(
+                                    Level.WARNING,
+                                    file.originalFilename + ": Extension not detected or media type not accepted"
+                                )
+                            }
                         } catch (e: Exception) {
                             logger.log(
                                 Level.WARNING,
