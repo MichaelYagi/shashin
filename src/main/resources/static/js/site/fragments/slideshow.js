@@ -193,7 +193,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 "<div class='row'><div class='col-4'><strong>f</strong></div><div class='col-8'>Fullscreen</div></div>" +
                 "<div class='row'><div class='col-4'><strong>Space</strong></div><div class='col-8'>Play/pause</div></div>" +
                 "<div class='row'><div class='col-4'><strong>i</strong></div><div class='col-8'>Slide info</div></div>" +
-                "<div class='row'><div class='col-4'><strong>Left/Right</strong></div><div class='col-8'>Got to next/previous slide</div></div>" +
+                "<div class='row'><div class='col-4'><strong>← →</strong></div><div class='col-8'>Got to next/previous slide</div></div>" +
                 "</div>",
                 options
             );
