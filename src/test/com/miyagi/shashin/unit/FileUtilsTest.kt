@@ -4,6 +4,8 @@ import com.miyagi.shashin.util.FileUtils
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.test.context.ActiveProfiles
+import java.io.File
+import java.net.URL
 
 @ActiveProfiles("test")
 class FileUtilsTest {
@@ -45,5 +47,25 @@ class FileUtilsTest {
 
         json = FileUtils.convertYamlToJson("---\nQuickTimeSound-SampleRate: 48000")
         Assertions.assertEquals(json, "{\"QuickTimeSound-SampleRate\":48000}")
+    }
+
+    @Test
+    fun probeFileExtensionTest() {
+        val classLoader = javaClass.classLoader
+
+        var testImageUrl: URL = classLoader.getResource("testscreen.jpg")!!
+        var testImageFile = File(testImageUrl.file)
+        var extension = FileUtils.probeFileExtension(testImageFile)
+        Assertions.assertEquals("jpg", extension)
+
+        testImageUrl = classLoader.getResource("subdir/SoSSpcl_Cvr_Main_JorgeJimenezAvif")!!
+        testImageFile = File(testImageUrl.file)
+        extension = FileUtils.probeFileExtension(testImageFile)
+        Assertions.assertEquals("avif", extension)
+
+        testImageUrl = classLoader.getResource("subdir/SoSSpcl_Cvr_Main_JorgeJimenezJpg")!!
+        testImageFile = File(testImageUrl.file)
+        extension = FileUtils.probeFileExtension(testImageFile)
+        Assertions.assertEquals("jpeg", extension)
     }
 }
