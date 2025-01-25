@@ -565,28 +565,28 @@ class BrowseController: BaseController() {
                     "recent" -> {
                         metadataList = metadataRepository.findRecentByMediaTypeAndOffsetAndLimit(
                             pageValue,
-                            mediaType!!,
+                            mediaType,
                             size
                         ).toMutableList()
                     }
                     "modified" -> {
                         metadataList = metadataRepository.findModifiedByMediaTypeAndOffsetAndLimit(
                             pageValue,
-                            mediaType!!,
+                            mediaType,
                             size
                         ).toMutableList()
                     }
                     "taken" -> {
                         metadataList = metadataRepository.findTakenByMediaTypeAndOffsetAndLimit(
                             pageValue,
-                            mediaType!!,
+                            mediaType,
                             size
                         ).toMutableList()
                     }
                     "accessed" -> {
                         metadataList = metadataRepository.findLastAccessedByMediaTypeAndOffsetAndLimit(
                             pageValue,
-                            mediaType!!,
+                            mediaType,
                             size
                         ).toMutableList()
                     }
