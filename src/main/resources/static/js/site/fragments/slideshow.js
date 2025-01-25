@@ -161,11 +161,21 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     }
 
     function showInstruction(autoHide) {
-        let options = {
-            icon: "bi-info-circle",
-            target:"toastTarget4",
-            autohide: false
-        };
+        let options = {}
+
+        if (Util.isMobile() === false) {
+            options = {
+                icon: "bi-keyboard",
+                target: "toastTarget4",
+                autohide: false
+            };
+        } else {
+            options = {
+                icon: "bi-hand-index",
+                target: "toastTarget4",
+                autohide: false
+            };
+        }
 
         if (autoHide === "undefined" || autoHide === null) {
             autoHide = false;
@@ -188,23 +198,23 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         if (Util.isMobile() === false) {
             shashin.showToastMessage("Keyboard Shortcuts",
                 "<div class='container'>" +
-                "<div class='row'><div class='col-4'><strong>d</strong></div><div class='col-8'>Show/close this window</div></div>" +
-                "<div class='row'><div class='col-4'><strong>Esc</strong></div><div class='col-8'>Exit fullscreen. Press Esc again to exit slideshow.</div></div>" +
-                "<div class='row'><div class='col-4'><strong>f</strong></div><div class='col-8'>Fullscreen</div></div>" +
-                "<div class='row'><div class='col-4'><strong>Space</strong></div><div class='col-8'>Play/pause</div></div>" +
-                "<div class='row'><div class='col-4'><strong>i</strong></div><div class='col-8'>Slide info</div></div>" +
-                "<div class='row'><div class='col-4'><strong>← →</strong></div><div class='col-8'>Got to next/previous slide</div></div>" +
+                "<div class='row mb-1'><div class='col-3 text-center'><strong>d</strong></div><div class='col-9'>Show/close this window</div></div>" +
+                "<div class='row mb-1'><div class='col-3 text-center'><strong>Esc</strong></div><div class='col-9'>Exit fullscreen. Press Esc again to exit slideshow.</div></div>" +
+                "<div class='row mb-1'><div class='col-3 text-center'><strong>f</strong></div><div class='col-9'>Fullscreen</div></div>" +
+                "<div class='row mb-1'><div class='col-3 text-center'><strong>Space</strong></div><div class='col-9'>Play/pause</div></div>" +
+                "<div class='row mb-1'><div class='col-3 text-center'><strong>i</strong></div><div class='col-9'>Slide info</div></div>" +
+                "<div class='row mb-1'><div class='col-3 text-center'><strong>← →</strong></div><div class='col-9'>Got to next/previous slide</div></div>" +
                 "</div>",
                 options
             );
         } else {
             shashin.showToastMessage("Touch Bindings",
                 "<div class='container'>" +
-                "<div class='row'><div class='col-4'><strong>Swipe Up</strong></div><div class='col-8'>Show/close this window when in fullscreen</div></div>" +
-                "<div class='row'><div class='col-4'><strong>Swipe Down</strong></div><div class='col-8'>Slide info</div></div>" +
-                "<div class='row'><div class='col-4'><strong>Single Tap</strong></div><div class='col-8'>Play/pause</div></div>" +
-                "<div class='row'><div class='col-4'><strong>Double Tap</strong></div><div class='col-8'>Exit fullscreen. Double tap again to exit slideshow or swipe up to go back to fullscreen</div></div>" +
-                "<div class='row'><div class='col-4'><strong>Swipe Left/Right</strong></div><div class='col-8'>Got to next/previous slide</div></div>" +
+                "<div class='row mb-1'><div class='col-3 text-center'><strong>Swipe Up</strong></div><div class='col-9'>Show/close this window when in fullscreen</div></div>" +
+                "<div class='row mb-1'><div class='col-3 text-center'><strong>Swipe Down</strong></div><div class='col-9'>Slide info</div></div>" +
+                "<div class='row mb-1'><div class='col-3 text-center'><strong>Single Tap</strong></div><div class='col-9'>Play/pause</div></div>" +
+                "<div class='row mb-1'><div class='col-3 text-center'><strong>Double Tap</strong></div><div class='col-9'>Exit fullscreen. Double tap again to exit slideshow or swipe up to go back to fullscreen</div></div>" +
+                "<div class='row mb-1'><div class='col-3 text-center'><strong>Swipe Left/Right</strong></div><div class='col-9'>Got to next/previous slide</div></div>" +
                 "</div>",
                 options
             );
