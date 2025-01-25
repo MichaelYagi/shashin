@@ -172,14 +172,21 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         }
 
         if (autoHide === true) {
-            options = {
-                icon: "bi-info-circle",
-                target:"toastTarget4"
-            };
+            if (Util.isMobile() === false) {
+                options = {
+                    icon: "bi-keyboard",
+                    target: "toastTarget4"
+                };
+            } else {
+                options = {
+                    icon: "bi-hand-index",
+                    target: "toastTarget4"
+                };
+            }
         }
 
         if (Util.isMobile() === false) {
-            shashin.showToastMessage("Key bindings",
+            shashin.showToastMessage("Keyboard Shortcuts",
                 "<div class='container'>" +
                 "<div class='row'><div class='col-4'><strong>d</strong></div><div class='col-8'>Show/close this window</div></div>" +
                 "<div class='row'><div class='col-4'><strong>Esc</strong></div><div class='col-8'>Exit fullscreen. Press Esc again to exit slideshow.</div></div>" +
@@ -191,7 +198,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 options
             );
         } else {
-            shashin.showToastMessage("Touch bindings",
+            shashin.showToastMessage("Touch Bindings",
                 "<div class='container'>" +
                 "<div class='row'><div class='col-4'><strong>Swipe Up</strong></div><div class='col-8'>Show/close this window when in fullscreen</div></div>" +
                 "<div class='row'><div class='col-4'><strong>Swipe Down</strong></div><div class='col-8'>Slide info</div></div>" +
