@@ -10,7 +10,7 @@
                 <h5 class="modal-title" id="propMetadataModalTitle">Edit &ldquo;<span id="metadataModalTitle"></span>&rdquo;<div id="propMetadataModalThumbnail"></div></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <ul class="nav nav-pills nav-fill ms-3 me-3 mt-3">
+            <ul class="nav nav-pills nav-fill ms-3 me-3 mt-3 mb-2">
                 <th:block th:if="${(authority == 'ROLE_SUPER' || authority == 'ROLE_ADMIN') and activePage != 'archived'}">
                     <li class="nav-item" id="generalTabNav">
                         <a class="nav-link show active" data-bs-toggle="tab" id="generalTabLink" href="#generalTab">Update</a>
