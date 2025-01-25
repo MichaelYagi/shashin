@@ -733,11 +733,21 @@ class AlbumsController: BaseController() {
         val currentUserObj = model.getAttribute("currentUser") as User?
 
         if (currentUserObj != null && !media.isEmpty() && albumId > 0 && hasMediaUploadDirectory != null && hasMediaUploadDirectory && !settings?.getUploadMediaDirectory().isNullOrBlank()) {
-            FileUtils.copyMultipartFiles(media, settings)
+            val fileUploadedMap = FileUtils.copyMultipartFiles(media, settings)
+            val uploadedFiles = fileUploadedMap["uploadedFiles"] as MutableList<String>
+            val notUploadedFiles = fileUploadedMap["notUploadedFiles"] as MutableList<String>
 
             settingsController.scanMediaDirectories(false, albumId, currentUserObj.getId())
 
-            resp["msg"] = "Files uploaded. Processing files"
+            if (!notUploadedFiles.isEmpty() && !uploadedFiles.isEmpty()) {
+                resp["msg"] = "Some items not saved to album - ${notUploadedFiles.joinToString(", ")}. Check file formats."
+            } else if (!notUploadedFiles.isEmpty() && uploadedFiles.isEmpty()) {
+                resp["msg"] = "Items not saved to album. Check file formats."
+            } else if (!uploadedFiles.isEmpty()) {
+                resp["msg"] = "Saved to album. Processing files."
+            } else {
+                resp["msg"] = "Saved to album. Processing files."
+            }
             resp["status"] = ApiResponse.SUCCESS.status
         }
 

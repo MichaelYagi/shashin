@@ -8,6 +8,7 @@ import com.google.gson.JsonSyntaxException
 import com.miyagi.shashin.ShashinApplication
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
+import org.apache.commons.io.FilenameUtils
 import org.springframework.core.io.FileSystemResource
 import org.springframework.stereotype.Component
 import org.springframework.web.multipart.MultipartFile
@@ -42,7 +43,7 @@ class FileUtils {
         }
 
         fun allowableImageFiles(): Array<String> {
-            return arrayOf("jpeg","jpg","png","bmp","gif","webm","webp","heif","heic","tiff","avif")
+            return arrayOf("jpeg","jpg","png","bmp","gif","webm","webp","heif","heic","tiff") //,"avif")
         }
 
         fun allowableAudioFiles(): Array<String> {
@@ -370,27 +371,31 @@ class FileUtils {
             }
 
             for (file in media) {
-                val copyToFile = File(uploadDirectory + simpleTimestamp + "/" +file.originalFilename)
-                if (!copyToFile.exists()) {
-                    try {
-                        copyToFile.createNewFile()
-                        val outputStream = FileOutputStream(copyToFile)
-                        outputStream.write(file.bytes)
-                        outputStream.close()
-                        uploadedFiles.add(file.originalFilename.toString())
-                    } catch (e: Exception) {
+                if (!allowableMediaFiles().contains(FilenameUtils.getExtension(file.originalFilename).lowercase())) {
+                    notUploadedFiles.add(file.originalFilename.toString())
+                } else {
+                    val copyToFile = File(uploadDirectory + simpleTimestamp + "/" + file.originalFilename)
+                    if (!copyToFile.exists()) {
+                        try {
+                            copyToFile.createNewFile()
+                            val outputStream = FileOutputStream(copyToFile)
+                            outputStream.write(file.bytes)
+                            outputStream.close()
+                            uploadedFiles.add(file.originalFilename.toString())
+                        } catch (e: Exception) {
+                            logger.log(
+                                Level.WARNING,
+                                file.originalFilename + ": " + e.localizedMessage
+                            )
+                            notUploadedFiles.add(file.originalFilename.toString())
+                        }
+                    } else {
                         logger.log(
                             Level.WARNING,
-                            file.originalFilename + ": " + e.localizedMessage
+                            file.originalFilename + " already exists"
                         )
                         notUploadedFiles.add(file.originalFilename.toString())
                     }
-                } else {
-                    logger.log(
-                        Level.WARNING,
-                        file.originalFilename + " already exists"
-                    )
-                    notUploadedFiles.add(file.originalFilename.toString())
                 }
             }
 
