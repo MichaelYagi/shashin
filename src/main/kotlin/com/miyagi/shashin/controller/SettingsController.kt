@@ -1547,6 +1547,7 @@ class SettingsController {
 
                             if (metadataList != null) {
                                 var deleteCount = 0
+                                var deletedList = mutableListOf<String>()
 
                                 for (metadata in metadataList) {
                                     if (shouldStop.get()) {
@@ -1587,6 +1588,8 @@ class SettingsController {
                                             val checkFile = File(metadata.getPath()!!)
                                             if (!checkFile.exists() || !basePathExists || excludeBasePathExists) {
                                                 deleteCount++
+
+                                                deletedList.add(metadata.getFileName().toString())
 
                                                 // Delete side car and metadata files
                                                 if (!metadata.getThumbnailPathCentered().isNullOrBlank()) {
@@ -1792,7 +1795,7 @@ class SettingsController {
                                     // Set notification for scanCount and date and link to /recent
                                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                                     val msg =
-                                        "Deleted $deleteCount images/videos at " + sdtf.format(Date()) + "."
+                                        "Deleted <a href='#' data-bs-toggle='tooltip' title='${deletedList.joinToString("\n")}'>$deleteCount</a> images/videos at " + sdtf.format(Date()) + "."
                                     if (superAdmins != null) {
                                         val notificationObjList = mutableListOf<Notification>()
                                         for (admin in superAdmins) {
