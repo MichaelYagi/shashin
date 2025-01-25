@@ -31,6 +31,7 @@ import org.springframework.web.socket.messaging.SessionConnectEvent
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import org.springframework.web.socket.messaging.SessionSubscribeEvent
 import kotlin.collections.HashMap
+import kotlin.collections.mutableListOf
 
 @Controller
 class BrowseController: BaseController() {
@@ -76,11 +77,21 @@ class BrowseController: BaseController() {
         val currentUserObj = model.getAttribute("currentUser") as User?
 
         if (currentUserObj != null && !media.isEmpty() && hasMediaUploadDirectory != null && hasMediaUploadDirectory && !settings?.getUploadMediaDirectory().isNullOrBlank()) {
-            FileUtils.copyMultipartFiles(media, settings)
+            val fileUploadedMap = FileUtils.copyMultipartFiles(media, settings)
+            val uploadedFiles = fileUploadedMap["uploadedFiles"] as MutableList<String>
+            val notUploadedFiles = fileUploadedMap["notUploadedFiles"] as MutableList<String>
 
             settingsController.scanMediaDirectories(false, 0, currentUserObj.getId())
 
-            resp["msg"] = "Saved to album"
+            if (!notUploadedFiles.isEmpty() && !uploadedFiles.isEmpty()) {
+                resp["msg"] = "Some items not uploaded - ${notUploadedFiles.joinToString(", ")}. Check file formats."
+            } else if (!notUploadedFiles.isEmpty() && uploadedFiles.isEmpty()) {
+                resp["msg"] = "Items not uploaded. Check file formats."
+            } else if (!uploadedFiles.isEmpty()) {
+                resp["msg"] = "Files uploaded. Processing files"
+            } else {
+                resp["msg"] = "Files uploaded. Processing files"
+            }
             resp["status"] = ApiResponse.SUCCESS.status
         }
 
