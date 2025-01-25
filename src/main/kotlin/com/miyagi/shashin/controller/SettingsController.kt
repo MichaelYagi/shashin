@@ -71,6 +71,7 @@ import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
 import jakarta.transaction.Transactional
 import org.springframework.data.jpa.repository.Modifying
+import kotlin.io.path.Path
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
 import kotlin.math.floor
@@ -2340,12 +2341,14 @@ class SettingsController {
                         currentMediaCount++
                     }
 
-                    if (!exclude && !alreadyScannedFilepaths.contains(file.path) && FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
+                    val mediaExtension = FileUtils.probeFileExtension(file)
+
+                    if (!exclude && !alreadyScannedFilepaths.contains(file.path) && FileUtils.allowableMediaFiles().contains(mediaExtension)) {
 
                         //val mediaProcessingUtils = MediaProcessing(apiVersion,geocodeUrl)
                         var metadataObj: Metadata? = Metadata()
 
-                        if (!shouldStop.get() && FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
+                        if (!shouldStop.get() && FileUtils.allowableMediaFiles().contains(mediaExtension)) {
                             val metadataProcessing = MetadataProcessing(apiVersion!!, file, sidecarDir, metadataObj!!, geocodeUrl!!)
                             metadataObj = metadataProcessing.populateMetadata()
                             if (metadataObj.getId().isNotEmpty()) {

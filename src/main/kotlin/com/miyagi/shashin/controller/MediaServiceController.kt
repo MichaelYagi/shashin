@@ -48,6 +48,7 @@ import java.awt.image.BufferedImage
 import java.io.IOException
 import java.lang.management.ManagementFactory
 import javax.imageio.ImageIO
+import kotlin.io.path.Path
 import kotlin.text.split
 
 
@@ -775,7 +776,9 @@ class MediaServiceController {
 
                     val thumbnails = Thumbnails.of(img).outputQuality(1.0)
 
-                    if (file.extension.lowercase() == "gif") {
+                    val mediaExtension = FileUtils.probeFileExtension(file)
+
+                    if (mediaExtension == "gif") {
                         thumbnails
                             .imageType(BufferedImage.TYPE_INT_ARGB)
                     }

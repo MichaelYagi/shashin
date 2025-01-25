@@ -81,7 +81,9 @@ class BrowseController: BaseController() {
             val uploadedFiles = fileUploadedMap["uploadedFiles"] as MutableList<String>
             val notUploadedFiles = fileUploadedMap["notUploadedFiles"] as MutableList<String>
 
-            settingsController.scanMediaDirectories(false, 0, currentUserObj.getId())
+            if (!uploadedFiles.isEmpty()) {
+                settingsController.scanMediaDirectories(false, 0, currentUserObj.getId())
+            }
 
             if (!notUploadedFiles.isEmpty() && !uploadedFiles.isEmpty()) {
                 resp["msg"] = "Some items not uploaded - ${notUploadedFiles.joinToString(", ")}. Check file formats."

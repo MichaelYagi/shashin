@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
+import kotlin.io.path.Path
 
 
 class MetadataProcessing() {
@@ -556,16 +557,13 @@ class MetadataProcessing() {
 
         val supportedImageFormats = FileUtils.allowableImageFiles()
         val supportedVideoFormats = FileUtils.allowableVideoFiles()
-//        val supportedAudioFormats = FileUtils.allowableAudioFiles()
+        val mediaExtension = FileUtils.probeFileExtension(file)
 
-        if (supportedImageFormats.contains(file.extension.lowercase())) {
+        if (supportedImageFormats.contains(mediaExtension)) {
             this.metadataObj.setThumbnailUrlOriginal("/api/$apiVersion/image/${this.metadataObj.getId()}")
-        } else if (supportedVideoFormats.contains(file.extension.lowercase())) {
+        } else if (supportedVideoFormats.contains(mediaExtension)) {
             this.metadataObj.setVideoUrl("/api/$apiVersion/video/${this.metadataObj.getId()}")
         }
-//        else if (supportedAudioFormats.contains(file.extension.lowercase())) {
-//            metadataObj.setVideoUrl("/api/$apiVersion/audio/${metadataObj.getId()}")
-//        }
 
         return metadataObj
     }
