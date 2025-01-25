@@ -57,6 +57,33 @@
     </div>
 </div>
 
+<div class="modal fade" id="propAbout" tabindex="-1" role="dialog" aria-labelledby="labelAboutContent" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteContentLabel">About</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <th:block th:if="${activeProfile != 'prod'}">
+                    <span th:text="${#strings.capitalize(activeProfile)+' Build'}"></span><br>
+                </th:block>
+                Version <span th:text="${buildProperties.getVersion()}"></span><br>
+                <th:block th:if="${operatingSystemInfo != ''}">
+                    <span th:text="${operatingSystemInfo}"></span><br>
+                </th:block>
+                <br>
+                &copy; <span th:text="'2021-'+${copyrightYear}+' '+${@environment.getProperty('app.build.properties.name')}"></span><br>
+                <a class="me-2" href="https://github.com/MichaelYagi" target="_blank"><span class="bi-github" style="font-size: 1.5rem;color: lightgray;"></span></a>
+                <a href="www.linkedin.com/in/michael-yagi-25242835" target="_blank"><span class="bi-linkedin" style="font-size: 1.5rem;color: lightgray;"></span></a>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="slideshowGallery" class="imgbox" style="display: none;">
     <img class="centerFit" id="mediaSrc" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII">
     <span class="bi-play-circle" id="playPause" style="display: none;"></span>
@@ -277,6 +304,7 @@
                     </div>
                 </div>
                 <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#propAbout">About</a>
                 <a class="dropdown-item" href="/users/logout">Sign out</a>
             </div>
         </div>
