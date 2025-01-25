@@ -9,6 +9,10 @@ import com.miyagi.shashin.ShashinApplication
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import org.apache.commons.io.FilenameUtils
+import org.apache.tika.Tika
+import org.apache.tika.detect.Detector
+import org.apache.tika.mime.MediaType
+import org.apache.tika.parser.AutoDetectParser
 import org.springframework.core.io.FileSystemResource
 import org.springframework.stereotype.Component
 import org.springframework.web.multipart.MultipartFile
@@ -75,13 +79,30 @@ class FileUtils {
                         mediaExtension = mediaMimeTypeArray[1].lowercase()
                     }
                 } else {
-                    val inputStream: InputStream = BufferedInputStream(FileInputStream(file))
-                    val mimeType: String? = URLConnection.guessContentTypeFromStream(inputStream)
-                    inputStream.close()
-                    if (mimeType != null) {
-                        val mediaMimeTypeArray = mimeType.split("/")
-                        if (mediaMimeTypeArray.size > 1) {
-                            mediaExtension = mediaMimeTypeArray[1].lowercase()
+                    try {
+                        val inputStream: InputStream = BufferedInputStream(FileInputStream(file))
+                        val mimeType: String? = URLConnection.guessContentTypeFromStream(inputStream)
+                        inputStream.close()
+                        if (mimeType != null) {
+                            val mediaMimeTypeArray = mimeType.split("/")
+                            if (mediaMimeTypeArray.size > 1) {
+                                mediaExtension = mediaMimeTypeArray[1].lowercase()
+                            }
+                        }
+                    } catch (_: Exception) {}
+
+                    if (mediaExtension == "") {
+                        val tika = Tika()
+                        try {
+                            val mimeType = tika.detect(file)
+                            if (mimeType != null) {
+                                val mediaMimeTypeArray = mimeType.split("/")
+                                if (mediaMimeTypeArray.size > 1) {
+                                    mediaExtension = mediaMimeTypeArray[1].lowercase()
+                                }
+                            }
+                        } catch (e: Exception) {
+                            logger.log(Level.WARNING, "Could not detect file extension: ${e.localizedMessage}")
                         }
                     }
                 }
