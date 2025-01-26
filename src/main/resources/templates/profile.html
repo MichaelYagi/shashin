@@ -149,6 +149,7 @@
                     $("#saveProfile").css("display", "none");
                     $("#cancelProfile").css("display", "none");
                     $("#chooseProfilePhoto").val("");
+                    location.replace(location.href.split('#')[0]);
                 });
 
                 $("#saveProfile").on("click", async function (e) {
@@ -174,6 +175,9 @@
                                 shashin.showToastMessage("Could not save profile", "Something went wrong", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
                             }
                         });
+
+                        $("#profilePictureEdit").croppie('destroy');
+                        croppieObject = null;
                     });
                 });
             }
