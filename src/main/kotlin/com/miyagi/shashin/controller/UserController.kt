@@ -41,6 +41,7 @@ import java.util.logging.Logger
 import javax.imageio.ImageIO
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.transaction.annotation.Transactional
+import kotlin.collections.set
 
 
 @Suppress("UNCHECKED_CAST")
@@ -104,22 +105,58 @@ class UserController {
         return module
     }
 
-    @RequestMapping(value = ["/users/update"], method = [RequestMethod.POST], consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE])
+    @GetMapping("/users/account")
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    fun postUpdateUser(model: Model, request: HttpServletRequest): String {
-        val module = "update"
+    fun getAccount(model: Model, request: HttpServletRequest): String {
         model["message"] = ""
-        model["msg"] = "Could not save password"
-        model["status"] = ApiResponse.FAIL.status
+        model["user"] = User()
+        model["alertClass"] = ""
+        model["roleDescription"] = ""
+        model["dateJoined"] = ""
+        model["status"] = ""
         model["toastTitle"] = ""
         model["toastBody"] = ""
+        model["canDeleteAccount"] = false
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null && currentUserObj.getAuthority() != "ROLE_SUPER") {
+            model["canDeleteAccount"] = true
+        }
+        val model = getUserInfo(model, currentUserObj, request)
+
+        val module = "account"
+        model["msg"] = ""
+        model["status"] = ApiResponse.SUCCESS.status
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
+    @PostMapping("/users/account")
+    @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
+    fun postAccount(model: Model, request: HttpServletRequest): String {
+        model["message"] = ""
+        model["user"] = User()
+        model["alertClass"] = ""
+        model["roleDescription"] = ""
+        model["dateJoined"] = ""
+        model["status"] = ""
+        model["toastTitle"] = ""
+        model["toastBody"] = ""
+        model["canDeleteAccount"] = false
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null && currentUserObj.getAuthority() != "ROLE_SUPER") {
+            model["canDeleteAccount"] = true
+        }
+        val model = getUserInfo(model, currentUserObj, request)
 
         if (request.getParameter("oldpassword") != null && request.getParameter("newpassword") != null && request.getParameter("newpasswordconfirm") != null) {
             val oldPassword = java.lang.String.valueOf(request.getParameter("oldpassword")).trim()
             val newPassword = java.lang.String.valueOf(request.getParameter("newpassword")).trim()
             val newPasswordConfirm = java.lang.String.valueOf(request.getParameter("newpasswordconfirm")).trim()
 
-            val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
                 if (newPassword.isNotEmpty() && newPassword == newPasswordConfirm && bcrypt.matches(oldPassword, currentUserObj.getPassword())) {
                     currentUserObj.setModifiedAt(getCurrentTimestamp())
@@ -140,24 +177,26 @@ class UserController {
             }
         }
 
+        val module = "account"
+        model["msg"] = ""
+        model["status"] = ApiResponse.SUCCESS.status
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
         return module
     }
 
-    @GetMapping("/users/profile")
-    @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    fun getProfile(model: Model): String {
-        model["message"] = ""
-        model["user"] = User()
-        model["alertClass"] = ""
-        model["roleDescription"] = ""
-        model["dateJoined"] = ""
-
-        val currentUserObj = model.getAttribute("currentUser") as User?
+    private fun getUserInfo(model: Model, currentUserObj: User?, request: HttpServletRequest): Model {
         if (currentUserObj != null) {
             model["user"] = currentUserObj
+
+            var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
+            if (request.scheme == "https") {
+                baseUrlBuilder = baseUrlBuilder.scheme("https")
+            }
+            val baseUrl = baseUrlBuilder.build().toUriString()
+            model["rssFeedLink"] = "$baseUrl/${currentUserObj.getApikey()}/rss"
+            model["atomFeedLink"] = "$baseUrl/${currentUserObj.getApikey()}/atom"
 
             if (currentUserObj.getAuthority() == "ROLE_SUPER") {
                 model["roleDescription"] = "You have <strong>Super Admin</strong> privileges. " +
@@ -173,13 +212,7 @@ class UserController {
             model["dateJoined"] = TextUtils.formatToAbbrDate(currentUserObj.getCreatedAt().toString())
         }
 
-        val module = "profile"
-        model["msg"] = ""
-        model["status"] = ApiResponse.SUCCESS.status
-        model["activePage"] = module
-        model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
-        return module
+        return model
     }
 
     @RequestMapping(value = ["/users/profile"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
@@ -842,6 +875,52 @@ class UserController {
             }
         } else {
             response["msg"] = "No user IDs detected"
+        }
+
+        return mapper.writeValueAsString(response)
+    }
+
+    @RequestMapping(value = ["/api/v1/users/account/delete", "/users/account/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    @Transactional
+    @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
+    fun postDeleteUser(model: Model, @RequestBody requestBody: JsonNode): String {
+        val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        val response = mutableMapOf<String, Any?>()
+        response["userId"] = mutableListOf<String>()
+        response["status"] = ApiResponse.FAIL.status
+        response["msg"] = ""
+        val currentUserObj = model.getAttribute("currentUser") as User?
+
+        if (userMap.containsKey("userId") && currentUserObj != null && currentUserObj.getId() == userMap["userId"].toString().toInt()) {
+            val userId = currentUserObj.getId()
+
+            // Delete profile picture
+            val user = userRepository?.findById(userId)
+            if (user != null && user.isPresent) {
+                val profileImage =
+                    if (user.get().getProfile() == null) "" else user.get().getProfile()!!.replace("/api/v1/profile/", "")
+                if (profileImage.isNotEmpty()) {
+                    val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+                    val sidecarDir = rootPath + relativeSidecarDir
+                    val profileDirectory = sidecarDir.dropLast(1) + "/profile"
+                    val profileFileStr = "$profileDirectory/$profileImage"
+                    if (File(profileFileStr).exists()) {
+                        File(profileFileStr).delete()
+                    }
+                }
+            }
+
+            userRepository?.deleteById(userId)
+            userAlbumRepository?.deleteByUserId(userId)
+            favoriteRepository?.deleteByUserId(userId)
+            commentRepository?.deleteByUserId(userId)
+
+            response["status"] = ApiResponse.SUCCESS.status
+            response["msg"] = "Successfully deleted account"
+            logger.log(Level.INFO, "User ${currentUserObj.getId()} - ${currentUserObj.getUsername()} deleted")
+        } else {
+            response["msg"] = "No user ID detected"
         }
 
         return mapper.writeValueAsString(response)

@@ -274,39 +274,37 @@
             </a>
             <div class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownMenuButton" style="z-index: 9999">
                 <h6 class="dropdown-header" th:text="${currentUser.username}"></h6>
-                <a th:class="'dropdown-item'+${activePage=='profile'?' active':''}" href="/users/profile">View profile</a>
-                <a th:class="'dropdown-item'+${activePage=='update'?' active':''}" href="/users/update">Change password</a>
-                <a th:class="'dropdown-item'+${activePage=='apikey'?' active':''}" href="/users/apikey">Manage API key</a>
+                <a th:class="'dropdown-item'+${activePage=='account'?' active':''}" href="/users/account">View Account</a>
                 <th:block th:if="${hasAlbums}">
-                    <a href="#" class="dropdown-item" id="viewSlideshow">View slideshow</a>
+                    <a href="#" class="dropdown-item" id="viewSlideshow">View Slideshow</a>
                 </th:block>
                 <div class="dropdown-item">
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" id="darkModeSwitch" th:checked="${currentUser.darkMode}">
-                        <label class="form-check-label" for="darkModeSwitch">Dark mode</label>
+                        <label class="form-check-label" for="darkModeSwitch">Dark Mode</label>
                     </div>
                 </div>
                 <div class="dropdown-item">
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" id="autoplayVideoSwitch" th:checked="${currentUser.autoplayVideo}">
-                        <label class="form-check-label" for="autoplayVideoSwitch">Autoplay videos</label>
+                        <label class="form-check-label" for="autoplayVideoSwitch">Autoplay Videos</label>
                     </div>
                 </div>
                 <div class="dropdown-item">
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" id="showPlacenameSwitch" th:checked="${currentUser.showPlacename}">
-                        <label class="form-check-label" for="showPlacenameSwitch">Show place names</label>
+                        <label class="form-check-label" for="showPlacenameSwitch">Show Place Names</label>
                     </div>
                 </div>
                 <div class="dropdown-item">
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" id="showNotificationAlertsSwitch" th:checked="${currentUser.notificationAlerts}">
-                        <label class="form-check-label" for="showNotificationAlertsSwitch">Show notifications</label>
+                        <label class="form-check-label" for="showNotificationAlertsSwitch">Show Notifications</label>
                     </div>
                 </div>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#propAbout">About</a>
-                <a class="dropdown-item" href="/users/logout">Sign out</a>
+                <a class="dropdown-item" href="/users/logout">Sign Out</a>
             </div>
         </div>
     </div>
