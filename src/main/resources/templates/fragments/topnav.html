@@ -278,32 +278,8 @@
                 <th:block th:if="${hasAlbums}">
                     <a href="#" class="dropdown-item" id="viewSlideshow">View Slideshow</a>
                 </th:block>
-                <div class="dropdown-item">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="darkModeSwitch" th:checked="${currentUser.darkMode}">
-                        <label class="form-check-label" for="darkModeSwitch">Dark Mode</label>
-                    </div>
-                </div>
-                <div class="dropdown-item">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="autoplayVideoSwitch" th:checked="${currentUser.autoplayVideo}">
-                        <label class="form-check-label" for="autoplayVideoSwitch">Autoplay Videos</label>
-                    </div>
-                </div>
-                <div class="dropdown-item">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="showPlacenameSwitch" th:checked="${currentUser.showPlacename}">
-                        <label class="form-check-label" for="showPlacenameSwitch">Show Place Names</label>
-                    </div>
-                </div>
-                <div class="dropdown-item">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="showNotificationAlertsSwitch" th:checked="${currentUser.notificationAlerts}">
-                        <label class="form-check-label" for="showNotificationAlertsSwitch">Show Notifications</label>
-                    </div>
-                </div>
-                <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#propAbout">About</a>
+                <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="/users/logout">Sign Out</a>
             </div>
         </div>
