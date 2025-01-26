@@ -152,21 +152,25 @@ class UserController {
         model["message"] = ""
         model["user"] = User()
         model["alertClass"] = ""
+        model["roleDescription"] = ""
+        model["dateJoined"] = ""
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
             model["user"] = currentUserObj
 
             if (currentUserObj.getAuthority() == "ROLE_SUPER") {
-                model["message"] = "<span>You have <strong>Super Admin</strong> privileges. " +
-                        "You have access to application settings, editing metadata, dashboard, maps, browsing and timeline views (if available).</span>"
+                model["roleDescription"] = "You have <strong>Super Admin</strong> privileges. " +
+                        "You have access to application settings, editing metadata, dashboard, maps, browsing and timeline views (if available)."
             } else if (currentUserObj.getAuthority() == "ROLE_ADMIN") {
-                model["message"] = "<span>You have <strong>Admin</strong> privileges. " +
-                        "You have access to editing metadata, dashboard, maps, browsing and timeline views (if available).</span>"
+                model["roleDescription"] = "You have <strong>Admin</strong> privileges. " +
+                        "You have access to editing metadata, dashboard, maps, browsing and timeline views (if available)."
             } else {
-                model["message"] = "<span>You have <strong>User</strong> privileges. " +
-                        "You have access to albums shared with you, maps and viewing metadata.</span>"
+                model["roleDescription"] = "You have <strong>User</strong> privileges. " +
+                        "You have access to albums shared with you, maps and viewing metadata."
             }
+
+            model["dateJoined"] = TextUtils.formatToAbbrDate(currentUserObj.getCreatedAt().toString())
         }
 
         val module = "profile"
