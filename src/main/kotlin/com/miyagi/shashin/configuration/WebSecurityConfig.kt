@@ -68,6 +68,7 @@ class MultiSecurityConfig {
             "search",
             "search\\?term=.*",
             "users\\/profile",
+            "users\\/account",
             "users\\/update",
             "users\\/apikey",
             "rss",

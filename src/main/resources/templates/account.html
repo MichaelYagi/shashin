@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="~{fragments/head :: head(${activePage},${titleDescriptor})}"></head>
+<body class="thumb d-flex flex-column vh-100">
+
+<div th:replace="~{fragments/topnav :: topnav(${currentUser},${activePage},'')}"></div>
+
+<div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
+    <div class="row flex-grow-sm-1 flex-grow-0">
+        <div th:replace="~{fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})}"></div>
+        <main role="main" class="col overflow-auto h-100">
+            <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
+
+            <div class="row image-group-padding mt-3">
+                <div class="col-1 me-5" id="profilePictureEditWrapper" th:style="${'width:200px;max-height:500px;display: ' + {user.profile==null or user.profile==''?'none;':'display;'}}">
+                    <img id="profilePictureEdit" th:src="${user.profile==null or user.profile==''?'#':user.profile + '?' + randomString}" style="max-height: 200px;" />
+                </div>
+                <div id="profileInfo" class="col-10">
+                    <h3 th:utext="${currentUser.username + '&lt;small class=&quot;text-muted&quot; style=&quot;font-size: 0.8rem&quot; &gt; Joined ' + dateJoined + '&lt;/small&gt;'}"></h3>
+                    <p th:utext="${roleDescription}"></p>
+                </div>
+            </div>
+
+            <div class="row image-group-padding mt-4">
+                <div class="col-lg-4">
+                    <div class="input-group mb-2">
+                        <h1 style="font-size:1.5rem;">Edit Profile Picture</h1>
+                    </div>
+
+                    <div class="input-group mb-2">
+                        <input type="file" th:accept="${'.'+#strings.listJoin(acceptedImageTypes, ',.')}" class="form-control" id="chooseProfilePhoto" name="chooseProfilePhoto" aria-describedby="chooseProfilePhoto" aria-label="Upload">
+                        <button type="button" class="btn btn-danger rounded-end" id="removeProfile" th:style="${'display: '+{user.profile==null or user.profile==''?'none;':'block;'}}">Delete Profile Picture</button>
+                        <button type="button" class="btn btn-secondary rounded-end" id="saveProfile" style="display: none;">Save</button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button type="button" id="cancelProfile" class="btn btn-secondary rounded" style="display: none;float:right;">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row image-group-padding mt-5">
+                <div class="col-lg-4">
+                    <div class="input-group mb-2">
+                        <h1 style="font-size:1.5rem;">Manage API Key</h1>
+                    </div>
+
+                    <div class="input-group mb-2">
+                        <div class="input-group mb-3">
+                            <button id="copyapikey" data-clipboard-target="#apikey" class="btn btn-secondary" type="button" title="Copy API key">
+                                <span id="apikeycopyicon" class="bi-clipboard-plus" style="font-size: 1rem;"></span>
+                            </button>
+                            <input id="apikey" type="text" class="form-control" aria-label="API key" th:data-clipboard-text="${user.apikey}" th:value="${user.apikey}" readonly>
+                            <button id="updateapikey" class="btn btn-danger" type="button" title="Update API key">
+                                <span class="bi-arrow-clockwise" style="font-size: 1rem;"></span>
+                            </button>
+                        </div>
+                        <p>RSS feed <a id="rssFeedLink" th:href="${rssFeedLink}" th:text="${rssFeedLink}" target="_blank"></a></p>
+                        <p>ATOM feed <a id="atomFeedLink" th:href="${atomFeedLink}" th:text="${atomFeedLink}" target="_blank"></a></p>
+                        <p>View API documentaion <a href="/articles/endpoints">here</a>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row image-group-padding mt-4">
+                <div class="col-lg-4">
+                    <div class="input-group mb-2">
+                        <h1 style="font-size:1.5rem;">Change Password</h1>
+                    </div>
+
+                    <form action="/users/account" method="post" id="passwordForm">
+                        <div class="input-group mb-3">
+                            <input type="password" id="oldpassword" name="oldpassword" class="form-control" placeholder="Old password" aria-label="" aria-describedby="basic-addon1">
+                            <button class="btn btn-secondary" type="button" id="unhideold"><span id="unhideoldicon" class="bi-eye"></span></button>
+                        </div>
+                        <div class="input-group mb-3">
+                            <input type="password" id="newpassword" name="newpassword" class="form-control" placeholder="New password" aria-label="" aria-describedby="basic-addon1">
+                            <button class="btn btn-secondary" type="button" id="unhidenew"><span id="unhidenewicon" class="bi-eye"></span></button>
+                        </div>
+                        <div class="input-group mb-3">
+                            <input type="password" id="newpasswordconfirm" name="newpasswordconfirm" class="form-control" placeholder="New password confirm" aria-label="" aria-describedby="basic-addon1">
+                            <button class="btn btn-secondary" type="button" id="unhideconfirm"><span id="unhideconfirmicon" class="bi-eye"></span></button>
+                        </div>
+
+                        <button class="btn btn-primary btn-block" type="submit">Save Password</button>
+                    </form>
+                </div>
+            </div>
+
+            <th:block th:if="${canDeleteAccount == true}">
+                <hr>
+                <div class="alert alert-danger" role="alert">
+                    <h4 class="alert-heading">Delete Account</h4>
+                    <p><span class="exclamation-triangle-fill"></span>Warning! This will permanently delete your account.</p>
+                    <a href="#" class="btn btn-danger" id="deleteAccount">Delete</a>
+                </div>
+            </th:block>
+
+            <th:block th:if="${message != '' and alertClass != ''}">
+                <div class="col-12">
+                    <div th:class="${'alert ' + alertClass + ' alert-dismissible fade show'}" role="alert" th:utext="${message+'&lt;button type=&quot;button&quot; class=&quot;btn-close&quot; data-bs-dismiss=&quot;alert&quot; aria-label=&quot;Close&quot;&gt;&lt;/button&gt;'}"/>
+                </div>
+            </th:block>
+
+            <div id="footer" th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
+        </main>
+    </div>
+</div>
+
+<div class="modal fade" id="removeProfileConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="removeProfileConfirmationModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="removeProfileConfirmationModalLabel">Delete Profile Picture</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">Are you sure you want to delete your profile picture?</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="removeProfileConfirmation">Confirm</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="apikeyUpdateConfirmation" tabindex="-1" role="dialog" aria-labelledby="apikey"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="trashModalLabel">Update API Key</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">Are you sure you want to update your API key?</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="confirmUpdateApiKey">Confirm
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteAccountConfirmation" tabindex="-1" role="dialog" aria-labelledby="deleteAccount"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Delete Account</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">Are you sure you want to delete your account?</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="confirmDeleteAccount">Confirm
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
+    $(document).ready(function () {
+        /*<![CDATA[*/
+        shashin.nonce = /*[[${cspNonce}]]*/ '';
+        const profileUrl = /*[[${user.profile}]]*/ '';
+        const userId = /*[[${user.id}]]*/ 0;
+        const status = /*[[${status}]]*/ '';
+        const toastTitle = /*[[${toastTitle}]]*/ '';
+        const toastBody = /*[[${toastBody}]]*/ '';
+        /*]]>*/
+
+        initializeAccount(profileUrl, userId, status, toastTitle, toastBody);
+    });
+</script>
+
+</body>
+</html>
