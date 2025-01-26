@@ -194,6 +194,19 @@ class TextUtils {
             return formattedDate
         }
 
+        fun formatToAbbrDate(oldDate: String): String {
+            var formattedDate = ""
+            try {
+                val sdf = SimpleDateFormat(getCommonDateFormat())
+                val newSdf = SimpleDateFormat("MMM d, yyyy")
+                val temp = sdf.parse(oldDate)
+                formattedDate = newSdf.format(temp)
+            } catch (e: Exception) {
+                logger.log(Level.WARNING, "Could not format date $oldDate. ${e.message}")
+            }
+            return formattedDate
+        }
+
         fun formatToLongDateWithTime(oldDate: String): String {
             var formattedDate = ""
             try {

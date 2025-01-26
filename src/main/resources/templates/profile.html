@@ -11,6 +11,16 @@
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
 
+            <div class="row mt-3">
+                <div class="col-1 me-5" id="profilePictureEditWrapper" th:style="${'width:200px;max-height:500px;display: ' + {user.profile==null or user.profile==''?'none;':'display;'}}">
+                    <img id="profilePictureEdit" th:src="${user.profile==null or user.profile==''?'#':user.profile + '?' + randomString}" style="max-height: 200px;" />
+                </div>
+                <div id="profileInfo" class="col-10">
+                    <h3 th:utext="${currentUser.username + '&lt;small class=&quot;text-muted&quot; style=&quot;font-size: 0.8rem&quot; &gt; Joined ' + dateJoined + '&lt;/small&gt;'}"></h3>
+                    <p th:utext="${roleDescription}"></p>
+                </div>
+            </div>
+
             <div class="row mt-4">
                 <div class="col-lg-4">
                     <div class="input-group mb-2">
@@ -24,8 +34,6 @@
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <button type="button" id="cancelProfile" class="btn btn-secondary rounded" style="display: none;float:right;">Cancel</button>
                     </div>
-
-                    <img id="profilePictureEdit" th:src="${user.profile==null or user.profile==''?'#':user.profile + '?' + randomString}" th:style="${'float: left; max-height: 200px; visibility: ' + {user.profile==null or user.profile==''?'hidden;':'visible;'}}" />
                 </div>
             </div>
 
@@ -82,14 +90,6 @@
         let json = {userId: userId}
         http.ajax("post", "/users/delete/profile", JSON.stringify(json)).then(function (data) {
             if (data.hasOwnProperty("status") && data["status"] === "success" && data.hasOwnProperty("msg")) {
-                // shashin.showToastMessage("Profile deleted", data["msg"], {icon:"bi-info-circle", iconColor:"#777777"});
-                // profileUrl = "#";
-                // $("#profilePictureEdit").attr('src', "#");
-                // $("#profilePictureEdit").css("visibility", "hidden");
-                // $("#profileImage").attr('src', "#");
-                // $("#profileImage").css({"display": "none","width":"32px","height":"32px"});
-                // $("#profileImagePlaceholder").css({"display": "block","font-size":"37px"});
-                // $("#removeProfile").css("display", "none");
                 window.top.location = window.top.location
             } else {
                 shashin.showToastMessage("Could not delete profile", "Something went wrong", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
@@ -110,8 +110,9 @@
             const reader = new FileReader();
 
             reader.onload = function (e) {
+                $("#profileInfo").css("padding-left","8em");
                 $("#profilePictureEdit").attr('src', e.target.result);
-                $("#profilePictureEdit").visible();
+                $("#profilePictureEditWrapper").css("display", "block");
                 $("#removeProfile").css("display", "none");
                 $("#saveProfile").css("display", "block");
                 $("#cancelProfile").css("display", "block");
@@ -135,15 +136,16 @@
 
                     $("#profilePictureEdit").attr("src", profileUrl);
                     if (profileUrl === null || profileUrl === "" || profileUrl === "#") {
-                        $("#profilePictureEdit").invisible();
+                        $("#profilePictureEditWrapper").css("display", "none");
                         $("#removeProfile").css("display", "none");
                     } else {
-                        $("#profilePictureEdit").visible();
+                        $("#profilePictureEditWrapper").css("display", "block");
                         $("#removeProfile").css("display", "block");
                     }
 
                     $("#profilePictureEdit").croppie('destroy');
                     croppieObject = null;
+                    $("#profileInfo").css("padding-left","");
                     $("#saveProfile").css("display", "none");
                     $("#cancelProfile").css("display", "none");
                     $("#chooseProfilePhoto").val("");
@@ -164,20 +166,6 @@
                         http.ajax("post", "/users/profile", JSON.stringify(json)).then(function (data) {
                             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                                 if (data.hasOwnProperty("imageUrl") && data["imageUrl"] !== "") {
-                                    // randomString = data["randomString"];
-                                    // profileUrl = data["imageUrl"];
-                                    // $("#profileImage").attr("src", profileUrl + '?' + data["randomString"]);
-                                    // $("#profileImage").css({"display": "inline-block","width":"39px","height":"39px"});
-                                    // $("#profileImagePlaceholder").css("display", "none");
-                                    //
-                                    // $("#profilePictureEdit").attr("src", profileUrl + '?' + data["randomString"]);
-                                    // $("#profilePictureEdit").css("visibility", "visible");
-                                    // $("#profilePictureEdit").croppie('destroy');
-                                    // croppieObject = null;
-                                    // $("#saveProfile").css("display", "none");
-                                    // $("#cancelProfile").css("display", "none");
-                                    // $("#chooseProfilePhoto").val("");
-                                    // $("#removeProfile").css("display", "block");
                                     window.top.location = window.top.location
                                 } else {
                                     shashin.showToastMessage("Could not save profile", "Could not save profile. "+data["msg"], {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
@@ -194,7 +182,8 @@
         } else {
             // File dialog cancel pressed
             if (profileUrl === null || profileUrl === "" || profileUrl === "#") {
-                $("#profilePictureEdit").invisible();
+                $("#profileInfo").css("padding-left","");
+                $("#profilePictureEditWrapper").css("display", "none");
                 $("#removeProfile").css("display", "none");
 
                 $("#profilePictureEdit").attr('src', "#");
@@ -203,7 +192,8 @@
                 $("#profileImagePlaceholder").css({"display": "block","font-size":"37px"});
                 $("#removeProfile").css("display", "none");
             } else {
-                $("#profilePictureEdit").visible();
+                $("#profileInfo").css("padding-left","8em");
+                $("#profilePictureEditWrapper").css("display", "block");
                 $("#removeProfile").css("display", "block");
 
                 $("#profilePictureEdit").attr('src', profileUrl + '?' + randomString);
