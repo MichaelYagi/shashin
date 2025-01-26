@@ -11,13 +11,22 @@
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
 
-            <div class="row image-group-padding mt-4">
-                <div class="col-1 me-5" id="profilePictureEditWrapper" th:style="${'width:200px;max-height:500px;display: ' + {user.profile==null or user.profile==''?'none;':'display;'}}">
-                    <img id="profilePictureEdit" th:src="${user.profile==null or user.profile==''?'#':user.profile + '?' + randomString}" style="max-height: 200px;" />
-                </div>
-                <div id="profileInfo" class="col-10">
-                    <h3 th:utext="${currentUser.username + '&lt;small class=&quot;text-muted&quot; style=&quot;font-size: 0.8rem&quot; &gt; Joined ' + dateJoined + '&lt;/small&gt;'}"></h3>
-                    <p th:utext="${roleDescription}"></p>
+            <div class="row">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row image-group-padding mt-4 mb-4">
+                                <div class="col-1 me-5" id="profilePictureEditWrapper" th:style="${'width:200px;max-height:500px;display: ' + {user.profile==null or user.profile==''?'none;':'display;'}}">
+                                    <img id="profilePictureEdit" th:src="${user.profile==null or user.profile==''?'#':user.profile + '?' + randomString}" style="max-height: 200px;" />
+                                </div>
+                                <div id="profileInfo" class="col-10">
+                                    <h5 class="card-title" th:utext="${currentUser.username}"></h5>
+                                    <h6 class="card-subtitle mb-2 text-muted" th:utext="${'&lt;small class=&quot;text-muted&quot; style=&quot;font-size: 0.8rem&quot; &gt; Joined ' + dateJoined + '&lt;/small&gt;'}"></h6>
+                                    <p th:utext="${roleDescription}"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
