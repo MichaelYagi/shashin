@@ -83,28 +83,6 @@ class UserController {
     @Autowired
     private lateinit var persistentLoginsExpiryRepository: PersistentLoginsExpiryRepository
 
-    @GetMapping("/users/update")
-    @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    fun getUpdateUser(model: Model): String {
-        model["message"] = ""
-        model["user"] = User()
-        model["toastTitle"] = ""
-        model["toastBody"] = ""
-
-        val currentUserObj = model.getAttribute("currentUser") as User?
-        if (currentUserObj != null) {
-            model["user"] = currentUserObj
-        }
-
-        val module = "update"
-        model["msg"] = ""
-        model["status"] = ApiResponse.SUCCESS.status
-        model["activePage"] = module
-        model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
-        return module
-    }
-
     @GetMapping("/users/account")
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     fun getAccount(model: Model, request: HttpServletRequest): String {
