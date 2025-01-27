@@ -62,20 +62,25 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
     }
 
     $("#darkModeSwitch").change(async function () {
-        const darkMode = this.checked;
-        shashin.darkMode = darkMode;
+        let darkMode = this.checked;
+
         const http = new Http("dark mode");
         const json = {darkMode: darkMode};
         const data = await http.ajax("post", "/users/darkmode", JSON.stringify(json));
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             if (data["status"] === "success") {
-                let html = $("html");
+                shashin.darkMode = darkMode;
 
+                let html = $("html");
                 html.hide();
                 Util.darkModeToggle(darkMode);
                 html.show();
             } else {
+                darkMode = darkMode !== true;
+                $("#darkModeSwitch").prop("checked", darkMode);
+                shashin.darkMode = darkMode;
+
                 shashin.showToastMessage("Setting failed", "Dark mode setting failed. "+data["msg"], {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",
@@ -83,6 +88,10 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
                 });
             }
         } else {
+            darkMode = darkMode !== true;
+            $("#darkModeSwitch").prop("checked", darkMode);
+            shashin.darkMode = darkMode;
+
             shashin.showToastMessage("Setting failed", "Dark mode setting failed. "+data["msg"], {
                 icon: "bi-exclamation-triangle",
                 iconColor: "#FF0000",
@@ -93,6 +102,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
 
     $("#showNotificationAlertsSwitch").change(async function () {
         const notificationAlerts = this.checked;
+
         const http = new Http("show notificationAlerts");
         const json = {notificationAlerts: notificationAlerts};
         const data = await http.ajax("post", "/users/shownotificationalerts", JSON.stringify(json));
@@ -117,16 +127,21 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
     });
 
     $("#showPlacenameSwitch").change(async function () {
-        const showPlacename = this.checked;
-        shashin.showPlacename = showPlacename;
+        let showPlacename = this.checked;
+
         const http = new Http("show placename");
         const json = {showPlacename: showPlacename};
         const data = await http.ajax("post", "/users/showplacename", JSON.stringify(json));
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             if (data["status"] === "success") {
+                shashin.showPlacename = showPlacename;
                 shashin.printMessageToConsole("Successfully set show place names.");
             } else {
+                showPlacename = showPlacename !== true;
+                $("#showPlacenameSwitch").prop("checked", showPlacename);
+                shashin.showPlacename = showPlacename;
+
                 shashin.showToastMessage("Setting failed", "Show place names setting failed. "+data["msg"], {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",
@@ -134,6 +149,10 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
                 });
             }
         } else {
+            showPlacename = showPlacename !== true;
+            $("#showPlacenameSwitch").prop("checked", showPlacename);
+            shashin.showPlacename = showPlacename;
+
             shashin.showToastMessage("Setting failed", "Show place names setting failed. "+data["msg"], {
                 icon: "bi-exclamation-triangle",
                 iconColor: "#FF0000",
@@ -143,7 +162,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
     });
 
     $("#autoplayVideoSwitch").change(async function () {
-        const autoplayVideo = this.checked;
+        let autoplayVideo = this.checked;
         const http = new Http("autoplay video");
         const json = {autoplayVideo: autoplayVideo};
         const data = await http.ajax("post", "/users/autoplayvideo", JSON.stringify(json));
@@ -153,6 +172,10 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
                 shashin.autoplayVideo = autoplayVideo;
                 shashin.printMessageToConsole("Successfully set autoplay.");
             } else {
+                autoplayVideo = autoplayVideo !== true;
+                $("#autoplayVideoSwitch").prop("checked", autoplayVideo);
+                shashin.autoplayVideo = autoplayVideo;
+
                 shashin.showToastMessage("Setting failed", "Autoplay videos setting failed. "+data["msg"], {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",
@@ -160,6 +183,10 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
                 });
             }
         } else {
+            autoplayVideo = autoplayVideo !== true;
+            $("#autoplayVideoSwitch").attr("checked", autoplayVideo);
+            shashin.autoplayVideo = autoplayVideo;
+
             shashin.showToastMessage("Setting failed", "Autoplay videos setting failed.", {
                 icon: "bi-exclamation-triangle",
                 iconColor: "#FF0000",
