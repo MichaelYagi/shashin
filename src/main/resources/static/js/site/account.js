@@ -1,5 +1,5 @@
 function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
-// API management
+    // API management
     $("#copyapikey").on("click", function (e) {
         e.preventDefault();
 
@@ -145,7 +145,6 @@ function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
         return fieldsValid;
     }
 
-
     // Profile edit
     let randomString = Util.getMetadataLocalStorage();
 
@@ -196,6 +195,8 @@ function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
                 $("#removeProfile").css("display", "none");
                 $("#saveProfile").css("display", "block");
                 $("#cancelProfile").css("display", "block");
+                $("#profileCard").css("width", "300px");
+                $("#profilePictureEditWrapper").removeClass("mt-4").removeClass("ms-4")
 
                 croppieObject = $("#profilePictureEdit").croppie({
                     customClass: "croppieContainer",
@@ -229,6 +230,8 @@ function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
                     $("#saveProfile").css("display", "none");
                     $("#cancelProfile").css("display", "none");
                     $("#chooseProfilePhoto").val("");
+                    $("#profileCard").css("width", "250px");
+                    $("#profilePictureEditWrapper").addClass("mt-4").addClass("ms-4")
                     location.replace(location.href.split('#')[0]);
                 });
 
@@ -283,6 +286,8 @@ function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
                 $("#profileImage").css({"display": "none", "width": "32px", "height": "32px"});
                 $("#profileImagePlaceholder").css({"display": "block", "font-size": "37px"});
                 $("#removeProfile").css("display", "none");
+                $("#profileCard").css("width", "300px");
+                $("#profilePictureEditWrapper").removeClass("mt-4").removeClass("ms-4")
             } else {
                 $("#profileInfo").css("padding-left", "8em");
                 $("#profilePictureEditWrapper").css("display", "block");
@@ -293,6 +298,8 @@ function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
                 $("#profileImage").css({"display": "inline-block", "width": "39px", "height": "39px"});
                 $("#profileImagePlaceholder").css("display", "none");
                 $("#removeProfile").css("display", "block");
+                $("#profileCard").css("width", "250px");
+                $("#profilePictureEditWrapper").addClass("mt-4").addClass("ms-4")
             }
             $("#saveProfile").css("display", "none");
             $("#cancelProfile").css("display", "none");
