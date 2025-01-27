@@ -132,11 +132,11 @@ function initializeUploads(activePage) {
                 success => {
                     const status = success.hasOwnProperty("status") === true ? success["status"] : "fail";
                     if (status === "success") {
-                        shashin.showToastMessage("Media uploaded", success["msg"] + ":<br>" + filelist + "Refresh page to view.", {
+                        shashin.showToastMessage("Media uploaded", success["msg"] + ":<br>" + filelist + "<a href='javascript:window.location.href=window.location.href'>Refresh</a> page to view.", {
                             icon: "bi-info-circle",
                             placement: shashin.toast.placement.top.center,
                             iconColor: "#777777",
-                            delay: 5000,
+                            autohide: false,
                             borderColor: "success"
                         });
                     } else {

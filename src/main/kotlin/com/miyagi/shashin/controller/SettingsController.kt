@@ -1651,20 +1651,22 @@ class SettingsController {
 
                                                 val metadataDir = sidecarDir + "metadata/"
                                                 val thumbnailDir = sidecarDir.replace('\\', '/') + "thumbnails"
-                                                var relativePath: String =
-                                                    metadata.getThumbnailPathCentered()!!.replace('\\', '/').lowercase()
-                                                        .replace(thumbnailDir.lowercase(), "")
-                                                relativePath = relativePath.replace("_centered.jpg", "")
+                                                var relativePath: String? =
+                                                    metadata.getThumbnailPathCentered()?.replace('\\', '/')?.lowercase()
+                                                        ?.replace(thumbnailDir.lowercase(), "")
+                                                relativePath = relativePath?.replace("_centered.jpg", "")
 
-                                                val metadataExifFile = "$metadataDir$relativePath.exif.yaml"
-                                                val fileObj = File(metadataExifFile)
-                                                if (fileObj.delete()) {
-                                                    logger.log(Level.INFO, "Deleted EXIF file: " + fileObj.name)
-                                                } else {
-                                                    logger.log(
-                                                        Level.WARNING,
-                                                        "Failed to delete EXIF file: " + fileObj.name
-                                                    )
+                                                if (relativePath != null) {
+                                                    val metadataExifFile = "$metadataDir$relativePath.exif.yaml"
+                                                    val fileObj = File(metadataExifFile)
+                                                    if (fileObj.delete()) {
+                                                        logger.log(Level.INFO, "Deleted EXIF file: " + fileObj.name)
+                                                    } else {
+                                                        logger.log(
+                                                            Level.WARNING,
+                                                            "Failed to delete EXIF file: " + fileObj.name
+                                                        )
+                                                    }
                                                 }
 
                                                 // Delete comments
