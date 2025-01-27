@@ -478,8 +478,8 @@ footer {
 .bi-bluesky::before {
   content: "";
   background-color: currentColor;
-  -webkit-mask: url("../../fonts/bluesky.svg") no-repeat 50% 50%;
-  mask: url("../../fonts/bluesky.svg") no-repeat 50% 50%;
+  -webkit-mask: url("/fonts/bluesky.svg") no-repeat 50% 50%;
+  mask: url("/fonts/bluesky.svg") no-repeat 50% 50%;
   -webkit-mask-size: cover;
   mask-size: cover;
   margin-bottom: 2px;
