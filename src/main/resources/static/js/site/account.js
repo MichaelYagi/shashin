@@ -192,7 +192,6 @@ function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
                 $("#profileInfo").css("padding-left", "8em");
                 $("#profilePictureEdit").attr('src', e.target.result);
                 $("#profilePictureEditWrapper").css("display", "block");
-                $("#profilePictureEditWrapper").removeClass("mt-4").removeClass("ms-5")
                 $("#removeProfile").css("display", "none");
                 $("#saveProfile").css("display", "block");
                 $("#cancelProfile").css("display", "block");
@@ -229,7 +228,6 @@ function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
                     $("#saveProfile").css("display", "none");
                     $("#cancelProfile").css("display", "none");
                     $("#chooseProfilePhoto").val("");
-                    $("#profilePictureEditWrapper").addClass("mt-4").addClass("ms-5")
                     location.replace(location.href.split('#')[0]);
                 });
 
@@ -285,7 +283,6 @@ function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
                 $("#profileImagePlaceholder").css({"display": "block", "font-size": "37px"});
                 $("#removeProfile").css("display", "none");
                 $("#profileCard").css("width", "300px");
-                $("#profilePictureEditWrapper").removeClass("mt-4").removeClass("ms-5")
             } else {
                 $("#profileInfo").css("padding-left", "8em");
                 $("#profilePictureEditWrapper").css("display", "block");
@@ -296,7 +293,6 @@ function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
                 $("#profileImage").css({"display": "inline-block", "width": "39px", "height": "39px"});
                 $("#profileImagePlaceholder").css("display", "none");
                 $("#removeProfile").css("display", "block");
-                $("#profilePictureEditWrapper").addClass("mt-4").addClass("ms-5")
             }
             $("#saveProfile").css("display", "none");
             $("#cancelProfile").css("display", "none");
