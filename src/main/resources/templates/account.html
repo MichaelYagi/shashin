@@ -13,8 +13,8 @@
 
             <div class="row mx-auto mt-4" style="width: 200px;">
                 <div class="col">
-                    <div class="card" id="profileCard" style="width: 250px;"> <!-- to 300 and remove mt, ms -->
-                        <span id="profilePictureEditWrapper" class="card-img-top mt-4 ms-4" th:style="${'width:200px;max-height:500px;display: ' + {user.profile==null or user.profile==''?'none;':'display;'}}">
+                    <div class="card" id="profileCard" style="width: 300px;"> <!-- to 300 and remove mt, ms -->
+                        <span id="profilePictureEditWrapper" class="card-img-top mt-4 ms-5" th:style="${'width:200px;max-height:500px;display: ' + {user.profile==null or user.profile==''?'none;':'display;'}}">
                             <img id="profilePictureEdit" th:src="${user.profile==null or user.profile==''?'#':user.profile + '?' + randomString}" style="max-height: 200px;" />
                         </span>
                         <div class="card-body">
@@ -25,7 +25,6 @@
                     </div>
                 </div>
             </div>
-
 
             <div class="row mx-auto mt-4" style="width: 650px">
                 <div class="row ms-4 mt-4">
