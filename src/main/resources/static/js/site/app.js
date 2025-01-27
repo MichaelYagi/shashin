@@ -337,7 +337,7 @@
                 "attributes": {
                     "preload": "auto",
                     "controls": true,
-                    "autoplay": true
+                    "autoplay": shashin.autoplayVideo
                 }
             };
             mediaContent.lgSize = metadata.originalImageWidth+"-"+metadata.originalImageHeight;
@@ -1875,7 +1875,7 @@
     }
 
     shashin.getLightGalleryConfigs = function(additionalConfigs) {
-        shashin.autoplayVideo = $("#autoplayVideoSwitch").is(':checked');
+        // shashin.autoplayVideo = $("#autoplayVideoSwitch").is(':checked');
 
         const configs = {
             plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen, lgRotate, lgCastMedia],

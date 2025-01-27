@@ -804,7 +804,7 @@ async function showMap(mapdata, keywordMap) {
                         "attributes": {
                             "preload": "auto",
                             "controls": true,
-                            "autoplay": true,
+                            "autoplay": shashin.autoplayVideo,
                             "id": featureProperties.metadataId
                         }
                     }
