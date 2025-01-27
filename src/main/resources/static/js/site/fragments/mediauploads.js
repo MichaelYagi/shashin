@@ -33,7 +33,7 @@ function initializeUploads(activePage) {
         e.preventDefault();
         e.stopPropagation();
     }
-    $("header,#container,ul.nav").on('dragover', function (e) {
+    $("header,#container,ul.nav,#toastContainer,#defaultToastTarget,#toastTarget1,#toastTarget2,#toastTarget3,#toastTarget4").on('dragover', function (e) {
         preventDefaults(e);
 
         const isModalShown = ($('.modal').hasClass('in') || $('.modal').hasClass('show'));
@@ -79,7 +79,7 @@ function initializeUploads(activePage) {
         $("header,#container,ul.nav").css({"background-color": backgroundColor, "opacity": "1"});
         shashin.closeToastMessage();
     });
-    $("header,#container,ul.nav").on("drop", function (e) {
+    $("header,#container,ul.nav,#toastContainer,#defaultToastTarget,#toastTarget1,#toastTarget2,#toastTarget3,#toastTarget4").on("drop", function (e) {
         e.preventDefault();
 
         const isModalShown = ($('.modal').hasClass('in') || $('.modal').hasClass('show'));
