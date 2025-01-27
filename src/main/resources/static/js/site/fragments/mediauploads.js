@@ -40,7 +40,11 @@ function initializeUploads(activePage) {
         const isOffcanvasShown = ($('.offcanvas').hasClass('in') || $('.offcanvas').hasClass('show'));
 
         if (isOffcanvasShown === false && isModalShown === false && $("#"+shashin.toast.target.default).hasClass("show") === false) {
-            $("header,#container,.nav").css({"background-color": "white", "opacity": ".5"});
+            let backgroundColor = "white";
+            if (shashin.darkMode === true) {
+                backgroundColor = "black";
+            }
+            $("header,#container,.nav").css({"background-color": backgroundColor, "opacity": ".5"});
         }
     });
     $("header,#container,.nav").on('dragenter', function (e) {
@@ -50,7 +54,11 @@ function initializeUploads(activePage) {
         const isOffcanvasShown = ($('.offcanvas').hasClass('in') || $('.offcanvas').hasClass('show'));
 
         if (isOffcanvasShown === false && isModalShown === false && $("#"+shashin.toast.target.default).hasClass("show") === false) {
-            $("header,#container,.nav").css({"background-color": "white", "opacity": ".5"});
+            let backgroundColor = "white";
+            if (shashin.darkMode === true) {
+                backgroundColor = "black";
+            }
+            $("header,#container,.nav").css({"background-color": backgroundColor, "opacity": ".5"});
 
             shashin.showToastMessage("Drop Media", "Drag and drop media anywhere to upload.", {
                 placement: shashin.toast.placement.top.center,
@@ -64,12 +72,20 @@ function initializeUploads(activePage) {
             return false;
         }
 
-        $("header,#container,.nav").css({"background-color": "white", "opacity": "1"});
+        let backgroundColor = "white";
+        if (shashin.darkMode === true) {
+            backgroundColor = "black";
+        }
+        $("header,#container,.nav").css({"background-color": backgroundColor, "opacity": "1"});
         shashin.closeToastMessage();
     });
     $("header,#container,.nav").on("drop", function (e) {
         e.preventDefault();
-        $("header,#container,.nav").css({"background-color": "white", "opacity": "1"});
+        let backgroundColor = "white";
+        if (shashin.darkMode === true) {
+            backgroundColor = "black";
+        }
+        $("header,#container,.nav").css({"background-color": backgroundColor, "opacity": "1"});
         shashin.closeToastMessage();
 
         const dt = e.originalEvent.dataTransfer;
