@@ -154,7 +154,7 @@ function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
         profileUrl = "#";
     }
 
-    shashin.updateSearchInput("View Account");
+    shashin.updateSearchInput("Manage Account");
 
     $("#removeProfile").on("click", function () {
         $("#removeProfileConfirmationModal").modal('show');
