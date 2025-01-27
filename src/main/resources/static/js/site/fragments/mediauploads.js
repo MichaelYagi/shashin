@@ -64,6 +64,11 @@ function initializeUploads(activePage) {
                 placement: shashin.toast.placement.top.center,
                 autohide: false
             });
+
+            $("#"+shashin.toast.target.one).hide();
+            $("#"+shashin.toast.target.two).hide();
+            $("#"+shashin.toast.target.three).hide();
+            $("#"+shashin.toast.target.four).hide();
         }
     });
     $("header,#container,ul.nav").on('dragleave', function (e) {
