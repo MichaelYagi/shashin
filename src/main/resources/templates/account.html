@@ -11,7 +11,8 @@
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
 
-            <div class="row mx-auto mt-4" style="width: 200px;">
+            <div class="row image-group-padding mt-4">
+<!--             style="width: 200px;">-->
                 <div class="col">
                     <div class="card" id="profileCard" style="width: 300px;"> <!-- to 300 and remove mt, ms -->
                         <span id="profilePictureEditWrapper" class="card-img-top mt-4 ms-5" th:style="${'width:200px;max-height:500px;display: ' + {user.profile==null or user.profile==''?'none;':'display;'}}">
@@ -26,114 +27,111 @@
                 </div>
             </div>
 
-            <div class="row mx-auto mt-4" style="width: 650px">
-                <div class="row ms-4 mt-4">
-                    <div class="col">
-                        <div class="input-group mb-2">
-                            <h1 class="display-1" style="font-size:1.5rem;">Edit Profile Picture</h1>
-                        </div>
+            <div class="row image-group-padding mt-4">
+                <div class="col-lg-4">
+                    <div class="input-group mb-2">
+                        <h1 class="display-1" style="font-size:1.5rem;">Edit Profile Picture</h1>
+                    </div>
 
-                        <div class="input-group mb-2">
-                            <input type="file" th:accept="${'.'+#strings.listJoin(acceptedImageTypes, ',.')}" class="form-control" id="chooseProfilePhoto" name="chooseProfilePhoto" aria-describedby="chooseProfilePhoto" aria-label="Upload">
-                            <button type="button" class="btn btn-danger rounded-end" id="removeProfile" th:style="${'display: '+{user.profile==null or user.profile==''?'none;':'block;'}}">Delete Profile Picture</button>
-                            <button type="button" class="btn btn-secondary rounded-end" id="saveProfile" style="display: none;">Save</button>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <button type="button" id="cancelProfile" class="btn btn-secondary rounded" style="display: none;float:right;">Cancel</button>
-                        </div>
+                    <div class="input-group mb-2">
+                        <input type="file" th:accept="${'.'+#strings.listJoin(acceptedImageTypes, ',.')}" class="form-control" id="chooseProfilePhoto" name="chooseProfilePhoto" aria-describedby="chooseProfilePhoto" aria-label="Upload">
+                        <button type="button" class="btn btn-danger rounded-end" id="removeProfile" th:style="${'display: '+{user.profile==null or user.profile==''?'none;':'block;'}}">Delete Profile Picture</button>
+                        <button type="button" class="btn btn-secondary rounded-end" id="saveProfile" style="display: none;">Save</button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button type="button" id="cancelProfile" class="btn btn-secondary rounded" style="display: none;float:right;">Cancel</button>
                     </div>
                 </div>
-
-                <div class="row ms-4 mt-4">
-                    <div class="col">
-                        <div class="input-group mb-2">
-                            <h1 class="display-1" style="font-size:1.5rem;">User Experience</h1>
-                        </div>
-
-                        <div class="dropdown-item">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="darkModeSwitch" th:checked="${currentUser.darkMode}">
-                                <label class="form-check-label" for="darkModeSwitch">Dark Mode</label>
-                            </div>
-                        </div>
-                        <div class="dropdown-item">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="autoplayVideoSwitch" th:checked="${currentUser.autoplayVideo}">
-                                <label class="form-check-label" for="autoplayVideoSwitch">Autoplay Videos</label>
-                            </div>
-                        </div>
-                        <div class="dropdown-item">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="showPlacenameSwitch" th:checked="${currentUser.showPlacename}">
-                                <label class="form-check-label" for="showPlacenameSwitch">Show Place Names On Maps</label>
-                            </div>
-                        </div>
-                        <div class="dropdown-item">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="showNotificationAlertsSwitch" th:checked="${currentUser.notificationAlerts}">
-                                <label class="form-check-label" for="showNotificationAlertsSwitch">Show Notifications Pop-Ups</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row ms-4 mt-4">
-                    <div class="col">
-                        <div class="input-group mb-2">
-                            <h1 class="display-1" style="font-size:1.5rem;">Manage API Key</h1>
-                        </div>
-
-                        <div class="input-group mb-1">
-                            <div class="input-group mb-3">
-                                <button id="copyapikey" data-clipboard-target="#apikey" class="btn btn-secondary" type="button" title="Copy API key">
-                                    <span id="apikeycopyicon" class="bi-clipboard-plus" style="font-size: 1rem;"></span>
-                                </button>
-                                <input id="apikey" type="text" class="form-control" aria-label="API key" th:data-clipboard-text="${user.apikey}" th:value="${user.apikey}" readonly>
-                                <button id="updateapikey" class="btn btn-danger" type="button" title="Update API key">
-                                    <span class="bi-arrow-clockwise" style="font-size: 1rem;"></span>
-                                </button>
-                            </div>
-                            <p>RSS feed <a id="rssFeedLink" th:href="${rssFeedLink}" th:text="${rssFeedLink}" target="_blank"></a></p>
-                            <p>ATOM feed <a id="atomFeedLink" th:href="${atomFeedLink}" th:text="${atomFeedLink}" target="_blank"></a></p>
-                            <p>View API documentaion <a href="/articles/endpoints">here</a>.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row ms-4 mt-3">
-                    <div class="col">
-                        <div class="input-group mb-2">
-                            <h1 class="display-1" style="font-size:1.5rem;">Change Password</h1>
-                        </div>
-
-                        <form action="/users/account" method="post" id="passwordForm">
-                            <div class="input-group mb-3">
-                                <input type="password" id="oldpassword" name="oldpassword" class="form-control" placeholder="Old password" aria-label="" aria-describedby="basic-addon1">
-                                <button class="btn btn-secondary" type="button" id="unhideold"><span id="unhideoldicon" class="bi-eye"></span></button>
-                            </div>
-                            <div class="input-group mb-3">
-                                <input type="password" id="newpassword" name="newpassword" class="form-control" placeholder="New password" aria-label="" aria-describedby="basic-addon1">
-                                <button class="btn btn-secondary" type="button" id="unhidenew"><span id="unhidenewicon" class="bi-eye"></span></button>
-                            </div>
-                            <div class="input-group mb-3">
-                                <input type="password" id="newpasswordconfirm" name="newpasswordconfirm" class="form-control" placeholder="New password confirm" aria-label="" aria-describedby="basic-addon1">
-                                <button class="btn btn-secondary" type="button" id="unhideconfirm"><span id="unhideconfirmicon" class="bi-eye"></span></button>
-                            </div>
-
-                            <button class="btn btn-primary btn-block" type="submit">Save Password</button>
-                        </form>
-                    </div>
-                </div>
-
-                <th:block th:if="${canDeleteAccount == true}">
-                    <div class="alert alert-danger row ms-5 mt-5" role="alert">
-                        <div class="col">
-                            <h4 class="alert-heading">Delete Account</h4>
-                            <p><span class="exclamation-triangle-fill"></span>Warning! This will permanently delete your account.</p>
-                            <a href="#" class="btn btn-danger" id="deleteAccount">Delete</a>
-                        </div>
-                    </div>
-                </th:block>
             </div>
+
+            <div class="row image-group-padding mt-4">
+                <div class="col-lg-4">
+                    <div class="input-group mb-2">
+                        <h1 class="display-1" style="font-size:1.5rem;">User Experience</h1>
+                    </div>
+
+                    <div class="dropdown-item">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="darkModeSwitch" th:checked="${currentUser.darkMode}">
+                            <label class="form-check-label" for="darkModeSwitch">Dark Mode</label>
+                        </div>
+                    </div>
+                    <div class="dropdown-item">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="autoplayVideoSwitch" th:checked="${currentUser.autoplayVideo}">
+                            <label class="form-check-label" for="autoplayVideoSwitch">Autoplay Videos</label>
+                        </div>
+                    </div>
+                    <div class="dropdown-item">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="showPlacenameSwitch" th:checked="${currentUser.showPlacename}">
+                            <label class="form-check-label" for="showPlacenameSwitch">Show Place Names On Maps</label>
+                        </div>
+                    </div>
+                    <div class="dropdown-item">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="showNotificationAlertsSwitch" th:checked="${currentUser.notificationAlerts}">
+                            <label class="form-check-label" for="showNotificationAlertsSwitch">Show Notifications Pop-Ups</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row image-group-padding mt-4">
+                <div class="col-lg-4">
+                    <div class="input-group mb-2">
+                        <h1 class="display-1" style="font-size:1.5rem;">Manage API Key</h1>
+                    </div>
+
+                    <div class="input-group mb-1">
+                        <div class="input-group mb-3">
+                            <button id="copyapikey" data-clipboard-target="#apikey" class="btn btn-secondary" type="button" title="Copy API key">
+                                <span id="apikeycopyicon" class="bi-clipboard-plus" style="font-size: 1rem;"></span>
+                            </button>
+                            <input id="apikey" type="text" class="form-control" aria-label="API key" th:data-clipboard-text="${user.apikey}" th:value="${user.apikey}" readonly>
+                            <button id="updateapikey" class="btn btn-danger" type="button" title="Update API key">
+                                <span class="bi-arrow-clockwise" style="font-size: 1rem;"></span>
+                            </button>
+                        </div>
+                        <p>RSS feed <a id="rssFeedLink" th:href="${rssFeedLink}" th:text="${rssFeedLink}" target="_blank"></a></p>
+                        <p>ATOM feed <a id="atomFeedLink" th:href="${atomFeedLink}" th:text="${atomFeedLink}" target="_blank"></a></p>
+                        <p>View API documentaion <a href="/articles/endpoints">here</a>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row image-group-padding mt-3">
+                <div class="col-lg-4">
+                    <div class="input-group mb-2">
+                        <h1 class="display-1" style="font-size:1.5rem;">Change Password</h1>
+                    </div>
+
+                    <form action="/users/account" method="post" id="passwordForm">
+                        <div class="input-group mb-3">
+                            <input type="password" id="oldpassword" name="oldpassword" class="form-control" placeholder="Old password" aria-label="" aria-describedby="basic-addon1">
+                            <button class="btn btn-secondary" type="button" id="unhideold"><span id="unhideoldicon" class="bi-eye"></span></button>
+                        </div>
+                        <div class="input-group mb-3">
+                            <input type="password" id="newpassword" name="newpassword" class="form-control" placeholder="New password" aria-label="" aria-describedby="basic-addon1">
+                            <button class="btn btn-secondary" type="button" id="unhidenew"><span id="unhidenewicon" class="bi-eye"></span></button>
+                        </div>
+                        <div class="input-group mb-3">
+                            <input type="password" id="newpasswordconfirm" name="newpasswordconfirm" class="form-control" placeholder="New password confirm" aria-label="" aria-describedby="basic-addon1">
+                            <button class="btn btn-secondary" type="button" id="unhideconfirm"><span id="unhideconfirmicon" class="bi-eye"></span></button>
+                        </div>
+
+                        <button class="btn btn-primary btn-block" type="submit">Save Password</button>
+                    </form>
+                </div>
+            </div>
+
+            <th:block th:if="${canDeleteAccount == true}">
+                <hr>
+                <div class="alert alert-danger" role="alert">
+                    <h4 class="alert-heading">Delete Account</h4>
+                    <p><span class="exclamation-triangle-fill"></span>Warning! This will permanently delete your account.</p>
+                    <a href="#" class="btn btn-danger" id="deleteAccount">Delete</a>
+                </div>
+            </th:block>
 
             <th:block th:if="${message != '' and alertClass != ''}">
                 <div class="col-12">
