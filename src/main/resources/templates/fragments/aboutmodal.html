@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body th:fragment="aboutmodal(activeProfile, buildProperties, operatingSystemInfo, copyrightYear)">
+
+<div class="modal fade" id="propAbout" tabindex="-1" role="dialog" aria-labelledby="labelAboutContent" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteContentLabel">About</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <th:block th:if="${activeProfile != 'prod'}">
+                    <span th:text="${#strings.capitalize(activeProfile)+' Build'}"></span><br>
+                </th:block>
+                Version <span th:text="${buildProperties.getVersion()}"></span><br>
+                <th:block th:if="${operatingSystemInfo != ''}">
+                    <span th:text="${operatingSystemInfo}"></span><br>
+                </th:block>
+                <br>
+                &copy; <span th:text="'2021-'+${copyrightYear}+' '+${@environment.getProperty('app.build.properties.name')}"></span><br>
+                <a class="me-2" href="https://github.com/MichaelYagi" target="_blank"><span class="bi-github" style="font-size: 1.5rem;color: lightgray;"></span></a>
+                <a class="me-2" href="https://www.youtube.com/@MichaelTakayukiYagi" target="_blank"><span class="bi-youtube" style="font-size: 1.5rem;color: lightgray;"></span></a>
+                <a class="me-2" href="https://bsky.app/profile/mtyagi.bsky.social" target="_blank"><span class="bi-bluesky" style="font-size: 1.5rem;color: lightgray;"></span></a>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
