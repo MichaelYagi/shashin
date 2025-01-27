@@ -33,7 +33,7 @@ function initializeUploads(activePage) {
         e.preventDefault();
         e.stopPropagation();
     }
-    $("header,#container,.nav").on('dragover', function (e) {
+    $("header,#container,ul.nav").on('dragover', function (e) {
         preventDefaults(e);
 
         const isModalShown = ($('.modal').hasClass('in') || $('.modal').hasClass('show'));
@@ -42,12 +42,12 @@ function initializeUploads(activePage) {
         if (isOffcanvasShown === false && isModalShown === false && $("#"+shashin.toast.target.default).hasClass("show") === false) {
             let backgroundColor = "white";
             if (shashin.darkMode === true) {
-                backgroundColor = "black";
+                backgroundColor = "#222222";
             }
-            $("header,#container,.nav").css({"background-color": backgroundColor, "opacity": ".5"});
+            $("header,#container,ul.nav").css({"background-color": backgroundColor, "opacity": ".5"});
         }
     });
-    $("header,#container,.nav").on('dragenter', function (e) {
+    $("header,#container,ul.nav").on('dragenter', function (e) {
         preventDefaults(e);
 
         const isModalShown = ($('.modal').hasClass('in') || $('.modal').hasClass('show'));
@@ -56,9 +56,9 @@ function initializeUploads(activePage) {
         if (isOffcanvasShown === false && isModalShown === false && $("#"+shashin.toast.target.default).hasClass("show") === false) {
             let backgroundColor = "white";
             if (shashin.darkMode === true) {
-                backgroundColor = "black";
+                backgroundColor = "#222222";
             }
-            $("header,#container,.nav").css({"background-color": backgroundColor, "opacity": ".5"});
+            $("header,#container").css({"background-color": backgroundColor, "opacity": ".5"});
 
             shashin.showToastMessage("Drop Media", "Drag and drop media anywhere to upload.", {
                 placement: shashin.toast.placement.top.center,
@@ -66,7 +66,7 @@ function initializeUploads(activePage) {
             });
         }
     });
-    $("header,#container,.nav").on('dragleave', function (e) {
+    $("header,#container,ul.nav").on('dragleave', function (e) {
         preventDefaults(e);
         if (e.originalEvent.pageX !== 0 && e.originalEvent.pageY !== 0) {
             return false;
@@ -74,26 +74,32 @@ function initializeUploads(activePage) {
 
         let backgroundColor = "white";
         if (shashin.darkMode === true) {
-            backgroundColor = "black";
+            backgroundColor = "#222222";
         }
-        $("header,#container,.nav").css({"background-color": backgroundColor, "opacity": "1"});
+        $("header,#container,ul.nav").css({"background-color": backgroundColor, "opacity": "1"});
         shashin.closeToastMessage();
     });
-    $("header,#container,.nav").on("drop", function (e) {
+    $("header,#container,ul.nav").on("drop", function (e) {
         e.preventDefault();
-        let backgroundColor = "white";
-        if (shashin.darkMode === true) {
-            backgroundColor = "black";
-        }
-        $("header,#container,.nav").css({"background-color": backgroundColor, "opacity": "1"});
-        shashin.closeToastMessage();
 
-        const dt = e.originalEvent.dataTransfer;
-        if (dt.types && (dt.types.indexOf ? dt.types.indexOf('Files') !== -1 : dt.types.includes('Files'))) {
-            if (activePage === "album") {
-                uploadData(dt, "uploadToAlbumForm");
-            } else {
-                uploadData(dt, "uploadForm");
+        const isModalShown = ($('.modal').hasClass('in') || $('.modal').hasClass('show'));
+        const isOffcanvasShown = ($('.offcanvas').hasClass('in') || $('.offcanvas').hasClass('show'));
+
+        if (isOffcanvasShown === false && isModalShown === false) {
+            let backgroundColor = "white";
+            if (shashin.darkMode === true) {
+                backgroundColor = "#222222";
+            }
+            $("header,#container,.ul:not(#offcanvasList)").css({"background-color": backgroundColor, "opacity": "1"});
+            shashin.closeToastMessage();
+
+            const dt = e.originalEvent.dataTransfer;
+            if (dt.types && (dt.types.indexOf ? dt.types.indexOf('Files') !== -1 : dt.types.includes('Files'))) {
+                if (activePage === "album") {
+                    uploadData(dt, "uploadToAlbumForm");
+                } else {
+                    uploadData(dt, "uploadForm");
+                }
             }
         }
     });
