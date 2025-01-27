@@ -474,3 +474,15 @@ footer {
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
 }
+
+.bi-bluesky::before {
+  content: "";
+  background-color: currentColor;
+  -webkit-mask: url("../../fonts/bluesky.svg") no-repeat 50% 50%;
+  mask: url("../../fonts/bluesky.svg") no-repeat 50% 50%;
+  -webkit-mask-size: cover;
+  mask-size: cover;
+  margin-bottom: 5px;
+  height: 16px;
+  width: 16px;
+}
