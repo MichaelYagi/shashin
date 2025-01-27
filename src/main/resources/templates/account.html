@@ -11,17 +11,35 @@
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
 
-            <div class="row image-group-padding mt-4">
-<!--             style="width: 200px;">-->
+<!--            <div class="row image-group-padding mt-4">-->
+<!--                <div class="col">-->
+<!--                    <div class="card" id="profileCard" style="width: 300px;"> &lt;!&ndash; to 300 and remove mt, ms &ndash;&gt;-->
+<!--                        <span id="profilePictureEditWrapper" class="card-img-top mt-4 ms-5" th:style="${'width:200px;max-height:500px;display: ' + {user.profile==null or user.profile==''?'none;':'display;'}}">-->
+<!--                            <img id="profilePictureEdit" th:src="${user.profile==null or user.profile==''?'#':user.profile + '?' + randomString}" style="max-height: 200px;" />-->
+<!--                        </span>-->
+<!--                        <div class="card-body">-->
+<!--                            <h5 class="card-title" th:utext="${currentUser.username}"></h5>-->
+<!--                            <h6 class="card-subtitle mb-2 text-muted" th:utext="${'&lt;small class=&quot;text-muted&quot; style=&quot;font-size: 0.8rem&quot; &gt; Joined ' + dateJoined + '&lt;/small&gt;'}"></h6>-->
+<!--                            <p class="card-text" th:utext="${roleDescription}"></p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+
+            <div class="row mt-4">
                 <div class="col">
-                    <div class="card" id="profileCard" style="width: 300px;"> <!-- to 300 and remove mt, ms -->
-                        <span id="profilePictureEditWrapper" class="card-img-top mt-4 ms-5" th:style="${'width:200px;max-height:500px;display: ' + {user.profile==null or user.profile==''?'none;':'display;'}}">
-                            <img id="profilePictureEdit" th:src="${user.profile==null or user.profile==''?'#':user.profile + '?' + randomString}" style="max-height: 200px;" />
-                        </span>
+                    <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title" th:utext="${currentUser.username}"></h5>
-                            <h6 class="card-subtitle mb-2 text-muted" th:utext="${'&lt;small class=&quot;text-muted&quot; style=&quot;font-size: 0.8rem&quot; &gt; Joined ' + dateJoined + '&lt;/small&gt;'}"></h6>
-                            <p class="card-text" th:utext="${roleDescription}"></p>
+                            <div class="row image-group-padding mt-4 mb-4">
+                                <div class="col-1 me-5" id="profilePictureEditWrapper" th:style="${'width:200px;max-height:500px;display: ' + {user.profile==null or user.profile==''?'none;':'display;'}}">
+                                    <img id="profilePictureEdit" th:src="${user.profile==null or user.profile==''?'#':user.profile + '?' + randomString}" style="max-height: 200px;" />
+                                </div>
+                                <div id="profileInfo" class="col-10">
+                                    <h5 class="card-title" th:utext="${currentUser.username}"></h5>
+                                    <h6 class="card-subtitle mb-2 text-muted" th:utext="${'&lt;small class=&quot;text-muted&quot; style=&quot;font-size: 0.8rem&quot; &gt; Joined ' + dateJoined + '&lt;/small&gt;'}"></h6>
+                                    <p th:utext="${roleDescription}"></p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
