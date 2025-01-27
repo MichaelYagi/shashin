@@ -2,9 +2,10 @@ $(window).bind("load", function () {
     $("header .placeholder").removeClass("placeholder");
 });
 
-async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts, searchHistoryLimit, queryLimit, accessTimelineView, hasMediaUploadDirectory) {
+async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts, searchHistoryLimit, queryLimit, accessTimelineView, hasMediaUploadDirectory, autoplayVideo) {
     shashin.darkMode = darkMode;
     shashin.showPlacename = placeNames;
+    shashin.autoplayVideo = autoplayVideo;
 
     const activePage = $("#activePage").val();
 
@@ -54,11 +55,9 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
                 searchHistoryData.push(searchHistoryObj.term)
             }
 
-            /*<![CDATA[*/
             shashin.createAutocomplete("#appSearchInput", searchHistoryData, false, searchHistoryLimit, function () {
                 $("#appSearchSubmit").click();
             });
-            /*]]>*/
         }
     }
 
@@ -76,7 +75,19 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
                 html.hide();
                 Util.darkModeToggle(darkMode);
                 html.show();
+            } else {
+                shashin.showToastMessage("Setting failed", "Dark mode setting failed. "+data["msg"], {
+                    icon: "bi-exclamation-triangle",
+                    iconColor: "#FF0000",
+                    borderColor: "danger"
+                });
             }
+        } else {
+            shashin.showToastMessage("Setting failed", "Dark mode setting failed. "+data["msg"], {
+                icon: "bi-exclamation-triangle",
+                iconColor: "#FF0000",
+                borderColor: "danger"
+            });
         }
     });
 
@@ -88,8 +99,20 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             if (data["status"] === "success") {
-                window.location.reload();
+                shashin.printMessageToConsole("Successfully set notification alerts.");
+            } else {
+                shashin.showToastMessage("Setting failed", "Notification setting failed. "+data["msg"], {
+                    icon: "bi-exclamation-triangle",
+                    iconColor: "#FF0000",
+                    borderColor: "danger"
+                });
             }
+        } else {
+            shashin.showToastMessage("Setting failed", "Notification setting failed. "+data["msg"], {
+                icon: "bi-exclamation-triangle",
+                iconColor: "#FF0000",
+                borderColor: "danger"
+            });
         }
     });
 
@@ -102,30 +125,46 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             if (data["status"] === "success") {
-                if (activePage === "timeline") {
-                    Util.reinitLightGalleryInstance();
-                } else {
-                    window.location.reload();
-                }
+                shashin.printMessageToConsole("Successfully set show place names.");
+            } else {
+                shashin.showToastMessage("Setting failed", "Show place names setting failed. "+data["msg"], {
+                    icon: "bi-exclamation-triangle",
+                    iconColor: "#FF0000",
+                    borderColor: "danger"
+                });
             }
+        } else {
+            shashin.showToastMessage("Setting failed", "Show place names setting failed. "+data["msg"], {
+                icon: "bi-exclamation-triangle",
+                iconColor: "#FF0000",
+                borderColor: "danger"
+            });
         }
     });
 
     $("#autoplayVideoSwitch").change(async function () {
         const autoplayVideo = this.checked;
-        shashin.autoplayVideo = autoplayVideo;
         const http = new Http("autoplay video");
         const json = {autoplayVideo: autoplayVideo};
         const data = await http.ajax("post", "/users/autoplayvideo", JSON.stringify(json));
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             if (data["status"] === "success") {
-                if (activePage === "timeline") {
-                    Util.reinitLightGalleryInstance();
-                } else {
-                    window.location.reload();
-                }
+                shashin.autoplayVideo = autoplayVideo;
+                shashin.printMessageToConsole("Successfully set autoplay.");
+            } else {
+                shashin.showToastMessage("Setting failed", "Autoplay videos setting failed. "+data["msg"], {
+                    icon: "bi-exclamation-triangle",
+                    iconColor: "#FF0000",
+                    borderColor: "danger"
+                });
             }
+        } else {
+            shashin.showToastMessage("Setting failed", "Autoplay videos setting failed.", {
+                icon: "bi-exclamation-triangle",
+                iconColor: "#FF0000",
+                borderColor: "danger"
+            });
         }
     });
 
