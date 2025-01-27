@@ -482,7 +482,7 @@ footer {
   mask: url("../../fonts/bluesky.svg") no-repeat 50% 50%;
   -webkit-mask-size: cover;
   mask-size: cover;
-  margin-bottom: 5px;
-  height: 16px;
-  width: 16px;
+  margin-bottom: 2px;
+  height: 20px;
+  width: 20px;
 }
