@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body th:fragment="toastmessages()">
+
+<!-- For live toast messages, use shashin.showToastMessage() to display toast messages -->
+<div class="position-fixed bottom-0 start-50 translate-middle-x" id="toastContainer" style="z-index: 999999">
+    <div class="toast-container">
+        <div id="defaultToastTarget" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <span id="toastIcon"></span><span id="toastSpacer"></span>
+                <strong id="toastTitle" class="me-auto"></strong>
+                <small id="headerSubtext"></small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div id="toastMessage" class="toast-body"></div>
+        </div>
+
+        <div id="toastTarget1" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <span id="toastIcon1"></span><span id="toastSpacer1"></span>
+                <strong id="toastTitle1" class="me-auto"></strong>
+                <small id="headerSubtext1"></small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div id="toastMessage1" class="toast-body"></div>
+        </div>
+
+        <div id="toastTarget2" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <span id="toastIcon2"></span><span id="toastSpacer2"></span>
+                <strong id="toastTitle2" class="me-auto"></strong>
+                <small id="headerSubtext2"></small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div id="toastMessage2" class="toast-body"></div>
+        </div>
+
+        <div id="toastTarget3" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <span id="toastIcon3"></span><span id="toastSpacer3"></span>
+                <strong id="toastTitle3" class="me-auto"></strong>
+                <small id="headerSubtext3"></small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div id="toastMessage3" class="toast-body"></div>
+        </div>
+
+        <div id="toastTarget4" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <span id="toastIcon4"></span><span id="toastSpacer4"></span>
+                <strong id="toastTitle4" class="me-auto"></strong>
+                <small id="headerSubtext4"></small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div id="toastMessage4" class="toast-body"></div>
+        </div>
+    </div>
+</div>
