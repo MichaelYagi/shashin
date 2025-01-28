@@ -14,10 +14,15 @@ if (typeof module !== 'undefined') {
     //module.exports = sum;
 }
 
-shashin.showToastMessage("Title 1", "Message 1.");
-shashin.showToastMessage("Title 2", "Message 2", {target:"toastTarget1"});
-shashin.showToastMessage("Title 3", "Message 3", {autohide: false, target:"toastTarget4", icon:"bi-alt", iconColor:"#ff0000"});
-shashin.showToastMessage("Title 4", "Message 5.", {autohide: false, target:"toastTarget3", icon:"bi-exclamation-triangle", iconColor:"#000000"});
+shashin.showToastMessage("Title 1", "Message 1.",{autohide:false,placement:shashin.toast.placement.top.left});
+shashin.showToastMessage("Title 2", "Message 2.",{autohide:false,placement:shashin.toast.placement.top.center});
+shashin.showToastMessage("Title 3", "Message 3.",{autohide:false,placement:shashin.toast.placement.top.right});
+shashin.showToastMessage("Title 4", "Message 4.",{autohide:false,placement:shashin.toast.placement.middle.left});
+shashin.showToastMessage("Title 5", "Message 5.",{autohide:false,placement:shashin.toast.placement.middle.center});
+shashin.showToastMessage("Title 6", "Message 6.",{autohide:false,placement:shashin.toast.placement.middle.right});
+shashin.showToastMessage("Title 7", "Message 7.",{autohide:false,placement:shashin.toast.placement.bottom.left});
+shashin.showToastMessage("Title 8", "Message 8.",{autohide:false,placement:shashin.toast.placement.bottom.center});
+shashin.showToastMessage("Title 9", "Message 9.",{autohide:false,placement:shashin.toast.placement.bottom.right});
 
 let options = {
     autohide: false

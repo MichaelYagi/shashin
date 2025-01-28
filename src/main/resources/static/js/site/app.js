@@ -154,7 +154,6 @@
 
                 // Test if closed - use it, otherwise create new after last open
                 if (tag !== null) {
-
                     // check if tag exists
                     if (shashin.hasToast(placement+"ToastContainer", tag) === true) {
                         shashin.removeElements($("#"+placement+"_ToastTargetAttach").siblings(), tag);
@@ -169,7 +168,7 @@
                             attached = true;
                         }
                     }
-                } else if ($("#" + toastId).length > 0 && $("#" + toastId).hasClass('in') === false && $("#" + toastId).hasClass('show') === false) {
+                } else if ($("#" + toastId).length === 0 || ($("#" + toastId).length > 0 && $("#" + toastId).hasClass('in') === false && $("#" + toastId).hasClass('show') === false)) {
                     shashin.createNewToast(nextIteration, placement, tag);
                     attached = true;
                 }
