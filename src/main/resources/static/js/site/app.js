@@ -132,7 +132,6 @@
 
         let toastId = "";
         if (siblingCount === 0) {
-            //shashin.createNewToast(1, container.slice(0, container.indexOf("ToastContainer")), tag);
             toastId = container.slice(0, container.indexOf("ToastContainer")) + "_ToastTarget_1";
         }
 
@@ -156,12 +155,19 @@
                 // Test if closed - use it, otherwise create new after last open
                 if (tag !== null) {
 
-                    shashin.createNewToast(nextIteration, placement, tag);
+                    // check if tag exists
+                    if (shashin.hasToast(placement+"ToastContainer", tag) === true) {
+                        shashin.removeElements($("#"+placement+"_ToastTargetAttach").siblings(), tag);
+                    }
 
-                    const attr = $("#" + toastId).attr('data-tag');
+                    if (shashin.hasToast(placement+"ToastContainer", tag) === false) {
+                        shashin.createNewToast(nextIteration, placement, tag);
 
-                    if (typeof attr !== 'undefined' && attr !== false && $("#" + toastId).attr('data-tag') === tag) { // && $("#" + toastId).hasClass('show') === false
-                        attached = true;
+                        const attr = $("#" + toastId).attr('data-tag');
+
+                        if (typeof attr !== 'undefined' && attr !== false && $("#" + toastId).attr('data-tag') === tag) { // && $("#" + toastId).hasClass('show') === false
+                            attached = true;
+                        }
                     }
                 } else if ($("#" + toastId).length > 0 && $("#" + toastId).hasClass('in') === false && $("#" + toastId).hasClass('show') === false) {
                     shashin.createNewToast(nextIteration, placement, tag);
