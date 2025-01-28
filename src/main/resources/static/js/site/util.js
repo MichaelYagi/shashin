@@ -1269,6 +1269,7 @@ class Util {
                                     iconColor: "#FF8C00",
                                     headerSubtext: Util.getMessageSubText(createdAtDate, timezone),
                                     autohide: false,
+                                    tag: "showNotifications",
                                     target: shashin.toast.target.four,
                                     borderColor:"warning"
                                 });
