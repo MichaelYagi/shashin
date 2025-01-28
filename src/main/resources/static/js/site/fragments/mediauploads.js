@@ -39,7 +39,7 @@ function initializeUploads(activePage) {
         const isModalShown = ($('.modal').hasClass('in') || $('.modal').hasClass('show'));
         const isOffcanvasShown = ($('.offcanvas').hasClass('in') || $('.offcanvas').hasClass('show'));
 
-        if (isOffcanvasShown === false && isModalShown === false && $("#"+shashin.toast.target.default).hasClass("show") === false) {
+        if (isOffcanvasShown === false && isModalShown === false) {
             let backgroundColor = "white";
             if (shashin.darkMode === true) {
                 backgroundColor = "#222222";
@@ -53,7 +53,7 @@ function initializeUploads(activePage) {
         const isModalShown = ($('.modal').hasClass('in') || $('.modal').hasClass('show'));
         const isOffcanvasShown = ($('.offcanvas').hasClass('in') || $('.offcanvas').hasClass('show'));
 
-        if (isOffcanvasShown === false && isModalShown === false && $("#"+shashin.toast.target.default).hasClass("show") === false) {
+        if (isOffcanvasShown === false && isModalShown === false) {
             let backgroundColor = "white";
             if (shashin.darkMode === true) {
                 backgroundColor = "#222222";

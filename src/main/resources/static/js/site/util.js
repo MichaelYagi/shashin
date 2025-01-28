@@ -1270,7 +1270,6 @@ class Util {
                                     headerSubtext: Util.getMessageSubText(createdAtDate, timezone),
                                     autohide: false,
                                     tag: "showNotifications",
-                                    target: shashin.toast.target.four,
                                     borderColor:"warning"
                                 });
 
@@ -1285,7 +1284,7 @@ class Util {
                                         setTimeout(() => {
                                             NotificationUtil.markNotificationRead();
                                             shashin.closeToastMessage({
-                                                target: shashin.toast.target.four
+                                                tag: "showNotifications"
                                             });
                                         }, 500);
                                     });
@@ -1295,7 +1294,7 @@ class Util {
 
                                         NotificationUtil.markNotificationRead();
                                         shashin.closeToastMessage({
-                                            target: shashin.toast.target.four
+                                            tag: "showNotifications"
                                         });
                                     });
                                 }
@@ -1314,7 +1313,7 @@ class Util {
                         $("#sidebarPeople").html('');
 
                         shashin.closeToastMessage({
-                            target: shashin.toast.target.four
+                            tag: "showNotifications"
                         });
 
                         if (notificationAlerts === true && pollMinutes !== undefined) {

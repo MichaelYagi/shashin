@@ -52,8 +52,7 @@ function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
 
                 shashin.showToastMessage("API key updated", "API key has been updated.", {
                     icon: "bi-info-circle",
-                    iconColor: "#777777",
-                    target: shashin.toast.target.one
+                    iconColor: "#777777"
                 });
             } else {
                 shashin.showToastMessage("Operation failed", "Could not regenerate API key", {
@@ -136,7 +135,6 @@ function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
             shashin.showToastMessage("Validation error", "Passwords do not match.", {
                 icon: "bi-exclamation-triangle",
                 iconColor: "#FF0000",
-                target: shashin.toast.target.one,
                 borderColor: "danger"
             });
             fieldsValid = false;

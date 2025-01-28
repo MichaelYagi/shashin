@@ -568,8 +568,7 @@ async function showMap(mapdata, keywordMap) {
         if (filteredCount === 0 && contextCoordArray.length > 0 && maxDistance > 0) {
             shashin.showToastMessage("No results", "No results for photos near " + contextCoordArray[1]+", "+contextCoordArray[0], {
                 icon: "bi-info-circle",
-                iconColor: "#777777",
-                target: shashin.toast.target.three
+                iconColor: "#777777"
             });
             forcedFiltered = true;
             $("#filterMap").click();
@@ -666,7 +665,7 @@ async function showMap(mapdata, keywordMap) {
         }
 
         shashin.closeToastMessage({
-            target: shashin.toast.target.two
+            tag: "mainMap"
         });
     }
 
