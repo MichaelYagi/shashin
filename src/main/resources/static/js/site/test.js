@@ -61,13 +61,14 @@ setTimeout(function () {
 timer += 2000;
 setTimeout(function () {
     shashin.closeToastMessages({
+        hide: true,
         tags: ["test5","test7"]
     });
 }, timer);
-timer += 2000;
-setTimeout(function () {
-    shashin.closeToastMessages();
-}, timer);
+// timer += 2000;
+// setTimeout(function () {
+//     shashin.closeToastMessages();
+// }, timer);
 
 
 // let options = {
