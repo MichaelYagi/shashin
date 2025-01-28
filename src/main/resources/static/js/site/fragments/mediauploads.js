@@ -134,6 +134,7 @@ function initializeUploads(activePage) {
                         shashin.showToastMessage("Media uploaded", success["msg"] + ":<br>" + filelist + "<a href='javascript:window.location.href=window.location.href'>Refresh</a> page to view.", {
                             icon: "bi-info-circle",
                             placement: shashin.toast.placement.top.center,
+                            tag: "successUpload",
                             iconColor: "#777777",
                             autohide: false,
                             borderColor: "success"
@@ -142,6 +143,7 @@ function initializeUploads(activePage) {
                         shashin.showToastMessage("Something went wrong", "Check media upload directory in settings", {
                             icon: "bi-exclamation-triangle",
                             placement: shashin.toast.placement.top.center,
+                            tag: "failUpload",
                             iconColor: "#FF0000",
                             delay: 5000,
                             borderColor: "danger"
@@ -153,6 +155,7 @@ function initializeUploads(activePage) {
                     shashin.showToastMessage("Something went wrong", error, {
                         icon: "bi-exclamation-triangle",
                         placement: shashin.toast.placement.top.center,
+                        tag: "failUpload",
                         iconColor: "#FF0000",
                         delay: 5000,
                         borderColor: "danger"
