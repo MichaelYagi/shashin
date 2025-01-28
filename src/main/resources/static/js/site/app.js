@@ -267,6 +267,15 @@
         });
     }
 
+    shashin.hideElements = function (elements, tag) {
+        elements.each( function () {
+            const attr = $(this).attr('data-tag');
+            if (tag === null || (typeof attr !== 'undefined' && attr !== false && attr === tag)) {
+                $(this).hide();
+            }
+        });
+    }
+
     shashin.closeToastMessage = function (options) {
         shashin.printMessageToConsole(options);
         let tag = null;
@@ -283,6 +292,24 @@
         shashin.removeElements($("#bottomLeft_ToastTargetAttach").siblings(), tag);
         shashin.removeElements($("#bottomCenter_ToastTargetAttach").siblings(), tag);
         shashin.removeElements($("#bottomRight_ToastTargetAttach").siblings(), tag);
+    }
+
+    shashin.hideToastMessage = function (options) {
+        shashin.printMessageToConsole(options);
+        let tag = null;
+        if (options && options.hasOwnProperty("tag")) {
+            tag = options["tag"];
+        }
+
+        shashin.hideElements($("#topLeft_ToastTargetAttach").siblings(), tag);
+        shashin.hideElements($("#topCenter_ToastTargetAttach").siblings(), tag);
+        shashin.hideElements($("#topRight_ToastTargetAttach").siblings(), tag);
+        shashin.hideElements($("#midLeft_ToastTargetAttach").siblings(), tag);
+        shashin.hideElements($("#midCenter_ToastTargetAttach").siblings(), tag);
+        shashin.hideElements($("#midRight_ToastTargetAttach").siblings(), tag);
+        shashin.hideElements($("#bottomLeft_ToastTargetAttach").siblings(), tag);
+        shashin.hideElements($("#bottomCenter_ToastTargetAttach").siblings(), tag);
+        shashin.hideElements($("#bottomRight_ToastTargetAttach").siblings(), tag);
     }
 
     shashin.hasToast = function (placement, tag) {

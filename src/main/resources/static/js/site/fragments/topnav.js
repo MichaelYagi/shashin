@@ -194,6 +194,10 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
         }
     });
 
+    $(document).on("click", function() {
+        shashin.hideToastMessage();
+    });
+
     initializeSlideshow(accessTimelineView, queryLimit);
 
     captureMessages(activePage, notificationAlerts, timezone);
