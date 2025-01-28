@@ -1283,7 +1283,7 @@ class Util {
 
                                         setTimeout(() => {
                                             NotificationUtil.markNotificationRead();
-                                            shashin.closeToastMessage({
+                                            shashin.closeToastMessages({
                                                 tag: "showNotifications"
                                             });
                                         }, 500);
@@ -1293,7 +1293,7 @@ class Util {
                                         e.preventDefault();
 
                                         NotificationUtil.markNotificationRead();
-                                        shashin.closeToastMessage({
+                                        shashin.closeToastMessages({
                                             tag: "showNotifications"
                                         });
                                     });
@@ -1312,7 +1312,7 @@ class Util {
                         $("#sidebarNotification").html('');
                         $("#sidebarPeople").html('');
 
-                        shashin.closeToastMessage({
+                        shashin.closeToastMessages({
                             tag: "showNotifications"
                         });
 

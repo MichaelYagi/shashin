@@ -228,7 +228,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             } else {
                 $("#mediaInfo").css("display", "none");
                 exitSlideshowGallery();
-                shashin.closeToastMessage({tag: "slide"});
+                shashin.closeToastMessages({tag: "slide"});
             }
         }
     })
@@ -241,7 +241,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 } else {
                     $("#mediaInfo").css("display", "none");
                     exitSlideshowGallery();
-                    shashin.closeToastMessage({tag: "slide"});
+                    shashin.closeToastMessages({tag: "slide"});
                 }
             }
 
@@ -260,7 +260,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 if (shashin.hasToast(shashin.toast.placement.bottom.center, "slide") === false) {
                     showInstruction();
                 } else {
-                    shashin.closeToastMessage({tag: "slide"});
+                    shashin.closeToastMessages({tag: "slide"});
                 }
             }
 
@@ -304,7 +304,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 } else if (shashin.hasToast(shashin.toast.placement.bottom.center, "slide") === false) {
                     showInstruction();
                 } else {
-                    shashin.closeToastMessage({tag: "slide"});
+                    shashin.closeToastMessages({tag: "slide"});
                 }
             } else {
                 slideshowInfo();

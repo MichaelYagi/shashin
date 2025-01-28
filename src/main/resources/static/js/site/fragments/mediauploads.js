@@ -79,7 +79,7 @@ function initializeUploads(activePage) {
         }
         $("header,#container,ul#browserGroup").css({"background-color": backgroundColor, "opacity": "1"});
         $("ul#offcanvasList").css({"background-color": "#2F2F2F", "opacity": "1"});
-        shashin.closeToastMessage();
+        shashin.closeToastMessages();
     });
     $("header,#container,ul:not(#offcanvasList),ul#browserGroup,#topLeftToastContainer,#topCenterToastContainer,#topRightToastContainer,#midLeftToastContainer,#midCenterToastContainer,#midRightToastContainer,#bottomLeftToastContainer,#bottomCenterToastContainer,#bottomRightToastContainer").on("drop", function (e) {
         e.preventDefault();
@@ -95,7 +95,7 @@ function initializeUploads(activePage) {
             $("header,#container,ul#browserGroup").css({"background-color": backgroundColor, "opacity": "1"});
             $("ul#offcanvasList").css({"background-color": "#2F2F2F", "opacity": "1"});
 
-            shashin.closeToastMessage();
+            shashin.closeToastMessages();
 
             const dt = e.originalEvent.dataTransfer;
             if (dt.types && (dt.types.indexOf ? dt.types.indexOf('Files') !== -1 : dt.types.includes('Files'))) {
