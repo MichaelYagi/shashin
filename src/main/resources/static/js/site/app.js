@@ -130,13 +130,15 @@
         const attachPoint = $("#"+container).find(".attachPoint");
         const siblingCount = attachPoint.siblings().length;
 
-        if (siblingCount === 0 || tag !== null) {
-            shashin.createNewToast(1, container.slice(0, container.indexOf("ToastContainer")), tag);
+        let toastId = "";
+        if (siblingCount === 0) {
+            //shashin.createNewToast(1, container.slice(0, container.indexOf("ToastContainer")), tag);
+            toastId = container.slice(0, container.indexOf("ToastContainer")) + "_ToastTarget_1";
         }
 
         const previousSibling = attachPoint.prev();
         const lastToast = previousSibling.attr("id");
-        const lastToastArray = lastToast.split("_");
+        const lastToastArray = toastId !== "" ? toastId.split("_") : lastToast.split("_");
 
         if (lastToastArray.length === 3) {
             const placement = lastToastArray[0];
@@ -144,97 +146,88 @@
             const lastIteration = lastToastArray[2];
 
             if ($.isNumeric(lastIteration)) {
-                const limit = parseInt(lastIteration);
+                let nextIteration = parseInt(lastIteration);
+                nextIteration = nextIteration + 1;
 
-                for (let i = 1; i < limit + 1; i++) {
-                    let toastId = placement + "_" + target + "_" + i;
+                let toastId = placement + "_" + target + "_" + nextIteration;
 
-                    let attached = false;
-                    let currentIndex = 0;
+                let attached = false;
 
-                    // Test if closed - use it, otherwise create new after last open
-                    if (tag !== null) {
-                        currentIndex = i;
+                // Test if closed - use it, otherwise create new after last open
+                if (tag !== null) {
 
-                        const attr = $("#" + toastId).attr('data-tag');
+                    shashin.createNewToast(nextIteration, placement, tag);
 
-                        if (typeof attr !== 'undefined' && attr !== false && $("#" + toastId).attr('data-tag') === tag) { // && $("#" + toastId).hasClass('show') === false
-                            attached = true;
-                        }
-                    } else if ($("#" + toastId).length > 0 && $("#" + toastId).hasClass('in') === false && $("#" + toastId).hasClass('show') === false) {
+                    const attr = $("#" + toastId).attr('data-tag');
+
+                    if (typeof attr !== 'undefined' && attr !== false && $("#" + toastId).attr('data-tag') === tag) { // && $("#" + toastId).hasClass('show') === false
                         attached = true;
-                        currentIndex = i;
-                    } else if (i === limit) {
-                        currentIndex = i + 1;
-                        shashin.createNewToast(currentIndex, placement);
+                    }
+                } else if ($("#" + toastId).length > 0 && $("#" + toastId).hasClass('in') === false && $("#" + toastId).hasClass('show') === false) {
+                    shashin.createNewToast(nextIteration, placement, tag);
+                    attached = true;
+                }
 
-                        attached = true;
+                if (attached === true) {
+                    const messageId = placement + "_ToastMessage_" + nextIteration;
+                    $("#" + messageId).html(message);
+                    const titleId = placement + "_ToastTitle_" + nextIteration;
+                    $("#" + titleId).html(title);
 
-                        toastId = placement + "_" + target + "_" + currentIndex;
+                    $("#" + toastId).removeClass(function (index, className) {
+                        return (className.match(/(^|\s)border-\S+/g) || []).join(' ');
+                    });
+                    $("#" + toastId).removeClass("border");
+                    if (borderColor === "primary" ||
+                        borderColor === "secondary" ||
+                        borderColor === "success" ||
+                        borderColor === "danger" ||
+                        borderColor === "warning" ||
+                        borderColor === "info" ||
+                        borderColor === "light" ||
+                        borderColor === "dark" ||
+                        borderColor === "white") {
+                        $("#" + toastId).addClass("border border-" + borderColor);
                     }
 
-                    if (attached === true) {
-                        const messageId = placement + "_ToastMessage_" + currentIndex;
-                        $("#" + messageId).html(message);
-                        const titleId = placement + "_ToastTitle_" + currentIndex;
-                        $("#" + titleId).html(title);
+                    if (headerSubtext !== null) {
+                        const headerSubtextId = placement + "_HeaderSubtext_" + nextIteration;
+                        $("#" + headerSubtextId).html(title);
+                    }
 
-                        $("#" + toastId).removeClass(function (index, className) {
-                            return (className.match(/(^|\s)border-\S+/g) || []).join(' ');
-                        });
-                        $("#" + toastId).removeClass("border");
-                        if (borderColor === "primary" ||
-                            borderColor === "secondary" ||
-                            borderColor === "success" ||
-                            borderColor === "danger" ||
-                            borderColor === "warning" ||
-                            borderColor === "info" ||
-                            borderColor === "light" ||
-                            borderColor === "dark" ||
-                            borderColor === "white") {
-                            $("#" + toastId).addClass("border border-" + borderColor);
-                        }
+                    if (autohide === false || autohide === true) {
+                        $("#" + toastId).attr("data-bs-autohide", autohide);
 
-                        if (headerSubtext !== null) {
-                            const headerSubtextId = placement + "_HeaderSubtext_" + currentIndex;
-                            $("#" + headerSubtextId).html(title);
-                        }
-
-                        if (autohide === false || autohide === true) {
-                            $("#" + toastId).attr("data-bs-autohide", autohide);
-
-                            if (autohide === true) {
-                                $("#" + toastId).attr("data-bs-delay", delay);
-                            }
-                        } else {
+                        if (autohide === true) {
                             $("#" + toastId).attr("data-bs-delay", delay);
                         }
-
-                        if (icon !== undefined && icon !== null) {
-                            const iconEl = placement + "_ToastIcon_" + currentIndex;
-                            const iconField = $("#" + iconEl);
-                            const spacerEl = placement + "_ToastSpacer_" + currentIndex;
-                            const spacerField = $("#" + spacerEl);
-                            let cssStyle = {"font-size": "1rem"};
-                            if (iconColor !== null) {
-                                cssStyle["color"] = iconColor;
-                            }
-                            iconField.css(cssStyle);
-                            iconField.addClass(icon);
-                            spacerField.html("&nbsp;");
-                        }
-
-                        const toastLive = document.getElementById(toastId);
-                        const toast = new bootstrap.Toast(toastLive);
-                        toast.show();
-
-                        toastLive.addEventListener('hidden.bs.toast', () => {
-                            $("#" + toastId).remove();
-                        });
-
-                        break;
+                    } else {
+                        $("#" + toastId).attr("data-bs-delay", delay);
                     }
+
+                    if (icon !== undefined && icon !== null) {
+                        const iconEl = placement + "_ToastIcon_" + nextIteration;
+                        const iconField = $("#" + iconEl);
+                        const spacerEl = placement + "_ToastSpacer_" + nextIteration;
+                        const spacerField = $("#" + spacerEl);
+                        let cssStyle = {"font-size": "1rem"};
+                        if (iconColor !== null) {
+                            cssStyle["color"] = iconColor;
+                        }
+                        iconField.css(cssStyle);
+                        iconField.addClass(icon);
+                        spacerField.html("&nbsp;");
+                    }
+
+                    const toastLive = document.getElementById(toastId);
+                    const toast = new bootstrap.Toast(toastLive);
+                    toast.show();
+
+                    toastLive.addEventListener('hidden.bs.toast', () => {
+                        $("#" + toastId).remove();
+                    });
                 }
+
             }
         }
     }
@@ -329,7 +322,7 @@
             }
         });
 
-        return foundTag || counter > 0;
+        return foundTag || (tag === null && counter > 0);
     }
 
     shashin.getToastElement = function (placement, tag) {
