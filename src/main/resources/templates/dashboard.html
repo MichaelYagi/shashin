@@ -200,7 +200,7 @@
                 icon: "bi-info-circle",
                 iconColor: "#777777",
                 autohide: false,
-                target: shashin.toast.target.two
+                tag: "dashboard"
             });
             const http = new Http("dashboard data");
             http.ajax("get", "/dashboard/data").then(function (data) {
@@ -284,7 +284,7 @@
                 $("#progressBarWrapper").invisible();
                 Util.updateProgressBar(0, {autoVisibility: false});
                 shashin.closeToastMessage({
-                    target: shashin.toast.target.two
+                    tag: "dashboard"
                 });
             });
         }, 0);

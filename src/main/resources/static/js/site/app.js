@@ -20,16 +20,11 @@
     shashin.downloadInstance = null;
     shashin.initialMapZoom = 17;
     shashin.toast = {};
-    shashin.toast.target = {};
-    shashin.toast.target.default = "defaultToastTarget";
-    shashin.toast.target.one = "toastTarget1";
-    shashin.toast.target.two = "toastTarget2";
-    shashin.toast.target.three = "toastTarget3";
-    shashin.toast.target.four = "toastTarget4";
     shashin.toast.placement = {};
     shashin.toast.placement.top = {};
     shashin.toast.placement.middle = {};
     shashin.toast.placement.bottom = {};
+    shashin.toast.placement.default = "bottomCenterToastContainer";
     shashin.toast.placement.top.left = "topLeftToastContainer";
     shashin.toast.placement.top.center = "topCenterToastContainer";
     shashin.toast.placement.top.right = "topRightToastContainer";
@@ -81,6 +76,9 @@
         borderColor = one of primary, secondary, success, danger, warning, info, light, dark, white
     */
     shashin.showToastMessage = function(title, message, options) {
+        shashin.printMessageToConsole(title);
+        shashin.printMessageToConsole(options);
+
         let icon = null;
         let iconColor = null;
         let headerSubtext = null;
@@ -242,15 +240,16 @@
     }
 
     shashin.createNewToast = function (index, placement, tag) {
+
         let html = '<div id="'+placement+'_ToastTarget_'+index+'" class="toast" role="alert" aria-live="assertive" aria-atomic="true">';
         if (tag !== null) {
             html = '<div id="'+placement+'_ToastTarget_'+index+'" data-tag="'+tag+'" class="toast" role="alert" aria-live="assertive" aria-atomic="true">';
         }
 
         html += '<div class="toast-header">' +
-            '<span id="'+placement+'_ToastIcon_'+index+'"></span><span id="'+placement+'_ToastSpacer_'+index+'"></span>' +
-            '<strong id="'+placement+'_ToastTitle_'+index+'" class="me-auto"></strong>' +
-            '<small id="'+placement+'_HeaderSubtext_'+index+'"></small>' +
+            '<span id="'+placement+'_ToastIcon_'+index+'" class="toast-icon"></span><span id="'+placement+'_ToastSpacer_'+index+'"></span>' +
+            '<strong id="'+placement+'_ToastTitle_'+index+'" class="me-auto toast-title"></strong>' +
+            '<small id="'+placement+'_HeaderSubtext_'+index+'" class="toast-subtext"></small>' +
             '<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>' +
             '</div>' +
             '<div id="'+placement+'_ToastMessage_'+index+'" class="toast-body"></div>' +
@@ -259,23 +258,86 @@
         $(html).insertBefore($("#" + placement + "_ToastTargetAttach"));
     }
 
-    shashin.removeElements = function (elements) {
+    shashin.removeElements = function (elements, tag) {
         elements.each( function () {
-            this.remove();
+            const attr = $(this).attr('data-tag');
+            if (tag === null || (typeof attr !== 'undefined' && attr !== false && attr === tag)) {
+                this.remove();
+            }
         });
     }
 
     shashin.closeToastMessage = function (options) {
         shashin.printMessageToConsole(options);
-        shashin.removeElements($("#topLeft_ToastTargetAttach").siblings());
-        shashin.removeElements($("#topCenter_ToastTargetAttach").siblings());
-        shashin.removeElements($("#topRight_ToastTargetAttach").siblings());
-        shashin.removeElements($("#midLeft_ToastTargetAttach").siblings());
-        shashin.removeElements($("#midCenter_ToastTargetAttach").siblings());
-        shashin.removeElements($("#midRight_ToastTargetAttach").siblings());
-        shashin.removeElements($("#bottomLeft_ToastTargetAttach").siblings());
-        shashin.removeElements($("#bottomCenter_ToastTargetAttach").siblings());
-        shashin.removeElements($("#bottomRight_ToastTargetAttach").siblings());
+        let tag = null;
+        if (options && options.hasOwnProperty("tag")) {
+            tag = options["tag"];
+        }
+
+        shashin.removeElements($("#topLeft_ToastTargetAttach").siblings(), tag);
+        shashin.removeElements($("#topCenter_ToastTargetAttach").siblings(), tag);
+        shashin.removeElements($("#topRight_ToastTargetAttach").siblings(), tag);
+        shashin.removeElements($("#midLeft_ToastTargetAttach").siblings(), tag);
+        shashin.removeElements($("#midCenter_ToastTargetAttach").siblings(), tag);
+        shashin.removeElements($("#midRight_ToastTargetAttach").siblings(), tag);
+        shashin.removeElements($("#bottomLeft_ToastTargetAttach").siblings(), tag);
+        shashin.removeElements($("#bottomCenter_ToastTargetAttach").siblings(), tag);
+        shashin.removeElements($("#bottomRight_ToastTargetAttach").siblings(), tag);
+    }
+
+    shashin.hasToast = function (placement, tag) {
+        if (typeof tag === 'undefined' || tag === false) {
+            tag = null
+        }
+
+        let counter = 0;
+        let foundTag = false;
+        $("#"+placement+" div.toast-container").children().each(function(i, obj) {
+            if ($(obj).hasClass('show') === true && $(obj).hasClass("attachPoint") === false) {
+                if (tag !== null && $(obj).attr("data-tag") === tag) {
+                    foundTag = true;
+                    return foundTag;
+                }
+                counter++;
+            }
+        });
+
+        return foundTag || counter > 0;
+    }
+
+    shashin.getToastElement = function (placement, tag) {
+        let foundObj = null;
+
+        if (placement === null || tag === null) {
+            return null;
+        }
+
+        $("#"+placement+" div.toast-container").children().each(function(i, obj) {
+            if ($(obj).hasClass("attachPoint") === false) {
+                if (tag !== null && $(obj).attr("data-tag") === tag) {
+                    foundObj = obj;
+                    return true;
+                }
+            }
+        });
+
+        return foundObj;
+    }
+
+    shashin.getToastElements = function (placement) {
+        let foundObjs = null;
+
+        if (placement === null) {
+            return null;
+        }
+
+        $("#"+placement+" div.toast-container").children().each(function(i, obj) {
+            if ($(obj).hasClass("attachPoint") === false) {
+                foundObjs = obj;
+            }
+        });
+
+        return foundObjs;
     }
 
     shashin.getMediaContent = function(metadata) {

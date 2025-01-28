@@ -166,14 +166,14 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         if (Util.isMobile() === false) {
             options = {
                 icon: "bi-keyboard",
-                target: "toastTarget4",
-                autohide: false
+                autohide: false,
+                tag: "slide"
             };
         } else {
             options = {
                 icon: "bi-hand-index",
-                target: "toastTarget4",
-                autohide: false
+                autohide: false,
+                tag: "slide"
             };
         }
 
@@ -185,12 +185,12 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             if (Util.isMobile() === false) {
                 options = {
                     icon: "bi-keyboard",
-                    target: "toastTarget4"
+                    tag: "slide"
                 };
             } else {
                 options = {
                     icon: "bi-hand-index",
-                    target: "toastTarget4"
+                    tag: "slide"
                 };
             }
         }
@@ -228,9 +228,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             } else {
                 $("#mediaInfo").css("display", "none");
                 exitSlideshowGallery();
-                shashin.closeToastMessage({
-                    target: shashin.toast.target.four
-                });
+                shashin.closeToastMessage({tag: "slide"});
             }
         }
     })
@@ -243,9 +241,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 } else {
                     $("#mediaInfo").css("display", "none");
                     exitSlideshowGallery();
-                    shashin.closeToastMessage({
-                        target: shashin.toast.target.four
-                    });
+                    shashin.closeToastMessage({tag: "slide"});
                 }
             }
 
@@ -261,12 +257,10 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
             // Show key binding toast
             if (e.key === "d" || e.code === "KeyD" || e.keyCode === 68) {
-                if ($("#" + shashin.toast.target.four).css('display') === 'none' || $("#" + shashin.toast.target.four).css("visibility") === "hidden") {
+                if (shashin.hasToast(shashin.toast.placement.bottom.center, "slide") === false) {
                     showInstruction();
                 } else {
-                    shashin.closeToastMessage({
-                        target: shashin.toast.target.four
-                    });
+                    shashin.closeToastMessage({tag: "slide"});
                 }
             }
 
@@ -307,12 +301,10 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             if (direction === "up") {
                 if (document.fullscreenElement === null) { // Not full screen, return to full screen
                     document.documentElement.requestFullscreen();
-                } else if ($("#" + shashin.toast.target.four).css('display') === 'none' || $("#" + shashin.toast.target.four).css("visibility") === "hidden") {
+                } else if (shashin.hasToast(shashin.toast.placement.bottom.center, "slide") === false) {
                     showInstruction();
                 } else {
-                    shashin.closeToastMessage({
-                        target: shashin.toast.target.four
-                    });
+                    shashin.closeToastMessage({tag: "slide"});
                 }
             } else {
                 slideshowInfo();

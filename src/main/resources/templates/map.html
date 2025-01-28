@@ -195,7 +195,7 @@
             icon: "bi-info-circle",
             iconColor: "#777777",
             autohide: false,
-            target: shashin.toast.target.two
+            tag: "mainMap"
         });
         http.ajax("get", "/mapdata/keywords" + (version === "" ? "" : "?v=" + version)).then(function (mapdataObj) {
             let mapdata = [];
@@ -216,7 +216,7 @@
 
             if (mapdata.length === 0) {
                 shashin.closeToastMessage({
-                    target: shashin.toast.target.two
+                    tag: "mainMap"
                 });
                 $("#progressBarWrapper").invisible();
                 Util.updateProgressBar(0, {autoVisibility: false});

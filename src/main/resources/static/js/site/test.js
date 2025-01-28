@@ -64,7 +64,6 @@ shashin.showToastMessage(title, message, {
     iconColor: "#FF8C00",
     headerSubtext: createdAtDate,
     autohide: false,
-    target: shashin.toast.target.four,
     borderColor:"warning"
 });
 

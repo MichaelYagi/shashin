@@ -22,7 +22,6 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
                         icon: "bi-exclamation-triangle",
                         iconColor: "#FF0000",
                         autohide: false,
-                        target: shashin.toast.target.three,
                         borderColor: "danger"
                     });
                 }
@@ -195,8 +194,6 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
         }
     });
 
-    toastClosureListeners();
-
     initializeSlideshow(accessTimelineView, queryLimit);
 
     captureMessages(activePage, notificationAlerts, timezone);
@@ -204,42 +201,4 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
     if (hasMediaUploadDirectory === true && (activePage === "recent" || activePage === "modified" || activePage === "taken" || activePage === "accessed" || activePage === "archived" || activePage === "folders" || activePage === "folder" || activePage === "album")) {
         initializeUploads(activePage);
     }
-}
-
-function toastClosureListeners() {
-    // Clear live toast message on close
-    $('#' + shashin.toast.target.default).on('hidden.bs.toast', function () {
-        $("#toastIcon").removeClass();
-        $("#toastIcon").removeAttr('style');
-        $("#toastTitle").text("");
-        $("#toastMessage").text("");
-    });
-
-    $('#' + shashin.toast.target.one).on('hidden.bs.toast', function () {
-        $("#toastIcon1").removeClass();
-        $("#toastIcon1").removeAttr('style');
-        $("#toastTitle1").text("");
-        $("#toastMessage1").text("");
-    });
-
-    $('#' + shashin.toast.target.two).on('hidden.bs.toast', function () {
-        $("#toastIcon2").removeClass();
-        $("#toastIcon2").removeAttr('style');
-        $("#toastTitle2").text("");
-        $("#toastMessage2").text("");
-    });
-
-    $('#' + shashin.toast.target.three).on('hidden.bs.toast', function () {
-        $("#toastIcon3").removeClass();
-        $("#toastIcon3").removeAttr('style');
-        $("#toastTitle3").text("");
-        $("#toastMessage3").text("");
-    });
-
-    $('#' + shashin.toast.target.four).on('hidden.bs.toast', function () {
-        $("#toastIcon4").removeClass();
-        $("#toastIcon4").removeAttr('style');
-        $("#toastTitle4").text("");
-        $("#toastMessage4").text("");
-    });
 }

@@ -189,18 +189,22 @@ $("#albumAppToolsRestore").on("click", async function (e) {
                 shashin.showToastMessage("Success!", "Media restored", {
                     icon: "bi-info-circle",
                     iconColor: "#777777",
+                    tag: "restoreArchive",
                     borderColor:"success"
                 });
 
-                $('#'+shashin.toast.target.default).on('hidden.bs.toast', function () {
-                    $("#albumAppToolsRestoreIcon").removeClass("spinner-border spinner-border-sm").addClass("bi-arrow-repeat");
-                    $("#albumAppToolsRestoreIcon").css({
-                        "width": "",
-                        "height": "",
-                        "font-size": "1.5rem"
+                const el = shashin.getToastElement(shashin.toast.placement.bottom.center, "restoreArchive");
+                if (el !== null) {
+                    $('#' + $(el).attr("id")).on('hidden.bs.toast', function () {
+                        $("#albumAppToolsRestoreIcon").removeClass("spinner-border spinner-border-sm").addClass("bi-arrow-repeat");
+                        $("#albumAppToolsRestoreIcon").css({
+                            "width": "",
+                            "height": "",
+                            "font-size": "1.5rem"
+                        });
+                        location.replace(location.href.split('#')[0]);
                     });
-                    location.replace(location.href.split('#')[0]);
-                });
+                }
             } else {
                 shashin.showToastMessage("Could not restore media", data["msg"], {icon: "bi-exclamation-triangle", iconColor: "#FF0000", borderColor:"danger"});
 
