@@ -177,7 +177,7 @@ class Settings {
 
         // If click anywhere on page, hide toast message
         // $(document).on("click", function() {
-        //     shashin.hideToastMessage();
+        //     shashin.closeToastMessages({hide: true});
         // });
     }
 }

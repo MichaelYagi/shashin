@@ -299,29 +299,20 @@
             placements = ["topLeft","topCenter","topRight","midLeft","midCenter","midRight","bottomLeft","bottomCenter","bottomRight"];
         }
 
-        placements.forEach(function (placement, index) {
-            tags.forEach(function (tag, index) {
-                shashin.removeElements($("#" + placement + "_ToastTargetAttach").siblings(), tag);
-            });
-        });
-    }
-
-    shashin.hideToastMessage = function (options) {
-        shashin.printMessageToConsole(options);
-        let tag = null;
-        if (options && options.hasOwnProperty("tag")) {
-            tag = options["tag"];
+        let hide = false;
+        if (options && options.hasOwnProperty("hide")) {
+            hide = options["hide"];
         }
 
-        shashin.hideElements($("#topLeft_ToastTargetAttach").siblings(), tag);
-        shashin.hideElements($("#topCenter_ToastTargetAttach").siblings(), tag);
-        shashin.hideElements($("#topRight_ToastTargetAttach").siblings(), tag);
-        shashin.hideElements($("#midLeft_ToastTargetAttach").siblings(), tag);
-        shashin.hideElements($("#midCenter_ToastTargetAttach").siblings(), tag);
-        shashin.hideElements($("#midRight_ToastTargetAttach").siblings(), tag);
-        shashin.hideElements($("#bottomLeft_ToastTargetAttach").siblings(), tag);
-        shashin.hideElements($("#bottomCenter_ToastTargetAttach").siblings(), tag);
-        shashin.hideElements($("#bottomRight_ToastTargetAttach").siblings(), tag);
+        placements.forEach(function (placement, index) {
+            tags.forEach(function (tag, index) {
+                if (hide === true) {
+                    shashin.hideElements($("#" + placement + "_ToastTargetAttach").siblings(), tag);
+                } else {
+                    shashin.removeElements($("#" + placement + "_ToastTargetAttach").siblings(), tag);
+                }
+            });
+        });
     }
 
     shashin.hasToast = function (placement, tag) {
