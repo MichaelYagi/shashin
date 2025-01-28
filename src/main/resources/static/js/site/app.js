@@ -274,22 +274,36 @@
         });
     }
 
-    shashin.closeToastMessage = function (options) {
+    // placement - topLeft, topCenter, etc
+    shashin.closeToastMessages = function (options) {
         shashin.printMessageToConsole(options);
-        let tag = null;
+        let tags = [];
+        if (options && options.hasOwnProperty("tags")) {
+            tags = options["tags"];
+        }
         if (options && options.hasOwnProperty("tag")) {
-            tag = options["tag"];
+            tags.push(options["tag"])
+        }
+        if (tags.length === 0) {
+            tags = [null];
         }
 
-        shashin.removeElements($("#topLeft_ToastTargetAttach").siblings(), tag);
-        shashin.removeElements($("#topCenter_ToastTargetAttach").siblings(), tag);
-        shashin.removeElements($("#topRight_ToastTargetAttach").siblings(), tag);
-        shashin.removeElements($("#midLeft_ToastTargetAttach").siblings(), tag);
-        shashin.removeElements($("#midCenter_ToastTargetAttach").siblings(), tag);
-        shashin.removeElements($("#midRight_ToastTargetAttach").siblings(), tag);
-        shashin.removeElements($("#bottomLeft_ToastTargetAttach").siblings(), tag);
-        shashin.removeElements($("#bottomCenter_ToastTargetAttach").siblings(), tag);
-        shashin.removeElements($("#bottomRight_ToastTargetAttach").siblings(), tag);
+        let placements = [];
+        if (options && options.hasOwnProperty("placements") && options["placements"].length > 0) {
+            placements = options["placements"];
+        }
+        if (options && options.hasOwnProperty("placement")) {
+            placements.push(options["placement"])
+        }
+        if (placements.length === 0) {
+            placements = ["topLeft","topCenter","topRight","midLeft","midCenter","midRight","bottomLeft","bottomCenter","bottomRight"];
+        }
+
+        placements.forEach(function (placement, index) {
+            tags.forEach(function (tag, index) {
+                shashin.removeElements($("#" + placement + "_ToastTargetAttach").siblings(), tag);
+            });
+        });
     }
 
     shashin.hideToastMessage = function (options) {

@@ -664,7 +664,7 @@ async function showMap(mapdata, keywordMap) {
             forcedFiltered = false;
         }
 
-        shashin.closeToastMessage({
+        shashin.closeToastMessages({
             tag: "mainMap"
         });
     }
