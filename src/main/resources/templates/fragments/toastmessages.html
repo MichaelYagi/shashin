@@ -3,56 +3,120 @@
 <body th:fragment="toastmessages()">
 
 <!-- For live toast messages, use shashin.showToastMessage() to display toast messages -->
-<div class="position-fixed bottom-0 start-50 translate-middle-x" id="toastContainer" style="z-index: 999999">
+
+<!--
+---------
+ 1  0  0
+ 0  0  0
+ 0  0  0
+---------
+-->
+<div class="position-fixed top-0 start-0" id="topLeftToastContainer" style="z-index: 999999">
     <div class="toast-container">
-        <div id="defaultToastTarget" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <span id="toastIcon"></span><span id="toastSpacer"></span>
-                <strong id="toastTitle" class="me-auto"></strong>
-                <small id="headerSubtext"></small>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-            <div id="toastMessage" class="toast-body"></div>
-        </div>
+        <span class="attachPoint" id="topLeft_ToastTargetAttach"></span>
+    </div>
+</div>
 
-        <div id="toastTarget1" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <span id="toastIcon1"></span><span id="toastSpacer1"></span>
-                <strong id="toastTitle1" class="me-auto"></strong>
-                <small id="headerSubtext1"></small>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-            <div id="toastMessage1" class="toast-body"></div>
-        </div>
+<!--
+---------
+ 0  1  0
+ 0  0  0
+ 0  0  0
+---------
+-->
+<div class="position-fixed top-0 start-50 translate-middle-x" id="topCenterToastContainer" style="z-index: 999999">
+    <div class="toast-container">
+        <span class="attachPoint" id="topCenter_ToastTargetAttach"></span>
+    </div>
+</div>
 
-        <div id="toastTarget2" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <span id="toastIcon2"></span><span id="toastSpacer2"></span>
-                <strong id="toastTitle2" class="me-auto"></strong>
-                <small id="headerSubtext2"></small>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-            <div id="toastMessage2" class="toast-body"></div>
-        </div>
+<!--
+---------
+ 0  0  1
+ 0  0  0
+ 0  0  0
+---------
+-->
+<div class="position-fixed top-0 end-0" id="topRightToastContainer" style="z-index: 999999">
+    <div class="toast-container">
+        <span class="attachPoint" id="topRight_ToastTargetAttach"></span>
+    </div>
+</div>
 
-        <div id="toastTarget3" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <span id="toastIcon3"></span><span id="toastSpacer3"></span>
-                <strong id="toastTitle3" class="me-auto"></strong>
-                <small id="headerSubtext3"></small>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-            <div id="toastMessage3" class="toast-body"></div>
-        </div>
+<!--
+---------
+ 0  0  0
+ 1  0  0
+ 0  0  0
+---------
+-->
+<div class="position-fixed top-50 start-0 translate-middle-y" id="midLeftToastContainer" style="z-index: 999999">
+    <div class="toast-container">
+        <span class="attachPoint" id="midLeft_ToastTargetAttach"></span>
+    </div>
+</div>
 
-        <div id="toastTarget4" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <span id="toastIcon4"></span><span id="toastSpacer4"></span>
-                <strong id="toastTitle4" class="me-auto"></strong>
-                <small id="headerSubtext4"></small>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-            <div id="toastMessage4" class="toast-body"></div>
-        </div>
+<!--
+---------
+ 0  0  0
+ 0  1  0
+ 0  0  0
+---------
+-->
+<div class="position-fixed top-50 start-50 translate-middle" id="midCenterToastContainer" style="z-index: 999999">
+    <div class="toast-container">
+        <span class="attachPoint" id="midCenter_ToastTargetAttach"></span>
+    </div>
+</div>
+
+<!--
+---------
+ 0  0  0
+ 0  0  1
+ 0  0  0
+---------
+-->
+<div class="position-fixed top-50 end-0 translate-middle-y" id="midRightToastContainer" style="z-index: 999999">
+    <div class="toast-container">
+        <span class="attachPoint" id="midRight_ToastTargetAttach"></span>
+    </div>
+</div>
+
+<!--
+---------
+ 0  0  0
+ 0  0  0
+ 1  0  0
+---------
+-->
+<div class="position-fixed bottom-0 start-0" id="bottomLeftToastContainer" style="z-index: 999999">
+    <div class="toast-container">
+        <span class="attachPoint" id="bottomLeft_ToastTargetAttach"></span>
+    </div>
+</div>
+
+<!--
+---------
+ 0  0  0
+ 0  0  0
+ 0  1  0
+---------
+-->
+<div class="position-fixed bottom-0 start-50 translate-middle-x" id="bottomCenterToastContainer" style="z-index: 999999">
+    <div class="toast-container">
+        <span class="attachPoint" id="bottomCenter_ToastTargetAttach"></span>
+    </div>
+</div>
+
+<!--
+---------
+ 0  0  0
+ 0  0  0
+ 0  0  1
+---------
+-->
+<div class="position-fixed bottom-0 end-0" id="bottomRightToastContainer" style="z-index: 999999">
+    <div class="toast-container">
+        <span class="attachPoint" id="bottomRight_ToastTargetAttach"></span>
     </div>
 </div>

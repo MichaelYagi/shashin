@@ -30,15 +30,15 @@
     shashin.toast.placement.top = {};
     shashin.toast.placement.middle = {};
     shashin.toast.placement.bottom = {};
-    shashin.toast.placement.top.left = "top_left";
-    shashin.toast.placement.top.center = "top_center";
-    shashin.toast.placement.top.right = "top_right";
-    shashin.toast.placement.middle.left = "middle_left";
-    shashin.toast.placement.middle.center = "middle_center";
-    shashin.toast.placement.middle.right = "middle_right";
-    shashin.toast.placement.bottom.left = "bottom_left";
-    shashin.toast.placement.bottom.center = "bottom_center";
-    shashin.toast.placement.bottom.right = "bottom_right";
+    shashin.toast.placement.top.left = "topLeftToastContainer";
+    shashin.toast.placement.top.center = "topCenterToastContainer";
+    shashin.toast.placement.top.right = "topRightToastContainer";
+    shashin.toast.placement.middle.left = "midLeftToastContainer";
+    shashin.toast.placement.middle.center = "midCenterToastContainer";
+    shashin.toast.placement.middle.right = "midRightToastContainer";
+    shashin.toast.placement.bottom.left = "bottomLeftToastContainer";
+    shashin.toast.placement.bottom.center = "bottomCenterToastContainer";
+    shashin.toast.placement.bottom.right = "bottomRightToastContainer";
     shashin.apiResponse = {};
     shashin.apiResponse.SUCCESS = "success";
     shashin.apiResponse.WARN = "warn";
@@ -73,254 +73,209 @@
 
     /*
     options:
-    icon = bootstrap icon
-    iconColor = CSS color
-    delay = in ms
-    target = default defaultToastTarget, or one of toastTarget1,toastTarget2,toastTarget3,toastTarget4
-    autohide = boolean
-    borderColor = one of primary, secondary, success, danger, warning, info, light, dark, white
+        icon = bootstrap icon
+        iconColor = CSS color
+        delay = in ms
+        autohide = boolean
+        placement = shashin.toast.placement.*
+        borderColor = one of primary, secondary, success, danger, warning, info, light, dark, white
     */
     shashin.showToastMessage = function(title, message, options) {
-        let titleField = null;
-        let headerSubtextField = null;
-        let messageField = null;
-        let spacerField = null;
-        let iconField = null;
         let icon = null;
         let iconColor = null;
-        let target = null;
-        let autohide = null;
         let headerSubtext = null;
-        let delay = 5000;
-        let placement = shashin.toast.placement.bottom.center;
         let borderColor = null;
+        let container = shashin.toast.placement.bottom.center;
+        let autohide = null;
+        let delay = null;
+        let tag = null;
 
         if (options === undefined || options === null) {
-            target = shashin.toast.target.default;
+            container = shashin.toast.placement.bottom.center;
             autohide = true;
         } else {
-            if (options.hasOwnProperty("placement")) {
-                placement = options["placement"];
-                if (placement === shashin.toast.placement.top.left ||
-                    placement === shashin.toast.placement.top.center ||
-                    placement === shashin.toast.placement.top.right ||
-                    placement === shashin.toast.placement.middle.left ||
-                    placement === shashin.toast.placement.middle.center ||
-                    placement === shashin.toast.placement.middle.right ||
-                    placement === shashin.toast.placement.bottom.left ||
-                    placement === shashin.toast.placement.bottom.center ||
-                    placement === shashin.toast.placement.bottom.right
-                ) {
-                    $("#toastContainer")
-                        .removeClass("top-0")
-                        .removeClass("top-50")
-                        .removeClass("bottom-0")
-                        .removeClass("start-0")
-                        .removeClass("start-50")
-                        .removeClass("end-0")
-                        .removeClass("translate-middle-x")
-                        .removeClass("translate-middle-y")
-                        .removeClass("translate-middle");
-
-                    switch (placement) {
-                        case shashin.toast.placement.top.left:
-                            $("#toastContainer").addClass("top-0").addClass("start-0");
-                            break;
-                        case shashin.toast.placement.top.center:
-                            $("#toastContainer").addClass("top-0").addClass("start-50").addClass("translate-middle-x");
-                            break;
-                        case shashin.toast.placement.top.right:
-                            $("#toastContainer").addClass("top-0").addClass("end-0");
-                            break;
-                        case shashin.toast.placement.middle.left:
-                            $("#toastContainer").addClass("top-50").addClass("start-0").addClass("translate-middle-y");
-                            break;
-                        case shashin.toast.placement.middle.center:
-                            $("#toastContainer").addClass("top-50").addClass("start-50").addClass("translate-middle");
-                            break;
-                        case shashin.toast.placement.middle.right:
-                            $("#toastContainer").addClass("top-50").addClass("end-0").addClass("translate-middle-y");
-                            break;
-                        case shashin.toast.placement.bottom.left:
-                            $("#toastContainer").addClass("bottom-0").addClass("start-0");
-                            break;
-                        case shashin.toast.placement.bottom.center:
-                            $("#toastContainer").addClass("bottom-0").addClass("start-50").addClass("translate-middle-x");
-                            break;
-                        case shashin.toast.placement.bottom.right:
-                            $("#toastContainer").addClass("bottom-0").addClass("end-0");
-                            break;
-                        default:
-                            $("#toastContainer").addClass("bottom-0").addClass("start-50").addClass("translate-middle-x");
-                    }
-                }
-            } else {
-                $("#toastContainer").addClass("bottom-0").addClass("start-50").addClass("translate-middle-x");
-            }
-            if (options.hasOwnProperty("icon")) {
-                icon = options["icon"];
-            }
-            if (options.hasOwnProperty("iconColor")) {
-                iconColor = options["iconColor"];
-            }
-            if (options.hasOwnProperty("delay")) {
-                delay = options["delay"];
-            }
-            if (options.hasOwnProperty("headerSubtext")) {
-                headerSubtext = options["headerSubtext"];
-            }
-            if (options.hasOwnProperty("target")) {
-                target = options["target"];
-            } else {
-                target = shashin.toast.target.default;
-            }
             if (options.hasOwnProperty("autohide")) {
                 autohide = options["autohide"];
             } else {
                 autohide = true;
             }
+
+            if (options.hasOwnProperty("delay")) {
+                delay = options["delay"];
+            }
+
+            if (options.hasOwnProperty("placement")) {
+                container = options["placement"];
+            }
+
+            if (options.hasOwnProperty("headerSubtext")) {
+                headerSubtext = options["headerSubtext"];
+            }
+
             if (options.hasOwnProperty("borderColor")) {
                 borderColor = options["borderColor"];
-            } else {
-                borderColor = null;
+            }
+
+            if (options.hasOwnProperty("iconColor")) {
+                iconColor = options["iconColor"];
+            }
+
+            if (options.hasOwnProperty("icon")) {
+                icon = options["icon"];
+            }
+
+            if (options.hasOwnProperty("tag")) {
+                tag = options["tag"];
             }
         }
 
-        if (target === shashin.toast.target.one) {
-            titleField = $("#toastTitle1");
-            headerSubtextField = $("#headerSubtext1");
-            messageField = $("#toastMessage1");
-            iconField = $("#toastIcon1");
-            spacerField = $("#toastSpacer1");
-        } else if (target === shashin.toast.target.two) {
-            titleField = $("#toastTitle2");
-            headerSubtextField = $("#headerSubtext2");
-            messageField = $("#toastMessage2");
-            iconField = $("#toastIcon2");
-            spacerField = $("#toastSpacer2");
-        } else if (target === shashin.toast.target.three) {
-            titleField = $("#toastTitle3");
-            headerSubtextField = $("#headerSubtext3");
-            messageField = $("#toastMessage3");
-            iconField = $("#toastIcon3");
-            spacerField = $("#toastSpacer3");
-        } else if (target === shashin.toast.target.four) {
-            titleField = $("#toastTitle4");
-            headerSubtextField = $("#headerSubtext4");
-            messageField = $("#toastMessage4");
-            iconField = $("#toastIcon4");
-            spacerField = $("#toastSpacer4");
-        } else {
-            target = shashin.toast.target.default;
-            titleField = $("#toastTitle");
-            headerSubtextField = $("#headerSubtext");
-            messageField = $("#toastMessage");
-            iconField = $("#toastIcon");
-            spacerField = $("#toastSpacer");
+        const attachPoint = $("#"+container).find(".attachPoint");
+        const siblingCount = attachPoint.siblings().length;
+
+        if (siblingCount === 0 || tag !== null) {
+            shashin.createNewToast(1, container.slice(0, container.indexOf("ToastContainer")), tag);
         }
 
-        if (title !== undefined && title !== null) {
-            titleField.html(title);
-        }
+        const previousSibling = attachPoint.prev();
+        const lastToast = previousSibling.attr("id");
+        const lastToastArray = lastToast.split("_");
 
-        if (headerSubtext !== undefined && headerSubtext !== null) {
-            headerSubtextField.html(headerSubtext);
-        }
+        if (lastToastArray.length === 3) {
+            const placement = lastToastArray[0];
+            const target = lastToastArray[1];
+            const lastIteration = lastToastArray[2];
 
-        if (message !== undefined && message !== null) {
-            messageField.html(message);
-        }
+            if ($.isNumeric(lastIteration)) {
+                const limit = parseInt(lastIteration);
 
-        if (icon !== undefined && icon !== null) {
-            let cssStyle = {"font-size":"1rem"};
-            if (iconColor !== null) {
-                cssStyle["color"] = iconColor;
+                for (let i = 1; i < limit + 1; i++) {
+                    let toastId = placement + "_" + target + "_" + i;
+
+                    let attached = false;
+                    let currentIndex = 0;
+
+                    // Test if closed - use it, otherwise create new after last open
+                    if (tag !== null) {
+                        currentIndex = i;
+
+                        const attr = $("#" + toastId).attr('data-tag');
+
+                        if (typeof attr !== 'undefined' && attr !== false && $("#" + toastId).attr('data-tag') === tag) { // && $("#" + toastId).hasClass('show') === false
+                            attached = true;
+                        }
+                    } else if ($("#" + toastId).length > 0 && $("#" + toastId).hasClass('in') === false && $("#" + toastId).hasClass('show') === false) {
+                        attached = true;
+                        currentIndex = i;
+                    } else if (i === limit) {
+                        currentIndex = i + 1;
+                        shashin.createNewToast(currentIndex, placement);
+
+                        attached = true;
+
+                        toastId = placement + "_" + target + "_" + currentIndex;
+                    }
+
+                    if (attached === true) {
+                        const messageId = placement + "_ToastMessage_" + currentIndex;
+                        $("#" + messageId).html(message);
+                        const titleId = placement + "_ToastTitle_" + currentIndex;
+                        $("#" + titleId).html(title);
+
+                        $("#" + toastId).removeClass(function (index, className) {
+                            return (className.match(/(^|\s)border-\S+/g) || []).join(' ');
+                        });
+                        $("#" + toastId).removeClass("border");
+                        if (borderColor === "primary" ||
+                            borderColor === "secondary" ||
+                            borderColor === "success" ||
+                            borderColor === "danger" ||
+                            borderColor === "warning" ||
+                            borderColor === "info" ||
+                            borderColor === "light" ||
+                            borderColor === "dark" ||
+                            borderColor === "white") {
+                            $("#" + toastId).addClass("border border-" + borderColor);
+                        }
+
+                        if (headerSubtext !== null) {
+                            const headerSubtextId = placement + "_HeaderSubtext_" + currentIndex;
+                            $("#" + headerSubtextId).html(title);
+                        }
+
+                        if (autohide === false || autohide === true) {
+                            $("#" + toastId).attr("data-bs-autohide", autohide);
+
+                            if (autohide === true) {
+                                $("#" + toastId).attr("data-bs-delay", delay);
+                            }
+                        } else {
+                            $("#" + toastId).attr("data-bs-delay", delay);
+                        }
+
+                        if (icon !== undefined && icon !== null) {
+                            const iconEl = placement + "_ToastIcon_" + currentIndex;
+                            const iconField = $("#" + iconEl);
+                            const spacerEl = placement + "_ToastSpacer_" + currentIndex;
+                            const spacerField = $("#" + spacerEl);
+                            let cssStyle = {"font-size": "1rem"};
+                            if (iconColor !== null) {
+                                cssStyle["color"] = iconColor;
+                            }
+                            iconField.css(cssStyle);
+                            iconField.addClass(icon);
+                            spacerField.html("&nbsp;");
+                        }
+
+                        const toastLive = document.getElementById(toastId);
+                        const toast = new bootstrap.Toast(toastLive);
+                        toast.show();
+
+                        toastLive.addEventListener('hidden.bs.toast', () => {
+                            $("#" + toastId).remove();
+                        });
+
+                        break;
+                    }
+                }
             }
-            iconField.css(cssStyle);
-            iconField.addClass(icon);
-            spacerField.html("&nbsp;");
+        }
+    }
+
+    shashin.createNewToast = function (index, placement, tag) {
+        let html = '<div id="'+placement+'_ToastTarget_'+index+'" class="toast" role="alert" aria-live="assertive" aria-atomic="true">';
+        if (tag !== null) {
+            html = '<div id="'+placement+'_ToastTarget_'+index+'" data-tag="'+tag+'" class="toast" role="alert" aria-live="assertive" aria-atomic="true">';
         }
 
-        $("#" + target).removeClass (function (index, className) {
-            return (className.match (/(^|\s)border-\S+/g) || []).join(' ');
+        html += '<div class="toast-header">' +
+            '<span id="'+placement+'_ToastIcon_'+index+'"></span><span id="'+placement+'_ToastSpacer_'+index+'"></span>' +
+            '<strong id="'+placement+'_ToastTitle_'+index+'" class="me-auto"></strong>' +
+            '<small id="'+placement+'_HeaderSubtext_'+index+'"></small>' +
+            '<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>' +
+            '</div>' +
+            '<div id="'+placement+'_ToastMessage_'+index+'" class="toast-body"></div>' +
+            '</div>';
+
+        $(html).insertBefore($("#" + placement + "_ToastTargetAttach"));
+    }
+
+    shashin.removeElements = function (elements) {
+        elements.each( function () {
+            this.remove();
         });
-        $("#" + target).removeClass("border");
-        if (borderColor === "primary" ||
-            borderColor === "secondary" ||
-            borderColor === "success" ||
-            borderColor === "danger" ||
-            borderColor === "warning" ||
-            borderColor === "info" ||
-            borderColor === "light" ||
-            borderColor === "dark" ||
-            borderColor === "white")
-        {
-            $("#" + target).addClass("border border-"+borderColor);
-        }
-
-        if (autohide === false || autohide === true) {
-            $("#" + target).attr("data-bs-autohide", autohide);
-
-            if (autohide === true) {
-                $("#"+target).attr("data-bs-delay", delay);
-            }
-        } else {
-            $("#"+target).attr("data-bs-delay", delay);
-        }
-
-        const toastLive = document.getElementById(target);
-        const toast = new bootstrap.Toast(toastLive);
-        toast.show();
     }
 
     shashin.closeToastMessage = function (options) {
-        let target = null;
-
-        if (options === undefined || options === null) {
-            target = shashin.toast.target.default;
-            let toastLive = document.getElementById(target);
-            let toast = new bootstrap.Toast(toastLive);
-            toast.hide();
-
-            target = shashin.toast.target.one;
-            toastLive = document.getElementById(target);
-            toast = new bootstrap.Toast(toastLive);
-            toast.hide();
-
-            target = shashin.toast.target.two;
-            toastLive = document.getElementById(target);
-            toast = new bootstrap.Toast(toastLive);
-            toast.hide();
-
-            target = shashin.toast.target.three;
-            toastLive = document.getElementById(target);
-            toast = new bootstrap.Toast(toastLive);
-            toast.hide();
-
-            target = shashin.toast.target.four;
-            toastLive = document.getElementById(target);
-            toast = new bootstrap.Toast(toastLive);
-            toast.hide();
-        } else if (options.hasOwnProperty("target")) {
-            target = options.target;
-
-            if (target !== shashin.toast.target.default &&
-                target !== shashin.toast.target.one &&
-                target !== shashin.toast.target.two &&
-                target !== shashin.toast.target.three &&
-                target !== shashin.toast.target.four) {
-                target = shashin.toast.target.default;
-            }
-
-            const toastLive = document.getElementById(target);
-            const toast = new bootstrap.Toast(toastLive);
-            toast.hide();
-        } else {
-            target = shashin.toast.target.default;
-            const toastLive = document.getElementById(target);
-            const toast = new bootstrap.Toast(toastLive);
-            toast.hide();
-        }
+        shashin.printMessageToConsole(options);
+        shashin.removeElements($("#topLeft_ToastTargetAttach").siblings());
+        shashin.removeElements($("#topCenter_ToastTargetAttach").siblings());
+        shashin.removeElements($("#topRight_ToastTargetAttach").siblings());
+        shashin.removeElements($("#midLeft_ToastTargetAttach").siblings());
+        shashin.removeElements($("#midCenter_ToastTargetAttach").siblings());
+        shashin.removeElements($("#midRight_ToastTargetAttach").siblings());
+        shashin.removeElements($("#bottomLeft_ToastTargetAttach").siblings());
+        shashin.removeElements($("#bottomCenter_ToastTargetAttach").siblings());
+        shashin.removeElements($("#bottomRight_ToastTargetAttach").siblings());
     }
 
     shashin.getMediaContent = function(metadata) {

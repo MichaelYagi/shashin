@@ -33,7 +33,7 @@ function initializeUploads(activePage) {
         e.preventDefault();
         e.stopPropagation();
     }
-    $("header,#container,ul.nav,#toastContainer,#defaultToastTarget,#toastTarget1,#toastTarget2,#toastTarget3,#toastTarget4").on('dragover', function (e) {
+    $("header,#container,ul.nav,#topLeftToastContainer,#topCenterToastContainer,#topRightToastContainer,#midLeftToastContainer,#midCenterToastContainer,#midRightToastContainer,#bottomLeftToastContainer,#bottomCenterToastContainer,#bottomRightToastContainer").on('dragover', function (e) {
         preventDefaults(e);
 
         const isModalShown = ($('.modal').hasClass('in') || $('.modal').hasClass('show'));
@@ -62,13 +62,9 @@ function initializeUploads(activePage) {
 
             shashin.showToastMessage("Drop Media", "Drag and drop media anywhere to upload.", {
                 placement: shashin.toast.placement.top.center,
+                tag: "uploadMedia",
                 autohide: false
             });
-
-            $("#"+shashin.toast.target.one).hide();
-            $("#"+shashin.toast.target.two).hide();
-            $("#"+shashin.toast.target.three).hide();
-            $("#"+shashin.toast.target.four).hide();
         }
     });
     $("header,#container,ul.nav").on('dragleave', function (e) {
@@ -81,10 +77,11 @@ function initializeUploads(activePage) {
         if (shashin.darkMode === true) {
             backgroundColor = "#222222";
         }
-        $("header,#container,ul.nav").css({"background-color": backgroundColor, "opacity": "1"});
+        $("header,#container,ul#browserGroup").css({"background-color": backgroundColor, "opacity": "1"});
+        $("ul#offcanvasList").css({"background-color": "#2F2F2F", "opacity": "1"});
         shashin.closeToastMessage();
     });
-    $("header,#container,ul.nav,#toastContainer,#defaultToastTarget,#toastTarget1,#toastTarget2,#toastTarget3,#toastTarget4").on("drop", function (e) {
+    $("header,#container,ul:not(#offcanvasList),ul#browserGroup,#topLeftToastContainer,#topCenterToastContainer,#topRightToastContainer,#midLeftToastContainer,#midCenterToastContainer,#midRightToastContainer,#bottomLeftToastContainer,#bottomCenterToastContainer,#bottomRightToastContainer").on("drop", function (e) {
         e.preventDefault();
 
         const isModalShown = ($('.modal').hasClass('in') || $('.modal').hasClass('show'));
@@ -95,7 +92,9 @@ function initializeUploads(activePage) {
             if (shashin.darkMode === true) {
                 backgroundColor = "#222222";
             }
-            $("header,#container,.ul:not(#offcanvasList)").css({"background-color": backgroundColor, "opacity": "1"});
+            $("header,#container,ul#browserGroup").css({"background-color": backgroundColor, "opacity": "1"});
+            $("ul#offcanvasList").css({"background-color": "#2F2F2F", "opacity": "1"});
+
             shashin.closeToastMessage();
 
             const dt = e.originalEvent.dataTransfer;
