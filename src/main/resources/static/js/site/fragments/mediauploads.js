@@ -63,6 +63,7 @@ function initializeUploads(activePage) {
 
             shashin.showToastMessage("Drop Media", "Drag and drop media anywhere to upload.", {
                 placement: shashin.toast.placement.top.center,
+                forceDisplay: true,
                 tag: "uploadMedia",
                 autohide: false
             });
@@ -149,6 +150,7 @@ function initializeUploads(activePage) {
                             placement: shashin.toast.placement.top.center,
                             tag: "successUpload",
                             iconColor: "#777777",
+                            forceDisplay: true,
                             autohide: false,
                             borderColor: "success"
                         });
@@ -158,6 +160,7 @@ function initializeUploads(activePage) {
                             placement: shashin.toast.placement.top.center,
                             tag: "failUpload",
                             iconColor: "#FF0000",
+                            forceDisplay: true,
                             delay: 5000,
                             borderColor: "danger"
                         });
@@ -170,6 +173,7 @@ function initializeUploads(activePage) {
                         placement: shashin.toast.placement.top.center,
                         tag: "failUpload",
                         iconColor: "#FF0000",
+                        forceDisplay: true,
                         delay: 5000,
                         borderColor: "danger"
                     });

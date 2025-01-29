@@ -167,13 +167,15 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             options = {
                 icon: "bi-keyboard",
                 autohide: false,
-                tag: "slide"
+                tag: "slide",
+                forceDisplay: true
             };
         } else {
             options = {
                 icon: "bi-hand-index",
                 autohide: false,
-                tag: "slide"
+                tag: "slide",
+                forceDisplay: true
             };
         }
 

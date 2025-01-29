@@ -190,6 +190,7 @@ $("#albumAppToolsRestore").on("click", async function (e) {
                     icon: "bi-info-circle",
                     iconColor: "#777777",
                     tag: "restoreArchive",
+                    forceDisplay: true,
                     borderColor:"success"
                 });
 
@@ -206,7 +207,7 @@ $("#albumAppToolsRestore").on("click", async function (e) {
                     });
                 }
             } else {
-                shashin.showToastMessage("Could not restore media", data["msg"], {icon: "bi-exclamation-triangle", iconColor: "#FF0000", borderColor:"danger"});
+                shashin.showToastMessage("Could not restore media", data["msg"], {icon: "bi-exclamation-triangle", forceDisplay: true, iconColor: "#FF0000", borderColor:"danger"});
 
                 $("#albumAppToolsRestoreIcon").removeClass("spinner-border spinner-border-sm").addClass("bi-arrow-repeat");
                 $("#albumAppToolsRestoreIcon").css({
