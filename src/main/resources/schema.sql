@@ -138,7 +138,7 @@ CREATE TABLE `user` (
                         `password` VARCHAR(64) NOT NULL,
                         `authority` VARCHAR(50) NOT NULL,
                         `isAuthorized` BOOLEAN NOT NULL DEFAULT FALSE,
-                        `notificationAlerts` BOOLEAN NOT NULL DEFAULT FALSE,
+                        `notificationAlerts` BOOLEAN NOT NULL DEFAULT TRUE,
                         `showPlacename` BOOLEAN NOT NULL DEFAULT FALSE,
                         `darkMode` BOOLEAN NOT NULL DEFAULT FALSE,
                         `autoplayVideo` BOOLEAN NOT NULL DEFAULT FALSE,

@@ -27,7 +27,7 @@ class User {
     @NotBlank
     private var showPlacename: Boolean? = false
     @NotBlank
-    private var notificationAlerts: Boolean? = false
+    private var notificationAlerts: Boolean? = true
     private var profile: String? = null
     private var authority: String? = null
     private var createdAt: String? = null

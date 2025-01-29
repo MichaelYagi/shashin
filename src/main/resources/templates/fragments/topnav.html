@@ -4,7 +4,7 @@
 
 <div th:replace="~{fragments/aboutmodal :: aboutmodal(${activeProfile}, ${buildProperties}, ${operatingSystemInfo}, ${copyrightYear})}"></div>
 
-<div th:replace="~{fragments/toastmessages :: toastmessages()}"></div>
+<div th:replace="~{fragments/toastmessages :: toastmessages(${currentUser.notificationAlerts})}"></div>
 
 <div id="slideshowGallery" class="imgbox" style="display: none;">
     <img class="centerFit" id="mediaSrc" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII">
