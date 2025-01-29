@@ -1,4 +1,7 @@
 function initializeUploads(activePage) {
+
+    let messageShowing = false;
+
     $("#uploadToAlbum").on("click", function (e) {
         e.preventDefault();
         chooseMedia("album");
@@ -60,15 +63,19 @@ function initializeUploads(activePage) {
             }
             $("header,#container").css({"background-color": backgroundColor, "opacity": ".5"});
 
-            shashin.showToastMessage("Drop Media", "Drag and drop media anywhere to upload.", {
-                placement: shashin.toast.placement.top.center,
-                tag: "uploadMedia",
-                autohide: false
-            });
+            if (messageShowing === false) {
+                shashin.showToastMessage("Drop Media", "Drag and drop media anywhere to upload.", {
+                    placement: shashin.toast.placement.top.center,
+                    tag: "uploadMedia",
+                    autohide: false
+                });
+                messageShowing = true;
+            }
         }
     });
     $("header,#container,ul.nav").on('dragleave', function (e) {
         preventDefaults(e);
+
         if (e.originalEvent.pageX !== 0 && e.originalEvent.pageY !== 0) {
             return false;
         }
@@ -78,8 +85,15 @@ function initializeUploads(activePage) {
             backgroundColor = "#222222";
         }
         $("header,#container,ul#browserGroup").css({"background-color": backgroundColor, "opacity": "1"});
-        $("ul#offcanvasList").css({"background-color": "#2F2F2F", "opacity": "1"});
+
+        let offcanvasBackgroundColor = "white";
+        if (shashin.darkMode === true) {
+            offcanvasBackgroundColor = "#2F2F2F";
+        }
+        $("ul#offcanvasList").css({"background-color": offcanvasBackgroundColor, "opacity": "1"});
+
         shashin.closeToastMessages({tag: "uploadMedia"});
+        messageShowing = false;
     });
     $("header,#container,ul:not(#offcanvasList),ul#browserGroup,#topLeftToastContainer,#topCenterToastContainer,#topRightToastContainer,#midLeftToastContainer,#midCenterToastContainer,#midRightToastContainer,#bottomLeftToastContainer,#bottomCenterToastContainer,#bottomRightToastContainer").on("drop", function (e) {
         e.preventDefault();
@@ -93,9 +107,15 @@ function initializeUploads(activePage) {
                 backgroundColor = "#222222";
             }
             $("header,#container,ul#browserGroup").css({"background-color": backgroundColor, "opacity": "1"});
-            $("ul#offcanvasList").css({"background-color": "#2F2F2F", "opacity": "1"});
+
+            let offcanvasBackgroundColor = "white";
+            if (shashin.darkMode === true) {
+                offcanvasBackgroundColor = "#2F2F2F";
+            }
+            $("ul#offcanvasList").css({"background-color": offcanvasBackgroundColor, "opacity": "1"});
 
             shashin.closeToastMessages({tag: "uploadMedia"});
+            messageShowing = false;
 
             const dt = e.originalEvent.dataTransfer;
             if (dt.types && (dt.types.indexOf ? dt.types.indexOf('Files') !== -1 : dt.types.includes('Files'))) {
