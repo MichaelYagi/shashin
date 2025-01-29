@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="aboutmodal(activeProfile, buildProperties, operatingSystemInfo, copyrightYear)">
+<body th:fragment="aboutmodal(activeProfile, buildProperties, operatingSystemInfo, copyrightYear, darkMode)">
 
 <div class="modal fade" id="propAbout" tabindex="-1" role="dialog" aria-labelledby="labelAboutContent" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteContentLabel">About</h5>
+                <h5 class="modal-title" id="deleteContentLabel"><th:block th:if="${darkMode == true}"><img src="/images/kamon_transparent_inverted.png" width="25px" height="25px" class="mb-1"></th:block><th:block th:if="${darkMode == false}"><img src="/images/kamon_transparent.png" width="25px" height="25px" class="mb-1"></th:block> About</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
