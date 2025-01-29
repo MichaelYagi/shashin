@@ -81,16 +81,6 @@ class MediaServiceController {
         if (metadataObj.isPresent && (type == "original" || type == "225" || type == "112" || type == "centered" || type == "map" || type == "gif")) {
             // Updated viewed date
             val metadata = metadataObj.get()
-            metadata.setLastAccessedAt(getCurrentTimestamp())
-
-            val currentUserObj = request.session?.getAttribute("CurrentUser") as User?
-            if (currentUserObj != null && currentUserObj.getId() > 0) {
-                metadata.setLastAccessedBy(currentUserObj.getId())
-            } else {
-                metadata.setLastAccessedBy(0)
-            }
-            metadata.setFreeFormString(TextUtils.getMetadataFreeformString(model))
-            metadataRepository.save(metadata)
 
             val path = if (type == "225") {
                 metadata.getThumbnailPathSmall().toString()
