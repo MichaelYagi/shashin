@@ -145,6 +145,7 @@
             const lastIteration = lastToastArray[2];
 
             if ($.isNumeric(lastIteration)) {
+
                 let nextIteration = parseInt(lastIteration);
                 nextIteration = nextIteration + 1;
 
@@ -154,12 +155,11 @@
 
                 // Test if closed - use it, otherwise create new after last open
                 if (tag !== null) {
-                    // check if tag exists
+                    // check if tag exists in the target placement, exit if exists to prevent flashing
                     if (shashin.hasToast(placement+"ToastContainer", tag) === true) {
-                        shashin.removeElements($("#"+placement+"_ToastTargetAttach").siblings(), tag);
-                    }
-
-                    if (shashin.hasToast(placement+"ToastContainer", tag) === false) {
+                        // shashin.removeElements($("#"+placement+"_ToastTargetAttach").siblings(), tag);
+                        return true;
+                    } else {
                         shashin.createNewToast(nextIteration, placement, tag);
 
                         const attr = $("#" + toastId).attr('data-tag');
