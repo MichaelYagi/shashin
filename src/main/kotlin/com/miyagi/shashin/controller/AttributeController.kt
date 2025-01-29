@@ -318,9 +318,11 @@ class AttributeController: ResponseEntityExceptionHandler() {
             settingsObj.setPort(portProperty)
             settingsObj.setScanAutomatically(false)
             settingsObj.setObjectDetection(false)
+            settingsObj.setFacialDetection(false)
             settingsObj.setScheduledMatching(false)
             settingsObj.setScheduledTime(scheduledTime)
             model["objectRecogEnabled"] = false
+            model["facialRecogEnabled"] = false
             settingsObj.setRecognitionConfidenceThreshold(recognitionConfidenceThresholdProperty)
             settingsObj.setObjectRecognitionConfidenceThreshold(objectRecognitionConfidenceThresholdProperty)
             settingsObj.setCreatedAt(getCurrentTimestamp())
