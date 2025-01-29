@@ -87,19 +87,16 @@
         let headerSubtext = null;
         let borderColor = null;
         let container = shashin.toast.placement.bottom.center;
-        let autohide = null;
+        let autohide = true;
         let delay = null;
         let tag = null;
         let refreshTag = null;
 
         if (options === undefined || options === null) {
             container = shashin.toast.placement.bottom.center;
-            autohide = true;
         } else {
             if (options.hasOwnProperty("autohide")) {
                 autohide = options["autohide"];
-            } else {
-                autohide = true;
             }
 
             if (options.hasOwnProperty("delay")) {
