@@ -80,8 +80,8 @@
         refreshTag = if tag is already defined, overwrites the tag with updated content
     */
     shashin.showToastMessage = function(title, message, options) {
-        shashin.printMessageToConsole(title);
-        shashin.printMessageToConsole(options);
+        shashin.printMessageToConsole(title, {tag: "toast"});
+        shashin.printMessageToConsole(JSON.stringify(options), {tag: "toast"});
 
         let icon = null;
         let iconColor = null;
@@ -96,6 +96,28 @@
         if (options === undefined || options === null) {
             container = shashin.toast.placement.bottom.center;
         } else {
+            const validOptions = [
+                "autohide",
+                "delay",
+                "placement",
+                "headerSubtext",
+                "borderColor",
+                "iconColor",
+                "icon",
+                "tag",
+                "refreshTag"
+            ];
+
+            const invalidOptions = [];
+            for (let key in options) {
+                if (options.hasOwnProperty(key) === false || (options.hasOwnProperty(key) === true && validOptions.includes(key) === false)) {
+                    invalidOptions.push(key);
+                }
+            }
+            if (invalidOptions.length > 0) {
+                shashin.printMessageToConsole("Invalid toast options: " + invalidOptions.join(), {tag: "toast"});
+            }
+
             if (options.hasOwnProperty("autohide")) {
                 autohide = options["autohide"];
             }
@@ -2779,7 +2801,7 @@
     }
 
     // Call in console
-    // eg: shashin.enableDebug({filter:[shashin.consoleTypes.log,shashin.consoleTypes.error],showTrace:true,writeLog:true})
+    // eg: shashin.enableDebug({tags: all, filter:[shashin.consoleTypes.log,shashin.consoleTypes.error],showTrace:true,writeLog:true})
     shashin.enableDebug = function (options) {
         shashin.showDebug = true;
         shashin.showTrace = false;
@@ -2811,6 +2833,15 @@
 
             if (options.hasOwnProperty("tags")) {
                 tags = options["tags"];
+            }
+
+            if (options.hasOwnProperty("tag")) {
+                if (options.hasOwnProperty("tags")) {
+                    tags.push(options["tag"]);
+                } else {
+                    tags = [options["tag"]];
+                }
+
             }
         }
 
