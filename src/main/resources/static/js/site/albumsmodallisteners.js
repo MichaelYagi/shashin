@@ -150,7 +150,6 @@
                         icon: "bi-exclamation-triangle",
                         forceDisplay: true,
                         iconColor: "#FF0000",
-                        forceDisplay: true,
                         borderColor:"danger"
                     });
                 }
