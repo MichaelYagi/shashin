@@ -307,7 +307,7 @@
 
     // placement - topLeft, topCenter, etc
     shashin.closeToastMessages = function (options) {
-        shashin.printMessageToConsole(options);
+        shashin.printMessageToConsole(JSON.stringify(options), {tag: "toast"});
         let tags = [];
         if (options && options.hasOwnProperty("tags")) {
             tags = options["tags"];
