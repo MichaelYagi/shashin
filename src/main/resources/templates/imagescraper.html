@@ -87,9 +87,9 @@
             const pageUrl = $("#pageUrl").val().trim();
 
             if (pageUrl === "") {
-                shashin.showToastMessage("Invalid URL", "Enter a valid URL", {icon:"bi-exclamation-triangle", forceDisplay: true, iconColor:"#FF0000", borderColor:"danger"});
+                shashin.showToastMessage("Invalid URL", "Enter a valid URL", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
             } else {
-                shashin.showToastMessage("Starting", "Starting scan, please wait ...", {icon:"bi-info-circle", forceDisplay: true, iconColor:"#777777"});
+                shashin.showToastMessage("Starting", "Starting scan, please wait ...", {icon:"bi-info-circle", iconColor:"#777777"});
 
                 $("#imageScraperContainer").html("");
 
@@ -109,13 +109,11 @@
                             let timeDiff = endTime - startTime;
                             shashin.showToastMessage("Page processed", data.toastMessage + " in " + timeDiff + " ms.", {
                                 icon: "bi-info-circle",
-                                forceDisplay: true,
                                 iconColor: "#777777"
                             });
                         } else {
                             shashin.showToastMessage("Something went wrong", data.toastMessage, {
                                 icon: "bi-exclamation-triangle",
-                                forceDisplay: true,
                                 iconColor: "#FF0000",
                                 borderColor:"danger"
                             });

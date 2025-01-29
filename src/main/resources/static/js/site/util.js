@@ -112,7 +112,6 @@ class Util {
                 if (successful === false) {
                     shashin.showToastMessage("Could not copy", textToCopy + " could not be copied", {
                         icon: "bi-exclamation-triangle",
-                        forceDisplay: true,
                         iconColor: "#FF0000",
                         borderColor:"danger"
                     });
@@ -121,7 +120,6 @@ class Util {
 
                     shashin.showToastMessage("Copied to clipboard", textToCopy + " copied to clipboard", {
                         icon: "bi-info-circle",
-                        forceDisplay: true,
                         iconColor: "#777777"
                     });
                 }
@@ -132,7 +130,6 @@ class Util {
             } catch (err) {
                 shashin.showToastMessage("Could not copy", textToCopy + " could not be copied: " + err, {
                     icon: "bi-exclamation-triangle",
-                    forceDisplay: true,
                     iconColor: "#FF0000",
                     borderColor:"danger"
                 });
@@ -146,7 +143,6 @@ class Util {
             navigator.clipboard.writeText(textToCopy).then(function () {
                 shashin.showToastMessage("Copied to clipboard", textToCopy + " copied to clipboard", {
                     icon: "bi-info-circle",
-                    forceDisplay: true,
                     iconColor: "#777777"
                 });
 
@@ -156,7 +152,6 @@ class Util {
             }).catch(function (err) {
                 shashin.showToastMessage("Could not copy", textToCopy + " could not be copied: " + err, {
                     icon: "bi-exclamation-triangle",
-                    forceDisplay: true,
                     iconColor: "#FF0000",
                     borderColor:"danger"
                 });
@@ -344,7 +339,6 @@ class Util {
                 if (data["status"] === shashin.apiResponse.SUCCESS) {
                     shashin.showToastMessage("Metadata Rescanned", "Metadata successfully rescanned!", {
                         icon: "bi-info-circle",
-                        forceDisplay: true,
                         iconColor: "#777777"
                     });
 
@@ -360,7 +354,6 @@ class Util {
                 } else {
                     shashin.showToastMessage("Error Rescanning Metadata", "There was an error rescanning metadata!", {
                         icon:"bi-exclamation-triangle",
-                        forceDisplay: true,
                         iconColor:"#FF0000",
                         borderColor:"danger"
                     });
@@ -700,7 +693,7 @@ class Util {
         if (msg !== "") {
             if (test === false) {
                 // $("#"+msgId).html('<div class="alert alert-danger" role="alert">'+msg+'</div>');
-                shashin.showToastMessage("Input errors", msg, {icon: "bi-exclamation-triangle", forceDisplay: true, iconColor: "#FF0000", borderColor:"danger"});
+                shashin.showToastMessage("Input errors", msg, {icon: "bi-exclamation-triangle", iconColor: "#FF0000", borderColor:"danger"});
             }
             return false;
         } else {
