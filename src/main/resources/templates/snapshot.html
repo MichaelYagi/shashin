@@ -54,7 +54,8 @@
             const statusMessage = status.charAt(0).toUpperCase() + status.slice(1);
             let options = {
                 icon: "bi-exclamation-triangle",
-                iconColor: "#FF0000"
+                iconColor: "#FF0000",
+                forceDisplay: true,
             };
 
             if (status === shashin.apiResponse.SUCCESS) {

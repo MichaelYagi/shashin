@@ -6,6 +6,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
     shashin.darkMode = darkMode;
     shashin.showPlacename = placeNames;
     shashin.autoplayVideo = autoplayVideo;
+    shashin.showNotifications = notificationAlerts;
 
     const activePage = $("#activePage").val();
 
@@ -21,6 +22,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
                     shashin.showToastMessage("CompreFace server check failed", "Check CompreFace server connection.", {
                         icon: "bi-exclamation-triangle",
                         iconColor: "#FF0000",
+                        forceDisplay: true,
                         autohide: false,
                         borderColor: "danger"
                     });
@@ -83,6 +85,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
                 shashin.showToastMessage("Setting failed", "Dark mode setting failed. "+data["msg"], {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",
+                    forceDisplay: true,
                     borderColor: "danger"
                 });
             }
@@ -94,6 +97,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
             shashin.showToastMessage("Setting failed", "Dark mode setting failed. "+data["msg"], {
                 icon: "bi-exclamation-triangle",
                 iconColor: "#FF0000",
+                forceDisplay: true,
                 borderColor: "danger"
             });
         }
@@ -113,6 +117,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
                 shashin.showToastMessage("Setting failed", "Notification setting failed. "+data["msg"], {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",
+                    forceDisplay: true,
                     borderColor: "danger"
                 });
             }
@@ -120,6 +125,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
             shashin.showToastMessage("Setting failed", "Notification setting failed. "+data["msg"], {
                 icon: "bi-exclamation-triangle",
                 iconColor: "#FF0000",
+                forceDisplay: true,
                 borderColor: "danger"
             });
         }
@@ -143,6 +149,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
 
                 shashin.showToastMessage("Setting failed", "Show place names setting failed. "+data["msg"], {
                     icon: "bi-exclamation-triangle",
+                    forceDisplay: true,
                     iconColor: "#FF0000",
                     borderColor: "danger"
                 });
@@ -154,6 +161,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
 
             shashin.showToastMessage("Setting failed", "Show place names setting failed. "+data["msg"], {
                 icon: "bi-exclamation-triangle",
+                forceDisplay: true,
                 iconColor: "#FF0000",
                 borderColor: "danger"
             });
@@ -177,6 +185,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
 
                 shashin.showToastMessage("Setting failed", "Autoplay videos setting failed. "+data["msg"], {
                     icon: "bi-exclamation-triangle",
+                    forceDisplay: true,
                     iconColor: "#FF0000",
                     borderColor: "danger"
                 });
@@ -188,6 +197,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
 
             shashin.showToastMessage("Setting failed", "Autoplay videos setting failed.", {
                 icon: "bi-exclamation-triangle",
+                forceDisplay: true,
                 iconColor: "#FF0000",
                 borderColor: "danger"
             });

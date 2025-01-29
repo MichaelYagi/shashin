@@ -39,7 +39,7 @@
                         $("#metadataId").val(funObject.args);
                         funObject.fn(funObject.args);
                     } else if (shashin) {
-                        shashin.showToastMessage("Could not get media details", "Could not get media details. Function or metadata ID not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
+                        shashin.showToastMessage("Could not get media details", "Could not get media details. Function or metadata ID not found", {icon:"bi-exclamation-triangle", forceDisplay: true, iconColor:"#FF0000", borderColor:"danger"});
                     }
                 });
         },

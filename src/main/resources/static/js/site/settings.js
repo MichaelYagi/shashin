@@ -162,11 +162,11 @@ class Settings {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === shashin.apiResponse.SUCCESS) {
-                    shashin.showToastMessage("Content deleted", data["msg"], {icon:"bi-info-circle", iconColor:"#777777", autohide: false});
+                    shashin.showToastMessage("Content deleted", data["msg"], {icon:"bi-info-circle", forceDisplay: true, iconColor:"#777777", autohide: false});
                     $("#propDeleteContent").modal('hide');
                     // message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                 } else {
-                    shashin.showToastMessage("Could delete content", data["msg"], {icon:"bi-exclamation-triangle", iconColor:"#FF0000", autohide: false, borderColor:"danger"});
+                    shashin.showToastMessage("Could delete content", data["msg"], {icon:"bi-exclamation-triangle", forceDisplay: true, iconColor:"#FF0000", autohide: false, borderColor:"danger"});
                     $("#propDeleteContent").modal('hide');
                     // message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                 }
