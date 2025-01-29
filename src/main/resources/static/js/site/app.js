@@ -74,7 +74,6 @@
         headerSubtext = string, sits beside the title in smaller print
         delay = in ms
         autohide = boolean
-        forceDisplay = overrides user setting
         placement = one of shashin.toast.placement.*
         borderColor = one of primary, secondary, success, danger, warning, info, light, dark, white
         tag = string, identifies and labels the toast
@@ -90,7 +89,6 @@
         let borderColor = null;
         let container = shashin.toast.placement.bottom.center;
         let autohide = true;
-        let forceDisplay = false;
         let delay = null;
         let tag = null;
         let refreshTag = null;
@@ -133,124 +131,117 @@
             if (options.hasOwnProperty("refreshTag")) {
                 refreshTag = options["refreshTag"];
             }
-
-            if (options.hasOwnProperty("forceDisplay")) {
-                forceDisplay = options["forceDisplay"];
-            }
         }
 
-        if (shashin.showNotifications === true || forceDisplay === true) {
-            const attachPoint = $("#" + container).find(".attachPoint");
-            const siblingCount = attachPoint.siblings().length;
+        const attachPoint = $("#" + container).find(".attachPoint");
+        const siblingCount = attachPoint.siblings().length;
 
-            let toastId = "";
-            if (siblingCount === 0) {
-                toastId = container.slice(0, container.indexOf("ToastContainer")) + "_ToastTarget_1";
-            }
+        let toastId = "";
+        if (siblingCount === 0) {
+            toastId = container.slice(0, container.indexOf("ToastContainer")) + "_ToastTarget_1";
+        }
 
-            const previousSibling = attachPoint.prev();
-            const lastToast = previousSibling.attr("id");
-            const lastToastArray = toastId !== "" ? toastId.split("_") : lastToast.split("_");
+        const previousSibling = attachPoint.prev();
+        const lastToast = previousSibling.attr("id");
+        const lastToastArray = toastId !== "" ? toastId.split("_") : lastToast.split("_");
 
-            if (lastToastArray.length === 3) {
-                const placement = lastToastArray[0];
-                const target = lastToastArray[1];
-                const lastIteration = lastToastArray[2];
+        if (lastToastArray.length === 3) {
+            const placement = lastToastArray[0];
+            const target = lastToastArray[1];
+            const lastIteration = lastToastArray[2];
 
-                if ($.isNumeric(lastIteration)) {
+            if ($.isNumeric(lastIteration)) {
 
-                    let nextIteration = parseInt(lastIteration);
-                    nextIteration = nextIteration + 1;
+                let nextIteration = parseInt(lastIteration);
+                nextIteration = nextIteration + 1;
 
-                    let toastId = placement + "_" + target + "_" + nextIteration;
+                let toastId = placement + "_" + target + "_" + nextIteration;
 
-                    let attached = false;
+                let attached = false;
 
-                    // Test if closed - use it, otherwise create new after last open
-                    if (tag !== null) {
-                        // check if tag exists in the target placement, exit if exists to prevent flashing
-                        if (shashin.hasToast(placement + "ToastContainer", tag) === true) {
-                            if (refreshTag === true) {
-                                shashin.removeElements($("#" + placement + "_ToastTargetAttach").siblings(), tag);
-                            } else {
-                                return true;
-                            }
+                // Test if closed - use it, otherwise create new after last open
+                if (tag !== null) {
+                    // check if tag exists in the target placement, exit if exists to prevent flashing
+                    if (shashin.hasToast(placement + "ToastContainer", tag) === true) {
+                        if (refreshTag === true) {
+                            shashin.removeElements($("#" + placement + "_ToastTargetAttach").siblings(), tag);
+                        } else {
+                            return true;
                         }
-
-                        if (shashin.hasToast(placement + "ToastContainer", tag) === false) {
-                            shashin.createNewToast(nextIteration, placement, tag);
-
-                            const attr = $("#" + toastId).attr('data-tag');
-
-                            if (typeof attr !== 'undefined' && attr !== false && $("#" + toastId).attr('data-tag') === tag) { // && $("#" + toastId).hasClass('show') === false
-                                attached = true;
-                            }
-                        }
-                    } else if ($("#" + toastId).length === 0 || ($("#" + toastId).length > 0 && $("#" + toastId).hasClass('in') === false && $("#" + toastId).hasClass('show') === false)) {
-                        shashin.createNewToast(nextIteration, placement, tag);
-                        attached = true;
                     }
 
-                    if (attached === true) {
-                        const messageId = placement + "_ToastMessage_" + nextIteration;
-                        $("#" + messageId).html(message);
-                        const titleId = placement + "_ToastTitle_" + nextIteration;
-                        $("#" + titleId).html(title);
+                    if (shashin.hasToast(placement + "ToastContainer", tag) === false) {
+                        shashin.createNewToast(nextIteration, placement, tag);
 
-                        $("#" + toastId).removeClass(function (index, className) {
-                            return (className.match(/(^|\s)border-\S+/g) || []).join(' ');
-                        });
-                        $("#" + toastId).removeClass("border");
-                        if (borderColor === "primary" ||
-                            borderColor === "secondary" ||
-                            borderColor === "success" ||
-                            borderColor === "danger" ||
-                            borderColor === "warning" ||
-                            borderColor === "info" ||
-                            borderColor === "light" ||
-                            borderColor === "dark" ||
-                            borderColor === "white") {
-                            $("#" + toastId).addClass("border border-" + borderColor);
+                        const attr = $("#" + toastId).attr('data-tag');
+
+                        if (typeof attr !== 'undefined' && attr !== false && $("#" + toastId).attr('data-tag') === tag) { // && $("#" + toastId).hasClass('show') === false
+                            attached = true;
                         }
+                    }
+                } else if ($("#" + toastId).length === 0 || ($("#" + toastId).length > 0 && $("#" + toastId).hasClass('in') === false && $("#" + toastId).hasClass('show') === false)) {
+                    shashin.createNewToast(nextIteration, placement, tag);
+                    attached = true;
+                }
 
-                        if (headerSubtext !== null) {
-                            const headerSubtextId = placement + "_HeaderSubtext_" + nextIteration;
-                            $("#" + headerSubtextId).html(headerSubtext);
-                        }
+                if (attached === true) {
+                    const messageId = placement + "_ToastMessage_" + nextIteration;
+                    $("#" + messageId).html(message);
+                    const titleId = placement + "_ToastTitle_" + nextIteration;
+                    $("#" + titleId).html(title);
 
-                        if (autohide === false || autohide === true) {
-                            $("#" + toastId).attr("data-bs-autohide", autohide);
+                    $("#" + toastId).removeClass(function (index, className) {
+                        return (className.match(/(^|\s)border-\S+/g) || []).join(' ');
+                    });
+                    $("#" + toastId).removeClass("border");
+                    if (borderColor === "primary" ||
+                        borderColor === "secondary" ||
+                        borderColor === "success" ||
+                        borderColor === "danger" ||
+                        borderColor === "warning" ||
+                        borderColor === "info" ||
+                        borderColor === "light" ||
+                        borderColor === "dark" ||
+                        borderColor === "white") {
+                        $("#" + toastId).addClass("border border-" + borderColor);
+                    }
 
-                            if (autohide === true) {
-                                $("#" + toastId).attr("data-bs-delay", delay);
-                            }
-                        } else {
+                    if (headerSubtext !== null) {
+                        const headerSubtextId = placement + "_HeaderSubtext_" + nextIteration;
+                        $("#" + headerSubtextId).html(headerSubtext);
+                    }
+
+                    if (autohide === false || autohide === true) {
+                        $("#" + toastId).attr("data-bs-autohide", autohide);
+
+                        if (autohide === true) {
                             $("#" + toastId).attr("data-bs-delay", delay);
                         }
-
-                        if (icon !== undefined && icon !== null) {
-                            const iconEl = placement + "_ToastIcon_" + nextIteration;
-                            const iconField = $("#" + iconEl);
-                            const spacerEl = placement + "_ToastSpacer_" + nextIteration;
-                            const spacerField = $("#" + spacerEl);
-                            let cssStyle = {"font-size": "1rem"};
-                            if (iconColor !== null) {
-                                cssStyle["color"] = iconColor;
-                            }
-                            iconField.css(cssStyle);
-                            iconField.addClass(icon);
-                            spacerField.html("&nbsp;");
-                        }
-
-                        const toastLive = document.getElementById(toastId);
-                        const toast = new bootstrap.Toast(toastLive);
-                        toast.show();
-
-                        toastLive.addEventListener('hidden.bs.toast', () => {
-                            $("#" + toastId).remove();
-                        });
+                    } else {
+                        $("#" + toastId).attr("data-bs-delay", delay);
                     }
 
+                    if (icon !== undefined && icon !== null) {
+                        const iconEl = placement + "_ToastIcon_" + nextIteration;
+                        const iconField = $("#" + iconEl);
+                        const spacerEl = placement + "_ToastSpacer_" + nextIteration;
+                        const spacerField = $("#" + spacerEl);
+                        let cssStyle = {"font-size": "1rem"};
+                        if (iconColor !== null) {
+                            cssStyle["color"] = iconColor;
+                        }
+                        iconField.css(cssStyle);
+                        iconField.addClass(icon);
+                        spacerField.html("&nbsp;");
+                    }
+
+                    const toastLive = document.getElementById(toastId);
+                    const toast = new bootstrap.Toast(toastLive);
+                    toast.show();
+
+                    toastLive.addEventListener('hidden.bs.toast', () => {
+                        $("#" + toastId).remove();
+                    });
                 }
             }
         }
@@ -457,7 +448,7 @@
 
     shashin.onFail = function(xhr, textStatus, ajaxParams, description, failFunction) {
         $("#spinner").hide();
-        shashin.showToastMessage("AJAX error", "AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".", {icon:"bi-exclamation-triangle", forceDisplay: true, iconColor:"#FF0000", borderColor:"danger"});
+        shashin.showToastMessage("AJAX error", "AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
         shashin.printMessageToConsole("AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".", {
             type: shashin.consoleTypes.error
         });
@@ -1547,7 +1538,6 @@
                                 icon: "bi-info-circle",
                                 iconColor: "#777777",
                                 delay: 2000,
-                                forceDisplay: true,
                                 borderColor:"success"
                             });
 
@@ -1574,7 +1564,6 @@
                             shashin.showToastMessage("Could not update thumbnail", "Could not update thumbnails", {
                                 icon: "bi-exclamation-triangle",
                                 iconColor: "#FF0000",
-                                forceDisplay: true,
                                 borderColor:"danger"
                             });
                             $(".lg-current").css("background-color", "transparent");
@@ -1588,7 +1577,6 @@
                     shashin.showToastMessage("Could not update thumbnails", "Could not update thumbnails. Failed to capture image.", {
                         icon: "bi-exclamation-triangle",
                         iconColor: "#FF0000",
-                        forceDisplay: true,
                         borderColor:"danger"
                     });
                     $("#captureThumbnail").show();
@@ -1601,7 +1589,6 @@
                 shashin.showToastMessage("Could not update thumbnails", "Could not update thumbnails. "+metadata.fileName+" not a video.", {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",
-                    forceDisplay: true,
                     borderColor:"danger"
                 });
                 $("#captureThumbnail").show();

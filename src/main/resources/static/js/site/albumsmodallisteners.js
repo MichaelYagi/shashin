@@ -139,7 +139,6 @@
                         shashin.showToastMessage("Could not edit album", data["msg"], {
                             icon: "bi-exclamation-triangle",
                             iconColor: "#FF0000",
-                            forceDisplay: true,
                             borderColor:"danger"
                         });
                         $("#editAlbumNameStatus").addClass('bi-x-circle').removeClass('spinner-grow');
@@ -148,7 +147,6 @@
                 } else {
                     shashin.showToastMessage("Could not edit album", "Something went wrong", {
                         icon: "bi-exclamation-triangle",
-                        forceDisplay: true,
                         iconColor: "#FF0000",
                         borderColor:"danger"
                     });
@@ -239,7 +237,7 @@
                     }
                 });
             } else {
-                shashin.showToastMessage("Could not copy text", "Link must not be blank", {icon:"bi-exclamation-triangle", forceDisplay: true, iconColor:"#FF0000", borderColor:"danger"});
+                shashin.showToastMessage("Could not copy text", "Link must not be blank", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
                 $("#copyLinkIcon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
             }
         });

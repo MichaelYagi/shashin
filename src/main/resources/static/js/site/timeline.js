@@ -113,7 +113,6 @@
                 const dateArray = hash.split("-");
                 shashin.showToastMessage(hash+ " not found", "Could not find date " +Util.getDateString(dateArray[0],dateArray[1],dateArray[2])+ " on timeline.", {
                     icon: "bi-exclamation-triangle",
-                    forceDisplay: true,
                     iconColor: "#FF0000",
                     borderColor:"danger"
                 });

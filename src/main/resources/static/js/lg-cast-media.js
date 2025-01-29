@@ -114,7 +114,7 @@
                             });
                         } else {
                             if (shashin) {
-                                shashin.showToastMessage("Could not get cast", "Could not cast. Metadata ID not valid", {icon:"bi-exclamation-triangle", forceDisplay: true, iconColor:"#FF0000", borderColor:"danger"});
+                                shashin.showToastMessage("Could not get cast", "Could not cast. Metadata ID not valid", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
                             }
                         }
                     }
@@ -139,7 +139,7 @@
                                 } catch(e) {
                                     // Error
                                     if (shashin) {
-                                        shashin.showToastMessage("Could not cast", "Castjs could not cast video "+metadata.videoUrl+": "+e.message, {icon:"bi-exclamation-triangle", forceDisplay: true, iconColor:"#FF0000", borderColor:"danger"});
+                                        shashin.showToastMessage("Could not cast", "Castjs could not cast video "+metadata.videoUrl+": "+e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
                                     }
                                     // console.log(e)
                                     $("#chromecasting").css({"display": "none", "font-size": "1rem"});
@@ -150,7 +150,7 @@
                                 } catch(e) {
                                     // Error
                                     if (shashin) {
-                                        shashin.showToastMessage("Could not cast", "Castjs could not cast video "+metadata.videoUrl+": "+e.message, {icon:"bi-exclamation-triangle", forceDisplay: true, iconColor:"#FF0000", borderColor:"danger"});
+                                        shashin.showToastMessage("Could not cast", "Castjs could not cast video "+metadata.videoUrl+": "+e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
                                     }
                                     $("#chromecasting").css({"display": "none", "font-size": "1rem"});
                                 }
