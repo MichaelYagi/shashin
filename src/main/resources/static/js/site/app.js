@@ -70,7 +70,7 @@
     options:
         icon = bootstrap icon
         iconColor = CSS color
-        headerSubtext = string
+        headerSubtext = string, sits beside the title in smaller print
         delay = in ms
         autohide = boolean
         placement = one of shashin.toast.placement.*
@@ -207,7 +207,7 @@
 
                     if (headerSubtext !== null) {
                         const headerSubtextId = placement + "_HeaderSubtext_" + nextIteration;
-                        $("#" + headerSubtextId).html(title);
+                        $("#" + headerSubtextId).html(headerSubtext);
                     }
 
                     if (autohide === false || autohide === true) {
