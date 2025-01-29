@@ -14,21 +14,19 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
         await Util.getNotifications(notificationAlerts, timezone);
     }
 
-    if (notificationAlerts === true) {
-        setTimeout(function () {
-            const http = new Http("check compreface status");
-            http.ajax("get", "/status/compreface").then(function (data) {
-                if (data.hasOwnProperty("status") && data["status"] === false) {
-                    shashin.showToastMessage("CompreFace server check failed", "Check CompreFace server connection.", {
-                        icon: "bi-exclamation-triangle",
-                        iconColor: "#FF0000",
-                        autohide: false,
-                        borderColor: "danger"
-                    });
-                }
-            })
-        }, 0);
-    }
+    setTimeout(function () {
+        const http = new Http("check compreface status");
+        http.ajax("get", "/status/compreface").then(function (data) {
+            if (data.hasOwnProperty("status") && data["status"] === false) {
+                shashin.showToastMessage("CompreFace server check failed", "Check CompreFace server connection.", {
+                    icon: "bi-exclamation-triangle",
+                    iconColor: "#FF0000",
+                    autohide: false,
+                    borderColor: "danger"
+                });
+            }
+        })
+    }, 0);
 
     $("#appSearch").on("submit", function (e) {
         const searchTerm = $("#appSearchInput").val().trim();
