@@ -268,7 +268,15 @@
                 timer += 2000;
                 setTimeout(function () {
                     shashin.showToastMessage("Title 1", "Message 1.",{autohide:false,tag:"test1",placement:shashin.toast.placement.top.left});
-                    shashin.showToastMessage("Title 2", "Message 2.",{autohide:false,tag:"testzzz2",placement:shashin.toast.placement.top.center});
+                    setTimeout(function () {
+                        shashin.showToastMessage("Title 2", "Message 2.",{autohide:false,tag:"testzzz2",placement:shashin.toast.placement.top.center});
+                    }, 2000);
+                    setTimeout(function () {
+                        shashin.showToastMessage("Title 2", "Message 2a.",{autohide:false,tag:"testzzz2",placement:shashin.toast.placement.top.center});
+                    }, 4000);
+                    setTimeout(function () {
+                        shashin.showToastMessage("Title 2", "Message 2 refreshed.",{autohide:false,refreshTag:true,tag:"testzzz2",placement:shashin.toast.placement.top.center});
+                    }, 6000);
                     shashin.showToastMessage("Title 3", "Message 3.",{autohide:false,tag:"test3",placement:shashin.toast.placement.top.right});
                     shashin.showToastMessage("Title 4", "Message 4.",{autohide:false,tag:"test4",placement:shashin.toast.placement.middle.left});
                     shashin.showToastMessage("Title 5", "Message 5.",{autohide:false,tag:"test5",placement:shashin.toast.placement.middle.center});

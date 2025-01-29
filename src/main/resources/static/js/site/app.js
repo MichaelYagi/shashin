@@ -70,10 +70,13 @@
     options:
         icon = bootstrap icon
         iconColor = CSS color
+        headerSubtext = string
         delay = in ms
         autohide = boolean
-        placement = shashin.toast.placement.*
+        placement = one of shashin.toast.placement.*
         borderColor = one of primary, secondary, success, danger, warning, info, light, dark, white
+        tag = string, identifies and labels the toast
+        refreshTag = if tag is already defined, overwrites the tag with updated content
     */
     shashin.showToastMessage = function(title, message, options) {
         shashin.printMessageToConsole(title);
@@ -87,6 +90,7 @@
         let autohide = null;
         let delay = null;
         let tag = null;
+        let refreshTag = null;
 
         if (options === undefined || options === null) {
             container = shashin.toast.placement.bottom.center;
@@ -125,6 +129,10 @@
             if (options.hasOwnProperty("tag")) {
                 tag = options["tag"];
             }
+
+            if (options.hasOwnProperty("refreshTag")) {
+                refreshTag = options["refreshTag"];
+            }
         }
 
         const attachPoint = $("#"+container).find(".attachPoint");
@@ -157,9 +165,14 @@
                 if (tag !== null) {
                     // check if tag exists in the target placement, exit if exists to prevent flashing
                     if (shashin.hasToast(placement+"ToastContainer", tag) === true) {
-                        // shashin.removeElements($("#"+placement+"_ToastTargetAttach").siblings(), tag);
-                        return true;
-                    } else {
+                        if (refreshTag === true) {
+                            shashin.removeElements($("#"+placement+"_ToastTargetAttach").siblings(), tag);
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    if (shashin.hasToast(placement+"ToastContainer", tag) === false) {
                         shashin.createNewToast(nextIteration, placement, tag);
 
                         const attr = $("#" + toastId).attr('data-tag');
