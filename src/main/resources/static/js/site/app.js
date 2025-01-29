@@ -96,17 +96,52 @@
         if (options === undefined || options === null) {
             container = shashin.toast.placement.bottom.center;
         } else {
-            const validOptions = [
-                "autohide",
-                "delay",
-                "placement",
-                "headerSubtext",
-                "borderColor",
-                "iconColor",
-                "icon",
-                "tag",
-                "refreshTag"
-            ];
+            const validOptions = [];
+
+            if (options.hasOwnProperty("autohide")) {
+                autohide = options["autohide"];
+                validOptions.push("autohide");
+            }
+
+            if (options.hasOwnProperty("delay")) {
+                delay = options["delay"];
+                validOptions.push("delay");
+            }
+
+            if (options.hasOwnProperty("placement")) {
+                container = options["placement"];
+                validOptions.push("placement");
+            }
+
+            if (options.hasOwnProperty("headerSubtext")) {
+                headerSubtext = options["headerSubtext"];
+                validOptions.push("headerSubtext");
+            }
+
+            if (options.hasOwnProperty("borderColor")) {
+                borderColor = options["borderColor"];
+                validOptions.push("borderColor");
+            }
+
+            if (options.hasOwnProperty("iconColor")) {
+                iconColor = options["iconColor"];
+                validOptions.push("iconColor");
+            }
+
+            if (options.hasOwnProperty("icon")) {
+                icon = options["icon"];
+                validOptions.push("icon");
+            }
+
+            if (options.hasOwnProperty("tag")) {
+                tag = options["tag"];
+                validOptions.push("tag");
+            }
+
+            if (options.hasOwnProperty("refreshTag")) {
+                refreshTag = options["refreshTag"];
+                validOptions.push("refreshTag");
+            }
 
             const invalidOptions = [];
             for (let key in options) {
@@ -116,42 +151,6 @@
             }
             if (invalidOptions.length > 0) {
                 shashin.printMessageToConsole("Invalid toast options: " + invalidOptions.join(), {tag: "toast"});
-            }
-
-            if (options.hasOwnProperty("autohide")) {
-                autohide = options["autohide"];
-            }
-
-            if (options.hasOwnProperty("delay")) {
-                delay = options["delay"];
-            }
-
-            if (options.hasOwnProperty("placement")) {
-                container = options["placement"];
-            }
-
-            if (options.hasOwnProperty("headerSubtext")) {
-                headerSubtext = options["headerSubtext"];
-            }
-
-            if (options.hasOwnProperty("borderColor")) {
-                borderColor = options["borderColor"];
-            }
-
-            if (options.hasOwnProperty("iconColor")) {
-                iconColor = options["iconColor"];
-            }
-
-            if (options.hasOwnProperty("icon")) {
-                icon = options["icon"];
-            }
-
-            if (options.hasOwnProperty("tag")) {
-                tag = options["tag"];
-            }
-
-            if (options.hasOwnProperty("refreshTag")) {
-                refreshTag = options["refreshTag"];
             }
         }
 
