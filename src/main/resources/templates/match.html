@@ -5,17 +5,19 @@
 
 <div th:replace="~{fragments/topnav :: topnav(${currentUser},${activePage},'')}"></div>
 
-<div th:replace="~{fragments/settingsgroup :: settings(${activePage},${faceRecogServicesAvailable},${objectRecogEnabled})}"></div>
+<div th:replace="~{fragments/settingsgroup :: settings(${activePage},${faceRecogServicesAvailable},${objectRecogEnabled},${facialRecogEnabled})}"></div>
 
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
     <div class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="~{fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})}"></div>
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
-            <button class="btn btn-primary" id="matchAction">Scan For Matches</button>
-            <button class="btn btn-danger" id="stopScan">Stop</button>
-            <br>
-            <span class="bi-info-circle" style="font-size: 1rem;color: blue;"></span> This is experimental! There should be at least 3 distinct people already tagged before scanning, and should be a single subject in each of the photos. Object detection needs to be enabled in settings to detect objects.
+            <th:block th:if="${objectRecogEnabled==true || facialRecogEnabled==true}">
+                <button class="btn btn-primary" id="matchAction">Scan For Matches</button>
+                <button class="btn btn-danger" id="stopScan">Stop</button>
+                <br>
+                <span class="bi-info-circle" style="font-size: 1rem;color: blue;"></span> Face detection needs to be enabled in settings to detect faces. There should be at least 3 distinct people already tagged before scanning, and should be a single subject in each of the photos. Object detection needs to be enabled in settings to detect objects.
+            </th:block>
             <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
         </main>
     </div>
@@ -31,124 +33,129 @@
     $(document).ready(function () {
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
+        const objectRecogEnabled = /*[[${objectRecogEnabled}]]*/ false;
+        const facialRecogEnabled = /*[[${facialRecogEnabled}]]*/ false;
         /*]]>*/
 
-        $("#matchAction").on("click", function(e) {
-            e.preventDefault();
+        if (objectRecogEnabled || facialRecogEnabled) {
+            $("#matchAction").on("click", function (e) {
+                e.preventDefault();
 
-            let posting = $.post(
-                "/matches/start",
-                {"stopScan": false}
-            );
+                let posting = $.post(
+                    "/matches/start",
+                    {"stopScan": false}
+                );
 
-            posting.done(function(data) {
-                if (data["status"] === "success") {
-                    window.location.href = window.location.href;
+                posting.done(function (data) {
+                    if (data["status"] === "success") {
+                        window.location.href = window.location.href;
+                    } else {
+                        $("#msg").text(data["msg"]);
+                    }
+                });
+            });
+
+            $("#stopScan").on("click", function (e) {
+                e.preventDefault();
+
+                let posting = $.post(
+                    "/matches/start",
+                    {"stopScan": true}
+                );
+
+                posting.done(function (data) {
+                    if (data["msg"]) {
+                        $("#msg").text(data["msg"]);
+                    }
+                });
+            });
+
+            // Web socket
+            let stompClient = null;
+            let scanInProgress = false;
+
+            connect();
+
+            function matchRefresh() {
+                sendMessage();
+                let msgId = "#msg";
+                if ($(msgId).text() === "Matching Complete") {
+                    scanInProgress = false;
+                    disconnect();
                 } else {
-                    $("#msg").text(data["msg"]);
+                    scanInProgress = true;
+                    setTimeout(matchRefresh, 1000);
                 }
-            });
-        });
-
-        $("#stopScan").on("click", function(e) {
-            e.preventDefault();
-
-            let posting = $.post(
-                "/matches/start",
-                {"stopScan": true}
-            );
-
-            posting.done(function(data) {
-                if (data["msg"]) {
-                    $("#msg").text(data["msg"]);
-                }
-            });
-        });
-
-        // Web socket
-        let stompClient = null;
-        let scanInProgress = false;
-
-        connect();
-
-        function matchRefresh() {
-            sendMessage();
-            let msgId = "#msg";
-            if ($(msgId).text() === "Matching Complete") {
-                scanInProgress = false;
-                disconnect();
-            } else {
-                scanInProgress = true;
-                setTimeout(matchRefresh, 1000);
-            }
-        }
-
-        let counter = 0;
-        function connect() {
-            const socket = new SockJS('/websocket-endpoint');
-            stompClient = Stomp.over(socket);
-            if (shashin.showDebug === false) {
-                stompClient.debug = null
             }
 
-            shashin.printMessageToConsole("Socket Connecting");
+            let counter = 0;
 
-            stompClient.connect({}, function() {
-                if (scanInProgress === false) {
-                    matchRefresh();
+            function connect() {
+                const socket = new SockJS('/websocket-endpoint');
+                stompClient = Stomp.over(socket);
+                if (shashin.showDebug === false) {
+                    stompClient.debug = null
                 }
-                shashin.printMessageToConsole( "Connected STOMP client");
-                this.subscribe("/topic/matchmessages", function (message) {
-                    let respMessage = JSON.parse(message.body).content;
-                    shashin.printMessageToConsole("respMessage: "+message);
-                    showMessage(respMessage);
-                });
-            }, function(e) {
-                shashin.printMessageToConsole("match connect() error", {
-                    type: shashin.consoleTypes.warn
-                });
-                shashin.printMessageToConsole( e );
-                // showMessage("Socket connection error: " + e.toString())
-                if (counter > 0) {
-                    showMessage("Oops, something went wrong! " + e.toString() + ". Probably already scanning.", {
+
+                shashin.printMessageToConsole("Socket Connecting");
+
+                stompClient.connect({}, function () {
+                    if (scanInProgress === false) {
+                        matchRefresh();
+                    }
+                    shashin.printMessageToConsole("Connected STOMP client");
+                    this.subscribe("/topic/matchmessages", function (message) {
+                        let respMessage = JSON.parse(message.body).content;
+                        shashin.printMessageToConsole("respMessage: " + message);
+                        showMessage(respMessage);
+                    });
+                }, function (e) {
+                    shashin.printMessageToConsole("match connect() error", {
                         type: shashin.consoleTypes.warn
                     });
-                    window.top.location = window.top.location
+                    shashin.printMessageToConsole(e);
+                    // showMessage("Socket connection error: " + e.toString())
+                    if (counter > 0) {
+                        showMessage("Oops, something went wrong! " + e.toString() + ". Probably already scanning.", {
+                            type: shashin.consoleTypes.warn
+                        });
+                        window.top.location = window.top.location
+                    } else {
+                        showMessage("Oops, something went wrong! " + e.toString() + ". Click the Scan button once, to proceed with indexing.", {
+                            type: shashin.consoleTypes.warn
+                        });
+                        window.top.location = window.top.location
+                    }
+
+                    if (counter < 10) {
+                        counter = 0;
+                        matchRefresh();
+                    }
+
+                    scanInProgress = false;
+                    counter++;
+                });
+            }
+
+            function disconnect() {
+                if (stompClient !== null) {
+                    stompClient.disconnect();
+                }
+                shashin.printMessageToConsole("Disconnected");
+            }
+
+            function sendMessage() {
+                if (stompClient !== null) {
+                    stompClient.send("/app/matchmessage", {}, JSON.stringify({'message': "getMatchMessage"}));
                 } else {
-                    showMessage("Oops, something went wrong! " + e.toString() + ". Click the Scan button once, to proceed with indexing.", {
-                        type: shashin.consoleTypes.warn
-                    });
-                    window.top.location = window.top.location
+                    showMessage("Trying to send message but STOMP client is null")
+                    scanInProgress = false;
                 }
-
-                if (counter < 10) {
-                    counter = 0;
-                    matchRefresh();
-                }
-
-                scanInProgress = false;
-                counter++;
-            });
-        }
-
-        function disconnect() {
-            if (stompClient !== null) {
-                stompClient.disconnect();
             }
-            shashin.printMessageToConsole("Disconnected");
-        }
 
-        function sendMessage() {
-            if (stompClient !== null) {
-                stompClient.send("/app/matchmessage", {}, JSON.stringify({'message': "getMatchMessage"}));
-            } else {
-                showMessage("Trying to send message but STOMP client is null")
-                scanInProgress = false;
+            function showMessage(message) {
+                $("#msg").text(message);
             }
-        }
-
-        function showMessage(message) {
-            $("#msg").text(message);
         }
     });
 </script>

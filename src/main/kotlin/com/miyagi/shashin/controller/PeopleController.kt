@@ -199,15 +199,18 @@ class PeopleController: BaseController() {
 
                 // Object and person recognition
                 if (threadFile != null) {
-                    val recognitionCount = ImageProcessing.subjectRecognizer(
-                        metadataRepository,
-                        recognitionLabelRepository,
-                        recognitionLabelPhotoRepository,
-                        relativeSidecarDir!!,
-                        settings,
-                        threadFile,
-                        shouldStop
-                    )
+                    var recognitionCount = 0
+                    if (settings.getFacialDetection() == true) {
+                        recognitionCount = ImageProcessing.subjectRecognizer(
+                            metadataRepository,
+                            recognitionLabelRepository,
+                            recognitionLabelPhotoRepository,
+                            relativeSidecarDir!!,
+                            settings,
+                            threadFile,
+                            shouldStop
+                        )
+                    }
 
                     val adminSupers = userRepository?.findAllByAuthorityEquals(superRole)
 

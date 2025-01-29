@@ -194,8 +194,18 @@ class ScheduledTasks {
                     }
                 }
 
-                val recognitionCount = subjectRecognizer(metadataRepository, recognitionLabelRepository, recognitionLabelPhotoRepository, relativeSidecarDir!!, settings, null, null)
-
+                var recognitionCount = 0
+                if (settings.getFacialDetection() == true) {
+                    recognitionCount = subjectRecognizer(
+                        metadataRepository,
+                        recognitionLabelRepository,
+                        recognitionLabelPhotoRepository,
+                        relativeSidecarDir!!,
+                        settings,
+                        null,
+                        null
+                    )
+                }
                 if (superAdmins != null && recognitionCount > 0) {
                     val notificationObjList = mutableListOf<Notification>()
                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")

@@ -78,6 +78,7 @@ CREATE TABLE `settings` (
                             `scheduledMatching` BOOLEAN DEFAULT FALSE,
                             `scheduledTime` VARCHAR(20) DEFAULT '2:00',
                             `objectDetection` BOOLEAN DEFAULT FALSE,
+                            `facialDetection` BOOLEAN DEFAULT FALSE,
                             `compreFaceKey` VARCHAR(36),
                             `compreFaceServer` VARCHAR(150),
                             `uploadMediaDirectory` VARCHAR(255) DEFAULT NULL,

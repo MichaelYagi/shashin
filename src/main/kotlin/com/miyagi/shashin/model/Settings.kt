@@ -36,6 +36,8 @@ class Settings {
     @NotBlank
     private var objectDetection: Boolean? = null
     @NotBlank
+    private var facialDetection: Boolean? = null
+    @NotBlank
     private var scheduledMatching: Boolean? = null
     @NotBlank
     private var scheduledTime: String? = null
@@ -154,6 +156,14 @@ class Settings {
         this.objectDetection = objectDetection
     }
 
+    fun getFacialDetection(): Boolean? {
+        return this.facialDetection
+    }
+
+    fun setFacialDetection(facialDetection: Boolean?) {
+        this.facialDetection = facialDetection
+    }
+
     fun getScheduledMatching(): Boolean? {
         return this.scheduledMatching
     }
@@ -193,6 +203,7 @@ class Settings {
         map["compreFaceServer"] = this.compreFaceServer
         map["compreFaceKey"] = this.compreFaceKey
         map["objectDetection"] = this.objectDetection
+        map["facialDetection"] = this.facialDetection
         map["recognitionConfidenceThreshold"] = this.recognitionConfidenceThreshold
         map["objectRecognitionConfidenceThreshold"] = this.objectRecognitionConfidenceThreshold
         map["queryLimit"] = this.queryLimit

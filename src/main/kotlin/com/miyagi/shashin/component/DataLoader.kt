@@ -54,6 +54,7 @@ class DataLoader @Autowired constructor(private val settingsRepository: Settings
             settingsObj.setPort(portProperty)
             settingsObj.setScanAutomatically(false)
             settingsObj.setObjectDetection(false)
+            settingsObj.setFacialDetection(false)
             settingsObj.setScheduledMatching(false)
             settingsObj.setScheduledTime(scheduledTime)
             settingsObj.setRecognitionConfidenceThreshold(recognitionConfidenceThresholdProperty)

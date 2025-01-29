@@ -330,7 +330,7 @@ class SettingsController {
         val scheduledTime = settings.getScheduledTime()
         model["scheduledTime"] = scheduledTime as String
         model["objectRecogEnabled"] = settings.getObjectDetection()!!
-
+        model["facialRecogEnabled"] = settings.getFacialDetection()!!
         model["msg"] = ""
         model["statusMessage"] = dirDneString
         model["activePage"] = module
@@ -363,6 +363,7 @@ class SettingsController {
         @RequestParam("changePort") port: String?,
         @RequestParam("scanAutomatically") scanAutomatically: String?,
         @RequestParam("objectDetection") objectDetection: String?,
+        @RequestParam("facialDetection") facialDetection: String?,
         @RequestParam("scheduledMatching") scheduledMatching: String?,
         @RequestParam("scheduledTime") scheduledTime: String?,
         @RequestParam("uploadMediaDirectory") uploadMediaDirectory: String?
@@ -535,6 +536,11 @@ class SettingsController {
         } else {
             settings?.setObjectDetection(false)
         }
+        if (facialDetection == "on") {
+            settings?.setFacialDetection(true)
+        } else {
+            settings?.setFacialDetection(false)
+        }
         if (scheduledMatching == "on") {
             settings?.setScheduledMatching(true)
         } else {
@@ -576,6 +582,7 @@ class SettingsController {
             }
 
             model["objectRecogEnabled"] = settings.getObjectDetection()!!
+            model["facialRecogEnabled"] = settings.getFacialDetection()!!
         }
 
         if (statusMessage.isBlank() && model.getAttribute("status") == ApiResponse.SUCCESS.status) {
@@ -637,6 +644,7 @@ class SettingsController {
         val settings = model.getAttribute("settings") as Settings?
 
         model["objectRecogEnabled"] = settings?.getObjectDetection()!!
+        model["facialRecogEnabled"] = settings.getFacialDetection()!!
 
         val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
             settings.getCompreFaceServer(),
@@ -756,6 +764,7 @@ class SettingsController {
         val settings = model.getAttribute("settings") as Settings?
 
         model["objectRecogEnabled"] = settings?.getObjectDetection()!!
+        model["facialRecogEnabled"] = settings.getFacialDetection()!!
 
         val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
             settings.getCompreFaceServer(),
@@ -833,7 +842,19 @@ class SettingsController {
     fun getMatchScan(model: Model): String {
         val settings = model.getAttribute("settings") as Settings?
 
+        val module = "match"
+        model["msg"] = ""
+        model["status"] = ApiResponse.FAIL.status
+        model["message"] = "Nothing to see here."
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
         model["objectRecogEnabled"] = settings?.getObjectDetection()!!
+        model["facialRecogEnabled"] = settings.getFacialDetection()!!
+
+        if (settings.getFacialDetection()!! || settings.getObjectDetection()!!) {
+            model["message"] = "Click scan to start finding people and identifying objects"
+        }
 
         val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
             settings.getCompreFaceServer(),
@@ -841,13 +862,6 @@ class SettingsController {
         )
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
 
-        val module = "match"
-        model["msg"] = ""
-        model["status"] = ApiResponse.SUCCESS.status
-        model["message"] = "Click scan to start finding people and identifying objects"
-        model["activePage"] = module
-        model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
         return module
     }
 
@@ -857,6 +871,7 @@ class SettingsController {
         val settings = model.getAttribute("settings") as Settings?
 
         model["objectRecogEnabled"] = settings?.getObjectDetection()!!
+        model["facialRecogEnabled"] = settings.getFacialDetection()!!
 
         val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
             settings.getCompreFaceServer(),
@@ -912,6 +927,7 @@ class SettingsController {
         val settings = model.getAttribute("settings") as Settings?
 
         model["objectRecogEnabled"] = settings?.getObjectDetection()!!
+        model["facialRecogEnabled"] = settings.getFacialDetection()!!
 
         val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
             settings.getCompreFaceServer(),
@@ -1937,7 +1953,7 @@ class SettingsController {
 
                                         try {
                                             // Recognize face during index scan
-                                            if (settings != null) {
+                                            if (settings != null && settings.getFacialDetection() == true) {
                                                 if (webClient != null && compreFaceServerConnected) {
                                                     try {
                                                         // Have at least 3 people tagged

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
-<ul class="nav nav-pills nav-fill ms-3 me-3 mt-3" th:fragment="person(activePage,parameter,counts,faceRecogServicesAvailable,authority)">
-    <th:block th:if="${counts.get('person') > 0 and (authority == 'ROLE_ADMIN' or authority == 'ROLE_SUPER')}">
+<ul class="nav nav-pills nav-fill ms-3 me-3 mt-3" th:fragment="person(activePage,parameter,counts,faceRecogServicesAvailable,authority,facialDetection)">
+    <th:block th:if="${facialDetection && counts.get('person') > 0 and (authority == 'ROLE_ADMIN' or authority == 'ROLE_SUPER')}">
         <li class="nav-item">
             <a th:attr="class='nav-link' + ${activePage=='person' ? ' active' : ''}" th:href="${'/person/'+parameter}">Person <span class="badge bg-secondary" th:text="${counts.get('person')}"></span></a>
         </li>
