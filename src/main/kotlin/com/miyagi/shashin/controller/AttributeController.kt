@@ -389,7 +389,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
                     currentUser.setShowPlacename(false)
                 }
                 if (currentUser.getNotificationAlerts() == null) {
-                    currentUser.setNotificationAlerts(false)
+                    currentUser.setNotificationAlerts(true)
                 }
 
                 val mediaCount = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
@@ -448,7 +448,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
                     currentUser.setShowPlacename(false)
                 }
                 if (currentUser.getNotificationAlerts() == null) {
-                    currentUser.setNotificationAlerts(false)
+                    currentUser.setNotificationAlerts(true)
                 }
                 if (!currentUser.getApikey().isNullOrBlank()) {
                     model["apikey"] = currentUser.getApikey()!!
