@@ -159,7 +159,7 @@ function initializeUploads(activePage) {
                             tag: "failUpload",
                             iconColor: "#FF8C00",
                             autohide: false,
-                            borderColor: "danger"
+                            borderColor: "warning"
                         });
                     }
                 }
