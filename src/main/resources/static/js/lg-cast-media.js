@@ -95,6 +95,12 @@
                                 getMediaMetadata(currentDynamicEl, e.detail.index, this.core);
                             });
 
+                            this.core.LGel.on('lgBeforeClose', (e) => {
+                                cjs.disconnect();
+                                this.core.LGel.off('lgBeforeSlide');
+                                this.core.LGel.off('lgBeforeClose');
+                            });
+
                             getMediaMetadata(currentDynamicEl, index, this.core);
                         }
                     }
