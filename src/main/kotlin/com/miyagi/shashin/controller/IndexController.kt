@@ -1,5 +1,6 @@
 package com.miyagi.shashin.controller
 
+import com.miyagi.shashin.model.User
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.stereotype.Controller
@@ -10,9 +11,32 @@ import jakarta.servlet.http.HttpServletRequest
 
 @Controller
 class IndexController {
+    @GetMapping("/")
+    fun getIndex(model: Model, request: HttpServletRequest): String {
+        val module = "index"
+
+        model["loggedIn"] = false
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null && currentUserObj.getIsAuthorized() == true) {
+            model["loggedIn"] = true
+        }
+
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+
+        return module
+    }
+
     @GetMapping("/features")
     fun getFeatures(model: Model, request: HttpServletRequest): String {
         val module = "features"
+
+        model["loggedIn"] = false
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null && currentUserObj.getIsAuthorized() == true) {
+            model["loggedIn"] = true
+        }
 
         model["supportedImageTypes"] = FileUtils.allowableImageFiles().joinToString(", ", transform = { it.uppercase() })
         model["supportedRawTypes"] = FileUtils.allowableRawImageFiles().joinToString(", ", transform = { it.uppercase() })
