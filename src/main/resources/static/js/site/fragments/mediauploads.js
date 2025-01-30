@@ -153,7 +153,7 @@ function initializeUploads(activePage) {
                             borderColor: "success"
                         });
                     } else {
-                        shashin.showToastMessage("Something went wrong", success["msg"], {
+                        shashin.showToastMessage("Errors detected", success["msg"], {
                             icon: "bi-exclamation-triangle",
                             placement: shashin.toast.placement.top.center,
                             tag: "failUpload",
