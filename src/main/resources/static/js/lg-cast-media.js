@@ -152,7 +152,7 @@
                                 } catch(e) {
                                     // Error
                                     if (shashin) {
-                                        shashin.showToastMessage("Could not cast", "Castjs could not cast video "+metadata.videoUrl+": "+e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
+                                        shashin.showToastMessage("Could not cast", "CastJS could not cast video "+baseUrl + metadata.videoUrl+": "+e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
                                     }
                                     $("#chromecasting").css({"display": "none", "font-size": "1rem"});
                                 }
@@ -168,7 +168,7 @@
                                 } catch(e) {
                                     // Error
                                     if (shashin) {
-                                        shashin.showToastMessage("Could not cast", "Castjs could not cast video "+metadata.videoUrl+": "+e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
+                                        shashin.showToastMessage("Could not cast", "CastJS could not cast image "+baseUrl + "/api/v1/thumbnails/original/"+metadata.id+": "+e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
                                     }
                                     $("#chromecasting").css({"display": "none", "font-size": "1rem"});
                                 }
