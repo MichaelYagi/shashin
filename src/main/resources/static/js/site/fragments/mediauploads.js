@@ -153,12 +153,12 @@ function initializeUploads(activePage) {
                             borderColor: "success"
                         });
                     } else {
-                        shashin.showToastMessage("Something went wrong", "Check media upload directory in settings", {
+                        shashin.showToastMessage("Something went wrong", success["msg"], {
                             icon: "bi-exclamation-triangle",
                             placement: shashin.toast.placement.top.center,
                             tag: "failUpload",
                             iconColor: "#FF0000",
-                            delay: 5000,
+                            autohide: false,
                             borderColor: "danger"
                         });
                     }

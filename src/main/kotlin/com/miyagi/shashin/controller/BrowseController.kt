@@ -86,15 +86,18 @@ class BrowseController: BaseController() {
             }
 
             if (!notUploadedFiles.isEmpty() && !uploadedFiles.isEmpty()) {
-                resp["msg"] = "Some items not uploaded - ${notUploadedFiles.joinToString(", ")}. Check file formats."
+                resp["msg"] = "Files uploaded: <br>${uploadedFiles.joinToString("<br>")}.<br><br>Some items not uploaded. Check file formats: <br>${notUploadedFiles.joinToString("<br>")}"
+                resp["status"] = ApiResponse.FAIL.status
             } else if (!notUploadedFiles.isEmpty() && uploadedFiles.isEmpty()) {
-                resp["msg"] = "Items not uploaded. Check file formats."
+                resp["msg"] = "Items not uploaded. Check file formats: <br>${notUploadedFiles.joinToString("<br>")}"
+                resp["status"] = ApiResponse.FAIL.status
             } else if (!uploadedFiles.isEmpty()) {
                 resp["msg"] = "Files uploaded. Processing files"
+                resp["status"] = ApiResponse.SUCCESS.status
             } else {
                 resp["msg"] = "Files uploaded. Processing files"
+                resp["status"] = ApiResponse.SUCCESS.status
             }
-            resp["status"] = ApiResponse.SUCCESS.status
         }
 
         return mapper.writeValueAsString(resp)
