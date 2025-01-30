@@ -157,7 +157,7 @@ function initializeUploads(activePage) {
                             icon: "bi-exclamation-triangle",
                             placement: shashin.toast.placement.top.center,
                             tag: "failUpload",
-                            iconColor: "#FF0000",
+                            iconColor: "#FF8C00",
                             autohide: false,
                             borderColor: "danger"
                         });
