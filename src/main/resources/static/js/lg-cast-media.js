@@ -92,6 +92,8 @@
                             this.core.LGel.on('lgBeforeSlide', (e) => {
                                 getMediaMetadata(currentDynamicEl, e.detail.index);
                             });
+
+                            getMediaMetadata(currentDynamicEl, index);
                         }
                     }
 
