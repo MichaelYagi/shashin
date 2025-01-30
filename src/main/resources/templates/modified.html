@@ -17,7 +17,7 @@
 
             <div th:replace="~{fragments/infosidebar :: infosidebar(${currentUser})}"></div>
 
-            <div id="scroll-gallery" class="mt-3">
+            <div id="scroll-gallery">
                 <th:block th:if="${not #lists.isEmpty(metadataList)}">
                     <div class="row image-group-padding">
                         <th:block th:each="metadata, iterStat: ${metadataList}">
