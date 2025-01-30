@@ -284,7 +284,16 @@
                     shashin.showToastMessage("Title 7", "Message 7.",{autohide:false,tag:"test7",placement:shashin.toast.placement.bottom.left});
                     shashin.showToastMessage("Title 7a", "Message 7a.",{autohide:false,tag:"test7a",placement:shashin.toast.placement.bottom.left});
                     shashin.showToastMessage("Title 8", "Message 8.",{autohide:false,tag:"test8",placement:shashin.toast.placement.bottom.center});
-                    shashin.showToastMessage("Title 9", "Message 9.",{autohide:false,tag:"test9",placement:shashin.toast.placement.bottom.right});
+                    shashin.showToastMessage("Title 9", "Message 9 (all the things).", {
+                        autohide:false,
+                        tag:"test9",
+                        placement:shashin.toast.placement.bottom.right,
+                        icon: "bi-activity",
+                        iconColor: "blue",
+                        headerSubtext: "some subtext",
+                        borderColor: "success",
+                        refreshTag: true
+                    });
                     shashin.showToastMessage("Title 10", "Message 10.",{tag:"test10",placement:shashin.toast.placement.bottom.right});
                     shashin.showToastMessage("Title 11", "Message 11.",{autohide:true,tag:"test11",placement:shashin.toast.placement.bottom.right});
 
