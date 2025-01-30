@@ -82,6 +82,7 @@
                         if ($("#chromecasting").hasClass("bi-stop-circle")) {
                             $("#chromecasting").addClass('bi-cast').removeClass('bi-stop-circle');
                             cjs.disconnect();
+                            this.core.LGel.off('lgBeforeSlide');
                         } else {
 
                             let index = this.core.index;
