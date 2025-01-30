@@ -18,6 +18,7 @@
     cjs.on('event', (e) => {
         if (shashin) {
             shashin.printMessageToConsole("Castjs Event: " + e, {
+                tag: "cast",
                 type: shashin.consoleTypes.error
             });
         }
@@ -30,6 +31,7 @@
     cjs.on('error', (e) => {
         if (shashin) {
             shashin.printMessageToConsole("Castjs Error: " + e, {
+                tag: "cast",
                 type: shashin.consoleTypes.error
             });
         }
@@ -142,17 +144,28 @@
                                     cjsMetadata["poster"] = baseUrl + ((metadata.thumbnailUrlOriginal !== undefined && metadata.thumbnailUrlOriginal !== null) ? "/api/v1/thumbnails/original/"+metadata.id : "/api/v1/thumbnails/225/"+metadata.id);
 
                                     cjs.cast(baseUrl + metadata.videoUrl, cjsMetadata);
+
+                                    if (shashin) {
+                                        shashin.printMessageToConsole("Castjs casting video: " + baseUrl + metadata.videoUrl, {
+                                            tag: "cast"
+                                        });
+                                    }
                                 } catch(e) {
                                     // Error
                                     if (shashin) {
                                         shashin.showToastMessage("Could not cast", "Castjs could not cast video "+metadata.videoUrl+": "+e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
                                     }
-                                    // console.log(e)
                                     $("#chromecasting").css({"display": "none", "font-size": "1rem"});
                                 }
                             } else if (metadata.thumbnailUrlOriginal !== null) {
                                 try {
                                     cjs.cast(baseUrl + "/api/v1/thumbnails/original/"+metadata.id, cjsMetadata);
+
+                                    if (shashin) {
+                                        shashin.printMessageToConsole("Castjs casting image: " + baseUrl + "/api/v1/thumbnails/original/"+metadata.id, {
+                                            tag: "cast"
+                                        });
+                                    }
                                 } catch(e) {
                                     // Error
                                     if (shashin) {
