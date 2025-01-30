@@ -91,14 +91,14 @@
 
                             // Play slide show too if casting and playing
                             this.core.LGel.on('lgBeforeSlide', (e) => {
-                                getMediaMetadata(currentDynamicEl, e.detail.index);
+                                getMediaMetadata(currentDynamicEl, e.detail.index, this.core);
                             });
 
-                            getMediaMetadata(currentDynamicEl, index);
+                            getMediaMetadata(currentDynamicEl, index, this.core);
                         }
                     }
 
-                    function getMediaMetadata(currentDynamicEl, index) {
+                    function getMediaMetadata(currentDynamicEl, index, lgCore) {
                         let metadataId = "";
                         let currentDynamicElIndex = currentDynamicEl[index];
 
@@ -113,7 +113,7 @@
                         ) {
                             $("#metadataId").val(metadataId);
                             shashin.getMetadata(metadataId).then(function (metadata) {
-                                castMetadataMedia(metadata, cjs);
+                                castMetadataMedia(metadata, cjs, lgCore);
                             });
                         } else {
                             if (shashin) {
@@ -122,7 +122,7 @@
                         }
                     }
 
-                    function castMetadataMedia(metadata, cjs) {
+                    function castMetadataMedia(metadata, cjs, lgCore) {
                         if (metadata !== null && metadata.hasOwnProperty("id")) {
                             const getUrl = window.location;
                             let baseUrl = getUrl.protocol + "//" + getUrl.host;
@@ -175,7 +175,7 @@
                             }
 
                             cjs.on('disconnect', () => {
-                                this.core.closeGallery();
+                                lgCore.closeGallery();
                                 $("#chromecasting").addClass('bi-cast').removeClass('bi-stop-circle');
                             });
                         }
