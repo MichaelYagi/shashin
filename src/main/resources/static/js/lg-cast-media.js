@@ -102,10 +102,12 @@
                         let metadataId = "";
                         let currentDynamicElIndex = currentDynamicEl[index];
 
-                        if (currentDynamicElIndex.hasOwnProperty("args")) {
-                            metadataId = currentDynamicElIndex.args;
-                        } else if (currentDynamicElIndex.hasOwnProperty("metadataId")) {
-                            metadataId = currentDynamicElIndex.metadataId;
+                        if (typeof currentDynamicElIndex !== 'undefined' && currentDynamicElIndex !== null) {
+                            if (currentDynamicElIndex.hasOwnProperty("args")) {
+                                metadataId = currentDynamicElIndex.args;
+                            } else if (currentDynamicElIndex.hasOwnProperty("metadataId")) {
+                                metadataId = currentDynamicElIndex.metadataId;
+                            }
                         }
 
                         if (shashin &&
