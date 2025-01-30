@@ -20,6 +20,12 @@ class ArticlesController {
     fun getQuickstart(model: Model, request: HttpServletRequest): String {
         val module = "articles/quickstart"
 
+        model["loggedIn"] = false
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null && currentUserObj.getIsAuthorized() == true) {
+            model["loggedIn"] = true
+        }
+
         val moduleArray = module.split("/")
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -31,6 +37,12 @@ class ArticlesController {
     @RequestMapping(value = ["/articles/devnotes"], method = [RequestMethod.GET])
     fun getDevnotes(model: Model, request: HttpServletRequest): String {
         val module = "articles/devnotes"
+
+        model["loggedIn"] = false
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null && currentUserObj.getIsAuthorized() == true) {
+            model["loggedIn"] = true
+        }
 
         val moduleArray = module.split("/")
         model["activePage"] = module
@@ -45,12 +57,15 @@ class ArticlesController {
     fun getEndpoints(model: Model, request: HttpServletRequest): String {
         val module = "articles/endpoints"
 
+        model["loggedIn"] = false
+
         val currentUserObj = model.getAttribute("currentUser") as User?
 
-        if (currentUserObj?.getAuthority() != null &&
+        if (currentUserObj?.getAuthority() != null && currentUserObj.getIsAuthorized() == true &&
             (currentUserObj.getAuthority()!! == "ROLE_SUPER" || currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_USER")) {
 
             model["apiEndpointsMapList"] = TextUtils.getEndpointData(currentUserObj.getAuthority()!!,request)
+            model["loggedIn"] = true
         }
 
         val moduleArray = module.split("/")
