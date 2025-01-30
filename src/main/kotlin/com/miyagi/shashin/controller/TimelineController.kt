@@ -47,6 +47,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.annotation.SubscribeMapping
 import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import org.springframework.web.socket.messaging.SessionConnectEvent
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import org.springframework.web.socket.messaging.SessionSubscribeEvent
@@ -2380,6 +2381,12 @@ class TimelineController: BaseController() {
 
         response["lastAccessedAt"] = null
 
+        var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
+        if (request.scheme == "https") {
+            baseUrlBuilder = baseUrlBuilder.scheme("https")
+        }
+        response["baseUrl"] = baseUrlBuilder.build().toUriString()
+
         val emptyJson = "{}"
         val mapper = ObjectMapper()
         response["metadata"] = mapper.readTree(emptyJson)
@@ -2525,7 +2532,7 @@ class TimelineController: BaseController() {
     @RequestMapping(value = ["/api/v1/complete/metadata/{id}","/complete/metadata/{id}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    fun getTimelineMetadata(model: Model, @PathVariable(required = true) id: String): String {
+    fun getTimelineMetadata(model: Model, request: HttpServletRequest, @PathVariable(required = true) id: String): String {
         val response = mutableMapOf<String, Any?>()
 
         response["allAlbumList"] = mutableListOf<Album>()
@@ -2534,6 +2541,7 @@ class TimelineController: BaseController() {
         response["taggedPeopleList"] = labelArray
         response["albumMap"] = mutableMapOf<Int, String>()
         response["lastAccessedAt"] = null
+        response["baseUrl"] = null
 
         val emptyJson = "{}"
         val mapper = ObjectMapper()
@@ -2543,6 +2551,11 @@ class TimelineController: BaseController() {
 
         val metadataRecord = metadataRepository.findById(id)
         if (metadataRecord.isPresent) {
+            var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
+            if (request.scheme == "https") {
+                baseUrlBuilder = baseUrlBuilder.scheme("https")
+            }
+            response["baseUrl"] = baseUrlBuilder.build().toUriString()
 
             val metadataObj = metadataRecord.get()
             var metadataObjCopy: Metadata? = null

@@ -124,7 +124,11 @@
                     function castMetadataMedia(metadata, cjs) {
                         if (metadata !== null && metadata.hasOwnProperty("id")) {
                             const getUrl = window.location;
-                            const baseUrl = getUrl.protocol + "//" + getUrl.host;
+                            let baseUrl = getUrl.protocol + "//" + getUrl.host;
+                            if (metadata.hasOwnProperty("baseUrl")) {
+                                baseUrl = metadata.baseUrl;
+                            }
+
                             const cjsMetadata = {
                                 title      : metadata.title
                             }
