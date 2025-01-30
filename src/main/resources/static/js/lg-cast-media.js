@@ -18,8 +18,7 @@
     cjs.on('event', (e) => {
         if (shashin) {
             shashin.printMessageToConsole("Castjs Event: " + e, {
-                tag: "cast",
-                type: shashin.consoleTypes.error
+                tag: "cast"
             });
         }
 
