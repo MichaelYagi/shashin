@@ -43,7 +43,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             data["baseUrl"] !== ""
         ) {
             $("#mediaSrc").css("display", "block");
-            const photoUrl = data["baseUrl"] + "/api/v1/thumbnails/original/"+data["metadata"]["id"];
+            const photoUrl = data["baseUrl"] + "/api/v1/image/"+data["metadata"]["id"];
 
             currentPhotoUrl = photoUrl;
             currentMetadata = data["metadata"];
