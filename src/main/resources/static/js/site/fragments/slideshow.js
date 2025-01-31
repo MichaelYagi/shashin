@@ -8,6 +8,9 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     let slideshowMouseTimer = null;
     let slideshowCursorVisible = true;
     let slideshowProceed = true;
+    let cjsc = null;
+    let currentPhotoUrl = null;
+    let currentMetadata = null;
 
     function getSlideshowImage(callback) {
         const http = new Http("show slideshow");
@@ -41,6 +44,20 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         ) {
             $("#mediaSrc").css("display", "block");
             const photoUrl = data["baseUrl"] + "/api/v1/thumbnails/original/"+data["metadata"]["id"];
+
+            currentPhotoUrl = photoUrl;
+            currentMetadata = data["metadata"];
+
+            if (cjsc !== null && cjsc.available) {
+                const cjscMetadata = {
+                    title: data["metadata"].title
+                }
+
+                if (data["metadata"].description !== null && data["metadata"].description !== "") {
+                    cjscMetadata["description"] = data["metadata"].description;
+                }
+                cjsc.cast(photoUrl, cjscMetadata);
+            }
 
             const tempImage = new Image();
 
@@ -160,14 +177,14 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         $("#mediaSrc").attr("src", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII");
     }
 
-    function showInstruction(autoHide) {
+    function showInstruction() {
         let options = {}
 
         if (Util.isMobile() === false) {
             options = {
                 icon: "bi-keyboard",
                 autohide: false,
-                tag: "slide"
+                tag: "slide",
             };
         } else {
             options = {
@@ -177,48 +194,76 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             };
         }
 
-        if (autoHide === "undefined" || autoHide === null) {
-            autoHide = false;
+        if (typeof Castjs != "undefined" && cjsc === null) {
+            cjsc = new Castjs();
         }
 
-        if (autoHide === true) {
-            if (Util.isMobile() === false) {
-                options = {
-                    icon: "bi-keyboard",
-                    tag: "slide"
-                };
+        if (cjsc !== null) {
+            // Create
+            if (cjsc.state === "disconnected") {
+                options["headerSubtext"] = "<a href='#' id='toggleCast'><span id='toggleCastIcon' class='bi-cast' style='color: lightgray;'></span></a>";
             } else {
-                options = {
-                    icon: "bi-hand-index",
-                    tag: "slide"
-                };
+                options["headerSubtext"] = "<a href='#' id='toggleCast'><span id='toggleCastIcon' class='bi-stop-circle' style='color: lightgray;'></span></a>";
             }
         }
 
         if (Util.isMobile() === false) {
-            shashin.showToastMessage("Keyboard Shortcuts",
-                "<div class='container'>" +
+            let message = "<div class='container'>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>d</strong></span></div><div class='col-9'>Show/close this window</div></div>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>Esc</strong></span></div><div class='col-9'>Exit fullscreen. Press Esc again to exit slideshow.</div></div>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>f</strong></span></div><div class='col-9'>Fullscreen</div></div>" +
-                "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>Space</strong></span></div><div class='col-9'>Play/pause</div></div>" +
-                "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>i</strong></span></div><div class='col-9'>Slide info</div></div>" +
+                "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>Space</strong></span></div><div class='col-9'>Play/pause</div></div>";
+            if (cjsc !== null) {
+                message += "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>c</strong></span></div><div class='col-9'>Start/stop casting</div></div>";
+            }
+            message += "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>i</strong></span></div><div class='col-9'>Slide info</div></div>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>← →</strong></span></div><div class='col-9'>Got to next/previous slide</div></div>" +
-                "</div>",
+                "</div>";
+
+            shashin.showToastMessage("Keyboard Shortcuts",
+                message,
                 options
             );
         } else {
-            shashin.showToastMessage("Touch Bindings",
-                "<div class='container'>" +
+            let message = "<div class='container'>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>Swipe Up</strong></span></div><div class='col-9'>Show/close this window when in fullscreen</div></div>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>Swipe Down</strong></span></div><div class='col-9'>Slide info</div></div>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>Single Tap</strong></span></div><div class='col-9'>Play/pause</div></div>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>Double Tap</strong></span></div><div class='col-9'>Exit fullscreen. Double tap again to exit slideshow or swipe up to go back to fullscreen</div></div>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>Swipe ← →</strong></span></div><div class='col-9'>Got to next/previous slide</div></div>" +
-                "</div>",
+                "</div>"
+
+            shashin.showToastMessage("Touch Bindings",
+                message,
                 options
             );
         }
+
+        $("#toggleCast").on("click", function (e) {
+            e.preventDefault();
+
+            if (cjsc !== null && cjsc.available) {
+                if ($("#toggleCastIcon").hasClass('bi-cast')) {
+                    if (currentPhotoUrl !== null) {
+                        $("#toggleCastIcon").addClass('bi-stop-circle').removeClass('bi-cast');
+                        let cjscMetadata = {};
+                        if (currentMetadata !== null) {
+                            cjscMetadata = {
+                                title: currentMetadata.title
+                            }
+
+                            if (currentMetadata.description !== null && currentMetadata.description !== "") {
+                                cjscMetadata["description"] = currentMetadata.description;
+                            }
+                        }
+                        cjsc.cast(currentPhotoUrl, cjscMetadata);
+                    }
+                } else {
+                    cjsc.disconnect();
+                    $("#toggleCastIcon").addClass('bi-cast').removeClass('bi-stop-circle');
+                }
+            }
+        })
     }
 
     $("body").on("dblclick", function (e) {
@@ -229,6 +274,9 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 $("#mediaInfo").css("display", "none");
                 exitSlideshowGallery();
                 shashin.closeToastMessages({tag: "slide"});
+                if (cjsc !== null && cjsc.available) {
+                    cjsc.disconnect();
+                }
             }
         }
     })
@@ -242,6 +290,9 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                     $("#mediaInfo").css("display", "none");
                     exitSlideshowGallery();
                     shashin.closeToastMessages({tag: "slide"});
+                    if (cjsc !== null && cjsc.available) {
+                        cjsc.disconnect();
+                    }
                 }
             }
 
@@ -253,6 +304,31 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             // Show info
             if (e.key === "i" || e.code === "KeyI" || e.keyCode === 73) {
                 slideshowInfo();
+            }
+
+            // Cast slideshow
+            if (e.key === "c" || e.code === "KeyC" || e.keyCode === 67) {
+                if (cjsc !== null && cjsc.available) {
+                    if ($("#toggleCastIcon").hasClass('bi-cast')) {
+                        if (currentPhotoUrl !== null) {
+                            $("#toggleCastIcon").addClass('bi-stop-circle').removeClass('bi-cast');
+                            let cjscMetadata = {};
+                            if (currentMetadata !== null) {
+                                cjscMetadata = {
+                                    title: currentMetadata.title
+                                }
+
+                                if (currentMetadata.description !== null && currentMetadata.description !== "") {
+                                    cjscMetadata["description"] = currentMetadata.description;
+                                }
+                            }
+                            cjsc.cast(currentPhotoUrl, cjscMetadata);
+                        }
+                    } else {
+                        cjsc.disconnect();
+                        $("#toggleCastIcon").addClass('bi-cast').removeClass('bi-stop-circle');
+                    }
+                }
             }
 
             // Show key binding toast
@@ -305,6 +381,9 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                     showInstruction();
                 } else {
                     shashin.closeToastMessages({tag: "slide"});
+                    if (cjsc !== null && cjsc.available) {
+                        cjsc.disconnect();
+                    }
                 }
             } else {
                 slideshowInfo();
@@ -431,7 +510,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
                 $("#playPause").css("display", "block");
 
-                showInstruction(true);
+                showInstruction();
             }
         });
     })

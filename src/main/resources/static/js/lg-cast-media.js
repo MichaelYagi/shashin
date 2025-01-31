@@ -9,36 +9,46 @@
     "use strict";
 
     // Create new Castjs instance
-    let cjs = new Castjs();
+    let cjs = null;
 
-    cjs.on('available', () => {
-        $("#chromecasting").css({"display": "block", "font-size": "1rem"});
-    });
+    if (typeof Castjs != "undefined") {
+        cjs = new Castjs();
 
-    cjs.on('event', (e) => {
+        cjs.on('available', () => {
+            $("#chromecasting").css({"display": "block", "font-size": "1rem"});
+        });
+
+        cjs.on('event', (e) => {
+            if (shashin) {
+                shashin.printMessageToConsole("Castjs Event: " + e, {
+                    tag: "cast"
+                });
+            }
+
+            if (e === "connect" && $("#chromecasting").hasClass("bi-cast")) {
+                $("#chromecasting").addClass('bi-stop-circle').removeClass('bi-cast');
+            }
+        });
+
+        cjs.on('error', (e) => {
+            if (shashin) {
+                shashin.printMessageToConsole("Castjs Error: " + e, {
+                    tag: "cast",
+                    type: shashin.consoleTypes.error
+                });
+            }
+
+            if (e !== "invalid_parameter") {
+                $("#chromecasting").css({"display": "none", "font-size": "1rem"});
+            }
+        });
+    } else {
         if (shashin) {
-            shashin.printMessageToConsole("Castjs Event: " + e, {
+            shashin.printMessageToConsole("Castjs Error: Object DNE", {
                 tag: "cast"
             });
         }
-
-        if (e === "connect" && $("#chromecasting").hasClass("bi-cast")) {
-            $("#chromecasting").addClass('bi-stop-circle').removeClass('bi-cast');
-        }
-    });
-
-    cjs.on('error', (e) => {
-        if (shashin) {
-            shashin.printMessageToConsole("Castjs Error: " + e, {
-                tag: "cast",
-                type: shashin.consoleTypes.error
-            });
-        }
-
-        if (e !== "invalid_parameter") {
-            $("#chromecasting").css({"display": "none", "font-size": "1rem"});
-        }
-    });
+    }
 
     var e = function() {
             return (e = Object.assign || function(e) {
@@ -60,7 +70,7 @@
         }
         return n.prototype.init = function() {
             var e = "";
-            if (this.settings.castMedia) {
+            if (cjs !== null && this.settings.castMedia) {
                 e = '<button type="button" aria-label="Cast Media" title="Cast Media" id="chromecasting" class="bi-cast lg-icon" style="font-size: 1rem;display: none;"></button>',
                     this.core.$toolbar.append(e),
                     this.castMedia()
@@ -78,11 +88,10 @@
                 .find('.bi-cast, .bi-stop-circle')
                 .first()
                 .on('click.lg', () => {
-                    if (cjs.available) {
+                    if (cjs !== null && cjs.available) {
                         if ($("#chromecasting").hasClass("bi-stop-circle")) {
                             $("#chromecasting").addClass('bi-cast').removeClass('bi-stop-circle');
                             cjs.disconnect();
-                            this.core.LGel.off('lgBeforeSlide');
                         } else {
 
                             let index = this.core.index;
@@ -92,13 +101,14 @@
 
                             // Play slide show too if casting and playing
                             this.core.LGel.on('lgBeforeSlide', (e) => {
-                                getMediaMetadata(currentDynamicEl, e.detail.index, this.core);
+                                if (cjs.state === "connected") {
+                                    getMediaMetadata(currentDynamicEl, e.detail.index, this.core);
+                                }
                             });
 
                             this.core.LGel.on('lgBeforeClose', (e) => {
                                 cjs.disconnect();
                                 this.core.LGel.off('lgBeforeSlide');
-                                this.core.LGel.off('lgBeforeClose');
                             });
 
                             getMediaMetadata(currentDynamicEl, index, this.core);
@@ -140,7 +150,7 @@
                             }
 
                             const cjsMetadata = {
-                                title      : metadata.title
+                                title: metadata.title
                             }
 
                             if (metadata.description !== null && metadata.description !== "") {
@@ -187,7 +197,7 @@
                             }
 
                             cjs.on('disconnect', () => {
-                                lgCore.closeGallery();
+                                // lgCore.closeGallery();
                                 $("#chromecasting").addClass('bi-cast').removeClass('bi-stop-circle');
                             });
                         }
