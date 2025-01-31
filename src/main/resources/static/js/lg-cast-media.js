@@ -178,9 +178,9 @@
                                 }
                             } else if (metadata.thumbnailUrlOriginal !== null) {
                                 try {
-                                    cjs.src = baseUrl + "/api/v1/thumbnails/original/"+metadata.id;
+                                    cjs.src = baseUrl + "/api/v1/thumbnails/original/"+metadata.id+".jpg";
 
-                                    cjs.cast(baseUrl + "/api/v1/thumbnails/original/"+metadata.id, cjsMetadata);
+                                    cjs.cast(baseUrl + "/api/v1/thumbnails/original/"+metadata.id+".jpg", cjsMetadata);
 
                                     if (shashin) {
                                         shashin.printMessageToConsole("Castjs casting image: " + baseUrl + "/api/v1/thumbnails/original/"+metadata.id, {

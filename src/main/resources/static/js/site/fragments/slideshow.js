@@ -56,7 +56,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 if (data["metadata"].description !== null && data["metadata"].description !== "") {
                     cjscMetadata["description"] = data["metadata"].description;
                 }
-                cjsc.cast(photoUrl, cjscMetadata);
+                cjsc.cast(photoUrl+".jpg", cjscMetadata);
             }
 
             const tempImage = new Image();
@@ -262,7 +262,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                                 cjscMetadata["description"] = currentMetadata.description;
                             }
                         }
-                        cjsc.cast(currentPhotoUrl, cjscMetadata);
+                        cjsc.cast(currentPhotoUrl+".jpg", cjscMetadata);
                     }
                 } else {
                     cjsc.disconnect();
@@ -328,7 +328,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                                     cjscMetadata["description"] = currentMetadata.description;
                                 }
                             }
-                            cjsc.cast(currentPhotoUrl, cjscMetadata);
+                            cjsc.cast(currentPhotoUrl+".jpg", cjscMetadata);
                         }
                     } else {
                         cjsc.disconnect();
