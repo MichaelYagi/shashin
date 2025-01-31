@@ -101,7 +101,22 @@
 
                             // Play slide show too if casting and playing
                             this.core.LGel.on('lgBeforeSlide', (e) => {
+                                if (shashin) {
+                                    shashin.printMessageToConsole("lgBeforeSlide state: "+cjs.state, {
+                                        tag: "cast"
+                                    });
+                                }
                                 if (cjs.state === "connected") {
+                                    currentDynamicEl = this.settings.dynamicEl[e.detail.index] && this.settings.dynamicEl[e.detail.index].hasOwnProperty("args") ?
+                                        this.settings.dynamicEl : this.core.galleryItems;
+                                    if (shashin) {
+                                        shashin.printMessageToConsole("currentDynamicEl null: "+(currentDynamicEl === null), {
+                                            tag: "cast"
+                                        });
+                                        shashin.printMessageToConsole("currentDynamicEl index: "+e.detail.index, {
+                                            tag: "cast"
+                                        });
+                                    }
                                     getMediaMetadata(currentDynamicEl, e.detail.index, this.core);
                                 }
                             });
