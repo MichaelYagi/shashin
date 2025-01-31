@@ -106,7 +106,7 @@
                                         tag: "cast"
                                     });
                                 }
-                                if (cjs.state === "connected" || cjs.state === "paused" || cjs.state === "playing") {
+                                if (cjs.state === "connected" || cjs.state === "paused" || cjs.state === "playing" || cjs.state === "ended") {
                                     currentDynamicEl = this.settings.dynamicEl[e.detail.index] && this.settings.dynamicEl[e.detail.index].hasOwnProperty("args") ?
                                         this.settings.dynamicEl : this.core.galleryItems;
                                     if (shashin) {
