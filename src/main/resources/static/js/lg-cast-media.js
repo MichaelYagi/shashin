@@ -178,19 +178,19 @@
                                 }
                             } else if (metadata.thumbnailUrlOriginal !== null) {
                                 try {
-                                    cjs.src = baseUrl + "/api/v1/thumbnails/original/"+metadata.id+".jpg";
+                                    cjs.src = baseUrl + "/api/v1/image/"+metadata.id+".jpg";
 
-                                    cjs.cast(baseUrl + "/api/v1/thumbnails/original/"+metadata.id+".jpg", cjsMetadata);
+                                    cjs.cast(baseUrl + "/api/v1/image/"+metadata.id+".jpg", cjsMetadata);
 
                                     if (shashin) {
-                                        shashin.printMessageToConsole("Castjs casting image: " + baseUrl + "/api/v1/thumbnails/original/"+metadata.id, {
+                                        shashin.printMessageToConsole("Castjs casting image: " + baseUrl + "/api/v1/image/"+metadata.id+".jpg", {
                                             tag: "cast"
                                         });
                                     }
                                 } catch(e) {
                                     // Error
                                     if (shashin) {
-                                        shashin.showToastMessage("Could not cast", "CastJS could not cast image "+baseUrl + "/api/v1/thumbnails/original/"+metadata.id+": "+e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
+                                        shashin.showToastMessage("Could not cast", "CastJS could not cast image "+baseUrl + "/api/v1/image/"+metadata.id+".jpg: "+e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
                                     }
                                     $("#chromecasting").css({"display": "none", "font-size": "1rem"});
                                 }
