@@ -202,9 +202,9 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         if (cjsc !== null) {
             // Create
             if (cjsc.state === "disconnected") {
-                options["headerSubtext"] = "<a href='#' id='toggleCast'><span id='toggleCastIcon' class='bi-cast' style='font-size:1rem;color: lightgray;'></span></a>";
+                options["headerSubtext"] = "<a href='#' id='toggleCast' style='display: none;'><span id='toggleCastIcon' class='bi-cast' style='font-size:1rem;color: lightgray;'></span></a>";
             } else {
-                options["headerSubtext"] = "<a href='#' id='toggleCast'><span id='toggleCastIcon' class='bi-stop-circle' style='font-size:1rem;color: lightgray;'></span></a>";
+                options["headerSubtext"] = "<a href='#' id='toggleCast' style='display: none;'><span id='toggleCastIcon' class='bi-stop-circle' style='font-size:1rem;color: lightgray;'></span></a>";
             }
         }
 
@@ -241,6 +241,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         if (typeof Castjs != "undefined" && cjsc !== null) {
             cjsc.on('available', () => {
                 $("#castKey").css({"display": "block"});
+                $("#toggleCast").css({"display": "block"});
             });
         }
 
