@@ -178,6 +178,7 @@
                                     cjs.src = baseUrl + metadata.videoUrl;
 
                                     cjs.cast(baseUrl + metadata.videoUrl, cjsMetadata);
+                                    cjs.seek(0);
 
                                     if (shashin) {
                                         shashin.printMessageToConsole("Castjs casting video: " + baseUrl + metadata.videoUrl, {
