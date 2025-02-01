@@ -2402,7 +2402,7 @@
                             const lastSelectionPoint = shashin.lastSelectionPoint[lastSelectedMetadataId];
                             const direction = (pointerPos[0] >= lastSelectionPoint[0] || pointerPos[1] >= lastSelectionPoint[1]) ? "forward" : "backward";
                             // Avoids infinte loops
-                            const whileLimit = 3000;
+                            const whileLimit = 10000;
 
                             if ($("#photoThumbnailContainer" + lastSelectedMetadataId).length > 0) {
                                 let container = $("#photoThumbnailContainer" + ((direction === "forward") ? lastSelectedMetadataId : metadata.id));
