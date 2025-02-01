@@ -42,6 +42,7 @@
     shashin.objectName = "shashinobject";
     shashin.slideshowXDown = null;
     shashin.slideshowYDown = null;
+    shashin.lastSelectionPoint = {};
     shashin.consoleTypes = Object.freeze({
         error: 0,
         info: 1,
@@ -469,7 +470,7 @@
 
     shashin.onFail = function(xhr, textStatus, ajaxParams, description, failFunction) {
         $("#spinner").hide();
-        shashin.showToastMessage("AJAX error", "AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
+        shashin.showToastMessage("AJAX error", "AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".", {tag:"ajaxError",icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
         shashin.printMessageToConsole("AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".", {
             type: shashin.consoleTypes.error
         });
@@ -2149,6 +2150,7 @@
             e.preventDefault();
 
             if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
+                shashin.lastSelectionPoint[metadata.id] = [e.clientX, e.clientY];
                 $("#tntl" + metadata.id).show();
                 $("#tlicon" + metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
                 $("#image" + metadata.id).css("opacity", opaque);
@@ -2166,6 +2168,7 @@
                 }
             } else {
                 $("#tntl" + metadata.id).show();
+                shashin.lastSelectionPoint = {};
                 $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
                 $("#image" + metadata.id).css("opacity", opaque);
                 $("#tntr" + metadata.id).show();
@@ -2268,6 +2271,7 @@
             // Fill top left icon when clicking anywhere on thumbnail
             if ($('.bi-circle-fill')[0] || metadataIdArray.length > 0) {
                 if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
+                    shashin.lastSelectionPoint[metadata.id] = [e.clientX, e.clientY];
                     $("#tntl" + metadata.id).show();
                     $("#tlicon" + metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
                     $("#image" + metadata.id).css("opacity", opaque);
@@ -2284,6 +2288,7 @@
                     }
                 } else {
                     $("#tntl" + metadata.id).show();
+                    shashin.lastSelectionPoint = {};
                     $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
                     $("#image" + metadata.id).css("opacity", opaque);
                     $("#tncentered" + metadata.id).show();
@@ -2376,7 +2381,138 @@
             }
         });
 
+
+
+        let pointerPos = [];
+        $(document).on('mousemove', function (e) {
+            pointerPos = [e.clientX, e.clientY];
+        })
         $("#photoThumbnailContainer" + metadata.id).hover(function () {
+
+            // TODO: Implement for timeline
+            if (view !== "timeline") {
+                // Multi select
+                $(document).bind("keydown", function (e) {
+
+                    metadataIdArray = shashin.getMetadataIdList();
+
+                    if ($("#tlicon" + metadata.id).attr("class") === "bi-circle" && metadataIdArray.length > 0) {
+                        if (e.key === "Shift" || e.code === "ShifLeft" || e.code === "ShifRight" || e.keyCode === 16) {
+                            if (pointerPos.length > 0 && shashin.lastSelectionPoint !== {} && Object.keys(shashin.lastSelectionPoint)[0] !== "") {
+                                const lastSelectedMetadataId = Object.keys(shashin.lastSelectionPoint)[0];
+                                const lastSelectionPoint = shashin.lastSelectionPoint[lastSelectedMetadataId];
+                                const direction = (pointerPos[0] >= lastSelectionPoint[0] || pointerPos[1] >= lastSelectionPoint[1]) ? "forward" : "backward";
+
+                                if ($("#photoThumbnailContainer" + lastSelectedMetadataId).length > 0) {
+                                    if (direction === "forward") {
+                                        let container = $("#photoThumbnailContainer" + lastSelectedMetadataId);
+
+                                        let selectedRowMetadataIds = container.siblings().addBack().map(function () {
+                                            const metadataId = this.id.split("photoThumbnailContainer");
+                                            return metadataId[1];
+                                        }).toArray();
+
+                                        let found = ($.inArray(metadata.id, selectedRowMetadataIds) !== -1);
+
+                                        while (found === false) {
+                                            let nextContainer = container.parent().parent().nextUntil().filter(".dateSection:first");
+
+                                            container = $(nextContainer[0]).children("div.row").children("div");
+
+                                            let metadataIdArray = container.siblings().addBack().map(function () {
+                                                const metadataId = this.id.split("photoThumbnailContainer");
+                                                return metadataId[1];
+                                            }).toArray()
+                                            found = ($.inArray(metadata.id, metadataIdArray) !== -1);
+
+                                            $.merge(selectedRowMetadataIds, metadataIdArray);
+                                        }
+
+                                        let start = false;
+                                        for (let index in selectedRowMetadataIds) {
+                                            if (selectedRowMetadataIds.hasOwnProperty(index)) {
+                                                const currentMetadataId = selectedRowMetadataIds[index];
+                                                if (currentMetadataId === lastSelectedMetadataId || start === true) {
+                                                    if (currentMetadataId === lastSelectedMetadataId) {
+                                                        start = true;
+                                                        continue;
+                                                    }
+
+                                                    if ($("#tlicon"+currentMetadataId).hasClass("bi-circle")) {
+                                                        $("#select" + currentMetadataId).click();
+                                                    }
+                                                }
+
+                                                if (currentMetadataId === metadata.id) {
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        let container = $("#photoThumbnailContainer" + metadata.id);
+
+                                        let selectedRowMetadataIds = container.siblings().addBack().map(function () {
+                                            const metadataId = this.id.split("photoThumbnailContainer");
+                                            return metadataId[1];
+                                        }).toArray();
+                                        let found = ($.inArray(lastSelectedMetadataId, selectedRowMetadataIds) !== -1);
+
+                                        while (found === false) {
+                                            let nextContainer = container.parent().parent().nextUntil().filter(".dateSection:first");
+                                            container = $(nextContainer[0]).children("div.row").children("div");
+                                            let metadataIdArray = container.siblings().addBack().map(function () {
+                                                const metadataId = this.id.split("photoThumbnailContainer");
+                                                return metadataId[1];
+                                            }).toArray()
+                                            found = ($.inArray(lastSelectedMetadataId, metadataIdArray) !== -1);
+
+                                            $.merge(selectedRowMetadataIds, metadataIdArray);
+                                        }
+
+
+                                        let start = false;
+                                        for (let index in selectedRowMetadataIds) {
+                                            if (selectedRowMetadataIds.hasOwnProperty(index)) {
+                                                const currentMetadataId = selectedRowMetadataIds[index];
+                                                if (currentMetadataId === metadata.id || start === true) {
+                                                    if (currentMetadataId === metadata.id) {
+                                                        start = true;
+                                                        continue;
+                                                    }
+                                                    if ($("#tlicon"+currentMetadataId).hasClass("bi-circle")) {
+                                                        $("#select" + currentMetadataId).click();
+                                                    }
+                                                }
+
+                                                if (currentMetadataId === lastSelectedMetadataId) {
+                                                    if ($("#tlicon"+metadata.id).hasClass("bi-circle")) {
+                                                        $("#select" + metadata.id).click();
+                                                    }
+                                                    if ($("#tlicon"+currentMetadataId).hasClass("bi-circle")) {
+                                                        $("#select" + lastSelectedMetadataId).click();
+                                                    }
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+
+                                    }
+                                }
+                            }
+
+
+                        }
+                    }
+                });
+                $(document).bind("keyup", function (e) {
+                    console.log("test6")
+
+                });
+            }
+
+
+
             if (metadata.type.includes("video") && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
             ) {
                 if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
@@ -2388,6 +2524,9 @@
                 }
             }
         }, function () {
+            $(document).unbind("keydown");
+            $(document).unbind("keyup");
+
             if (metadata.type.includes("video")) {
                 const jpgUrl = $("#image" + metadata.id).attr("src").replace("/gif/" + metadata.id, "/225/" + metadata.id);
                 $("#image" + metadata.id).attr("src", jpgUrl);
@@ -2687,6 +2826,7 @@
             shashin.showToastMessage("Download cancelled", "Download cancelled.", {icon:"bi-info-circle", iconColor:"#777777"});
             $("button").find("span").addClass('bi-download').removeClass('spinner-grow');
         }
+        shashin.lastSelectionPoint = {};
         shashin.removeAllMetadataFilenamesList();
         shashin.removeAllMetadataThumbnailsList();
         shashin.removeAllMetadataIdList();
@@ -2714,6 +2854,7 @@
             shashin.showToastMessage("Download cancelled", "Download cancelled.", {icon:"bi-info-circle", iconColor:"#777777"});
             $("button").find("span").addClass('bi-download').removeClass('spinner-grow');
         }
+        shashin.lastSelectionPoint = {};
         shashin.removeAllMetadataFilenamesList();
         shashin.removeAllMetadataThumbnailsList();
         shashin.removeAllMetadataIdList();
@@ -2738,6 +2879,7 @@
         $("#matchToolsDeselectAll").on("click", function(e) {
             e.preventDefault();
 
+            shashin.lastSelectionPoint = {};
             $(".thumbnail-centered").hide();
             //$(".thumbnail-tr").hide();
             $(".thumbnail-br").hide();
