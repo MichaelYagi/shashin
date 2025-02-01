@@ -42,7 +42,7 @@
     shashin.objectName = "shashinobject";
     shashin.slideshowXDown = null;
     shashin.slideshowYDown = null;
-    shashin.lastSelectionPoint = {};
+    shashin.lastSelectedMetadataId = "";
     shashin.consoleTypes = Object.freeze({
         error: 0,
         info: 1,
@@ -2150,8 +2150,7 @@
             e.preventDefault();
 
             if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
-                shashin.lastSelectionPoint = {};
-                shashin.lastSelectionPoint[metadata.id] = [e.clientX, e.clientY];
+                shashin.lastSelectedMetadataId = metadata.id;
                 $("#tntl" + metadata.id).show();
                 $("#tlicon" + metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
                 $("#image" + metadata.id).css("opacity", opaque);
@@ -2169,7 +2168,7 @@
                 }
             } else {
                 $("#tntl" + metadata.id).show();
-                shashin.lastSelectionPoint = {};
+                shashin.lastSelectedMetadataId = "";
                 $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
                 $("#image" + metadata.id).css("opacity", opaque);
                 $("#tntr" + metadata.id).show();
@@ -2272,8 +2271,7 @@
             // Fill top left icon when clicking anywhere on thumbnail
             if ($('.bi-circle-fill')[0] || metadataIdArray.length > 0) {
                 if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
-                    shashin.lastSelectionPoint = {};
-                    shashin.lastSelectionPoint[metadata.id] = [e.clientX, e.clientY];
+                    shashin.lastSelectedMetadataId = metadata.id;
                     $("#tntl" + metadata.id).show();
                     $("#tlicon" + metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
                     $("#image" + metadata.id).css("opacity", opaque);
@@ -2290,7 +2288,7 @@
                     }
                 } else {
                     $("#tntl" + metadata.id).show();
-                    shashin.lastSelectionPoint = {};
+                    shashin.lastSelectedMetadataId = "";
                     $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
                     $("#image" + metadata.id).css("opacity", opaque);
                     $("#tncentered" + metadata.id).show();
@@ -2383,13 +2381,6 @@
             }
         });
 
-        // Multi select
-        let pointerPos = [];
-        $(document).on('mousemove', function (e) {
-            pointerPos = [e.clientX, e.clientY];
-            // console.log("mousemove")
-            // console.log(pointerPos)
-        })
         $("#photoThumbnailContainer" + metadata.id).hover(function () {
 
             // Multi select
@@ -2399,17 +2390,23 @@
 
                 if ($("#tlicon" + metadata.id).attr("class") === "bi-circle" && metadataIdArray.length > 0) {
                     if (e.key === "Shift" || e.code === "ShifLeft" || e.code === "ShifRight" || e.keyCode === 16) {
-                        if (pointerPos.length > 0 && shashin.lastSelectionPoint !== {} && Object.keys(shashin.lastSelectionPoint)[0] !== "") {
-                            const lastSelectedMetadataId = Object.keys(shashin.lastSelectionPoint)[0];
-                            const lastSelectionPoint = shashin.lastSelectionPoint[lastSelectedMetadataId];
 
-                            if (lastSelectionPoint !== undefined && lastSelectionPoint !== null && lastSelectionPoint[0] !== null && lastSelectionPoint[1] !== null) {
-                                shashin.printMessageToConsole("Selected Media point [x, y]: " + JSON.stringify(lastSelectionPoint) + ". MetadataId: " + lastSelectedMetadataId, {tag: "multiselect"});
+                        if (shashin.lastSelectedMetadataId !== "") {
+                            const lastSelectedMetadataId = shashin.lastSelectedMetadataId;
+
+                            const selectionHash = getElementLocation($("#photoThumbnailContainer" + lastSelectedMetadataId)[0]);
+                            const lastSelectionMetadataId = [selectionHash.x,selectionHash.y];
+
+                            const pointerHash = getElementLocation($("#photoThumbnailContainer" + metadata.id)[0]);
+                            const pointerPos = [pointerHash.x,pointerHash.y];
+
+                            if (lastSelectionMetadataId[0] !== null && lastSelectionMetadataId[1] !== null) {
+                                shashin.printMessageToConsole("Selected Media point [x, y]: " + JSON.stringify(lastSelectionMetadataId) + ". MetadataId: " + lastSelectedMetadataId, {tag: "multiselect"});
                                 shashin.printMessageToConsole("Shift Key point [x, y]: " + JSON.stringify(pointerPos) + ". MetadataId: " + metadata.id, {tag: "multiselect"});
 
-                                const direction = (pointerPos[1] >= lastSelectionPoint[1] || (pointerPos[0] >= lastSelectionPoint[0] && pointerPos[1] >= lastSelectionPoint[1])) ? "down" : "up";
+                                const direction = (pointerPos[1] > lastSelectionMetadataId[1] || (pointerPos[0] > lastSelectionMetadataId[0] && pointerPos[1] > lastSelectionMetadataId[1])) ? "down" : "up";
 
-                                shashin.printMessageToConsole("Select direction :" + direction, {tag: "multiselect"});
+                                shashin.printMessageToConsole("Select direction: " + direction, {tag: "multiselect"});
 
                                 // Avoids infinte loops
                                 const whileLimit = 10000;
@@ -2468,18 +2465,21 @@
                                                     if ($("#tlicon" + currentMetadataId).hasClass("bi-circle")) {
                                                         $("#select" + currentMetadataId).click();
                                                     }
+
+                                                    // const lastSelectionLocation = getElementLocation($("#photoThumbnailContainer"+metadata.id)[0]);
+                                                    // shashin.lastSelectedMetadataId = {};
+                                                    // shashin.lastSelectedMetadataId[metadata.id] = [lastSelectionLocation.x, lastSelectionLocation.y];
                                                 }
 
                                                 const lastSelectionLocation = getElementLocation($("#photoThumbnailContainer"+metadata.id)[0]);
-                                                shashin.lastSelectionPoint = {};
-                                                shashin.lastSelectionPoint[metadata.id] = [lastSelectionLocation.x, lastSelectionLocation.y];
+                                                shashin.lastSelectedMetadataId = metadata.id;
                                                 break;
                                             }
                                         }
                                     }
                                 }
                             } else {
-                                shashin.printMessageToConsole("lastSelectionPoint undefined or null", {tag: "multiselect"});
+                                shashin.printMessageToConsole("lastSelectionMetadataId undefined or null", {tag: "multiselect"});
                             }
                         }
                     }
@@ -2806,7 +2806,7 @@
             shashin.showToastMessage("Download cancelled", "Download cancelled.", {icon:"bi-info-circle", iconColor:"#777777"});
             $("button").find("span").addClass('bi-download').removeClass('spinner-grow');
         }
-        shashin.lastSelectionPoint = {};
+        shashin.lastSelectedMetadataId = "";
         shashin.removeAllMetadataFilenamesList();
         shashin.removeAllMetadataThumbnailsList();
         shashin.removeAllMetadataIdList();
@@ -2834,7 +2834,7 @@
             shashin.showToastMessage("Download cancelled", "Download cancelled.", {icon:"bi-info-circle", iconColor:"#777777"});
             $("button").find("span").addClass('bi-download').removeClass('spinner-grow');
         }
-        shashin.lastSelectionPoint = {};
+        shashin.lastSelectedMetadataId = "";
         shashin.removeAllMetadataFilenamesList();
         shashin.removeAllMetadataThumbnailsList();
         shashin.removeAllMetadataIdList();
@@ -2859,7 +2859,7 @@
         $("#matchToolsDeselectAll").on("click", function(e) {
             e.preventDefault();
 
-            shashin.lastSelectionPoint = {};
+            shashin.lastSelectedMetadataId = "";
             $(".thumbnail-centered").hide();
             //$(".thumbnail-tr").hide();
             $(".thumbnail-br").hide();
