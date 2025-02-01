@@ -2396,16 +2396,16 @@
                                 const lastSelectedMetadataId = shashin.lastSelectedMetadataId;
 
                                 const selectionHash = getElementLocation($("#photoThumbnailContainer" + lastSelectedMetadataId)[0]);
-                                const lastSelectionMetadataId = [selectionHash.x,selectionHash.y];
+                                const lastSelectionPos = [selectionHash.x,selectionHash.y];
 
                                 const pointerHash = getElementLocation($("#photoThumbnailContainer" + metadata.id)[0]);
                                 const pointerPos = [pointerHash.x,pointerHash.y];
 
-                                if (lastSelectionMetadataId[0] !== null && lastSelectionMetadataId[1] !== null) {
-                                    shashin.printMessageToConsole("Selected Media point [x, y]: " + JSON.stringify(lastSelectionMetadataId) + ". MetadataId: " + lastSelectedMetadataId, {tag: "multiselect"});
+                                if (lastSelectionPos[0] !== null && lastSelectionPos[1] !== null) {
+                                    shashin.printMessageToConsole("Selected Media point [x, y]: " + JSON.stringify(lastSelectionPos) + ". MetadataId: " + lastSelectedMetadataId, {tag: "multiselect"});
                                     shashin.printMessageToConsole("Shift Key point [x, y]: " + JSON.stringify(pointerPos) + ". MetadataId: " + metadata.id, {tag: "multiselect"});
 
-                                    const direction = (pointerPos[1] > lastSelectionMetadataId[1] || (pointerPos[0] > lastSelectionMetadataId[0] && pointerPos[1] > lastSelectionMetadataId[1])) ? "down" : "up";
+                                    const direction = (pointerPos[1] > lastSelectionPos[1] || (pointerPos[0] > lastSelectionPos[0] && pointerPos[1] >= lastSelectionPos[1])) ? "down" : "up";
 
                                     shashin.printMessageToConsole("Select direction: " + direction, {tag: "multiselect"});
 
@@ -2467,12 +2467,12 @@
                                                             $("#select" + currentMetadataId).click();
                                                         }
 
-                                                        // const lastSelectionLocation = getElementLocation($("#photoThumbnailContainer"+metadata.id)[0]);
+                                                        // const lastSelectionPos = getElementLocation($("#photoThumbnailContainer"+metadata.id)[0]);
                                                         // shashin.lastSelectedMetadataId = {};
-                                                        // shashin.lastSelectedMetadataId[metadata.id] = [lastSelectionLocation.x, lastSelectionLocation.y];
+                                                        // shashin.lastSelectedMetadataId[metadata.id] = [lastSelectionPos.x, lastSelectionPos.y];
                                                     }
 
-                                                    const lastSelectionLocation = getElementLocation($("#photoThumbnailContainer"+metadata.id)[0]);
+                                                    const lastSelectionPos = getElementLocation($("#photoThumbnailContainer"+metadata.id)[0]);
                                                     shashin.lastSelectedMetadataId = metadata.id;
                                                     break;
                                                 }
@@ -2480,7 +2480,7 @@
                                         }
                                     }
                                 } else {
-                                    shashin.printMessageToConsole("lastSelectionMetadataId undefined or null", {tag: "multiselect"});
+                                    shashin.printMessageToConsole("lastSelectionPos undefined or null", {tag: "multiselect"});
                                 }
                             }
                         }
