@@ -2150,6 +2150,7 @@
             e.preventDefault();
 
             if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
+                shashin.lastSelectionPoint = {};
                 shashin.lastSelectionPoint[metadata.id] = [e.clientX, e.clientY];
                 $("#tntl" + metadata.id).show();
                 $("#tlicon" + metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
@@ -2271,6 +2272,7 @@
             // Fill top left icon when clicking anywhere on thumbnail
             if ($('.bi-circle-fill')[0] || metadataIdArray.length > 0) {
                 if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
+                    shashin.lastSelectionPoint = {};
                     shashin.lastSelectionPoint[metadata.id] = [e.clientX, e.clientY];
                     $("#tntl" + metadata.id).show();
                     $("#tlicon" + metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
@@ -2381,8 +2383,7 @@
             }
         });
 
-
-
+        // Multi select
         let pointerPos = [];
         $(document).on('mousemove', function (e) {
             pointerPos = [e.clientX, e.clientY];
@@ -2398,6 +2399,7 @@
                     if (e.key === "Shift" || e.code === "ShifLeft" || e.code === "ShifRight" || e.keyCode === 16) {
                         if (pointerPos.length > 0 && shashin.lastSelectionPoint !== {} && Object.keys(shashin.lastSelectionPoint)[0] !== "") {
                             const lastSelectedMetadataId = Object.keys(shashin.lastSelectionPoint)[0];
+                            console.log(lastSelectedMetadataId)
                             const lastSelectionPoint = shashin.lastSelectionPoint[lastSelectedMetadataId];
                             const direction = (pointerPos[0] >= lastSelectionPoint[0] || pointerPos[1] >= lastSelectionPoint[1]) ? "forward" : "backward";
 
@@ -2438,6 +2440,8 @@
 
                                             if ($("#tlicon"+currentMetadataId).hasClass("bi-circle")) {
                                                 $("#select" + currentMetadataId).click();
+                                                shashin.lastSelectionPoint = {};
+                                                shashin.lastSelectionPoint[lastSelectedMetadataId] = lastSelectionPoint;
                                             }
                                         }
 
@@ -2446,9 +2450,13 @@
                                             if (direction === "backward") {
                                                 if ($("#tlicon"+metadata.id).hasClass("bi-circle")) {
                                                     $("#select" + metadata.id).click();
+                                                    shashin.lastSelectionPoint = {};
+                                                    shashin.lastSelectionPoint[lastSelectedMetadataId] = lastSelectionPoint;
                                                 }
                                                 if ($("#tlicon"+currentMetadataId).hasClass("bi-circle")) {
                                                     $("#select" + currentMetadataId).click();
+                                                    shashin.lastSelectionPoint = {};
+                                                    shashin.lastSelectionPoint[lastSelectedMetadataId] = lastSelectionPoint;
                                                 }
                                             }
                                             break;
