@@ -2404,104 +2404,61 @@
                                 const direction = (pointerPos[0] >= lastSelectionPoint[0] || pointerPos[1] >= lastSelectionPoint[1]) ? "forward" : "backward";
 
                                 if ($("#photoThumbnailContainer" + lastSelectedMetadataId).length > 0) {
-                                    if (direction === "forward") {
-                                        let container = $("#photoThumbnailContainer" + lastSelectedMetadataId);
+                                    let container = $("#photoThumbnailContainer" + ((direction === "forward") ? lastSelectedMetadataId : metadata.id));
 
-                                        let selectedRowMetadataIds = container.siblings().addBack().map(function () {
+                                    let selectedRowMetadataIds = container.siblings().addBack().map(function () {
+                                        const metadataId = this.id.split("photoThumbnailContainer");
+                                        return metadataId[1];
+                                    }).toArray();
+
+                                    let found = ($.inArray(((direction === "forward") ? metadata.id : lastSelectedMetadataId), selectedRowMetadataIds) !== -1);
+
+                                    while (found === false) {
+                                        let nextContainer = container.parent().parent().nextUntil().filter(".dateSection:first");
+
+                                        container = $(nextContainer[0]).children("div.row").children("div");
+
+                                        let metadataIdArray = container.siblings().addBack().map(function () {
                                             const metadataId = this.id.split("photoThumbnailContainer");
                                             return metadataId[1];
-                                        }).toArray();
+                                        }).toArray()
+                                        found = ($.inArray(((direction === "forward") ? metadata.id : lastSelectedMetadataId), metadataIdArray) !== -1);
 
-                                        let found = ($.inArray(metadata.id, selectedRowMetadataIds) !== -1);
+                                        $.merge(selectedRowMetadataIds, metadataIdArray);
+                                    }
 
-                                        while (found === false) {
-                                            let nextContainer = container.parent().parent().nextUntil().filter(".dateSection:first");
-
-                                            container = $(nextContainer[0]).children("div.row").children("div");
-
-                                            let metadataIdArray = container.siblings().addBack().map(function () {
-                                                const metadataId = this.id.split("photoThumbnailContainer");
-                                                return metadataId[1];
-                                            }).toArray()
-                                            found = ($.inArray(metadata.id, metadataIdArray) !== -1);
-
-                                            $.merge(selectedRowMetadataIds, metadataIdArray);
-                                        }
-
-                                        let start = false;
-                                        for (let index in selectedRowMetadataIds) {
-                                            if (selectedRowMetadataIds.hasOwnProperty(index)) {
-                                                const currentMetadataId = selectedRowMetadataIds[index];
-                                                if (currentMetadataId === lastSelectedMetadataId || start === true) {
-                                                    if (currentMetadataId === lastSelectedMetadataId) {
-                                                        start = true;
-                                                        continue;
-                                                    }
-
-                                                    if ($("#tlicon"+currentMetadataId).hasClass("bi-circle")) {
-                                                        $("#select" + currentMetadataId).click();
-                                                    }
+                                    let start = false;
+                                    for (let index in selectedRowMetadataIds) {
+                                        if (selectedRowMetadataIds.hasOwnProperty(index)) {
+                                            const currentMetadataId = selectedRowMetadataIds[index];
+                                            const compareFirst = (direction === "forward") ? lastSelectedMetadataId : metadata.id;
+                                            if (currentMetadataId === compareFirst || start === true) {
+                                                if (currentMetadataId === compareFirst) {
+                                                    start = true;
+                                                    continue;
                                                 }
 
-                                                if (currentMetadataId === metadata.id) {
-                                                    break;
+                                                if ($("#tlicon"+currentMetadataId).hasClass("bi-circle")) {
+                                                    $("#select" + currentMetadataId).click();
                                                 }
                                             }
-                                        }
-                                    } else {
-                                        let container = $("#photoThumbnailContainer" + metadata.id);
 
-                                        let selectedRowMetadataIds = container.siblings().addBack().map(function () {
-                                            const metadataId = this.id.split("photoThumbnailContainer");
-                                            return metadataId[1];
-                                        }).toArray();
-                                        let found = ($.inArray(lastSelectedMetadataId, selectedRowMetadataIds) !== -1);
-
-                                        while (found === false) {
-                                            let nextContainer = container.parent().parent().nextUntil().filter(".dateSection:first");
-                                            container = $(nextContainer[0]).children("div.row").children("div");
-                                            let metadataIdArray = container.siblings().addBack().map(function () {
-                                                const metadataId = this.id.split("photoThumbnailContainer");
-                                                return metadataId[1];
-                                            }).toArray()
-                                            found = ($.inArray(lastSelectedMetadataId, metadataIdArray) !== -1);
-
-                                            $.merge(selectedRowMetadataIds, metadataIdArray);
-                                        }
-
-
-                                        let start = false;
-                                        for (let index in selectedRowMetadataIds) {
-                                            if (selectedRowMetadataIds.hasOwnProperty(index)) {
-                                                const currentMetadataId = selectedRowMetadataIds[index];
-                                                if (currentMetadataId === metadata.id || start === true) {
-                                                    if (currentMetadataId === metadata.id) {
-                                                        start = true;
-                                                        continue;
-                                                    }
-                                                    if ($("#tlicon"+currentMetadataId).hasClass("bi-circle")) {
-                                                        $("#select" + currentMetadataId).click();
-                                                    }
-                                                }
-
-                                                if (currentMetadataId === lastSelectedMetadataId) {
+                                            const compareSecond = (direction === "forward") ? metadata.id : lastSelectedMetadataId;
+                                            if (currentMetadataId === compareSecond) {
+                                                if (direction === "backward") {
                                                     if ($("#tlicon"+metadata.id).hasClass("bi-circle")) {
                                                         $("#select" + metadata.id).click();
                                                     }
                                                     if ($("#tlicon"+currentMetadataId).hasClass("bi-circle")) {
-                                                        $("#select" + lastSelectedMetadataId).click();
+                                                        $("#select" + currentMetadataId).click();
                                                     }
-                                                    break;
                                                 }
+                                                break;
                                             }
                                         }
-
-
                                     }
                                 }
                             }
-
-
                         }
                     }
                 });
