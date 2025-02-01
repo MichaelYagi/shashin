@@ -2387,6 +2387,8 @@
         let pointerPos = [];
         $(document).on('mousemove', function (e) {
             pointerPos = [e.clientX, e.clientY];
+            // console.log("mousemove")
+            // console.log(pointerPos)
         })
         $("#photoThumbnailContainer" + metadata.id).hover(function () {
 
@@ -2400,76 +2402,84 @@
                         if (pointerPos.length > 0 && shashin.lastSelectionPoint !== {} && Object.keys(shashin.lastSelectionPoint)[0] !== "") {
                             const lastSelectedMetadataId = Object.keys(shashin.lastSelectionPoint)[0];
                             const lastSelectionPoint = shashin.lastSelectionPoint[lastSelectedMetadataId];
-                            const direction = (pointerPos[0] >= lastSelectionPoint[0] || pointerPos[1] >= lastSelectionPoint[1]) ? "forward" : "backward";
-                            // Avoids infinte loops
-                            const whileLimit = 10000;
 
-                            if ($("#photoThumbnailContainer" + lastSelectedMetadataId).length > 0) {
-                                let container = $("#photoThumbnailContainer" + ((direction === "forward") ? lastSelectedMetadataId : metadata.id));
+                            if (lastSelectionPoint !== undefined && lastSelectionPoint !== null && lastSelectionPoint[0] !== null && lastSelectionPoint[1] !== null) {
+                                shashin.printMessageToConsole("Selected Media point [x, y]: " + JSON.stringify(lastSelectionPoint) + ". MetadataId: " + lastSelectedMetadataId, {tag: "multiselect"});
+                                shashin.printMessageToConsole("Shift Key point [x, y]: " + JSON.stringify(pointerPos) + ". MetadataId: " + metadata.id, {tag: "multiselect"});
 
-                                let selectedRowMetadataIds = container.siblings().addBack().map(function () {
-                                    const metadataId = this.id.split("photoThumbnailContainer");
-                                    return metadataId[1];
-                                }).toArray();
+                                const direction = (pointerPos[1] >= lastSelectionPoint[1] || (pointerPos[0] >= lastSelectionPoint[0] && pointerPos[1] >= lastSelectionPoint[1])) ? "down" : "up";
 
-                                let found = ($.inArray(((direction === "forward") ? metadata.id : lastSelectedMetadataId), selectedRowMetadataIds) !== -1);
+                                shashin.printMessageToConsole("Select direction :" + direction, {tag: "multiselect"});
 
-                                let index = 0;
-                                while (found === false) {
-                                    if (index > whileLimit) {
-                                        break;
-                                    }
+                                // Avoids infinte loops
+                                const whileLimit = 10000;
+                                if ($("#photoThumbnailContainer" + lastSelectedMetadataId).length > 0) {
+                                    let container = $("#photoThumbnailContainer" + ((direction === "down") ? lastSelectedMetadataId : metadata.id));
 
-                                    let nextContainer = container.parent().parent().nextUntil().filter((view === "timeline") ? ".dateContainer:first" : ".dateSection:first");
-
-                                    container = $(nextContainer[0]).children("div.row").children("div");
-
-                                    let metadataIdArray = container.siblings().addBack().map(function () {
+                                    let selectedRowMetadataIds = container.siblings().addBack().map(function () {
                                         const metadataId = this.id.split("photoThumbnailContainer");
                                         return metadataId[1];
-                                    }).toArray()
-                                    found = ($.inArray(((direction === "forward") ? metadata.id : lastSelectedMetadataId), metadataIdArray) !== -1);
+                                    }).toArray();
 
-                                    $.merge(selectedRowMetadataIds, metadataIdArray);
-                                    index++;
-                                }
+                                    let found = ($.inArray(((direction === "down") ? metadata.id : lastSelectedMetadataId), selectedRowMetadataIds) !== -1);
 
-                                let start = false;
-                                for (let index in selectedRowMetadataIds) {
-                                    if (selectedRowMetadataIds.hasOwnProperty(index)) {
-                                        const currentMetadataId = selectedRowMetadataIds[index];
-                                        const compareFirst = (direction === "forward") ? lastSelectedMetadataId : metadata.id;
-                                        if (currentMetadataId === compareFirst || start === true) {
-                                            if (currentMetadataId === compareFirst) {
-                                                start = true;
-                                                continue;
-                                            }
-
-                                            if ($("#tlicon"+currentMetadataId).hasClass("bi-circle")) {
-                                                $("#select" + currentMetadataId).click();
-                                                shashin.lastSelectionPoint = {};
-                                                shashin.lastSelectionPoint[lastSelectedMetadataId] = lastSelectionPoint;
-                                            }
+                                    let index = 0;
+                                    while (found === false) {
+                                        if (index > whileLimit) {
+                                            break;
                                         }
 
-                                        const compareSecond = (direction === "forward") ? metadata.id : lastSelectedMetadataId;
-                                        if (currentMetadataId === compareSecond) {
-                                            if (direction === "backward") {
-                                                if ($("#tlicon"+metadata.id).hasClass("bi-circle")) {
-                                                    $("#select" + metadata.id).click();
-                                                    shashin.lastSelectionPoint = {};
-                                                    shashin.lastSelectionPoint[lastSelectedMetadataId] = lastSelectionPoint;
+                                        let nextContainer = container.parent().parent().nextUntil().filter((view === "timeline") ? ".dateContainer:first" : ".dateSection:first");
+
+                                        container = $(nextContainer[0]).children("div.row").children("div");
+
+                                        let metadataIdArray = container.siblings().addBack().map(function () {
+                                            const metadataId = this.id.split("photoThumbnailContainer");
+                                            return metadataId[1];
+                                        }).toArray()
+                                        found = ($.inArray(((direction === "down") ? metadata.id : lastSelectedMetadataId), metadataIdArray) !== -1);
+
+                                        $.merge(selectedRowMetadataIds, metadataIdArray);
+                                        index++;
+                                    }
+
+                                    let start = false;
+                                    for (let index in selectedRowMetadataIds) {
+                                        if (selectedRowMetadataIds.hasOwnProperty(index)) {
+                                            const currentMetadataId = selectedRowMetadataIds[index];
+                                            const compareFirst = (direction === "down") ? lastSelectedMetadataId : metadata.id;
+                                            if (currentMetadataId === compareFirst || start === true) {
+                                                if (currentMetadataId === compareFirst) {
+                                                    start = true;
+                                                    continue;
                                                 }
-                                                if ($("#tlicon"+currentMetadataId).hasClass("bi-circle")) {
+
+                                                if ($("#tlicon" + currentMetadataId).hasClass("bi-circle")) {
                                                     $("#select" + currentMetadataId).click();
-                                                    shashin.lastSelectionPoint = {};
-                                                    shashin.lastSelectionPoint[lastSelectedMetadataId] = lastSelectionPoint;
                                                 }
                                             }
-                                            break;
+
+                                            const compareSecond = (direction === "down") ? metadata.id : lastSelectedMetadataId;
+                                            if (currentMetadataId === compareSecond) {
+                                                if (direction === "up") {
+                                                    if ($("#tlicon" + metadata.id).hasClass("bi-circle")) {
+                                                        $("#select" + metadata.id).click();
+                                                    }
+                                                    if ($("#tlicon" + currentMetadataId).hasClass("bi-circle")) {
+                                                        $("#select" + currentMetadataId).click();
+                                                    }
+                                                }
+
+                                                const lastSelectionLocation = getElementLocation($("#photoThumbnailContainer"+metadata.id)[0]);
+                                                shashin.lastSelectionPoint = {};
+                                                shashin.lastSelectionPoint[metadata.id] = [lastSelectionLocation.x, lastSelectionLocation.y];
+                                                break;
+                                            }
                                         }
                                     }
                                 }
+                            } else {
+                                shashin.printMessageToConsole("lastSelectionPoint undefined or null", {tag: "multiselect"});
                             }
                         }
                     }
@@ -2488,7 +2498,6 @@
             }
         }, function () {
             $(document).unbind("keydown");
-            $(document).unbind("keyup");
 
             if (metadata.type.includes("video")) {
                 const jpgUrl = $("#image" + metadata.id).attr("src").replace("/gif/" + metadata.id, "/225/" + metadata.id);
@@ -2707,6 +2716,14 @@
                 attempts--;
             }, 1000);
         }
+    }
+
+    function getElementLocation(el) {
+        const rect = el.getBoundingClientRect();
+        return {
+            x: rect.left + window.scrollX,
+            y: rect.top + window.scrollY
+        };
     }
 
     shashin.getOverlayData = function(metadata, args) {
