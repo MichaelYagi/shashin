@@ -2388,87 +2388,78 @@
             pointerPos = [e.clientX, e.clientY];
         })
         $("#photoThumbnailContainer" + metadata.id).hover(function () {
+            
+            // Multi select
+            $(document).bind("keydown", function (e) {
 
-            // TODO: Implement for timeline
-            if (view !== "timeline") {
-                // Multi select
-                $(document).bind("keydown", function (e) {
+                metadataIdArray = shashin.getMetadataIdList();
 
-                    metadataIdArray = shashin.getMetadataIdList();
+                if ($("#tlicon" + metadata.id).attr("class") === "bi-circle" && metadataIdArray.length > 0) {
+                    if (e.key === "Shift" || e.code === "ShifLeft" || e.code === "ShifRight" || e.keyCode === 16) {
+                        if (pointerPos.length > 0 && shashin.lastSelectionPoint !== {} && Object.keys(shashin.lastSelectionPoint)[0] !== "") {
+                            const lastSelectedMetadataId = Object.keys(shashin.lastSelectionPoint)[0];
+                            const lastSelectionPoint = shashin.lastSelectionPoint[lastSelectedMetadataId];
+                            const direction = (pointerPos[0] >= lastSelectionPoint[0] || pointerPos[1] >= lastSelectionPoint[1]) ? "forward" : "backward";
 
-                    if ($("#tlicon" + metadata.id).attr("class") === "bi-circle" && metadataIdArray.length > 0) {
-                        if (e.key === "Shift" || e.code === "ShifLeft" || e.code === "ShifRight" || e.keyCode === 16) {
-                            if (pointerPos.length > 0 && shashin.lastSelectionPoint !== {} && Object.keys(shashin.lastSelectionPoint)[0] !== "") {
-                                const lastSelectedMetadataId = Object.keys(shashin.lastSelectionPoint)[0];
-                                const lastSelectionPoint = shashin.lastSelectionPoint[lastSelectedMetadataId];
-                                const direction = (pointerPos[0] >= lastSelectionPoint[0] || pointerPos[1] >= lastSelectionPoint[1]) ? "forward" : "backward";
+                            if ($("#photoThumbnailContainer" + lastSelectedMetadataId).length > 0) {
+                                let container = $("#photoThumbnailContainer" + ((direction === "forward") ? lastSelectedMetadataId : metadata.id));
 
-                                if ($("#photoThumbnailContainer" + lastSelectedMetadataId).length > 0) {
-                                    let container = $("#photoThumbnailContainer" + ((direction === "forward") ? lastSelectedMetadataId : metadata.id));
+                                let selectedRowMetadataIds = container.siblings().addBack().map(function () {
+                                    const metadataId = this.id.split("photoThumbnailContainer");
+                                    return metadataId[1];
+                                }).toArray();
 
-                                    let selectedRowMetadataIds = container.siblings().addBack().map(function () {
+                                let found = ($.inArray(((direction === "forward") ? metadata.id : lastSelectedMetadataId), selectedRowMetadataIds) !== -1);
+
+                                while (found === false) {
+                                    let nextContainer = container.parent().parent().nextUntil().filter((view === "timeline") ? ".dateContainer:first" : ".dateSection:first");
+
+                                    container = $(nextContainer[0]).children("div.row").children("div");
+
+                                    let metadataIdArray = container.siblings().addBack().map(function () {
                                         const metadataId = this.id.split("photoThumbnailContainer");
                                         return metadataId[1];
-                                    }).toArray();
+                                    }).toArray()
+                                    found = ($.inArray(((direction === "forward") ? metadata.id : lastSelectedMetadataId), metadataIdArray) !== -1);
 
-                                    let found = ($.inArray(((direction === "forward") ? metadata.id : lastSelectedMetadataId), selectedRowMetadataIds) !== -1);
+                                    $.merge(selectedRowMetadataIds, metadataIdArray);
+                                }
 
-                                    while (found === false) {
-                                        let nextContainer = container.parent().parent().nextUntil().filter(".dateSection:first");
+                                let start = false;
+                                for (let index in selectedRowMetadataIds) {
+                                    if (selectedRowMetadataIds.hasOwnProperty(index)) {
+                                        const currentMetadataId = selectedRowMetadataIds[index];
+                                        const compareFirst = (direction === "forward") ? lastSelectedMetadataId : metadata.id;
+                                        if (currentMetadataId === compareFirst || start === true) {
+                                            if (currentMetadataId === compareFirst) {
+                                                start = true;
+                                                continue;
+                                            }
 
-                                        container = $(nextContainer[0]).children("div.row").children("div");
+                                            if ($("#tlicon"+currentMetadataId).hasClass("bi-circle")) {
+                                                $("#select" + currentMetadataId).click();
+                                            }
+                                        }
 
-                                        let metadataIdArray = container.siblings().addBack().map(function () {
-                                            const metadataId = this.id.split("photoThumbnailContainer");
-                                            return metadataId[1];
-                                        }).toArray()
-                                        found = ($.inArray(((direction === "forward") ? metadata.id : lastSelectedMetadataId), metadataIdArray) !== -1);
-
-                                        $.merge(selectedRowMetadataIds, metadataIdArray);
-                                    }
-
-                                    let start = false;
-                                    for (let index in selectedRowMetadataIds) {
-                                        if (selectedRowMetadataIds.hasOwnProperty(index)) {
-                                            const currentMetadataId = selectedRowMetadataIds[index];
-                                            const compareFirst = (direction === "forward") ? lastSelectedMetadataId : metadata.id;
-                                            if (currentMetadataId === compareFirst || start === true) {
-                                                if (currentMetadataId === compareFirst) {
-                                                    start = true;
-                                                    continue;
+                                        const compareSecond = (direction === "forward") ? metadata.id : lastSelectedMetadataId;
+                                        if (currentMetadataId === compareSecond) {
+                                            if (direction === "backward") {
+                                                if ($("#tlicon"+metadata.id).hasClass("bi-circle")) {
+                                                    $("#select" + metadata.id).click();
                                                 }
-
                                                 if ($("#tlicon"+currentMetadataId).hasClass("bi-circle")) {
                                                     $("#select" + currentMetadataId).click();
                                                 }
                                             }
-
-                                            const compareSecond = (direction === "forward") ? metadata.id : lastSelectedMetadataId;
-                                            if (currentMetadataId === compareSecond) {
-                                                if (direction === "backward") {
-                                                    if ($("#tlicon"+metadata.id).hasClass("bi-circle")) {
-                                                        $("#select" + metadata.id).click();
-                                                    }
-                                                    if ($("#tlicon"+currentMetadataId).hasClass("bi-circle")) {
-                                                        $("#select" + currentMetadataId).click();
-                                                    }
-                                                }
-                                                break;
-                                            }
+                                            break;
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                });
-                $(document).bind("keyup", function (e) {
-                    console.log("test6")
-
-                });
-            }
-
-
+                }
+            });
 
             if (metadata.type.includes("video") && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
             ) {
