@@ -2389,7 +2389,7 @@
             pointerPos = [e.clientX, e.clientY];
         })
         $("#photoThumbnailContainer" + metadata.id).hover(function () {
-            
+
             // Multi select
             $(document).bind("keydown", function (e) {
 
@@ -2399,9 +2399,10 @@
                     if (e.key === "Shift" || e.code === "ShifLeft" || e.code === "ShifRight" || e.keyCode === 16) {
                         if (pointerPos.length > 0 && shashin.lastSelectionPoint !== {} && Object.keys(shashin.lastSelectionPoint)[0] !== "") {
                             const lastSelectedMetadataId = Object.keys(shashin.lastSelectionPoint)[0];
-                            console.log(lastSelectedMetadataId)
                             const lastSelectionPoint = shashin.lastSelectionPoint[lastSelectedMetadataId];
                             const direction = (pointerPos[0] >= lastSelectionPoint[0] || pointerPos[1] >= lastSelectionPoint[1]) ? "forward" : "backward";
+                            // Avoids infinte loops
+                            const whileLimit = 3000;
 
                             if ($("#photoThumbnailContainer" + lastSelectedMetadataId).length > 0) {
                                 let container = $("#photoThumbnailContainer" + ((direction === "forward") ? lastSelectedMetadataId : metadata.id));
@@ -2413,7 +2414,12 @@
 
                                 let found = ($.inArray(((direction === "forward") ? metadata.id : lastSelectedMetadataId), selectedRowMetadataIds) !== -1);
 
+                                let index = 0;
                                 while (found === false) {
+                                    if (index > whileLimit) {
+                                        break;
+                                    }
+
                                     let nextContainer = container.parent().parent().nextUntil().filter((view === "timeline") ? ".dateContainer:first" : ".dateSection:first");
 
                                     container = $(nextContainer[0]).children("div.row").children("div");
@@ -2425,6 +2431,7 @@
                                     found = ($.inArray(((direction === "forward") ? metadata.id : lastSelectedMetadataId), metadataIdArray) !== -1);
 
                                     $.merge(selectedRowMetadataIds, metadataIdArray);
+                                    index++;
                                 }
 
                                 let start = false;
