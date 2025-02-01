@@ -2466,13 +2466,8 @@
                                                         if ($("#tlicon" + currentMetadataId).hasClass("bi-circle")) {
                                                             $("#select" + currentMetadataId).click();
                                                         }
-
-                                                        // const lastSelectionPos = getElementLocation($("#photoThumbnailContainer"+metadata.id)[0]);
-                                                        // shashin.lastSelectedMetadataId = {};
-                                                        // shashin.lastSelectedMetadataId[metadata.id] = [lastSelectionPos.x, lastSelectionPos.y];
                                                     }
 
-                                                    const lastSelectionPos = getElementLocation($("#photoThumbnailContainer"+metadata.id)[0]);
                                                     shashin.lastSelectedMetadataId = metadata.id;
                                                     break;
                                                 }
