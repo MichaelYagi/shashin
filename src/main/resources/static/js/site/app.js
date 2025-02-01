@@ -2389,100 +2389,102 @@
                 metadataIdArray = shashin.getMetadataIdList();
 
                 if ($("#tlicon" + metadata.id).attr("class") === "bi-circle" && metadataIdArray.length > 0) {
-                    if (e.key === "Shift" || e.code === "ShifLeft" || e.code === "ShifRight" || e.keyCode === 16) {
+                    setTimeout(function () {
+                        if (e.key === "Shift" || e.code === "ShifLeft" || e.code === "ShifRight" || e.keyCode === 16) {
 
-                        if (shashin.lastSelectedMetadataId !== "") {
-                            const lastSelectedMetadataId = shashin.lastSelectedMetadataId;
+                            if (shashin.lastSelectedMetadataId !== "") {
+                                const lastSelectedMetadataId = shashin.lastSelectedMetadataId;
 
-                            const selectionHash = getElementLocation($("#photoThumbnailContainer" + lastSelectedMetadataId)[0]);
-                            const lastSelectionMetadataId = [selectionHash.x,selectionHash.y];
+                                const selectionHash = getElementLocation($("#photoThumbnailContainer" + lastSelectedMetadataId)[0]);
+                                const lastSelectionMetadataId = [selectionHash.x,selectionHash.y];
 
-                            const pointerHash = getElementLocation($("#photoThumbnailContainer" + metadata.id)[0]);
-                            const pointerPos = [pointerHash.x,pointerHash.y];
+                                const pointerHash = getElementLocation($("#photoThumbnailContainer" + metadata.id)[0]);
+                                const pointerPos = [pointerHash.x,pointerHash.y];
 
-                            if (lastSelectionMetadataId[0] !== null && lastSelectionMetadataId[1] !== null) {
-                                shashin.printMessageToConsole("Selected Media point [x, y]: " + JSON.stringify(lastSelectionMetadataId) + ". MetadataId: " + lastSelectedMetadataId, {tag: "multiselect"});
-                                shashin.printMessageToConsole("Shift Key point [x, y]: " + JSON.stringify(pointerPos) + ". MetadataId: " + metadata.id, {tag: "multiselect"});
+                                if (lastSelectionMetadataId[0] !== null && lastSelectionMetadataId[1] !== null) {
+                                    shashin.printMessageToConsole("Selected Media point [x, y]: " + JSON.stringify(lastSelectionMetadataId) + ". MetadataId: " + lastSelectedMetadataId, {tag: "multiselect"});
+                                    shashin.printMessageToConsole("Shift Key point [x, y]: " + JSON.stringify(pointerPos) + ". MetadataId: " + metadata.id, {tag: "multiselect"});
 
-                                const direction = (pointerPos[1] > lastSelectionMetadataId[1] || (pointerPos[0] > lastSelectionMetadataId[0] && pointerPos[1] > lastSelectionMetadataId[1])) ? "down" : "up";
+                                    const direction = (pointerPos[1] > lastSelectionMetadataId[1] || (pointerPos[0] > lastSelectionMetadataId[0] && pointerPos[1] > lastSelectionMetadataId[1])) ? "down" : "up";
 
-                                shashin.printMessageToConsole("Select direction: " + direction, {tag: "multiselect"});
+                                    shashin.printMessageToConsole("Select direction: " + direction, {tag: "multiselect"});
 
-                                // Avoids infinte loops
-                                const whileLimit = 10000;
-                                if ($("#photoThumbnailContainer" + lastSelectedMetadataId).length > 0) {
-                                    let container = $("#photoThumbnailContainer" + ((direction === "down") ? lastSelectedMetadataId : metadata.id));
+                                    // Avoids infinte loops
+                                    const whileLimit = 10000;
+                                    if ($("#photoThumbnailContainer" + lastSelectedMetadataId).length > 0) {
+                                        let container = $("#photoThumbnailContainer" + ((direction === "down") ? lastSelectedMetadataId : metadata.id));
 
-                                    let selectedRowMetadataIds = container.siblings().addBack().map(function () {
-                                        const metadataId = this.id.split("photoThumbnailContainer");
-                                        return metadataId[1];
-                                    }).toArray();
-
-                                    let found = ($.inArray(((direction === "down") ? metadata.id : lastSelectedMetadataId), selectedRowMetadataIds) !== -1);
-
-                                    let index = 0;
-                                    while (found === false) {
-                                        if (index > whileLimit) {
-                                            break;
-                                        }
-
-                                        let nextContainer = container.parent().parent().nextUntil().filter((view === "timeline") ? ".dateContainer:first" : ".dateSection:first");
-
-                                        container = $(nextContainer[0]).children("div.row").children("div");
-
-                                        let metadataIdArray = container.siblings().addBack().map(function () {
+                                        let selectedRowMetadataIds = container.siblings().addBack().map(function () {
                                             const metadataId = this.id.split("photoThumbnailContainer");
                                             return metadataId[1];
-                                        }).toArray()
-                                        found = ($.inArray(((direction === "down") ? metadata.id : lastSelectedMetadataId), metadataIdArray) !== -1);
+                                        }).toArray();
 
-                                        $.merge(selectedRowMetadataIds, metadataIdArray);
-                                        index++;
-                                    }
+                                        let found = ($.inArray(((direction === "down") ? metadata.id : lastSelectedMetadataId), selectedRowMetadataIds) !== -1);
 
-                                    let start = false;
-                                    for (let index in selectedRowMetadataIds) {
-                                        if (selectedRowMetadataIds.hasOwnProperty(index)) {
-                                            const currentMetadataId = selectedRowMetadataIds[index];
-                                            const compareFirst = (direction === "down") ? lastSelectedMetadataId : metadata.id;
-                                            if (currentMetadataId === compareFirst || start === true) {
-                                                if (currentMetadataId === compareFirst) {
-                                                    start = true;
-                                                    continue;
-                                                }
-
-                                                if ($("#tlicon" + currentMetadataId).hasClass("bi-circle")) {
-                                                    $("#select" + currentMetadataId).click();
-                                                }
+                                        let index = 0;
+                                        while (found === false) {
+                                            if (index > whileLimit) {
+                                                break;
                                             }
 
-                                            const compareSecond = (direction === "down") ? metadata.id : lastSelectedMetadataId;
-                                            if (currentMetadataId === compareSecond) {
-                                                if (direction === "up") {
-                                                    if ($("#tlicon" + metadata.id).hasClass("bi-circle")) {
-                                                        $("#select" + metadata.id).click();
+                                            let nextContainer = container.parent().parent().nextUntil().filter((view === "timeline") ? ".dateContainer:first" : ".dateSection:first");
+
+                                            container = $(nextContainer[0]).children("div.row").children("div");
+
+                                            let metadataIdArray = container.siblings().addBack().map(function () {
+                                                const metadataId = this.id.split("photoThumbnailContainer");
+                                                return metadataId[1];
+                                            }).toArray()
+                                            found = ($.inArray(((direction === "down") ? metadata.id : lastSelectedMetadataId), metadataIdArray) !== -1);
+
+                                            $.merge(selectedRowMetadataIds, metadataIdArray);
+                                            index++;
+                                        }
+
+                                        let start = false;
+                                        for (let index in selectedRowMetadataIds) {
+                                            if (selectedRowMetadataIds.hasOwnProperty(index)) {
+                                                const currentMetadataId = selectedRowMetadataIds[index];
+                                                const compareFirst = (direction === "down") ? lastSelectedMetadataId : metadata.id;
+                                                if (currentMetadataId === compareFirst || start === true) {
+                                                    if (currentMetadataId === compareFirst) {
+                                                        start = true;
+                                                        continue;
                                                     }
+
                                                     if ($("#tlicon" + currentMetadataId).hasClass("bi-circle")) {
                                                         $("#select" + currentMetadataId).click();
                                                     }
-
-                                                    // const lastSelectionLocation = getElementLocation($("#photoThumbnailContainer"+metadata.id)[0]);
-                                                    // shashin.lastSelectedMetadataId = {};
-                                                    // shashin.lastSelectedMetadataId[metadata.id] = [lastSelectionLocation.x, lastSelectionLocation.y];
                                                 }
 
-                                                const lastSelectionLocation = getElementLocation($("#photoThumbnailContainer"+metadata.id)[0]);
-                                                shashin.lastSelectedMetadataId = metadata.id;
-                                                break;
+                                                const compareSecond = (direction === "down") ? metadata.id : lastSelectedMetadataId;
+                                                if (currentMetadataId === compareSecond) {
+                                                    if (direction === "up") {
+                                                        if ($("#tlicon" + metadata.id).hasClass("bi-circle")) {
+                                                            $("#select" + metadata.id).click();
+                                                        }
+                                                        if ($("#tlicon" + currentMetadataId).hasClass("bi-circle")) {
+                                                            $("#select" + currentMetadataId).click();
+                                                        }
+
+                                                        // const lastSelectionLocation = getElementLocation($("#photoThumbnailContainer"+metadata.id)[0]);
+                                                        // shashin.lastSelectedMetadataId = {};
+                                                        // shashin.lastSelectedMetadataId[metadata.id] = [lastSelectionLocation.x, lastSelectionLocation.y];
+                                                    }
+
+                                                    const lastSelectionLocation = getElementLocation($("#photoThumbnailContainer"+metadata.id)[0]);
+                                                    shashin.lastSelectedMetadataId = metadata.id;
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
+                                } else {
+                                    shashin.printMessageToConsole("lastSelectionMetadataId undefined or null", {tag: "multiselect"});
                                 }
-                            } else {
-                                shashin.printMessageToConsole("lastSelectionMetadataId undefined or null", {tag: "multiselect"});
                             }
                         }
-                    }
+                    }, 0);
                 }
             });
 
