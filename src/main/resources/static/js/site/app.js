@@ -2168,7 +2168,7 @@
                 }
             } else {
                 $("#tntl" + metadata.id).show();
-                shashin.lastSelectedMetadataId = "";
+                shashin.lastSelectedMetadataId = metadata.id;
                 $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
                 $("#image" + metadata.id).css("opacity", opaque);
                 $("#tntr" + metadata.id).show();
@@ -2288,7 +2288,7 @@
                     }
                 } else {
                     $("#tntl" + metadata.id).show();
-                    shashin.lastSelectedMetadataId = "";
+                    shashin.lastSelectedMetadataId = metadata.id;
                     $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
                     $("#image" + metadata.id).css("opacity", opaque);
                     $("#tncentered" + metadata.id).show();
@@ -2381,18 +2381,20 @@
             }
         });
 
-        $("#photoThumbnailContainer" + metadata.id).hover(function () {
+        $("#photoThumbnailContainer" + metadata.id).hover(function (e) {
+            e.preventDefault();
 
             // Multi select
             $(document).bind("keydown", function (e) {
+                e.preventDefault();
 
                 metadataIdArray = shashin.getMetadataIdList();
 
-                if ($("#tlicon" + metadata.id).attr("class") === "bi-circle" && metadataIdArray.length > 0) {
+                if (/*$("#tlicon" + metadata.id).attr("class") === "bi-circle" && */metadataIdArray.length > 0) {
                     setTimeout(function () {
                         if (e.key === "Shift" || e.code === "ShifLeft" || e.code === "ShifRight" || e.keyCode === 16) {
 
-                            if (shashin.lastSelectedMetadataId !== "") {
+                            if (shashin.lastSelectedMetadataId !== "" && shashin.lastSelectedMetadataId !== metadata.id) {
                                 const lastSelectedMetadataId = shashin.lastSelectedMetadataId;
 
                                 const selectionHash = getElementLocation($("#photoThumbnailContainer" + lastSelectedMetadataId)[0]);
@@ -2409,8 +2411,8 @@
 
                                     shashin.printMessageToConsole("Select direction: " + direction, {tag: "multiselect"});
 
-                                    // Avoids infinte loops
-                                    const whileLimit = 10000;
+                                    // Avoids infinite loops
+                                    const whileLimit = 1000;
                                     if ($("#photoThumbnailContainer" + lastSelectedMetadataId).length > 0) {
                                         let container = $("#photoThumbnailContainer" + ((direction === "down") ? lastSelectedMetadataId : metadata.id));
 
@@ -2441,6 +2443,8 @@
                                             index++;
                                         }
 
+                                        shashin.printMessageToConsole("Looped "+index+" times finding metadata", {tag: "multiselect"});
+
                                         let start = false;
                                         for (let index in selectedRowMetadataIds) {
                                             if (selectedRowMetadataIds.hasOwnProperty(index)) {
@@ -2452,23 +2456,33 @@
                                                         continue;
                                                     }
 
+                                                    $("#select" + currentMetadataId).trigger("click");
+
                                                     if ($("#tlicon" + currentMetadataId).hasClass("bi-circle")) {
-                                                        $("#select" + currentMetadataId).click();
+                                                        $("#image" + currentMetadataId).css("opacity", "1");
+                                                        if ($("#image" + currentMetadataId).attr("src").indexOf("/api/v1/thumbnails/gif/") >= 0) {
+                                                            const convertedUrl = $("#image" + currentMetadataId).attr("src").replace("/gif/", "/225/");
+                                                            $("#image" + currentMetadataId).attr("src",convertedUrl);
+                                                        }
                                                     }
+
+                                                    shashin.lastSelectedMetadataId = metadata.id;
                                                 }
 
                                                 const compareSecond = (direction === "down") ? metadata.id : lastSelectedMetadataId;
                                                 if (currentMetadataId === compareSecond) {
                                                     if (direction === "up") {
+                                                        $("#select" + metadata.id).trigger("click");
+                                                        $("#select" + currentMetadataId).trigger("click");
+
                                                         if ($("#tlicon" + metadata.id).hasClass("bi-circle")) {
-                                                            $("#select" + metadata.id).click();
+                                                            $("#image" + metadata.id).css("opacity", "1");
                                                         }
                                                         if ($("#tlicon" + currentMetadataId).hasClass("bi-circle")) {
-                                                            $("#select" + currentMetadataId).click();
+                                                            $("#image" + currentMetadataId).css("opacity", "1");
                                                         }
                                                     }
 
-                                                    shashin.lastSelectedMetadataId = metadata.id;
                                                     break;
                                                 }
                                             }
