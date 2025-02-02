@@ -2427,6 +2427,7 @@
             }
         }, function () {
             $(document).unbind("keydown");
+            $(document).unbind("dblclick");
 
             if (metadata.type.includes("video")) {
                 const jpgUrl = $("#image" + metadata.id).attr("src").replace("/gif/" + metadata.id, "/225/" + metadata.id);
