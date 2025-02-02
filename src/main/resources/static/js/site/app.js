@@ -2401,7 +2401,7 @@
 
                 metadataIdArray = shashin.getMetadataIdList();
 
-                if (/*$("#tlicon" + metadata.id).attr("class") === "bi-circle" && */metadataIdArray.length > 0) {
+                if (metadataIdArray.length > 0) {
                     setTimeout(function () {
                         if (e.key === "Shift" || e.code === "ShifLeft" || e.code === "ShifRight" || e.keyCode === 16) {
 
