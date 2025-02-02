@@ -2394,14 +2394,18 @@
             e.preventDefault();
 
             // Multi select
-            $(document).bind("keyup", function (e) {
+            $(document).bind("keydown", function (e) {
                 e.preventDefault();
+
+                shashin.printMessageToConsole("Select keydown", {tag: "multiselect"});
 
                 metadataIdArray = shashin.getMetadataIdList();
 
                 if (/*$("#tlicon" + metadata.id).attr("class") === "bi-circle" && */metadataIdArray.length > 0) {
                     setTimeout(function () {
                         if (e.key === "Shift" || e.code === "ShifLeft" || e.code === "ShifRight" || e.keyCode === 16) {
+
+                            shashin.printMessageToConsole("Shift key pressed", {tag: "multiselect"});
 
                             if (shashin.lastSelectedMetadataId !== "" && shashin.lastSelectedMetadataId !== metadata.id) {
                                 const lastSelectedMetadataId = shashin.lastSelectedMetadataId;
@@ -2505,7 +2509,7 @@
                 }
             }
         }, function () {
-            $(document).unbind("keyup");
+            $(document).unbind("keydown");
 
             if (metadata.type.includes("video")) {
                 const jpgUrl = $("#image" + metadata.id).attr("src").replace("/gif/" + metadata.id, "/225/" + metadata.id);
