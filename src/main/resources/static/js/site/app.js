@@ -2394,7 +2394,7 @@
             e.preventDefault();
 
             // Multi select
-            $(document).bind("keydown", function (e) {
+            $(document).bind("keyup", function (e) {
                 e.preventDefault();
 
                 metadataIdArray = shashin.getMetadataIdList();
@@ -2505,7 +2505,7 @@
                 }
             }
         }, function () {
-            $(document).unbind("keydown");
+            $(document).unbind("keyup");
 
             if (metadata.type.includes("video")) {
                 const jpgUrl = $("#image" + metadata.id).attr("src").replace("/gif/" + metadata.id, "/225/" + metadata.id);
