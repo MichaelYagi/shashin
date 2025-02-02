@@ -43,7 +43,6 @@
     shashin.slideshowXDown = null;
     shashin.slideshowYDown = null;
     shashin.lastSelectedMetadataId = "";
-    shashin.lastMetadataIds = [];
     shashin.consoleTypes = Object.freeze({
         error: 0,
         info: 1,
@@ -2391,60 +2390,35 @@
             }
         });
 
-
-        let mousemoveTarget = null;
-        $(document).on("mousemove", function (e) {
-            e.preventDefault();
-            mousemoveTarget = [e.clientX,e.clientY];
-        })
-        $(document).on("keydown", function (e) {
+        $("#photoThumbnailContainer" + metadata.id).hover(function (e) {
             e.preventDefault();
 
             // Multi select
-            if (e.key === "Shift" || e.code === "ShifLeft" || e.code === "ShifRight" || e.keyCode === 16) {
-                let metadataId = "";
-                if (mousemoveTarget !== null) {
-                    const targets = document.elementsFromPoint(mousemoveTarget[0], mousemoveTarget[1]);
-                    for (let index in targets) {
-                        if (targets.hasOwnProperty(index)) {
-                            const target = targets[index];
-                            const id = $(target).attr("id");
-                            if (id.startsWith("photoThumbnailContainer")) {
-                                const metadataIdArr = id.split("photoThumbnailContainer");
+            $(document).bind("keydown", function (e) {
+                e.preventDefault();
 
-                                if (metadataIdArr.length === 2) {
-                                    metadataId = metadataIdArr[1];
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }
+                shashin.printMessageToConsole("Select keydown", {tag: "multiselect"});
 
-                if (metadataId !== "" && metadataId !== shashin.lastSelectedMetadataId && (shashin.lastMetadataIds.length === 0 || (shashin.lastMetadataIds.length === 2 && shashin.lastMetadataIds[0] !== metadataId && shashin.lastMetadataIds[1] !== shashin.lastSelectedMetadataId))) {
-                    shashin.lastMetadataIds = [metadataId, shashin.lastSelectedMetadataId];
+                metadataIdArray = shashin.getMetadataIdList();
 
-                    shashin.printMessageToConsole("Select keydown", {tag: "multiselect"});
-
-                    metadataIdArray = shashin.getMetadataIdList();
-
-                    if (metadataIdArray.length > 0) {
-                        setTimeout(function () {
+                if (/*$("#tlicon" + metadata.id).attr("class") === "bi-circle" && */metadataIdArray.length > 0) {
+                    setTimeout(function () {
+                        if (e.key === "Shift" || e.code === "ShifLeft" || e.code === "ShifRight" || e.keyCode === 16) {
 
                             shashin.printMessageToConsole("Shift key pressed", {tag: "multiselect"});
 
-                            if (shashin.lastSelectedMetadataId !== "" && shashin.lastSelectedMetadataId !== metadataId) {
+                            if (shashin.lastSelectedMetadataId !== "" && shashin.lastSelectedMetadataId !== metadata.id) {
                                 const lastSelectedMetadataId = shashin.lastSelectedMetadataId;
 
                                 const selectionHash = getElementLocation($("#photoThumbnailContainer" + lastSelectedMetadataId)[0]);
                                 const lastSelectionPos = [selectionHash.x,selectionHash.y];
 
-                                const pointerHash = getElementLocation($("#photoThumbnailContainer" + metadataId)[0]);
+                                const pointerHash = getElementLocation($("#photoThumbnailContainer" + metadata.id)[0]);
                                 const pointerPos = [pointerHash.x,pointerHash.y];
 
                                 if (lastSelectionPos[0] !== null && lastSelectionPos[1] !== null) {
                                     shashin.printMessageToConsole("Selected Media point [x, y]: " + JSON.stringify(lastSelectionPos) + ". MetadataId: " + lastSelectedMetadataId, {tag: "multiselect"});
-                                    shashin.printMessageToConsole("Shift Key point [x, y]: " + JSON.stringify(pointerPos) + ". MetadataId: " + metadataId, {tag: "multiselect"});
+                                    shashin.printMessageToConsole("Shift Key point [x, y]: " + JSON.stringify(pointerPos) + ". MetadataId: " + metadata.id, {tag: "multiselect"});
 
                                     const direction = (pointerPos[1] > lastSelectionPos[1] || (pointerPos[0] > lastSelectionPos[0] && pointerPos[1] >= lastSelectionPos[1])) ? "down" : "up";
 
@@ -2453,14 +2427,14 @@
                                     // Avoids infinite loops
                                     const whileLimit = 1000;
                                     if ($("#photoThumbnailContainer" + lastSelectedMetadataId).length > 0) {
-                                        let container = $("#photoThumbnailContainer" + ((direction === "down") ? lastSelectedMetadataId : metadataId));
+                                        let container = $("#photoThumbnailContainer" + ((direction === "down") ? lastSelectedMetadataId : metadata.id));
 
                                         let selectedRowMetadataIds = container.siblings().addBack().map(function () {
                                             const metadataId = this.id.split("photoThumbnailContainer");
                                             return metadataId[1];
                                         }).toArray();
 
-                                        let found = ($.inArray(((direction === "down") ? metadataId : lastSelectedMetadataId), selectedRowMetadataIds) !== -1);
+                                        let found = ($.inArray(((direction === "down") ? metadata.id : lastSelectedMetadataId), selectedRowMetadataIds) !== -1);
 
                                         let index = 0;
                                         while (found === false) {
@@ -2476,7 +2450,7 @@
                                                 const metadataId = this.id.split("photoThumbnailContainer");
                                                 return metadataId[1];
                                             }).toArray()
-                                            found = ($.inArray(((direction === "down") ? metadataId : lastSelectedMetadataId), metadataIdArray) !== -1);
+                                            found = ($.inArray(((direction === "down") ? metadata.id : lastSelectedMetadataId), metadataIdArray) !== -1);
 
                                             $.merge(selectedRowMetadataIds, metadataIdArray);
                                             index++;
@@ -2488,7 +2462,7 @@
                                         for (let index in selectedRowMetadataIds) {
                                             if (selectedRowMetadataIds.hasOwnProperty(index)) {
                                                 const currentMetadataId = selectedRowMetadataIds[index];
-                                                const compareFirst = (direction === "down") ? lastSelectedMetadataId : metadataId;
+                                                const compareFirst = (direction === "down") ? lastSelectedMetadataId : metadata.id;
                                                 if (currentMetadataId === compareFirst || start === true) {
                                                     if (currentMetadataId === compareFirst) {
                                                         start = true;
@@ -2503,21 +2477,21 @@
                                                         $("#image" + currentMetadataId).css("opacity", "1.0");
                                                     }
 
-                                                    shashin.lastSelectedMetadataId = metadataId;
+                                                    shashin.lastSelectedMetadataId = metadata.id;
                                                 }
 
-                                                const compareSecond = (direction === "down") ? metadataId : lastSelectedMetadataId;
+                                                const compareSecond = (direction === "down") ? metadata.id : lastSelectedMetadataId;
                                                 if (currentMetadataId === compareSecond) {
                                                     if (direction === "up") {
-                                                        // $("#select" + metadataId).trigger("click");
+                                                        // $("#select" + metadata.id).trigger("click");
                                                         // $("#select" + currentMetadataId).trigger("click");
-                                                        selectClick(metadataId, view, opaque, transparent, metadataIdArray);
+                                                        selectClick(metadata.id, view, opaque, transparent, metadataIdArray);
                                                         selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray);
 
-                                                        if ($("#tlicon" + metadataId).attr("class") === "bi-circle") {
-                                                            const imageUrl = $("#image" + metadataId).attr("src").replace("/gif/" + metadataId, "/225/" + metadataId);
-                                                            $("#image" + metadataId).attr("src", imageUrl);
-                                                            $("#image" + metadataId).css("opacity", "1.0");
+                                                        if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
+                                                            const imageUrl = $("#image" + metadata.id).attr("src").replace("/gif/" + metadata.id, "/225/" + metadata.id);
+                                                            $("#image" + metadata.id).attr("src", imageUrl);
+                                                            $("#image" + metadata.id).css("opacity", "1.0");
                                                         }
                                                         if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle") {
                                                             const imageUrl = $("#image" + currentMetadataId).attr("src").replace("/gif/" + currentMetadataId, "/225/" + currentMetadataId);
@@ -2535,13 +2509,10 @@
                                     shashin.printMessageToConsole("lastSelectionPos undefined or null", {tag: "multiselect"});
                                 }
                             }
-                        }, 0);
-                    }
+                        }
+                    }, 0);
                 }
-            }
-        });
-        $("#photoThumbnailContainer" + metadata.id).hover(function (e) {
-            e.preventDefault();
+            });
 
             if (metadata.type.includes("video") && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
             ) {
@@ -2554,6 +2525,8 @@
                 }
             }
         }, function () {
+            $(document).unbind("keydown");
+
             if (metadata.type.includes("video")) {
                 const jpgUrl = $("#image" + metadata.id).attr("src").replace("/gif/" + metadata.id, "/225/" + metadata.id);
                 $("#image" + metadata.id).attr("src", jpgUrl);
