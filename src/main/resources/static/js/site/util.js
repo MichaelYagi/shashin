@@ -586,20 +586,20 @@ class Util {
           platform =
             window.navigator?.userAgentData?.platform ||
             window.navigator.platform,
-          macosPlatforms = ["Macintosh", "MacIntel", "MacPPC", "Mac68K"],
-          windowsPlatforms = ["Win32", "Win64", "Windows", "WinCE"],
-          iosPlatforms = ["iPhone", "iPad", "iPod"],
+          macosPlatforms = ["macintosh", "macintel", "macppc", "mac68k"],
+          windowsPlatforms = ["win32", "win64", "windows", "wince"],
+          iosPlatforms = ["iphone", "ipad", "ipod"],
           os = "";
 
-        if (macosPlatforms.indexOf(platform) !== -1) {
+        if (macosPlatforms.indexOf(platform.toLowerCase()) !== -1) {
           os = "MacOS";
-        } else if (iosPlatforms.indexOf(platform) !== -1) {
+        } else if (iosPlatforms.indexOf(platform.toLowerCase()) !== -1) {
           os = "iOS";
-        } else if (windowsPlatforms.indexOf(platform) !== -1) {
+        } else if (windowsPlatforms.indexOf(platform.toLowerCase()) !== -1) {
           os = "Windows";
-        } else if (/Android/.test(userAgent)) {
+        } else if (/android/.test(userAgent.toLowerCase())) {
           os = "Android";
-        } else if (/Linux/.test(platform)) {
+        } else if (/linux/.test(platform.toLowerCase())) {
           os = "Linux";
         }
 

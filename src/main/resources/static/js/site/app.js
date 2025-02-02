@@ -2401,7 +2401,7 @@
                     shashin.printMessageToConsole("s key pressed", {tag: "multiselect"});
 
                     batchSelect();
-                } else if ((e.key === "Shift" || e.code === "ShiftLeft" || e.code === "ShiftRight" || e.keyCode === 16)) {
+                } else if (e.key === "Shift" || e.code === "ShiftLeft" || e.code === "ShiftRight" || e.keyCode === 16) {
                     shashin.printMessageToConsole("Shift key pressed", {tag: "multiselect"});
 
                     batchSelect();
