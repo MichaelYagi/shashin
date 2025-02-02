@@ -2149,39 +2149,48 @@
         $("#select" + metadata.id).on("click", function (e) {
             e.preventDefault();
 
-            if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
-                shashin.lastSelectedMetadataId = metadata.id;
-                $("#tntl" + metadata.id).show();
-                $("#tlicon" + metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
-                $("#image" + metadata.id).css("opacity", opaque);
-                //$("#tntr" + metadata.id).hide();
-                $("#tncentered" + metadata.id).hide();
-                $("#tnbr" + metadata.id).hide();
-                $("#tnbl" + metadata.id).hide();
+            selectClick(metadata.id, view, opaque, transparent, metadataIdArray);
+        });
+
+        function selectClick(metadataId, view, opaque, transparent, metadataIdArray) {
+            let isVideo = false;
+
+            if ($("#photoThumbnailContainer"+metadataId).hasClass("is-video")) {
+                isVideo = true;
+            }
+
+            if ($("#tlicon" + metadataId).attr("class") === "bi-circle") {
+                shashin.lastSelectedMetadataId = metadataId;
+                $("#tntl" + metadataId).show();
+                $("#tlicon" + metadataId).addClass('bi-circle-fill').removeClass('bi-circle');
+                $("#image" + metadataId).css("opacity", opaque);
+                $("#tncentered" + metadataId).hide();
+                $("#tnbr" + metadataId).hide();
+                $("#tnbl" + metadataId).hide();
                 // List of selected media
-                shashin.addToMetadataIdList(metadata.id);
-                shashin.addToMetadataFilenamesList($('#filename' + metadata.id).val());
-                shashin.addToMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
-                if (metadata.type.includes("video")) {
-                    const jpgUrl = $("#image" + metadata.id).attr("src").replace("/gif/" + metadata.id, "/225/" + metadata.id);
-                    $("#image" + metadata.id).attr("src", jpgUrl);
+                shashin.addToMetadataIdList(metadataId);
+                shashin.addToMetadataFilenamesList($('#filename' + metadataId).val());
+                shashin.addToMetadataThumbnailsList($('#thumbnailCentered' + metadataId).val());
+                if (isVideo) {
+                    const jpgUrl = $("#image" + metadataId).attr("src").replace("/gif/" + metadataId, "/225/" + metadataId);
+                    $("#image" + metadataId).attr("src", jpgUrl);
                 }
             } else {
-                $("#tntl" + metadata.id).show();
-                shashin.lastSelectedMetadataId = metadata.id;
-                $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
-                $("#image" + metadata.id).css("opacity", opaque);
-                $("#tntr" + metadata.id).show();
-                $("#tncentered" + metadata.id).show();
-                $("#tnbr" + metadata.id).show();
-                $("#tnbl" + metadata.id).show();
-                shashin.removeFromMetadataIdList(metadata.id);
-                shashin.removeFromMetadataFilenamesList($('#filename' + metadata.id).val());
-                shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
-                if (metadata.type.includes("video") && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
+                $("#tntl" + metadataId).show();
+                shashin.lastSelectedMetadataId = metadataId;
+                $("#tlicon" + metadataId).addClass('bi-circle').removeClass('bi-circle-fill');
+                $("#image" + metadataId).css("opacity", opaque);
+                $("#tntr" + metadataId).show();
+                $("#tncentered" + metadataId).show();
+                $("#tnbr" + metadataId).show();
+                $("#tnbl" + metadataId).show();
+                shashin.removeFromMetadataIdList(metadataId);
+                shashin.removeFromMetadataFilenamesList($('#filename' + metadataId).val());
+                shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadataId).val());
+                if (isVideo && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
                 ) {
-                    const gifUrl = $("#image" + metadata.id).attr("src").replace("/225/" + metadata.id, "/gif/" + metadata.id);
-                    $("#image" + metadata.id).attr("src", gifUrl);
+                    const gifUrl = $("#image" + metadataId).attr("src").replace("/225/" + metadataId, "/gif/" + metadataId);
+                    $("#image" + metadataId).attr("src", gifUrl);
                 }
             }
 
@@ -2259,7 +2268,7 @@
                     trackShareDownload(albumId,albumName,shareLink);
                 });
             }
-        });
+        }
 
         $("#image" + metadata.id).on('error', function() {
             $("#image" + metadata.id).attr("src", "/api/v1/thumbnails/225/"+metadata.id);
@@ -2456,15 +2465,8 @@
                                                         continue;
                                                     }
 
-                                                    $("#select" + currentMetadataId).trigger("click");
-
-                                                    if ($("#tlicon" + currentMetadataId).hasClass("bi-circle")) {
-                                                        $("#image" + currentMetadataId).css("opacity", "1");
-                                                        if ($("#image" + currentMetadataId).attr("src").indexOf("/api/v1/thumbnails/gif/") >= 0) {
-                                                            const convertedUrl = $("#image" + currentMetadataId).attr("src").replace("/gif/", "/225/");
-                                                            $("#image" + currentMetadataId).attr("src",convertedUrl);
-                                                        }
-                                                    }
+                                                    // $("#select" + currentMetadataId).trigger("click");
+                                                    selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray);
 
                                                     shashin.lastSelectedMetadataId = metadata.id;
                                                 }
@@ -2472,15 +2474,10 @@
                                                 const compareSecond = (direction === "down") ? metadata.id : lastSelectedMetadataId;
                                                 if (currentMetadataId === compareSecond) {
                                                     if (direction === "up") {
-                                                        $("#select" + metadata.id).trigger("click");
-                                                        $("#select" + currentMetadataId).trigger("click");
-
-                                                        if ($("#tlicon" + metadata.id).hasClass("bi-circle")) {
-                                                            $("#image" + metadata.id).css("opacity", "1");
-                                                        }
-                                                        if ($("#tlicon" + currentMetadataId).hasClass("bi-circle")) {
-                                                            $("#image" + currentMetadataId).css("opacity", "1");
-                                                        }
+                                                        // $("#select" + metadata.id).trigger("click");
+                                                        // $("#select" + currentMetadataId).trigger("click");
+                                                        selectClick(metadata.id, view, opaque, transparent, metadataIdArray);
+                                                        selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray);
                                                     }
 
                                                     break;
