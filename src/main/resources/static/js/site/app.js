@@ -2471,6 +2471,11 @@
 
                                                     // $("#select" + currentMetadataId).trigger("click");
                                                     selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray);
+                                                    if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle") {
+                                                        const imageUrl = $("#image" + currentMetadataId).attr("src").replace("/gif/" + currentMetadataId, "/225/" + currentMetadataId);
+                                                        $("#image" + currentMetadataId).attr("src", imageUrl);
+                                                        $("#image" + currentMetadataId).css("opacity", "1.0");
+                                                    }
 
                                                     shashin.lastSelectedMetadataId = metadata.id;
                                                 }
@@ -2482,6 +2487,17 @@
                                                         // $("#select" + currentMetadataId).trigger("click");
                                                         selectClick(metadata.id, view, opaque, transparent, metadataIdArray);
                                                         selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray);
+
+                                                        if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
+                                                            const imageUrl = $("#image" + metadata.id).attr("src").replace("/gif/" + metadata.id, "/225/" + metadata.id);
+                                                            $("#image" + metadata.id).attr("src", imageUrl);
+                                                            $("#image" + metadata.id).css("opacity", "1.0");
+                                                        }
+                                                        if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle") {
+                                                            const imageUrl = $("#image" + currentMetadataId).attr("src").replace("/gif/" + currentMetadataId, "/225/" + currentMetadataId);
+                                                            $("#image" + currentMetadataId).attr("src", imageUrl);
+                                                            $("#image" + currentMetadataId).css("opacity", "1.0");
+                                                        }
                                                     }
 
                                                     break;
