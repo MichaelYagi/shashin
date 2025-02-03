@@ -315,4 +315,70 @@ describe('#Util tests', function() {
         aCookie = Util.getCookie("someothercookiename");
         assert.equal(aCookie, "");
     })
+
+    it('Get OS tests', function() {
+        const windowRef = global.window;
+
+        global.window = {
+            navigator: {
+                userAgent: undefined,
+                platform: undefined,
+                userAgentData: {
+                    platform: undefined
+                }
+            }
+        };
+        let os = Util.getOS();
+        assert.equal(os, "");
+
+        global.window = {
+            navigator: {
+                userAgent: undefined,
+                platform: "macppc",
+                userAgentData: {
+                    platform: undefined
+                }
+            }
+        };
+        os = Util.getOS();
+        assert.equal(os, "MacOS");
+
+        global.window = {
+            navigator: {
+                userAgent: undefined,
+                platform: undefined,
+                userAgentData: {
+                    platform: "WiNdOwS"
+                }
+            }
+        };
+        os = Util.getOS();
+        assert.equal(os, "Windows");
+
+        global.window = {
+            navigator: {
+                userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+                platform: undefined,
+                userAgentData: {
+                    platform: undefined
+                }
+            }
+        };
+        os = Util.getOS();
+        assert.equal(os, "");
+
+        global.window = {
+            navigator: {
+                userAgent: 'Mozilla/5.0 (Linux; Android 15) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.6834.164 Mobile Safari/537.36',
+                platform: undefined,
+                userAgentData: {
+                    platform: undefined
+                }
+            }
+        };
+        os = Util.getOS();
+        assert.equal(os, "Android");
+
+        global.window = windowRef;
+    })
 })

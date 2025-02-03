@@ -583,24 +583,22 @@ class Util {
 
     static getOS() {
         let userAgent = window.navigator.userAgent,
-          platform =
-            window.navigator?.userAgentData?.platform ||
-            window.navigator.platform,
-          macosPlatforms = ["macintosh", "macintel", "macppc", "mac68k"],
-          windowsPlatforms = ["win32", "win64", "windows", "wince"],
-          iosPlatforms = ["iphone", "ipad", "ipod"],
-          os = "";
+            platform = window.navigator?.userAgentData?.platform || window.navigator.platform,
+            macosPlatforms = ["macintosh", "macintel", "macppc", "mac68k"],
+            windowsPlatforms = ["win32", "win64", "windows", "wince"],
+            iosPlatforms = ["iphone", "ipad", "ipod"],
+            os = "";
 
-        if (macosPlatforms.indexOf(platform.toLowerCase()) !== -1) {
-          os = "MacOS";
-        } else if (iosPlatforms.indexOf(platform.toLowerCase()) !== -1) {
-          os = "iOS";
-        } else if (windowsPlatforms.indexOf(platform.toLowerCase()) !== -1) {
-          os = "Windows";
-        } else if (/android/.test(userAgent.toLowerCase())) {
-          os = "Android";
-        } else if (/linux/.test(platform.toLowerCase())) {
-          os = "Linux";
+        if (platform !== undefined && platform !== null && macosPlatforms.indexOf(platform.toLowerCase()) !== -1) {
+            os = "MacOS";
+        } else if (platform !== undefined && platform !== null && iosPlatforms.indexOf(platform.toLowerCase()) !== -1) {
+            os = "iOS";
+        } else if (platform !== undefined && platform !== null && windowsPlatforms.indexOf(platform.toLowerCase()) !== -1) {
+            os = "Windows";
+        } else if (platform !== undefined && platform !== null && /linux/.test(platform.toLowerCase())) {
+            os = "Linux";
+        } else if (userAgent !== undefined && userAgent !== null && /android/.test(userAgent.toLowerCase())) {
+            os = "Android";
         }
 
         return os;
