@@ -2172,8 +2172,10 @@
                     shashin.lastSelectedMetadataId = metadataId;
                     shashin.lastSelectedMetadataSelected = true;
                     $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                    $('.photo-thumbnail-image').removeClass("pb-1");
                     if (shashin.multiSelected === true) {
                         $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
+                        $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
                     }
                 }
                 // List of selected media
@@ -2196,7 +2198,9 @@
                     shashin.lastSelectedMetadataId = metadata.id;
                     shashin.lastSelectedMetadataSelected = false;
                     $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                    $('.photo-thumbnail-image').removeClass("pb-1");
                     $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
+                    $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
                 }
                 shashin.removeFromMetadataIdList(metadataId);
                 shashin.removeFromMetadataFilenamesList($('#filename' + metadataId).val());
@@ -2235,6 +2239,7 @@
             } else {
                 $("#appSearch").show();
                 $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                $('.photo-thumbnail-image').removeClass("pb-1");
                 shashin.multiSelected = false;
                 $("#timelineAppTools").hide();
                 $("#albumAppTools").hide();
@@ -2306,7 +2311,11 @@
                     $("#tnbr" + metadata.id).hide();
                     $("#tnbl" + metadata.id).hide();
                     $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                    $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
+                    $('.photo-thumbnail-image').removeClass("pb-1");
+                    if (shashin.multiSelected === true) {
+                        $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
+                        $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
+                    }
                     // List of selected media
                     shashin.addToMetadataIdList(metadata.id);
                     shashin.addToMetadataFilenamesList($('#filename' + metadata.id).val());
@@ -2326,7 +2335,11 @@
                     $("#tnbr" + metadata.id).show();
                     $("#tnbl" + metadata.id).show();
                     $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                    $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
+                    $('.photo-thumbnail-image').removeClass("pb-1");
+                    if (shashin.multiSelected === true) {
+                        $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
+                        $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
+                    }
                     shashin.removeFromMetadataIdList(metadata.id);
                     shashin.removeFromMetadataFilenamesList($('#filename' + metadata.id).val());
                     shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
@@ -2364,6 +2377,7 @@
             } else {
                 $("#appSearch").show();
                 $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                $('.photo-thumbnail-image').removeClass("pb-1");
                 shashin.multiSelected = false;
                 $("#timelineAppTools").hide();
                 if (view === "timeline" || view === "folder" || view === "matches" || view === "person" || view === "compreface") {
@@ -2470,6 +2484,7 @@
             if (metadataIdArray.length > 0) {
                 setTimeout(function () {
                     $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                    $('.photo-thumbnail-image').removeClass("pb-1");
 
                     if (shashin.lastSelectedMetadataId !== "" && shashin.lastSelectedMetadataId !== metadata.id) {
                         const selectionHash = getElementLocation($("#photoThumbnailContainer" + shashin.lastSelectedMetadataId)[0]);
@@ -2613,10 +2628,12 @@
                             }
 
                             $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                            $('.photo-thumbnail-image').removeClass("pb-1");
 
                             // Put a border around select point
                             if (shashin.getMetadataIdList().length > 0) {
                                 $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
+                                $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
                                 shashin.multiSelected = true;
                             }
                         } else {
@@ -2945,6 +2962,7 @@
         $("#appSearch").show();
         shashin.multiSelected = false;
         $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+        $('.photo-thumbnail-image').removeClass("pb-1");
         $("#timelineAppTools").hide();
         $("#timelineTools").show();
         $("#albumTools").hide();
@@ -2976,6 +2994,7 @@
         $("#appSearch").show();
         shashin.multiSelected = false;
         $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+        $('.photo-thumbnail-image').removeClass("pb-1");
         $("#timelineAppTools").hide();
         $("#timelineTools").hide();
         $("#albumTools").show();
@@ -3001,6 +3020,7 @@
             $("#appSearch").show();
             shashin.multiSelected = false;
             $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+            $('.photo-thumbnail-image').removeClass("pb-1");
             $("#timelineAppTools").hide();
             $("#timelineTools").show();
             $("#albumTools").hide();
