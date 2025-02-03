@@ -2446,11 +2446,14 @@
             $(document).bind("keydown", function (e) {
                 e.preventDefault();
 
+                // Shift key may not be available for Mac
                 if (Util.getOS() === "MacOS" && (e.key === "s" || e.code === "KeyS" || e.keyCode === 83)) {
                     shashin.printMessageToConsole("s key pressed", {tag: "multiselect"});
 
                     batchSelect();
-                } else if (e.key === "Shift" || e.code === "ShiftLeft" || e.code === "ShiftRight" || e.keyCode === 16) {
+                }
+
+                if (e.key === "Shift" || e.code === "ShiftLeft" || e.code === "ShiftRight" || e.keyCode === 16) {
                     shashin.printMessageToConsole("Shift key pressed", {tag: "multiselect"});
 
                     batchSelect();
