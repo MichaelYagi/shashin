@@ -2171,14 +2171,14 @@
                 if (clicked) {
                     shashin.lastSelectedMetadataId = metadataId;
                     shashin.lastSelectedMetadataSelected = true;
-                    $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                    $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
+                    $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                    $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-white");
                     if (shashin.multiSelected === true) {
                         let borderColor = "primary";
                         if (shashin.darkMode === true) {
                             borderColor = "white";
                         }
-                        $("#image" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-"+borderColor);
+                        $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-"+borderColor);
                     }
                 }
                 // List of selected media
@@ -2200,14 +2200,14 @@
                 if (clicked) {
                     shashin.lastSelectedMetadataId = metadata.id;
                     shashin.lastSelectedMetadataSelected = false;
-                    $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                    $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
+                    $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                    $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-white");
 
                     let borderColor = "primary";
                     if (shashin.darkMode === true) {
                         borderColor = "white";
                     }
-                    $("#image" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-"+borderColor);
+                    $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-"+borderColor);
                 }
                 shashin.removeFromMetadataIdList(metadataId);
                 shashin.removeFromMetadataFilenamesList($('#filename' + metadataId).val());
@@ -2245,8 +2245,8 @@
                 $('.thumbnail-centered').hide();
             } else {
                 $("#appSearch").show();
-                $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
+                $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-white");
                 shashin.multiSelected = false;
                 $("#timelineAppTools").hide();
                 $("#albumAppTools").hide();
@@ -2317,14 +2317,14 @@
                     $("#tncentered" + metadata.id).hide();
                     $("#tnbr" + metadata.id).hide();
                     $("#tnbl" + metadata.id).hide();
-                    $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                    $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
+                    $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                    $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-white");
 
                     let borderColor = "primary";
                     if (shashin.darkMode === true) {
                         borderColor = "white";
                     }
-                    $("#image" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-"+borderColor);
+                    $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-"+borderColor);
                     // List of selected media
                     shashin.addToMetadataIdList(metadata.id);
                     shashin.addToMetadataFilenamesList($('#filename' + metadata.id).val());
@@ -2343,14 +2343,14 @@
                     $("#tncentered" + metadata.id).show();
                     $("#tnbr" + metadata.id).show();
                     $("#tnbl" + metadata.id).show();
-                    $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                    $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
+                    $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                    $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-white");
 
                     let borderColor = "primary";
                     if (shashin.darkMode === true) {
                         borderColor = "white";
                     }
-                    $("#image" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-"+borderColor);
+                    $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-"+borderColor);
                     shashin.removeFromMetadataIdList(metadata.id);
                     shashin.removeFromMetadataFilenamesList($('#filename' + metadata.id).val());
                     shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
@@ -2387,8 +2387,8 @@
                 $('.thumbnail-centered').hide();
             } else {
                 $("#appSearch").show();
-                $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
+                $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-white");
                 shashin.multiSelected = false;
                 $("#timelineAppTools").hide();
                 if (view === "timeline" || view === "folder" || view === "matches" || view === "person" || view === "compreface") {
@@ -2494,8 +2494,8 @@
 
             if (metadataIdArray.length > 0) {
                 setTimeout(function () {
-                    $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                    $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
+                    $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                    $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-white");
 
                     if (shashin.lastSelectedMetadataId !== "" && shashin.lastSelectedMetadataId !== metadata.id) {
                         const selectionHash = getElementLocation($("#photoThumbnailContainer" + shashin.lastSelectedMetadataId)[0]);
@@ -2638,8 +2638,8 @@
                                 }
                             }
 
-                            $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                            $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
+                            $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                            $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-white");
 
                             let borderColor = "primary";
                             if (shashin.darkMode === true) {
@@ -2648,7 +2648,7 @@
 
                             // Put a border around select point
                             if (shashin.getMetadataIdList().length > 0) {
-                                $("#image" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-" + borderColor);
+                                $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-" + borderColor);
                                 shashin.multiSelected = true;
                             }
                         } else {
@@ -2976,8 +2976,8 @@
 
         $("#appSearch").show();
         shashin.multiSelected = false;
-        $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
-        $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
+        $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+        $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-white");
         $("#timelineAppTools").hide();
         $("#timelineTools").show();
         $("#albumTools").hide();
@@ -3008,8 +3008,8 @@
 
         $("#appSearch").show();
         shashin.multiSelected = false;
-        $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
-        $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
+        $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+        $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-white");
         $("#timelineAppTools").hide();
         $("#timelineTools").hide();
         $("#albumTools").show();
@@ -3034,8 +3034,8 @@
 
             $("#appSearch").show();
             shashin.multiSelected = false;
-            $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
-            $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
+            $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+            $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-white");
             $("#timelineAppTools").hide();
             $("#timelineTools").show();
             $("#albumTools").hide();
