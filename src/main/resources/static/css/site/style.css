@@ -486,3 +486,15 @@ footer {
   height: 20px;
   width: 20px;
 }
+
+.border.border-3.border-white {
+  /*z-index: 99 !important;*/
+  /*position: relative;*/
+  overflow:hidden;
+}
+
+.border.border-3.border-black {
+  /*z-index: 99 !important;*/
+  /*position: relative;*/
+  overflow:hidden;
+}
