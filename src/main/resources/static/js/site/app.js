@@ -44,6 +44,7 @@
     shashin.slideshowYDown = null;
     shashin.lastSelectedMetadataId = "";
     shashin.lastSelectedMetadataSelected = false;
+    shashin.firstTimeSelected = false;
     shashin.consoleTypes = Object.freeze({
         error: 0,
         info: 1,
@@ -2166,7 +2167,10 @@
                     shashin.lastSelectedMetadataSelected = true;
                     $('.bi-circle').css("color", "lightgray");
                     $('.bi-circle-fill').css("color", "lightgray");
-                    $("#tlicon"+shashin.lastSelectedMetadataId).css('color', "#CC5500");
+                    if (shashin.firstTimeSelected === true) {
+                        $("#tlicon" + shashin.lastSelectedMetadataId).css('color', "#CC5500");
+                    }
+                    shashin.firstTimeSelected = true;
                 }
                 $("#tntl" + metadataId).show();
                 $("#tlicon" + metadataId).addClass('bi-circle-fill').removeClass('bi-circle');
@@ -2235,6 +2239,7 @@
                 $("#appSearch").show();
                 $('.bi-circle').css("color", "lightgray");
                 $('.bi-circle-fill').css("color", "lightgray");
+                shashin.firstTimeSelected = false;
                 $("#timelineAppTools").hide();
                 $("#albumAppTools").hide();
                 $("#matchesAppTools").hide();
@@ -2366,6 +2371,7 @@
                 $("#appSearch").show();
                 $('.bi-circle').css("color", "lightgray");
                 $('.bi-circle-fill').css("color", "lightgray");
+                shashin.firstTimeSelected = false;
                 $("#timelineAppTools").hide();
                 if (view === "timeline" || view === "folder" || view === "matches" || view === "person" || view === "compreface") {
                     $("#timelineTools").show();
@@ -2932,6 +2938,7 @@
         $(".thumbnail-tl a span").addClass('bi-circle').removeClass('bi-circle-fill');
 
         $("#appSearch").show();
+        shashin.firstTimeSelected = false;
         $('.bi-circle').css("color", "lightgray");
         $('.bi-circle-fill').css("color", "lightgray");
         $("#timelineAppTools").hide();
@@ -2963,6 +2970,7 @@
         $(".thumbnail-tl a span").addClass('bi-circle').removeClass('bi-circle-fill');
 
         $("#appSearch").show();
+        shashin.firstTimeSelected = false;
         $('.bi-circle').css("color", "lightgray");
         $('.bi-circle-fill').css("color", "lightgray");
         $("#timelineAppTools").hide();
@@ -2988,6 +2996,7 @@
             $(".thumbnail-tl a span").addClass('bi-circle').removeClass('bi-circle-fill');
 
             $("#appSearch").show();
+            shashin.firstTimeSelected = false;
             $('.bi-circle').css("color", "lightgray");
             $('.bi-circle-fill').css("color", "lightgray");
             $("#timelineAppTools").hide();
