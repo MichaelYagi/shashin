@@ -2522,7 +2522,10 @@
                                             } else {
                                                 if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle-fill") {
                                                     selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray);
-                                                    $("#image" + currentMetadataId).css("opacity", transparent);
+                                                    if (currentMetadataId !== metadata.id) {
+                                                        $("#image" + currentMetadataId).css("opacity", transparent);
+                                                        $("#tntl" + currentMetadataId).css("display", "none");
+                                                    }
                                                 }
                                             }
 
@@ -2545,7 +2548,10 @@
                                                 } else {
                                                     if ($("#tlicon" + metadata.id).attr("class") === "bi-circle-fill") {
                                                         selectClick(metadata.id, view, opaque, transparent, metadataIdArray);
-                                                        $("#image" + metadata.id).css("opacity", transparent);
+                                                        if (currentMetadataId !== metadata.id) {
+                                                            $("#image" + metadata.id).css("opacity", transparent);
+                                                            $("#tntl" + metadata.id).css("display", "none");
+                                                        }
                                                     }
                                                 }
 
@@ -2559,7 +2565,10 @@
                                                 } else {
                                                     if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle-fill") {
                                                         selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray);
-                                                        $("#image" + currentMetadataId).css("opacity", transparent);
+                                                        if (currentMetadataId !== metadata.id) {
+                                                            $("#image" + currentMetadataId).css("opacity", transparent);
+                                                            $("#tntl" + currentMetadataId).css("display", "none");
+                                                        }
                                                     }
                                                 };
                                             }
