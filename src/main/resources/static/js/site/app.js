@@ -2150,10 +2150,10 @@
         $("#select" + metadata.id).on("click", function (e) {
             e.preventDefault();
 
-            selectClick(metadata.id, view, opaque, transparent, metadataIdArray);
+            selectClick(metadata.id, view, opaque, transparent, metadataIdArray, true);
         });
 
-        function selectClick(metadataId, view, opaque, transparent, metadataIdArray) {
+        function selectClick(metadataId, view, opaque, transparent, metadataIdArray, clicked) {
             let isVideo = false;
 
             if ($("#photoThumbnailContainer"+metadataId).hasClass("is-video")) {
@@ -2161,8 +2161,13 @@
             }
 
             if ($("#tlicon" + metadataId).attr("class") === "bi-circle") {
-                shashin.lastSelectedMetadataId = metadataId;
-                shashin.lastSelectedMetadataSelected = true;
+                if (clicked) {
+                    shashin.lastSelectedMetadataId = metadataId;
+                    shashin.lastSelectedMetadataSelected = true;
+                    $('.bi-circle').css("color", "lightgray");
+                    $('.bi-circle-fill').css("color", "lightgray");
+                    $("#tlicon"+shashin.lastSelectedMetadataId).css('color', "#CC5500");
+                }
                 $("#tntl" + metadataId).show();
                 $("#tlicon" + metadataId).addClass('bi-circle-fill').removeClass('bi-circle');
                 $("#image" + metadataId).css("opacity", opaque);
@@ -2179,8 +2184,13 @@
                 }
             } else {
                 $("#tntl" + metadataId).show();
-                shashin.lastSelectedMetadataId = metadata.id;
-                shashin.lastSelectedMetadataSelected = false;
+                if (clicked) {
+                    shashin.lastSelectedMetadataId = metadata.id;
+                    shashin.lastSelectedMetadataSelected = false;
+                    $('.bi-circle').css("color", "lightgray");
+                    $('.bi-circle-fill').css("color", "lightgray");
+                    $("#tlicon"+shashin.lastSelectedMetadataId).css('color', "#CC5500");
+                }
                 $("#tlicon" + metadataId).addClass('bi-circle').removeClass('bi-circle-fill');
                 $("#image" + metadataId).css("opacity", opaque);
                 $("#tntr" + metadataId).show();
@@ -2449,6 +2459,10 @@
                 setTimeout(function () {
 
                     if (shashin.lastSelectedMetadataId !== "" && shashin.lastSelectedMetadataId !== metadata.id) {
+                        $('.bi-circle').css("color", "lightgray");
+                        $('.bi-circle-fill').css("color", "lightgray");
+                        $("#tlicon"+shashin.lastSelectedMetadataId).css('color', "#CC5500");
+
                         const selectionHash = getElementLocation($("#photoThumbnailContainer" + shashin.lastSelectedMetadataId)[0]);
                         const lastSelectionPos = [selectionHash.x, selectionHash.y];
 
@@ -2516,12 +2530,12 @@
                                             $("#image" + currentMetadataId).attr("src", imageUrl);
                                             if (shashin.lastSelectedMetadataSelected === true) {
                                                 if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle") {
-                                                    selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray);
+                                                    selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray, false);
                                                     $("#image" + currentMetadataId).css("opacity", opaque);
                                                 }
                                             } else {
                                                 if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle-fill") {
-                                                    selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray);
+                                                    selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray, false);
                                                     if (currentMetadataId !== metadata.id) {
                                                         $("#image" + currentMetadataId).css("opacity", transparent);
                                                         $("#tntl" + currentMetadataId).css("display", "none");
@@ -2542,12 +2556,12 @@
                                                 $("#image" + metadata.id).attr("src", imageUrl);
                                                 if (shashin.lastSelectedMetadataSelected === true) {
                                                     if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
-                                                        selectClick(metadata.id, view, opaque, transparent, metadataIdArray);
+                                                        selectClick(metadata.id, view, opaque, transparent, metadataIdArray, false);
                                                         $("#image" + metadata.id).css("opacity", opaque);
                                                     }
                                                 } else {
                                                     if ($("#tlicon" + metadata.id).attr("class") === "bi-circle-fill") {
-                                                        selectClick(metadata.id, view, opaque, transparent, metadataIdArray);
+                                                        selectClick(metadata.id, view, opaque, transparent, metadataIdArray, false);
                                                         if (currentMetadataId !== metadata.id) {
                                                             $("#image" + metadata.id).css("opacity", transparent);
                                                             $("#tntl" + metadata.id).css("display", "none");
@@ -2559,12 +2573,12 @@
                                                 $("#image" + currentMetadataId).attr("src", imageUrl);
                                                 if (shashin.lastSelectedMetadataSelected === true) {
                                                     if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle") {
-                                                        selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray);
+                                                        selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray, false);
                                                         $("#image" + currentMetadataId).css("opacity", opaque);
                                                     }
                                                 } else {
                                                     if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle-fill") {
-                                                        selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray);
+                                                        selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray, false);
                                                         if (currentMetadataId !== metadata.id) {
                                                             $("#image" + currentMetadataId).css("opacity", transparent);
                                                             $("#tntl" + currentMetadataId).css("display", "none");
