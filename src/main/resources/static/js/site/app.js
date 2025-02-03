@@ -2491,6 +2491,8 @@
 
             if (metadataIdArray.length > 0) {
                 setTimeout(function () {
+                    $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                    $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
 
                     if (shashin.lastSelectedMetadataId !== "" && shashin.lastSelectedMetadataId !== metadata.id) {
                         const selectionHash = getElementLocation($("#photoThumbnailContainer" + shashin.lastSelectedMetadataId)[0]);
@@ -2620,7 +2622,7 @@
                                                             }
                                                         }
                                                     }
-                                                };
+                                                }
                                             }
 
                                             break;
@@ -2636,8 +2638,10 @@
                             if (shashin.darkMode === true) {
                                 borderColor = "white";
                             }
-                            $("#image" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-"+borderColor);
-                            shashin.multiSelected = true;
+                            if (shashin.getMetadataIdList().length > 0) {
+                                $("#image" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-" + borderColor);
+                                shashin.multiSelected = true;
+                            }
                         } else {
                             shashin.printMessageToConsole("lastSelectionPos undefined or null", {tag: "multiselect"});
                         }
