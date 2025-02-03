@@ -43,6 +43,7 @@
     shashin.slideshowXDown = null;
     shashin.slideshowYDown = null;
     shashin.lastSelectedMetadataId = "";
+    shashin.lastSelectedMetadataSelected = false;
     shashin.consoleTypes = Object.freeze({
         error: 0,
         info: 1,
@@ -2161,6 +2162,7 @@
 
             if ($("#tlicon" + metadataId).attr("class") === "bi-circle") {
                 shashin.lastSelectedMetadataId = metadataId;
+                shashin.lastSelectedMetadataSelected = true;
                 $("#tntl" + metadataId).show();
                 $("#tlicon" + metadataId).addClass('bi-circle-fill').removeClass('bi-circle');
                 $("#image" + metadataId).css("opacity", opaque);
@@ -2177,7 +2179,8 @@
                 }
             } else {
                 $("#tntl" + metadataId).show();
-                shashin.lastSelectedMetadataId = metadataId;
+                shashin.lastSelectedMetadataId = metadata.id;
+                shashin.lastSelectedMetadataSelected = false;
                 $("#tlicon" + metadataId).addClass('bi-circle').removeClass('bi-circle-fill');
                 $("#image" + metadataId).css("opacity", opaque);
                 $("#tntr" + metadataId).show();
@@ -2281,6 +2284,7 @@
             if ($('.bi-circle-fill')[0] || metadataIdArray.length > 0) {
                 if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
                     shashin.lastSelectedMetadataId = metadata.id;
+                    shashin.lastSelectedMetadataSelected = true;
                     $("#tntl" + metadata.id).show();
                     $("#tlicon" + metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
                     $("#image" + metadata.id).css("opacity", opaque);
@@ -2298,6 +2302,7 @@
                 } else {
                     $("#tntl" + metadata.id).show();
                     shashin.lastSelectedMetadataId = metadata.id;
+                    shashin.lastSelectedMetadataSelected = false;
                     $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
                     $("#image" + metadata.id).css("opacity", opaque);
                     $("#tncentered" + metadata.id).show();
@@ -2444,16 +2449,14 @@
                 setTimeout(function () {
 
                     if (shashin.lastSelectedMetadataId !== "" && shashin.lastSelectedMetadataId !== metadata.id) {
-                        const lastSelectedMetadataId = shashin.lastSelectedMetadataId;
-
-                        const selectionHash = getElementLocation($("#photoThumbnailContainer" + lastSelectedMetadataId)[0]);
+                        const selectionHash = getElementLocation($("#photoThumbnailContainer" + shashin.lastSelectedMetadataId)[0]);
                         const lastSelectionPos = [selectionHash.x, selectionHash.y];
 
                         const pointerHash = getElementLocation($("#photoThumbnailContainer" + metadata.id)[0]);
                         const pointerPos = [pointerHash.x, pointerHash.y];
 
                         if (lastSelectionPos[0] !== null && lastSelectionPos[1] !== null) {
-                            shashin.printMessageToConsole("Selected Media point [x, y]: " + JSON.stringify(lastSelectionPos) + ". MetadataId: " + lastSelectedMetadataId, {tag: "multiselect"});
+                            shashin.printMessageToConsole("Selected Media point [x, y]: " + JSON.stringify(lastSelectionPos) + ". MetadataId: " + shashin.lastSelectedMetadataId, {tag: "multiselect"});
                             shashin.printMessageToConsole("Shift Key point [x, y]: " + JSON.stringify(pointerPos) + ". MetadataId: " + metadata.id, {tag: "multiselect"});
 
                             const direction = (pointerPos[1] > lastSelectionPos[1] || (pointerPos[0] > lastSelectionPos[0] && pointerPos[1] >= lastSelectionPos[1])) ? "down" : "up";
@@ -2462,15 +2465,15 @@
 
                             // Avoids infinite loops
                             const whileLimit = 1000;
-                            if ($("#photoThumbnailContainer" + lastSelectedMetadataId).length > 0) {
-                                let container = $("#photoThumbnailContainer" + ((direction === "down") ? lastSelectedMetadataId : metadata.id));
+                            if ($("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).length > 0) {
+                                let container = $("#photoThumbnailContainer" + ((direction === "down") ? shashin.lastSelectedMetadataId : metadata.id));
 
                                 let selectedRowMetadataIds = container.siblings().addBack().map(function () {
                                     const metadataId = this.id.split("photoThumbnailContainer");
                                     return metadataId[1];
                                 }).toArray();
 
-                                let found = ($.inArray(((direction === "down") ? metadata.id : lastSelectedMetadataId), selectedRowMetadataIds) !== -1);
+                                let found = ($.inArray(((direction === "down") ? metadata.id : shashin.lastSelectedMetadataId), selectedRowMetadataIds) !== -1);
 
                                 let index = 0;
                                 while (found === false) {
@@ -2486,7 +2489,7 @@
                                         const metadataId = this.id.split("photoThumbnailContainer");
                                         return metadataId[1];
                                     }).toArray()
-                                    found = ($.inArray(((direction === "down") ? metadata.id : lastSelectedMetadataId), metadataIdArray) !== -1);
+                                    found = ($.inArray(((direction === "down") ? metadata.id : shashin.lastSelectedMetadataId), metadataIdArray) !== -1);
 
                                     $.merge(selectedRowMetadataIds, metadataIdArray);
                                     index++;
@@ -2495,45 +2498,70 @@
                                 shashin.printMessageToConsole("Looped " + index + " times finding metadata", {tag: "multiselect"});
 
                                 let start = false;
+                                let lastSelectedMetadataId = shashin.lastSelectedMetadataId;
+
                                 for (let index in selectedRowMetadataIds) {
                                     if (selectedRowMetadataIds.hasOwnProperty(index)) {
                                         const currentMetadataId = selectedRowMetadataIds[index];
-                                        const compareFirst = (direction === "down") ? lastSelectedMetadataId : metadata.id;
-                                        if (currentMetadataId === compareFirst || start === true) {
-                                            if (currentMetadataId === compareFirst) {
+                                        const compareOne = (direction === "down") ? lastSelectedMetadataId : metadata.id;
+
+                                        if (currentMetadataId === compareOne || start === true) {
+                                            if (currentMetadataId === compareOne) {
+                                                lastSelectedMetadataId = (direction === "down") ? metadata.id : shashin.lastSelectedMetadataId;
                                                 start = true;
                                                 continue;
                                             }
 
-                                            // $("#select" + currentMetadataId).trigger("click");
-                                            selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray);
-                                            if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle") {
-                                                const imageUrl = $("#image" + currentMetadataId).attr("src").replace("/gif/" + currentMetadataId, "/225/" + currentMetadataId);
-                                                $("#image" + currentMetadataId).attr("src", imageUrl);
-                                                $("#image" + currentMetadataId).css("opacity", "1.0");
+                                            const imageUrl = $("#image" + currentMetadataId).attr("src").replace("/gif/" + currentMetadataId, "/225/" + currentMetadataId);
+                                            $("#image" + currentMetadataId).attr("src", imageUrl);
+                                            if (shashin.lastSelectedMetadataSelected === true) {
+                                                if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle") {
+                                                    selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray);
+                                                    $("#image" + currentMetadataId).css("opacity", opaque);
+                                                }
+                                            } else {
+                                                if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle-fill") {
+                                                    selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray);
+                                                    $("#image" + currentMetadataId).css("opacity", transparent);
+                                                }
                                             }
 
-                                            shashin.lastSelectedMetadataId = metadata.id;
+                                            if (direction === "down") {
+                                                lastSelectedMetadataId = currentMetadataId;
+                                            }
                                         }
 
-                                        const compareSecond = (direction === "down") ? metadata.id : lastSelectedMetadataId;
-                                        if (currentMetadataId === compareSecond) {
-                                            if (direction === "up") {
-                                                // $("#select" + metadata.id).trigger("click");
-                                                // $("#select" + currentMetadataId).trigger("click");
-                                                selectClick(metadata.id, view, opaque, transparent, metadataIdArray);
-                                                selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray);
+                                        const compareTwo = (direction === "down") ? metadata.id : lastSelectedMetadataId;
 
-                                                if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
-                                                    const imageUrl = $("#image" + metadata.id).attr("src").replace("/gif/" + metadata.id, "/225/" + metadata.id);
-                                                    $("#image" + metadata.id).attr("src", imageUrl);
-                                                    $("#image" + metadata.id).css("opacity", "1.0");
+                                        if (currentMetadataId === compareTwo) {
+                                            if (direction === "up") {
+                                                let imageUrl = $("#image" + metadata.id).attr("src").replace("/gif/" + metadata.id, "/225/" + metadata.id);
+                                                $("#image" + metadata.id).attr("src", imageUrl);
+                                                if (shashin.lastSelectedMetadataSelected === true) {
+                                                    if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
+                                                        selectClick(metadata.id, view, opaque, transparent, metadataIdArray);
+                                                        $("#image" + metadata.id).css("opacity", opaque);
+                                                    }
+                                                } else {
+                                                    if ($("#tlicon" + metadata.id).attr("class") === "bi-circle-fill") {
+                                                        selectClick(metadata.id, view, opaque, transparent, metadataIdArray);
+                                                        $("#image" + metadata.id).css("opacity", transparent);
+                                                    }
                                                 }
-                                                if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle") {
-                                                    const imageUrl = $("#image" + currentMetadataId).attr("src").replace("/gif/" + currentMetadataId, "/225/" + currentMetadataId);
-                                                    $("#image" + currentMetadataId).attr("src", imageUrl);
-                                                    $("#image" + currentMetadataId).css("opacity", "1.0");
-                                                }
+
+                                                imageUrl = $("#image" + currentMetadataId).attr("src").replace("/gif/" + currentMetadataId, "/225/" + currentMetadataId);
+                                                $("#image" + currentMetadataId).attr("src", imageUrl);
+                                                if (shashin.lastSelectedMetadataSelected === true) {
+                                                    if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle") {
+                                                        selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray);
+                                                        $("#image" + currentMetadataId).css("opacity", opaque);
+                                                    }
+                                                } else {
+                                                    if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle-fill") {
+                                                        selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray);
+                                                        $("#image" + currentMetadataId).css("opacity", transparent);
+                                                    }
+                                                };
                                             }
 
                                             break;
@@ -2852,6 +2880,7 @@
             $("button").find("span").addClass('bi-download').removeClass('spinner-grow');
         }
         shashin.lastSelectedMetadataId = "";
+        shashin.lastSelectedMetadataSelected = false;
         shashin.removeAllMetadataFilenamesList();
         shashin.removeAllMetadataThumbnailsList();
         shashin.removeAllMetadataIdList();
@@ -2880,6 +2909,7 @@
             $("button").find("span").addClass('bi-download').removeClass('spinner-grow');
         }
         shashin.lastSelectedMetadataId = "";
+        shashin.lastSelectedMetadataSelected = false;
         shashin.removeAllMetadataFilenamesList();
         shashin.removeAllMetadataThumbnailsList();
         shashin.removeAllMetadataIdList();
@@ -2905,6 +2935,7 @@
             e.preventDefault();
 
             shashin.lastSelectedMetadataId = "";
+            shashin.lastSelectedMetadataSelected = false;
             $(".thumbnail-centered").hide();
             //$(".thumbnail-tr").hide();
             $(".thumbnail-br").hide();
