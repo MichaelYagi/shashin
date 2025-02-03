@@ -2162,21 +2162,26 @@
             }
 
             if ($("#tlicon" + metadataId).attr("class") === "bi-circle") {
-                if (clicked) {
-                    shashin.lastSelectedMetadataId = metadataId;
-                    shashin.lastSelectedMetadataSelected = true;
-                    $('.photo-thumbnail-image').removeClass("border").removeClass("border-primary-subtle");
-                    if (shashin.firstTimeSelected === true) {
-                        $("#image" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-primary-subtle");
-                    }
-                    shashin.firstTimeSelected = true;
-                }
                 $("#tntl" + metadataId).show();
                 $("#tlicon" + metadataId).addClass('bi-circle-fill').removeClass('bi-circle');
                 $("#image" + metadataId).css("opacity", opaque);
                 $("#tncentered" + metadataId).hide();
                 $("#tnbr" + metadataId).hide();
                 $("#tnbl" + metadataId).hide();
+                if (clicked) {
+                    shashin.lastSelectedMetadataId = metadataId;
+                    shashin.lastSelectedMetadataSelected = true;
+                    $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                    $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
+                    if (shashin.firstTimeSelected === true) {
+                        let borderColor = "primary";
+                        if (shashin.darkMode === true) {
+                            borderColor = "white";
+                        }
+                        $("#image" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-"+borderColor);
+                    }
+                    shashin.firstTimeSelected = true;
+                }
                 // List of selected media
                 shashin.addToMetadataIdList(metadataId);
                 shashin.addToMetadataFilenamesList($('#filename' + metadataId).val());
@@ -2187,18 +2192,24 @@
                 }
             } else {
                 $("#tntl" + metadataId).show();
-                if (clicked) {
-                    shashin.lastSelectedMetadataId = metadata.id;
-                    shashin.lastSelectedMetadataSelected = false;
-                    $('.photo-thumbnail-image').removeClass("border").removeClass("border-primary-subtle");
-                    $("#image" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-primary-subtle");
-                }
                 $("#tlicon" + metadataId).addClass('bi-circle').removeClass('bi-circle-fill');
                 $("#image" + metadataId).css("opacity", opaque);
                 $("#tntr" + metadataId).show();
                 $("#tncentered" + metadataId).show();
                 $("#tnbr" + metadataId).show();
                 $("#tnbl" + metadataId).show();
+                if (clicked) {
+                    shashin.lastSelectedMetadataId = metadata.id;
+                    shashin.lastSelectedMetadataSelected = false;
+                    $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                    $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
+
+                    let borderColor = "primary";
+                    if (shashin.darkMode === true) {
+                        borderColor = "white";
+                    }
+                    $("#image" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-"+borderColor);
+                }
                 shashin.removeFromMetadataIdList(metadataId);
                 shashin.removeFromMetadataFilenamesList($('#filename' + metadataId).val());
                 shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadataId).val());
@@ -2235,7 +2246,8 @@
                 $('.thumbnail-centered').hide();
             } else {
                 $("#appSearch").show();
-                $('.photo-thumbnail-image').removeClass("border").removeClass("border-primary-subtle");
+                $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
                 shashin.firstTimeSelected = false;
                 $("#timelineAppTools").hide();
                 $("#albumAppTools").hide();
@@ -2299,8 +2311,6 @@
                 if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
                     shashin.lastSelectedMetadataId = metadata.id;
                     shashin.lastSelectedMetadataSelected = true;
-                    $('.photo-thumbnail-image').removeClass("border").removeClass("border-primary-subtle");
-                    $("#image" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-primary-subtle");
 
                     $("#tntl" + metadata.id).show();
                     $("#tlicon" + metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
@@ -2308,6 +2318,14 @@
                     $("#tncentered" + metadata.id).hide();
                     $("#tnbr" + metadata.id).hide();
                     $("#tnbl" + metadata.id).hide();
+                    $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                    $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
+
+                    let borderColor = "primary";
+                    if (shashin.darkMode === true) {
+                        borderColor = "white";
+                    }
+                    $("#image" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-"+borderColor);
                     // List of selected media
                     shashin.addToMetadataIdList(metadata.id);
                     shashin.addToMetadataFilenamesList($('#filename' + metadata.id).val());
@@ -2320,14 +2338,20 @@
                     $("#tntl" + metadata.id).show();
                     shashin.lastSelectedMetadataId = metadata.id;
                     shashin.lastSelectedMetadataSelected = false;
-                    $('.photo-thumbnail-image').removeClass("border").removeClass("border-primary-subtle");
-                    $("#image" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-primary-subtle");
 
                     $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
                     $("#image" + metadata.id).css("opacity", opaque);
                     $("#tncentered" + metadata.id).show();
                     $("#tnbr" + metadata.id).show();
                     $("#tnbl" + metadata.id).show();
+                    $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                    $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
+
+                    let borderColor = "primary";
+                    if (shashin.darkMode === true) {
+                        borderColor = "white";
+                    }
+                    $("#image" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-"+borderColor);
                     shashin.removeFromMetadataIdList(metadata.id);
                     shashin.removeFromMetadataFilenamesList($('#filename' + metadata.id).val());
                     shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
@@ -2364,7 +2388,8 @@
                 $('.thumbnail-centered').hide();
             } else {
                 $("#appSearch").show();
-                $('.photo-thumbnail-image').removeClass("border").removeClass("border-primary-subtle");
+                $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
                 shashin.firstTimeSelected = false;
                 $("#timelineAppTools").hide();
                 if (view === "timeline" || view === "folder" || view === "matches" || view === "person" || view === "compreface") {
@@ -2469,9 +2494,6 @@
                 setTimeout(function () {
 
                     if (shashin.lastSelectedMetadataId !== "" && shashin.lastSelectedMetadataId !== metadata.id) {
-                        $('.photo-thumbnail-image').removeClass("border").removeClass("border-primary-subtle");
-                        $("#image" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-primary-subtle");
-
                         const selectionHash = getElementLocation($("#photoThumbnailContainer" + shashin.lastSelectedMetadataId)[0]);
                         const lastSelectionPos = [selectionHash.x, selectionHash.y];
 
@@ -2607,6 +2629,15 @@
                                     }
                                 }
                             }
+
+                            $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                            $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
+
+                            let borderColor = "primary";
+                            if (shashin.darkMode === true) {
+                                borderColor = "white";
+                            }
+                            $("#image" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-"+borderColor);
                         } else {
                             shashin.printMessageToConsole("lastSelectionPos undefined or null", {tag: "multiselect"});
                         }
@@ -2932,7 +2963,8 @@
 
         $("#appSearch").show();
         shashin.firstTimeSelected = false;
-        $('.photo-thumbnail-image').removeClass("border").removeClass("border-primary-subtle");
+        $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
+        $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
         $("#timelineAppTools").hide();
         $("#timelineTools").show();
         $("#albumTools").hide();
@@ -2963,7 +2995,8 @@
 
         $("#appSearch").show();
         shashin.firstTimeSelected = false;
-        $('.photo-thumbnail-image').removeClass("border").removeClass("border-primary-subtle");
+        $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
+        $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
         $("#timelineAppTools").hide();
         $("#timelineTools").hide();
         $("#albumTools").show();
@@ -2988,7 +3021,8 @@
 
             $("#appSearch").show();
             shashin.firstTimeSelected = false;
-            $('.photo-thumbnail-image').removeClass("border").removeClass("border-primary-subtle");
+            $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
+            $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
             $("#timelineAppTools").hide();
             $("#timelineTools").show();
             $("#albumTools").hide();
