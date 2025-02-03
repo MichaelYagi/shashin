@@ -2233,6 +2233,8 @@
                 $('.thumbnail-centered').hide();
             } else {
                 $("#appSearch").show();
+                $('.bi-circle').css("color", "lightgray");
+                $('.bi-circle-fill').css("color", "lightgray");
                 $("#timelineAppTools").hide();
                 $("#albumAppTools").hide();
                 $("#matchesAppTools").hide();
@@ -2293,8 +2295,12 @@
             // Fill top left icon when clicking anywhere on thumbnail
             if ($('.bi-circle-fill')[0] || metadataIdArray.length > 0) {
                 if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
-                    shashin.lastSelectedMetadataId = metadata.id;
+                    shashin.lastSelectedMetadataId = metadataId;
                     shashin.lastSelectedMetadataSelected = true;
+                    $('.bi-circle').css("color", "lightgray");
+                    $('.bi-circle-fill').css("color", "lightgray");
+                    $("#tlicon"+shashin.lastSelectedMetadataId).css('color', "#CC5500");
+
                     $("#tntl" + metadata.id).show();
                     $("#tlicon" + metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
                     $("#image" + metadata.id).css("opacity", opaque);
@@ -2313,6 +2319,10 @@
                     $("#tntl" + metadata.id).show();
                     shashin.lastSelectedMetadataId = metadata.id;
                     shashin.lastSelectedMetadataSelected = false;
+                    $('.bi-circle').css("color", "lightgray");
+                    $('.bi-circle-fill').css("color", "lightgray");
+                    $("#tlicon"+shashin.lastSelectedMetadataId).css('color', "#CC5500");
+
                     $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
                     $("#image" + metadata.id).css("opacity", opaque);
                     $("#tncentered" + metadata.id).show();
@@ -2351,11 +2361,11 @@
                 // Hide all center and bottom left icons
                 $('.thumbnail-br').hide();
                 $('.thumbnail-bl').hide();
-                //$('.thumbnail-tr').hide();
                 $('.thumbnail-centered').hide();
             } else {
                 $("#appSearch").show();
-                //$('.thumbnail-br').show();
+                $('.bi-circle').css("color", "lightgray");
+                $('.bi-circle-fill').css("color", "lightgray");
                 $("#timelineAppTools").hide();
                 if (view === "timeline" || view === "folder" || view === "matches" || view === "person" || view === "compreface") {
                     $("#timelineTools").show();
@@ -2538,7 +2548,9 @@
                                                     selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray, false);
                                                     if (currentMetadataId !== metadata.id) {
                                                         $("#image" + currentMetadataId).css("opacity", transparent);
-                                                        $("#tntl" + currentMetadataId).css("display", "none");
+                                                        if (shashin.lastSelectedMetadataId !== currentMetadataId) {
+                                                            $("#tntl" + currentMetadataId).css("display", "none");
+                                                        }
                                                     }
                                                 }
                                             }
@@ -2564,7 +2576,9 @@
                                                         selectClick(metadata.id, view, opaque, transparent, metadataIdArray, false);
                                                         if (currentMetadataId !== metadata.id) {
                                                             $("#image" + metadata.id).css("opacity", transparent);
-                                                            $("#tntl" + metadata.id).css("display", "none");
+                                                            if (shashin.lastSelectedMetadataId !== metadata.id) {
+                                                                $("#tntl" + metadata.id).css("display", "none");
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -2581,7 +2595,9 @@
                                                         selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray, false);
                                                         if (currentMetadataId !== metadata.id) {
                                                             $("#image" + currentMetadataId).css("opacity", transparent);
-                                                            $("#tntl" + currentMetadataId).css("display", "none");
+                                                            if (shashin.lastSelectedMetadataId !== currentMetadataId) {
+                                                                $("#tntl" + currentMetadataId).css("display", "none");
+                                                            }
                                                         }
                                                     }
                                                 };
@@ -2916,6 +2932,8 @@
         $(".thumbnail-tl a span").addClass('bi-circle').removeClass('bi-circle-fill');
 
         $("#appSearch").show();
+        $('.bi-circle').css("color", "lightgray");
+        $('.bi-circle-fill').css("color", "lightgray");
         $("#timelineAppTools").hide();
         $("#timelineTools").show();
         $("#albumTools").hide();
@@ -2945,6 +2963,8 @@
         $(".thumbnail-tl a span").addClass('bi-circle').removeClass('bi-circle-fill');
 
         $("#appSearch").show();
+        $('.bi-circle').css("color", "lightgray");
+        $('.bi-circle-fill').css("color", "lightgray");
         $("#timelineAppTools").hide();
         $("#timelineTools").hide();
         $("#albumTools").show();
@@ -2968,6 +2988,8 @@
             $(".thumbnail-tl a span").addClass('bi-circle').removeClass('bi-circle-fill');
 
             $("#appSearch").show();
+            $('.bi-circle').css("color", "lightgray");
+            $('.bi-circle-fill').css("color", "lightgray");
             $("#timelineAppTools").hide();
             $("#timelineTools").show();
             $("#albumTools").hide();
