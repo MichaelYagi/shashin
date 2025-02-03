@@ -44,7 +44,7 @@
     shashin.slideshowYDown = null;
     shashin.lastSelectedMetadataId = "";
     shashin.lastSelectedMetadataSelected = false;
-    shashin.firstTimeSelected = false;
+    shashin.multiSelected = false;
     shashin.consoleTypes = Object.freeze({
         error: 0,
         info: 1,
@@ -2173,14 +2173,13 @@
                     shashin.lastSelectedMetadataSelected = true;
                     $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
                     $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
-                    if (shashin.firstTimeSelected === true) {
+                    if (shashin.multiSelected === true) {
                         let borderColor = "primary";
                         if (shashin.darkMode === true) {
                             borderColor = "white";
                         }
                         $("#image" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-"+borderColor);
                     }
-                    shashin.firstTimeSelected = true;
                 }
                 // List of selected media
                 shashin.addToMetadataIdList(metadataId);
@@ -2248,7 +2247,7 @@
                 $("#appSearch").show();
                 $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
                 $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
-                shashin.firstTimeSelected = false;
+                shashin.multiSelected = false;
                 $("#timelineAppTools").hide();
                 $("#albumAppTools").hide();
                 $("#matchesAppTools").hide();
@@ -2390,7 +2389,7 @@
                 $("#appSearch").show();
                 $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
                 $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
-                shashin.firstTimeSelected = false;
+                shashin.multiSelected = false;
                 $("#timelineAppTools").hide();
                 if (view === "timeline" || view === "folder" || view === "matches" || view === "person" || view === "compreface") {
                     $("#timelineTools").show();
@@ -2638,6 +2637,7 @@
                                 borderColor = "white";
                             }
                             $("#image" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-"+borderColor);
+                            shashin.multiSelected = true;
                         } else {
                             shashin.printMessageToConsole("lastSelectionPos undefined or null", {tag: "multiselect"});
                         }
@@ -2962,7 +2962,7 @@
         $(".thumbnail-tl a span").addClass('bi-circle').removeClass('bi-circle-fill');
 
         $("#appSearch").show();
-        shashin.firstTimeSelected = false;
+        shashin.multiSelected = false;
         $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
         $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
         $("#timelineAppTools").hide();
@@ -2994,7 +2994,7 @@
         $(".thumbnail-tl a span").addClass('bi-circle').removeClass('bi-circle-fill');
 
         $("#appSearch").show();
-        shashin.firstTimeSelected = false;
+        shashin.multiSelected = false;
         $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
         $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
         $("#timelineAppTools").hide();
@@ -3020,7 +3020,7 @@
             $(".thumbnail-tl a span").addClass('bi-circle').removeClass('bi-circle-fill');
 
             $("#appSearch").show();
-            shashin.firstTimeSelected = false;
+            shashin.multiSelected = false;
             $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-primary");
             $('.photo-thumbnail-image').removeClass("border").removeClass("border-3").removeClass("border-white");
             $("#timelineAppTools").hide();
