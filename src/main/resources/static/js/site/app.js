@@ -2517,13 +2517,16 @@
                             if ($("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).length > 0) {
                                 let container = $("#photoThumbnailContainer" + ((direction === "down") ? shashin.lastSelectedMetadataId : metadata.id));
 
+                                // Get row that selected metadata is in
                                 let selectedRowMetadataIds = container.siblings().addBack().map(function () {
                                     const metadataId = this.id.split("photoThumbnailContainer");
                                     return metadataId[1];
                                 }).toArray();
 
+                                // Check if above row contains shift selected metadata
                                 let found = ($.inArray(((direction === "down") ? metadata.id : shashin.lastSelectedMetadataId), selectedRowMetadataIds) !== -1);
 
+                                // If not found, check other rows and add to collectiom. if found, exit out of loop
                                 let index = 0;
                                 while (found === false) {
                                     if (index > whileLimit) {
@@ -2546,6 +2549,7 @@
 
                                 shashin.printMessageToConsole("Looped " + index + " times finding metadata", {tag: "multiselect"});
 
+                                // Loop through all collected rows and select from selected metadata to shift selected metadata
                                 let start = false;
                                 let lastSelectedMetadataId = shashin.lastSelectedMetadataId;
 
@@ -2556,7 +2560,7 @@
 
                                         if (currentMetadataId === compareOne || start === true) {
                                             if (currentMetadataId === compareOne) {
-                                                lastSelectedMetadataId = (direction === "down") ? metadata.id : shashin.lastSelectedMetadataId;
+                                                lastSelectedMetadataId = (direction === "down") ? currentMetadataId : shashin.lastSelectedMetadataId;
                                                 start = true;
                                                 continue;
                                             }
@@ -2641,6 +2645,8 @@
                             if (shashin.darkMode === true) {
                                 borderColor = "white";
                             }
+
+                            // Put a border around select point
                             if (shashin.getMetadataIdList().length > 0) {
                                 $("#image" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-" + borderColor);
                                 shashin.multiSelected = true;
