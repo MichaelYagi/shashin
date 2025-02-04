@@ -961,10 +961,12 @@ class Util {
             $("LINK[href='/css/bootstrap.min.css']").attr("href", "/css/bootstrap-night.min.css");
             $(".lightmodeIcons").addClass("darkmodeIcons").removeClass("lightmodeIcons");
             $(".link-button-lightmode").addClass("link-button-darkmode").removeClass("link-button-lightmode");
+            $("#aboutIcon").attr("src", "/images/kamon_transparent_inverted.png");
         } else {
             $("LINK[href='/css/bootstrap-night.min.css']").attr("href", "/css/bootstrap.min.css");
             $(".darkmodeIcons").addClass("lightmodeIcons").removeClass("darkmodeIcons");
             $(".link-button-darkmode").addClass("link-button-lightmode").removeClass("link-button-darkmode");
+            $("#aboutIcon").attr("src", "/images/kamon_transparent.png");
         }
     }
 
