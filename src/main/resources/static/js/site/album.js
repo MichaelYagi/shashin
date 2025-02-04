@@ -75,7 +75,7 @@
                 $("#metadataId").val(metadata.id);
                 if (metadata.thumbnailUrlCentered !== null) {
                     const version = Util.getMetadataLocalStorage();
-                    $("#propAlbumModalThumbnail").html('<img loading="lazy" src="/api/v1/thumbnails/centered/' + metadata.id + (version === "" ? "" : "?v=" + version) + '" height="100" width="100">');
+                    $("#propAlbumModalThumbnail").html('<img loading="lazy" src="/api/v1/thumbnails/centered/' + metadata.id + (version === "" ? "" : "?v=" + version) + '" height="100" width="100" draggable="false">');
                 }
 
                 // Open modal window

@@ -190,7 +190,7 @@
                             <div th:id="${'photoThumbnailContainer'+faceObj.image_id}" class="photo-thumbnail-container photo-thumbnail" style="float: left; padding-left:0;padding-right:0;">
                                 <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
 
-                                <img loading="lazy" th:src="'data:image/png;base64,'+${faceObj.image_base64}" style="height:225px;" class="photo-thumbnail-image" th:id="'image'+${faceObj.image_id}">
+                                <img loading="lazy" draggable="false" th:src="'data:image/png;base64,'+${faceObj.image_base64}" style="height:225px;" class="photo-thumbnail-image" th:id="'image'+${faceObj.image_id}">
 
                                 <div th:replace="~{fragments/topleftoverlay :: topleftoverlay(${faceObj.image_id})}"></div>
                                 <th:block th:if="${faceObj.metadata_date != null and faceObj.metadata_date != ''}">
