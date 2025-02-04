@@ -2493,7 +2493,7 @@
                         const pointerHash = getElementLocation($("#photoThumbnailContainer" + metadata.id)[0]);
                         const pointerPos = [pointerHash.x, pointerHash.y];
 
-                        if (lastSelectionPos[0] !== null && lastSelectionPos[1] !== null) {
+                        if (lastSelectionPos[0] !== null && lastSelectionPos[1] !== null && pointerPos[0] !== null && pointerPos[1] !== null) {
                             shashin.printMessageToConsole("Selected Media point [x, y]: " + JSON.stringify(lastSelectionPos) + ". MetadataId: " + shashin.lastSelectedMetadataId, {tag: "multiselect"});
                             shashin.printMessageToConsole("Shift Key point [x, y]: " + JSON.stringify(pointerPos) + ". MetadataId: " + metadata.id, {tag: "multiselect"});
 
@@ -2859,11 +2859,15 @@
     }
 
     function getElementLocation(el) {
-        const rect = el.getBoundingClientRect();
-        return {
-            x: rect.left + window.scrollX,
-            y: rect.top + window.scrollY
-        };
+        if (el) {
+            const rect = el.getBoundingClientRect();
+            return {
+                x: rect.left + window.scrollX,
+                y: rect.top + window.scrollY
+            };
+        } else {
+            return {x: null,y: null};
+        }
     }
 
     shashin.getOverlayData = function(metadata, args) {
