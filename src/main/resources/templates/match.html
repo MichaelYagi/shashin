@@ -16,7 +16,7 @@
                 <button class="btn btn-primary" id="matchAction">Scan For Matches</button>
                 <button class="btn btn-danger" id="stopScan">Stop</button>
                 <br>
-                <span class="bi-info-circle" style="font-size: 1rem;color: blue;"></span> Face detection needs to be enabled in settings to detect faces. There should be at least 3 distinct people already tagged before scanning, and should be a single subject in each of the photos. Object detection needs to be enabled in settings to detect objects.
+                <span class="bi-info-circle" style="font-size: 1rem;color: blue;"></span> Face and object detection need to be enabled in settings to detect faces and objects. There should be at least 1 subject to start scanning for faces.
             </th:block>
             <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
         </main>
