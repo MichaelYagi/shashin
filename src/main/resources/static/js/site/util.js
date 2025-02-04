@@ -956,6 +956,7 @@ class Util {
         }
     }
 
+    // Set things live when toggling dark mode
     static darkModeToggle(darkmodeEnabled) {
         if (darkmodeEnabled === true) {
             $("LINK[href='/css/bootstrap.min.css']").attr("href", "/css/bootstrap-night.min.css");
