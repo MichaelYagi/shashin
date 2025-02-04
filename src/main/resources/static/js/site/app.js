@@ -2639,6 +2639,9 @@
                         } else {
                             shashin.printMessageToConsole("lastSelectionPos undefined or null", {tag: "multiselect"});
                         }
+                    } else {
+                        shashin.lastSelectedMetadataId = "";
+                        shashin.multiSelected = false;
                     }
 
                 }, 0);
