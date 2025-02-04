@@ -249,6 +249,12 @@
                 timelineSettings.rescanElements();
             }
 
+            // Used for multiselect - see app.js: batchSelect()
+            if (shashin.lastSelectedMetadataId !== "" && shashin.multiSelected === true && shashin.getMetadataIdList().length > 0) {
+                $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
+                $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
+            }
+
             // Prevent flickering
             const elementsInViewPort = Util.elementsInViewport($(".scrollspy"));
 
