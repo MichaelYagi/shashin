@@ -23,7 +23,7 @@
                     <th:block th:each="album, iterStat: ${albumsList}">
                         <div class="card" style="width:235px;padding-top:10px;margin-right:-1px;margin-bottom:-1px;">
                             <a th:href="'/album/'+${album.id}" style="text-decoration: none !important;color: #777777;" th:id="'album'+${album.id}">
-                                <img loading="lazy" class="card-img-top" th:src="${#strings.replace(#uris.escapePath(album.coverUrl),';','%3B')}" width="209" height="209" style="width: 209px;height: 209px;">
+                                <img loading="lazy" draggable="false" class="card-img-top" th:src="${#strings.replace(#uris.escapePath(album.coverUrl),';','%3B')}" width="209" height="209" style="width: 209px;height: 209px;">
                             </a>
                             <div class="card-body" style="display: flex;flex-direction: column;">
                                 <p class="card-text"><strong th:id="'albumName'+${album.id}" th:text="${album.name}"></strong></p>
@@ -88,7 +88,7 @@
         <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="propsharealbumsLabel">Share <span id="albumName"></span><div id="propsharelinkalbums"><img loading="lazy" id="albumCoverThumb" src="" width="100" height="100"></div></h5>
+                    <h5 class="modal-title" id="propsharealbumsLabel">Share <span id="albumName"></span><div id="propsharelinkalbums"><img loading="lazy" draggable="false" id="albumCoverThumb" src="" width="100" height="100"></div></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -131,7 +131,7 @@
         <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="trashModalLabel">Delete <span id="albumNameTrash"></span><div id="proptrashalbumsthumb"><img loading="lazy" id="albumCoverTrashThumb" src="" width="100" height="100"></div></h5>
+                    <h5 class="modal-title" id="trashModalLabel">Delete <span id="albumNameTrash"></span><div id="proptrashalbumsthumb"><img loading="lazy" draggable="false" id="albumCoverTrashThumb" src="" width="100" height="100"></div></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">Are you sure you want to delete this album?</div>
@@ -164,7 +164,7 @@
         <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Edit Album <span id="albumNameEdit"></span><div id="editalbumsthumb"><img loading="lazy" id="albumCoverEditThumb" src="" width="100" height="100"></div></h5>
+                    <h5 class="modal-title" id="editModalLabel">Edit Album <span id="albumNameEdit"></span><div id="editalbumsthumb"><img loading="lazy" draggable="false" id="albumCoverEditThumb" src="" width="100" height="100"></div></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -187,7 +187,7 @@
     <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="commentModalLabel">Comments for <span id="albumNameComments"></span><div id="propalbumphotocomment"><img loading="lazy" id="albumCoverCommentThumb" src="" width="100" height="100"></div></h5>
+                <h5 class="modal-title" id="commentModalLabel">Comments for <span id="albumNameComments"></span><div id="propalbumphotocomment"><img loading="lazy" draggable="false" id="albumCoverCommentThumb" src="" width="100" height="100"></div></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">

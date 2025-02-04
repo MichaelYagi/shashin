@@ -34,11 +34,11 @@ class TimelineTemplates {
     `};
 
     static HeaderThumbnail({metadata,version,showMap}) { return `
-        <img loading="lazy" src="${"/api/v1/thumbnails/centered/"+metadata.id+(version === "" ? "" : "?v=" + version)}" height="100" width="100" style="float: left;">${(metadata.lat !== null && metadata.lng !== null && showMap === true) ? `<div id="headerMap" class="map ps-2" style="width: 108px; height: 100px; overflow: hidden;"></div>` : ''}
+        <img loading="lazy" draggable="false" src="${"/api/v1/thumbnails/centered/"+metadata.id+(version === "" ? "" : "?v=" + version)}" height="100" width="100" style="float: left;">${(metadata.lat !== null && metadata.lng !== null && showMap === true) ? `<div id="headerMap" class="map ps-2" style="width: 108px; height: 100px; overflow: hidden;"></div>` : ''}
     `};
 
     static BatchHeaderThumbnail({thumbnailImage, title, version}) { return `
-        <img loading="lazy" src="${thumbnailImage+(version === "" ? "" : "?v=" + version)}" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="${title}">
+        <img loading="lazy" draggable="false" src="${thumbnailImage+(version === "" ? "" : "?v=" + version)}" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="${title}">
     `};
 
     static TimelinePreLoadGalleryHeader({metadata, placeNameHeaders, listHtml}) { return `
@@ -72,11 +72,11 @@ class TimelineTemplates {
             ${(metadata.year == null || metadata.month == null || metadata.day == null) ?
             `
             <input type="hidden" name="thumbnailUrl-undated[]" id="thumbnailUrl_${metadata.id}" value="${"/api/v1/thumbnails/225/"+metadata.id }">
-            <img loading="lazy" class="photo-thumbnail-image thumbnailTag_undated" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}" src="${Util.getPlaceholderBackground()}">
+            <img loading="lazy" draggable="false" class="photo-thumbnail-image thumbnailTag_undated" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}" src="${Util.getPlaceholderBackground()}">
             ` :
             `
             <input type="hidden" name="thumbnailUrl-${metadata.year}-${metadata.month}-${metadata.day}[]" id="thumbnailUrl_${metadata.id}" value="${"/api/v1/thumbnails/225/"+metadata.id}">
-            <img loading="lazy" class="photo-thumbnail-image thumbnailTag_${metadata.year}-${metadata.month}-${metadata.day}" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}" src="${Util.getPlaceholderBackground()}">
+            <img loading="lazy" draggable="false" class="photo-thumbnail-image thumbnailTag_${metadata.year}-${metadata.month}-${metadata.day}" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}" src="${Util.getPlaceholderBackground()}">
             `}
             
             <div id="tntl${metadata.id}"></div>

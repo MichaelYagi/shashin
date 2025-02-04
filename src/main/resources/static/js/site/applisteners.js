@@ -7,7 +7,7 @@ $("#appToolsBatchEdit").on("click", function(e) {
     let metadataThumbnailsArray = shashin.getMetadataThumbnailsList();
     for (let index in metadataThumbnailsArray) {
         const metadataThumnailUrl = metadataThumbnailsArray[index];
-        thumbnailList += '<img loading="lazy" src="'+metadataThumnailUrl+'" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="'+metadataFilenamesArray[index]+'">';
+        thumbnailList += '<img loading="lazy" src="'+metadataThumnailUrl+'" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="'+metadataFilenamesArray[index]+'" draggable="false">';
     }
 
     $("#yearTakenBatchData ").attr("max", new Date().getFullYear());
@@ -93,7 +93,7 @@ $("#appToolsAddAlbum").on("click", function(e) {
     let metadataThumbnailsArray = shashin.getMetadataThumbnailsList();
     for (let index in metadataThumbnailsArray) {
         const metadataThumnailUrl = metadataThumbnailsArray[index];
-        thumbnailList += '<img loading="lazy" src="'+metadataThumnailUrl+'" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="'+metadataFilenamesArray[index]+'">';
+        thumbnailList += '<img loading="lazy" src="'+metadataThumnailUrl+'" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="'+metadataFilenamesArray[index]+'" draggable="false">';
     }
 
     if (thumbnailList !== "") {

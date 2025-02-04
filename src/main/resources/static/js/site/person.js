@@ -227,7 +227,7 @@ class Person {
 
             $("#metadataId").val(metadata.id);
             if (metadata.thumbnailUrlCentered !== null) {
-                $("#propPersonModalThumbnail").html('<img loading="lazy" src="/api/v1/thumbnails/centered/' + metadata.id + '" height="100" width="100">');
+                $("#propPersonModalThumbnail").html('<img loading="lazy" src="/api/v1/thumbnails/centered/' + metadata.id + '" height="100" width="100" draggable="false">');
             }
 
             // Open modal window

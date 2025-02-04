@@ -2,7 +2,7 @@ class GalleryTemplates {
     static PhotoGalleryItem({activePage, metadata, overlayData, uuid}) { return `
         <div id="photoThumbnailContainer${metadata.id}" class="photo-thumbnail-container photo-thumbnail" style="width:${metadata.thumbnailSmallWidth}px;height:${metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
             <span class="lightGalleryIndexAnchor"></span>
-            <img loading="lazy" data-smallthumb="${"/api/v1/thumbnails/225/"+metadata.id}?v=${uuid}" data-xsmallthumb="${activePage !== 'timeline' && metadata.thumbnailUrlExtraSmall===null?'':"/api/v1/thumbnails/112/"+metadata.id}" src="${"/api/v1/thumbnails/225/"+metadata.id}?v=${uuid}" class="photo-thumbnail-image" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
+            <img loading="lazy" draggable="false" data-smallthumb="${"/api/v1/thumbnails/225/"+metadata.id}?v=${uuid}" data-xsmallthumb="${activePage !== 'timeline' && metadata.thumbnailUrlExtraSmall===null?'':"/api/v1/thumbnails/112/"+metadata.id}" src="${"/api/v1/thumbnails/225/"+metadata.id}?v=${uuid}" class="photo-thumbnail-image" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
             <input type="hidden" name="filename${metadata.id}" id="filename${metadata.id}" value="${metadata.fileName}">
             <input type="hidden" name="thumbnailCentered${metadata.id}" id="thumbnailCentered${metadata.id}" value="${"/api/v1/thumbnails/centered/"+metadata.id}">
             
@@ -231,7 +231,7 @@ class GalleryTemplates {
     static getFoldersCard({folder, thumbnailUrlCentered, count, appendClass}) { return `
         <div class="card" style="width:235px;padding-top:10px;margin-right:-1px;margin-top:-1px;">
             <a href="/folder/${encodeURIComponent(encodeURIComponent(folder)).replace(";", "%3B")}" style="text-decoration: none !important;color: #777777;">
-                <img loading="lazy" class="card-img-top" src="${thumbnailUrlCentered}" width="209" height="209" style="width: 209px;height: 209px;">
+                <img loading="lazy" draggable="false" class="card-img-top" src="${thumbnailUrlCentered}" width="209" height="209" style="width: 209px;height: 209px;">
             </a>
             <div class="card-body" style="display: flex;flex-direction: column;">
                 <p class="card-text"><strong>${folder}</strong></p>

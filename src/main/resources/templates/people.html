@@ -19,7 +19,7 @@
                             <div class="card" style="width:235px;padding-top:10px;margin-right:-1px;margin-bottom:-1px;">
                                 <a th:href="'/person/'+${person.id}"  style="text-decoration: none !important;color: #777777;" th:id="'person'+${person.id}">
                                     <th:block th:if="${#maps.containsKey(coverUrls, person.id)}">
-                                        <img loading="lazy" class="card-img-top" th:src="${coverUrls.get(person.id)}" width="209" height="209">
+                                        <img loading="lazy" draggable="false" class="card-img-top" th:src="${coverUrls.get(person.id)}" width="209" height="209">
                                     </th:block>
                                 </a>
                                 <div class="card-body" style="display: flex;flex-direction: column;">

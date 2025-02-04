@@ -50,7 +50,7 @@ class Compreface {
                     html += 'style="float: left; padding-left:0;padding-right:0;">';
                     html += '<a class="lightGalleryIndexAnchor" name="lightGalleryIndex'+index+'"></a>';
                     html += '<img loading="lazy" src="data:image/png;base64,'+resultObj["image_base64"]+'" ';
-                    html += 'style="height:225px;" class="photo-thumbnail-image" id="image'+resultObj["image_id"]+'">';
+                    html += 'style="height:225px;" class="photo-thumbnail-image" id="image'+resultObj["image_id"]+'" draggable="false">';
                     html += '<div class="thumbnail-tl" id="tntl'+resultObj["image_id"]+'">';
                     html += '<a href="#" id="select'+resultObj["image_id"]+'">';
                     html += '<span id="tlicon'+resultObj["image_id"]+'" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>';
