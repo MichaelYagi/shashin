@@ -20,7 +20,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT DISTINCT m.id, m.type, m.lat, m.lng, m.year, m.month, m.day, m.thumbnail_url_small as thumbnailUrlSmall, m.thumbnail_url_original as thumbnailUrlOriginal, m.video_url as videoUrl, m.original_image_width as originalImageWidth, m.original_image_height as originalImageHeight, m.map_marker_url as mapMarkerUrl, m.place_name as placeName FROM metadata m LEFT JOIN albumphoto ap ON m.id = ap.metadata_id LEFT JOIN useralbum ua ON ap.album_id = ua.album_id LEFT JOIN album a ON a.id = ua.album_id WHERE m.hidden = 0 AND ua.user_id = :userId AND m.lat IS NOT NULL AND m.lat != \"\" AND m.lng IS NOT NULL AND m.lng != \"\"", nativeQuery = true)
    fun findByAlbumMetadataByUserIdForMap(@Param("userId") userId: Int): MutableIterable<MapData>
 
-   @Query("SELECT * FROM metadata WHERE taken_at >= :startDate AND taken_at <= :endDate ORDER BY taken_at DESC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE concat(year,'-',month,'-',day,' ',time) >= :startDate AND concat(year,'-',month,'-',day,' ',time) <= :endDate ORDER BY concat(year,'-',month,'-',day,' ',time) DESC", nativeQuery = true)
    fun findMetadataIdBetweenTakenAt(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
    @Cacheable(value = ["allAlbumMetadataWithCoordinates"], key = "{#userId}")
