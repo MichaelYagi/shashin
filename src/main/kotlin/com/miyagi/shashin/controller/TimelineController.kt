@@ -147,18 +147,18 @@ class TimelineController: BaseController() {
             val selectMetadata = metadataRepository.findByMetadataId(selectId)
 
             val anchorYear = anchorMetadata?.getYear().toString()
-            var month = anchorMetadata?.getMonth().toString()
-            var day = anchorMetadata?.getDay().toString()
-            val anchorMonth = if (month.toInt() > 9) month else "0$month"
-            val anchorDay = if (day.toInt() > 9) day else "0$day"
+            val anchorSingleMonth = anchorMetadata?.getMonth().toString()
+            val anchorSingleDay = anchorMetadata?.getDay().toString()
+            val anchorMonth = if (anchorSingleMonth.toInt() > 9) anchorSingleMonth else "0$anchorSingleMonth"
+            val anchorDay = if (anchorSingleDay.toInt() > 9) anchorSingleDay else "0$anchorSingleDay"
             val anchorTime = anchorMetadata?.getTime()
             val anchorMetadataString = "$anchorYear-$anchorMonth-$anchorDay $anchorTime"
 
             val selectYear = selectMetadata?.getYear().toString()
-            month = selectMetadata?.getMonth().toString()
-            day = selectMetadata?.getDay().toString()
-            val selectMonth = if (month.toInt() > 9) month else "0$month"
-            val selectDay = if (day.toInt() > 9) day else "0$day"
+            val selectSingleMonth = selectMetadata?.getMonth().toString()
+            val selectSingleDay = selectMetadata?.getDay().toString()
+            val selectMonth = if (selectSingleMonth.toInt() > 9) selectSingleMonth else "0$selectSingleMonth"
+            val selectDay = if (selectSingleDay.toInt() > 9) selectSingleDay else "0$selectSingleDay"
             val selectTime = selectMetadata?.getTime()
             val selectMetadataString = "$selectYear-$selectMonth-$selectDay $selectTime"
 
@@ -166,16 +166,16 @@ class TimelineController: BaseController() {
             val anchorMetadataDateObj = sdf.parse(anchorMetadataString)
             val selectMetadataDateObj = sdf.parse(selectMetadataString)
 
-            var startDate = selectMetadataString
-            var endDate = anchorMetadataString
+            var startDate = "$selectYear-$selectSingleMonth-$selectSingleDay $selectTime"
+            var endDate = "$anchorYear-$anchorSingleMonth-$anchorSingleDay $anchorTime"
             if (anchorMetadataDateObj <= selectMetadataDateObj) {
-                startDate = anchorMetadataString
-                endDate = selectMetadataString
+                startDate = "$anchorYear-$anchorSingleMonth-$anchorSingleDay $anchorTime"
+                endDate = "$selectYear-$selectSingleMonth-$selectSingleDay $selectTime"
                 direction = "up"
             }
 
             // If timeline view
-            val metadatas = metadataRepository.findMetadataIdBetweenTakenAt(startDate!!, endDate!!)
+            val metadatas = metadataRepository.findMetadataIdBetweenTakenAt(startDate, endDate)
 
             if (metadatas != null && metadatas.isNotEmpty()) {
                 var startCaptured = false
