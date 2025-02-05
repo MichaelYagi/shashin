@@ -146,8 +146,21 @@ class TimelineController: BaseController() {
             val anchorMetadata = metadataRepository.findByMetadataId(anchorId)
             val selectMetadata = metadataRepository.findByMetadataId(selectId)
 
-            val anchorMetadataString = anchorMetadata?.getTakenAt()
-            val selectMetadataString = selectMetadata?.getTakenAt()
+            val anchorYear = anchorMetadata?.getYear().toString()
+            var month = anchorMetadata?.getMonth().toString()
+            var day = anchorMetadata?.getDay().toString()
+            val anchorMonth = if (month.toInt() > 9) month else "0$month"
+            val anchorDay = if (day.toInt() > 9) day else "0$day"
+            val anchorTime = anchorMetadata?.getTime()
+            val anchorMetadataString = "$anchorYear-$anchorMonth-$anchorDay $anchorTime"
+
+            val selectYear = selectMetadata?.getYear().toString()
+            month = selectMetadata?.getMonth().toString()
+            day = selectMetadata?.getDay().toString()
+            val selectMonth = if (month.toInt() > 9) month else "0$month"
+            val selectDay = if (day.toInt() > 9) day else "0$day"
+            val selectTime = selectMetadata?.getTime()
+            val selectMetadataString = "$selectYear-$selectMonth-$selectDay $selectTime"
 
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
             val anchorMetadataDateObj = sdf.parse(anchorMetadataString)
