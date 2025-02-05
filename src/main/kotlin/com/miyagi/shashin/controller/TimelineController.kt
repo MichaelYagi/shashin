@@ -221,7 +221,7 @@ class TimelineController: BaseController() {
         val initialMetadataObj = if (mediaType != "all") {
             metadataRepository.findDistinctFirstByHiddenIsFalseByMediaTypeOrderByYearDescMonthDescDayDesc(mediaType!!)
         } else {
-            metadataRepository.findDistinctFirstByHiddenIsFalseOrderByYearDescMonthDescDayDesc()
+            metadataRepository.findDistinctFirstByHiddenIsFalseOrderByYearDescMonthDescDayDescTimeDesc()
         }
         var date = "undated"
         if (initialMetadataObj?.getYear() != null && initialMetadataObj.getMonth() != null && initialMetadataObj.getDay() != null) {
