@@ -1509,7 +1509,7 @@
             if ($("#image" + metadata.id).attr("src") === Util.getPlaceholderBackground()) {
                 $("#image" + metadata.id).attr("src", "/api/v1/thumbnails/225/" + metadata.id + (version === "" ? "" : "?v=" + version));
             }
-            $("#image" + metadata.id).css("background-color", "lightgray");
+            $("#image" + metadata.id).css("background-color", "transparent");
         }
 
         if ($("#tnbl" + metadata.id + ".thumbnail-bl").length === 0) {
