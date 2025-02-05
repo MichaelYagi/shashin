@@ -22,7 +22,9 @@ class ArticlesController {
 
         model["loggedIn"] = false
         val currentUserObj = model.getAttribute("currentUser") as User?
-        if (currentUserObj != null && currentUserObj.getIsAuthorized() == true) {
+        val sessionUser = request.session.getAttribute("CurrentUser") as User?
+
+        if ((currentUserObj != null && currentUserObj.getIsAuthorized() == true) || (sessionUser != null && sessionUser.getIsAuthorized() == true)) {
             model["loggedIn"] = true
         }
 
@@ -40,7 +42,9 @@ class ArticlesController {
 
         model["loggedIn"] = false
         val currentUserObj = model.getAttribute("currentUser") as User?
-        if (currentUserObj != null && currentUserObj.getIsAuthorized() == true) {
+        val sessionUser = request.session.getAttribute("CurrentUser") as User?
+
+        if ((currentUserObj != null && currentUserObj.getIsAuthorized() == true) || (sessionUser != null && sessionUser.getIsAuthorized() == true)) {
             model["loggedIn"] = true
         }
 
