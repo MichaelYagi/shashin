@@ -2493,7 +2493,7 @@
                         const pointerHash = getElementLocation($("#photoThumbnailContainer" + metadata.id)[0]);
                         const pointerPos = [pointerHash.x, pointerHash.y];
 
-                        if (lastSelectionPos[0] !== null && lastSelectionPos[1] !== null && pointerPos[0] !== null && pointerPos[1] !== null) {
+                        if (view !== "timeline" && lastSelectionPos[0] !== null && lastSelectionPos[1] !== null && pointerPos[0] !== null && pointerPos[1] !== null) {
                             shashin.printMessageToConsole("Selected Media point [x, y]: " + JSON.stringify(lastSelectionPos) + ". MetadataId: " + shashin.lastSelectedMetadataId, {tag: "multiselect"});
                             shashin.printMessageToConsole("Shift Key point [x, y]: " + JSON.stringify(pointerPos) + ". MetadataId: " + metadata.id, {tag: "multiselect"});
 
@@ -2515,7 +2515,7 @@
                                 // Check if above row contains shift selected metadata
                                 let found = ($.inArray(((direction === "down") ? metadata.id : shashin.lastSelectedMetadataId), selectedRowMetadataIds) !== -1);
 
-                                // If not found, check other rows and add to collectiom. if found, exit out of loop
+                                // If not found, check other rows and add to collection. if found, exit out of loop
                                 let index = 0;
                                 while (found === false) {
                                     if (index > whileLimit) {
@@ -2636,6 +2636,63 @@
                                 $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
                                 shashin.multiSelected = true;
                             }
+                        } else if (view === "timeline") {
+                            const http = new Http("get ranged metadata");
+                            const version = Util.getMetadataLocalStorage();
+                            http.ajax("get", "/metadata/range/"+view+"/"+shashin.lastSelectedMetadataId+"/"+metadata.id+(version === "" ? "" : "?v=" + version)).then(function (data) {
+                                if (data !== null && data.hasOwnProperty("metadataIdArray")) {
+                                    const metadataIdArray = data["metadataIdArray"];
+
+                                    for (let index in metadataIdArray) {
+                                        if (metadataIdArray.hasOwnProperty(index)) {
+                                            const metadataArray = metadataIdArray[index];
+                                            const metadataId = metadataArray[0];
+
+                                            if ($("#image" + metadataId).length > 0) {
+                                                const imageUrl = $("#image" + metadataId).attr("src").replace("/gif/" + metadataId, "/225/" + metadataId);
+                                                $("#image" + metadataId).attr("src", imageUrl);
+                                            }
+
+                                            if (shashin.lastSelectedMetadataSelected === true) {
+                                                if ($("#tlicon" + metadataId).attr("class") === "bi-circle") {
+                                                    selectClick(metadataId, view, opaque, transparent, metadataIdArray, false);
+                                                    $("#image" + metadataId).css("opacity", opaque);
+                                                }
+                                            } else {
+                                                if ($("#tlicon" + metadataId).attr("class") === "bi-circle-fill") {
+                                                    selectClick(metadataId, view, opaque, transparent, metadataIdArray, false);
+                                                    if (metadataId !== metadata.id) {
+                                                        $("#image" + metadataId).css("opacity", transparent);
+                                                        if (shashin.lastSelectedMetadataId !== metadataId) {
+                                                            $("#tntl" + metadataId).css("display", "none");
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            if (shashin.lastSelectedMetadataSelected === true) {
+                                                shashin.addToMetadataIdList(metadataId);
+                                                shashin.addToMetadataFilenamesList(metadataArray[1]);
+                                                shashin.addToMetadataThumbnailsList(metadataArray[2]);
+                                            } else {
+                                                shashin.removeFromMetadataIdList(metadataId);
+                                                shashin.removeFromMetadataFilenamesList(metadataArray[1]);
+                                                shashin.removeFromMetadataThumbnailsList(metadataArray[2]);
+                                            }
+                                        }
+                                    }
+
+                                    $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                                    $('.photo-thumbnail-image').removeClass("pb-1");
+
+                                    // Put a border around select point
+                                    if (/*$("#image" + shashin.lastSelectedMetadataId).length > 0 && */shashin.getMetadataIdList().length > 0) {
+                                        $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
+                                        $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
+                                        shashin.multiSelected = true;
+                                    }
+                                }
+                            });
                         } else {
                             shashin.printMessageToConsole("lastSelectionPos undefined or null", {tag: "multiselect"});
                         }

@@ -129,6 +129,71 @@ class TimelineController: BaseController() {
         return buildTimelineModel(model,mediaType)
     }
 
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
+    @RequestMapping(value = ["/metadata/range/{view}/{anchorId}/{selectId}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) view: String?,@PathVariable(required = true) anchorId: String?, @PathVariable(required = true) selectId: String?): String {
+        val retMetadataIdArray = mutableListOf<MutableList<String>>()
+        val response = mutableMapOf<String, Any?>()
+
+        response["msg"] = "Could not get results"
+        response["status"] = ApiResponse.FAIL.status
+        response["metadataIdArray"] = mutableListOf<MutableList<String>>()
+
+        var direction = "down"
+
+        if (anchorId !== null && anchorId !== "" && selectId !== null && selectId !== "" && anchorId !== selectId) {
+            val anchorMetadata = metadataRepository.findByMetadataId(anchorId)
+            val selectMetadata = metadataRepository.findByMetadataId(selectId)
+
+            val anchorMetadataString = anchorMetadata?.getTakenAt()
+            val selectMetadataString = selectMetadata?.getTakenAt()
+
+            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            val anchorMetadataDateObj = sdf.parse(anchorMetadataString)
+            val selectMetadataDateObj = sdf.parse(selectMetadataString)
+
+            var startDate = selectMetadataString
+            var endDate = anchorMetadataString
+            if (anchorMetadataDateObj <= selectMetadataDateObj) {
+                startDate = anchorMetadataString
+                endDate = selectMetadataString
+                direction = "up"
+            }
+
+            // If timeline view
+            val metadatas = metadataRepository.findMetadataIdBetweenTakenAt(startDate!!, endDate!!)
+
+            if (metadatas != null && metadatas.isNotEmpty()) {
+                var startCaptured = false
+
+                for (metadata in metadatas) {
+                    if (direction == "down" && metadata.getId() == anchorId) {
+                        startCaptured = true
+                    } else if (direction == "up" && metadata.getId() == selectId) {
+                        startCaptured = true
+                    }
+
+                    if (startCaptured == true) {
+                        retMetadataIdArray.add(mutableListOf(metadata.getId(),metadata.getFileName()!!, "/api/v1/thumbnails/centered/"+metadata.getId()))
+
+                        if (direction == "down" && metadata.getId() == selectId) {
+                            break
+                        } else if (direction == "up" && metadata.getId() == anchorId) {
+                            break
+                        }
+                    }
+                }
+
+                response["msg"] = "Success"
+                response["status"] = ApiResponse.SUCCESS.status
+                response["metadataIdArray"] = retMetadataIdArray
+            }
+        }
+
+        return mapper.writeValueAsString(response)
+    }
+
     private fun buildTimelineModel(model: Model,mediaTypeFilter: String?): String {
         val module = "timeline"
 
