@@ -166,11 +166,11 @@ class TimelineController: BaseController() {
             val anchorMetadataDateObj = sdf.parse(anchorMetadataString)
             val selectMetadataDateObj = sdf.parse(selectMetadataString)
 
-            var startDate = "$selectYear-$selectSingleMonth-$selectSingleDay $selectTime"
-            var endDate = "$anchorYear-$anchorSingleMonth-$anchorSingleDay $anchorTime"
+            var startDate = selectMetadataString
+            var endDate = anchorMetadataString
             if (anchorMetadataDateObj <= selectMetadataDateObj) {
-                startDate = "$anchorYear-$anchorSingleMonth-$anchorSingleDay $anchorTime"
-                endDate = "$selectYear-$selectSingleMonth-$selectSingleDay $selectTime"
+                startDate = anchorMetadataString
+                endDate = selectMetadataString
                 direction = "up"
             }
 
