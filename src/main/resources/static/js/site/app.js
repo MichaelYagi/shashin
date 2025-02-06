@@ -3182,7 +3182,7 @@
     }
 
     // Call in console
-    // eg: shashin.enableDebug({tags: all, filter:[shashin.consoleTypes.log,shashin.consoleTypes.error],showTrace:true,writeLog:true})
+    // eg: shashin.enableDebug({tags: all, consoleTypes:[shashin.consoleTypes.log,shashin.consoleTypes.error],showTrace:true,writeLog:true})
     shashin.enableDebug = function (options) {
         shashin.showDebug = true;
         shashin.showTrace = false;
@@ -3191,12 +3191,12 @@
 
         let showTrace = false;
         //[shashin.consoleTypes.error, shashin.consoleTypes.info, shashin.consoleTypes.log, shashin.consoleTypes.warn]
-        let filters = [];
+        let consoleTypes = [];
         let tags = ["all"];
 
         if (options === undefined || options === null) {
             showTrace = false;
-            filters = [];
+            consoleTypes = [];
             shashin.writeLog = false;
             tags = ["all"];
         } else {
@@ -3204,8 +3204,8 @@
                 showTrace = options["showTrace"];
             }
 
-            if (options.hasOwnProperty("filter")) {
-                filters = options["filter"];
+            if (options.hasOwnProperty("consoleTypes")) {
+                consoleTypes = options["consoleTypes"];
             }
 
             if (options.hasOwnProperty("writeLog")) {
@@ -3227,7 +3227,7 @@
         }
 
         shashin.showTrace = showTrace;
-        shashin.consoleFilterTypes = filters;
+        shashin.consoleFilterTypes = consoleTypes;
         shashin.consoleTags = tags;
 
         if (Util.localStorageAvailable() === true) {
