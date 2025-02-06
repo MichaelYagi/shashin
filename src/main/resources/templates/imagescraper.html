@@ -206,11 +206,11 @@
             }, function(e) {
                 if (counter > 0) {
                     shashin.printMessageToConsole("Oops, something went wrong! " + e.toString() + ". Probably already scanning.", {
-                        type: shashin.consoleTypes.warn
+                        consoleType: shashin.consoleTypes.warn
                     });
                 } else {
                     shashin.printMessageToConsole("Oops, something went wrong! " + e.toString() + ". Click the Scan button once, to proceed with indexing.", {
-                        type: shashin.consoleTypes.warn
+                        consoleType: shashin.consoleTypes.warn
                     });
                 }
 
@@ -235,7 +235,7 @@
                 stompClient.send("/app/scrapermessage", {}, JSON.stringify({'message': "getScraperMessage"}));
             } else {
                 shashin.printMessageToConsole("Trying to send message but STOMP client is null", {
-                    type: shashin.consoleTypes.warn
+                    consoleType: shashin.consoleTypes.warn
                 });
             }
         }

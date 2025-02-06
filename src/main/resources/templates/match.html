@@ -111,18 +111,18 @@
                     });
                 }, function (e) {
                     shashin.printMessageToConsole("match connect() error", {
-                        type: shashin.consoleTypes.warn
+                        consoleType: shashin.consoleTypes.warn
                     });
                     shashin.printMessageToConsole(e);
                     // showMessage("Socket connection error: " + e.toString())
                     if (counter > 0) {
-                        showMessage("Oops, something went wrong! " + e.toString() + ". Probably already scanning.", {
-                            type: shashin.consoleTypes.warn
+                        shashin.printMessageToConsole("Oops, something went wrong! " + e.toString() + ". Probably already scanning.", {
+                            consoleType: shashin.consoleTypes.warn
                         });
                         window.top.location = window.top.location
                     } else {
-                        showMessage("Oops, something went wrong! " + e.toString() + ". Click the Scan button once, to proceed with indexing.", {
-                            type: shashin.consoleTypes.warn
+                        shashin.printMessageToConsole("Oops, something went wrong! " + e.toString() + ". Click the Scan button once, to proceed with indexing.", {
+                            consoleType: shashin.consoleTypes.warn
                         });
                         window.top.location = window.top.location
                     }

@@ -34,7 +34,7 @@
             if (shashin) {
                 shashin.printMessageToConsole("Castjs Error: " + e, {
                     tag: "cast",
-                    type: shashin.consoleTypes.error
+                    consoleType: shashin.consoleTypes.error
                 });
             }
 
