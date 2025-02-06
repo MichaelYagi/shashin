@@ -2674,10 +2674,12 @@
                                                 shashin.addToMetadataIdList(metadataId);
                                                 shashin.addToMetadataFilenamesList(metadataArray[1]);
                                                 shashin.addToMetadataThumbnailsList(metadataArray[2]);
+                                                $("#timelineNumberSelected").text(shashin.getMetadataIdList().length + " Selected");
                                             } else {
                                                 shashin.removeFromMetadataIdList(metadataId);
                                                 shashin.removeFromMetadataFilenamesList(metadataArray[1]);
                                                 shashin.removeFromMetadataThumbnailsList(metadataArray[2]);
+                                                $("#timelineNumberSelected").text(shashin.getMetadataIdList().length + " Selected");
                                             }
                                         }
                                     }
