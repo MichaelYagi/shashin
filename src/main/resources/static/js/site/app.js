@@ -88,12 +88,12 @@
         shashin.printMessageToConsole(JSON.stringify(options), {tag: "toast"});
 
         let icon = null;
-        let iconColor = null;
+        let iconColor = "lightgray";
         let headerSubtext = null;
         let borderColor = null;
         let container = shashin.toast.placement.bottom.center;
         let autohide = true;
-        let delay = null;
+        let delay = 5000;
         let tag = null;
         let refreshTag = null;
 
@@ -1542,7 +1542,7 @@
                     }
                 } catch (e) {
                     shashin.printMessageToConsole("Error capturing thumbnail: " + e, {
-                        type: shashin.consoleTypes.error
+                        consoleType: shashin.consoleTypes.error
                     });
                 }
 
@@ -1778,13 +1778,13 @@
                     },
                     failCallback: function (html, url) {
                         shashin.printMessageToConsole("Media ZIP download fail", {
-                            type: shashin.consoleTypes.error
+                            consoleType: shashin.consoleTypes.error
                         });
                         shashin.printMessageToConsole(url, {
-                            type: shashin.consoleTypes.error
+                            consoleType: shashin.consoleTypes.error
                         });
                         shashin.printMessageToConsole(html, {
-                            type: shashin.consoleTypes.error
+                            consoleType: shashin.consoleTypes.error
                         });
 
                         if (span !== null) {
@@ -1816,7 +1816,7 @@
                         }
                     }).catch(() => {
                         shashin.printMessageToConsole("Media ZIP download fail using fetch()", {
-                            type: shashin.consoleTypes.error
+                            consoleType: shashin.consoleTypes.error
                         });
                         if (span !== null) {
                             span.addClass('bi-download').removeClass('spinner-grow');

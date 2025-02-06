@@ -831,7 +831,7 @@ async function showMap(mapdata, keywordMap) {
                     dynamicGallery.$container.remove();
                 } catch (e) {
                     shashin.printMessageToConsole("Error removing lightGallery instance: "+e.message, {
-                        type: shashin.consoleTypes.error
+                        consoleType: shashin.consoleTypes.error
                     });
                 }
                 lightGalleryConfigs["dynamicEl"] = mediaContentList;
