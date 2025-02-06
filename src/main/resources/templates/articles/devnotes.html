@@ -33,10 +33,68 @@
         <h2>Front end debugging</h2>
         <p>Apart from standard IDE debuggers, convenience functions to look at console outputs can be enabled.</p>
         <p>Place <code>shashin.printMessageToConsole(&lt;message&gt;,{&lt;options&gt;})</code> in JS code where you'd like to see console outputs. Options are a hash map of allowable options.</p>
-        <p><code>tag</code> - tags messages to be used as a filter.<br><code>consoleType</code> - allows for different console types to be used, <code>shashin.consoleTypes.error</code>, <code>shashin.consoleTypes.info</code>, <code>shashin.consoleTypes.log</code>, or <code>shashin.consoleTypes.warn</code>. Default is <code>shashin.consoleTypes.info</code></p>
+        <p>
+            <code>tag</code> - tags messages to be used as a filter.<br>
+            <code>consoleType</code> - allows for different console types to be used for a message, <code>shashin.consoleTypes.error</code>, <code>shashin.consoleTypes.info</code>, <code>shashin.consoleTypes.log</code>, or <code>shashin.consoleTypes.warn</code>. Default is <code>shashin.consoleTypes.info</code>
+        </p>
+        <p>Example: <br>
+            <code>shashin.printMessageToConsole("test",{<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;tag: "testcode",<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;consoleType: shashin.consoleTypes.error<br>
+            });</code>
+        </p>
+
         <p>Typing <code>shashin.enableDebug({&lt;options&gt;})</code> in the browser console will output console log messages placed in the app. There are various options you can pass.</p>
-        <p><code>tags</code> - an array of tags to filter on. Tag value "all" shows all logs without tag filtering. Default is for all tags to be shown.<br><code>consoleTypes</code> - an array of console types to filter on. Default is for all console types to be shown.<br><code>showTrace</code> - if set to true, shows the stack trace for the output. Default is false.<br><code>writeLog</code> - if set to true, makes network requests to the backend to write console outputs to the app logs. Default is false.</p>
+        <p>
+            <code>tags</code> - an array of tags to filter on. Tag value "all" shows all logs without tag filtering. Default is for all tags to be shown.<br>
+            <code>consoleTypes</code> - an array of console types to filter on. Default is for all console types to be shown.<br>
+            <code>showTrace</code> - if set to true, shows the stack trace for the output. Default is false.<br>
+            <code>writeLog</code> - if set to true, makes network requests to the backend to write console outputs to the app logs. Default is false.
+        </p>
         <p>Typing <code>shashin.disableDebug()</code> in the browser console prevents any output from the app to be shown in the console window.</p>
+        <p>Example: <br>
+            <code>shashin.enableDebug({<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;tags: ["testcode", "anothertag"],<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;consoleTypes: [shashin.consoleTypes.error],<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;showTrace: true,<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;writeLog: true<br>
+            });</code>
+        </p>
+
+        <h2>Toast messages</h2>
+        <p>Pop-up messages can be used to notify users. There are 9 quadrants you can see pop-ups.</p>
+        <p>Place <code>shashin.showToastMessage(&lt;title&gt;, &lt;message&gt;, {&lt;options&gt;})</code> in JS code. Options are a hash map of allowable options.</p>
+        <p>
+            <code>icon</code> - use Bootstrap Icons. eg. bi-info-circle. Default is empty.<br>
+            <code>iconColor</code> - allows for different CSS colors for the icon eg. "red" or "#FF0000". Default "lightgray"<br>
+            <code>headerSubtext</code> - Text that sits beside the title in smaller print. Default is an empty string.<br>
+            <code>autohide</code> - Flag whether the toast will automatically hide. If false, user will be forced to close the notification. Default is true.<br>
+            <code>delay</code> - Time in which toast message will close in milliseconds. This option will be ignored if autohide is set to true. Default is 5000 ms.<br>
+            <code>placement</code> - Determines the placement of the toast message. Default is bottom middle. Options are: <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.default<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.top.left<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.top.center<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.top.right<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.middle.left<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.middle.center<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.middle.right<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.bottom.left<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.bottom.center<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.bottom.right<br>
+            <code>borderColor</code> - The border color of the toast notification. Default is secondary. Options are: primary, secondary, success, danger, warning, info, light, dark, white<br>
+            <code>tag</code> - A string that identifies and labels the toast. Default is empty.<br>
+            <code>refreshTag</code> - If tag is defined, overwrites the tag content with any updated content. Default is empty.
+        </p>
+        <p>Example:<br>
+            <code>shashin.showToastMessage("test title","test message"{<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;icon: "bi-exclamation-triangle",<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;icon: "#FF0000",<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;delay: 6500,<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;placement: shashin.toast.placement.top.left,<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;tag: "testcode",<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;refreshTag: true<br>
+                });</code>
+        </p>
         <hr>
         <p>Report issues <a href="mailto:myagi.developer@gmail.com" target="_blank">here</a>!</p>
     </div>
