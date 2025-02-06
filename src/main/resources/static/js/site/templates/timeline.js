@@ -38,7 +38,7 @@ class TimelineTemplates {
     `};
 
     static BatchHeaderThumbnail({thumbnailImage, title, version}) { return `
-        <img loading="lazy" draggable="false" src="${thumbnailImage+(version === "" ? "" : "?v=" + version)}" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="${title}">
+        <img class="me-1" loading="lazy" draggable="false" src="${thumbnailImage+(version === "" ? "" : "?v=" + version)}" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="${title}">
     `};
 
     static TimelinePreLoadGalleryHeader({metadata, placeNameHeaders, listHtml}) { return `

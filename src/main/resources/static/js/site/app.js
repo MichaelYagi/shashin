@@ -3104,12 +3104,29 @@
             e.preventDefault();
 
             let metadataIdList = [];
+            let metadataFilenamesArray = shashin.getMetadataFilenamesList();
             let thumbnailList = "";
             $('.bi-circle-fill').each(function(i, obj) {
                 const metadataId = obj.id.substring(6, obj.id.length);
                 metadataIdList.push(metadataId);
-                thumbnailList += TimelineTemplates.BatchHeaderThumbnail({thumbnailImage:$("#thumbnailCentered"+metadataId).val(),title:$("#filename"+metadataId).val().trim(), version: Util.getMetadataLocalStorage()});
             });
+
+            if (metadataIdList.length > 5) {
+                for (let index in metadataIdList) {
+                    const metadataId = metadataIdList[index];
+                    thumbnailList += TimelineTemplates.BatchHeaderThumbnail({
+                        thumbnailImage: $("#thumbnailCentered" + metadataId).val(),
+                        title: $("#filename" + metadataId).val().trim(),
+                        version: Util.getMetadataLocalStorage()
+                    });
+                }
+            } else {
+                thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataIdList[0] + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="' + metadataFilenamesArray[0] + '" draggable="false">';
+                thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataIdList[1] + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="' + metadataFilenamesArray[0] + '" draggable="false">';
+                thumbnailList += '<span class="bi-arrows ms-1 me-1"></span>';
+                thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataIdList[metadataIdList.length-2] + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="' + metadataFilenamesArray[metadataFilenamesArray.length-2] + '" draggable="false">';
+                thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataIdList[metadataIdList.length-1] + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="' + metadataFilenamesArray[metadataFilenamesArray.length-1] + '" draggable="false">';
+            }
 
             $("#batchMetadataIds").val(JSON.stringify(metadataIdList));
             if (thumbnailList !== "") {
