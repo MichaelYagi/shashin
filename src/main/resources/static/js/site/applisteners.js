@@ -5,9 +5,18 @@ $("#appToolsBatchEdit").on("click", function(e) {
     let metadataIdArray = shashin.getMetadataIdList();
     let metadataFilenamesArray = shashin.getMetadataFilenamesList();
     let metadataThumbnailsArray = shashin.getMetadataThumbnailsList();
-    for (let index in metadataThumbnailsArray) {
-        const metadataThumnailUrl = metadataThumbnailsArray[index];
-        thumbnailList += '<img loading="lazy" src="'+metadataThumnailUrl+'" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="'+metadataFilenamesArray[index]+'" draggable="false">';
+
+    if (metadataThumbnailsArray.length > 5) {
+        thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataThumbnailsArray[0] + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="' + metadataFilenamesArray[0] + '" draggable="false">';
+        thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataThumbnailsArray[1] + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="' + metadataFilenamesArray[0] + '" draggable="false">';
+        thumbnailList += '<span class="bi-arrows ms-1 me-1"></span>';
+        thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataThumbnailsArray[metadataThumbnailsArray.length-2] + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="' + metadataFilenamesArray[metadataFilenamesArray.length-2] + '" draggable="false">';
+        thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataThumbnailsArray[metadataThumbnailsArray.length-1] + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="' + metadataFilenamesArray[metadataFilenamesArray.length-1] + '" draggable="false">';
+    } else {
+        for (let index in metadataThumbnailsArray) {
+            const metadataThumnailUrl = metadataThumbnailsArray[index];
+            thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataThumnailUrl + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="' + metadataFilenamesArray[index] + '" draggable="false">';
+        }
     }
 
     $("#yearTakenBatchData ").attr("max", new Date().getFullYear());
