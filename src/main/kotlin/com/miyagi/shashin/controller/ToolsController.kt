@@ -239,9 +239,9 @@ class ToolsController {
     @ResponseBody
     fun writeConsoleToLog(@RequestBody requestBody: JsonNode): String {
         val consoleLogMapper = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
-        if (consoleLogMapper.containsKey("type") && consoleLogMapper.containsKey("log") && consoleLogMapper.containsKey("tag")) {
+        if (consoleLogMapper.containsKey("consoleType") && consoleLogMapper.containsKey("log") && consoleLogMapper.containsKey("tag")) {
             // error: 0, info: 1, log: 2, warn: 3
-            val type = consoleLogMapper["type"].toString().toInt()
+            val type = consoleLogMapper["consoleType"].toString().toInt()
             val log = consoleLogMapper["log"].toString()
             val tag = consoleLogMapper["tag"].toString()
 

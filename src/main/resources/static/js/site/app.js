@@ -475,7 +475,7 @@
         $("#spinner").hide();
         shashin.showToastMessage("AJAX error", "AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".", {tag:"ajaxError",icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
         shashin.printMessageToConsole("AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".", {
-            type: shashin.consoleTypes.error
+            consoleType: shashin.consoleTypes.error
         });
         if (xhr.status === 403 || xhr.status === 401) {
             $(location).prop('href', '/users/login');
@@ -3264,15 +3264,15 @@
 
     shashin.printMessageToConsole = function (msg, options) {
         // error, info, log, warn
-        let type = shashin.consoleTypes.log;
+        let consoleType = shashin.consoleTypes.log;
         let tag = "all";
 
         if (options === undefined || options === null) {
-            type = shashin.consoleTypes.log;
+            consoleType = shashin.consoleTypes.log;
             tag = "all";
         } else {
-            if (options.hasOwnProperty("type")) {
-                type = options["type"];
+            if (options.hasOwnProperty("consoleType")) {
+                consoleType = options["consoleType"];
             }
 
             if (options.hasOwnProperty("tag")) {
@@ -3289,13 +3289,13 @@
         }
 
         if (($.inArray(tag, shashin.consoleTags) !== -1 || $.inArray("all", shashin.consoleTags) !== -1) && (shashin.showDebug === true || localStorageDebugFlag === true)) {
-            if (type === shashin.consoleTypes.log && (shashin.consoleFilterTypes.length === 0 || $.inArray(shashin.consoleTypes.log, shashin.consoleFilterTypes) !== -1)) {
+            if (consoleType === shashin.consoleTypes.log && (shashin.consoleFilterTypes.length === 0 || $.inArray(shashin.consoleTypes.log, shashin.consoleFilterTypes) !== -1)) {
                 console.log(msg+". Tag: " + tag);
-            } else if (type === shashin.consoleTypes.error && (shashin.consoleFilterTypes.length === 0 || $.inArray(shashin.consoleTypes.error, shashin.consoleFilterTypes) !== -1)) {
+            } else if (consoleType === shashin.consoleTypes.error && (shashin.consoleFilterTypes.length === 0 || $.inArray(shashin.consoleTypes.error, shashin.consoleFilterTypes) !== -1)) {
                 console.error(msg+". Tag: " + tag);
-            } else if (type === shashin.consoleTypes.info && (shashin.consoleFilterTypes.length === 0 || $.inArray(shashin.consoleTypes.info, shashin.consoleFilterTypes) !== -1)) {
+            } else if (consoleType === shashin.consoleTypes.info && (shashin.consoleFilterTypes.length === 0 || $.inArray(shashin.consoleTypes.info, shashin.consoleFilterTypes) !== -1)) {
                 console.info(msg+". Tag: " + tag);
-            } else if (type === shashin.consoleTypes.warn && (shashin.consoleFilterTypes.length === 0 || $.inArray(shashin.consoleTypes.warn, shashin.consoleFilterTypes) !== -1)) {
+            } else if (consoleType === shashin.consoleTypes.warn && (shashin.consoleFilterTypes.length === 0 || $.inArray(shashin.consoleTypes.warn, shashin.consoleFilterTypes) !== -1)) {
                 console.warn(msg+". Tag: " + tag);
             } else {
                 console.log(msg+". Tag: " + tag);
@@ -3310,13 +3310,13 @@
                 if (msg.length > 0) {
                     if (shashin.consoleFilterTypes.length === 0) {
                         log = "console.log: " + msg;
-                    } else if (type === shashin.consoleTypes.log && $.inArray(shashin.consoleTypes.log, shashin.consoleFilterTypes) !== -1) {
+                    } else if (consoleType === shashin.consoleTypes.log && $.inArray(shashin.consoleTypes.log, shashin.consoleFilterTypes) !== -1) {
                         log = "console.log: " + msg;
-                    } else if (type === shashin.consoleTypes.error && $.inArray(shashin.consoleTypes.error, shashin.consoleFilterTypes) !== -1) {
+                    } else if (consoleType === shashin.consoleTypes.error && $.inArray(shashin.consoleTypes.error, shashin.consoleFilterTypes) !== -1) {
                         log = "console.error: " + msg;
-                    } else if (type === shashin.consoleTypes.info && $.inArray(shashin.consoleTypes.info, shashin.consoleFilterTypes) !== -1) {
+                    } else if (consoleType === shashin.consoleTypes.info && $.inArray(shashin.consoleTypes.info, shashin.consoleFilterTypes) !== -1) {
                         log = "console.info: " + msg;
-                    } else if (type === shashin.consoleTypes.warn && $.inArray(shashin.consoleTypes.warn, shashin.consoleFilterTypes) !== -1) {
+                    } else if (consoleType === shashin.consoleTypes.warn && $.inArray(shashin.consoleTypes.warn, shashin.consoleFilterTypes) !== -1) {
                         log = "console.warn: " + msg;
                     }
 
@@ -3327,7 +3327,7 @@
                         }
 
                         setTimeout(function () {
-                            let json = {type: type, log: log, tag: tag}
+                            let json = {consoleType: consoleType, log: log, tag: tag}
                             http.ajax("post", "/console/log", JSON.stringify(json)).then(function (data) {
                                 if (data.hasOwnProperty("status") && data["status"] === "fail" && data.hasOwnProperty("msg")) {
                                     console.error("Could not log console output");

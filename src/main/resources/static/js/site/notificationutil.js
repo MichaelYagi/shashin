@@ -10,7 +10,7 @@ class NotificationUtil {
         // Check if the browser supports notifications
         if (!("Notification" in window)) {
             shashin.printMessageToConsole("Notification API not available.", {
-                type: shashin.consoleTypes.warn
+                consoleType: shashin.consoleTypes.warn
             });
             this.available = false;
             return false;
@@ -48,7 +48,7 @@ class NotificationUtil {
         } else {
             if (shashin) {
                 shashin.printMessageToConsole("Notification permissions not granted.", {
-                    type: shashin.consoleTypes.warn
+                    consoleType: shashin.consoleTypes.warn
                 });
             }
         }
