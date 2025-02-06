@@ -2462,7 +2462,7 @@
 
                     metadataIdArray = shashin.getMetadataIdList();
 
-                    if (metadataIdArray.length > 0 && shashin.lastSelectedMetadataId !== "" && shashin.lastSelectedMetadataId !== metadata.id) {
+                    if (metadataIdArray.length > 0 && shashin.lastSelectedMetadataId !== "") {
                         shashin.printMessageToConsole("double tap detected", {tag: "multiselect"});
                         batchSelect();
                     }
