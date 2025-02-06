@@ -6,7 +6,7 @@
     <div class="col-11 col-md-10 col-xl-9">
         <h1>Dev Notes</h1>
 
-        <h2>Multi-select editing</h2>
+        <h2>Multi-select media editing</h2>
         <ul>
             <li>See Search module as an example</li>
             <li>You must add tag <code>&lt;div th:replace="~{fragments/metadatabatchmodal :: metadatabatchmodal(${recognitionLabels},${allAlbumList})}"&gt;&lt;/div></code> in order to access the multi-select modal dialog</li>
@@ -18,7 +18,26 @@
             </li>
             <li>In the controller, it must extend <code>BaseController</code> and in the action, call <code>getAllAttributeData(model)</code> in order to prefill album and people dropdowns</li>
         </ul>
+        <ul>
+            <li>See "Search" module as an example</li>
+            <li>You must add tag <code>&lt;div th:replace="~{fragments/metadatabatchmodal :: metadatabatchmodal(${recognitionLabels},${allAlbumList})}"&gt;&lt;/div></code> in order to access the multi-select modal dialog</li>
+            <li>For each metadata, you should add hidden inputs to show proper headings in the modal dialog:
+                <ul>
+                    <li><code>&lt;input type="hidden" th:name="'filename'+${metadata.id}" th:id="'filename'+${metadata.id}" th:value="${metadata.fileName}"&gt;</code>
+                    <li><code>&lt;input type="hidden" th:name="'thumbnailCentered'+${metadata.id}" th:id="'thumbnailCentered'+${metadata.id}" th:value="${metadata.thumbnailUrlCentered}"&gt;</code>
+                </ul>
+            </li>
+            <li>In the controller, it must extend <code>BaseController</code> and in the action, call <code>getAllAttributeData(model)</code> in order to prefill album and people dropdowns</li>
+        </ul>
 
+        <h2>Front end debugging</h2>
+        <p>Apart from standard IDE debuggers, convenience functions to look at console outputs can be enabled.</p>
+        <p>Place <code>shashin.printMessageToConsole(&lt;message&gt;,{&lt;options&gt;})</code> in JS code where you'd like to see console outputs. Options are a hash map of allowable options.</p>
+        <p><code>tag</code> - tags outputs to be used as a filter.<br><code>type</code> - allows for different console types to be used, <code>shashin.consoleTypes.error</code>, <code>shashin.consoleTypes.info</code>, <code>shashin.consoleTypes.log</code>, or <code>shashin.consoleTypes.warn</code>.</p>
+        <p>Typing <code>shashin.enableDebug({&lt;options&gt;})</code> in the browser console will output console log messages placed in the app. There are various options you can pass.</p>
+        <p><code>tags</code> - an array of tags to filter on. Default is "all", to output all tagged messages.<br><code>filter</code> - an array of console types to filter on. Default is for all console types to be shown.<br><code>showTrace</code> - if set to true, shows the stack trace for the output. Default is false.<br><code>writeLog</code> - if set to true, makes network requests to the backend to write console outputs to the app logs. Default is false.</p>
+        <p>Typing <code>shashin.disableDebug()</code> in the browser console prevents any output from the app to be shown in the console window.</p>
+        <hr>
         <p>Report issues <a href="mailto:myagi.developer@gmail.com" target="_blank">here</a>!</p>
     </div>
 </section>
