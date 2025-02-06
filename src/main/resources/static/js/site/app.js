@@ -3123,7 +3123,7 @@
             } else {
                 thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataIdList[0] + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="' + metadataFilenamesArray[0] + '" draggable="false">';
                 thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataIdList[1] + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="' + metadataFilenamesArray[0] + '" draggable="false">';
-                thumbnailList += '<span class="bi-arrows ms-1 me-1"></span>';
+                thumbnailList += '<span class="bi-arrows ms-1 me-1 display-4 align-middle"></span>';
                 thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataIdList[metadataIdList.length-2] + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="' + metadataFilenamesArray[metadataFilenamesArray.length-2] + '" draggable="false">';
                 thumbnailList += '<img class="me-1" loading="lazy" src="' + metadataIdList[metadataIdList.length-1] + '" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="' + metadataFilenamesArray[metadataFilenamesArray.length-1] + '" draggable="false">';
             }
