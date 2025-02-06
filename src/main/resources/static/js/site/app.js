@@ -42,6 +42,7 @@
     shashin.objectName = "shashinobject";
     shashin.slideshowXDown = null;
     shashin.slideshowYDown = null;
+    shashin.tapped = false;
     shashin.lastSelectedMetadataId = "";
     shashin.lastSelectedMetadataSelected = false;
     shashin.multiSelected = false;
@@ -2301,8 +2302,11 @@
             // Fill top left icon when clicking anywhere on thumbnail
             if ($('.bi-circle-fill')[0] || metadataIdArray.length > 0) {
                 if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
-                    shashin.lastSelectedMetadataId = metadata.id;
-                    shashin.lastSelectedMetadataSelected = true;
+
+                    if (Util.isMobile() === false) {
+                        shashin.lastSelectedMetadataId = metadata.id;
+                        shashin.lastSelectedMetadataSelected = true;
+                    }
 
                     $("#tntl" + metadata.id).show();
                     $("#tlicon" + metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
@@ -2326,8 +2330,11 @@
                     }
                 } else {
                     $("#tntl" + metadata.id).show();
-                    shashin.lastSelectedMetadataId = metadata.id;
-                    shashin.lastSelectedMetadataSelected = false;
+
+                    if (Util.isMobile() === false) {
+                        shashin.lastSelectedMetadataId = metadata.id;
+                        shashin.lastSelectedMetadataSelected = false;
+                    }
 
                     $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
                     $("#image" + metadata.id).css("opacity", opaque);
@@ -2448,13 +2455,19 @@
                     batchSelect();
                 }
             });
-            $(document).bind("dblclick", function (e) {
-                e.preventDefault();
 
-                shashin.printMessageToConsole("s key pressed", {tag: "multiselect"});
+            if (Util.isMobile() === true) {
+                $(document).bind("dblclick", function (e) {
+                    e.preventDefault();
 
-                batchSelect();
-            });
+                    metadataIdArray = shashin.getMetadataIdList();
+
+                    if (metadataIdArray.length > 0 && shashin.lastSelectedMetadataId !== "" && shashin.lastSelectedMetadataId !== metadata.id) {
+                        shashin.printMessageToConsole("double tap detected", {tag: "multiselect"});
+                        batchSelect();
+                    }
+                });
+            }
 
             if (metadata.type.includes("video") && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
             ) {
