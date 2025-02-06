@@ -2648,11 +2648,6 @@
                                             const metadataArray = metadataIdArray[index];
                                             const metadataId = metadataArray[0];
 
-                                            if ($("#image" + metadataId).length > 0) {
-                                                const imageUrl = $("#image" + metadataId).attr("src").replace("/gif/" + metadataId, "/225/" + metadataId);
-                                                $("#image" + metadataId).attr("src", imageUrl);
-                                            }
-
                                             if (shashin.lastSelectedMetadataSelected === true) {
                                                 if ($("#tlicon" + metadataId).attr("class") === "bi-circle") {
                                                     selectClick(metadataId, view, opaque, transparent, metadataIdArray, false);
@@ -2680,6 +2675,15 @@
                                                 shashin.removeFromMetadataFilenamesList(metadataArray[1]);
                                                 shashin.removeFromMetadataThumbnailsList(metadataArray[2]);
                                                 $("#timelineNumberSelected").text(shashin.getMetadataIdList().length + " Selected");
+                                            }
+
+                                            if (shashin.getMetadataIdList().length === 0) {
+                                                shashin.clearTimelineSelection();
+                                            }
+
+                                            if ($("#image" + metadataId).length > 0) {
+                                                const imageUrl = $("#image" + metadataId).attr("src").replace("/gif/" + metadataId, "/225/" + metadataId);
+                                                $("#image" + metadataId).attr("src", imageUrl);
                                             }
                                         }
                                     }
