@@ -29,7 +29,6 @@ class Archived {
             shashin.pageLoader(await this.loadNextPage.bind(this), ".appendMetadataPhotos", this.metadataList, this.activePage);
         }, 0);
         shashin.mouseMoveListener();
-        shashin.closeGalleryOnBack();
     }
 
     async loadNextPage() {

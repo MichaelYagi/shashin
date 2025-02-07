@@ -56,7 +56,6 @@
             shashin.pageLoader(await loadNextPage, ".appendAlbumPhotos", albumMetadataList, activePage);
         }, 0);
         shashin.mouseMoveListener();
-        shashin.closeGalleryOnBack();
     };
 
     albumSettings.openAlbumModal = function (e,metadataId) {

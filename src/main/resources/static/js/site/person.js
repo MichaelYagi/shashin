@@ -31,7 +31,6 @@ class Person {
         }, 0);
         shashin.matchingListeners();
         shashin.mouseMoveListener();
-        shashin.closeGalleryOnBack();
 
         $('#savePersonModal').on("click", async function (e) {
 
