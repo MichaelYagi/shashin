@@ -366,10 +366,6 @@
 
             });
         }, 3000);
-
-        if (false === Util.isMobile()) {
-            shashin.closeGalleryOnBack();
-        }
     };
 
     timelineSettings.rescanElements = function (preCalculatedElements) {
