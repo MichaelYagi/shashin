@@ -196,7 +196,7 @@
                     }
 
                     if (shashin.hasToast(placement + "ToastContainer", tag) === false) {
-                        shashin.createNewToast(nextIteration, placement, tag);
+                        shashin.createNewToast(nextIteration, placement, tag, title);
 
                         const attr = $("#" + toastId).attr('data-tag');
 
@@ -205,7 +205,7 @@
                         }
                     }
                 } else if ($("#" + toastId).length === 0 || ($("#" + toastId).length > 0 && $("#" + toastId).hasClass('in') === false && $("#" + toastId).hasClass('show') === false)) {
-                    shashin.createNewToast(nextIteration, placement, tag);
+                    shashin.createNewToast(nextIteration, placement, tag, title);
                     attached = true;
                 }
 
@@ -272,21 +272,33 @@
         }
     }
 
-    shashin.createNewToast = function (index, placement, tag) {
+    shashin.createNewToast = function (index, placement, tag, title) {
 
         let html = '<div id="'+placement+'_ToastTarget_'+index+'" class="toast" role="alert" aria-live="assertive" aria-atomic="true">';
         if (tag !== null) {
             html = '<div id="'+placement+'_ToastTarget_'+index+'" data-tag="'+tag+'" class="toast" role="alert" aria-live="assertive" aria-atomic="true">';
         }
 
-        html += '<div class="toast-header">' +
-            '<span id="'+placement+'_ToastIcon_'+index+'" class="toast-icon"></span><span id="'+placement+'_ToastSpacer_'+index+'"></span>' +
-            '<strong id="'+placement+'_ToastTitle_'+index+'" class="me-auto toast-title"></strong>' +
-            '<small id="'+placement+'_HeaderSubtext_'+index+'" class="toast-subtext"></small>' +
-            '<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>' +
-            '</div>' +
-            '<div id="'+placement+'_ToastMessage_'+index+'" class="toast-body"></div>' +
-            '</div>';
+        if (title !== null && title !== "") {
+            html += '<div class="toast-header">' +
+                '<span id="' + placement + '_ToastIcon_' + index + '" class="toast-icon"></span><span id="' + placement + '_ToastSpacer_' + index + '"></span>' +
+                '<strong id="' + placement + '_ToastTitle_' + index + '" class="me-auto toast-title"></strong>' +
+                '<small id="' + placement + '_HeaderSubtext_' + index + '" class="toast-subtext"></small>' +
+                '<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>' +
+                '</div>';
+        }
+
+        if (title === null || title === "") {
+            html += '<div class="d-flex">';
+        }
+
+        html += '<div id="'+placement+'_ToastMessage_'+index+'" class="toast-body"></div>';
+
+        if (title === null || title === "") {
+            html += '<button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button></div>';
+        }
+
+        html += '</div>';
 
         $(html).insertBefore($("#" + placement + "_ToastTargetAttach"));
     }
