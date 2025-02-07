@@ -14,31 +14,31 @@ class GalleryTemplates {
             </div>`
             :''}
     
-            ${(overlayData.hasOwnProperty("data") && overlayData["data"].hasOwnProperty("overlayFlags") && overlayData["data"]["overlayFlags"].hasOwnProperty("renderTopRight") && overlayData["data"]["overlayFlags"]["renderTopRight"] === true) ? GalleryTemplates.getTopRightOverlay({
+            ${(overlayData.hasOwnProperty("data") && overlayData.data.hasOwnProperty("overlayFlags") && overlayData.data.overlayFlags.hasOwnProperty("renderTopRight") && overlayData.data.overlayFlags.renderTopRight === true) ? GalleryTemplates.getTopRightOverlay({
             id: metadata.id,
             overlays: overlayData.overlays,
             data: overlayData.data
         }) : ''}
             
-            ${(overlayData.hasOwnProperty("data") && overlayData["data"].hasOwnProperty("overlayFlags") && overlayData["data"]["overlayFlags"].hasOwnProperty("renderTopLeft") && overlayData["data"]["overlayFlags"]["renderTopLeft"] === true) ? GalleryTemplates.getTopLeftOverlay({
+            ${(overlayData.hasOwnProperty("data") && overlayData.data.hasOwnProperty("overlayFlags") && overlayData.data.overlayFlags.hasOwnProperty("renderTopLeft") && overlayData.data.overlayFlags.renderTopLeft === true) ? GalleryTemplates.getTopLeftOverlay({
             id: metadata.id,
             overlays: overlayData.overlays,
             data: overlayData.data
         }) : ''}
             
-            ${(overlayData.hasOwnProperty("data") && overlayData["data"].hasOwnProperty("overlayFlags") && overlayData["data"]["overlayFlags"].hasOwnProperty("renderBottomLeft") && overlayData["data"]["overlayFlags"]["renderBottomLeft"] === true) ? GalleryTemplates.getBottomLeftOverlay({
+            ${(overlayData.hasOwnProperty("data") && overlayData.data.hasOwnProperty("overlayFlags") && overlayData.data.overlayFlags.hasOwnProperty("renderBottomLeft") && overlayData.data.overlayFlags.renderBottomLeft === true) ? GalleryTemplates.getBottomLeftOverlay({
             metadata: metadata,
             overlays: overlayData.overlays,
             data: overlayData.data
         }) : ''}
             
-            ${(overlayData.hasOwnProperty("data") && overlayData["data"].hasOwnProperty("overlayFlags") && overlayData["data"]["overlayFlags"].hasOwnProperty("renderBottomRight") && overlayData["data"]["overlayFlags"]["renderBottomRight"] === true) ? GalleryTemplates.getBottomRightOverlay({
+            ${(overlayData.hasOwnProperty("data") && overlayData.data.hasOwnProperty("overlayFlags") && overlayData.data.overlayFlags.hasOwnProperty("renderBottomRight") && overlayData.data.overlayFlags.renderBottomRight === true) ? GalleryTemplates.getBottomRightOverlay({
             id: metadata.id,
             overlays: overlayData.overlays,
             data: overlayData.data
         }) : ''}
             
-            ${(overlayData.hasOwnProperty("data") && overlayData["data"].hasOwnProperty("overlayFlags") && overlayData["data"]["overlayFlags"].hasOwnProperty("renderCenter") && overlayData["data"]["overlayFlags"]["renderCenter"] === true) ? GalleryTemplates.getCenteredOverlay({
+            ${(overlayData.hasOwnProperty("data") && overlayData.data.hasOwnProperty("overlayFlags") && overlayData.data.overlayFlags.hasOwnProperty("renderCenter") && overlayData.data.overlayFlags.renderCenter === true) ? GalleryTemplates.getCenteredOverlay({
             id: metadata.id,
             overlays: overlayData.overlays,
             data: overlayData.data,
@@ -51,26 +51,26 @@ class GalleryTemplates {
         ${(activePage === "person") ? `<span id="personmodal${metadata.id}" style="width:0;height:0;padding:0"></span>` : ''}
         
         <script type="text/javascript"${(shashin.nonce.length > 0 ? ' nonce="' + shashin.nonce + '"' : '')}>
-        $(document).ready(function () {
-            shashin.setPhotoOverlays({id:"${metadata.id}",type:"${metadata.type}",lat:"${(metadata.lat === null) ? '' : `${metadata.lat}`}", lng:"${(metadata.lng === null) ? '' : `${metadata.lng}`}", year:${metadata.year}, month:${metadata.month}, day:${metadata.day}, fileName:"${metadata.fileName}", thumbnailUrlSmall:"${"/api/v1/thumbnails/225/"+metadata.id}"}, "${activePage}");
-            Util.activateMetadataListeners("${metadata.id}");
-            $("#mediaLink${metadata.id}").attr("tag", "${metadata.id}");
-            
-            ${(overlayData.hasOwnProperty("data") === false || overlayData["data"].hasOwnProperty("overlayFlags") === false || overlayData["data"]["overlayFlags"].hasOwnProperty("renderBottomLeft") === false || overlayData["data"]["overlayFlags"]["renderBottomLeft"] === false || $.inArray("isInfo", overlayData.overlays) !== -1) ?
-        `
-                $("#infoModalEdit${metadata.id}").on("click", function (e) {
-                    e.preventDefault();
-                    shashin.openEditMetadataModal("${metadata.id}");
-                })
-                `
-        :
-        `
-                $("#metadataModalEdit${metadata.id}").on("click", function (e) {
-                    e.preventDefault();
-                    shashin.openEditMetadataModal("${metadata.id}");
-                })
-                `
-    }
+            $(document).ready(function () {
+                shashin.setPhotoOverlays({id:"${metadata.id}",type:"${metadata.type}",lat:"${(metadata.lat === null) ? '' : `${metadata.lat}`}", lng:"${(metadata.lng === null) ? '' : `${metadata.lng}`}", year:${metadata.year}, month:${metadata.month}, day:${metadata.day}, fileName:"${metadata.fileName}", thumbnailUrlSmall:"${"/api/v1/thumbnails/225/"+metadata.id}"}, "${activePage}");
+                Util.activateMetadataListeners("${metadata.id}");
+                $("#mediaLink${metadata.id}").attr("tag", "${metadata.id}");
+                
+                ${(overlayData.hasOwnProperty("data") === false || overlayData.data.hasOwnProperty("overlayFlags") === false || overlayData.data.overlayFlags.hasOwnProperty("renderBottomLeft") === false || overlayData.data.overlayFlags.renderBottomLeft === false || $.inArray("isInfo", overlayData.overlays) !== -1) ?
+            `
+                    $("#infoModalEdit${metadata.id}").on("click", function (e) {
+                        e.preventDefault();
+                        shashin.openEditMetadataModal("${metadata.id}");
+                    })
+                    `
+            :
+            `
+                    $("#metadataModalEdit${metadata.id}").on("click", function (e) {
+                        e.preventDefault();
+                        shashin.openEditMetadataModal("${metadata.id}");
+                    })
+                    `
+            }
     
             $("#image${metadata.id}").on('load', function () {
                 $(this).css("background-color", "transparent");

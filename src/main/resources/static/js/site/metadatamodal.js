@@ -4,20 +4,20 @@
     }
 
     metadataModal.toggleTagPeopleDropdown = function (metadataId) {
-        $("#tagpeopledropdown"+metadataId).dropdown('toggle')
-    }
+        $("#tagpeopledropdown"+metadataId).dropdown('toggle');
+    };
 
     metadataModal.closeTagPeopleDropdown = function (metadataId) {
-        $("#tagpeopledropdown"+metadataId).dropdown('hide')
-    }
+        $("#tagpeopledropdown"+metadataId).dropdown('hide');
+    };
 
     metadataModal.toggleAlbumDropdown = function (metadataId) {
-        $("#albumdropdown"+metadataId).dropdown('toggle')
-    }
+        $("#albumdropdown"+metadataId).dropdown('toggle');
+    };
 
     metadataModal.closeAlbumDropdown = function (metadataId) {
-        $("#albumdropdown"+metadataId).dropdown('hide')
-    }
+        $("#albumdropdown"+metadataId).dropdown('hide');
+    };
 
     metadataModal.populateLabel = function (metadataId) {
         const checkedBoxes = $('input[name="recognitionLabel' + metadataId + '[]"]:checked');
@@ -28,7 +28,7 @@
         });
 
         if (labelString.length > 0) {
-            labelString = labelString.slice(0,-1)
+            labelString = labelString.slice(0,-1);
         }
 
         $("#tagpeople").val(labelString);
@@ -36,7 +36,7 @@
         if (labelString !== "") {
             $("#isobject").prop("checked", false);
         }
-    }
+    };
 
     metadataModal.populateAlbum = function (metadataId) {
         const checkedBoxes = $('input[name="album' + metadataId + '[]"]:checked');
@@ -47,11 +47,11 @@
         });
 
         if (albumString.length > 0) {
-            albumString = albumString.slice(0,-1)
+            albumString = albumString.slice(0,-1);
         }
 
         $("#albumnames").val(albumString);
-    }
+    };
 
 }( window.metadataModal = window.metadataModal || {}, jQuery ));
 
@@ -189,7 +189,7 @@ async function saveMetadata(e) {
             albumnames: albums,
             hidden: $("#hidden").prop("checked"),
             isObject: $("#isobject").prop("checked")
-        }
+        };
 
         let compreFaceImageId = "";
         const peopleArray = people.split(",").map(function (item) {
@@ -208,12 +208,12 @@ async function saveMetadata(e) {
                     const personJson = {
                         personName: person,
                         metadataId: metadataId
-                    }
+                    };
                     const http = new Http("upload faces");
                     let persondata = await http.ajax("post", "/person/recognition/faces", JSON.stringify(personJson));
 
-                    if (persondata.hasOwnProperty("responseDataUpload") && persondata["responseDataUpload"].hasOwnProperty("image_id")) {
-                        compreFaceImageId = persondata["responseDataUpload"]["image_id"];
+                    if (persondata.hasOwnProperty("responseDataUpload") && persondata.responseDataUpload.hasOwnProperty("image_id")) {
+                        compreFaceImageId = persondata.responseDataUpload.image_id;
                     }
                 }
             });
@@ -237,20 +237,20 @@ async function saveMetadata(e) {
         }
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-            if (data["status"] === shashin.apiResponse.SUCCESS) {
-                if (data.hasOwnProperty("keywords") && data["keywords"] !== "") {
-                    $("#keywordsString").val(data["keywords"]);
-                    $("#keywordsBatchString").val(data["keywords"]);
+            if (data.status === shashin.apiResponse.SUCCESS) {
+                if (data.hasOwnProperty("keywords") && data.keywords !== "") {
+                    $("#keywordsString").val(data.keywords);
+                    $("#keywordsBatchString").val(data.keywords);
                 }
 
-                if (data.hasOwnProperty("cameras") && data["cameras"] !== "") {
-                    $("#camerasString").val(data["cameras"]);
-                    $("#camerasBatchString").val(data["cameras"]);
+                if (data.hasOwnProperty("cameras") && data.cameras !== "") {
+                    $("#camerasString").val(data.cameras);
+                    $("#camerasBatchString").val(data.cameras);
                 }
 
-                if (data.hasOwnProperty("lenses") && data["lenses"] !== "") {
-                    $("#lensesString").val(data["lenses"]);
-                    $("#lensesBatchString").val(data["lenses"]);
+                if (data.hasOwnProperty("lenses") && data.lenses !== "") {
+                    $("#lensesString").val(data.lenses);
+                    $("#lensesBatchString").val(data.lenses);
                 }
 
                 // Update tag
@@ -266,10 +266,10 @@ async function saveMetadata(e) {
                         if (mediaContentList.length > 0) {
                             for (let i = 0; i <= mediaContentList.length; i++) {
                                 let mediaContent = mediaContentList[i];
-                                if (mediaContent && mediaContent.hasOwnProperty("args") && mediaContent["args"] === metadataId) {
-                                    mediaContent["subHtml"] = updatedDescription;
+                                if (mediaContent && mediaContent.hasOwnProperty("args") && mediaContent.args === metadataId) {
+                                    mediaContent.subHtml = updatedDescription;
                                     if (updatedDescription.trim().length === 0) {
-                                        delete mediaContent["subHtml"];
+                                        delete mediaContent.subHtml;
                                     }
                                     mediaContentList[i] = mediaContent;
                                     break;
@@ -280,17 +280,17 @@ async function saveMetadata(e) {
                 }
 
                 const latlngArray = $("#latlng").val().split(",");
-                metadataObj.lat = $.trim(latlngArray[0])
-                metadataObj.lng = $.trim(latlngArray[1])
+                metadataObj.lat = $.trim(latlngArray[0]);
+                metadataObj.lng = $.trim(latlngArray[1]);
 
-                metadataObj.hidden = $("#hidden").prop("checked")
+                metadataObj.hidden = $("#hidden").prop("checked");
 
                 if (metadataObj.hidden === false) {
                     $("#metadataModalEdit" + metadataId).attr("tag", metadataId);
                     $("#mediaLink" + metadataId).attr("tag", metadataId);
 
-                    if ($("#keywords").val() === "" && data.hasOwnProperty("keywordsIdentified") && data["keywordsIdentified"] !== "") {
-                        $("#keywords").val(data["keywordsIdentified"]);
+                    if ($("#keywords").val() === "" && data.hasOwnProperty("keywordsIdentified") && data.keywordsIdentified !== "") {
+                        $("#keywords").val(data.keywordsIdentified);
                     }
 
                     if (type.indexOf("video") >= 0) {
@@ -392,7 +392,7 @@ async function saveMetadata(e) {
                     const options = {
                         mediaContentList: mediaContentList,
                         refreshContent: refreshContent
-                    }
+                    };
                     Util.reinitLightGalleryInstance(options);
                 }
 
@@ -489,7 +489,7 @@ $("#refreshTakenDate").on("click", function (e) {
         $("#yearTaken").val(parseInt(takenAtParts[0]));
         $("#monthTaken").val(parseInt(takenAtParts[1]));
         $("#dayTaken").val(parseInt(takenAtParts[2]));
-        $("#timeTaken").val(originalTakenAtDateArray[1])
+        $("#timeTaken").val(originalTakenAtDateArray[1]);
     }
 });
 
@@ -540,7 +540,7 @@ $("#exifTabLink").on("click", async function (e) {
 
     let exif = "";
     if (data.hasOwnProperty("exif")) {
-        exif = JSON.stringify(data["exif"], null, 2);
+        exif = JSON.stringify(data.exif, null, 2);
     }
     $("#exifInfo").val(exif);
 

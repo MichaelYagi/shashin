@@ -15,13 +15,13 @@ class Taken {
         };
         if (typeof lgMetadataDetail !== "undefined") {
             lgConfig.plugins.push(lgMetadataDetail);
-            lgConfig["metadataDetail"] = true;
-            lgConfig["metadataDetailFun"] = shashin.openInfoSidebar;
+            lgConfig.metadataDetail = true;
+            lgConfig.metadataDetailFun = shashin.openInfoSidebar;
         }
         if (typeof lgVideoThumbnail !== "undefined") {
             lgConfig.plugins.push(lgVideoThumbnail);
-            lgConfig["videoThumbnail"] = true;
-            lgConfig["videoThumbnailFun"] = shashin.processVideoThumbnail;
+            lgConfig.videoThumbnail = true;
+            lgConfig.videoThumbnailFun = shashin.processVideoThumbnail;
         }
         this.mediaContentList = shashin.initLightGallery('scroll-gallery',lgConfig,'.mediaLink');
     }
@@ -54,7 +54,7 @@ class Taken {
     async updateTaken(nextPage,activePage,mediaTypeFilter) {
         this.rendering = true;
 
-        let data = null
+        let data = null;
 
         if (false === this.eol) {
             $("#spinner").css("display", "block");
@@ -62,10 +62,10 @@ class Taken {
         }
 
         const mediaContentList = [];
-        if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data["status"] === shashin.apiResponse.SUCCESS) {
-            const metadataList = data["metadataList"];
-            const favoritesMap = data["favorites"];
-            const placenameMap = data["placenameMap"];
+        if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data.status === shashin.apiResponse.SUCCESS) {
+            const metadataList = data.metadataList;
+            const favoritesMap = data.favorites;
+            const placenameMap = data.placenameMap;
 
             if (metadataList !== null && metadataList.length > 0) {
                 const mediaLinkLength = $(".mediaLink").length;
@@ -85,16 +85,16 @@ class Taken {
                     overlayFlags.renderCenter = true;
                     overlayFlags.renderBottomRight = true;
 
-                    const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
-                    const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
+                    const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id].favorite === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
+                    const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id].count > 0 ? favoritesMap[metadata.id].count : 0;
 
-                    let lastDate = metadataList.hasOwnProperty(index-1) ? metadataList[index-1]["year"]+ "-" + metadataList[index-1]["month"] + "-" + metadataList[index-1]["day"] : "";
+                    let lastDate = metadataList.hasOwnProperty(index-1) ? metadataList[index-1].year+ "-" + metadataList[index-1].month + "-" + metadataList[index-1].day : "";
                     if (this.lastDate !== "") {
                         lastDate = this.lastDate;
                         this.lastDate = "";
                     }
-                    const currentDate = metadata["year"] + "-" + metadata["month"] + "-" + metadata["day"];
-                    const nextDate = metadataList.hasOwnProperty(index+1) ? metadataList[index+1]["year"] + "-" + metadataList[index+1]["month"] + "-" + metadataList[index+1]["day"] : "";
+                    const currentDate = metadata.year + "-" + metadata.month + "-" + metadata.day;
+                    const nextDate = metadataList.hasOwnProperty(index+1) ? metadataList[index+1].year + "-" + metadataList[index+1].month + "-" + metadataList[index+1].day : "";
                     const displayCurrentDate = dateFormat(currentDate.replace(/-/g, "/"), "ddd, mmm d, yyyy");
 
 

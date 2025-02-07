@@ -43,7 +43,7 @@ class ShareAlbum {
         const self = this;
         self.rendering = true;
 
-        let data = null
+        let data = null;
 
         if (false === this.eol) {
             $("#spinner").css("display", "block");
@@ -54,9 +54,9 @@ class ShareAlbum {
 
         if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
-            if (data["status"] === shashin.apiResponse.SUCCESS) {
+            if (data.status === shashin.apiResponse.SUCCESS) {
                 if (data.hasOwnProperty("albumMetadataList")) {
-                    const albumMetadataList = data["albumMetadataList"];
+                    const albumMetadataList = data.albumMetadataList;
                     const mediaLinkLength = $(".mediaLink").length;
 
                     for (let index in albumMetadataList) {
@@ -72,13 +72,13 @@ class ShareAlbum {
                             overlayFlags.renderBottomLeft = false;
                             overlayFlags.renderCenter = true;
 
-                            let lastDate = albumMetadataList.hasOwnProperty(index-1) ? albumMetadataList[index-1]["year"]+ "-" + albumMetadataList[index-1]["month"] + "-" + albumMetadataList[index-1]["day"] : "";
+                            let lastDate = albumMetadataList.hasOwnProperty(index-1) ? albumMetadataList[index-1].year+ "-" + albumMetadataList[index-1].month + "-" + albumMetadataList[index-1].day : "";
                             if (this.lastDate !== "") {
                                 lastDate = this.lastDate;
                                 this.lastDate = "";
                             }
-                            const currentDate = metadata["year"] + "-" + metadata["month"] + "-" + metadata["day"];
-                            const nextDate = albumMetadataList.hasOwnProperty(index+1) ? albumMetadataList[index+1]["year"] + "-" + albumMetadataList[index+1]["month"] + "-" + albumMetadataList[index+1]["day"] : "";
+                            const currentDate = metadata.year + "-" + metadata.month + "-" + metadata.day;
+                            const nextDate = albumMetadataList.hasOwnProperty(index+1) ? albumMetadataList[index+1].year + "-" + albumMetadataList[index+1].month + "-" + albumMetadataList[index+1].day : "";
                             const displayCurrentDate = dateFormat(currentDate.replace(/-/g, "/"), "ddd, mmm d, yyyy");
 
                             if (lastDate !== currentDate || $("#"+currentDate).length === 0) {
@@ -130,7 +130,7 @@ class ShareAlbum {
                 }
             } else {
                 $(".appendAlbumPhotos").last().text("EOL").css("display","none");
-                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                message = '<div class="alert alert-danger" role="alert">' + data.msg + '</div>';
                 $("#msgTimeline").html(message);
                 this.rendering = false;
                 this.eol = true;

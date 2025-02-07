@@ -14,13 +14,13 @@ class Folder {
         };
         if (typeof lgMetadataDetail !== "undefined") {
             lgConfig.plugins.push(lgMetadataDetail);
-            lgConfig["metadataDetail"] = true;
-            lgConfig["metadataDetailFun"] = shashin.openInfoSidebar;
+            lgConfig.metadataDetail = true;
+            lgConfig.metadataDetailFun = shashin.openInfoSidebar;
         }
         if (typeof lgVideoThumbnail !== "undefined") {
             lgConfig.plugins.push(lgVideoThumbnail);
-            lgConfig["videoThumbnail"] = true;
-            lgConfig["videoThumbnailFun"] = shashin.processVideoThumbnail;
+            lgConfig.videoThumbnail = true;
+            lgConfig.videoThumbnailFun = shashin.processVideoThumbnail;
         }
         this.mediaContentList = shashin.initLightGallery('scroll-gallery',lgConfig,'.mediaLink');
     }
@@ -53,7 +53,7 @@ class Folder {
     async updateRecent(nextPage,folderName,activePage) {
         this.rendering = true;
 
-        let data = null
+        let data = null;
 
         if (false === this.eol) {
             $("#spinner").css("display", "block");
@@ -61,9 +61,9 @@ class Folder {
         }
 
         const mediaContentList = [];
-        if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data["status"] === shashin.apiResponse.SUCCESS) {
-            const metadataList = data["metadataList"];
-            const favoritesMap = data["favorites"];
+        if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data.status === shashin.apiResponse.SUCCESS) {
+            const metadataList = data.metadataList;
+            const favoritesMap = data.favorites;
 
             if (metadataList !== null && metadataList.length > 0) {
                 const mediaLinkLength = $(".mediaLink").length;
@@ -81,8 +81,8 @@ class Folder {
                         overlayFlags.renderCenter = true;
                         overlayFlags.renderBottomRight = true;
 
-                        const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
-                        const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
+                        const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id].favorite === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
+                        const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id].count > 0 ? favoritesMap[metadata.id].count : 0;
 
                         const overlayData = shashin.getOverlayData(metadata, {
                             editControls: true,
@@ -112,12 +112,12 @@ class Folder {
             } else {
                 this.rendering = false;
                 this.eol = true;
-                $(".appendFolderPhotos").last().text("EOL").css("display","none")
+                $(".appendFolderPhotos").last().text("EOL").css("display","none");
             }
         } else {
             this.rendering = false;
             this.eol = true;
-            $(".appendFolderPhotos").last().text("EOL").css("display","none")
+            $(".appendFolderPhotos").last().text("EOL").css("display","none");
         }
 
         $("#spinner").css("display","none");

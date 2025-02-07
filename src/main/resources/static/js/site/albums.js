@@ -43,7 +43,7 @@ class Albums {
     async updateAlbums(nextPage,activePage) {
         this.rendering = true;
 
-        let data = null
+        let data = null;
         let showControls = this.showControls;
         let cspNonce = this.cspNonce;
         let baseUrl = this.baseUrl;
@@ -55,9 +55,9 @@ class Albums {
             data = await this.http.ajax("get", "/" + activePage + "/" + nextPage);
         }
 
-        if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("albumsList") && data["status"] === shashin.apiResponse.SUCCESS) {
-            const albumsList = data["albumsList"];
-            const sharedAlbumMap = data["sharedAlbumsMap"];
+        if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("albumsList") && data.status === shashin.apiResponse.SUCCESS) {
+            const albumsList = data.albumsList;
+            const sharedAlbumMap = data.sharedAlbumsMap;
 
             if (albumsList !== null && albumsList.length > 0) {
                 albumsList.forEach(function (album) {
@@ -69,7 +69,7 @@ class Albums {
                         html += '<div class="card-body" style="display: flex;flex-direction: column;">';
                         html += '<p class="card-text"><strong id="albumName' + album.id + '">' + album.name + '</strong></p>';
                         html += '<span style="margin-top: auto;"><a href="#" id="comment' + album.id + '" style="text-decoration: none;" title="Comments">';
-                        html += '<span id="commentcount' + album.id + '">' + (album.id in data["albumsCommentsMap"] ? data["albumsCommentsMap"][album.id].length : "0") + '</span>&nbsp;';
+                        html += '<span id="commentcount' + album.id + '">' + (album.id in data.albumsCommentsMap ? data.albumsCommentsMap[album.id].length : "0") + '</span>&nbsp;';
                         html += '<span class="bi-chat-square position-relative">';
                         html += '</span></a>';
 
@@ -129,18 +129,17 @@ class Albums {
                 let data = await http.ajax("get", "/album/" + albumId + "/page/0");
 
                 if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("album")) {
-                    if (data["status"] === shashin.apiResponse.SUCCESS) {
-                        let album = data["album"];
-                        console.log(data)
+                    if (data.status === shashin.apiResponse.SUCCESS) {
+                        let album = data.album;
 
-                        $("#albumName").text(album["name"]);
+                        $("#albumName").text(album.name);
                         const version = Util.getMetadataLocalStorage();
-                        $("#albumCoverThumb").attr("src", data["coverUrl"]+(version === "" ? "" : "?v=" + version));
+                        $("#albumCoverThumb").attr("src", data.coverUrl+(version === "" ? "" : "?v=" + version));
                         $("#fullShareLinkContainer").css("display", "none");
                         $("#fullShareLink").text("");
                         $("#shareLink").val("");
                         $("#shareUserList").text("");
-                        let shareUrl = album["shareUrl"];
+                        let shareUrl = album.shareUrl;
 
                         if (shareUrl !== null && "" !== shareUrl) {
                             const fullShareLink = baseUrl + "/share/" + shareUrl + "/album/" + albumId;
@@ -154,9 +153,9 @@ class Albums {
 
                         let sharedAlbumsList = await http.ajax("get", "/sharedalbums");
 
-                        if (sharedAlbumsList != null && sharedAlbumsList["sharedAlbums"].length > 0) {
+                        if (sharedAlbumsList != null && sharedAlbumsList.sharedAlbums.length > 0) {
                             let html = "<strong>Share with other users</strong><br>";
-                            sharedAlbumsList["sharedAlbums"].forEach(function (shareObj) {
+                            sharedAlbumsList.sharedAlbums.forEach(function (shareObj) {
                                 if (albumId === shareObj.albumId) {
                                     html += '<div class="col-auto form-check">';
                                     let input = '<input type="checkbox" class="form-check-input" id="id-' + shareObj.userId + '-' + shareObj.albumId + '" name="userShare' + shareObj.albumId + '"';
@@ -192,14 +191,14 @@ class Albums {
                 let http = new Http("editalbums");
                 let data = await http.ajax("get", "/album/" + albumId + "/page/0");
 
-                if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("album") && data["status"] === shashin.apiResponse.SUCCESS) {
-                    let album = data["album"];
+                if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("album") && data.status === shashin.apiResponse.SUCCESS) {
+                    let album = data.album;
 
-                    $("#albumNameEdit").text(album["name"]);
-                    $("#albumEditName").val(album["name"]);
-                    $("#originalAlbumName").val(album["name"]);
+                    $("#albumNameEdit").text(album.name);
+                    $("#albumEditName").val(album.name);
+                    $("#originalAlbumName").val(album.name);
                     const version = Util.getMetadataLocalStorage();
-                    $("#albumCoverEditThumb").attr("src", data["coverUrl"]+(version === "" ? "" : "?v=" + version));
+                    $("#albumCoverEditThumb").attr("src", data.coverUrl+(version === "" ? "" : "?v=" + version));
                     $("#editAlbum").prop('disabled', true);
 
                     $("#propeditalbums").modal('show');
@@ -217,12 +216,12 @@ class Albums {
                 let data = await http.ajax("get", "/album/" + albumId + "/page/0");
 
                 if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("album")) {
-                    if (data["status"] === shashin.apiResponse.SUCCESS) {
-                        let album = data["album"];
+                    if (data.status === shashin.apiResponse.SUCCESS) {
+                        let album = data.album;
 
-                        $("#albumNameTrash").text(album["name"]);
+                        $("#albumNameTrash").text(album.name);
                         const version = Util.getMetadataLocalStorage();
-                        $("#albumCoverTrashThumb").attr("src", data["coverUrl"]+(version === "" ? "" : "?v=" + version));
+                        $("#albumCoverTrashThumb").attr("src", data.coverUrl+(version === "" ? "" : "?v=" + version));
 
                         $("#proptrashalbums").modal('show');
 
@@ -241,21 +240,21 @@ class Albums {
             let data = await http.ajax("get", "/album/" + albumId + "/page/0");
             let currentUserId = $("#currentUserId").val();
 
-            if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("album") && data["status"] === shashin.apiResponse.SUCCESS) {
-                let album = data["album"];
-                let canEdit = data["canEdit"];
+            if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("album") && data.status === shashin.apiResponse.SUCCESS) {
+                let album = data.album;
+                let canEdit = data.canEdit;
 
-                $("#albumNameComments").text(album["name"]);
+                $("#albumNameComments").text(album.name);
                 const version = Util.getMetadataLocalStorage();
-                $("#albumCoverCommentThumb").attr("src", data["coverUrl"]+(version === "" ? "" : "?v=" + version));
+                $("#albumCoverCommentThumb").attr("src", data.coverUrl+(version === "" ? "" : "?v=" + version));
 
                 let albumCommentsList = await http.ajax("get", "/albumcomments/"+albumId);
 
-                if (albumCommentsList != null && albumCommentsList["albumCommentsList"].length > 0) {
+                if (albumCommentsList != null && albumCommentsList.albumCommentsList.length > 0) {
                     let html = "";
-                    albumCommentsList = albumCommentsList["albumCommentsList"];
+                    albumCommentsList = albumCommentsList.albumCommentsList;
                     albumCommentsList.forEach(function(comments) {
-                        if (comments["albumId"] === albumId) {
+                        if (comments.albumId === albumId) {
                             html += '<li id="comment' + comments.commentId + '" class="list-group-item' + (comments.userId === currentUserId ? ' list-group-item-secondary' : '') + '">';
                             html += '<span id="commentcontainer' + comments.commentId + '">';
                             html += '<p id="commentcontent' + comments.commentId + '">' + comments.comment + '</p>';
@@ -303,7 +302,7 @@ class Albums {
 
             // $("#albumsMessage").html("<span class='spinner-grow spinner-grow-sm'></span> <strong>Exporting album \""+albumName+"\". Downloading photos only.</strong>").animate({opacity: 100}, 0);
             shashin.showToastMessage("Downloading album", "Downloading album \""+albumName+"\". Downloading photos only.", {icon:"bi-info-circle", iconColor:"#777777", autohide:false});
-            setTimeout(function () { $("#download"+albumId).removeAttr("href") }, 0);
+            setTimeout(function () { $("#download"+albumId).removeAttr("href"); }, 0);
                 Util.setCookie(tokenName, "", "/");
                 Util.setCookie(tokenSize, "", "/");
 

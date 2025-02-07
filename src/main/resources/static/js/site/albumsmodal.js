@@ -26,7 +26,7 @@
         }
 
         const http = new Http("save sharelink");
-        let json = {albumId: albumId, relativeShareUrl: relativeShareLink}
+        let json = {albumId: albumId, relativeShareUrl: relativeShareLink};
         const data = await http.ajax("post", "/share/album/save", JSON.stringify(json), function () {
             $("#albumsModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
             $("#albumsModalStatus").attr("title", shashin.modalStatusFailMessage());
@@ -34,7 +34,7 @@
         });
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("relativeShareUrl")) {
-            let relativeShareUrlData = data["relativeShareUrl"] === null ? "" : data["relativeShareUrl"];
+            let relativeShareUrlData = data.relativeShareUrl === null ? "" : data.relativeShareUrl;
             $("#shareLink").val(relativeShareUrlData);
             $("#fullShareLinkContainer").css("display", "none");
             $("#fullShareLink").text("");
@@ -46,7 +46,7 @@
                 $("#copyLink").attr("data-clipboard-text", fullShareLink);
             }
 
-            if (data["status"] === shashin.apiResponse.SUCCESS && $("#shareLink").val() === relativeShareUrlData) {
+            if (data.status === shashin.apiResponse.SUCCESS && $("#shareLink").val() === relativeShareUrlData) {
                 $("#albumsModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
             } else {
                 $("#albumsModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
@@ -61,7 +61,7 @@
             $("#albumsModalStatus").attr("title", shashin.modalStatusFailMessage());
             $("#cancelUserShare").prop('disabled', false);
         }
-    }
+    };
 
     albumsModalSettings.makeShareLinkId = function (minLength, maxLength) {
         const length = Math.floor(
@@ -75,5 +75,5 @@
                 charactersLength));
         }
         return result;
-    }
+    };
 }( window.albumsModalSettings = window.albumsModalSettings || {}, jQuery ));

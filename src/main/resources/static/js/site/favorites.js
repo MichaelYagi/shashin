@@ -15,13 +15,13 @@ class Favorites {
         };
         if (typeof lgMetadataDetail !== "undefined") {
             lgConfig.plugins.push(lgMetadataDetail);
-            lgConfig["metadataDetail"] = true;
-            lgConfig["metadataDetailFun"] = shashin.openInfoSidebar;
+            lgConfig.metadataDetail = true;
+            lgConfig.metadataDetailFun = shashin.openInfoSidebar;
         }
         if (typeof lgVideoThumbnail !== "undefined") {
             lgConfig.plugins.push(lgVideoThumbnail);
-            lgConfig["videoThumbnail"] = true;
-            lgConfig["videoThumbnailFun"] = shashin.processVideoThumbnail;
+            lgConfig.videoThumbnail = true;
+            lgConfig.videoThumbnailFun = shashin.processVideoThumbnail;
         }
         this.mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',lgConfig,'.mediaLink');
     }
@@ -54,7 +54,7 @@ class Favorites {
     async updateFavorites(nextPage,activePage,mediaTypeFilter) {
         this.rendering = true;
 
-        let data = null
+        let data = null;
 
         if (false === this.eol) {
             $("#spinner").css("display", "block");
@@ -64,9 +64,9 @@ class Favorites {
         const mediaContentList = [];
         if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
-            if (data["status"] === shashin.apiResponse.SUCCESS) {
+            if (data.status === shashin.apiResponse.SUCCESS) {
                 if (data.hasOwnProperty("metadataList")) {
-                    const metadataList = data["metadataList"];
+                    const metadataList = data.metadataList;
 
                     if (metadataList.length > 0) {
                         const mediaLinkLength = $(".mediaLink").length;
@@ -85,13 +85,13 @@ class Favorites {
                                 overlayFlags.renderBottomLeft = true;
                                 overlayFlags.renderCenter = true;
 
-                                let lastDate = metadataList.hasOwnProperty(index-1) ? metadataList[index-1]["year"]+ "-" + metadataList[index-1]["month"] + "-" + metadataList[index-1]["day"] : "";
+                                let lastDate = metadataList.hasOwnProperty(index-1) ? metadataList[index-1].year+ "-" + metadataList[index-1].month + "-" + metadataList[index-1].day : "";
                                 if (this.lastDate !== "") {
                                     lastDate = this.lastDate;
                                     this.lastDate = "";
                                 }
-                                const currentDate = metadata["year"] + "-" + metadata["month"] + "-" + metadata["day"];
-                                const nextDate = metadataList.hasOwnProperty(index+1) ? metadataList[index+1]["year"] + "-" + metadataList[index+1]["month"] + "-" + metadataList[index+1]["day"] : "";
+                                const currentDate = metadata.year + "-" + metadata.month + "-" + metadata.day;
+                                const nextDate = metadataList.hasOwnProperty(index+1) ? metadataList[index+1].year + "-" + metadataList[index+1].month + "-" + metadataList[index+1].day : "";
                                 const displayCurrentDate = dateFormat(currentDate.replace(/-/g, "/"), "ddd, mmm d, yyyy");
 
                                 if (lastDate !== currentDate || $("#"+currentDate).length === 0) {
@@ -132,20 +132,20 @@ class Favorites {
                         this.rendering = false;
                         $("#spinner").css("display", "none");
                     } else {
-                        $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
+                        $(".appendMetadataPhotos").last().text("EOL").css("display", "none");
                         this.rendering = false;
                         this.eol = true;
                     }
                 }
             } else {
-                $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
+                $(".appendMetadataPhotos").last().text("EOL").css("display", "none");
                 this.rendering = false;
                 this.eol = true;
-                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                message = '<div class="alert alert-danger" role="alert">' + data.msg + '</div>';
                 $("#msgTimeline").html(message);
             }
         } else {
-            $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
+            $(".appendMetadataPhotos").last().text("EOL").css("display", "none");
             this.rendering = false;
             this.eol = true;
         }

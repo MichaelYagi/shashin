@@ -2,47 +2,47 @@
 
     metadataBatchModal.toggleBatchTagPeopleDropdown = function() {
         $("#tagbatchpeopledropdown").dropdown('toggle');
-    }
+    };
 
     metadataBatchModal.closeBatchTagPeopleDropdown = function() {
         $("#tagbatchpeopledropdown").dropdown('hide');
-    }
+    };
 
     metadataBatchModal.populateBatchLabel = function() {
-        const checkedBoxes = $('input[name="recognitionLabel[]"]:checked');
+        const checkedBoxes = $('input[name="recognitionLabel[]:checked');
         let labelString = "";
         checkedBoxes.each(function() {
             labelString += $(this).val() + ",";
         });
         if (labelString.length > 0) {
-            labelString = labelString.slice(0,-1)
+            labelString = labelString.slice(0,-1);
         }
         $("#tagBatchDataInput").val(labelString);
 
         if (labelString !== "") {
             $("#batchisobject").prop("checked", false);
         }
-    }
+    };
 
     metadataBatchModal.toggleBatchTagAlbumDropdown = function() {
         $("#tagalbumdropdown").dropdown('toggle');
-    }
+    };
 
     metadataBatchModal.closeBatchTagAlbumDropdown = function() {
         $("#tagalbumdropdown").dropdown('hide');
-    }
+    };
 
     metadataBatchModal.populateBatchAlbum = function() {
-        const checkedBoxes = $('input[name="albums[]"]:checked');
+        const checkedBoxes = $('input[name="albums[]:checked');
         let albumsString = "";
         checkedBoxes.each(function() {
             albumsString += $(this).val().replace(/ +(?= )/g,'').trim() + ",";
         });
         if (albumsString.length > 0) {
-            albumsString = albumsString.slice(0,-1)
+            albumsString = albumsString.slice(0,-1);
         }
         $("#albumNameInput").val(albumsString);
-    }
+    };
 
 }( window.metadataBatchModal = window.metadataBatchModal || {}, jQuery ));
 
@@ -168,20 +168,20 @@ async function saveBatchMetadata(e) {
         }
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-            if (data["status"] === shashin.apiResponse.SUCCESS) {
-                if (data.hasOwnProperty("keywords") && data["keywords"] !== "") {
-                    $("#keywordsString").val(data["keywords"]);
-                    $("#keywordsBatchString").val(data["keywords"]);
+            if (data.status === shashin.apiResponse.SUCCESS) {
+                if (data.hasOwnProperty("keywords") && data.keywords !== "") {
+                    $("#keywordsString").val(data.keywords);
+                    $("#keywordsBatchString").val(data.keywords);
                 }
 
-                if (data.hasOwnProperty("cameras") && data["cameras"] !== "") {
-                    $("#camerasString").val(data["cameras"]);
-                    $("#camerasBatchString").val(data["cameras"]);
+                if (data.hasOwnProperty("cameras") && data.cameras !== "") {
+                    $("#camerasString").val(data.cameras);
+                    $("#camerasBatchString").val(data.cameras);
                 }
 
-                if (data.hasOwnProperty("lenses") && data["lenses"] !== "") {
-                    $("#lensesString").val(data["lenses"]);
-                    $("#lensesBatchString").val(data["lenses"]);
+                if (data.hasOwnProperty("lenses") && data.lenses !== "") {
+                    $("#lensesString").val(data.lenses);
+                    $("#lensesBatchString").val(data.lenses);
                 }
 
                 shashin.processBatchAlbumList(data, albumInputVal);
@@ -199,10 +199,10 @@ async function saveBatchMetadata(e) {
 
                         if ($("#latlngBatchData").val().trim() !== "") {
                             const latlngArray = $("#latlngBatchData").val().split(",");
-                            metadataObj.lat = $.trim(latlngArray[0])
-                            metadataObj.lng = $.trim(latlngArray[1])
+                            metadataObj.lat = $.trim(latlngArray[0]);
+                            metadataObj.lng = $.trim(latlngArray[1]);
                             if (metadataObj.lat !== null && metadataObj.lng !== null && metadataObj.lat !== "" && metadataObj.lng !== "") {
-                                $("#latlng").val(metadataObj.lat + "," + metadataObj.lng)
+                                $("#latlng").val(metadataObj.lat + "," + metadataObj.lng);
                             }
                         }
 
@@ -302,7 +302,7 @@ $('#rescanBatchMetadataConfirmation').on('hide.bs.modal', function () {
 $('#propAddAlbum').on('hide.bs.modal', function () {
     $("#albumNameInput").val("");
     $("#albumResponseMsg").html("");
-})
+});
 
 // Clear message on input editing
 $('#propAddAlbum').bind('keypress', function() {

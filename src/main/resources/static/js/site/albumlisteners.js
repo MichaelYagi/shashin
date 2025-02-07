@@ -15,7 +15,7 @@ $(document).ready(function () {
             setCoverAlbum: $('#setCoverAlbum').val() === "yes",
             metadataId: metadataId,
             albumId: albumId
-        }
+        };
 
         const http = new Http("updating album");
         const data = await http.ajax("post", "/album/update", JSON.stringify(requestJson), function () {
@@ -25,12 +25,12 @@ $(document).ready(function () {
         });
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-            if (data["status"] === "redirect") {
-                // window.location.replace(data["msg"]);
-                window.top.location = window.top.location
-                $("#albumMessage").html('<div class="alert alert-success" role="alert">' + data["msg"] + '</div>');
+            if (data.status === "redirect") {
+                // window.location.replace(data.msg);
+                window.top.location = window.top.location;
+                $("#albumMessage").html('<div class="alert alert-success" role="alert">' + data.msg + '</div>');
             } else {
-                if (data["status"] === shashin.apiResponse.SUCCESS) {
+                if (data.status === shashin.apiResponse.SUCCESS) {
                     $("#albumsModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                     $("#albumsModalCancel").prop('disabled', false);
                 } else {

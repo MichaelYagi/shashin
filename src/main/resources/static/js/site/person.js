@@ -14,13 +14,13 @@ class Person {
         };
         if (typeof lgMetadataDetail !== "undefined") {
             lgConfig.plugins.push(lgMetadataDetail);
-            lgConfig["metadataDetail"] = true;
-            lgConfig["metadataDetailFun"] = shashin.openInfoSidebar;
+            lgConfig.metadataDetail = true;
+            lgConfig.metadataDetailFun = shashin.openInfoSidebar;
         }
         if (typeof lgVideoThumbnail !== "undefined") {
             lgConfig.plugins.push(lgVideoThumbnail);
-            lgConfig["videoThumbnail"] = true;
-            lgConfig["videoThumbnailFun"] = shashin.processVideoThumbnail;
+            lgConfig.videoThumbnail = true;
+            lgConfig.videoThumbnailFun = shashin.processVideoThumbnail;
         }
         this.mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',lgConfig,'.mediaLink');
     }
@@ -49,7 +49,7 @@ class Person {
                 setCoverPerson: $('#setCoverPerson').val() === "yes",
                 metadataId: metadataId,
                 personId: personId
-            }
+            };
 
             const http = new Http("updating album");
             const data = await http.ajax("post", "/person/update", JSON.stringify(requestJson), function () {
@@ -59,12 +59,12 @@ class Person {
             });
 
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                if (data["status"] === "redirect") {
-                    // window.location.replace(data["msg"]);
-                    window.top.location = window.top.location
-                    $("#personMessage").html('<div class="alert alert-success" role="alert">' + data["msg"] + '</div>');
+                if (data.status === "redirect") {
+                    // window.location.replace(data.msg);
+                    window.top.location = window.top.location;
+                    $("#personMessage").html('<div class="alert alert-success" role="alert">' + data.msg + '</div>');
                 } else {
-                    if (data["status"] === shashin.apiResponse.SUCCESS) {
+                    if (data.status === shashin.apiResponse.SUCCESS) {
                         $("#personModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                         $("#personModalCancel").prop('disabled', false);
                     } else {
@@ -108,7 +108,7 @@ class Person {
     async updatePerson(personId,nextPage,activePage) {
         this.rendering = true;
 
-        let data = null
+        let data = null;
 
         if (false === this.eol) {
             $("#spinner").css("display", "block");
@@ -118,12 +118,12 @@ class Person {
         const mediaContentList = [];
         if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
-            if (data["status"] === shashin.apiResponse.SUCCESS) {
+            if (data.status === shashin.apiResponse.SUCCESS) {
                 if (data.hasOwnProperty("metadataList")) {
-                    const metadataList = data["metadataList"];
-                    const recognitionLabels = data["recognitionLabels"];
-                    const labelPhotoMap = data["labelPhotoMap"];
-                    const favoritesMap = data["favorites"];
+                    const metadataList = data.metadataList;
+                    const recognitionLabels = data.recognitionLabels;
+                    const labelPhotoMap = data.labelPhotoMap;
+                    const favoritesMap = data.favorites;
 
                     if (metadataList.length > 0) {
                         const mediaLinkLength = $(".mediaLink").length;
@@ -143,8 +143,8 @@ class Person {
                                 overlayFlags.renderCenter = true;
                                 overlayFlags.renderBottomRight = true;
 
-                                const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
-                                const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
+                                const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id].favorite === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
+                                const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id].count > 0 ? favoritesMap[metadata.id].count : 0;
 
                                 let overlayData;
 
@@ -180,7 +180,7 @@ class Person {
                                     uuid
                                 })).insertBefore($("." + appendClass).last()).ready(function () {
                                     // Call JS and modal
-                                    // personModalSettings.renderPersonModal(metadata, recognitionLabels, labelPhotoMap[metadata.id]["labels"]);
+                                    // personModalSettings.renderPersonModal(metadata, recognitionLabels, labelPhotoMap[metadata.id].labels);
                                     shashin.updateFavorites("#favorite","#brfavoriteicon","#briconcount", metadata.id);
                                 });
                             }
@@ -196,7 +196,7 @@ class Person {
                 }
             } else {
                 $(".appendPersonPhotos").last().text("EOL").css("display", "none");
-                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                message = '<div class="alert alert-danger" role="alert">' + data.msg + '</div>';
                 $("#msgTimeline").html(message);
                 this.rendering = false;
                 this.eol = true;
@@ -220,7 +220,7 @@ class Person {
     shashin.getMetadata(metadataId).then(function (metadata) {
         if (metadata !== null) {
             // Clear modal data
-            $("#personModalTitle").text(metadata.title)
+            $("#personModalTitle").text(metadata.title);
             $('#propPersonModal').find(':input').val('');
             $("#setCoverPerson").val("yes");
             $("#propPersonModalThumbnail").html("");
@@ -234,5 +234,5 @@ class Person {
             $("#propPersonModal").modal('show');
         }
     });
-}
+};
 }( window.personSettings = window.personSettings || {}, jQuery ));

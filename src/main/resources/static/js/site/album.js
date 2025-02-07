@@ -15,13 +15,13 @@
         };
         if (typeof lgMetadataDetail !== "undefined") {
             lgConfig.plugins.push(lgMetadataDetail);
-            lgConfig["metadataDetail"] = true;
-            lgConfig["metadataDetailFun"] = shashin.openInfoSidebar;
+            lgConfig.metadataDetail = true;
+            lgConfig.metadataDetailFun = shashin.openInfoSidebar;
         }
         if (typeof lgVideoThumbnail !== "undefined") {
             lgConfig.plugins.push(lgVideoThumbnail);
-            lgConfig["videoThumbnail"] = true;
-            lgConfig["videoThumbnailFun"] = shashin.processVideoThumbnail;
+            lgConfig.videoThumbnail = true;
+            lgConfig.videoThumbnailFun = shashin.processVideoThumbnail;
         }
 
         let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery', lgConfig, '.mediaLink');
@@ -57,7 +57,7 @@
         }, 0);
         shashin.mouseMoveListener();
         shashin.closeGalleryOnBack();
-    }
+    };
 
     albumSettings.openAlbumModal = function (e,metadataId) {
         e.preventDefault();
@@ -65,7 +65,7 @@
         shashin.getMetadata(metadataId).then(function (metadata) {
             if (metadata !== null) {
                 // Clear modal data
-                $("#albumModalTitle").text(metadata.title)
+                $("#albumModalTitle").text(metadata.title);
                 $('#propAlbumModal').find(':input').val('');
                 // $("#removeFromAlbum")[0].checked = false;
                 // $("#setCoverAlbum")[0].checked = true;
@@ -82,12 +82,12 @@
                 $("#propAlbumModal").modal('show');
             }
         });
-    }
+    };
 
     albumSettings.getPagedAlbum = async function(albumId,mediaTypeFilter, nextPage,activePage) {
         albumSettings.rendering = true;
 
-        let data = null
+        let data = null;
 
         if (false === albumSettings.eol) {
             $("#spinner").css("display", "block");
@@ -98,18 +98,18 @@
 
         if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
-            if (data["status"] === shashin.apiResponse.SUCCESS) {
+            if (data.status === shashin.apiResponse.SUCCESS) {
                 if (data.hasOwnProperty("album") &&
                     data.hasOwnProperty("albumMetadataList") &&
                     data.hasOwnProperty("albumPhotoCommentsMap") &&
                     data.hasOwnProperty("userMap")
                 ) {
-                    const albumData = data["album"];
-                    const albumMetadataList = data["albumMetadataList"];
-                    const albumPhotoCommentsMap = data["albumPhotoCommentsMap"];
-                    const userMap = data["userMap"];
-                    const favoritesMap = data["favorites"];
-                    const canEdit = data["canEdit"];
+                    const albumData = data.album;
+                    const albumMetadataList = data.albumMetadataList;
+                    const albumPhotoCommentsMap = data.albumPhotoCommentsMap;
+                    const userMap = data.userMap;
+                    const favoritesMap = data.favorites;
+                    const canEdit = data.canEdit;
 
                     shashin.printMessageToConsole("albumSettings.getPagedAlbum");
                     shashin.printMessageToConsole(albumData);
@@ -137,16 +137,16 @@
                                 overlayFlags.renderCenter = true;
                                 overlayFlags.renderBottomRight = true;
 
-                                const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
-                                const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
+                                const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id].favorite === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
+                                const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id].count > 0 ? favoritesMap[metadata.id].count : 0;
 
-                                let lastDate = albumMetadataList.hasOwnProperty(index-1) ? albumMetadataList[index-1]["year"]+ "-" + albumMetadataList[index-1]["month"] + "-" + albumMetadataList[index-1]["day"] : "";
+                                let lastDate = albumMetadataList.hasOwnProperty(index-1) ? albumMetadataList[index-1].year+ "-" + albumMetadataList[index-1].month + "-" + albumMetadataList[index-1].day : "";
                                 if (albumSettings.lastDate !== "") {
                                     lastDate = albumSettings.lastDate;
                                     albumSettings.lastDate = "";
                                 }
-                                const currentDate = metadata["year"] + "-" + metadata["month"] + "-" + metadata["day"];
-                                const nextDate = albumMetadataList.hasOwnProperty(index+1) ? albumMetadataList[index+1]["year"] + "-" + albumMetadataList[index+1]["month"] + "-" + albumMetadataList[index+1]["day"] : "";
+                                const currentDate = metadata.year + "-" + metadata.month + "-" + metadata.day;
+                                const nextDate = albumMetadataList.hasOwnProperty(index+1) ? albumMetadataList[index+1].year + "-" + albumMetadataList[index+1].month + "-" + albumMetadataList[index+1].day : "";
                                 const displayCurrentDate = dateFormat(currentDate.replace(/-/g, "/"), "ddd, mmm d, yyyy");
 
                                 if (lastDate !== currentDate || $("#"+currentDate).length === 0) {
@@ -225,7 +225,7 @@
                 $("#spinner").css("display","none");
                 $(".appendAlbumPhotos").last().text("EOL").css("display","none");
                 albumSettings.rendering = false;
-                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                message = '<div class="alert alert-danger" role="alert">' + data.msg + '</div>';
                 $("#msgTimeline").html(message);
             }
         } else {
@@ -236,7 +236,7 @@
         }
 
         return mediaContentList;
-    }
+    };
 
     albumSettings.activateAlbumListeners = function(metadata) {
         $("#image"+metadata.id).on('load', function() {
@@ -268,7 +268,7 @@
         $('#propAlbumModal input').bind('keypress', function() {
             $("#albumModalMsg").html("");
         });
-    }
+    };
 
     albumSettings.deleteComment = async function (commentId, metadataId) {
         const http = new Http("delete comment");
@@ -276,8 +276,8 @@
         const data = await http.ajax("delete", "/comment/albumphoto/delete", JSON.stringify(json));
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
-            let commentId = data["commentId"];
-            if (data["status"] === shashin.apiResponse.SUCCESS) {
+            let commentId = data.commentId;
+            if (data.status === shashin.apiResponse.SUCCESS) {
                 // Delete comment
                 $("#comment" + commentId).remove();
                 let currentCount = parseInt($("#brcommentcount" + metadataId).text());
@@ -289,7 +289,7 @@
         }
 
         $("#currentCommentId" + metadataId).val("");
-    }
+    };
 
     albumSettings.editComment = function(commentId, metadataId) {
         if ($("#currentCommentId" + metadataId).val() === "") {
@@ -308,7 +308,7 @@
             const commentText = $("#commentcontent" + commentId).html();
             $("#textareacontainer" + commentId).html('<textarea class="form-control" id="commenttext' + commentId + '" rows="2">' + commentText + '</textarea>');
         }
-    }
+    };
 
     albumSettings.albumCommentsDeleteEditModalListener = function(commentId, metadataId) {
         $("#deletecomment" + commentId).on("click", function (e) {
@@ -322,7 +322,7 @@
             e.preventDefault();
             albumSettings.editComment(commentId, metadataId);
         });
-    }
+    };
 
     albumSettings.albumCommentsUpdateSaveModalListener = function(metadata, album, userMap) {
         $("#updateCommentMetadata"+metadata.id).hide();
@@ -359,11 +359,11 @@
 
                 if (updatedComment.length > 0) {
                     const http = new Http("updating album photo comment");
-                    const json = {commentId: currentCommentId, comment: updatedComment}
+                    const json = {commentId: currentCommentId, comment: updatedComment};
                     const data = await http.ajax("put", "/comment/update", JSON.stringify(json));
 
                     if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
-                        let commentId = data["commentId"];
+                        let commentId = data.commentId;
 
                         // Update comment
                         $("#commentcontent" + commentId).html(updatedComment);
@@ -408,13 +408,13 @@
                 const data = await http.ajax("post", "/comment/albumphoto/save", JSON.stringify(json));
 
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
-                    let commentId = data["commentId"];
-                    let userProfile = data["userProfile"];
-                    let createdAt = data["createdAt"];
-                    let canEdit = data["createdAt"];
+                    let commentId = data.commentId;
+                    let userProfile = data.userProfile;
+                    let createdAt = data.createdAt;
+                    let canEdit = data.createdAt;
 
                     // Insert comment at top of list
-                    $("#commentText" + metadata.id).val("")
+                    $("#commentText" + metadata.id).val("");
                     $("#commentList" + metadata.id).prepend(ModalTemplates.AlbumComment({
                         commentId: commentId,
                         commentText: comment,
@@ -439,11 +439,11 @@
                     });
 
                     let currentCount = parseInt($("#brcommentcount" + metadata.id).text());
-                    $("#brcommentcount" + metadata.id).text(currentCount + 1)
+                    $("#brcommentcount" + metadata.id).text(currentCount + 1);
                 }
             }
         });
-    }
+    };
 }( window.albumSettings = window.albumSettings || {}, jQuery ));
 
 (function( albumModal, $, undefined ) {
@@ -454,9 +454,9 @@
         const commentIdArray = [];
         for (index in albumPhotoCommentsMap[metadata.id]) {
             const comments = albumPhotoCommentsMap[metadata.id][index];
-            commentIdArray.push(comments["commentId"]);
+            commentIdArray.push(comments.commentId);
 
-            html += ModalTemplates.AlbumComment({commentId:comments["commentId"],commentText:comments["comment"],userId:userMap.id,commentUserId:comments['userId'],username:comments["username"],userProfile:comments["userProfile"],createdAt:comments["createdAt"],canEdit:canEdit});
+            html += ModalTemplates.AlbumComment({commentId:comments.commentId,commentText:comments.comment,userId:userMap.id,commentUserId:comments.userId,username:comments.username,userProfile:comments.userProfile,createdAt:comments.createdAt,canEdit:canEdit});
         }
 
         html += ModalTemplates.AlbumCommentsModalFooter({metadata:metadata});
@@ -468,5 +468,5 @@
         }
 
         albumSettings.albumCommentsUpdateSaveModalListener(metadata, albumData, userMap);
-    }
+    };
 }( window.albumModal = window.albumModal || {}, jQuery ));

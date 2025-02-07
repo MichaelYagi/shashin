@@ -15,13 +15,13 @@ class Recent {
         };
         if (typeof lgMetadataDetail !== "undefined") {
             lgConfig.plugins.push(lgMetadataDetail);
-            lgConfig["metadataDetail"] = true;
-            lgConfig["metadataDetailFun"] = shashin.openInfoSidebar;
+            lgConfig.metadataDetail = true;
+            lgConfig.metadataDetailFun = shashin.openInfoSidebar;
         }
         if (typeof lgVideoThumbnail !== "undefined") {
             lgConfig.plugins.push(lgVideoThumbnail);
-            lgConfig["videoThumbnail"] = true;
-            lgConfig["videoThumbnailFun"] = shashin.processVideoThumbnail;
+            lgConfig.videoThumbnail = true;
+            lgConfig.videoThumbnailFun = shashin.processVideoThumbnail;
         }
         this.mediaContentList = shashin.initLightGallery('scroll-gallery',lgConfig,'.mediaLink');
     }
@@ -55,7 +55,7 @@ class Recent {
     async updateRecent(nextPage,activePage,mediaTypeFilter) {
         this.rendering = true;
 
-        let data = null
+        let data = null;
 
         if (false === this.eol) {
             $("#spinner").css("display", "block");
@@ -63,9 +63,9 @@ class Recent {
         }
 
         const mediaContentList = [];
-        if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data["status"] === shashin.apiResponse.SUCCESS) {
-            const metadataList = data["metadataList"];
-            const favoritesMap = data["favorites"];
+        if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data.status === shashin.apiResponse.SUCCESS) {
+            const metadataList = data.metadataList;
+            const favoritesMap = data.favorites;
 
             if (metadataList !== null && metadataList.length > 0) {
                 const mediaLinkLength = $(".mediaLink").length;
@@ -86,17 +86,17 @@ class Recent {
                         overlayFlags.renderCenter = true;
                         overlayFlags.renderBottomRight = true;
 
-                        const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
-                        const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
+                        const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id].favorite === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
+                        const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id].count > 0 ? favoritesMap[metadata.id].count : 0;
 
-                        let lastDate = metadataList.hasOwnProperty(index-1) ? dateFormat(metadataList[index-1]["addedAt"].replace(/-/g, "/"), "yyyy-m-d") : "";
+                        let lastDate = metadataList.hasOwnProperty(index-1) ? dateFormat(metadataList[index-1].addedAt.replace(/-/g, "/"), "yyyy-m-d") : "";
                         if (this.lastDate !== "") {
                             lastDate = this.lastDate;
                             this.lastDate = "";
                         }
-                        const currentDate = dateFormat(metadata["addedAt"].replace(/-/g, "/"), "yyyy-m-d");
-                        const nextDate = metadataList.hasOwnProperty(index+1) ? dateFormat(metadataList[index+1]["addedAt"].replace(/-/g, "/"), "yyyy-m-d") : "";
-                        const displayCurrentDate = dateFormat(metadata["addedAt"].replace(/-/g, "/"), "ddd, mmm d, yyyy");
+                        const currentDate = dateFormat(metadata.addedAt.replace(/-/g, "/"), "yyyy-m-d");
+                        const nextDate = metadataList.hasOwnProperty(index+1) ? dateFormat(metadataList[index+1].addedAt.replace(/-/g, "/"), "yyyy-m-d") : "";
+                        const displayCurrentDate = dateFormat(metadata.addedAt.replace(/-/g, "/"), "ddd, mmm d, yyyy");
 
                         if (lastDate !== currentDate || $("#"+currentDate).length === 0) {
                             dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
