@@ -2257,10 +2257,12 @@
             e.preventDefault();
 
             // Check for single click, avoid dblclick events
-            if (Util.isMobile() === true && e.detail === 1) {
-                shashin.touchTimer = setTimeout(() => {
-                    imageClickEvent();
-                }, 200);
+            if (Util.isMobile() === true) {
+                if (e.detail === 1) {
+                    shashin.touchTimer = setTimeout(() => {
+                        imageClickEvent();
+                    }, 200);
+                }
             } else {
                 imageClickEvent();
             }
@@ -2424,14 +2426,10 @@
                 $(document).bind("dblclick", function (e) {
                     e.preventDefault();
 
+                    shashin.printMessageToConsole("double tap detected", {tag: "multiselect"});
+                    batchSelect();
+
                     clearTimeout(shashin.touchTimer);
-
-                    metadataIdArray = shashin.getMetadataIdList();
-
-                    if (metadataIdArray.length > 0 && shashin.lastSelectedMetadataId !== "") {
-                        shashin.printMessageToConsole("double tap detected", {tag: "multiselect"});
-                        batchSelect();
-                    }
                 });
             }
 
