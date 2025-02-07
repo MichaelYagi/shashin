@@ -11,7 +11,7 @@ function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
                     $("#apikeycopyicon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
                     $('#apikeycopyicon').fadeOut(5000, function () {
                         $(this).removeClass("bi-clipboard-check").removeClass("bi-clipboard-x").addClass("bi-clipboard-plus");
-                    }).fadeIn(400)
+                    }).fadeIn(400);
                 } else {
                     $("#apikeycopyicon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
                 }
@@ -40,15 +40,15 @@ function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
             const json = {currentApikey: currentApikey};
 
             let data = await http.ajax("post", "/users/update/apikey", JSON.stringify(json));
-            if (data.hasOwnProperty("updatedApikey") && data["updatedApikey"] !== "" &&
-                data.hasOwnProperty("rssFeedLink") && data["rssFeedLink"] !== "") {
-                $("#apikey").val(data["updatedApikey"]);
+            if (data.hasOwnProperty("updatedApikey") && data.updatedApikey !== "" &&
+                data.hasOwnProperty("rssFeedLink") && data.rssFeedLink !== "") {
+                $("#apikey").val(data.updatedApikey);
 
-                $("#rssFeedLink").text(data["rssFeedLink"]);
-                $("#rssFeedLink").attr("href", data["rssFeedLink"]);
+                $("#rssFeedLink").text(data.rssFeedLink);
+                $("#rssFeedLink").attr("href", data.rssFeedLink);
 
-                $("#atomFeedLink").text(data["atomFeedLink"]);
-                $("#atomFeedLink").attr("href", data["atomFeedLink"]);
+                $("#atomFeedLink").text(data.atomFeedLink);
+                $("#atomFeedLink").attr("href", data.atomFeedLink);
 
                 shashin.showToastMessage("API key updated", "API key has been updated.", {
                     icon: "bi-info-circle",
@@ -160,10 +160,10 @@ function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
 
     $("#removeProfileConfirmation").on("click", function () {
         const http = new Http("delete profile picture");
-        let json = {userId: userId}
+        let json = {userId: userId};
         http.ajax("post", "/users/delete/profile", JSON.stringify(json)).then(function (data) {
-            if (data.hasOwnProperty("status") && data["status"] === "success" && data.hasOwnProperty("msg")) {
-                window.top.location = window.top.location
+            if (data.hasOwnProperty("status") && data.status === "success" && data.hasOwnProperty("msg")) {
+                window.top.location = window.top.location;
             } else {
                 shashin.showToastMessage("Could not delete profile", "Something went wrong", {
                     icon: "bi-exclamation-triangle",
@@ -240,13 +240,13 @@ function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
                             'Expires': 'Thu, 1 Jan 1970 00:00:00 GMT',
                             'Pragma': 'no-cache'
                         });
-                        let json = {base64: base64Result}
+                        let json = {base64: base64Result};
                         http.ajax("post", "/users/profile", JSON.stringify(json)).then(function (data) {
                             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                                if (data.hasOwnProperty("imageUrl") && data["imageUrl"] !== "") {
-                                    window.top.location = window.top.location
+                                if (data.hasOwnProperty("imageUrl") && data.imageUrl !== "") {
+                                    window.top.location = window.top.location;
                                 } else {
-                                    shashin.showToastMessage("Could not save profile", "Could not save profile. " + data["msg"], {
+                                    shashin.showToastMessage("Could not save profile", "Could not save profile. " + data.msg, {
                                         icon: "bi-exclamation-triangle",
                                         iconColor: "#FF0000",
                                         borderColor: "danger"
@@ -265,7 +265,7 @@ function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
                         croppieObject = null;
                     });
                 });
-            }
+            };
 
             reader.readAsDataURL(input.files[0]);
         } else {
@@ -310,14 +310,14 @@ function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
             const http = new Http("deleting account");
             let json = {
                 userId: userId
-            }
+            };
             const data = await http.ajax("post", "/users/account/delete", JSON.stringify(json));
 
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                if (data["status"] === "success") {
+                if (data.status === "success") {
                     window.location.replace("/users/logout");
                 } else {
-                    shashin.showToastMessage("Uh-oh!", "Something went wrong! " + data["msg"], {
+                    shashin.showToastMessage("Uh-oh!", "Something went wrong! " + data.msg, {
                         icon: "bi-exclamation-triangle",
                         iconColor: "#FF0000",
                         borderColor: "danger"

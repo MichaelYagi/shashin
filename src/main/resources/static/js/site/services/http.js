@@ -33,7 +33,7 @@ class Http {
             contentType: 'application/json; charset=utf-8',
             async: true,
             retries: shashin.ajaxRetries
-        }
+        };
 
         $.extend(ajaxParams, this.additionalParameters);
 
@@ -62,7 +62,7 @@ class Http {
                     $(location).prop('href', '/users/login');
                 }
             } else {
-                return {"message": "Error: No status or msg keys."}
+                return {"message": "Error: No status or msg keys."};
             }
         }.bind(this));
     }

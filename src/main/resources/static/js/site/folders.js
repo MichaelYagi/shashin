@@ -32,15 +32,15 @@ class Folders {
         const appendClass = "appendFoldersPhotos";
         let foldersList = [];
 
-        let data = null
+        let data = null;
 
         if (false === this.eol) {
             $("#spinner").css("display", "block");
             data = await this.http.ajax("get", "/" + activePage + "/" + nextPage);
         }
 
-        if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("foldersList") && data["status"] === shashin.apiResponse.SUCCESS) {
-            foldersList = data["foldersList"];
+        if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("foldersList") && data.status === shashin.apiResponse.SUCCESS) {
+            foldersList = data.foldersList;
 
             if (foldersList !== null && foldersList.length > 0) {
 

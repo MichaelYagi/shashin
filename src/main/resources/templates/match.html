@@ -94,7 +94,7 @@
                 const socket = new SockJS('/websocket-endpoint');
                 stompClient = Stomp.over(socket);
                 if (shashin.showDebug === false) {
-                    stompClient.debug = null
+                    stompClient.debug = null;
                 }
 
                 shashin.printMessageToConsole("Socket Connecting");
@@ -119,12 +119,12 @@
                         shashin.printMessageToConsole("Oops, something went wrong! " + e.toString() + ". Probably already scanning.", {
                             consoleType: shashin.consoleTypes.warn
                         });
-                        window.top.location = window.top.location
+                        window.top.location = window.top.location;
                     } else {
                         shashin.printMessageToConsole("Oops, something went wrong! " + e.toString() + ". Click the Scan button once, to proceed with indexing.", {
                             consoleType: shashin.consoleTypes.warn
                         });
-                        window.top.location = window.top.location
+                        window.top.location = window.top.location;
                     }
 
                     if (counter < 10) {

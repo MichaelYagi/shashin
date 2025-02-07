@@ -1,13 +1,13 @@
 (function( albumsCommentsSettings, $, undefined ) {
     albumsCommentsSettings.deleteComment = async function (commentId, albumId) {
         const http = new Http("delete comment");
-        let json = {commentId: commentId, albumId: albumId}
+        let json = {commentId: commentId, albumId: albumId};
         const data = await http.ajax("delete", "/comment/album/delete", JSON.stringify(json));
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId") && data.hasOwnProperty("commentCount")) {
-            let commentId = data["commentId"];
-            let commentCount = data["commentCount"];
-            if (data["status"] === shashin.apiResponse.SUCCESS) {
+            let commentId = data.commentId;
+            let commentCount = data.commentCount;
+            if (data.status === shashin.apiResponse.SUCCESS) {
                 // Delete comment
                 $("#comment" + commentId).remove();
                 $("#commentcount" + albumId).text(commentCount);
@@ -15,7 +15,7 @@
         }
 
         $("#currentCommentId").val("");
-    }
+    };
 
     albumsCommentsSettings.editComment = function(albumId,commentId) {
         if ($("#currentCommentId").val() === "") {
@@ -33,7 +33,7 @@
             const commentText = $("#commentcontent" + commentId).html();
             $("#textareacontainer"+commentId).html('<textarea class="form-control" id="commenttext' + commentId + '" rows="2">'+commentText+'</textarea>');
         }
-    }
+    };
 }( window.albumsCommentsSettings = window.albumsCommentsSettings || {}, jQuery ));
 
 (function (albumsModalListeners, $, undefined) {
@@ -58,21 +58,21 @@
 
         async function deleteAlbum() {
             const http = new Http("delete album");
-            let json = {albumId: albumId}
+            let json = {albumId: albumId};
             const data = await http.ajax("delete", "/album/delete", JSON.stringify(json));
 
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
-                if (data["status"] === shashin.apiResponse.SUCCESS) {
-                    message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                    window.top.location = window.top.location
+                if (data.status === shashin.apiResponse.SUCCESS) {
+                    message = '<div class="alert alert-success" role="alert">' + data.msg + '</div>';
+                    window.top.location = window.top.location;
                 } else {
-                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                    message = '<div class="alert alert-danger" role="alert">' + data.msg + '</div>';
                 }
                 $("#albumsMessage").html(message);
             }
         }
-    }
+    };
 
     albumsModalListeners.setEditAlbumsListeners = function (albumId) {
         $("#propeditalbums").on('hide.bs.modal', function () {
@@ -120,7 +120,7 @@
 
                 const http = new Http("edit album");
 
-                let json = {albumId: albumId, albumName: Util.htmlDecode(albumName)}
+                let json = {albumId: albumId, albumName: Util.htmlDecode(albumName)};
                 const data = await http.ajax("post", "/album/updatename/" + albumId, JSON.stringify(json), function () {
                     $("#editAlbumNameStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
                     $("#editAlbumNameStatus").attr("title", shashin.modalStatusFailMessage());
@@ -128,7 +128,7 @@
                 });
 
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                    if (data["status"] === shashin.apiResponse.SUCCESS) {
+                    if (data.status === shashin.apiResponse.SUCCESS) {
                         $("#albumName").text(albumName);
                         $("#albumNameEdit").text(albumName);
                         $("#albumName" + albumId).text(albumName);
@@ -136,13 +136,13 @@
                         $("#editAlbum").prop('disabled', true);
                         $("#originalAlbumName").val(albumName);
                     } else {
-                        shashin.showToastMessage("Could not edit album", data["msg"], {
+                        shashin.showToastMessage("Could not edit album", data.msg, {
                             icon: "bi-exclamation-triangle",
                             iconColor: "#FF0000",
                             borderColor:"danger"
                         });
                         $("#editAlbumNameStatus").addClass('bi-x-circle').removeClass('spinner-grow');
-                        $("#editAlbumNameStatus").attr("title", data["msg"]);
+                        $("#editAlbumNameStatus").attr("title", data.msg);
                     }
                 } else {
                     shashin.showToastMessage("Could not edit album", "Something went wrong", {
@@ -155,7 +155,7 @@
                 $("#cancelAlbum").prop('disabled', false);
             }
         }
-    }
+    };
 
     albumsModalListeners.setAlbumModalListeners = function () {
         $("#propsharealbums").on('hide.bs.modal', function () {
@@ -179,7 +179,7 @@
 
         $("#clearLink").on("click", function (e) {
             if ($("#shareLink").val() !== "") {
-                e.preventDefault()
+                e.preventDefault();
                 $("#shareConfirmationModalInfo").show();
 
                 const action = "clear";
@@ -231,7 +231,7 @@
                         $("#copyLinkIcon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
                         $('#copyLinkIcon').fadeOut(5000, function () {
                             $(this).removeClass("bi-clipboard-check").removeClass("bi-clipboard-x").addClass("bi-clipboard-plus");
-                        }).fadeIn(400)
+                        }).fadeIn(400);
                     } else {
                         $("#copyLinkIcon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
                     }
@@ -265,7 +265,7 @@
 
             let userShareMap = {};
             let albumShared = false;
-            $('input[name^="userShare' + albumId + '"]').each(function () {
+            $('input[name^="userShare' + albumId + '').each(function () {
                 let checkboxId = $(this).attr('id');
                 let isChecked = $(this).prop("checked");
                 if (true === isChecked) {
@@ -274,14 +274,14 @@
 
                 let checkboxIdArray = checkboxId.split("-");
                 let userId = checkboxIdArray[1];
-                userShareMap[userId] = isChecked
+                userShareMap[userId] = isChecked;
             });
             if (true === albumShared) {
                 $("#userShare"+albumId).css('display', 'inline-block');
             }
 
             const http = new Http("share album");
-            let json = {albumId: albumId, userShareMap: JSON.stringify(userShareMap)}
+            let json = {albumId: albumId, userShareMap: JSON.stringify(userShareMap)};
             const data = await http.ajax("post", "/album/share/" + albumId, JSON.stringify(json), function () {
                 $("#albumsModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
                 $("#albumsModalStatus").attr("title", shashin.modalStatusFailMessage());
@@ -289,7 +289,7 @@
             });
 
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                if (data["status"] === shashin.apiResponse.SUCCESS) {
+                if (data.status === shashin.apiResponse.SUCCESS) {
                     $("#albumsModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                     $("#cancelUserShare").prop('disabled', false);
                 } else {
@@ -303,7 +303,7 @@
                 $("#cancelUserShare").prop('disabled', false);
             }
         }
-    }
+    };
 
     albumsModalListeners.setCommentModalListeners = function () {
         // $("#propcommentalbums").on('show.bs.modal', async function () {
@@ -356,11 +356,11 @@
 
                 if (updatedComment.length > 0) {
                     const http = new Http("update comment");
-                    let json = {commentId: currentCommentId, comment: updatedComment}
+                    let json = {commentId: currentCommentId, comment: updatedComment};
                     const data = await http.ajax("put", "/comment/update", JSON.stringify(json));
 
                     if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
-                        let commentId = data["commentId"];
+                        let commentId = data.commentId;
 
                         // Update comment
                         $("#commentcontent" + commentId).html(updatedComment);
@@ -396,23 +396,23 @@
 
         $("#saveCommentAlbum").on("click", async function (e) {
             e.preventDefault();
-            const username = $("#currentUser").val()
+            const username = $("#currentUser").val();
             const albumId = $("#currentAlbumId").val();
 
             let comment = $.trim($("#commentText").val());
 
             if (comment.length > 0) {
                 const http = new Http("save comment");
-                let json = {albumId: albumId, comment: comment}
+                let json = {albumId: albumId, comment: comment};
                 const data = await http.ajax("post", "/comment/album/save", JSON.stringify(json));
 
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId") && data.hasOwnProperty("commentCount")) {
-                    let commentId = data["commentId"];
-                    let commentCount = data["commentCount"];
-                    let userProfile = data["userProfile"];
-                    let createdAt = data["createdAt"]; //dateFormat(new Date(data["createdAt"]), "ddd, mmm d, yyyy 'at' h:mm TT");
+                    let commentId = data.commentId;
+                    let commentCount = data.commentCount;
+                    let userProfile = data.userProfile;
+                    let createdAt = data.createdAt; //dateFormat(new Date(data.createdAt), "ddd, mmm d, yyyy 'at' h:mm TT");
 
-                    if (data["status"] === shashin.apiResponse.SUCCESS) {
+                    if (data.status === shashin.apiResponse.SUCCESS) {
                         $("#commentcount" + albumId).text(commentCount);
 
                         // Insert comment at top of list
@@ -420,7 +420,7 @@
                             '<span id="commentcontainer' + commentId + '">\n<p id="commentcontent' + commentId + '">' + comment + '</p>\n' +
                             '<small>'+(userProfile!=="null" && userProfile!==null && userProfile!==""?'<img src="'+userProfile+'?'+uuidv4()+'" class="me-1" style="display:inline-block;width:24px;height:24px;" />':'<span class="bi-person-circle me-1" style="font-size:1.0rem;"></span>')+'<strong>' + username + '</strong> on '+createdAt+'<span style="float: right"><a href="#" id="deletecomment' + commentId + '"><span class="bi-trash"></span></a>&nbsp;&nbsp;<a href="#" id="editcomment' + commentId + '"><span class="bi-pencil"></span></a></span></small></span>' +
                             '<span id="textareacontainer' + commentId + '"></span></li>';
-                        $("#commentText").val("")
+                        $("#commentText").val("");
                         $("#commentList").prepend(commentItem);
 
                         $("#deletecomment" + commentId).on("click", function (e) {
@@ -438,7 +438,7 @@
                 }
             }
         });
-    }
+    };
 
     albumsModalListeners.setEditCommentModalListeners = function (commentId) {
         $("#propcommentalbums").on('hide.bs.modal', async function () {
@@ -447,7 +447,7 @@
             $("#deletecomment"+commentId).off();
             $("#editcomment"+commentId).off();
             $("#propcommentalbums").off();
-        })
+        });
 
         $("#deletecomment"+commentId).on("click", function (e) {
             e.preventDefault();
@@ -463,5 +463,5 @@
             $("#currentCommentId").val("");
             albumsCommentsSettings.editComment(albumId, commentId);
         });
-    }
+    };
 }(window.albumsModalListeners = window.albumsModalListeners || {}, jQuery));

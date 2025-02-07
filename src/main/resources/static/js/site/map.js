@@ -89,9 +89,9 @@ async function showMap(mapdata, keywordMap) {
     // Date fields are format "yyyy-MM-dd"
     let initialStartDate = "";
     if (mapdata.length > 0) {
-    initialStartDate = mapdata[initIndex]["year"] + '-' +
-        ((mapdata[initIndex]["month"] > 9) ? (mapdata[initIndex]["month"]) : ('0' + (mapdata[initIndex]["month"]))) + '-' +
-        ((mapdata[initIndex]["day"] > 9) ? mapdata[initIndex]["day"] : ('0' + mapdata[initIndex]["day"]));
+    initialStartDate = mapdata[initIndex].year + '-' +
+        ((mapdata[initIndex].month > 9) ? (mapdata[initIndex].month) : ('0' + (mapdata[initIndex].month))) + '-' +
+        ((mapdata[initIndex].day > 9) ? mapdata[initIndex].day : ('0' + mapdata[initIndex].day));
     }
     startDateField.val(initialStartDate);
 
@@ -360,7 +360,7 @@ async function showMap(mapdata, keywordMap) {
 
     function setLayer(options) {
         map.getLayers().forEach(layer => {
-            if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinatesFN") {
+            if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties().name === "tempCoordinatesFN") {
                 map.removeLayer(layer);
             }
         });
@@ -382,7 +382,7 @@ async function showMap(mapdata, keywordMap) {
         let resetMap = false;
 
         if (options.hasOwnProperty("startDate") === true) {
-            const startDate = options["startDate"];
+            const startDate = options.startDate;
 
             const dateArray = startDate.split("-");
             const year = dateArray[0];
@@ -392,7 +392,7 @@ async function showMap(mapdata, keywordMap) {
         }
 
         if (options.hasOwnProperty("endDate") === true) {
-            const endDate = options["endDate"];
+            const endDate = options.endDate;
 
             const dateArray = endDate.split("-");
             const year = dateArray[0];
@@ -402,34 +402,34 @@ async function showMap(mapdata, keywordMap) {
         }
 
         if (options.hasOwnProperty("videoOnly") === true) {
-            videoOnly = options["videoOnly"];
+            videoOnly = options.videoOnly;
         }
 
         if (options.hasOwnProperty("metadataList") === true) {
-            metadataList = options["metadataList"];
+            metadataList = options.metadataList;
         }
 
         if (options.hasOwnProperty("resetMap") === true) {
-            resetMap = options["resetMap"];
+            resetMap = options.resetMap;
         }
 
         if (options.hasOwnProperty("inputsChanged") === true) {
-            inputsChanged = options["inputsChanged"];
+            inputsChanged = options.inputsChanged;
         }
 
         if (options.hasOwnProperty("contextCoordArray") === true) {
-            contextCoordArray = options["contextCoordArray"];
+            contextCoordArray = options.contextCoordArray;
         }
 
         if (options.hasOwnProperty("maxDistance") === true) {
-            maxDistance = options["maxDistance"];
+            maxDistance = options.maxDistance;
             if (typeof maxDistance === 'string' || maxDistance instanceof String) {
                 maxDistance = parseFloat(maxDistance);
             }
         }
 
         if (options.hasOwnProperty("zoomOnly") === true) {
-            zoomOnly = options["zoomOnly"];
+            zoomOnly = options.zoomOnly;
         }
 
         if (resetMap === true) {
@@ -458,18 +458,18 @@ async function showMap(mapdata, keywordMap) {
                 shashin.printMessageToConsole("currentProgress for map: " + currentProgress.toString());
             }
 
-            if ((videoOnly === true && data["type"].includes("video") === false) || (qsmtf !== null && qsmtf !== "" && data["type"].includes(qsmtf) === false)) {
+            if ((videoOnly === true && data.type.includes("video") === false) || (qsmtf !== null && qsmtf !== "" && data.type.includes(qsmtf) === false)) {
                 continue;
             }
 
-            if (metadataList !== undefined && metadataList.length > 0 && $.inArray(data["id"], metadataList) === -1) {
+            if (metadataList !== undefined && metadataList.length > 0 && $.inArray(data.id, metadataList) === -1) {
                 continue;
             }
 
-            const placeName = data["placeName"] !== null ? data["placeName"] : "";
-            const mapMarkerUrl = data["mapMarkerUrl"] !== null ? "/api/v1/thumbnails/map/"+data["id"] : "";
-            const type = data["type"] !== null ? data["type"] : "";
-            const keywords = keywordMap.hasOwnProperty(data["id"]) && keywordMap[data["id"]].length > 0 ? keywordMap[data["id"]] : "";
+            const placeName = data.placeName !== null ? data.placeName : "";
+            const mapMarkerUrl = data.mapMarkerUrl !== null ? "/api/v1/thumbnails/map/"+data.id : "";
+            const type = data.type !== null ? data.type : "";
+            const keywords = keywordMap.hasOwnProperty(data.id) && keywordMap[data.id].length > 0 ? keywordMap[data.id] : "";
 
             if (searchTerm !== null && searchTerm !== "" &&
                 placeName.toLowerCase().indexOf(searchTerm.toLowerCase()) === -1 &&
@@ -480,22 +480,22 @@ async function showMap(mapdata, keywordMap) {
                 continue;
             }
 
-            if (data["lat"] !== null && data["lng"] !== null &&
-                data["lat"] !== "" && data["lng"] !== "") {
+            if (data.lat !== null && data.lng !== null &&
+                data.lat !== "" && data.lng !== "") {
 
-                const lat = data["lat"];
-                const lng = data["lng"];
+                const lat = data.lat;
+                const lng = data.lng;
 
-                let dateTakenObj = new Date(data["year"],parseInt(data["month"])-1,data["day"]);
+                let dateTakenObj = new Date(data.year,parseInt(data.month)-1,data.day);
 
                 if (true === checkDateInputs(startDateObj,endDateObj,dateTakenObj)) {
                     // Check distance
                     if (contextCoordArray.length > 0 && maxDistance > 0) {
                         if (zoomOnly === false) {
                             const kmDistance = calcCrow(contextCoordArray[1], contextCoordArray[0], lat, lng);
-                            shashin.printMessageToConsole("center: " + contextCoordArray[1] + ", " + contextCoordArray[0])
-                            shashin.printMessageToConsole("current coord: " + lat + ", " + lng)
-                            shashin.printMessageToConsole("Distance: " + kmDistance)
+                            shashin.printMessageToConsole("center: " + contextCoordArray[1] + ", " + contextCoordArray[0]);
+                            shashin.printMessageToConsole("current coord: " + lat + ", " + lng);
+                            shashin.printMessageToConsole("Distance: " + kmDistance);
 
                             if (kmDistance > maxDistance) {
                                 continue;
@@ -515,26 +515,26 @@ async function showMap(mapdata, keywordMap) {
                             anchorXUnits: 'fraction',
                             anchorYUnits: 'pixels',
                             opacity: 1.0,
-                            src: "/api/v1/thumbnails/map/"+data["id"] + (version === "" ? "" : "?v=" + version)
+                            src: "/api/v1/thumbnails/map/"+data.id + (version === "" ? "" : "?v=" + version)
                         }))
                     });
 
                     const iconFeature = new ol.Feature({
-                        geometry: new ol.geom.Point(ol.proj.transform([data["lng"], data["lat"]], 'EPSG:4326', 'EPSG:900913')),
-                        thumbnailUrlSmall: "/api/v1/thumbnails/225/"+data["id"],
-                        thumbnailUrlOriginal: "/api/v1/thumbnails/original/"+data["id"],
-                        mapMarkerUrl: "/api/v1/thumbnails/map/"+data["id"],
+                        geometry: new ol.geom.Point(ol.proj.transform([data.lng, data.lat], 'EPSG:4326', 'EPSG:900913')),
+                        thumbnailUrlSmall: "/api/v1/thumbnails/225/"+data.id,
+                        thumbnailUrlOriginal: "/api/v1/thumbnails/original/"+data.id,
+                        mapMarkerUrl: "/api/v1/thumbnails/map/"+data.id,
                         mapMarkerIcon: mapMarkerIcon,
-                        videoUrl: data["videoUrl"],
-                        originalImageWidth: data["originalImageWidth"],
-                        originalImageHeight: data["originalImageHeight"],
-                        metadataId: data["id"],
+                        videoUrl: data.videoUrl,
+                        originalImageWidth: data.originalImageWidth,
+                        originalImageHeight: data.originalImageHeight,
+                        metadataId: data.id,
                         lat: lat,
                         lng: lng,
-                        type: data["type"]
+                        type: data.type
                     });
 
-                    iconFeature.setStyle(data["mapMarkerIcon"]);
+                    iconFeature.setStyle(data.mapMarkerIcon);
                     iconFeatures.push(iconFeature);
 
                     if (zoomOnly === false) {
@@ -623,9 +623,9 @@ async function showMap(mapdata, keywordMap) {
             map.addLayer(vectorLayer);
 
             shashin.printMessageToConsole("minLat for map filtering: "+minLat);
-            shashin.printMessageToConsole("minLng for map filtering: "+minLng)
-            shashin.printMessageToConsole("maxLat for map filtering: "+maxLat)
-            shashin.printMessageToConsole("maxLng for map filtering: "+maxLng)
+            shashin.printMessageToConsole("minLng for map filtering: "+minLng);
+            shashin.printMessageToConsole("maxLat for map filtering: "+maxLat);
+            shashin.printMessageToConsole("maxLng for map filtering: "+maxLng);
 
             if (forcedFiltered === true) {
                 initialCoord = defaultCoord;
@@ -741,7 +741,7 @@ async function showMap(mapdata, keywordMap) {
             })
         };
         if (size > 2) {
-            style["text"] = new ol.style.Text({
+            style.text = new ol.style.Text({
                 text: size.toString(),
                 fill: textFill,
                 stroke: textStroke,
@@ -780,7 +780,7 @@ async function showMap(mapdata, keywordMap) {
             ];
             const originalFeatures = feature.get('features');
             let originalFeature = originalFeatures[originalFeatures.length - 1];
-            styles.push(originalFeature.getProperties()["mapMarkerIcon"]);
+            styles.push(originalFeature.getProperties().mapMarkerIcon);
 
             // Show gallery for each cluster
             const mediaContentList = [];
@@ -790,13 +790,13 @@ async function showMap(mapdata, keywordMap) {
                 const mediaContent = {
                     metadataDetailFun: editLocation,
                     args: [
-                        featureProperties["metadataId"]
+                        featureProperties.metadataId
                     ]
                 };
 
                 if (featureProperties.type.includes("image")) {
                     mediaContent.src = featureProperties.thumbnailUrlOriginal;
-                    mediaContent.downloadUrl = "/api/v1/image/"+featureProperties["metadataId"] + "/download";
+                    mediaContent.downloadUrl = "/api/v1/image/"+featureProperties.metadataId + "/download";
                 } else if (featureProperties.type.includes("video")) {
                     mediaContent.video = {
                         "source": [{"src": featureProperties.videoUrl, "type": "video/mp4"}],
@@ -806,7 +806,7 @@ async function showMap(mapdata, keywordMap) {
                             "autoplay": shashin.autoplayVideo,
                             "id": featureProperties.metadataId
                         }
-                    }
+                    };
 
                     mediaContent.poster = ((featureProperties.thumbnailUrlOriginal === null || featureProperties.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/225/"+featureProperties.metadataId : "/api/v1/thumbnails/original/"+featureProperties.metadataId) + "?v=" + Util.getMetadataLocalStorage();
                     mediaContent.lgSize = featureProperties.originalImageWidth+"-"+featureProperties.originalImageHeight;
@@ -834,7 +834,7 @@ async function showMap(mapdata, keywordMap) {
                         consoleType: shashin.consoleTypes.error
                     });
                 }
-                lightGalleryConfigs["dynamicEl"] = mediaContentList;
+                lightGalleryConfigs.dynamicEl = mediaContentList;
                 dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
                 dynamicGallery.openGallery(0);
             }, 500);
@@ -851,15 +851,15 @@ async function showMap(mapdata, keywordMap) {
     });
 
     const lightGalleryConfigs = shashin.getLightGalleryConfigs();
-    lightGalleryConfigs["plugins"].push(lgMetadataDetail);
-    lightGalleryConfigs["plugins"].push(lgCastMedia);
-    lightGalleryConfigs["controls"] = true;
-    lightGalleryConfigs["dynamic"] = true;
-    lightGalleryConfigs["counter"] = true;
-    lightGalleryConfigs["metadataDetail"] = true;
-    // lightGalleryConfigs["editLocation"] = true;
-    // lightGalleryConfigs["showControls"] = showControls;
-    lightGalleryConfigs["castMedia"] = true;
+    lightGalleryConfigs.plugins.push(lgMetadataDetail);
+    lightGalleryConfigs.plugins.push(lgCastMedia);
+    lightGalleryConfigs.controls = true;
+    lightGalleryConfigs.dynamic = true;
+    lightGalleryConfigs.counter = true;
+    lightGalleryConfigs.metadataDetail = true;
+    // lightGalleryConfigs.editLocation = true;
+    // lightGalleryConfigs.showControls = showControls;
+    lightGalleryConfigs.castMedia = true;
 
     const $dynamicGallery = document.getElementById('light-gallery-photo');
     let dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
@@ -918,7 +918,7 @@ async function showMap(mapdata, keywordMap) {
             const copyText = obj.data.placename;
             Util.copyToClipboard(copyText);
         }
-    }
+    };
 
     const copyCoordinates = function (obj) {
         const coordArray = ol.proj.toLonLat(obj.coordinate);
@@ -942,7 +942,7 @@ async function showMap(mapdata, keywordMap) {
                 maxDistance: radius
             });
         }
-    }
+    };
 
     const zoomIn = function (obj) {
         const coordArray = ol.proj.toLonLat(obj.coordinate);
@@ -959,7 +959,7 @@ async function showMap(mapdata, keywordMap) {
                 zoomOnly: true
             });
         }
-    }
+    };
 
     const googleMapsLink = function (obj) {
         const coordArray = ol.proj.toLonLat(obj.coordinate);
@@ -972,7 +972,7 @@ async function showMap(mapdata, keywordMap) {
                 renderMarker('tempGoogleCoordinates',coordArray[1],coordArray[0],"red");
             }
         }
-    }
+    };
 
     const contextmenu = new ContextMenu({
         width: 300,
@@ -980,7 +980,7 @@ async function showMap(mapdata, keywordMap) {
     });
     contextmenu.on('close', function (evt) {
         map.getLayers().forEach(layer => {
-            if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinates") {
+            if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties().name === "tempCoordinates") {
                 map.removeLayer(layer);
             }
         });
@@ -989,9 +989,9 @@ async function showMap(mapdata, keywordMap) {
     function showContextMenu(evt, coordArray, data) {
         map.getLayers().forEach(layer => {
             if (layer && layer.getProperties().hasOwnProperty("name") &&
-                (layer.getProperties()["name"] === "tempQpCoordinates" ||
-                layer.getProperties()["name"] === "tempCoordinatesFN" ||
-                layer.getProperties()["name"] === "tempGoogleCoordinates"
+                (layer.getProperties().name === "tempQpCoordinates" ||
+                layer.getProperties().name === "tempCoordinatesFN" ||
+                layer.getProperties().name === "tempGoogleCoordinates"
             )) {
                 map.removeLayer(layer);
             }
@@ -1004,14 +1004,14 @@ async function showMap(mapdata, keywordMap) {
         const contextValueArray = [];
 
         let contextItem = {};
-        if (data.hasOwnProperty("placename") && data["placename"].length > 0) {
+        if (data.hasOwnProperty("placename") && data.placename.length > 0) {
             contextItem = {
-                text: "<strong>" + data["placename"] + "</strong>",
+                text: "<strong>" + data.placename + "</strong>",
                 // classname: "ol-ctx-menu-separator" // Make unselectable text
                 classname: "context-text-wrap",
                 callback: copyPlacename
-            }
-            contextItem.data = {placename: data["placename"]};
+            };
+            contextItem.data = {placename: data.placename};
 
             contextValueArray.push(contextItem);
             contextValueArray.push("-");
@@ -1072,9 +1072,9 @@ async function showMap(mapdata, keywordMap) {
         map.getLayers().forEach(layer => {
             if (layer && layer.getProperties().hasOwnProperty("name") &&
                 (
-                    layer.getProperties()["name"] === "tempQpCoordinates" ||
-                    layer.getProperties()["name"] === "tempCoordinatesFN" ||
-                    layer.getProperties()["name"] === "tempGoogleCoordinates"
+                    layer.getProperties().name === "tempQpCoordinates" ||
+                    layer.getProperties().name === "tempCoordinatesFN" ||
+                    layer.getProperties().name === "tempGoogleCoordinates"
                 )
             ) {
                 map.removeLayer(layer);
@@ -1107,7 +1107,7 @@ async function showMap(mapdata, keywordMap) {
         }
     });
 
-    checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))
+    checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()));
     setLayer({
         startDate: startDateField.val(),
         endDate: endDateField.val(),
@@ -1142,7 +1142,7 @@ async function showMap(mapdata, keywordMap) {
                     const resultsTextEl = document.getElementById("resultsText");
 
                     if (resultsTextEl) {
-                        let resultsString = ""
+                        let resultsString = "";
                         if ($("#resultsText").text().trim().length > 0) {
                             resultsString = " " + $("#resultsText").text().trim();
                         }
@@ -1163,7 +1163,7 @@ async function showMap(mapdata, keywordMap) {
                 });
             } else {
                 setTimeout(function () {
-                    let resultsString = ""
+                    let resultsString = "";
                     if ($("#resultsText").text().trim().length > 0) {
                         resultsString = " " + $("#resultsText").text();
                     }
@@ -1212,7 +1212,7 @@ async function showMap(mapdata, keywordMap) {
             // Needs timeout fn() to make it work
             setTimeout(() => {
                 el.select();
-            })
+            });
         });
 
         // register the focusout event to reset the input back to a date input field
@@ -1288,7 +1288,7 @@ async function showMap(mapdata, keywordMap) {
                         startDate: startDateField.val(),
                         endDate: endDateField.val(),
                         videoOnly: videoOnlyCheckbox.prop("checked"),
-                        metadataList: data["albummapdata"],
+                        metadataList: data.albummapdata,
                         inputsChanged: true
                     });
                 }
@@ -1352,7 +1352,7 @@ async function showMap(mapdata, keywordMap) {
 
         // Remove marker
         map.getLayers().forEach(layer => {
-            if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempQpCoordinates") {
+            if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties().name === "tempQpCoordinates") {
                 map.removeLayer(layer);
             }
         });

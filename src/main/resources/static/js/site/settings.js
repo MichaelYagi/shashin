@@ -8,9 +8,9 @@ class Settings {
         // Populate dirs
         const http = new Http("settings");
         let data = await http.ajax("post", "/settings/directorytree", '{"path":""}');
-        let os = ""
+        let os = "";
         if (data.hasOwnProperty("os")) {
-            os = data["os"];
+            os = data.os;
         }
         const seperator = (os.toLowerCase().indexOf('windows') !== -1 ? "\\" : "/");
         // $("#selectFolder").hide();
@@ -89,7 +89,7 @@ class Settings {
             $("#pathInput").val(path);
 
             getSubdirs(path);
-        })
+        });
 
         populateDirs(data);
         listClick();
@@ -98,12 +98,12 @@ class Settings {
             $("#dirList").empty();
 
             if (data.hasOwnProperty("dirs")) {
-                let dirs = data["dirs"];
+                let dirs = data.dirs;
                 let dirList = dirs[Object.keys(dirs)[0]];
 
                 $.each(dirList, function (index, dir) {
                     $("#dirList").append('<li><a href="#">' + dir + '</a></li>');
-                })
+                });
 
                 listClick();
             }
@@ -156,19 +156,19 @@ class Settings {
             $("#deleteContentModalStatus").visible();
 
             const http = new Http("deleting all content");
-            let json = {deleteContent: true}
+            let json = {deleteContent: true};
             const data = await http.ajax("post", "/settings/content/delete", JSON.stringify(json));
 
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
-                if (data["status"] === shashin.apiResponse.SUCCESS) {
-                    shashin.showToastMessage("Content deleted", data["msg"], {icon:"bi-info-circle", iconColor:"#777777", autohide: false});
+                if (data.status === shashin.apiResponse.SUCCESS) {
+                    shashin.showToastMessage("Content deleted", data.msg, {icon:"bi-info-circle", iconColor:"#777777", autohide: false});
                     $("#propDeleteContent").modal('hide');
-                    // message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                    // message = '<div class="alert alert-success" role="alert">' + data.msg + '</div>';
                 } else {
-                    shashin.showToastMessage("Could delete content", data["msg"], {icon:"bi-exclamation-triangle", iconColor:"#FF0000", autohide: false, borderColor:"danger"});
+                    shashin.showToastMessage("Could delete content", data.msg, {icon:"bi-exclamation-triangle", iconColor:"#FF0000", autohide: false, borderColor:"danger"});
                     $("#propDeleteContent").modal('hide');
-                    // message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                    // message = '<div class="alert alert-danger" role="alert">' + data.msg + '</div>';
                 }
                 // $("#msgDeleteContent").html(message);
             }

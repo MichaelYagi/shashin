@@ -17,7 +17,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
     setTimeout(function () {
         const http = new Http("check compreface status");
         http.ajax("get", "/status/compreface").then(function (data) {
-            if (data.hasOwnProperty("status") && data["status"] === false) {
+            if (data.hasOwnProperty("status") && data.status === false) {
                 shashin.showToastMessage("CompreFace server check failed", "Check CompreFace server connection.", {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",
@@ -25,7 +25,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
                     borderColor: "danger"
                 });
             }
-        })
+        });
     }, 0);
 
     $("#appSearch").on("submit", function (e) {
@@ -33,7 +33,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
         if (searchTerm === "") {
             e.preventDefault();
         }
-    })
+    });
 
     // Focus and select search input
     $("#appSearchInput").focus(function () {
@@ -43,14 +43,14 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
     const http = new Http("search history");
     const data = await http.ajax("get", "/search/history");
 
-    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data["status"] === "success" && data.hasOwnProperty("searchHistoryList")) {
-        const searchHistoryList = data["searchHistoryList"];
+    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.status === "success" && data.hasOwnProperty("searchHistoryList")) {
+        const searchHistoryList = data.searchHistoryList;
 
         if (searchHistoryList.length > 0) {
             let searchHistoryData = [];
             for (const index in searchHistoryList) {
                 const searchHistoryObj = searchHistoryList[index];
-                searchHistoryData.push(searchHistoryObj.term)
+                searchHistoryData.push(searchHistoryObj.term);
             }
 
             shashin.createAutocomplete("#appSearchInput", searchHistoryData, false, searchHistoryLimit, function () {
@@ -67,7 +67,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
         const data = await http.ajax("post", "/users/darkmode", JSON.stringify(json));
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-            if (data["status"] === "success") {
+            if (data.status === "success") {
                 shashin.darkMode = darkMode;
 
                 let html = $("html");
@@ -79,7 +79,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
                 $("#darkModeSwitch").prop("checked", darkMode);
                 shashin.darkMode = darkMode;
 
-                shashin.showToastMessage("Setting failed", "Dark mode setting failed. "+data["msg"], {
+                shashin.showToastMessage("Setting failed", "Dark mode setting failed. "+data.msg, {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",
                     borderColor: "danger"
@@ -90,7 +90,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
             $("#darkModeSwitch").prop("checked", darkMode);
             shashin.darkMode = darkMode;
 
-            shashin.showToastMessage("Setting failed", "Dark mode setting failed. "+data["msg"], {
+            shashin.showToastMessage("Setting failed", "Dark mode setting failed. "+data.msg, {
                 icon: "bi-exclamation-triangle",
                 iconColor: "#FF0000",
                 borderColor: "danger"
@@ -106,17 +106,17 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
         const data = await http.ajax("post", "/users/shownotificationalerts", JSON.stringify(json));
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-            if (data["status"] === "success") {
+            if (data.status === "success") {
                 shashin.printMessageToConsole("Successfully set notification alerts.");
             } else {
-                shashin.showToastMessage("Setting failed", "Notification setting failed. "+data["msg"], {
+                shashin.showToastMessage("Setting failed", "Notification setting failed. "+data.msg, {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",
                     borderColor: "danger"
                 });
             }
         } else {
-            shashin.showToastMessage("Setting failed", "Notification setting failed. "+data["msg"], {
+            shashin.showToastMessage("Setting failed", "Notification setting failed. "+data.msg, {
                 icon: "bi-exclamation-triangle",
                 iconColor: "#FF0000",
                 borderColor: "danger"
@@ -132,7 +132,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
         const data = await http.ajax("post", "/users/showplacename", JSON.stringify(json));
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-            if (data["status"] === "success") {
+            if (data.status === "success") {
                 shashin.showPlacename = showPlacename;
                 shashin.printMessageToConsole("Successfully set show place names.");
             } else {
@@ -140,7 +140,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
                 $("#showPlacenameSwitch").prop("checked", showPlacename);
                 shashin.showPlacename = showPlacename;
 
-                shashin.showToastMessage("Setting failed", "Show place names setting failed. "+data["msg"], {
+                shashin.showToastMessage("Setting failed", "Show place names setting failed. "+data.msg, {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",
                     borderColor: "danger"
@@ -151,7 +151,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
             $("#showPlacenameSwitch").prop("checked", showPlacename);
             shashin.showPlacename = showPlacename;
 
-            shashin.showToastMessage("Setting failed", "Show place names setting failed. "+data["msg"], {
+            shashin.showToastMessage("Setting failed", "Show place names setting failed. "+data.msg, {
                 icon: "bi-exclamation-triangle",
                 iconColor: "#FF0000",
                 borderColor: "danger"
@@ -166,7 +166,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
         const data = await http.ajax("post", "/users/autoplayvideo", JSON.stringify(json));
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-            if (data["status"] === "success") {
+            if (data.status === "success") {
                 shashin.autoplayVideo = autoplayVideo;
                 shashin.printMessageToConsole("Successfully set autoplay.");
             } else {
@@ -174,7 +174,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
                 $("#autoplayVideoSwitch").prop("checked", autoplayVideo);
                 shashin.autoplayVideo = autoplayVideo;
 
-                shashin.showToastMessage("Setting failed", "Autoplay videos setting failed. "+data["msg"], {
+                shashin.showToastMessage("Setting failed", "Autoplay videos setting failed. "+data.msg, {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",
                     borderColor: "danger"

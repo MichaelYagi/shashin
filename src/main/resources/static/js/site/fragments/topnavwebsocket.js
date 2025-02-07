@@ -22,7 +22,7 @@ function captureMessages(activePage, notificationAlerts, timezone) {
 
         posting.done(function (data) {
             if (data.hasOwnProperty("msg")) {
-                showMessageSP(data["msg"]);
+                showMessageSP(data.msg);
             }
         });
     });
@@ -36,8 +36,8 @@ function captureMessages(activePage, notificationAlerts, timezone) {
 
         posting.done(function (data) {
             if (data.hasOwnProperty("msg")) {
-                showMessageSP(data["msg"]);
-                window.top.location = window.top.location
+                showMessageSP(data.msg);
+                window.top.location = window.top.location;
             }
         });
     });
@@ -55,7 +55,7 @@ function captureMessages(activePage, notificationAlerts, timezone) {
 
         posting.done(function (data) {
 
-            showMessageSP(data.hasOwnProperty("msg") ? data["msg"] : "")
+            showMessageSP(data.hasOwnProperty("msg") ? data.msg : "");
             if (scanInProgress === false) {
                 if ($("#msg").text() === "Start Scan") {
                     connectSP();
@@ -87,7 +87,7 @@ function captureMessages(activePage, notificationAlerts, timezone) {
         const socket = new SockJS('/websocket-endpoint');
         stompClient = Stomp.over(socket);
         if (shashin.showDebug === false) {
-            stompClient.debug = null
+            stompClient.debug = null;
         }
 
         shashin.printMessageToConsole("Socket Connecting");
@@ -101,12 +101,12 @@ function captureMessages(activePage, notificationAlerts, timezone) {
             this.subscribe("/topic/messages", function (message) {
                 let respMessageJsonString = JSON.parse(message.body).content;
                 const messageMap = JSON.parse(respMessageJsonString);
-                let respMessage = messageMap.hasOwnProperty("message") ? messageMap["message"] : "";
-                let currentMediaCount = messageMap.hasOwnProperty("currentMediaCount") ? parseInt(messageMap["currentMediaCount"]) : 0;
-                let totalMediaCount = messageMap.hasOwnProperty("totalMediaCount") ? parseInt(messageMap["totalMediaCount"]) : 0;
+                let respMessage = messageMap.hasOwnProperty("message") ? messageMap.message : "";
+                let currentMediaCount = messageMap.hasOwnProperty("currentMediaCount") ? parseInt(messageMap.currentMediaCount) : 0;
+                let totalMediaCount = messageMap.hasOwnProperty("totalMediaCount") ? parseInt(messageMap.totalMediaCount) : 0;
 
                 if (activePage !== "map" && totalMediaCount > 0 && currentMediaCount > 0) {
-                    $("#progressBarWrapper").visible()
+                    $("#progressBarWrapper").visible();
                     let completedPercent = (currentMediaCount / totalMediaCount) * 100;
                     Util.updateProgressBar(completedPercent);
                 }
@@ -131,12 +131,12 @@ function captureMessages(activePage, notificationAlerts, timezone) {
                 counterMessage++;
             });
         }, function (e) {
-            shashin.printMessageToConsole("Socket connection error in connectSP(): " + e.toString())
+            shashin.printMessageToConsole("Socket connection error in connectSP(): " + e.toString());
 
             if (mediaScanCounterSP > 10) {
                 showMessageSP("Oops, something went wrong! " + e.toString() + ". Probably already scanning.");
                 if (activePage === "scan") {
-                    window.top.location = window.top.location
+                    window.top.location = window.top.location;
                 }
                 mediaScanCounterSP = 0;
             } else {
@@ -161,7 +161,7 @@ function captureMessages(activePage, notificationAlerts, timezone) {
         if (stompClient !== null) {
             stompClient.send("/app/scanmessage", {}, JSON.stringify({'message': "getScanMessage"}));
         } else {
-            showMessageSP("Trying to send message but STOMP client is null")
+            showMessageSP("Trying to send message but STOMP client is null");
             scanInProgress = false;
         }
     }

@@ -103,47 +103,47 @@
             const validOptions = [];
 
             if (options.hasOwnProperty("autohide")) {
-                autohide = options["autohide"];
+                autohide = options.autohide;
                 validOptions.push("autohide");
             }
 
             if (options.hasOwnProperty("delay")) {
-                delay = options["delay"];
+                delay = options.delay;
                 validOptions.push("delay");
             }
 
             if (options.hasOwnProperty("placement")) {
-                container = options["placement"];
+                container = options.placement;
                 validOptions.push("placement");
             }
 
             if (options.hasOwnProperty("headerSubtext")) {
-                headerSubtext = options["headerSubtext"];
+                headerSubtext = options.headerSubtext;
                 validOptions.push("headerSubtext");
             }
 
             if (options.hasOwnProperty("borderColor")) {
-                borderColor = options["borderColor"];
+                borderColor = options.borderColor;
                 validOptions.push("borderColor");
             }
 
             if (options.hasOwnProperty("iconColor")) {
-                iconColor = options["iconColor"];
+                iconColor = options.iconColor;
                 validOptions.push("iconColor");
             }
 
             if (options.hasOwnProperty("icon")) {
-                icon = options["icon"];
+                icon = options.icon;
                 validOptions.push("icon");
             }
 
             if (options.hasOwnProperty("tag")) {
-                tag = options["tag"];
+                tag = options.tag;
                 validOptions.push("tag");
             }
 
             if (options.hasOwnProperty("refreshTag")) {
-                refreshTag = options["refreshTag"];
+                refreshTag = options.refreshTag;
                 validOptions.push("refreshTag");
             }
 
@@ -253,7 +253,7 @@
                         const spacerField = $("#" + spacerEl);
                         let cssStyle = {"font-size": "1rem"};
                         if (iconColor !== null) {
-                            cssStyle["color"] = iconColor;
+                            cssStyle.color = iconColor;
                         }
                         iconField.css(cssStyle);
                         iconField.addClass(icon);
@@ -314,21 +314,21 @@
         shashin.printMessageToConsole(JSON.stringify(options), {tag: "toast"});
         let tags = [];
         if (options && options.hasOwnProperty("tags")) {
-            tags = options["tags"];
+            tags = options.tags;
         }
         if (options && options.hasOwnProperty("tag")) {
-            tags.push(options["tag"])
+            tags.push(options.tag)
         }
         if (tags.length === 0) {
             tags = [null];
         }
 
         let placements = [];
-        if (options && options.hasOwnProperty("placements") && options["placements"].length > 0) {
-            placements = options["placements"];
+        if (options && options.hasOwnProperty("placements") && options.placements.length > 0) {
+            placements = options.placements;
         }
         if (options && options.hasOwnProperty("placement")) {
-            placements.push(options["placement"])
+            placements.push(options.placement)
         }
         if (placements.length === 0) {
             placements = ["topLeft","topCenter","topRight","midLeft","midCenter","midRight","bottomLeft","bottomCenter","bottomRight"];
@@ -336,7 +336,7 @@
 
         let hide = false;
         if (options && options.hasOwnProperty("hide")) {
-            hide = options["hide"];
+            hide = options.hide;
         }
 
         placements.forEach(function (placement, index) {
@@ -462,7 +462,7 @@
 
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("count")) {
                 Util.setMetadataLocalStorage();
-                $(countPrefix + metadataId).text(data["count"]);
+                $(countPrefix + metadataId).text(data.count);
             }
         });
     }
@@ -536,19 +536,19 @@
         shashin.printMessageToConsole(JSON.stringify(data),{tag: "metadata"});
 
         let metadata = {};
-        metadata["keywords"] = [];
-        metadata["albumMap"] = {};
-        metadata["lastAccessedByDetails"] = "";
-        metadata["uploadedByDetails"] = "";
-        metadata["baseUrl"] = "";
+        metadata.keywords = [];
+        metadata.albumMap = {};
+        metadata.lastAccessedByDetails = "";
+        metadata.uploadedByDetails = "";
+        metadata.baseUrl = "";
 
         if (data.hasOwnProperty("metadata") && data.hasOwnProperty("keywordList") && data.hasOwnProperty("albumMap") && data.hasOwnProperty("lastAccessedByDetails") && data.hasOwnProperty("uploadedByDetails") && data.hasOwnProperty("baseUrl")) {
-            metadata = data["metadata"];
-            metadata["keywords"] = data["keywordList"];
-            metadata["albumMap"] = data["albumMap"];
-            metadata["lastAccessedByDetails"] = data["lastAccessedByDetails"];
-            metadata["uploadedByDetails"] = data["uploadedByDetails"];
-            metadata["baseUrl"] = data["baseUrl"];
+            metadata = data.metadata;
+            metadata.keywords = data.keywordList;
+            metadata.albumMap = data.albumMap;
+            metadata.lastAccessedByDetails = data.lastAccessedByDetails;
+            metadata.uploadedByDetails = data.uploadedByDetails;
+            metadata.baseUrl = data.baseUrl;
         }
 
         return metadata;
@@ -563,21 +563,21 @@
                 data.hasOwnProperty("allAlbumList") &&
                 data.hasOwnProperty("albumMap")
             ) {
-                const metadata = data["metadata"];
+                const metadata = data.metadata;
 
-                const taggedPeopleArray = data["taggedPeopleList"];
+                const taggedPeopleArray = data.taggedPeopleList;
 
-                let keywordList = data["keywordList"];
+                let keywordList = data.keywordList;
                 const keywordInArray = $.inArray("unidentified objects", keywordList);
                 if (keywordInArray !== -1) {
                     keywordList.splice(keywordInArray, 1);
                 }
-                metadata["keywords"] = keywordList;
-                const albumMap = data["albumMap"];
-                metadata["albumMap"] = albumMap;
+                metadata.keywords = keywordList;
+                const albumMap = data.albumMap;
+                metadata.albumMap = albumMap;
 
-                const recognitionLabels = data["allRecognitionLabels"];
-                const allAlbumList = data["allAlbumList"];
+                const recognitionLabels = data.allRecognitionLabels;
+                const allAlbumList = data.allAlbumList;
                 let index;
 
                 let keywordsAvailable = "";
@@ -875,7 +875,7 @@
     shashin.syncCheckboxInputs = function(inputEl, checkboxElName) {
         $(inputEl).on( "blur", function(e) {
             const terms = shashin.autocompleteSplit(this.value.trim());
-            const checkBoxes = $('input[name="'+checkboxElName+'[]"]');
+            const checkBoxes = $('input[name="'+checkboxElName+'[]');
 
             checkBoxes.each(function() {
                 if ($.inArray($(this).val(), terms) !== -1) {
@@ -1359,7 +1359,7 @@
             });
             shashin.contextMenu.on('close', function (evt) {
                 shashin.map.getLayers().forEach(layer => {
-                    if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinates") {
+                    if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties().name === "tempCoordinates") {
                         shashin.map.removeLayer(layer);
                     }
                 });
@@ -1368,7 +1368,7 @@
             function showContextMenu(evt, coordArray, data) {
                 // Clear all previous coordinates
                 shashin.map.getLayers().forEach(layer => {
-                    if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinates") {
+                    if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties().name === "tempCoordinates") {
                         shashin.map.removeLayer(layer);
                     }
                 });
@@ -1418,14 +1418,14 @@
                 const contextValueArray = [];
 
                 let contextItem = {};
-                if (data.hasOwnProperty("placename") && data["placename"].length > 0) {
+                if (data.hasOwnProperty("placename") && data.placename.length > 0) {
                     contextItem = {
-                        text: "<strong>" + data["placename"] + "</strong>",
+                        text: "<strong>" + data.placename + "</strong>",
                         // classname: "ol-ctx-menu-separator" // Make unselectable text
                         classname: "context-text-wrap",
                         callback: copyPlacename
                     }
-                    contextItem.data = {placename: data["placename"]};
+                    contextItem.data = {placename: data.placename};
 
                     contextValueArray.push(contextItem);
                     contextValueArray.push("-");
@@ -1576,10 +1576,10 @@
                                     mediaContent.hasOwnProperty("downloadUrl") &&
                                     mediaContent.downloadUrl.includes(metadataId)
                                 ) {
-                                    mediaContentList[lightGalleryIndex].poster = data["posterUrl"];
+                                    mediaContentList[lightGalleryIndex].poster = data.posterUrl;
                                     const mediaLinkId = "#mediaLink"+metadataId;
                                     if ($(mediaLinkId).length > 0) {
-                                        $(mediaLinkId).attr("data-poster", encodeURI(data["posterUrl"]).replace(";", "%3B")+"?v="+Util.getMetadataLocalStorage());
+                                        $(mediaLinkId).attr("data-poster", encodeURI(data.posterUrl).replace(";", "%3B")+"?v="+Util.getMetadataLocalStorage());
                                     }
                                 }
 
@@ -1995,10 +1995,10 @@
             if (key === "plugins") {
                 if ($.isArray(additionalConfigs[key])) {
                     $.each(additionalConfigs[key] , function(index, val) {
-                        configs["plugins"].push(val);
+                        configs.plugins.push(val);
                     });
                 } else {
-                    configs["plugins"].push(additionalConfigs[key]);
+                    configs.plugins.push(additionalConfigs[key]);
                 }
             } else {
                 configs[key] = additionalConfigs[key];
@@ -2654,7 +2654,7 @@
                             const version = Util.getMetadataLocalStorage();
                             http.ajax("get", "/metadata/range/"+view+"/"+shashin.lastSelectedMetadataId+"/"+metadata.id+(version === "" ? "" : "?v=" + version)).then(function (data) {
                                 if (data !== null && data.hasOwnProperty("metadataIdArray")) {
-                                    const metadataIdArray = data["metadataIdArray"];
+                                    const metadataIdArray = data.metadataIdArray;
 
                                     for (let index in metadataIdArray) {
                                         if (metadataIdArray.hasOwnProperty(index)) {
@@ -2953,11 +2953,11 @@
         const overlays = [];
         const data = {};
 
-        data["metadata"] = metadata;
+        data.metadata = metadata;
 
         if (metadata.type.includes("video")) {
             overlays.push("isVideo");
-            data["duration"] = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
+            data.duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
         } else if (metadata.width !== null && metadata.height !== null && metadata.width > metadata.height*2) {
             overlays.push("isPan");
         } else if (metadata.expectedExtension === "gif") {
@@ -2966,54 +2966,54 @@
 
         if (typeof args !== "undefined") {
             if (args.hasOwnProperty("overlayFlags")) {
-                data["overlayFlags"] = args.overlayFlags;
+                data.overlayFlags = args.overlayFlags;
             }
 
             if (args.hasOwnProperty("galleryIndex")) {
-                data["galleryIndex"] = args.galleryIndex;
+                data.galleryIndex = args.galleryIndex;
             }
 
             if (args.hasOwnProperty("labelPhotoMap")) {
                 const labelPhotoMap = args.labelPhotoMap;
-                if (labelPhotoMap.hasOwnProperty(metadata.id) === true && labelPhotoMap[metadata.id].hasOwnProperty("isTagged") === true && labelPhotoMap[metadata.id]["isTagged"] === true) {
+                if (labelPhotoMap.hasOwnProperty(metadata.id) === true && labelPhotoMap[metadata.id].hasOwnProperty("isTagged") === true && labelPhotoMap[metadata.id].isTagged === true) {
                     overlays.push("isTagged");
                 }
             }
 
-            if (args.hasOwnProperty("editControls") && args["editControls"] === true) {
+            if (args.hasOwnProperty("editControls") && args.editControls === true) {
                 overlays.push("isEditControls");
             } else {
                 overlays.push("isInfo");
             }
 
             if (args.hasOwnProperty("editIcon")) {
-                data["editIcon"] = args["editIcon"];
+                data.editIcon = args.editIcon;
             }
 
             if (args.hasOwnProperty("blOnClickFunction") && args.hasOwnProperty("onClickIdPrefix")) {
                 overlays.push("isBlOnClickFunction");
-                data["blOnClickFunction"] = args["blOnClickFunction"];
-                data["onClickIdPrefix"] = args["onClickIdPrefix"];
+                data.blOnClickFunction = args.blOnClickFunction;
+                data.onClickIdPrefix = args.onClickIdPrefix;
             } else if (args.hasOwnProperty("onClickIdPrefix")) {
                 overlays.push("isOnClickIdPrefix");
-                data["onClickIdPrefix"] = args["onClickIdPrefix"];
+                data.onClickIdPrefix = args.onClickIdPrefix;
             } else if (args.hasOwnProperty("blOnClickFunction")) {
-                data["blOnClickFunction"] = args["blOnClickFunction"];
+                data.blOnClickFunction = args.blOnClickFunction;
             }
 
             if (args.hasOwnProperty("cOnClickFunction")) {
-                data["cOnClickFunction"] = args["cOnClickFunction"];
+                data.cOnClickFunction = args.cOnClickFunction;
             }
 
             if (args.hasOwnProperty("favoriteCount")) {
                 overlays.push("isFavorites");
-                data["favoriteCount"] = args["favoriteCount"];
-                data["favoriteIcon"] = args["favoriteIcon"];
+                data.favoriteCount = args.favoriteCount;
+                data.favoriteIcon = args.favoriteIcon;
             }
 
             if (args.hasOwnProperty("albumPhotoCommentsMap")) {
                 overlays.push("isComments");
-                data["albumPhotoCommentsMap"] = args["albumPhotoCommentsMap"];
+                data.albumPhotoCommentsMap = args.albumPhotoCommentsMap;
             }
         } else {
             overlays.push("isInfo");
@@ -3161,7 +3161,7 @@
             const lensList = $("#lensesBatchString").val().split(",");
             shashin.createAutocomplete("#lensBatchData", lensList, false);
 
-            const albumcheckedBoxes = $('input[name="albums[]"]');
+            const albumcheckedBoxes = $('input[name="albums[]');
             const albumNames = [];
             albumcheckedBoxes.each(function() {
                 albumNames.push($(this).val().replace(/ +(?= )/g,'').trim());
@@ -3169,7 +3169,7 @@
             shashin.createAutocomplete("#albumNameInput", albumNames, false);
             shashin.syncCheckboxInputs("#albumNameInput", "albums");
 
-            const peoplecheckedBoxes = $('input[name="recognitionLabel[]"]');
+            const peoplecheckedBoxes = $('input[name="recognitionLabel[]');
             const peopleNames = [];
             peoplecheckedBoxes.each(function() {
                 peopleNames.push($(this).val().replace(/ +(?= )/g,'').trim());
@@ -3201,26 +3201,26 @@
             tags = ["all"];
         } else {
             if (options.hasOwnProperty("showTrace")) {
-                showTrace = options["showTrace"];
+                showTrace = options.showTrace;
             }
 
             if (options.hasOwnProperty("consoleTypes")) {
-                consoleTypes = options["consoleTypes"];
+                consoleTypes = options.consoleTypes;
             }
 
             if (options.hasOwnProperty("writeLog")) {
-                shashin.writeLog = options["writeLog"];
+                shashin.writeLog = options.writeLog;
             }
 
             if (options.hasOwnProperty("tags")) {
-                tags = options["tags"];
+                tags = options.tags;
             }
 
             if (options.hasOwnProperty("tag")) {
                 if (options.hasOwnProperty("tags")) {
-                    tags.push(options["tag"]);
+                    tags.push(options.tag);
                 } else {
-                    tags = [options["tag"]];
+                    tags = [options.tag];
                 }
 
             }
@@ -3272,11 +3272,11 @@
             tag = "all";
         } else {
             if (options.hasOwnProperty("consoleType")) {
-                consoleType = options["consoleType"];
+                consoleType = options.consoleType;
             }
 
             if (options.hasOwnProperty("tag")) {
-                tag = options["tag"];
+                tag = options.tag;
             }
         }
 
@@ -3329,7 +3329,7 @@
                         setTimeout(function () {
                             let json = {consoleType: consoleType, log: log, tag: tag}
                             http.ajax("post", "/console/log", JSON.stringify(json)).then(function (data) {
-                                if (data.hasOwnProperty("status") && data["status"] === "fail" && data.hasOwnProperty("msg")) {
+                                if (data.hasOwnProperty("status") && data.status === "fail" && data.hasOwnProperty("msg")) {
                                     console.error("Could not log console output");
                                 }
                             });
@@ -3374,9 +3374,9 @@
         if (albumInputVal === undefined) {
             albumInputVal = "";
         }
-        if (data.hasOwnProperty("allAlbumList") && data["allAlbumList"].length > 0) {
+        if (data.hasOwnProperty("allAlbumList") && data.allAlbumList.length > 0) {
             let renderAlbumList = false;
-            const albumList = data["allAlbumList"];
+            const albumList = data.allAlbumList;
             const albumNames = [];
 
             let batchHtml =
@@ -3426,9 +3426,9 @@
         if (subjectInputVal === undefined) {
             subjectInputVal = "";
         }
-        if (data.hasOwnProperty("recognitionLabels") && data["recognitionLabels"].length > 0) {
+        if (data.hasOwnProperty("recognitionLabels") && data.recognitionLabels.length > 0) {
             let renderRecognitionLabels = false;
-            const recognitionLabels = data["recognitionLabels"];
+            const recognitionLabels = data.recognitionLabels;
             const recognitionLabelNames = [];
 
             let batchHtml =

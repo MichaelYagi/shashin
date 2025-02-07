@@ -142,9 +142,9 @@ function initializeUploads(activePage) {
                 response => response.json()
             ).then(
                 success => {
-                    const status = success.hasOwnProperty("status") === true ? success["status"] : "fail";
+                    const status = success.hasOwnProperty("status") === true ? success.status : "fail";
                     if (status === "success") {
-                        shashin.showToastMessage("Media uploaded", success["msg"] + ":<br>" + filelist + "<a href='javascript:window.location.href=window.location.href'><br>Refresh</a> page to view.", {
+                        shashin.showToastMessage("Media uploaded", success.msg + ":<br>" + filelist + "<a href='javascript:window.location.href=window.location.href'><br>Refresh</a> page to view.", {
                             icon: "bi-info-circle",
                             placement: shashin.toast.placement.top.center,
                             tag: "successUpload",
@@ -153,7 +153,7 @@ function initializeUploads(activePage) {
                             borderColor: "success"
                         });
                     } else {
-                        shashin.showToastMessage("Errors detected", success["msg"], {
+                        shashin.showToastMessage("Errors detected", success.msg, {
                             icon: "bi-exclamation-triangle",
                             placement: shashin.toast.placement.top.center,
                             tag: "failUpload",

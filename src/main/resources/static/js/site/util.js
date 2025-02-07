@@ -26,11 +26,11 @@ class Util {
 
         $(element).on('touchstart', e => {
             handleTouchStart(e);
-        })
+        });
 
         $(element).on('touchmove', e => {
             handleTouchMove(e, callback);
-        })
+        });
 
         function handleTouchMove(evt, callback) {
             if (!shashin.slideshowXDown || !shashin.slideshowYDown) {
@@ -86,7 +86,7 @@ class Util {
         }
 
         return false;
-    };
+    }
 
     static copyToClipboard(textToCopy, callback) {
         if (!navigator.clipboard) {
@@ -174,7 +174,7 @@ class Util {
         }
 
         return $(elementsArray);
-    };
+    }
 
     static elementsNotInViewport(element) {
         const elementsArray = [];
@@ -187,7 +187,7 @@ class Util {
         }
 
         return $(elementsArray);
-    };
+    }
 
     static isOverlap(div1, div2) {
         if (div1.length > 0 && div2.length > 0) {
@@ -308,7 +308,7 @@ class Util {
 
         const json = {
             metadataIdList: metadataIdArray
-        }
+        };
 
         let propMetadataModal = null;
         if (modalId === "propMetadata") {
@@ -336,7 +336,7 @@ class Util {
 
         http.ajax("post", "/rescan/metadata" + (version === "" ? "" : "?v=" + version), JSON.stringify(json)).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                if (data["status"] === shashin.apiResponse.SUCCESS) {
+                if (data.status === shashin.apiResponse.SUCCESS) {
                     shashin.showToastMessage("Metadata Rescanned", "Metadata successfully rescanned!", {
                         icon: "bi-info-circle",
                         iconColor: "#777777"
@@ -375,7 +375,7 @@ class Util {
                 let metadataMap = {};
                 let metadataKeys = [];
                 if (data.hasOwnProperty("metadataMap")) {
-                    metadataMap = data["metadataMap"];
+                    metadataMap = data.metadataMap;
                     metadataKeys = Array.from(Object.keys(metadataMap));
                 }
 
@@ -386,44 +386,44 @@ class Util {
                     const rescannedMetadata = metadataMap[metadataKeys[0]];
                     let takenDateUpdated = false;
 
-                    if (rescannedMetadata["id"] !== metadataIdArray[0]) {
+                    if (rescannedMetadata.id !== metadataIdArray[0]) {
                         takenDateUpdated = true;
                         Util.setMetadataLocalStorage();
                     }
 
                     $("#title").val("");
-                    if (rescannedMetadata["title"] !== null) {
-                        $("#title").val(rescannedMetadata["title"]);
+                    if (rescannedMetadata.title !== null) {
+                        $("#title").val(rescannedMetadata.title);
                     }
                     $("#camera").val("");
-                    if (rescannedMetadata["camera"] !== null) {
-                        $("#camera").val(rescannedMetadata["camera"]);
+                    if (rescannedMetadata.camera !== null) {
+                        $("#camera").val(rescannedMetadata.camera);
                     }
                     $("#lens").val("");
-                    if (rescannedMetadata["lens"] !== null) {
-                        $("#lens").val(rescannedMetadata["lens"]);
+                    if (rescannedMetadata.lens !== null) {
+                        $("#lens").val(rescannedMetadata.lens);
                     }
                     $("#description").val("");
-                    if (rescannedMetadata["description"] !== null) {
-                        $("#description").val(rescannedMetadata["description"]);
+                    if (rescannedMetadata.description !== null) {
+                        $("#description").val(rescannedMetadata.description);
                     }
                     $("#duration").val("");
-                    if (rescannedMetadata["duration"] !== null) {
-                        $("#duration").val(rescannedMetadata["duration"]);
+                    if (rescannedMetadata.duration !== null) {
+                        $("#duration").val(rescannedMetadata.duration);
                     }
                     $("#yearTaken").val("");
-                    if (rescannedMetadata["year"] !== null) {
-                        $("#yearTaken").val(rescannedMetadata["year"]);
+                    if (rescannedMetadata.year !== null) {
+                        $("#yearTaken").val(rescannedMetadata.year);
                         Util.setMetadataLocalStorage();
                     }
                     $("#monthTaken").val("");
-                    if (rescannedMetadata["month"] !== null) {
-                        $("#monthTaken").val(rescannedMetadata["month"]);
+                    if (rescannedMetadata.month !== null) {
+                        $("#monthTaken").val(rescannedMetadata.month);
                         Util.setMetadataLocalStorage();
                     }
                     $("#dayTaken").val("");
-                    if (rescannedMetadata["day"] !== null) {
-                        $("#dayTaken").val(rescannedMetadata["day"]);
+                    if (rescannedMetadata.day !== null) {
+                        $("#dayTaken").val(rescannedMetadata.day);
                         Util.setMetadataLocalStorage();
                     }
                     if ($.isEmptyObject(originalMetadata) === false &&
@@ -434,27 +434,27 @@ class Util {
                         takenDateUpdated = true;
                     }
                     $("#timeTaken").val("");
-                    if (rescannedMetadata["time"] !== null) {
-                        $("#timeTaken").val(rescannedMetadata["time"]);
+                    if (rescannedMetadata.time !== null) {
+                        $("#timeTaken").val(rescannedMetadata.time);
                     }
                     $("#offsetTaken").val("");
-                    if (rescannedMetadata["timeZone"] !== null) {
-                        $("#offsetTaken").val(rescannedMetadata["timeZone"]);
+                    if (rescannedMetadata.timeZone !== null) {
+                        $("#offsetTaken").val(rescannedMetadata.timeZone);
                     }
                     $("#placeName").val("");
-                    if (rescannedMetadata["placeName"] !== null) {
-                        $("#placeName").val(rescannedMetadata["placeName"]);
+                    if (rescannedMetadata.placeName !== null) {
+                        $("#placeName").val(rescannedMetadata.placeName);
                     }
                     $("#latlng").val("");
-                    if (rescannedMetadata["lat"] !== null && rescannedMetadata["lng"] !== null) {
-                        $("#latlng").val(rescannedMetadata["lat"]+","+rescannedMetadata["lng"]);
+                    if (rescannedMetadata.lat !== null && rescannedMetadata.lng !== null) {
+                        $("#latlng").val(rescannedMetadata.lat+","+rescannedMetadata.lng);
                         $("#mapTabNav").show();
                         Util.setMetadataLocalStorage();
                     } else {
                         $("#mapTabNav").hide();
                     }
                     if (takenDateUpdated === true) {
-                        const dateGalleryRemoved = shashin.removeThumbnail((rescannedMetadata["id"] !== metadataIdArray[0]) ? metadataIdArray[0] : rescannedMetadata.id);
+                        const dateGalleryRemoved = shashin.removeThumbnail((rescannedMetadata.id !== metadataIdArray[0]) ? metadataIdArray[0] : rescannedMetadata.id);
                         timelineSettings.refreshTimeline($("#mediaTypeFilter").val()).then(function (data) {
                             // If a date section was removed refresh the timeline
                             if (dateGalleryRemoved === true) {
@@ -525,18 +525,19 @@ class Util {
 
     static isLocalNetwork(hostname = window.location.hostname) {
         return (
-            (['localhost', '127.0.0.1', '', '::1'].includes(hostname))
-            || (hostname.startsWith('192.168.'))
-            || (hostname.startsWith('10.'))
-            || (hostname.endsWith('.local'))
-        )
+            (['localhost', '127.0.0.1', '', '::1'].includes(hostname)) || 
+            (hostname.startsWith('192.168.')) ||
+            (hostname.startsWith('10.')) ||
+            (hostname.endsWith('.local'))
+        );
     }
 
     static isMobile() {
         let isMobile = false; //initiate as false
         // device detection
-        if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|ipad|iris|kindle|Android|Silk|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i.test(navigator.userAgent)
-            || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(navigator.userAgent.substr(0,4))) {
+        if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|ipad|iris|kindle|Android|Silk|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i.test(navigator.userAgent) ||
+            /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(navigator.userAgent.substr(0,4))) 
+        {
             isMobile = true;
         }
 
@@ -583,7 +584,7 @@ class Util {
 
     static getOS() {
         let userAgent = window.navigator.userAgent,
-            platform = window.navigator?.userAgentData?.platform || window.navigator.platform,
+            platform = (window.navigator.hasOwnProperty("userAgentData") && window.navigator.userAgentData.platform) || window.navigator.platform,
             macosPlatforms = ["macintosh", "macintel", "macppc", "mac68k"],
             windowsPlatforms = ["win32", "win64", "windows", "wince"],
             iosPlatforms = ["iphone", "ipad", "ipod"],
@@ -629,7 +630,7 @@ class Util {
             }
         });
         return o;
-    };
+    }
 
     static getShortDay(index) {
         const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -710,7 +711,7 @@ class Util {
     }
 
     static atEndOfPage(element) {
-        return (((window.innerHeight + element.scrollTop) * 1.05) >= element.scrollHeight) // compare with scroll position + some give (*1.5)
+        return (((window.innerHeight + element.scrollTop) * 1.05) >= element.scrollHeight); // compare with scroll position + some give (*1.5)
     }
 
     static hasScrollBar(containerElement) {
@@ -761,9 +762,9 @@ class Util {
     }
 
     static isNumericString(str) {
-        if (typeof str != "string") return false // we only process strings!
+        if (typeof str != "string") {return false;} // we only process strings!
         return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
-            !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+            !isNaN(parseFloat(str)); // ...and ensure strings of whitespace fail
     }
 
     static decodeHtml(html) {
@@ -810,7 +811,7 @@ class Util {
 
     static addKeywordToMetadata(metadata, keywords) {
         if (metadata && metadata.hasOwnProperty("id")) {
-            metadata["keywords"] = keywords;
+            metadata.keywords = keywords;
         }
         return metadata;
     }
@@ -839,13 +840,13 @@ class Util {
         }
 
         if (options.hasOwnProperty("timeoutValue")) {
-            timeoutValue = options["timeoutValue"];
+            timeoutValue = options.timeoutValue;
         }
 
         if (shashin && shashin.getLightGallery() !== null) {
             let mediaContentList = [];
             if (options.hasOwnProperty("mediaContentList")) {
-                mediaContentList = options["mediaContentList"];
+                mediaContentList = options.mediaContentList;
             } else {
                 mediaContentList = shashin.getLightGallery().galleryItems;
             }
@@ -853,8 +854,8 @@ class Util {
             const closeTimeout = shashin.getLightGallery().closeGallery(true);
             setTimeout(() => {
                 if (shashin.getLightGallery() !== null) {
-                    if (options.hasOwnProperty("useDestroyMethod") && (options["useDestroyMethod"] === false || options["useDestroyMethod"] === true)) {
-                        if (options["useDestroyMethod"] === false) {
+                    if (options.hasOwnProperty("useDestroyMethod") && (options.useDestroyMethod === false || options.useDestroyMethod === true)) {
+                        if (options.useDestroyMethod === false) {
                             shashin.getLightGallery().destroyModules(true);
                             shashin.getLightGallery().invalidateItems();
                             $(window).off(`.lg.global${shashin.getLightGallery().lgId}`);
@@ -881,8 +882,8 @@ class Util {
 
                     setTimeout(() => {
                         let selector = ".mediaLink";
-                        if (options.hasOwnProperty("selector") && options["selector"] !== "") {
-                            selector = options["selector"];
+                        if (options.hasOwnProperty("selector") && options.selector !== "") {
+                            selector = options.selector;
                         }
 
                         const lgConfig = {
@@ -891,18 +892,18 @@ class Util {
                         };
                         if (typeof lgMetadataDetail !== "undefined") {
                             lgConfig.plugins.push(lgMetadataDetail);
-                            lgConfig["metadataDetail"] = true;
-                            lgConfig["metadataDetailFun"] = shashin.openInfoSidebar;
+                            lgConfig.metadataDetail = true;
+                            lgConfig.metadataDetailFun = shashin.openInfoSidebar;
                         }
                         if (typeof lgVideoThumbnail !== "undefined") {
                             lgConfig.plugins.push(lgVideoThumbnail);
-                            lgConfig["videoThumbnail"] = true;
-                            lgConfig["videoThumbnailFun"] = shashin.processVideoThumbnail;
+                            lgConfig.videoThumbnail = true;
+                            lgConfig.videoThumbnailFun = shashin.processVideoThumbnail;
                         }
 
                         shashin.setLightGallery(lgConfig);
 
-                        if (options.hasOwnProperty("refreshContent") && options["refreshContent"] === true && mediaContentList.length > 0 && shashin.getLightGallery() !== null) {
+                        if (options.hasOwnProperty("refreshContent") && options.refreshContent === true && mediaContentList.length > 0 && shashin.getLightGallery() !== null) {
                             shashin.getLightGallery().refresh(mediaContentList);
                         }
 
@@ -922,7 +923,7 @@ class Util {
             const query = window.matchMedia('prefers-color-scheme: dark');
             if (query.hasOwnProperty("matches")) {
                 useMatchMedia = true;
-                Util.darkModeToggle(query["matches"] === true);
+                Util.darkModeToggle(query.matches === true);
             }
         }
 
@@ -1005,15 +1006,17 @@ class Util {
     }
 
     static formatBytes(bytes, decimals = 2) {
-        if (!+bytes) return '0 Bytes'
+        if (+bytes === false) {
+            return '0 Bytes';
+        }
 
-        const k = 1024
-        const dm = decimals < 0 ? 0 : decimals
-        const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
 
-        const i = Math.floor(Math.log(bytes) / Math.log(k))
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-        return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
+        return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
     }
 
     static msToTimeSegments(duration) {
@@ -1041,20 +1044,20 @@ class Util {
         const nowDate = new Date(new Date().toLocaleString("en-US", {timeZone: timezone}));
         const elapsedTime = Util.msToTimeSegments(nowDate - createdAtDate);
         let timeLapsed = "0s";
-        if (elapsedTime["years"] > 0) {
-            timeLapsed = elapsedTime["years"] + " year" + (elapsedTime["years"] === 1 ? "": "s");
-        } else if (elapsedTime["months"] > 0) {
-            timeLapsed = elapsedTime["months"] + " month" + (elapsedTime["months"] === 1 ? "": "s");
-        } else if (elapsedTime["days"] > 0) {
-            timeLapsed = elapsedTime["days"] + " day" + (elapsedTime["days"] === 1 ? "": "s");
-        } else if (elapsedTime["hours"] > 0) {
-            timeLapsed = elapsedTime["hours"] + " hour" + (elapsedTime["hours"] === 1 ? "": "s");
-        } else if (elapsedTime["minutes"] > 0) {
-            timeLapsed = elapsedTime["minutes"] + " minute" + (elapsedTime["minutes"] === 1 ? "": "s");
-        } else if (elapsedTime["seconds"] > 0) {
-            timeLapsed = elapsedTime["seconds"] + " second" + (elapsedTime["seconds"] === 1 ? "": "s");
+        if (elapsedTime.years > 0) {
+            timeLapsed = elapsedTime.years + " year" + (elapsedTime.years === 1 ? "": "s");
+        } else if (elapsedTime.months > 0) {
+            timeLapsed = elapsedTime.months + " month" + (elapsedTime.months === 1 ? "": "s");
+        } else if (elapsedTime.days > 0) {
+            timeLapsed = elapsedTime.days + " day" + (elapsedTime.days === 1 ? "": "s");
+        } else if (elapsedTime.hours > 0) {
+            timeLapsed = elapsedTime.hours + " hour" + (elapsedTime.hours === 1 ? "": "s");
+        } else if (elapsedTime.minutes > 0) {
+            timeLapsed = elapsedTime.minutes + " minute" + (elapsedTime.minutes === 1 ? "": "s");
+        } else if (elapsedTime.seconds > 0) {
+            timeLapsed = elapsedTime.seconds + " second" + (elapsedTime.seconds === 1 ? "": "s");
         }
-        return "<small class='text-muted'>"+timeLapsed+" ago</small>"
+        return "<small class='text-muted'>"+timeLapsed+" ago</small>";
     }
 
     static getDateGalleryHeight(id) {
@@ -1105,16 +1108,16 @@ class Util {
     }
 
     static updateProgressBar(value, options) {
-        let timeout = 0
-        let autoVisibility = true
+        let timeout = 0;
+        let autoVisibility = true;
 
         if (options !== undefined) {
             if (options.hasOwnProperty("timeout")) {
-                timeout = options["timeout"];
+                timeout = options.timeout;
             }
 
             if (options.hasOwnProperty("autoVisibility")) {
-                autoVisibility = options["autoVisibility"];
+                autoVisibility = options.autoVisibility;
             }
         }
 
@@ -1218,22 +1221,22 @@ class Util {
 
     static getBatchData(batchObj) {
         const jsonData = {};
-        jsonData.batchMetadataIds = batchObj.hasOwnProperty("batchMetadataIds") ? JSON.parse(batchObj["batchMetadataIds"]) : null;
-        jsonData.dayTakenBatchData = batchObj.hasOwnProperty("dayTakenBatchData") ? batchObj["dayTakenBatchData"] : null;
-        jsonData.monthTakenBatchData = batchObj.hasOwnProperty("monthTakenBatchData") ? batchObj["monthTakenBatchData"] : null;
-        jsonData.yearTakenBatchData = batchObj.hasOwnProperty("yearTakenBatchData") ? batchObj["yearTakenBatchData"] : null;
-        jsonData.latlngBatchData = batchObj.hasOwnProperty("latlngBatchData") ? Util.decodeHtml(batchObj["latlngBatchData"]) : null;
-        jsonData.keywordsBatchData = batchObj.hasOwnProperty("keywordsBatchData") ? batchObj["keywordsBatchData"] : null;
-        jsonData.cameraBatchData = batchObj.hasOwnProperty("cameraBatchData") ? Util.decodeHtml(batchObj["cameraBatchData"]) : null;
-        jsonData.lensBatchData = batchObj.hasOwnProperty("lensBatchData") ? Util.decodeHtml(batchObj["lensBatchData"]) : null;
-        jsonData.offsetTakenBatchData = batchObj.hasOwnProperty("offsetTakenBatchData") ? batchObj["offsetTakenBatchData"] : null;
-        jsonData.tagBatchDataInput = batchObj.hasOwnProperty("tagBatchDataInput") ? batchObj["tagBatchDataInput"] : null;
-        jsonData.albumNameInput = batchObj.hasOwnProperty("albumNameInput") ? batchObj["albumNameInput"] : null;
-        jsonData.batchisobject = batchObj.hasOwnProperty("batchisobject") ? batchObj["batchisobject"] : null;
-        jsonData.batchhidden = batchObj.hasOwnProperty("batchhidden") ? batchObj["batchhidden"] : null;
-        jsonData.addtoexistingalbums = batchObj.hasOwnProperty("addtoexistingalbums") ? batchObj["addtoexistingalbums"] : null;
-        jsonData.addtoexistingpeople = batchObj.hasOwnProperty("addtoexistingpeople") ? batchObj["addtoexistingpeople"] : null;
-        jsonData.addtoexistingkeywords = batchObj.hasOwnProperty("addtoexistingkeywords") ? batchObj["addtoexistingkeywords"] : null;
+        jsonData.batchMetadataIds = batchObj.hasOwnProperty("batchMetadataIds") ? JSON.parse(batchObj.batchMetadataIds) : null;
+        jsonData.dayTakenBatchData = batchObj.hasOwnProperty("dayTakenBatchData") ? batchObj.dayTakenBatchData : null;
+        jsonData.monthTakenBatchData = batchObj.hasOwnProperty("monthTakenBatchData") ? batchObj.monthTakenBatchData : null;
+        jsonData.yearTakenBatchData = batchObj.hasOwnProperty("yearTakenBatchData") ? batchObj.yearTakenBatchData : null;
+        jsonData.latlngBatchData = batchObj.hasOwnProperty("latlngBatchData") ? Util.decodeHtml(batchObj.latlngBatchData) : null;
+        jsonData.keywordsBatchData = batchObj.hasOwnProperty("keywordsBatchData") ? batchObj.keywordsBatchData : null;
+        jsonData.cameraBatchData = batchObj.hasOwnProperty("cameraBatchData") ? Util.decodeHtml(batchObj.cameraBatchData) : null;
+        jsonData.lensBatchData = batchObj.hasOwnProperty("lensBatchData") ? Util.decodeHtml(batchObj.lensBatchData) : null;
+        jsonData.offsetTakenBatchData = batchObj.hasOwnProperty("offsetTakenBatchData") ? batchObj.offsetTakenBatchData : null;
+        jsonData.tagBatchDataInput = batchObj.hasOwnProperty("tagBatchDataInput") ? batchObj.tagBatchDataInput : null;
+        jsonData.albumNameInput = batchObj.hasOwnProperty("albumNameInput") ? batchObj.albumNameInput : null;
+        jsonData.batchisobject = batchObj.hasOwnProperty("batchisobject") ? batchObj.batchisobject : null;
+        jsonData.batchhidden = batchObj.hasOwnProperty("batchhidden") ? batchObj.batchhidden : null;
+        jsonData.addtoexistingalbums = batchObj.hasOwnProperty("addtoexistingalbums") ? batchObj.addtoexistingalbums : null;
+        jsonData.addtoexistingpeople = batchObj.hasOwnProperty("addtoexistingpeople") ? batchObj.addtoexistingpeople : null;
+        jsonData.addtoexistingkeywords = batchObj.hasOwnProperty("addtoexistingkeywords") ? batchObj.addtoexistingkeywords : null;
 
         return jsonData;
     }
@@ -1243,23 +1246,23 @@ class Util {
             let http = new Http("check notifications");
             http.ajax("get", "/notifications/check").then(function (data) {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("hasNotifications")) {
-                    if (data["uncheckedPersonMatches"] > 0) {
+                    if (data.uncheckedPersonMatches > 0) {
                         $("#sidebarMenuDrawer").html('<span id="topNavAlertBadge" class="position-absolute top-0 start-50 p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
                         $("#sidebarPeople").html('<span id="sideBarAlertPersonBadge" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
                     }
 
-                    if (data["hasNotifications"] === true) {
+                    if (data.hasNotifications === true) {
                         $("#sidebarMenuDrawer").html('<span id="topNavAlertBadge" class="position-absolute top-0 start-50 p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
                         $("#sidebarNotification").html('<span id="sideBarAlertBadge" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
 
                         if (notificationAlerts === true) {
                             setTimeout(() => {
-                                const unreadNotifications = data["unreadNotifications"];
+                                const unreadNotifications = data.unreadNotifications;
                                 const notificationCount = unreadNotifications.length;
-                                const firstNotification = data["unreadNotifications"][0];
-                                const createdAtDate = firstNotification["createdAt"];
+                                const firstNotification = data.unreadNotifications[0];
+                                const createdAtDate = firstNotification.createdAt;
                                 const title = notificationCount + " new notification" + (notificationCount === 1 ? "" : "s");
-                                let message = '<div class="container"><div class="row">' + ((firstNotification["imageUrl"] !== null && firstNotification["imageUrl"] !== "") ? '<div class="col-4"><img src="' + firstNotification["imageUrl"] + '" width="100"></div>' : '') + ((firstNotification["imageUrl"] !== null && firstNotification["imageUrl"] !== "") ? '<div class="col-8">' : '<div class="col">') + ((notificationCount > 1) ? 'Latest - ' : '') + firstNotification["message"] + '</div></div>';
+                                let message = '<div class="container"><div class="row">' + ((firstNotification.imageUrl !== null && firstNotification.imageUrl !== "") ? '<div class="col-4"><img src="' + firstNotification.imageUrl + '" width="100"></div>' : '') + ((firstNotification.imageUrl !== null && firstNotification.imageUrl !== "") ? '<div class="col-8">' : '<div class="col">') + ((notificationCount > 1) ? 'Latest - ' : '') + firstNotification.message + '</div></div>';
                                 if (notificationCount > 1) {
                                     message = message + "<div class='row'><hr class='mb-1 mt-3'><div class='col'><a href='#' class='gotoNotifications' target='_blank'>Read notifications</a></div><div class='col'><a href='#' class='markNotifications'>Mark all read</a></div></div>";
                                 }
@@ -1308,7 +1311,7 @@ class Util {
                         }
                     }
 
-                    if (data["hasNotifications"] === false && data["uncheckedPersonMatches"] === 0) {
+                    if (data.hasNotifications === false && data.uncheckedPersonMatches === 0) {
                         $("#sidebarMenuDrawer").html('');
                         $("#sidebarNotification").html('');
                         $("#sidebarPeople").html('');
@@ -1590,7 +1593,7 @@ class Util {
                         $(".copyMetadataId").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
                         $('.copyMetadataId').fadeOut(5000, function () {
                             $(this).removeClass("bi-clipboard-check").removeClass("bi-clipboard-x").addClass("bi-clipboard-plus");
-                        }).fadeIn(400)
+                        }).fadeIn(400);
                     } else {
                         $(".copyMetadataId").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
                     }
@@ -1607,9 +1610,9 @@ class Util {
             // const shareUrl = baseUrl + relativeShareLink.replace('/api/v1','');
             $(".shareUrlLabel").show();
 
-            let page = "/viewer"
+            let page = "/viewer";
             if (metadata.videoUrl != null) {
-                page = "/player"
+                page = "/player";
             }
 
             let shareDetailsHtml = "<a class='bi-download' href='" + relativeShareLink + "/download' title='Download photo' style='font-size: 1rem;'></a>&nbsp;&nbsp;&nbsp;" +
@@ -1628,7 +1631,7 @@ class Util {
 
             $(".sharecopy").on("click", function (e) {
                 e.preventDefault();
-            })
+            });
         }
     }
 }
@@ -1643,7 +1646,7 @@ class Util {
     };
     $.fn.hasScrollBar = function() {
         return this.get(0).scrollHeight > this.get(0).clientHeight;
-    }
+    };
 }(jQuery));
 
 if (typeof module !== 'undefined') {

@@ -42,7 +42,7 @@ class TimelineTemplates {
     `};
 
     static TimelinePreLoadGalleryHeader({metadata, placeNameHeaders, listHtml}) { return `
-        ${(metadata["year"] === null || metadata["month"] === null || metadata["day"] === null) ?
+        ${(metadata.year === null || metadata.month === null || metadata.day === null) ?
             `
         <span class="dateContainer" id="container_undated">
         <br id="brundated">
@@ -90,7 +90,7 @@ class TimelineTemplates {
     `};
 
     static TimelinePreLoadGalleryFooter({metadata, lastDate}) { return `
-        ${(metadata["year"] === null || metadata["month"] === null || metadata["day"] === null) ?
+        ${(metadata.year === null || metadata.month === null || metadata.day === null) ?
             `
                 <span class="scrollspy metadataprocessed" id="tail_undated"></span>
             </div>

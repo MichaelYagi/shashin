@@ -40,7 +40,7 @@ $("#appToolsBatchEdit").on("click", function(e) {
     const lensList = $("#lensesBatchString").val().split(",");
     shashin.createAutocomplete("#lensBatchData", lensList, false);
 
-    const albumcheckedBoxes = $('input[name="albums[]"]');
+    const albumcheckedBoxes = $('input[name="albums[]');
     const albumNames = [];
     albumcheckedBoxes.each(function() {
         albumNames.push($(this).val().replace(/ +(?= )/g,'').trim());
@@ -48,7 +48,7 @@ $("#appToolsBatchEdit").on("click", function(e) {
     shashin.createAutocomplete("#albumNameInput", albumNames, false);
     shashin.syncCheckboxInputs("#albumNameInput", "albums");
 
-    const peoplecheckedBoxes = $('input[name="recognitionLabel[]"]');
+    const peoplecheckedBoxes = $('input[name="recognitionLabel[]');
     const peopleNames = [];
     peoplecheckedBoxes.each(function() {
         peopleNames.push($(this).val().replace(/ +(?= )/g,'').trim());
@@ -132,15 +132,15 @@ $("#albumAppToolsRemoveAlbum").on("click", async function (e) {
         const data = await http.ajax("delete", "/album/media/delete/batch", JSON.stringify(json));
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-            if (data["status"] === "redirect") {
-                window.location.replace(data["msg"]);
+            if (data.status === "redirect") {
+                window.location.replace(data.msg);
             } else {
                 let message = "Error";
-                if (data["status"] === shashin.apiResponse.SUCCESS) {
-                    message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                if (data.status === shashin.apiResponse.SUCCESS) {
+                    message = '<div class="alert alert-success" role="alert">' + data.msg + '</div>';
                     window.top.location = window.top.location
                 } else {
-                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                    message = '<div class="alert alert-danger" role="alert">' + data.msg + '</div>';
                 }
                 $("#albumMessage").html(message);
             }
@@ -163,11 +163,11 @@ $("#albumAppToolsRemoveFavorites").on("click", async function (e) {
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
-            if (data["status"] === shashin.apiResponse.SUCCESS) {
-                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+            if (data.status === shashin.apiResponse.SUCCESS) {
+                message = '<div class="alert alert-success" role="alert">' + data.msg + '</div>';
                 location.reload();
             } else {
-                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                message = '<div class="alert alert-danger" role="alert">' + data.msg + '</div>';
             }
             $("#favoritesMessage").html(message);
         }
@@ -198,7 +198,7 @@ $("#albumAppToolsRestore").on("click", async function (e) {
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
-            if (data["status"] === shashin.apiResponse.SUCCESS) {
+            if (data.status === shashin.apiResponse.SUCCESS) {
                 shashin.showToastMessage("Success!", "Media restored", {
                     icon: "bi-info-circle",
                     iconColor: "#777777",
@@ -219,7 +219,7 @@ $("#albumAppToolsRestore").on("click", async function (e) {
                     });
                 }
             } else {
-                shashin.showToastMessage("Could not restore media", data["msg"], {icon: "bi-exclamation-triangle", iconColor: "#FF0000", borderColor:"danger"});
+                shashin.showToastMessage("Could not restore media", data.msg, {icon: "bi-exclamation-triangle", iconColor: "#FF0000", borderColor:"danger"});
 
                 $("#albumAppToolsRestoreIcon").removeClass("spinner-border spinner-border-sm").addClass("bi-arrow-repeat");
                 $("#albumAppToolsRestoreIcon").css({

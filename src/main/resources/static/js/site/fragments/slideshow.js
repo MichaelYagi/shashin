@@ -25,36 +25,36 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 shashin.printMessageToConsole("Looking up " + slideshowMetadataIds[slideshowCurrentIndex], {tag: "slideshow"});
                 http.ajax("get", "/media/metadata/" + slideshowMetadataIds[slideshowCurrentIndex]).then(function (data) {
                     processSlideData(data, "existing", callback);
-                })
+                });
             } else {
                 shashin.printMessageToConsole("New random image", {tag: "slideshow"});
                 http.ajax("get", "/random/metadata/type/image").then(function (data) {
                     processSlideData(data, "new", callback);
-                })
+                });
             }
         }
     }
 
     function processSlideData(data, type, callback) {
         if (data && data.hasOwnProperty("metadata") === true &&
-            data["metadata"].hasOwnProperty("thumbnailUrlOriginal") === true &&
-            data["metadata"]["thumbnailUrlOriginal"] !== "" &&
+            data.metadata.hasOwnProperty("thumbnailUrlOriginal") === true &&
+            data.metadata.thumbnailUrlOriginal !== "" &&
             data.hasOwnProperty("baseUrl") === true &&
-            data["baseUrl"] !== ""
+            data.baseUrl !== ""
         ) {
             $("#mediaSrc").css("display", "block");
-            const photoUrl = data["baseUrl"] + "/api/v1/image/"+data["metadata"]["id"];
+            const photoUrl = data.baseUrl + "/api/v1/image/"+data.metadata.id;
 
             currentPhotoUrl = photoUrl;
-            currentMetadata = data["metadata"];
+            currentMetadata = data.metadata;
 
             if (cjsc !== null && cjsc.available) {
                 const cjscMetadata = {
-                    title: data["metadata"].title
-                }
+                    title: data.metadata.title
+                };
 
-                if (data["metadata"].description !== null && data["metadata"].description !== "") {
-                    cjscMetadata["description"] = data["metadata"].description;
+                if (data.metadata.description !== null && data.metadata.description !== "") {
+                    cjscMetadata.description = data.metadata.description;
                 }
                 cjsc.cast(photoUrl+".jpg", cjscMetadata);
             }
@@ -64,7 +64,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             tempImage.onerror = function (error) {
                 shashin.printMessageToConsole("Error: " + error, {tag: "slideshow"});
                 slideshowProceed = true;
-            }
+            };
 
             tempImage.onload = function () {
                 slideshowProceed = true;
@@ -107,26 +107,26 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                     }
 
                     if (type === "new") {
-                        slideshowMetadataIds.push(data["metadata"]["id"]);
+                        slideshowMetadataIds.push(data.metadata.id);
                     }
                     if (slideshowMetadataIds.length > queryLimit) {
                         slideshowMetadataIds.splice(0, 1); // At position 0, remove 1
                         slideshowCurrentIndex--;
                     }
 
-                    const takenDateString = data["metadata"]["year"] + "-" + data["metadata"]["month"] + "-" + data["metadata"]["day"];
+                    const takenDateString = data.metadata.year + "-" + data.metadata.month + "-" + data.metadata.day;
                     const takenDate = new Date(takenDateString);
                     const options = {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'};
-                    let description = takenDate.toLocaleDateString('en-us', options)
+                    let description = takenDate.toLocaleDateString('en-us', options);
 
-                    if (accessTimelineView === false && data.hasOwnProperty("albumIds") === true && data["albumIds"].hasOwnProperty(0) === true) {
-                        description = "<a style='color:#DBE9F4;text-decoration:none;' href='/album/" + data["albumIds"][0] + "' target='_blank'>" + takenDate.toLocaleDateString('en-us', options) + "</a>"
+                    if (accessTimelineView === false && data.hasOwnProperty("albumIds") === true && data.albumIds.hasOwnProperty(0) === true) {
+                        description = "<a style='color:#DBE9F4;text-decoration:none;' href='/album/" + data.albumIds[0] + "' target='_blank'>" + takenDate.toLocaleDateString('en-us', options) + "</a>";
                     } else if (accessTimelineView === true) {
-                        description = "<a style='color:#DBE9F4;text-decoration:none;' href='/timeline#" + takenDateString + "' target='_blank'>" + takenDate.toLocaleDateString('en-us', options) + "</a>"
+                        description = "<a style='color:#DBE9F4;text-decoration:none;' href='/timeline#" + takenDateString + "' target='_blank'>" + takenDate.toLocaleDateString('en-us', options) + "</a>";
                     }
 
-                    if (data["shortPlaceName"] !== "") {
-                        description += " • " + data["shortPlaceName"];
+                    if (data.shortPlaceName !== "") {
+                        description += " • " + data.shortPlaceName;
                     }
                     $("#mediaInfo").html(description);
 
@@ -136,7 +136,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                         callback(true);
                     }
                 });
-            }
+            };
 
             tempImage.src = photoUrl;
         } else if (callback !== undefined && typeof callback === 'function') {
@@ -178,7 +178,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     }
 
     function showInstruction() {
-        let options = {}
+        let options = {};
 
         if (Util.isMobile() === false) {
             options = {
@@ -202,9 +202,9 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         if (cjsc !== null) {
             // Create
             if (cjsc.state === "disconnected") {
-                options["headerSubtext"] = "<a href='#' id='toggleCast' style='display: none;'><span id='toggleCastIcon' class='bi-cast' style='font-size:1rem;color: lightgray;'></span></a>";
+                options.headerSubtext = "<a href='#' id='toggleCast' style='display: none;'><span id='toggleCastIcon' class='bi-cast' style='font-size:1rem;color: lightgray;'></span></a>";
             } else {
-                options["headerSubtext"] = "<a href='#' id='toggleCast' style='display: none;'><span id='toggleCastIcon' class='bi-stop-circle' style='font-size:1rem;color: lightgray;'></span></a>";
+                options.headerSubtext = "<a href='#' id='toggleCast' style='display: none;'><span id='toggleCastIcon' class='bi-stop-circle' style='font-size:1rem;color: lightgray;'></span></a>";
             }
         }
 
@@ -230,7 +230,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>Single Tap</strong></span></div><div class='col-9'>Play/pause</div></div>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>Double Tap</strong></span></div><div class='col-9'>Exit fullscreen. Double tap again to exit slideshow or swipe up to go back to fullscreen</div></div>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>Swipe ← →</strong></span></div><div class='col-9'>Got to next/previous slide</div></div>" +
-                "</div>"
+                "</div>";
 
             shashin.showToastMessage("Touch Bindings",
                 message,
@@ -256,10 +256,10 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                         if (currentMetadata !== null) {
                             cjscMetadata = {
                                 title: currentMetadata.title
-                            }
+                            };
 
                             if (currentMetadata.description !== null && currentMetadata.description !== "") {
-                                cjscMetadata["description"] = currentMetadata.description;
+                                cjscMetadata.description = currentMetadata.description;
                             }
                         }
                         cjsc.cast(currentPhotoUrl+".jpg", cjscMetadata);
@@ -269,7 +269,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                     $("#toggleCastIcon").addClass('bi-cast').removeClass('bi-stop-circle');
                 }
             }
-        })
+        });
     }
 
     $("body").on("dblclick", function (e) {
@@ -285,7 +285,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 }
             }
         }
-    })
+    });
 
     $("body").on("keyup", function (e) {
         if ($("#slideshowGallery").css("display") === "block") {
@@ -322,10 +322,10 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                             if (currentMetadata !== null) {
                                 cjscMetadata = {
                                     title: currentMetadata.title
-                                }
+                                };
 
                                 if (currentMetadata.description !== null && currentMetadata.description !== "") {
-                                    cjscMetadata["description"] = currentMetadata.description;
+                                    cjscMetadata.description = currentMetadata.description;
                                 }
                             }
                             cjsc.cast(currentPhotoUrl+".jpg", cjscMetadata);
@@ -519,5 +519,5 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 showInstruction();
             }
         });
-    })
+    });
 }

@@ -323,7 +323,7 @@ class Dashboard {
                     window.open("/search?term=" + encodeURI(label.split(' ').join('+')).replace(";", "%3B"), '_blank').focus();
                 }
             }
-        }
+        };
 
         // Click label
         $('#keywordChart').on('click', openLinkFromLabel);
@@ -479,7 +479,7 @@ class Dashboard {
 
         function scanRefresh() {
             sendMessage();
-            elapsedMS += refreshRateMS
+            elapsedMS += refreshRateMS;
             setTimeout(scanRefresh, refreshRateMS);
         }
 
@@ -488,7 +488,7 @@ class Dashboard {
             const socket = new SockJS('/websocket-endpoint');
             stompClient = Stomp.over(socket);
             if (shashin.showDebug === false) {
-                stompClient.debug = null
+                stompClient.debug = null;
             }
 
             shashin.printMessageToConsole("Socket Connecting");
@@ -501,21 +501,21 @@ class Dashboard {
                     let respMessageJsonString = JSON.parse(message.body).content;
                     const systemStats = JSON.parse(respMessageJsonString);
 
-                    const uptime = systemStats["uptime"];
+                    const uptime = systemStats.uptime;
                     $("#uptime").html("Uptime <code>" + uptime + "</code>");
 
-                    const processCpuLoadPercent = Math.ceil(systemStats["processCpuLoadPercentDouble"]*100)|0;
+                    const processCpuLoadPercent = Math.ceil(systemStats.processCpuLoadPercentDouble*100)|0;
                     const processCpuLoadData = ~~processCpuLoadPercent;
                     shashin.printMessageToConsole("processCpuLoadData: "+processCpuLoadData);
 
-                    const systemCpuLoadPercent = Math.ceil(systemStats["systemCpuLoadPercentDouble"]*100)|0;
-                    const systemCpuLoadData = ~~systemCpuLoadPercent
+                    const systemCpuLoadPercent = Math.ceil(systemStats.systemCpuLoadPercentDouble*100)|0;
+                    const systemCpuLoadData = ~~systemCpuLoadPercent;
                     shashin.printMessageToConsole("systemCpuLoadData: "+systemCpuLoadData);
 
-                    const memoryUsedPercent = Math.ceil(systemStats["usedHeapMemoryGB"]/systemStats["maxHeapMemoryGB"]*100)|0;
-                    const memoryUsedData = ~~memoryUsedPercent
-                    shashin.printMessageToConsole("usedHeapMemoryGB: "+systemStats["usedHeapMemoryGB"]);
-                    shashin.printMessageToConsole("maxHeapMemoryGB: "+systemStats["maxHeapMemoryGB"]);
+                    const memoryUsedPercent = Math.ceil(systemStats.usedHeapMemoryGB/systemStats.maxHeapMemoryGB*100)|0;
+                    const memoryUsedData = ~~memoryUsedPercent;
+                    shashin.printMessageToConsole("usedHeapMemoryGB: "+systemStats.usedHeapMemoryGB);
+                    shashin.printMessageToConsole("maxHeapMemoryGB: "+systemStats.maxHeapMemoryGB);
                     shashin.printMessageToConsole("memoryUsedData: "+memoryUsedData);
 
                     if (elapsedMS >= maxElapsedMS && elapsedMS % intervalMS === 0) {
@@ -523,9 +523,9 @@ class Dashboard {
                         Dashboard.removeData(memoryChart);
                     }
                     if (elapsedMS === refreshRateMS || elapsedMS % intervalMS === 0) {
-                        Dashboard.addData(cpuChart, systemStats["timestamp"], processCpuLoadData, 0)
-                        Dashboard.addData(cpuChart, null, systemCpuLoadData, 1)
-                        Dashboard.addData(memoryChart, systemStats["timestamp"], memoryUsedData, 0)
+                        Dashboard.addData(cpuChart, systemStats.timestamp, processCpuLoadData, 0);
+                        Dashboard.addData(cpuChart, null, systemCpuLoadData, 1);
+                        Dashboard.addData(memoryChart, systemStats.timestamp, memoryUsedData, 0);
                     }
                     shashin.printMessageToConsole("Message:"+respMessageJsonString);
                 });
@@ -535,7 +535,7 @@ class Dashboard {
                         consoleType: shashin.consoleTypes.error
                     });
                     counter = 0;
-                    window.top.location = window.top.location
+                    window.top.location = window.top.location;
                 } else {
                     shashin.printMessageToConsole("Oops, something went wrong! " + e.toString() + ".", {
                         consoleType: shashin.consoleTypes.error
