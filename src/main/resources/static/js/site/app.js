@@ -42,7 +42,7 @@
     shashin.objectName = "shashinobject";
     shashin.slideshowXDown = null;
     shashin.slideshowYDown = null;
-    shashin.tapped = false;
+    shashin.touchTimer = undefined;
     shashin.lastSelectedMetadataId = "";
     shashin.lastSelectedMetadataSelected = false;
     shashin.multiSelected = false;
@@ -2256,139 +2256,146 @@
         $("#image" + metadata.id).on("click", function (e) {
             e.preventDefault();
 
-            // Fill top left icon when clicking anywhere on thumbnail
-            if ($('.bi-circle-fill')[0] || metadataIdArray.length > 0) {
-                if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
+            // Check for single click, avoid dblclick events
+            if (Util.isMobile() === true && e.detail === 1) {
+                shashin.touchTimer = setTimeout(() => {
+                    imageClickEvent();
+                }, 200);
+            } else {
+                imageClickEvent();
+            }
 
-                    if (Util.isMobile() === false) {
+            function imageClickEvent() {
+                // Fill top left icon when clicking anywhere on thumbnail
+                if ($('.bi-circle-fill')[0] || metadataIdArray.length > 0) {
+                    if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
+
                         shashin.lastSelectedMetadataId = metadata.id;
                         shashin.lastSelectedMetadataSelected = true;
-                    }
 
-                    $("#tntl" + metadata.id).show();
-                    $("#tlicon" + metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
-                    $("#image" + metadata.id).css("opacity", opaque);
-                    $("#tncentered" + metadata.id).hide();
-                    $("#tnbr" + metadata.id).hide();
-                    $("#tnbl" + metadata.id).hide();
-                    $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                    $('.photo-thumbnail-image').removeClass("pb-1");
-                    if (shashin.multiSelected === true) {
-                        $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
-                        $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
-                    }
-                    // List of selected media
-                    shashin.addToMetadataIdList(metadata.id);
-                    shashin.addToMetadataFilenamesList($('#filename' + metadata.id).val());
-                    shashin.addToMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
-                    if (metadata.type.includes("video")) {
-                        const jpgUrl = $("#image" + metadata.id).attr("src").replace("/gif/" + metadata.id, "/225/" + metadata.id);
-                        $("#image" + metadata.id).attr("src", jpgUrl);
-                    }
-                } else {
-                    $("#tntl" + metadata.id).show();
+                        $("#tntl" + metadata.id).show();
+                        $("#tlicon" + metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
+                        $("#image" + metadata.id).css("opacity", opaque);
+                        $("#tncentered" + metadata.id).hide();
+                        $("#tnbr" + metadata.id).hide();
+                        $("#tnbl" + metadata.id).hide();
+                        $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                        $('.photo-thumbnail-image').removeClass("pb-1");
+                        if (shashin.multiSelected === true) {
+                            $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
+                            $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
+                        }
+                        // List of selected media
+                        shashin.addToMetadataIdList(metadata.id);
+                        shashin.addToMetadataFilenamesList($('#filename' + metadata.id).val());
+                        shashin.addToMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
+                        if (metadata.type.includes("video")) {
+                            const jpgUrl = $("#image" + metadata.id).attr("src").replace("/gif/" + metadata.id, "/225/" + metadata.id);
+                            $("#image" + metadata.id).attr("src", jpgUrl);
+                        }
+                    } else {
+                        $("#tntl" + metadata.id).show();
 
-                    if (Util.isMobile() === false) {
                         shashin.lastSelectedMetadataId = metadata.id;
                         shashin.lastSelectedMetadataSelected = false;
-                    }
 
-                    $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
-                    $("#image" + metadata.id).css("opacity", opaque);
-                    $("#tncentered" + metadata.id).show();
-                    $("#tnbr" + metadata.id).show();
-                    $("#tnbl" + metadata.id).show();
-                    $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                    $('.photo-thumbnail-image').removeClass("pb-1");
-                    if (shashin.multiSelected === true) {
-                        $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
-                        $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
-                    }
-                    shashin.removeFromMetadataIdList(metadata.id);
-                    shashin.removeFromMetadataFilenamesList($('#filename' + metadata.id).val());
-                    shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
-                    if (metadata.type.includes("video") && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
-                    ) {
-                        const gifUrl = $("#image" + metadata.id).attr("src").replace("/225/" + metadata.id, "/gif/" + metadata.id);
-                        $("#image" + metadata.id).attr("src", gifUrl);
+                        $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
+                        $("#image" + metadata.id).css("opacity", opaque);
+                        $("#tncentered" + metadata.id).show();
+                        $("#tnbr" + metadata.id).show();
+                        $("#tnbl" + metadata.id).show();
+                        $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                        $('.photo-thumbnail-image').removeClass("pb-1");
+                        if (shashin.multiSelected === true) {
+                            $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
+                            $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
+                        }
+                        shashin.removeFromMetadataIdList(metadata.id);
+                        shashin.removeFromMetadataFilenamesList($('#filename' + metadata.id).val());
+                        shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
+                        if (metadata.type.includes("video") && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
+                        ) {
+                            const gifUrl = $("#image" + metadata.id).attr("src").replace("/225/" + metadata.id, "/gif/" + metadata.id);
+                            $("#image" + metadata.id).attr("src", gifUrl);
+                        }
                     }
                 }
-            }
 
-            metadataIdArray = shashin.getMetadataIdList();
+                metadataIdArray = shashin.getMetadataIdList();
 
-            if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
-                $("#appSearch").hide();
-                if (view === "album" || view === "favorites" || view === "archived") {
-                    $("#albumAppTools").show();
-                    if (view === "album") {
-                        $("#albumTools").hide();
-                    }
-                } else if (view === "timeline" || view === "recent" || view === "modified" || view === "taken" || view === "folder" || view === "search") {
-                    $("#timelineAppTools").show();
-                    if (view === "timeline" || view === "folder") {
+                if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
+                    $("#appSearch").hide();
+                    if (view === "album" || view === "favorites" || view === "archived") {
+                        $("#albumAppTools").show();
+                        if (view === "album") {
+                            $("#albumTools").hide();
+                        }
+                    } else if (view === "timeline" || view === "recent" || view === "modified" || view === "taken" || view === "folder" || view === "search") {
+                        $("#timelineAppTools").show();
+                        if (view === "timeline" || view === "folder") {
+                            $("#timelineTools").hide();
+                        }
+                    } else if (view === "matches" || view === "person" || view === "compreface") {
+                        $("#matchesAppTools").show();
                         $("#timelineTools").hide();
                     }
-                } else if (view === "matches" || view === "person" || view === "compreface") {
-                    $("#matchesAppTools").show();
-                    $("#timelineTools").hide();
-                }
 
-                // Hide all center and bottom left icons
-                $('.thumbnail-br').hide();
-                $('.thumbnail-bl').hide();
-                $('.thumbnail-centered').hide();
-            } else {
-                $("#appSearch").show();
-                $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                $('.photo-thumbnail-image').removeClass("pb-1");
-                shashin.multiSelected = false;
-                $("#timelineAppTools").hide();
-                if (view === "timeline" || view === "folder" || view === "matches" || view === "person" || view === "compreface") {
-                    $("#timelineTools").show();
-                } else if (view === "album") {
-                    $("#albumTools").show();
-                }
-                $("#albumAppTools").hide();
-                $("#matchesAppTools").hide();
-            }
-
-            let timelineSelectCount = $('.bi-circle-fill').length;
-            if (metadataIdArray.length > 0) {
-                timelineSelectCount = metadataIdArray.length;
-            }
-
-            $("#timelineNumberSelected").text(timelineSelectCount+" Selected");
-            $("#matchesNumberSelected").text($('.bi-circle-fill').length+" Selected");
-            $("#favoritesNumberSelected").text($('.bi-circle-fill').length+" Selected");
-            $("#trashNumberSelected").text($('.bi-circle-fill').length+" Selected");
-            $("#albumNumberSelected").text($('.bi-circle-fill').length+" Selected");
-
-            if (view === "share") {
-                const albumId = $("#albumId").val();
-                const albumName = $("#albumName").val();
-                const shareLink = $("#shareLink").val();
-                const downloadEl = $("#download" + albumId);
-
-                if ($('.bi-circle-fill').length > 0) {
-                    $("#clearMultiSelect").show();
-                    $("#albumNumberSelected").show();
-                    downloadEl.attr("name", "downloadArray");
-                    downloadEl.attr("value", JSON.stringify(metadataIdArray));
-                    downloadEl.attr("title", "Download selected media");
+                    // Hide all center and bottom left icons
+                    $('.thumbnail-br').hide();
+                    $('.thumbnail-bl').hide();
+                    $('.thumbnail-centered').hide();
                 } else {
-                    shashin.clearAlbumSelection();
-                    $("#clearMultiSelect").hide();
-                    $("#multiSelectMetadataIds").val("[]");
-                    $("#albumNumberSelected").hide();
-                    downloadEl.attr("name", "download");
-                    downloadEl.attr("value", albumId);
-                    downloadEl.attr("title", "Download all photos");
+                    $("#appSearch").show();
+                    $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                    $('.photo-thumbnail-image').removeClass("pb-1");
+                    shashin.multiSelected = false;
+                    $("#timelineAppTools").hide();
+                    if (view === "timeline" || view === "folder" || view === "matches" || view === "person" || view === "compreface") {
+                        $("#timelineTools").show();
+                    } else if (view === "album") {
+                        $("#albumTools").show();
+                    }
+                    $("#albumAppTools").hide();
+                    $("#matchesAppTools").hide();
                 }
 
-                $("#download"+albumId).on("click", function() {
-                    trackShareDownload(albumId,albumName,shareLink);
-                });
+                let timelineSelectCount = $('.bi-circle-fill').length;
+                if (metadataIdArray.length > 0) {
+                    timelineSelectCount = metadataIdArray.length;
+                }
+
+                $("#timelineNumberSelected").text(timelineSelectCount+" Selected");
+                $("#matchesNumberSelected").text($('.bi-circle-fill').length+" Selected");
+                $("#favoritesNumberSelected").text($('.bi-circle-fill').length+" Selected");
+                $("#trashNumberSelected").text($('.bi-circle-fill').length+" Selected");
+                $("#albumNumberSelected").text($('.bi-circle-fill').length+" Selected");
+
+                if (view === "share") {
+                    const albumId = $("#albumId").val();
+                    const albumName = $("#albumName").val();
+                    const shareLink = $("#shareLink").val();
+                    const downloadEl = $("#download" + albumId);
+
+                    if ($('.bi-circle-fill').length > 0) {
+                        $("#clearMultiSelect").show();
+                        $("#albumNumberSelected").show();
+                        downloadEl.attr("name", "downloadArray");
+                        downloadEl.attr("value", JSON.stringify(metadataIdArray));
+                        downloadEl.attr("title", "Download selected media");
+                    } else {
+                        shashin.clearAlbumSelection();
+                        $("#clearMultiSelect").hide();
+                        $("#multiSelectMetadataIds").val("[]");
+                        $("#albumNumberSelected").hide();
+                        downloadEl.attr("name", "download");
+                        downloadEl.attr("value", albumId);
+                        downloadEl.attr("title", "Download all photos");
+                    }
+
+                    $("#download"+albumId).on("click", function() {
+                        trackShareDownload(albumId,albumName,shareLink);
+                    });
+                }
             }
         });
 
@@ -2416,6 +2423,8 @@
             if (Util.isMobile() === true) {
                 $(document).bind("dblclick", function (e) {
                     e.preventDefault();
+
+                    clearTimeout(shashin.touchTimer);
 
                     metadataIdArray = shashin.getMetadataIdList();
 
