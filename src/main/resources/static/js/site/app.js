@@ -69,7 +69,7 @@
                 $("#appSearchInput").val(title);
             }
         });
-    }
+    };
 
     /*
     options:
@@ -270,7 +270,7 @@
                 }
             }
         }
-    }
+    };
 
     shashin.createNewToast = function (index, placement, tag, title) {
 
@@ -301,7 +301,7 @@
         html += '</div>';
 
         $(html).insertBefore($("#" + placement + "_ToastTargetAttach"));
-    }
+    };
 
     shashin.removeElements = function (elements, tag) {
         elements.each( function () {
@@ -310,7 +310,7 @@
                 this.remove();
             }
         });
-    }
+    };
 
     shashin.hideElements = function (elements, tag) {
         elements.each( function () {
@@ -319,7 +319,7 @@
                 $(this).hide();
             }
         });
-    }
+    };
 
     // placement - topLeft, topCenter, etc
     shashin.closeToastMessages = function (options) {
@@ -329,7 +329,7 @@
             tags = options.tags;
         }
         if (options && options.hasOwnProperty("tag")) {
-            tags.push(options.tag)
+            tags.push(options.tag);
         }
         if (tags.length === 0) {
             tags = [null];
@@ -340,7 +340,7 @@
             placements = options.placements;
         }
         if (options && options.hasOwnProperty("placement")) {
-            placements.push(options.placement)
+            placements.push(options.placement);
         }
         if (placements.length === 0) {
             placements = ["topLeft","topCenter","topRight","midLeft","midCenter","midRight","bottomLeft","bottomCenter","bottomRight"];
@@ -360,11 +360,11 @@
                 }
             });
         });
-    }
+    };
 
     shashin.hasToast = function (placement, tag) {
         if (typeof tag === 'undefined' || tag === false) {
-            tag = null
+            tag = null;
         }
 
         let counter = 0;
@@ -380,7 +380,7 @@
         });
 
         return foundTag || (tag === null && counter > 0);
-    }
+    };
 
     shashin.getToastElement = function (placement, tag) {
         let foundObj = null;
@@ -399,7 +399,7 @@
         });
 
         return foundObj;
-    }
+    };
 
     shashin.getToastElements = function (placement) {
         let foundObjs = null;
@@ -415,7 +415,7 @@
         });
 
         return foundObjs;
-    }
+    };
 
     shashin.getMediaContent = function(metadata) {
         const mediaContent = {};
@@ -447,7 +447,7 @@
         }
 
         return mediaContent;
-    }
+    };
 
     shashin.updateFavorites = function(listenerPrefix, iconPrefix, countPrefix, metadataId) {
         $(listenerPrefix+metadataId).on("click", async function (e) {
@@ -477,11 +477,11 @@
                 $(countPrefix + metadataId).text(data.count);
             }
         });
-    }
+    };
 
     shashin.modalStatusFailMessage = function() {
         return "Something went wrong. Please try again.";
-    }
+    };
 
     shashin.onFail = function(xhr, textStatus, ajaxParams, description, failFunction) {
         $("#spinner").hide();
@@ -493,16 +493,16 @@
             $(location).prop('href', '/users/login');
         } else if ((textStatus === 'timeout' || textStatus === 'error') && ajaxParams.retries-- > 0) {
             $.ajax(ajaxParams).fail(function (xhr, textStatus) {
-                shashin.onFail(xhr, textStatus, ajaxParams, description, failFunction)
+                shashin.onFail(xhr, textStatus, ajaxParams, description, failFunction);
             });
         } else if (xhr.status !== 200 && ajaxParams.retries-- > 0) {
             $.ajax(ajaxParams).fail(function (xhr, textStatus) {
-                shashin.onFail(xhr, textStatus, ajaxParams, description, failFunction)
+                shashin.onFail(xhr, textStatus, ajaxParams, description, failFunction);
             });
         } else if (typeof failFunction !== "undefined" && typeof failFunction === "function") {
             failFunction();
         }
-    }
+    };
 
     shashin.checkMetadata = function(metadataId) {
         let metadata = {};
@@ -520,7 +520,7 @@
         }
 
         return metadata;
-    }
+    };
 
     // Get metadata with albums,tagged people and keywords
     shashin.getCompleteMetadata = async function(metadataId) {
@@ -537,7 +537,7 @@
         }
 
         return ret;
-    }
+    };
 
     // Get just the metadata with all keywords and albums
     shashin.getMetadata = async function(metadataId) {
@@ -564,7 +564,7 @@
         }
 
         return metadata;
-    }
+    };
 
     shashin.openEditMetadataModal = function (metadataId) {
         shashin.getCompleteMetadata(metadataId).then(async function (data) {
@@ -625,9 +625,9 @@
                 $("#albumList").val("");
                 $("#peopleList").val("");
                 $("#metadataModalTitle").text(metadata.title);
-                $("#currentfilename").val(metadata.fileName)
-                $("#currentlat").val(metadata.lat)
-                $("#currentlng").val(metadata.lng)
+                $("#currentfilename").val(metadata.fileName);
+                $("#currentlat").val(metadata.lat);
+                $("#currentlng").val(metadata.lng);
                 $("#keywordsString").val(keywordsAvailable);
                 $("#camerasString").val(camerasList);
                 $("#lensesString").val(lensList);
@@ -665,12 +665,12 @@
                     $("#keywords").val(metadata.keywords);
                 } else {
                     $("#keywords").val(keywordList);
-                    metadata.keywords = keywordList
+                    metadata.keywords = keywordList;
                 }
 
                 if (metadata.type.indexOf("video") >= 0) {
                     $("#videoduration").css("display","block");
-                    let duration = metadata.duration
+                    let duration = metadata.duration;
                     if (duration === "" || duration === null) {
                         duration = "0:00";
                     }
@@ -746,7 +746,7 @@
                 if (isObject === true) {
                     $("#tagpeople").val();
                     $("#peopleList").val();
-                    $("#isobject").prop("checked", true)
+                    $("#isobject").prop("checked", true);
                 } else if (taggedPeopleString !== "") {
                     $("#tagpeople").val(taggedPeopleString);
                     $("#peopleList").val(taggedPeopleString);
@@ -837,7 +837,7 @@
                     }
                     html += ModalTemplates.AlbumModalDropdownFooter();
 
-                    $(html).insertAfter($("#albumNameData"))
+                    $(html).insertAfter($("#albumNameData"));
                     $("#albumdropdown" + metadata.id).on("click", function (e) {
                         e.preventDefault();
                         metadataModal.toggleAlbumDropdown(metadata.id);
@@ -859,21 +859,21 @@
 
                 if ($("#keywordsString").length > 0) {
                     const keywordAvailableList = $($("#keywordsString").val().split(",")).not($("#keywords").val().split(",")).get().filter(function (v) {
-                        return v !== ''
+                        return v !== '';
                     });
                     shashin.createAutocomplete("#keywords", keywordAvailableList, true, 10);
                 }
 
                 if ($("#camerasString").length > 0) {
                     const camerasAvailableList = $($("#camerasString").val().split(",")).not($("#camera").val().split(",")).get().filter(function (v) {
-                        return v !== ''
+                        return v !== '';
                     });
                     shashin.createAutocomplete("#camera", camerasAvailableList, false);
                 }
 
                 if ($("#lensesString").length > 0) {
                     const lensesAvailableList = $($("#lensesString").val().split(",")).not($("#lens").val().split(",")).get().filter(function (v) {
-                        return v !== ''
+                        return v !== '';
                     });
                     shashin.createAutocomplete("#lens", lensesAvailableList, false);
                 }
@@ -882,7 +882,7 @@
                 $("#propMetadata").modal('show');
             }
         });
-    }
+    };
 
     shashin.syncCheckboxInputs = function(inputEl, checkboxElName) {
         $(inputEl).on( "blur", function(e) {
@@ -897,7 +897,7 @@
                 }
             });
         });
-    }
+    };
 
     shashin.createAutocomplete = function(inputEl, source, commaDelimited, resultLimit, functionOnSelect) {
 
@@ -920,10 +920,10 @@
                 );
 
                 if (typeof resultLimit !== "undefined" && Number.isInteger(resultLimit)) {
-                    filter = filter.slice(0, resultLimit)
+                    filter = filter.slice(0, resultLimit);
                 }
 
-                response(filter)
+                response(filter);
             },
             focus: function () {
                 // prevent value inserted on focus
@@ -963,7 +963,7 @@
             // Show dropdown on focus
             $(this).autocomplete("search");
         });
-    }
+    };
 
     shashin.initLightGallery = function(lgElement,additionalLgConfigs,mediaElement) {
         shashin.setLightGalleryElement(lgElement);
@@ -998,13 +998,13 @@
         shashin.initMediaContent(mediaContentList);
 
         return mediaContentList;
-    }
+    };
 
     shashin.initMediaContent = function(mediaContentList) {
         if (mediaContentList.length > 0 && shashin.getLightGallery() !== null) {
             shashin.refreshAndActivateLgListener(mediaContentList);
         }
-    }
+    };
 
     shashin.updateMediaContent = function(mediaContentList,additionalMediaContentList) {
         if (additionalMediaContentList && additionalMediaContentList.length > 0) {
@@ -1013,7 +1013,7 @@
         }
 
         return mediaContentList;
-    }
+    };
 
     shashin.refreshAndActivateLgListener = function (mediaContentList) {
         if (shashin.getLightGallery() !== null) {
@@ -1022,7 +1022,7 @@
             //     shashin.jumpToLightGalleryIndex(e.detail.index);
             // })
         }
-    }
+    };
 
     shashin.pageLoader = function(func, appendClass, list, activePage) {
         let eol = false;
@@ -1096,7 +1096,7 @@
                         eol = await func();
                     }, 200);
                 }
-            })
+            });
 
             $(window).bind("scrollStop", function() {
                 setupPlaceholders(activePage, -1.0);
@@ -1111,7 +1111,7 @@
                 $("#container")[0].scrollTo({top: 0, behavior: 'smooth'});
             });
         }
-    }
+    };
 
     shashin.showScrollToTop = function(scrollEl) {
         const scrollToTopButton = $("#btn-back-to-top");
@@ -1123,7 +1123,7 @@
                 scrollToTopButton.css("display","none");
             }
         }
-    }
+    };
 
     shashin.showScrollToBottom = function(scrollEl) {
         const scrollToBottomButton = $("#btn-to-bottom");
@@ -1135,7 +1135,7 @@
                 scrollToBottomButton.css("display","block");
             }
         }
-    }
+    };
 
     shashin.activateScrollToTop = function() {
         const scrollToTopButton = $("#btn-back-to-top");
@@ -1153,7 +1153,7 @@
                 $("#container")[0].scrollTo({top: 0, behavior: 'smooth'});
             });
         }
-    }
+    };
 
     shashin.activateScrollToBottom = function() {
         const scrollToBottomButton = $("#btn-to-bottom");
@@ -1176,7 +1176,7 @@
                 $("#container")[0].scrollTo({top: $("#container")[0].scrollHeight, behavior: 'smooth'});
             });
         }
-    }
+    };
 
     shashin.openHeaderMap = function (metadata) {
         shashin.printMessageToConsole("Opening Siderbar with Map with metadata");
@@ -1263,7 +1263,7 @@
 
             setTimeout(fixContentHeight, 1000);
         }
-    }
+    };
 
     shashin.openMap = function (metadata) {
         shashin.printMessageToConsole("Opening Map with metadata");
@@ -1350,7 +1350,7 @@
                     const copyText = obj.data.placename;
                     Util.copyToClipboard(copyText);
                 }
-            }
+            };
 
             const copyCoordinates = function (obj) {
                 const coordArray = ol.proj.toLonLat(obj.coordinate);
@@ -1377,7 +1377,7 @@
                 });
             });
 
-            function showContextMenu(evt, coordArray, data) {
+            const showContextMenu = (evt, coordArray, data) => {
                 // Clear all previous coordinates
                 shashin.map.getLayers().forEach(layer => {
                     if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties().name === "tempCoordinates") {
@@ -1417,7 +1417,7 @@
                 const layer = new ol.layer.Vector({
                     source: shashin.tempVector
                 });
-                layer.set('name', 'tempCoordinates')
+                layer.set('name', 'tempCoordinates');
                 shashin.map.addLayer(layer);
 
                 feature.setStyle(styleIcon);
@@ -1436,7 +1436,7 @@
                         // classname: "ol-ctx-menu-separator" // Make unselectable text
                         classname: "context-text-wrap",
                         callback: copyPlacename
-                    }
+                    };
                     contextItem.data = {placename: data.placename};
 
                     contextValueArray.push(contextItem);
@@ -1455,7 +1455,7 @@
                 );
 
                 shashin.contextMenu.extend(contextValueArray);
-            }
+            };
             shashin.contextMenu.on('open', function (evt) {
                 shashin.contextMenu.clear();
                 const coordArray = ol.proj.toLonLat(evt.coordinate);
@@ -1522,7 +1522,7 @@
             $("#mapTabMessage").text("No map data");
             $("#mapTabMessage").css("display","block");
         }
-    }
+    };
 
     shashin.processVideoThumbnail = function(metadataId, lightGalleryId, lightGalleryIndex) {
         const mediaContentList = shashin.getLightGallery().galleryItems;
@@ -1566,7 +1566,7 @@
                     const json = {
                         metadataId: metadataId,
                         base64Data: image
-                    }
+                    };
                     http.ajax("post", "/metadata/update/videothumbs" + (version === "" ? "" : "?v=" + version), JSON.stringify(json)).then(function (data) {
                         if (data.hasOwnProperty("msg") && data.hasOwnProperty("status") && data.hasOwnProperty("posterUrl")) {
                             // Refresh image
@@ -1640,7 +1640,7 @@
                 shashin.getLightGallery().refresh();
             }
         });
-    }
+    };
 
     shashin.openInfoSidebar = function(metadataId) {
         // Populate modal data
@@ -1648,9 +1648,9 @@
             let metadata = data;
 
             $("#infoSidebarTitle").text(metadata.title);
-            $("#currentfilename").val(metadata.fileName)
-            $("#currentlat").val(metadata.lat)
-            $("#currentlng").val(metadata.lng)
+            $("#currentfilename").val(metadata.fileName);
+            $("#currentlat").val(metadata.lat);
+            $("#currentlng").val(metadata.lng);
             $("#metadataId").val(metadata.id);
 
             if (metadata.thumbnailUrlCentered !== null) {
@@ -1664,9 +1664,9 @@
             $("#propInfoSidebar").css('z-index', 9999);
             const infoSidebar = document.getElementById('propInfoSidebar');
             const bsInfoSidebar = new bootstrap.Offcanvas(infoSidebar);
-            bsInfoSidebar.show()
+            bsInfoSidebar.show();
         });
-    }
+    };
 
     shashin.addToMetadataThumbnailsList = function(thumbnail) {
         if ($("#multiSelectThumbnails").length > 0) {
@@ -1676,7 +1676,7 @@
                 $("#multiSelectThumbnails").val(JSON.stringify(metadataThumbnailsArray));
             }
         }
-    }
+    };
 
     shashin.removeFromMetadataThumbnailsList = function(thumbnail) {
         if ($("#multiSelectThumbnails").length > 0) {
@@ -1687,7 +1687,7 @@
             }
             $("#multiSelectThumbnails").val(JSON.stringify(metadataThumbnailsArray));
         }
-    }
+    };
 
     shashin.getMetadataThumbnailsList = function() {
         if ($("#multiSelectThumbnails").length > 0) {
@@ -1695,7 +1695,7 @@
         }
 
         return [];
-    }
+    };
 
     shashin.removeFromMetadataFilenamesList = function(filename) {
         if ($("#multiSelectFilenames").length > 0) {
@@ -1706,7 +1706,7 @@
             }
             $("#multiSelectFilenames").val(JSON.stringify(metadataFilenamesArray));
         }
-    }
+    };
 
     shashin.getMetadataFilenamesList = function() {
         if ($("#multiSelectFilenames").length > 0) {
@@ -1714,7 +1714,7 @@
         }
 
         return [];
-    }
+    };
 
     shashin.addToMetadataFilenamesList = function (filename) {
         if ($("#multiSelectFilenames").length > 0) {
@@ -1724,7 +1724,7 @@
                 $("#multiSelectFilenames").val(JSON.stringify(metadataFilenamesArray));
             }
         }
-    }
+    };
 
     shashin.addToMetadataIdList = function (metadataId) {
         if ($("#multiSelectMetadataIds").length > 0) {
@@ -1734,7 +1734,7 @@
                 $("#multiSelectMetadataIds").val(JSON.stringify(metadataIdArray));
             }
         }
-    }
+    };
 
     shashin.removeFromMetadataIdList = function (metadataId) {
         if ($("#multiSelectMetadataIds").length > 0) {
@@ -1745,7 +1745,7 @@
             }
             $("#multiSelectMetadataIds").val(JSON.stringify(metadataIdArray));
         }
-    }
+    };
 
     shashin.getMetadataIdList = function() {
         if ($("#multiSelectMetadataIds").length > 0) {
@@ -1753,7 +1753,7 @@
         }
 
         return [];
-    }
+    };
 
     shashin.downloadSelected = async function (buttonId) {
 
@@ -1836,31 +1836,31 @@
                     });
             }
         }
-    }
+    };
 
     shashin.removeAllMetadataIdList = function () {
         if ($("#multiSelectMetadataIds").length > 0) {
             $("#multiSelectMetadataIds").val(JSON.stringify([]));
         }
-    }
+    };
 
     shashin.removeAllMetadataFilenamesList = function () {
         if ($("#multiSelectFilenames").length > 0) {
             $("#multiSelectFilenames").val(JSON.stringify([]));
         }
-    }
+    };
 
     shashin.removeAllMetadataThumbnailsList = function () {
         if ($("#multiSelectThumbnails").length > 0) {
             $("#multiSelectThumbnails").val(JSON.stringify([]));
         }
-    }
+    };
 
     shashin.jumpToLightGalleryIndex = function (index) {
         const url = location.href;
         location.href = '#lightGalleryIndex'+index;
         history.replaceState(null,null,url);
-    }
+    };
 
     shashin.setLightGalleryElement = function (name) {
         shashin.infiniteScrollGallery = null;
@@ -1894,7 +1894,7 @@
     shashin.setLightGallery = function (additionalConfigs) {
         let configs = shashin.getLightGalleryConfigs(additionalConfigs);
         shashin.lg = lightGallery(shashin.getLightGalleryElement(), configs);
-    }
+    };
 
     shashin.mouseMoveListener = function () {
         // Hide caption when showing lg gallery
@@ -1902,7 +1902,7 @@
         $("html").mousemove(function() {
             shashin.captionListener();
         });
-    }
+    };
 
     shashin.captionListener = function () {
         clearTimeout(shashin.lgSubHtmlTimeout);
@@ -1910,7 +1910,7 @@
         shashin.lgSubHtmlTimeout = setTimeout(function () {
             $(".lg-sub-html").hide('slide', {direction: 'down'}, 200);
         }, 5000);
-    }
+    };
 
     shashin.getLightGalleryElement = function () {
         return shashin.infiniteScrollGallery;
@@ -1918,14 +1918,14 @@
 
     shashin.getLightGallery = function () {
         return shashin.lg;
-    }
+    };
 
     shashin.openGallery = function (e, index) {
         e.preventDefault();
         if (shashin.getLightGallery() !== null) {
             shashin.getLightGallery().openGallery(index);
         }
-    }
+    };
 
     shashin.getLightGalleryConfigs = function(additionalConfigs) {
         // shashin.autoplayVideo = $("#autoplayVideoSwitch").is(':checked');
@@ -1953,7 +1953,7 @@
             flipHorizontal: true,
             flipVertical: false,
             licenseKey: Util.lgApiKey()
-        }
+        };
 
         if (shashin.autoplayVideo === false) {
             configs.autoplayFirstVideo = false;
@@ -1975,7 +1975,7 @@
         }
 
         return configs;
-    }
+    };
 
     shashin.getMapSource = function (source) {
         let mapSource = new ol.source.OSM();
@@ -1983,19 +1983,19 @@
         switch(source) {
             case "osm":
                 mapSource = new ol.source.OSM();
-                break
+                break;
             case "arcGisWSM":
                 mapSource = new ol.source.XYZ({
                     url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
                     maxZoom: 19
                 });
-                break
+                break;
             case "arcGisWI":
                 mapSource = new ol.source.XYZ({
                     url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
                     maxZoom: 19
                 });
-                break
+                break;
             case "bingmaps":
                 mapSource = new ol.source.BingMaps({
                     key: 'AgLAysLWWJdjeVeOTVUYlNfUddxeF6QFeXCciHblaYSG7xYx3OUuAnpX98MNQUFR', // Dev/Test
@@ -2004,7 +2004,7 @@
                     // "no photos at this zoom level" tiles
                     maxZoom: 19
                 });
-                break
+                break;
             case "bingmapsROD":
                 mapSource = new ol.source.BingMaps({
                     key: 'AgLAysLWWJdjeVeOTVUYlNfUddxeF6QFeXCciHblaYSG7xYx3OUuAnpX98MNQUFR', // Dev/Test
@@ -2013,7 +2013,7 @@
                     // "no photos at this zoom level" tiles
                     maxZoom: 19
                 });
-                break
+                break;
             case "bingmapsBE":
                 mapSource = new ol.source.BingMaps({
                     key: 'AgLAysLWWJdjeVeOTVUYlNfUddxeF6QFeXCciHblaYSG7xYx3OUuAnpX98MNQUFR', // Dev/Test
@@ -2022,7 +2022,7 @@
                     // "no photos at this zoom level" tiles
                     maxZoom: 19
                 });
-                break
+                break;
             case "bingmapsCD":
                 mapSource = new ol.source.BingMaps({
                     key: 'AgLAysLWWJdjeVeOTVUYlNfUddxeF6QFeXCciHblaYSG7xYx3OUuAnpX98MNQUFR', // Dev/Test
@@ -2031,7 +2031,7 @@
                     // "no photos at this zoom level" tiles
                     maxZoom: 19
                 });
-                break
+                break;
             case "bingmapsSS":
                 mapSource = new ol.source.BingMaps({
                     key: 'AgLAysLWWJdjeVeOTVUYlNfUddxeF6QFeXCciHblaYSG7xYx3OUuAnpX98MNQUFR', // Dev/Test
@@ -2040,7 +2040,7 @@
                     // "no photos at this zoom level" tiles
                     maxZoom: 19
                 });
-                break
+                break;
             case "maptiler":
                 mapSource =  new ol.source.TileJSON({
                     url: 'https://api.maptiler.com/maps/streets-v2/256/tiles.json?key=YlQvLcNKq0a4aFDX2z3O',
@@ -2075,8 +2075,8 @@
                 mapSource = new ol.source.OSM();
         }
 
-        return mapSource
-    }
+        return mapSource;
+    };
 
     shashin.imageHover = function (_this, metadataId) {
         const metadataIdArray = shashin.getMetadataIdList();
@@ -2096,11 +2096,11 @@
             //$('.thumbnail-tr').hide();
             $('.thumbnail-br').hide();
         }
-    }
+    };
 
     shashin.setPhotoOverlays = function (metadata, view) {
-        const opaque = 0.3
-        const transparent = 1.0
+        const opaque = 0.3;
+        const transparent = 1.0;
 
         let metadataIdArray = shashin.getMetadataIdList();
         shashin.printMessageToConsole("shashin.setPhotoOverlays for "+metadata.id);
@@ -2518,7 +2518,7 @@
                                     let metadataIdArray = container.siblings().addBack().map(function () {
                                         const metadataId = this.id.split("photoThumbnailContainer");
                                         return metadataId[1];
-                                    }).toArray()
+                                    }).toArray();
                                     found = ($.inArray(((direction === "down") ? metadata.id : shashin.lastSelectedMetadataId), metadataIdArray) !== -1);
 
                                     $.merge(selectedRowMetadataIds, metadataIdArray);
@@ -2875,7 +2875,7 @@
             const configuredAttempts = 120;
 
             shashin.showToastMessage("Downloading share album", "Downloading share album \""+albumName+"\". Downloading photos only.", {icon:"bi-info-circle", iconColor:"#777777", autohide:false});
-            setTimeout(function () { $("#download"+albumId).removeAttr("href") }, 0);
+            setTimeout(function () { $("#download"+albumId).removeAttr("href"); }, 0);
             Util.setCookie(tokenName, "", "/");
             Util.setCookie(tokenSize, "", "/");
 
@@ -2911,7 +2911,7 @@
                 attempts--;
             }, 1000);
         }
-    }
+    };
 
     function getElementLocation(el) {
         if (el) {
@@ -2996,7 +2996,7 @@
         }
 
         return {overlays:overlays,data:data};
-    }
+    };
 
     shashin.clearTimelineSelection = function () {
         if (shashin.downloadInstance !== null) {
@@ -3028,7 +3028,7 @@
         $("#albumAppTools").hide();
         $("#matchesAppTools").hide();
         $("#comprefaceAppTools").hide();
-    }
+    };
 
     shashin.clearAlbumSelection = function () {
         if (shashin.downloadInstance !== null) {
@@ -3060,7 +3060,7 @@
         $("#albumAppTools").hide();
         $("#matchesAppTools").hide();
         $("#comprefaceAppTools").hide();
-    }
+    };
 
     shashin.matchingListeners = function () {
         $("#matchToolsDeselectAll").on("click", function(e) {
@@ -3085,7 +3085,7 @@
             $("#albumTools").hide();
             $("#albumAppTools").hide();
             $("#matchesAppTools").hide();
-        })
+        });
 
         $("#matchesAppTools").hide();
 
@@ -3155,7 +3155,7 @@
 
             $("#propBatchMetadata").modal('show');
         });
-    }
+    };
 
     // Call in console
     // eg: shashin.enableDebug({tags: all, consoleTypes:[shashin.consoleTypes.log,shashin.consoleTypes.error],showTrace:true,writeLog:true})
@@ -3209,7 +3209,7 @@
         if (Util.localStorageAvailable() === true) {
             localStorage.setItem("showDebug", "on");
         }
-    }
+    };
 
     // Call in console
     shashin.disableDebug = function () {
@@ -3222,7 +3222,7 @@
         if (Util.localStorageAvailable() === true && localStorage.getItem("showDebug") !== null) {
             localStorage.removeItem("showDebug");
         }
-    }
+    };
 
     function getStackTrace() {
         let stack;
@@ -3258,7 +3258,7 @@
 
         let localStorageDebugFlag = false;
         if (Util.localStorageAvailable() === true && localStorage.getItem("showDebug") !== null && localStorage.getItem("showDebug").length > 0) {
-            let getFlag = localStorage.getItem("showDebug")
+            let getFlag = localStorage.getItem("showDebug");
             if (getFlag === "on") {
                 localStorageDebugFlag = true;
             }
@@ -3303,7 +3303,7 @@
                         }
 
                         setTimeout(function () {
-                            let json = {consoleType: consoleType, log: log, tag: tag}
+                            let json = {consoleType: consoleType, log: log, tag: tag};
                             http.ajax("post", "/console/log", JSON.stringify(json)).then(function (data) {
                                 if (data.hasOwnProperty("status") && data.status === "fail" && data.hasOwnProperty("msg")) {
                                     console.error("Could not log console output");
@@ -3314,14 +3314,14 @@
                 }
             }
         }
-    }
+    };
 
     shashin.removeThumbnail = function(metadataId) {
         let dateGalleryRemoved = false;
         const targetElement = $("#photoThumbnailContainer" + metadataId);
 
         const rowId = targetElement.parent().attr("id");
-        const sectionId = $(targetElement.siblings("section")[0]).attr("id")
+        const sectionId = $(targetElement.siblings("section")[0]).attr("id");
         const headingId = typeof rowId !== "undefined" ? rowId.replace("row", "") : sectionId;
 
         // Count children
@@ -3336,15 +3336,15 @@
         }
 
         return dateGalleryRemoved;
-    }
+    };
 
     shashin.autocompleteSplit = function(val) {
         return val.split(/,\s*/);
-    }
+    };
 
     shashin.autocompleteExtractLast = function(term) {
         return shashin.autocompleteSplit(term).pop();
-    }
+    };
 
     shashin.processBatchAlbumList = function(data, albumInputVal) {
         if (albumInputVal === undefined) {
@@ -3396,7 +3396,7 @@
                 });
             }
         }
-    }
+    };
 
     shashin.processBatchPeopleList = function(data, subjectInputVal) {
         if (subjectInputVal === undefined) {
@@ -3425,7 +3425,7 @@
                         '           <button class="dropdown-item" type="button">\n' +
                         '               <input type="checkbox" class="recognitionLabel" id="recognitionLabel' + recognitionLabel.id + '" value="' + Util.escapeHtml(recognitionLabel.name) + '" name="recognitionLabel[]">\n' +
                         '               <label for="recognitionLabel' + recognitionLabel.id + '">' + Util.escapeHtml(recognitionLabel.name) + '</label>\n' +
-                        '           </button>'
+                        '           </button>';
 
                     recognitionLabelNames.push(recognitionLabel.name);
                 }
@@ -3452,7 +3452,7 @@
                 });
             }
         }
-    }
+    };
 }( window.shashin = window.shashin || {}, jQuery ));
 
 if (typeof module !== 'undefined') {
