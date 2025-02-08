@@ -475,7 +475,7 @@
             mediaContent.poster = ((null === metadata.thumbnailUrlOriginal || "" === metadata.thumbnailUrlOriginal) ? "/api/v1/thumbnails/225/"+metadata.id : "/api/v1/thumbnails/original/"+metadata.id) + "?v=" + Util.getMetadataLocalStorage();
             mediaContent.downloadUrl = encodeURI(metadata.videoUrl).replace(";", "%3B") + "/download";
         } else {
-            mediaContent.src = "/api/v1/thumbnails/original/"+metadata.id;
+            mediaContent.src = "/api/v1/image/"+metadata.id;
             mediaContent.downloadUrl = "/api/v1/image/"+metadata.id + "/download";
         }
 
