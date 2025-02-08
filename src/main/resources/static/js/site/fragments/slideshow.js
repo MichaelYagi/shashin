@@ -48,7 +48,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             currentPhotoUrl = photoUrl;
             currentMetadata = data.metadata;
 
-            if (cjsc !== null && cjsc.available) {
+            if (cjsc !== null && cjsc.available && cjsc.connected) {
                 const cjscMetadata = {
                     title: data.metadata.title
                 };
@@ -125,8 +125,12 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                         description = "<a style='color:#DBE9F4;text-decoration:none;' href='/timeline#" + takenDateString + "' target='_blank'>" + takenDate.toLocaleDateString('en-us', options) + "</a>";
                     }
 
-                    if (data.shortPlaceName !== "") {
+                    if (data.shortPlaceName !== null && data.shortPlaceName !== "") {
                         description += " • " + data.shortPlaceName;
+                    }
+
+                    if (data.metadata.description !== null && data.metadata.description !== "") {
+                        description += "<div class='text-center'>" + data.metadata.description + "</div>";
                     }
                     $("#mediaInfo").html(description);
 

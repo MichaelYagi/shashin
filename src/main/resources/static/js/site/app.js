@@ -406,7 +406,7 @@
 
         let counter = 0;
         let foundTag = false;
-        $("#"+placement+" div.toast-container").children().each(function(i, obj) {
+        $("#"+placement+"ToastContainer div.toast-container").children().each(function(i, obj) {
             if ($(obj).hasClass('show') === true && $(obj).hasClass("attachPoint") === false) {
                 if (tag !== null && $(obj).attr("data-tag") === tag) {
                     foundTag = true;
@@ -426,7 +426,7 @@
             return null;
         }
 
-        $("#"+placement+" div.toast-container").children().each(function(i, obj) {
+        $("#"+placement+"ToastContainer div.toast-container").children().each(function(i, obj) {
             if ($(obj).hasClass("attachPoint") === false) {
                 if (tag !== null && $(obj).attr("data-tag") === tag) {
                     foundObj = obj;
@@ -445,7 +445,7 @@
             return null;
         }
 
-        $("#"+placement+" div.toast-container").children().each(function(i, obj) {
+        $("#"+placement+"ToastContainer div.toast-container").children().each(function(i, obj) {
             if ($(obj).hasClass("attachPoint") === false) {
                 foundObjs = obj;
             }
