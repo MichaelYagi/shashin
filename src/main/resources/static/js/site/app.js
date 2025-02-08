@@ -340,7 +340,7 @@
             tags.push(options.tag);
         }
         if (tags.length === 0) {
-            tags = [null];
+            tags = null;
         }
 
         let placements = [];
@@ -359,15 +359,21 @@
             hide = options.hide;
         }
 
-        placements.forEach(function (placement, index) {
-            tags.forEach(function (tag, index) {
-                if (hide === true) {
-                    shashin.hideElements($("#" + placement + "_ToastTargetAttach").siblings(), tag);
-                } else {
-                    shashin.removeElements($("#" + placement + "_ToastTargetAttach").siblings(), tag);
-                }
-            });
-        });
+        if (tags !== null) {
+            if (Array.isArray(tags) && Array.isArray(placements)) {
+                placements.forEach(function (placement, index) {
+                    tags.forEach(function (tag, index) {
+                        if (hide === true) {
+                            shashin.hideElements($("#" + placement + "_ToastTargetAttach").siblings(), tag);
+                        } else {
+                            shashin.removeElements($("#" + placement + "_ToastTargetAttach").siblings(), tag);
+                        }
+                    });
+                });
+            } else {
+                shashin.printMessageToConsole("Tags or placement are nor arrays", {tag: "toast"});
+            }
+        }
     };
 
     shashin.hasToast = function (placement, tag) {
