@@ -25,16 +25,16 @@
     shashin.toast.placement.top = {};
     shashin.toast.placement.middle = {};
     shashin.toast.placement.bottom = {};
-    shashin.toast.placement.default = "bottomCenterToastContainer";
-    shashin.toast.placement.top.left = "topLeftToastContainer";
-    shashin.toast.placement.top.center = "topCenterToastContainer";
-    shashin.toast.placement.top.right = "topRightToastContainer";
-    shashin.toast.placement.middle.left = "midLeftToastContainer";
-    shashin.toast.placement.middle.center = "midCenterToastContainer";
-    shashin.toast.placement.middle.right = "midRightToastContainer";
-    shashin.toast.placement.bottom.left = "bottomLeftToastContainer";
-    shashin.toast.placement.bottom.center = "bottomCenterToastContainer";
-    shashin.toast.placement.bottom.right = "bottomRightToastContainer";
+    shashin.toast.placement.default = "bottomCenter";
+    shashin.toast.placement.top.left = "topLeft";
+    shashin.toast.placement.top.center = "topCenter";
+    shashin.toast.placement.top.right = "topRight";
+    shashin.toast.placement.middle.left = "midLeft";
+    shashin.toast.placement.middle.center = "midCenter";
+    shashin.toast.placement.middle.right = "midRight";
+    shashin.toast.placement.bottom.left = "bottomLeft";
+    shashin.toast.placement.bottom.center = "bottomCenter";
+    shashin.toast.placement.bottom.right = "bottomRight";
     shashin.apiResponse = {};
     shashin.apiResponse.SUCCESS = "success";
     shashin.apiResponse.WARN = "warn";
@@ -82,6 +82,7 @@
         borderColor = one of primary, secondary, success, danger, warning, info, light, dark, white
         tag = string, identifies and labels the toast
         refreshTag = if tag is already defined, overwrites the tag with updated content
+        closeButton = boolean
     */
     shashin.showToastMessage = function(title, message, options) {
         shashin.printMessageToConsole(title, {tag: "toast"});
@@ -124,7 +125,7 @@
         let iconColor = "lightgray";
         let headerSubtext = null;
         let borderColor = null;
-        let container = shashin.toast.placement.bottom.center;
+        let placement = shashin.toast.placement.bottom.center;
         let autohide = true;
         let delay = 5000;
         let tag = null;
@@ -132,7 +133,7 @@
         let closeButton = true;
 
         if (options === undefined || options === null) {
-            container = shashin.toast.placement.bottom.center;
+            placement = shashin.toast.placement.bottom.center;
         } else {
             const validOptions = [];
 
@@ -147,7 +148,7 @@
             }
 
             if (options.hasOwnProperty("placement")) {
-                container = options.placement;
+                placement = options.placement;
                 validOptions.push("placement");
             }
 
@@ -197,6 +198,7 @@
             }
         }
 
+        const container = placement+"ToastContainer";
         const attachPoint = $("#" + container).find(".attachPoint");
         const siblingCount = attachPoint.siblings().length;
 
@@ -209,8 +211,7 @@
         const lastToast = previousSibling.attr("id");
         const lastToastArray = toastId !== "" ? toastId.split("_") : lastToast.split("_");
 
-        if (lastToastArray.length === 3) {
-            const placement = lastToastArray[0];
+        if (lastToastArray.length === 3 && placement === lastToastArray[0]) {
             const target = lastToastArray[1];
             const lastIteration = lastToastArray[2];
 
@@ -344,6 +345,19 @@
         }
 
         let placements = [];
+
+        const validPlacements = [
+            shashin.toast.placement.default,
+            shashin.toast.placement.top.left,
+            shashin.toast.placement.top.center,
+            shashin.toast.placement.top.right,
+            shashin.toast.placement.middle.left,
+            shashin.toast.placement.middle.center,
+            shashin.toast.placement.middle.right,
+            shashin.toast.placement.bottom.left,
+            shashin.toast.placement.bottom.center,
+            shashin.toast.placement.bottom.right
+        ];
         if (options && options.hasOwnProperty("placements") && options.placements.length > 0) {
             placements = options.placements;
         }
@@ -351,7 +365,7 @@
             placements.push(options.placement);
         }
         if (placements.length === 0) {
-            placements = ["topLeft","topCenter","topRight","midLeft","midCenter","midRight","bottomLeft","bottomCenter","bottomRight"];
+            placements = validPlacements;
         }
 
         let hide = false;
@@ -361,17 +375,26 @@
 
         if (tags !== null) {
             if (Array.isArray(tags) && Array.isArray(placements)) {
+                let invalidPlacements = [];
                 placements.forEach(function (placement, index) {
-                    tags.forEach(function (tag, index) {
-                        if (hide === true) {
-                            shashin.hideElements($("#" + placement + "_ToastTargetAttach").siblings(), tag);
-                        } else {
-                            shashin.removeElements($("#" + placement + "_ToastTargetAttach").siblings(), tag);
-                        }
-                    });
+                    if (validPlacements.includes(placement)) {
+                        tags.forEach(function (tag, index) {
+                            if (hide === true) {
+                                shashin.hideElements($("#" + placement + "_ToastTargetAttach").siblings(), tag);
+                            } else {
+                                shashin.removeElements($("#" + placement + "_ToastTargetAttach").siblings(), tag);
+                            }
+                        });
+                    } else {
+                        invalidPlacements.push(placement);
+                    }
                 });
+
+                if (invalidPlacements.length > 0) {
+                    shashin.printMessageToConsole("Invalid placements detected: " + invalidPlacements.join(","), {tag: "toast"});
+                }
             } else {
-                shashin.printMessageToConsole("Tags or placement are nor arrays", {tag: "toast"});
+                shashin.printMessageToConsole("Tags or placement are not arrays", {tag: "toast"});
             }
         }
     };
