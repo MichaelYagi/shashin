@@ -315,7 +315,7 @@
         elements.each( function () {
             const attr = $(this).attr('data-tag');
             if (tag === null || (typeof attr !== 'undefined' && attr !== false && attr === tag)) {
-                this.remove();
+                $(this).remove();
             }
         });
     };

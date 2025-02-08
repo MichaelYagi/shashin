@@ -878,6 +878,10 @@ class Util {
                         shashin.getLightGallery().destroy();
                     }
 
+                    if (shashin) {
+                        shashin.closeToastMessages({tags:["subhtml"]});
+                    }
+
                     shashin.lg = null;
 
                     setTimeout(() => {
