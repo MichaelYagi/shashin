@@ -341,7 +341,7 @@
             tags.push(options.tag);
         }
         if (tags.length === 0) {
-            tags = null;
+            tags = [null];
         }
 
         let placements = [];
@@ -373,29 +373,27 @@
             hide = options.hide;
         }
 
-        if (tags !== null) {
-            if (Array.isArray(tags) && Array.isArray(placements)) {
-                let invalidPlacements = [];
-                placements.forEach(function (placement, index) {
-                    if (validPlacements.includes(placement)) {
-                        tags.forEach(function (tag, index) {
-                            if (hide === true) {
-                                shashin.hideElements($("#" + placement + "_ToastTargetAttach").siblings(), tag);
-                            } else {
-                                shashin.removeElements($("#" + placement + "_ToastTargetAttach").siblings(), tag);
-                            }
-                        });
-                    } else {
-                        invalidPlacements.push(placement);
-                    }
-                });
-
-                if (invalidPlacements.length > 0) {
-                    shashin.printMessageToConsole("Invalid placements detected: " + invalidPlacements.join(","), {tag: "toast"});
+        if (Array.isArray(tags) && Array.isArray(placements)) {
+            let invalidPlacements = [];
+            placements.forEach(function (placement, index) {
+                if (validPlacements.includes(placement)) {
+                    tags.forEach(function (tag, index) {
+                        if (hide === true) {
+                            shashin.hideElements($("#" + placement + "_ToastTargetAttach").siblings(), tag);
+                        } else {
+                            shashin.removeElements($("#" + placement + "_ToastTargetAttach").siblings(), tag);
+                        }
+                    });
+                } else {
+                    invalidPlacements.push(placement);
                 }
-            } else {
-                shashin.printMessageToConsole("Tags or placement are not arrays", {tag: "toast"});
+            });
+
+            if (invalidPlacements.length > 0) {
+                shashin.printMessageToConsole("Invalid placements detected: " + invalidPlacements.join(","), {tag: "toast"});
             }
+        } else {
+            shashin.printMessageToConsole("Tags or placement are not arrays", {tag: "toast"});
         }
     };
 

@@ -236,20 +236,20 @@
                 timer += 2000;
                 setTimeout(function () {
                     shashin.closeToastMessages({
-                        placements: ["topLeft"],
+                        placements: [shashin.toast.placement.top.left],
                         tags: ["test4"]
                     });
                 }, timer);
                 timer += 2000;
                 setTimeout(function () {
                     shashin.closeToastMessages({
-                        placement: "midCenter"
+                        placement: shashin.toast.placement.middle.center
                     });
                 }, timer);
                 timer += 2000;
                 setTimeout(function () {
                     shashin.closeToastMessages({
-                        placements: ["bottomRight", "midLeft"]
+                        placements: [shashin.toast.placement.bottom.right, shashin.toast.placement.middle.left]
                     });
                 }, timer);
                 timer += 2000;
