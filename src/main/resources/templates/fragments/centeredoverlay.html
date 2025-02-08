@@ -9,7 +9,7 @@
                 th:data-metadata-id="${metadata.id}"
                 th:data-download-url="${'/api/v1/image/'+ metadata.id + '/download'}"
                 th:data-sub-html="${metadata.description}"
-                th:data-src="'/api/v1/image/'+${metadata.id}" th:href="'/api/v1/thumbnails/original/'+${metadata.id}">
+                th:data-src="'/api/v1/image/'+${metadata.id}" th:href="'/api/v1/image/'+${metadata.id}">
                 <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>
             </a>
         </th:block>
@@ -18,7 +18,7 @@
                 th:data-metadata-id="${metadata.id}"
                 th:data-download-url="${'/api/v1/image/'+ metadata.id + '/download'}"
                 th:data-sub-html="${metadata.description}"
-                th:data-src="'/api/v1/image/'+${metadata.id}" th:href="'/api/v1/thumbnails/original/'+${metadata.id}">
+                th:data-src="'/api/v1/image/'+${metadata.id}" th:href="'/api/v1/image/'+${metadata.id}">
                 <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>
             </a>
         </th:block>
