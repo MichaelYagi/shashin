@@ -520,6 +520,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
                 $("#playPause").css("display", "block");
 
+                shashin.closeToastMessages({tags:["subhtml"]});
                 showInstruction();
             }
         });
