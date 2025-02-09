@@ -19,6 +19,8 @@ async function showMap(mapdata, keywordMap) {
     const qsaid = Util.getParameterByName("aid");
     // Album name
     const qsan = Util.getParameterByName("an");
+    // Map style
+    const qsms = Util.getParameterByName("ms");
 
     let version = Util.getMetadataLocalStorage();
 
@@ -40,26 +42,13 @@ async function showMap(mapdata, keywordMap) {
     let previousMapMarkers = "";
     let previousFindNearest = "";
     let prevMapTile = "osm";
-    let prevBingImagery = "AerialWithLabels";
-    let prevMaptilerImagery = "maptiler";
     let forcedFiltered = false;
     let progressBarShown = false;
 
+    const validMapStyles = ["osm", "maptiler", "stadiaSA"];
     let osmMapTile = shashin.getMapSource("osm");
-    let arcGisWsm = shashin.getMapSource("arcGisWSM");
-    let arcGisWi = shashin.getMapSource("arcGisWI");
-    let bingMapsTile = shashin.getMapSource("bingmaps");
-    let bingMapsTileRod = shashin.getMapSource("bingmapsROD");
-    //let bingMapsTileBe = shashin.getMapSource("bingmapsBE");
-    let bingMapsTileCd = shashin.getMapSource("bingmapsCD");
-    //let bingMapsTileSs = shashin.getMapSource("bingmapsSS");
     let mapTilerTile = shashin.getMapSource("maptiler");
-    let mapTilerTileHy = shashin.getMapSource("maptilerHY");
-    let mapTilerTileBa = shashin.getMapSource("maptilerBA");
-    let mapTilerTileSa = shashin.getMapSource("maptilerSA");
     let stadiaSa = shashin.getMapSource("stadiaSA");
-
-    let mapBoxTile = shashin.getMapSource("mapbox");
 
     const layerTile = new ol.layer.Tile({
         visible: true,
@@ -441,6 +430,11 @@ async function showMap(mapdata, keywordMap) {
             if (qslat !== null && qslng !== null && qslat !== "" && qslng !== "") {
                 initialZoom = coordZoom;
             }
+        }
+
+        if (qsms !== null && qsms !== "" && qsms !== prevMapTile && validMapStyles.includes(qsms)) {
+            $("#mapSources").val(qsms);
+            layerTile.setSource(shashin.getMapSource(qsms));
         }
 
         let minLat = null;
@@ -1121,22 +1115,20 @@ async function showMap(mapdata, keywordMap) {
 
     function filterClicked() {
         let mapSourceChanged = false;
-        if ($("#mapSources").val() !== prevMapTile) {
+
+        if ((qsms !== null && qsms !== "" && qsms !== prevMapTile) || $("#mapSources").val() !== prevMapTile) {
             mapSourceChanged = true;
-            prevMapTile = $("#mapSources").val();
-            switch (prevMapTile) {
-                case "osm":
-                    layerTile.setSource(osmMapTile);
-                    break;
-                case "maptiler":
-                    layerTile.setSource(mapTilerTile);
-                    break;
-                case "stadiaSA":
-                    layerTile.setSource(stadiaSa);
-                    break;
-                default:
-                    layerTile.setSource(osmMapTile);
+            if (qsms !== null && qsms !== "" && qsms !== prevMapTile) {
+                prevMapTile = qsms;
+            } else {
+                prevMapTile = $("#mapSources").val();
             }
+
+            if (!validMapStyles.includes(prevMapTile)) {
+                prevMapTile = "osm";
+            }
+
+            layerTile.setSource(shashin.getMapSource(prevMapTile));
         }
 
         filtered = true;
@@ -1372,23 +1364,9 @@ async function showMap(mapdata, keywordMap) {
 
         $("#findNearestRadius").val("5");
 
-        if ($("#mapSources").val() !== "osm" || $("#bingMapsImagerySet").val() !== "AerialWithLabels" || $("#maptilerImagerySet").val() !== "maptiler") {
-            if ($("#mapSources").val() !== "osm") {
-                prevMapTile = "osm";
-                $("#mapSources").val(prevMapTile);
-                layerTile.setSource(osmMapTile);
-            }
-
-            if ($("#bingMapsImagerySet").val() !== "AerialWithLabels") {
-                prevBingImagery = "AerialWithLabels";
-                $("#bingMapsImagerySet").val(prevBingImagery);
-            }
-
-            if ($("#maptilerImagerySet").val() !== "maptiler") {
-                prevMaptilerImagery = "maptiler";
-                $("#maptilerImagerySet").val(prevMaptilerImagery);
-            }
-        }
+        prevMapTile = "osm";
+        $("#mapSources").val(prevMapTile);
+        layerTile.setSource(osmMapTile);
 
         filtered = true;
 
