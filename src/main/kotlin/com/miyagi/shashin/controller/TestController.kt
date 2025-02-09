@@ -110,76 +110,14 @@ class TestController {
     fun handleSubscribeEvent(event: SessionSubscribeEvent) {}
 
     @Secured("ROLE_SUPER")
-    @GetMapping("/test")
-    fun test(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
+    @GetMapping("/sandbox")
+    fun sandbox(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
         model["somevalue"] = "This is a test"
 
         println("repairscripts thread exists: "+FileUtils.checkThreadFileAlive("repairscripts"))
 //        FileUtils.deleteThreadFiles("repairscripts")
 
-        return "test"
-    }
-
-    @Secured("ROLE_SUPER")
-    @GetMapping("/sandbox")
-    fun sandbox(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
-        model["somevalue"] = "This is a test"
-
-
-
-//        var fileName = "C:/Users/Michael/Downloads/testpics/PXL_20240505_203632083.TS.mp4"
-//        var file = File(fileName)
-//
-//        // Create thumbnails
-//        var metadata: Metadata? = Metadata()
-//        metadata?.setId("00000000-00000000-00000000-00000012")
-//        metadata?.setType("video")
-//        var imageProcessing = ImageProcessing("v1", file, "C:/Users/Michael/Downloads/thumbs/", metadata)
-//        metadata = imageProcessing.createThumbnails()
-
-        // Create GIF from video
-//        val videoProcessing = VideoProcessing(file)
-//        val processedGifFile = videoProcessing.getVideoGifFile(10.0)
-//        if (processedGifFile != null && processedGifFile.exists() && processedGifFile.length() > 0) {
-//            println("gif exists")
-//        }
-//
-//
-//        fileName = "C:/Users/Michael/Downloads/testpics/PXL_20240724_181651592.jpg"
-//        file = File(fileName)
-//
-//        // Create thumbnails
-//        var metadata = Metadata()
-//        metadata.setId("00000000-00000000-00000000-00000012")
-//        metadata.setPath(fileName)
-//        val imageProcessing = ImageProcessing("v1", file, "C:/Users/Michael/Downloads/thumbs/", metadata)
-//        metadata = imageProcessing.createThumbnails()!!
-
-//        var criteria = buildObjectRecognitionCriteria()
-//        val settings = model.getAttribute("settings") as Settings
-//        val keywordArray = ImageProcessing.objectRecognizer(
-//            metadata,
-//            criteria!!,
-//            settings,
-//            null,
-//            null
-//        )
-//        println("keywords: ${keywordArray.joinToString(", ")}")
-
-//        fileName = "C:/Users/Michael/Downloads/testpics/PXL_20240505_193019519.jpg"
-//        val imageBi = ImageIO.read(File(fileName))
-//        val img = ImageFactory.getInstance().fromImage(imageBi)
-//
-//        val djlFaceRecognizer = DjlFaceRecognizer()
-//        val detect = djlFaceRecognizer.detect(img)
-//        println("numberOfObjects: "+detect.numberOfObjects)
-//        println(detect.toString())
-//
-//        val predict = djlFaceRecognizer.predict(img)
-//        println("size: "+predict.size)
-
-
-        return "test"
+        return "sandbox"
     }
 
     @Secured("ROLE_SUPER")
@@ -188,7 +126,7 @@ class TestController {
     fun deleteThread(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
         FileUtils.deleteThreadFiles("repairscripts")
 
-        return "test"
+        return "sandbox"
     }
 
     private fun getFSR(path: String, mediaType: String, mediaSubtype: String): ResponseEntity<FileSystemResource> {
@@ -283,7 +221,7 @@ class TestController {
             println("$activeLink already running")
         }
 
-        return "test"
+        return "sandbox"
     }
 
     @Secured("ROLE_SUPER")
@@ -346,7 +284,7 @@ class TestController {
             println("$activeLink already running")
         }
 
-        return "test"
+        return "sandbox"
     }
 
     @Secured("ROLE_SUPER")
@@ -424,7 +362,7 @@ class TestController {
             println("$activeLink already running")
         }
 
-        return "test"
+        return "sandbox"
     }
 
     @Secured("ROLE_SUPER")
@@ -504,7 +442,7 @@ class TestController {
             println("$activeLink already running")
         }
 
-        return "test"
+        return "sandbox"
     }
 
     @Secured("ROLE_SUPER")
@@ -583,7 +521,7 @@ class TestController {
             println("$activeLink already running")
         }
 
-        return "test"
+        return "sandbox"
     }
 
     @Secured("ROLE_SUPER")
@@ -658,7 +596,7 @@ class TestController {
             println("$activeLink already running")
         }
 
-        return "test"
+        return "sandbox"
     }
 
     @Secured("ROLE_SUPER")
@@ -741,7 +679,7 @@ class TestController {
             println("$activeLink already running")
         }
 
-        return "test"
+        return "sandbox"
     }
 
     private fun progress(position: Int, total: Int, times: MutableList<Long>): Long {
