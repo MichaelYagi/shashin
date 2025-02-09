@@ -254,6 +254,7 @@ class NotificationsController {
         response["hasNotifications"] = false
         response["unreadNotifications"] = mutableListOf<Notification>()
         response["uncheckedPersonMatches"] = 0
+        response["facialDetection"] = false
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -271,6 +272,7 @@ class NotificationsController {
             response["uncheckedPersonMatches"] = metadataRepository?.findAllLowMatches(
                 settings.getRecognitionConfidenceThreshold()!!
             )
+            response["facialDetection"] = settings.getFacialDetection()
         }
 
         return mapper.writeValueAsString(response)
