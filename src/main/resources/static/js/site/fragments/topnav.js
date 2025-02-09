@@ -193,15 +193,11 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
         }
     });
 
-    // $(document).on("click", function() {
-    //     shashin.closeToastMessages({hide: true});
-    // });
-
     initializeSlideshow(accessTimelineView, queryLimit);
 
     captureMessages(activePage, notificationAlerts, timezone);
 
-    if (hasMediaUploadDirectory === true && (activePage === "recent" || activePage === "modified" || activePage === "taken" || activePage === "accessed" || activePage === "archived" || activePage === "folders" || activePage === "folder" || activePage === "album")) {
+    if (hasMediaUploadDirectory === true && $("#dummyframe").length > 0) {
         initializeUploads(activePage);
     }
 }
