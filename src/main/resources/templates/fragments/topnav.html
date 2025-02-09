@@ -99,7 +99,7 @@
             <th:block th:if="${activePage == 'recent' || activePage == 'modified' || activePage == 'taken' || activePage == 'accessed' || activePage == 'archived' || activePage == 'modified'}">
                 <th:block th:if="${hasMediaUploadDirectory == true}">
                     &nbsp;
-                    <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" id="uploadToMedia" aria-controls="back" title="Upload Media">
+                    <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" id="uploadToMedia" aria-controls="back" title="Upload To Media Folder">
                         <span th:class="'bi-upload placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" id="uploadMediaIcon" style="font-size: 1.5rem;"></span>
                     </a>
                     <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
