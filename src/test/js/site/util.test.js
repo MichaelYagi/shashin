@@ -1,7 +1,7 @@
-const {assert,expect} = require("chai")
-require('../helper.js')
+const {assert,expect} = require("chai");
+require('../helper.js');
 
-const Util = require('../../../main/resources/static/js/site/util')
+const Util = require('../../../main/resources/static/js/site/util');
 
 describe('#Util tests', function() {
     it('seriarlize form test', function() {
@@ -27,62 +27,62 @@ describe('#Util tests', function() {
                     value: 'Submit'
                 })
             )
-        )
+        );
 
-        const serialized = Util.serializeObject($('#form1'))
-        assert.equal(serialized.name,'somename')
-        assert.equal(serialized.email,'someemail')
-    })
+        const serialized = Util.serializeObject($('#form1'));
+        assert.equal(serialized.name,'somename');
+        assert.equal(serialized.email,'someemail');
+    });
 
     it('URL query parameters test', function() {
-        const url = "http://localhost/asdf?qp1=test1&qp2=test2&qp3=test3"
-        assert.equal(Util.getParameterByName("qp2", url),"test2")
-        assert.equal(Util.getParameterByName("qp4", url),null)
-    })
+        const url = "http://localhost/asdf?qp1=test1&qp2=test2&qp3=test3";
+        assert.equal(Util.getParameterByName("qp2", url),"test2");
+        assert.equal(Util.getParameterByName("qp4", url),null);
+    });
 
     it('Date formatter test', function() {
-        assert.equal(Util.getDateString(2021,10,17),"Sun, Oct 17, 2021")
-        assert.equal(Util.getDateString(2021,9,2),"Thu, Sep 2, 2021")
-        assert.equal(Util.getDateString(2021,2,9),"Tue, Feb 9, 2021")
-        assert.equal(Util.getDateString(2021,14,32),"")
-        assert.equal(Util.getDateString(2021,14,9),"")
-        assert.equal(Util.getDateString("asdf","asdf","asdf"),"")
-    })
+        assert.equal(Util.getDateString(2021,10,17),"Sun, Oct 17, 2021");
+        assert.equal(Util.getDateString(2021,9,2),"Thu, Sep 2, 2021");
+        assert.equal(Util.getDateString(2021,2,9),"Tue, Feb 9, 2021");
+        assert.equal(Util.getDateString(2021,14,32),"");
+        assert.equal(Util.getDateString(2021,14,9),"");
+        assert.equal(Util.getDateString("asdf","asdf","asdf"),"");
+    });
 
     it('Numeric string test', function() {
-        assert.equal(Util.isNumericString(),false)
-        assert.equal(Util.isNumericString("a"),false)
-        assert.equal(Util.isNumericString("5"),true)
-        assert.equal(Util.isNumericString("5.5"),true)
-        assert.equal(Util.isNumericString("0.5"),true)
-        assert.equal(Util.isNumericString("1e5"),true)
-        assert.equal(Util.isNumericString(5),false)
-        assert.equal(Util.isNumericString(5.5),false)
-        assert.equal(Util.isNumericString(0.5),false)
-    })
+        assert.equal(Util.isNumericString(),false);
+        assert.equal(Util.isNumericString("a"),false);
+        assert.equal(Util.isNumericString("5"),true);
+        assert.equal(Util.isNumericString("5.5"),true);
+        assert.equal(Util.isNumericString("0.5"),true);
+        assert.equal(Util.isNumericString("1e5"),true);
+        assert.equal(Util.isNumericString(5),false);
+        assert.equal(Util.isNumericString(5.5),false);
+        assert.equal(Util.isNumericString(0.5),false);
+    });
 
     it('Encode/Decode HTML string test', function() {
-        const encodedString = Util.encodeHtml('{"a":"b"}')
-        assert.equal(encodedString,"{&quot;a&quot;:&quot;b&quot;}")
-        const decodedString = Util.decodeHtml(encodedString)
-        assert.equal(decodedString,'{"a":"b"}')
-    })
+        const encodedString = Util.encodeHtml('{"a":"b"}');
+        assert.equal(encodedString,"{&quot;a&quot;:&quot;b&quot;}");
+        const decodedString = Util.decodeHtml(encodedString);
+        assert.equal(decodedString,'{"a":"b"}');
+    });
 
     it('Validate metadata inputs test', function () {
-        const shashin = {}
-        shashin.showToastMessage = function () {}
+        const shashin = {};
+        shashin.showToastMessage = function () {};
 
-        assert.isTrue(Util.validateMetadataInputs("1", "1", "2021", "00:00:00", "-07:00", "123.1234,-123.1234", "0:00", true))
-        assert.isFalse(Util.validateMetadataInputs("1", "1", "2021", "00:00:0", "-07:00", "123.1234,-123.1234", "0:00", true))
+        assert.isTrue(Util.validateMetadataInputs("1", "1", "2021", "00:00:00", "-07:00", "123.1234,-123.1234", "0:00", true));
+        assert.isFalse(Util.validateMetadataInputs("1", "1", "2021", "00:00:0", "-07:00", "123.1234,-123.1234", "0:00", true));
         // assert.equal($("#someelement").html(),"<div class=\"alert alert-danger\" role=\"alert\">Enter Valid Time</div>")
-        assert.isFalse(Util.validateMetadataInputs("1", "13", "2021", "00:00:00", "-07:00", "123.1234,-123.1234", "0:00", true))
+        assert.isFalse(Util.validateMetadataInputs("1", "13", "2021", "00:00:00", "-07:00", "123.1234,-123.1234", "0:00", true));
         // assert.equal($("#someelement").html(),"<div class=\"alert alert-danger\" role=\"alert\">Enter Valid Month</div>")
-        assert.isFalse(Util.validateMetadataInputs("1", "12", "2021", "00:00:00", "-99:00", "123.1234,-123.1234", "0:00", true))
+        assert.isFalse(Util.validateMetadataInputs("1", "12", "2021", "00:00:00", "-99:00", "123.1234,-123.1234", "0:00", true));
         // assert.equal($("#someelement").html(),"<div class=\"alert alert-danger\" role=\"alert\">Enter Valid Offset</div>")
-        assert.isFalse(Util.validateMetadataInputs("1", "1", "2021", "00:00:00", "-07:00", "1231234,-abc.1234", "0:00", true))
-        assert.isFalse(Util.validateMetadataInputs("1", "1", "2021", "00:00:00", "-07:00", "123.1234,-123.1234", "asdf", true))
+        assert.isFalse(Util.validateMetadataInputs("1", "1", "2021", "00:00:00", "-07:00", "1231234,-abc.1234", "0:00", true));
+        assert.isFalse(Util.validateMetadataInputs("1", "1", "2021", "00:00:00", "-07:00", "123.1234,-123.1234", "asdf", true));
         // assert.equal($("#someelement").html(),"<div class=\"alert alert-danger\" role=\"alert\">Enter Valid Latitude/Longitude</div>")
-    })
+    });
 
     it('Validate metadata inputs test', function () {
         $("body").append($("<div/>", {
@@ -105,40 +105,40 @@ describe('#Util tests', function() {
                 id: 'tail_metadataelement',
                 height: 9
             })
-        )
+        );
 
-        assert.equal(Util.getDateGalleryHeight("metadataelement"),31)
-        Util.removeDateGallery("metadataelement")
-        assert.equal(Util.getDateGalleryHeight("metadataelement"),0)
-    })
+        assert.equal(Util.getDateGalleryHeight("metadataelement"),31);
+        Util.removeDateGallery("metadataelement");
+        assert.equal(Util.getDateGalleryHeight("metadataelement"),0);
+    });
 
     it('Date object from string test', function () {
-        let dateOneString = "2021-11-25"
-        let dateTwoString = "2021-11-24"
+        let dateOneString = "2021-11-25";
+        let dateTwoString = "2021-11-24";
 
-        let dateOneObj = Util.getDateObject(dateOneString)
-        let dateTwoObj = Util.getDateObject(dateTwoString)
-        expect(dateOneObj).to.be.gt(dateTwoObj)
+        let dateOneObj = Util.getDateObject(dateOneString);
+        let dateTwoObj = Util.getDateObject(dateTwoString);
+        expect(dateOneObj).to.be.gt(dateTwoObj);
 
-        dateOneString = "tail_2021-11-25"
-        dateTwoString = "tail_2021-11-24"
+        dateOneString = "tail_2021-11-25";
+        dateTwoString = "tail_2021-11-24";
 
-        dateOneObj = Util.getDateObject(dateOneString)
-        dateTwoObj = Util.getDateObject(dateTwoString)
-        expect(dateOneObj).to.be.gt(dateTwoObj)
+        dateOneObj = Util.getDateObject(dateOneString);
+        dateTwoObj = Util.getDateObject(dateTwoString);
+        expect(dateOneObj).to.be.gt(dateTwoObj);
 
-        dateOneString = "asdf-qw-df"
-        dateOneObj = Util.getDateObject(dateOneString)
-        assert.equal(dateOneObj.toString(),"Invalid Date")
-    })
+        dateOneString = "asdf-qw-df";
+        dateOneObj = Util.getDateObject(dateOneString);
+        assert.equal(dateOneObj.toString(),"Invalid Date");
+    });
 
     it('Get date string from year month day test', function () {
-        let dateString = Util.getDateString("2021","11","25")
-        assert.equal(dateString,"Thu, Nov 25, 2021")
+        let dateString = Util.getDateString("2021","11","25");
+        assert.equal(dateString,"Thu, Nov 25, 2021");
 
-        dateString = Util.getDateString("asdf","11","25")
-        expect(dateString).to.be.empty
-    })
+        dateString = Util.getDateString("asdf","11","25");
+        expect(dateString).to.be.empty;
+    });
 
     it('Populate details tab data test', function () {
         $("body").append($("<div/>", {
@@ -195,71 +195,71 @@ describe('#Util tests', function() {
             $("<div/>", {
                 class: 'keywordsDetails'
             })
-        )
+        );
 
-        Util.populateDetailsInfo({})
-        expect($(".pathDetails").text()).to.be.empty
+        Util.populateDetailsInfo({});
+        expect($(".pathDetails").text()).to.be.empty;
 
-        Util.populateDetailsInfo({path:"test"})
-        assert.equal($(".pathDetails").text(),"test")
+        Util.populateDetailsInfo({path:"test"});
+        assert.equal($(".pathDetails").text(),"test");
 
-        Util.populateDetailsInfo({year:2021,month:11,day:5,time:"00:00:00"})
-        assert.equal($(".manualTakenAtDetails").text(),"2021-11-05 00:00:00")
-    })
+        Util.populateDetailsInfo({year:2021,month:11,day:5,time:"00:00:00"});
+        assert.equal($(".manualTakenAtDetails").text(),"2021-11-05 00:00:00");
+    });
 
     it('Date index tests', function() {
-        let day = Util.getShortDay(1)
-        assert.equal(day, 'Mon')
+        let day = Util.getShortDay(1);
+        assert.equal(day, 'Mon');
 
-        let month = Util.getShortMonths(1)
-        assert.equal(month, 'Feb')
-    })
+        let month = Util.getShortMonths(1);
+        assert.equal(month, 'Feb');
+    });
 
     it('Format string date tests', function() {
-        let date = Util.formatDate("2023-12-09")
-        assert.equal(date, "2023-12-09")
+        let date = Util.formatDate("2023-12-09");
+        assert.equal(date, "2023-12-09");
 
-        date = Util.formatDate("2023-12-9")
-        assert.equal(date, "2023-12-09")
+        date = Util.formatDate("2023-12-9");
+        assert.equal(date, "2023-12-09");
 
-        date = Util.formatDate("2023-9-8")
-        assert.equal(date, "2023-09-08")
+        date = Util.formatDate("2023-9-8");
+        assert.equal(date, "2023-09-08");
 
-        date = Util.formatDate(1)
-        assert.equal(date, null)
-    })
+        date = Util.formatDate(1);
+        assert.equal(date, null);
+    });
 
     it('Valid date test', function() {
-        let dateCheck = Util.isValidDate("2023-12-09")
-        assert.equal(dateCheck, true)
+        let dateCheck = Util.isValidDate("2023-12-09");
+        assert.equal(dateCheck, true);
 
-        dateCheck = Util.isValidDate("2023-12-9")
-        assert.equal(dateCheck, false)
+        dateCheck = Util.isValidDate("2023-12-9");
+        assert.equal(dateCheck, false);
 
-        dateCheck = Util.isValidDate("12-2023-09")
-        assert.equal(dateCheck, false)
-    })
+        dateCheck = Util.isValidDate("12-2023-09");
+        assert.equal(dateCheck, false);
+    });
 
     it('Format date object test', function() {
-        let dateFormat = Util.formatDateTime(new Date("12/09/2023"))
-        assert.equal(dateFormat.getFullYear(), 2023)
+        let dateFormat = Util.formatDateTime(new Date("12/09/2023"));
+        assert.equal(dateFormat.getFullYear(), 2023);
         // 0 based month for some reason
-        assert.equal(dateFormat.getMonth(), 11)
-        assert.equal(dateFormat.getDate(), 9)
+        assert.equal(dateFormat.getMonth(), 11);
+        assert.equal(dateFormat.getDate(), 9);
 
-        dateFormat = Util.formatDateTime(new Date("2023-12-09"))
-        assert.equal(dateFormat.getFullYear(), 2023)
-        assert.equal(dateFormat.getMonth(), 11)
-        assert.equal(dateFormat.getDate(), 9)
+        dateFormat = Util.formatDateTime(new Date("2023-12-09"));
+        assert.equal(dateFormat.getFullYear(), 2023);
+        assert.equal(dateFormat.getMonth(), 11);
+        assert.equal(dateFormat.getDate(), 9);
 
-        dateFormat = Util.formatDateTime(1)
-        assert.equal(dateFormat, null)
+        dateFormat = Util.formatDateTime(1);
+        assert.equal(dateFormat, null);
 
-        dateFormat = Util.formatDateTime(new Date(1))
-        assert.equal(dateFormat.getFullYear(), 1970)
-        assert.equal(dateFormat.getMonth(), 0)
-        assert.equal(dateFormat.getDate(), 1)
-    })
+        dateFormat = Util.formatDateTime(new Date(1));
+        assert.equal(dateFormat.getFullYear(), 1970);
+        assert.equal(dateFormat.getMonth(), 0);
+        assert.equal(dateFormat.getDate(), 1);
+    });
 
     it('Cookie tests', function() {
         let aCookie = Util.getCookie("somecookiename");
@@ -314,7 +314,7 @@ describe('#Util tests', function() {
         Util.deleteCookie("someothercookiename", "/");
         aCookie = Util.getCookie("someothercookiename");
         assert.equal(aCookie, "");
-    })
+    });
 
     it('Get OS tests', function() {
         const windowRef = global.window;
@@ -380,5 +380,5 @@ describe('#Util tests', function() {
         assert.equal(os, "Android");
 
         global.window = windowRef;
-    })
-})
+    });
+});
