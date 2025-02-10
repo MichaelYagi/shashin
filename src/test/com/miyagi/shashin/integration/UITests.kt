@@ -97,17 +97,37 @@ class UITests: BaseSeleniumTests() {
         this.driver!!.get("http://localhost:$port/test")
         val js: JavascriptExecutor = this.driver as JavascriptExecutor
         var hasToast = js.executeScript("shashin.showToastMessage('Title 1', 'Message 1.',{autohide:false,tag:\"test1\",placement:shashin.toast.placement.top.left});" +
-                "return shashin.hasToast(shashin.toast.placement.top.left);")
+                "return shashin.hasToast(shashin.toast.placement.top.left);");
 
-        Assertions.assertTrue(hasToast as Boolean)
+        Assertions.assertTrue(hasToast as Boolean);
 
-        hasToast = js.executeScript("return shashin.hasToast(shashin.toast.placement.top.center);")
+        hasToast = js.executeScript("return shashin.hasToast(shashin.toast.placement.top.center);");
 
-        Assertions.assertFalse(hasToast as Boolean)
+        Assertions.assertFalse(hasToast as Boolean);
 
         hasToast = js.executeScript("shashin.closeToastMessages({placement:shashin.toast.placement.top.left});" +
+                "return shashin.hasToast(shashin.toast.placement.top.left);");
+
+        Assertions.assertFalse(hasToast as Boolean);
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun shouldCloseToastMessage() {
+        this.driver!!.get("http://localhost:$port/test")
+        val js: JavascriptExecutor = this.driver as JavascriptExecutor
+        var hasToast = js.executeScript("shashin.showToastMessage('Title 1', 'Message 1.',{autohide:false,tag:\"test1\",placement:shashin.toast.placement.top.left});" +
                 "return shashin.hasToast(shashin.toast.placement.top.left);")
 
-        Assertions.assertFalse(hasToast as Boolean)
+        Assertions.assertTrue(hasToast as Boolean);
+
+        hasToast = js.executeScript("shashin.closeToastMessages({placement:shashin.toast.placement.top.left,tag:\"test1\",hide:true});" +
+                "return shashin.hasToast(shashin.toast.placement.top.left,{tag:\"test1\"});");
+
+        Assertions.assertFalse(hasToast as Boolean);
+
+        hasToast = js.executeScript("return shashin.hasToast(shashin.toast.placement.top.left,{findHidden:true});");
+
+        Assertions.assertTrue(hasToast as Boolean);
     }
 }

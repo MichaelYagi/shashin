@@ -343,7 +343,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
             // Show key binding toast
             if (e.key === "d" || e.code === "KeyD" || e.keyCode === 68) {
-                if (shashin.hasToast(shashin.toast.placement.bottom.center, "slide") === false) {
+                if (shashin.hasToast(shashin.toast.placement.bottom.center,{tag: "slide"}) === false) {
                     showInstruction();
                 } else {
                     shashin.closeToastMessages({tag: "slide"});
@@ -387,7 +387,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             if (direction === "up") {
                 if (document.fullscreenElement === null) { // Not full screen, return to full screen
                     document.documentElement.requestFullscreen();
-                } else if (shashin.hasToast(shashin.toast.placement.bottom.center, "slide") === false) {
+                } else if (shashin.hasToast(shashin.toast.placement.bottom.center, {tag: "slide"}) === false) {
                     showInstruction();
                 } else {
                     shashin.closeToastMessages({tag: "slide"});

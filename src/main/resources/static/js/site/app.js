@@ -227,7 +227,7 @@
                 // Test if closed - use it, otherwise create new after last open
                 if (tag !== null) {
                     // check if tag exists in the target placement, exit if exists to prevent flashing
-                    if (shashin.hasToast(placement, tag) === true) {
+                    if (shashin.hasToast(placement, {tag: tag}) === true) {
                         if (refreshTag === true) {
                             shashin.removeElements($("#" + placement + "_ToastTargetAttach").siblings(), tag);
                         } else {
@@ -235,7 +235,7 @@
                         }
                     }
 
-                    if (shashin.hasToast(placement, tag) === false) {
+                    if (shashin.hasToast(placement, {tag: tag}) === false) {
                         createToast(nextIteration, placement, tag, title, closeButton);
 
                         const attr = $("#" + toastId).attr('data-tag');
@@ -397,15 +397,25 @@
         }
     };
 
-    shashin.hasToast = function (placement, tag) {
-        if (typeof tag === 'undefined' || tag === false) {
-            tag = null;
+    shashin.hasToast = function (placement, options) {
+        let tag = null;
+        let findHidden = false;
+
+        if (options && options.hasOwnProperty("tag")) {
+            tag = options.tag;
+        }
+        if (options && options.hasOwnProperty("findHidden")) {
+            findHidden = options.findHidden;
         }
 
         let counter = 0;
         let foundTag = false;
         $("#"+placement+"ToastContainer div.toast-container").children().each(function(i, obj) {
-            if ($(obj).hasClass('show') === true && $(obj).hasClass("attachPoint") === false) {
+            if ((findHidden === true ||
+                (findHidden === false &&
+                    (typeof $(obj).attr('style') === 'undefined' || $(obj).attr('style') === false) || $(obj).css('display') === "block"))
+                && $(obj).hasClass("attachPoint") === false
+            ) {
                 if (tag !== null && $(obj).attr("data-tag") === tag) {
                     foundTag = true;
                     return foundTag;
