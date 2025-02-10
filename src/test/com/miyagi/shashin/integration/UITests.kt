@@ -129,5 +129,10 @@ class UITests: BaseSeleniumTests() {
         hasToast = js.executeScript("return shashin.hasToast(shashin.toast.placement.top.left,{findHidden:true});");
 
         Assertions.assertTrue(hasToast as Boolean);
+
+        hasToast = js.executeScript("shashin.closeToastMessages({placement:shashin.toast.placement.top.left,tag:\"test1\"});" +
+                "return shashin.hasToast(shashin.toast.placement.top.left,{findHidden:true});");
+
+        Assertions.assertFalse(hasToast as Boolean);
     }
 }
