@@ -1,0 +1,113 @@
+package com.miyagi.shashin.e2e
+
+import com.miyagi.shashin.model.User
+import com.miyagi.shashin.repository.UserRepository
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.openqa.selenium.By
+import org.openqa.selenium.JavascriptExecutor
+import org.openqa.selenium.WebElement
+import org.openqa.selenium.support.ui.ExpectedConditions
+import org.openqa.selenium.support.ui.WebDriverWait
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
+import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import org.springframework.web.context.WebApplicationContext
+import java.awt.image.BufferedImage
+import java.io.File
+import java.io.IOException
+import java.net.URL
+import java.time.Duration
+import java.util.*
+import java.util.logging.Level
+import javax.imageio.ImageIO
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
+class UITests: BaseSeleniumTests() {
+
+    private var metadataId: String? = null
+    private var adminId: Int? = null
+    private var userId: Int? = null
+    private var mockMvc: MockMvc? = null
+
+    @LocalServerPort
+    private val port = 0
+
+    @Autowired
+    private val context: WebApplicationContext? = null
+
+    @Autowired
+    private val userRepository: UserRepository? = null
+
+
+    private var bcrypt = BCryptPasswordEncoder()
+
+    @BeforeEach
+    fun setup() {
+        val adminObj = User()
+        adminObj.setUsername("testadmin")
+        var encodedPassword: String = bcrypt.encode("testadmin")
+        adminObj.setPassword(encodedPassword)
+        adminObj.setAuthority("ROLE_SUPER")
+        adminObj.setIsAuthorized(true)
+        adminObj.setApikey("00000000-00000000-00000000-00000000")
+        userRepository?.save(adminObj)
+        adminId = adminObj.getId()
+
+        val userObj = User()
+        userObj.setUsername("testuser")
+        encodedPassword = bcrypt.encode("testuser")
+        userObj.setPassword(encodedPassword)
+        userObj.setAuthority("ROLE_USER")
+        userObj.setIsAuthorized(true)
+        userObj.setApikey("00000000-00000000-00000000-00000001")
+        userRepository?.save(userObj)
+        userId = userObj.getId()
+
+        mockMvc = MockMvcBuilders
+            .webAppContextSetup(context!!)
+            .apply<DefaultMockMvcBuilder>(springSecurity())
+            .build()
+
+        this.driver?.get("http://localhost:$port/users/login")
+        //println(this.driver?.pageSource)
+        val username = this.driver!!.findElement(By.id("username"))
+        val password = this.driver!!.findElement(By.id("password"))
+        val rememberMe = this.driver!!.findElement(By.id("remember-me"))
+        val login = this.driver!!.findElement(By.id("submit-loginreg"))
+        rememberMe.click()
+        username.sendKeys("testadmin")
+        password.sendKeys("testadmin")
+        login.click()
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun shouldSeeToastMessage() {
+        Assertions.assertEquals("http://localhost:$port/timeline", this.driver!!.currentUrl)
+
+        this.driver!!.get("http://localhost:$port/test")
+        val js: JavascriptExecutor = this.driver as JavascriptExecutor
+        var hasToast = js.executeScript("shashin.showToastMessage('Title 1', 'Message 1.',{autohide:false,tag:\"test1\",placement:shashin.toast.placement.top.left});" +
+                "return shashin.hasToast(shashin.toast.placement.top.left);")
+
+        Assertions.assertTrue(hasToast as Boolean)
+
+        hasToast = js.executeScript("return shashin.hasToast(shashin.toast.placement.top.center);")
+
+        Assertions.assertFalse(hasToast as Boolean)
+
+        hasToast = js.executeScript("shashin.closeToastMessages({placement:shashin.toast.placement.top.left});" +
+                "return shashin.hasToast(shashin.toast.placement.top.left);")
+
+        Assertions.assertFalse(hasToast as Boolean)
+    }
+}
