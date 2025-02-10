@@ -72,42 +72,11 @@ class TestController {
     private var activeLink = ""
     val mapper = ObjectMapper()
 
-    @MessageMapping("/fixscriptmessage")
-    @SendTo("/topic/fixscriptmessages")
-    @Throws(java.lang.Exception::class)
-    fun sendScanMessage(message: ScaperMessage): Message? {
-        //println("message:${message.getMessage()}")
-        val returnMap = mutableMapOf<String,Any>()
-
-        returnMap["currentIndex"] = currentIndex
-        returnMap["totalIndex"] = totalIndex
-        returnMap["activeLink"] = activeLink
-        returnMap["etr"] = etr
-
-        val msg: String = mapper.writeValueAsString(returnMap)
-//        println(msg)
-
-        val messageObj = Message()
-        messageObj.setContent(msg)
-
-        return messageObj
+    @Secured("ROLE_SUPER")
+    @GetMapping("/test")
+    fun test(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
+        return "test"
     }
-
-    @SubscribeMapping("/topic/fixscriptmessages")
-    fun subscribe(
-        session: HttpSession,
-        @PathVariable pipelineId: String,
-        @PathVariable topic: String
-    ) {}
-
-    @EventListener
-    fun onApplicationEvent(event: SessionConnectEvent) {}
-
-    @EventListener
-    fun onApplicationEvent(event: SessionDisconnectEvent) {}
-
-    @EventListener
-    fun handleSubscribeEvent(event: SessionSubscribeEvent) {}
 
     @Secured("ROLE_SUPER")
     @GetMapping("/sandbox")
