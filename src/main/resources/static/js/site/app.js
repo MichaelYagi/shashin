@@ -227,7 +227,7 @@
                 // Test if closed - use it, otherwise create new after last open
                 if (tag !== null) {
                     // check if tag exists in the target placement, exit if exists to prevent flashing
-                    if (shashin.hasToast(placement + "ToastContainer", tag) === true) {
+                    if (shashin.hasToast(placement, tag) === true) {
                         if (refreshTag === true) {
                             shashin.removeElements($("#" + placement + "_ToastTargetAttach").siblings(), tag);
                         } else {
@@ -235,7 +235,7 @@
                         }
                     }
 
-                    if (shashin.hasToast(placement + "ToastContainer", tag) === false) {
+                    if (shashin.hasToast(placement, tag) === false) {
                         createToast(nextIteration, placement, tag, title, closeButton);
 
                         const attr = $("#" + toastId).attr('data-tag');
