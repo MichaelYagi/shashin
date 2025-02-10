@@ -312,22 +312,25 @@
         }
     };
 
-    shashin.removeElements = function (elements, tag) {
+    function hideRemoveElements(elements, tag, remove) {
         elements.each( function () {
             const attr = $(this).attr('data-tag');
             if (tag === null || (typeof attr !== 'undefined' && attr !== false && attr === tag)) {
-                $(this).remove();
+                if (remove === true) {
+                    $(this).remove();
+                } else {
+                    $(this).hide();
+                }
             }
         });
+    }
+
+    shashin.removeElements = function (elements, tag) {
+        hideRemoveElements(elements, tag, true);
     };
 
     shashin.hideElements = function (elements, tag) {
-        elements.each( function () {
-            const attr = $(this).attr('data-tag');
-            if (tag === null || (typeof attr !== 'undefined' && attr !== false && attr === tag)) {
-                $(this).hide();
-            }
-        });
+        hideRemoveElements(elements, tag, false);
     };
 
     // placement - topLeft, topCenter, etc
