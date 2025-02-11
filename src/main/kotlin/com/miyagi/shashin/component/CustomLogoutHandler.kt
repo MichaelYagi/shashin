@@ -16,8 +16,12 @@ class CustomLogoutHandler : LogoutHandler {
     @Autowired
     var userRepository: UserRepository? = null
 
-    override fun logout(request: HttpServletRequest, response: HttpServletResponse, authentication: Authentication) {
-        val authentication = SecurityContextHolder.getContext().authentication
+    override fun logout(request: HttpServletRequest, response: HttpServletResponse, authentication: Authentication?) {
+        var authentication = authentication
+        if (authentication == null) {
+            authentication = SecurityContextHolder.getContext().authentication
+        }
+
         if (authentication != null && !authentication.name.isNullOrBlank()) {
             val user = userRepository?.findByUsername(authentication.name)
 
