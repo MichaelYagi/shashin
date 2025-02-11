@@ -32,6 +32,8 @@
 
         <h2>Front end debugging</h2>
         <p>Apart from standard IDE debuggers, convenience functions to look at console outputs can be enabled.</p>
+
+        <h5>Print console messages</h5>
         <p>Place <code>shashin.printMessageToConsole(&lt;message&gt;,{&lt;options&gt;})</code> in JS code where you'd like to see console outputs. Options are a hash map of allowable options.</p>
         <p>
             <code>tag</code> - tags messages to be used as a filter.<br>
@@ -44,6 +46,7 @@
             });</code>
         </p>
 
+        <h5>Enable debug messages in the console</h5>
         <p>Typing <code>shashin.enableDebug({&lt;options&gt;})</code> in the browser console will output console log messages placed in the app. There are various options you can pass.</p>
         <p>
             <code>tags</code> - an array of tags to filter on. Tag value "all" shows all logs without tag filtering. Default is for all tags to be shown.<br>
@@ -51,18 +54,14 @@
             <code>showTrace</code> - if set to true, shows the stack trace for the output. Default is false.<br>
             <code>writeLog</code> - if set to true, makes network requests to the backend to write console outputs to the app logs. Default is false.
         </p>
+
+        <h5>Disable debug messages in the console</h5>
         <p>Typing <code>shashin.disableDebug()</code> in the browser console prevents any output from the app to be shown in the console window.</p>
-        <p>Example: <br>
-            <code>shashin.enableDebug({<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;tags: ["testcode", "anothertag"],<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;consoleTypes: [shashin.consoleTypes.error],<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;showTrace: true,<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;writeLog: true<br>
-            });</code>
-        </p>
 
         <h2>Toast messages</h2>
         <p>Pop-up messages can be used to notify users. There are 9 quadrants you can see pop-ups.</p>
+
+        <h5>Show toast messages</h5>
         <p>Place <code>shashin.showToastMessage(&lt;title&gt;, &lt;message&gt;, {&lt;options&gt;})</code> in JS code. Options are a hash map of allowable options.</p>
         <p>
             <code>icon</code> - use Bootstrap Icons. eg. bi-info-circle. Default is empty.<br>
@@ -96,6 +95,34 @@
                 &nbsp;&nbsp;&nbsp;&nbsp;refreshTag: true<br>
                 });</code>
         </p>
+
+        <h5>Close toast messages</h5>
+        <p>Place <code>shashin.closeToastMessages()</code> in JS code. Options are a hash map of allowable options.</p>
+        <p>
+            <code>tag</code> - Target specific tag to close.<br>
+            <code>tags</code> - Array of tags to close.<br>
+            <code>placement</code> - Target specific placement to close. Options are: <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.default<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.top.left<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.top.center<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.top.right<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.middle.left<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.middle.center<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.middle.right<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.bottom.left<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.bottom.center<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;shashin.toast.placement.bottom.right<br>
+            <code>placements</code> - Targets multiple placements to close.<br>
+            <code>hide</code> - Flag to remove or hide toast message. If set to true, will only hide the element, else it will remove the element from the DOM. Default is false.
+        </p>
+        <p>Example: <br>
+            <code>shashin.closeToastMessages({<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;tags: ["testcode", "anothertag"],<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;placement: shashin.toast.placement.bottom.center,<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;hide: true<br>
+                });</code>
+        </p>
+
         <hr>
         <p>Report issues <a href="mailto:myagi.developer@gmail.com" target="_blank">here</a>!</p>
     </div>
