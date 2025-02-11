@@ -381,7 +381,7 @@
                 const imageMetadataId = imageId.substring(5);
                 timelineSettings.renderMetadata(imageMetadataId);
             });
-            if (elements.length > 0 && shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null) {
+            if (elements.length > 0 && shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null && typeof shashin.getLightGallery().refresh === 'function') {
                 setTimeout(() => {
                     shashin.getLightGallery().refresh();
                 }, 1000);
