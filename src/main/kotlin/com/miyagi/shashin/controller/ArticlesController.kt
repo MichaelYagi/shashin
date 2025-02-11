@@ -24,7 +24,7 @@ class ArticlesController {
         val currentUserObj = model.getAttribute("currentUser") as User?
         val sessionUser = request.session.getAttribute("CurrentUser") as User?
 
-        if ((currentUserObj != null && currentUserObj.getIsAuthorized() == true) || (sessionUser != null && sessionUser.getIsAuthorized() == true)) {
+        if ((currentUserObj != null && currentUserObj.getIsAuthorized() == true) || (sessionUser != null && sessionUser.getIsAuthorized() == true || TextUtils.checkValidRememberMeToken(request.getHeader("Cookie")))) {
             model["loggedIn"] = true
         }
 
@@ -44,7 +44,7 @@ class ArticlesController {
         val currentUserObj = model.getAttribute("currentUser") as User?
         val sessionUser = request.session.getAttribute("CurrentUser") as User?
 
-        if ((currentUserObj != null && currentUserObj.getIsAuthorized() == true) || (sessionUser != null && sessionUser.getIsAuthorized() == true)) {
+        if ((currentUserObj != null && currentUserObj.getIsAuthorized() == true) || (sessionUser != null && sessionUser.getIsAuthorized() == true) || TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"))) {
             model["loggedIn"] = true
         }
 

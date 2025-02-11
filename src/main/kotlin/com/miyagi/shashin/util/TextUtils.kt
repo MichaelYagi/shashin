@@ -139,6 +139,35 @@ class TextUtils {
             return seriesExpiryMap
         }
 
+        fun checkValidRememberMeToken(requestCookie: String?): Boolean {
+            if (requestCookie != null) {
+                val cookieArray = requestCookie.split(";").toTypedArray()
+                var manuallyParsedToken = ""
+                for (cookie in cookieArray) {
+                    val keyValue = cookie.trim { it <= ' ' }
+                    val keyValueArray = keyValue.split("=").toTypedArray()
+                    if (keyValueArray.size == 2 && keyValueArray[0] == "remember-me") {
+                        // base64 and url decode
+                        manuallyParsedToken = TextUtils.decodePersistenceToken(keyValueArray[1])
+                        break
+                    }
+                }
+
+                val seriesExpiryMap = TextUtils.parseRememberMeCookie(requestCookie)
+                var functionParsedToken = ""
+                if (seriesExpiryMap.isNotEmpty()) {
+                    val seriesExpiryMapValues = seriesExpiryMap.values.toTypedArray()
+                    if (seriesExpiryMapValues.size == 2) {
+                        functionParsedToken = seriesExpiryMapValues[1]
+                    }
+                }
+
+                return manuallyParsedToken != "" && functionParsedToken != "" && manuallyParsedToken == functionParsedToken
+            }
+
+            return false
+        }
+
         fun decodePersistenceToken(token: String): String {
             if (token.isNotBlank()) {
                 var decodedSeriesToken = String(Base64.getDecoder().decode(token))

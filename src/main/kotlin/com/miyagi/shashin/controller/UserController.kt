@@ -395,7 +395,7 @@ class UserController {
     }
 
     @GetMapping("/users/register")
-    fun getRegisterUser(model: Model): String {
+    fun getRegisterUser(model: Model, request: HttpServletRequest): String {
         val module = "register"
 
         if ((model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) && model.getAttribute("agentName") != "safari") {
@@ -404,6 +404,8 @@ class UserController {
             return "redirect:/recent"
         } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
             return "redirect:/albums"
+        } else if (TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"))) {
+            return "redirect:/users/login"
         } else {
             model["message"] = ""
 
