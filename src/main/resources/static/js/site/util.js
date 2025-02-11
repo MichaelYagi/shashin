@@ -474,7 +474,7 @@ class Util {
                 propMetadataModal._config.keyboard = true;
             }
 
-            if (shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null) {
+            if (shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null && typeof shashin.getLightGallery().refresh === 'function') {
                 shashin.getLightGallery().refresh();
             }
         });
@@ -907,7 +907,7 @@ class Util {
 
                         shashin.setLightGallery(lgConfig);
 
-                        if (options.hasOwnProperty("refreshContent") && options.refreshContent === true && mediaContentList.length > 0 && shashin.getLightGallery() !== null) {
+                        if (options.hasOwnProperty("refreshContent") && options.refreshContent === true && mediaContentList.length > 0 && shashin.getLightGallery() !== null && typeof shashin.getLightGallery().refresh === 'function') {
                             shashin.getLightGallery().refresh(mediaContentList);
                         }
 
