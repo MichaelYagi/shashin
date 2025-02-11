@@ -178,13 +178,13 @@ class UserController {
 
             if (currentUserObj.getAuthority() == "ROLE_SUPER") {
                 model["roleDescription"] = "You have <strong>Super Admin</strong> privileges. " +
-                        "You have access to application settings, editing metadata, dashboard, maps, browsing and timeline views (if available)."
+                        "You have access to application settings, uploading to albums and timeline, editing metadata, dashboard, maps, browsing and timeline views (if available)."
             } else if (currentUserObj.getAuthority() == "ROLE_ADMIN") {
                 model["roleDescription"] = "You have <strong>Admin</strong> privileges. " +
-                        "You have access to editing metadata, dashboard, maps, browsing and timeline views (if available)."
+                        "You have access to uploading to albums and timeline, editing metadata, dashboard, maps, browsing and timeline views (if available)."
             } else {
                 model["roleDescription"] = "You have <strong>User</strong> privileges. " +
-                        "You have access to albums shared with you, maps and viewing metadata."
+                        "You have access to albums shared with you, uploading to albums, maps and viewing metadata."
             }
 
             model["dateJoined"] = TextUtils.formatToAbbrDate(currentUserObj.getCreatedAt().toString())
@@ -396,109 +396,138 @@ class UserController {
 
     @GetMapping("/users/register")
     fun getRegisterUser(model: Model): String {
-        val userCount = userRepository?.count()
-
-        model["user"] = User()
-        model["message"] = ""
-        if ((userCount != null) && (userCount.toInt() == 0)) {
-            model["message"] = "Register as a super admin"
-        }
-
         val module = "register"
-        model["msg"] = ""
-        model["status"] = ApiResponse.SUCCESS.status
-        model["activePage"] = module
-        model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
-        return module
+
+        if ((model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) && model.getAttribute("agentName") != "safari") {
+            return "redirect:/timeline"
+        } else if ((model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) && model.getAttribute("agentName") == "safari") {
+            return "redirect:/recent"
+        } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
+            return "redirect:/albums"
+        } else {
+            model["message"] = ""
+
+            val userCount = userRepository?.count()
+            if ((userCount != null) && (userCount.toInt() == 0)) {
+                model["message"] = "Register as a super admin"
+            }
+            model["msg"] = ""
+            model["status"] = ApiResponse.SUCCESS.status
+            model["activePage"] = module
+            model["activeSidebar"] = module
+            model["titleDescriptor"] = TextUtils.capitalized(module)
+            return module
+        }
     }
 
     @RequestMapping(value = ["/users/register"], method = [RequestMethod.POST])
     fun registerUser(model: Model, request: HttpServletRequest): String {
-        var newUser: User? = null
-        var userCount: Long? = null
+        if ((model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) && model.getAttribute("agentName") != "safari") {
+            return "redirect:/timeline"
+        } else if ((model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) && model.getAttribute("agentName") == "safari") {
+            return "redirect:/recent"
+        } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
+            return "redirect:/albums"
+        } else {
+            var newUser: User? = null
+            var userCount: Long? = null
 
-        model["user"] = User()
-        model["message"] = ""
+            model["user"] = User()
+            model["message"] = ""
 
-        val module = "register"
-        model["activePage"] = module
-        model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
+            val module = "register"
+            model["activePage"] = module
+            model["activeSidebar"] = module
+            model["titleDescriptor"] = TextUtils.capitalized(module)
 
-        if (request.getParameter("username") != null && request.getParameter("password") != null) {
-            val userName = request.getParameter("username").toString()
-            val passWord = request.getParameter("password").toString()
+            if (request.getParameter("username") != null && request.getParameter("password") != null) {
+                val userName = request.getParameter("username").toString()
+                val passWord = request.getParameter("password").toString()
 
-            newUser = User()
-            newUser.setUsername(userName)
-            newUser.setPassword(passWord)
+                newUser = User()
+                newUser.setUsername(userName)
+                newUser.setPassword(passWord)
 
-            userCount = userRepository?.count()
+                userCount = userRepository?.count()
 
-            val users: List<User?> = userRepository?.findAll() as List<User?>
+                val users: List<User?> = userRepository?.findAll() as List<User?>
 
-            logger.log(Level.INFO, "New user: $newUser")
+                logger.log(Level.INFO, "New user: $newUser")
 
-            for (user in users) {
-                if (user != null) {
-                    if (user.getUsername()?.lowercase() == newUser.getUsername()?.lowercase()) {
-                        logger.log(Level.INFO, "Already registered user: $newUser")
-                        model["message"] = "Could not register user"
-                        return module
-                    }
-                }
-            }
-        }
-
-        if (newUser != null) {
-            val encodedPassword: String = bcrypt.encode(newUser.getPassword())
-            newUser.setPassword(encodedPassword)
-            newUser.setCreatedAt(getCurrentTimestamp())
-            newUser.setModifiedAt(getCurrentTimestamp())
-            newUser.setApikey(TextUtils.generateUUID(newUser.getUsername(),System.currentTimeMillis().toString(),"",0.0,0,"","API key generated for new user from UserController").toString())
-
-            if ((userCount != null) && (userCount.toInt() == 0)) {
-                newUser.setAuthority("ROLE_SUPER")
-                newUser.setIsAuthorized(true)
-                userRepository?.save(newUser)
-                return "redirect:/users/login?msg=regsuccess"
-            } else {
-                newUser.setAuthority("ROLE_USER")
-                userRepository?.save(newUser)
-
-                val admins = userRepository?.findAllAdmins()
-
-                if (admins != null) {
-                    val notificationObjList = mutableListOf<Notification>()
-                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
-                    sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
-                    for (admin in admins) {
-                        val notificationObj = Notification()
-                        notificationObj.setUserId(admin.getId())
-                        notificationObj.setCreatedAt(getCurrentTimestamp())
-                        notificationObj.setModifiedAt(getCurrentTimestamp())
-                        notificationObj.setRead(false)
-                        var message = newUser.getUsername()+" registered at "+sdtf.format(Date())+" and is pending approval."
-                        if (admin.getAuthority() == superRole) {
-                            message = "<a href='/settings/users' target='_blank'>"+newUser.getUsername()+"</a> registered at "+sdtf.format(Date())+" and is pending approval."
+                for (user in users) {
+                    if (user != null) {
+                        if (user.getUsername()?.lowercase() == newUser.getUsername()?.lowercase()) {
+                            logger.log(Level.INFO, "Already registered user: $newUser")
+                            model["message"] = "Could not register user"
+                            return module
                         }
-                        notificationObj.setMessage(message)
-                        notificationObjList.add(notificationObj)
-                    }
-                    if (notificationObjList.isNotEmpty()) {
-                        notificationRepository.saveAll(notificationObjList)
                     }
                 }
-
-                return "redirect:/users/login?msg=regpending"
             }
-        }
 
-        model["msg"] = ""
-        model["status"] = ApiResponse.FAIL.status
-        model["message"] = "Something went wrong"
-        return module
+            if (newUser != null) {
+                val encodedPassword: String = bcrypt.encode(newUser.getPassword())
+                newUser.setPassword(encodedPassword)
+                newUser.setCreatedAt(getCurrentTimestamp())
+                newUser.setModifiedAt(getCurrentTimestamp())
+                newUser.setApikey(
+                    TextUtils.generateUUID(
+                        newUser.getUsername(),
+                        System.currentTimeMillis().toString(),
+                        "",
+                        0.0,
+                        0,
+                        "",
+                        "API key generated for new user from UserController"
+                    ).toString()
+                )
+
+                if ((userCount != null) && (userCount.toInt() == 0)) {
+                    newUser.setAuthority("ROLE_SUPER")
+                    newUser.setIsAuthorized(true)
+                    userRepository?.save(newUser)
+                    return "redirect:/users/login?msg=regsuccess"
+                } else {
+                    newUser.setAuthority("ROLE_USER")
+                    userRepository?.save(newUser)
+
+                    val admins = userRepository?.findAllAdmins()
+
+                    if (admins != null) {
+                        val notificationObjList = mutableListOf<Notification>()
+                        val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                        sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                        for (admin in admins) {
+                            val notificationObj = Notification()
+                            notificationObj.setUserId(admin.getId())
+                            notificationObj.setCreatedAt(getCurrentTimestamp())
+                            notificationObj.setModifiedAt(getCurrentTimestamp())
+                            notificationObj.setRead(false)
+                            var message =
+                                newUser.getUsername() + " registered at " + sdtf.format(Date()) + " and is pending approval."
+                            if (admin.getAuthority() == superRole) {
+                                message =
+                                    "<a href='/settings/users' target='_blank'>" + newUser.getUsername() + "</a> registered at " + sdtf.format(
+                                        Date()
+                                    ) + " and is pending approval."
+                            }
+                            notificationObj.setMessage(message)
+                            notificationObjList.add(notificationObj)
+                        }
+                        if (notificationObjList.isNotEmpty()) {
+                            notificationRepository.saveAll(notificationObjList)
+                        }
+                    }
+
+                    return "redirect:/users/login?msg=regpending"
+                }
+            }
+
+            model["msg"] = ""
+            model["status"] = ApiResponse.FAIL.status
+            model["message"] = "Something went wrong"
+            return module
+        }
     }
 
     @GetMapping("/users/login")
