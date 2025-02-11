@@ -466,14 +466,16 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             $("#playPause").removeClass("bi-play-circle").addClass("bi-pause-circle");
             slideshowIsPaused = true;
             // $("#mediaInfo").css("display", "block");
+            $("#playPause").show();
         } else {
             $("#playPause").removeClass("bi-pause-circle").addClass("bi-play-circle");
             slideshowIsPaused = false;
             // $("#mediaInfo").css("display", "none");
+            $("#playPause").show();
+            $("#playPause").fadeOut(3000);
         }
 
-        $("#playPause").show();
-        $("#playPause").fadeOut(3000);
+
     }
 
     $("#viewSlideshow").on("click", function (e) {
