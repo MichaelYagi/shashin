@@ -195,9 +195,9 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
             $("#slideSpinner").hide();
         } else if (callback !== undefined && typeof callback === 'function') {
-            $("#slideSpinner").hide();
-
             callback(false);
+
+            $("#slideSpinner").hide();
         }
     }
 
@@ -471,6 +471,8 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     $("#prevSlideButton").on("click", function (e) {
         e.preventDefault();
 
+        $("#slideSpinner").show();
+
         if (slideshowCurrentIndex > 0 && slideshowProceed === true) {
             slideshowCurrentIndex--;
         }
@@ -494,6 +496,8 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
     $("#nextSlideButton").on("click", function (e) {
         e.preventDefault();
+
+        $("#slideSpinner").show();
 
         if (slideshowCurrentIndex <= slideshowMetadataIds.length - 1) {
             slideshowCurrentIndex++;
@@ -530,7 +534,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         } else if (direction === "left" || direction === "right") {
             if ((direction === "right" && slideshowCurrentIndex === 0) === false && slideshowProceed === true) {
                 $("#slideSpinner").show();
-                
+
                 if (slideshowCurrentIndex > 0 && direction === "right") {
                     slideshowCurrentIndex--;
                 } else if (slideshowCurrentIndex <= slideshowMetadataIds.length - 1 && direction === "left") {
