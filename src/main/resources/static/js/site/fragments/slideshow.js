@@ -10,6 +10,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     let nextTimer = null;
     let prevTimer = null;
     let infoTimer = null;
+    let shortcutTimer = null;
     let slideshowCursorVisible = true;
     let slideshowProceed = true;
     let cjsc = null;
@@ -126,7 +127,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                         "right": "5px"
                     });
 
-                    $("#infoAction").css({
+                    $("#shortcutAction").css({
                         "font-size": "2rem",
                         "color": "#FFFFFF",
                         "z-index": 99998,
@@ -135,13 +136,22 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                         "right": "77px"
                     });
 
-                    $("#slideSpinner").css({
+                    $("#infoAction").css({
                         "font-size": "2rem",
                         "color": "#FFFFFF",
                         "z-index": 99998,
                         "position": "absolute",
                         "top": "23px",
                         "right": "135px"
+                    });
+
+                    $("#slideSpinner").css({
+                        "font-size": "2rem",
+                        "color": "#FFFFFF",
+                        "z-index": 99998,
+                        "position": "absolute",
+                        "top": "23px",
+                        "left": "2%"
                     });
 
                     if (Util.isMobile() === false) {
@@ -443,7 +453,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         }
     });
 
-    $("#infoActionButton").on("click", function (e) {
+    $("#shortcutActionButton").on("click", function (e) {
         e.preventDefault();
 
         if (shashin.hasToast(shashin.toast.placement.bottom.center,{tag: "slide"}) === false) {
@@ -468,6 +478,12 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         if (cjsc !== null && cjsc.available) {
             cjsc.disconnect();
         }
+    });
+
+    $("#infoActionButton").on("click", function (e) {
+        e.preventDefault();
+
+        slideshowInfo();
     });
 
     $("#prevSlideButton").on("click", function (e) {
@@ -541,7 +557,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             if (slideshowProceed === false) {
                 return false;
             }
-            
+
             if ((direction === "right" && slideshowCurrentIndex === 0) === false && slideshowProceed === true) {
                 $("#slideSpinner").show();
 
@@ -599,6 +615,9 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         if (closeTimer) {
             clearTimeout(closeTimer);
         }
+        if (shortcutTimer) {
+            clearTimeout(shortcutTimer);
+        }
         if (infoTimer) {
             clearTimeout(infoTimer);
         }
@@ -606,6 +625,10 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         $("#infoAction").show();
         infoTimer = setTimeout(function () {
             $("#infoAction").fadeOut(1000);
+        }, 5000);
+        $("#shortcutAction").show();
+        shortcutTimer = setTimeout(function () {
+            $("#shortcutAction").fadeOut(1000);
         }, 5000);
         $("#nextSlide").show();
         nextTimer = setTimeout(function () {
@@ -654,6 +677,12 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
     $("#viewSlideshow").on("click", function (e) {
         e.preventDefault();
+
+        if (Util.isMobile()) {
+            $("#shortcutAction").addClass("bi-hand-index").removeClass("bi-keyboard");
+        } else {
+            $("#shortcutAction").addClass("bi-keyboard").removeClass("bi-hand-index");
+        }
 
         document.body.style.overflow = 'hidden';
 
