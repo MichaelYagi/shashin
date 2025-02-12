@@ -474,8 +474,6 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             $("#playPause").show();
             $("#playPause").fadeOut(3000);
         }
-
-
     }
 
     $("#viewSlideshow").on("click", function (e) {
