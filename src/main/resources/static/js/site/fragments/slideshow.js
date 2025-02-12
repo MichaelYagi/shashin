@@ -140,36 +140,6 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                             "top": "3.6%",
                             "right": "5.5%"
                         });
-
-                        if (nextTimer) {
-                            clearTimeout(nextTimer);
-                        }
-                        if (prevTimer) {
-                            clearTimeout(prevTimer);
-                        }
-                        if (closeTimer) {
-                            clearTimeout(closeTimer);
-                        }
-                        if (infoTimer) {
-                            clearTimeout(infoTimer);
-                        }
-
-                        $("#infoAction").show();
-                        infoTimer = setTimeout(function () {
-                            $("#infoAction").fadeOut(1000);
-                        }, 5000);
-                        $("#nextSlide").show();
-                        nextTimer = setTimeout(function () {
-                            $("#nextSlide").fadeOut(1000);
-                        }, 5000);
-                        $("#prevSlide").show();
-                        prevTimer = setTimeout(function () {
-                            $("#prevSlide").fadeOut(1000);
-                        }, 5000);
-                        $("#closeAction").show();
-                        closeTimer = setTimeout(function () {
-                            $("#closeAction").fadeOut(1000);
-                        }, 5000);
                     } else {
                         $("#mediaInfo").css({
                             "font-size": "1rem"
@@ -581,10 +551,6 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
     function disappearCursor() {
         slideshowMouseTimer = null;
-        closeTimer = null;
-        nextTimer = null;
-        prevTimer = null;
-        infoTimer = null;
         document.body.style.cursor = "none";
         slideshowCursorVisible = false;
     }
