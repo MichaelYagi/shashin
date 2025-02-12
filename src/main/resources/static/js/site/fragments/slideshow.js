@@ -104,6 +104,10 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                             "max-width": ($(window).width() + 1),
                             "font-size": "1.7rem"
                         });
+                    } else {
+                        $("#mediaInfo").css({
+                            "font-size": "1rem"
+                        });
 
                         $("#prevSlide").css({
                             "font-size": "4rem",
@@ -139,10 +143,6 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                             "position": "absolute",
                             "top": "3.6%",
                             "right": "5.5%"
-                        });
-                    } else {
-                        $("#mediaInfo").css({
-                            "font-size": "1rem"
                         });
                     }
 
@@ -244,7 +244,6 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             cjsc = new Castjs();
         }
 
-        let castLink = "";
         if (cjsc !== null) {
             // Create
             if (cjsc.state === "disconnected") {
@@ -254,8 +253,10 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             }
         }
 
+        let title = "";
+        let message = "";
         if (Util.isMobile() === false) {
-            let message = "<div class='container'>" +
+            message = "<div class='container'>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>d</strong></span></div><div class='col-9'>Show/close this window</div></div>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>Esc</strong></span></div><div class='col-9'>Exit fullscreen. Press Esc again to exit slideshow.</div></div>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>f</strong></span></div><div class='col-9'>Fullscreen</div></div>" +
@@ -265,12 +266,9 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>← →</strong></span></div><div class='col-9'>Got to next/previous slide</div></div>" +
                 "</div>";
 
-            shashin.showToastMessage("Keyboard Shortcuts" + castLink,
-                message,
-                options
-            );
+            title = "Keyboard Shortcuts";
         } else {
-            let message = "<div class='container'>" +
+            message = "<div class='container'>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>Swipe Up</strong></span></div><div class='col-9'>Show/close this window when in fullscreen</div></div>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>Swipe Down</strong></span></div><div class='col-9'>Slide info</div></div>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>Single Tap</strong></span></div><div class='col-9'>Play/pause</div></div>" +
@@ -278,11 +276,13 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>Swipe ← →</strong></span></div><div class='col-9'>Got to next/previous slide</div></div>" +
                 "</div>";
 
-            shashin.showToastMessage("Touch Bindings",
-                message,
-                options
-            );
+            title = "Touch Bindings";
         }
+
+        shashin.showToastMessage(title,
+            message,
+            options
+        );
 
         if (typeof Castjs != "undefined" && cjsc !== null) {
             cjsc.on('available', () => {
@@ -556,24 +556,43 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     }
 
     $("body").on("mousemove", function () {
+        if (nextTimer) {
+            clearTimeout(nextTimer);
+        }
+        if (prevTimer) {
+            clearTimeout(prevTimer);
+        }
+        if (closeTimer) {
+            clearTimeout(closeTimer);
+        }
+        if (infoTimer) {
+            clearTimeout(infoTimer);
+        }
+
+        $("#infoAction").show();
+        infoTimer = setTimeout(function () {
+            $("#infoAction").fadeOut(1000);
+        }, 5000);
+        $("#nextSlide").show();
+        nextTimer = setTimeout(function () {
+            $("#nextSlide").fadeOut(1000);
+        }, 5000);
+        $("#prevSlide").show();
+        prevTimer = setTimeout(function () {
+            $("#prevSlide").fadeOut(1000);
+        }, 5000);
+        $("#closeAction").show();
+        closeTimer = setTimeout(function () {
+            $("#closeAction").fadeOut(1000);
+        }, 5000);
+
         if (Util.isMobile() === false && $("#slideshowGallery").css("display") === "block") {
 
             if (slideshowMouseTimer) {
                 clearTimeout(slideshowMouseTimer);
             }
 
-            if (nextTimer) {
-                clearTimeout(nextTimer);
-            }
-            if (prevTimer) {
-                clearTimeout(prevTimer);
-            }
-            if (closeTimer) {
-                clearTimeout(closeTimer);
-            }
-            if (infoTimer) {
-                clearTimeout(infoTimer);
-            }
+
 
             if (slideshowCursorVisible === false) {
                 document.body.style.cursor = "default";
@@ -582,22 +601,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
             slideshowMouseTimer = setTimeout(disappearCursor, 3000);
 
-            $("#infoAction").show();
-            infoTimer = setTimeout(function () {
-                $("#infoAction").fadeOut(1000);
-            }, 5000);
-            $("#nextSlide").show();
-            nextTimer = setTimeout(function () {
-                $("#nextSlide").fadeOut(1000);
-            }, 5000);
-            $("#prevSlide").show();
-            prevTimer = setTimeout(function () {
-                $("#prevSlide").fadeOut(1000);
-            }, 5000);
-            $("#closeAction").show();
-            closeTimer = setTimeout(function () {
-                $("#closeAction").fadeOut(1000);
-            }, 5000);
+
         }
     });
 
@@ -677,7 +681,10 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 $("#playPause").css("display", "block");
 
                 shashin.closeToastMessages({tags:["subhtml"]});
-                // showInstruction();
+
+                if (Util.isMobile()) {
+                    showInstruction();
+                }
             }
         });
     });
