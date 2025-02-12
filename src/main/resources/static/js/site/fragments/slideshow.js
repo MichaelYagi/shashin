@@ -538,12 +538,12 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 slideshowInfo();
             }
         } else if (direction === "left" || direction === "right") {
+            if (slideshowProceed === false) {
+                return false;
+            }
+            
             if ((direction === "right" && slideshowCurrentIndex === 0) === false && slideshowProceed === true) {
                 $("#slideSpinner").show();
-
-                if (slideshowProceed === false) {
-                    return false;
-                }
 
                 if (slideshowCurrentIndex > 0 && direction === "right") {
                     slideshowCurrentIndex--;
