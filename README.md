@@ -3,7 +3,7 @@
 # Shashin
 An Image Gallery inspired by Google Photos
 
-<img src="https://michaelyagi.github.io/images/shashin2.png" alt="shashin"/>
+<img src="https://michaelyagi.github.io/images/shashinss.png" alt="shashin"/>
 
 # Versions
 Must be updated in POM file and git tag with format v[Major][Minor][Patch].
