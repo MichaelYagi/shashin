@@ -131,7 +131,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                         "color": "#FFFFFF",
                         "z-index": 99998,
                         "position": "absolute",
-                        "top": "23px",
+                        "top": "22px",
                         "right": "77px"
                     });
 
