@@ -529,6 +529,8 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             }
         } else if (direction === "left" || direction === "right") {
             if ((direction === "right" && slideshowCurrentIndex === 0) === false && slideshowProceed === true) {
+                $("#slideSpinner").show();
+                
                 if (slideshowCurrentIndex > 0 && direction === "right") {
                     slideshowCurrentIndex--;
                 } else if (slideshowCurrentIndex <= slideshowMetadataIds.length - 1 && direction === "left") {
