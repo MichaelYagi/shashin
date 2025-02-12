@@ -258,7 +258,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         if (Util.isMobile() === false) {
             message = "<div class='container'>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>d</strong></span></div><div class='col-9'>Show/close this window</div></div>" +
-                "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>Esc</strong></span></div><div class='col-9'>Exit slideshow.</div></div>" +
+                "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>e</strong></span></div><div class='col-9'>Exit slideshow.</div></div>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>Space</strong></span></div><div class='col-9'>Play/pause</div></div>" +
                 "<span id='castKey' style='display: none;'><div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>c</strong></span></div><div class='col-9'>Start/stop casting</div></div></span>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>i</strong></span></div><div class='col-9'>Slide info</div></div>" +
@@ -318,6 +318,8 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     }
 
     $("body").on("dblclick", function (e) {
+        e.preventDefault();
+
         if (Util.isMobile() === true && $("#slideshowGallery").css("display") === "block") {
             if (document.exitFullscreen) {
                 document.exitFullscreen();
@@ -336,7 +338,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
     $("body").on("keyup", function (e) {
         if ($("#slideshowGallery").css("display") === "block") {
-            if (e.code === "Escape" || e.keyCode === 27) {
+            if (e.key === "e" || e.code === "KeyE" || e.keyCode === 69) {
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
                 } else if (document.documentElement.exitFullscreen) {
