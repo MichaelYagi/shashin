@@ -6,6 +6,10 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     let slideshowCurrentIndex = 0;
     let slideshowMetadataIds = [];
     let slideshowMouseTimer = null;
+    let closeTimer = null;
+    let nextTimer = null;
+    let prevTimer = null;
+    let infoTimer = null;
     let slideshowCursorVisible = true;
     let slideshowProceed = true;
     let cjsc = null;
@@ -100,6 +104,72 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                             "max-width": ($(window).width() + 1),
                             "font-size": "1.7rem"
                         });
+
+                        $("#prevSlide").css({
+                            "font-size": "4rem",
+                            "color": "#FFFFFF",
+                            "z-index": 99999,
+                            "position": "absolute",
+                            "top": "50%",
+                            "left": "2%"
+                        });
+
+                        $("#nextSlide").css({
+                            "font-size": "4rem",
+                            "color": "#FFFFFF",
+                            "z-index": 99999,
+                            "position": "absolute",
+                            "top": "50%",
+                            "right": "2%"
+                        });
+
+                        $("#closeAction").css({
+                            "font-size": "4rem",
+                            "color": "#FFFFFF",
+                            "z-index": 99999,
+                            "position": "absolute",
+                            "top": "2%",
+                            "right": "2%"
+                        });
+
+                        $("#infoAction").css({
+                            "font-size": "2rem",
+                            "color": "#FFFFFF",
+                            "z-index": 99999,
+                            "position": "absolute",
+                            "top": "3.6%",
+                            "right": "5.5%"
+                        });
+
+                        if (nextTimer) {
+                            clearTimeout(nextTimer);
+                        }
+                        if (prevTimer) {
+                            clearTimeout(prevTimer);
+                        }
+                        if (closeTimer) {
+                            clearTimeout(closeTimer);
+                        }
+                        if (infoTimer) {
+                            clearTimeout(infoTimer);
+                        }
+
+                        $("#infoAction").show();
+                        infoTimer = setTimeout(function () {
+                            $("#infoAction").fadeOut(1000);
+                        }, 5000);
+                        $("#nextSlide").show();
+                        nextTimer = setTimeout(function () {
+                            $("#nextSlide").fadeOut(1000);
+                        }, 5000);
+                        $("#prevSlide").show();
+                        prevTimer = setTimeout(function () {
+                            $("#prevSlide").fadeOut(1000);
+                        }, 5000);
+                        $("#closeAction").show();
+                        closeTimer = setTimeout(function () {
+                            $("#closeAction").fadeOut(1000);
+                        }, 5000);
                     } else {
                         $("#mediaInfo").css({
                             "font-size": "1rem"
@@ -149,7 +219,9 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     }
 
     function exitSlideshowGallery() {
-        if (document.documentElement.exitFullscreen) {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.documentElement.exitFullscreen) {
             document.documentElement.exitFullscreen();
         }
 
@@ -278,8 +350,12 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
     $("body").on("dblclick", function (e) {
         if (Util.isMobile() === true && $("#slideshowGallery").css("display") === "block") {
-            if (document.fullscreenElement !== null && document.exitFullscreen) {
-                document.exitFullscreen();
+            if (document.fullscreenElement !== null && (document.documentElement.exitFullscreen || document.exitFullscreen)) {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else {
+                    document.documentElement.exitFullscreen();
+                }
             } else {
                 $("#mediaInfo").css("display", "none");
                 exitSlideshowGallery();
@@ -294,8 +370,12 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     $("body").on("keyup", function (e) {
         if ($("#slideshowGallery").css("display") === "block") {
             if (e.code === "Escape" || e.keyCode === 27) {
-                if (document.fullscreenElement !== null && document.documentElement.exitFullscreen) {
-                    document.documentElement.exitFullscreen();
+                if (document.fullscreenElement !== null && (document.documentElement.exitFullscreen || document.exitFullscreen)) {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else {
+                        document.documentElement.exitFullscreen();
+                    }
                 } else {
                     $("#mediaInfo").css("display", "none");
                     exitSlideshowGallery();
@@ -382,6 +462,81 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         }
     });
 
+    $("#infoActionButton").on("click", function (e) {
+        e.preventDefault();
+
+        if (shashin.hasToast(shashin.toast.placement.bottom.center,{tag: "slide"}) === false) {
+            showInstruction();
+        } else {
+            shashin.closeToastMessages({tag: "slide"});
+        }
+    });
+
+    $("#closeActionButton").on("click", function (e) {
+        e.preventDefault();
+
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.documentElement.exitFullscreen) {
+            document.documentElement.exitFullscreen();
+        }
+
+        $("#mediaInfo").css("display", "none");
+        exitSlideshowGallery();
+        shashin.closeToastMessages({tag: "slide"});
+        if (cjsc !== null && cjsc.available) {
+            cjsc.disconnect();
+        }
+    });
+
+    $("#prevSlideButton").on("click", function (e) {
+        e.preventDefault();
+
+        if (slideshowCurrentIndex > 0 && slideshowProceed === true) {
+            slideshowCurrentIndex--;
+        }
+
+        getSlideshowImage(function () {
+            slideshowProceed = true;
+        });
+
+        if (slideshowIsPaused === false) {
+            clearInterval(slideshowIntervalId);
+            slideshowIntervalId = window.setInterval(function () {
+                if (slideshowIsPaused === false) {
+                    slideshowCurrentIndex++;
+                    getSlideshowImage(function () {
+                        slideshowProceed = true;
+                    });
+                }
+            }, (slideshowIsElapsed * 1000));
+        }
+    });
+
+    $("#nextSlideButton").on("click", function (e) {
+        e.preventDefault();
+
+        if (slideshowCurrentIndex <= slideshowMetadataIds.length - 1) {
+            slideshowCurrentIndex++;
+        }
+
+        getSlideshowImage(function () {
+            slideshowProceed = true;
+        });
+
+        if (slideshowIsPaused === false) {
+            clearInterval(slideshowIntervalId);
+            slideshowIntervalId = window.setInterval(function () {
+                if (slideshowIsPaused === false) {
+                    slideshowCurrentIndex++;
+                    getSlideshowImage(function () {
+                        slideshowProceed = true;
+                    });
+                }
+            }, (slideshowIsElapsed * 1000));
+        }
+    });
+
     Util.detectSwipe("#slideshowGallery", function (direction) {
         if (direction === "up" || direction === "down") {
             if (direction === "up") {
@@ -426,14 +581,32 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
     function disappearCursor() {
         slideshowMouseTimer = null;
+        closeTimer = null;
+        nextTimer = null;
+        prevTimer = null;
+        infoTimer = null;
         document.body.style.cursor = "none";
         slideshowCursorVisible = false;
     }
 
     $("body").on("mousemove", function () {
         if (Util.isMobile() === false && $("#slideshowGallery").css("display") === "block") {
+
             if (slideshowMouseTimer) {
                 clearTimeout(slideshowMouseTimer);
+            }
+
+            if (nextTimer) {
+                clearTimeout(nextTimer);
+            }
+            if (prevTimer) {
+                clearTimeout(prevTimer);
+            }
+            if (closeTimer) {
+                clearTimeout(closeTimer);
+            }
+            if (infoTimer) {
+                clearTimeout(infoTimer);
             }
 
             if (slideshowCursorVisible === false) {
@@ -441,11 +614,28 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 slideshowCursorVisible = true;
             }
 
-            slideshowMouseTimer = setTimeout(disappearCursor, 5000);
+            slideshowMouseTimer = setTimeout(disappearCursor, 3000);
+
+            $("#infoAction").show();
+            infoTimer = setTimeout(function () {
+                $("#infoAction").fadeOut(1000);
+            }, 5000);
+            $("#nextSlide").show();
+            nextTimer = setTimeout(function () {
+                $("#nextSlide").fadeOut(1000);
+            }, 5000);
+            $("#prevSlide").show();
+            prevTimer = setTimeout(function () {
+                $("#prevSlide").fadeOut(1000);
+            }, 5000);
+            $("#closeAction").show();
+            closeTimer = setTimeout(function () {
+                $("#closeAction").fadeOut(1000);
+            }, 5000);
         }
     });
 
-    $("#mediaSrc").on("click", function (e) {
+    $("#mediaSrc, #playPause").on("click", function (e) {
         if ($("#slideshowGallery").css("display") === "block") {
             slideshowGalleryPlayPause();
         }
@@ -521,7 +711,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 $("#playPause").css("display", "block");
 
                 shashin.closeToastMessages({tags:["subhtml"]});
-                showInstruction();
+                // showInstruction();
             }
         });
     });
