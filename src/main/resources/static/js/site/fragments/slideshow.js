@@ -188,12 +188,12 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                     if (callback !== undefined && typeof callback === 'function') {
                         callback(true);
                     }
+
+                    $("#slideSpinner").hide();
                 });
             };
 
             tempImage.src = photoUrl;
-
-            $("#slideSpinner").hide();
         } else if (callback !== undefined && typeof callback === 'function') {
             callback(false);
 
