@@ -79,7 +79,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                     $("#playPause").css({
                         "font-size": "10rem",
                         "color": "#FFFFFF",
-                        "z-index": 99999,
+                        "z-index": 99998,
                         "max-width": $(window).innerWidth() + 1,
                         "height": "auto",
                         "max-height": $(window).innerHeight() + 1,
@@ -102,7 +102,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                     $("#prevSlide").css({
                         "font-size": "4rem",
                         "color": "#FFFFFF",
-                        "z-index": 99999,
+                        "z-index": 99998,
                         "position": "absolute",
                         "top": "46%",
                         "left": "2%"
@@ -111,7 +111,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                     $("#nextSlide").css({
                         "font-size": "4rem",
                         "color": "#FFFFFF",
-                        "z-index": 99999,
+                        "z-index": 99998,
                         "position": "absolute",
                         "top": "46%",
                         "right": "2%"
@@ -120,7 +120,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                     $("#closeAction").css({
                         "font-size": "4rem",
                         "color": "#FFFFFF",
-                        "z-index": 99999,
+                        "z-index": 99998,
                         "position": "absolute",
                         "top": "5px",
                         "right": "5px"
@@ -129,10 +129,19 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                     $("#infoAction").css({
                         "font-size": "2rem",
                         "color": "#FFFFFF",
-                        "z-index": 99999,
+                        "z-index": 99998,
                         "position": "absolute",
                         "top": "23px",
                         "right": "77px"
+                    });
+
+                    $("#slideSpinner").css({
+                        "font-size": "2rem",
+                        "color": "#FFFFFF",
+                        "z-index": 99998,
+                        "position": "absolute",
+                        "top": "23px",
+                        "right": "135px"
                     });
 
                     if (Util.isMobile() === false) {
@@ -183,7 +192,11 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             };
 
             tempImage.src = photoUrl;
+
+            $("#slideSpinner").hide();
         } else if (callback !== undefined && typeof callback === 'function') {
+            $("#slideSpinner").hide();
+
             callback(false);
         }
     }
@@ -197,7 +210,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
         document.body.style.overflow = 'visible';
 
-        $("#slideshowGallery").css({
+        $("#slideshowContainer").css({
             "display": "none"
         });
 
@@ -320,7 +333,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     $("body").on("dblclick", function (e) {
         e.preventDefault();
 
-        if (Util.isMobile() === true && $("#slideshowGallery").css("display") === "block") {
+        if (Util.isMobile() === true && $("#slideshowContainer").css("display") === "block") {
             if (document.exitFullscreen) {
                 document.exitFullscreen();
             } else if (document.documentElement.exitFullscreen) {
@@ -337,7 +350,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     });
 
     $("body").on("keyup", function (e) {
-        if ($("#slideshowGallery").css("display") === "block") {
+        if ($("#slideshowContainer").css("display") === "block") {
             if (e.key === "e" || e.code === "KeyE" || e.keyCode === 69) {
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
@@ -399,6 +412,9 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
             if (e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.keyCode === "37" || e.key === "ArrowRight" || e.code === "ArrowRight" || e.keyCode === "39") {
                 if (((e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.keyCode === "37") && slideshowCurrentIndex === 0) === false && slideshowProceed === true) {
+
+                    $("#slideSpinner").show();
+
                     if ((e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.keyCode === "37") && slideshowCurrentIndex > 0) {
                         slideshowCurrentIndex--;
                     } else if ((e.key === "ArrowRight" || e.code === "ArrowRight" || e.keyCode === "39") && slideshowCurrentIndex <= slideshowMetadataIds.length - 1) {
@@ -500,7 +516,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         }
     });
 
-    Util.detectSwipe("#slideshowGallery", function (direction) {
+    Util.detectSwipe("#slideshowContainer", function (direction) {
         if (direction === "up" || direction === "down") {
             if (direction === "up") {
                 if (shashin.hasToast(shashin.toast.placement.bottom.center,{tag: "slide"}) === false) {
@@ -544,7 +560,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     }
 
     $("body").on("mousemove", function () {
-        if (Util.isMobile() === false && $("#slideshowGallery").css("display") === "block") {
+        if (Util.isMobile() === false && $("#slideshowContainer").css("display") === "block") {
 
             if (slideshowMouseTimer) {
                 clearTimeout(slideshowMouseTimer);
@@ -590,7 +606,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     });
 
     $("#mediaSrc, #playPause").on("click", function (e) {
-        if ($("#slideshowGallery").css("display") === "block") {
+        if ($("#slideshowContainer").css("display") === "block") {
             slideshowGalleryPlayPause();
         }
     });
@@ -645,7 +661,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 $("#playPause").show();
                 $("#playPause").fadeOut(3000);
 
-                $("#slideshowGallery").css({
+                $("#slideshowContainer").css({
                     "width": "101%",
                     "height": "101%",
                     "display": "block",
