@@ -99,46 +99,46 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                         "transform": "translate(-50%, -50%)"
                     });
 
+                    $("#prevSlide").css({
+                        "font-size": "4rem",
+                        "color": "#FFFFFF",
+                        "z-index": 99999,
+                        "position": "absolute",
+                        "top": "47%",
+                        "left": "2%"
+                    });
+
+                    $("#nextSlide").css({
+                        "font-size": "4rem",
+                        "color": "#FFFFFF",
+                        "z-index": 99999,
+                        "position": "absolute",
+                        "top": "47%",
+                        "right": "2%"
+                    });
+
+                    $("#closeAction").css({
+                        "font-size": "4rem",
+                        "color": "#FFFFFF",
+                        "z-index": 99999,
+                        "position": "absolute",
+                        "top": "5px",
+                        "right": "5px"
+                    });
+
+                    $("#infoAction").css({
+                        "font-size": "2rem",
+                        "color": "#FFFFFF",
+                        "z-index": 99999,
+                        "position": "absolute",
+                        "top": "23px",
+                        "right": "77px"
+                    });
+
                     if (Util.isMobile() === false) {
                         $("#mediaInfo").css({
                             "max-width": ($(window).width() + 1),
                             "font-size": "1.7rem"
-                        });
-
-                        $("#prevSlide").css({
-                            "font-size": "4rem",
-                            "color": "#FFFFFF",
-                            "z-index": 99999,
-                            "position": "absolute",
-                            "top": "50%",
-                            "left": "2%"
-                        });
-
-                        $("#nextSlide").css({
-                            "font-size": "4rem",
-                            "color": "#FFFFFF",
-                            "z-index": 99999,
-                            "position": "absolute",
-                            "top": "50%",
-                            "right": "2%"
-                        });
-
-                        $("#closeAction").css({
-                            "font-size": "4rem",
-                            "color": "#FFFFFF",
-                            "z-index": 99999,
-                            "position": "absolute",
-                            "top": "2%",
-                            "right": "2%"
-                        });
-
-                        $("#infoAction").css({
-                            "font-size": "2rem",
-                            "color": "#FFFFFF",
-                            "z-index": 99999,
-                            "position": "absolute",
-                            "top": "3.6%",
-                            "right": "5.5%"
                         });
                     } else {
                         $("#mediaInfo").css({
@@ -544,8 +544,6 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     }
 
     $("body").on("mousemove", function () {
-
-
         if (Util.isMobile() === false && $("#slideshowGallery").css("display") === "block") {
 
             if (slideshowMouseTimer) {
@@ -558,37 +556,37 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             }
 
             slideshowMouseTimer = setTimeout(disappearCursor, 3000);
-
-            if (nextTimer) {
-                clearTimeout(nextTimer);
-            }
-            if (prevTimer) {
-                clearTimeout(prevTimer);
-            }
-            if (closeTimer) {
-                clearTimeout(closeTimer);
-            }
-            if (infoTimer) {
-                clearTimeout(infoTimer);
-            }
-
-            $("#infoAction").show();
-            infoTimer = setTimeout(function () {
-                $("#infoAction").fadeOut(1000);
-            }, 5000);
-            $("#nextSlide").show();
-            nextTimer = setTimeout(function () {
-                $("#nextSlide").fadeOut(1000);
-            }, 5000);
-            $("#prevSlide").show();
-            prevTimer = setTimeout(function () {
-                $("#prevSlide").fadeOut(1000);
-            }, 5000);
-            $("#closeAction").show();
-            closeTimer = setTimeout(function () {
-                $("#closeAction").fadeOut(1000);
-            }, 5000);
         }
+
+        if (nextTimer) {
+            clearTimeout(nextTimer);
+        }
+        if (prevTimer) {
+            clearTimeout(prevTimer);
+        }
+        if (closeTimer) {
+            clearTimeout(closeTimer);
+        }
+        if (infoTimer) {
+            clearTimeout(infoTimer);
+        }
+
+        $("#infoAction").show();
+        infoTimer = setTimeout(function () {
+            $("#infoAction").fadeOut(1000);
+        }, 5000);
+        $("#nextSlide").show();
+        nextTimer = setTimeout(function () {
+            $("#nextSlide").fadeOut(1000);
+        }, 5000);
+        $("#prevSlide").show();
+        prevTimer = setTimeout(function () {
+            $("#prevSlide").fadeOut(1000);
+        }, 5000);
+        $("#closeAction").show();
+        closeTimer = setTimeout(function () {
+            $("#closeAction").fadeOut(1000);
+        }, 5000);
     });
 
     $("#mediaSrc, #playPause").on("click", function (e) {
@@ -667,10 +665,6 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 $("#playPause").css("display", "block");
 
                 shashin.closeToastMessages({tags:["subhtml"]});
-
-                if (Util.isMobile()) {
-                    showInstruction();
-                }
             }
         });
     });
