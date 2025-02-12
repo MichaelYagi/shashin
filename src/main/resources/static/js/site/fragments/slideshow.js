@@ -436,6 +436,8 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                             }
                         }, (slideshowIsElapsed * 1000));
                     }
+                } else {
+                    return false;
                 }
             }
         }
@@ -475,6 +477,8 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
         if (slideshowCurrentIndex > 0 && slideshowProceed === true) {
             slideshowCurrentIndex--;
+        } else {
+            return false;
         }
 
         getSlideshowImage(function () {
@@ -499,8 +503,10 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
         $("#slideSpinner").show();
 
-        if (slideshowCurrentIndex <= slideshowMetadataIds.length - 1) {
+        if (slideshowCurrentIndex <= slideshowMetadataIds.length - 1 && slideshowProceed === true) {
             slideshowCurrentIndex++;
+        } else {
+            return false;
         }
 
         getSlideshowImage(function () {
@@ -534,6 +540,10 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         } else if (direction === "left" || direction === "right") {
             if ((direction === "right" && slideshowCurrentIndex === 0) === false && slideshowProceed === true) {
                 $("#slideSpinner").show();
+
+                if (slideshowProceed === false) {
+                    return false;
+                }
 
                 if (slideshowCurrentIndex > 0 && direction === "right") {
                     slideshowCurrentIndex--;
