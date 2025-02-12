@@ -104,7 +104,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                         "color": "#FFFFFF",
                         "z-index": 99999,
                         "position": "absolute",
-                        "top": "47%",
+                        "top": "46%",
                         "left": "2%"
                     });
 
@@ -113,7 +113,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                         "color": "#FFFFFF",
                         "z-index": 99999,
                         "position": "absolute",
-                        "top": "47%",
+                        "top": "46%",
                         "right": "2%"
                     });
 
