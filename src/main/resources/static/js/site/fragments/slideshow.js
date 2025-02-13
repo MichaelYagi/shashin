@@ -16,6 +16,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     let cjsc = null;
     let currentPhotoUrl = null;
     let currentMetadata = null;
+    let firstTime = true;
 
     function getSlideshowImage(callback) {
         const http = new Http("show slideshow");
@@ -71,8 +72,13 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 slideshowProceed = true;
             };
 
+            if (firstTime === true) {
+                waitingScreen();
+            }
+
             tempImage.onload = function () {
                 slideshowProceed = true;
+                firstTime = false;
 
                 $("#mediaSrc").fadeOut((slideshowStarted === false) ? 0 : 300, function () {
                     $("#mediaSrc").attr("src", photoUrl).fadeIn((slideshowStarted === false) ? 0 : 600);
@@ -209,6 +215,33 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
             $("#slideSpinner").hide();
         }
+    }
+
+    function waitingScreen() {
+        $("#slideshowContainer").css({
+            "width": "101%",
+            "height": "101%",
+            "display": "block",
+            "z-index": 9999,
+            "background-color": "#000000",
+            "overflow": "hidden"
+        });
+
+        $("#slideSpinner").css({
+            "font-size": "2rem",
+            "color": "#FFFFFF",
+            "z-index": 99998,
+            "position": "absolute",
+            "top": "23px",
+            "left": "2%"
+        });
+
+        $("#slideSpinner").show();
+        $("#infoAction").css("display", "none");
+        $("#shortcutAction").css("display", "none");
+        $("#nextSlide").css("display", "none");
+        $("#prevSlide").css("display", "none");
+        $("#closeAction").css("display", "none");
     }
 
     function exitSlideshowGallery() {
@@ -606,42 +639,44 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             slideshowMouseTimer = setTimeout(disappearCursor, 3000);
         }
 
-        if (nextTimer) {
-            clearTimeout(nextTimer);
-        }
-        if (prevTimer) {
-            clearTimeout(prevTimer);
-        }
-        if (closeTimer) {
-            clearTimeout(closeTimer);
-        }
-        if (shortcutTimer) {
-            clearTimeout(shortcutTimer);
-        }
-        if (infoTimer) {
-            clearTimeout(infoTimer);
-        }
+        if (firstTime === false || (slideshowProceed === true && firstTime === true)) {
+            if (nextTimer) {
+                clearTimeout(nextTimer);
+            }
+            if (prevTimer) {
+                clearTimeout(prevTimer);
+            }
+            if (closeTimer) {
+                clearTimeout(closeTimer);
+            }
+            if (shortcutTimer) {
+                clearTimeout(shortcutTimer);
+            }
+            if (infoTimer) {
+                clearTimeout(infoTimer);
+            }
 
-        $("#infoAction").show();
-        infoTimer = setTimeout(function () {
-            $("#infoAction").fadeOut(1000);
-        }, 5000);
-        $("#shortcutAction").show();
-        shortcutTimer = setTimeout(function () {
-            $("#shortcutAction").fadeOut(1000);
-        }, 5000);
-        $("#nextSlide").show();
-        nextTimer = setTimeout(function () {
-            $("#nextSlide").fadeOut(1000);
-        }, 5000);
-        $("#prevSlide").show();
-        prevTimer = setTimeout(function () {
-            $("#prevSlide").fadeOut(1000);
-        }, 5000);
-        $("#closeAction").show();
-        closeTimer = setTimeout(function () {
-            $("#closeAction").fadeOut(1000);
-        }, 5000);
+            $("#infoAction").show();
+            infoTimer = setTimeout(function () {
+                $("#infoAction").fadeOut(1000);
+            }, 5000);
+            $("#shortcutAction").show();
+            shortcutTimer = setTimeout(function () {
+                $("#shortcutAction").fadeOut(1000);
+            }, 5000);
+            $("#nextSlide").show();
+            nextTimer = setTimeout(function () {
+                $("#nextSlide").fadeOut(1000);
+            }, 5000);
+            $("#prevSlide").show();
+            prevTimer = setTimeout(function () {
+                $("#prevSlide").fadeOut(1000);
+            }, 5000);
+            $("#closeAction").show();
+            closeTimer = setTimeout(function () {
+                $("#closeAction").fadeOut(1000);
+            }, 5000);
+        }
     });
 
     $("#mediaSrc, #playPause").on("click", function (e) {
@@ -689,6 +724,8 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen();
         }
+
+        firstTime = true;
 
         slideshowIntervalId = window.setInterval(function () {
             if (slideshowIsPaused === false) {
