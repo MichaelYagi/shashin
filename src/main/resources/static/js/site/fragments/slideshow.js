@@ -222,8 +222,6 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     }
 
     function showControls() {
-        document.body.style.cursor = "default";
-
         if ($("#closeAction,#infoAction,#shortcutAction,#nextSlide,#prevSlide").is(":hidden")) {
             if (nextTimer) {
                 clearTimeout(nextTimer);
@@ -241,6 +239,10 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 clearTimeout(infoTimer);
             }
 
+            document.body.style.cursor = "default";
+            infoTimer = setTimeout(function () {
+                disappearCursor();
+            }, 5000);
             $("#infoAction").show();
             infoTimer = setTimeout(function () {
                 $("#infoAction").fadeOut(1000);
