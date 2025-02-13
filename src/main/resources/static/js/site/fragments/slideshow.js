@@ -77,6 +77,10 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             }
 
             tempImage.onload = function () {
+                if (firstTime === true) {
+                    showControls();
+                }
+
                 slideshowProceed = true;
                 firstTime = false;
 
@@ -214,6 +218,49 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             callback(false);
 
             $("#slideSpinner").hide();
+        }
+    }
+
+    function showControls() {
+        document.body.style.cursor = "default";
+
+        if ($("#closeAction,#infoAction,#shortcutAction,#nextSlide,#prevSlide").is(":hidden")) {
+            if (nextTimer) {
+                clearTimeout(nextTimer);
+            }
+            if (prevTimer) {
+                clearTimeout(prevTimer);
+            }
+            if (closeTimer) {
+                clearTimeout(closeTimer);
+            }
+            if (shortcutTimer) {
+                clearTimeout(shortcutTimer);
+            }
+            if (infoTimer) {
+                clearTimeout(infoTimer);
+            }
+
+            $("#infoAction").show();
+            infoTimer = setTimeout(function () {
+                $("#infoAction").fadeOut(1000);
+            }, 5000);
+            $("#shortcutAction").show();
+            shortcutTimer = setTimeout(function () {
+                $("#shortcutAction").fadeOut(1000);
+            }, 5000);
+            $("#nextSlide").show();
+            nextTimer = setTimeout(function () {
+                $("#nextSlide").fadeOut(1000);
+            }, 5000);
+            $("#prevSlide").show();
+            prevTimer = setTimeout(function () {
+                $("#prevSlide").fadeOut(1000);
+            }, 5000);
+            $("#closeAction").show();
+            closeTimer = setTimeout(function () {
+                $("#closeAction").fadeOut(1000);
+            }, 5000);
         }
     }
 
@@ -391,6 +438,8 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             }
         }
     });
+
+
 
     $("body").on("keyup", function (e) {
         if ($("#slideshowContainer").css("display") === "block") {
@@ -624,6 +673,10 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         slideshowCursorVisible = false;
     }
 
+    $("#slideshowContainer").on("click", function () {
+        showControls();
+    });
+
     $("body").on("mousemove", function () {
         if (Util.isMobile() === false && $("#slideshowContainer").css("display") === "block") {
 
@@ -640,42 +693,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         }
 
         if (firstTime === false || (slideshowProceed === true && firstTime === true)) {
-            if (nextTimer) {
-                clearTimeout(nextTimer);
-            }
-            if (prevTimer) {
-                clearTimeout(prevTimer);
-            }
-            if (closeTimer) {
-                clearTimeout(closeTimer);
-            }
-            if (shortcutTimer) {
-                clearTimeout(shortcutTimer);
-            }
-            if (infoTimer) {
-                clearTimeout(infoTimer);
-            }
-
-            $("#infoAction").show();
-            infoTimer = setTimeout(function () {
-                $("#infoAction").fadeOut(1000);
-            }, 5000);
-            $("#shortcutAction").show();
-            shortcutTimer = setTimeout(function () {
-                $("#shortcutAction").fadeOut(1000);
-            }, 5000);
-            $("#nextSlide").show();
-            nextTimer = setTimeout(function () {
-                $("#nextSlide").fadeOut(1000);
-            }, 5000);
-            $("#prevSlide").show();
-            prevTimer = setTimeout(function () {
-                $("#prevSlide").fadeOut(1000);
-            }, 5000);
-            $("#closeAction").show();
-            closeTimer = setTimeout(function () {
-                $("#closeAction").fadeOut(1000);
-            }, 5000);
+            showControls();
         }
     });
 
