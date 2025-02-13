@@ -281,7 +281,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         if (Util.isMobile() === false) {
             message = "<div class='container'>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>d</strong></span></div><div class='col-9'>Show/close this window</div></div>" +
-                "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>e</strong></span></div><div class='col-9'>Exit slideshow.</div></div>" +
+                "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>x</strong></span></div><div class='col-9'>Exit slideshow.</div></div>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>Space</strong></span></div><div class='col-9'>Play/pause</div></div>" +
                 "<span id='castKey' style='display: none;'><div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>c</strong></span></div><div class='col-9'>Start/stop casting</div></div></span>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>i</strong></span></div><div class='col-9'>Slide info</div></div>" +
@@ -361,7 +361,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
     $("body").on("keyup", function (e) {
         if ($("#slideshowContainer").css("display") === "block") {
-            if (e.key === "e" || e.code === "KeyE" || e.keyCode === 69) {
+            if (e.key === "x" || e.code === "KeyX" || e.keyCode === 88) {
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
                 } else if (document.documentElement.exitFullscreen) {
