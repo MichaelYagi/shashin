@@ -361,7 +361,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
     $("body").on("keyup", function (e) {
         if ($("#slideshowContainer").css("display") === "block") {
-            if (e.key === "x" || e.code === "KeyX" || e.keyCode === 88) {
+            if (e.key === "x" || e.code === "KeyX" || e.which === 88 || e.keyCode === 88) {
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
                 } else if (document.documentElement.exitFullscreen) {
@@ -377,17 +377,17 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             }
 
             // Pause/play slideshow
-            if (e.key === " " || e.code === "Space" || e.keyCode === 32) {
+            if (e.key === " " || e.code === "Space" || e.which === 32 || e.keyCode === 32) {
                 slideshowGalleryPlayPause();
             }
 
             // Show info
-            if (e.key === "i" || e.code === "KeyI" || e.keyCode === 73) {
+            if (e.key === "i" || e.code === "KeyI" || e.which === 73 || e.keyCode === 73) {
                 slideshowInfo();
             }
 
             // Cast slideshow
-            if (e.key === "c" || e.code === "KeyC" || e.keyCode === 67) {
+            if (e.key === "c" || e.code === "KeyC" || e.which === 67 || e.keyCode === 67) {
                 if (cjsc !== null && cjsc.available) {
                     if ($("#toggleCastIcon").hasClass('bi-cast')) {
                         if (currentPhotoUrl !== null) {
@@ -412,7 +412,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             }
 
             // Show key binding toast
-            if (e.key === "d" || e.code === "KeyD" || e.keyCode === 68) {
+            if (e.key === "d" || e.code === "KeyD" || e.which === 68 || e.keyCode === 68) {
                 if (shashin.hasToast(shashin.toast.placement.bottom.center,{tag: "slide"}) === false) {
                     showInstruction();
                 } else {
@@ -420,14 +420,14 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 }
             }
 
-            if (e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.keyCode === "37" || e.key === "ArrowRight" || e.code === "ArrowRight" || e.keyCode === "39") {
-                if (((e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.keyCode === "37") && slideshowCurrentIndex === 0) === false && slideshowProceed === true) {
+            if (e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.which === 37 || e.keyCode === 37 || e.key === "ArrowRight" || e.code === "ArrowRight" || e.which === 39 || e.keyCode === 39) {
+                if (((e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.which === 37 || e.keyCode === 37) && slideshowCurrentIndex === 0) === false && slideshowProceed === true) {
 
                     $("#slideSpinner").show();
 
-                    if ((e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.keyCode === "37") && slideshowCurrentIndex > 0) {
+                    if ((e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.which === 37 || e.keyCode === 37) && slideshowCurrentIndex > 0) {
                         slideshowCurrentIndex--;
-                    } else if ((e.key === "ArrowRight" || e.code === "ArrowRight" || e.keyCode === "39") && slideshowCurrentIndex <= slideshowMetadataIds.length - 1) {
+                    } else if ((e.key === "ArrowRight" || e.code === "ArrowRight" || e.which === 39 || e.keyCode === 39) && slideshowCurrentIndex <= slideshowMetadataIds.length - 1) {
                         slideshowCurrentIndex++;
                     }
 
