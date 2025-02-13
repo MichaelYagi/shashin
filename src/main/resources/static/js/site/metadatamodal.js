@@ -96,7 +96,7 @@ $("#saveMetadata").on("click", async function (e) {
 });
 
 $("#propMetadata").on("keydown", async function (e) {
-    if (e.keyCode === 13) {
+    if (e.key === "Enter" || e.code === "Enter" || e.which === 13 || e.keyCode === 13) {
         await saveMetadata(e);
     }
 });

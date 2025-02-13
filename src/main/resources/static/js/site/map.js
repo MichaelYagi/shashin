@@ -1183,9 +1183,8 @@ async function showMap(mapdata, keywordMap) {
         filterClicked();
     });
 
-    $('#propMapFilter').on('keypress', function (event) {
-        const keycode = (event.keyCode ? event.keyCode : event.which);
-        if (keycode === '13' || keycode === 13) {
+    $('#propMapFilter').on('keypress', function (e) {
+        if (e.key === "Enter" || e.code === "Enter" || e.which === 13 || e.keyCode === 13) {
             filterClicked();
         }
     });
@@ -1473,7 +1472,7 @@ async function showMap(mapdata, keywordMap) {
     // Focus control on modal instead of gallery
     $("#propMetadata").on('keydown', function(e) {
         // left arrow
-        if (e.keyCode === 37) {
+        if (e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.which === 37 || e.keyCode === 37) {
             e.stopPropagation();
             e.currentTarget.setSelectionRange(
                 e.currentTarget.selectionStart,
@@ -1484,7 +1483,7 @@ async function showMap(mapdata, keywordMap) {
         }
 
         // right arrow
-        if (e.keyCode === 39) {
+        if (e.key === "ArrowRight" || e.code === "ArrowRight" || e.which === 39 || e.keyCode === 39) {
             e.stopPropagation();
             e.currentTarget.setSelectionRange(
                 e.currentTarget.selectionStart,
@@ -1495,7 +1494,7 @@ async function showMap(mapdata, keywordMap) {
         }
 
         // escape
-        if (e.keyCode === 27) {
+        if (e.key === "Escape" || e.code === "Escape" || e.which === 27 || e.keyCode === 27) {
             e.stopPropagation();
             const bsModalEl = document.getElementById('propMetadata');
             const bsModal = bootstrap.Modal.getInstance(bsModalEl);
