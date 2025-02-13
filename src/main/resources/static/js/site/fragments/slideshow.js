@@ -261,7 +261,6 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
     $("#closeAction,#infoAction,#shortcutAction,#nextSlide,#prevSlide").on("mouseleave", function (e) {
         e.preventDefault();
-        console.log("testzzz1")
 
         setTimeout(function () {
             let hovered = $("#slideshowContainer").find("#closeAction:hover,#infoAction:hover,#shortcutAction:hover,#nextSlide:hover,#prevSlide:hover").length;
