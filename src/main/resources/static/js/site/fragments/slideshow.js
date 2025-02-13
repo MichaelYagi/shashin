@@ -224,6 +224,59 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         }
     }
 
+    $("#closeAction,#infoAction,#shortcutAction,#nextSlide,#prevSlide").on("mouseenter", function (e) {
+        e.preventDefault();
+
+        if (nextTimer) {
+            clearTimeout(nextTimer);
+        }
+        if (prevTimer) {
+            clearTimeout(prevTimer);
+        }
+        if (closeTimer) {
+            clearTimeout(closeTimer);
+        }
+        if (shortcutTimer) {
+            clearTimeout(shortcutTimer);
+        }
+        if (infoTimer) {
+            clearTimeout(infoTimer);
+        }
+
+        if (slideshowMouseTimer) {
+            clearTimeout(slideshowMouseTimer);
+        }
+
+        if (slideshowCursorVisible === false) {
+            document.body.style.cursor = "default";
+            slideshowCursorVisible = true;
+        }
+
+        $("#infoAction").show();
+        $("#shortcutAction").show();
+        $("#nextSlide").show();
+        $("#prevSlide").show();
+        $("#closeAction").show();
+    });
+
+    $("#closeAction,#infoAction,#shortcutAction,#nextSlide,#prevSlide").on("mouseleave", function (e) {
+        e.preventDefault();
+        console.log("testzzz1")
+
+        setTimeout(function () {
+            let hovered = $("#slideshowContainer").find("#closeAction:hover,#infoAction:hover,#shortcutAction:hover,#nextSlide:hover,#prevSlide:hover").length;
+
+            if (hovered === 0) {
+                $("#infoAction").fadeOut(fadeOutTime);
+                $("#shortcutAction").fadeOut(fadeOutTime);
+                $("#nextSlide").fadeOut(fadeOutTime);
+                $("#prevSlide").fadeOut(fadeOutTime);
+                $("#closeAction").fadeOut(fadeOutTime);
+            }
+        }, hideTime);
+
+    });
+
     function showControls() {
         if ($("#closeAction,#infoAction,#shortcutAction,#nextSlide,#prevSlide").is(":hidden")) {
             if (nextTimer) {
