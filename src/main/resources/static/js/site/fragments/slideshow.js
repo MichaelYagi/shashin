@@ -12,12 +12,14 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     let infoTimer = null;
     let shortcutTimer = null;
     let screenTimer = null;
+    let downloadTimer = null;
     let slideshowCursorVisible = true;
     let slideshowProceed = true;
     let cjsc = null;
     let currentPhotoUrl = null;
     let currentMetadata = null;
     let firstTime = true;
+    let isFileDialogOpened = false;
     const hideTime = 5000;
     const playPauseHideTime = 3000;
     const fadeOutTime = 1000;
@@ -57,6 +59,9 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
             currentPhotoUrl = photoUrl;
             currentMetadata = data.metadata;
+
+            // const downloadUrl = "/api/v1/image/"+data.metadata.id+"/download";
+            // $("#downloadActionButton").attr("href",downloadUrl);
 
             if (cjsc !== null && cjsc.available && cjsc.connected) {
                 const cjscMetadata = {
@@ -170,6 +175,15 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                         });
                     }
 
+                    $("#downloadAction").css({
+                        "font-size": "2rem",
+                        "color": "#FFFFFF",
+                        "z-index": 99998,
+                        "position": "absolute",
+                        "top": "23px",
+                        "right": "251px"
+                    });
+
                     $("#slideSpinner").css({
                         "font-size": "2rem",
                         "color": "#FFFFFF",
@@ -236,7 +250,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         }
     }
 
-    $("#closeAction,#infoAction,#shortcutAction,#nextSlide,#prevSlide,#screenAction").on("mouseenter", function (e) {
+    $("#closeAction,#infoAction,#shortcutAction,#nextSlide,#prevSlide,#screenAction,#downloadAction").on("mouseenter", function (e) {
         e.preventDefault();
 
         if (nextTimer) {
@@ -253,6 +267,9 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         }
         if (document.fullscreenEnabled && screenTimer) {
             clearTimeout(screenTimer);
+        }
+        if (downloadTimer) {
+            clearTimeout(downloadTimer);
         }
         if (infoTimer) {
             clearTimeout(infoTimer);
@@ -275,17 +292,19 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         if (document.fullscreenEnabled) {
             $("#screenAction").show();
         }
+        $("#downloadAction").show();
     });
 
-    $("#closeAction,#infoAction,#shortcutAction,#nextSlide,#prevSlide,#screenAction").on("mouseleave", function (e) {
+    $("#closeAction,#infoAction,#shortcutAction,#nextSlide,#prevSlide,#screenAction,#downloadAction").on("mouseleave", function (e) {
         e.preventDefault();
 
         setTimeout(function () {
-            let hovered = $("#slideshowContainer").find("#closeAction:hover,#infoAction:hover,#shortcutAction:hover,#nextSlide:hover,#prevSlide:hover,#screenAction:hover").length;
+            let hovered = $("#slideshowContainer").find("#closeAction:hover,#infoAction:hover,#shortcutAction:hover,#nextSlide:hover,#prevSlide:hover,#screenAction:hover,#downloadAction:hover").length;
 
             if (hovered === 0) {
                 $("#infoAction").fadeOut(fadeOutTime);
                 $("#screenAction").fadeOut(fadeOutTime);
+                $("#downloadAction").fadeOut(fadeOutTime);
                 $("#shortcutAction").fadeOut(fadeOutTime);
                 $("#nextSlide").fadeOut(fadeOutTime);
                 $("#prevSlide").fadeOut(fadeOutTime);
@@ -296,7 +315,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     });
 
     function showControls() {
-        if ($("#closeAction,#infoAction,#shortcutAction,#nextSlide,#prevSlide,#screenAction").is(":hidden")) {
+        if ($("#closeAction,#infoAction,#shortcutAction,#nextSlide,#prevSlide,#screenAction,#downloadAction").is(":hidden")) {
             if (nextTimer) {
                 clearTimeout(nextTimer);
             }
@@ -308,6 +327,9 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             }
             if (screenTimer) {
                 clearTimeout(screenTimer);
+            }
+            if (downloadTimer) {
+                clearTimeout(downloadTimer);
             }
             if (shortcutTimer) {
                 clearTimeout(shortcutTimer);
@@ -337,6 +359,10 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                     $("#screenAction").fadeOut(fadeOutTime);
                 }, hideTime);
             }
+            $("#downloadAction").show();
+            downloadTimer = setTimeout(function () {
+                $("#downloadAction").fadeOut(fadeOutTime);
+            }, hideTime);
             $("#shortcutAction").show();
             shortcutTimer = setTimeout(function () {
                 $("#shortcutAction").fadeOut(fadeOutTime);
@@ -378,6 +404,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         $("#slideSpinner").show();
         $("#infoAction").css("display", "none");
         $("#screenAction").css("display", "none");
+        $("#downloadAction").css("display", "none");
         $("#shortcutAction").css("display", "none");
         $("#nextSlide").css("display", "none");
         $("#prevSlide").css("display", "none");
@@ -522,6 +549,34 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             cjsc.disconnect();
         }
     }
+
+    $("#downloadContainer").on("click", function (e) {
+        e.preventDefault();
+
+        if (currentMetadata !== null) {
+            if ($("#playPause").hasClass("bi-play-circle")) {
+                slideshowGalleryPlayPause();
+            }
+
+            const downloadUrl = "/api/v1/image/"+currentMetadata.id+"/download";
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = downloadUrl.split('/').pop();
+            document.body.appendChild(a);
+            a.click();
+            isFileDialogOpened = true;
+            document.body.removeChild(a);
+        }
+    });
+
+    $(window).on('focus', function () {
+        if (isFileDialogOpened) {
+            isFileDialogOpened = false;
+            if ($("#playPause").hasClass("bi-pause-circle")) {
+                slideshowGalleryPlayPause();
+            }
+        }
+    });
 
     $("body").on("dblclick", function (e) {
         e.preventDefault();
