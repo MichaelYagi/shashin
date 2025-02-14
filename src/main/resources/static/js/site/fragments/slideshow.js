@@ -833,12 +833,14 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         slideshowMouseTimer = null;
         document.documentElement.style.cursor = "none";
         document.getElementById("mediaSrc").style.cursor = "none";
+        document.getElementById("playPause").style.cursor = "none";
         slideshowCursorVisible = false;
     }
 
     function showCursor() {
         document.documentElement.style.cursor = "default";
-        document.getElementById("mediaSrc").style.cursor = "default";
+        document.getElementById("mediaSrc").style.cursor = "pointer";
+        document.getElementById("playPause").style.cursor = "pointer";
     }
 
     $("#slideshowContainer").on("click", function () {
