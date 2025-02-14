@@ -586,6 +586,20 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         }
     });
 
+    // Check for entering/leaving fullscreen
+    $(window).on("resize", function () {
+        const maxHeight = window.screen.height,
+            maxWidth = window.screen.width,
+            curHeight = window.innerHeight,
+            curWidth = window.innerWidth;
+
+        if (maxWidth === curWidth && maxHeight === curHeight) {
+            $("#screenAction").removeClass("bi-fullscreen").addClass("bi-fullscreen-exit");
+        } else {
+            $("#screenAction").removeClass("bi-fullscreen-exit").addClass("bi-fullscreen");
+        }
+    });
+
     $("body").on("keyup", function (e) {
         if ($("#slideshowContainer").css("display") === "block") {
 
