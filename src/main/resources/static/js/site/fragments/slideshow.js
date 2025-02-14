@@ -11,6 +11,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     let prevTimer = null;
     let infoTimer = null;
     let shortcutTimer = null;
+    let screenTimer = null;
     let slideshowCursorVisible = true;
     let slideshowProceed = true;
     let cjsc = null;
@@ -158,6 +159,17 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                         "right": "135px"
                     });
 
+                    if (document.fullscreenEnabled) {
+                        $("#screenAction").css({
+                            "font-size": "2rem",
+                            "color": "#FFFFFF",
+                            "z-index": 99998,
+                            "position": "absolute",
+                            "top": "23px",
+                            "right": "193px"
+                        });
+                    }
+
                     $("#slideSpinner").css({
                         "font-size": "2rem",
                         "color": "#FFFFFF",
@@ -224,7 +236,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         }
     }
 
-    $("#closeAction,#infoAction,#shortcutAction,#nextSlide,#prevSlide").on("mouseenter", function (e) {
+    $("#closeAction,#infoAction,#shortcutAction,#nextSlide,#prevSlide,#screenAction").on("mouseenter", function (e) {
         e.preventDefault();
 
         if (nextTimer) {
@@ -238,6 +250,9 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         }
         if (shortcutTimer) {
             clearTimeout(shortcutTimer);
+        }
+        if (document.fullscreenEnabled && screenTimer) {
+            clearTimeout(screenTimer);
         }
         if (infoTimer) {
             clearTimeout(infoTimer);
@@ -257,16 +272,20 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         $("#nextSlide").show();
         $("#prevSlide").show();
         $("#closeAction").show();
+        if (document.fullscreenEnabled) {
+            $("#screenAction").show();
+        }
     });
 
-    $("#closeAction,#infoAction,#shortcutAction,#nextSlide,#prevSlide").on("mouseleave", function (e) {
+    $("#closeAction,#infoAction,#shortcutAction,#nextSlide,#prevSlide,#screenAction").on("mouseleave", function (e) {
         e.preventDefault();
 
         setTimeout(function () {
-            let hovered = $("#slideshowContainer").find("#closeAction:hover,#infoAction:hover,#shortcutAction:hover,#nextSlide:hover,#prevSlide:hover").length;
+            let hovered = $("#slideshowContainer").find("#closeAction:hover,#infoAction:hover,#shortcutAction:hover,#nextSlide:hover,#prevSlide:hover,#screenAction:hover").length;
 
             if (hovered === 0) {
                 $("#infoAction").fadeOut(fadeOutTime);
+                $("#screenAction").fadeOut(fadeOutTime);
                 $("#shortcutAction").fadeOut(fadeOutTime);
                 $("#nextSlide").fadeOut(fadeOutTime);
                 $("#prevSlide").fadeOut(fadeOutTime);
@@ -277,7 +296,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     });
 
     function showControls() {
-        if ($("#closeAction,#infoAction,#shortcutAction,#nextSlide,#prevSlide").is(":hidden")) {
+        if ($("#closeAction,#infoAction,#shortcutAction,#nextSlide,#prevSlide,#screenAction").is(":hidden")) {
             if (nextTimer) {
                 clearTimeout(nextTimer);
             }
@@ -286,6 +305,9 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             }
             if (closeTimer) {
                 clearTimeout(closeTimer);
+            }
+            if (screenTimer) {
+                clearTimeout(screenTimer);
             }
             if (shortcutTimer) {
                 clearTimeout(shortcutTimer);
@@ -309,6 +331,12 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             infoTimer = setTimeout(function () {
                 $("#infoAction").fadeOut(fadeOutTime);
             }, hideTime);
+            if (document.fullscreenEnabled) {
+                $("#screenAction").show();
+                screenTimer = setTimeout(function () {
+                    $("#screenAction").fadeOut(fadeOutTime);
+                }, hideTime);
+            }
             $("#shortcutAction").show();
             shortcutTimer = setTimeout(function () {
                 $("#shortcutAction").fadeOut(fadeOutTime);
@@ -349,6 +377,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
         $("#slideSpinner").show();
         $("#infoAction").css("display", "none");
+        $("#screenAction").css("display", "none");
         $("#shortcutAction").css("display", "none");
         $("#nextSlide").css("display", "none");
         $("#prevSlide").css("display", "none");
@@ -479,7 +508,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     }
 
     function exitSlideshow() {
-        if (document.fullscreenElement !== null && document.exitFullscreen) {
+        if (document.fullscreenEnabled && document.fullscreenElement !== null && document.exitFullscreen) {
             document.exitFullscreen();
             if (document.exitFullscreen) {
                 document.exitFullscreen();
@@ -589,6 +618,19 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                     return false;
                 }
             }
+        }
+    });
+
+    $("#screenActionButton").on("click", function (e) {
+        e.preventDefault();
+
+        // If fullscreen, show bi-fullscreen-exit, else bi-fullscreen
+        if (document.fullscreenElement !== null && document.exitFullscreen) {
+            document.exitFullscreen();
+            $("#screenAction").removeClass("bi-fullscreen-exit").addClass("bi-fullscreen");
+        } else if (document.fullscreenElement === null && document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+            $("#screenAction").addClass("bi-fullscreen-exit").removeClass("bi-fullscreen");
         }
     });
 
@@ -781,6 +823,10 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             $("#shortcutAction").addClass("bi-hand-index").removeClass("bi-keyboard");
         } else {
             $("#shortcutAction").addClass("bi-keyboard").removeClass("bi-hand-index");
+        }
+
+        if (document.fullscreenEnabled) {
+            $("#screenAction").addClass("bi-fullscreen-exit").removeClass("bi-fullscreen");
         }
 
         document.body.style.overflow = 'hidden';
