@@ -356,10 +356,8 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     }
 
     function exitSlideshowGallery() {
-        if (document.exitFullscreen) {
+        if (document.fullscreenElement !== null && document.exitFullscreen) {
             document.exitFullscreen();
-        } else if (document.documentElement.exitFullscreen) {
-            document.documentElement.exitFullscreen();
         }
 
         document.body.style.overflow = 'visible';
@@ -488,10 +486,8 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         e.preventDefault();
 
         if (Util.isMobile() === true && $("#slideshowContainer").css("display") === "block") {
-            if (document.exitFullscreen) {
+            if (document.fullscreenElement !== null && document.exitFullscreen) {
                 document.exitFullscreen();
-            } else if (document.documentElement.exitFullscreen) {
-                document.documentElement.exitFullscreen();
             }
 
             $("#mediaInfo").css("display", "none");
@@ -503,15 +499,28 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         }
     });
 
-
-
     $("body").on("keyup", function (e) {
         if ($("#slideshowContainer").css("display") === "block") {
-            if (e.key === "x" || e.code === "KeyX" || e.which === 88 || e.keyCode === 88) {
-                if (document.exitFullscreen) {
+
+            if (e.key === "Escape" || e.code === "Escape" || e.which === 27 || e.keyCode === 27) {
+                document.body.style.overflow = 'visible';
+
+                if (document.fullscreenElement !== null && document.exitFullscreen) {
                     document.exitFullscreen();
-                } else if (document.documentElement.exitFullscreen) {
-                    document.documentElement.exitFullscreen();
+                }
+
+                $("#mediaInfo").css("display", "none");
+                exitSlideshowGallery();
+                shashin.closeToastMessages({tag: "slide"});
+                if (cjsc !== null && cjsc.available) {
+                    cjsc.disconnect();
+                }
+            }
+
+            if (e.key === "x" || e.code === "KeyX" || e.which === 88 || e.keyCode === 88) {
+
+                if (document.fullscreenElement !== null && document.exitFullscreen) {
+                    document.exitFullscreen();
                 }
 
                 $("#mediaInfo").css("display", "none");
@@ -612,10 +621,8 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     $("#closeActionButton").on("click", function (e) {
         e.preventDefault();
 
-        if (document.exitFullscreen) {
+        if (document.fullscreenElement !== null && document.exitFullscreen) {
             document.exitFullscreen();
-        } else if (document.documentElement.exitFullscreen) {
-            document.documentElement.exitFullscreen();
         }
 
         $("#mediaInfo").css("display", "none");
