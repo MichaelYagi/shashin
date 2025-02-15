@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import net.iakovlev.timeshape.TimeZoneEngine
 import org.springdoc.core.annotations.RouterOperation
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.CacheControl
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import java.lang.management.ManagementFactory
 import java.net.*
 import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.time.*
 import java.time.format.DateTimeFormatter
@@ -117,6 +119,7 @@ class TextUtils {
             seriesExpiryMap["token"] = ""
             seriesExpiryMap["series"] = ""
             seriesExpiryMap["expires"] = ""
+            seriesExpiryMap["cookieValue"] = ""
 
             val cookieArray = cookie.split("; ")
             for (keyValue in cookieArray) {
@@ -129,6 +132,7 @@ class TextUtils {
                 }
 
                 if (key.lowercase() == "remember-me" && value.isNotEmpty()) {
+                    seriesExpiryMap["cookieValue"] = value
                     seriesExpiryMap["token"] = decodePersistenceToken(value)
                     seriesExpiryMap["series"] = decodePersistenceSeries(value)
                 }
@@ -142,42 +146,51 @@ class TextUtils {
             return seriesExpiryMap
         }
 
-        fun checkValidRememberMeToken(requestCookie: String?, userRepository: UserRepository?): Boolean {
+        fun checkValidRememberMeToken(requestCookie: String?, rememberMeKey: String, userRepository: UserRepository?): Boolean {
             if (requestCookie != null) {
                 val seriesExpiryMap = parseRememberMeCookie(requestCookie)
-                var parsedUsername = ""
-                var parsedExpiry = 0L
-                if (seriesExpiryMap.isNotEmpty()) {
-                    if (seriesExpiryMap["token"].toString() != "") {
-                        parsedUsername = seriesExpiryMap["token"].toString()
-                    }
-                    if (seriesExpiryMap["series"].toString() != "") {
-                        parsedExpiry = seriesExpiryMap["series"].toString().toLong()
-                    }
-                }
+                var cookieValue = seriesExpiryMap["cookieValue"]
+                var username = seriesExpiryMap["token"]
+                val series = seriesExpiryMap["series"]
+                var timeStamp = if (series != null && series != "") series.toLong() else 0L
+                var verifiedCookieValue = ""
 
-                var userExists = false
-
-                if (parsedUsername != "") {
-                    val user = userRepository?.findByUsername(parsedUsername)
+                if (cookieValue != "" && username != "") {
+                    val user = userRepository?.findByUsername(username)
                     if (user != null && user.getId() > 0) {
-                        userExists = true
+                        verifiedCookieValue = verifyPersistenceToken(username.toString(), timeStamp.toString(), user.getPassword().toString(), rememberMeKey.toString())
                     }
                 }
 
                 val now = Instant.now().toEpochMilli()
 
-                return userExists && parsedExpiry != 0L && parsedExpiry > now
+                return verifiedCookieValue != "" && cookieValue == verifiedCookieValue && timeStamp != 0L && timeStamp > now
             }
 
             return false
         }
 
-        fun createPersistenceToken(token: String,series: String): String {
-            if (token.isNotBlank() && series.isNotBlank()) {
-                val tokenSeries = "$token:$series"
-                val encodedTokenSeries = URLEncoder.encode(tokenSeries, StandardCharsets.UTF_8.toString())
-                return String(Base64.getEncoder().encode(encodedTokenSeries.toByteArray()))
+        // See https://docs.spring.io/spring-security/reference/servlet/authentication/rememberme.html
+        fun verifyPersistenceToken(token: String,series: String,hashedPassword: String,rememberKey: String): String {
+            if (token.isNotBlank() && series.isNotBlank() && hashedPassword.isNotBlank() && rememberKey.isNotBlank()) {
+                val tokenSignature = "$token:$series:$hashedPassword:$rememberKey"
+                val digest = MessageDigest.getInstance("SHA-256")
+
+                // Perform the hash computation
+                val encodedHash = digest.digest(tokenSignature.toByteArray())
+
+                // Convert byte array into a hexadecimal string
+                val hexString = StringBuilder()
+                for (b in encodedHash) {
+                    val hex = String.format("%02x", b)
+                    hexString.append(hex)
+                }
+                val tokenSeries = "$token:$series:SHA256:$hexString"
+                var encodedSeries = String(Base64.getEncoder().encode(tokenSeries.toByteArray()))
+                if (encodedSeries.substring(encodedSeries.length - 2) == "==") {
+                    encodedSeries = encodedSeries.substring(0, encodedSeries.length - 2)
+                }
+                return encodedSeries
             }
 
             return ""

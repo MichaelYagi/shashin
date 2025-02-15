@@ -14,6 +14,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.access.annotation.Secured
 
 @Controller
@@ -21,6 +22,9 @@ class ArticlesController {
 
     @Autowired
     private lateinit var userRepository: UserRepository
+
+    @Value("\${app.rememberme.key}")
+    private var rememberMeKey: String? = null
 
     @RequestMapping(value = ["/articles","/articles/quickstart"], method = [RequestMethod.GET])
     fun getQuickstart(model: Model, request: HttpServletRequest): String {
@@ -30,7 +34,7 @@ class ArticlesController {
         val currentUserObj = model.getAttribute("currentUser") as User?
         val sessionUser = request.session.getAttribute("CurrentUser") as User?
 
-        if ((currentUserObj != null && currentUserObj.getIsAuthorized() == true) || (sessionUser != null && sessionUser.getIsAuthorized() == true || TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"), userRepository))) {
+        if ((currentUserObj != null && currentUserObj.getIsAuthorized() == true) || (sessionUser != null && sessionUser.getIsAuthorized() == true || TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"), rememberMeKey.toString(), userRepository))) {
             model["loggedIn"] = true
         }
 
@@ -50,7 +54,7 @@ class ArticlesController {
         val currentUserObj = model.getAttribute("currentUser") as User?
         val sessionUser = request.session.getAttribute("CurrentUser") as User?
 
-        if ((currentUserObj != null && currentUserObj.getIsAuthorized() == true) || (sessionUser != null && sessionUser.getIsAuthorized() == true) || TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"), userRepository)) {
+        if ((currentUserObj != null && currentUserObj.getIsAuthorized() == true) || (sessionUser != null && sessionUser.getIsAuthorized() == true) || TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"), rememberMeKey.toString(), userRepository)) {
             model["loggedIn"] = true
         }
 

@@ -8,16 +8,19 @@ import org.json.JSONObject
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.test.context.ActiveProfiles
 import java.time.LocalTime
 
 @SpringBootTest
 @ActiveProfiles("test")
 class TextUtilsTest {
+    var bcrypt = BCryptPasswordEncoder()
 
-    @Autowired
-    private val userRepository: UserRepository? = null
+    @Value("\${app.rememberme.key}")
+    private var rememberMeKey: String? = null
 
     @Test
     fun isLocalIpTest() {
@@ -46,7 +49,7 @@ class TextUtilsTest {
         Assertions.assertFalse(isLocal)
     }
 
-    // See https://docs.spring.io/spring-security/reference/servlet/authentication/rememberme.html
+
     @Test
     fun parseRememberMeCookieTest() {
         var cookie = TextUtils.parseRememberMeCookie("JSESSIONID=AAE3E4E1396B3B2FCD6E519CCC9EF5BC; Path=/; HttpOnly")
@@ -65,17 +68,14 @@ class TextUtilsTest {
         var series = TextUtils.decodePersistenceSeries("YXNkZjpxd2Vy")
         Assertions.assertTrue(series == "qwer")
 
-        var tokenSeries = TextUtils.createPersistenceToken("super","1771171640177")
-        Assertions.assertTrue(tokenSeries == "c3VwZXIlM0ExNzcxMTcxNjQwMTc3")
+        var tokenSeries = TextUtils.verifyPersistenceToken("super","1771171640177", "\$2a\$10\$d4J5iPrj38rerwEwP/qJkO94.Lr/um9nj41YWM0m9gKTT7Ng/6vem", rememberMeKey.toString())
+        Assertions.assertTrue(tokenSeries == "c3VwZXI6MTc3MTE3MTY0MDE3NzpTSEEyNTY6NGYyNmIxYWQ2N2YzOWRkNmU5NmViMTg4N2RhYzQzODdiYTEyZDJlYWM2ZTcxMjNkYTk2NDhmMzQ0NjBkYzgwZg")
 
         token = TextUtils.decodePersistenceToken(tokenSeries)
         Assertions.assertTrue(token == "super")
 
         series = TextUtils.decodePersistenceSeries(tokenSeries)
         Assertions.assertTrue(series == "1771171640177")
-
-        tokenSeries = TextUtils.createPersistenceToken("super","1771171640177")
-        Assertions.assertTrue(tokenSeries == "c3VwZXIlM0ExNzcxMTcxNjQwMTc3")
 
         val test = TextUtils.parseRememberMeCookie("remember-me=c3VwZXI6MTc3MTE3MTY0MDE3NzpTSEEyNTY6NGYyNmIxYWQ2N2YzOWRkNmU5NmViMTg4N2RhYzQzODdiYTEyZDJlYWM2ZTcxMjNkYTk2NDhmMzQ0NjBkYzgwZg")
         Assertions.assertTrue(test["token"] == "super")
