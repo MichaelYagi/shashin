@@ -62,6 +62,9 @@ class UserController {
     @Value("\${app.role.super}")
     private var superRole: String? = null
 
+    @Value("\${app.rememberme.key}")
+    private var rememberMeKey: String? = null
+
     @Autowired
     var userRepository: UserRepository? = null
 
@@ -404,7 +407,7 @@ class UserController {
             return "redirect:/recent"
         } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
             return "redirect:/albums"
-        } else if (TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"), userRepository)) {
+        } else if (TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"), rememberMeKey.toString(), userRepository)) {
             return "redirect:/users/login"
         } else {
             model["message"] = ""
