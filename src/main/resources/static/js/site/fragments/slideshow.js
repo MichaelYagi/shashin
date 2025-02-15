@@ -885,13 +885,11 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             $("#mediaSrc").css("opacity", "0.3");
             $("#playPause").addClass("bi-play-circle").removeClass("bi-pause-circle");
             slideshowIsPaused = true;
-            // $("#mediaInfo").css("display", "block");
             $("#playPause").show();
         } else {
             $("#mediaSrc").css("opacity", "1");
             $("#playPause").addClass("bi-pause-circle").removeClass("bi-play-circle");
             slideshowIsPaused = false;
-            // $("#mediaInfo").css("display", "none");
             $("#playPause").show();
             $("#playPause").fadeOut(playPauseHideTime);
         }
