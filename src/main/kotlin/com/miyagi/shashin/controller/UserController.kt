@@ -15,6 +15,8 @@ import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
+import com.miyagi.shashin.util.TextUtils.Companion.parseRememberMeCookie
+import com.miyagi.shashin.util.TextUtils.Companion.verifyPersistenceToken
 import io.swagger.v3.oas.annotations.Operation
 import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
@@ -40,8 +42,11 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
 import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.http.ResponseCookie
 import org.springframework.transaction.annotation.Transactional
 import kotlin.collections.set
+import kotlin.text.toLong
 
 
 @Suppress("UNCHECKED_CAST")
@@ -116,7 +121,7 @@ class UserController {
 
     @PostMapping("/users/account")
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    fun postAccount(model: Model, request: HttpServletRequest): String {
+    fun postAccount(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
         model["message"] = ""
         model["user"] = User()
         model["alertClass"] = ""
@@ -140,9 +145,37 @@ class UserController {
 
             if (currentUserObj != null) {
                 if (newPassword.isNotEmpty() && newPassword == newPasswordConfirm && bcrypt.matches(oldPassword, currentUserObj.getPassword())) {
+                    val updatedPassword = bcrypt.encode(newPassword)
                     currentUserObj.setModifiedAt(getCurrentTimestamp())
-                    currentUserObj.setPassword(bcrypt.encode(newPassword))
+                    currentUserObj.setPassword(updatedPassword)
                     userRepository?.save(currentUserObj)
+                    
+                    // Update remember-me cookie
+                    val cookies = request.cookies
+                    for (cookie in cookies) {
+                        if (cookie.name == "remember-me") {
+                            val seriesExpiryMap = parseRememberMeCookie(cookie.name+"="+cookie.value)
+                            var cookieValue = seriesExpiryMap["cookieValue"]
+                            var username = seriesExpiryMap["token"]
+                            val series = seriesExpiryMap["series"]
+                            var timeStamp = if (series != null && series != "") series.toLong() else 0L
+
+                            if (cookieValue != "" && username != "") {
+                                val user = userRepository?.findByUsername(username)
+                                if (user != null && user.getId() > 0) {
+                                    val cookieValue = verifyPersistenceToken(username.toString(), timeStamp.toString(), user.getPassword().toString(), rememberMeKey.toString())
+                                    val resCookie = ResponseCookie.from("remember-me", cookieValue)
+                                        .path("/")
+                                        .httpOnly(true)
+                                        .maxAge(timeStamp)
+                                        .build()
+                                    response.addHeader("Set-Cookie", resCookie.toString())
+                                }
+                            }
+                            break
+                        }
+                    }
+
 
                     model["msg"] = "Success"
                     model["status"] = ApiResponse.SUCCESS.status
