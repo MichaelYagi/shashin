@@ -5,6 +5,7 @@ import com.miyagi.shashin.configuration.MultiSecurityConfig
 import com.miyagi.shashin.model.FreeFormText
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.MetadataRepository
+import com.miyagi.shashin.repository.UserRepository
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import net.iakovlev.timeshape.TimeZoneEngine
@@ -113,6 +114,7 @@ class TextUtils {
 
         fun parseRememberMeCookie(cookie: String): HashMap<String,String> {
             val seriesExpiryMap = HashMap<String,String>()
+            seriesExpiryMap["token"] = ""
             seriesExpiryMap["series"] = ""
             seriesExpiryMap["expires"] = ""
 
@@ -127,7 +129,8 @@ class TextUtils {
                 }
 
                 if (key.lowercase() == "remember-me" && value.isNotEmpty()) {
-                    seriesExpiryMap["series"] = decodePersistenceToken(value)
+                    seriesExpiryMap["token"] = decodePersistenceToken(value)
+                    seriesExpiryMap["series"] = decodePersistenceSeries(value)
                 }
 
                 if (key.lowercase() == "expires" && value.isNotEmpty()) {
@@ -139,33 +142,45 @@ class TextUtils {
             return seriesExpiryMap
         }
 
-        fun checkValidRememberMeToken(requestCookie: String?): Boolean {
+        fun checkValidRememberMeToken(requestCookie: String?, userRepository: UserRepository?): Boolean {
             if (requestCookie != null) {
-                val cookieArray = requestCookie.split(";").toTypedArray()
-                var manuallyParsedToken = ""
-                for (cookie in cookieArray) {
-                    val keyValue = cookie.trim { it <= ' ' }
-                    val keyValueArray = keyValue.split("=").toTypedArray()
-                    if (keyValueArray.size == 2 && keyValueArray[0] == "remember-me") {
-                        // base64 and url decode
-                        manuallyParsedToken = decodePersistenceToken(keyValueArray[1])
-                        break
-                    }
-                }
-
                 val seriesExpiryMap = parseRememberMeCookie(requestCookie)
-                var functionParsedToken = ""
+                var parsedUsername = ""
+                var parsedExpiry = 0L
                 if (seriesExpiryMap.isNotEmpty()) {
-                    val seriesExpiryMapValues = seriesExpiryMap.values.toTypedArray()
-                    if (seriesExpiryMapValues.size == 2) {
-                        functionParsedToken = seriesExpiryMapValues[1]
+                    if (seriesExpiryMap["token"].toString() != "") {
+                        parsedUsername = seriesExpiryMap["token"].toString()
+                    }
+                    if (seriesExpiryMap["series"].toString() != "") {
+                        parsedExpiry = seriesExpiryMap["series"].toString().toLong()
                     }
                 }
 
-                return manuallyParsedToken != "" && functionParsedToken != "" && manuallyParsedToken == functionParsedToken
+                var userExists = false
+
+                if (parsedUsername != "") {
+                    val user = userRepository?.findByUsername(parsedUsername)
+                    if (user != null && user.getId() > 0) {
+                        userExists = true
+                    }
+                }
+
+                val now = Instant.now().toEpochMilli()
+
+                return userExists && parsedExpiry != 0L && parsedExpiry > now
             }
 
             return false
+        }
+
+        fun createPersistenceToken(token: String,series: String): String {
+            if (token.isNotBlank() && series.isNotBlank()) {
+                val tokenSeries = "$token:$series"
+                val encodedTokenSeries = URLEncoder.encode(tokenSeries, StandardCharsets.UTF_8.toString())
+                return String(Base64.getEncoder().encode(encodedTokenSeries.toByteArray()))
+            }
+
+            return ""
         }
 
         fun decodePersistenceToken(token: String): String {
