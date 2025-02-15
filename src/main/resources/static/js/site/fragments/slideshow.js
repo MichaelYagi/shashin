@@ -554,7 +554,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         if (currentMetadata !== null) {
             playState = "play";
 
-            if ($("#playPause").hasClass("bi-play-circle")) {
+            if ($("#playPause").hasClass("bi-pause-circle")) {
                 slideshowGalleryPlayPause();
             } else {
                 playState = "pause";
@@ -574,7 +574,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     $(window).on('focus', function () {
         if (isFileDialogOpened) {
             isFileDialogOpened = false;
-            if (playState === "play" && $("#playPause").hasClass("bi-pause-circle")) {
+            if (playState === "play" && $("#playPause").hasClass("bi-play-circle")) {
                 slideshowGalleryPlayPause();
             }
         }
@@ -882,12 +882,14 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         $("#playPause").stop(true, true);
 
         if (slideshowIsPaused === false) {
-            $("#playPause").removeClass("bi-play-circle").addClass("bi-pause-circle");
+            $("#mediaSrc").css("opacity", "0.3");
+            $("#playPause").addClass("bi-play-circle").removeClass("bi-pause-circle");
             slideshowIsPaused = true;
             // $("#mediaInfo").css("display", "block");
             $("#playPause").show();
         } else {
-            $("#playPause").removeClass("bi-pause-circle").addClass("bi-play-circle");
+            $("#mediaSrc").css("opacity", "1");
+            $("#playPause").addClass("bi-pause-circle").removeClass("bi-play-circle");
             slideshowIsPaused = false;
             // $("#mediaInfo").css("display", "none");
             $("#playPause").show();
