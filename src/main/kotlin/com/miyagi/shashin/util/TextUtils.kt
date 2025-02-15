@@ -148,12 +148,12 @@ class TextUtils {
                     val keyValueArray = keyValue.split("=").toTypedArray()
                     if (keyValueArray.size == 2 && keyValueArray[0] == "remember-me") {
                         // base64 and url decode
-                        manuallyParsedToken = TextUtils.decodePersistenceToken(keyValueArray[1])
+                        manuallyParsedToken = decodePersistenceToken(keyValueArray[1])
                         break
                     }
                 }
 
-                val seriesExpiryMap = TextUtils.parseRememberMeCookie(requestCookie)
+                val seriesExpiryMap = parseRememberMeCookie(requestCookie)
                 var functionParsedToken = ""
                 if (seriesExpiryMap.isNotEmpty()) {
                     val seriesExpiryMapValues = seriesExpiryMap.values.toTypedArray()
