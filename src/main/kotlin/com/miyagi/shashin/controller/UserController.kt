@@ -404,7 +404,7 @@ class UserController {
             return "redirect:/recent"
         } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
             return "redirect:/albums"
-        } else if (TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"))) {
+        } else if (TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"), userRepository)) {
             return "redirect:/users/login"
         } else {
             model["message"] = ""

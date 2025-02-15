@@ -1,16 +1,23 @@
 package com.miyagi.shashin.unit
 
+import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import com.miyagi.shashin.util.TextUtils.Companion.sortPlaceNames
 import org.json.JSONObject
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import java.time.LocalTime
 
+@SpringBootTest
 @ActiveProfiles("test")
 class TextUtilsTest {
+
+    @Autowired
+    private val userRepository: UserRepository? = null
 
     @Test
     fun isLocalIpTest() {
@@ -39,21 +46,39 @@ class TextUtilsTest {
         Assertions.assertFalse(isLocal)
     }
 
+    // See https://docs.spring.io/spring-security/reference/servlet/authentication/rememberme.html
     @Test
     fun parseRememberMeCookieTest() {
         var cookie = TextUtils.parseRememberMeCookie("JSESSIONID=AAE3E4E1396B3B2FCD6E519CCC9EF5BC; Path=/; HttpOnly")
+        Assertions.assertTrue(cookie["token"] == "")
         Assertions.assertTrue(cookie["series"] == "")
         Assertions.assertTrue(cookie["expires"] == "")
 
         cookie = TextUtils.parseRememberMeCookie("remember-me=YXNkZjpxd2Vy; expires=Mon, 30-May-2016 05:06:07 +0100")
-        Assertions.assertTrue(cookie["series"] == "asdf")
+        Assertions.assertTrue(cookie["token"] == "asdf")
+        Assertions.assertTrue(cookie["series"] == "qwer")
         Assertions.assertTrue(cookie["expires"] == "1464581167000")
 
-        val token = TextUtils.decodePersistenceToken("YXNkZjpxd2Vy")
+        var token = TextUtils.decodePersistenceToken("YXNkZjpxd2Vy")
         Assertions.assertTrue(token == "asdf")
 
-        val series = TextUtils.decodePersistenceSeries("YXNkZjpxd2Vy")
+        var series = TextUtils.decodePersistenceSeries("YXNkZjpxd2Vy")
         Assertions.assertTrue(series == "qwer")
+
+        var tokenSeries = TextUtils.createPersistenceToken("super","1771171640177")
+        Assertions.assertTrue(tokenSeries == "c3VwZXIlM0ExNzcxMTcxNjQwMTc3")
+
+        token = TextUtils.decodePersistenceToken(tokenSeries)
+        Assertions.assertTrue(token == "super")
+
+        series = TextUtils.decodePersistenceSeries(tokenSeries)
+        Assertions.assertTrue(series == "1771171640177")
+
+        tokenSeries = TextUtils.createPersistenceToken("super","1771171640177")
+        Assertions.assertTrue(tokenSeries == "c3VwZXIlM0ExNzcxMTcxNjQwMTc3")
+
+        val test = TextUtils.parseRememberMeCookie("remember-me=c3VwZXI6MTc3MTE3MTY0MDE3NzpTSEEyNTY6NGYyNmIxYWQ2N2YzOWRkNmU5NmViMTg4N2RhYzQzODdiYTEyZDJlYWM2ZTcxMjNkYTk2NDhmMzQ0NjBkYzgwZg")
+        Assertions.assertTrue(test["token"] == "super")
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.miyagi.shashin.controller
 
 import com.miyagi.shashin.model.User
+import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.service.CustomUserDetailsService
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
@@ -9,9 +10,13 @@ import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.GetMapping
 import jakarta.servlet.http.HttpServletRequest
+import org.springframework.beans.factory.annotation.Autowired
 
 @Controller
 class IndexController {
+
+    @Autowired
+    private lateinit var userRepository: UserRepository
 
     @GetMapping("/")
     fun getIndex(model: Model, request: HttpServletRequest): String {
@@ -23,7 +28,7 @@ class IndexController {
 
         if ((currentUserObj != null && currentUserObj.getIsAuthorized() == true) ||
             (sessionUser != null && sessionUser.getIsAuthorized() == true) ||
-            TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"))
+            TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"), userRepository)
         ) {
             model["loggedIn"] = true
         }
@@ -43,7 +48,7 @@ class IndexController {
         val currentUserObj = model.getAttribute("currentUser") as User?
         val sessionUser = request.session.getAttribute("CurrentUser") as User?
 
-        if ((currentUserObj != null && currentUserObj.getIsAuthorized() == true) || (sessionUser != null && sessionUser.getIsAuthorized() == true) || TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"))) {
+        if ((currentUserObj != null && currentUserObj.getIsAuthorized() == true) || (sessionUser != null && sessionUser.getIsAuthorized() == true) || TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"),userRepository)) {
             model["loggedIn"] = true
         }
 
