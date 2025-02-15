@@ -282,7 +282,6 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
         if (slideshowCursorVisible === false) {
             showCursor();
-            slideshowCursorVisible = true;
         }
 
         $("#infoAction").show();
@@ -345,10 +344,9 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
             if (slideshowCursorVisible === false) {
                 showCursor();
-                slideshowCursorVisible = true;
             }
 
-            slideshowMouseTimer = setTimeout(disappearCursor, hideTime);
+            slideshowMouseTimer = setTimeout(hideCursor, hideTime);
 
             $("#infoAction").show();
             infoTimer = setTimeout(function () {
@@ -432,7 +430,6 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         }
 
         showCursor();
-        slideshowCursorVisible = true;
         slideshowStarted = false;
         slideshowProceed = true;
 
@@ -829,7 +826,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         }
     });
 
-    function disappearCursor() {
+    function hideCursor() {
         slideshowMouseTimer = null;
         document.documentElement.style.cursor = "none";
         document.getElementById("mediaSrc").style.cursor = "none";
@@ -841,6 +838,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         document.documentElement.style.cursor = "default";
         document.getElementById("mediaSrc").style.cursor = "pointer";
         document.getElementById("playPause").style.cursor = "pointer";
+        slideshowCursorVisible = true;
     }
 
     $("#slideshowContainer").on("click", function () {
@@ -856,10 +854,9 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
             if (slideshowCursorVisible === false) {
                 showCursor();
-                slideshowCursorVisible = true;
             }
 
-            slideshowMouseTimer = setTimeout(disappearCursor, hideTime);
+            slideshowMouseTimer = setTimeout(hideCursor, hideTime);
         }
 
         if (firstTime === false || (slideshowProceed === true && firstTime === true)) {
