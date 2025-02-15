@@ -730,13 +730,13 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     $("#prevSlideButton").on("click", function (e) {
         e.preventDefault();
 
-        $("#slideSpinner").show();
-
         if (slideshowCurrentIndex > 0 && slideshowProceed === true) {
             slideshowCurrentIndex--;
         } else {
             return false;
         }
+
+        $("#slideSpinner").show();
 
         getSlideshowImage(function () {
             slideshowProceed = true;
@@ -758,13 +758,13 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     $("#nextSlideButton").on("click", function (e) {
         e.preventDefault();
 
-        $("#slideSpinner").show();
-
         if (slideshowCurrentIndex <= slideshowMetadataIds.length - 1 && slideshowProceed === true) {
             slideshowCurrentIndex++;
         } else {
             return false;
         }
+
+        $("#slideSpinner").show();
 
         getSlideshowImage(function () {
             slideshowProceed = true;
