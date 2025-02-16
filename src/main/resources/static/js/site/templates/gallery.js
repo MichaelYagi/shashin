@@ -211,7 +211,7 @@ class GalleryTemplates {
                     data-download-url="${"/api/v1/image/"+data.metadata.id}/download"
                     data-metadata-id="${data.metadata.id}"
                     ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}>
-                    <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
+                    <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>
                 </a>
                 `
             }
