@@ -45,6 +45,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.ResponseCookie
 import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
 import kotlin.collections.set
 import kotlin.text.toLong
 
@@ -69,6 +70,9 @@ class UserController {
 
     @Value("\${app.rememberme.key}")
     private var rememberMeKey: String? = null
+
+    @Value("\${app.rememberme.expiration.seconds}")
+    private var expirationSeconds: Int? = null
 
     @Autowired
     var userRepository: UserRepository? = null
@@ -149,7 +153,7 @@ class UserController {
                     currentUserObj.setModifiedAt(getCurrentTimestamp())
                     currentUserObj.setPassword(updatedPassword)
                     userRepository?.save(currentUserObj)
-                    
+
                     // Update remember-me cookie
                     val cookies = request.cookies
                     for (cookie in cookies) {
@@ -163,11 +167,12 @@ class UserController {
                             if (cookieValue != "" && username != "") {
                                 val user = userRepository?.findByUsername(username)
                                 if (user != null && user.getId() > 0) {
-                                    val cookieValue = verifyPersistenceToken(username.toString(), timeStamp.toString(), user.getPassword().toString(), rememberMeKey.toString())
-                                    val resCookie = ResponseCookie.from("remember-me", cookieValue)
+                                    val now = Instant.now().toEpochMilli()
+                                    val updatedCookieValue = verifyPersistenceToken(username.toString(), timeStamp.toString(), user.getPassword().toString(), rememberMeKey.toString())
+                                    val resCookie = ResponseCookie.from("remember-me", updatedCookieValue)
                                         .path("/")
                                         .httpOnly(true)
-                                        .maxAge(timeStamp)
+                                        .maxAge((timeStamp.toLong()-now)/1000)
                                         .build()
                                     response.addHeader("Set-Cookie", resCookie.toString())
                                 }
