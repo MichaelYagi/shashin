@@ -321,7 +321,6 @@ $('#propBatchMetadata').on('hide.bs.modal', function () {
     $("#metadataBatchModalStatus").attr("class","spinner-grow me-auto");
     $("#metadataBatchModalStatus").invisible();
     $("#msgBatchMetadata").html("");
-    $("#msgBatchMetadata").html("");
     $('input:checkbox').prop('checked', false);
     $('#batchMetadataIds').val('');
     $('#batchFilenames').val('');
