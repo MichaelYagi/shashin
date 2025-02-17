@@ -195,7 +195,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
 
     initializeSlideshow(accessTimelineView, queryLimit);
 
-    if (activePage !== "timeline" && activePage !== "test") {
+    if (activePage !== "timeline" && activePage !== "wake") {
         captureMessages(activePage, notificationAlerts, timezone);
     }
 
