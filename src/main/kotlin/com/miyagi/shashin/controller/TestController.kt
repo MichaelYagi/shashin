@@ -75,16 +75,15 @@ class TestController {
     @Secured("ROLE_SUPER")
     @GetMapping("/test")
     fun test(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
+        model["activePage"] = "test"
+
         return "test"
     }
 
     @Secured("ROLE_SUPER")
     @GetMapping("/sandbox")
     fun sandbox(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
-        model["somevalue"] = "This is a test"
-
-        println("repairscripts thread exists: "+FileUtils.checkThreadFileAlive("repairscripts"))
-//        FileUtils.deleteThreadFiles("repairscripts")
+        model["activePage"] = "sandbox"
 
         return "sandbox"
     }
