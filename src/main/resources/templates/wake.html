@@ -11,6 +11,7 @@
             <h2 class="mt-3">Test Page</h2>
             <button id="stopStartVideo" data-state="pause">Start wake</button>
             <span id="videoContainer"></span><br>
+            <span id="statusContainer">Status:</span>
 <!--            <input type="checkbox" id="dontPause" name="dontPause">-->
 <!--            <label for="dontPause"> Wake in background</label>-->
 
@@ -39,6 +40,7 @@
                             video.play();
                             $("#stopStartVideo").attr("data-state","play");
                             shashin.printMessageToConsole("Looping video", {tag: "wake"});
+                            $("#statusContainer").text("Status: Looping video");
                         }
                     });
 
@@ -51,6 +53,7 @@
                                 video.pause();
                                 // $("#stopStartVideo").attr("data-state", "pause");
                                 shashin.printMessageToConsole("Paused video after away from tab", {tag: "wake"});
+                                $("#statusContainer").text("Status: Paused video after away from tab");
                             } else {
                                 let state = "Start";
                                 if ($("#stopStartVideo").attr("data-state") === "play") {
@@ -61,6 +64,7 @@
                                 video.play();
                                 $("#stopStartVideo").attr("data-state", $("#stopStartVideo").attr("data-state"));
                                 shashin.printMessageToConsole(capitalizeFirstLetter($("#stopStartVideo").attr("data-state")) + " video after returning to tab", {tag: "wake"});
+                                $("#statusContainer").text("Status: " + capitalizeFirstLetter($("#stopStartVideo").attr("data-state")) + " video after returning to tab");
                             }
                         // }
                     });
@@ -76,11 +80,13 @@
                             video.play();
                             $("#stopStartVideo").attr("data-state","play");
                             shashin.printMessageToConsole("Play video button pressed", {tag: "wake"});
+                            $("#statusContainer").text("Status: Play video button pressed");
                         } else {
                             $("#stopStartVideo").text("Start wake");
                             video.pause();
                             $("#stopStartVideo").attr("data-state","pause");
                             shashin.printMessageToConsole("Pause video button pressed", {tag: "wake"});
+                            $("#statusContainer").text("Status: Pause video button pressed");
                         }
                     });
                 });
