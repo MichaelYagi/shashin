@@ -88,6 +88,7 @@ class MultiSecurityConfig {
             "/js/**",
             "/fonts/**",
             "/images/**",
+            "/media/**",
             "/users/register"
         )
 
