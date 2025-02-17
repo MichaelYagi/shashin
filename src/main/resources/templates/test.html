@@ -10,7 +10,9 @@
         <main role="main" class="col">
             <h2 class="mt-3">Test Page</h2>
             <button id="stopStartVideo" data-state="pause">Start wake</button>
-            <span id="videoContainer"></span>
+            <span id="videoContainer"></span><br>
+            <input type="checkbox" id="dontPause" name="dontPause">
+            <label for="dontPause"> Wake in background</label>
 
             <script type="text/javascript">
                 $(document).ready(function() {
@@ -26,8 +28,10 @@
                     $(video).hide();
 
                     // Loop
-                    video.addEventListener("ended", function(){
-                        if (document.hidden === false) {
+                    video.addEventListener("ended", function() {
+                        const wakeInBackground = $('#dontPause').is(":checked");
+
+                        if ((wakeInBackground === true) || document.hidden === false && wakeInBackground === false) {
                             $("#stopStartVideo").text("Stop wake");
                             video.currentTime = 0;
                             video.play();
@@ -37,17 +41,21 @@
                     });
 
                     document.addEventListener("visibilitychange", () => {
-                        if (document.hidden === true) {
-                            $("#stopStartVideo").text("Start wake");
-                            video.pause();
-                            $("#stopStartVideo").attr("data-state","pause");
-                            shashin.printMessageToConsole("Paused video after away from tab", {tag: "wake"});
-                        } else {
-                            $("#stopStartVideo").text("Stop wake");
-                            video.currentTime = 0;
-                            video.play();
-                            $("#stopStartVideo").attr("data-state","play");
-                            shashin.printMessageToConsole("Play video after returning to tab", {tag: "wake"});
+                        const wakeInBackground = $('#dontPause').is(":checked");
+
+                        if (wakeInBackground === false) {
+                            if (document.hidden === true) {
+                                $("#stopStartVideo").text("Start wake");
+                                video.pause();
+                                $("#stopStartVideo").attr("data-state", "pause");
+                                shashin.printMessageToConsole("Paused video after away from tab", {tag: "wake"});
+                            } else {
+                                $("#stopStartVideo").text("Stop wake");
+                                video.currentTime = 0;
+                                video.play();
+                                $("#stopStartVideo").attr("data-state", "play");
+                                shashin.printMessageToConsole("Play video after returning to tab", {tag: "wake"});
+                            }
                         }
                     });
 
