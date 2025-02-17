@@ -975,8 +975,21 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
         // Loop
         video.addEventListener("ended", function(){
-            video.currentTime = 0;
-            video.play().then(_ => shashin.printMessageToConsole("Looping video", {tag: "slideshow"}));
+            if (document.hidden === false) {
+                video.currentTime = 0;
+                video.play().then(_ => shashin.printMessageToConsole("Looping video", {tag: "slideshow"}));
+            }
+        });
+
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden === false) {
+                video.currentTime = 0;
+                video.play().then(_ => shashin.printMessageToConsole("Looping video", {tag: "slideshow"}));
+            } else {
+                if (slideshowIsPaused === false) {
+                    slideshowGalleryPlayPause();
+                }
+            }
         });
     }
 
