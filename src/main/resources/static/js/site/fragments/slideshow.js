@@ -533,6 +533,8 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     }
 
     function exitSlideshow() {
+        tearDownVideo();
+
         if (document.fullscreenEnabled && document.fullscreenElement !== null && document.exitFullscreen) {
             document.exitFullscreen();
             if (document.exitFullscreen) {
@@ -898,6 +900,9 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     $("#viewSlideshow").on("click", function (e) {
         e.preventDefault();
 
+        tearDownVideo();
+        createVideo();
+
         if (Util.isMobile()) {
             $("#shortcutAction").addClass("bi-hand-index").removeClass("bi-keyboard");
         } else {
@@ -955,4 +960,27 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             }
         });
     });
+
+    // Use to keep screen awake
+    function createVideo() {
+        const video = document.createElement('video');
+        const source = document.createElement('source');
+
+        source.setAttribute("src", "/media/muted-blank.mp4");
+        source.setAttribute("type", "video/mp4");
+
+        video.appendChild(source);
+        document.getElementById("dummyVideoContainer").appendChild(video);
+        video.play();
+
+        // Loop
+        video.addEventListener("ended", function(){
+            video.currentTime = 0;
+            video.play().then(_ => shashin.printMessageToConsole("Looping video", {tag: "slideshow"}));
+        });
+    }
+
+    function tearDownVideo() {
+        $("#dummyVideoContainer").children().remove();
+    }
 }
