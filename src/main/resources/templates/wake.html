@@ -11,12 +11,13 @@
             <h2 class="mt-3">Test Page</h2>
             <button id="stopStartVideo" data-state="pause">Start wake</button>
             <span id="videoContainer"></span><br>
-            <input type="checkbox" id="dontPause" name="dontPause">
-            <label for="dontPause"> Wake in background</label>
+<!--            <input type="checkbox" id="dontPause" name="dontPause">-->
+<!--            <label for="dontPause"> Wake in background</label>-->
 
             <script type="text/javascript">
                 $(document).ready(function() {
                     // shashin.enableDebug({tag:"wake"})
+
                     const video = document.createElement('video');
                     const source = document.createElement('source');
 
@@ -29,9 +30,10 @@
 
                     // Loop
                     video.addEventListener("ended", function() {
-                        const wakeInBackground = $('#dontPause').is(":checked");
+                        // const wakeInBackground = $('#dontPause').is(":checked");
 
-                        if ((wakeInBackground === true) || document.hidden === false && wakeInBackground === false) {
+                        //if ((wakeInBackground === true) || document.hidden === false && wakeInBackground === false) {
+                        if (document.hidden === false && $("#stopStartVideo").attr("data-state") === "play") {
                             $("#stopStartVideo").text("Stop wake");
                             video.currentTime = 0;
                             video.play();
@@ -41,23 +43,31 @@
                     });
 
                     document.addEventListener("visibilitychange", () => {
-                        const wakeInBackground = $('#dontPause').is(":checked");
+                        // const wakeInBackground = $('#dontPause').is(":checked");
 
-                        if (wakeInBackground === false) {
+                        // if (wakeInBackground === false) {
                             if (document.hidden === true) {
                                 $("#stopStartVideo").text("Start wake");
                                 video.pause();
-                                $("#stopStartVideo").attr("data-state", "pause");
+                                // $("#stopStartVideo").attr("data-state", "pause");
                                 shashin.printMessageToConsole("Paused video after away from tab", {tag: "wake"});
                             } else {
-                                $("#stopStartVideo").text("Stop wake");
+                                let state = "Start";
+                                if ($("#stopStartVideo").attr("data-state") === "play") {
+                                    state = "Stop";
+                                }
+                                $("#stopStartVideo").text(state + " wake");
                                 video.currentTime = 0;
                                 video.play();
-                                $("#stopStartVideo").attr("data-state", "play");
-                                shashin.printMessageToConsole("Play video after returning to tab", {tag: "wake"});
+                                $("#stopStartVideo").attr("data-state", $("#stopStartVideo").attr("data-state"));
+                                shashin.printMessageToConsole(capitalizeFirstLetter($("#stopStartVideo").attr("data-state")) + " video after returning to tab", {tag: "wake"});
                             }
-                        }
+                        // }
                     });
+
+                    function capitalizeFirstLetter(val) {
+                        return val.charAt(0).toUpperCase() + val.slice(1);
+                    }
 
                     $("#stopStartVideo").on("click", function () {
                         if ($("#stopStartVideo").attr("data-state") === "pause") {
