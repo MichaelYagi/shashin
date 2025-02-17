@@ -89,6 +89,14 @@ class TestController {
     }
 
     @Secured("ROLE_SUPER")
+    @GetMapping("/wake")
+    fun wake(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
+        model["activePage"] = "wake"
+
+        return "wake"
+    }
+
+    @Secured("ROLE_SUPER")
     @RequestMapping(value = ["/deletethread"], method = [RequestMethod.GET])
     @ResponseBody
     fun deleteThread(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
