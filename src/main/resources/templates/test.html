@@ -14,6 +14,7 @@
 
             <script type="text/javascript">
                 $(document).ready(function() {
+                    // shashin.enableDebug({tag:"wake"})
                     const video = document.createElement('video');
                     const source = document.createElement('source');
 
@@ -31,7 +32,7 @@
                             video.currentTime = 0;
                             video.play();
                             $("#stopStartVideo").attr("data-state","play");
-                            shashin.printMessageToConsole("Looping video", {tag: "slideshow"});
+                            shashin.printMessageToConsole("Looping video", {tag: "wake"});
                         }
                     });
 
@@ -40,13 +41,13 @@
                             $("#stopStartVideo").text("Start wake");
                             video.pause();
                             $("#stopStartVideo").attr("data-state","pause");
-                            shashin.printMessageToConsole("Paused video after away from tab", {tag: "slideshow"});
+                            shashin.printMessageToConsole("Paused video after away from tab", {tag: "wake"});
                         } else {
                             $("#stopStartVideo").text("Stop wake");
                             video.currentTime = 0;
                             video.play();
                             $("#stopStartVideo").attr("data-state","play");
-                            shashin.printMessageToConsole("Play video after returning to tab", {tag: "slideshow"});
+                            shashin.printMessageToConsole("Play video after returning to tab", {tag: "wake"});
                         }
                     });
 
@@ -56,12 +57,12 @@
                             video.currentTime = 0;
                             video.play();
                             $("#stopStartVideo").attr("data-state","play");
-                            shashin.printMessageToConsole("Play video button pressed", {tag: "slideshow"});
+                            shashin.printMessageToConsole("Play video button pressed", {tag: "wake"});
                         } else {
                             $("#stopStartVideo").text("Start wake");
                             video.pause();
                             $("#stopStartVideo").attr("data-state","pause");
-                            shashin.printMessageToConsole("Pause video button pressed", {tag: "slideshow"});
+                            shashin.printMessageToConsole("Pause video button pressed", {tag: "wake"});
                         }
                     });
                 });
