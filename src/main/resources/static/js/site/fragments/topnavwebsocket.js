@@ -4,9 +4,7 @@ function captureMessages(activePage, notificationAlerts, timezone) {
     let scanInProgress = false;
     let mediaScanCounterSP = 0;
 
-    if (activePage !== "timeline") {
-        connectSP();
-    }
+    connectSP();
 
     $("#scanPhotos").on("click", function (e) {
         e.preventDefault();

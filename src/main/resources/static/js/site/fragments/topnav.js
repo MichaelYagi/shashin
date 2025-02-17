@@ -195,7 +195,9 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
 
     initializeSlideshow(accessTimelineView, queryLimit);
 
-    captureMessages(activePage, notificationAlerts, timezone);
+    if (activePage !== "timeline" && activePage !== "test") {
+        captureMessages(activePage, notificationAlerts, timezone);
+    }
 
     if (hasMediaUploadDirectory === true && $("#dummyframe").length > 0) {
         initializeUploads(activePage);
