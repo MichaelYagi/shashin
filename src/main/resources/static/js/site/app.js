@@ -3513,19 +3513,21 @@
                 //     renderAlbumList = true;
                 // }
 
-                batchHtml +=
-                    '<button class="dropdown-item" type="button">\n' +
-                    '    <input type="checkbox" class="album" id="album'+album.id+'" value="'+Util.escapeHtml(album.name)+'" name="albums[]">\n' +
-                    '    <label for="album'+album.id+'">'+Util.escapeHtml(album.name)+'</label>\n' +
-                    '</button>\n';
+                if (album.name.trim().length > 0) {
+                    batchHtml +=
+                        '<button class="dropdown-item" type="button">\n' +
+                        '    <input type="checkbox" class="album" id="album' + album.id + '" value="' + Util.escapeHtml(album.name) + '" name="albums[]">\n' +
+                        '    <label for="album' + album.id + '">' + Util.escapeHtml(album.name) + '</label>\n' +
+                        '</button>\n';
 
-                albumNames.push(Util.escapeHtml(album.name));
+                    albumNames.push(Util.escapeHtml(album.name));
+                }
             }
 
             for (let index in inputArr) {
                 const albumName = inputArr[index].trim();
 
-                if (albumNames.includes(albumName) === false) {
+                if (albumName.length > 0 && albumNames.includes(albumName) === false) {
                     batchHtml +=
                         '<button class="dropdown-item" type="button">\n' +
                         '    <input type="checkbox" class="album" id="'+albumName+'" value="'+Util.escapeHtml(albumName)+'" name="albums[]">\n' +
@@ -3565,7 +3567,6 @@
             const inputArr = subjectInputVal.split(",");
 
             let batchHtml = '';
-
             for (let index in recognitionLabels) {
                 const recognitionLabel = recognitionLabels[index];
 
@@ -3573,7 +3574,7 @@
                 //     renderRecognitionLabels = true;
                 // }
 
-                if (recognitionLabel.name !== null && recognitionLabel.name !== "null") {
+                if (recognitionLabel.name !== null && recognitionLabel.name !== "null" && recognitionLabel.name.trim().length > 0 && recognitionLabel.id > 0) {
                     batchHtml +=
                         '           <button class="dropdown-item" type="button">\n' +
                         '               <input type="checkbox" class="recognitionLabel" id="recognitionLabel' + recognitionLabel.id + '" value="' + Util.escapeHtml(recognitionLabel.name) + '" name="recognitionLabel[]">\n' +
@@ -3587,7 +3588,7 @@
             for (let index in inputArr) {
                 const recognitionName = inputArr[index].trim();
 
-                if (recognitionLabelNames.includes(recognitionName) === false) {
+                if (recognitionName.length > 0 && recognitionLabelNames.includes(recognitionName) === false) {
                     batchHtml +=
                         '<button class="dropdown-item" type="button">\n' +
                         '    <input type="checkbox" class="recognitionLabel" id="'+recognitionName+'" value="'+Util.escapeHtml(recognitionName)+'" name="recognitionLabel[]">\n' +
