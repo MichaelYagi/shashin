@@ -1160,6 +1160,20 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @RequestMapping(value = ["/metadata/attributes"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun getMetadataAttributeData(model: Model): String? {
+        val attrResponse = getAllAttributeData(model)
+        for ((k, v) in attrResponse) {
+            resp[k] = v
+        }
+
+        resp["msg"] = "Success"
+        resp["status"] = ApiResponse.SUCCESS.status
+        return mapper.writeValueAsString(resp)
+    }
+
     @RouterOperation(
         operation =
         Operation(
