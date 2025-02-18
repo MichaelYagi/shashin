@@ -418,6 +418,15 @@ async function saveMetadata(e) {
                     $("#saveMetadata").prop('disabled', false);
                 });
                 $("#metadataModalCancel").prop('disabled', false);
+
+                shashin.showToastMessage("Metadata", "Metadata Saved", {
+                    icon: "bi-info-circle",
+                    iconColor: "#777777",
+                    tag: "metadatamodal",
+                    borderColor:"success"
+                });
+
+                $("#propMetadata").modal('hide');
             } else {
                 $("#metadataModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                 $("#metadataModalStatus").attr("title", shashin.modalStatusFailMessage());
