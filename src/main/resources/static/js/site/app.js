@@ -807,7 +807,7 @@
                     $("#recognitionLabelInput").remove();
                 }
                 if (recognitionLabels !== null && recognitionLabels.length > 0) {
-                    let html = ModalTemplates.PersonModalDropdownHead({metadata: metadata});
+                    let html = "";
                     const recognitionLabelNames = [];
 
                     for (index in recognitionLabels) {
@@ -826,12 +826,18 @@
 
                         recognitionLabelNames.push(recognitionLabel.name);
                     }
-                    html += ModalTemplates.PersonModalDropdownFooter();
 
-                    $(html).insertAfter($("#labelIdData"));
-                    $("#tagpeopledropdown" + metadata.id).on("click", function (e) {
+                    if (recognitionLabelNames.length > 0) {
+                        $("#peopleNameData").css("display", "block");
+                    } else {
+                        $("#peopleNameData").css("display", "none");
+                    }
+                    $("#peopleNameData").on("click", function (e) {
                         e.preventDefault();
-                        metadataModal.toggleTagPeopleDropdown(metadata.id);
+
+                        shashin.createModalMultiselect(metadata.id, "people", html);
+
+                        // metadataModal.toggleTagPeopleDropdown(metadata.id);
                     });
                     $(".recognitionLabel").on("click", function (e) {
                         metadataModal.populateLabel(metadata.id);
@@ -863,8 +869,9 @@
                     $("#albumListInput").remove();
                 }
 
+                // Create dropdown checkboxes
                 if (allAlbumList !== null && allAlbumList.length > 0) {
-                    let html = ModalTemplates.AlbumModalDropdownHeader({metadata: metadata});
+                    let html = "";
                     const albumNames = [];
 
                     for (index in allAlbumList) {
@@ -883,12 +890,17 @@
 
                         albumNames.push(eachAlbum.name);
                     }
-                    html += ModalTemplates.AlbumModalDropdownFooter();
 
-                    $(html).insertAfter($("#albumNameData"));
-                    $("#albumdropdown" + metadata.id).on("click", function (e) {
+                    if (albumNames.length > 0) {
+                        $("#albumNameData").css("display", "block");
+                    } else {
+                        $("#albumNameData").css("display", "none");
+                    }
+
+                    $("#albumNameData").on("click", function (e) {
                         e.preventDefault();
-                        metadataModal.toggleAlbumDropdown(metadata.id);
+
+                        shashin.createModalMultiselect(metadata.id, "album", html);
                     });
                     $(".album").on("click", function (e) {
                         metadataModal.populateAlbum(metadata.id);
@@ -931,6 +943,93 @@
             }
         });
     };
+
+    shashin.createModalMultiselect = function(metadataId, type, html) {
+        $("#"+type+"SelectionList").html(html);
+        $("#"+type+"SelectionLabel").text("Select " + type.charAt(0).toUpperCase() + type.slice(1));
+        $("#"+type+"Selection").modal('show');
+
+        $("#"+type+"Selection").on('hide.bs.modal', function () {
+            $("#"+type+"SelectionLabel").text("");
+        });
+
+        $("#confirm"+type.charAt(0).toUpperCase() + type.slice(1)+"Selection").on("click", function () {
+            if (type === "album") {
+                const checkedBoxes = $('input[name="album' + metadataId + '[]"]:checked');
+                let albumString = "";
+
+                checkedBoxes.each(function() {
+                    albumString += $(this).val() + ",";
+                });
+
+                if (albumString.length > 0) {
+                    albumString = albumString.slice(0,-1);
+                }
+
+                $("#albumnames").val(albumString);
+            } else {
+                const checkedBoxes = $('input[name="recognitionLabel' + metadataId + '[]"]:checked');
+                let labelString = "";
+
+                checkedBoxes.each(function () {
+                    labelString += $(this).val() + ",";
+                });
+
+                if (labelString.length > 0) {
+                    labelString = labelString.slice(0, -1);
+                }
+
+                $("#tagpeople").val(labelString);
+
+                if (labelString !== "") {
+                    $("#isobject").prop("checked", false);
+                }
+            }
+        });
+    };
+
+    shashin.createBatchModalMultiselect = function(type) {
+        $("#"+type+"BatchSelectionLabel").text("Select " + type.charAt(0).toUpperCase() + type.slice(1));
+        $("#"+type+"BatchSelection").modal('show');
+
+        $("#"+type+"BatchSelection").on('hide.bs.modal', function () {
+            $("#"+type+"BatchSelectionLabel").text("");
+        });
+
+        $("#confirmBatch"+type.charAt(0).toUpperCase() + type.slice(1)+"Selection").on("click", function () {
+            if (type === "album") {
+                const checkedBoxes = $('#albumBatchSelectionList :checked');
+                let albumString = "";
+
+                checkedBoxes.each(function() {
+                    albumString += $(this).val() + ",";
+                });
+
+                if (albumString.length > 0) {
+                    albumString = albumString.slice(0,-1);
+                }
+
+                $("#albumNameInput").val(albumString);
+            } else {
+                const checkedBoxes = $('#peopleBatchSelectionList :checked');
+                let labelString = "";
+
+                checkedBoxes.each(function () {
+                    labelString += $(this).val() + ",";
+                });
+
+                if (labelString.length > 0) {
+                    labelString = labelString.slice(0, -1);
+                }
+
+                $("#tagBatchDataInput").val(labelString);
+
+                if (labelString !== "") {
+                    $("#isobject").prop("checked", false);
+                }
+            }
+        });
+    }
 
     shashin.syncCheckboxInputs = function(inputEl, checkboxElName) {
         $(inputEl).on( "blur", function(e) {
@@ -3398,23 +3497,21 @@
         if (albumInputVal === undefined) {
             albumInputVal = "";
         }
-        if (data.hasOwnProperty("allAlbumList") && data.allAlbumList.length > 0) {
-            let renderAlbumList = false;
+
+        if (data.hasOwnProperty("allAlbumList")) {
+            // let renderAlbumList = false;
             const albumList = data.allAlbumList;
             const albumNames = [];
+            const inputArr = albumInputVal.split(",");
 
-            let batchHtml =
-                '<input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="'+albumInputVal+'">\n' +
-                '<div class="input-group-append dropdown">\n' +
-                '   <button class="btn btn-secondary dropdown-toggle" id="tagalbumdropdown" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
-                '   <div class="dropdown-menu" id="albumNameList">\n';
+            let batchHtml = "";
 
             for (let index in albumList) {
                 const album = albumList[index];
 
-                if ($("#"+album.id).length === 0) {
-                    renderAlbumList = true;
-                }
+                // if ($("#"+album.id).length === 0) {
+                //     renderAlbumList = true;
+                // }
 
                 batchHtml +=
                     '<button class="dropdown-item" type="button">\n' +
@@ -3425,23 +3522,33 @@
                 albumNames.push(Util.escapeHtml(album.name));
             }
 
-            batchHtml +=
-                '   </div>\n' +
-                '</div>\n';
+            for (let index in inputArr) {
+                const albumName = inputArr[index].trim();
 
-            if (true === renderAlbumList) {
+                if (albumNames.includes(albumName) === false) {
+                    batchHtml +=
+                        '<button class="dropdown-item" type="button">\n' +
+                        '    <input type="checkbox" class="album" id="'+albumName+'" value="'+Util.escapeHtml(albumName)+'" name="albums[]">\n' +
+                        '    <label for="'+albumName+'">'+Util.escapeHtml(albumName)+'</label>\n' +
+                        '</button>\n';
+
+                    albumNames.push(albumName);
+                }
+            }
+
+            if (albumNames.length > 0) {
+                $("#albumBatchNameData").css("display", "block");
+
                 shashin.createAutocomplete("#albumNameInput", albumNames, false);
                 shashin.syncCheckboxInputs("#albumNameInput", "albums");
 
-                $("#albumListForModal").html(batchHtml);
-                $(".album").on("click", function (e) {
-                    metadataBatchModal.populateBatchAlbum();
-                });
-
-                $("#tagalbumdropdown").on("click", function (e) {
+                $("#albumBatchSelectionList").html(batchHtml);
+                $("#albumBatchNameData").on("click", function (e) {
                     e.preventDefault();
-                    metadataBatchModal.toggleBatchTagAlbumDropdown();
+                    shashin.createBatchModalMultiselect("album");
                 });
+            } else {
+                $("#albumBatchNameData").css("display", "none");
             }
         }
     };
@@ -3450,23 +3557,21 @@
         if (subjectInputVal === undefined) {
             subjectInputVal = "";
         }
-        if (data.hasOwnProperty("recognitionLabels") && data.recognitionLabels.length > 0) {
-            let renderRecognitionLabels = false;
+
+        if (data.hasOwnProperty("recognitionLabels")) {
+            // let renderRecognitionLabels = false;
             const recognitionLabels = data.recognitionLabels;
             const recognitionLabelNames = [];
+            const inputArr = subjectInputVal.split(",");
 
-            let batchHtml =
-                '       <input type="text" class="form-control" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="'+subjectInputVal+'">\n' +
-                '       <div class="input-group-append">\n' +
-                '           <button class="btn btn-secondary dropdown-toggle" id="tagbatchpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
-                '           <div class="dropdown-menu" id="peopleNameList">';
+            let batchHtml = '';
 
             for (let index in recognitionLabels) {
                 const recognitionLabel = recognitionLabels[index];
 
-                if ($("#"+recognitionLabel.id).length === 0) {
-                    renderRecognitionLabels = true;
-                }
+                // if ($("#"+recognitionLabel.id).length === 0) {
+                //     renderRecognitionLabels = true;
+                // }
 
                 if (recognitionLabel.name !== null && recognitionLabel.name !== "null") {
                     batchHtml +=
@@ -3478,26 +3583,34 @@
                     recognitionLabelNames.push(recognitionLabel.name);
                 }
             }
-            batchHtml +=
-                '   </div>\n' +
-                '</div>\n';
 
-            if (true === renderRecognitionLabels) {
+            for (let index in inputArr) {
+                const recognitionName = inputArr[index].trim();
+
+                if (recognitionLabelNames.includes(recognitionName) === false) {
+                    batchHtml +=
+                        '<button class="dropdown-item" type="button">\n' +
+                        '    <input type="checkbox" class="recognitionLabel" id="'+recognitionName+'" value="'+Util.escapeHtml(recognitionName)+'" name="recognitionLabel[]">\n' +
+                        '    <label for="'+recognitionName+'">'+Util.escapeHtml(recognitionName)+'</label>\n' +
+                        '</button>\n';
+
+                    recognitionLabelNames.push(recognitionName);
+                }
+            }
+
+            if (recognitionLabelNames.length > 0) {
+                $("#peopleBatchNameData").css("display", "block");
+
                 shashin.createAutocomplete("#tagBatchDataInput", recognitionLabelNames, false);
                 shashin.syncCheckboxInputs("#tagBatchDataInput", "recognitionLabel");
 
-                $("#batchLabelIds").html(batchHtml);
-                $("#tagBatchDataInput").on("focus", function (e) {
+                $("#peopleBatchSelectionList").html(batchHtml);
+                $("#peopleBatchNameData").on("click", function (e) {
                     e.preventDefault();
-                    metadataBatchModal.closeBatchTagPeopleDropdown();
+                    shashin.createBatchModalMultiselect("people");
                 });
-                $("#tagbatchpeopledropdown").on("click", function (e) {
-                    e.preventDefault();
-                    metadataBatchModal.toggleBatchTagPeopleDropdown();
-                });
-                $(".recognitionLabel").on("click", function (e) {
-                    metadataBatchModal.populateBatchLabel();
-                });
+            } else {
+                $("#peopleBatchNameData").css("display", "none");
             }
         }
     };

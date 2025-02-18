@@ -74,29 +74,7 @@
                             <div class="input-group" id="batchAlbumNames">
                                 <div class="input-group" id="albumListForModal">
                                     <input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="">
-
-                                    <th:block th:if="${allAlbumList != null && #lists.size(allAlbumList) > 0}">
-                                        <div class="input-group-append dropdown">
-                                            <button class="btn btn-secondary dropdown-toggle" id="tagalbumdropdown" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>
-                                            <div class="dropdown-menu" id="albumNameList">
-                                                <th:block th:each="album, iterStat: ${allAlbumList}">
-                                                    <button class="dropdown-item" type="button">
-                                                        <input type="checkbox" class="album" th:id="${'album'+album.id}" th:value="${album.name}" name="albums[]">
-                                                        <label th:for="${'album'+album.id}" th:text="${album.name}"></label>
-                                                    </button>
-                                                </th:block>
-                                            </div>
-                                            <script type="text/javascript" th:nonce="${cspNonce}">
-                                                $(".album").on("click", function (e) {
-                                                    metadataBatchModal.populateBatchAlbum();
-                                                });
-                                                $("#tagalbumdropdown").on("click", function (e) {
-                                                    e.preventDefault();
-                                                    metadataBatchModal.toggleBatchTagAlbumDropdown();
-                                                });
-                                            </script>
-                                        </div>
-                                    </th:block>
+                                    <button class="btn btn-secondary" type="button" id="albumBatchNameData" style="display: none;">Albums</button>
                                 </div>
                             </div>
                         </div>
@@ -104,37 +82,7 @@
                             <label for="tagBatchDataInput" class="col-form-label">Tag People (comma separated)</label>
                             <div class="input-group" id="batchLabelIds">
                                 <input type="text" class="form-control" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">
-                                <script type="text/javascript" th:nonce="${cspNonce}">
-                                    $("#tagBatchDataInput").on("focus", function (e) {
-                                        e.preventDefault();
-                                        metadataBatchModal.closeBatchTagPeopleDropdown();
-                                    });
-                                </script>
-
-                                <th:block th:if="${recognitionLabels != null && #lists.size(recognitionLabels) > 0}">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-secondary dropdown-toggle" id="tagbatchpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>
-                                        <div class="dropdown-menu" id="peopleNameList">
-                                            <th:block th:each="recognitionLabel, iterStat: ${recognitionLabels}">
-                                                <th:block th:if="${recognitionLabel.name != null and recognitionLabel.name != 'null'}">
-                                                    <button class="dropdown-item" type="button">
-                                                        <input type="checkbox" class="recognitionLabel" th:id="${'recognitionLabel'+recognitionLabel.id}" th:value="${recognitionLabel.name}" name="recognitionLabel[]">
-                                                        <label th:for="${'recognitionLabel'+recognitionLabel.id}" th:text="${recognitionLabel.name}"></label>
-                                                    </button>
-                                                </th:block>
-                                            </th:block>
-                                        </div>
-                                        <script type="text/javascript" th:nonce="${cspNonce}">
-                                            $(".recognitionLabel").on("click", function (e) {
-                                                metadataBatchModal.populateBatchLabel();
-                                            });
-                                            $("#tagbatchpeopledropdown").on("click", function (e) {
-                                                e.preventDefault();
-                                                metadataBatchModal.toggleBatchTagPeopleDropdown();
-                                            });
-                                        </script>
-                                    </div>
-                                </th:block>
+                                <button class="btn btn-secondary" type="button" id="peopleBatchNameData" style="display: none;">People</button>
                             </div>
                         </div>
                     </div>
@@ -190,6 +138,76 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="confirmRescanBatchMetadata">Confirm</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="albumBatchSelection" tabindex="-1" role="dialog" aria-labelledby="dropdownSelection" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="albumBatchSelectionLabel"></h5>
+            </div>
+            <div class="modal-body" id="albumBatchSelectionList">
+                <th:block th:if="${allAlbumList != null && #lists.size(allAlbumList) > 0}">
+                    <th:block th:each="album, iterStat: ${allAlbumList}">
+                        <button class="dropdown-item" type="button">
+                            <input type="checkbox" class="album" th:id="${'album'+album.id}" th:value="${album.name}" name="albums[]">
+                            <label th:for="${'album'+album.id}" th:text="${album.name}"></label>
+                        </button>
+                    </th:block>
+
+                    <script type="text/javascript" th:nonce="${cspNonce}">
+                        $(".album").on("click", function (e) {
+                            metadataBatchModal.populateBatchAlbum();
+                        });
+                        $("#tagalbumdropdown").on("click", function (e) {
+                            e.preventDefault();
+                            metadataBatchModal.toggleBatchTagAlbumDropdown();
+                        });
+                    </script>
+                </th:block>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="confirmBatchAlbumSelection">Save</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelBatchAlbumSelection">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="peopleBatchSelection" tabindex="-1" role="dialog" aria-labelledby="dropdownSelection" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="peopleBatchSelectionLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="peopleBatchSelectionList">
+                <th:block th:if="${recognitionLabels != null && #lists.size(recognitionLabels) > 0}">
+                    <th:block th:each="recognitionLabel, iterStat: ${recognitionLabels}">
+                        <th:block th:if="${recognitionLabel.name != null and recognitionLabel.name != 'null'}">
+                            <button class="dropdown-item" type="button">
+                                <input type="checkbox" class="recognitionLabel" th:id="${'recognitionLabel'+recognitionLabel.id}" th:value="${recognitionLabel.name}" name="recognitionLabel[]">
+                                <label th:for="${'recognitionLabel'+recognitionLabel.id}" th:text="${recognitionLabel.name}"></label>
+                            </button>
+                        </th:block>
+                    </th:block>
+                    <script type="text/javascript" th:nonce="${cspNonce}">
+                        $(".recognitionLabel").on("click", function (e) {
+                            metadataBatchModal.populateBatchLabel();
+                        });
+                        $("#tagbatchpeopledropdown").on("click", function (e) {
+                            e.preventDefault();
+                            metadataBatchModal.toggleBatchTagPeopleDropdown();
+                        });
+                    </script>
+                </th:block>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="confirmBatchPeopleSelection">Save</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelBatchPeopleSelection">Cancel</button>
             </div>
         </div>
     </div>

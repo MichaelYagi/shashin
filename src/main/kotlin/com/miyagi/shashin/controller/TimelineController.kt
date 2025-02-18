@@ -1663,12 +1663,12 @@ class TimelineController: BaseController() {
                 notifyAlbumUpdate(albumIdAddedList,currentUserObj)
 
                 metricsUtil.start("Metadata Update - Getting attributes")
-                Thread {
+//                Thread {
                     val attrResponse = getAllAttributeData(model)
                     for ((k, v) in attrResponse) {
                         resp[k] = v
                     }
-                }.start()
+//                }.start()
                 metricsUtil.end()
 
                 return mapper.writeValueAsString(resp)
@@ -2196,12 +2196,12 @@ class TimelineController: BaseController() {
                 // Update record
                 metadataRepository.saveAll(metadataList)
 
-                Thread {
+//                Thread {
                     val attrResponse = getAllAttributeData(model)
                     for ((k, v) in attrResponse) {
                         resp[k] = v
                     }
-                }.start()
+//                }.start()
 
                 metricsUtil.end()
 

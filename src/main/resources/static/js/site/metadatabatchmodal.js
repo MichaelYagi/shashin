@@ -9,7 +9,7 @@
     };
 
     metadataBatchModal.populateBatchLabel = function() {
-        const checkedBoxes = $('input[name="recognitionLabel[]:checked');
+        const checkedBoxes = $('#peopleBatchSelectionList :checked');
         let labelString = "";
         checkedBoxes.each(function() {
             labelString += $(this).val() + ",";
@@ -33,7 +33,7 @@
     };
 
     metadataBatchModal.populateBatchAlbum = function() {
-        const checkedBoxes = $('input[name="albums[]:checked');
+        const checkedBoxes = $('#albumBatchSelectionList :checked');
         let albumsString = "";
         checkedBoxes.each(function() {
             albumsString += $(this).val().replace(/ +(?= )/g,'').trim() + ",";
