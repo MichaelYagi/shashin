@@ -381,11 +381,11 @@
                 const imageMetadataId = imageId.substring(5);
                 timelineSettings.renderMetadata(imageMetadataId);
             });
-            if (elements.length > 0 && shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null && typeof shashin.getLightGallery().refresh === 'function') {
-                setTimeout(() => {
+            setTimeout(() => {
+                if (elements.length > 0 && shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null && typeof shashin.getLightGallery().refresh === 'function') {
                     shashin.getLightGallery().refresh();
-                }, 1000);
-            }
+                }
+            }, 1000);
         }, 0);
     };
 
