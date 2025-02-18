@@ -270,6 +270,15 @@ async function saveBatchMetadata(e) {
                         window.location.reload();
                     }
                 }
+
+                shashin.showToastMessage("Metadata", "Batch Metadata Saved", {
+                    icon: "bi-info-circle",
+                    iconColor: "#777777",
+                    tag: "metadatabatchmodal",
+                    borderColor:"success"
+                });
+
+                $("#propBatchMetadata").modal('hide');
             } else {
                 $("#metadataBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                 $("#metadataBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
