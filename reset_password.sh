@@ -1,5 +1,8 @@
 #!/bin/sh
 
+export LC_CTYPE=C
+export LANG=C
+
 available=1
 if ! command -v htpasswd > /dev/null; then
     echo "htpasswd command is not available"
