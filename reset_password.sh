@@ -23,7 +23,7 @@ if [ "$#" -lt 1 ]; then
     exit 1
 fi
 username=$1
-environment=""
+environment="prod"
 if [ "$#" -eq 2 ]; then
     # prod, dev or test
     environment=$2
@@ -39,7 +39,7 @@ if [ -z "${password}" ]; then
 fi
 
 db_command=""
-if [ -z "${environment}" ] || [ "${environment}" = "prod" ]; then
+if [ "${environment}" = "prod" ]; then
     db_command="sqlite3 shashin.db 'SELECT password FROM user WHERE username = \"${username}\";'"
 else
     db_command="sqlite3 shashin_${environment}.db 'SELECT password FROM user WHERE username = \"${username}\";'"
@@ -48,7 +48,7 @@ fi
 old_password=$(eval $db_command)
 
 db_command=""
-if [ -z "${environment}" ] || [ "${environment}" = "prod" ]; then
+if [ "${environment}" = "prod" ]; then
     db_command="sqlite3 shashin.db 'SELECT id FROM user WHERE username = \"${username}\";'"
 else
     db_command="sqlite3 shashin_${environment}.db 'SELECT id FROM user WHERE username = \"${username}\";'"
@@ -64,7 +64,7 @@ fi
 #echo $user_id
 #echo $password
 db_command=""
-if [ -z "${environment}" ] || [ "${environment}" = "prod" ]; then
+if [ "${environment}" = "prod" ]; then
     db_command="sqlite3 shashin.db 'UPDATE user SET password = \"${password}\" WHERE id = ${user_id};'"
 else
     db_command="sqlite3 shashin_${environment}.db 'UPDATE user SET password = \"${password}\" WHERE id = ${user_id};'"
@@ -74,7 +74,7 @@ fi
 eval $db_command
 
 db_command=""
-if [ -z "${environment}" ] || [ "${environment}" = "prod" ]; then
+if [ "${environment}" = "prod" ]; then
     db_command="sqlite3 shashin.db 'SELECT password FROM user WHERE id = ${user_id};'"
 else
     db_command="sqlite3 shashin_${environment}.db 'SELECT password FROM user WHERE id = ${user_id};'"
@@ -86,7 +86,7 @@ update_password=$(eval $db_command)
 #echo $update_password
 
 if [ "$old_password" != "" ] && [ "$update_password" != "" ]; then
-    echo "Password reset for '${username}'. Change after logging in under Manage Account: $new_password"
+    echo "Password reset for '${username}' in ${environment}. Change after logging in under Manage Account: $new_password"
 else
     echo "Oops, something went wrong!"
 fi
