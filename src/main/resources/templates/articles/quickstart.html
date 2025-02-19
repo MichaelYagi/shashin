@@ -33,6 +33,17 @@
 
         <p>Copy the <strong>API key</strong> and configure it in the Shashin <a href="/settings">settings</a> under <strong>CompreFace API key</strong>. If CompreFace is hosted on the same network as Shashin, you should configure the <strong>CompreFace Endpoint</strong> to be a private or public IP.</p>
 
+        <h2 id="resetpass">
+            <div>Reset Password as an Admin<a class="resetpass-link" href="#resetpass" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+        </h2>
+
+        <ol>
+            <li>You need your username and an encrypted password.</li>
+            <li>Visit <a href="http://127.0.0.1:6624/bcrypt" target="_blank">http://127.0.0.1:6624/bcrypt</a> to generate an encrypted password.</li>
+            <li><code>UPDATE user SET password = "&lt;encrypted password&gt;"<br>WHERE id = (SELECT id FROM user WHERE username = "&lt;username&gt;")</code>
+            </li>
+        </ol>
+
         <h2 id="contact">
             <div>Contact<a class="anchorjs-link" href="#contact" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
         </h2>

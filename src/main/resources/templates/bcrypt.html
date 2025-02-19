@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:insert="~{fragments/head :: head(${activePage},${titleDescriptor})}"></head>
+<body>
+
+<h1>BCrypt</h1>
+
+<input type="text" id="bcryptVal" name="strtobcrypt" placeholder="Type text" style="width: 550px;" th:value="${bcryptValue}">
+<input type="submit" name="submit" id="submit">
+
+<script type="application/javascript">
+    $("#submit").on("click", async function (e) {
+        e.preventDefault();
+
+        if ($("#bcryptVal").val() !== "") {
+            const http = new Http("bcrypt");
+
+            let data = await http.ajax("get", "/bcrypt/" + $("#bcryptVal").val());
+
+            if (data.hasOwnProperty("bcryptValue")) {
+                $("#bcryptVal").val(data.bcryptValue);
+            }
+        }
+    });
+
+</script>
+
+</body>
+</html>
