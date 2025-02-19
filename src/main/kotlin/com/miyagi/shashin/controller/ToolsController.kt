@@ -1,5 +1,6 @@
 package com.miyagi.shashin.controller
 
+import ai.djl.repository.MRL.model
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -29,6 +30,8 @@ import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
 import jakarta.servlet.http.HttpServletRequest
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import kotlin.collections.set
 
 
 @Controller
@@ -64,6 +67,37 @@ class ToolsController {
         model["localServerTime"] = TextUtils.getCurrentTimestampTZ()
 
         return "health"
+    }
+
+    @RequestMapping(value = ["/bcrypt/{strtobcrypt}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getBcryptVal(@PathVariable(required = true) strtobcrypt: String): String {
+
+        val response = mutableMapOf<String, Any?>()
+
+        var encodedStr = ""
+
+        if (strtobcrypt.isNotEmpty()) {
+
+            var bcrypt = BCryptPasswordEncoder()
+
+            encodedStr = bcrypt.encode(strtobcrypt)
+        }
+
+        response["msg"] = "Success"
+        response["status"] = ApiResponse.SUCCESS.status
+        response["bcryptValue"] = encodedStr
+
+        return mapper.writeValueAsString(response)
+    }
+
+    @GetMapping("/bcrypt")
+    fun getBcrypt(model: Model): String {
+
+        model["activePage"] = "bcrypt"
+        model["titleDescriptor"] = "bcrypt"
+
+        return "bcrypt"
     }
 
     @RequestMapping(value = ["/status/compreface"], method = [RequestMethod.GET], produces = ["application/json"])

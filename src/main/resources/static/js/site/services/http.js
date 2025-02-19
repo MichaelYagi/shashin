@@ -55,6 +55,8 @@ class Http {
             const message = " executing " + (this.action && this.action.length > 0 ? this.action : "unknown.");
             shashin.onFail(xhr, textStatus, ajaxParams, message, failFunction);
         }).then(function (data, statusText, xhr) {
+            shashin.printMessageToConsole("http response",{tag:"http"});
+            shashin.printMessageToConsole(JSON.stringify(data),{tag:"http"});
             if (isJSON(data) && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 return data;
             } else if (isJSON(data) === false) {
