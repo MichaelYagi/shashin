@@ -2,7 +2,10 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
 <footer th:fragment="footer(copyrightYear,operatingSystemInfo,buildProperties,activeProfile,activePage)">
+    <th:block th:if="${activePage == 'timeline'}">
+        &nbsp;
 <!--    &copy; <span th:text="'2021-'+${copyrightYear}+' '+${@environment.getProperty('app.build.properties.name')}+${activeProfile != 'prod' ? ' '+#strings.capitalize(activeProfile)+' Build ': ' '}+${operatingSystemInfo != '' ? '('+operatingSystemInfo+') ' : ''}+${buildProperties.getVersion()}"></span>-->
+    </th:block>
 </footer>
 </body>
 </html>
