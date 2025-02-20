@@ -121,9 +121,9 @@
                             <span style="display: none;" class="dayTaken" th:text="${metadataList[0].day}"></span>
                     </th:block>
 
-                    <th:block th:each="metadata, iterStat: ${metadataList}">
+<!--                    <th:block th:each="metadata, iterStat: ${metadataList}">-->
 
-                        <div th:id="${'photoThumbnailContainer'+metadata.id}" th:class="${'photo-thumbnail-container photo-thumbnail '+(metadata.type.contains('video') ? 'is-video' : 'is-not-video')}" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
+<!--                        <div th:id="${'photoThumbnailContainer'+metadata.id}" th:class="${'photo-thumbnail-container photo-thumbnail '+(metadata.type.contains('video') ? 'is-video' : 'is-not-video')}" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">-->
 <!--                            <a class="lightGalleryIndexAnchor" th:id="${'lightGalleryIndex'+metadata.id}"></a>-->
 <!--                            <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">-->
 <!--                                <input type="hidden" name="thumbnailUrl-undated[]" th:id="'thumbnailUrl_'+${metadata.id}" th:value="'/api/v1/thumbnails/225/'+${metadata.id}">-->
@@ -155,9 +155,9 @@
 <!--                            <div th:id="'tncentered'+${metadata.id}"></div>-->
 
 <!--                            <span th:id="'metadatamodal'+${metadata.id}"></span>-->
-                        </div>
+<!--                        </div>-->
 
-                    </th:block>
+<!--                    </th:block>-->
 
                     <th:block th:if="${metadataList[0].year==null or metadataList[0].month==null or metadataList[0].day==null}">
                         <span class="scrollspy metadataprocessed" id="tail_undated"></span>
