@@ -178,8 +178,12 @@
 
             <div th:replace="~{fragments/metadatabatchmodal :: metadatabatchmodal(${recognitionLabels},${allAlbumList})}"></div>
 
-            <!-- <div id="msgTimeline"></div> -->
-            <div id="spinner_bottom" class="spinner-border justify-content-center align-items-center mt-2" role="status" style="display: none"></div>
+            <th:block th:if="${agentOS == 'Android' || agentOS == 'IPhone'}">
+                <div id="spinner_bottom" class="spinner-border justify-content-center align-items-center mt-2" role="status" style="display: none"></div>
+            </th:block>
+            <th:block th:unless="${agentOS == 'Android' || agentOS == 'IPhone'}">
+                <div id="spinner_bottom"></div>
+            </th:block>
 
             <div id="subfooter"></div>
             <div id="footer" th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
