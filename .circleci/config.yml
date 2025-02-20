@@ -83,6 +83,11 @@ workflows:
                   mkdir -p target/artifact/
                   mv target/**.exe Shashin-$VERSION.exe
             - run:
+                name: Move shell script Artifacts
+                command: |
+                  mkdir -p target/artifact/
+                  mv target/reset_password.sh reset_password.sh
+            - run:
                 name: Compress Artifacts
                 command: |
                   mkdir -p target/artifact/
