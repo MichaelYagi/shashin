@@ -129,7 +129,6 @@
             timelineSettings.enableScrollSpy = false;
         }
 
-
         $(window).bind("scrollStop", function() {
             firsthovered = true;
             timelineSettings.isScrolling = false;
