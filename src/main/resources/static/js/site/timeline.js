@@ -120,10 +120,12 @@
                 renderInitPage(mediaTypeFilter);
             }
         } else if ($('.scrollspy').length > 0) {
-            renderInitPage(mediaTypeFilter);
+            // renderInitPage(mediaTypeFilter);
+            timelineSettings.jumpFromTimelineToc(null, timelineSettings.timelineDates[0].year+"-"+timelineSettings.timelineDates[0].month+"-"+timelineSettings.timelineDates[0].day, mediaTypeFilter);
         } else {
             timelineSettings.enableScrollSpy = false;
         }
+
 
         $(window).bind("scrollStop", function() {
             firsthovered = true;
@@ -132,16 +134,16 @@
             if ($(".attachMetadataPhotos").last().text() !== "EOL" && $("#spinner_bottom").css("display") === "block") {
                 timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
 
-                // setTimeout(function () {
-                //     if ($(".attachMetadataPhotos").last().text() !== "EOL" && $("#spinner_bottom").css("display") === "block") {
-                //         timelineSettings.enableScrollSpy = true;
-                //         renderViewport();
-                //         timelineSettings.enableScrollSpy = false;
-                //     }
-                // }, 1500);
+                setTimeout(function () {
+                    if ($(".attachMetadataPhotos").last().text() !== "EOL" && $("#spinner_bottom").css("display") === "block") {
+                        timelineSettings.enableScrollSpy = true;
+                        renderViewport();
+                        timelineSettings.enableScrollSpy = false;
+                    }
+                }, 1500);
             }
 
-            //renderViewport();
+            renderViewport();
 
             // Prevent getting stuck scrolling up
             if ($("#container").position().top === $("#infinite-scroll-gallery").position().top ||
@@ -175,10 +177,10 @@
                 }, 1000);
             }
 
-            // timelineSettings.rescanElements();
+            timelineSettings.rescanElements();
 
             setTimeout(() => {
-                const elements = Util.elementsInViewport($('img.photo-thumbnail-image:not([src*="_225.)'));
+                const elements = Util.elementsInViewport($('img.photo-thumbnail-image:not([src*="/api/v1/thumbnails/225/)'));
                 if (elements.length > 0) {
                     timelineSettings.rescanElements(elements);
                 }
@@ -374,7 +376,7 @@
             if (preCalculatedElements !== undefined && preCalculatedElements !== null) {
                 elements = preCalculatedElements;
             } else {
-                elements = Util.elementsInViewport($('img.photo-thumbnail-image:not([src*="_225.)'));
+                elements = Util.elementsInViewport($('img.photo-thumbnail-image:not([src*="/api/v1/thumbnails/225/)'));
             }
             $.each(elements, function(index, value) {
                 const imageId = $(value).attr('id');
