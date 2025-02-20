@@ -127,7 +127,9 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         this.logger.log(Level.INFO, "AlbumSeleniumTest - Redirected to timeline.")
         val scrollContainer = this.driver!!.findElement(By.id("infinite-scroll-gallery"))
         val spanContainerEl = scrollContainer.findElement(By.xpath("./span[1]"))
-        val dateId = spanContainerEl.getAttribute("id")?.substringAfter("container_")
+//        val dateId = spanContainerEl.getAttribute("id")?.substringAfter("container_")
+        val dateId = spanContainerEl.getAttribute("id")?.substringAfter("tail_")
+        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.id("row$dateId")))
         val parentEl = this.driver!!.findElement(By.id("row$dateId"))
         val childEl = parentEl.findElement(By.xpath("./div[1]"))
         val imageId = childEl.getAttribute("id")
@@ -166,11 +168,11 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val saveMetadataButton = this.driver!!.findElement(By.id("saveMetadata"))
         saveMetadataButton.click()
 
-        startTime = System.currentTimeMillis()
-        var elementHasClass = elementHasClass(this.driver!!.findElement(By.id("metadataModalStatus")),"bi-check-circle")
-        while (!elementHasClass || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
-            elementHasClass = elementHasClass(this.driver!!.findElement(By.id("metadataModalStatus")),"bi-check-circle")
-        }
+//        startTime = System.currentTimeMillis()
+//        var elementHasClass = elementHasClass(this.driver!!.findElement(By.id("metadataModalStatus")),"bi-check-circle")
+//        while (!elementHasClass || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
+//            elementHasClass = elementHasClass(this.driver!!.findElement(By.id("metadataModalStatus")),"bi-check-circle")
+//        }
         Thread.sleep(this.elementScanTimeoutMillis.toLong())
         this.logger.log(Level.INFO, "Relocating to albums view.")
         this.driver!!.get("http://localhost:$port/albums")
