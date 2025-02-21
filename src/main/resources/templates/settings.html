@@ -17,40 +17,43 @@
 
                 <br>
 
-                <form id="saveSettingsForm" method="post" action="/settings">
-                    <input type="hidden" id="pathInput" value="">
-                    <input type="hidden" id="selectedPathInput" value="">
-                    <div class="row">
-                        <div class="col-12">
-                            <label for="mediaDirTextArea" class="form-label"><strong>Media directories and files</strong> (separate by line)</label>&nbsp;<span id="inclusionListInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="When Automatic Media Indexing is enabled, changing this value will restart the app"></span>
-                            <div>
-                                <textarea class="form-control" id="mediaDirTextArea" name="mediaDirList" rows="5"><th:block th:text="${mediaDirList}"></th:block></textarea>
+                <th:block th:if="${settings != null}">
+                    <form id="saveSettingsForm" method="post" action="/settings">
+                        <input type="hidden" id="pathInput" value="">
+                        <input type="hidden" id="selectedPathInput" value="">
+                        <div class="card mt-2 px-2 pt-2 pb-2">
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="mediaDirTextArea" class="form-label"><strong>Media directories and files</strong> (separate by line)</label>&nbsp;<span id="inclusionListInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="When Automatic Media Indexing is enabled, changing this value will restart the app"></span>
+                                    <div>
+                                        <textarea class="form-control" id="mediaDirTextArea" name="mediaDirList" rows="5"><th:block th:text="${mediaDirList}"></th:block></textarea>
+                                    </div>
+
+                                    <label for="mediaExcludeDirTextArea" class="form-label"><strong>Excluded media directories and files</strong> (separate by line)</label>&nbsp;<span id="exclusionListInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Exclusion list takes precedence over inclusion list"></span>
+                                    <div>
+                                        <textarea class="form-control" id="mediaExcludeDirTextArea" name="mediaExcludeDirList" rows="3"><th:block th:text="${mediaExcludeDirList}"></th:block></textarea>
+                                    </div>
+                                </div>
                             </div>
 
-                            <label for="mediaExcludeDirTextArea" class="form-label"><strong>Excluded media directories and files</strong> (separate by line)</label>&nbsp;<span id="exclusionListInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Exclusion list takes precedence over inclusion list"></span>
-                            <div>
-                                <textarea class="form-control" id="mediaExcludeDirTextArea" name="mediaExcludeDirList" rows="3"><th:block th:text="${mediaExcludeDirList}"></th:block></textarea>
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="uploadMediaDirectory" class="form-label"><strong>Media upload directory</strong></label>&nbsp;<span id="mediaUploadInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Define with a valid directory to allow media uploads. Uploads can be done on album and explore pages."></span>
+                                    <input class="form-control" id="uploadMediaDirectory" name="uploadMediaDirectory" th:value="${settings.uploadMediaDirectory}">
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <th:block th:if="${settings != null}">
-                        <div class="row">
-                            <div class="col-12">
-                                <label for="uploadMediaDirectory" class="form-label"><strong>Media upload directory</strong></label>&nbsp;<span id="mediaUploadInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Define with a valid directory to allow media uploads. Uploads can be done on album and explore pages."></span>
-                                <input class="form-control" id="uploadMediaDirectory" name="uploadMediaDirectory" th:value="${settings.uploadMediaDirectory}">
-                            </div>
-                        </div>
-                        <div class="card mt-2">
-                            <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDirectories" aria-expanded="false" aria-controls="collapseDirectories">
-                                Browse Directories
-                            </button>
-                            <div class="collapse" id="collapseDirectories">
-                                <input class="form-control" type="text" id="selectedPath" placeholder="Select Directory" readonly>
-                                <button id="parentFolder" type="button" class="btn btn-secondary btn-sm mt-1"><i class="bi-arrow-90deg-up"></i></button>&nbsp;<button type="button" id="selectFolder" class="btn btn-primary btn-sm mt-1">Select</button>
+                            <div class="card mt-2">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDirectories" aria-expanded="false" aria-controls="collapseDirectories">
+                                    Browse Directories
+                                </button>
+                                <div class="collapse" id="collapseDirectories">
+                                    <input class="form-control" type="text" id="selectedPath" placeholder="Select Directory" readonly>
+                                    <button id="parentFolder" type="button" class="btn btn-secondary btn-sm mt-1"><i class="bi-arrow-90deg-up"></i></button>&nbsp;<button type="button" id="selectFolder" class="btn btn-primary btn-sm mt-1">Select</button>
 
-                                <div class="card-body scroll" style="height: 300px">
-                                    <ul class="card-body list-group list-group-flush" id="dirList" style="list-style-type: none;">
-                                    </ul>
+                                    <div class="card-body scroll" style="height: 300px">
+                                        <ul class="card-body list-group list-group-flush" id="dirList" style="list-style-type: none;">
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -142,20 +145,30 @@
                                 <strong>Automatic Media Indexing</strong>&nbsp;<span id="scanAutomaticallyInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Automatically scans media when changes detected in media directories"></span>
                             </label>
                         </div>
-                    </th:block>
-                    <br>
-                    <div class="row">
-                        <div class="col-12">
-                            <button type="submit" class="btn btn-primary" name="saveSettings" id="saveSettings" value="Save">Save</button>
+
+                        <br>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary" name="saveSettings" id="saveSettings" value="Save">Save</button>
+                            </div>
                         </div>
-                    </div>
-                    <hr>
-                    <div class="alert alert-danger" role="alert">
-                        <h4 class="alert-heading">Delete Content</h4>
-                        <p><span class="exclamation-triangle-fill"></span>Warning! This will wipe all sidecar media content!<br>Settings on this page and media directories configured will be not be deleted.</p>
-                        <a href="#" class="btn btn-danger" id="deleteContent">Delete</a>
-                    </div>
-                </form>
+
+                        <hr>
+
+                        <div class="card mt-2">
+                            <button class="btn btn-danger dropdown-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDelete" aria-expanded="false" aria-controls="collapseDelete">
+                                Delete Content
+                            </button>
+                            <div class="collapse alert-danger" id="collapseDelete">
+                                <div class="alert" role="alert">
+                                    <p><span class="exclamation-triangle-fill"></span>Warning! This will wipe all sidecar media content - thumbnails and metadata will be removed!<br>Settings on this page and media directories configured will be not be deleted.</p>
+                                    <a href="#" class="btn btn-danger" id="deleteContent">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </th:block>
             </th:block>
 
             <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
