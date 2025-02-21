@@ -19,7 +19,7 @@ if [ $available -eq 0 ]; then
 fi
 
 environment="prod"
-new_password=$(tr -dc 'A-Za-z0-9!?%=' < /dev/urandom | head -c 10)
+new_password=$(tr -dc 'A-Za-z0-9!?%=' < /dev/urandom | head -c $((9+RANDOM%13)))
 
 # Get the options
 while getopts "e:p:u:" option; do
@@ -53,6 +53,11 @@ if [ -z "${password}" ]; then
     exit 1
 fi
 
+if [ "${environment}" != "test" ] &&  [ "${environment}" != "dev" ] && [ "${environment}" != "prod" ]; then
+    echo "Environment must be one of test, dev or prod"
+    exit 1
+fi
+
 db_command=""
 if [ "${environment}" = "prod" ]; then
     db_command="sqlite3 shashin.db 'SELECT name FROM sqlite_master WHERE type = \"table\";'"
@@ -75,7 +80,7 @@ do
 done
 
 if [ $count != ${#validtables[@]} ]; then
-    echo "Invalid tables"
+    echo "Invalid tables."
     exit 1
 fi
 
@@ -121,7 +126,8 @@ fi
 update_password=$(eval $db_command)
 
 if [ "$old_password" != "" ] && [ "$update_password" != "" ]; then
-    echo "Password reset for '${username}' in ${environment}. Change after logging in under Manage Account: $new_password"
+    echo "Password reset for '${username}' in ${environment}. Change after logging in under Manage Account."
+    echo $new_password
 else
     echo "Oops, something went wrong!"
 fi
