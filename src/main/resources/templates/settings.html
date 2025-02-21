@@ -21,6 +21,10 @@
                     <form id="saveSettingsForm" method="post" action="/settings">
                         <input type="hidden" id="pathInput" value="">
                         <input type="hidden" id="selectedPathInput" value="">
+
+                        <div class="input-group mb-2">
+                            <h1 class="display-1" style="font-size:1.5rem;">Basic Settings</h1>
+                        </div>
                         <div class="card mt-2 px-2 pt-2 pb-2">
                             <div class="row">
                                 <div class="col-12">
@@ -57,93 +61,101 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-3">
-                                <label for="recognitionConfidenceThreshold" class="form-label"><strong>Facial Recognition Confidence Threshold</strong> (Default 0.8)</label>
-                                <input class="form-control" id="recognitionConfidenceThreshold" name="recognitionConfidenceThreshold" th:value="${settings.recognitionConfidenceThreshold}">
-                            </div>
-                            <div class="col-3">
-                                <label for="objectRecognitionConfidenceThreshold" class="form-label"><strong>Object Recognition Confidence Threshold</strong> (Default 0.45)</label>
-                                <input class="form-control" id="objectRecognitionConfidenceThreshold" name="objectRecognitionConfidenceThreshold" th:value="${settings.objectRecognitionConfidenceThreshold}">
-                            </div>
-                            <div class="col-3">
-                                <label for="queryLimit" class="form-label"><strong>Paging Results Query Limit</strong> (Default 30)</label>
-                                <input class="form-control" id="queryLimit" name="queryLimit" th:value="${settings.queryLimit}">
-                            </div>
-                            <div class="col-3">
-                                <label for="notificationLimit" class="form-label"><strong>Notification Limit</strong> (Default 20)</label>
-                                <input class="form-control" id="notificationLimit" name="notificationLimit" th:value="${settings.notificationLimit}">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-3">
-                                <label for="searchHistoryLimit" class="form-label"><strong>Search History Limit</strong> (Default 10)</label>
-                                <input class="form-control" id="searchHistoryLimit" name="searchHistoryLimit" th:value="${settings.searchHistoryLimit}">
-                            </div>
-                            <div class="col-3">
-                                <label for="matchScanLimit" class="form-label"><strong>Match Scan Limit</strong> (Default 30)</label>
-                                <input class="form-control" id="matchScanLimit" name="matchScanLimit" th:value="${settings.matchScanLimit}">
-                            </div>
-                            <div class="col-3">
-                                <label for="trainingDataLimit" class="form-label"><strong>Training Data Limit</strong> (Default 100)</label>
-                                <input class="form-control" id="trainingDataLimit" name="trainingDataLimit" th:value="${settings.trainingDataLimit}">
-                            </div>
-                            <div class="col-3">
-                                <label for="changePort" class="form-label"><strong>Change Port</strong></label>&nbsp;<span id="changePortInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Restarts app after updated and saved"></span>
-                                <input class="form-control" id="changePort" name="changePort" th:value="${settings.port}">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-6">
-                                <label for="compreFaceServer" class="form-label"><strong>CompreFace Endpoint</strong> (eg. http://127.0.0.1:8000/)&nbsp;<span id="compreFaceInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Setup your own CompreFace server (https://github.com/exadel-inc/CompreFace) for facial recognition."></span></label>
-                                <input class="form-control" id="compreFaceServer" name="compreFaceServer" th:value="${settings.compreFaceServer}">
-                            </div>
-                            <div class="col-6">
-                                <label for="compreFaceKey" class="form-label"><strong>CompreFace API key</strong></label>&nbsp;<span id="faceRecogAvailableStatusInfo" th:style="${'color: '+faceRecogAvailableStatusColor+';font-size: 1rem;'}" th:class="${faceRecogAvailableStatusIcon}" data-bs-toggle="tooltip" th:title="${faceRecogAvailableStatusText}"></span>
-                                <input class="form-control" id="compreFaceKey" name="compreFaceKey" th:value="${settings.compreFaceKey}">
-                            </div>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="objectDetection" name="objectDetection" th:checked="${settings.objectDetection}">
-                            <label class="form-check-label" for="objectDetection">
-                                <strong>Enable object detection</strong>&nbsp;<span id="objectDetectionInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Enabling puts CPU under load during processing"></span>
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="facialDetection" name="facialDetection" th:checked="${settings.facialDetection}">
-                            <label class="form-check-label" for="objectDetection">
-                                <strong>Enable face detection</strong>&nbsp;<span id="objectFacialInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Enabling puts CPU under load during processing, unless CompreFace is setup"></span>
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <div class="col-3">
-                                <input class="form-check-input" type="checkbox" id="scheduledMatching" name="scheduledMatching" th:checked="${settings.scheduledMatching}">
-                                <label class="form-check-label" for="scheduledMatching">
-                                    <strong>Enable scheduled background matching</strong>&nbsp;<span id="scheduledMatchingInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Scans people and objects as a background job"></span>
-                                </label>
-                            </div>
 
-                            <div class="col-2 form-group">
-                                <label for="scheduledTime">Time at which tasks run</label>&nbsp;<span id="scheduledTimeInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Restarts app after updated and saved"></span>
-                                <div class="col-5">
-                                    <select class="form-select" id="scheduledTime" name="scheduledTime">
-                                        <th:block th:each="time, iterStat: ${timeScheduleList}">
-                                            <th:block th:if="${scheduledTime==time}">
-                                                <option th:value="${time}" th:text="${time}" selected></option>
-                                            </th:block>
-                                            <th:block th:if="${scheduledTime!=time}">
-                                                <option th:value="${time}" th:text="${time}"></option>
-                                            </th:block>
-                                        </th:block>
-                                    </select>&nbsp;<span th:text="${currentTimezone}"></span>
+                        <br>
+
+                        <div class="input-group mb-2">
+                            <h1 class="display-1" style="font-size:1.5rem;">Advanced Settings</h1>
+                        </div>
+                        <div class="card mt-2 px-2 pt-2 pb-2">
+                            <div class="row">
+                                <div class="col-3">
+                                    <label for="recognitionConfidenceThreshold" class="form-label"><strong>Facial Recognition Confidence Threshold</strong> (Default 0.8)</label>
+                                    <input class="form-control" id="recognitionConfidenceThreshold" name="recognitionConfidenceThreshold" th:value="${settings.recognitionConfidenceThreshold}">
+                                </div>
+                                <div class="col-3">
+                                    <label for="objectRecognitionConfidenceThreshold" class="form-label"><strong>Object Recognition Confidence Threshold</strong> (Default 0.45)</label>
+                                    <input class="form-control" id="objectRecognitionConfidenceThreshold" name="objectRecognitionConfidenceThreshold" th:value="${settings.objectRecognitionConfidenceThreshold}">
+                                </div>
+                                <div class="col-3">
+                                    <label for="queryLimit" class="form-label"><strong>Paging Results Query Limit</strong> (Default 30)</label>
+                                    <input class="form-control" id="queryLimit" name="queryLimit" th:value="${settings.queryLimit}">
+                                </div>
+                                <div class="col-3">
+                                    <label for="notificationLimit" class="form-label"><strong>Notification Limit</strong> (Default 20)</label>
+                                    <input class="form-control" id="notificationLimit" name="notificationLimit" th:value="${settings.notificationLimit}">
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="scanAutomatically" name="scanAutomatically" th:checked="${settings.scanAutomatically}">
-                            <label class="form-check-label" for="scanAutomatically">
-                                <strong>Automatic Media Indexing</strong>&nbsp;<span id="scanAutomaticallyInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Automatically scans media when changes detected in media directories"></span>
-                            </label>
+                            <div class="row">
+                                <div class="col-3">
+                                    <label for="searchHistoryLimit" class="form-label"><strong>Search History Limit</strong> (Default 10)</label>
+                                    <input class="form-control" id="searchHistoryLimit" name="searchHistoryLimit" th:value="${settings.searchHistoryLimit}">
+                                </div>
+                                <div class="col-3">
+                                    <label for="matchScanLimit" class="form-label"><strong>Match Scan Limit</strong> (Default 30)</label>
+                                    <input class="form-control" id="matchScanLimit" name="matchScanLimit" th:value="${settings.matchScanLimit}">
+                                </div>
+                                <div class="col-3">
+                                    <label for="trainingDataLimit" class="form-label"><strong>Training Data Limit</strong> (Default 100)</label>
+                                    <input class="form-control" id="trainingDataLimit" name="trainingDataLimit" th:value="${settings.trainingDataLimit}">
+                                </div>
+                                <div class="col-3">
+                                    <label for="changePort" class="form-label"><strong>Change Port</strong></label>&nbsp;<span id="changePortInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Restarts app after updated and saved"></span>
+                                    <input class="form-control" id="changePort" name="changePort" th:value="${settings.port}">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="compreFaceServer" class="form-label"><strong>CompreFace Endpoint</strong> (eg. http://127.0.0.1:8000/)&nbsp;<span id="compreFaceInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Setup your own CompreFace server (https://github.com/exadel-inc/CompreFace) for facial recognition."></span></label>
+                                    <input class="form-control" id="compreFaceServer" name="compreFaceServer" th:value="${settings.compreFaceServer}">
+                                </div>
+                                <div class="col-6">
+                                    <label for="compreFaceKey" class="form-label"><strong>CompreFace API key</strong></label>&nbsp;<span id="faceRecogAvailableStatusInfo" th:style="${'color: '+faceRecogAvailableStatusColor+';font-size: 1rem;'}" th:class="${faceRecogAvailableStatusIcon}" data-bs-toggle="tooltip" th:title="${faceRecogAvailableStatusText}"></span>
+                                    <input class="form-control" id="compreFaceKey" name="compreFaceKey" th:value="${settings.compreFaceKey}">
+                                </div>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="objectDetection" name="objectDetection" th:checked="${settings.objectDetection}">
+                                <label class="form-check-label" for="objectDetection">
+                                    <strong>Enable object detection</strong>&nbsp;<span id="objectDetectionInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Enabling puts CPU under load during processing"></span>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="facialDetection" name="facialDetection" th:checked="${settings.facialDetection}">
+                                <label class="form-check-label" for="objectDetection">
+                                    <strong>Enable face detection</strong>&nbsp;<span id="objectFacialInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Enabling puts CPU under load during processing, unless CompreFace is setup"></span>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <div class="col-3">
+                                    <input class="form-check-input" type="checkbox" id="scheduledMatching" name="scheduledMatching" th:checked="${settings.scheduledMatching}">
+                                    <label class="form-check-label" for="scheduledMatching">
+                                        <strong>Enable scheduled background matching</strong>&nbsp;<span id="scheduledMatchingInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Scans people and objects as a background job"></span>
+                                    </label>
+                                </div>
+
+                                <div class="col-2 form-group">
+                                    <label for="scheduledTime">Time at which tasks run</label>&nbsp;<span id="scheduledTimeInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Restarts app after updated and saved"></span>
+                                    <div class="col-5">
+                                        <select class="form-select" id="scheduledTime" name="scheduledTime">
+                                            <th:block th:each="time, iterStat: ${timeScheduleList}">
+                                                <th:block th:if="${scheduledTime==time}">
+                                                    <option th:value="${time}" th:text="${time}" selected></option>
+                                                </th:block>
+                                                <th:block th:if="${scheduledTime!=time}">
+                                                    <option th:value="${time}" th:text="${time}"></option>
+                                                </th:block>
+                                            </th:block>
+                                        </select>&nbsp;<span th:text="${currentTimezone}"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="scanAutomatically" name="scanAutomatically" th:checked="${settings.scanAutomatically}">
+                                <label class="form-check-label" for="scanAutomatically">
+                                    <strong>Automatic Media Indexing</strong>&nbsp;<span id="scanAutomaticallyInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Automatically scans media when changes detected in media directories"></span>
+                                </label>
+                            </div>
                         </div>
 
                         <br>
