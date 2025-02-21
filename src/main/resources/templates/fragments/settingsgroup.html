@@ -3,7 +3,7 @@
 <body>
 <ul class="nav nav-pills nav-fill ms-3 me-3 mt-3" th:fragment="settings(activePage,faceRecogServicesAvailable,objectRecogEnabled,facialRecogEnabled)">
   <li class="nav-item">
-    <a th:attr="class='nav-link' + ${activePage=='settings' ? ' active' : ''}" href="/settings">General Settings</a>
+    <a th:attr="class='nav-link' + ${activePage=='settings' ? ' active' : ''}" href="/settings">Settings</a>
   </li>
   <li class="nav-item">
     <a th:attr="class='nav-link' + ${activePage=='scan' ? ' active' : ''}" href="/settings/scan">Media Indexing</a>
