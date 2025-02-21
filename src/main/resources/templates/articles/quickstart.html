@@ -33,26 +33,28 @@
 
         <p>Copy the <strong>API key</strong> and configure it in the Shashin <a href="/settings">settings</a> under <strong>CompreFace API key</strong>. If CompreFace is hosted on the same network as Shashin, you should configure the <strong>CompreFace Endpoint</strong> to be a private or public IP.</p>
 
-        <h2 id="resetpass">
-            <div>Reset Password as an Admin<a class="resetpass-link" href="#resetpass" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
-        </h2>
+        <th:block th:if="${authority == 'ROLE_SUPER'}">
+            <h2 id="resetpass">
+                <div>Reset Password as an Admin<a class="resetpass-link" href="#resetpass" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+            </h2>
 
-        <p>You need access to the shashin database.</p>
+            <p>You need access to the shashin database.</p>
 
-        <p>Either reset the password with the shell script <code>reset_password.sh</code> and ensure you can execute it <code>chmod +x reset_password.sh</code>.</p>
+            <p>Either reset the password with the shell script <code>reset_password.sh</code> and ensure you can execute it <code>chmod +x reset_password.sh</code>.</p>
 
-        <p>Usage <code>./reset_password.sh &lt;username&gt;</code> to reset password in prod. To define an environment, type <code>./reset_password.sh &lt;username&gt; &lt;prod/dev/test&gt;</code></p>
+            <p>Usage <code>./reset_password.sh &lt;username&gt;</code> to reset password in prod. To define an environment, type <code>./reset_password.sh &lt;username&gt; &lt;prod/dev/test&gt;</code></p>
 
-        <p>Output would be the new temporary password. You should change the password immediately afterward in <strong>Manage Account</strong>.</p>
+            <p>Output would be the new temporary password. You should change the password immediately afterward in <strong>Manage Account</strong>.</p>
 
-        <p>Or follow the steps:</p>
+            <p>Or follow the steps:</p>
 
-        <ol>
-            <li>You need your username and an encrypted password.</li>
-            <li>Visit <a href="http://127.0.0.1:6624/bcrypt" target="_blank">http://127.0.0.1:6624/bcrypt</a> to generate an encrypted password.</li>
-            <li><code>UPDATE user SET password = "&lt;encrypted password&gt;"<br>WHERE id = (SELECT id FROM user WHERE username = "&lt;username&gt;")</code>
-            </li>
-        </ol>
+            <ol>
+                <li>You need your username and an encrypted password.</li>
+                <li>Visit <a href="http://127.0.0.1:6624/bcrypt" target="_blank">http://127.0.0.1:6624/bcrypt</a> to generate an encrypted password.</li>
+                <li><code>UPDATE user SET password = "&lt;encrypted password&gt;"<br>WHERE id = (SELECT id FROM user WHERE username = "&lt;username&gt;")</code>
+                </li>
+            </ol>
+        </th:block>
 
         <h2 id="contact">
             <div>Contact<a class="anchorjs-link" href="#contact" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
