@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 export LC_CTYPE=C
 export LANG=C
@@ -40,6 +40,25 @@ fi
 
 db_command=""
 if [ "${environment}" = "prod" ]; then
+    db_command="sqlite3 shashin.db 'SELECT name FROM sqlite_master WHERE type = \"table\";'"
+else
+    db_command="sqlite3 shashin_${environment}.db 'SELECT name FROM sqlite_master WHERE type = \"table\";'"
+fi
+
+tables=$(eval $db_command)
+validtables=("album" "albumcomment" "albumphoto" "albumphotocomment" "comment" "favorite" "keyword" "keywordphoto" "mediadir" "metadata" "notification" "persistent_logins" "persistent_logins_expiry" "recognitionlabel" "recognitionlabelphoto" "searchhistory" "settings" "user" "useragent" "useralbum")
+# shellcheck disable=SC2068
+diff=(`echo ${tables[@]} ${validtables[@]} | tr ' ' '\n' | sort | uniq -u `)
+arraylength=${#diff[@]}
+
+if [ $arraylength -ne 0 ]; then
+    echo "Validating tables failed. Missing tables:"
+    echo $diff
+    exit 1;
+fi
+
+db_command=""
+if [ "${environment}" = "prod" ]; then
     db_command="sqlite3 shashin.db 'SELECT password FROM user WHERE username = \"${username}\";'"
 else
     db_command="sqlite3 shashin_${environment}.db 'SELECT password FROM user WHERE username = \"${username}\";'"
@@ -57,12 +76,10 @@ fi
 user_id=$(eval $db_command)
 
 if [ -z "${user_id}" ]; then
-    echo "User $username not found"
+    echo "User '$username' not found"
     exit 1
 fi
 
-#echo $user_id
-#echo $password
 db_command=""
 if [ "${environment}" = "prod" ]; then
     db_command="sqlite3 shashin.db 'UPDATE user SET password = \"${password}\" WHERE id = ${user_id};'"
@@ -70,7 +87,6 @@ else
     db_command="sqlite3 shashin_${environment}.db 'UPDATE user SET password = \"${password}\" WHERE id = ${user_id};'"
 fi
 
-#echo $db_command
 eval $db_command
 
 db_command=""
@@ -81,9 +97,6 @@ else
 fi
 
 update_password=$(eval $db_command)
-
-#echo $old_password
-#echo $update_password
 
 if [ "$old_password" != "" ] && [ "$update_password" != "" ]; then
     echo "Password reset for '${username}' in ${environment}. Change after logging in under Manage Account: $new_password"
