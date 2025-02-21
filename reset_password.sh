@@ -30,8 +30,13 @@ dbenv="prod"
 new_password=$(tr -dc 'A-Za-z0-9!?%=' < /dev/urandom | head -c $((9+RANDOM%13)))
 
 # Get the options
+# shellcheck disable=SC2214
 while getopts "e:p:u:" option; do
     case "${option}" in
+        h)
+            usage
+            exit 1
+            ;;
         u)
             username=${OPTARG}
             ;;
