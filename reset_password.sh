@@ -18,23 +18,38 @@ if [ $available -eq 0 ]; then
     exit 1
 fi
 
-if [ "$#" -lt 1 ]; then
-    echo "Usage, place this script in the shashin root directory, default environment is prod: $0 <username>"
-    exit 1
-fi
-username=$1
 environment="prod"
-if [ "$#" -eq 2 ]; then
-    # prod, dev or test
-    environment=$2
-fi
-
 new_password=$(tr -dc 'A-Za-z0-9!?%=' < /dev/urandom | head -c 10)
+
+# Get the options
+while getopts "e:p:u:" option; do
+    case "${option}" in
+        u)
+            username=${OPTARG}
+            ;;
+        e)
+            environment=${OPTARG}
+            ;;
+        p)
+            new_password=${OPTARG}
+            ;;
+   esac
+done
+
 bcrypt="htpasswd -bnBC 12 \"\" $new_password | cut -d : -f 2"
 password=$(eval $bcrypt)
 
+if [ "${username}" == "" ]; then
+    echo "Place this script in the Shashin root directory. The default environment is prod."
+    echo "$0 -u <username>"
+    echo "Options:"
+       echo "-e     Environment - one of test/dev/prod"
+       echo "-p     Preset password"
+    exit 1
+fi
+
 if [ -z "${password}" ]; then
-    echo "Password could not be generated"
+    echo "Password could not be encrypted"
     exit 1
 fi
 
@@ -45,16 +60,23 @@ else
     db_command="sqlite3 shashin_${environment}.db 'SELECT name FROM sqlite_master WHERE type = \"table\";'"
 fi
 
-tables=$(eval $db_command)
-validtables=("album" "albumcomment" "albumphoto" "albumphotocomment" "comment" "favorite" "keyword" "keywordphoto" "mediadir" "metadata" "notification" "persistent_logins" "persistent_logins_expiry" "recognitionlabel" "recognitionlabelphoto" "searchhistory" "settings" "user" "useragent" "useralbum")
-# shellcheck disable=SC2068
-diff=(`echo ${tables[@]} ${validtables[@]} | tr ' ' '\n' | sort | uniq -u `)
-arraylength=${#diff[@]}
+tables=($(eval $db_command))
+validtables=("album" "albumcomment" "albumphoto" "albumphotocomment" "comment" "favorite" "keyword" "keywordphoto" "mediadir" "metadata" "notification" "recognitionlabel" "recognitionlabelphoto" "searchhistory" "settings" "user" "useragent" "useralbum")
 
-if [ $arraylength -ne 0 ]; then
-    echo "Validating tables failed. Missing tables:"
-    echo $diff
-    exit 1;
+count=0
+for i in "${tables[@]}"
+do
+    for k in "${validtables[@]}"
+    do
+        if [[ $i = $k ]]; then
+            count=$((count+1))
+        fi
+    done
+done
+
+if [ $count != ${#validtables[@]} ]; then
+    echo "Invalid tables"
+    exit 1
 fi
 
 db_command=""
