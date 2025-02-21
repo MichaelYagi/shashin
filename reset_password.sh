@@ -18,6 +18,14 @@ if [ $available -eq 0 ]; then
     exit 1
 fi
 
+usage() {
+    echo "Place this script in the Shashin root directory. The default environment is prod."
+    echo "$0 -u <username>"
+    echo "Options:"
+    echo "-e     Environment - one of test/dev/prod"
+    echo "-p     Preset password"
+}
+
 dbenv="prod"
 new_password=$(tr -dc 'A-Za-z0-9!?%=' < /dev/urandom | head -c $((9+RANDOM%13)))
 
@@ -35,6 +43,7 @@ while getopts "e:p:u:" option; do
             ;;
         *)
             echo "Unknown option $i"
+            usage
             exit 1
             ;;
    esac
@@ -54,11 +63,7 @@ bcrypt="htpasswd -bnBC 12 \"\" $new_password | cut -d : -f 2"
 password=$(eval $bcrypt)
 
 if [ "${username}" == "" ]; then
-    echo "Place this script in the Shashin root directory. The default environment is prod."
-    echo "$0 -u <username>"
-    echo "Options:"
-       echo "-e     Environment - one of test/dev/prod"
-       echo "-p     Preset password"
+    usage
     exit 1
 fi
 
