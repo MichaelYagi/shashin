@@ -100,6 +100,9 @@ class SettingsController {
     private val mediaDirRepository: MediaDirectoryRepository? = null
 
     @Autowired
+    private val folderDataRepository: FolderDataRepository? = null
+
+    @Autowired
     private val userRepository: UserRepository? = null
 
     @Autowired
@@ -1947,7 +1950,7 @@ class SettingsController {
                                                     Level.INFO,
                                                     "Place set for " + metadataObj.getFileName()
                                                 )
-                                                metadataRepository?.save(metadataObj)
+                                                metadataRepository.save(metadataObj)
                                             }
                                         }
 
@@ -2384,6 +2387,17 @@ class SettingsController {
                                         metadataObj.setUploadedBy(uploadUserId)
 
                                         metadataRepository.save(metadataObj)
+
+                                        // Create folder cover URL
+                                        if (metadataObj.getFolder() != null && metadataObj.getFolder()!!.isNotEmpty()) {
+                                            val folderDataCount = folderDataRepository!!.countByFolder(metadataObj.getFolder().toString())
+                                            if (folderDataCount == 0) {
+                                                val folderData = FolderData()
+                                                folderData.setCoverUrl(metadataObj.getThumbnailUrlCentered().toString())
+                                                folderData.setFolder(metadataObj.getFolder().toString())
+                                                folderDataRepository.save(folderData)
+                                            }
+                                        }
 
                                         // Add to album from album view
                                         if (addToAlbum > 0) {

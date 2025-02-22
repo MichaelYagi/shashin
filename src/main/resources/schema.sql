@@ -63,6 +63,13 @@ CREATE INDEX `idx_metadata_datetype` ON metadata (`year` DESC, `month` DESC, `da
 DROP INDEX IF EXISTS `idx_metadata_date`;
 CREATE INDEX `idx_metadata_date` ON metadata (`year` DESC, `month` DESC, `day` DESC, `hidden`);
 
+DROP TABLE IF EXISTS `folderdata`;
+CREATE TABLE `folderdata` (
+                            `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                            `folder` VARCHAR (255) NOT NULL UNIQUE,
+                            `coverUrl` VARCHAR(255) DEFAULT NULL
+);
+
 DROP TABLE IF EXISTS `settings`;
 CREATE TABLE `settings` (
                             `id` INTEGER PRIMARY KEY AUTOINCREMENT,

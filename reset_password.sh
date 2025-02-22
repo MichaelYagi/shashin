@@ -94,7 +94,7 @@ fi
 
 db_command="sqlite3 shashin${environment}.db 'SELECT name FROM sqlite_master WHERE type = \"table\";'"
 tables=($(eval $db_command))
-validtables=("album" "albumcomment" "albumphoto" "albumphotocomment" "comment" "favorite" "keyword" "keywordphoto" "mediadir" "metadata" "notification" "recognitionlabel" "recognitionlabelphoto" "searchhistory" "settings" "user" "useragent" "useralbum")
+validtables=("album" "albumcomment" "albumphoto" "albumphotocomment" "comment" "favorite" "folderdata" "keyword" "keywordphoto" "mediadir" "metadata" "notification" "recognitionlabel" "recognitionlabelphoto" "searchhistory" "settings" "user" "useragent" "useralbum")
 
 count=0
 for i in "${tables[@]}"
