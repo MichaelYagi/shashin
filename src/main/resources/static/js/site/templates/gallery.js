@@ -184,6 +184,7 @@ class GalleryTemplates {
             
             ${($.inArray("isEditControls", overlays) !== -1) ?
         `
+            <br>
             <a href="#" id="metadataModalEdit${metadata.id}" data-bs-target="#propTimelinModal" tag="${metadata.id}">
                 <span class="${data.editIcon}" style="font-size: 1rem;color: lightgray;"></span>
             </a>

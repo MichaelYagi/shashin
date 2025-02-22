@@ -84,6 +84,8 @@ class Folder {
                         const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id].count > 0 ? favoritesMap[metadata.id].count : 0;
 
                         const overlayData = shashin.getOverlayData(metadata, {
+                            blOnClickFunction: "Folder.openFolderModal",
+                            onClickIdPrefix: "folderModalEdit",
                             editControls: true,
                             editIcon: ((metadata.lat === null || metadata.lng === null) ? 'bi-info-square' : 'bi-info-circle'),
                             cOnClickFunction: "shashin.openGallery",
@@ -122,5 +124,29 @@ class Folder {
         $("#spinner").css("display","none");
 
         return mediaContentList;
+    }
+
+    static openFolderModal(e,metadataId) {
+        e.preventDefault();
+
+        shashin.getMetadata(metadataId).then(function (metadata) {
+            if (metadata !== null) {
+                // Clear modal data
+                $("#folderModalTitle").text(metadata.title);
+                $('#propFolderModal').find(':input').val('');
+                $("#setCoverFolder").val("yes");
+                $("#propFolderModalThumbnail").html("");
+
+                $("#metadataId").val(metadata.id);
+                if (metadata.thumbnailUrlCentered !== null) {
+                    const version = Util.getMetadataLocalStorage();
+                    $("#propFolderModalThumbnail").html('<img loading="lazy" src="/api/v1/thumbnails/centered/' + metadata.id + (version === "" ? "" : "?v=" + version) + '" height="100" width="100" draggable="false">');
+                    $("#folderCoverUrl").val("/api/v1/thumbnails/centered/" + metadata.id);
+                }
+
+                // Open modal window
+                $("#propFolderModal").modal('show');
+            }
+        });
     }
 }

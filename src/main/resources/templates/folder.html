@@ -17,8 +17,6 @@
 
             <div id="scroll-gallery">
                 <th:block th:if="${not #lists.isEmpty(metadataList)}">
-<!--                    <h1 th:inline="text">[[${folder}]]</h1>-->
-<!--                    <small><a href="/folders"><span class="bi-arrow-return-left" style="font-size: 1rem;text-decoration: none !important;color: #777777;" title="Go back"></span></a></small>-->
                     <div class="mt-2" id="folderMessage"></div>
 
                     <div class="row image-group-padding">
@@ -35,6 +33,12 @@
                                 <div th:replace="~{fragments/topleftoverlay :: topleftoverlay(${metadata.id})}"></div>
 
                                 <div class="thumbnail-bl" th:id="${'tnbl'+metadata.id}">
+                                    <th:block th:if="${authority == 'ROLE_ADMIN' || authority == 'ROLE_SUPER'}">
+                                        <a href="#" th:id="${'folderModalEdit'+metadata.id}" data-bs-target="#propFolderModal">
+                                            <span th:class="bi-journal-album" style="font-size: 1rem;color: lightgray;"></span>
+                                        </a>
+                                        <br>
+                                    </th:block>
                                     <a href="#" th:id="${'metadataModalEdit'+metadata.id}" data-bs-target="#propTimelinModal">
                                         <span th:class="${metadata.lat == null || metadata.lng == null ? 'bi-info-square' : 'bi-info-circle'}" style="font-size: 1rem;color: lightgray;"></span>
                                     </a>
@@ -59,6 +63,10 @@
                                 $("#metadataModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").on("click", function(e) {
                                     e.preventDefault();
                                     shashin.openEditMetadataModal(/*[[${metadata.id}]]*/"");
+                                });
+                                $("#folderModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").on("click", function(e) {
+                                    e.preventDefault();
+                                    Folder.openFolderModal(e, /*[[${metadata.id}]]*/"");
                                 });
 
                                 shashin.setPhotoOverlays({id:[[${metadata.id}]],lat:[[${metadata.lat}]],lng:[[${metadata.lng}]],year:[[${metadata.year}]],month:[[${metadata.month}]],day:[[${metadata.day}]],fileName:[[${metadata.fileName}]],thumbnailUrlSmall:[[${metadata.thumbnailUrlSmall}]],type:[[${metadata.type}]]}, /*[[${activePage}]]*/'folder');
@@ -127,6 +135,28 @@
     </div>
 </div>
 
+<div class="modal fade" id="propFolderModal" tabindex="-1" role="dialog" aria-labelledby="labelFolderModal">
+    <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="propFolderModalLabel">Set &ldquo;<span id="folderModalTitle"></span>&rdquo; as folder cover?<div id="propFolderModalThumbnail"></div></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form id="saveFolderModalForm">
+                <input type="hidden" name="setCoverFolder" id="setCoverFolder" value="yes">
+                <input type="hidden" name="folderCoverUrl" id="folderCoverUrl">
+            </form>
+
+            <div class="modal-footer">
+                <div id="folderModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 1.55rem;" role="status" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
+                <button type="button" class="btn btn-primary" id="saveFolderModal">OK</button>
+                <button id="folderModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
     <script src="/js/site/applisteners.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
@@ -149,7 +179,50 @@
                 const metadataList = data["metadataList"];
                 const folderInstance = new Folder(metadataList, activePage, folderName);
                 folderInstance.init();
-                // Util.checkErrorImage();
+
+
+                $('#saveFolderModal').on("click", async function (e) {
+                    e.preventDefault();
+                    $("#folderModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
+                    $("#folderModalStatus").visible();
+                    $("#folderModalStatus").attr("title", "");
+                    $("#folderModalCancel").prop('disabled', false);
+
+                    let requestJson = {
+                        setCoverFolder: $('#setCoverFolder').val() === "yes",
+                        metadataId: $("#metadataId").val(),
+                        folder: folderName
+                    };
+
+                    const http = new Http("updating folder");
+                    const data = await http.ajax("post", "/folder/update", JSON.stringify(requestJson), function () {
+                        $("#folderModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
+                        $("#folderModalStatus").attr("title", shashin.modalStatusFailMessage());
+                        $("#folderModalCancel").prop('disabled', false);
+                    });
+
+                    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                        if (data.status === shashin.apiResponse.SUCCESS) {
+                            $("#folderModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+                            $("#folderModalCancel").prop('disabled', false);
+                        } else {
+                            $("#folderModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                            $("#folderModalStatus").attr("title", shashin.modalStatusFailMessage());
+                            $("#folderModalCancel").prop('disabled', false);
+                        }
+                    } else {
+                        $("#folderModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                        $("#folderModalStatus").attr("title", shashin.modalStatusFailMessage());
+                        $("#folderModalCancel").prop('disabled', false);
+                    }
+
+                    return false;
+                });
+
+                $('#propAlbumModal').on('hide.bs.modal', function () {
+                    $("#albumsModalStatus").attr("class","spinner-grow me-auto");
+                    $("#albumsModalStatus").invisible();
+                });
             }
         });
     });

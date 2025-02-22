@@ -67,7 +67,7 @@ DROP TABLE IF EXISTS `folderdata`;
 CREATE TABLE `folderdata` (
                             `id` INTEGER PRIMARY KEY AUTOINCREMENT,
                             `folder` VARCHAR (255) NOT NULL UNIQUE,
-                            `coverUrl` VARCHAR(255) DEFAULT NULL
+                            `mid` VARCHAR(36) NOT NULL UNIQUE
 );
 
 DROP TABLE IF EXISTS `settings`;

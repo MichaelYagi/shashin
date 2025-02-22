@@ -687,7 +687,7 @@ class SettingsController {
                 recognitionLabelRepository?.deleteAll()
                 userAlbumRepository?.deleteAll()
                 keywordRepository?.deleteAll()
-                keywordPhotoRepository?.deleteAll()
+                folderDataRepository?.deleteAll()
 
                 // Cleanup CompreFace subjects
                 val settings = model.getAttribute("settings") as Settings
@@ -1701,7 +1701,7 @@ class SettingsController {
                                                             val commentCount =
                                                                 commentRepository?.countById(albumPhotoComment.getId())
                                                             if (commentCount != null && commentCount > 0) {
-                                                                commentRepository?.deleteById(albumPhotoComment.getId())
+                                                                commentRepository.deleteById(albumPhotoComment.getId())
                                                             }
                                                         }
                                                     }
@@ -1800,7 +1800,7 @@ class SettingsController {
                                                 recognitionLabelPhotoRepository?.deleteByMetadataId(metadata.getId())
 
                                                 // Delete metadata
-                                                metadataRepository?.deleteById(metadata.getId())
+                                                metadataRepository.deleteById(metadata.getId())
                                                 logger.log(
                                                     Level.INFO,
                                                     "Removed metadata records for: " + metadata.getId()
@@ -2393,7 +2393,7 @@ class SettingsController {
                                             val folderDataCount = folderDataRepository!!.countByFolder(metadataObj.getFolder().toString())
                                             if (folderDataCount == 0) {
                                                 val folderData = FolderData()
-                                                folderData.setCoverUrl(metadataObj.getThumbnailUrlCentered().toString())
+                                                folderData.setMid(metadataObj.getId().toString())
                                                 folderData.setFolder(metadataObj.getFolder().toString())
                                                 folderDataRepository.save(folderData)
                                             }

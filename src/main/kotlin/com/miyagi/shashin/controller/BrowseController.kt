@@ -1,5 +1,7 @@
 package com.miyagi.shashin.controller
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScanMessage
@@ -56,6 +58,9 @@ class BrowseController: BaseController() {
 
     @Autowired
     private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
+
+    @Autowired
+    private var folderDataRepository: FolderDataRepository? = null
 
     @Autowired
     private lateinit var settingsController: SettingsController
@@ -700,9 +705,6 @@ class BrowseController: BaseController() {
     private fun buildInitialFoldersPage(model: Model): Model {
         val page = 0
         val response = buildPagedFolders(model,page)
-        for ((k, v) in response) {
-            model[k] = v!!
-        }
 
         for ((k, v) in response) {
             model[k] = v!!
@@ -716,9 +718,6 @@ class BrowseController: BaseController() {
     private fun buildInitialPage(module: String, model: Model, mediaTypeFilter: String?): Model {
         val page = 0
         val response = buildBrowseRecord(module,model,page,model.getAttribute("queryLimit").toString().toInt(),mediaTypeFilter)
-        for ((k, v) in response) {
-            model[k] = v!!
-        }
 
         for ((k, v) in response) {
             model[k] = v!!
@@ -1188,5 +1187,38 @@ class BrowseController: BaseController() {
         }
 
         return response
+    }
+
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
+    @RequestMapping(value = ["/folder/update"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    fun postFolderUpdate(model: Model, @RequestBody requestBody: JsonNode): String {
+
+        val response = mutableMapOf<String, Any?>()
+
+        val folderMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+
+        response["responseData"] = mutableMapOf<String, Any?>()
+        response["msg"] = ""
+        response["status"] = ApiResponse.FAIL.status
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null && folderMap.containsKey("setCoverFolder") && folderMap["setCoverFolder"].toString().toBoolean() && folderMap.containsKey("metadataId") && folderMap.containsKey("folder")) {
+            val metadataId = folderMap["metadataId"].toString()
+            val folder = folderMap["folder"].toString()
+
+            if (folderDataRepository!!.countByFolder(folder) == 1) {
+                val folderData = folderDataRepository!!.findByFolder(folder)
+                folderData.setMid(metadataId)
+                folderDataRepository!!.save(folderData)
+
+                response["msg"] = ""
+                response["status"] = ApiResponse.SUCCESS.status
+            } else {
+                response["msg"] = "Single entry not found."
+            }
+        }
+
+        return mapper.writeValueAsString(response)
     }
 }
