@@ -20,18 +20,31 @@ fi
 
 usage() {
     echo "Place this script in the Shashin root directory. The default environment is prod."
+    echo ""
     echo "$0 -u <username>"
     echo "Options:"
     echo "-e     Environment - one of test/dev/prod"
     echo "-p     Preset password"
 }
 
+# Transform long options to short ones
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    '--help') set -- "$@" '-h'   ;;
+    '--username') set -- "$@" '-u'   ;;
+    '--password') set -- "$@" '-p'   ;;
+    '--environment') set -- "$@" '-e'   ;;
+    *) set -- "$@" "$arg" ;;
+  esac
+done
+
 dbenv="prod"
 new_password=$(tr -dc 'A-Za-z0-9!?%=' < /dev/urandom | head -c $((9+RANDOM%13)))
 
 # Get the options
 # shellcheck disable=SC2214
-while getopts "e:p:u:" option; do
+while getopts "e:p:u:h?" option; do
     case "${option}" in
         h)
             usage
@@ -56,6 +69,7 @@ done
 
 if [ "${dbenv}" != "test" ] &&  [ "${dbenv}" != "dev" ] && [ "${dbenv}" != "prod" ]; then
     echo "Environment must be one of test, dev or prod"
+    usage
     exit 1
 fi
 
@@ -119,4 +133,5 @@ if [ "$old_password" != "" ] && [ "$update_password" != "" ]; then
     echo $new_password
 else
     echo "Oops, something went wrong!"
+    usage
 fi
