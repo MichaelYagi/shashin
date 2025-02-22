@@ -205,6 +205,15 @@
                         if (data.status === shashin.apiResponse.SUCCESS) {
                             $("#folderModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                             $("#folderModalCancel").prop('disabled', false);
+
+                            shashin.showToastMessage("Folder", "Folder Updated", {
+                                icon: "bi-info-circle",
+                                iconColor: "#777777",
+                                tag: "foldermodal",
+                                borderColor:"success"
+                            });
+
+                            $("#propFolderModal").modal('hide');
                         } else {
                             $("#folderModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                             $("#folderModalStatus").attr("title", shashin.modalStatusFailMessage());

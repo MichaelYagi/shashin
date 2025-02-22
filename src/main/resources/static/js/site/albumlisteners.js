@@ -33,6 +33,15 @@ $(document).ready(function () {
                 if (data.status === shashin.apiResponse.SUCCESS) {
                     $("#albumsModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                     $("#albumsModalCancel").prop('disabled', false);
+
+                    shashin.showToastMessage("Album", "Album Updated", {
+                        icon: "bi-info-circle",
+                        iconColor: "#777777",
+                        tag: "albummodal",
+                        borderColor:"success"
+                    });
+
+                    $("#propAlbumModal").modal('hide');
                 } else {
                     $("#albumsModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                     $("#albumsModalStatus").attr("title", shashin.modalStatusFailMessage());
