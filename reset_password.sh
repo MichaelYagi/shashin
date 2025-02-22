@@ -19,12 +19,13 @@ if [ $available -eq 0 ]; then
 fi
 
 usage() {
-    echo "Place this script in the Shashin root directory. The default environment is prod."
+    echo "Reset a users password. Place this script in the same directory as the Shashin database. The default environment is prod."
     echo ""
     echo "$0 -u <username>"
+    echo ""
     echo "Options:"
-    echo "-e     Environment - one of test/dev/prod"
-    echo "-p     Preset password"
+    echo "-e     Environment - test, dev or prod"
+    echo "-p     Preset password, otherwise a random password will be generated"
 }
 
 # Transform long options to short ones
