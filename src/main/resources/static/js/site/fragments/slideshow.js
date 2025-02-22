@@ -20,7 +20,6 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     let currentMetadata = null;
     let firstTime = true;
     let isFileDialogOpened = false;
-    let playState = "play";
     const hideTime = 5000;
     const playPauseHideTime = 3000;
     const fadeOutTime = 1000;
@@ -554,12 +553,8 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
         e.preventDefault();
 
         if (currentMetadata !== null) {
-            playState = "play";
-
-            if ($("#playPause").hasClass("bi-pause-circle")) {
+            if (slideshowIsPaused === false) {
                 slideshowGalleryPlayPause();
-            } else {
-                playState = "pause";
             }
 
             const downloadUrl = "/api/v1/image/"+currentMetadata.id+"/download";
@@ -574,11 +569,9 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     });
 
     $(window).on('focus', function () {
-        if (isFileDialogOpened) {
+        if (isFileDialogOpened === true && slideshowIsPaused === false) {
             isFileDialogOpened = false;
-            if (playState === "play" && $("#playPause").hasClass("bi-play-circle")) {
-                slideshowGalleryPlayPause();
-            }
+            slideshowGalleryPlayPause();
         }
     });
 
@@ -997,14 +990,10 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
         document.addEventListener("visibilitychange", () => {
             if (document.hidden === false) {
-                // Unpause slideshow
-                slideshowGalleryPlayPause(true);
-
                 // Play bg video
                 video.currentTime = 0;
                 video.play().then(_ => shashin.printMessageToConsole("Looping video", {tag: "slideshow"}));
             } else if (slideshowIsPaused === false) {
-                // Pause slideshow
                 slideshowGalleryPlayPause();
             }
         });
