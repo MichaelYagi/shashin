@@ -76,6 +76,11 @@
                                     <input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="">
                                     <button class="btn btn-secondary" type="button" id="albumBatchNameData" style="display: none;">Albums</button>
                                 </div>
+                                <br>
+                                <div>
+                                    <input type="checkbox" name="addtoexistingalbums" id="addtoexistingalbums">
+                                    <label class="form-check-label" for="addtoexistingalbums">Add to existing albums</label>
+                                </div>
                             </div>
                         </div>
                         <div class="col-sm">
@@ -84,16 +89,10 @@
                                 <input type="text" class="form-control" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">
                                 <button class="btn btn-secondary" type="button" id="peopleBatchNameData" style="display: none;">People</button>
                             </div>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm">
-                            <input type="checkbox" name="addtoexistingalbums" id="addtoexistingalbums">
-                            <label class="form-check-label" for="addtoexistingalbums">Add to existing albums</label>
-                        </div>
-                        <div class="col-sm">
-                            <input type="checkbox" name="addtoexistingpeople" id="addtoexistingpeople">
-                            <label class="form-check-label" for="addtoexistingpeople">Add to existing people</label>
+                            <div>
+                                <input type="checkbox" name="addtoexistingpeople" id="addtoexistingpeople">
+                                <label class="form-check-label" for="addtoexistingpeople">Add to existing people</label>
+                            </div>
                         </div>
                     </div>
                     <button class="btn btn-secondary col-12 mt-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBatchMetadata" aria-expanded="false" aria-controls="collapseBatchMetadata">
