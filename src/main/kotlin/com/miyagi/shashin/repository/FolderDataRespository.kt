@@ -9,4 +9,7 @@ import org.springframework.stereotype.Repository
 interface FolderDataRepository : CrudRepository<FolderData?, Int?> {
     @Query("SELECT COUNT(*) FROM folderdata WHERE folder = :folderName", nativeQuery = true)
     fun countByFolder(folderName: String): Int
+
+    @Query("SELECT * FROM folderdata WHERE folder = :folderName", nativeQuery = true)
+    fun findByFolder(folderName: String): FolderData
 }

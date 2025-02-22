@@ -16,7 +16,7 @@ class FolderData() {
     private var folder: String? = null
 
     @NotBlank
-    private var coverUrl: String? = null
+    private var mid: String? = null
 
     fun FolderData() {}
 
@@ -28,19 +28,19 @@ class FolderData() {
         this.folder = folder
     }
 
-    fun getCoverUrl(): String? {
-        return this.coverUrl
+    fun getMid(): String? {
+        return this.mid
     }
 
-    fun setCoverUrl(coverUrl: String) {
-        this.coverUrl = coverUrl
+    fun setMid(mid: String) {
+        this.mid = mid
     }
 
     override fun toString(): String {
         val map = mutableMapOf<String, Any?>()
         map["id"] = this.id
         map["userId"] = this.folder
-        map["metadataId"] = this.coverUrl
+        map["mid"] = this.mid
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {
