@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="usersettingsmodal(user)">
 
-<div class="modal fade" th:id="'proptrashuser'+${user.id}" tabindex="-1" role="dialog" th:aria-labelledby="'labeltrash'+${user.id}" aria-hidden="true">
+<div class="modal fade" th:id="'proptrashuser'+${user.id}" tabindex="-1" role="dialog" th:aria-labelledby="'labeltrash'+${user.id}">
     <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -44,7 +44,7 @@
     </div>
 </div>
 
-<div class="modal fade" th:id="'propresetpassworduser'+${user.id}" tabindex="-1" role="dialog" th:aria-labelledby="'labelresetpassword'+${user.id}" aria-hidden="true">
+<div class="modal fade" th:id="'propresetpassworduser'+${user.id}" tabindex="-1" role="dialog" th:aria-labelledby="'labelresetpassword'+${user.id}">
     <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -60,7 +60,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <div th:id="'resetPasswordUserStatus'+${user.id}" class="spinner-grow me-auto" style="visibility: hidden;font-size: 1.55rem;" role="status" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
+                <div th:id="'resetPasswordUserStatus'+${user.id}" class="spinner-grow me-auto" style="visibility: hidden;font-size: 1.55rem;" role="status" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
                 <button type="button" class="btn btn-primary" th:id="'resetPasswordUser'+${user.id}">Confirm</button>
                 <button th:id="'resetPasswordUserCancel'+${user.id}" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
@@ -137,7 +137,7 @@
     </div>
 </div>
 
-<div class="modal fade" th:id="'proproleuser'+${user.id}" tabindex="-1" role="dialog" th:aria-labelledby="'labelroleuser'+${user.id}" aria-hidden="true">
+<div class="modal fade" th:id="'proproleuser'+${user.id}" tabindex="-1" role="dialog" th:aria-labelledby="'labelroleuser'+${user.id}">
     <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -219,7 +219,7 @@
     </div>
 </div>
 
-<div class="modal fade" th:id="'propisauthorizeduser'+${user.id}" tabindex="-1" role="dialog" th:aria-labelledby="'labelalloweduser'+${user.id}" aria-hidden="true">
+<div class="modal fade" th:id="'propisauthorizeduser'+${user.id}" tabindex="-1" role="dialog" th:aria-labelledby="'labelalloweduser'+${user.id}">
     <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">

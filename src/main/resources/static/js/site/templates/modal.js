@@ -1,6 +1,6 @@
 class ModalTemplates {
     static AlbumCommentsModalHead({metadata}) { return `
-        <div class="modal fade" id="propalbumphotocomment${metadata.id}" tabindex="-1" role="dialog" aria-labelledby="label${metadata.id}" aria-hidden="true">
+        <div class="modal fade" id="propalbumphotocomment${metadata.id}" tabindex="-1" role="dialog" aria-labelledby="label${metadata.id}">
             <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -60,7 +60,7 @@ class ModalTemplates {
     `};
 
     static PersonModalHead({module, metadata, recognitionLabels, taggedPeopleList}) { return `
-        <div class="modal fade" id="prop${module}${metadata.id}" tabindex="-1" role="dialog" aria-labelledby="label${metadata.id}" aria-hidden="true">
+        <div class="modal fade" id="prop${module}${metadata.id}" tabindex="-1" role="dialog" aria-labelledby="label${metadata.id}">
             <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -125,7 +125,7 @@ class ModalTemplates {
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <div id="${module}ModalStatus${metadata.id}" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
+                        <div id="${module}ModalStatus${metadata.id}" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
                         <button type="button" class="btn btn-primary" id="saveMetadata${metadata.id}">Save</button>
                         <button id="${module}ModalCancel${metadata.id}" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     </div>
