@@ -11,30 +11,15 @@
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
 
-<!--            <div class="row image-group-padding mt-4">-->
-<!--                <div class="col">-->
-<!--                    <div class="card" id="profileCard" style="width: 300px;"> &lt;!&ndash; to 300 and remove mt, ms &ndash;&gt;-->
-<!--                        <span id="profilePictureEditWrapper" class="card-img-top mt-4 ms-5" th:style="${'width:200px;max-height:500px;display: ' + {user.profile==null or user.profile==''?'none;':'display;'}}">-->
-<!--                            <img id="profilePictureEdit" th:src="${user.profile==null or user.profile==''?'#':user.profile + '?' + randomString}" style="max-height: 200px;" />-->
-<!--                        </span>-->
-<!--                        <div class="card-body">-->
-<!--                            <h5 class="card-title" th:utext="${currentUser.username}"></h5>-->
-<!--                            <h6 class="card-subtitle mb-2 text-muted" th:utext="${'&lt;small class=&quot;text-muted&quot; style=&quot;font-size: 0.8rem&quot; &gt; Joined ' + dateJoined + '&lt;/small&gt;'}"></h6>-->
-<!--                            <p class="card-text" th:utext="${roleDescription}"></p>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-
-            <div class="row mt-4">
-                <div class="col">
+            <div class="row align-items-center justify-content-center mt-4">
+                <div class="col-6">
                     <div class="card">
                         <div class="card-body">
-                            <div class="row image-group-padding mt-4 mb-4">
-                                <div class="col-1 me-5" id="profilePictureEditWrapper" th:style="${'width:200px;max-height:500px;display: ' + {user.profile==null or user.profile==''?'none;':'display;'}}">
+                            <div class="row align-items-center justify-content-center mt-2 mb-2">
+                                <div id="profilePictureEditWrapper" th:style="${'width:200px;max-height:500px;display: ' + {user.profile==null or user.profile==''?'none;':'display;'}}">
                                     <img id="profilePictureEdit" th:src="${user.profile==null or user.profile==''?'#':user.profile + '?' + randomString}" style="max-height: 200px;" />
                                 </div>
-                                <div id="profileInfo" class="col-10">
+                                <div id="profileInfo" class="ms-5 me-3 mt-2">
                                     <h5 class="card-title" th:utext="${currentUser.username}"></h5>
                                     <h6 class="card-subtitle mb-2 text-muted" th:utext="${'&lt;small class=&quot;text-muted&quot; style=&quot;font-size: 0.8rem&quot; &gt; Joined ' + dateJoined + '&lt;/small&gt;'}"></h6>
                                     <p th:utext="${roleDescription}"></p>
@@ -45,8 +30,8 @@
                 </div>
             </div>
 
-            <div class="row image-group-padding mt-4">
-                <div class="col-lg-4">
+            <div class="row align-items-center justify-content-center mt-4">
+                <div class="col-lg-6">
                     <div class="input-group mb-2">
                         <h1 class="display-1" style="font-size:1.5rem;">Edit Profile Picture</h1>
                     </div>
@@ -61,8 +46,8 @@
                 </div>
             </div>
 
-            <div class="row image-group-padding mt-4">
-                <div class="col-lg-4">
+            <div class="row align-items-center justify-content-center mt-4">
+                <div class="col-lg-6">
                     <div class="input-group mb-2">
                         <h1 class="display-1" style="font-size:1.5rem;">Website Settings</h1>
                     </div>
@@ -94,13 +79,13 @@
                 </div>
             </div>
 
-            <div class="row image-group-padding mt-4">
-                <div class="col-lg-4">
+            <div class="row align-items-center justify-content-center mt-4">
+                <div class="col-lg-6">
                     <div class="input-group mb-2">
                         <h1 class="display-1" style="font-size:1.5rem;">Manage API Key</h1>
                     </div>
 
-                    <div class="input-group mb-1">
+                    <div class="input-group mb-2">
                         <div class="input-group mb-3">
                             <button id="copyapikey" data-clipboard-target="#apikey" class="btn btn-secondary" type="button" title="Copy API key">
                                 <span id="apikeycopyicon" class="bi-clipboard-plus" style="font-size: 1rem;"></span>
@@ -110,15 +95,21 @@
                                 <span class="bi-arrow-clockwise" style="font-size: 1rem;"></span>
                             </button>
                         </div>
-                        <p>RSS feed <a id="rssFeedLink" th:href="${rssFeedLink}" th:text="${rssFeedLink}" target="_blank"></a></p>
-                        <p>ATOM feed <a id="atomFeedLink" th:href="${atomFeedLink}" th:text="${atomFeedLink}" target="_blank"></a></p>
-                        <p>View API documentaion <a href="/articles/endpoints">here</a>.</p>
+                        <div class="input-group mb-3">
+                            RSS feed&nbsp;<a id="rssFeedLink" th:href="${rssFeedLink}" th:text="${rssFeedLink}" target="_blank"></a>
+                        </div>
+                        <div class="input-group mb-3">
+                            ATOM feed&nbsp;<a id="atomFeedLink" th:href="${atomFeedLink}" th:text="${atomFeedLink}" target="_blank"></a>
+                        </div>
+                        <div class="input-group mb-3">
+                            View API documentation&nbsp;<a href="/articles/endpoints">here</a>.
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="row image-group-padding mt-3">
-                <div class="col-lg-4">
+            <div class="row align-items-center justify-content-center mt-3">
+                <div class="col-lg-6">
                     <div class="input-group mb-2">
                         <h1 class="display-1" style="font-size:1.5rem;">Change Password</h1>
                     </div>
