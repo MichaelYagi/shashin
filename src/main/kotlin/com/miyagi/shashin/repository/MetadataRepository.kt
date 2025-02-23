@@ -144,6 +144,9 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT COUNT(DISTINCT folder) FROM metadata WHERE hidden = 0", nativeQuery = true)
    fun countByFolder(): Int
 
+   @Query("SELECT COUNT(DISTINCT folder) FROM metadata WHERE folder = :folder", nativeQuery = true)
+   fun countAllByFolder(@Param("folder") folder: String): Int
+
    @Query("SELECT m.folder, (SELECT mid FROM folderdata WHERE folder = m.folder) as metadataId, (SELECT COUNT(*) FROM metadata m1 WHERE m1.folder = m.folder AND m1.hidden = 0) as count FROM metadata m WHERE m.hidden = 0 GROUP BY m.folder ORDER BY m.folder ASC LIMIT :offset, :limit", nativeQuery = true)
    fun findFoldersOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Folder?>?
 
