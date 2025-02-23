@@ -158,7 +158,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <div id="metadataModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 1.55rem;" role="status" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
+                <div id="metadataModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 1.55rem;" role="status" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
                 <th:block th:if="${(authority == 'ROLE_SUPER' || authority == 'ROLE_ADMIN') and activePage != 'archived'}">
                 <button type="button" class="btn btn-primary" id="saveMetadata">Save</button>
                 <button id="metadataModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -171,7 +171,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="rescanMetadataConfirmation" tabindex="-1" role="dialog" aria-labelledby="rescanMetadata" aria-hidden="true">
+<div class="modal fade" id="rescanMetadataConfirmation" tabindex="-1" role="dialog" aria-labelledby="rescanMetadata">
     <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -187,7 +187,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="albumSelection" tabindex="-1" role="dialog" aria-labelledby="dropdownSelection" aria-hidden="true">
+<div class="modal fade" id="albumSelection" tabindex="-1" role="dialog" aria-labelledby="dropdownSelection">
     <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -203,7 +203,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="peopleSelection" tabindex="-1" role="dialog" aria-labelledby="dropdownSelection" aria-hidden="true">
+<div class="modal fade" id="peopleSelection" tabindex="-1" role="dialog" aria-labelledby="dropdownSelection">
     <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
