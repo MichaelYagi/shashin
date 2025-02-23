@@ -30,7 +30,17 @@ import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
 import jakarta.servlet.http.HttpServletRequest
+import org.springframework.http.CacheControl
+import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStreamReader
+import java.io.OutputStream
+import java.net.HttpURLConnection
+import java.net.URL
+import java.util.concurrent.TimeUnit
+import kotlin.collections.iterator
 import kotlin.collections.set
 
 
@@ -49,6 +59,9 @@ class ToolsController {
     @Value("\${app.circleci.key}")
     private lateinit var circleCiKey: String
 
+    @Value("\${app.github.key}")
+    private lateinit var githubKey: String
+
     @Autowired
     private var healthEndpoint: HealthEndpoint? = null
 
@@ -56,6 +69,58 @@ class ToolsController {
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
+
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
+    @RequestMapping(value = ["/releases"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getReleases(): ResponseEntity<String> {
+
+        var url = "https://api.github.com/repos/michaelyagi/shashin/tags"
+        var response = mutableMapOf<String, Any?>()
+        response["releases"] = arrayOf<Any?>()
+        response["status"] = ApiResponse.FAIL.status
+        response["msg"] = ""
+
+        try {
+            val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
+            connection.connectTimeout = 1000
+            connection.readTimeout = 1000
+            connection.requestMethod = "GET"
+
+            connection.setRequestProperty("Accept", "application/vnd.github+json")
+            connection.setRequestProperty("Authorization", "Bearer " + githubKey)
+            connection.setRequestProperty("X-GitHub-Api-Version", "2022-11-28")
+
+            BufferedReader(
+                InputStreamReader(connection.inputStream, "utf-8")
+            ).use { br ->
+                val responseBuilder = StringBuilder()
+                var responseLine: String?
+                while (br.readLine().also { responseLine = it } != null) {
+                    responseBuilder.append(responseLine!!.trim { it <= ' ' })
+                }
+                response["releases"] = responseBuilder.toString()
+                response["status"] = ApiResponse.SUCCESS.status
+                response["msg"] = ""
+            }
+
+            val responseCode: Int = connection.responseCode
+
+            if (responseCode != 200) {
+                logger.log(Level.WARNING, "Could not process GitHub request.")
+            }
+        } catch (e: IOException) {
+            logger.log(Level.WARNING, "Could not process GitHub request: " + e.message)
+            response["status"] = ApiResponse.FAIL.status
+            response["msg"] = ""
+        }
+
+        val json = mapper.writeValueAsString(response)
+        return ResponseEntity
+            .ok()
+            .cacheControl(CacheControl.maxAge(14, TimeUnit.DAYS))
+            .body(json)
+    }
 
     @GetMapping("/health")
     fun getHealth(model: Model): String {

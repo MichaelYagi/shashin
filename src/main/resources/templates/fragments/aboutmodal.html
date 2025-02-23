@@ -14,7 +14,7 @@
                 <th:block th:if="${activeProfile != 'prod'}">
                     <span th:text="${#strings.capitalize(activeProfile)+' Build'}"></span><br>
                 </th:block>
-                Version <span th:text="${buildProperties.getVersion()}"></span><br>
+                Version <span th:text="${buildProperties.getVersion()}"></span><span id="gitVersionId"></span><br>
                 <th:block th:if="${operatingSystemInfo != ''}">
                     <span th:text="${operatingSystemInfo}"></span><br>
                 </th:block>
@@ -24,9 +24,37 @@
                 <a class="me-2" href="https://www.youtube.com/@MichaelTakayukiYagi" target="_blank"><span class="bi-youtube" style="font-size: 1.5rem;color: lightgray;"></span></a>
                 <a class="me-2" href="https://bsky.app/profile/mtyagi.bsky.social" target="_blank"><span class="bi-bluesky" style="font-size: 1.5rem;color: lightgray;"></span></a>
             </div>
-<!--            <div class="modal-footer">-->
-<!--                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
-<!--            </div>-->
         </div>
     </div>
 </div>
+
+<script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
+    $(document).ready(function() {
+        $("#propAbout").on('shown.bs.modal', function () {
+            $("#gitVersionId").html("");
+            let currentRelease = 'v' + /*[[${buildProperties.getVersion()}]]*/ '';
+
+            const http = new Http("get releases");
+            http.ajax("get", "/releases").then(function (data) {
+                if (data.hasOwnProperty("releases")) {
+                    const releaseArray = JSON.parse(data.releases);
+                    if (releaseArray.length > 0 && currentRelease !== "v") {
+                        for (let i in releaseArray) {
+                            const releaseInfo = releaseArray[i];
+                            if (releaseInfo.hasOwnProperty("name")) {
+                                const ghReleaseName = releaseInfo.name;
+                                if (currentRelease === ghReleaseName) {
+                                    if (i > 0) {
+                                        $("#gitVersionId").html("<br><em>A new <a href='https://github.com/MichaelYagi/shashin' target='_blank'>release</a> is available.</em>");
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+            });
+        });
+    });
+</script>

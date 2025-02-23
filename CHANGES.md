@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.7.2] - 2025-02-23
+### Added
+- New release notices in about modal
+
+### Changed
+
+### Fixed
+- Mobile views
 ## [2.7.1] - 2025-02-19
 ### Added
 - Password reset script for admins
@@ -11,7 +19,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Timeline initial rendering
 - Slideshow UI improvements
-- 
 ## [2.7.0] - 2025-02-03
 ### Added
 - Multi select images
