@@ -20,6 +20,10 @@ class FolderData() {
 
     fun FolderData() {}
 
+    fun getId(): Int? {
+        return id
+    }
+
     fun getFolder(): String? {
         return this.folder
     }

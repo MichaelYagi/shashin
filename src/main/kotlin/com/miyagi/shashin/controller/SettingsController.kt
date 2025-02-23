@@ -1799,8 +1799,18 @@ class SettingsController {
                                                 }
                                                 recognitionLabelPhotoRepository?.deleteByMetadataId(metadata.getId())
 
+                                                val folder = metadata.getFolder()
+
                                                 // Delete metadata
                                                 metadataRepository.deleteById(metadata.getId())
+
+                                                // Check folder data
+                                                val metadataFolderCount = metadataRepository.countAllByFolder(folder.toString())
+                                                if (metadataFolderCount == 0) {
+                                                    val folderData = folderDataRepository!!.findByFolder(folder.toString())
+                                                    folderDataRepository.deleteById(folderData.getId()!!)
+                                                }
+
                                                 logger.log(
                                                     Level.INFO,
                                                     "Removed metadata records for: " + metadata.getId()
