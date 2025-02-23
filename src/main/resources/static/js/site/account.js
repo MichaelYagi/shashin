@@ -187,8 +187,8 @@ function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
             const reader = new FileReader();
 
             reader.onload = function (e) {
-                $("#profileInfo").css("padding-left", "8em");
                 $("#profilePictureEdit").attr('src', e.target.result);
+                $("#profilePictureEditWrapper").css("width", "325px");
                 $("#profilePictureEditWrapper").css("display", "block");
                 $("#removeProfile").css("display", "none");
                 $("#saveProfile").css("display", "block");
@@ -212,6 +212,7 @@ function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
                     e.preventDefault();
 
                     $("#profilePictureEdit").attr("src", profileUrl);
+                    $("#profilePictureEditWrapper").css("width", "225px");
                     if (profileUrl === null || profileUrl === "" || profileUrl === "#") {
                         $("#profilePictureEditWrapper").css("display", "none");
                         $("#removeProfile").css("display", "none");
@@ -242,6 +243,7 @@ function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
                         });
                         let json = {base64: base64Result};
                         http.ajax("post", "/users/profile", JSON.stringify(json)).then(function (data) {
+                            $("#profilePictureEditWrapper").css("width", "225px");
                             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                                 if (data.hasOwnProperty("imageUrl") && data.imageUrl !== "") {
                                     window.top.location = window.top.location;
