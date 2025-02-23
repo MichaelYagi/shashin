@@ -127,16 +127,16 @@
                                 </label>
                             </div>
                             <div class="form-check">
-                                <div class="col-3">
+                                <div>
                                     <input class="form-check-input" type="checkbox" id="scheduledMatching" name="scheduledMatching" th:checked="${settings.scheduledMatching}">
                                     <label class="form-check-label" for="scheduledMatching">
                                         <strong>Enable scheduled background matching</strong>&nbsp;<span id="scheduledMatchingInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Scans people and objects as a background job"></span>
                                     </label>
                                 </div>
 
-                                <div class="col-2 form-group">
+                                <div class="form-group">
                                     <label for="scheduledTime">Time at which tasks run</label>&nbsp;<span id="scheduledTimeInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Restarts app after updated and saved"></span>
-                                    <div class="col-5">
+                                    <div class="col-sm-1">
                                         <select class="form-select" id="scheduledTime" name="scheduledTime">
                                             <th:block th:each="time, iterStat: ${timeScheduleList}">
                                                 <th:block th:if="${scheduledTime==time}">
@@ -146,8 +146,9 @@
                                                     <option th:value="${time}" th:text="${time}"></option>
                                                 </th:block>
                                             </th:block>
-                                        </select>&nbsp;<span th:text="${currentTimezone}"></span>
+                                        </select>
                                     </div>
+                                    &nbsp;<span th:text="${currentTimezone}"></span>
                                 </div>
                             </div>
                             <div class="form-check">
