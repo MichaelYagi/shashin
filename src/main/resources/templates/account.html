@@ -16,7 +16,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="row align-items-center justify-content-center mt-2 mb-2">
-                                <div id="profilePictureEditWrapper" th:style="${'width:225px;max-height:500px;display: ' + {user.profile==null or user.profile==''?'none;':'display;'}}">
+                                <div id="profilePictureEditWrapper" th:style="${'width:16em;max-height:500px;display: ' + {user.profile==null or user.profile==''?'none;':'display;'}}">
                                     <img id="profilePictureEdit" th:src="${user.profile==null or user.profile==''?'#':user.profile + '?' + randomString}" style="max-height: 200px;" />
                                 </div>
                                 <div id="profileInfo" class="ms-5 me-3 mt-2">
