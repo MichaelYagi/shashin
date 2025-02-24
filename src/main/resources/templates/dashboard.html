@@ -200,7 +200,8 @@
                 icon: "bi-info-circle",
                 iconColor: "#777777",
                 autohide: false,
-                tag: "dashboard"
+                tag: "dashboard",
+                closeButton: false
             });
             const http = new Http("dashboard data");
             http.ajax("get", "/dashboard/data").then(function (data) {
