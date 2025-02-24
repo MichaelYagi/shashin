@@ -6,7 +6,7 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="aboutLabel"><th:block th:if="${darkMode == true}"><img id="aboutIcon" src="/images/kamon_transparent_inverted.png" width="25px" height="25px" class="mb-1"></th:block><th:block th:if="${darkMode == false}"><img id="aboutIcon" src="/images/kamon_transparent.png" width="25px" height="25px" class="mb-1"></th:block>&nbsp;&nbsp;&nbsp;About</h5>
+                <h5 class="modal-title" id="aboutLabel"><img id="aboutIcon" th:src="${darkMode == true ? '/images/kamon_transparent_inverted.png' : '/images/kamon_transparent.png'}" width="25px" height="25px" class="mb-1">&nbsp;&nbsp;&nbsp;About</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
