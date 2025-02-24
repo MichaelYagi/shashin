@@ -81,13 +81,30 @@ $("#saveBatchMetadata").on("click", async function (e) {
 });
 
 $("#propBatchMetadata").on("keydown", async function (e) {
-    if (e.keyCode === 13) {
+    if (e.key === "Enter" || e.code === "Enter" || e.which === 13 || e.keyCode === 13) {
         await saveBatchMetadata(e);
     }
 });
 
 async function saveBatchMetadata(e) {
     e.preventDefault();
+
+    if ($("#cameraBatchData").val() === "" && $("#lensBatchData").val() === "" &&
+        $("#yearTakenBatchData").val() === "" && $("#monthTakenBatchData").val() === "" && $("#dayTakenBatchData").val() === "" && $("#offsetTakenBatchData").val() === "" &&
+        $("#latlngBatchData").val() === "" && $("#keywordsBatchData").val() === "" && $("#albumNameInput").val() === "" && $("#tagBatchDataInput").val() === "" &&
+        $("#batchhidden").is(':checked') === false && $("#batchisobject").is(':checked') === false && $("#batchrescan").is(':checked') === false
+    ) {
+        shashin.showToastMessage("Metadata", "Did not save, nothing entered.", {
+            icon: "bi-info-circle",
+            iconColor: "#777777",
+            tag: "metadatabatchmodal",
+            borderColor:"warning"
+        });
+
+        $("#propBatchMetadata").modal('hide');
+
+        return true;
+    }
 
     $("#metadataBatchModalCancel").prop("disabled", true);
     $("saveBatchMetadata").prop("disabled", true);
