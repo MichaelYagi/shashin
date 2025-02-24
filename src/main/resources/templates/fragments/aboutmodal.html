@@ -45,7 +45,16 @@
                                 const ghReleaseName = releaseInfo.name;
                                 if (currentRelease === ghReleaseName) {
                                     if (i > 0) {
-                                        $("#gitVersionId").html("<br><em>A new <a href='https://github.com/MichaelYagi/shashin' target='_blank'>release</a> is available.</em>");
+                                        let link = "https://github.com/MichaelYagi/shashin";
+                                        if (releaseInfo.hasOwnProperty("zipball_url")) {
+                                            link = releaseInfo.zipball_url;
+                                            link = link.replace("api.", "");
+                                            link = link.replace("repos/", "");
+                                            link = link.replace("zipball/", "");
+                                            link = link.replace("refs/", "releases/");
+                                            link = link.replace("tags/", "tag/");
+                                        }
+                                        $("#gitVersionId").html("<br><em>A new <a href='"+link+"' target='_blank'>release</a> is available.</em>");
                                     }
                                     break;
                                 }
