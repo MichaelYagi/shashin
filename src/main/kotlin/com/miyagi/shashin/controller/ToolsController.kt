@@ -75,7 +75,7 @@ class ToolsController {
     @RequestMapping(value = ["/releases"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getReleases(): ResponseEntity<String> {
-
+        // https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#list-repository-tags
         var url = "https://api.github.com/repos/michaelyagi/shashin/tags"
         var response = mutableMapOf<String, Any?>()
         response["releases"] = mutableListOf<Map<String, Any>>()
