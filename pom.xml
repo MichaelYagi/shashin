@@ -458,14 +458,14 @@
                     <excludeDevtools>false</excludeDevtools>
                 </configuration>
                 <version>2.6.6</version>
-                <!--                <dependencies>-->
-                <!--                    &lt;!&ndash; The following enables the "thin jar" deployment option. &ndash;&gt;-->
-                <!--                    <dependency>-->
-                <!--                        <groupId>org.springframework.boot.experimental</groupId>-->
-                <!--                        <artifactId>spring-boot-thin-layout</artifactId>-->
-                <!--                        <version>1.0.28.RELEASE</version>-->
-                <!--                    </dependency>-->
-                <!--                </dependencies>-->
+                <dependencies>
+                    <!-- The following enables the "thin jar" deployment option. -->
+                    <dependency>
+                        <groupId>org.springframework.boot.experimental</groupId>
+                        <artifactId>spring-boot-thin-layout</artifactId>
+                        <version>1.0.31.RELEASE</version>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <execution>
                         <goals>
