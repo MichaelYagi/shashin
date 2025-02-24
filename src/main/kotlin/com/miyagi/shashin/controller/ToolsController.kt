@@ -72,7 +72,7 @@ class ToolsController {
     val resp = mutableMapOf<String, Any?>()
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
-    @RequestMapping(value = ["/releases"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/releases", "/api/v1/releases"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getReleases(): ResponseEntity<String> {
         // https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#list-repository-tags
@@ -125,18 +125,6 @@ class ToolsController {
             .ok()
             .cacheControl(CacheControl.maxAge(14, TimeUnit.DAYS))
             .body(json)
-    }
-
-    @GetMapping("/health")
-    fun getHealth(model: Model): String {
-
-        for ((k, v) in buildHealthData(model)) {
-            model[k] = v!!
-        }
-
-        model["localServerTime"] = TextUtils.getCurrentTimestampTZ()
-
-        return "health"
     }
 
     @RequestMapping(value = ["/bcrypt/{strtobcrypt}"], method = [RequestMethod.GET], produces = ["application/json"])
@@ -203,6 +191,18 @@ class ToolsController {
     fun getStatusApi(model: Model): String {
         val healthData = buildHealthData(model)
         return "{\"status\":\""+healthData["status"]+"\"}"
+    }
+
+    @GetMapping("/health")
+    fun getHealth(model: Model): String {
+
+        for ((k, v) in buildHealthData(model)) {
+            model[k] = v!!
+        }
+
+        model["localServerTime"] = TextUtils.getCurrentTimestampTZ()
+
+        return "health"
     }
 
     @RequestMapping(value = ["/api/v1/health"], method = [RequestMethod.GET], produces = ["application/json"])
