@@ -89,8 +89,7 @@ class ToolsController {
             connection.requestMethod = "GET"
 
             connection.setRequestProperty("Accept", "application/vnd.github+json")
-            connection.setRequestProperty("Authorization", "Bearer " + githubKey)
-            connection.setRequestProperty("X-GitHub-Api-Version", "2022-11-28")
+            connection.setRequestProperty("Authorization", "Bearer $githubKey")
 
             BufferedReader(
                 InputStreamReader(connection.inputStream, "utf-8")
