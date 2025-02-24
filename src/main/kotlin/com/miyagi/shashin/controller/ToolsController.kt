@@ -4,6 +4,7 @@ import ai.djl.repository.MRL.model
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.gson.Gson
 import com.miyagi.shashin.configuration.MultiSecurityConfig
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
@@ -77,7 +78,7 @@ class ToolsController {
 
         var url = "https://api.github.com/repos/michaelyagi/shashin/tags"
         var response = mutableMapOf<String, Any?>()
-        response["releases"] = arrayOf<Any?>()
+        response["releases"] = mutableListOf<Map<String, Any>>()
         response["status"] = ApiResponse.FAIL.status
         response["msg"] = ""
 
@@ -99,7 +100,12 @@ class ToolsController {
                 while (br.readLine().also { responseLine = it } != null) {
                     responseBuilder.append(responseLine!!.trim { it <= ' ' })
                 }
-                response["releases"] = responseBuilder.toString()
+
+                val jsonString = responseBuilder.toString()
+                var array: MutableList<Map<String, Any>>? = mutableListOf<Map<String, Any>>()
+                array = Gson().fromJson(jsonString, array?.javaClass)
+
+                response["releases"] = array
                 response["status"] = ApiResponse.SUCCESS.status
                 response["msg"] = ""
             }
