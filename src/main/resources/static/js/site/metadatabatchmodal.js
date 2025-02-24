@@ -271,7 +271,7 @@ async function saveBatchMetadata(e) {
                     }
                 }
 
-                shashin.showToastMessage("Metadata", "Metadata Group Saved", {
+                shashin.showToastMessage("Metadata", "Metadata Saved", {
                     icon: "bi-info-circle",
                     iconColor: "#777777",
                     tag: "metadatabatchmodal",
