@@ -169,7 +169,8 @@
             icon: "bi-info-circle",
             iconColor: "#777777",
             autohide: false,
-            tag: "mainmap"
+            tag: "mainmap",
+            closeButton: false
         });
         http.ajax("get", "/mapdata/keywords" + (version === "" ? "" : "?v=" + version)).then(function (mapdataObj) {
             let mapdata = [];
