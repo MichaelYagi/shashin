@@ -33,44 +33,51 @@ function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
     $("#confirmUpdateApiKey").on("click", async function (e) {
         e.preventDefault();
 
-        const currentApikey = $("#apikey").val();
+        if ($("#updateConfirm").val() === "UPDATE") {
+            const currentApikey = $("#apikey").val();
 
-        if (currentApikey !== null && currentApikey !== "") {
-            const http = new Http("apikey update");
-            const json = {currentApikey: currentApikey};
+            if (currentApikey !== null && currentApikey !== "") {
+                const http = new Http("apikey update");
+                const json = {currentApikey: currentApikey};
 
-            let data = await http.ajax("post", "/users/update/apikey", JSON.stringify(json));
-            if (data.hasOwnProperty("updatedApikey") && data.updatedApikey !== "" &&
-                data.hasOwnProperty("rssFeedLink") && data.rssFeedLink !== "") {
-                $("#apikey").val(data.updatedApikey);
+                let data = await http.ajax("post", "/users/update/apikey", JSON.stringify(json));
+                if (data.hasOwnProperty("updatedApikey") && data.updatedApikey !== "" &&
+                    data.hasOwnProperty("rssFeedLink") && data.rssFeedLink !== "") {
+                    $("#apikey").val(data.updatedApikey);
 
-                $("#rssFeedLink").text(data.rssFeedLink);
-                $("#rssFeedLink").attr("href", data.rssFeedLink);
+                    $("#rssFeedLink").text(data.rssFeedLink);
+                    $("#rssFeedLink").attr("href", data.rssFeedLink);
 
-                $("#atomFeedLink").text(data.atomFeedLink);
-                $("#atomFeedLink").attr("href", data.atomFeedLink);
+                    $("#atomFeedLink").text(data.atomFeedLink);
+                    $("#atomFeedLink").attr("href", data.atomFeedLink);
 
-                shashin.showToastMessage("API key updated", "API key has been updated.", {
-                    icon: "bi-info-circle",
-                    iconColor: "#777777"
-                });
+                    shashin.showToastMessage("API key updated", "API key has been updated.", {
+                        icon: "bi-info-circle",
+                        iconColor: "#777777"
+                    });
+                } else {
+                    shashin.showToastMessage("Operation failed", "Could not regenerate API key", {
+                        icon: "bi-exclamation-triangle",
+                        iconColor: "#FF0000",
+                        borderColor: "danger"
+                    });
+                }
             } else {
-                shashin.showToastMessage("Operation failed", "Could not regenerate API key", {
+                shashin.showToastMessage("Operation failed", "API key must not be blank", {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",
                     borderColor: "danger"
                 });
-                // $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Could not regenerate API key</div>");
             }
         } else {
-            shashin.showToastMessage("Operation failed", "API key must not be blank", {
+            shashin.showToastMessage("Input not valid", "Try again. You must type UPDATE in all caps.", {
                 icon: "bi-exclamation-triangle",
-                iconColor: "#FF0000",
-                borderColor: "danger"
+                iconColor: "#FD7E14",
+                borderColor: "warning"
             });
-            // $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Link must not be blank</div>");
+            $("#apikeyUpdateConfirmation").modal('hide');
         }
-
+        $("#updateConfirm").val("");
     });
 
     // Password edit
