@@ -1,6 +1,7 @@
 package com.miyagi.shashin.util
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.gson.Gson
 import com.miyagi.shashin.configuration.MultiSecurityConfig
 import com.miyagi.shashin.model.FreeFormText
 import com.miyagi.shashin.model.Metadata
@@ -17,6 +18,9 @@ import org.springframework.stereotype.Component
 import org.springframework.ui.Model
 import org.springframework.web.context.support.WebApplicationContextUtils
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStreamReader
 import java.lang.management.ManagementFactory
 import java.net.*
 import java.nio.charset.StandardCharsets
@@ -1272,6 +1276,45 @@ class TextUtils {
             }
 
             return cache
+        }
+
+        // https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#list-repository-tags
+        fun getReleases(githubKey: String): MutableList<Map<String, Any>>? {
+            var url = "https://api.github.com/repos/michaelyagi/shashin/tags"
+            var array: MutableList<Map<String, Any>>? = mutableListOf<Map<String, Any>>()
+
+            try {
+                val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
+                connection.connectTimeout = 1000
+                connection.readTimeout = 1000
+                connection.requestMethod = "GET"
+
+                connection.setRequestProperty("Accept", "application/vnd.github+json")
+                connection.setRequestProperty("Authorization", "Bearer $githubKey")
+
+                BufferedReader(
+                    InputStreamReader(connection.inputStream, "utf-8")
+                ).use { br ->
+                    val responseBuilder = StringBuilder()
+                    var responseLine: String?
+                    while (br.readLine().also { responseLine = it } != null) {
+                        responseBuilder.append(responseLine!!.trim { it <= ' ' })
+                    }
+
+                    val jsonString = responseBuilder.toString()
+                    array = Gson().fromJson(jsonString, array?.javaClass)
+                }
+
+                val responseCode: Int = connection.responseCode
+
+                if (responseCode != 200) {
+                    logger.log(Level.WARNING, "Could not process GitHub request.")
+                }
+            } catch (e: IOException) {
+                logger.log(Level.WARNING, "Could not process GitHub request: " + e.message)
+            }
+
+            return array
         }
 
         fun formatPlaceNameForHeader(placeDescription: String?): String {

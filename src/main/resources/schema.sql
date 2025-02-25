@@ -267,20 +267,13 @@ DROP TABLE IF EXISTS `notification`;
 CREATE TABLE `notification` (
                                 `id` INTEGER PRIMARY KEY AUTOINCREMENT,
                                 `userId` INT,
-                                `albumId` INT DEFAULT NULL,
-                                `metadataId` VARCHAR(36) DEFAULT NULL,
-                                `commentId` INT DEFAULT NULL,
-                                `favoriteId` INT DEFAULT NULL,
+                                `identifier` VARCHAR(36) DEFAULT NULL,
                                 `imageUrl` VARCHAR,
-                                `read` BOOLEAN DEFAULT FALSE,
+                                `read` BOOLEAN DEFAULT 0,
                                 `message` VARCHAR,
                                 `createdAt` DATETIME DEFAULT NULL,
                                 `modifiedAt` DATETIME DEFAULT NULL,
-                                FOREIGN KEY (`userId`) REFERENCES user(`id`),
-                                FOREIGN KEY (`albumId`) REFERENCES album(`id`),
-                                FOREIGN KEY (`metadataId`) REFERENCES metadata(`id`),
-                                FOREIGN KEY (`commentId`) REFERENCES comment(`id`),
-                                FOREIGN KEY (`favoriteId`) REFERENCES favorite(`id`)
+                                FOREIGN KEY (`userId`) REFERENCES user(`id`)
 );
 
 DROP TABLE IF EXISTS `searchhistory`;
