@@ -35,48 +35,50 @@
             // Get current build
             let currentRelease = 'v' + /*[[${buildProperties.getVersion()}]]*/ '';
 
-            // Look through list of GH releases
-            const http = new Http("get releases");
-            http.ajax("get", "/releases").then(function (data) {
-                if (data.hasOwnProperty("releases")) {
-                    const releaseArray = data.releases;
-                    if (releaseArray.length > 0 && currentRelease !== "v") {
-                        for (let i in releaseArray) {
-                            const releaseInfo = releaseArray[i];
-                            if (releaseInfo.hasOwnProperty("name")) {
-                                const ghReleaseName = releaseInfo.name;
-                                // Look for matching release
-                                if (currentRelease === ghReleaseName) {
-                                    // If not the most recent, notify in about modal and notification if not sent or stale
-                                    if (i > 0) {
-                                        const message = "Version <a href='https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin' target='_blank'>"+releaseArray[0].name.substring(1)+"</a> is available.";
-                                        $("#gitVersionId").html("<br><em>"+message+"</em>");
-                                        const type = "releases";
+            setTimeout(function () {
+                // Look through list of GH releases
+                const http = new Http("get releases");
+                http.ajax("get", "/releases").then(function (data) {
+                    if (data.hasOwnProperty("releases")) {
+                        const releaseArray = data.releases;
+                        if (releaseArray.length > 0 && currentRelease !== "v") {
+                            for (let i in releaseArray) {
+                                const releaseInfo = releaseArray[i];
+                                if (releaseInfo.hasOwnProperty("name")) {
+                                    const ghReleaseName = releaseInfo.name;
+                                    // Look for matching release
+                                    if (currentRelease === ghReleaseName) {
+                                        // If not the most recent, notify in about modal and notification if not sent or stale
+                                        if (i > 0) {
+                                            const message = "Version <a href='https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin' target='_blank'>"+releaseArray[0].name.substring(1)+"</a> is available.";
+                                            $("#gitVersionId").html("<br><em>"+message+"</em>");
+                                            const type = "releases";
 
-                                        http.ajax("get", "/notifications/exists/"+type+"/"+releaseArray[0].name).then(function (data) {
-                                            if (data.hasOwnProperty("exists")) {
-                                                const exists = data.exists;
-                                                if (exists === false) {
-                                                    const json = {
-                                                        message: message,
-                                                        type: type,
-                                                        identifier: releaseArray[0].name
-                                                    };
-                                                    http.ajax("post", "/notifications/create", JSON.stringify(json)).then(function (data) {
-                                                        shashin.printMessageToConsole(JSON.stringify(data), {tag: type});
-                                                    });
+                                            http.ajax("get", "/notifications/exists/"+type+"/"+releaseArray[0].name).then(function (data) {
+                                                if (data.hasOwnProperty("exists")) {
+                                                    const exists = data.exists;
+                                                    if (exists === false) {
+                                                        const json = {
+                                                            message: message,
+                                                            type: type,
+                                                            identifier: releaseArray[0].name
+                                                        };
+                                                        http.ajax("post", "/notifications/create", JSON.stringify(json)).then(function (data) {
+                                                            shashin.printMessageToConsole(JSON.stringify(data), {tag: type});
+                                                        });
+                                                    }
                                                 }
-                                            }
-                                        });
+                                            });
+                                        }
+                                        break;
                                     }
-                                    break;
                                 }
                             }
                         }
                     }
-                }
 
-            });
+                });
+            }, 0);
         // });
     });
 </script>
