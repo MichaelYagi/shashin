@@ -119,13 +119,6 @@ class Settings {
             e.preventDefault();
             const selectedPath = $("#selectedPath").val().trim();
 
-            // const selectedPath = $("#selectedPath").val() === "Select Folder" ? "" : $("#selectedPath").val().trim();
-            // if (selectedPath.length > 0) {
-            //     $("#selectFolder").show();
-            // } else {
-            //     $("#selectFolder").hide();
-            // }
-
             $("#selectedPathInput").val($("#selectedPath").val().trim());
 
             const listText = $(e.target).text();
@@ -155,29 +148,42 @@ class Settings {
 
             $("#deleteContentModalStatus").visible();
 
-            const http = new Http("deleting all content");
-            let json = {deleteContent: true};
-            const data = await http.ajax("post", "/settings/content/delete", JSON.stringify(json));
+            if ($("#deleteConfirm").val() === "DELETE") {
 
-            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                let message = "Error";
-                if (data.status === shashin.apiResponse.SUCCESS) {
-                    shashin.showToastMessage("Content deleted", data.msg, {icon:"bi-info-circle", iconColor:"#777777", autohide: false});
-                    $("#propDeleteContent").modal('hide');
-                    // message = '<div class="alert alert-success" role="alert">' + data.msg + '</div>';
-                } else {
-                    shashin.showToastMessage("Could delete content", data.msg, {icon:"bi-exclamation-triangle", iconColor:"#FF0000", autohide: false, borderColor:"danger"});
-                    $("#propDeleteContent").modal('hide');
-                    // message = '<div class="alert alert-danger" role="alert">' + data.msg + '</div>';
+                const http = new Http("deleting all content");
+                let json = {deleteContent: true};
+                const data = await http.ajax("post", "/settings/content/delete", JSON.stringify(json));
+
+                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                    let message = "Error";
+                    if (data.status === shashin.apiResponse.SUCCESS) {
+                        shashin.showToastMessage("Content deleted", data.msg, {
+                            icon: "bi-info-circle",
+                            iconColor: "#777777",
+                            autohide: false
+                        });
+                        $("#propDeleteContent").modal('hide');
+                    } else {
+                        shashin.showToastMessage("Could delete content", data.msg, {
+                            icon: "bi-exclamation-triangle",
+                            iconColor: "#FF0000",
+                            autohide: false,
+                            borderColor: "danger"
+                        });
+                        $("#propDeleteContent").modal('hide');
+                    }
                 }
-                // $("#msgDeleteContent").html(message);
+                $("#deleteContentModalStatus").invisible();
+            } else {
+                shashin.showToastMessage("Input not valid", "Try again. You must type DELETE in all caps.", {
+                    icon: "bi-exclamation-triangle",
+                    iconColor: "#FD7E14",
+                    borderColor: "warning"
+                });
+                $("#propDeleteContent").modal('hide');
+                $("#deleteContentModalStatus").invisible();
+                $("#deleteConfirm").val("");
             }
-            $("#deleteContentModalStatus").invisible();
         });
-
-        // If click anywhere on page, hide toast message
-        // $(document).on("click", function() {
-        //     shashin.closeToastMessages({hide: true});
-        // });
     }
 }

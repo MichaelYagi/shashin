@@ -170,13 +170,16 @@
 </div>
 
 <div class="modal fade" id="apikeyUpdateConfirmation" tabindex="-1" role="dialog" aria-labelledby="apikey">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="trashModalLabel">Update API Key</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">Are you sure you want to update your API key?</div>
+            <div class="modal-body">
+                Type <strong>UPDATE</strong> to confirm<br>
+                <input class="form-control" type="text" id="updateConfirm" value="">
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="confirmUpdateApiKey">Confirm
                 </button>
