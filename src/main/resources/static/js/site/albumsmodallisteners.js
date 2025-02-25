@@ -306,18 +306,9 @@
     };
 
     albumsModalListeners.setCommentModalListeners = function () {
-        // $("#propcommentalbums").on('show.bs.modal', async function () {
-        //     const http = new Http("album notification read");
-        //     const data = await http.ajax("get", "/notifications/markread/album/" + albumId);
-        // })
 
         $("#propcommentalbums").on('hide.bs.modal', async function () {
             $("#commentList").empty();
-
-            // $("#cancelEditCommentAlbum").off();
-            // $("#updateCommentAlbum").off();
-            // $("#saveCommentAlbum").off();
-            // $("#propcommentalbums").off();
         });
 
         $("#propcommentalbums").on('shown.bs.modal', async function () {

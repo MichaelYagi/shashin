@@ -32,14 +32,6 @@
     /*]]>*/
 
     shashin.updateSearchInput("Notifications");
-
-    $.ajax({
-        type: 'get',
-        url: "/notifications/markread/favorites",
-        contentType: 'application/json; charset=utf-8'
-    }).then(function () {
-        NotificationUtil.markNotificationRead();
-    });
 </script>
 </body>
 </html>

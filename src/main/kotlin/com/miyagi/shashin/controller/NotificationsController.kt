@@ -12,6 +12,7 @@ import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
+import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
@@ -20,6 +21,9 @@ import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import java.util.*
 import jakarta.transaction.Transactional
+import org.apache.commons.text.StringEscapeUtils
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Controller
 @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
@@ -72,6 +76,42 @@ class NotificationsController {
         return module
     }
 
+    @RequestMapping(value = ["/notifications/create"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    fun createNotification(model: Model, @RequestBody requestBody: JsonNode): String {
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        val paramMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+
+        val response = mutableMapOf<String, Any?>()
+
+        response["msg"] = ""
+        response["status"] = ApiResponse.FAIL.status
+
+        if (currentUserObj != null && paramMap.containsKey("message") && paramMap.containsKey("type") && paramMap.containsKey("identifier")) {
+            val message = paramMap["message"] as String?
+            val type = paramMap["type"] as String?
+            val identifier = paramMap["identifier"] as String?
+
+            val notification = Notification()
+            notification.setType(type)
+            notification.setIdentifier(identifier)
+            notification.setRead(false)
+            notification.setMessage(message)
+            notification.setUserId(currentUserObj.getId())
+            notification.setCreatedAt(getCurrentTimestamp())
+            notification.setModifiedAt(getCurrentTimestamp())
+            notificationRepository.save(notification)
+
+            response["msg"] = ""
+            response["status"] = ApiResponse.SUCCESS.status
+        } else {
+            response["msg"] = ""
+            response["status"] = ApiResponse.FAIL.status
+        }
+
+        return mapper.writeValueAsString(response)
+    }
+
     @GetMapping("/notifications/markread", produces = ["application/json"])
     @ResponseBody
     fun markNotificationsRead(model: Model): String {
@@ -122,17 +162,83 @@ class NotificationsController {
         return "{\"msg\":\"\",\"status\":\"fail\"}"
     }
 
-    @GetMapping("/notifications/markread/album/{albumId}", produces = ["application/json"])
+    @GetMapping("/notifications/exists/{type}/{identifier}", produces = ["application/json"])
     @ResponseBody
-    fun markNotificationsReadByAlbum(model: Model,@PathVariable albumId: Int): String {
+    fun existsNotificationsReadByTypeAndIdentifier(model: Model,@PathVariable type: String,@PathVariable identifier: String): String {
         val currentUserObj = model.getAttribute("currentUser") as User?
-        if (currentUserObj != null && albumId > 0) {
+        var exists = false
+
+        if (currentUserObj != null && identifier.isNotEmpty()) {
+            var notificationList: MutableIterable<Notification?>? = notificationRepository.findAllByTypeAndId(
+                type,
+                identifier,
+                currentUserObj.getId()
+            )
+
+            if (notificationList != null) {
+                if (notificationList.count() > 0) {
+                    exists = true
+                }
+            } else {
+                return "{\"msg\":\"\",\"status\":\"fail\"}"
+            }
+        } else {
+            return "{\"msg\":\"\",\"status\":\"fail\"}"
+        }
+
+        return "{\"msg\":\"\",\"status\":\"success\",\"exists\":$exists}"
+    }
+
+    @GetMapping("/notifications/check/{type}/{identifier}", produces = ["application/json"])
+    @ResponseBody
+    fun checkNotificationsReadByTypeAndIdentifier(model: Model,@PathVariable type: String,@PathVariable identifier: String): String {
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        var allChecked = true
+
+        if (currentUserObj != null && identifier.isNotEmpty()) {
+            var notificationList: MutableIterable<Notification?>? = notificationRepository.findAllByTypeAndId(
+                type,
+                identifier,
+                currentUserObj.getId()
+            )
+
+            if (notificationList != null) {
+                if (notificationList.count() > 0) {
+                    for (notification in notificationList) {
+                        if (notification != null) {
+                            if (!notification.getRead()!!) {
+                                allChecked = false
+                                break
+                            }
+                        }
+                    }
+                }
+            } else {
+                return "{\"msg\":\"\",\"status\":\"fail\"}"
+            }
+        } else {
+            return "{\"msg\":\"\",\"status\":\"fail\"}"
+        }
+
+        return "{\"msg\":\"\",\"status\":\"success\",\"allChecked\":$allChecked}"
+    }
+
+    @GetMapping("/notifications/markread/{type}/{identifier}", produces = ["application/json"])
+    @ResponseBody
+    fun markNotificationsReadByTypeAndIdentifier(model: Model,@PathVariable type: String,@PathVariable identifier: String): String {
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null && identifier.isNotEmpty()) {
             Thread {
-                val notificationList =
-                    notificationRepository.findAllByAlbumIdAndUserIdAndMetadataIdIsNullOrderByCreatedAtDesc(
-                        albumId,
+                var notificationList: MutableIterable<Notification?>? = null
+
+                if (type == "metadata") {
+                    notificationList = notificationRepository.findAllByTypeAndId(
+                        type,
+                        identifier,
                         currentUserObj.getId()
                     )
+                }
+
                 if (notificationList != null && notificationList.count() > 0) {
                     val notifications = mutableListOf<Notification>()
                     for (notification in notificationList) {
@@ -148,95 +254,6 @@ class NotificationsController {
                     }
                 }
             }.start()
-        } else {
-            return "{\"msg\":\"\",\"status\":\"fail\"}"
-        }
-
-        return "{\"msg\":\"\",\"status\":\"success\"}"
-    }
-
-    @GetMapping("/notifications/markread/metadata/{metadataId}", produces = ["application/json"])
-    @ResponseBody
-    fun markNotificationsReadByMetadata(model: Model,@PathVariable metadataId: String): String {
-        val currentUserObj = model.getAttribute("currentUser") as User?
-        if (currentUserObj != null && metadataId.length > 0) {
-            Thread {
-                val notificationList = notificationRepository.findAllByMetadataIdAndUserIdOrderByCreatedAtDesc(
-                    metadataId,
-                    currentUserObj.getId()
-                )
-                if (notificationList != null && notificationList.count() > 0) {
-                    val notifications = mutableListOf<Notification>()
-                    for (notification in notificationList) {
-                        if (notification != null) {
-                            if (!notification.getRead()!!) {
-                                notification.setRead(true)
-                                notifications.add(notification)
-                            }
-                        }
-                    }
-                    if (notifications.isNotEmpty()) {
-                        notificationRepository.saveAll(notifications)
-                    }
-                }
-            }.start()
-        } else {
-            return "{\"msg\":\"\",\"status\":\"fail\"}"
-        }
-
-        return "{\"msg\":\"\",\"status\":\"success\"}"
-    }
-
-    @GetMapping("/notifications/markread/favorites", produces = ["application/json"])
-    @ResponseBody
-    fun markNotificationsReadByFavorites(model: Model): String {
-        val currentUserObj = model.getAttribute("currentUser") as User?
-        if (currentUserObj != null) {
-            Thread {
-                val notificationList =
-                    notificationRepository.findAllByUserIdAndFavoriteIdIsNotNull(currentUserObj.getId())
-                if (notificationList != null && notificationList.count() > 0) {
-                    val notifications = mutableListOf<Notification>()
-                    for (notification in notificationList) {
-                        if (notification != null) {
-                            if (!notification.getRead()!!) {
-                                notification.setRead(true)
-                                notifications.add(notification)
-                            }
-                        }
-                    }
-                    if (notifications.isNotEmpty()) {
-                        notificationRepository.saveAll(notifications)
-                    }
-                }
-            }.start()
-        } else {
-            return "{\"msg\":\"\",\"status\":\"fail\"}"
-        }
-
-        return "{\"msg\":\"\",\"status\":\"success\"}"
-    }
-
-    @GetMapping("/notifications/markread/users", produces = ["application/json"])
-    @ResponseBody
-    fun markNotificationsReadByUsers(model: Model): String {
-        val currentUserObj = model.getAttribute("currentUser") as User?
-        if (currentUserObj != null) {
-            val notificationList = notificationRepository.findAllByUserIdAndAlbumIdIsNullAndCommentIdIsNullAndMetadataIdIsNullAndFavoriteIdIsNull(currentUserObj.getId())
-            if (notificationList != null && notificationList.count() > 0) {
-                val notifications = mutableListOf<Notification>()
-                for (notification in notificationList) {
-                    if (notification != null) {
-                        if (!notification.getRead()!!) {
-                            notification.setRead(true)
-                            notifications.add(notification)
-                        }
-                    }
-                }
-                if (notifications.isNotEmpty()) {
-                    notificationRepository.saveAll(notifications)
-                }
-            }
         } else {
             return "{\"msg\":\"\",\"status\":\"fail\"}"
         }

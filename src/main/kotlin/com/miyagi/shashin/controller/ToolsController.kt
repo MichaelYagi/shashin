@@ -75,54 +75,21 @@ class ToolsController {
     @RequestMapping(value = ["/releases", "/api/v1/releases"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getReleases(): ResponseEntity<String> {
-        // https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28#list-repository-tags
-        var url = "https://api.github.com/repos/michaelyagi/shashin/tags"
         var response = mutableMapOf<String, Any?>()
         response["releases"] = mutableListOf<Map<String, Any>>()
         response["status"] = ApiResponse.FAIL.status
         response["msg"] = ""
 
-        try {
-            val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
-            connection.connectTimeout = 1000
-            connection.readTimeout = 1000
-            connection.requestMethod = "GET"
-
-            connection.setRequestProperty("Accept", "application/vnd.github+json")
-            connection.setRequestProperty("Authorization", "Bearer $githubKey")
-
-            BufferedReader(
-                InputStreamReader(connection.inputStream, "utf-8")
-            ).use { br ->
-                val responseBuilder = StringBuilder()
-                var responseLine: String?
-                while (br.readLine().also { responseLine = it } != null) {
-                    responseBuilder.append(responseLine!!.trim { it <= ' ' })
-                }
-
-                val jsonString = responseBuilder.toString()
-                var array: MutableList<Map<String, Any>>? = mutableListOf<Map<String, Any>>()
-                array = Gson().fromJson(jsonString, array?.javaClass)
-
-                response["releases"] = array
-                response["status"] = ApiResponse.SUCCESS.status
-                response["msg"] = ""
-            }
-
-            val responseCode: Int = connection.responseCode
-
-            if (responseCode != 200) {
-                logger.log(Level.WARNING, "Could not process GitHub request.")
-            }
-        } catch (e: IOException) {
-            logger.log(Level.WARNING, "Could not process GitHub request: " + e.message)
-            response["status"] = ApiResponse.FAIL.status
-            response["msg"] = ""
+        val array = TextUtils.getReleases(githubKey)
+        if (array != null && array.isNotEmpty()) {
+            response["releases"] = array
+            response["status"] = ApiResponse.SUCCESS.status
         }
 
         val json = mapper.writeValueAsString(response)
         return ResponseEntity
             .ok()
+//            .cacheControl(CacheControl.maxAge(1, TimeUnit.SECONDS))
             .cacheControl(CacheControl.maxAge(14, TimeUnit.DAYS))
             .body(json)
     }

@@ -30,7 +30,7 @@
 
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     $(document).ready(function() {
-        $("#propAbout").on('shown.bs.modal', function () {
+        // $("#propAbout").on('shown.bs.modal', function () {
             $("#gitVersionId").html("");
             let currentRelease = 'v' + /*[[${buildProperties.getVersion()}]]*/ '';
 
@@ -45,16 +45,25 @@
                                 const ghReleaseName = releaseInfo.name;
                                 if (currentRelease === ghReleaseName) {
                                     if (i > 0) {
-                                        // let link = "https://github.com/MichaelYagi/shashin";
-                                        // if (releaseInfo.hasOwnProperty("zipball_url")) {
-                                        //     link = releaseInfo.zipball_url;
-                                        //     link = link.replace("api.", "");
-                                        //     link = link.replace("repos/", "");
-                                        //     link = link.replace("zipball/", "");
-                                        //     link = link.replace("refs/", "releases/");
-                                        //     link = link.replace("tags/", "tag/");
-                                        // }
-                                        $("#gitVersionId").html("<br><em>Version <a href='https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin' target='_blank'>"+releaseArray[0].name.substring(1)+"</a> is available.</em>");
+                                        const message = "Version <a href='https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin' target='_blank'>"+releaseArray[0].name.substring(1)+"</a> is available.";
+                                        $("#gitVersionId").html("<br><em>"+message+"</em>");
+                                        const type = "releases";
+
+                                        http.ajax("get", "/notifications/exists/"+type+"/"+releaseArray[0].name).then(function (data) {
+                                            if (data.hasOwnProperty("exists")) {
+                                                const exists = data.exists;
+                                                if (exists === false) {
+                                                    const json = {
+                                                        message: message,
+                                                        type: type,
+                                                        identifier: releaseArray[0].name
+                                                    };
+                                                    http.ajax("post", "/notifications/create", JSON.stringify(json)).then(function (data) {
+                                                        shashin.printMessageToConsole(JSON.stringify(data), {tag: type});
+                                                    });
+                                                }
+                                            }
+                                        });
                                     }
                                     break;
                                 }
@@ -64,6 +73,6 @@
                 }
 
             });
-        });
+        // });
     });
 </script>

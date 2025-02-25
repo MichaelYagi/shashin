@@ -160,8 +160,8 @@ class CommentsController {
                         if (createEntry) {
                             notificationObj.setUserId(user.getId())
                             notificationObj.setImageUrl(coverUrl)
-                            notificationObj.setCommentId(albumComment.getId())
-                            notificationObj.setAlbumId(albumId)
+                            notificationObj.setType("comment")
+                            notificationObj.setIdentifier(albumComment.getId().toString())
                             notificationObj.setCreatedAt(getCurrentTimestamp())
                             notificationObj.setModifiedAt(getCurrentTimestamp())
                             notificationObj.setRead(false)
@@ -294,9 +294,8 @@ class CommentsController {
 
                         if (createEntry) {
                             notificationObj.setUserId(user.getId())
-                            notificationObj.setCommentId(savedCommentObj.getId())
-                            notificationObj.setMetadataId(metadataId)
-                            notificationObj.setAlbumId(albumId)
+                            notificationObj.setType("comment")
+                            notificationObj.setIdentifier(savedCommentObj.getId().toString())
                             notificationObj.setImageUrl(coverUrl)
                             notificationObj.setRead(false)
                             notificationObj.setCreatedAt(getCurrentTimestamp())

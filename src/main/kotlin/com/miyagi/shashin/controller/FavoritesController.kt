@@ -258,7 +258,8 @@ class FavoritesController: BaseController() {
                                 .getId() + "' target='_blank'>" + metadata.get()
                                 .getFileName() + "</a> on " + sdtf.format(Date())
                         )
-                        notificationObj.setFavoriteId(favorite.getId())
+                        notificationObj.setType("favorite")
+                        notificationObj.setIdentifier(favorite.getId().toString())
                         notificationObj.setUserId(admin.getId())
                         notificationObjList.add(notificationObj)
                     }

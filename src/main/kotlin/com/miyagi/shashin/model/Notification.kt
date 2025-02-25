@@ -15,13 +15,9 @@ class Notification {
     @NotBlank
     private var userId: Int? = null
 
-    private var albumId: Int? = null
+    private var type: String? = null
 
-    private var metadataId: String? = null
-
-    private var commentId: Int? = null
-
-    private var favoriteId: Int? = null
+    private var identifier: String? = null
 
     private var imageUrl: String? = null
 
@@ -53,36 +49,20 @@ class Notification {
         this.userId = userId
     }
 
-    fun getAlbumId(): Int? {
-        return this.albumId
+    fun getType(): String? {
+        return this.type
     }
 
-    fun setAlbumId(albumId: Int?) {
-        this.albumId = albumId
+    fun setType(type: String?) {
+        this.type = type
     }
 
-    fun getFavoriteId(): Int? {
-        return this.favoriteId
+    fun getIdentifier(): String? {
+        return this.identifier
     }
 
-    fun setFavoriteId(favoriteId: Int?) {
-        this.favoriteId = favoriteId
-    }
-
-    fun getCommentId(): Int? {
-        return this.commentId
-    }
-
-    fun setCommentId(commentId: Int?) {
-        this.commentId = commentId
-    }
-
-    fun getMetadataId(): String? {
-        return this.metadataId
-    }
-
-    fun setMetadataId(metadataId: String?) {
-        this.metadataId = metadataId
+    fun setIdentifier(identifier: String?) {
+        this.identifier = identifier
     }
 
     fun getImageUrl(): String? {
@@ -129,10 +109,8 @@ class Notification {
         val map = mutableMapOf<String, Any?>()
         map["id"] = this.id
         map["userId"] = this.userId
-        map["albumId"] = this.albumId
-        map["commentId"] = this.commentId
-        map["favoriteId"] = this.favoriteId
-        map["metadataId"] = this.metadataId
+        map["type"] = this.type
+        map["identifier"] = this.identifier
         map["imageUrl"] = this.imageUrl
         map["message"] = this.message
         map["read"] = this.read
