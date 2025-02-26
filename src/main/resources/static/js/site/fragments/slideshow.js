@@ -195,7 +195,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
                     $("#mediaInfo").addClass("text-center");
                     $("#mediaInfo").css({
-                        "transform": "translate(-50%, -20%)"
+                        "transform": "translate(-50%, -30px)"
                     });
 
                     if (Util.isMobile() === false) {
