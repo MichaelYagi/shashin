@@ -1741,7 +1741,7 @@ class TimelineController: BaseController() {
             notificationObj.setUserId(userId)
             notificationObj.setCreatedAt(getCurrentTimestamp())
             notificationObj.setModifiedAt(getCurrentTimestamp())
-            notificationObj.setImageUrl(imageUrl)
+            notificationObj.setImageUrl(coverUrl)
             notificationObj.setRead(false)
             notificationObj.setMessage("Photos added to album $message at ${sdtf.format(Date())}.")
             notificationObjList.add(notificationObj)
