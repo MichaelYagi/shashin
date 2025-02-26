@@ -193,9 +193,14 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                         "left": "2%"
                     });
 
+                    $("#mediaInfo").addClass("text-center");
+                    $("#mediaInfo").css({
+                        "transform": "translate(-50%, -20%)"
+                    });
+
                     if (Util.isMobile() === false) {
                         $("#mediaInfo").css({
-                            "max-width": ($(window).width() + 1),
+                            "width": "50em", //($(window).width() + 1)
                             "font-size": "1.7rem"
                         });
                     } else {
@@ -228,7 +233,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                     }
 
                     if (data.metadata.description !== null && data.metadata.description !== "") {
-                        description += "<div class='text-center'>" + data.metadata.description + "</div>";
+                        description += "<div>" + data.metadata.description + "</div>";
                     }
                     $("#mediaInfo").html(description);
 
@@ -956,8 +961,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
                 if (Util.isMobile() === false) {
                     $("#mediaInfo").css({
-                        "max-width": ($(window).width() + 1),
-                        "white-space": "nowrap"
+                        "width": "50em" //($(window).width() + 1)
                     });
                 }
 

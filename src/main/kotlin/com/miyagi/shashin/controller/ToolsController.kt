@@ -71,19 +71,22 @@ class ToolsController {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
 
-    @Secured("ROLE_SUPER","ROLE_ADMIN")
+    @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     @RequestMapping(value = ["/releases", "/api/v1/releases"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getReleases(): ResponseEntity<String> {
+    fun getReleases(model: Model): ResponseEntity<String> {
         var response = mutableMapOf<String, Any?>()
         response["releases"] = mutableListOf<Map<String, Any>>()
         response["status"] = ApiResponse.FAIL.status
         response["msg"] = ""
 
-        val array = TextUtils.getReleases(githubKey)
-        if (array != null && array.isNotEmpty()) {
-            response["releases"] = array
-            response["status"] = ApiResponse.SUCCESS.status
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null && currentUserObj.getAuthority()!! != "ROLE_USER") {
+            val array = TextUtils.getReleases(githubKey)
+            if (array != null && array.isNotEmpty()) {
+                response["releases"] = array
+                response["status"] = ApiResponse.SUCCESS.status
+            }
         }
 
         val json = mapper.writeValueAsString(response)
