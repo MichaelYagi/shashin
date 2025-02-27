@@ -416,8 +416,7 @@
         $("#"+placement+"ToastContainer div.toast-container").children().each(function(i, obj) {
             if ((findHidden === true ||
                 (findHidden === false &&
-                    (typeof $(obj).attr('style') === 'undefined' || $(obj).attr('style') === false) || $(obj).css('display') === "block"))
-                && $(obj).hasClass("attachPoint") === false
+                    (typeof $(obj).attr('style') === 'undefined' || $(obj).attr('style') === false) || $(obj).css('display') === "block")) && $(obj).hasClass("attachPoint") === false
             ) {
                 if (tag !== null && $(obj).attr("data-tag") === tag) {
                     foundTag = true;
@@ -2041,6 +2040,10 @@
     shashin.setLightGallery = function (additionalConfigs) {
         let configs = shashin.getLightGalleryConfigs(additionalConfigs);
         shashin.lg = lightGallery(shashin.getLightGalleryElement(), configs);
+
+        shashin.getLightGalleryElement().addEventListener('lgAfterClose', _ => {
+            shashin.closeToastMessages({tags: ["subhtml"]});
+        });
     };
 
     shashin.mouseMoveListener = function () {
