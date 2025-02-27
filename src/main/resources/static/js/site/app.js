@@ -2041,9 +2041,11 @@
         let configs = shashin.getLightGalleryConfigs(additionalConfigs);
         shashin.lg = lightGallery(shashin.getLightGalleryElement(), configs);
 
-        shashin.getLightGalleryElement().addEventListener('lgAfterClose', _ => {
-            shashin.closeToastMessages({tags: ["subhtml"]});
-        });
+        if (shashin.getLightGalleryElement() !== null) {
+            shashin.getLightGalleryElement().addEventListener('lgAfterClose', _ => {
+                shashin.closeToastMessages({tags: ["subhtml"]});
+            });
+        }
     };
 
     shashin.mouseMoveListener = function () {
