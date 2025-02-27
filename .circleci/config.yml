@@ -122,7 +122,7 @@ workflows:
                 command: |
                   curl --location 'https://api.repoflow.io/upload/myagidevel-8191/shashin/single' \
                   --header 'Authorization: Bearer $REPOFLOW_TOKEN' \
-                  --form 'packageFiles=@"target/artifact//Shashin-$VERSION.exe"' \
+                  --form 'packageFiles=@"target/artifact/Shashin-$VERSION.exe"' \
                   --form 'packageName="shashin"' \
                   --form 'packageVersion="$VERSION"'
 #      - artifactory/upload: # Upload only when there's a new tag
