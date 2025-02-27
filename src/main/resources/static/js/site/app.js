@@ -2047,7 +2047,7 @@
             });
 
             shashin.getLightGalleryElement().addEventListener('lgBeforeSlide', (event) => {
-                if (shashin.lg !== null) {
+                if (shashin.lg !== null && shashin.lg.hasOwnProperty("galleryItems")) {
                     const galleryItems = shashin.lg.galleryItems;
                     const currentIndex = event.detail.index;
                     const galleryItem = galleryItems[currentIndex];
