@@ -2065,22 +2065,6 @@
         }
     };
 
-    shashin.mouseMoveListener = function () {
-        // Hide caption when showing lg gallery
-        shashin.lgSubHtmlTimeout = null;
-        $("html").mousemove(function() {
-            shashin.captionListener();
-        });
-    };
-
-    shashin.captionListener = function () {
-        clearTimeout(shashin.lgSubHtmlTimeout);
-        $(".lg-sub-html").show('slide', {direction: 'down'}, 200);
-        shashin.lgSubHtmlTimeout = setTimeout(function () {
-            $(".lg-sub-html").hide('slide', {direction: 'down'}, 200);
-        }, 5000);
-    };
-
     shashin.getLightGalleryElement = function () {
         return shashin.infiniteScrollGallery;
     };
