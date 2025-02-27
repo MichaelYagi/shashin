@@ -2045,6 +2045,23 @@
             shashin.getLightGalleryElement().addEventListener('lgAfterClose', _ => {
                 shashin.closeToastMessages({tags: ["subhtml"]});
             });
+
+            shashin.getLightGalleryElement().addEventListener('lgBeforeSlide', (event) => {
+                if (shashin.lg !== null) {
+                    const galleryItems = shashin.lg.galleryItems;
+                    const currentIndex = event.detail.index;
+                    const galleryItem = galleryItems[currentIndex];
+
+                    if (galleryItem.hasOwnProperty("subHtml") && galleryItem.subHtml !== "") {
+                        let subhtml = galleryItem.subHtml;
+                        shashin.showToastMessage(null, subhtml, {
+                            tag: "subhtml",
+                            autohide: false,
+                            closeButton: false
+                        });
+                    }
+                }
+            });
         }
     };
 
