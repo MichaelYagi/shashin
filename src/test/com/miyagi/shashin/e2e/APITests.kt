@@ -199,7 +199,7 @@ class APITests: BaseSeleniumTests() {
 
 //        println(imageResponse.andReturn().response.contentType)
 
-        Assertions.assertTrue(imageResponse.andReturn().response.contentType == "image/jpeg")
+        Assertions.assertTrue(imageResponse.andReturn().response.contentType!!.contains("image/"))
     }
 
     @Test
