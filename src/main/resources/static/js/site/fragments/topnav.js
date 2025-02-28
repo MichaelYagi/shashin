@@ -1,7 +1,3 @@
-$(window).bind("load", function () {
-    $("header .placeholder").removeClass("placeholder");
-});
-
 async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts, searchHistoryLimit, queryLimit, accessTimelineView, hasMediaUploadDirectory, autoplayVideo) {
     shashin.darkMode = darkMode;
     shashin.showPlacename = placeNames;
