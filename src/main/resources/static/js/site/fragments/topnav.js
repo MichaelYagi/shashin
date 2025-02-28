@@ -4,7 +4,7 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
     shashin.autoplayVideo = autoplayVideo;
     shashin.showNotifications = notificationAlerts;
 
-    // manage back button click (and backspace)
+    // manage back button click (and backspace) to close light gallery close
     let popFlag = false; // needed for safari
     if (typeof history.pushState === "function") {
         history.pushState("back", null, null);
