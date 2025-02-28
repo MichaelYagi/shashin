@@ -91,7 +91,14 @@
                         </div>
                         <div class="mb-3 col-sm-2">
                             <label class="form-label me-2 mt-2" for="markerColors">Marker Colors</label>
-                            <input type="color" class="form-control form-control-color" id="markerColors" value="#004DFF" title="Choose your color">
+<!--                            <input type="color" class="form-control form-control-color" id="markerColors" value="#004DFF" title="Choose your color">-->
+                            <input type="color" class="form-control form-control-color" list="colors" id="markerColors" value="#004DFF" placeholder="Select Color" height="15">
+                            <datalist id="colors">
+                                <option value="#004DFF"></option>
+                                <option value="#228B22"></option>
+                                <option value="#FF6700"></option>
+                                <option value="#FF3131"></option>
+                            </datalist>
                         </div>
                     </div>
 
