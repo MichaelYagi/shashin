@@ -50,10 +50,6 @@
                         <a class="align-items-center mb-lg-0 link-dark text-decoration-none" id="timelineTocToggle" data-bs-toggle="offcanvas" data-bs-placement="bottom" href="#offcanvasToc" aria-controls="offcanvasToc" title="Show timeline" style="display: none">
                             <span th:class="'bi-calendar3 placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem"></span>
                         </a>
-<!--                    &nbsp;-->
-<!--                    <a class="align-items-center mb-lg-0 link-dark text-decoration-none" id="timelineMediaTypeToggle" data-bs-placement="bottom" href="#mediaTypeToggle" aria-controls="mediaTypeToggle" title="Toggle media type">-->
-<!--                        <span id="timelineMediaTypeToggleIcon" th:class="'bi-camera-video placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span>-->
-<!--                    </a>-->
                     </th:block>
                     <th:block th:if="${activePage == 'folder'}">
                         &nbsp;
@@ -86,11 +82,6 @@
                                 <input type="file" id="uploadMediaAlbum" name="uploadMediaAlbum" th:accept="${'.'+#strings.listJoin(acceptedMediaTypes, ',.')}" multiple>
                             </form>
                         </th:block>
-
-<!--                    &nbsp;-->
-<!--                    <a class="align-items-center mb-lg-0 link-dark text-decoration-none" id="albumMediaTypeToggle" data-bs-placement="bottom" href="#mediaTypeToggle" aria-controls="mediaTypeToggle" title="Toggle media type">-->
-<!--                        <span id="albumMediaTypeToggleIcon" th:class="'bi-camera-video placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span>-->
-<!--                    </a>-->
                     </th:block>
                 </span>
             </th:block>
