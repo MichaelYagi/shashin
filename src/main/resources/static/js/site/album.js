@@ -55,7 +55,6 @@
         setTimeout(async () => {
             shashin.pageLoader(await loadNextPage, ".appendAlbumPhotos", albumMetadataList, activePage);
         }, 0);
-        shashin.mouseMoveListener();
     };
 
     albumSettings.openAlbumModal = function (e,metadataId) {
