@@ -236,6 +236,8 @@
     </th:block>
     <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
         $(document).ready(function () {
+            $("header .placeholder").removeClass("placeholder");
+
             /*<![CDATA[*/
             setVarsTopnav(/*[[${currentUser.darkMode}]]*/ false, /*[[${currentUser.showPlacename}]]*/ false, /*[[${timezone}]]*/ "America/Los_Angeles", /*[[${currentUser.notificationAlerts}]]*/ true, /*[[${searchHistoryLimit}]]*/ 10, /*[[${queryLimit}]]*/ 30, /*[[${authority == "ROLE_SUPER" || authority == "ROLE_ADMIN"}]]*/ false,/*[[${hasMediaUploadDirectory}]]*/ false, /*[[${currentUser.autoplayVideo}]]*/ false);
             /*]]>*/
