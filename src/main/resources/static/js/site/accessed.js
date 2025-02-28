@@ -30,7 +30,6 @@ class Accessed {
         setTimeout(async () => {
             shashin.pageLoader(await this.loadNextPage.bind(this), ".appendAccessedPhotos", this.metadataList, this.activePage);
         }, 0);
-        shashin.mouseMoveListener();
     }
 
     async loadNextPage() {

@@ -55,8 +55,6 @@ async function showMap(mapdata, keywordMap) {
         source: osmMapTile
     });
 
-    shashin.mouseMoveListener();
-
     const textFill = new ol.style.Fill({
         color: '#fff',
     });
@@ -731,11 +729,13 @@ async function showMap(mapdata, keywordMap) {
         const features = feature.get('features');
         const size = features.length;
 
+        const markerColor = $("#markerColors").val();
+        const rgbMarker = hexToRgb(markerColor);
         let style = {
             image: new ol.style.Circle({
                 radius: feature.get('radius'),
                 fill: new ol.style.Fill({
-                    color: [0, 77, 255, Math.min(0.8, 0.4 + size / maxFeatureCount)],
+                    color: [rgbMarker.r, rgbMarker.g, rgbMarker.b, Math.min(0.8, 0.4 + size / maxFeatureCount)],
                 }),
             })
         };
@@ -1502,4 +1502,21 @@ async function showMap(mapdata, keywordMap) {
             return false;
         }
     });
+
+    function hexToRgb(hex) {
+        if (hex.charAt(0) === "#") {
+            hex = hex.slice(1);
+        }
+
+        const bigint = parseInt(hex, 16);
+        const r = (bigint >> 16) & 255;
+        const g = (bigint >> 8) & 255;
+        const b = bigint & 255;
+
+        return {
+            r: r,
+            g: g,
+            b: b
+        };
+    }
 }

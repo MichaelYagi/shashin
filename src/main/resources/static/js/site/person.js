@@ -30,7 +30,6 @@ class Person {
             shashin.pageLoader(await this.loadNextPage.bind(this), ".appendPersonPhotos", this.metadataList, this.activePage);
         }, 0);
         shashin.matchingListeners();
-        shashin.mouseMoveListener();
 
         $('#savePersonModal').on("click", async function (e) {
 

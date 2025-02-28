@@ -14,7 +14,6 @@ class Compreface {
         setTimeout(async () => {
             shashin.pageLoader(await this.loadNextPage.bind(this), ".appendCompreFacePhotos", this.resultList);
         }, 0);
-        shashin.mouseMoveListener();
     }
 
     async loadNextPage() {

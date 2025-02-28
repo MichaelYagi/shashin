@@ -29,7 +29,6 @@ class Folder {
         setTimeout(async () => {
             shashin.pageLoader(await this.loadNextPage.bind(this), ".appendFolderPhotos", this.metadataList, this.activePage);
         }, 0);
-        shashin.mouseMoveListener();
     }
 
     async loadNextPage() {

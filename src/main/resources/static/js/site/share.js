@@ -17,7 +17,6 @@ class ShareAlbum {
         setTimeout(async () => {
             shashin.pageLoader(await this.loadNextPage.bind(this), ".appendAlbumPhotos", this.albumMetadataList, this.activePage);
         }, 0);
-        shashin.mouseMoveListener();
         await this.renderDownload();
     }
 

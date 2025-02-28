@@ -342,8 +342,6 @@
             }
         });
 
-        shashin.mouseMoveListener();
-
         if (scrollTimer !== null) {
             clearTimeout(scrollTimer);
         }
