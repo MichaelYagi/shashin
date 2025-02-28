@@ -235,9 +235,11 @@
         <script src="/js/site/min/fragments/topnav.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
     </th:block>
     <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
-        /*<![CDATA[*/
-        setVarsTopnav(/*[[${currentUser.darkMode}]]*/ false, /*[[${currentUser.showPlacename}]]*/ false, /*[[${timezone}]]*/ "America/Los_Angeles", /*[[${currentUser.notificationAlerts}]]*/ true, /*[[${searchHistoryLimit}]]*/ 10, /*[[${queryLimit}]]*/ 30, /*[[${authority == "ROLE_SUPER" || authority == "ROLE_ADMIN"}]]*/ false,/*[[${hasMediaUploadDirectory}]]*/ false, /*[[${currentUser.autoplayVideo}]]*/ false);
-        /*]]>*/
+        $(document).ready(function () {
+            /*<![CDATA[*/
+            setVarsTopnav(/*[[${currentUser.darkMode}]]*/ false, /*[[${currentUser.showPlacename}]]*/ false, /*[[${timezone}]]*/ "America/Los_Angeles", /*[[${currentUser.notificationAlerts}]]*/ true, /*[[${searchHistoryLimit}]]*/ 10, /*[[${queryLimit}]]*/ 30, /*[[${authority == "ROLE_SUPER" || authority == "ROLE_ADMIN"}]]*/ false,/*[[${hasMediaUploadDirectory}]]*/ false, /*[[${currentUser.autoplayVideo}]]*/ false);
+            /*]]>*/
+        });
     </script>
 </header>
 
