@@ -1,4 +1,4 @@
-async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts, searchHistoryLimit, queryLimit, accessTimelineView, hasMediaUploadDirectory, autoplayVideo) {
+async function setVarsTopNav(darkMode, placeNames, timezone, notificationAlerts, searchHistoryLimit, queryLimit, accessTimelineView, hasMediaUploadDirectory, autoplayVideo) {
     shashin.darkMode = darkMode;
     shashin.showPlacename = placeNames;
     shashin.autoplayVideo = autoplayVideo;
