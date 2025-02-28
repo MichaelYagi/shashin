@@ -1355,6 +1355,8 @@ async function showMap(mapdata, keywordMap) {
             }
         });
 
+        $("#markerColors").val("#004DFF");
+
         $("#bingMapsImageryContainer").css("display", "none");
         $("#maptilerContainer").css("display", "none");
 
