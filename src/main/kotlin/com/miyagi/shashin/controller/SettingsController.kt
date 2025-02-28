@@ -377,7 +377,7 @@ class SettingsController {
         val mediaDirArrayList: ArrayList<MediaDirectory> = ArrayList()
 
         if (mediaDirList.isNotBlank()) {
-            mediaDirs = BufferedReader(StringReader(mediaExcludeDirList))
+            mediaDirs = BufferedReader(StringReader(mediaDirList))
                 .lines()
                 .collect(Collectors.toList())
         }
