@@ -71,6 +71,7 @@ import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
 import jakarta.transaction.Transactional
 import org.springframework.data.jpa.repository.Modifying
+import java.util.stream.Collectors
 import kotlin.io.path.Path
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
@@ -376,13 +377,17 @@ class SettingsController {
         val mediaDirArrayList: ArrayList<MediaDirectory> = ArrayList()
 
         if (mediaDirList.isNotBlank()) {
-            mediaDirs = mediaDirList.trim().split("\\r\\n","\\n","\\r","\r\n","\n","\r").map { it.trim() }
+            mediaDirs = BufferedReader(StringReader(mediaExcludeDirList))
+                .lines()
+                .collect(Collectors.toList())
         }
 
         var mediaExcludeDirs: List<String>? = null
         val mediaExcludeDirArrayList: ArrayList<MediaDirectory> = ArrayList()
         if (mediaExcludeDirList.isNotBlank()) {
-            mediaExcludeDirs = mediaExcludeDirList.trim().split("\\r\\n","\\n","\\r","\r\n","\n","\r").map { it.trim() }
+            mediaExcludeDirs = BufferedReader(StringReader(mediaExcludeDirList))
+                .lines()
+                .collect(Collectors.toList())
         }
 
         model["status"] = ApiResponse.SUCCESS.status
