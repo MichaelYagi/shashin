@@ -8,6 +8,15 @@ async function setVarsTopnav(darkMode, placeNames, timezone, notificationAlerts,
     shashin.autoplayVideo = autoplayVideo;
     shashin.showNotifications = notificationAlerts;
 
+    // Avoids aria-hidden warnings
+    document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener('hide.bs.modal', function (event) {
+            if (document.activeElement) {
+                document.activeElement.blur();
+            }
+        });
+    });
+
     const activePage = $("#activePage").val();
 
     if (activePage !== "notifications") {
