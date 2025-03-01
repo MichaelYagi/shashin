@@ -96,6 +96,7 @@ abstract class BaseSeleniumTests {
         options.addArguments("--headless")
 //        options.setExperimentalOption("useAutomationExtension", false)
         options.addArguments("start-maximized") // open Browser in maximized mode
+        options.addArguments("--window-size=1400,600")
         options.addArguments("disable-infobars") // disabling infobars
         options.addArguments("--disable-extensions") // disabling extensions
         options.addArguments("--disable-gpu") // applicable to windows os only
