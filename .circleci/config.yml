@@ -107,11 +107,13 @@ workflows:
                   branches:
                     ignore: /.*/
                 command: |
-                  curl --location -X POST "https://api.repoflow.io/upload/myagidevel-8191/shashin/single" \
+                  curl --request POST \
                   --header "Authorization: Bearer $REPOFLOW_TOKEN" \
-                  --form 'packageFiles=@"target/artifact/shashin-$VERSION.jar"' \
-                  --form 'packageName="shashin"' \
-                  --form 'packageVersion="$VERSION"'
+                  --header "Content-Type: multipart/form-data" \
+                  --form "packageFiles=@\"target/artifact/shashin-$VERSION.jar\"" \
+                  --form "packageName=\"shashin\"" \
+                  --form "packageVersion=\"$VERSION\"" \
+                  --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
             - run:
                 name: Upload windows artifact
                 filters: # job runs for no branches and only for tags starting with 'v'
@@ -120,11 +122,13 @@ workflows:
                   branches:
                     ignore: /.*/
                 command: |
-                  curl --location -X POST "https://api.repoflow.io/upload/myagidevel-8191/shashin/single" \
-                  --header 'Authorization: Bearer $REPOFLOW_TOKEN' \
-                  --form 'packageFiles=@"target/artifact/Shashin-$VERSION.exe"' \
-                  --form 'packageName="shashin"' \
-                  --form 'packageVersion="$VERSION"'
+                  curl --request POST \
+                  --header "Authorization: Bearer $REPOFLOW_TOKEN" \
+                  --header "Content-Type: multipart/form-data" \
+                  --form "packageFiles=@\"target/artifact/Shashin-$VERSION.exe\"" \
+                  --form "packageName=\"shashin\"" \
+                  --form "packageVersion=\"$VERSION\"" \
+                  --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
 #      - artifactory/upload: # Upload only when there's a new tag
 #          requires:
 #            - Run junit tests, package to tar and store artifacts
