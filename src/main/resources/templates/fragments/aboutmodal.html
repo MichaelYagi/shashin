@@ -42,39 +42,50 @@
                     shashin.printMessageToConsole(JSON.stringify(data), {tag: "release"});
                     if (data.hasOwnProperty("releases") && data.releases.length > 0 && currentRelease !== "v") {
                         const releaseArray = data.releases;
+                        let releaseFound = false;
 
                         for (let i in releaseArray) {
                             const releaseInfo = releaseArray[i];
                             // Look for matching release
                             if (releaseInfo.hasOwnProperty("name") && currentRelease === releaseInfo.name) {
+                                releaseFound = true;
                                 // If not the most recent, notify in about modal and notification if not sent or stale
                                 if (i > 0) {
-                                    const message = "Version <a href='https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin' target='_blank'>"+releaseArray[0].name.substring(1)+"</a> is available.";
-                                    $("#gitVersionId").html("<br><em>"+message+"</em>");
-                                    const type = "releases";
-
-                                    http.ajax("get", "/notifications/exists/"+type+"/"+releaseArray[0].name).then(function (data) {
-                                        if (data.hasOwnProperty("exists")) {
-                                            const exists = data.exists;
-                                            if (exists === false) {
-                                                const json = {
-                                                    message: message,
-                                                    type: type,
-                                                    identifier: releaseArray[0].name
-                                                };
-                                                http.ajax("post", "/notifications/create", JSON.stringify(json)).then(function (data) {
-                                                    shashin.printMessageToConsole(JSON.stringify(data), {tag: type});
-                                                });
-                                            }
-                                        }
-                                    });
+                                    getLatestRelease(releaseArray);
                                 }
                                 break;
                             }
                         }
+
+                        if (releaseFound === false) {
+                            getLatestRelease(releaseArray);
+                        }
                     }
                 });
             }, 0);
+
+            function getLatestRelease(releaseArray) {
+                const message = "Version <a href='https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin' target='_blank'>"+releaseArray[0].name.substring(1)+"</a> is available.";
+                $("#gitVersionId").html("<br><em>"+message+"</em>");
+                const type = "releases";
+
+                const http = new Http("get releases");
+                http.ajax("get", "/notifications/exists/"+type+"/"+releaseArray[0].name).then(function (data) {
+                    if (data.hasOwnProperty("exists")) {
+                        const exists = data.exists;
+                        if (exists === false) {
+                            const json = {
+                                message: message,
+                                type: type,
+                                identifier: releaseArray[0].name
+                            };
+                            http.ajax("post", "/notifications/create", JSON.stringify(json)).then(function (data) {
+                                shashin.printMessageToConsole(JSON.stringify(data), {tag: type});
+                            });
+                        }
+                    }
+                });
+            }
         // });
     });
 </script>
