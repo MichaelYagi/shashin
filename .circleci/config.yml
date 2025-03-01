@@ -115,6 +115,11 @@ workflows:
             # Upload to RepoFlow
             - run:
                 name: Upload jar artifact
+                filters:
+                  tags:
+                    only: /^v.*/
+                  branches:
+                    ignore: /.*/
                 command: |
                   token=$REPOFLOW_TOKEN
                   version=$VERSION
@@ -127,6 +132,11 @@ workflows:
                   --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
             - run:
                 name: Upload windows artifact
+                filters:
+                  tags:
+                    only: /^v.*/
+                  branches:
+                    ignore: /.*/
                 command: |
                   token=$REPOFLOW_TOKEN
                   version=$VERSION
