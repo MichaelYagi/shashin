@@ -173,9 +173,9 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val albumNamesInput = this.driver!!.findElement(By.id("albumnames"))
         albumNamesInput.sendKeys("testalbum")
         val saveMetadataButton = this.driver!!.findElement(By.id("saveMetadata"))
-        albumNamesInput.click()
+        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.elementToBeClickable(By.id("saveMetadata"))).click()
+
 //        println(this.driver?.pageSource)
-        saveMetadataButton.click()
 
         Thread.sleep(this.elementScanTimeoutMillis.toLong())
         this.logger.log(Level.INFO, "Relocating to albums view.")
