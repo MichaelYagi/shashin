@@ -107,7 +107,7 @@ workflows:
             only: /^v.*/
           branches:
             ignore: /.*/
-        build-steps:
+        post-steps:
           # Upload to RepoFlow
           - run:
               name: Upload jar artifact
