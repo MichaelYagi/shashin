@@ -106,11 +106,11 @@ workflows:
                   chromedriver --version
                   whereis chromedriver
                 name: Check install
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
+#          filters:
+#            tags:
+#              only: /^v.*/
+#            branches:
+#              ignore: /.*/
           post-steps: # steps to run after steps
             # Upload to RepoFlow
             - run:
