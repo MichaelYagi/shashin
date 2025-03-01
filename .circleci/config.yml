@@ -1,0 +1,143 @@
+version: 2.1
+
+executors:
+  java17:
+    docker:
+      - image: 'cimg/openjdk:17.0'
+
+orbs:
+  maven: circleci/maven@1.4.1
+  node: circleci/node@5.3.0
+  browser-tools: circleci/browser-tools@1.4.8
+#  artifactory: circleci/artifactory@1.0.0
+
+workflows:
+  shashin_workflow:
+    jobs:
+      - node/test:
+          name: Run node tests
+          filters: # job runs for all branches and all tags
+            tags:
+              only: /.*/
+          test-results-for: mocha
+          post-steps:
+            - run:
+                name: Save JS test results
+                command: |
+                  mkdir -p test-results/mocha/
+                  find . -type f -regex ".*/test-results.xml" -exec cp {} test-results/mocha/ \;
+                when: always
+            - store_test_results:
+                path: test-results
+            - store_artifacts:
+                path: test-results/mocha
+            - persist_to_workspace: # persist across jobs
+                root: .
+                paths:
+                  - test-results/mocha
+      - maven/test: # checkout, build, test, and upload test results
+          executor: java17
+          name: Run junit tests and package to tar # and store artifacts
+          requires:
+            - Run node tests
+          filters: # job runs for all branches and all tags
+            tags:
+              only: /.*/
+          pre-steps:
+            - run:
+                name: Download Chromedrivers
+                command: |
+                  sudo apt-get update
+                  sudo apt-get install libgbm1 libgconf-2-4 libnss3 libxss1 lsb-release
+                  sudo apt-get install libappindicator3-1 libasound2 fonts-liberation xdg-utils
+            # Install latest
+            - browser-tools/install-chrome
+            - browser-tools/install-chromedriver
+            - run:
+                command: |
+                  google-chrome --version
+                  chromedriver --version
+                  whereis chromedriver
+                name: Check install
+          post-steps: # steps to run after steps
+            - run:
+                name: Save test results
+                command: |
+                  mkdir -p test-results/junit/
+                  find . -type f -regex ".*/target/surefire-reports/.*" -exec cp {} test-results/junit/ \;
+                when: always
+            - attach_workspace: # attach from another job
+                at: .
+            - run:
+                name: Set Version # get version from pom.xml
+                command: |
+                  echo 'export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)' >> $BASH_ENV
+            - run:
+                name: Move jar Artifacts
+                command: |
+                  mkdir -p target/artifact/
+                  mv target/**.jar shashin-$VERSION.jar
+            - run:
+                name: Move exe Artifacts
+                command: |
+                  mkdir -p target/artifact/
+                  mv target/**.exe Shashin-$VERSION.exe
+            - run:
+                name: Move shell script Artifacts
+                command: |
+                  mkdir -p target/artifact/
+                  mv target/reset_password.sh reset_password.sh
+            - run:
+                name: Compress Artifacts
+                command: |
+                  mkdir -p target/artifact/
+                  tar -cvzf target/artifact/shashin-$VERSION.tar **.jar **.exe test-results
+            - persist_to_workspace: # persist across jobs
+                root: .
+                paths:
+                  - target/artifact
+            - store_artifacts:
+                path: target/artifact
+            # Upload to RepoFlow
+            - run:
+                name: Upload jar artifact
+                filters: # job runs for no branches and only for tags starting with 'v'
+                  tags:
+                    only: /^v.*/
+                  branches:
+                    ignore: /.*/
+                command: |
+                  curl --location -X POST "https://api.repoflow.io/upload/myagidevel-8191/shashin/single" \
+                  --header "Authorization: Bearer $REPOFLOW_TOKEN" \
+                  --form 'packageFiles=@"target/artifact/shashin-$VERSION.jar"' \
+                  --form 'packageName="shashin"' \
+                  --form 'packageVersion="$VERSION"'
+            - run:
+                name: Upload windows artifact
+                filters: # job runs for no branches and only for tags starting with 'v'
+                  tags:
+                    only: /^v.*/
+                  branches:
+                    ignore: /.*/
+                command: |
+                  curl --location -X POST "https://api.repoflow.io/upload/myagidevel-8191/shashin/single" \
+                  --header 'Authorization: Bearer $REPOFLOW_TOKEN' \
+                  --form 'packageFiles=@"target/artifact/Shashin-$VERSION.exe"' \
+                  --form 'packageName="shashin"' \
+                  --form 'packageVersion="$VERSION"'
+#      - artifactory/upload: # Upload only when there's a new tag
+#          requires:
+#            - Run junit tests, package to tar and store artifacts
+#          filters: # job runs for no branches and only for tags starting with 'v'
+#            tags:
+#              only: /^v.*/
+#            branches:
+#              ignore: /.*/
+#          build-steps:
+#            - attach_workspace: # attach from another job
+#                at: target/artifact
+#            - store_artifacts:
+#                path: target/artifact
+#          name: Publish tar to Artifactory
+#          source: target/artifact/**
+#          target: shashin
