@@ -39,6 +39,7 @@
                 // Look through list of GH releases
                 const http = new Http("get releases");
                 http.ajax("get", "/releases").then(function (data) {
+                    shashin.printMessageToConsole(JSON.stringify(data), {tag: "release"});
                     if (data.hasOwnProperty("releases") && data.releases.length > 0 && currentRelease !== "v") {
                         const releaseArray = data.releases;
 
