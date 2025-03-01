@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [2.7.3] - 2025-03-01
+## [2.7.4] - 2025-03-01
 ### Added
 - Color select for maps
 - Upload artifacts to RepoFlow in CircleCI script
