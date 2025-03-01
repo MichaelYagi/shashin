@@ -190,6 +190,7 @@ class APITests: BaseSeleniumTests() {
             jsonNode = mapper.readTree(jsonString)
         }
 
+        // Get image metadata ID
         val metadataList = jsonNode!!.get("metadataList").toList()
         var metadataId = ""
         for (metadata in metadataList) {
@@ -204,8 +205,6 @@ class APITests: BaseSeleniumTests() {
         val imageResponse = mockMvc!!.perform(
             get("/api/v1/image/$metadataId")
         )
-
-//        println(imageResponse.andReturn().response.contentType)
 
         Assertions.assertTrue(imageResponse.andReturn().response.contentType!!.contains("image/"))
     }

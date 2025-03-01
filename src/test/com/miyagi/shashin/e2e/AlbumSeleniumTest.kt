@@ -125,6 +125,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         this.logger.log(Level.INFO, "AlbumSeleniumTest - Redirected to timeline.")
         val scrollContainer = this.driver!!.findElement(By.id("infinite-scroll-gallery"))
         val spanContainerEl = scrollContainer.findElement(By.xpath("./span[1]"))
+        // Get the date id
         var dateId = ""
         if (spanContainerEl !== null && spanContainerEl.getAttribute("id") !== null) {
             if (spanContainerEl.getAttribute("id")?.contains("container") == true) {
@@ -175,11 +176,6 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 //        println(this.driver?.pageSource)
         saveMetadataButton.click()
 
-//        startTime = System.currentTimeMillis()
-//        var elementHasClass = elementHasClass(this.driver!!.findElement(By.id("metadataModalStatus")),"bi-check-circle")
-//        while (!elementHasClass || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
-//            elementHasClass = elementHasClass(this.driver!!.findElement(By.id("metadataModalStatus")),"bi-check-circle")
-//        }
         Thread.sleep(this.elementScanTimeoutMillis.toLong())
         this.logger.log(Level.INFO, "Relocating to albums view.")
         this.driver!!.get("http://localhost:$port/albums")

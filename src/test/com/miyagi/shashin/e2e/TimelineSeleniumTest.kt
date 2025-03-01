@@ -103,10 +103,6 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         mediaDirTextArea.sendKeys(testImageFile.parent)
         val mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
         mediaExcludeDirTextArea.sendKeys(testImageFile.parent+"/subdir")
-//        val scanAutomatically = this.driver!!.findElement(By.id("scanAutomatically"))
-//        if (scanAutomatically.isSelected) {
-//            scanAutomatically.click()
-//        }
 
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
         saveSettings.click()
@@ -133,6 +129,7 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         //println(this.driver?.pageSource)
         val scrollContainer = this.driver!!.findElement(By.id("infinite-scroll-gallery"))
         val spanContainerEl = scrollContainer.findElement(By.xpath("./span[1]"))
+        // Get the date id
         var dateId = ""
         if (spanContainerEl !== null && spanContainerEl.getAttribute("id") !== null) {
             if (spanContainerEl.getAttribute("id")?.contains("container") == true) {
