@@ -40,9 +40,11 @@ workflows:
           name: Run junit tests and package to tar # and store artifacts
           requires:
             - Run node tests
-          filters: # job runs for all branches and all tags
+          filters: # job runs for no branches and only for tags starting with 'v'
             tags:
-              only: /.*/
+              only: /^v.*/
+            branches:
+              ignore: /.*/
           pre-steps:
             - run:
                 name: Download Chromedrivers
@@ -98,11 +100,7 @@ workflows:
                   - target/artifact
             - store_artifacts:
                 path: target/artifact
-        when:
-          filters: # job runs for no branches and only for tags starting with 'v'
-            tags:
-              only: /^v.*/
-          jobs:
+            # Upload to RepoFlow
             - run:
                 name: Upload jar artifact
                 command: |
@@ -115,15 +113,15 @@ workflows:
                   --form "packageName=\"shashin\"" \
                   --form "packageVersion=\"$version\"" \
                   --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
-#            - run:
-#                name: Upload windows artifact
-#                command: |
-#                  token=$REPOFLOW_TOKEN
-#                  version=$VERSION
-#                  curl --request POST \
-#                  --header "Authorization: Bearer $token" \
-#                  --header "Content-Type: multipart/form-data" \
-#                  --form "packageFiles=@\"Shashin-$version.exe\"" \
-#                  --form "packageName=\"shashin\"" \
-#                  --form "packageVersion=\"$version\"" \
-#                  --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
+            - run:
+                name: Upload windows artifact
+                command: |
+                  token=$REPOFLOW_TOKEN
+                  version=$VERSION
+                  curl --request POST \
+                  --header "Authorization: Bearer $token" \
+                  --header "Content-Type: multipart/form-data" \
+                  --form "packageFiles=@\"Shashin-$version.exe\"" \
+                  --form "packageName=\"shashin\"" \
+                  --form "packageVersion=\"$version\"" \
+                  --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
