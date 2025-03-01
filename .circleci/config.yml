@@ -115,15 +115,15 @@ workflows:
                   --form "packageName=\"shashin\"" \
                   --form "packageVersion=\"$version\"" \
                   --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
-            - run:
-                name: Upload windows artifact
-                command: |
-                  token=$REPOFLOW_TOKEN
-                  version=$VERSION
-                  curl --request POST \
-                  --header "Authorization: Bearer $token" \
-                  --header "Content-Type: multipart/form-data" \
-                  --form "packageFiles=@\"Shashin-$version.exe\"" \
-                  --form "packageName=\"shashin\"" \
-                  --form "packageVersion=\"$version\"" \
-                  --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
+#            - run:
+#                name: Upload windows artifact
+#                command: |
+#                  token=$REPOFLOW_TOKEN
+#                  version=$VERSION
+#                  curl --request POST \
+#                  --header "Authorization: Bearer $token" \
+#                  --header "Content-Type: multipart/form-data" \
+#                  --form "packageFiles=@\"Shashin-$version.exe\"" \
+#                  --form "packageName=\"shashin\"" \
+#                  --form "packageVersion=\"$version\"" \
+#                  --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
