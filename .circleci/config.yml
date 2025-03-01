@@ -99,49 +99,33 @@ workflows:
             - store_artifacts:
                 path: target/artifact
             # Upload to RepoFlow
-#            - run:
-#                name: Upload jar artifact
-#                filters: # job runs for no branches and only for tags starting with 'v'
-#                  tags:
-#                    only: /^v.*/
-#                    command: |
-#                      token=$REPOFLOW_TOKEN
-#                      version=$VERSION
-#                      curl --request POST \
-#                      --header "Authorization: Bearer $token" \
-#                      --header "Content-Type: multipart/form-data" \
-#                      --form "packageFiles=@\"shashin-$version.jar\"" \
-#                      --form "packageName=\"shashin\"" \
-#                      --form "packageVersion=\"$version\"" \
-#                      --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
-#            - run:
-#                name: Upload windows artifact
-#                filters: # job runs for no branches and only for tags starting with 'v'
-#                  tags:
-#                    only: /^v.*/
-#                    command: |
-#                      token=$REPOFLOW_TOKEN
-#                      version=$VERSION
-#                      curl --request POST \
-#                      --header "Authorization: Bearer $token" \
-#                      --header "Content-Type: multipart/form-data" \
-#                      --form "packageFiles=@\"Shashin-$version.exe\"" \
-#                      --form "packageName=\"shashin\"" \
-#                      --form "packageVersion=\"$version\"" \
-#                      --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
-#      - artifactory/upload: # Upload only when there's a new tag
-#          requires:
-#            - Run junit tests, package to tar and store artifacts
-#          filters: # job runs for no branches and only for tags starting with 'v'
-#            tags:
-#              only: /^v.*/
-#            branches:
-#              ignore: /.*/
-#          build-steps:
-#            - attach_workspace: # attach from another job
-#                at: target/artifact
-#            - store_artifacts:
-#                path: target/artifact
-#          name: Publish tar to Artifactory
-#          source: target/artifact/**
-#          target: shashin
+            - run:
+                name: Upload jar artifact
+                filters: # job runs for no branches and only for tags starting with 'v'
+                  tags:
+                    only:
+                      command: |
+                        token=$REPOFLOW_TOKEN
+                        version=$VERSION
+                        curl --request POST \
+                        --header "Authorization: Bearer $token" \
+                        --header "Content-Type: multipart/form-data" \
+                        --form "packageFiles=@\"shashin-$version.jar\"" \
+                        --form "packageName=\"shashin\"" \
+                        --form "packageVersion=\"$version\"" \
+                        --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
+            - run:
+                name: Upload windows artifact
+                filters: # job runs for no branches and only for tags starting with 'v'
+                  tags:
+                    only:
+                      command: |
+                        token=$REPOFLOW_TOKEN
+                        version=$VERSION
+                        curl --request POST \
+                        --header "Authorization: Bearer $token" \
+                        --header "Content-Type: multipart/form-data" \
+                        --form "packageFiles=@\"Shashin-$version.exe\"" \
+                        --form "packageName=\"shashin\"" \
+                        --form "packageVersion=\"$version\"" \
+                        --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
