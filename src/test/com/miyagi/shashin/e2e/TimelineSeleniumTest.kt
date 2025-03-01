@@ -133,8 +133,16 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         //println(this.driver?.pageSource)
         val scrollContainer = this.driver!!.findElement(By.id("infinite-scroll-gallery"))
         val spanContainerEl = scrollContainer.findElement(By.xpath("./span[1]"))
-//        val dateId = spanContainerEl.getAttribute("id")?.substringAfter("container_")
-        val dateId = spanContainerEl.getAttribute("id")?.substringAfter("tail_")
+        var dateId = ""
+        if (spanContainerEl !== null && spanContainerEl.getAttribute("id") !== null) {
+            if (spanContainerEl.getAttribute("id")?.contains("container") == true) {
+                dateId = spanContainerEl.getAttribute("id")?.substringAfter("container_").toString()
+            } else if (spanContainerEl.getAttribute("id")?.contains("tail") == true) {
+                dateId = spanContainerEl.getAttribute("id")?.substringAfter("tail_").toString()
+            } else if (spanContainerEl.getAttribute("id")?.contains("amp") == true) {
+                dateId = spanContainerEl.getAttribute("id")?.substringAfter("amp_").toString()
+            }
+        }
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.id("row$dateId")))
         val parentEl = this.driver!!.findElement(By.id("row$dateId"))
         val childEl = parentEl.findElement(By.xpath("./div[1]"))

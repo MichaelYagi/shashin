@@ -190,8 +190,16 @@ class APITests: BaseSeleniumTests() {
             jsonNode = mapper.readTree(jsonString)
         }
 
-        Assertions.assertTrue(jsonNode!!.get("metadataList").get(0).get("id").textValue() != "")
-        val metadataId = jsonNode.get("metadataList").get(0).get("id").textValue()
+        val metadataList = jsonNode!!.get("metadataList").toList()
+        var metadataId = ""
+        for (metadata in metadataList) {
+            if (metadata.get("type").textValue().contains("image/")) {
+                metadataId = metadata.get("id").textValue()
+                break
+            }
+        }
+
+        Assertions.assertTrue(metadataId != "")
 
         val imageResponse = mockMvc!!.perform(
             get("/api/v1/image/$metadataId")
