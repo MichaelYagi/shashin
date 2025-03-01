@@ -22,6 +22,8 @@ Eg. ```git commit -m "[ci skip] Updated README"```
 
 See this [help](https://circleci.com/docs/skip-build/) article.
 
+Artifacts are uploaded to [RepoFlow](https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin).
+
 # Docker
 ```mvn -Pprod clean install```
 
