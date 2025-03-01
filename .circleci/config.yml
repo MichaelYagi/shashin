@@ -13,8 +13,6 @@ orbs:
 jobs:
   upload_to_repoflow:
     executor: java17
-    requires:
-      - Run junit tests, package to tar and store artifacts
     steps:
       # Upload to RepoFlow
       - run:
@@ -134,8 +132,9 @@ workflows:
                   - target/artifact
             - store_artifacts:
                 path: target/artifact
-      - upload_to_repoflow
-
+      - upload_to_repoflow:
+          requires:
+            - Run junit tests and package to tar
 
 #            # Upload to RepoFlow
 #            - run:
