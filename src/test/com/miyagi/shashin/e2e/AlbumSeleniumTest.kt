@@ -173,6 +173,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val albumNamesInput = this.driver!!.findElement(By.id("albumnames"))
         albumNamesInput.sendKeys("testalbum")
         val saveMetadataButton = this.driver!!.findElement(By.id("saveMetadata"))
+        albumNamesInput.click()
 //        println(this.driver?.pageSource)
         saveMetadataButton.click()
 
