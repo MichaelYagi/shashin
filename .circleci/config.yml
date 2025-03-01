@@ -8,10 +8,11 @@ executors:
 orbs:
   maven: circleci/maven@1.4.1
   node: circleci/node@5.3.0
+  artifactory: circleci/artifactory@1.0.0
   browser-tools: circleci/browser-tools@1.4.8
 
 workflows:
-  shashin_test:
+  shashin_workflow:
     jobs:
       - node/test:
           name: Run node tests
@@ -39,9 +40,9 @@ workflows:
           name: Run junit tests and package to tar # and store artifacts
           requires:
             - Run node tests
-          filters: # job runs for no branches and only for tags starting with 'v'
-            branches:
-              ignore: /.*/
+          filters: # job runs for all branches and all tags
+            tags:
+              only: /.*/
           pre-steps:
             - run:
                 name: Download Chromedrivers
