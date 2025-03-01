@@ -98,34 +98,32 @@ workflows:
                   - target/artifact
             - store_artifacts:
                 path: target/artifact
-            # Upload to RepoFlow
+        when:
+          filters: # job runs for no branches and only for tags starting with 'v'
+            tags:
+              only: /^v.*/
+          jobs:
             - run:
                 name: Upload jar artifact
-                filters: # job runs for no branches and only for tags starting with 'v'
-                  tags:
-                    only:
-                      command: |
-                        token=$REPOFLOW_TOKEN
-                        version=$VERSION
-                        curl --request POST \
-                        --header "Authorization: Bearer $token" \
-                        --header "Content-Type: multipart/form-data" \
-                        --form "packageFiles=@\"shashin-$version.jar\"" \
-                        --form "packageName=\"shashin\"" \
-                        --form "packageVersion=\"$version\"" \
-                        --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
+                command: |
+                  token=$REPOFLOW_TOKEN
+                  version=$VERSION
+                  curl --request POST \
+                  --header "Authorization: Bearer $token" \
+                  --header "Content-Type: multipart/form-data" \
+                  --form "packageFiles=@\"shashin-$version.jar\"" \
+                  --form "packageName=\"shashin\"" \
+                  --form "packageVersion=\"$version\"" \
+                  --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
             - run:
                 name: Upload windows artifact
-                filters: # job runs for no branches and only for tags starting with 'v'
-                  tags:
-                    only:
-                      command: |
-                        token=$REPOFLOW_TOKEN
-                        version=$VERSION
-                        curl --request POST \
-                        --header "Authorization: Bearer $token" \
-                        --header "Content-Type: multipart/form-data" \
-                        --form "packageFiles=@\"Shashin-$version.exe\"" \
-                        --form "packageName=\"shashin\"" \
-                        --form "packageVersion=\"$version\"" \
-                        --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
+                command: |
+                  token=$REPOFLOW_TOKEN
+                  version=$VERSION
+                  curl --request POST \
+                  --header "Authorization: Bearer $token" \
+                  --header "Content-Type: multipart/form-data" \
+                  --form "packageFiles=@\"Shashin-$version.exe\"" \
+                  --form "packageName=\"shashin\"" \
+                  --form "packageVersion=\"$version\"" \
+                  --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
