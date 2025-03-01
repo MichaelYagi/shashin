@@ -107,12 +107,14 @@ workflows:
                   branches:
                     ignore: /.*/
                 command: |
+                  token=$REPOFLOW_TOKEN
+                  version=$VERSION
                   curl --request POST \
-                  --header "Authorization: Bearer $REPOFLOW_TOKEN" \
+                  --header "Authorization: Bearer $token" \
                   --header "Content-Type: multipart/form-data" \
-                  --form "packageFiles=@\"target/artifact/shashin-$VERSION.jar\"" \
+                  --form "packageFiles=@\"shashin-$version.jar\"" \
                   --form "packageName=\"shashin\"" \
-                  --form "packageVersion=\"$VERSION\"" \
+                  --form "packageVersion=\"$version\"" \
                   --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
             - run:
                 name: Upload windows artifact
@@ -122,12 +124,14 @@ workflows:
                   branches:
                     ignore: /.*/
                 command: |
+                  token=$REPOFLOW_TOKEN
+                  version=$VERSION
                   curl --request POST \
-                  --header "Authorization: Bearer $REPOFLOW_TOKEN" \
+                  --header "Authorization: Bearer $token" \
                   --header "Content-Type: multipart/form-data" \
-                  --form "packageFiles=@\"target/artifact/Shashin-$VERSION.exe\"" \
+                  --form "packageFiles=@\"Shashin-$version.exe\"" \
                   --form "packageName=\"shashin\"" \
-                  --form "packageVersion=\"$VERSION\"" \
+                  --form "packageVersion=\"$version\"" \
                   --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
 #      - artifactory/upload: # Upload only when there's a new tag
 #          requires:
