@@ -1,5 +1,7 @@
 package com.miyagi.shashin.e2e
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.UserRepository
 import org.junit.jupiter.api.Assertions
@@ -13,6 +15,8 @@ import org.openqa.selenium.support.ui.WebDriverWait
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers
 import org.springframework.test.context.ActiveProfiles
@@ -20,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
+import org.springframework.web.reactive.function.client.WebClient
 import java.io.File
 import java.net.URL
 import java.time.Duration
@@ -94,10 +99,6 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         mediaDirTextArea.sendKeys(testImageFile.parent)
         val mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
         mediaExcludeDirTextArea.sendKeys(testImageFile.parent+"/subdir")
-//        val scanAutomatically = this.driver!!.findElement(By.id("scanAutomatically"))
-//        if (scanAutomatically.isSelected) {
-//            scanAutomatically.click()
-//        }
 
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
         saveSettings.click()
@@ -118,17 +119,22 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         Thread.sleep(this.elementScanTimeoutMillis.toLong())
         this.logger.log(Level.INFO, "AlbumSeleniumTest - Photos scanned.")
 
-        // Clear all notifications so that modal window does not show in next screen
-//        this.driver!!.get("http://localhost:$port/notifications")
-
         // Check if UUID present
         this.driver!!.get("http://localhost:$port/timeline")
 //        println(this.driver?.pageSource)
         this.logger.log(Level.INFO, "AlbumSeleniumTest - Redirected to timeline.")
         val scrollContainer = this.driver!!.findElement(By.id("infinite-scroll-gallery"))
         val spanContainerEl = scrollContainer.findElement(By.xpath("./span[1]"))
-//        val dateId = spanContainerEl.getAttribute("id")?.substringAfter("container_")
-        val dateId = spanContainerEl.getAttribute("id")?.substringAfter("tail_")
+        var dateId = ""
+        if (spanContainerEl !== null && spanContainerEl.getAttribute("id") !== null) {
+            if (spanContainerEl.getAttribute("id")?.contains("container") == true) {
+                dateId = spanContainerEl.getAttribute("id")?.substringAfter("container_").toString()
+            } else if (spanContainerEl.getAttribute("id")?.contains("tail") == true) {
+                dateId = spanContainerEl.getAttribute("id")?.substringAfter("tail_").toString()
+            } else if (spanContainerEl.getAttribute("id")?.contains("amp") == true) {
+                dateId = spanContainerEl.getAttribute("id")?.substringAfter("amp_").toString()
+            }
+        }
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.id("row$dateId")))
         val parentEl = this.driver!!.findElement(By.id("row$dateId"))
         val childEl = parentEl.findElement(By.xpath("./div[1]"))
@@ -166,6 +172,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val albumNamesInput = this.driver!!.findElement(By.id("albumnames"))
         albumNamesInput.sendKeys("testalbum")
         val saveMetadataButton = this.driver!!.findElement(By.id("saveMetadata"))
+//        println(this.driver?.pageSource)
         saveMetadataButton.click()
 
 //        startTime = System.currentTimeMillis()
