@@ -172,7 +172,6 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         //Save album in timeline
         val albumNamesInput = this.driver!!.findElement(By.id("albumnames"))
         albumNamesInput.sendKeys("testalbum")
-        val saveMetadataButton = this.driver!!.findElement(By.id("saveMetadata"))
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.elementToBeClickable(By.id("saveMetadata"))).click()
 
 //        println(this.driver?.pageSource)
