@@ -9,7 +9,6 @@ orbs:
   maven: circleci/maven@1.4.1
   node: circleci/node@5.3.0
   browser-tools: circleci/browser-tools@1.4.8
-#  artifactory: circleci/artifactory@1.0.0
 
 workflows:
   shashin_test:
@@ -133,19 +132,3 @@ workflows:
                   --form "packageName=\"shashin\"" \
                   --form "packageVersion=\"$version\"" \
                   --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
-#      - artifactory/upload: # Upload only when there's a new tag
-#          requires:
-#            - Run junit tests, package to tar and store artifacts
-#          filters: # job runs for no branches and only for tags starting with 'v'
-#            tags:
-#              only: /^v.*/
-#            branches:
-#              ignore: /.*/
-#          build-steps:
-#            - attach_workspace: # attach from another job
-#                at: target/artifact
-#            - store_artifacts:
-#                path: target/artifact
-#          name: Publish tar to Artifactory
-#          source: target/artifact/**
-#          target: shashin
