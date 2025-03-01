@@ -43,6 +43,11 @@ workflows:
           filters: # job runs for all branches and all tags
             tags:
               only: /.*/
+#          filters:
+#            tags:
+#              only: /^v.*/
+#            branches:
+#              ignore: /.*/
           pre-steps:
             - run:
                 name: Download Chromedrivers
@@ -101,11 +106,6 @@ workflows:
             # Upload to RepoFlow
             - run:
                 name: Upload jar artifact
-                filters: # job runs for no branches and only for tags starting with 'v'
-                  tags:
-                    only: /^v.*/
-                  branches:
-                    ignore: /.*/
                 command: |
                   token=$REPOFLOW_TOKEN
                   version=$VERSION
@@ -118,11 +118,6 @@ workflows:
                   --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
             - run:
                 name: Upload windows artifact
-                filters: # job runs for no branches and only for tags starting with 'v'
-                  tags:
-                    only: /^v.*/
-                  branches:
-                    ignore: /.*/
                 command: |
                   token=$REPOFLOW_TOKEN
                   version=$VERSION
