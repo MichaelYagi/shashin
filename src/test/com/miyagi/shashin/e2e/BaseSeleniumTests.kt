@@ -65,7 +65,7 @@ abstract class BaseSeleniumTests {
     private val recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
 
     @Autowired
-    private val settingsRepository: SettingsRepository? = null
+    private val folderDataRepository: FolderDataRepository? = null
 
     @Autowired
     private val keywordPhotoRepository: KeywordPhotoRepository? = null
@@ -135,7 +135,7 @@ abstract class BaseSeleniumTests {
         notificationRepository?.deleteAll()
         recognitionLabelRepository?.deleteAll()
         recognitionLabelPhotoRepository?.deleteAll()
-//        settingsRepository?.deleteAll()
+        folderDataRepository?.deleteAll()
         keywordPhotoRepository?.deleteAll()
         keywordRepository?.deleteAll()
         searchHistoryRepository?.deleteAll()

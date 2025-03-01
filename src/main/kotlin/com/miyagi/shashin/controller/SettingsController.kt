@@ -687,7 +687,6 @@ class SettingsController {
                 commentRepository?.deleteAll()
                 favoriteRepository?.deleteAll()
                 metadataRepository?.deleteAll()
-                notificationRepository?.deleteAll()
                 recognitionLabelPhotoRepository?.deleteAll()
                 recognitionLabelRepository?.deleteAll()
                 userAlbumRepository?.deleteAll()
