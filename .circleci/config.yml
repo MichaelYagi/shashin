@@ -122,16 +122,9 @@ workflows:
             - run: |
                 echo $(cat /home/circleci/project/target/shashin-version.txt)
             - run:
-                name: Move jar Artifacts
-                command: |
-                  mv target/**.jar target/shashin-$VERSION.jar
-            - run:
-                name: Move exe Artifacts
-                command: |
-                  mv target/**.exe target/Shashin-$VERSION.exe
-            - run:
                 name: Compress Artifacts
                 command: |
+                  touch shashin-$VERSION.tar
                   tar -cvzf shashin-$VERSION.tar shashin-$VERSION.jar Shashin-$VERSION.exe **.sh test-results
             - persist_to_workspace: # persist across jobs
                 root: .
