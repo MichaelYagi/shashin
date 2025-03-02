@@ -20,6 +20,9 @@ jobs:
           path: .
       - run:
           command: |
+            echo $(cat /home/circleci/project/target/artifact/target/artifact/shashin-version.txt)
+      - run:
+          command: |
             VERSION=$(cat /home/circleci/project/target/artifact/target/artifact/shashin-version.txt)
       - run:
           command: |
