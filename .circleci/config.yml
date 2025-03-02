@@ -112,6 +112,7 @@ workflows:
                   echo 'export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)' >> $BASH_ENV
             - run: |
                 cp $BASH_ENV bash.env
+            # Persist to text file
             - run: |
                 mkdir -p target/artifact/
                 touch target/artifact/shashin-version.txt
