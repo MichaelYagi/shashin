@@ -15,12 +15,12 @@ jobs:
     executor: java17
     steps:
       - attach_workspace: # attach from another job
-          at: target/artifact
+          at: target
       - store_artifacts:
           path: .
       - run:
           command: |
-            echo 'export VERSION=$(cat /home/circleci/project/target/artifact/target/artifact/shashin-version.txt)' >> $BASH_ENV
+            echo 'export VERSION=$(cat /home/circleci/project/target/shashin-version.txt)' >> $BASH_ENV
       - run: |
           cp $BASH_ENV bash.env
       - run:
@@ -117,38 +117,36 @@ workflows:
                 cp $BASH_ENV bash.env
             # Persist to text file
             - run: |
-                mkdir -p target/artifact/
-                touch target/artifact/shashin-version.txt
-                echo $VERSION > target/artifact/shashin-version.txt
+                touch shashin-version.txt
+                echo $VERSION > shashin-version.txt
             - run: |
-                echo $(cat /home/circleci/project/target/artifact/target/artifact/shashin-version.txt)
-            - run:
-                name: Move jar Artifacts
-                command: |
-                  mkdir -p target/artifact/
-                  mv target/**.jar target/artifact/shashin-$VERSION.jar
-            - run:
-                name: Move exe Artifacts
-                command: |
-                  mkdir -p target/artifact/
-                  mv target/**.exe target/artifact/Shashin-$VERSION.exe
+                echo $(cat /home/circleci/project/target/shashin-version.txt)
+#            - run:
+#                name: Move jar Artifacts
+#                command: |
+#                  mkdir -p target/artifact/
+#                  mv target/**.jar target/artifact/shashin-$VERSION.jar
+#            - run:
+#                name: Move exe Artifacts
+#                command: |
+#                  mkdir -p target/artifact/
+#                  mv target/**.exe target/artifact/Shashin-$VERSION.exe
             - run:
                 name: Compress Artifacts
                 command: |
-                  mkdir -p target/artifact/
-                  tar -cvzf target/artifact/shashin-$VERSION.tar target/artifact/shashin-$VERSION.jar target/artifact/Shashin-$VERSION.exe **.sh test-results
+                  tar -cvzf shashin-$VERSION.tar target/shashin-$VERSION.jar target/Shashin-$VERSION.exe **.sh test-results
             - persist_to_workspace: # persist across jobs
                 root: .
                 paths:
-                  - target/artifact
+                  - target
             - store_artifacts:
-                path: target/artifact
+                path: target
       - upload_to_repoflow:
           requires:
             - Run junit tests
-          filters: # job runs for no branches and only for tags starting with 'v'
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
+#          filters: # job runs for no branches and only for tags starting with 'v'
+#            tags:
+#              only: /^v.*/
+#            branches:
+#              ignore: /.*/
           name: Upload to RepoFlow
