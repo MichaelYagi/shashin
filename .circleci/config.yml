@@ -66,6 +66,7 @@ workflows:
                 name: Save JS test results
                 command: |
                   mkdir -p test-results/mocha/
+                  find . -type f -regex ".*/test-results.xml" -exec cp {} test-results/mocha/ \;
                 when: always
             - store_test_results:
                 path: test-results
