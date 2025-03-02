@@ -19,9 +19,11 @@ jobs:
       - store_artifacts:
           path: .
       - run:
-          VERSION=$(cat /home/circleci/project/target/artifact/target/artifact/shashin-version.txt)
+          command: |
+            VERSION=$(cat /home/circleci/project/target/artifact/target/artifact/shashin-version.txt)
       - run:
-          echo $VERSION
+          command: |
+            echo $VERSION
 #      # Upload to RepoFlow
 #      - run:
 #          name: Upload jar artifact
