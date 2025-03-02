@@ -59,7 +59,7 @@ workflows:
           name: Run node tests
           filters: # job runs for all branches and all tags
             tags:
-              only: /.*/
+              only: /^v.*/
           test-results-for: mocha
           post-steps:
             - run:
@@ -81,7 +81,7 @@ workflows:
           name: Run junit tests # and package to tar
           filters: # job runs for all branches and all tags
             tags:
-              only: /.*/
+              only: /^v.*/
           requires:
             - Run node tests
           pre-steps:
