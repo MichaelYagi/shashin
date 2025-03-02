@@ -20,9 +20,7 @@ To avoid triggering a CircleCI pipeline, ensure commit messages to master contai
 
 Eg. ```git commit -m "[skip ci] Updated README"```
 
-Creating and pushing tags will upload jar and exe artifacts to RepoFlow.
-
-Artifacts are uploaded to [RepoFlow](https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin).
+Creating and pushing tags will upload jar and exe artifacts to [RepoFlow](https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin).
 
 # Docker
 ```mvn -Pprod clean install```
