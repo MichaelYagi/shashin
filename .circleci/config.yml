@@ -16,8 +16,8 @@ jobs:
     steps:
       - attach_workspace: # attach from another job
           at: target/artifact
-#      - store_artifacts:
-#          path: target/artifact
+      - store_artifacts:
+          path: target/artifact
       # Upload to RepoFlow
       - run:
           name: Upload jar artifact
