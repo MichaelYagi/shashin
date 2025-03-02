@@ -17,11 +17,11 @@ jobs:
       # Upload to RepoFlow
       - run:
           name: Upload jar artifact
-#          build-steps:
-#            - attach_workspace: # attach from another job
-#                at: target/artifact
-#            - store_artifacts:
-#                path: target/artifact
+          build-steps:
+            - attach_workspace: # attach from another job
+                at: target/artifact
+            - store_artifacts:
+                path: target/artifact
           command: |
             token=$REPOFLOW_TOKEN
             version=$VERSION
@@ -34,6 +34,11 @@ jobs:
             --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
       - run:
           name: Upload windows artifact
+          build-steps:
+            - attach_workspace: # attach from another job
+                at: target/artifact
+            - store_artifacts:
+                path: target/artifact
           command: |
             token=$REPOFLOW_TOKEN
             version=$VERSION
@@ -138,7 +143,6 @@ workflows:
             - store_artifacts:
                 path: target/artifact
       - upload_to_repoflow:
-          name: Upload to RepoFlow
           requires:
             - Run junit tests and package to tar
           build-steps:
@@ -151,6 +155,12 @@ workflows:
 #              only: /^v.*/
 #            branches:
 #              ignore: /.*/
+#          build-steps:
+#            - attach_workspace: # attach from another job
+#                at: target/artifact
+#            - store_artifacts:
+#                path: target/artifact
+          name: Upload to RepoFlow
 
 
 #            # Upload to RepoFlow
