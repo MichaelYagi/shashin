@@ -15,12 +15,12 @@ jobs:
     executor: java17
     steps:
       - attach_workspace: # attach from another job
-          at: .
+          at: target/artifact
       - store_artifacts:
           path: .
       - run:
           command: |
-            echo 'export VERSION=$(cat /home/circleci/project/target/artifact/shashin-version.txt)' >> $BASH_ENV
+            echo 'export VERSION=$(cat /home/circleci/project/target/artifact/target/artifact/shashin-version.txt)' >> $BASH_ENV
       - run: |
           cp $BASH_ENV bash.env
       - run:
@@ -113,27 +113,32 @@ workflows:
             - run: |
                 cp $BASH_ENV bash.env
             - run: |
-                touch shashin-version.txt
-                echo $VERSION > shashin-version.txt
+                mkdir -p target/artifact/
+                touch target/artifact/shashin-version.txt
+                echo $VERSION > target/artifact/shashin-version.txt
             - run: |
-                echo $(cat /home/circleci/project/target/artifact/shashin-version.txt)
+                echo $(cat /home/circleci/project/target/artifact/target/artifact/shashin-version.txt)
             - run:
                 name: Move jar Artifacts
                 command: |
-                  mv target/**.jar shashin-$VERSION.jar
+                  mkdir -p target/artifact/
+                  mv target/**.jar target/artifact/shashin-$VERSION.jar
             - run:
                 name: Move exe Artifacts
                 command: |
-                  mv target/**.exe Shashin-$VERSION.exe
+                  mkdir -p target/artifact/
+                  mv target/**.exe target/artifact/Shashin-$VERSION.exe
             - run:
                 name: Compress Artifacts
                 command: |
-                  tar -cvzf shashin-$VERSION.tar shashin-$VERSION.jar Shashin-$VERSION.exe **.sh test-results
+                  mkdir -p target/artifact/
+                  tar -cvzf target/artifact/shashin-$VERSION.tar target/artifact/shashin-$VERSION.jar target/artifact/Shashin-$VERSION.exe **.sh test-results
             - persist_to_workspace: # persist across jobs
                 root: .
-                paths: .
+                paths:
+                  - target/artifact
             - store_artifacts:
-                path: .
+                path: target/artifact
       - upload_to_repoflow:
           requires:
             - Run junit tests
