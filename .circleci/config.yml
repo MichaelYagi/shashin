@@ -13,20 +13,10 @@ orbs:
 jobs:
   upload_to_repoflow:
     executor: java17
-    build-steps:
-      - attach_workspace: # attach from another job
-          at: target/artifact
-      - store_artifacts:
-          path: target/artifact
     steps:
       # Upload to RepoFlow
       - run:
           name: Upload jar artifact
-          build-steps:
-            - attach_workspace: # attach from another job
-                at: target/artifact
-            - store_artifacts:
-                path: target/artifact
           command: |
             token=$REPOFLOW_TOKEN
             version=$VERSION
@@ -39,11 +29,6 @@ jobs:
             --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
       - run:
           name: Upload windows artifact
-          build-steps:
-            - attach_workspace: # attach from another job
-                at: target/artifact
-            - store_artifacts:
-                path: target/artifact
           command: |
             token=$REPOFLOW_TOKEN
             version=$VERSION
@@ -186,11 +171,16 @@ workflows:
       - upload_to_repoflow:
           requires:
             - Run junit tests and package to tar
-#          filters: # job runs for no branches and only for tags starting with 'v'
+          filters: # job runs for no branches and only for tags starting with 'v'
 #            tags:
 #              only: /^v.*/
-#            branches:
-#              ignore: /.*/
+            branches:
+              ignore: /.*/
+          build-steps:
+            - attach_workspace: # attach from another job
+                at: target/artifact
+            - store_artifacts:
+                path: target/artifact
           name: Upload to RepoFlow
 
 
