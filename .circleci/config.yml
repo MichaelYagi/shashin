@@ -20,9 +20,6 @@ jobs:
           path: .
       - run:
           command: |
-            echo $(cat /home/circleci/project/target/artifact/target/artifact/shashin-version.txt)
-      - run:
-          command: |
             echo 'export VERSION=$(cat /home/circleci/project/target/artifact/target/artifact/shashin-version.txt)' >> $BASH_ENV
       - run: |
           cp $BASH_ENV bash.env
@@ -30,30 +27,30 @@ jobs:
           command: |
             echo $VERSION
       # Upload to RepoFlow
-#      - run:
-#          name: Upload jar artifact
-#          command: |
-#            token=$REPOFLOW_TOKEN
-#            version=$VERSION
-#            curl --request POST \
-#            --header "Authorization: Bearer $token" \
-#            --header "Content-Type: multipart/form-data" \
-#            --form "packageFiles=@\"/home/circleci/project/target/artifact/target/artifact/shashin-$version.jar\"" \
-#            --form "packageName=\"shashin\"" \
-#            --form "packageVersion=\"$version\"" \
-#            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
-#      - run:
-#          name: Upload windows artifact
-#          command: |
-#            token=$REPOFLOW_TOKEN
-#            version=$VERSION
-#            curl --request POST \
-#            --header "Authorization: Bearer $token" \
-#            --header "Content-Type: multipart/form-data" \
-#            --form "packageFiles=@\"/home/circleci/project/target/artifact/target/artifact/Shashin-$version.exe\"" \
-#            --form "packageName=\"shashin\"" \
-#            --form "packageVersion=\"$version\"" \
-#            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
+      - run:
+          name: Upload jar artifact
+          command: |
+            token=$REPOFLOW_TOKEN
+            version=$VERSION
+            curl --request POST \
+            --header "Authorization: Bearer $token" \
+            --header "Content-Type: multipart/form-data" \
+            --form "packageFiles=@\"/home/circleci/project/target/artifact/target/artifact/shashin-$version.jar\"" \
+            --form "packageName=\"shashin\"" \
+            --form "packageVersion=\"$version\"" \
+            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
+      - run:
+          name: Upload windows artifact
+          command: |
+            token=$REPOFLOW_TOKEN
+            version=$VERSION
+            curl --request POST \
+            --header "Authorization: Bearer $token" \
+            --header "Content-Type: multipart/form-data" \
+            --form "packageFiles=@\"/home/circleci/project/target/artifact/target/artifact/Shashin-$version.exe\"" \
+            --form "packageName=\"shashin\"" \
+            --form "packageVersion=\"$version\"" \
+            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
 
 workflows:
   shashin_workflow:
@@ -65,103 +62,86 @@ workflows:
               only: /.*/
           test-results-for: mocha
           post-steps:
+            - run:
+                name: Save JS test results
+                command: |
+                  mkdir -p test-results/mocha/
+                  find . -type f -regex ".*/test-results.xml" -exec cp {} test-results/mocha/ \;
+                when: always
+            - store_test_results:
+                path: test-results
+            - store_artifacts:
+                path: test-results/mocha
+            - persist_to_workspace: # persist across jobs
+                root: .
+                paths:
+                  - test-results/mocha
+      - maven/test: # checkout, build, test, and upload test results
+          executor: java17
+          name: Run junit tests # and package to tar
+          requires:
+            - Run node tests
+          pre-steps:
+            - run:
+                name: Download Chromedrivers
+                command: |
+                  sudo apt-get update
+                  sudo apt-get install libgbm1 libgconf-2-4 libnss3 libxss1 lsb-release
+                  sudo apt-get install libappindicator3-1 libasound2 fonts-liberation xdg-utils
+            # Install latest
+            - browser-tools/install-chrome
+            - browser-tools/install-chromedriver
+            - run:
+                command: |
+                  google-chrome --version
+                  chromedriver --version
+                  whereis chromedriver
+                name: Check install
+          post-steps: # steps to run after steps
+            - run:
+                name: Save test results
+                command: |
+                  mkdir -p test-results/junit/
+                  find . -type f -regex ".*/target/surefire-reports/.*" -exec cp {} test-results/junit/ \;
+                when: always
+            - attach_workspace: # attach from another job
+                at: .
+            - run:
+                name: Set Version # get version from pom.xml
+                command: |
+                  echo 'export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)' >> $BASH_ENV
+            - run: |
+                cp $BASH_ENV bash.env
             - run: |
                 mkdir -p target/artifact/
                 touch target/artifact/shashin-version.txt
-                echo "2.7.2" > target/artifact/shashin-version.txt
+                echo $VERSION > target/artifact/shashin-version.txt
             - run: |
-                echo $(cat target/artifact/shashin-version.txt)  
-              
-
-#            - run:
-#                name: Save JS test results
-#                command: |
-#                  mkdir -p test-results/mocha/
-#                  find . -type f -regex ".*/test-results.xml" -exec cp {} test-results/mocha/ \;
-#                when: always
-#            - store_test_results:
-#                path: test-results
-#            - store_artifacts:
-#                path: test-results/mocha
-#            - persist_to_workspace: # persist across jobs
-#                root: .
-#                paths:
-#                  - test-results/mocha
-
+                echo $(cat /home/circleci/project/target/artifact/target/artifact/shashin-version.txt)
+            - run:
+                name: Move jar Artifacts
+                command: |
+                  mkdir -p target/artifact/
+                  mv target/**.jar target/artifact/shashin-$VERSION.jar
+            - run:
+                name: Move exe Artifacts
+                command: |
+                  mkdir -p target/artifact/
+                  mv target/**.exe target/artifact/Shashin-$VERSION.exe
+            - run:
+                name: Compress Artifacts
+                command: |
+                  mkdir -p target/artifact/
+                  tar -cvzf target/artifact/shashin-$VERSION.tar **.jar **.exe **.sh test-results
             - persist_to_workspace: # persist across jobs
                 root: .
                 paths:
                   - target/artifact
             - store_artifacts:
                 path: target/artifact
-#      - maven/test: # checkout, build, test, and upload test results
-#          executor: java17
-#          name: Run junit tests # and package to tar
-#          requires:
-#            - Run node tests
-#          pre-steps:
-#            - run:
-#                name: Download Chromedrivers
-#                command: |
-#                  sudo apt-get update
-#                  sudo apt-get install libgbm1 libgconf-2-4 libnss3 libxss1 lsb-release
-#                  sudo apt-get install libappindicator3-1 libasound2 fonts-liberation xdg-utils
-#            # Install latest
-#            - browser-tools/install-chrome
-#            - browser-tools/install-chromedriver
-#            - run:
-#                command: |
-#                  google-chrome --version
-#                  chromedriver --version
-#                  whereis chromedriver
-#                name: Check install
-#          post-steps: # steps to run after steps
-#            - run:
-#                name: Save test results
-#                command: |
-#                  mkdir -p test-results/junit/
-#                  find . -type f -regex ".*/target/surefire-reports/.*" -exec cp {} test-results/junit/ \;
-#                when: always
-#            - attach_workspace: # attach from another job
-#                at: .
-#            - run:
-#                name: Set Version # get version from pom.xml
-#                command: |
-#                  echo 'export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)' >> $BASH_ENV
-#            - run: |
-#                cp $BASH_ENV bash.env
-#            - run: |
-#                mkdir -p target/artifact/
-#                touch target/artifact/shashin-version.txt
-#                echo $VERSION > target/artifact/shashin-version.txt
-#            - run: |
-#                echo $(cat /home/circleci/project/target/artifact/target/artifact/shashin-version.txt)
-#            - run:
-#                name: Move jar Artifacts
-#                command: |
-#                  mkdir -p target/artifact/
-#                  mv target/**.jar target/artifact/shashin-$VERSION.jar
-#            - run:
-#                name: Move exe Artifacts
-#                command: |
-#                  mkdir -p target/artifact/
-#                  mv target/**.exe target/artifact/Shashin-$VERSION.exe
-#            - run:
-#                name: Compress Artifacts
-#                command: |
-#                  mkdir -p target/artifact/
-#                  tar -cvzf target/artifact/shashin-$VERSION.tar **.jar **.exe **.sh test-results
-#            - persist_to_workspace: # persist across jobs
-#                root: .
-#                paths:
-#                  - target/artifact
-#            - store_artifacts:
-#                path: target/artifact
       - upload_to_repoflow:
           requires:
-            - Run node tests
-#          requires:
-#            - Run junit tests
+            - Run junit tests
 #          filters: # job runs for no branches and only for tags starting with 'v'
 #            tags:
 #              only: /^v.*/
