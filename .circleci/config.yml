@@ -14,6 +14,10 @@ jobs:
   upload_to_repoflow:
     executor: java17
     steps:
+      - attach_workspace: # attach from another job
+          at: target/artifact
+      - store_artifacts:
+          path: target/artifact
       # Upload to RepoFlow
       - run:
           name: Upload jar artifact
@@ -176,11 +180,11 @@ workflows:
 #              only: /^v.*/
             branches:
               ignore: /.*/
-          build-steps:
-            - attach_workspace: # attach from another job
-                at: target/artifact
-            - store_artifacts:
-                path: target/artifact
+#          build-steps:
+#            - attach_workspace: # attach from another job
+#                at: target/artifact
+#            - store_artifacts:
+#                path: target/artifact
           name: Upload to RepoFlow
 
 
