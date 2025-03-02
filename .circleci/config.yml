@@ -152,7 +152,7 @@ workflows:
           name: Upload to RepoFlow
           requires:
             - Run junit tests and package to tar
-          filters: # job runs for no branches and only for tags starting with 'v'
+#          filters: # job runs for no branches and only for tags starting with 'v'
 #            tags:
 #              only: /^v.*/
 #            branches:
