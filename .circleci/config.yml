@@ -76,7 +76,7 @@ workflows:
                   - test-results/mocha
       - maven/test: # checkout, build, test, and upload test results
           executor: java17
-          name: Run junit tests and package to tar # and store artifacts
+          name: Run junit tests # and package to tar
           requires:
             - Run node tests
           pre-steps:
@@ -137,7 +137,7 @@ workflows:
                 path: target/artifact
       - upload_to_repoflow:
           requires:
-            - Run node tests
+            - Run junit tests
 #          filters: # job runs for no branches and only for tags starting with 'v'
 #            tags:
 #              only: /^v.*/
