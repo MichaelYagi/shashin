@@ -18,8 +18,10 @@ jobs:
           at: target/artifact
       - store_artifacts:
           path: .
-      - run: |
-          cat bash.env > $BASH_ENV
+      - run:
+          name: Set Version # get version from pom.xml
+          command: |
+            echo 'export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)' >> $BASH_ENV
       # Upload to RepoFlow
       - run:
           name: Upload jar artifact
@@ -150,7 +152,9 @@ workflows:
                   - target/artifact
                   - bash.env
             - store_artifacts:
-                path: target/artifact
+                path:
+                  - target/artifact
+                  - bash.env
 #            # Upload to RepoFlow
 #            - run:
 #                name: Upload jar artifact
