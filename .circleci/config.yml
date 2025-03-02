@@ -65,7 +65,7 @@ workflows:
                 touch target/artifact/shashin-version.txt
                 echo "2.7.2" > target/artifact/shashin-version.txt
             - run: |
-                echo $(cat /home/circleci/project/target/artifact/target/artifact/shashin-version.txt)  
+                echo $(cat target/artifact/shashin-version.txt)  
               
 
 #            - run:
