@@ -20,7 +20,7 @@ jobs:
           path: .
       - run:
           command: |
-            echo 'export VERSION=$(cat /home/circleci/project/target/shashin-version.txt)' >> $BASH_ENV
+            echo 'export VERSION=$(cat /home/circleci/project/artifacts/shashin-version.txt)' >> $BASH_ENV
       - run: |
           cp $BASH_ENV bash.env
       - run:
@@ -120,19 +120,20 @@ workflows:
                 touch shashin-version.txt
                 echo $VERSION > shashin-version.txt
             - run: |
-                echo $(cat /home/circleci/project/target/shashin-version.txt)
+                echo $(cat /home/circleci/project/shashin-version.txt)
             - run:
                 name: Compress Artifacts
                 command: |
                   touch shashin-$VERSION.tar
-                  tar -cvzf shashin-$VERSION.tar shashin-$VERSION.jar Shashin-$VERSION.exe reset_password.sh test-results
+                  tar -cvzf shashin-$VERSION.tar /home/circleci/project/target/shashin-$VERSION.jar /home/circleci/project/target/Shashin-$VERSION.exe reset_password.sh test-results
             - run:
                 name: Create Artifact Directory
                 command: |
                   mkdir -p artifacts
+                  mv shashin-version.txt artifacts/shashin-version.txt
                   mv shashin-$VERSION.tar artifacts/shashin-$VERSION.tar
-                  mv Shashin-$VERSION.exe artifacts/Shashin-$VERSION.exe
-                  mv shashin-$VERSION.jar artifacts/shashin-$VERSION.jar
+                  mv /home/circleci/project/target/Shashin-$VERSION.exe artifacts/Shashin-$VERSION.exe
+                  mv /home/circleci/project/target/shashin-$VERSION.jar artifacts/shashin-$VERSION.jar
             - persist_to_workspace: # persist across jobs
                 root: .
                 paths: artifacts
