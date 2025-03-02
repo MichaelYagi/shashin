@@ -24,6 +24,8 @@ jobs:
           command: |
             token=$REPOFLOW_TOKEN
             version=$VERSION
+            echo $token
+            echo $version
             curl --request POST \
             --header "Authorization: Bearer $token" \
             --header "Content-Type: multipart/form-data" \
@@ -36,6 +38,8 @@ jobs:
           command: |
             token=$REPOFLOW_TOKEN
             version=$VERSION
+            echo $token
+            echo $version
             curl --request POST \
             --header "Authorization: Bearer $token" \
             --header "Content-Type: multipart/form-data" \
