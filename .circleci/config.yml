@@ -178,8 +178,8 @@ workflows:
           filters: # job runs for no branches and only for tags starting with 'v'
 #            tags:
 #              only: /^v.*/
-            branches:
-              ignore: /.*/
+#            branches:
+#              ignore: /.*/
 #          build-steps:
 #            - attach_workspace: # attach from another job
 #                at: target/artifact
