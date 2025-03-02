@@ -152,9 +152,7 @@ workflows:
                   - target/artifact
                   - bash.env
             - store_artifacts:
-                path:
-                  - target/artifact
-                  - bash.env
+                path: target/artifact
 #            # Upload to RepoFlow
 #            - run:
 #                name: Upload jar artifact
