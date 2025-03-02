@@ -18,20 +18,16 @@ jobs:
           at: target/artifact
       - store_artifacts:
           path: .
-      - run: |
-          cat bash.env >> $BASH_ENV
       # Upload to RepoFlow
       - run:
           name: Upload jar artifact
           command: |
             token=$REPOFLOW_TOKEN
-            version=$VERSION
             echo $token
-            echo $version
             curl --request POST \
             --header "Authorization: Bearer $token" \
             --header "Content-Type: multipart/form-data" \
-            --form "packageFiles=@\"/home/circleci/project/target/artifact/target/artifact/shashin-$version.jar\"" \
+            --form "packageFiles=@\"/home/circleci/project/target/artifact/target/artifact/shashin-**.jar\"" \
             --form "packageName=\"shashin\"" \
             --form "packageVersion=\"$version\"" \
             --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
@@ -39,13 +35,11 @@ jobs:
           name: Upload windows artifact
           command: |
             token=$REPOFLOW_TOKEN
-            version=$VERSION
             echo $token
-            echo $version
             curl --request POST \
             --header "Authorization: Bearer $token" \
             --header "Content-Type: multipart/form-data" \
-            --form "packageFiles=@\"/home/circleci/project/target/artifact/target/artifact/Shashin-$version.exe\"" \
+            --form "packageFiles=@\"/home/circleci/project/target/artifact/target/artifact/Shashin-**.exe\"" \
             --form "packageName=\"shashin\"" \
             --form "packageVersion=\"$version\"" \
             --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
