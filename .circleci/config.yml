@@ -18,6 +18,8 @@ jobs:
           at: target/artifact
       - store_artifacts:
           path: .
+      - run: |
+          cat bash.env >> $BASH_ENV
       # Upload to RepoFlow
       - run:
           name: Upload jar artifact
@@ -148,6 +150,7 @@ workflows:
                 root: .
                 paths:
                   - target/artifact
+                  - bash.env
             - store_artifacts:
                 path: target/artifact
 #            # Upload to RepoFlow
