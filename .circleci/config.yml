@@ -17,18 +17,18 @@ jobs:
       # Upload to RepoFlow
       - run:
           name: Upload jar artifact
-          build-steps:
-            - attach_workspace: # attach from another job
-                at: target/artifact
-            - store_artifacts:
-                path: target/artifact
+#          build-steps:
+#            - attach_workspace: # attach from another job
+#                at: target/artifact
+#            - store_artifacts:
+#                path: target/artifact
           command: |
             token=$REPOFLOW_TOKEN
             version=$VERSION
             curl --request POST \
             --header "Authorization: Bearer $token" \
             --header "Content-Type: multipart/form-data" \
-            --form "packageFiles=@\"target/artifact/shashin-$version.jar\"" \
+            --form "packageFiles=@\"shashin-$version.jar\"" \
             --form "packageName=\"shashin\"" \
             --form "packageVersion=\"$version\"" \
             --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
@@ -40,7 +40,7 @@ jobs:
             curl --request POST \
             --header "Authorization: Bearer $token" \
             --header "Content-Type: multipart/form-data" \
-            --form "packageFiles=@\"target/artifact/Shashin-$version.exe\"" \
+            --form "packageFiles=@\"Shashin-$version.exe\"" \
             --form "packageName=\"shashin\"" \
             --form "packageVersion=\"$version\"" \
             --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
