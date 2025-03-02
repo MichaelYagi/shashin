@@ -12,8 +12,7 @@ orbs:
 
 jobs:
   upload_to_repoflow:
-    docker: # executor type
-      - image: cimg/base:stable
+    executor: java17
     steps:
       - attach_workspace: # attach from another job
           at: target/artifact
@@ -143,9 +142,9 @@ workflows:
       - upload_to_repoflow:
           requires:
             - Run junit tests
-#          filters: # job runs for no branches and only for tags starting with 'v'
-#            tags:
-#              only: /^v.*/
-#            branches:
-#              ignore: /.*/
+          filters: # job runs for no branches and only for tags starting with 'v'
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
           name: Upload to RepoFlow
