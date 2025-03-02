@@ -16,11 +16,11 @@ Built on CircleCI with push to master at:
 
 https://app.circleci.com/pipelines/github/MichaelYagi/shashin
 
-To avoid triggering a CircleCI pipeline, ensure commit messages to master contain ```[ci skip]```.
+To avoid triggering a CircleCI pipeline, ensure commit messages to master contain ```[skip ci]```.
 
-Eg. ```git commit -m "[ci skip] Updated README"```
+Eg. ```git commit -m "[skip ci] Updated README"```
 
-See this [help](https://circleci.com/docs/skip-build/) article.
+Creating and pushing tags will upload jar and exe artifacts to RepoFlow.
 
 Artifacts are uploaded to [RepoFlow](https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin).
 
@@ -37,22 +37,7 @@ Published to https://hub.docker.com/repository/docker/michaeltyagi/shashin
 To use unminified JS assets, set the following VM options:
 ```-Dspring.profiles.active=dev```
 
-## Frontend Debugging
-In the browser console, use ```shashin.enableDebug()``` to debug the frontend. You can pass different options:
-
-| Option          | Value                                                                                                                                       | Default                          | Description           |
-|-----------------|---------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------|-----------------------|
-| ```filter```    | Array of ```shashin.consoleTypes.log```, ```shashin.consoleTypes.error```, ```shashin.consoleTypes.info```, ```shashin.consoleTypes.warn``` | ```[shashin.consoleTypes.log]``` | Include log types     |
-| ```showTrace``` | ```boolean```                                                                                                                               | ```false```                      | Show stack trace      |
-| ```writeLog```  | ```boolean```                                                                                                                               | ```false```                      | Write to backend logs |
-
-eg. ```shashin.enableDebug({
-            filter:[shashin.consoleTypes.log,shashin.consoleTypes.error],
-            showTrace:true,
-            writeLog:true}
-    )```
-
-Example above dumps the stack trace and writes log and error to the backend logs.
+You can view dev notes on Shashin at ```/articles/quickstart```.
 
 ## Frameworks Used
 * [Spring Boot](https://spring.io/) - Java framework to create micro services and web apps
