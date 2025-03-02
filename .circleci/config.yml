@@ -181,11 +181,6 @@ workflows:
       - upload_to_repoflow:
           requires:
             - Run junit tests and package to tar
-          build-steps:
-            - attach_workspace: # attach from another job
-                at: target/artifact
-            - store_artifacts:
-                path: target/artifact
 #          filters: # job runs for no branches and only for tags starting with 'v'
 #            tags:
 #              only: /^v.*/
