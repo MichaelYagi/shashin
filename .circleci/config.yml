@@ -72,7 +72,7 @@ workflows:
                 path: test-results
             - store_artifacts:
                 path: test-results/mocha
-            - persist_to_workspace: # persist across jobs
+            - persist_to_workspace: # persist workspace across jobs
                 root: .
                 paths:
                   - test-results/mocha
