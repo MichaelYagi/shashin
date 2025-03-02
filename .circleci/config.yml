@@ -14,8 +14,8 @@ jobs:
   upload_to_repoflow:
     executor: java17
     steps:
-      - attach_workspace: # attach from another job
-          at: ./target/artifact
+      - attach_workspace: . # attach from another job
+#          at: target/artifact
       - store_artifacts:
           path: .
       - run:
@@ -26,31 +26,31 @@ jobs:
       - run:
           command: |
             echo $VERSION
-      # Upload to RepoFlow
-      - run:
-          name: Upload jar artifact
-          command: |
-            token=$REPOFLOW_TOKEN
-            version=$VERSION
-            curl --request POST \
-            --header "Authorization: Bearer $token" \
-            --header "Content-Type: multipart/form-data" \
-            --form "packageFiles=@\"/home/circleci/project/target/artifact/target/artifact/shashin-$version.jar\"" \
-            --form "packageName=\"shashin\"" \
-            --form "packageVersion=\"$version\"" \
-            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
-      - run:
-          name: Upload windows artifact
-          command: |
-            token=$REPOFLOW_TOKEN
-            version=$VERSION
-            curl --request POST \
-            --header "Authorization: Bearer $token" \
-            --header "Content-Type: multipart/form-data" \
-            --form "packageFiles=@\"/home/circleci/project/target/artifact/target/artifact/Shashin-$version.exe\"" \
-            --form "packageName=\"shashin\"" \
-            --form "packageVersion=\"$version\"" \
-            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
+#      # Upload to RepoFlow
+#      - run:
+#          name: Upload jar artifact
+#          command: |
+#            token=$REPOFLOW_TOKEN
+#            version=$VERSION
+#            curl --request POST \
+#            --header "Authorization: Bearer $token" \
+#            --header "Content-Type: multipart/form-data" \
+#            --form "packageFiles=@\"/home/circleci/project/target/artifact/target/artifact/shashin-$version.jar\"" \
+#            --form "packageName=\"shashin\"" \
+#            --form "packageVersion=\"$version\"" \
+#            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
+#      - run:
+#          name: Upload windows artifact
+#          command: |
+#            token=$REPOFLOW_TOKEN
+#            version=$VERSION
+#            curl --request POST \
+#            --header "Authorization: Bearer $token" \
+#            --header "Content-Type: multipart/form-data" \
+#            --form "packageFiles=@\"/home/circleci/project/target/artifact/target/artifact/Shashin-$version.exe\"" \
+#            --form "packageName=\"shashin\"" \
+#            --form "packageVersion=\"$version\"" \
+#            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
 
 workflows:
   shashin_workflow:
@@ -117,34 +117,38 @@ workflows:
                 cp $BASH_ENV bash.env
             # Persist to text file
             - run: |
+#                mkdir -p target/artifact/
+#                touch target/artifact/shashin-version.txt
                 touch shashin-version.txt
                 echo $VERSION > shashin-version.txt
             - run: |
                 echo $(cat /home/circleci/project/target/shashin-version.txt)
-            - run:
-                name: Move jar Artifacts
-                command: |
-                  mkdir -p ./target/artifact/
-                  mv ./target/**.jar ./target/artifact/shashin-$VERSION.jar
-            - run:
-                name: Move exe Artifacts
-                command: |
-                  mkdir -p ./target/artifact/
-                  mv ./target/**.exe ./target/artifact/Shashin-$VERSION.exe
+#            - run:
+#                name: Move jar Artifacts
+#                command: |
+#                  mkdir -p target/artifact/
+#                  mv target/**.jar target/artifact/shashin-$VERSION.jar
+#            - run:
+#                name: Move exe Artifacts
+#                command: |
+#                  mkdir -p target/artifact/
+#                  mv target/**.exe target/artifact/Shashin-$VERSION.exe
             - run:
                 name: Compress Artifacts
                 command: |
-                  tar -cvzf shashin-$VERSION.tar ./target/artifact/shashin-$VERSION.jar ./target/artifact/Shashin-$VERSION.exe **.sh test-results
+#                  mkdir -p target/artifact/
+#                  tar -cvzf target/artifact/shashin-$VERSION.tar target/artifact/shashin-$VERSION.jar target/artifact/Shashin-$VERSION.exe **.sh test-results
+                  tar -cvzf shashin-$VERSION.tar shashin-$VERSION.jar Shashin-$VERSION.exe **.sh test-results
             - persist_to_workspace: # persist across jobs
                 root: .
-                paths:
-                  - ./target/artifact
-            - store_artifacts:
-                path: ./target/artifact
+                paths: .
+#                  - target/artifact
+            - store_artifacts: .
+#                path: target/artifact
       - upload_to_repoflow:
           requires:
             - Run junit tests
-#          filters: # job runs for no branches and only for tags starting with 'v'
+          filters: # job runs for no branches and only for tags starting with 'v'
 #            tags:
 #              only: /^v.*/
 #            branches:
