@@ -15,12 +15,12 @@ jobs:
     executor: java17
     steps:
       - attach_workspace: # attach from another job
-          at: .
+          at: artifacts
       - store_artifacts:
           path: .
       - run:
           command: |
-            echo 'export VERSION=$(cat /home/circleci/project/target/artifact/target/artifact/shashin-version.txt)' >> $BASH_ENV
+            echo 'export VERSION=$(cat /home/circleci/project/target/shashin-version.txt)' >> $BASH_ENV
       - run: |
           cp $BASH_ENV bash.env
       - run:
@@ -125,12 +125,19 @@ workflows:
                 name: Compress Artifacts
                 command: |
                   touch shashin-$VERSION.tar
-                  tar -cvzf shashin-$VERSION.tar shashin-$VERSION.jar Shashin-$VERSION.exe **.sh test-results
+                  tar -cvzf shashin-$VERSION.tar shashin-$VERSION.jar Shashin-$VERSION.exe reset_password.sh test-results
+            - run:
+                name: Create Artifact Directory
+                command: |
+                  mkdir -p artifacts
+                  mv shashin-$VERSION.tar artifacts/shashin-$VERSION.tar
+                  mv Shashin-$VERSION.exe artifacts/Shashin-$VERSION.exe
+                  mv shashin-$VERSION.jar artifacts/shashin-$VERSION.jar
             - persist_to_workspace: # persist across jobs
                 root: .
-                paths: .
+                paths: artifacts
             - store_artifacts:
-                path: .
+                path: artifacts
       - upload_to_repoflow:
           requires:
             - Run junit tests
