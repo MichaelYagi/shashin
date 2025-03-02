@@ -23,13 +23,10 @@ jobs:
             echo $(cat /home/circleci/project/target/artifact/target/artifact/shashin-version.txt)
       - run:
           command: |
-            VERSION=$(cat /home/circleci/project/target/artifact/target/artifact/shashin-version.txt)
-            echo "$VERSION"
-            echo $VERSION
-            echo VERSION
+            echo 'export VERSION=$(cat /home/circleci/project/target/artifact/target/artifact/shashin-version.txt)'
       - run:
           command: |
-            echo "$VERSION"
+            echo $VERSION
       # Upload to RepoFlow
 #      - run:
 #          name: Upload jar artifact
