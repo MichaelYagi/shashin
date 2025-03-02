@@ -15,7 +15,7 @@ jobs:
     executor: java17
     steps:
       - attach_workspace: # attach from another job
-          at: target
+          at: ./target/artifact
       - store_artifacts:
           path: .
       - run:
@@ -121,26 +121,26 @@ workflows:
                 echo $VERSION > shashin-version.txt
             - run: |
                 echo $(cat /home/circleci/project/target/shashin-version.txt)
-#            - run:
-#                name: Move jar Artifacts
-#                command: |
-#                  mkdir -p target/artifact/
-#                  mv target/**.jar target/artifact/shashin-$VERSION.jar
-#            - run:
-#                name: Move exe Artifacts
-#                command: |
-#                  mkdir -p target/artifact/
-#                  mv target/**.exe target/artifact/Shashin-$VERSION.exe
+            - run:
+                name: Move jar Artifacts
+                command: |
+                  mkdir -p ./target/artifact/
+                  mv ./target/**.jar ./target/artifact/shashin-$VERSION.jar
+            - run:
+                name: Move exe Artifacts
+                command: |
+                  mkdir -p ./target/artifact/
+                  mv ./target/**.exe ./target/artifact/Shashin-$VERSION.exe
             - run:
                 name: Compress Artifacts
                 command: |
-                  tar -cvzf shashin-$VERSION.tar target/shashin-$VERSION.jar target/Shashin-$VERSION.exe **.sh test-results
+                  tar -cvzf shashin-$VERSION.tar ./target/artifact/shashin-$VERSION.jar ./target/artifact/Shashin-$VERSION.exe **.sh test-results
             - persist_to_workspace: # persist across jobs
                 root: .
                 paths:
-                  - target
+                  - ./target/artifact
             - store_artifacts:
-                path: target
+                path: ./target/artifact
       - upload_to_repoflow:
           requires:
             - Run junit tests
