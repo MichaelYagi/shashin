@@ -142,9 +142,9 @@ workflows:
       - upload_to_repoflow:
           requires:
             - Run junit tests
-          filters: # job runs for no branches and only for tags starting with 'v'
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
+#          filters: # job runs for no branches and only for tags starting with 'v'
+#            tags:
+#              only: /^v.*/
+#            branches:
+#              ignore: /.*/
           name: Upload to RepoFlow
