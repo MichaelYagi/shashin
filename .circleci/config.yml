@@ -23,7 +23,7 @@ jobs:
             echo $(cat /home/circleci/project/target/artifact/target/artifact/shashin-version.txt)
       - run:
           command: |
-            VERSION < $(cat /home/circleci/project/target/artifact/target/artifact/shashin-version.txt)
+            VERSION=echo $(cat /home/circleci/project/target/artifact/target/artifact/shashin-version.txt)
       - run:
           command: |
             echo "$VERSION"
