@@ -142,9 +142,35 @@ workflows:
                   - target/artifact
             - store_artifacts:
                 path: target/artifact
-      - upload_to_repoflow:
-          requires:
-            - Run junit tests and package to tar
+            # Upload to RepoFlow
+            - run:
+                name: Upload jar artifact
+                command: |
+                  token=$REPOFLOW_TOKEN
+                  version=$VERSION
+                  curl --request POST \
+                  --header "Authorization: Bearer $token" \
+                  --header "Content-Type: multipart/form-data" \
+                  --form "packageFiles=@\"shashin-$version.jar\"" \
+                  --form "packageName=\"shashin\"" \
+                  --form "packageVersion=\"$version\"" \
+                  --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
+            - run:
+                name: Upload windows artifact
+                command: |
+                  token=$REPOFLOW_TOKEN
+                  version=$VERSION
+                  curl --request POST \
+                  --header "Authorization: Bearer $token" \
+                  --header "Content-Type: multipart/form-data" \
+                  --form "packageFiles=@\"Shashin-$version.exe\"" \
+                  --form "packageName=\"shashin\"" \
+                  --form "packageVersion=\"$version\"" \
+                  --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"    
+
+#      - upload_to_repoflow:
+#          requires:
+#            - Run junit tests and package to tar
 #          build-steps:
 #            - attach_workspace: # attach from another job
 #                at: target/artifact
@@ -160,7 +186,7 @@ workflows:
 #                at: target/artifact
 #            - store_artifacts:
 #                path: target/artifact
-          name: Upload to RepoFlow
+#          name: Upload to RepoFlow
 
 
 #            # Upload to RepoFlow
