@@ -66,16 +66,23 @@ workflows:
                 when: always
             - store_test_results:
                 path: test-results
-            - store_artifacts:
-                path: test-results/mocha
-            - persist_to_workspace: # persist across jobs
-                root: .
-                paths:
-                  - test-results/mocha
+#            - store_artifacts:
+#                path: test-results/mocha
+#            - persist_to_workspace: # persist across jobs
+#                root: .
+#                paths:
+#                  - test-results/mocha
             - run: |
                 mkdir -p target/artifact/
                 touch target/artifact/shashin-version.txt
                 echo "2.7.2" > target/artifact/shashin-version.txt
+            - persist_to_workspace: # persist across jobs
+                root: .
+                paths:
+                  - target/artifact
+                  - test-results/mocha
+            - store_artifacts:
+                path: target/artifact
 #      - maven/test: # checkout, build, test, and upload test results
 #          executor: java17
 #          name: Run junit tests and package to tar # and store artifacts
@@ -135,7 +142,6 @@ workflows:
 #                root: .
 #                paths:
 #                  - target/artifact
-#                  - bash.env
 #            - store_artifacts:
 #                path: target/artifact
       - upload_to_repoflow:
