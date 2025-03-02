@@ -121,27 +121,16 @@ workflows:
                 command: |
                   mkdir -p target/artifact/
                   mv target/**.exe Shashin-$VERSION.exe
-
-#            - run:
-#                name: Move jar Artifacts
-#                command: |
-#                  mkdir -p target/artifact/
-#                  mv target/**.jar shashin-$VERSION.jar
-#            - run:
-#                name: Move exe Artifacts
-#                command: |
-#                  mkdir -p target/artifact/
-#                  mv target/**.exe Shashin-$VERSION.exe
-#            - run:
-#                name: Move shell script Artifacts
-#                command: |
-#                  mkdir -p target/artifact/
-#                  mv target/reset_password.sh reset_password.sh
-#            - run:
-#                name: Compress Artifacts
-#                command: |
-#                  mkdir -p target/artifact/
-#                  tar -cvzf target/artifact/shashin-$VERSION.tar **.jar **.exe **.sh test-results
+            - run:
+                name: Move shell script Artifacts
+                command: |
+                  mkdir -p target/artifact/
+                  mv target/reset_password.sh reset_password.sh
+            - run:
+                name: Compress Artifacts
+                command: |
+                  mkdir -p target/artifact/
+                  tar -cvzf target/artifact/shashin-$VERSION.tar **.jar **.exe **.sh test-results
             - persist_to_workspace: # persist across jobs
                 root: .
                 paths:
@@ -152,6 +141,11 @@ workflows:
           name: Upload to RepoFlow
           requires:
             - Run junit tests and package to tar
+          build-steps:
+            - attach_workspace: # attach from another job
+                at: target/artifact
+            - store_artifacts:
+                path: target/artifact
 #          filters: # job runs for no branches and only for tags starting with 'v'
 #            tags:
 #              only: /^v.*/
