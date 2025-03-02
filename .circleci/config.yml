@@ -23,7 +23,9 @@ jobs:
             echo $(cat /home/circleci/project/target/artifact/target/artifact/shashin-version.txt)
       - run:
           command: |
-            echo 'export VERSION=$(cat /home/circleci/project/target/artifact/target/artifact/shashin-version.txt)'
+            echo 'export VERSION=$(cat /home/circleci/project/target/artifact/target/artifact/shashin-version.txt)' >> $BASH_ENV
+      - run: |
+          cp $BASH_ENV bash.env
       - run:
           command: |
             echo $VERSION
