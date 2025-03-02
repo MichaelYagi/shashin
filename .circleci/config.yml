@@ -18,16 +18,18 @@ jobs:
           at: target/artifact
       - store_artifacts:
           path: .
+      - run: |
+          cat bash.env > $BASH_ENV
       # Upload to RepoFlow
       - run:
           name: Upload jar artifact
           command: |
             token=$REPOFLOW_TOKEN
-            echo $token
+            version=$VERSION
             curl --request POST \
             --header "Authorization: Bearer $token" \
             --header "Content-Type: multipart/form-data" \
-            --form "packageFiles=@\"/home/circleci/project/target/artifact/target/artifact/shashin-2.7.4.jar\"" \
+            --form "packageFiles=@\"/home/circleci/project/target/artifact/target/artifact/shashin-$version.jar\"" \
             --form "packageName=\"shashin\"" \
             --form "packageVersion=\"$version\"" \
             --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
@@ -35,11 +37,11 @@ jobs:
           name: Upload windows artifact
           command: |
             token=$REPOFLOW_TOKEN
-            echo $token
+            version=$VERSION
             curl --request POST \
             --header "Authorization: Bearer $token" \
             --header "Content-Type: multipart/form-data" \
-            --form "packageFiles=@\"/home/circleci/project/target/artifact/target/artifact/Shashin-2.7.4.exe\"" \
+            --form "packageFiles=@\"/home/circleci/project/target/artifact/target/artifact/Shashin-$version.exe\"" \
             --form "packageName=\"shashin\"" \
             --form "packageVersion=\"$version\"" \
             --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
@@ -110,6 +112,8 @@ workflows:
                 name: Set Version # get version from pom.xml
                 command: |
                   echo 'export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)' >> $BASH_ENV
+            - run: |
+                cp $BASH_ENV bash.env
 #            - run:
 #                name: Move jar Artifacts
 #                command: |
