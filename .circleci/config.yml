@@ -60,6 +60,8 @@ workflows:
           filters: # job runs for all branches and all tags
             tags:
               only: /.*/
+            branches:
+              only: main
           test-results-for: mocha
           post-steps:
             - run:
@@ -79,6 +81,11 @@ workflows:
       - maven/test: # checkout, build, test, and upload test results
           executor: java17
           name: Run junit tests # and package to tar
+          filters: # job runs for all branches and all tags
+            tags:
+              only: /.*/
+            branches:
+              only: main
           requires:
             - Run node tests
           pre-steps:
