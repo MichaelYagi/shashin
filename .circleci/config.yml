@@ -115,12 +115,12 @@ workflows:
                 name: Move jar Artifacts
                 command: |
                   mkdir -p target/artifact/
-                  mv target/**.jar target/artifact/shashin-$VERSION.jar
+                  mv target/**.jar shashin-$VERSION.jar
             - run:
                 name: Move exe Artifacts
                 command: |
                   mkdir -p target/artifact/
-                  mv target/**.exe target/artifact/Shashin-$VERSION.exe
+                  mv target/**.exe Shashin-$VERSION.exe
 
 #            - run:
 #                name: Move jar Artifacts
