@@ -7,6 +7,8 @@
 
 <div th:replace="~{fragments/metadatamodal :: metadatamodal(${currentUser})}"></div>
 
+<div th:replace="~{fragments/metadatabatchmodal :: metadatabatchmodal(${recognitionLabels},${allAlbumList})}"></div>
+
 <div th:replace="~{fragments/infosidebar :: infosidebar(${currentUser})}"></div>
 
 <div th:replace="~{fragments/persongroup :: person(${activePage},${parameter},${counts},${faceRecogServicesAvailable},${authority},${settings.facialDetection})}"></div>
@@ -78,7 +80,6 @@
 
                             <span class="appendPersonPhotos" style="width:0;height:0;padding:0"></span>
                         </th:block>
-                        <div th:replace="~{fragments/metadatabatchmodal :: metadatabatchmodal(${recognitionLabels},${allAlbumList})}"></div>
                     </div>
                 </th:block>
                 <th:block th:if="${#lists.isEmpty(metadataList)}">
