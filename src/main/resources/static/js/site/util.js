@@ -1277,13 +1277,13 @@ class Util {
                                     iconColor: "#FF8C00",
                                     headerSubtext: Util.getMessageSubText(createdAtDate, timezone),
                                     autohide: false,
-                                    tag: "showNotifications",
+                                    tag: "notifications",
                                     borderColor:"warning"
                                 });
 
-                                if (notificationCount === 1) {
-                                    NotificationUtil.markNotificationRead();
-                                } else {
+                                // if (notificationCount === 1) {
+                                //     // NotificationUtil.markNotificationRead();
+                                // } else {
                                     $(".gotoNotifications").on("click", function (e) {
                                         e.preventDefault();
 
@@ -1292,7 +1292,7 @@ class Util {
                                         setTimeout(() => {
                                             NotificationUtil.markNotificationRead();
                                             shashin.closeToastMessages({
-                                                tag: "showNotifications"
+                                                tag: "notifications"
                                             });
                                         }, 500);
                                     });
@@ -1302,10 +1302,10 @@ class Util {
 
                                         NotificationUtil.markNotificationRead();
                                         shashin.closeToastMessages({
-                                            tag: "showNotifications"
+                                            tag: "notifications"
                                         });
                                     });
-                                }
+                                // }
                             }, 0);
 
                             // Poll every x minutes
@@ -1321,7 +1321,7 @@ class Util {
                         $("#sidebarPeople").html('');
 
                         shashin.closeToastMessages({
-                            tag: "showNotifications"
+                            tag: "notifications"
                         });
 
                         if (notificationAlerts === true && pollMinutes !== undefined) {
