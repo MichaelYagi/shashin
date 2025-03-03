@@ -16,6 +16,8 @@ jobs:
     steps:
       - attach_workspace: # attach artifacts directory from previous job
           at: .
+      - store_artifacts: # Store artifacts temporarily in this job
+          path: artifacts
       - run:
           name: Exporting version from file
           command: |
@@ -144,14 +146,12 @@ workflows:
             - persist_to_workspace: # persist the artifacts directory across jobs
                 root: .
                 paths: artifacts
-            - store_artifacts: # Store them temporarily in this job
-                path: artifacts
       - upload_to_repoflow:
           requires:
             - Run junit tests
-          filters: # job runs for no branches and only for tags starting with 'v'
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
+#          filters: # job runs for no branches and only for tags starting with 'v'
+#            tags:
+#              only: /^v.*/
+#            branches:
+#              ignore: /.*/
           name: Upload artifacts to repo
