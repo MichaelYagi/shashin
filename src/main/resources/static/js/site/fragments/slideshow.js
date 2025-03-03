@@ -23,6 +23,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     const hideTime = 5000;
     const playPauseHideTime = 3000;
     const fadeOutTime = 1000;
+    let isActive = false;
 
     function getSlideshowImage(callback) {
         const http = new Http("show slideshow");
@@ -350,7 +351,9 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 showCursor();
             }
 
-            slideshowMouseTimer = setTimeout(hideCursor, hideTime);
+            if (isActive === true) {
+                slideshowMouseTimer = setTimeout(hideCursor, hideTime);
+            }
 
             $("#infoAction").show();
             infoTimer = setTimeout(function () {
@@ -538,6 +541,8 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
 
     function exitSlideshow() {
         tearDownVideo();
+
+        isActive = false;
 
         if (document.fullscreenEnabled && document.fullscreenElement !== null && document.exitFullscreen) {
             document.exitFullscreen();
@@ -856,7 +861,9 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 showCursor();
             }
 
-            slideshowMouseTimer = setTimeout(hideCursor, hideTime);
+            if (isActive === true) {
+                slideshowMouseTimer = setTimeout(hideCursor, hideTime);
+            }
         }
 
         if (firstTime === false || (slideshowProceed === true && firstTime === true)) {
@@ -912,6 +919,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
     $("#viewSlideshow").on("click", function (e) {
         e.preventDefault();
 
+        isActive = true;
         tearDownVideo();
         createVideo();
 
