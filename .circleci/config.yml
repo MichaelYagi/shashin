@@ -14,7 +14,7 @@ jobs:
   upload_to_repoflow:
     executor: java17
     steps:
-      - attach_workspace: # attach from another job
+      - attach_workspace: # attach artifacts directory from previous job
           at: .
       - store_artifacts:
           path: .
@@ -121,17 +121,17 @@ workflows:
                 command: |
                   cp $BASH_ENV bash.env
             - run:
-                name: Persist version to text file
+                name: Persist version to file
                 command: |
                   touch shashin-version.txt
                   echo $VERSION > shashin-version.txt
                   echo $(cat /home/circleci/project/shashin-version.txt)
-            - run:
-                name: Move jar Artifacts
+            - run: # move from target to root for tar package
+                name: Move jar artifact
                 command: |
                   mv target/**.jar shashin-$VERSION.jar
             - run:
-                name: Move exe Artifacts
+                name: Move exe artifact
                 command: |
                   mv target/**.exe Shashin-$VERSION.exe
             - run:
@@ -139,7 +139,7 @@ workflows:
                 command: |
                   touch shashin-$VERSION.tar
                   tar -cvzf shashin-$VERSION.tar shashin-$VERSION.jar Shashin-$VERSION.exe reset_password.sh test-results
-            - run:
+            - run: # Move artifacts to artifacts directory in preparation to persist
                 name: Create Artifacts Directory
                 command: |
                   mkdir -p artifacts
