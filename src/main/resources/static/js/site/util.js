@@ -1267,10 +1267,7 @@ class Util {
                                 const createdAtDate = firstNotification.createdAt;
                                 const title = notificationCount + " new notification" + (notificationCount === 1 ? "" : "s");
                                 let message = '<div class="container"><div class="row">' + ((firstNotification.imageUrl !== null && firstNotification.imageUrl !== "") ? '<div class="col-4"><img src="' + firstNotification.imageUrl + '" width="100"></div>' : '') + ((firstNotification.imageUrl !== null && firstNotification.imageUrl !== "") ? '<div class="col-8">' : '<div class="col">') + ((notificationCount > 1) ? 'Latest - ' : '') + firstNotification.message + '</div></div>';
-                                if (notificationCount > 1) {
-                                    message = message + "<div class='row'><hr class='mb-1 mt-3'><div class='col'><a href='#' class='gotoNotifications' target='_blank'>Read notifications</a></div><div class='col'><a href='#' class='markNotifications'>Mark all read</a></div></div>";
-                                }
-                                message = message + '</div>';
+                                message = message + "<div class='row'><hr class='mb-1 mt-3'><div class='col'><a href='#' class='gotoNotifications' target='_blank'>Read notifications</a></div><div class='col'><a href='#' class='markNotifications'>Mark "+(notificationCount === 1) ? 'read' : 'all read'+"</a></div></div></div>";
 
                                 shashin.showToastMessage(title, message, {
                                     icon: "bi-bell",
