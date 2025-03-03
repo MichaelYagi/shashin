@@ -19,13 +19,17 @@ jobs:
       - store_artifacts:
           path: .
       - run:
-          name: Getting version
+          name: Exporting version from file
           command: |
             echo 'export VERSION=$(cat /home/circleci/project/artifacts/shashin-version.txt)' >> $BASH_ENV
+      - run:
+          name: Exporting version to bash.env
+          command: |
             cp $BASH_ENV bash.env
-#      - run:
-#          command: |
-#            echo $VERSION
+      - run:
+          name: Checking version
+          command: |
+            echo $VERSION
       # Upload to RepoFlow
       - run:
           name: Upload jar artifact
@@ -113,11 +117,15 @@ workflows:
                 name: Set Version # get version from pom.xml
                 command: |
                   echo 'export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)' >> $BASH_ENV
+            - run:
+                command: |
                   cp $BASH_ENV bash.env
+            - run:
+                name: Persist version to text file
+                command: |
                   touch shashin-version.txt
                   echo $VERSION > shashin-version.txt
-#            - run: |
-#                echo $(cat /home/circleci/project/shashin-version.txt)
+                  echo $(cat /home/circleci/project/shashin-version.txt)
             - run:
                 name: Compress Artifacts
                 command: |
