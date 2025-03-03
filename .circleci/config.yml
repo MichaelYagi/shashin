@@ -144,7 +144,7 @@ workflows:
             - persist_to_workspace: # persist the artifacts directory across jobs
                 root: .
                 paths: artifacts
-            - store_artifacts: # Store them temporarily
+            - store_artifacts: # Store them temporarily in this job
                 path: artifacts
       - upload_to_repoflow:
           requires:
