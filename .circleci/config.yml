@@ -16,8 +16,6 @@ jobs:
     steps:
       - attach_workspace: # attach artifacts directory from previous job
           at: .
-      - store_artifacts:
-          path: .
       - run:
           name: Exporting version from file
           command: |
@@ -72,8 +70,6 @@ workflows:
                   mkdir -p test-results/mocha/
                   find . -type f -regex ".*/test-results.xml" -exec cp {} test-results/mocha/ \;
                 when: always
-            - store_artifacts:
-                path: test-results/mocha
             - persist_to_workspace: # persist workspace across jobs
                 root: .
                 paths:
@@ -153,9 +149,9 @@ workflows:
       - upload_to_repoflow:
           requires:
             - Run junit tests
-          filters: # job runs for no branches and only for tags starting with 'v'
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
+#          filters: # job runs for no branches and only for tags starting with 'v'
+#            tags:
+#              only: /^v.*/
+#            branches:
+#              ignore: /.*/
           name: Upload artifacts to repo
