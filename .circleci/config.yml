@@ -15,7 +15,7 @@ jobs:
     executor: java17
     steps:
       - attach_workspace: # attach from another job
-          at: artifacts
+          at: .
       - store_artifacts:
           path: .
       - run:
