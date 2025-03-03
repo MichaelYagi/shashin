@@ -1,4 +1,4 @@
-$("#appToolsBatchEdit").on("click", function(e) {
+$("#appToolsBatchEdit,#matchToolsBatchEdit").on("click", function(e) {
     e.preventDefault();
 
     let thumbnailList = "";
