@@ -295,10 +295,10 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         deleteAlbumButton.click()
         this.logger.log(Level.INFO, "Deleted album as admin.")
         startTime = System.currentTimeMillis()
-        scanBeforeAfter = null
-        while (scanBeforeBody == scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
-            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
-        }
+//        scanBeforeAfter = null
+//        while (scanBeforeBody == scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
+//            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
+//        }
         Thread.sleep(this.elementScanTimeoutMillis.toLong())
 
         val msgEl = this.driver!!.findElement(By.id("msg"))
