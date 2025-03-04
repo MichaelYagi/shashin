@@ -1,7 +1,7 @@
 [![CircleCI](https://circleci.com/gh/MichaelYagi/shashin/tree/main.svg?style=shield&circle-token=a7f7505f8d0357fbae3ca5be7a41ff8debed1d1d)](https://circleci.com/gh/MichaelYagi/shashin)
 
 # Shashin
-An Image Gallery inspired by Google Photos
+An Image Gallery inspired by Google Photos.
 
 <img src="https://michaelyagi.github.io/images/shashinss.png" alt="shashin"/>
 
