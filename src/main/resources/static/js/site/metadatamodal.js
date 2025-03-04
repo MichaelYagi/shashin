@@ -348,6 +348,11 @@ async function saveMetadata(e) {
                         //         $("#placeName").attr("placeholder", getMetadataModalUpdateText());
                         //     }
                         // }
+
+                        if (data.hasOwnProperty("shortPlaceName") && data.shortPlaceName !== "") {
+                            $("#shortLocationLabel").html(data.shortPlaceName);
+                        }
+
                     }
 
                     if (takenDateUpdated === true && ($("#activePage").length > 0 && $("#activePage").val() !== "recent" && $("#activePage").val() !== "modified" && $("#activePage").val() !== "taken" && $("#activePage").val() !== "folder") || $("#activePage").length === 0) {
@@ -465,6 +470,7 @@ $('#propMetadata').on('hide.bs.modal', function () {
     $("#placeName").attr("placeholder", "");
     $("#metadataModalCancel").text("Cancel");
     $("#saveTimelineModalForm :input").prop("disabled", false);
+    $("#shortLocationLabel").html("");
 
     if ($("#generalTabLink").length > 0) {
         const tab = new bootstrap.Tab($("#generalTabLink"));
@@ -564,15 +570,6 @@ $("#generalTabLink").on("click", function (e) {
     const propMetadataModal = document.getElementById('propMetadata');
     const modal = bootstrap.Modal.getInstance(propMetadataModal);
     modal.handleUpdate();
-
-    // const metadataId = $("#metadataId").val();
-    // if ($("#placeName").attr("placeholder") === getMetadataModalUpdateText()) {
-    //     shashin.getMetadata(metadataId).then(function (metadataObj) {
-    //         $("#placeName").attr("placeholder", "");
-    //         const placeArr = metadataObj.placeName.split(";");
-    //         $("#placeName").val(placeArr[0].trim());
-    //     });
-    // }
 });
 
 $("#isobject").on("click", function (e) {

@@ -1337,6 +1337,7 @@ class TimelineController: BaseController() {
             resp["keywordsIdentified"] = ""
 
             val metadataObj = metadataRepository.findById(metadataId)
+            resp["shortPlaceName"] = ""
 
             if (TextUtils.metadataInputValidation(
                     metadataMap["day"].toString().toInt(),
@@ -1628,6 +1629,7 @@ class TimelineController: BaseController() {
 
                                 if (coordinateMap["place"] != null) {
                                     metadataObj.get().setPlaceName(coordinateMap["place"])
+                                    resp["shortPlaceName"] = TextUtils.formatPlaceNameForHeader(coordinateMap["place"])
                                 }
                                 if (coordinateMap["timezone"] != null) {
                                     metadataObj.get().setTimeZone(coordinateMap["timezone"])
@@ -2448,6 +2450,8 @@ class TimelineController: BaseController() {
 
         response["lastAccessedAt"] = null
 
+        response["shortPlaceName"] = null
+
         var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
         if (request.scheme == "https") {
             baseUrlBuilder = baseUrlBuilder.scheme("https")
@@ -2506,6 +2510,10 @@ class TimelineController: BaseController() {
                 }
             }
             response["metadata"] = metadataObjCopy
+
+            if (metadataObjCopy.getPlaceName() != null) {
+                response["shortPlaceName"] = TextUtils.formatPlaceNameForHeader(metadataObjCopy.getPlaceName())
+            }
         }
 
         val favoritesMap = HashMap<String, HashMap<String, Any>>()
@@ -2609,6 +2617,7 @@ class TimelineController: BaseController() {
         response["albumMap"] = mutableMapOf<Int, String>()
         response["lastAccessedAt"] = null
         response["baseUrl"] = null
+        response["shortPlaceName"] = null
 
         val emptyJson = "{}"
         val mapper = ObjectMapper()
@@ -2635,6 +2644,10 @@ class TimelineController: BaseController() {
                 metadataObjCopy.setFreeFormString(null)
             }
             response["metadata"] = metadataObjCopy
+
+            if (metadataObjCopy.getPlaceName() != null && metadataObjCopy.getPlaceName() != "") {
+                response["shortPlaceName"] = TextUtils.formatPlaceNameForHeader(metadataObjCopy.getPlaceName())
+            }
 
             val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(id)
             if (recognitionLabelPhotos != null) {

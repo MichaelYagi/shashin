@@ -1549,7 +1549,7 @@
             $("#metadataModalEdit" + metadata.id).attr("tag", metadata.id);
             $("#metadataModalEdit" + metadata.id).on("click", function (e) {
                 e.preventDefault();
-                shashin.openEditMetadataModal(metadata.id, timelineSettings);
+                shashin.openEditMetadataModal(metadata.id);
             });
         }
 
