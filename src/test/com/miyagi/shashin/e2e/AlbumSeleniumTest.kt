@@ -288,7 +288,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         this.driver?.get("http://localhost:$port/albums")
 
         val js: JavascriptExecutor = this.driver as JavascriptExecutor
-        js.executeScript("shashin.closeToastMessages();")
+        js.executeScript("NotificationUtil.markNotificationRead();")
 
         val deleteAlbumEl = this.driver!!.findElement(By.id("trash$albumId"))
         deleteAlbumEl.click()
