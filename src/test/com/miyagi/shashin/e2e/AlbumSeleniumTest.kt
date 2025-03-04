@@ -363,9 +363,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val commentList = this.driver!!.findElement(By.id("commentList"))
         val commentEl = commentList.findElement(By.xpath("./li[1]"))
         val commentId = commentEl.getAttribute("id")?.substringAfter("comment")
-
-//        println(this.driver?.pageSource)
-
+        
         Assertions.assertTrue(this.driver!!.findElement(By.id("commentcontent$commentId")).text.contains("Test comment"))
 
         // Update comment
