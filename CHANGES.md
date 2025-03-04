@@ -7,8 +7,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Put place name beside latitude/longitude in metadata modal
 
 ### Changed
+- Further optimizing tests
 
 ### Fixed
+- Album batch modal select
+- CI script to be more streamlined
 
 ## [2.7.4] - 2025-03-01
 ### Added
