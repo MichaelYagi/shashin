@@ -1,8 +1,8 @@
 # Change Log
-All notable changes to this project will be documented in this file.
+All notable additions, changes, fixes and removals to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [Unreleased]
 
 ---
 ### Added
@@ -36,8 +36,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - New release notices in about modal
 
-### Changed
-
 ### Fixed
 - Mobile views
 
@@ -46,8 +44,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ---
 ### Added
 - Password reset script for admins
-
-### Changed
 
 ### Fixed
 - Timeline initial rendering
@@ -59,32 +55,20 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Multi select images
 
-### Changed
-
-### Fixed
-
 ## [2.6.1] - 2025-01-18
 
 ---
 ### Added
 - Drag and drop files to a preconfigured directory setting
 
-### Changed
-
-### Fixed
-
 ## [2.6.0] - 2024-08-24
 
 ---
-### Added
-
 ### Changed
 
 - Updated to Spring Boot 3.x.x
 - Updated from Java 11 to 17
 - Updated Hibernate JPA to 6.x.x
-
-### Fixed
 
 ## [2.5.1] - 2024-06-02
 
@@ -106,17 +90,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Super admin privileges
 
-### Changed
-
-### Fixed
-
 ## [2.4.0] - 2023-10-08
 
 ---
 ### Added
 - Slideshow view
-
-### Changed
 
 ### Fixed
 - Full screen fixes and enhancements
@@ -171,8 +149,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Paginated "Folders" and "Albums" view
 
-### Fixed
-
 ## [2.2.1] - 2022-06-20
 
 ---
@@ -196,17 +172,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Added ability to download selected files in various views
 
-### Changed
-
-### Fixed
-
 ## [2.1.0] - 2022-03-18
 
 ---
 ### Added
 - Added recently modified view and API
-
-### Changed
 
 ### Fixed
 - Firefox scroll jumping
@@ -217,17 +187,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Added nonce to inline Javascript
 
-### Changed
-
-### Fixed
-
 ## [2.0.1] - 2022-02-21
 
 ---
 ### Added
 - Import/Export metadata functionality
-
-### Changed
 
 ### Fixed
 - UX fixes and improvements for mobile
@@ -245,8 +209,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Optimized modals on views
 - Re-hauled date scrolling
 - Changed params for UUID generation for metadata
-
-### Fixed
 
 ## [1.0.0] - 2022-01-14
 
@@ -282,7 +244,3 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Initial commit
 - Framework setup
 - Base and timeline controller and views
-
-### Changed
-
-### Fixed
