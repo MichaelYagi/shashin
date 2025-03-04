@@ -170,13 +170,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 ### Added
-- Added ability to download selected files in various views
+- Ability to download selected files in various views
 
 ## [2.1.0] - 2022-03-18
 
 ---
 ### Added
-- Added recently modified view and API
+- Recently modified view and API
 
 ### Fixed
 - Firefox scroll jumping
@@ -185,7 +185,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 ### Added
-- Added nonce to inline Javascript
+- Nonce to inline Javascript
 
 ## [2.0.1] - 2022-02-21
 
@@ -219,7 +219,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Scroll to top button for infinite scroll pages
 - Date headings for share link pages
 - Dashboard stats for keywords
-- Added lightgallery rotate plugin
+- Lightgallery rotate plugin
 
 ### Changed
 - Improved API response for unauthorized requests
@@ -228,12 +228,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Delete all orphaned keywords if no longer used in any photos
 
 ### Fixed
-- Fixed editing lat/lng on map photo view
-- Fixed processing lat/lng
-- Fixed map icon flickering
-- Fixed timezone offset list and selection
-- Fixed thumbnail removal for non-timeline views
-- Fixed API data structure of values returned
+- Editing lat/lng on map photo view
+- Processing lat/lng
+- Map icon flickering
+- Timezone offset list and selection
+- Thumbnail removal for non-timeline views
+- API data structure of values returned
 - Prevent keyword blank string entry
 - Open only one search link when clicking on dashboard bar for camera and keywords
 
