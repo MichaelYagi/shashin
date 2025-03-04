@@ -283,6 +283,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val titleHeader = this.driver!!.findElement(By.id("albumNameTitle"))
         Assertions.assertEquals("Album name update",titleHeader.text)
 
+        this.driver?.get("http://localhost:$port/notifications")
         // Test delete album
         this.driver?.get("http://localhost:$port/albums")
 
@@ -363,7 +364,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val commentList = this.driver!!.findElement(By.id("commentList"))
         val commentEl = commentList.findElement(By.xpath("./li[1]"))
         val commentId = commentEl.getAttribute("id")?.substringAfter("comment")
-        
+
         Assertions.assertTrue(this.driver!!.findElement(By.id("commentcontent$commentId")).text.contains("Test comment"))
 
         // Update comment
