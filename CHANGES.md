@@ -3,8 +3,6 @@ All notable additions, changes, fixes and removals to this project will be docum
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
-
----
 ### Added
 - Put place name beside latitude/longitude in metadata modal
 
@@ -16,8 +14,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - CI script to be more streamlined
 
 ## [2.7.4] - 2025-03-01
-
----
 ### Added
 - Color select for maps
 - Upload artifacts to RepoFlow in CircleCI script
@@ -31,8 +27,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Flaky tests
 
 ## [2.7.2] - 2025-02-23
-
----
 ### Added
 - New release notices in about modal
 
@@ -40,8 +34,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Mobile views
 
 ## [2.7.1] - 2025-02-19
-
----
 ### Added
 - Password reset script for admins
 
@@ -50,20 +42,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Slideshow UI improvements
 
 ## [2.7.0] - 2025-02-03
-
----
 ### Added
 - Multi select images
 
 ## [2.6.1] - 2025-01-18
-
----
 ### Added
 - Drag and drop files to a preconfigured directory setting
 
 ## [2.6.0] - 2024-08-24
-
----
 ### Changed
 
 - Updated to Spring Boot 3.x.x
@@ -71,8 +57,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Updated Hibernate JPA to 6.x.x
 
 ## [2.5.1] - 2024-06-02
-
----
 ### Added
 - Accessed in browse view
 
@@ -85,14 +69,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - CircleCI script
 
 ## [2.5.0] - 2024-05-03
-
----
 ### Added
 - Super admin privileges
 
 ## [2.4.0] - 2023-10-08
-
----
 ### Added
 - Slideshow view
 
@@ -100,8 +80,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Full screen fixes and enhancements
 
 ## [2.3.0] - 2023-10-04
-
----
 ### Added
 - Facial recognition using CompreFace
 - Object recognition
@@ -121,8 +99,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Timeline view bug fixes
 
 ## [2.2.3] - 2023-04-26
-
----
 ### Added
 - Editable Lens field
 - SQLite backup added during metadata export
@@ -141,8 +117,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Map fullscreen button bug
 
 ## [2.2.2] - 2023-04-09
-
----
 ### Added
 - Ability to download album photos
 
@@ -150,8 +124,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Paginated "Folders" and "Albums" view
 
 ## [2.2.1] - 2022-06-20
-
----
 ### Added
 - Spinner on download icon while making AJAX call for timeline media downloads
 - UX improvements for backup exports
@@ -167,14 +139,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Redirect to referer after login
 
 ## [2.2.0] - 2022-06-19
-
----
 ### Added
 - Ability to download selected files in various views
 
 ## [2.1.0] - 2022-03-18
-
----
 ### Added
 - Recently modified view and API
 
@@ -182,14 +150,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Firefox scroll jumping
 
 ## [2.0.2] - 2022-03-15
-
----
 ### Added
 - Nonce to inline Javascript
 
 ## [2.0.1] - 2022-02-21
-
----
 ### Added
 - Import/Export metadata functionality
 
@@ -198,8 +162,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed favorite counts for media
 
 ## [2.0.0] - 2022-01-29
-
----
 ### Added
 - Input to change or add camera model
 - Added description field in metadata
@@ -211,8 +173,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Changed params for UUID generation for metadata
 
 ## [1.0.0] - 2022-01-14
-
----
 ### Added
 - Initial release
 - Added search auto-complete with search history for configurable number of unique terms
@@ -238,8 +198,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Open only one search link when clicking on dashboard bar for camera and keywords
 
 ## [0.1.0] - 2021-08-09
-
----
 ### Added
 - Initial commit
 - Framework setup
