@@ -293,11 +293,6 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         deleteAlbumEl.click()
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Delete')]")))
 
-        // Clear notifications
-        this.driver?.get("http://localhost:$port/notifications")
-        // Test delete album
-        this.driver?.get("http://localhost:$port/albums")
-
         val deleteAlbumButton = this.driver!!.findElement(By.id("deleteAlbum"))
         Actions(driver).moveToElement(deleteAlbumButton).perform()
         this.logger.log(Level.INFO, "Deleted album as admin.")
