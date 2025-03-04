@@ -355,6 +355,7 @@ async function saveMetadata(e) {
                                 locationLabel = $.trim(data.shortPlaceName).substring(0, 39).trim(this) + "...";
                             }
                             $("#shortLocationLabel").html(locationLabel);
+                            $("#shortLocationLabel").attr("title", data.shortPlaceName);
                         }
 
                     }
@@ -475,6 +476,7 @@ $('#propMetadata').on('hide.bs.modal', function () {
     $("#metadataModalCancel").text("Cancel");
     $("#saveTimelineModalForm :input").prop("disabled", false);
     $("#shortLocationLabel").html("");
+    $("#shortLocationLabel").attr("title", "");
 
     if ($("#generalTabLink").length > 0) {
         const tab = new bootstrap.Tab($("#generalTabLink"));
