@@ -287,11 +287,12 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         this.driver?.get("http://localhost:$port/albums")
 
         val deleteAlbumEl = this.driver!!.findElement(By.id("trash$albumId"))
+        Actions(driver).moveToElement(deleteAlbumEl).perform()
         deleteAlbumEl.click()
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Delete')]")))
-        scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
 
         val deleteAlbumButton = this.driver!!.findElement(By.id("deleteAlbum"))
+        Actions(driver).moveToElement(deleteAlbumButton).perform()
         deleteAlbumButton.click()
         this.logger.log(Level.INFO, "Deleted album as admin.")
         Thread.sleep(this.elementScanTimeoutMillis.toLong())
