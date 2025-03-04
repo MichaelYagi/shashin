@@ -1269,18 +1269,19 @@ class Util {
                                 let message = '<div class="container"><div class="row">' + ((firstNotification.imageUrl !== null && firstNotification.imageUrl !== "") ? '<div class="col-4"><img src="' + firstNotification.imageUrl + '" width="100"></div>' : '') + ((firstNotification.imageUrl !== null && firstNotification.imageUrl !== "") ? '<div class="col-8">' : '<div class="col">') + ((notificationCount > 1) ? 'Latest - ' : '') + firstNotification.message + '</div></div>';
                                 message = message + "<div class='row'><hr class='mb-1 mt-3'><div class='col'><a href='#' class='gotoNotifications' target='_blank'>Read notifications</a></div><div class='col'><a href='#' class='markNotifications'>Mark "+((notificationCount === 1) ? 'read' : 'all read')+"</a></div></div></div>";
 
-                                shashin.showToastMessage(title, message, {
-                                    icon: "bi-bell",
-                                    iconColor: "#FF8C00",
-                                    headerSubtext: Util.getMessageSubText(createdAtDate, timezone),
-                                    autohide: false,
-                                    tag: "notifications",
-                                    borderColor:"warning"
-                                });
-
                                 // if (notificationCount === 1) {
-                                //     // NotificationUtil.markNotificationRead();
+                                //     NotificationUtil.markNotificationRead();
                                 // } else {
+                                if (notificationCount > 1) {
+                                    shashin.showToastMessage(title, message, {
+                                        icon: "bi-bell",
+                                        iconColor: "#FF8C00",
+                                        headerSubtext: Util.getMessageSubText(createdAtDate, timezone),
+                                        autohide: false,
+                                        tag: "notifications",
+                                        borderColor: "warning"
+                                    });
+
                                     $(".gotoNotifications").on("click", function (e) {
                                         e.preventDefault();
 
@@ -1302,6 +1303,7 @@ class Util {
                                             tag: "notifications"
                                         });
                                     });
+                                }
                                 // }
                             }, 0);
 
