@@ -684,6 +684,11 @@
                     $("#propMetadataModalThumbnail").html(TimelineTemplates.HeaderThumbnail({metadata: metadata, version: Util.getMetadataLocalStorage(), showMap: false}));
                 }
 
+                $("#shortLocationLabel").html("");
+                if (data.hasOwnProperty("shortPlaceName") && data.shortPlaceName !== "") {
+                    $("#shortLocationLabel").html(data.shortPlaceName);
+                }
+
                 if (metadata.title !== null) {
                     $("#title").val(metadata.title);
                 }
