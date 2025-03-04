@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.openqa.selenium.By
+import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.interactions.Actions
 import org.openqa.selenium.support.ui.ExpectedConditions
@@ -283,9 +284,11 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val titleHeader = this.driver!!.findElement(By.id("albumNameTitle"))
         Assertions.assertEquals("Album name update",titleHeader.text)
 
-        this.driver?.get("http://localhost:$port/notifications")
         // Test delete album
         this.driver?.get("http://localhost:$port/albums")
+
+        val js: JavascriptExecutor = this.driver as JavascriptExecutor
+        js.executeScript("shashin.closeToastMessages();")
 
         val deleteAlbumEl = this.driver!!.findElement(By.id("trash$albumId"))
         deleteAlbumEl.click()
