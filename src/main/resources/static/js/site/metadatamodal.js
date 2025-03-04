@@ -349,13 +349,13 @@ async function saveMetadata(e) {
                         //     }
                         // }
 
-                        if (metadata.hasOwnProperty("placeName") && metadata.placeName !== "" &&
-                            data.hasOwnProperty("shortPlaceName") && data.shortPlaceName !== "") {
+                        if (metadataObj.hasOwnProperty("placeName") && metadataObj.placeName !== null && metadataObj.placeName !== "" &&
+                            data !== null && data.hasOwnProperty("shortPlaceName") && data.shortPlaceName !== null && data.shortPlaceName !== "") {
                             let locationLabel = data.shortPlaceName;
                             if (Util.isMobile() === false && locationLabel.length > 39) {
                                 locationLabel = $.trim(data.shortPlaceName).substring(0, 39).trim() + "...";
                             }
-                            const fullPlacenameArray = metadata.placeName.split(";");
+                            const fullPlacenameArray = metadataObj.placeName.split(";");
                             $("#shortLocationLabel").html(locationLabel);
                             $("#shortLocationLabel").attr("title", fullPlacenameArray[0]);
                         }
