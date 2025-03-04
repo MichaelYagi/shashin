@@ -283,17 +283,23 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val titleHeader = this.driver!!.findElement(By.id("albumNameTitle"))
         Assertions.assertEquals("Album name update",titleHeader.text)
 
+        // Clear notifications
+        this.driver?.get("http://localhost:$port/notifications")
+
         // Test delete album
         this.driver?.get("http://localhost:$port/albums")
 
         val deleteAlbumEl = this.driver!!.findElement(By.id("trash$albumId"))
-        Actions(driver).moveToElement(deleteAlbumEl).perform()
         deleteAlbumEl.click()
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Delete')]")))
 
+        // Clear notifications
+        this.driver?.get("http://localhost:$port/notifications")
+        // Test delete album
+        this.driver?.get("http://localhost:$port/albums")
+
         val deleteAlbumButton = this.driver!!.findElement(By.id("deleteAlbum"))
         Actions(driver).moveToElement(deleteAlbumButton).perform()
-        deleteAlbumButton.click()
         this.logger.log(Level.INFO, "Deleted album as admin.")
         Thread.sleep(this.elementScanTimeoutMillis.toLong())
 
