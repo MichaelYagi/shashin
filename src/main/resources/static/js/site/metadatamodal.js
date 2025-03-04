@@ -351,7 +351,7 @@ async function saveMetadata(e) {
 
                         if (data.hasOwnProperty("shortPlaceName") && data.shortPlaceName !== "") {
                             let locationLabel = data.shortPlaceName;
-                            if (Util.isMobile() === false) {
+                            if (Util.isMobile() === false && locationLabel.length > 39) {
                                 locationLabel = $.trim(data.shortPlaceName).substring(0, 39).trim() + "...";
                             }
                             $("#shortLocationLabel").html(locationLabel);
