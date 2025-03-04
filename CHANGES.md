@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Current - 2025-03-03
+### Added
+- Put place name beside latitude/longitude in metadata modal
+
+### Changed
+
+### Fixed
+
 ## [2.7.4] - 2025-03-01
 ### Added
 - Color select for maps
