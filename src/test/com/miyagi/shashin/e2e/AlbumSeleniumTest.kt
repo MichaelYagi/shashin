@@ -123,7 +123,6 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         // Check if UUID present
         this.driver!!.get("http://localhost:$port/timeline")
-//        println(this.driver?.pageSource)
         this.logger.log(Level.INFO, "AlbumSeleniumTest - Redirected to timeline.")
         val scrollContainer = this.driver!!.findElement(By.id("infinite-scroll-gallery"))
         val spanContainerEl = scrollContainer.findElement(By.xpath("./span[1]"))
