@@ -340,15 +340,8 @@ async function saveMetadata(e) {
                             Util.setMetadataLocalStorage();
                             window.location.replace("/map?latlng=" + $("#latlng").val() + queryParamDates);
                         }
-                        // else {
-                        //     $("#placeName").val("");
-                        //     $("#placeType").val("");
-                        //     if ($("#latlng").val().length > 0) {
-                        //         $("#placeName").prop('disabled', true);
-                        //         $("#placeName").attr("placeholder", getMetadataModalUpdateText());
-                        //     }
-                        // }
 
+                        // put place name beside lat lng
                         if (metadataObj.hasOwnProperty("placeName") && metadataObj.placeName !== null && metadataObj.placeName !== "" &&
                             data !== null && data.hasOwnProperty("shortPlaceName") && data.shortPlaceName !== null && data.shortPlaceName !== "") {
                             let locationLabel = data.shortPlaceName;
