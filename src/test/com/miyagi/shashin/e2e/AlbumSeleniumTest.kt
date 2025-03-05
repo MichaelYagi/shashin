@@ -319,6 +319,8 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         password.sendKeys("testuser")
         login.click()
 
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
+
         Assertions.assertEquals("http://localhost:$port/albums", this.driver!!.currentUrl)
 
         var isPresent = this.driver!!.findElements(By.id("share$albumId")).isNotEmpty()
