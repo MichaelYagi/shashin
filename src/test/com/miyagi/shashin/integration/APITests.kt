@@ -99,6 +99,10 @@ class APITests {
     @Autowired
     private val useragentRepository: UseragentRepository? = null
 
+    @Autowired
+    private val folderDataRepository: FolderDataRepository? = null
+
+
     private var bcrypt = BCryptPasswordEncoder()
 
     @BeforeEach
@@ -163,6 +167,7 @@ class APITests {
         searchHistoryRepository?.deleteAll()
         searchRepository?.deleteAll()
         useragentRepository?.deleteAll()
+        folderDataRepository?.deleteAll()
 
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
         val sidecarDir = File("$rootPath/sidecar_test")
