@@ -77,7 +77,6 @@ class UITests: BaseSeleniumTests() {
             .build()
 
         this.driver?.get("http://localhost:$port/users/login")
-        //println(this.driver?.pageSource)
         val username = this.driver!!.findElement(By.id("username"))
         val password = this.driver!!.findElement(By.id("password"))
         val rememberMe = this.driver!!.findElement(By.id("remember-me"))
