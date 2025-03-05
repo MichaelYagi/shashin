@@ -684,6 +684,7 @@
                     $("#propMetadataModalThumbnail").html(TimelineTemplates.HeaderThumbnail({metadata: metadata, version: Util.getMetadataLocalStorage(), showMap: false}));
                 }
 
+                // put place name beside lat lng
                 $("#shortLocationLabel").html("");
                 $("#shortLocationLabel").attr("title", "");
                 if (metadata.hasOwnProperty("placeName") && metadata.placeName !== null && metadata.placeName !== "" &&
