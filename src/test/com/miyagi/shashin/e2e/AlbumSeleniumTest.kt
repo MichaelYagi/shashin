@@ -92,6 +92,8 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         this.driver!!.get("http://localhost:$port/settings")
 
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
+
         // Get test image data and populate in settings
         val classLoader = javaClass.classLoader
         val testImageUrl: URL = classLoader.getResource("testscreen.jpg")!!
