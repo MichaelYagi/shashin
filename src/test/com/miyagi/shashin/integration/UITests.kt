@@ -86,6 +86,8 @@ class UITests: BaseSeleniumTests() {
         username.sendKeys("testadmin")
         password.sendKeys("testadmin")
         login.click()
+
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
     }
 
     @Test
