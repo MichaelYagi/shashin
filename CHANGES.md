@@ -12,7 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Album batch modal select
 - CI script to be more streamlined
-- Subhtml in LightGallery changed to toast messages to avoid collisions with video controls
+- Sub html in LightGallery for descriptions changed to toast messages to avoid collisions with video controls
 
 ## [2.7.4] - 2025-03-01
 ### Added
