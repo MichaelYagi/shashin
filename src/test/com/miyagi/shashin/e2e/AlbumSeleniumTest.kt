@@ -149,8 +149,6 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         // TODO: don't like sleep
         this.logger.log(Level.INFO, "3 sec sleep.")
-//        doesn't work
-//        this.driver!!.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
         Thread.sleep(this.elementScanTimeoutMillis.toLong())
 
         val timelineBottomLeft = "tnbl$metadataId"
