@@ -284,11 +284,10 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val titleHeader = this.driver!!.findElement(By.id("albumNameTitle"))
         Assertions.assertEquals("Album name update",titleHeader.text)
 
+        this.driver?.get("http://localhost:$port/notifications")
+
         // Test delete album
         this.driver?.get("http://localhost:$port/albums")
-
-        val js: JavascriptExecutor = this.driver as JavascriptExecutor
-        js.executeScript("NotificationUtil.markNotificationRead();")
 
         val deleteAlbumEl = this.driver!!.findElement(By.id("trash$albumId"))
         deleteAlbumEl.click()
