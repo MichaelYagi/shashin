@@ -134,7 +134,7 @@ workflows:
                 name: Compress Artifacts
                 command: |
                   touch shashin-$VERSION.tar
-                  tar -cvzf shashin-$VERSION.tar shashin-$VERSION.jar Shashin-$VERSION.exe reset_password.sh test-results
+                  tar -cvzf shashin-$VERSION.tar shashin-$VERSION.jar Shashin-$VERSION.exe reset_shashin_password.sh test-results
             - run: # Move artifacts to artifacts directory in preparation to persist
                 name: Create Artifacts Directory
                 command: |
