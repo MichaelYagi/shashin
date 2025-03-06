@@ -947,7 +947,9 @@ class UserController {
 
             // Delete profile picture
             val user = userRepository?.findById(userId)
+            var username = ""
             if (user != null && user.isPresent) {
+                username = user.get().getUsername().toString()
                 val profileImage =
                     if (user.get().getProfile() == null) "" else user.get().getProfile()!!.replace("/api/v1/profile/", "")
                 if (profileImage.isNotEmpty()) {
@@ -965,6 +967,26 @@ class UserController {
             userAlbumRepository?.deleteByUserId(userId)
             favoriteRepository?.deleteByUserId(userId)
             commentRepository?.deleteByUserId(userId)
+
+            val superAdmins = userRepository?.findAllByAuthorityEquals(superRole.toString())
+
+            if (superAdmins != null) {
+                val notificationObjList = mutableListOf<Notification>()
+                val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                for (superAdmin in superAdmins) {
+                    val notificationObj = Notification()
+                    notificationObj.setUserId(superAdmin.getId())
+                    notificationObj.setCreatedAt(getCurrentTimestamp())
+                    notificationObj.setModifiedAt(getCurrentTimestamp())
+                    notificationObj.setRead(false)
+                    notificationObj.setMessage("$username deleted their account at "+sdtf.format(Date())+".")
+                    notificationObjList.add(notificationObj)
+                }
+                if (notificationObjList.isNotEmpty()) {
+                    notificationRepository.saveAll(notificationObjList)
+                }
+            }
 
             response["status"] = ApiResponse.SUCCESS.status
             response["msg"] = "Successfully deleted account"
