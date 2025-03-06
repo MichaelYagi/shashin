@@ -1227,7 +1227,7 @@
                         'width': '73px',
                         'right': '0px',
                         'margin-right': '-3px',
-                        'cursor': 'default',
+                        'cursor': 'pointer',
                         'z-index': '3',
                         'position': 'absolute',
                         'top': tickTop + '%'
@@ -1246,12 +1246,14 @@
 
             $("#dateSliderWrapper").hover(function () {
                 $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
+                document.getElementById("dateSliderWrapper").style.cursor = "pointer";
             }, function () {
                 if (timelineSettings.scrollBarIsSliding === false) {
                     $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
                 } else {
                     $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
                 }
+                document.getElementById("dateSliderWrapper").style.cursor = "default";
             });
 
             $("#dateSliderWrapper").mousemove(function () {
