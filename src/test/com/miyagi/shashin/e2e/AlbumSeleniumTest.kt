@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptExecutor
+import org.openqa.selenium.Keys
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.interactions.Actions
 import org.openqa.selenium.support.ui.ExpectedConditions
@@ -186,29 +187,30 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val albumLink = albumCard.findElement(By.xpath("./a[1]"))
         val albumIdentifier = albumLink.getAttribute("id")
         albumId = albumIdentifier?.substringAfter("album")?.toInt()
-println(albumId)
+
         val shareLink = this.driver!!.findElement(By.id("share$albumId"))
         shareLink.click()
 
         this.logger.log(Level.INFO, "Share link created.")
-println("id-$userId-$albumId")
+
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.id("id-$userId-$albumId")))
         val userShareCheckbox = this.driver!!.findElement(By.id("id-$userId-$albumId"))
         userShareCheckbox.click()
 
         // ======== Issues with being unable to submit on element
         // Using actions to submit
-        val element = this.driver!!.findElement(By.id("saveUserShare"))
-        val actions = Actions(this.driver)
-        actions.moveToElement(element).click().perform()
+//        val element = this.driver!!.findElement(By.id("saveUserShare"))
+//        val actions = Actions(this.driver)
+//        actions.moveToElement(element).click().perform()
 
         // Using js to submit
 //        val js: JavascriptExecutor = this.driver as JavascriptExecutor
 //        js.executeScript("$('#saveUserShare').click();")
 
         // Using default way to submit - not working in CI
-//        val saveUserShare = this.driver!!.findElement(By.id("saveUserShare"))
+        val saveUserShare = this.driver!!.findElement(By.id("saveUserShare"))
 //        saveUserShare.click()
+        saveUserShare.sendKeys(Keys.RETURN)
         // ========
 
         this.logger.log(Level.INFO, "Share link saved.")
