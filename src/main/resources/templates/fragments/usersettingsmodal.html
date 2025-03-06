@@ -112,7 +112,7 @@
                             $("#unhidepasswordicon[[${user.id}]]").removeClass("bi-eye-slash").addClass("bi-eye");
                             $("#password[[${user.id}]]").prop("type", "password");
                             $("#propresetpassworduser[[${user.id}]]").modal('hide');
-                            shashin.showToastMessage("Password reset", "Password successfully reset", {icon:"bi-info-circle", iconColor:"#777777", autohide: false});
+                            shashin.showToastMessage("Password reset", "Password successfully reset for [[${user.username}]]", {icon:"bi-info-circle", iconColor:"#777777", autohide: false});
                             // window.location.replace("/settings/users");
                         } else {
                             $("#resetPasswordUserStatus[[${user.id}]]").addClass('bi-x-circle').removeClass('spinner-grow');
