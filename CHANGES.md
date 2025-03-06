@@ -9,7 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Further optimizing e2e tests
 - UX improvements for deleting content and account
-- Sizes for modal windows
+- Sizes for modal windows appropriate for content
 
 ### Fixed
 - Album batch modal select
