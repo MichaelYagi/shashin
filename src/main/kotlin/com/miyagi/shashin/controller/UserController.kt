@@ -181,7 +181,6 @@ class UserController {
                         }
                     }
 
-
                     model["msg"] = "Success"
                     model["status"] = ApiResponse.SUCCESS.status
                     model["toastTitle"] = "Password updated"
