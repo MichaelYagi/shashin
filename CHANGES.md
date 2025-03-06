@@ -16,6 +16,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - CI script to be more streamlined
 - Sub html in LightGallery for descriptions changed to toast messages to avoid collisions with video controls
 
+### Removed
+- Unneeded person modal to edit metadata
+
 ## [2.7.4] - 2025-03-01
 ### Added
 - Color select for maps
