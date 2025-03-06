@@ -498,7 +498,7 @@ class UserController {
 
                 newUser = User()
                 newUser.setUsername(userName)
-                newUser.setUsername(passWord)
+                newUser.setPassword(passWord)
 
                 userCount = userRepository?.count()
 
