@@ -659,7 +659,7 @@
                         </goals>
                         <configuration>
                             <target>
-                                <copy file="${project.basedir}/reset_password.sh" tofile="${project.basedir}/target/reset_password.sh"/>
+                                <copy file="${project.basedir}/reset_shashin_password.sh" tofile="${project.basedir}/target/reset_shashin_password.sh"/>
                             </target>
                         </configuration>
                     </execution>
