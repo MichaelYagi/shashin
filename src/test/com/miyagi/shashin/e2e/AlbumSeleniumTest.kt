@@ -196,10 +196,12 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val userShareCheckbox = this.driver!!.findElement(By.id("id-$userId-$albumId"))
         userShareCheckbox.click()
 
-        Thread.sleep(this.elementScanTimeoutMillis.toLong())
+        val element = this.driver!!.findElement(By.id("saveUserShare"))
+        val actions = Actions(this.driver)
+        actions.moveToElement(element).click().perform()
 
-        val saveUserShare = this.driver!!.findElement(By.id("saveUserShare"))
-        saveUserShare.click()
+//        val saveUserShare = this.driver!!.findElement(By.id("saveUserShare"))
+//        saveUserShare.click()
 
         this.logger.log(Level.INFO, "Share link saved.")
 
