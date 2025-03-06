@@ -197,21 +197,9 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val userShareCheckbox = this.driver!!.findElement(By.id("id-$userId-$albumId"))
         userShareCheckbox.click()
 
-        // ======== Issues with being unable to submit on element
-        // Using actions to submit
-//        val element = this.driver!!.findElement(By.id("saveUserShare"))
-//        val actions = Actions(this.driver)
-//        actions.moveToElement(element).click().perform()
-
-        // Using js to submit
-//        val js: JavascriptExecutor = this.driver as JavascriptExecutor
-//        js.executeScript("$('#saveUserShare').click();")
-
-        // Using default way to submit - not working in CI
         val saveUserShare = this.driver!!.findElement(By.id("saveUserShare"))
-//        saveUserShare.click()
+//        saveUserShare.click() // Not working in CI for some reason, using enter key instead
         saveUserShare.sendKeys(Keys.RETURN)
-        // ========
 
         this.logger.log(Level.INFO, "Share link saved.")
 
