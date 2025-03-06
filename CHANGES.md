@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Further optimizing e2e tests
+- UX improvements for deleting content and account
 
 ### Fixed
 - Album batch modal select
