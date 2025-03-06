@@ -134,11 +134,42 @@
             </div>
 
             <th:block th:if="${canDeleteAccount == true}">
-                <hr>
-                <div class="alert alert-danger" role="alert">
-                    <h4 class="alert-heading">Delete Account</h4>
-                    <p><span class="exclamation-triangle-fill"></span>Warning! This will permanently delete your account.</p>
-                    <a href="#" class="btn btn-danger" id="deleteAccount">Delete</a>
+                <div class="row align-items-center justify-content-center mt-3">
+                    <div class="col-lg-6">
+                        <hr>
+                        <div class="card mt-2">
+                            <button class="btn btn-danger dropdown-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDelete" aria-expanded="false" aria-controls="collapseDelete">
+                                Delete Account
+                            </button>
+                            <div class="collapse alert-danger" id="collapseDelete">
+                                <div class="alert" role="alert">
+                                    <p><span class="bi-exclamation-triangle-fill"></span> Warning!</p>
+                                    <p>This will permanently delete your account.</p>
+                                    <a href="#" class="btn btn-danger" id="deleteAccount">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="deleteAccountConfirmation" tabindex="-1" role="dialog" aria-labelledby="deleteAccount">
+                    <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteModalLabel">Delete Account</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Type <strong th:utext="${currentUser.username}"></strong> to confirm<br>
+                                <input class="form-control" type="text" id="deleteConfirm" value="">
+                            </div>
+                            <div class="modal-footer">
+                                <div id="deleteContentModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 1.55rem;" role="status" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="confirmDeleteAccount">Confirm</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </th:block>
 
@@ -189,23 +220,6 @@
     </div>
 </div>
 
-<div class="modal fade" id="deleteAccountConfirmation" tabindex="-1" role="dialog" aria-labelledby="deleteAccount">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Delete Account</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">Are you sure you want to delete your account?</div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="confirmDeleteAccount">Confirm
-                </button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
     $(document).ready(function () {
         /*<![CDATA[*/
@@ -215,9 +229,10 @@
         const status = /*[[${status}]]*/ '';
         const toastTitle = /*[[${toastTitle}]]*/ '';
         const toastBody = /*[[${toastBody}]]*/ '';
+        const username = /*[[${currentUser.username}]]*/ '';
         /*]]>*/
 
-        initializeAccount(profileUrl, userId, status, toastTitle, toastBody);
+        initializeAccount(profileUrl, userId, username, status, toastTitle, toastBody);
     });
 </script>
 

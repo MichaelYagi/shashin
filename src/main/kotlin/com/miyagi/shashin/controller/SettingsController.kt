@@ -736,6 +736,26 @@ class SettingsController {
                         successDeletion = thumbnailDirFile.deleteRecursively()
                     }
 
+                    val superAdmins = userRepository?.findAllByAuthorityEquals(superRole.toString())
+
+                    if (superAdmins != null) {
+                        val notificationObjList = mutableListOf<Notification>()
+                        val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                        sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                        for (superAdmin in superAdmins) {
+                            val notificationObj = Notification()
+                            notificationObj.setUserId(superAdmin.getId())
+                            notificationObj.setCreatedAt(getCurrentTimestamp())
+                            notificationObj.setModifiedAt(getCurrentTimestamp())
+                            notificationObj.setRead(false)
+                            notificationObj.setMessage("Content has been deleted at "+sdtf.format(Date())+".")
+                            notificationObjList.add(notificationObj)
+                        }
+                        if (notificationObjList.isNotEmpty()) {
+                            notificationRepository?.saveAll(notificationObjList)
+                        }
+                    }
+
                     if (successDeletion) {
                         resp["msg"] = "Success!"
                     } else {

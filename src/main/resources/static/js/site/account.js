@@ -1,4 +1,4 @@
-function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
+function initializeAccount(profileUrl, userId, username, status, toastTitle, toastBody) {
     // API management
     $("#copyapikey").on("click", function (e) {
         e.preventDefault();
@@ -308,6 +308,7 @@ function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
 
     // Delete account
     $("#deleteAccount").on("click", async function (e) {
+        e.preventDefault();
         $("#deleteAccountConfirmation").modal('show');
     });
 
@@ -315,23 +316,34 @@ function initializeAccount(profileUrl, userId, status, toastTitle, toastBody) {
         e.preventDefault();
 
         if (userId > 0) {
+            if ($("#deleteConfirm").val() === username) {
 
-            const http = new Http("deleting account");
-            let json = {
-                userId: userId
-            };
-            const data = await http.ajax("post", "/users/account/delete", JSON.stringify(json));
+                const http = new Http("deleting account");
+                let json = {
+                    userId: userId
+                };
+                const data = await http.ajax("post", "/users/account/delete", JSON.stringify(json));
 
-            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                if (data.status === "success") {
-                    window.location.replace("/users/logout");
-                } else {
-                    shashin.showToastMessage("Uh-oh!", "Something went wrong! " + data.msg, {
-                        icon: "bi-exclamation-triangle",
-                        iconColor: "#FF0000",
-                        borderColor: "danger"
-                    });
+                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                    if (data.status === "success") {
+                        window.location.replace("/users/logout");
+                    } else {
+                        shashin.showToastMessage("Uh-oh!", "Something went wrong! " + data.msg, {
+                            icon: "bi-exclamation-triangle",
+                            iconColor: "#FF0000",
+                            borderColor: "danger"
+                        });
+                    }
                 }
+            } else {
+                shashin.showToastMessage("Input not valid", "Try again. You must type your username.", {
+                    icon: "bi-exclamation-triangle",
+                    iconColor: "#FD7E14",
+                    borderColor: "warning"
+                });
+                $("#deleteAccountConfirmation").modal('hide');
+                $("#deleteContentModalStatus").invisible();
+                $("#deleteConfirm").val("");
             }
         } else {
             shashin.showToastMessage("Uh-oh!", "Something went wrong!", {
