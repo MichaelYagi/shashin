@@ -487,9 +487,18 @@ class UserController {
                 val userName = request.getParameter("username").toString()
                 val passWord = request.getParameter("password").toString()
 
+                if (userName.length < 4) {
+                    model["message"] = "Username must be at least 4 characters"
+                    return module
+                }
+
+                if (passWord.length < 6) {
+                    model["message"] = "Password must be at least 6 characters"
+                    return module
+                }
+
                 newUser = User()
                 newUser.setUsername(userName)
-                newUser.setPassword(passWord)
 
                 userCount = userRepository?.count()
 

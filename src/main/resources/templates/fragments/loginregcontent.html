@@ -23,10 +23,10 @@
             </th:block>
             <h2 class="form-signin-heading"><th:block th:text="'Please ' + ${#strings.capitalize(activePage)}"></th:block></h2>
             <div class="input-group mb-2">
-                <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
+                <input type="text" id="username" name="username" class="form-control" minlength="4" placeholder="Username" required autofocus>
             </div>
             <div class="input-group">
-                <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+                <input type="password" id="password" name="password"  minlength="6" class="form-control" placeholder="Password" required>
                 <button class="btn btn-secondary" type="button" id="unhidepassword" style="max-height: 46px;"><span id="unhidepasswordicon" class="bi-eye"></span></button>
             </div>
             <th:block th:if="${activePage == 'login'}">
