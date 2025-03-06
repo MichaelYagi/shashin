@@ -220,9 +220,9 @@
 
         if (statusMessage !== '' && status !== '') {
             if (status === "warning") {
-                shashin.showToastMessage("Error", statusMessage, {icon:"bi-exclamation-triangle", iconColor:"#FF0000", autohide: false, borderColor:"danger"});
+                shashin.showToastMessage("Error", statusMessage, {icon:"bi-exclamation-triangle", iconColor:"#FF0000", autohide: false, borderColor:"danger", placement:shashin.toast.placement.top.center});
             } else {
-                shashin.showToastMessage("Settings saved", statusMessage, {icon:"bi-info-circle", iconColor:"#777777", autohide: false});
+                shashin.showToastMessage("Settings saved", statusMessage, {icon:"bi-info-circle", iconColor:"#777777", autohide: false, borderColor:"success", placement:shashin.toast.placement.top.center});
             }
         }
 
