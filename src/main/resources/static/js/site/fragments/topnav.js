@@ -211,6 +211,12 @@ async function setVarsTopNav(darkMode, placeNames, timezone, notificationAlerts,
         }
     });
 
+    if (activePage === "settings") {
+        $('body').on("click", function () {
+            shashin.closeToastMessages();
+        });
+    }
+
     initializeSlideshow(accessTimelineView, queryLimit);
 
     if (activePage !== "timeline" && activePage !== "wake") {
