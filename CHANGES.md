@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Put place name beside latitude/longitude in metadata modal
-- - Account deletion for non-super admins
+- Account deletion for non-super admins
 
 ### Changed
 - Further optimizing e2e tests
