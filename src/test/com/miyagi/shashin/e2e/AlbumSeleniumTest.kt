@@ -198,7 +198,9 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         userShareCheckbox.click()
 
         val saveUserShare = this.driver!!.findElement(By.id("saveUserShare"))
-//        saveUserShare.click() // Not working in CI for some reason, using enter key instead
+        // Not working in CI after making changes to size of modal, using enter key instead
+        // https://github.com/MichaelYagi/shashin/commit/d5079f8e169b653127dd707e180af2d298d6d5e4
+//        saveUserShare.click()
         saveUserShare.sendKeys(Keys.RETURN)
 
         this.logger.log(Level.INFO, "Share link saved.")
