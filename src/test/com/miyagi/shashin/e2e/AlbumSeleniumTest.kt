@@ -186,12 +186,12 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val albumLink = albumCard.findElement(By.xpath("./a[1]"))
         val albumIdentifier = albumLink.getAttribute("id")
         albumId = albumIdentifier?.substringAfter("album")?.toInt()
-
+println(albumId)
         val shareLink = this.driver!!.findElement(By.id("share$albumId"))
         shareLink.click()
 
         this.logger.log(Level.INFO, "Share link created.")
-
+println("id-$userId-$albumId")
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.id("id-$userId-$albumId")))
         val userShareCheckbox = this.driver!!.findElement(By.id("id-$userId-$albumId"))
         userShareCheckbox.click()
@@ -213,11 +213,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         this.logger.log(Level.INFO, "Share link saved.")
 
-        // WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.id("albumsModalStatus")))
-
-        val js: JavascriptExecutor = this.driver as JavascriptExecutor
-        var statusIsVisible = js.executeScript("return $('#albumsModalStatus').css('visibility') === 'visible';") as Boolean
-        Assertions.assertTrue(statusIsVisible)
+        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.id("albumsModalStatus")))
     }
 
     @Test
