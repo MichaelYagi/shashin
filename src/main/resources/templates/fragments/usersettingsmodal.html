@@ -90,7 +90,7 @@
                     e.preventDefault();
 
                     let userId = "[[${user.id}]]";
-                    let username = "[[${user.username}]]";
+                    let username = /*[[${user.username}]]*/ '';
 
                     $("#resetPasswordUserStatus[[${user.id}]]").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
                     $("#resetPasswordUserStatus[[${user.id}]]").visible();
