@@ -116,7 +116,7 @@ class CommentsController {
             val albumObj = albumRepository.findById(albumId)
 
             if (currentUserObj != null && userAlbumCount != null &&
-                ((userAlbumCount > 0 && currentUserObj.getAuthority() == userRole) || (userAlbumCount == 0))
+                ((userAlbumCount > 0 && currentUserObj.getAuthority() == userRole) || currentUserObj.getAuthority() == superRole || currentUserObj.getAuthority() == adminRole)
                 && currentUserObj.getId() > 0 &&
                 albumObj.isPresent
             ) {
@@ -251,7 +251,7 @@ class CommentsController {
             val userAlbumCount = userAlbumRepository.countByUserIdAndAlbumId(currentUserObj?.getId(), albumId)
 
             if (currentUserObj != null && userAlbumCount != null &&
-                ((userAlbumCount > 0 && currentUserObj.getAuthority() == userRole) || (userAlbumCount == 0)) &&
+                ((userAlbumCount > 0 && currentUserObj.getAuthority() == userRole) || currentUserObj.getAuthority() == superRole || currentUserObj.getAuthority() == adminRole) &&
                 currentUserObj.getId() > 0 &&
                 metadataObj.isPresent && albumObj.isPresent
             ) {
