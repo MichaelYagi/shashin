@@ -113,7 +113,8 @@ class CommentsController {
             val albumObj = albumRepository.findById(albumId)
 
             if (currentUserObj != null && userAlbumCount != null &&
-                userAlbumCount > 0 && currentUserObj.getId() > 0 &&
+                (userAlbumCount > 0 || (userAlbumCount == 0 && currentUserObj.getAuthority() == adminRole))
+                && currentUserObj.getId() > 0 &&
                 albumObj.isPresent
             ) {
                 // Insert into comments
@@ -247,7 +248,8 @@ class CommentsController {
             val userAlbumCount = userAlbumRepository.countByUserIdAndAlbumId(currentUserObj?.getId(), albumId)
 
             if (currentUserObj != null && userAlbumCount != null &&
-                userAlbumCount > 0 && currentUserObj.getId() > 0 &&
+                (userAlbumCount > 0 || (userAlbumCount == 0 && currentUserObj.getAuthority() == adminRole)) &&
+                currentUserObj.getId() > 0 &&
                 metadataObj.isPresent && albumObj.isPresent
             ) {
                 // Insert into comments
