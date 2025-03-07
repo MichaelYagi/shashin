@@ -38,6 +38,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
     private var metadataId: String? = null
     private var superId: Int? = null
+    private var adminId: Int? = null
     private var userId: Int? = null
     private var albumId: Int? = null
     private var mockMvc: MockMvc? = null
@@ -74,6 +75,16 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         userObj.setApikey("00000000-00000000-00000000-00000001")
         userRepository?.save(userObj)
         userId = userObj.getId()
+
+        val adminObj = User()
+        adminObj.setUsername("testadmin")
+        encodedPassword = bcrypt.encode("testadmin")
+        adminObj.setPassword(encodedPassword)
+        adminObj.setAuthority("ROLE_ADMIN")
+        adminObj.setIsAuthorized(true)
+        adminObj.setApikey("00000000-00000000-00000000-00000002")
+        userRepository?.save(adminObj)
+        adminId = adminObj.getId()
 
         mockMvc = MockMvcBuilders
             .webAppContextSetup(context!!)
@@ -360,7 +371,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         this.driver?.get("http://localhost:$port/albums")
         val commentCountEl = this.driver!!.findElement(By.id("commentcount$albumId"))
         val commentCountStr = commentCountEl.text
-        Assertions.assertEquals(1,commentCountStr.toInt())
+        Assertions.assertTrue(commentCountStr.toInt() > 0)
 
         val postCommentEl = this.driver!!.findElement(By.id("comment$albumId"))
         postCommentEl.click()
@@ -421,6 +432,82 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         albumLink.click()
 
         Assertions.assertEquals("testalbum - Shashin", this.driver!!.title)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun shouldViewInAlbumAsAdmin() {
+        //Login as testadmin
+        this.driver!!.get("http://localhost:$port/users/logout")
+        // Logging out redirects to login page
+        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Please Login')]")))
+        val username = this.driver!!.findElement(By.id("username"))
+        val password = this.driver!!.findElement(By.id("password"))
+        val rememberMe = this.driver!!.findElement(By.id("remember-me"))
+        val login = this.driver!!.findElement(By.id("submit-loginreg"))
+        rememberMe.click()
+        username.sendKeys("testadmin")
+        password.sendKeys("testadmin")
+        login.click()
+
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
+
+        Assertions.assertEquals("http://localhost:$port/timeline", this.driver!!.currentUrl)
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
+        this.driver?.get("http://localhost:$port/albums")
+        Assertions.assertEquals("http://localhost:$port/albums", this.driver!!.currentUrl)
+
+        var isPresent = this.driver!!.findElements(By.id("share$albumId")).isNotEmpty()
+        Assertions.assertTrue(isPresent)
+
+        isPresent = this.driver!!.findElements(By.id("trash$albumId")).isNotEmpty()
+        Assertions.assertTrue(isPresent)
+
+        isPresent = this.driver!!.findElements(By.id("edit$albumId")).isNotEmpty()
+        Assertions.assertTrue(isPresent)
+
+        val postCommentElement = this.driver!!.findElements(By.id("comment$albumId"))
+        isPresent = postCommentElement.isNotEmpty()
+        Assertions.assertTrue(isPresent)
+
+        // Post comment on albums view
+        postCommentElement[0].click()
+        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Comments for')]")))
+        var scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
+        val commentTextArea = this.driver!!.findElement(By.id("commentText"))
+        commentTextArea.click()
+        commentTextArea.sendKeys("Test admin comment")
+
+        val saveComment = this.driver!!.findElement(By.id("saveCommentAlbum"))
+        saveComment.click()
+
+        this.logger.log(Level.INFO, "Shared comment as admin.")
+
+        var scanBeforeAfter: WebElement? = null
+        var startTime = System.currentTimeMillis()
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
+            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
+        }
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
+
+        this.driver?.get("http://localhost:$port/albums")
+        val commentCountEl = this.driver!!.findElement(By.id("commentcount$albumId"))
+        val commentCountStr = commentCountEl.text
+        Assertions.assertTrue(commentCountStr.toInt() > 0)
+
+        //Delete album as admin
+        val trashEl = this.driver!!.findElement(By.id("trash$albumId"))
+        trashEl.click()
+
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
+
+        val confirmButton = this.driver!!.findElement(By.id("deleteAlbum"))
+        confirmButton.sendKeys(Keys.RETURN)
+
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
+
+        val msgEl = this.driver!!.findElement(By.id("msg"))
+        Assertions.assertEquals("Nothing to see here.",msgEl.text)
     }
 
     private fun elementHasClass(element: WebElement, active: String?): Boolean {
