@@ -37,7 +37,7 @@ import java.util.logging.Level
 class AlbumSeleniumTest: BaseSeleniumTests() {
 
     private var metadataId: String? = null
-    private var adminId: Int? = null
+    private var superId: Int? = null
     private var userId: Int? = null
     private var albumId: Int? = null
     private var mockMvc: MockMvc? = null
@@ -55,15 +55,15 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
     @BeforeEach
     fun setup() {
-        val adminObj = User()
-        adminObj.setUsername("testadmin")
-        var encodedPassword: String = bcrypt.encode("testadmin")
-        adminObj.setPassword(encodedPassword)
-        adminObj.setAuthority("ROLE_SUPER")
-        adminObj.setIsAuthorized(true)
-        adminObj.setApikey("00000000-00000000-00000000-00000000")
-        userRepository?.save(adminObj)
-        adminId = adminObj.getId()
+        val superObj = User()
+        superObj.setUsername("testsuper")
+        var encodedPassword: String = bcrypt.encode("testsuper")
+        superObj.setPassword(encodedPassword)
+        superObj.setAuthority("ROLE_SUPER")
+        superObj.setIsAuthorized(true)
+        superObj.setApikey("00000000-00000000-00000000-00000000")
+        userRepository?.save(superObj)
+        superId = superObj.getId()
 
         val userObj = User()
         userObj.setUsername("testuser")
@@ -86,8 +86,8 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val rememberMe = this.driver!!.findElement(By.id("remember-me"))
         val login = this.driver!!.findElement(By.id("submit-loginreg"))
         rememberMe.click()
-        username.sendKeys("testadmin")
-        password.sendKeys("testadmin")
+        username.sendKeys("testsuper")
+        password.sendKeys("testsuper")
         login.click()
 
         this.driver!!.get("http://localhost:$port/settings")
@@ -210,7 +210,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
     @Test
     @Throws(Exception::class)
-    fun shouldViewInAlbumAsAdmin() {
+    fun shouldViewInAlbumAsSuper() {
         this.driver!!.get("http://localhost:$port/albums")
 
         var isPresent = this.driver!!.findElements(By.id("share$albumId")).isNotEmpty()
