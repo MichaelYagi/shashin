@@ -50,6 +50,9 @@ class CommentsController {
     @Autowired
     private lateinit var userRepository: UserRepository
 
+    @Value("\${app.role.user}")
+    private var userRole: String? = null
+
     @Value("\${app.role.admin}")
     private var adminRole: String? = null
 
@@ -113,7 +116,7 @@ class CommentsController {
             val albumObj = albumRepository.findById(albumId)
 
             if (currentUserObj != null && userAlbumCount != null &&
-                (userAlbumCount > 0 || (userAlbumCount == 0 && currentUserObj.getAuthority() == adminRole))
+                ((userAlbumCount > 0 && currentUserObj.getAuthority() == userRole) || (userAlbumCount == 0))
                 && currentUserObj.getId() > 0 &&
                 albumObj.isPresent
             ) {
@@ -248,7 +251,7 @@ class CommentsController {
             val userAlbumCount = userAlbumRepository.countByUserIdAndAlbumId(currentUserObj?.getId(), albumId)
 
             if (currentUserObj != null && userAlbumCount != null &&
-                (userAlbumCount > 0 || (userAlbumCount == 0 && currentUserObj.getAuthority() == adminRole)) &&
+                ((userAlbumCount > 0 && currentUserObj.getAuthority() == userRole) || (userAlbumCount == 0)) &&
                 currentUserObj.getId() > 0 &&
                 metadataObj.isPresent && albumObj.isPresent
             ) {
