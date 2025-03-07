@@ -81,7 +81,7 @@ class ToolsController {
         response["msg"] = ""
 
         val currentUserObj = model.getAttribute("currentUser") as User?
-        if (currentUserObj != null && githubKey != null && currentUserObj.getAuthority()!! != "ROLE_USER") {
+        if (currentUserObj != null && githubKey != null && githubKey != "" && currentUserObj.getAuthority()!! != "ROLE_USER") {
             val array = TextUtils.getReleases(githubKey!!)
             if (array != null && array.isNotEmpty()) {
                 response["releases"] = array
