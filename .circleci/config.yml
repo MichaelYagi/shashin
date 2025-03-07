@@ -82,7 +82,7 @@ workflows:
           filters: # job runs for all branches and all tags
             tags:
               only: /^v.*/
-          command: '-Dspring.profiles.active=test -Dapp.rememberme.key=$REMEMBER_ME_KEY -Dapp.github.key=$GITHUB_KEY -Dapp.circleci.key=$CIRCLECI_KEY clean install'
+          command: '-Dapp.github.key=$GITHUB_KEY -Dapp.circleci.key=$CIRCLECI_KEY clean install'
           requires:
             - Run node tests
           pre-steps:

@@ -58,10 +58,10 @@ class ToolsController {
     private lateinit var geocodeUrl: String
 
     @Value("\${app.circleci.key}")
-    private lateinit var circleCiKey: String
+    private var circleCiKey: String? = null
 
     @Value("\${app.github.key}")
-    private lateinit var githubKey: String
+    private var githubKey: String? = null
 
     @Autowired
     private var healthEndpoint: HealthEndpoint? = null
@@ -81,8 +81,8 @@ class ToolsController {
         response["msg"] = ""
 
         val currentUserObj = model.getAttribute("currentUser") as User?
-        if (currentUserObj != null && currentUserObj.getAuthority()!! != "ROLE_USER") {
-            val array = TextUtils.getReleases(githubKey)
+        if (currentUserObj != null && githubKey != null && currentUserObj.getAuthority()!! != "ROLE_USER") {
+            val array = TextUtils.getReleases(githubKey!!)
             if (array != null && array.isNotEmpty()) {
                 response["releases"] = array
                 response["status"] = ApiResponse.SUCCESS.status
