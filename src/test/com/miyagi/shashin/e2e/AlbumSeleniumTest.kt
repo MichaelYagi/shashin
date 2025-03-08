@@ -175,7 +175,6 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         action.moveToElement(imageEl).perform()
         action.moveToElement(timelineBottomLeftEl).perform()
         action.moveToElement(metadataModalEdit).perform()
-//        println(this.driver?.pageSource)
         metadataModalEdit.click()
 
         this.logger.log(Level.INFO, "Timeline edit button clicked.")
