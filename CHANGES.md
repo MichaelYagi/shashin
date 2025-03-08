@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Album batch modal select
 - CI script to be more streamlined
 - Sub html in LightGallery for descriptions changed to toast messages to avoid collisions with video controls
+- Hanging element in timeline
 
 ### Removed
 - Unneeded person modal to edit metadata
