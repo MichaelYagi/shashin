@@ -437,7 +437,6 @@ class APITests {
         )
 
 //        println(response.andReturn().response.contentAsString)
-//        println(response.andReturn().response.status)
 
         var jsonString = response.andReturn().response.contentAsString
         var jsonNode: JsonNode?
