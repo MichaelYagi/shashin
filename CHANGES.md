@@ -2,17 +2,23 @@
 All notable additions, changes, fixes and removals to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [2.8.0] - 2025-03-09
 ### Added
+- Color select for maps
+- Upload artifacts to RepoFlow in CircleCI script
 - Put place name beside latitude/longitude in metadata modal
 
 ### Changed
+- Album and people select now modal select
 - Further optimizing e2e tests
 - UX improvements for deleting content and account
 - Sizes for modal windows appropriate for content
 - Timeline scrollbar improvements
 
 ### Fixed
+- Media directory parsing
+- Small bug fixes
+- Flaky tests
 - Album batch modal select
 - CI script to be more streamlined
 - Sub html in LightGallery for descriptions changed to toast messages to avoid collisions with video controls
@@ -20,19 +26,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 - Unneeded person modal to edit metadata
-
-## [2.7.4] - 2025-03-01
-### Added
-- Color select for maps
-- Upload artifacts to RepoFlow in CircleCI script
-
-### Changed
-- Album and people select now modal select
-
-### Fixed
-- Media directory parsing
-- Small bug fixes
-- Flaky tests
 
 ## [2.7.2] - 2025-02-23
 ### Added
