@@ -42,17 +42,13 @@
                     shashin.printMessageToConsole(JSON.stringify(data), {tag: "release"});
                     if (data.hasOwnProperty("releases") && data.releases.length > 0 && currentRelease !== "v") {
                         const releaseArray = data.releases;
-                        let parsedCurrentRelease = currentRelease.replaceAll('.','');
-                        parsedCurrentRelease = parsedCurrentRelease.replaceAll('v','');
-                        parsedCurrentRelease = parseInt(parsedCurrentRelease);
+                        let parsedCurrentRelease = parseInt(currentRelease.replace(/\D/g,''));
 
                         for (let i in releaseArray) {
                             const releaseInfo = releaseArray[i];
 
                             if (releaseInfo.hasOwnProperty("name")) {
-                                let parsedReleaseInfo = releaseInfo.name.replaceAll('.', '');
-                                parsedReleaseInfo = parsedReleaseInfo.replaceAll('v', '');
-                                parsedReleaseInfo = parseInt(parsedReleaseInfo);
+                                let parsedReleaseInfo = parseInt(releaseInfo.name.replace(/\D/g,''));
 
                                 // Look for matching release
                                 if (parsedCurrentRelease <= parsedReleaseInfo) {
