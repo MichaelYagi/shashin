@@ -9,33 +9,43 @@ An Image Gallery inspired by Google Photos.
 Must be updated in POM file and git tag with format v[Major][Minor][Patch].
 
 # Maven Install
-Run ```mvn clean install``` with unminified JS assets. Run ```mvn -Pprod clean install``` to run with minified JS assets. These also download and installs libraries needed for face recognition.
+Run `mvn clean install` with unminified JS assets. Run `mvn -Pprod clean install` to run with minified JS assets. These also download and installs libraries needed for face recognition.
 
 # Pipeline
 Built on CircleCI with push to master at:
 
 https://app.circleci.com/pipelines/github/MichaelYagi/shashin
 
-To avoid triggering a CircleCI pipeline, ensure commit messages to master contain ```[skip ci]```.
+To avoid triggering a CircleCI pipeline, ensure commit messages to master contain `[skip ci]`.
 
-Eg. ```git commit -m "[skip ci] Updated README"```
+Eg. `git commit -m "[skip ci] Updated README"`
 
 Creating and pushing tags will upload jar and exe artifacts to [RepoFlow](https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin).
 
+## Release Process
+
+* Update version in `pom.xml`
+* Update `CHANGES.md` and commit code - use `[skip ci]` in commit message
+* Create tag:
+    * `git tag v<version>`
+    * `git push origin v<version>`
+    * This will kick off a build in circleci with artifacts uploaded to RepoFlow
+* Create release from new tag at https://github.com/MichaelYagi/shashin/tags
+
 # Docker
-```mvn -Pprod clean install```
+`mvn -Pprod clean install`
 
-```docker build -t michaeltyagi/shashin .```
+`docker build -t michaeltyagi/shashin .`
 
-```docker run -d -p 6624:6624 michaeltyagi/shashin```
+`docker run -d -p 6624:6624 michaeltyagi/shashin`
 
 Published to https://hub.docker.com/repository/docker/michaeltyagi/shashin
 
 # Development
 To use unminified JS assets, set the following VM options:
-```-Dspring.profiles.active=dev```
+`-Dspring.profiles.active=dev`
 
-You can view dev notes on Shashin at ```/articles/quickstart```.
+You can view dev notes on Shashin at `/articles/quickstart`.
 
 ## Frameworks Used
 * [Spring Boot](https://spring.io/) - Java framework to create micro services and web apps
