@@ -51,7 +51,7 @@
                                 let parsedReleaseInfo = parseInt(releaseInfo.name.replace(/\D/g,''));
 
                                 // Look for matching release
-                                if (parsedCurrentRelease <= parsedReleaseInfo) {
+                                if (isNaN(parsedCurrentRelease) === false && isNaN(parsedCurrentRelease) === false && parsedCurrentRelease <= parsedReleaseInfo) {
                                     if (parsedCurrentRelease < parsedReleaseInfo) {
                                         getLatestRelease(releaseArray);
                                     }
