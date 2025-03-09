@@ -42,24 +42,27 @@
                     shashin.printMessageToConsole(JSON.stringify(data), {tag: "release"});
                     if (data.hasOwnProperty("releases") && data.releases.length > 0 && currentRelease !== "v") {
                         const releaseArray = data.releases;
-                        let releaseFound = false;
+                        let parsedCurrentRelease = currentRelease.replaceAll('.','');
+                        parsedCurrentRelease = parsedCurrentRelease.replaceAll('v','');
+                        parsedCurrentRelease = parseInt(parsedCurrentRelease);
 
                         for (let i in releaseArray) {
                             const releaseInfo = releaseArray[i];
-                            // Look for matching release
-                            if (releaseInfo.hasOwnProperty("name") && currentRelease === releaseInfo.name) {
-                                releaseFound = true;
-                                // If not the most recent, notify in about modal and notification if not sent or stale
-                                if (i > 0) {
-                                    getLatestRelease(releaseArray);
+
+                            if (releaseInfo.hasOwnProperty("name")) {
+                                let parsedReleaseInfo = releaseInfo.name.replaceAll('.', '');
+                                parsedReleaseInfo = parsedReleaseInfo.replaceAll('v', '');
+                                parsedReleaseInfo = parseInt(parsedReleaseInfo);
+
+                                // Look for matching release
+                                if (parsedCurrentRelease <= parsedReleaseInfo) {
+                                    if (parsedCurrentRelease < parsedReleaseInfo) {
+                                        getLatestRelease(releaseArray);
+                                    }
+                                    break;
                                 }
-                                break;
                             }
                         }
-
-                        // if (releaseFound === false) {
-                        //     getLatestRelease(releaseArray);
-                        // }
                     }
                 });
             }, 0);
