@@ -2,6 +2,15 @@
 All notable additions, changes, fixes and removals to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Added
+
+### Changed
+
+### Fixed
+
+### Removed
+
 ## [2.8.0] - 2025-03-09
 ### Added
 - Color select for maps
