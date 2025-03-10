@@ -92,6 +92,12 @@ CREATE TABLE `settings` (
                             `createdAt` DATETIME DEFAULT NULL,
                             `modifiedAt` DATETIME DEFAULT NULL
 );
+CREATE TRIGGER settings_no_insert
+    BEFORE INSERT ON `settings`
+    WHEN (SELECT COUNT(*) FROM `settings`) >= 1
+BEGIN
+    SELECT RAISE(FAIL, 'only one row allowed!');
+END;
 
 DROP TABLE IF EXISTS `keyword`;
 CREATE TABLE `keyword` (
