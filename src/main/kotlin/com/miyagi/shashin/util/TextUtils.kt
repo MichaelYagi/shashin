@@ -339,14 +339,14 @@ class TextUtils {
             someDouble: Double? = null,
             someInt: Int? = null,
             inputStringFour: String? = null,
-            location: String = ""): UUID {
+            infoOrigin: String = ""): UUID {
             val uuidInput = "$inputString-$inputStringTwo-$inputStringThree-$someDouble-$someInt-$inputStringFour"
             val uuid = UUID.nameUUIDFromBytes(uuidInput.toByteArray())
 
-            if (location.isEmpty() || (location.isNotEmpty() && !location.contains("AttributeController"))) {
+            if (infoOrigin.isEmpty() || (infoOrigin.isNotEmpty() && !infoOrigin.contains("AttributeController"))) {
                 var logString = "UUID $uuid generated from input $uuidInput"
-                if (location.isNotEmpty()) {
-                    logString += " from $location"
+                if (infoOrigin.isNotEmpty()) {
+                    logString += " from $infoOrigin"
                 }
 
                 logger.log(Level.INFO, logString)
