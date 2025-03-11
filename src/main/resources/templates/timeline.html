@@ -82,7 +82,8 @@
 
             <div id="spinner_top" class="spinner-border justify-content-center align-items-center" role="status" style="display: none"></div>
 
-            <div id="infinite-scroll-gallery" style="max-width: 85%;">
+            <div id="infinite-scroll-gallery" style="max-width: 1500px;">
+<!--            <div id="infinite-scroll-gallery" style="max-width: 85%;">-->
                 <th:block th:if="${not #lists.isEmpty(metadataList)}">
                     <th:block th:if="${metadataList[0].year==null or metadataList[0].month==null or metadataList[0].day==null}">
                         <span class="dateContainer" id="container_undated">
