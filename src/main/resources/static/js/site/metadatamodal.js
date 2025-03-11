@@ -345,8 +345,8 @@ async function saveMetadata(e) {
                         if (metadataObj.hasOwnProperty("placeName") && metadataObj.placeName !== null && metadataObj.placeName !== "" &&
                             data !== null && data.hasOwnProperty("shortPlaceName") && data.shortPlaceName !== null && data.shortPlaceName !== "") {
                             let locationLabel = data.shortPlaceName;
-                            if (Util.isMobile() === false && locationLabel.length > 39) {
-                                locationLabel = $.trim(data.shortPlaceName).substring(0, 39).trim() + "...";
+                            if (Util.isMobile() === false && locationLabel.length > 38) {
+                                locationLabel = $.trim(data.shortPlaceName).substring(0, 38).trim() + "...";
                             }
                             const fullPlacenameArray = metadataObj.placeName.split(";");
                             $("#shortLocationLabel").html(locationLabel);
