@@ -898,12 +898,12 @@ class TimelineController: BaseController() {
                     if (metadataObj.isPresent) {
                         val metadata = metadataObj.get()
 
-                        val originalMetadataAdded = metadata.getAddedAt()
-                        val originalMetadataCreated = metadata.getCreatedAt()
-                        val originalMetadataTaken = metadata.getTakenAt()
-                        val originalTakenYear = metadata.getYear()
-                        val originalTakenMonth = metadata.getMonth()
-                        val originalTakenDay = metadata.getDay()
+//                        val originalMetadataAdded = metadata.getAddedAt()
+//                        val originalMetadataCreated = metadata.getCreatedAt()
+//                        val originalMetadataTaken = metadata.getTakenAt()
+//                        val originalTakenYear = metadata.getYear()
+//                        val originalTakenMonth = metadata.getMonth()
+//                        val originalTakenDay = metadata.getDay()
 
                         val stringMetadata = Gson().toJson(metadata, Metadata::class.java)
                         var metadataCopy = Gson().fromJson(stringMetadata, Metadata::class.java)
@@ -915,16 +915,6 @@ class TimelineController: BaseController() {
 
                         if (exifFile != null && exifFile.exists()) {
                             if (exifFile.delete()) {
-                                // Re-process metadata
-                                val metadataProcessing = MetadataProcessing(
-                                    apiVersion!!,
-                                    File(metadataCopy.getPath()!!),
-                                    sidecarDir,
-                                    metadataCopy,
-                                    geocodeUrl!!
-                                )
-                                metadataCopy = metadataProcessing.populateMetadata()
-
                                 // Re-process thumbnails
                                 var thumbnailFile = metadataCopy.getThumbnailPathCentered()
                                 if (!thumbnailFile.isNullOrBlank()) {
@@ -967,19 +957,34 @@ class TimelineController: BaseController() {
                                     }
                                 }
 
-                                val imageProcessing = ImageProcessing(apiVersion, File(metadataCopy.getPath()!!), sidecarDir, metadataCopy)
+                                val metadataPath = metadataCopy.getPath()!!
+
+                                metadataCopy = Metadata()
+
+                                // Re-process metadata
+                                val metadataProcessing = MetadataProcessing(
+                                    apiVersion!!,
+                                    File(metadataPath),
+                                    sidecarDir,
+                                    metadataCopy,
+                                    geocodeUrl!!
+                                )
+                                metadataCopy = metadataProcessing.populateMetadata()
+
+                                val imageProcessing = ImageProcessing(apiVersion, File(metadataPath), sidecarDir, metadataCopy)
                                 metadataCopy = imageProcessing.createThumbnails()!!
 
-                                metadataCopy.setAddedAt(originalMetadataAdded)
-                                metadataCopy.setCreatedAt(originalMetadataCreated)
-                                metadataCopy.setTakenAt(originalMetadataTaken)
-                                metadataCopy.setYear(originalTakenYear)
-                                metadataCopy.setMonth(originalTakenMonth)
-                                metadataCopy.setDay(originalTakenDay)
-                                metadataCopy.setLastAccessedAt(getCurrentTimestamp())
-                                metadataCopy.setModifiedAt(getCurrentTimestamp())
+//                                metadataCopy.setAddedAt(originalMetadataAdded)
+//                                metadataCopy.setCreatedAt(originalMetadataCreated)
+//                                metadataCopy.setTakenAt(originalMetadataTaken)
+//                                metadataCopy.setYear(originalTakenYear)
+//                                metadataCopy.setMonth(originalTakenMonth)
+//                                metadataCopy.setDay(originalTakenDay)
+//                                metadataCopy.setLastAccessedAt(getCurrentTimestamp())
+//                                metadataCopy.setModifiedAt(getCurrentTimestamp())
 
                                 if (metadataCopy.getId().isNotEmpty() && metadataCopy.getThumbnailSmallWidth() != null && metadataCopy.getThumbnailSmallHeight() != null && metadataCopy.getThumbnailUrlSmall() != null) {
+                                    metadataCopy.setHidden(false)
                                     metadataRepository.save(metadataCopy)
 
                                     // Something was updated that changed the UUID, delete the old record

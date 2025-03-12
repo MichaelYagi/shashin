@@ -336,40 +336,6 @@ class Util {
 
         http.ajax("post", "/rescan/metadata" + (version === "" ? "" : "?v=" + version), JSON.stringify(json)).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                if (data.status === shashin.apiResponse.SUCCESS) {
-                    shashin.showToastMessage("Metadata Rescanned", "Metadata successfully rescanned!", {
-                        icon: "bi-info-circle",
-                        iconColor: "#777777"
-                    });
-
-                    if (modalId === "propMetadata") {
-                        $("#metadataModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
-                        $("#metadataModalCancel").prop('disabled', false);
-                        $("#saveMetadata").prop("disabled", false);
-                    } else if (modalId === "propBatchMetadata") {
-                        $("#metadataBatchModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
-                        $("#metadataBatchModalCancel").prop("disabled", false);
-                        $("#saveBatchMetadata").prop("disabled", false);
-                    }
-                } else {
-                    shashin.showToastMessage("Error Rescanning Metadata", "There was an error rescanning metadata!", {
-                        icon:"bi-exclamation-triangle",
-                        iconColor:"#FF0000",
-                        borderColor:"danger"
-                    });
-
-                    if (modalId === "propMetadata") {
-                        $("#metadataModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
-                        $("#metadataModalStatus").attr("title", shashin.modalStatusFailMessage());
-                        $("#metadataModalCancel").prop('disabled', false);
-                        $("#saveMetadata").prop("disabled", false);
-                    } else if (modalId === "propBatchMetadata") {
-                        $("#metadataBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
-                        $("#metadataBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
-                        $("#metadataBatchModalCancel").prop("disabled", false);
-                        $("#saveBatchMetadata").prop("disabled", false);
-                    }
-                }
                 Util.setMetadataLocalStorage();
 
                 let metadataMap = {};
@@ -379,9 +345,7 @@ class Util {
                     metadataKeys = Array.from(Object.keys(metadataMap));
                 }
 
-                if (activePage !== "timeline") {
-                    window.top.location = window.top.location;
-                } else if (metadataIdArray.length === 1 && metadataKeys.length === 1) {
+                if (metadataIdArray.length === 1 && metadataKeys.length === 1) {
                     // If single value, update fields in timeline view
                     const rescannedMetadata = metadataMap[metadataKeys[0]];
                     let takenDateUpdated = false;
@@ -455,18 +419,43 @@ class Util {
                     }
                     if (takenDateUpdated === true) {
                         const dateGalleryRemoved = shashin.removeThumbnail((rescannedMetadata.id !== metadataIdArray[0]) ? metadataIdArray[0] : rescannedMetadata.id);
-                        timelineSettings.refreshTimeline($("#mediaTypeFilter").val()).then(function (data) {
-                            // If a date section was removed refresh the timeline
-                            if (dateGalleryRemoved === true) {
-                                Util.setMetadataLocalStorage();
-                                const elements = Util.elementsInViewport($(".scrollspy"));
-                                let firstElementId = $(elements[0]).attr("id");
-                                let firstVisibleId = firstElementId.indexOf("tail_") === -1 ? firstElementId : firstElementId.substring(5, firstElementId.length);
-                                timelineSettings.jumpFromTimelineToc(event, firstVisibleId, $("#mediaTypeFilter").val());
-                            }
-                        });
+                        if (activePage === "timeline") {
+                            timelineSettings.refreshTimeline($("#mediaTypeFilter").val()).then(function (data) {
+                                // If a date section was removed refresh the timeline
+                                if (dateGalleryRemoved === true) {
+                                    Util.setMetadataLocalStorage();
+                                    const elements = Util.elementsInViewport($(".scrollspy"));
+                                    let firstElementId = $(elements[0]).attr("id");
+                                    let firstVisibleId = firstElementId.indexOf("tail_") === -1 ? firstElementId : firstElementId.substring(5, firstElementId.length);
+                                    timelineSettings.jumpFromTimelineToc(event, firstVisibleId, $("#mediaTypeFilter").val());
+                                }
+                            });
+                        }
                     }
                 }
+
+                if (data.status === shashin.apiResponse.SUCCESS) {
+                    shashin.showToastMessage("Metadata Rescanned", "Metadata successfully rescanned!", {
+                        icon: "bi-info-circle",
+                        iconColor: "#777777",
+                        tag: "metadatamodal",
+                        borderColor:"success"
+                    });
+                } else {
+                    shashin.showToastMessage("Error Rescanning Metadata", "There was an error rescanning metadata!", {
+                        icon:"bi-exclamation-triangle",
+                        iconColor:"#FF0000",
+                        tag: "metadatamodal",
+                        borderColor:"danger"
+                    });
+                }
+            } else {
+                shashin.showToastMessage("Error Rescanning Metadata", "There was an error rescanning metadata!", {
+                    icon:"bi-exclamation-triangle",
+                    iconColor:"#FF0000",
+                    tag: "metadatamodal",
+                    borderColor:"danger"
+                });
             }
             if (propMetadataModal !== null) {
                 // Default states
@@ -476,6 +465,24 @@ class Util {
 
             if (shashin.getLightGallery() !== undefined && shashin.getLightGallery() !== null && typeof shashin.getLightGallery().refresh === 'function') {
                 shashin.getLightGallery().refresh();
+            }
+
+            if (modalId === "propMetadata") {
+                $("#metadataModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').removeClass('spinner-grow');
+                $("#metadataModalStatus").visible();
+                $("#metadataModalStatus").attr("title", "");
+                $("#metadataModalCancel").prop('disabled', false);
+                $("#saveMetadata").prop("disabled", false);
+
+                $("#propMetadata").modal('hide');
+            } else if (modalId === "propBatchMetadata") {
+                $("#metadataBatchModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').removeClass('spinner-grow');
+                $("#metadataBatchModalStatus").visible();
+                $("#metadataBatchModalStatus").attr("title", "");
+                $("#metadataBatchModalCancel").prop("disabled", false);
+                $("#saveBatchMetadata").prop("disabled", false);
+
+                $("#propBatchMetadata").modal('hide');
             }
         });
     }

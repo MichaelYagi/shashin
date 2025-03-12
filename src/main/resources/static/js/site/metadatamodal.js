@@ -417,24 +417,47 @@ async function saveMetadata(e) {
                     tag: "metadatamodal",
                     borderColor:"success"
                 });
-
-                $("#propMetadata").modal('hide');
             } else {
                 $("#metadataModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                 $("#metadataModalStatus").attr("title", shashin.modalStatusFailMessage());
                 $("#metadataModalCancel").prop('disabled', false);
+
+                shashin.showToastMessage("Metadata", "Metadata Saved", {
+                    icon:"bi-exclamation-triangle",
+                    iconColor:"#FF0000",
+                    tag: "metadatamodal",
+                    borderColor:"danger"
+                });
             }
         } else {
             $("#metadataModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
             $("#metadataModalStatus").attr("title", shashin.modalStatusFailMessage());
             $("#metadataModalCancel").prop('disabled', false);
+
+            shashin.showToastMessage("Metadata", "Metadata Saved", {
+                icon:"bi-exclamation-triangle",
+                iconColor:"#FF0000",
+                tag: "metadatamodal",
+                borderColor:"danger"
+            });
         }
         propMetadataModal._config.backdrop = true;
         propMetadataModal._config.keyboard = true;
+
+        $("#propMetadata").modal('hide');
     } else {
         $("#metadataModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
         propMetadataModal._config.backdrop = true;
         propMetadataModal._config.keyboard = true;
+
+        shashin.showToastMessage("Metadata", "Metadata Saved", {
+            icon:"bi-exclamation-triangle",
+            iconColor:"#FF0000",
+            tag: "metadatamodal",
+            borderColor:"danger"
+        });
+
+        $("#propMetadata").modal('hide');
     }
 }
 
