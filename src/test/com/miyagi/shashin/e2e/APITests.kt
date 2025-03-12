@@ -2,6 +2,8 @@ package com.miyagi.shashin.e2e
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.gson.Gson
+import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.MetadataRepository
@@ -22,8 +24,10 @@ import org.openqa.selenium.support.ui.WebDriverWait
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.core.io.FileSystemResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
+import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers
 import org.springframework.test.context.ActiveProfiles
@@ -32,6 +36,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
+import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import java.io.File
 import java.net.URL
@@ -260,6 +265,125 @@ class APITests: BaseSeleniumTests() {
         }
 
         Assertions.assertTrue(jsonNode?.get("keywordMap")?.get(metadataId)?.textValue() != "")
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun rescanAPITest() {
+        val webClient = WebClient.create("http://localhost:$port/")
+
+        var jsonString: String? = null
+        var jsonNode: JsonNode? = null
+        val mapper = ObjectMapper()
+
+        var response = webClient.get()
+            .uri("/api/v1/recent/0")
+            .header("x-api-key", "00000000-00000000-00000000-00000000")
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            .retrieve()
+            .bodyToMono(String::class.java)
+            .block()
+
+        jsonString = response
+
+        if (!jsonString.isNullOrBlank()) {
+            jsonNode = mapper.readTree(jsonString)
+        }
+
+        Assertions.assertTrue(jsonNode!!.has("metadataList"))
+        Assertions.assertTrue(jsonNode.get("metadataList").get(0).get("id").textValue() != "")
+
+        val metadataJsonObj = ObjectMapper().writeValueAsString(jsonNode.get("metadataList").get(0))
+        var gson = Gson()
+        val metadata = gson.fromJson(metadataJsonObj, Metadata::class.java)
+        val metadataId = metadata.getId()
+
+        // Capture original dates
+        val originalYear = metadata.getYear()
+        val originalMonth = metadata.getMonth()
+        val originalDay = metadata.getDay()
+
+        // Update metadata with different dates
+        var map = mutableMapOf<String, Any>()
+        map["id"] = metadataId
+        map["year"] = "2001"
+        map["month"] = "1"
+        map["day"] = "2"
+        map["time"] = "23:01:02"
+        map["offset"] = "+02:00"
+        map["keywords"] = ""
+        map["latlng"] = ""
+        map["title"] = if (metadata.getTitle() == null) "" else metadata.getTitle().toString()
+        map["description"] = if (metadata.getDescription() == null) "" else metadata.getDescription().toString()
+        map["albumnames"] = ""
+        map["tagpeople"] = ""
+        map["hidden"] = "0"
+        map["isObject"] = "0"
+        map["camera"] = if (metadata.getCamera() == null) "" else metadata.getCamera().toString()
+        map["lens"] = if (metadata.getLens() == null) "" else metadata.getLens().toString()
+        map["duration"] = if (metadata.getDuration() == null) "" else metadata.getDuration().toString()
+
+        response = webClient.put()
+            .uri("/api/v1/update/metadata/${metadataId}")
+            .header("x-api-key", "00000000-00000000-00000000-00000000")
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            .bodyValue(gson.toJson(map).toString())
+            .retrieve()
+            .bodyToMono(String::class.java)
+            .block()
+
+        // Check if dates differ from original
+        response = webClient.get()
+            .uri("/api/v1/metadata/${metadataId}")
+            .header("x-api-key", "00000000-00000000-00000000-00000000")
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            .retrieve()
+            .bodyToMono(String::class.java)
+            .block()
+
+        jsonString = response
+
+        if (!jsonString.isNullOrBlank()) {
+            jsonNode = mapper.readTree(jsonString)
+        }
+
+        Assertions.assertTrue(jsonNode!!.has("metadata"))
+        Assertions.assertTrue(jsonNode.get("metadata").get("year").toString().toInt() != originalYear)
+        Assertions.assertTrue(jsonNode.get("metadata").get("month").toString().toInt() != originalMonth)
+        Assertions.assertTrue(jsonNode.get("metadata").get("day").toString().toInt() != originalDay)
+
+        // Rescan
+        map = mutableMapOf<String, Any>()
+        map["metadataIdList"] = arrayOf(metadataId)
+
+        response = webClient.post()
+            .uri("/api/v1/rescan/metadata")
+            .header("x-api-key", "00000000-00000000-00000000-00000000")
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            .bodyValue(gson.toJson(map).toString())
+            .retrieve()
+            .bodyToMono(String::class.java)
+            .block()
+
+        // Check if dates are the same as original
+        response = webClient.get()
+            .uri("/api/v1/metadata/${metadataId}")
+            .header("x-api-key", "00000000-00000000-00000000-00000000")
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            .retrieve()
+            .bodyToMono(String::class.java)
+            .block()
+
+        jsonString = response
+
+        if (!jsonString.isNullOrBlank()) {
+            jsonNode = mapper.readTree(jsonString)
+        }
+
+        Assertions.assertTrue(jsonNode!!.has("metadata"))
+        Assertions.assertTrue(jsonNode.get("metadata").get("year").toString().toInt() == originalYear)
+        Assertions.assertTrue(jsonNode.get("metadata").get("month").toString().toInt() == originalMonth)
+        Assertions.assertTrue(jsonNode.get("metadata").get("day").toString().toInt() == originalDay)
     }
 
     companion object {
