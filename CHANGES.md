@@ -7,8 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Improved version checking
-- Close modal window after scan
-- Reset everything after rescan
+- Reset everything after rescan and close modal
 
 ### Fixed
 
