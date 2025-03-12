@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Reset everything after rescan and close modal
 
 ### Fixed
+- Search queue mechanism
 
 ### Removed
 
