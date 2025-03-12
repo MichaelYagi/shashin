@@ -1220,7 +1220,7 @@ async function showMap(mapdata, keywordMap) {
 
         singleDateInput.on('keypress',function(e) {
             // Enter key
-            if(e.which === 13) {
+            if (e.key === "Enter" || e.code === "Enter" || e.which === 13 || e.keyCode === 13) {
                 validateAndChangeDateType(singleDateInput,el);
             }
         });

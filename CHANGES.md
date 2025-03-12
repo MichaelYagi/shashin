@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Tests for rescan feature
+- Choose profile picture from URL
 
 ### Changed
 - Improved version checking
