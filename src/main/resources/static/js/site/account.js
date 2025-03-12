@@ -165,6 +165,21 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
         $("#removeProfileConfirmationModal").modal('show');
     });
 
+    $("#profileMode").on("click", function (e) {
+        e.preventDefault();
+
+        if ($("#chooseProfilePhoto").attr("type") === "file") {
+            // Change to text input
+            $("#chooseProfilePhoto").attr("type","url");
+            $("#chooseProfilePhoto").attr("placeholder","Enter URL To Upload Image From Web And Press Enter Key to Upload");
+            $("#profileMode").text("Choose Image From File");
+        } else {
+            $("#chooseProfilePhoto").attr("type","file");
+            $("#chooseProfilePhoto").attr("placeholder","");
+            $("#profileMode").text("Enter Image URL");
+        }
+    });
+
     $("#removeProfileConfirmation").on("click", function () {
         const http = new Http("delete profile picture");
         let json = {userId: userId};
@@ -181,99 +196,175 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
         });
     });
 
+    $("#chooseProfilePhoto").on("keydown", function(e) {
+        if ($("#chooseProfilePhoto").attr("type") === "url" && (e.key === "Enter" || e.code === "Enter" || e.which === 13 || e.keyCode === 13)) {
+            if (croppieObject !== null) {
+                $("#profilePictureEdit").croppie('destroy');
+                croppieObject = null;
+            }
+
+            const url = $("#chooseProfilePhoto").val();
+            let validUrl = true;
+            try {
+                const testUrl = new URL(url);
+            } catch (_) {
+                validUrl = false;
+            }
+
+            if (validUrl === true) {
+                testImage($("#chooseProfilePhoto").val()).then(record.bind(null, url), record.bind(null, url));
+            } else {
+                shashin.showToastMessage("URL invalid", "Could not load image. Check URL.", {
+                    icon: "bi-exclamation-triangle",
+                    iconColor: "#FF0000",
+                    borderColor: "danger"
+                });
+            }
+        }
+    });
+
+    function record(url, result) {
+        if (result === "success") {
+            processImage(this);
+        } else {
+            shashin.showToastMessage("URL invalid", "Could not load image. Check URL: "+url+".", {
+                icon: "bi-exclamation-triangle",
+                iconColor: "#FF0000",
+                borderColor: "danger"
+            });
+        }
+    }
+
+    function testImage(url, timeoutT) {
+        return new Promise(function(resolve, reject) {
+            const timeout = timeoutT || 5000;
+            let timer, img = new Image();
+            img.onerror = img.onabort = function() {
+                clearTimeout(timer);
+                reject("error");
+            };
+            img.onload = function() {
+                clearTimeout(timer);
+                resolve("success");
+            };
+            timer = setTimeout(function() {
+                // reset .src to invalid URL so it stops previous
+                // loading, but doens't trigger new load
+                img.src = "//!!!!/noexist.jpg";
+                reject("timeout");
+            }, timeout);
+            img.src = url;
+        });
+    }
+
     $("#chooseProfilePhoto").on("change", function () {
         if (croppieObject !== null) {
             $("#profilePictureEdit").croppie('destroy');
             croppieObject = null;
         }
-        processImage(this);
+
+        if ($("#chooseProfilePhoto").attr("type") === "file") {
+            processImage(this);
+        }
     });
 
+    function processImageMode(event) {
+        if ($("#chooseProfilePhoto").attr("type") === "file") {
+            $("#profilePictureEdit").attr('src', event.target.result);
+        } else {
+            $("#profilePictureEdit").attr("referrerPolicy", "no-referrer");
+            $("#profilePictureEdit").attr("crossorigin", "anonymous");
+            $("#profilePictureEdit").attr('src', $("#chooseProfilePhoto").val());
+        }
+        $("#profilePictureEditWrapper").css("width", "23em");
+        $("#profilePictureEditWrapper").css("display", "block");
+        $("#removeProfile").css("display", "none");
+        $("#saveProfile").css("display", "block");
+        $("#cancelProfile").css("display", "block");
+
+        croppieObject = $("#profilePictureEdit").croppie({
+            customClass: "croppieContainer",
+            enableExif: true,
+            viewport: {
+                width: 200,
+                height: 200,
+                type: 'circle'
+            },
+            boundary: {
+                width: 300,
+                height: 300
+            }
+        });
+
+        $("#cancelProfile").on("click", async function (e) {
+            e.preventDefault();
+
+            $("#profilePictureEdit").attr("src", profileUrl);
+            $("#profilePictureEditWrapper").css("width", "16em");
+            if (profileUrl === null || profileUrl === "" || profileUrl === "#") {
+                $("#profilePictureEditWrapper").css("display", "none");
+                $("#removeProfile").css("display", "none");
+            } else {
+                $("#profilePictureEditWrapper").css("display", "block");
+                $("#removeProfile").css("display", "block");
+            }
+
+            $("#profilePictureEdit").croppie('destroy');
+            croppieObject = null;
+            $("#profileInfo").css("padding-left", "");
+            $("#saveProfile").css("display", "none");
+            $("#cancelProfile").css("display", "none");
+            $("#chooseProfilePhoto").val("");
+            location.replace(location.href.split('#')[0]);
+        });
+
+        $("#saveProfile").on("click", async function (e) {
+            e.preventDefault();
+            croppieObject.croppie('result', 'base64').then(function (base64Result) {
+                // send to server
+                const http = new Http("upload profile picture");
+                http.setAdditionalParameters({cache: false});
+                http.setAdditionalHeaders({
+                    'Cache-Control': 'no-cache, no-store, max-age=0',
+                    'Expires': 'Thu, 1 Jan 1970 00:00:00 GMT',
+                    'Pragma': 'no-cache'
+                });
+                let json = {base64: base64Result};
+                http.ajax("post", "/users/profile", JSON.stringify(json)).then(function (data) {
+                    $("#profilePictureEditWrapper").css("width", "16em");
+                    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                        if (data.hasOwnProperty("imageUrl") && data.imageUrl !== "") {
+                            window.top.location = window.top.location;
+                        } else {
+                            shashin.showToastMessage("Could not save profile", "Could not save profile. " + data.msg, {
+                                icon: "bi-exclamation-triangle",
+                                iconColor: "#FF0000",
+                                borderColor: "danger"
+                            });
+                        }
+                    } else {
+                        shashin.showToastMessage("Could not save profile", "Something went wrong", {
+                            icon: "bi-exclamation-triangle",
+                            iconColor: "#FF0000",
+                            borderColor: "danger"
+                        });
+                    }
+                });
+
+                $("#profilePictureEdit").croppie('destroy');
+                croppieObject = null;
+            });
+        });
+    }
+
     function processImage(input) {
-        if (input.files && input.files[0]) {
+        if ($("#chooseProfilePhoto").attr("type") === "url") {
+            processImageMode();
+        } else if ($("#chooseProfilePhoto").attr("type") === "file" && input.files && input.files[0]) {
             const reader = new FileReader();
 
             reader.onload = function (e) {
-                $("#profilePictureEdit").attr('src', e.target.result);
-                $("#profilePictureEditWrapper").css("width", "23em");
-                $("#profilePictureEditWrapper").css("display", "block");
-                $("#removeProfile").css("display", "none");
-                $("#saveProfile").css("display", "block");
-                $("#cancelProfile").css("display", "block");
-
-                croppieObject = $("#profilePictureEdit").croppie({
-                    customClass: "croppieContainer",
-                    enableExif: true,
-                    viewport: {
-                        width: 200,
-                        height: 200,
-                        type: 'circle'
-                    },
-                    boundary: {
-                        width: 300,
-                        height: 300
-                    }
-                });
-
-                $("#cancelProfile").on("click", async function (e) {
-                    e.preventDefault();
-
-                    $("#profilePictureEdit").attr("src", profileUrl);
-                    $("#profilePictureEditWrapper").css("width", "16em");
-                    if (profileUrl === null || profileUrl === "" || profileUrl === "#") {
-                        $("#profilePictureEditWrapper").css("display", "none");
-                        $("#removeProfile").css("display", "none");
-                    } else {
-                        $("#profilePictureEditWrapper").css("display", "block");
-                        $("#removeProfile").css("display", "block");
-                    }
-
-                    $("#profilePictureEdit").croppie('destroy');
-                    croppieObject = null;
-                    $("#profileInfo").css("padding-left", "");
-                    $("#saveProfile").css("display", "none");
-                    $("#cancelProfile").css("display", "none");
-                    $("#chooseProfilePhoto").val("");
-                    location.replace(location.href.split('#')[0]);
-                });
-
-                $("#saveProfile").on("click", async function (e) {
-                    e.preventDefault();
-                    croppieObject.croppie('result', 'base64').then(function (base64Result) {
-                        // send to server
-                        const http = new Http("upload profile picture");
-                        http.setAdditionalParameters({cache: false});
-                        http.setAdditionalHeaders({
-                            'Cache-Control': 'no-cache, no-store, max-age=0',
-                            'Expires': 'Thu, 1 Jan 1970 00:00:00 GMT',
-                            'Pragma': 'no-cache'
-                        });
-                        let json = {base64: base64Result};
-                        http.ajax("post", "/users/profile", JSON.stringify(json)).then(function (data) {
-                            $("#profilePictureEditWrapper").css("width", "16em");
-                            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                                if (data.hasOwnProperty("imageUrl") && data.imageUrl !== "") {
-                                    window.top.location = window.top.location;
-                                } else {
-                                    shashin.showToastMessage("Could not save profile", "Could not save profile. " + data.msg, {
-                                        icon: "bi-exclamation-triangle",
-                                        iconColor: "#FF0000",
-                                        borderColor: "danger"
-                                    });
-                                }
-                            } else {
-                                shashin.showToastMessage("Could not save profile", "Something went wrong", {
-                                    icon: "bi-exclamation-triangle",
-                                    iconColor: "#FF0000",
-                                    borderColor: "danger"
-                                });
-                            }
-                        });
-
-                        $("#profilePictureEdit").croppie('destroy');
-                        croppieObject = null;
-                    });
-                });
+                processImageMode(e);
             };
 
             reader.readAsDataURL(input.files[0]);
