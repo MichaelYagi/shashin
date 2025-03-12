@@ -151,6 +151,9 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
     }
 
     // Profile edit
+    const initLink = "Enter Image URL";
+    $("#profileMode").text(initLink);
+
     let randomString = Util.getMetadataLocalStorage();
 
     let croppieObject = null;
@@ -176,7 +179,7 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
         } else {
             $("#chooseProfilePhoto").attr("type","file");
             $("#chooseProfilePhoto").attr("placeholder","");
-            $("#profileMode").text("Enter Image URL");
+            $("#profileMode").text(initLink);
         }
     });
 
