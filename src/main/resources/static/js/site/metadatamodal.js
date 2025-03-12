@@ -340,19 +340,6 @@ async function saveMetadata(e) {
                             Util.setMetadataLocalStorage();
                             window.location.replace("/map?latlng=" + $("#latlng").val() + queryParamDates);
                         }
-
-                        // put place name beside lat lng
-                        if (metadataObj.hasOwnProperty("placeName") && metadataObj.placeName !== null && metadataObj.placeName !== "" &&
-                            data !== null && data.hasOwnProperty("shortPlaceName") && data.shortPlaceName !== null && data.shortPlaceName !== "") {
-                            let locationLabel = data.shortPlaceName;
-                            if (Util.isMobile() === false && locationLabel.length > 38) {
-                                locationLabel = $.trim(data.shortPlaceName).substring(0, 38).trim() + "...";
-                            }
-                            const fullPlacenameArray = metadataObj.placeName.split(";");
-                            $("#shortLocationLabel").html(locationLabel);
-                            $("#shortLocationLabel").attr("title", fullPlacenameArray[0]);
-                        }
-
                     }
 
                     if (takenDateUpdated === true && ($("#activePage").length > 0 && $("#activePage").val() !== "recent" && $("#activePage").val() !== "modified" && $("#activePage").val() !== "taken" && $("#activePage").val() !== "folder") || $("#activePage").length === 0) {
