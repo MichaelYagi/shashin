@@ -881,11 +881,10 @@ class TimelineController: BaseController() {
     @RequestMapping(value = ["/rescan/metadata", "/api/v1/rescan/metadata"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
-    fun rescanMetadata(model: Model, @RequestBody requestBody: JsonNode): String? {
+    fun rescanMetadata(@RequestBody requestBody: JsonNode): String? {
 //        println(requestBody)
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         val retMap = mutableMapOf<String,Metadata>()
-        val currentUserObj = model.getAttribute("currentUser") as User?
 
         if (metadataMap.containsKey("metadataIdList")) {
             val metadataIdArray = metadataMap["metadataIdList"] as ArrayList<String>?
@@ -897,13 +896,6 @@ class TimelineController: BaseController() {
 
                     if (metadataObj.isPresent) {
                         val metadata = metadataObj.get()
-
-//                        val originalMetadataAdded = metadata.getAddedAt()
-//                        val originalMetadataCreated = metadata.getCreatedAt()
-//                        val originalMetadataTaken = metadata.getTakenAt()
-//                        val originalTakenYear = metadata.getYear()
-//                        val originalTakenMonth = metadata.getMonth()
-//                        val originalTakenDay = metadata.getDay()
 
                         val stringMetadata = Gson().toJson(metadata, Metadata::class.java)
                         var metadataCopy = Gson().fromJson(stringMetadata, Metadata::class.java)
@@ -974,13 +966,6 @@ class TimelineController: BaseController() {
                                 val imageProcessing = ImageProcessing(apiVersion, File(metadataPath), sidecarDir, metadataCopy)
                                 metadataCopy = imageProcessing.createThumbnails()!!
 
-//                                metadataCopy.setAddedAt(originalMetadataAdded)
-//                                metadataCopy.setCreatedAt(originalMetadataCreated)
-//                                metadataCopy.setTakenAt(originalMetadataTaken)
-//                                metadataCopy.setYear(originalTakenYear)
-//                                metadataCopy.setMonth(originalTakenMonth)
-//                                metadataCopy.setDay(originalTakenDay)
-//                                metadataCopy.setLastAccessedAt(getCurrentTimestamp())
                                 metadataCopy.setModifiedAt(getCurrentTimestamp())
 
                                 if (metadataCopy.getId().isNotEmpty() && metadataCopy.getThumbnailSmallWidth() != null && metadataCopy.getThumbnailSmallHeight() != null && metadataCopy.getThumbnailUrlSmall() != null) {
