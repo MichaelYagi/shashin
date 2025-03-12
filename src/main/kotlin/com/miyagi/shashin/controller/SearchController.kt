@@ -252,6 +252,7 @@ class SearchController: BaseController() {
                     }
 
                     if (searchHistory != null) {
+
                         searchHistoryRepository.save(searchHistory)
                     }
 
@@ -261,11 +262,12 @@ class SearchController: BaseController() {
                     )
                     val searchHistoryLimit = model.getAttribute("searchHistoryLimit").toString().toInt()
                     if (searchHistoryCount > searchHistoryLimit) {
-                        val searchHistoryRefresh = searchHistoryRepository.findTopNByUserIdOrderByIdDesc(
+                        val searchHistoryRefresh = searchHistoryRepository.findTopNByUserIdOrderByIdAsc(
                             currentUserObj.getId(),
                             1,
                             SearchHistoryTypes.AppHistorySearch.type
                         )
+
                         if (searchHistoryRefresh != null && searchHistoryRefresh.count() > 0) {
                             searchHistoryRepository.deleteByIdAndSearchType(
                                 searchHistoryRefresh.last().getId(),
