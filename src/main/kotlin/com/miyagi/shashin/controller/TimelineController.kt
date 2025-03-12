@@ -981,7 +981,7 @@ class TimelineController: BaseController() {
 //                                metadataCopy.setMonth(originalTakenMonth)
 //                                metadataCopy.setDay(originalTakenDay)
 //                                metadataCopy.setLastAccessedAt(getCurrentTimestamp())
-//                                metadataCopy.setModifiedAt(getCurrentTimestamp())
+                                metadataCopy.setModifiedAt(getCurrentTimestamp())
 
                                 if (metadataCopy.getId().isNotEmpty() && metadataCopy.getThumbnailSmallWidth() != null && metadataCopy.getThumbnailSmallHeight() != null && metadataCopy.getThumbnailUrlSmall() != null) {
                                     metadataCopy.setHidden(false)
