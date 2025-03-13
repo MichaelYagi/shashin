@@ -9,9 +9,17 @@
         <div th:replace="~{fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})}"></div>
         <main role="main" class="col">
             <h2 class="mt-3">Test Page</h2>
-
+            <img id="image" src="">
             <script type="text/javascript">
                 $(document).ready(function() {
+                    // $("#image").attr("src","https://shashin.ngrok.app/api/v1/thumbnails/original/c8b00a5b-f7f4-36d2-a376-507f4b6ec091");
+
+                    $.ajax({url: "https://shashin.ngrok.app/api/v1/thumbnails/original/c8b00a5b-f7f4-36d2-a376-507f4b6ec091"
+                    }).fail(function(xhr, textStatus) {
+                        console.log(textStatus)
+                    }).then(function (data, statusText, xhr) {
+                        console.log(textStatus)
+                    });
                 });
             </script>
 
