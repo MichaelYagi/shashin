@@ -207,6 +207,22 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
                 croppieObject = null;
             }
 
+            $("#profilePictureEdit").attr("src", profileUrl);
+            $("#profilePictureEditWrapper").css("width", "16em");
+            if (profileUrl === null || profileUrl === "" || profileUrl === "#") {
+                $("#profilePictureEditWrapper").css("display", "none");
+                $("#removeProfile").css("display", "none");
+            } else {
+                $("#profilePictureEditWrapper").css("display", "block");
+                $("#removeProfile").css("display", "block");
+            }
+
+            $("#profilePictureEdit").croppie('destroy');
+            croppieObject = null;
+            $("#profileInfo").css("padding-left", "");
+            $("#saveProfile").css("display", "none");
+            $("#cancelProfile").css("display", "none");
+
             const url = $("#chooseProfilePhoto").val();
             let validUrl = true;
             try {
@@ -241,7 +257,7 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
 
     function testImage(url, timeoutT) {
         return new Promise(function(resolve, reject) {
-            const timeout = timeoutT || 500;
+            const timeout = timeoutT || 1000;
             let timer, img = new Image();
             img.onerror = img.onabort = function() {
                 clearTimeout(timer);
