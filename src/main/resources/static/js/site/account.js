@@ -253,7 +253,7 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
             };
             timer = setTimeout(function() {
                 // reset .src to invalid URL so it stops previous
-                // loading, but doens't trigger new load
+                // loading, but doesn't trigger new load
                 reject("timeout");
             }, timeout);
             img.src = url;
