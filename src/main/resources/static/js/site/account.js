@@ -257,7 +257,7 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
 
     function testImage(url, timeoutT) {
         return new Promise(function(resolve, reject) {
-            const timeout = timeoutT || 1000;
+            const timeout = timeoutT || 3000;
             let timer, img = new Image();
             img.onerror = img.onabort = function() {
                 clearTimeout(timer);
