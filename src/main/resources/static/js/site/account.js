@@ -241,7 +241,7 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
 
     function testImage(url, timeoutT) {
         return new Promise(function(resolve, reject) {
-            const timeout = timeoutT || 5000;
+            const timeout = timeoutT || 500;
             let timer, img = new Image();
             img.onerror = img.onabort = function() {
                 clearTimeout(timer);
@@ -254,7 +254,6 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
             timer = setTimeout(function() {
                 // reset .src to invalid URL so it stops previous
                 // loading, but doens't trigger new load
-                img.src = "//!!!!/noexist.jpg";
                 reject("timeout");
             }, timeout);
             img.src = url;
@@ -276,8 +275,8 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
         if ($("#chooseProfilePhoto").attr("type") === "file") {
             $("#profilePictureEdit").attr('src', event.target.result);
         } else {
-            $("#profilePictureEdit").attr("referrerPolicy", "no-referrer");
-            $("#profilePictureEdit").attr("crossorigin", "anonymous");
+            // $("#profilePictureEdit").attr("referrerPolicy", "no-referrer");
+            // $("#profilePictureEdit").attr("crossorigin", "anonymous");
             $("#profilePictureEdit").attr('src', $("#chooseProfilePhoto").val());
         }
         $("#profilePictureEditWrapper").css("width", "23em");
