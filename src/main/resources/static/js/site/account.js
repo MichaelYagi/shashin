@@ -175,6 +175,7 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
             // Change to text input
             $("#chooseProfilePhoto").attr("type","url");
             $("#chooseProfilePhoto").attr("placeholder","Enter URL To Upload Image From Web And Press Enter Key to Upload");
+            $("#chooseProfilePhoto").focus();
             $("#profileMode").text("Choose Image From File");
         } else {
             $("#chooseProfilePhoto").attr("type","file");
