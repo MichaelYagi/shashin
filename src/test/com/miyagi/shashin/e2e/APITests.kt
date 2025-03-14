@@ -431,12 +431,12 @@ class APITests: BaseSeleniumTests() {
                 "       \"x-api-key\": \"00000000-00000000-00000000-00000001\"\n" +
                 "   }\n" +
                 "}).fail(function() {\n" +
-                "   return false;\n" +
+                "   return \"fail\";\n" +
                 "}).then(function (data) {\n" +
-                "   return data.apikey;\n" +
+                "   return data.username;\n" +
                 "});")
 
-        Assertions.assertEquals(apikey, "00000000-00000000-00000000-00000001")
+        Assertions.assertEquals(apikey, "testuser")
 
         var isimage = js.executeScript("return " +
                 "\$.ajax({\n" +
