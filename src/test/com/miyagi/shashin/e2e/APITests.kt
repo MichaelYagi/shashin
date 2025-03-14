@@ -17,6 +17,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.openqa.selenium.By
+import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.Keys
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.support.ui.ExpectedConditions
@@ -384,6 +385,70 @@ class APITests: BaseSeleniumTests() {
         Assertions.assertTrue(jsonNode.get("metadata").get("year").toString().toInt() == originalYear)
         Assertions.assertTrue(jsonNode.get("metadata").get("month").toString().toInt() == originalMonth)
         Assertions.assertTrue(jsonNode.get("metadata").get("day").toString().toInt() == originalDay)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun corsAPITest() {
+        val webClient = WebClient.create("http://localhost:$port/")
+
+        var jsonString: String? = null
+        var jsonNode: JsonNode? = null
+        val mapper = ObjectMapper()
+
+        // Get metadata
+        val response = webClient.get()
+            .uri("/api/v1/recent/0")
+            .header("x-api-key", "00000000-00000000-00000000-00000000")
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            .retrieve()
+            .bodyToMono(String::class.java)
+            .block()
+
+        jsonString = response
+
+        if (!jsonString.isNullOrBlank()) {
+            jsonNode = mapper.readTree(jsonString)
+        }
+
+        // Get image metadata ID
+        val metadataList = jsonNode!!.get("metadataList").toList()
+        var metadataId = ""
+        for (metadata in metadataList) {
+            if (metadata.get("type").textValue().contains("image/")) {
+                metadataId = metadata.get("id").textValue()
+                break
+            }
+        }
+
+        Assertions.assertTrue(metadataId != "")
+
+        val js: JavascriptExecutor = this.driver as JavascriptExecutor
+        var apikey = js.executeScript("return \$.ajax({\n" +
+                "                        url: \"http://localhost:$port/api/v1/user/self\",\n" +
+                "                        headers: {\n" +
+                "                            \"x-api-key\": \"00000000-00000000-00000000-00000000\"\n" +
+                "                        }\n" +
+                "                    }).fail(function(xhr, textStatus) {\n" +
+                "                        return false;\n" +
+                "                    }).then(function (data, statusText, xhr) {\n" +
+                "                        return data.apikey;\n" +
+                "                    });")
+
+        Assertions.assertEquals(apikey, "00000000-00000000-00000000-00000000")
+
+        var isimage = js.executeScript("return \$.ajax({\n" +
+                "                        url: \"http://localhost:$port/api/v1/image/"+metadataId+"\",\n" +
+                "                        headers: {\n" +
+                "                            \"x-api-key\": \"00000000-00000000-00000000-00000000\"\n" +
+                "                        }\n" +
+                "                    }).fail(function(xhr, textStatus) {\n" +
+                "                        return \"fail\";\n" +
+                "                    }).then(function (data, statusText, xhr) {\n" +
+                "                        return \"success\";\n" +
+                "                    });")
+
+        Assertions.assertEquals(isimage,"success")
     }
 
     companion object {
