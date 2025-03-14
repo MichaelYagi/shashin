@@ -51,6 +51,7 @@ import javax.imageio.ImageIO
 import kotlin.io.path.Path
 import kotlin.text.split
 
+@CrossOrigin(origins = ["*"], originPatterns = [], allowedHeaders = ["*"], methods = [RequestMethod.GET], maxAge = 3600)
 @Controller
 class MediaServiceController {
 

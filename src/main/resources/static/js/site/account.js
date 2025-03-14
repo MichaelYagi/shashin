@@ -247,7 +247,7 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
         if (result === "success") {
             processImage(this);
         } else {
-            shashin.showToastMessage("URL invalid", "Could not load image. Check URL: "+url+".", {
+            shashin.showToastMessage("URL invalid", "Could not load image. Request "+result+". Check URL: "+url+".", {
                 icon: "bi-exclamation-triangle",
                 iconColor: "#FF0000",
                 borderColor: "danger"
