@@ -6,7 +6,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Tests for rescan feature
 - Choose profile picture from URL
-- Tests for CORS
 
 ### Changed
 - Improved version checking

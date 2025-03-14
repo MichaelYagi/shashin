@@ -16,15 +16,27 @@
 
                     $.ajax({
                         url: "https://shashin.ngrok.app/api/v1/user/self",
-                        // url: "https://shashin.ngrok.app/api/v1/thumbnails/original/c8b00a5b-f7f4-36d2-a376-507f4b6ec091",
                         headers: {
                             "x-api-key": "e456ff02-81ad-39e0-b3bb-a8b4802d8392"
                         }
                     }).fail(function(xhr, textStatus) {
-                        console.log("fail")
+                        console.log("fail self")
                         console.log(textStatus)
                     }).then(function (data, statusText, xhr) {
-                        console.log("success")
+                        console.log("success self")
+                        console.log(data)
+                    });
+
+                    $.ajax({
+                        url: "https://shashin.ngrok.app/api/v1/thumbnails/original/c8b00a5b-f7f4-36d2-a376-507f4b6ec091",
+                        headers: {
+                            "x-api-key": "e456ff02-81ad-39e0-b3bb-a8b4802d8392"
+                        }
+                    }).fail(function(xhr, textStatus) {
+                        console.log("fail image")
+                        console.log(textStatus)
+                    }).then(function (data, statusText, xhr) {
+                        console.log("success image")
                         console.log(data)
                     });
                 });
