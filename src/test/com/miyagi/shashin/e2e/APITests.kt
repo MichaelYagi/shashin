@@ -424,29 +424,31 @@ class APITests: BaseSeleniumTests() {
         Assertions.assertTrue(metadataId != "")
 
         val js: JavascriptExecutor = this.driver as JavascriptExecutor
-        var apikey = js.executeScript("return \$.ajax({\n" +
-                "                        url: \"http://localhost:$port/api/v1/user/self\",\n" +
-                "                        headers: {\n" +
-                "                            \"x-api-key\": \"00000000-00000000-00000000-00000000\"\n" +
-                "                        }\n" +
-                "                    }).fail(function(xhr, textStatus) {\n" +
-                "                        return false;\n" +
-                "                    }).then(function (data, statusText, xhr) {\n" +
-                "                        return data.apikey;\n" +
-                "                    });")
+        var apikey = js.executeScript("return " +
+                "\$.ajax({\n" +
+                "   url: \"http://localhost:$port/api/v1/user/self\",\n" +
+                "   headers: {\n" +
+                "       \"x-api-key\": \"00000000-00000000-00000000-00000001\"\n" +
+                "   }\n" +
+                "}).fail(function() {\n" +
+                "   return false;\n" +
+                "}).then(function (data) {\n" +
+                "   return data.apikey;\n" +
+                "});")
 
-        Assertions.assertEquals(apikey, "00000000-00000000-00000000-00000000")
+        Assertions.assertEquals(apikey, "00000000-00000000-00000000-00000001")
 
-        var isimage = js.executeScript("return \$.ajax({\n" +
-                "                        url: \"http://localhost:$port/api/v1/image/"+metadataId+"\",\n" +
-                "                        headers: {\n" +
-                "                            \"x-api-key\": \"00000000-00000000-00000000-00000000\"\n" +
-                "                        }\n" +
-                "                    }).fail(function(xhr, textStatus) {\n" +
-                "                        return \"fail\";\n" +
-                "                    }).then(function (data, statusText, xhr) {\n" +
-                "                        return \"success\";\n" +
-                "                    });")
+        var isimage = js.executeScript("return " +
+                "\$.ajax({\n" +
+                "   url: \"http://localhost:$port/api/v1/image/"+metadataId+"\",\n" +
+                "   headers: {\n" +
+                "       \"x-api-key\": \"00000000-00000000-00000000-00000001\"\n" +
+                "}\n" +
+                "}).fail(function() {\n" +
+                "   return \"fail\";\n" +
+                "}).then(function () {\n" +
+                "   return \"success\";\n" +
+                "});")
 
         Assertions.assertEquals(isimage,"success")
     }
