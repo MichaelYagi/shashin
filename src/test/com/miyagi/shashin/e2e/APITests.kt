@@ -32,8 +32,13 @@ import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.web.client.match.MockRestRequestMatchers.header
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.ResultMatcher
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
@@ -385,6 +390,79 @@ class APITests: BaseSeleniumTests() {
         Assertions.assertTrue(jsonNode.get("metadata").get("year").toString().toInt() == originalYear)
         Assertions.assertTrue(jsonNode.get("metadata").get("month").toString().toInt() == originalMonth)
         Assertions.assertTrue(jsonNode.get("metadata").get("day").toString().toInt() == originalDay)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun corsAPITest() {
+        val webClient = WebClient.create("http://localhost:$port/")
+
+        var jsonString: String? = null
+        var jsonNode: JsonNode? = null
+        val mapper = ObjectMapper()
+
+        // Get metadata
+        val response = webClient.get()
+            .uri("/api/v1/recent/0")
+            .header("x-api-key", "00000000-00000000-00000000-00000000")
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            .retrieve()
+            .bodyToMono(String::class.java)
+            .block()
+
+        jsonString = response
+
+        if (!jsonString.isNullOrBlank()) {
+            jsonNode = mapper.readTree(jsonString)
+        }
+
+        // Get image metadata ID
+        val metadataList = jsonNode!!.get("metadataList").toList()
+        var metadataId = ""
+        for (metadata in metadataList) {
+            if (metadata.get("type").textValue().contains("image/")) {
+                metadataId = metadata.get("id").textValue()
+                break
+            }
+        }
+
+        Assertions.assertTrue(metadataId != "")
+
+        // Perform options call to test CORS response
+        mockMvc!!.perform(
+            options("/api/v1/user/self")
+            .header("Content-Type", "application/json")
+            .header("X-Api-Key", "00000000-00000000-00000000-00000001")
+            .header("Origin", "http://111.111.0.111:9999")
+            .header("Access-Control-Request-Method", "GET")
+        )
+        .andExpect(status().isOk)
+        .andExpect(MockMvcResultMatchers.header().stringValues("Access-Control-Allow-Origin", "*"))
+        .andExpect(MockMvcResultMatchers.header().stringValues("Access-Control-Allow-Methods", "GET"))
+
+        val selfObjJson = mockMvc!!.perform(
+            get("/api/v1/user/self")
+            .header("Content-Type", "application/json")
+            .header("X-Api-Key", "00000000-00000000-00000000-00000001")
+            .header("Origin", "http://111.111.0.111:9999")
+            .header("Access-Control-Request-Method", "GET")
+        )
+        val selfObj = selfObjJson.andReturn().response.contentAsString
+        var gson = Gson()
+        val userObj = gson.fromJson(selfObj, User::class.java)
+        val username = userObj.getUsername()
+        Assertions.assertEquals(username, "testuser")
+
+        mockMvc!!.perform(
+            options("/api/v1/image/$metadataId")
+            .header("Content-Type", "application/json")
+            .header("X-Api-Key", "00000000-00000000-00000000-00000001")
+            .header("Origin", "http://111.111.0.111:9999")
+            .header("Access-Control-Request-Method", "GET")
+        )
+        .andExpect(status().isOk)
+        .andExpect(MockMvcResultMatchers.header().stringValues("Access-Control-Allow-Origin", "*"))
+        .andExpect(MockMvcResultMatchers.header().stringValues("Access-Control-Allow-Methods", "GET"))
     }
 
     companion object {
