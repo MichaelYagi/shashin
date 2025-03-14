@@ -11,7 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Improved version checking
 - Reset everything after rescan and close modal
-- CORS for image APIs
+- CORS for APIs
 
 ### Fixed
 - Search queue mechanism
