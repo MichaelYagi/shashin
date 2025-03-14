@@ -168,8 +168,33 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
         $("#removeProfileConfirmationModal").modal('show');
     });
 
+    function resetProfile() {
+        if (croppieObject !== null) {
+            $("#profilePictureEdit").croppie('destroy');
+            croppieObject = null;
+        }
+
+        $("#profilePictureEdit").attr("src", profileUrl);
+        $("#profilePictureEditWrapper").css("width", "16em");
+        if (profileUrl === null || profileUrl === "" || profileUrl === "#") {
+            $("#profilePictureEditWrapper").css("display", "none");
+            $("#removeProfile").css("display", "none");
+        } else {
+            $("#profilePictureEditWrapper").css("display", "block");
+            $("#removeProfile").css("display", "block");
+        }
+
+        $("#profilePictureEdit").croppie('destroy');
+        croppieObject = null;
+        $("#profileInfo").css("padding-left", "");
+        $("#saveProfile").css("display", "none");
+        $("#cancelProfile").css("display", "none");
+    }
+
     $("#profileMode").on("click", function (e) {
         e.preventDefault();
+
+        resetProfile();
 
         if ($("#chooseProfilePhoto").attr("type") === "file") {
             // Change to text input
@@ -202,26 +227,7 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
 
     $("#chooseProfilePhoto").on("keydown", function(e) {
         if ($("#chooseProfilePhoto").attr("type") === "url" && (e.key === "Enter" || e.code === "Enter" || e.which === 13 || e.keyCode === 13)) {
-            if (croppieObject !== null) {
-                $("#profilePictureEdit").croppie('destroy');
-                croppieObject = null;
-            }
-
-            $("#profilePictureEdit").attr("src", profileUrl);
-            $("#profilePictureEditWrapper").css("width", "16em");
-            if (profileUrl === null || profileUrl === "" || profileUrl === "#") {
-                $("#profilePictureEditWrapper").css("display", "none");
-                $("#removeProfile").css("display", "none");
-            } else {
-                $("#profilePictureEditWrapper").css("display", "block");
-                $("#removeProfile").css("display", "block");
-            }
-
-            $("#profilePictureEdit").croppie('destroy');
-            croppieObject = null;
-            $("#profileInfo").css("padding-left", "");
-            $("#saveProfile").css("display", "none");
-            $("#cancelProfile").css("display", "none");
+            resetProfile();
 
             const url = $("#chooseProfilePhoto").val();
             let validUrl = true;
@@ -318,21 +324,7 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
         $("#cancelProfile").on("click", async function (e) {
             e.preventDefault();
 
-            $("#profilePictureEdit").attr("src", profileUrl);
-            $("#profilePictureEditWrapper").css("width", "16em");
-            if (profileUrl === null || profileUrl === "" || profileUrl === "#") {
-                $("#profilePictureEditWrapper").css("display", "none");
-                $("#removeProfile").css("display", "none");
-            } else {
-                $("#profilePictureEditWrapper").css("display", "block");
-                $("#removeProfile").css("display", "block");
-            }
-
-            $("#profilePictureEdit").croppie('destroy');
-            croppieObject = null;
-            $("#profileInfo").css("padding-left", "");
-            $("#saveProfile").css("display", "none");
-            $("#cancelProfile").css("display", "none");
+            resetProfile();
             $("#chooseProfilePhoto").val("");
             location.replace(location.href.split('#')[0]);
         });
