@@ -31,6 +31,8 @@ import org.springframework.security.web.header.HeaderWriterFilter
 import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter
 import org.springframework.security.web.session.HttpSessionEventPublisher
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import javax.sql.DataSource
 
 // Used to validate URL paths for login redirect
@@ -245,6 +247,15 @@ class ApiSecurityConfig {
     fun apiSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .csrf{ it.disable() }
+            .cors{ httpSecurityCorsConfigurer ->
+                val configuration = CorsConfiguration()
+                configuration.allowedOrigins = listOf("*")
+                configuration.allowedMethods = listOf("*")
+                configuration.allowedHeaders = listOf("*")
+                val source = UrlBasedCorsConfigurationSource()
+                source.registerCorsConfiguration("/**", configuration)
+                httpSecurityCorsConfigurer.configurationSource(source)
+            }
             .sessionManagement{ it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .addFilterBefore(AuthenticationFilter(userRepository), UsernamePasswordAuthenticationFilter::class.java)
             .securityMatcher("/api/v1/**")
