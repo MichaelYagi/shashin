@@ -15,21 +15,34 @@
                 <div class="col">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title">Availability</h5>
+                            <h5 class="card-title">Usage</h5>
                         </div>
                         <div class="card-body">
                             <div class="card-text">
-                                <div class="row">
-                                    <div class="col">
-                                        <strong id="uptime"></strong>
+                                <div class="row pb-5">
+                                    <div class="col-sm text-center">
+                                        <h1 class="display-6" id="uptime"></h1>
                                     </div>
 
-                                    <div class="col" id="nominatimStatusContainer" style="display: none">
-                                        <strong>Nominatim</strong>&nbsp;<span id="nominatimStatus"></span>
+                                    <div class="col-sm text-center" id="nominatimStatusContainer" style="display: none">
+                                        <h1 class="display-6">Nominatim&nbsp;<span id="nominatimStatus"></span></h1>
                                     </div>
 
-                                    <div class="col" id="compreFaceStatusContainer" style="display: none">
-                                        <strong><span id="compreFaceText"></span></strong>&nbsp;<span id="compreFaceStatus"></span>
+                                    <div class="col-sm text-center" id="compreFaceStatusContainer" style="display: none">
+                                        <h1 class="display-6"><span id="compreFaceText"></span></strong>&nbsp;<span id="compreFaceStatus"></h1>
+                                    </div>
+                                </div>
+                                <div class="row pb-5">
+                                    <div class="col-sm">
+                                        <canvas id="osChart"></canvas>
+                                    </div>
+
+                                    <div class="col-sm">
+                                        <canvas id="browserChart"></canvas>
+                                    </div>
+
+                                    <div class="col-sm">
+                                        <canvas id="userChart"></canvas>
                                     </div>
                                 </div>
                             </div>
@@ -82,21 +95,6 @@
                     </div>
                 </div>
 
-<!--                <div class="col">-->
-<!--                    <div class="card">-->
-<!--                        <div class="card-header">-->
-<!--                            <h2 id="userCounts"></h2>-->
-<!--                            <p class="text-muted">Total Users</p>-->
-<!--                        </div>-->
-<!--                        <div class="card-body">-->
-<!--                            <h5 class="card-title">User Stats</h5>-->
-<!--                            <p class="card-text">-->
-<!--                                <canvas id="userChart" height="400"></canvas>-->
-<!--                            </p>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-
                 <div class="col">
                     <div class="card">
                         <div class="card-header">
@@ -112,38 +110,6 @@
                     </div>
                 </div>
             </div>
-
-<!--            <div class="row pb-4">-->
-<!--                <div class="col">-->
-<!--                    <div class="card">-->
-<!--                        <div class="card-header">-->
-<!--                            <h2 id="osCount"></h2>-->
-<!--                            <p class="text-muted">Total OS types</p>-->
-<!--                        </div>-->
-<!--                        <div class="card-body">-->
-<!--                            <h5 class="card-title">OS Stats</h5>-->
-<!--                            <p class="card-text">-->
-<!--                                <canvas id="osChart" height="600"></canvas>-->
-<!--                            </p>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-
-<!--                <div class="col">-->
-<!--                    <div class="card">-->
-<!--                        <div class="card-header">-->
-<!--                            <h2 id="browserCount"></h2>-->
-<!--                            <p class="text-muted">Total Browser Types</p>-->
-<!--                        </div>-->
-<!--                        <div class="card-body">-->
-<!--                            <h5 class="card-title">Browser Stats</h5>-->
-<!--                            <p class="card-text">-->
-<!--                                <canvas id="browserChart" height="600"></canvas>-->
-<!--                            </p>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
 
             <div class="row pb-4">
                 <div class="col">
@@ -211,7 +177,7 @@
                     $("#nominatimStatusContainer").css("display", "block");
                     $("#nominatimStatus").css({
                         "color": (data["nominatimAvailable"] ? "green" : "red"),
-                        "font-size": "1rem"
+                        "font-size": "2rem"
                     });
                     $("#nominatimStatus").addClass((data["nominatimAvailable"] ? "bi-check-circle" : "bi-x-circle"));
                 }
@@ -219,7 +185,7 @@
                     $("#compreFaceStatusContainer").css("display", "block");
                     $("#compreFaceStatus").css({
                         "color": (data["compreFaceAvailable"] ? "green" : "red"),
-                        "font-size": "1rem"
+                        "font-size": "2rem"
                     });
                     $("#compreFaceStatus").addClass((data["compreFaceAvailable"] ? "bi-check-circle" : "bi-x-circle"));
                     if (data["compreFaceAvailable"]) {
@@ -272,11 +238,11 @@
 
                 const dashboard = new Dashboard();
                 const siteStatChart = dashboard.displaySiteStatChart(siteStatChartData);
-                // const userChart = dashboard.displayUserChart(userChartData);
+                const userChart = dashboard.displayUserChart(userChartData);
                 const mediaChart = dashboard.displayMediaChart(mediaChartData);
                 const cameraChart = dashboard.displayCameraChart(cameraChartData);
-                // const agentNameChart = dashboard.displayAgentNameChart(agentNameChartData);
-                // const osNameChart = dashboard.displayOsNameChart(osNameChartData);
+                const agentNameChart = dashboard.displayAgentNameChart(agentNameChartData);
+                const osNameChart = dashboard.displayOsNameChart(osNameChartData);
                 const keywordChart = dashboard.displayKeywordChart(keywordChartData);
                 const cpuChart = dashboard.displayCpuChart();
                 const memoryChart = dashboard.displayMemoryChart();

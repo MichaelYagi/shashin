@@ -1,4 +1,18 @@
 class Dashboard {
+
+    static randomPastelHsla(index, num) {
+        if (num < 1) {
+            num = 1;
+        }
+
+        const hue = index * ((360 / num) % 360);
+
+        return [
+            'hsla('+hue+', 70%,  72%, 0.8)',
+            'hsla('+hue+', 70%,  72%, 1)'
+        ];
+    }
+
     displaySiteStatChart(data) {
         const ctx = $('#siteStatChart');
         return new Chart(ctx, {
@@ -18,50 +32,6 @@ class Dashboard {
                         'rgba(255, 206, 86, 1)',
                         'rgba(153, 102, 255, 1)',
                         'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
-                        }
-                    }
-                },
-                plugins: {
-                    legend: false
-                },
-                maintainAspectRatio: false
-            }
-        });
-    }
-
-    displayUserChart(data) {
-        const ctx = $('#userChart');
-        return new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Authorized Users', 'Authorized Admins', 'Authorized Super Admins', 'Unauthorized Users', 'Unauthorized Admins', 'Unauthorized Super Admins'],
-                datasets: [{
-                    data: [data.activeUserCount, data.activeAdminCount, data.activeSuperCount, data.pendingUserCount, data.pendingAdminCount, data.pendingSuperCount],
-                    backgroundColor: [
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(153, 102, 255, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(153, 102, 255, 1)'
                     ],
                     borderWidth: 1
                 }]
@@ -190,49 +160,93 @@ class Dashboard {
         });
     }
 
-    displayAgentNameChart(data) {
-        const ctx = $('#browserChart');
-        const agentNameCountObj = JSON.parse(data.agentNameCountJson);
+    displayUserChart(data) {
+        const ctx = $('#userChart');
+
         return new Chart(ctx, {
-            type: 'bar',
+            type: 'doughnut',
             data: {
+                labels: ['Authorized Users', 'Authorized Admins', 'Authorized Super Admins', 'Unauthorized Users', 'Unauthorized Admins', 'Unauthorized Super Admins'],
                 datasets: [{
-                    data: agentNameCountObj,
+                    data: [data.activeUserCount, data.activeAdminCount, data.activeSuperCount, data.pendingUserCount, data.pendingAdminCount, data.pendingSuperCount],
                     backgroundColor: [
-                        'rgba(54, 162, 235, 0.2)'
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(234, 159, 120, 0.2)',
+                        'rgba(163, 158, 238, 0.2)'
                     ],
                     borderColor: [
-                        'rgba(54, 162, 235, 1)'
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(234, 159, 120, 1)',
+                        'rgba(163, 158, 238, 1)'
                     ],
                     borderWidth: 1
                 }]
             },
             options: {
-                indexAxis: 'y',
-                scales: {
-                    y: {
-                        ticks: {
-                            // Truncate ticks
-                            callback: function (index) {
-                                let labelValue = agentNameCountObj[index].y;
-                                if (labelValue.length > 9) {
-                                    labelValue = labelValue.substr(0, 8) + "...";
-                                }
-                                return labelValue;
-                            },
-                            maxRotation: 0,
-                            minRotation: 0
-                        }
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: "left",
+                        align: "end"
                     },
-                    x: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
-                        }
+                    title: {
+                        display: true,
+                        text: 'Users'
                     }
                 },
+                maintainAspectRatio: false
+            }
+        });
+    }
+
+    displayAgentNameChart(data) {
+        const ctx = $('#browserChart');
+        const agentNameCountObj = JSON.parse(data.agentNameCountJson);
+        const agentNameCounts = [];
+        const agentNames = [];
+        const agentNameColors = [];
+        const agentNameBorders = [];
+
+        for (let i = 0; i < agentNameCountObj.length; i++) {
+            const hsl = Dashboard.randomPastelHsla((Math.random() * (agentNameCountObj.length - i)), agentNameCountObj.length);
+            const agentNameObj = agentNameCountObj[i];
+            agentNameCounts.push(agentNameObj.x);
+            agentNames.push(agentNameObj.y);
+            agentNameColors.push(hsl[0]);
+            agentNameBorders.push(hsl[1]);
+        }
+
+        return new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: agentNames,
+                datasets: [{
+                    data: agentNameCounts,
+                    backgroundColor: agentNameColors,
+                    borderColor: agentNameBorders,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
                 plugins: {
-                    legend: false
+                    legend: {
+                        display: true,
+                        position: "left",
+                        align: "end"
+                    },
+                    title: {
+                        display: true,
+                        text: 'Browsers'
+                    }
+                },
+                layout: {
+                    padding: 20
                 },
                 maintainAspectRatio: false
             }
@@ -242,46 +256,42 @@ class Dashboard {
     displayOsNameChart(data) {
         const ctx = $('#osChart');
         const osNameCountObj = JSON.parse(data.osNameCountJson);
+        const osNameCounts = [];
+        const osNames = [];
+        const osNameColors = [];
+        const osNameBorders = [];
+
+        for (let i = 0; i < osNameCountObj.length; i++) {
+            const hsl = Dashboard.randomPastelHsla((Math.random() * (osNameCountObj.length - i)), osNameCountObj.length);
+            const osNameObj = osNameCountObj[i];
+            osNameCounts.push(osNameObj.x);
+            osNames.push(osNameObj.y);
+            osNameColors.push(hsl[0]);
+            osNameBorders.push(hsl[1]);
+        }
+
         return new Chart(ctx, {
-            type: 'bar',
+            type: 'doughnut',
             data: {
+                labels: osNames,
                 datasets: [{
-                    data: osNameCountObj,
-                    backgroundColor: [
-                        'rgba(54, 162, 235, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(54, 162, 235, 1)'
-                    ],
-                    borderWidth: 1
+                    data: osNameCounts,
+                    backgroundColor: osNameColors,
+                    borderColor: osNameBorders,
+                    hoverOffset: 4
                 }]
             },
             options: {
-                indexAxis: 'y',
-                scales: {
-                    y: {
-                        ticks: {
-                            // Truncate ticks
-                            callback: function (index) {
-                                let labelValue = osNameCountObj[index].y;
-                                if (labelValue.length > 9) {
-                                    labelValue = labelValue.substr(0, 8) + "...";
-                                }
-                                return labelValue;
-                            },
-                            maxRotation: 0,
-                            minRotation: 0
-                        }
-                    },
-                    x: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
-                        }
-                    }
-                },
                 plugins: {
-                    legend: false
+                    legend: {
+                        display: true,
+                        position: "left",
+                        align: "end"
+                    },
+                    title: {
+                        display: true,
+                        text: 'OS'
+                    }
                 },
                 maintainAspectRatio: false
             }
