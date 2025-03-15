@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Reset everything after rescan and close modal
 - CORS for APIs
 - Dashboard UI updates
+- Improved server start time capture in dashboard
 
 ### Fixed
 - Search queue mechanism
