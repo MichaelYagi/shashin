@@ -18,6 +18,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Links in dashboard bar graph
 
 ### Removed
+- OS, Browser and User stats in dashboard
 
 ## [2.8.0] - 2025-03-09
 ### Added
