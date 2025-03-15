@@ -1,8 +1,10 @@
 package com.miyagi.shashin.model
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import java.util.*
 import jakarta.persistence.*
 import jakarta.validation.constraints.NotBlank
+import java.io.IOException
 
 @Entity
 @Table(name = "useragent")
@@ -91,5 +93,24 @@ class Useragent {
 
     fun setCreatedAt(createdAt: String?) {
         this.createdAt = createdAt
+    }
+
+    override fun toString(): String {
+        val map = mutableMapOf<String, Any?>()
+        map["id"] = this.id
+        map["userId"] = this.userId
+        map["deviceClass"] = this.deviceClass
+        map["osClass"] = this.osClass
+        map["osName"] = this.osName
+        map["osVersion"] = this.osVersion
+        map["agentName"] = this.agentName
+        val mapper = ObjectMapper()
+        var mapJson: String? = "{}"
+        try {
+            mapJson = mapper.writeValueAsString(map)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return mapJson.toString()
     }
 }
