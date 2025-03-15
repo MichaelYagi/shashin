@@ -82,20 +82,20 @@
                     </div>
                 </div>
 
-                <div class="col">
-                    <div class="card">
-                        <div class="card-header">
-                            <h2 id="userCounts"></h2>
-                            <p class="text-muted">Total Users</p>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">User Stats</h5>
-                            <p class="card-text">
-                                <canvas id="userChart" height="400"></canvas>
-                            </p>
-                        </div>
-                    </div>
-                </div>
+<!--                <div class="col">-->
+<!--                    <div class="card">-->
+<!--                        <div class="card-header">-->
+<!--                            <h2 id="userCounts"></h2>-->
+<!--                            <p class="text-muted">Total Users</p>-->
+<!--                        </div>-->
+<!--                        <div class="card-body">-->
+<!--                            <h5 class="card-title">User Stats</h5>-->
+<!--                            <p class="card-text">-->
+<!--                                <canvas id="userChart" height="400"></canvas>-->
+<!--                            </p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
 
                 <div class="col">
                     <div class="card">
@@ -272,11 +272,11 @@
 
                 const dashboard = new Dashboard();
                 const siteStatChart = dashboard.displaySiteStatChart(siteStatChartData);
-                const userChart = dashboard.displayUserChart(userChartData);
+                // const userChart = dashboard.displayUserChart(userChartData);
                 const mediaChart = dashboard.displayMediaChart(mediaChartData);
                 const cameraChart = dashboard.displayCameraChart(cameraChartData);
-                const agentNameChart = dashboard.displayAgentNameChart(agentNameChartData);
-                const osNameChart = dashboard.displayOsNameChart(osNameChartData);
+                // const agentNameChart = dashboard.displayAgentNameChart(agentNameChartData);
+                // const osNameChart = dashboard.displayOsNameChart(osNameChartData);
                 const keywordChart = dashboard.displayKeywordChart(keywordChartData);
                 const cpuChart = dashboard.displayCpuChart();
                 const memoryChart = dashboard.displayMemoryChart();
