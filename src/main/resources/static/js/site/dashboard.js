@@ -126,20 +126,7 @@ class Dashboard {
     displayCameraChart(data) {
         const ctx = $('#cameraChart');
         const cameraCountObj = JSON.parse(data.cameraCountJson);
-
-        // Click label
-        document.getElementById("cameraChart").onclick = function (evt) {
-            let point = Chart.helpers.getRelativePosition(event, cameraChart);
-            let datasetIndex = cameraChart.scales.y.getValueForPixel(point.y);
-            if (datasetIndex >= 0) {
-                let label = cameraCountObj[datasetIndex].y;
-                if (typeof label !== "undefined" && label !== "" && label !== "Unknown") {
-                    window.open("/search?term=" + encodeURI(label.split(' ').join('+')).replace(";", "%3B"), '_blank').focus();
-                }
-            }
-        };
-
-        return new Chart(ctx, {
+        const cameraChart = new Chart(ctx, {
             type: 'bar',
             data: {
                 datasets: [{
@@ -183,24 +170,29 @@ class Dashboard {
                 maintainAspectRatio: false
             }
         });
+
+        // Click label
+        $('#cameraChart').on('click', function (evt) {
+            let point = Chart.helpers.getRelativePosition(evt, cameraChart);
+            let datasetIndex = cameraChart.scales.y.getValueForPixel(point.y);
+            if (datasetIndex >= 0) {
+                let label = cameraCountObj[datasetIndex].y;
+                if (typeof label !== "undefined" && label !== "" && label !== "Unknown") {
+                    window.open("/search?term=" + encodeURI(label.split(' ').join('+')).replace(";", "%3B"), '_blank').focus();
+                }
+            }
+        });
+        $('#cameraChart').on('mouseenter', function (e) {
+            e.target.style.cursor = 'pointer';
+        });
+        $('#cameraChart').on('mouseleave', function (e) {
+            e.target.style.cursor = 'default';
+        });
     }
 
     displayAgentNameChart(data) {
         const ctx = $('#browserChart');
         const agentNameCountObj = JSON.parse(data.agentNameCountJson);
-
-        // Click label
-        document.getElementById("browserChart").onclick = function (evt) {
-            let point = Chart.helpers.getRelativePosition(event, agentNameChart);
-            let datasetIndex = agentNameChart.scales.y.getValueForPixel(point.y);
-            if (datasetIndex >= 0) {
-                let label = agentNameCountObj[datasetIndex].y;
-                if (typeof label !== "undefined" && label !== "" && label !== "Unknown") {
-                    window.open("/search?term=" + encodeURI(label.split(' ').join('+')).replace(";", "%3B"), '_blank').focus();
-                }
-            }
-        };
-
         return new Chart(ctx, {
             type: 'bar',
             data: {
@@ -250,19 +242,6 @@ class Dashboard {
     displayOsNameChart(data) {
         const ctx = $('#osChart');
         const osNameCountObj = JSON.parse(data.osNameCountJson);
-
-        // Click label
-        document.getElementById("osChart").onclick = function (evt) {
-            let point = Chart.helpers.getRelativePosition(event, osNameChart);
-            let datasetIndex = osNameChart.scales.y.getValueForPixel(point.y);
-            if (datasetIndex >= 0) {
-                let label = osNameCountObj[datasetIndex].y;
-                if (typeof label !== "undefined" && label !== "" && label !== "Unknown") {
-                    window.open("/search?term=" + encodeURI(label.split(' ').join('+')).replace(";", "%3B"), '_blank').focus();
-                }
-            }
-        };
-
         return new Chart(ctx, {
             type: 'bar',
             data: {
@@ -314,21 +293,7 @@ class Dashboard {
         const keywordCounts = JSON.parse(Util.decodeHtml(data.keywordCountJson));
         const keywordCountObj = JSON.parse(data.keywordCountJson);
 
-        const openLinkFromLabel = function () {
-            let point = Chart.helpers.getRelativePosition(event, keywordChart);
-            let datasetIndex = keywordChart.scales.y.getValueForPixel(point.y);
-            if (datasetIndex >= 0) {
-                let label = keywordCountObj[datasetIndex].y;
-                if (typeof label !== "undefined" && label !== "" && label !== "Unknown") {
-                    window.open("/search?term=" + encodeURI(label.split(' ').join('+')).replace(";", "%3B"), '_blank').focus();
-                }
-            }
-        };
-
-        // Click label
-        $('#keywordChart').on('click', openLinkFromLabel);
-
-        return new Chart(ctx, {
+        const keywordChart = new Chart(ctx, {
             type: 'bar',
             data: {
                 datasets: [{
@@ -371,6 +336,26 @@ class Dashboard {
                 },
                 maintainAspectRatio: false
             }
+        });
+
+        const openLinkFromLabel = function (e) {
+            let point = Chart.helpers.getRelativePosition(e, keywordChart);
+            let datasetIndex = keywordChart.scales.y.getValueForPixel(point.y);
+            if (datasetIndex >= 0) {
+                let label = keywordCountObj[datasetIndex].y;
+                if (typeof label !== "undefined" && label !== "" && label !== "Unknown") {
+                    window.open("/search?term=" + encodeURI(label.split(' ').join('+')).replace(";", "%3B"), '_blank').focus();
+                }
+            }
+        };
+
+        // Click label
+        $('#keywordChart').on('click', openLinkFromLabel);
+        $('#keywordChart').on('mouseenter', function (e) {
+            e.target.style.cursor = 'pointer';
+        });
+        $('#keywordChart').on('mouseleave', function (e) {
+            e.target.style.cursor = 'default';
         });
     }
 
