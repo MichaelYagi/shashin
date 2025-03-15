@@ -278,14 +278,13 @@ class DashboardController {
         val cameraCounts = metadataRepository.countByCameraType()
         val cameraCountList = ArrayList<HashMap<String, Any>>()
         for (cameraCount in cameraCounts) {
-            val cameraCountMap = HashMap<String, Any>()
-            var cameraName = cameraCount.getCamera().toString()
-            if (cameraCount.getCamera() == null) {
-                cameraName = "Unknown"
+            if (cameraCount.getCamera() != null) {
+                val cameraCountMap = HashMap<String, Any>()
+                var cameraName = cameraCount.getCamera().toString()
+                cameraCountMap["y"] = cameraName
+                cameraCountMap["x"] = cameraCount.getCount().toString().toInt()
+                cameraCountList.add(cameraCountMap)
             }
-            cameraCountMap["y"] = cameraName
-            cameraCountMap["x"] = cameraCount.getCount().toString().toInt()
-            cameraCountList.add(cameraCountMap)
         }
         response["cameraCountJson"] = mapper.writeValueAsString(cameraCountList)
         response["cameraTotalCount"] = cameraCountList.count()
