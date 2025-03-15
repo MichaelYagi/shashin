@@ -47,6 +47,9 @@ class DashboardController {
     @Value("\${app.role.user}")
     private var userRole: String? = null
 
+    @Value("#{systemProperties['shashinServerStartUnixMS']}")
+    private var shashinServerStartUnixMS: String? = null
+
     @Autowired
     private lateinit var metadataRepository: MetadataRepository
 
@@ -142,6 +145,7 @@ class DashboardController {
 //            model[k] = v!!
 //        }
 
+        model["shashinServerStartUnixMS"] = shashinServerStartUnixMS;
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)

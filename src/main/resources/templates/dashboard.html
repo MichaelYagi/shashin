@@ -155,106 +155,121 @@
     <script src="/js/site/min/dashboard.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
-    shashin.updateSearchInput("Dashboard");
+    $(document).ready(function() {
 
-    Util.updateProgressBar(100, {autoVisibility: false});
-    $("#progressBarWrapper").visible();
+        /*<![CDATA[*/
+        shashin.nonce = /*[[${cspNonce}]]*/ '';
+        const shashinServerStartUnixMSStr = /*[[${shashinServerStartUnixMS}]]*/ '0';
+        /*]]>*/
 
-    $(document).ready(function () {
-        setTimeout(function () {
-            shashin.showToastMessage("Loading", "Loading dashboard data ...", {
-                icon: "bi-info-circle",
-                iconColor: "#777777",
-                autohide: false,
-                tag: "dashboard",
-                closeButton: false
-            });
-            const http = new Http("dashboard data");
-            http.ajax("get", "/dashboard/data").then(function (data) {
+        const shashinServerStartUnixMS = Number(shashinServerStartUnixMSStr);
 
-                $("#uptime").html("Uptime <code>" + data["uptime"] + "</code>");
-                if (data["nominatimAvailable"] !== null) {
-                    $("#nominatimStatusContainer").css("display", "block");
-                    $("#nominatimStatus").css({
-                        "color": (data["nominatimAvailable"] ? "green" : "red"),
-                        "font-size": "2rem"
-                    });
-                    $("#nominatimStatus").addClass((data["nominatimAvailable"] ? "bi-check-circle" : "bi-x-circle"));
-                }
-                if (data["compreFaceAvailable"] !== null) {
-                    $("#compreFaceStatusContainer").css("display", "block");
-                    $("#compreFaceStatus").css({
-                        "color": (data["compreFaceAvailable"] ? "green" : "red"),
-                        "font-size": "2rem"
-                    });
-                    $("#compreFaceStatus").addClass((data["compreFaceAvailable"] ? "bi-check-circle" : "bi-x-circle"));
-                    if (data["compreFaceAvailable"]) {
-                        $("#compreFaceText").text('CompreFace');
-                    } else {
-                        $("#compreFaceText").html('<a href="/settings" target="_blank">CompreFace</a>');
-                    }
-                }
+        shashin.updateSearchInput("Dashboard");
 
-                $("#sidecarSizeText").text(data["sidecarSizeText"]);
-                $("#sidecarUsableSpaceText").text("Sidecar Data Size - " + data["sidecarUsableSpaceText"] + " usable space left");
-                $("#userCounts").text(parseInt(data["allowedUserCount"]) + parseInt(data["notAllowedUserCount"]) + parseInt(data["allowedAdminCount"]) + parseInt(data["notAllowedAdminCount"]) + parseInt(data["allowedSuperCount"]) + parseInt(data["notAllowedSuperCount"]));
-                $("#mediaCount").text(parseInt(data["photoCount"]) + parseInt(data["videoCount"]));
-                $("#osCount").text(parseInt(data["osTotalCount"]));
-                $("#browserCount").text(parseInt(data["browserTotalCount"]));
-                $("#cameraCount").text(parseInt(data["cameraTotalCount"]));
-                $("#keywordCount").text(parseInt(data["keywordTotalCount"]));
+        Util.updateProgressBar(100, {autoVisibility: false});
+        $("#progressBarWrapper").visible();
 
-                const siteStatChartData = {};
-                siteStatChartData["photosWithPeopleTaggedCount"] = data["photosWithPeopleTaggedCount"];
-                siteStatChartData["favoritesCount"] = data["favoritesCount"];
-                siteStatChartData["commentsCount"] = data["commentsCount"];
-                siteStatChartData["albumCount"] = data["albumCount"];
+        if (shashinServerStartUnixMS > 0) {
+            setInterval(function () {
+                const elapsed = Date.now()-shashinServerStartUnixMS;
+                $("#uptime").html("Uptime <code>" + Util.convertMSToString(elapsed) + "</code>");
+            }, 1000);
+        }
 
-                const userChartData = {};
-                userChartData["activeUserCount"] = data["allowedUserCount"];
-                userChartData["pendingUserCount"] = data["notAllowedUserCount"];
-                userChartData["activeAdminCount"] = data["allowedAdminCount"];
-                userChartData["pendingAdminCount"] = data["notAllowedAdminCount"];
-                userChartData["activeSuperCount"] = data["allowedSuperCount"];
-                userChartData["pendingSuperCount"] = data["notAllowedSuperCount"];
-
-                const mediaChartData = {};
-                mediaChartData["photoCount"] = data["photoCount"];
-                mediaChartData["videoCount"] = data["videoCount"];
-                mediaChartData["notLocatedCount"] = data["notLocatedCount"];
-                mediaChartData["hiddenCount"] = data["hiddenCount"];
-
-                const cameraChartData = {};
-                cameraChartData["cameraCountJson"] = data["cameraCountJson"];
-
-                const agentNameChartData = {};
-                agentNameChartData["agentNameCountJson"] = data["agentNameCountJson"];
-
-                const osNameChartData = {};
-                osNameChartData["osNameCountJson"] = data["osNameCountJson"];
-
-                const keywordChartData = {};
-                keywordChartData["keywordCountJson"] = data["keywordCountJson"];
-
-                const dashboard = new Dashboard();
-                const siteStatChart = dashboard.displaySiteStatChart(siteStatChartData);
-                const userChart = dashboard.displayUserChart(userChartData);
-                const mediaChart = dashboard.displayMediaChart(mediaChartData);
-                const cameraChart = dashboard.displayCameraChart(cameraChartData);
-                const agentNameChart = dashboard.displayAgentNameChart(agentNameChartData);
-                const osNameChart = dashboard.displayOsNameChart(osNameChartData);
-                const keywordChart = dashboard.displayKeywordChart(keywordChartData);
-                const cpuChart = dashboard.displayCpuChart();
-                const memoryChart = dashboard.displayMemoryChart();
-                dashboard.startWebSocket(cpuChart, memoryChart);
-
-                $("#progressBarWrapper").invisible();
-                Util.updateProgressBar(0, {autoVisibility: false});
-                shashin.closeToastMessages({
-                    tag: "dashboard"
+        $(document).ready(function () {
+            setTimeout(function () {
+                shashin.showToastMessage("Loading", "Loading dashboard data ...", {
+                    icon: "bi-info-circle",
+                    iconColor: "#777777",
+                    autohide: false,
+                    tag: "dashboard",
+                    closeButton: false
                 });
-            });
-        }, 0);
+                const http = new Http("dashboard data");
+                http.ajax("get", "/dashboard/data").then(function (data) {
+                    if (data["nominatimAvailable"] !== null) {
+                        $("#nominatimStatusContainer").css("display", "block");
+                        $("#nominatimStatus").css({
+                            "color": (data["nominatimAvailable"] ? "green" : "red"),
+                            "font-size": "2rem"
+                        });
+                        $("#nominatimStatus").addClass((data["nominatimAvailable"] ? "bi-check-circle" : "bi-x-circle"));
+                    }
+                    if (data["compreFaceAvailable"] !== null) {
+                        $("#compreFaceStatusContainer").css("display", "block");
+                        $("#compreFaceStatus").css({
+                            "color": (data["compreFaceAvailable"] ? "green" : "red"),
+                            "font-size": "2rem"
+                        });
+                        $("#compreFaceStatus").addClass((data["compreFaceAvailable"] ? "bi-check-circle" : "bi-x-circle"));
+                        if (data["compreFaceAvailable"]) {
+                            $("#compreFaceText").text('CompreFace');
+                        } else {
+                            $("#compreFaceText").html('<a href="/settings" target="_blank">CompreFace</a>');
+                        }
+                    }
+
+                    $("#sidecarSizeText").text(data["sidecarSizeText"]);
+                    $("#sidecarUsableSpaceText").text("Sidecar Data Size - " + data["sidecarUsableSpaceText"] + " usable space left");
+                    $("#userCounts").text(parseInt(data["allowedUserCount"]) + parseInt(data["notAllowedUserCount"]) + parseInt(data["allowedAdminCount"]) + parseInt(data["notAllowedAdminCount"]) + parseInt(data["allowedSuperCount"]) + parseInt(data["notAllowedSuperCount"]));
+                    $("#mediaCount").text(parseInt(data["photoCount"]) + parseInt(data["videoCount"]));
+                    $("#osCount").text(parseInt(data["osTotalCount"]));
+                    $("#browserCount").text(parseInt(data["browserTotalCount"]));
+                    $("#cameraCount").text(parseInt(data["cameraTotalCount"]));
+                    $("#keywordCount").text(parseInt(data["keywordTotalCount"]));
+
+                    const siteStatChartData = {};
+                    siteStatChartData["photosWithPeopleTaggedCount"] = data["photosWithPeopleTaggedCount"];
+                    siteStatChartData["favoritesCount"] = data["favoritesCount"];
+                    siteStatChartData["commentsCount"] = data["commentsCount"];
+                    siteStatChartData["albumCount"] = data["albumCount"];
+
+                    const userChartData = {};
+                    userChartData["activeUserCount"] = data["allowedUserCount"];
+                    userChartData["pendingUserCount"] = data["notAllowedUserCount"];
+                    userChartData["activeAdminCount"] = data["allowedAdminCount"];
+                    userChartData["pendingAdminCount"] = data["notAllowedAdminCount"];
+                    userChartData["activeSuperCount"] = data["allowedSuperCount"];
+                    userChartData["pendingSuperCount"] = data["notAllowedSuperCount"];
+
+                    const mediaChartData = {};
+                    mediaChartData["photoCount"] = data["photoCount"];
+                    mediaChartData["videoCount"] = data["videoCount"];
+                    mediaChartData["notLocatedCount"] = data["notLocatedCount"];
+                    mediaChartData["hiddenCount"] = data["hiddenCount"];
+
+                    const cameraChartData = {};
+                    cameraChartData["cameraCountJson"] = data["cameraCountJson"];
+
+                    const agentNameChartData = {};
+                    agentNameChartData["agentNameCountJson"] = data["agentNameCountJson"];
+
+                    const osNameChartData = {};
+                    osNameChartData["osNameCountJson"] = data["osNameCountJson"];
+
+                    const keywordChartData = {};
+                    keywordChartData["keywordCountJson"] = data["keywordCountJson"];
+
+                    const dashboard = new Dashboard();
+                    const siteStatChart = dashboard.displaySiteStatChart(siteStatChartData);
+                    const userChart = dashboard.displayUserChart(userChartData);
+                    const mediaChart = dashboard.displayMediaChart(mediaChartData);
+                    const cameraChart = dashboard.displayCameraChart(cameraChartData);
+                    const agentNameChart = dashboard.displayAgentNameChart(agentNameChartData);
+                    const osNameChart = dashboard.displayOsNameChart(osNameChartData);
+                    const keywordChart = dashboard.displayKeywordChart(keywordChartData);
+                    const cpuChart = dashboard.displayCpuChart();
+                    const memoryChart = dashboard.displayMemoryChart();
+                    dashboard.startWebSocket(cpuChart, memoryChart);
+
+                    $("#progressBarWrapper").invisible();
+                    Util.updateProgressBar(0, {autoVisibility: false});
+                    shashin.closeToastMessages({
+                        tag: "dashboard"
+                    });
+                });
+            }, 0);
+        });
     });
 </script>
 
