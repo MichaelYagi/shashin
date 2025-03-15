@@ -15,6 +15,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Search queue mechanism
+- Links in dashboard bar graph
 
 ### Removed
 
