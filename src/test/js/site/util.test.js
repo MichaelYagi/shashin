@@ -316,6 +316,26 @@ describe('#Util tests', function() {
         assert.equal(aCookie, "");
     });
 
+    it('MS to string tests', function() {
+        let msToString = Util.convertMSToDayTime(1000);
+        assert.equal(msToString, "00:00:01");
+
+        msToString = Util.convertMSToDayTime(60*1000);
+        assert.equal(msToString, "00:01:00");
+
+        msToString = Util.convertMSToDayTime(60*60*1000);
+        assert.equal(msToString, "01:00:00");
+
+        msToString = Util.convertMSToDayTime(35*57*25*1000);
+        assert.equal(msToString, "13:51:15");
+
+        msToString = Util.convertMSToDayTime(60*35*57*25*1000);
+        assert.equal(msToString, "34 days 15:15:00");
+
+        msToString = Util.convertMSToDayTime(1200*35*57*25*1000);
+        assert.equal(msToString, "692 days 17:00:00");
+    });
+
     it('Get OS tests', function() {
         const windowRef = global.window;
 
