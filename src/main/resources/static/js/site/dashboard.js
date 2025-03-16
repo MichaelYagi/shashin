@@ -1,16 +1,24 @@
 class Dashboard {
 
-    static randomPastelHsla(index, num) {
-        if (num < 1) {
-            num = 1;
+    static randomPastelHsla(hue) {
+        if (hue < 1) {
+            hue = 1;
         }
 
-        const hue = index * ((360 / num) % 360);
+        // const saturation = Math.floor(Dashboard.getRandomInt(60,70));
+        // const lightness = Math.floor(Dashboard.getRandomInt(62,72));
+        const saturation = 70;
+        const lightness = 72;
+        hue = Math.floor(hue);
 
         return [
-            'hsla('+hue+', 70%,  72%, 0.8)',
-            'hsla('+hue+', 70%,  72%, 1)'
+            'hsla('+hue+', '+saturation+'%, '+lightness+'%, 0.8)',
+            'hsla('+hue+', '+saturation+'%, '+lightness+'%, 1)'
         ];
+    }
+
+    static getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
     displaySiteStatChart(data) {
@@ -163,28 +171,51 @@ class Dashboard {
     displayUserChart(data) {
         const ctx = $('#userChart');
 
+        let counts = [];
+        let labels = [];
+
+        if (data.activeUserCount > 0) {
+            counts.push(data.activeUserCount);
+            labels.push("Authorized Users");
+        }
+        if (data.activeAdminCount > 0) {
+            counts.push(data.activeAdminCount);
+            labels.push("Authorized Admins");
+        }
+        if (data.activeSuperCount > 0) {
+            counts.push(data.activeSuperCount);
+            labels.push("Authorized Super Admins");
+        }
+        if (data.pendingUserCount > 0) {
+            counts.push(data.pendingUserCount);
+            labels.push("Unauthorized Users");
+        }
+        if (data.pendingAdminCount > 0) {
+            counts.push(data.pendingAdminCount);
+            labels.push("Unauthorized Admins");
+        }
+        if (data.pendingSuperCount > 0) {
+            counts.push(data.pendingSuperCount);
+            labels.push("Unauthorized Super Admins");
+        }
+
+        const userColors = [];
+        const userBorders = [];
+
+        for (let i = 0; i < counts.length; i++) {
+            const hsl = Dashboard.randomPastelHsla(Dashboard.getRandomInt(1,360));
+            userColors.push(hsl[0]);
+            userBorders.push(hsl[1]);
+        }
+
         return new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['Authorized Users', 'Authorized Admins', 'Authorized Super Admins', 'Unauthorized Users', 'Unauthorized Admins', 'Unauthorized Super Admins'],
+                labels: labels,
                 datasets: [{
-                    data: [data.activeUserCount, data.activeAdminCount, data.activeSuperCount, data.pendingUserCount, data.pendingAdminCount, data.pendingSuperCount],
-                    backgroundColor: [
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)',
-                        'rgba(234, 159, 120, 0.2)',
-                        'rgba(163, 158, 238, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)',
-                        'rgba(234, 159, 120, 1)',
-                        'rgba(163, 158, 238, 1)'
-                    ],
+                    data: counts,
+                    backgroundColor: userColors,
+                    borderColor: userBorders,
                     borderWidth: 1
                 }]
             },
@@ -214,7 +245,7 @@ class Dashboard {
         const agentNameBorders = [];
 
         for (let i = 0; i < agentNameCountObj.length; i++) {
-            const hsl = Dashboard.randomPastelHsla((Math.random() * (agentNameCountObj.length - i)), agentNameCountObj.length);
+            const hsl = Dashboard.randomPastelHsla(Dashboard.getRandomInt(1,360));
             const agentNameObj = agentNameCountObj[i];
             agentNameCounts.push(agentNameObj.x);
             agentNames.push(agentNameObj.y);
@@ -262,7 +293,7 @@ class Dashboard {
         const osNameBorders = [];
 
         for (let i = 0; i < osNameCountObj.length; i++) {
-            const hsl = Dashboard.randomPastelHsla((Math.random() * (osNameCountObj.length - i)), osNameCountObj.length);
+            const hsl = Dashboard.randomPastelHsla(Dashboard.getRandomInt(1,360));
             const osNameObj = osNameCountObj[i];
             osNameCounts.push(osNameObj.x);
             osNames.push(osNameObj.y);
