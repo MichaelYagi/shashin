@@ -1,5 +1,9 @@
 class Dashboard {
 
+    constructor() {
+        this.tension = 0.4;
+    }
+
     static randomPastelHsla(hue) {
         if (hue < 1) {
             hue = 1;
@@ -412,14 +416,14 @@ class Dashboard {
                         data: [],
                         fill: false,
                         borderColor: 'rgb(54, 162, 235)',
-                        tension: 0 //0.5 for curved
+                        tension: this.tension //0.5 for curved
                     },
                     {
                         label: 'System CPU %',
                         data: [],
                         fill: false,
                         borderColor: 'rgb(255, 206, 86)',
-                        tension: 0
+                        tension: this.tension
                     }
                 ]
             },
@@ -453,7 +457,7 @@ class Dashboard {
                         data: [],
                         fill: false,
                         borderColor: 'rgb(54, 162, 235)',
-                        tension: 0
+                        tension: this.tension
                     }
                 ]
             },
