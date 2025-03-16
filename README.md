@@ -65,3 +65,4 @@ Tech Stack
 * [CompreFace](https://github.com/exadel-inc/CompreFace) - Self hosted REST API for face recognition
 * [Deep Java Library](https://djl.ai/) - Face and object recognition library
 * [Croppie](https://foliotek.github.io/Croppie/) - Image cropping Javascript plugin
+* [Chart.js](https://www.chartjs.org/) - Javascript charting library
