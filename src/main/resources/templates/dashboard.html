@@ -166,6 +166,10 @@
 
         shashin.updateSearchInput("Dashboard");
 
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
         Util.updateProgressBar(100, {autoVisibility: false});
         $("#progressBarWrapper").visible();
 
@@ -211,12 +215,9 @@
 
                     $("#sidecarSizeText").text(data["sidecarSizeText"]);
                     $("#sidecarUsableSpaceText").text("Sidecar Data Size - " + data["sidecarUsableSpaceText"] + " usable space left");
-                    $("#userCounts").text(parseInt(data["allowedUserCount"]) + parseInt(data["notAllowedUserCount"]) + parseInt(data["allowedAdminCount"]) + parseInt(data["notAllowedAdminCount"]) + parseInt(data["allowedSuperCount"]) + parseInt(data["notAllowedSuperCount"]));
-                    $("#mediaCount").text(parseInt(data["photoCount"]) + parseInt(data["videoCount"]));
-                    $("#osCount").text(parseInt(data["osTotalCount"]));
-                    $("#browserCount").text(parseInt(data["browserTotalCount"]));
-                    $("#cameraCount").text(parseInt(data["cameraTotalCount"]));
-                    $("#keywordCount").text(parseInt(data["keywordTotalCount"]));
+                    $("#mediaCount").text(numberWithCommas(parseInt(data["photoCount"]) + parseInt(data["videoCount"])));
+                    $("#cameraCount").text(numberWithCommas(parseInt(data["cameraTotalCount"])));
+                    $("#keywordCount").text(numberWithCommas(parseInt(data["keywordTotalCount"])));
 
                     const siteStatChartData = {};
                     siteStatChartData["photosWithPeopleTaggedCount"] = data["photosWithPeopleTaggedCount"];
