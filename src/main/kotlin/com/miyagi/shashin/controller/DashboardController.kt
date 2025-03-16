@@ -47,7 +47,7 @@ class DashboardController {
     @Value("\${app.role.user}")
     private var userRole: String? = null
 
-    @Value("#{systemProperties['shashinServerStartUnixMS']}")
+    @Value("#{systemProperties['com.miyagi.shashin.serverStartUnixMS']}")
     private var shashinServerStartUnixMS: String? = null
 
     @Autowired
