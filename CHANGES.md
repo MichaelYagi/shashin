@@ -4,6 +4,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Fixed
+
+### Removed
+
+## [2.8.1] - 2025-03-15
+### Added
 - Tests for rescan feature
 - Choose profile picture from URL
 - Tests for CORS
