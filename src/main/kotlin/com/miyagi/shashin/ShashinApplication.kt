@@ -19,7 +19,7 @@ var jdbcTemplate: JdbcTemplate? = null
 
 fun main(args: Array<String>) {
 	System.setProperty("org.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH", "true")
-	System.setProperty("shashinServerStartUnixMS", (System.currentTimeMillis()).toString())
+	System.setProperty("com.miyagi.shashin.serverStartUnixMS", (System.currentTimeMillis()).toString())
 	jdbcTemplate?.execute("PRAGMA journal_mode = WAL")
 	jdbcTemplate?.execute("PRAGMA synchronous = NORMAL")
 	runApplication<ShashinApplication>(*args)
