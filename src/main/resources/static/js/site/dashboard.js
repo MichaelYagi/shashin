@@ -27,7 +27,7 @@ class Dashboard {
 
     displaySiteStatChart(data) {
         const ctx = $('#siteStatChart');
-        return new Chart(ctx, {
+        new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: ['Photos With People Tagged', 'Total Favorites', 'Total Comments', 'Total Albums'],
@@ -67,7 +67,7 @@ class Dashboard {
 
     displayMediaChart(data) {
         const ctx = $('#mediaChart');
-        return new Chart(ctx, {
+        new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: ['Photos', 'Videos', 'No GPS Data', 'Removed'],
@@ -212,7 +212,7 @@ class Dashboard {
             userBorders.push(hsl[1]);
         }
 
-        return new Chart(ctx, {
+        new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: labels,
@@ -257,7 +257,7 @@ class Dashboard {
             agentNameBorders.push(hsl[1]);
         }
 
-        return new Chart(ctx, {
+        new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: agentNames,
@@ -305,7 +305,7 @@ class Dashboard {
             osNameBorders.push(hsl[1]);
         }
 
-        return new Chart(ctx, {
+        new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: osNames,

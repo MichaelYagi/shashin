@@ -252,13 +252,13 @@
                     keywordChartData["keywordCountJson"] = data["keywordCountJson"];
 
                     const dashboard = new Dashboard();
-                    const siteStatChart = dashboard.displaySiteStatChart(siteStatChartData);
-                    const userChart = dashboard.displayUserChart(userChartData);
-                    const mediaChart = dashboard.displayMediaChart(mediaChartData);
-                    const cameraChart = dashboard.displayCameraChart(cameraChartData);
-                    const agentNameChart = dashboard.displayAgentNameChart(agentNameChartData);
-                    const osNameChart = dashboard.displayOsNameChart(osNameChartData);
-                    const keywordChart = dashboard.displayKeywordChart(keywordChartData);
+                    dashboard.displaySiteStatChart(siteStatChartData);
+                    dashboard.displayUserChart(userChartData);
+                    dashboard.displayMediaChart(mediaChartData);
+                    dashboard.displayCameraChart(cameraChartData);
+                    dashboard.displayAgentNameChart(agentNameChartData);
+                    dashboard.displayOsNameChart(osNameChartData);
+                    dashboard.displayKeywordChart(keywordChartData);
                     const cpuChart = dashboard.displayCpuChart();
                     const memoryChart = dashboard.displayMemoryChart();
                     dashboard.startWebSocket(cpuChart, memoryChart);
