@@ -168,33 +168,28 @@ class TextUtils {
 
                 val now = Instant.now().toEpochMilli()
 
-                var cookieEqualCount = 0
-                for (i in verifiedCookieValue.length - 1 downTo 0) {
-                    var char = verifiedCookieValue[i]
-                    if (char == '=') {
-                        cookieEqualCount++
-                    } else {
-                        break
+                fun removeTrailingEquals(value: String): String {
+                    verifiedCookieValue = value
+                    var cookieEqualCount = 0
+                    for (i in verifiedCookieValue.length - 1 downTo 0) {
+                        var char = verifiedCookieValue[i]
+                        if (char == '=') {
+                            cookieEqualCount++
+                        } else {
+                            break
+                        }
                     }
-                }
 
-                if (cookieEqualCount > 0) {
-                    verifiedCookieValue = verifiedCookieValue.dropLast(cookieEqualCount)
-                }
-
-                cookieEqualCount = 0
-                for (i in cookieValue.length - 1 downTo 0) {
-                    var char = cookieValue[i]
-                    if (char == '=') {
-                        cookieEqualCount++
-                    } else {
-                        break
+                    if (cookieEqualCount > 0) {
+                        verifiedCookieValue = verifiedCookieValue.dropLast(cookieEqualCount)
                     }
+
+                    return verifiedCookieValue
                 }
 
-                if (cookieEqualCount > 0) {
-                    cookieValue = cookieValue.dropLast(cookieEqualCount)
-                }
+                verifiedCookieValue = removeTrailingEquals(verifiedCookieValue)
+
+                cookieValue = removeTrailingEquals(cookieValue)
 
                 return verifiedCookieValue != "" && verifiedCookieValue == cookieValue && timeStamp != 0L && timeStamp > now
             }
