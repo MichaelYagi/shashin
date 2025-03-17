@@ -161,28 +161,28 @@ class TextUtils {
 
                 if (cookieValue != "" && username != "") {
                     val user = userRepository?.findByUsername(username)
-                    if (user != null && user.getId() > 0) {
+                    if (user != null && user.getId() > 0 && user.getIsAuthorized() == true) {
                         verifiedCookieValue = verifyPersistenceToken(username.toString(), timeStamp.toString(), user.getPassword().toString(), rememberMeKey.toString()).toString()
                     }
                 }
 
                 val now = Instant.now().toEpochMilli()
 
-                var verifiedCookieEqualCount = 0
+                var cookieEqualCount = 0
                 for (i in verifiedCookieValue.length - 1 downTo 0) {
                     var char = verifiedCookieValue[i]
                     if (char == '=') {
-                        verifiedCookieEqualCount++
+                        cookieEqualCount++
                     } else {
                         break
                     }
                 }
 
-                if (verifiedCookieEqualCount > 0) {
-                    verifiedCookieValue = verifiedCookieValue.dropLast(verifiedCookieEqualCount)
+                if (cookieEqualCount > 0) {
+                    verifiedCookieValue = verifiedCookieValue.dropLast(cookieEqualCount)
                 }
 
-                var cookieEqualCount = 0
+                cookieEqualCount = 0
                 for (i in cookieValue.length - 1 downTo 0) {
                     var char = cookieValue[i]
                     if (char == '=') {
