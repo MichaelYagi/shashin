@@ -153,7 +153,7 @@ class TextUtils {
         fun checkValidRememberMeToken(requestCookie: String?, rememberMeKey: String, userRepository: UserRepository?): Boolean {
             if (requestCookie != null) {
                 val seriesExpiryMap = parseRememberMeCookie(requestCookie)
-                var cookieValue = seriesExpiryMap["cookieValue"]
+                var cookieValue = seriesExpiryMap["cookieValue"].toString()
                 var username = seriesExpiryMap["token"]
                 val series = seriesExpiryMap["series"]
                 var timeStamp = if (series != null && series != "") series.toLong() else 0L
@@ -162,13 +162,41 @@ class TextUtils {
                 if (cookieValue != "" && username != "") {
                     val user = userRepository?.findByUsername(username)
                     if (user != null && user.getId() > 0) {
-                        verifiedCookieValue = verifyPersistenceToken(username.toString(), timeStamp.toString(), user.getPassword().toString(), rememberMeKey.toString())
+                        verifiedCookieValue = verifyPersistenceToken(username.toString(), timeStamp.toString(), user.getPassword().toString(), rememberMeKey.toString()).toString()
                     }
                 }
 
                 val now = Instant.now().toEpochMilli()
 
-                return verifiedCookieValue != "" && cookieValue == verifiedCookieValue && timeStamp != 0L && timeStamp > now
+                var verifiedCookieEqualCount = 0
+                for (i in verifiedCookieValue.length - 1 downTo 0) {
+                    var char = verifiedCookieValue[i]
+                    if (char == '=') {
+                        verifiedCookieEqualCount++
+                    } else {
+                        break
+                    }
+                }
+
+                if (verifiedCookieEqualCount > 0) {
+                    verifiedCookieValue = verifiedCookieValue.dropLast(verifiedCookieEqualCount)
+                }
+
+                var cookieEqualCount = 0
+                for (i in cookieValue.length - 1 downTo 0) {
+                    var char = cookieValue[i]
+                    if (char == '=') {
+                        cookieEqualCount++
+                    } else {
+                        break
+                    }
+                }
+
+                if (cookieEqualCount > 0) {
+                    cookieValue = cookieValue.dropLast(cookieEqualCount)
+                }
+
+                return verifiedCookieValue != "" && verifiedCookieValue == cookieValue && timeStamp != 0L && timeStamp > now
             }
 
             return false
