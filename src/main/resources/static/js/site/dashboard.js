@@ -253,15 +253,23 @@ class Dashboard {
                         },
                         formatter: (value, ctx) => {
                             let sum = 0;
+
+                            let userType = ctx.chart.data.labels[ctx.dataIndex];
+                            if (userType.includes("Super Admins")) {
+                                userType = userType.replace("Super Admins","Super\nAdmins");
+                            }
+
                             let dataArr = ctx.chart.data.datasets[0].data;
                             dataArr.map(data => {
                                 sum += data;
                             });
+
                             let percentage = Math.trunc(value*100 / sum);
                             if (percentage < this.showLabelThreshold) {
                                 return '';
                             }
-                            return percentage + '%\n' + ctx.chart.data.labels[ctx.dataIndex];
+
+                            return percentage + '%\n' + userType;
                         }
                     }
                 },
