@@ -2,7 +2,7 @@ class Dashboard {
 
     constructor() {
         this.tension = 0.4;
-        this.showLabelThreshold = 15;
+        this.showLabelThreshold = 10;
     }
 
     static randomPastelHsla(hue) {
@@ -238,6 +238,7 @@ class Dashboard {
                     },
                     datalabels: {
                         textAlign: 'center',
+                        clamp: true,
                         formatter: (value, ctx) => {
                             let sum = 0;
                             let dataArr = ctx.chart.data.datasets[0].data;
@@ -299,6 +300,7 @@ class Dashboard {
                     },
                     datalabels: {
                         textAlign: 'center',
+                        clamp: true,
                         formatter: (value, ctx) => {
                             let sum = 0;
                             let dataArr = ctx.chart.data.datasets[0].data;
@@ -340,6 +342,7 @@ class Dashboard {
             plugins: [ChartDataLabels],
             data: {
                 labels: osNames,
+                clamp: true,
                 datasets: [{
                     data: osNameCounts,
                     backgroundColor: osNameColors,
