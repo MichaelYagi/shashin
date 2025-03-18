@@ -3,6 +3,7 @@ class Dashboard {
     constructor() {
         this.tension = 0.4;
         this.showLabelThreshold = 10;
+        this.pieChartFontSize = 13;
     }
 
     static randomPastelHsla(hue) {
@@ -234,7 +235,11 @@ class Dashboard {
                     },
                     title: {
                         display: true,
-                        text: 'Users'
+                        text: 'Users',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
                     },
                     datalabels: {
                         textAlign: 'center',
@@ -243,7 +248,7 @@ class Dashboard {
                         textShadowBlur: 5,
                         textShadowColor: "white",
                         font: {
-                            size: 14,
+                            size: this.pieChartFontSize,
                             weight: 'bold'
                         },
                         formatter: (value, ctx) => {
@@ -260,7 +265,7 @@ class Dashboard {
                         }
                     }
                 },
-                maintainAspectRatio: true
+                maintainAspectRatio: false
             }
         });
     }
@@ -303,7 +308,11 @@ class Dashboard {
                     },
                     title: {
                         display: true,
-                        text: 'Browsers'
+                        text: 'Browsers',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
                     },
                     datalabels: {
                         textAlign: 'center',
@@ -312,7 +321,7 @@ class Dashboard {
                         textShadowBlur: 5,
                         textShadowColor: "white",
                         font: {
-                            size: 14,
+                            size: this.pieChartFontSize,
                             weight: 'bold'
                         },
                         formatter: (value, ctx) => {
@@ -329,7 +338,7 @@ class Dashboard {
                         }
                     }
                 },
-                maintainAspectRatio: true
+                maintainAspectRatio: false
             }
         });
     }
@@ -372,7 +381,11 @@ class Dashboard {
                     },
                     title: {
                         display: true,
-                        text: 'OS'
+                        text: 'OS',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
                     },
                     datalabels: {
                         textAlign: 'center',
@@ -381,7 +394,7 @@ class Dashboard {
                         textShadowBlur: 5,
                         textShadowColor: "white",
                         font: {
-                            size: 14,
+                            size: this.pieChartFontSize,
                             weight: 'bold'
                         },
                         formatter: (value, ctx) => {
@@ -398,7 +411,7 @@ class Dashboard {
                         }
                     }
                 },
-                maintainAspectRatio: true
+                maintainAspectRatio: false
             }
         });
     }
