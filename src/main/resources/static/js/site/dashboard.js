@@ -2,6 +2,7 @@ class Dashboard {
 
     constructor() {
         this.tension = 0.4;
+        this.showLabelThreshold = 15;
     }
 
     static randomPastelHsla(hue) {
@@ -214,6 +215,7 @@ class Dashboard {
 
         new Chart(ctx, {
             type: 'doughnut',
+            plugins: [ChartDataLabels],
             data: {
                 labels: labels,
                 datasets: [{
@@ -233,6 +235,21 @@ class Dashboard {
                     title: {
                         display: true,
                         text: 'Users'
+                    },
+                    datalabels: {
+                        textAlign: 'center',
+                        formatter: (value, ctx) => {
+                            let sum = 0;
+                            let dataArr = ctx.chart.data.datasets[0].data;
+                            dataArr.map(data => {
+                                sum += data;
+                            });
+                            let percentage = Math.trunc(value*100 / sum);
+                            if (percentage < this.showLabelThreshold) {
+                                return '';
+                            }
+                            return percentage + '%\n' + ctx.chart.data.labels[ctx.dataIndex];
+                        }
                     }
                 },
                 maintainAspectRatio: true
@@ -259,6 +276,7 @@ class Dashboard {
 
         new Chart(ctx, {
             type: 'doughnut',
+            plugins: [ChartDataLabels],
             data: {
                 labels: agentNames,
                 datasets: [{
@@ -278,6 +296,21 @@ class Dashboard {
                     title: {
                         display: true,
                         text: 'Browsers'
+                    },
+                    datalabels: {
+                        textAlign: 'center',
+                        formatter: (value, ctx) => {
+                            let sum = 0;
+                            let dataArr = ctx.chart.data.datasets[0].data;
+                            dataArr.map(data => {
+                                sum += data;
+                            });
+                            let percentage = Math.trunc(value*100 / sum);
+                            if (percentage < this.showLabelThreshold) {
+                                return '';
+                            }
+                            return percentage + '%\n' + ctx.chart.data.labels[ctx.dataIndex];
+                        }
                     }
                 },
                 maintainAspectRatio: true
@@ -304,6 +337,7 @@ class Dashboard {
 
         new Chart(ctx, {
             type: 'doughnut',
+            plugins: [ChartDataLabels],
             data: {
                 labels: osNames,
                 datasets: [{
@@ -323,6 +357,21 @@ class Dashboard {
                     title: {
                         display: true,
                         text: 'OS'
+                    },
+                    datalabels: {
+                        textAlign: 'center',
+                        formatter: (value, ctx) => {
+                            let sum = 0;
+                            let dataArr = ctx.chart.data.datasets[0].data;
+                            dataArr.map(data => {
+                                sum += data;
+                            });
+                            let percentage = Math.trunc(value*100 / sum);
+                            if (percentage < this.showLabelThreshold) {
+                                return '';
+                            }
+                            return percentage + '%\n' + ctx.chart.data.labels[ctx.dataIndex];
+                        }
                     }
                 },
                 maintainAspectRatio: true
