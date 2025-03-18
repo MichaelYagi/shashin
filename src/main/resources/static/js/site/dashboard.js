@@ -240,6 +240,12 @@ class Dashboard {
                         textAlign: 'center',
                         clamp: true,
                         display: 'auto',
+                        textShadowBlur: 5,
+                        textShadowColor: "white",
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        },
                         formatter: (value, ctx) => {
                             let sum = 0;
                             let dataArr = ctx.chart.data.datasets[0].data;
@@ -303,6 +309,12 @@ class Dashboard {
                         textAlign: 'center',
                         clamp: true,
                         display: 'auto',
+                        textShadowBlur: 5,
+                        textShadowColor: "white",
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        },
                         formatter: (value, ctx) => {
                             let sum = 0;
                             let dataArr = ctx.chart.data.datasets[0].data;
@@ -366,6 +378,12 @@ class Dashboard {
                         textAlign: 'center',
                         clamp: true,
                         display: 'auto',
+                        textShadowBlur: 5,
+                        textShadowColor: "white",
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        },
                         formatter: (value, ctx) => {
                             let sum = 0;
                             let dataArr = ctx.chart.data.datasets[0].data;
