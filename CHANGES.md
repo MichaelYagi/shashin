@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Labels in dashboard circle charts
+- Upgraded charts.js to 4.x.x
 
 ### Fixed
 - Cookie check for login persistence
