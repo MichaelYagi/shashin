@@ -226,7 +226,7 @@ class Dashboard {
             options: {
                 plugins: {
                     legend: {
-                        display: true,
+                        display: false,
                         position: "left",
                         align: "end"
                     },
@@ -235,7 +235,7 @@ class Dashboard {
                         text: 'Users'
                     }
                 },
-                maintainAspectRatio: false
+                maintainAspectRatio: true
             }
         });
     }
@@ -271,7 +271,7 @@ class Dashboard {
             options: {
                 plugins: {
                     legend: {
-                        display: true,
+                        display: false,
                         position: "left",
                         align: "end"
                     },
@@ -280,10 +280,7 @@ class Dashboard {
                         text: 'Browsers'
                     }
                 },
-                layout: {
-                    padding: 20
-                },
-                maintainAspectRatio: false
+                maintainAspectRatio: true
             }
         });
     }
@@ -319,7 +316,7 @@ class Dashboard {
             options: {
                 plugins: {
                     legend: {
-                        display: true,
+                        display: false,
                         position: "left",
                         align: "end"
                     },
@@ -328,7 +325,7 @@ class Dashboard {
                         text: 'OS'
                     }
                 },
-                maintainAspectRatio: false
+                maintainAspectRatio: true
             }
         });
     }
