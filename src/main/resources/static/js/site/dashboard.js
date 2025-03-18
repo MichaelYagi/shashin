@@ -133,7 +133,7 @@ class Dashboard {
                             callback: function (index) {
                                 let labelValue = cameraCountObj[index].y;
                                 if (labelValue.length > 9) {
-                                    labelValue = labelValue.substr(0, 8) + "...";
+                                    labelValue = labelValue.substring(0, 8) + "...";
                                 }
                                 return labelValue;
                             },
@@ -452,7 +452,7 @@ class Dashboard {
                             callback: function (index) {
                                 let labelValue = keywordCountObj[index].y;
                                 if (labelValue.length > 9) {
-                                    labelValue = labelValue.substr(0, 8) + "...";
+                                    labelValue = labelValue.substring(0, 8) + "...";
                                 }
                                 return labelValue;
                             },
