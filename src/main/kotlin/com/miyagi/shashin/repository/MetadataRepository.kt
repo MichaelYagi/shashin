@@ -68,7 +68,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
 
    fun countAllByLatIsNullAndLngIsNull(): Int
 
-   @Query("SELECT camera, COUNT(*) AS count FROM metadata GROUP BY camera ORDER BY count DESC", nativeQuery = true)
+   @Query("SELECT camera, COUNT(*) AS count FROM metadata WHERE camera IS NOT NULL GROUP BY camera ORDER BY count DESC", nativeQuery = true)
    fun countByCameraType(): MutableIterable<CameraTypeCount>
 
    @Query("SELECT camera FROM metadata WHERE camera IS NOT NULL GROUP BY camera ORDER BY camera COLLATE NOCASE ASC", nativeQuery = true)
