@@ -106,10 +106,14 @@ class DashboardController {
 
         if (processCpuLoad < 0 || processCpuLoad.isNaN()) {
             processCpuLoad = 0.0
+        } else if (processCpuLoad > 1) {
+            processCpuLoad = 1.0
         }
 
         if (systemCpuLoad < 0 || systemCpuLoad.isNaN()) {
             systemCpuLoad = 0.0
+        } else if (systemCpuLoad > 1) {
+            systemCpuLoad = 1.0
         }
 
         logger.log(Level.INFO, "Process CPU load:$processCpuLoad")
