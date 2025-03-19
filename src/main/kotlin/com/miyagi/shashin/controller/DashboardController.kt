@@ -104,6 +104,9 @@ class DashboardController {
         var processCpuLoad = osMXBean.processCpuLoad
         var systemCpuLoad = osMXBean.cpuLoad
 
+        logger.log(Level.INFO, "Raw process CPU load:$processCpuLoad")
+        logger.log(Level.INFO, "Raw system CPU load:$systemCpuLoad")
+
         if (processCpuLoad < 0 || processCpuLoad.isNaN()) {
             processCpuLoad = 0.0
         } else if (processCpuLoad > 1) {
@@ -116,8 +119,8 @@ class DashboardController {
             systemCpuLoad = 1.0
         }
 
-        logger.log(Level.INFO, "Process CPU load:$processCpuLoad")
-        logger.log(Level.INFO, "System CPU load:$systemCpuLoad")
+        logger.log(Level.INFO, "Processed process CPU load:$processCpuLoad")
+        logger.log(Level.INFO, "Processed system CPU load:$systemCpuLoad")
 
         metricsMap["processCpuLoadPercentDouble"] = processCpuLoad
         metricsMap["systemCpuLoadPercentDouble"] = systemCpuLoad
