@@ -281,9 +281,11 @@ class DashboardController {
         // Camera stats
         val cameraCounts = metadataRepository.countByCameraType()
         val cameraCountList = ArrayList<HashMap<String, Any>>()
+        var cameraTotals = 0
         if (cameraCounts.count() > 0) {
             val maxCameraCount = cameraCounts.toList()[0].getCount()
             for (cameraCount in cameraCounts) {
+                cameraTotals++
                 if (cameraCount.getCamera() != null && cameraCount.getCount() != null && cameraCount.getCount()!! > maxCameraCount!!*0.04) {
                     val cameraCountMap = HashMap<String, Any>()
                     var cameraName = cameraCount.getCamera().toString()
@@ -294,7 +296,7 @@ class DashboardController {
             }
         }
         response["cameraCountJson"] = mapper.writeValueAsString(cameraCountList)
-        response["cameraTotalCount"] = cameraCountList.count()
+        response["cameraTotalCount"] = cameraTotals
 
         val keywordCount = keywordRepository.count()
         val browserCount = useragentRepository.countDistinctAgentName()
