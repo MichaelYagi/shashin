@@ -53,10 +53,7 @@ class Dashboard {
             options: {
                 scales: {
                     y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
-                        }
+                        beginAtZero: true
                     }
                 },
                 plugins: {
@@ -93,10 +90,7 @@ class Dashboard {
             options: {
                 scales: {
                     y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
-                        }
+                        beginAtZero: true
                     }
                 },
                 plugins: {
@@ -140,7 +134,7 @@ class Dashboard {
                     x: {
                         beginAtZero: true,
                         ticks: {
-                            stepSize: 1
+                            stepSize: 20
                         }
                     }
                 },
@@ -455,7 +449,7 @@ class Dashboard {
                     x: {
                         beginAtZero: true,
                         ticks: {
-                            stepSize: 1
+                            stepSize: 20
                         }
                     }
                 },
@@ -514,9 +508,6 @@ class Dashboard {
                 scales: {
                     y: {
                         beginAtZero: true,
-                        ticks: {
-                            stepSize: 20
-                        },
                         max: 100
                     }
                 },
@@ -548,9 +539,6 @@ class Dashboard {
                 scales: {
                     y: {
                         beginAtZero: true,
-                        ticks: {
-                            stepSize: 20
-                        },
                         max: 100
                     }
                 },
