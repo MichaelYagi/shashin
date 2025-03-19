@@ -286,7 +286,7 @@ class DashboardController {
             val maxCameraCount = cameraCounts.toList()[0].getCount()
             for (cameraCount in cameraCounts) {
                 cameraTotals++
-                if (cameraCount.getCamera() != null && cameraCount.getCount() != null && cameraCount.getCount()!! > maxCameraCount!!*0.04) {
+                if (cameraCount.getCamera() != null && cameraCount.getCount() != null && cameraCount.getCount()!! > maxCameraCount!!*0.03) {
                     val cameraCountMap = HashMap<String, Any>()
                     var cameraName = cameraCount.getCamera().toString()
                     cameraCountMap["y"] = cameraName
@@ -335,7 +335,7 @@ class DashboardController {
             val maxKwCount = keywordCounts.toList()[0].getCount()
             for (kwCount in keywordCounts) {
                 keywordCount++
-                if (kwCount.getCount() != null && kwCount.getCount()!! > maxKwCount!!*0.04) {
+                if (kwCount.getCount() != null && kwCount.getCount()!! > maxKwCount!!*0.03) {
                     val keywordCountMap = HashMap<String, Any>()
                     val keyword = kwCount.getKeyword().toString()
                     keywordCountMap["y"] = keyword
