@@ -604,17 +604,17 @@ class Dashboard {
 
                     const processCpuLoadPercent = Math.ceil(systemStats.processCpuLoadPercentDouble*100)|0;
                     const processCpuLoadData = ~~processCpuLoadPercent;
-                    shashin.printMessageToConsole("processCpuLoadData: "+processCpuLoadData);
+                    shashin.printMessageToConsole("processCpuLoadData: "+processCpuLoadData,{tag:"dashboard"});
 
                     const systemCpuLoadPercent = Math.ceil(systemStats.systemCpuLoadPercentDouble*100)|0;
                     const systemCpuLoadData = ~~systemCpuLoadPercent;
-                    shashin.printMessageToConsole("systemCpuLoadData: "+systemCpuLoadData);
+                    shashin.printMessageToConsole("systemCpuLoadData: "+systemCpuLoadData,{tag:"dashboard"});
 
                     const memoryUsedPercent = Math.ceil(systemStats.usedHeapMemoryGB/systemStats.maxHeapMemoryGB*100)|0;
                     const memoryUsedData = ~~memoryUsedPercent;
-                    shashin.printMessageToConsole("usedHeapMemoryGB: "+systemStats.usedHeapMemoryGB);
-                    shashin.printMessageToConsole("maxHeapMemoryGB: "+systemStats.maxHeapMemoryGB);
-                    shashin.printMessageToConsole("memoryUsedData: "+memoryUsedData);
+                    shashin.printMessageToConsole("usedHeapMemoryGB: "+systemStats.usedHeapMemoryGB,{tag:"dashboard"});
+                    shashin.printMessageToConsole("maxHeapMemoryGB: "+systemStats.maxHeapMemoryGB,{tag:"dashboard"});
+                    shashin.printMessageToConsole("memoryUsedData: "+memoryUsedData,{tag:"dashboard"});
 
                     if (elapsedMS >= maxElapsedMS && elapsedMS % intervalMS === 0) {
                         Dashboard.removeData(cpuChart);
