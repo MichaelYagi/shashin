@@ -281,13 +281,16 @@ class DashboardController {
         // Camera stats
         val cameraCounts = metadataRepository.countByCameraType()
         val cameraCountList = ArrayList<HashMap<String, Any>>()
-        for (cameraCount in cameraCounts) {
-            if (cameraCount.getCamera() != null) {
-                val cameraCountMap = HashMap<String, Any>()
-                var cameraName = cameraCount.getCamera().toString()
-                cameraCountMap["y"] = cameraName
-                cameraCountMap["x"] = cameraCount.getCount().toString().toInt()
-                cameraCountList.add(cameraCountMap)
+        if (cameraCounts.count() > 0) {
+            val maxCameraCount = cameraCounts.toList()[0].getCount()
+            for (cameraCount in cameraCounts) {
+                if (cameraCount.getCamera() != null && cameraCount.getCount() != null && cameraCount.getCount()!! > maxCameraCount!!*0.04) {
+                    val cameraCountMap = HashMap<String, Any>()
+                    var cameraName = cameraCount.getCamera().toString()
+                    cameraCountMap["y"] = cameraName
+                    cameraCountMap["x"] = cameraCount.getCount().toString().toInt()
+                    cameraCountList.add(cameraCountMap)
+                }
             }
         }
         response["cameraCountJson"] = mapper.writeValueAsString(cameraCountList)
@@ -327,12 +330,17 @@ class DashboardController {
         // Keyword stats
         val keywordCounts = keywordRepository.countByKeyword()
         val keywordCountList = ArrayList<HashMap<String, Any>>()
-        for (kwCount in keywordCounts) {
-            val keywordCountMap = HashMap<String, Any>()
-            val keyword = kwCount.getKeyword().toString()
-            keywordCountMap["y"] = keyword
-            keywordCountMap["x"] = kwCount.getCount().toString().toInt()
-            keywordCountList.add(keywordCountMap)
+        if (keywordCounts.count() > 0) {
+            val maxKwCount = keywordCounts.toList()[0].getCount()
+            for (kwCount in keywordCounts) {
+                if (kwCount.getCount() != null && kwCount.getCount()!! > maxKwCount!!*0.04) {
+                    val keywordCountMap = HashMap<String, Any>()
+                    val keyword = kwCount.getKeyword().toString()
+                    keywordCountMap["y"] = keyword
+                    keywordCountMap["x"] = kwCount.getCount().toString().toInt()
+                    keywordCountList.add(keywordCountMap)
+                }
+            }
         }
         response["keywordCountJson"] = mapper.writeValueAsString(keywordCountList)
         response["keywordTotalCount"] = keywordCount
