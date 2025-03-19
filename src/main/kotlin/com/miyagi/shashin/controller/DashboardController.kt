@@ -102,12 +102,13 @@ class DashboardController {
         val osMXBean: OperatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
 
         val processCpuLoad = osMXBean.processCpuLoad
-        logger.log(Level.INFO, "Process CPU load:"+(processCpuLoad * 100).toInt())
-//        println("Process CPU load:"+(osMXBean.processCpuLoad * 100).toInt())
-//        println("System CPU load:"+(osMXBean.cpuLoad * 100).toInt())
+        val systemCpuLoad = osMXBean.cpuLoad
+        logger.log(Level.INFO, "Process CPU load:$processCpuLoad")
+        logger.log(Level.INFO, "System CPU load:$systemCpuLoad")
+
         metricsMap["processCpuLoadPercentDouble"] = processCpuLoad
         @Suppress("DEPRECATION")
-        metricsMap["systemCpuLoadPercentDouble"] = osMXBean.systemCpuLoad
+        metricsMap["systemCpuLoadPercentDouble"] = systemCpuLoad
         val dtf = DateTimeFormatter.ofPattern("HH:mm:ss")
         val now = LocalDateTime.now()
         metricsMap["timestamp"] = now.format(dtf)
