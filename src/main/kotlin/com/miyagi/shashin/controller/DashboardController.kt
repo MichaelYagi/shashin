@@ -298,10 +298,8 @@ class DashboardController {
         response["cameraCountJson"] = mapper.writeValueAsString(cameraCountList)
         response["cameraTotalCount"] = cameraTotals
 
-        val keywordCount = keywordRepository.count()
         val browserCount = useragentRepository.countDistinctAgentName()
         val osCount = useragentRepository.countDistinctOsName()
-        response["keywordCount"] = keywordCount
         response["browserTotalCount"] = browserCount
         response["osTotalCount"] = osCount
 
@@ -332,9 +330,11 @@ class DashboardController {
         // Keyword stats
         val keywordCounts = keywordRepository.countByKeyword()
         val keywordCountList = ArrayList<HashMap<String, Any>>()
+        var keywordCount = 0
         if (keywordCounts.count() > 0) {
             val maxKwCount = keywordCounts.toList()[0].getCount()
             for (kwCount in keywordCounts) {
+                keywordCount++
                 if (kwCount.getCount() != null && kwCount.getCount()!! > maxKwCount!!*0.04) {
                     val keywordCountMap = HashMap<String, Any>()
                     val keyword = kwCount.getKeyword().toString()
@@ -346,6 +346,7 @@ class DashboardController {
         }
         response["keywordCountJson"] = mapper.writeValueAsString(keywordCountList)
         response["keywordTotalCount"] = keywordCount
+        response["keywordCount"] = keywordCount
 
         response["message"] = ""
         response["msg"] = ""
