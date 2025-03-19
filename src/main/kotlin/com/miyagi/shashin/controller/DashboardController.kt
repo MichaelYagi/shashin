@@ -79,6 +79,9 @@ class DashboardController {
 
     private var logger: Logger = Logger.getLogger(DashboardController::class.simpleName)
 
+    val osMXBean: OperatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
+    val memoryMXBean = ManagementFactory.getMemoryMXBean()
+
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
@@ -89,9 +92,6 @@ class DashboardController {
         //println("message:${message.getMessage()}")
         val metricsMap = mutableMapOf<String,Any>()
 
-        metricsMap["uptime"] = TextUtils.getServerUptime()
-
-        val memoryMXBean = ManagementFactory.getMemoryMXBean()
         metricsMap["initialMemoryGB"] = memoryMXBean.heapMemoryUsage.init.toDouble() / 1073741824
         metricsMap["usedHeapMemoryGB"] = memoryMXBean.heapMemoryUsage.used.toDouble() / 1073741824
         metricsMap["maxHeapMemoryGB"] = memoryMXBean.heapMemoryUsage.max.toDouble() / 1073741824
@@ -99,13 +99,11 @@ class DashboardController {
 //        println("Used Heap Memory GB:"+metricsMap["usedHeapMemoryGB"])
 //        println("Max Heap Memory GB:"+metricsMap["maxHeapMemoryGB"])
 
-        val osMXBean: OperatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
-
         var processCpuLoad = osMXBean.processCpuLoad
         var systemCpuLoad = osMXBean.cpuLoad
 
-        logger.log(Level.INFO, "Raw process CPU load:$processCpuLoad")
-        logger.log(Level.INFO, "Raw system CPU load:$systemCpuLoad")
+//        logger.log(Level.INFO, "Raw process CPU load:$processCpuLoad")
+//        logger.log(Level.INFO, "Raw system CPU load:$systemCpuLoad")
 
         if (processCpuLoad < 0 || processCpuLoad.isNaN()) {
             processCpuLoad = 0.0
@@ -119,8 +117,8 @@ class DashboardController {
             systemCpuLoad = 1.0
         }
 
-        logger.log(Level.INFO, "Processed process CPU load:$processCpuLoad")
-        logger.log(Level.INFO, "Processed system CPU load:$systemCpuLoad")
+//        logger.log(Level.INFO, "Processed process CPU load:$processCpuLoad")
+//        logger.log(Level.INFO, "Processed system CPU load:$systemCpuLoad")
 
         metricsMap["processCpuLoadPercentDouble"] = processCpuLoad
         metricsMap["systemCpuLoadPercentDouble"] = systemCpuLoad
