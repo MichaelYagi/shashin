@@ -116,7 +116,6 @@ class DashboardController {
         logger.log(Level.INFO, "System CPU load:$systemCpuLoad")
 
         metricsMap["processCpuLoadPercentDouble"] = processCpuLoad
-        @Suppress("DEPRECATION")
         metricsMap["systemCpuLoadPercentDouble"] = systemCpuLoad
         val dtf = DateTimeFormatter.ofPattern("HH:mm:ss")
         val now = LocalDateTime.now()
