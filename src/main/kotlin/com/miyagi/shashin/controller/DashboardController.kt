@@ -104,11 +104,11 @@ class DashboardController {
         var processCpuLoad = osMXBean.processCpuLoad
         var systemCpuLoad = osMXBean.cpuLoad
 
-        if (processCpuLoad < 0) {
+        if (processCpuLoad < 0 || processCpuLoad.isNaN()) {
             processCpuLoad = 0.0
         }
 
-        if (systemCpuLoad < 0) {
+        if (systemCpuLoad < 0 || systemCpuLoad.isNaN()) {
             systemCpuLoad = 0.0
         }
 
