@@ -346,7 +346,6 @@ class DashboardController {
         }
         response["keywordCountJson"] = mapper.writeValueAsString(keywordCountList)
         response["keywordTotalCount"] = keywordCount
-        response["keywordCount"] = keywordCount
 
         response["message"] = ""
         response["msg"] = ""
