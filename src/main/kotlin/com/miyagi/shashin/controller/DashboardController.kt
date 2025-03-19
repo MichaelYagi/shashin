@@ -101,8 +101,17 @@ class DashboardController {
 
         val osMXBean: OperatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
 
-        val processCpuLoad = osMXBean.processCpuLoad
-        val systemCpuLoad = osMXBean.cpuLoad
+        var processCpuLoad = osMXBean.processCpuLoad
+        var systemCpuLoad = osMXBean.cpuLoad
+
+        if (processCpuLoad < 0) {
+            processCpuLoad = 0.0
+        }
+
+        if (systemCpuLoad < 0) {
+            systemCpuLoad = 0.0
+        }
+
         logger.log(Level.INFO, "Process CPU load:$processCpuLoad")
         logger.log(Level.INFO, "System CPU load:$systemCpuLoad")
 
