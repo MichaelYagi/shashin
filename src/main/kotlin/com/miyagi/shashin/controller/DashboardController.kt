@@ -79,7 +79,8 @@ class DashboardController {
 
     private var logger: Logger = Logger.getLogger(DashboardController::class.simpleName)
 
-    val osMXBean: OperatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
+//    val osMXBean: OperatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
+    val osMXBean: OperatingSystemMXBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean::class.java)
     val memoryMXBean = ManagementFactory.getMemoryMXBean()
 
     val mapper = ObjectMapper()
