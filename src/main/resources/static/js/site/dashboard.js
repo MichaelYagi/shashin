@@ -605,10 +605,10 @@ class Dashboard {
                     const invalidSystemCpuLoadCounter = systemStats.invalidSystemCpuLoadCounter;
                     const invalidProcessCpuLoadCounter = systemStats.invalidProcessCpuLoadCounter;
                     // Reload page if NaN, 0 or greater than 1
-                    if (invalidSystemCpuLoadCounter > 5 || invalidProcessCpuLoadCounter > 5) {
-                        shashin.printMessageToConsole("Crossed threshold for invalid system stat counter values. Reloading page.",{tag:"dashboard"});
-                        window.location.reload();
-                    }
+                    // if (invalidSystemCpuLoadCounter > 5 || invalidProcessCpuLoadCounter > 5) {
+                    //     shashin.printMessageToConsole("Crossed threshold for invalid system stat counter values. Reloading page.",{tag:"dashboard"});
+                    //     window.location.reload();
+                    // }
 
                     const processCpuLoadPercent = Math.ceil(systemStats.processCpuLoadPercentDouble*100)|0;
                     const processCpuLoadData = ~~processCpuLoadPercent;
