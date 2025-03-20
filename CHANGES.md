@@ -4,6 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- CpuMetrics class for dashboard
 
 ### Changed
 - Labels in dashboard circle charts
