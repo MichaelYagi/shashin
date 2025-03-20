@@ -608,6 +608,9 @@ class Dashboard {
                     invalidSystemCpuLoadCounter = systemStats.invalidSystemCpuLoadCounter;
                     invalidProcessCpuLoadCounter = systemStats.invalidProcessCpuLoadCounter;
 
+                    shashin.printMessageToConsole("invalidSystemCpuLoadCounter: "+invalidSystemCpuLoadCounter,{tag:"dashboard"});
+                    shashin.printMessageToConsole("invalidProcessCpuLoadCounter: "+invalidProcessCpuLoadCounter,{tag:"dashboard"});
+
                     // Reload page if NaN, 0 or greater than 1
                     if (invalidSystemCpuLoadCounter > 5 || invalidProcessCpuLoadCounter > 5) {
                         invalidSystemCpuLoadCounter = 0;
