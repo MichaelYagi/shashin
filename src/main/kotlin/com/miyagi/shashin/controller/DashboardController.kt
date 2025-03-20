@@ -34,6 +34,7 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import jakarta.servlet.http.HttpSession
 import org.springframework.web.bind.annotation.*
+import java.lang.management.MemoryMXBean
 
 
 @Controller
@@ -90,17 +91,17 @@ class DashboardController {
         val metricsMap = mutableMapOf<String,Any>()
 
         //    val osMXBean: OperatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
-        val osMXBean: OperatingSystemMXBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean::class.java)
-        val memoryMXBean = ManagementFactory.getMemoryMXBean()
+        var osMXBean: OperatingSystemMXBean? = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean::class.java)
+        var memoryMXBean: MemoryMXBean? = ManagementFactory.getMemoryMXBean()
 
-        metricsMap["initialMemoryGB"] = memoryMXBean.heapMemoryUsage.init.toDouble() / 1073741824
+        metricsMap["initialMemoryGB"] = memoryMXBean!!.heapMemoryUsage.init.toDouble() / 1073741824
         metricsMap["usedHeapMemoryGB"] = memoryMXBean.heapMemoryUsage.used.toDouble() / 1073741824
         metricsMap["maxHeapMemoryGB"] = memoryMXBean.heapMemoryUsage.max.toDouble() / 1073741824
         metricsMap["committedMemoryGB"] = memoryMXBean.heapMemoryUsage.committed.toDouble() / 1073741824
 //        println("Used Heap Memory GB:"+metricsMap["usedHeapMemoryGB"])
 //        println("Max Heap Memory GB:"+metricsMap["maxHeapMemoryGB"])
 
-        var processCpuLoad = osMXBean.processCpuLoad
+        var processCpuLoad = osMXBean!!.processCpuLoad
         var systemCpuLoad = osMXBean.cpuLoad
 
         if (processCpuLoad < 0 || processCpuLoad.isNaN()) {
@@ -130,6 +131,9 @@ class DashboardController {
 
         val msg: String = mapper.writeValueAsString(metricsMap)
 //        println(msg)
+
+        osMXBean = null
+        memoryMXBean = null
 
         val messageObj = Message()
         messageObj.setContent(msg)
