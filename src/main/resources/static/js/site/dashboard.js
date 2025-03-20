@@ -610,11 +610,6 @@ class Dashboard {
                     const systemCpuLoadData = ~~systemCpuLoadPercent;
                     shashin.printMessageToConsole("systemCpuLoadData: "+systemCpuLoadData,{tag:"dashboard"});
 
-                    if (processCpuLoadPercent === 0 || systemCpuLoadPercent === 0 || processCpuLoadPercent === 100 || systemCpuLoadPercent === 100) {
-                        disconnect();
-                        connect();
-                    }
-
                     const memoryUsedPercent = Math.ceil(systemStats.usedHeapMemoryGB/systemStats.maxHeapMemoryGB*100)|0;
                     const memoryUsedData = ~~memoryUsedPercent;
                     shashin.printMessageToConsole("usedHeapMemoryGB: "+systemStats.usedHeapMemoryGB,{tag:"dashboard"});

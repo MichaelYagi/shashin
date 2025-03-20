@@ -79,10 +79,6 @@ class DashboardController {
 
     private var logger: Logger = Logger.getLogger(DashboardController::class.simpleName)
 
-//    val osMXBean: OperatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
-    val osMXBean: OperatingSystemMXBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean::class.java)
-    val memoryMXBean = ManagementFactory.getMemoryMXBean()
-
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
@@ -92,6 +88,10 @@ class DashboardController {
     fun sendScanMessage(message: StatMessage): Message? {
         //println("message:${message.getMessage()}")
         val metricsMap = mutableMapOf<String,Any>()
+
+        //    val osMXBean: OperatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
+        val osMXBean: OperatingSystemMXBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean::class.java)
+        val memoryMXBean = ManagementFactory.getMemoryMXBean()
 
         metricsMap["initialMemoryGB"] = memoryMXBean.heapMemoryUsage.init.toDouble() / 1073741824
         metricsMap["usedHeapMemoryGB"] = memoryMXBean.heapMemoryUsage.used.toDouble() / 1073741824
