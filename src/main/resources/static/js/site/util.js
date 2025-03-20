@@ -90,7 +90,7 @@ class Util {
 
     static copyToClipboard(textToCopy, callback) {
         if (!navigator.clipboard) {
-            shashin.printMessageToConsole("copyToClipboard using execCommand");
+            shashin.printMessageToConsole("copyToClipboard using execCommand",{tag:"clipboard"});
             const textArea = document.createElement("textarea");
             textArea.value = textToCopy;
             textArea.innerText = textToCopy;
@@ -139,7 +139,7 @@ class Util {
                 }
             }
         } else {
-            shashin.printMessageToConsole("copyToClipboard using navigator.clipboard");
+            shashin.printMessageToConsole("copyToClipboard using navigator.clipboard",{tag:"clipboard"});
             navigator.clipboard.writeText(textToCopy).then(function () {
                 shashin.showToastMessage("Copied to clipboard", textToCopy + " copied to clipboard", {
                     icon: "bi-info-circle",
@@ -882,7 +882,8 @@ class Util {
                                 shashin.getLightGallery().$container.remove();
                             } catch (e) {
                                 shashin.printMessageToConsole("Error removing lightGallery instance: " + e.message, {
-                                    consoleType: shashin.consoleTypes.error
+                                    consoleType: shashin.consoleTypes.error,
+                                    tag: "lightgallery"
                                 });
                             }
                         } else {
@@ -1427,7 +1428,7 @@ class Util {
                     placeNameDisplayName = placeNameDisplayNameArray[0];
                     locationType = placeNameDisplayNameArray[1];
                 }
-                shashin.printMessageToConsole("Populating detail info - original placename: " + metadata.placeName + " - Display placename: " + placeNameDisplayName);
+                shashin.printMessageToConsole("Populating detail info - original placename: " + metadata.placeName + " - Display placename: " + placeNameDisplayName,{tag:"metadata"});
                 let queryParamDates = "";
                 if (metadata.year !== null && metadata.month !== null && metadata.day !== null) {
                     let month = metadata.month;
@@ -1555,7 +1556,6 @@ class Util {
         if (metadata.lastAccessedByDetails != null) {
             $(".lastViewedByLabel").show();
             $(".lastViewedByDetails").text(metadata.lastAccessedByDetails);
-            // shashin.printMessageToConsole("Last viewed by " + metadata.lastAccessedByDetails, {tag: "access"});
         }
         if (metadata.uploadedByDetails != null) {
             $(".uploadedByLabel").show();

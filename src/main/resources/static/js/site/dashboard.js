@@ -592,11 +592,11 @@ class Dashboard {
                 stompClient.debug = null;
             }
 
-            shashin.printMessageToConsole("Socket Connecting");
+            shashin.printMessageToConsole("Socket Connecting",{tag:"dashboard"});
 
             stompClient.connect({}, function() {
                 scanRefresh();
-                shashin.printMessageToConsole( "Connected STOMP client");
+                shashin.printMessageToConsole( "Connected STOMP client",{tag:"dashboard"});
 
                 this.subscribe("/topic/statmessages", function (message) {
                     let respMessageJsonString = JSON.parse(message.body).content;
@@ -625,18 +625,20 @@ class Dashboard {
                         Dashboard.addData(cpuChart, null, systemCpuLoadData, 1);
                         Dashboard.addData(memoryChart, systemStats.timestamp, memoryUsedData, 0);
                     }
-                    shashin.printMessageToConsole("Message:"+respMessageJsonString);
+                    shashin.printMessageToConsole("Message:"+respMessageJsonString,{tag:"dashboard"});
                 });
             }, function(e) {
                 if (counter > 10) {
                     shashin.printMessageToConsole("Oops, something went wrong! " + e.toString() + ". Probably already scanning.", {
-                        consoleType: shashin.consoleTypes.error
+                        consoleType: shashin.consoleTypes.error,
+                        tag: "lightgallery"
                     });
                     counter = 0;
                     window.top.location = window.top.location;
                 } else {
                     shashin.printMessageToConsole("Oops, something went wrong! " + e.toString() + ".", {
-                        consoleType: shashin.consoleTypes.error
+                        consoleType: shashin.consoleTypes.error,
+                        tag: "lightgallery"
                     });
                     disconnect();
                     connect();
@@ -650,7 +652,7 @@ class Dashboard {
             if (stompClient !== null) {
                 stompClient.disconnect();
             }
-            shashin.printMessageToConsole("Disconnected");
+            shashin.printMessageToConsole("Disconnected",{tag:"album"});
         }
 
         function sendMessage() {

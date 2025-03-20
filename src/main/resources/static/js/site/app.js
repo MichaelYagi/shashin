@@ -534,7 +534,8 @@
         $("#spinner").hide();
         shashin.showToastMessage("AJAX error", "AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".", {tag:"ajaxError",icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
         shashin.printMessageToConsole("AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".", {
-            consoleType: shashin.consoleTypes.error
+            consoleType: shashin.consoleTypes.error,
+            tag:"http"
         });
         if (xhr.status === 403 || xhr.status === 401) {
             $(location).prop('href', '/users/login');
@@ -574,7 +575,7 @@
         const http = new Http("get timeline metadata");
         const data = await http.ajax("get", "/complete/metadata/"+metadataId+"?v="+uuidv4());
 
-        shashin.printMessageToConsole("shashin.getCompleteMetadata");
+        shashin.printMessageToConsole("shashin.getCompleteMetadata",{tag:"metadata"});
         shashin.printMessageToConsole(JSON.stringify(data),{tag: "metadata"});
 
         let ret = {};

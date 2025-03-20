@@ -125,7 +125,7 @@ async function setVarsTopNav(darkMode, placeNames, timezone, notificationAlerts,
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             if (data.status === "success") {
-                shashin.printMessageToConsole("Successfully set notification alerts.");
+                shashin.printMessageToConsole("Successfully set notification alerts.",{tag:"notifications"});
             } else {
                 shashin.showToastMessage("Setting failed", "Notification setting failed. "+data.msg, {
                     icon: "bi-exclamation-triangle",
