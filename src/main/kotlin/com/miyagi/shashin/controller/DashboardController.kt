@@ -78,6 +78,12 @@ class DashboardController {
     @Value("\${app.endpoint.url.geocode}")
     private var geocodeUrl: String? = null
 
+    //    val osMXBean: OperatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
+    val osMXBean: OperatingSystemMXBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean::class.java)
+    val memoryMXBean: MemoryMXBean = ManagementFactory.getMemoryMXBean()
+    var invalidProcessCpuLoadCounter = 0
+    var invalidSystemCpuLoadCounter = 0
+
     private var logger: Logger = Logger.getLogger(DashboardController::class.simpleName)
 
     val mapper = ObjectMapper()
@@ -90,32 +96,32 @@ class DashboardController {
         //println("message:${message.getMessage()}")
         val metricsMap = mutableMapOf<String,Any>()
 
-        //    val osMXBean: OperatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
-        var osMXBean: OperatingSystemMXBean? = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean::class.java)
-        var memoryMXBean: MemoryMXBean? = ManagementFactory.getMemoryMXBean()
-
-        metricsMap["initialMemoryGB"] = memoryMXBean!!.heapMemoryUsage.init.toDouble() / 1073741824
+        metricsMap["initialMemoryGB"] = memoryMXBean.heapMemoryUsage.init.toDouble() / 1073741824
         metricsMap["usedHeapMemoryGB"] = memoryMXBean.heapMemoryUsage.used.toDouble() / 1073741824
         metricsMap["maxHeapMemoryGB"] = memoryMXBean.heapMemoryUsage.max.toDouble() / 1073741824
         metricsMap["committedMemoryGB"] = memoryMXBean.heapMemoryUsage.committed.toDouble() / 1073741824
 //        println("Used Heap Memory GB:"+metricsMap["usedHeapMemoryGB"])
 //        println("Max Heap Memory GB:"+metricsMap["maxHeapMemoryGB"])
 
-        var processCpuLoad = osMXBean!!.processCpuLoad
+        var processCpuLoad = osMXBean.processCpuLoad
         var systemCpuLoad = osMXBean.cpuLoad
 
         if (processCpuLoad < 0 || processCpuLoad.isNaN()) {
+            invalidProcessCpuLoadCounter++
             logger.log(Level.INFO, "Raw process CPU load: $processCpuLoad")
             processCpuLoad = 0.0
         } else if (processCpuLoad > 1) {
+            invalidProcessCpuLoadCounter++
             logger.log(Level.INFO, "Raw process CPU load greater than 1.0: $processCpuLoad")
             processCpuLoad = 1.0
         }
 
         if (systemCpuLoad < 0 || systemCpuLoad.isNaN()) {
+            invalidSystemCpuLoadCounter++
             logger.log(Level.INFO, "Raw system CPU load: $systemCpuLoad")
             systemCpuLoad = 0.0
         } else if (systemCpuLoad > 1) {
+            invalidSystemCpuLoadCounter++
             logger.log(Level.INFO, "Raw system CPU load greater than 1.0: $systemCpuLoad")
             systemCpuLoad = 1.0
         }
@@ -125,14 +131,14 @@ class DashboardController {
 
         metricsMap["processCpuLoadPercentDouble"] = processCpuLoad
         metricsMap["systemCpuLoadPercentDouble"] = systemCpuLoad
+        metricsMap["invalidSystemCpuLoadCounter"] = invalidSystemCpuLoadCounter
+        metricsMap["invalidProcessCpuLoadCounter"] = invalidProcessCpuLoadCounter
+
         val dtf = DateTimeFormatter.ofPattern("HH:mm:ss")
         val now = LocalDateTime.now()
         metricsMap["timestamp"] = now.format(dtf)
 
         val msg: String = mapper.writeValueAsString(metricsMap)
-
-        osMXBean = null
-        memoryMXBean = null
 
         val messageObj = Message()
         messageObj.setContent(msg)
