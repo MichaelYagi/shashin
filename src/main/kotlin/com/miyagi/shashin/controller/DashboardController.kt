@@ -130,7 +130,6 @@ class DashboardController {
         metricsMap["timestamp"] = now.format(dtf)
 
         val msg: String = mapper.writeValueAsString(metricsMap)
-//        println(msg)
 
         osMXBean = null
         memoryMXBean = null
