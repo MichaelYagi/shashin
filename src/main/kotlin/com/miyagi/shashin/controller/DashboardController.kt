@@ -1,6 +1,7 @@
 package com.miyagi.shashin.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.component.CpuMetrics
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.StatMessage
 import com.miyagi.shashin.model.Settings
@@ -8,7 +9,6 @@ import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.NetworkUtils
 import com.miyagi.shashin.util.TextUtils
-import com.sun.management.OperatingSystemMXBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.event.EventListener
@@ -79,7 +79,8 @@ class DashboardController {
     private var geocodeUrl: String? = null
 
     //    val osMXBean: OperatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
-    val osMXBean: OperatingSystemMXBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean::class.java)
+//    val osMXBean: OperatingSystemMXBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean::class.java)
+    val osMXBean = CpuMetrics()
     val memoryMXBean: MemoryMXBean = ManagementFactory.getMemoryMXBean()
     var invalidProcessCpuLoadCounter = 0
     var invalidSystemCpuLoadCounter = 0
@@ -103,10 +104,10 @@ class DashboardController {
 //        println("Used Heap Memory GB:"+metricsMap["usedHeapMemoryGB"])
 //        println("Max Heap Memory GB:"+metricsMap["maxHeapMemoryGB"])
 
-        var processCpuLoad = osMXBean.processCpuLoad
-        var systemCpuLoad = osMXBean.cpuLoad
+        var processCpuLoad = osMXBean.getProcessCpuLoad()
+        var systemCpuLoad = osMXBean.getSystemCpuLoad()
 
-        if (processCpuLoad < 0 || processCpuLoad.isNaN()) {
+        if (processCpuLoad == null || processCpuLoad < 0 || processCpuLoad.isNaN()) {
             invalidProcessCpuLoadCounter++
             logger.log(Level.INFO, "Raw process CPU load: $processCpuLoad")
             processCpuLoad = 0.0
@@ -116,7 +117,7 @@ class DashboardController {
             processCpuLoad = 1.0
         }
 
-        if (systemCpuLoad < 0 || systemCpuLoad.isNaN()) {
+        if (systemCpuLoad == null || systemCpuLoad < 0 || systemCpuLoad.isNaN()) {
             invalidSystemCpuLoadCounter++
             logger.log(Level.INFO, "Raw system CPU load: $systemCpuLoad")
             systemCpuLoad = 0.0
