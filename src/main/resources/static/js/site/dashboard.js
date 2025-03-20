@@ -598,14 +598,20 @@ class Dashboard {
                 scanRefresh();
                 shashin.printMessageToConsole( "Connected STOMP client",{tag:"dashboard"});
 
+                let invalidSystemCpuLoadCounter = 0;
+                let invalidProcessCpuLoadCounter = 0;
+
                 this.subscribe("/topic/statmessages", function (message) {
                     let respMessageJsonString = JSON.parse(message.body).content;
                     const systemStats = JSON.parse(respMessageJsonString);
 
-                    const invalidSystemCpuLoadCounter = systemStats.invalidSystemCpuLoadCounter;
-                    const invalidProcessCpuLoadCounter = systemStats.invalidProcessCpuLoadCounter;
+                    invalidSystemCpuLoadCounter = systemStats.invalidSystemCpuLoadCounter;
+                    invalidProcessCpuLoadCounter = systemStats.invalidProcessCpuLoadCounter;
+
                     // Reload page if NaN, 0 or greater than 1
                     if (invalidSystemCpuLoadCounter > 5 || invalidProcessCpuLoadCounter > 5) {
+                        invalidSystemCpuLoadCounter = 0;
+                        invalidProcessCpuLoadCounter = 0;
                         shashin.printMessageToConsole("Crossed threshold for invalid system stat counter values. Reloading page.",{tag:"dashboard"});
                         window.location.href = window.location.href;
                     }
