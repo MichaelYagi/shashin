@@ -102,18 +102,19 @@ class DashboardController {
         var processCpuLoad = osMXBean.processCpuLoad
         var systemCpuLoad = osMXBean.cpuLoad
 
-//        logger.log(Level.INFO, "Raw process CPU load:$processCpuLoad")
-//        logger.log(Level.INFO, "Raw system CPU load:$systemCpuLoad")
-
         if (processCpuLoad < 0 || processCpuLoad.isNaN()) {
+            logger.log(Level.INFO, "Raw process CPU load: $processCpuLoad")
             processCpuLoad = 0.0
         } else if (processCpuLoad > 1) {
+            logger.log(Level.INFO, "Raw process CPU load greater than 1.0: $processCpuLoad")
             processCpuLoad = 1.0
         }
 
         if (systemCpuLoad < 0 || systemCpuLoad.isNaN()) {
+            logger.log(Level.INFO, "Raw system CPU load: $systemCpuLoad")
             systemCpuLoad = 0.0
         } else if (systemCpuLoad > 1) {
+            logger.log(Level.INFO, "Raw system CPU load greater than 1.0: $systemCpuLoad")
             systemCpuLoad = 1.0
         }
 
