@@ -602,6 +602,13 @@ class Dashboard {
                     let respMessageJsonString = JSON.parse(message.body).content;
                     const systemStats = JSON.parse(respMessageJsonString);
 
+                    const invalidSystemCpuLoadCounter = systemStats.invalidSystemCpuLoadCounter;
+                    const invalidProcessCpuLoadCounter = systemStats.invalidProcessCpuLoadCounter;
+                    // Reload page if NaN, 0 or greater than 1
+                    if (invalidSystemCpuLoadCounter > 5 || invalidProcessCpuLoadCounter > 5) {
+                        window.location.reload();
+                    }
+
                     const processCpuLoadPercent = Math.ceil(systemStats.processCpuLoadPercentDouble*100)|0;
                     const processCpuLoadData = ~~processCpuLoadPercent;
                     shashin.printMessageToConsole("processCpuLoadData: "+processCpuLoadData,{tag:"dashboard"});
