@@ -197,7 +197,7 @@
                     if (prevClass === currClass || deleteElements === true) {
                         $(this).remove();
                         deleteElements = true;
-                        shashin.printMessageToConsole("Cleaning up IDs after jump:"+$(this).attr("id"));
+                        shashin.printMessageToConsole("Cleaning up IDs after jump:"+$(this).attr("id"),{tag:"timeline"});
                     }
                     prevClass = $(this).attr("class");
                 });
@@ -320,7 +320,7 @@
                         if (prevClass === currClass || deleteElements === true) {
                             $(this).remove();
                             deleteElements = true;
-                            shashin.printMessageToConsole("Cleaning up IDs after jump:"+$(this).attr("id"));
+                            shashin.printMessageToConsole("Cleaning up IDs after jump:"+$(this).attr("id"),{tag:"timeline"});
                         }
                         prevClass = $(this).attr("class");
                     });
@@ -553,9 +553,9 @@
         let depthDown = depth-1;
         let depthUp = depth;
 
-        shashin.printMessageToConsole("depthDown:"+depthDown);
-        shashin.printMessageToConsole("depthUp:"+depthUp);
-        shashin.printMessageToConsole("renderThumbnails id:"+id);
+        shashin.printMessageToConsole("depthDown:"+depthDown,{tag:"timeline"});
+        shashin.printMessageToConsole("depthUp:"+depthUp,{tag:"timeline"});
+        shashin.printMessageToConsole("renderThumbnails id:"+id,{tag:"timeline"});
 
         let offCanvasId = $("#offcanvas_"+id);
 
@@ -620,7 +620,7 @@
         let prevIndex = 0;
 
         $('section').each(function (index, element) {
-            shashin.printMessageToConsole(element.id + " checking to remove end");
+            shashin.printMessageToConsole(element.id + " checking to remove end",{tag:"timeline"});
             if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#" + element.id).length > 1 || prevElementId === element.id)) {
 
                 // Get height to set scrollTop for non chrome browsers
@@ -628,7 +628,7 @@
                     topHeight += Util.getDateGalleryHeight(element.id);
                 }
 
-                shashin.printMessageToConsole(element.id + " removed end");
+                shashin.printMessageToConsole(element.id + " removed end",{tag:"timeline"});
                 Util.removeDateGallery(element.id);
             }
 
@@ -636,7 +636,7 @@
             const currentTimelineIndex = timelineSettings.timelineDatesHash[element.id];
 
             if (prevIndex > 0 && prevIndex + 1 !== currentTimelineIndex) {
-                shashin.printMessageToConsole("Removing from timeline " + element.id);
+                shashin.printMessageToConsole("Removing from timeline " + element.id,{tag:"timeline"});
                 Util.removeDateGallery(element.id);
             }
 
@@ -651,24 +651,24 @@
             $("#container").scrollTop(tempScrollTop - topHeight);
         }
 
-        shashin.printMessageToConsole("attachAboveArray");
-        shashin.printMessageToConsole(attachAboveArray);
-        shashin.printMessageToConsole("attachBelowArray");
-        shashin.printMessageToConsole(attachBelowArray);
+        shashin.printMessageToConsole("attachAboveArray",{tag:"timeline"});
+        shashin.printMessageToConsole(attachAboveArray,{tag:"timeline"});
+        shashin.printMessageToConsole("attachBelowArray",{tag:"timeline"});
+        shashin.printMessageToConsole(attachBelowArray,{tag:"timeline"});
 
         // Render top
         let action = "new";
         let attachPoint = id;
         for (let index in attachAboveArray) {
             const currentId = attachAboveArray[index];
-            shashin.printMessageToConsole("attempting to attaching id above:" + currentId);
+            shashin.printMessageToConsole("attempting to attaching id above:" + currentId,{tag:"timeline"});
             if ($("#" + currentId).length === 0) {
                 if (action === "new") {
                     attachPoint = null;
                 }
-                shashin.printMessageToConsole("attaching above attachPoint:" + attachPoint);
-                shashin.printMessageToConsole("attaching id:" + currentId);
-                shashin.printMessageToConsole("actionAbove:" + action);
+                shashin.printMessageToConsole("attaching above attachPoint:" + attachPoint,{tag:"timeline"});
+                shashin.printMessageToConsole("attaching id:" + currentId,{tag:"timeline"});
+                shashin.printMessageToConsole("actionAbove:" + action,{tag:"timeline"});
                 const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
                 $("#container_"+currentId).outerHeight(true);
                 if (msg === timelineSettings.success && $("#"+currentId).length === 1) {
@@ -687,11 +687,11 @@
         }
         for (let index in attachBelowArray) {
             const currentId = attachBelowArray[index];
-            shashin.printMessageToConsole("attempting to attaching id below:" + currentId);
+            shashin.printMessageToConsole("attempting to attaching id below:" + currentId,{tag:"timeline"});
             if ($("#"+currentId).length === 0) {
-                shashin.printMessageToConsole("attaching below attachPoint:" + attachPoint);
-                shashin.printMessageToConsole("attaching id:" + currentId);
-                shashin.printMessageToConsole("actionBelow:"+action);
+                shashin.printMessageToConsole("attaching below attachPoint:" + attachPoint,{tag:"timeline"});
+                shashin.printMessageToConsole("attaching id:" + currentId,{tag:"timeline"});
+                shashin.printMessageToConsole("actionBelow:"+action,{tag:"timeline"});
                 const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
                 if (msg === timelineSettings.success && $("#"+currentId).length === 1) {
                     await timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
@@ -762,19 +762,19 @@
                 action = "above";
             }
 
-            shashin.printMessageToConsole("attempting to attaching id mid " + id + " " + action + " " + attachPoint + " length " + $("#" + id).length);
+            shashin.printMessageToConsole("attempting to attaching id mid " + id + " " + action + " " + attachPoint + " length " + $("#" + id).length,{tag:"timeline"});
 
             // Hack for attaching mid point
             if (attachAboveArray.length > 0 && attachBelowArray.length > 0 && $('section')[$('section').length - 1].id === id && $("#" + id).length === 1) {
-                shashin.printMessageToConsole("removing already existing id " + id + " for mid point");
+                shashin.printMessageToConsole("removing already existing id " + id + " for mid point",{tag:"timeline"});
                 Util.removeDateGallery(id);
             }
 
             // Render mid
             if ($("#" + id).length === 0) {
-                shashin.printMessageToConsole("attaching mid attachPoint:" + attachPoint);
-                shashin.printMessageToConsole("attaching id:" + id);
-                shashin.printMessageToConsole("attaching mid action:" + action);
+                shashin.printMessageToConsole("attaching mid attachPoint:" + attachPoint,{tag:"timeline"});
+                shashin.printMessageToConsole("attaching id:" + id,{tag:"timeline"});
+                shashin.printMessageToConsole("attaching mid action:" + action,{tag:"timeline"});
                 const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, action, attachPoint);
                 if (msg === timelineSettings.success && $("#" + id).length === 1) {
                     await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
@@ -782,7 +782,7 @@
             }
         }
 
-        shashin.printMessageToConsole("==============================================");
+        shashin.printMessageToConsole("==============================================",{tag:"timeline"});
         $("#spinner_top").css("display", "none");
         $("#spinner_bottom").css("display", "none");
         timelineSettings.enableScrollSpy = true;
@@ -889,7 +889,7 @@
                 const currentTimelineIndex = timelineSettings.timelineDatesHash[element.id];
 
                 if (prevIndex > 0 && prevIndex + 1 !== currentTimelineIndex) {
-                    shashin.printMessageToConsole("Removing from timeline " + element.id);
+                    shashin.printMessageToConsole("Removing from timeline " + element.id,{tag:"timeline"});
                     Util.removeDateGallery(element.id);
                 }
 
@@ -1011,7 +1011,7 @@
                             // Stage 1 - create a placeholder dive to enable scrolling through additional content based on current date section
                             const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
                             if (Util.isMobile() === false) {
-                                shashin.printMessageToConsole("timelineSettings.createEmptyContainer called");
+                                shashin.printMessageToConsole("timelineSettings.createEmptyContainer called",{tag:"timeline"});
                                 // Stage 1 - create an empty block
                                 await timelineSettings.createEmptyContainer(currentDate, anchorPoint, sectionHeight);
                                 action = "emptyContainer";
@@ -1286,8 +1286,8 @@
             }
         }
 
-        shashin.printMessageToConsole("jumpFromTimelineToc anchor:" + anchor);
-        shashin.printMessageToConsole("jumpFromTimelineToc mediaTypeFilter:" + mediaTypeFilter);
+        shashin.printMessageToConsole("jumpFromTimelineToc anchor:" + anchor,{tag:"timeline"});
+        shashin.printMessageToConsole("jumpFromTimelineToc mediaTypeFilter:" + mediaTypeFilter,{tag:"timeline"});
 
         $('section').each(function (index, element) {
             Util.removeDateGallery(element.id);

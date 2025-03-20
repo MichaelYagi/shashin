@@ -109,12 +109,12 @@
                     const favoritesMap = data.favorites;
                     const canEdit = data.canEdit;
 
-                    shashin.printMessageToConsole("albumSettings.getPagedAlbum");
-                    shashin.printMessageToConsole(albumData);
-                    shashin.printMessageToConsole(albumMetadataList);
-                    shashin.printMessageToConsole(albumPhotoCommentsMap);
-                    shashin.printMessageToConsole(userMap);
-                    shashin.printMessageToConsole(albumMetadataList.length);
+                    shashin.printMessageToConsole("albumSettings.getPagedAlbum",{tag:"album"});
+                    shashin.printMessageToConsole(albumData,{tag:"album"});
+                    shashin.printMessageToConsole(albumMetadataList,{tag:"album"});
+                    shashin.printMessageToConsole(albumPhotoCommentsMap,{tag:"album"});
+                    shashin.printMessageToConsole(userMap,{tag:"album"});
+                    shashin.printMessageToConsole(albumMetadataList.length,{tag:"album"});
 
                     if (albumMetadataList.length > 0) {
                         const mediaLinkLength = $(".mediaLink").length;
