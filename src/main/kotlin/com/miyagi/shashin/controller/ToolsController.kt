@@ -96,6 +96,7 @@ class ToolsController {
             .body(json)
     }
 
+    @CrossOrigin(origins = ["*"], originPatterns = [], allowedHeaders = ["*"], methods = [RequestMethod.GET], maxAge = 3600)
     @RequestMapping(value = ["/api/v1/tags"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getTags(model: Model): ResponseEntity<String> {
