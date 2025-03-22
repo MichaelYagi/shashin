@@ -34,7 +34,7 @@ Creating and pushing tags will upload jar and exe artifacts to [RepoFlow](https:
     * `git tag v<version>`
     * `git push origin v<version>`
     * This will kick off a build in circleci with artifacts uploaded to RepoFlow
-* Create release from new tag at https://github.com/MichaelYagi/shashin/tags
+* Create release from new tag at https://github.com/MichaelYagi/shashin/tags with release notes from `CHANGES.md`
 
 # Docker
 `mvn -Pprod clean install`
