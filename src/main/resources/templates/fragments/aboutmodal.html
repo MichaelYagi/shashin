@@ -47,9 +47,8 @@
                         for (let i in releaseArray) {
                             const releaseInfo = releaseArray[i];
 
-                            if (releaseInfo.hasOwnProperty("name")) {
-                                let parsedReleaseInfo = parseInt(releaseInfo.name.replace(/\D/g,''));
-
+                            if (releaseInfo.hasOwnProperty("tag_name")) {
+                                let parsedReleaseInfo = parseInt(releaseInfo.tag_name.replace(/\D/g,''));
                                 // Look for matching release
                                 if (isNaN(parsedCurrentRelease) === false && isNaN(parsedCurrentRelease) === false && parsedCurrentRelease <= parsedReleaseInfo) {
                                     if (parsedCurrentRelease < parsedReleaseInfo) {
