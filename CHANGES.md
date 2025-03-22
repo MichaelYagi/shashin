@@ -29,7 +29,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Improved server start time capture in dashboard
 
 ### Fixed
-- Search queue mechanism
+- Search history queue mechanism
 - Links in dashboard bar graph
 
 ### Removed

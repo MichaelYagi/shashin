@@ -3,6 +3,7 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.CommentRepository
 import com.miyagi.shashin.repository.FavoriteRepository
@@ -1053,8 +1054,14 @@ class UserController {
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
             response = mapper.readTree(currentUserObj.toString())
+
+            (response as ObjectNode).put("status", ApiResponse.SUCCESS.status)
+            response.put("msg", "")
         } else {
             response = mapper.readTree(User().toString())
+
+            (response as ObjectNode).put("status", ApiResponse.FAIL.status)
+            response.put("msg", "")
             logger.log(Level.INFO, "Could not access user info")
         }
 
