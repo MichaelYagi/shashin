@@ -96,6 +96,40 @@ class ToolsController {
             .body(json)
     }
 
+    @RequestMapping(value = ["/api/v1/tags"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getTags(model: Model): ResponseEntity<String> {
+        var response = mutableMapOf<String, Any?>()
+        response["tags"] = mutableListOf<Map<String, Any>>()
+        response["status"] = ApiResponse.FAIL.status
+        response["msg"] = ""
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null && githubKey != null && githubKey != "") {
+            val array = TextUtils.getReleases(githubKey!!)
+            if (array != null && array.isNotEmpty()) {
+                val tags = mutableListOf<Map<String, Any>>()
+                for (item in array) {
+                    if (item.containsKey("tag_name") && item.containsKey("body")) {
+                        val tag = mutableMapOf<String, Any>()
+                        tag["tag_name"] = item.getValue("tag_name")
+                        tag["body"] = item.getValue("body")
+                        tags.add(tag)
+                    }
+                }
+                response["tags"] = tags
+                response["status"] = ApiResponse.SUCCESS.status
+            }
+        }
+
+        val json = mapper.writeValueAsString(response)
+        return ResponseEntity
+            .ok()
+//            .cacheControl(CacheControl.maxAge(1, TimeUnit.SECONDS))
+            .cacheControl(CacheControl.maxAge(14, TimeUnit.DAYS))
+            .body(json)
+    }
+
     @RequestMapping(value = ["/bcrypt/{strtobcrypt}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getBcryptVal(@PathVariable(required = true) strtobcrypt: String): String {
