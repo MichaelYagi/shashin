@@ -76,7 +76,7 @@ class ToolsController {
     @ResponseBody
     fun getReleases(model: Model): ResponseEntity<String> {
         var response = mutableMapOf<String, Any?>()
-        response["releases"] = mutableListOf<Map<String, Any>>()
+        response["tags"] = mutableListOf<Map<String, Any>>()
         response["status"] = ApiResponse.FAIL.status
         response["msg"] = ""
 
@@ -84,7 +84,7 @@ class ToolsController {
         if (currentUserObj != null && githubKey != null && githubKey != "" && currentUserObj.getAuthority()!! != "ROLE_USER") {
             val array = TextUtils.getReleases(githubKey!!)
             if (array != null && array.isNotEmpty()) {
-                response["releases"] = array
+                response["tags"] = array
                 response["status"] = ApiResponse.SUCCESS.status
             }
         }
