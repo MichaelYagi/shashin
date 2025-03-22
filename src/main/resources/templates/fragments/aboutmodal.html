@@ -40,15 +40,15 @@
                 const http = new Http("get releases");
                 http.ajax("get", "/releases").then(function (data) {
                     shashin.printMessageToConsole(JSON.stringify(data), {tag: "release"});
-                    if (data.hasOwnProperty("releases") && data.releases.length > 0 && currentRelease !== "v") {
-                        const releaseArray = data.releases;
+                    if (data.hasOwnProperty("tags") && data.tags.length > 0 && currentRelease !== "v") {
+                        const releaseArray = data.tags;
                         let parsedCurrentRelease = parseInt(currentRelease.replace(/\D/g,''));
 
                         for (let i in releaseArray) {
                             const releaseInfo = releaseArray[i];
 
-                            if (releaseInfo.hasOwnProperty("tag_name")) {
-                                let parsedReleaseInfo = parseInt(releaseInfo.tag_name.replace(/\D/g,''));
+                            if (releaseInfo.hasOwnProperty("name")) {
+                                let parsedReleaseInfo = parseInt(releaseInfo.name.replace(/\D/g,''));
                                 // Look for matching release
                                 if (isNaN(parsedCurrentRelease) === false && isNaN(parsedCurrentRelease) === false && parsedCurrentRelease <= parsedReleaseInfo) {
                                     if (parsedCurrentRelease < parsedReleaseInfo) {
