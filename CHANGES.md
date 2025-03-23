@@ -4,6 +4,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Fixed
+
+### Removed
+
+## [2.8.2] - 2025-03-23
+### Added
 - CpuMetrics class for dashboard
 
 ### Changed
@@ -12,8 +21,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Cookie check for login persistence
-
-### Removed
 
 ## [2.8.1] - 2025-03-15
 ### Added
