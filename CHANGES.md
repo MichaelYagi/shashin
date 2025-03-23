@@ -23,6 +23,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Cookie check for login persistence
+- Getting tag name
 
 ## [2.8.1] - 2025-03-15
 ### Added
