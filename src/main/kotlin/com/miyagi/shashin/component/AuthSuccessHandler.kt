@@ -273,6 +273,12 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
             val agentVersion = if (userAgent.getAgentVersion() == null) "" else TextUtils.capitalized(userAgent.getAgentVersion()) + " "
 
             val notificationObjList = mutableListOf<Notification>()
+
+            var ipString = ""
+            if (!TextUtils.isLocalIp(clientIP)) {
+                ipString = " from IP <a href='https://ipgeolocation.io/ip-location/$clientIP' target='_blank'>$clientIP</a>"
+            }
+
             for (admin in admins) {
                 val notificationObj = Notification()
                 notificationObj.setUserId(admin.getId())
@@ -289,7 +295,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                 } else {
                     notificationObj.setRead(false)
                 }
-                notificationObj.setMessage("$identity logged in from IP <a href='https://ipgeolocation.io/ip-location/$clientIP' target='_blank'>$clientIP</a> using device $osName$osVersion$osClass and browser $agentName$agentVersion at ${sdtf.format(Date())}.")
+                notificationObj.setMessage("$identity logged in$ipString using device $osName$osVersion$osClass and browser $agentName$agentVersion at ${sdtf.format(Date())}.")
                 notificationObjList.add(notificationObj)
             }
             if (notificationObjList.isNotEmpty()) {

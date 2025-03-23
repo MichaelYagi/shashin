@@ -81,7 +81,12 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
 
         val clientIP = TextUtils.getClientIp(request)
 
-        message += " from IP <a href='https://ipgeolocation.io/ip-location/$clientIP' target='_blank'>$clientIP</a> using device $osName$osVersion$osClass and browser $agentName$agentVersion at ${sdtf.format(Date())}"
+        var ipString = ""
+        if (!TextUtils.isLocalIp(clientIP)) {
+            ipString = "from IP <a href='https://ipgeolocation.io/ip-location/$clientIP' target='_blank'>$clientIP</a> "
+        }
+
+        message += " ${ipString}using device $osName$osVersion$osClass and browser $agentName$agentVersion at ${sdtf.format(Date())}"
 
         logger.log(Level.WARNING, message)
 
