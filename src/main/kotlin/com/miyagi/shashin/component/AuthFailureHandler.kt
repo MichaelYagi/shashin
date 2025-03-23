@@ -4,6 +4,7 @@ import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.UserRepository
+import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.AuthenticationException
@@ -19,6 +20,7 @@ import java.util.*
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import nl.basjes.parse.useragent.UserAgentAnalyzer
 
 
 @Component
@@ -52,10 +54,35 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
             logger.log(Level.WARNING, "userRepository?.findByUsername error: ${e.message}")
         }
 
-        var message = "Unknown user '$lastUserName' attempted login at "+ sdtf.format(Date())+"."
+        var message = "Unknown user '$lastUserName' attempted login at "+ sdtf.format(Date())
         if (lastUser != null) {
-            message = "User '$lastUserName' failed login at " + sdtf.format(Date()) + "."
+            message = "User '$lastUserName' failed login at " + sdtf.format(Date())
         }
+
+        // Capture UA data
+        val userAgent = request?.getHeader("User-Agent")
+        val uaa = UserAgentAnalyzer
+            .newBuilder()
+            .hideMatcherLoadStats()
+            .withCache(10000)
+            .build()
+        val agentObj = uaa.parse(userAgent)
+
+        // eg. mobile
+        val osClass = if (agentObj.getValue("OperatingSystemClass") == "??") null else agentObj.getValue("OperatingSystemClass").lowercase()
+        // eg. android
+        val osName = if (agentObj.getValue("OperatingSystemName") == "??") null else agentObj.getValue("OperatingSystemName").lowercase()
+        // eg. 13
+        val osVersion = if (agentObj.getValue("OperatingSystemVersion") == "??") null else agentObj.getValue("OperatingSystemVersion").lowercase()
+        // eg. chrome
+        val agentName = if (agentObj.getValue("AgentName") == "??") null else agentObj.getValue("AgentName").lowercase()
+        // eg. 114
+        val agentVersion = if (agentObj.getValue("AgentVersion") == "??") null else agentObj.getValue("AgentVersion").lowercase()
+
+        val clientIP = TextUtils.getClientIp(request)
+
+        message += " from IP <a href='https://ipgeolocation.io/ip-location/$clientIP' target='_blank'>$clientIP</a> using device $osClass $osName $osVersion and browser $agentName $agentVersion at ${sdtf.format(Date())}"
+
 
         logger.log(Level.WARNING, message)
 
