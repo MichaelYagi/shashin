@@ -262,16 +262,15 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 
         if (admins != null && currentUserObj != null) {
             // eg. mobile
-            val osClass = if (userAgent.getOsClass() == null) "" else userAgent.getOsClass() + " "
+            val osClass = if (userAgent.getOsClass() == null) "" else TextUtils.capitalized(userAgent.getOsClass()) + " "
             // eg. android
-            val osName = if (userAgent.getOsName() == null) "" else userAgent.getOsName() + " "
+            val osName = if (userAgent.getOsName() == null) "" else TextUtils.capitalized(userAgent.getOsName()) + " "
             // eg. 13
-            val osVersion = if (userAgent.getOsVersion() == null) "" else userAgent.getOsVersion() + " "
+            val osVersion = if (userAgent.getOsVersion() == null) "" else TextUtils.capitalized(userAgent.getOsVersion()) + " "
             // eg. chrome
-            val agentName = if (userAgent.getAgentName() == null) "" else userAgent.getAgentName() + " "
+            val agentName = if (userAgent.getAgentName() == null) "" else TextUtils.capitalized(userAgent.getAgentName()) + " "
             // eg. 114
-            val agentVersion = if (userAgent.getAgentVersion() == null) "" else userAgent.getAgentVersion() + " "
-
+            val agentVersion = if (userAgent.getAgentVersion() == null) "" else TextUtils.capitalized(userAgent.getAgentVersion()) + " "
 
             val notificationObjList = mutableListOf<Notification>()
             for (admin in admins) {
@@ -290,7 +289,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                 } else {
                     notificationObj.setRead(false)
                 }
-                notificationObj.setMessage("$identity logged in from IP <a href='https://ipgeolocation.io/ip-location/$clientIP' target='_blank'>$clientIP</a> using device $osClass$osName$osVersion and browser $agentName$agentVersion at ${sdtf.format(Date())}.")
+                notificationObj.setMessage("$identity logged in from IP <a href='https://ipgeolocation.io/ip-location/$clientIP' target='_blank'>$clientIP</a> using device $osName$osVersion$osClass and browser $agentName$agentVersion at ${sdtf.format(Date())}.")
                 notificationObjList.add(notificationObj)
             }
             if (notificationObjList.isNotEmpty()) {
