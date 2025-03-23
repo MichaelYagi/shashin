@@ -54,9 +54,9 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
             logger.log(Level.WARNING, "userRepository?.findByUsername error: ${e.message}")
         }
 
-        var message = "Unknown user '$lastUserName' attempted login at "+ sdtf.format(Date())
+        var message = "Unknown user '$lastUserName' attempted login"
         if (lastUser != null) {
-            message = "User '$lastUserName' failed login at " + sdtf.format(Date())
+            message = "User '$lastUserName' failed login"
         }
 
         // Capture UA data
