@@ -15,6 +15,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - CpuMetrics class for dashboard
 - Public endpoint for tags and release notes
+- Detailed login/failed login information
 
 ### Changed
 - Labels in dashboard circle charts
