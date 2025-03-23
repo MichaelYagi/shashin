@@ -99,14 +99,13 @@ class ToolsController {
     @CrossOrigin(origins = ["*"], originPatterns = [], allowedHeaders = ["*"], methods = [RequestMethod.GET], maxAge = 3600)
     @RequestMapping(value = ["/api/v1/tags"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getTags(model: Model): ResponseEntity<String> {
+    fun getTags(): ResponseEntity<String> {
         var response = mutableMapOf<String, Any?>()
         response["tags"] = mutableListOf<Map<String, Any>>()
         response["status"] = ApiResponse.FAIL.status
         response["msg"] = ""
 
-        val currentUserObj = model.getAttribute("currentUser") as User?
-        if (currentUserObj != null && githubKey != null && githubKey != "") {
+        if (githubKey != null && githubKey != "") {
             val array = TextUtils.getReleases(githubKey!!)
             if (array != null && array.isNotEmpty()) {
                 val tags = mutableListOf<Map<String, Any>>()
@@ -121,6 +120,8 @@ class ToolsController {
                 response["tags"] = tags
                 response["status"] = ApiResponse.SUCCESS.status
             }
+        } else {
+            response["msg"] = "Could not complete request"
         }
 
         val json = mapper.writeValueAsString(response)

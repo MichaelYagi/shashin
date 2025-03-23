@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [2.8.2] - 2025-03-23
 ### Added
 - CpuMetrics class for dashboard
+- Public endpoint for tags and release notes
 
 ### Changed
 - Labels in dashboard circle charts
