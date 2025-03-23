@@ -69,19 +69,19 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
         val agentObj = uaa.parse(userAgent)
 
         // eg. mobile
-        val osClass = if (agentObj.getValue("OperatingSystemClass") == "??") "" else agentObj.getValue("OperatingSystemClass").lowercase() + " "
+        val osClass = if (agentObj.getValue("OperatingSystemClass") == "??") "" else TextUtils.capitalized(agentObj.getValue("OperatingSystemClass").lowercase()) + " "
         // eg. android
-        val osName = if (agentObj.getValue("OperatingSystemName") == "??") "" else agentObj.getValue("OperatingSystemName").lowercase() + " "
+        val osName = if (agentObj.getValue("OperatingSystemName") == "??") "" else TextUtils.capitalized(agentObj.getValue("OperatingSystemName").lowercase()) + " "
         // eg. 13
-        val osVersion = if (agentObj.getValue("OperatingSystemVersion") == "??") "" else agentObj.getValue("OperatingSystemVersion").lowercase() + " "
+        val osVersion = if (agentObj.getValue("OperatingSystemVersion") == "??") "" else TextUtils.capitalized(agentObj.getValue("OperatingSystemVersion").lowercase()) + " "
         // eg. chrome
-        val agentName = if (agentObj.getValue("AgentName") == "??") "" else agentObj.getValue("AgentName").lowercase() + " "
+        val agentName = if (agentObj.getValue("AgentName") == "??") "" else TextUtils.capitalized(agentObj.getValue("AgentName").lowercase()) + " "
         // eg. 114
-        val agentVersion = if (agentObj.getValue("AgentVersion") == "??") "" else agentObj.getValue("AgentVersion").lowercase() + " "
+        val agentVersion = if (agentObj.getValue("AgentVersion") == "??") "" else TextUtils.capitalized(agentObj.getValue("AgentVersion").lowercase()) + " "
 
         val clientIP = TextUtils.getClientIp(request)
 
-        message += " from IP <a href='https://ipgeolocation.io/ip-location/$clientIP' target='_blank'>$clientIP</a> using device $osClass$osName$osVersion and browser $agentName$agentVersion at ${sdtf.format(Date())}"
+        message += " from IP <a href='https://ipgeolocation.io/ip-location/$clientIP' target='_blank'>$clientIP</a> using device $osName$osVersion$osClass and browser $agentName$agentVersion at ${sdtf.format(Date())}"
 
         logger.log(Level.WARNING, message)
 
