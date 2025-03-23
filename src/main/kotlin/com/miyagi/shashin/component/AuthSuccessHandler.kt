@@ -161,9 +161,6 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 
                 if (isAuthorized) {
                     if (user != null && user.getId() > 0) {
-                        notifyLogin(user)
-//                        checkLatestAppVersion(user)
-
                         if (this.profile != "test" && this.persistentTokenRepository != null) {
                             val rememberMeServices =
                                 PersistentTokenBasedRememberMeServices(
@@ -180,35 +177,6 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                                 rememberMeServices.loginSuccess(request, response, authentication)
                             }
                         }
-
-//                    if (response != null) {
-//                        var series = ""
-//                        var expiry = ""
-//
-//                        for (cookie in response.getHeaders("Set-Cookie")) {
-//                            if (cookie.lowercase().contains("remember-me")) {
-//                                val seriesExpiryMap = TextUtils.parseRememberMeCookie(cookie)
-//                                series = seriesExpiryMap["series"].toString()
-//                                expiry = seriesExpiryMap["expires"].toString()
-//                                break
-//                            }
-//                        }
-//
-//                        if (series.isNotEmpty() && expiry.isNotEmpty()) {
-//                            val persistentLoginsExpiry = PersistentLoginsExpiry()
-//                            persistentLoginsExpiry.setSeries(series)
-//                            persistentLoginsExpiry.setExpiry(expiry.toLong())
-//                            val uri = URI(request.requestURL.toString())
-//                            val host = uri.host
-//                            persistentLoginsExpiry.setHost(host)
-//                            val userAgent = request.getHeader("User-Agent")
-//                            persistentLoginsExpiry.setUseragent(userAgent)
-//                            persistentLoginsExpiryRepository?.save(persistentLoginsExpiry)
-//                        }
-//
-//                        // Cleanup tasks
-//                        DatabaseUtil.cleanupPersistence(persistentLoginsExpiryRepository, persistentLoginsRepository)
-//                    }
 
                         // Capture UA data
                         val userAgent = request.getHeader("User-Agent")
@@ -242,6 +210,10 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                         useragentObj.setUserId(userId)
                         useragentObj.setCreatedAt(getCurrentTimestamp())
                         useragentRepository?.save(useragentObj)
+
+                        val clientIp = TextUtils.getClientIp(request)
+
+                        notifyLogin(user, useragentObj, clientIp)
 
                         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
                         val sidecarDir = rootPath + relativeSidecarDir
@@ -282,13 +254,25 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
         return false
     }
 
-    private fun notifyLogin(currentUserObj: User?) {
+    private fun notifyLogin(currentUserObj: User?, userAgent: Useragent, clientIP: String?) {
         val admins = userRepository?.findAllAdmins()
 
         val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
         sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
 
         if (admins != null && currentUserObj != null) {
+            // eg. mobile
+            val osClass = userAgent.getOsClass()
+            // eg. android
+            val osName = userAgent.getOsName()
+            // eg. 13
+            val osVersion = userAgent.getOsVersion()
+            // eg. chrome
+            val agentName = userAgent.getAgentName()
+            // eg. 114
+            val agentVersion = userAgent.getAgentVersion()
+
+
             val notificationObjList = mutableListOf<Notification>()
             for (admin in admins) {
                 val notificationObj = Notification()
@@ -306,7 +290,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                 } else {
                     notificationObj.setRead(false)
                 }
-                notificationObj.setMessage("$identity logged in at "+sdtf.format(Date())+".")
+                notificationObj.setMessage("$identity logged in from IP <a href='https://ipgeolocation.io/ip-location/$clientIP' target='_blank'>$clientIP</a> using device $osClass $osName $osVersion and browser $agentName $agentVersion at ${sdtf.format(Date())}.")
                 notificationObjList.add(notificationObj)
             }
             if (notificationObjList.isNotEmpty()) {
