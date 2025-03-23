@@ -81,7 +81,7 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
 
         val clientIP = TextUtils.getClientIp(request)
 
-        var ipString = ""
+        var ipString = "$clientIP "
         if (!TextUtils.isLocalIp(clientIP)) {
             ipString = "from IP <a href='https://ipgeolocation.io/ip-location/$clientIP' target='_blank'>$clientIP</a> "
         }
