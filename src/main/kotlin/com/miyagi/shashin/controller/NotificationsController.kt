@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
-import com.miyagi.shashin.repository.MediaDirectoryRepository
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.util.ApiResponse
@@ -21,9 +20,6 @@ import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import java.util.*
 import jakarta.transaction.Transactional
-import org.apache.commons.text.StringEscapeUtils
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 @Controller
 @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")

@@ -3,8 +3,6 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.miyagi.shashin.component.Message
-import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
@@ -38,23 +36,9 @@ import java.time.ZoneId
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
-import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import jakarta.servlet.http.HttpSession
 import jakarta.transaction.Transactional
-import org.springframework.context.event.EventListener
-import org.springframework.http.HttpStatus
-import org.springframework.messaging.handler.annotation.MessageMapping
-import org.springframework.messaging.handler.annotation.SendTo
-import org.springframework.messaging.simp.annotation.SubscribeMapping
-import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.multipart.MultipartFile
-import org.springframework.web.server.ResponseStatusException
-import org.springframework.web.socket.messaging.SessionConnectEvent
-import org.springframework.web.socket.messaging.SessionDisconnectEvent
-import org.springframework.web.socket.messaging.SessionSubscribeEvent
-import java.io.FileOutputStream
-import java.io.IOException
 import kotlin.collections.count
 import kotlin.io.path.isDirectory
 
