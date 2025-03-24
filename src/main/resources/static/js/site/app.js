@@ -967,6 +967,35 @@
             $("#"+type+"SelectionLabel").text("");
         });
 
+        $('input[name="' + ((type === "album") ? "album" : "recognitionLabel") + metadataId + '[]"]').on("click", function () {
+            const nameValue = $(this).attr("value");
+            const inputData = (type === "album") ? $("#albumnames").val() : $("#tagpeople").val();
+            let inputDataArray = $.map(inputData.split(","), $.trim);
+
+            if ($(this).is(":checked") === true) {
+                if ($.inArray(nameValue, inputDataArray) === -1) {
+                    if (type === "album") {
+                        $("#albumnames").val((($("#albumnames").val().trim().length === 0) ? "" : $("#albumnames").val().trim() + ",") + nameValue);
+                    } else {
+                        $("#tagpeople").val((($("#tagpeople").val().trim().length === 0) ? "" : $("#tagpeople").val().trim() + ",") + nameValue);
+                    }
+                }
+            } else {
+                if ($.inArray(nameValue, inputDataArray) !== -1) {
+                    // Take value out of array
+                    inputDataArray = $.grep(inputDataArray, function (value) {
+                        return value !== nameValue;
+                    });
+
+                    if (type === "album") {
+                        $("#albumnames").val(inputDataArray.join(","));
+                    } else {
+                        $("#tagpeople").val(inputDataArray.join(","));
+                    }
+                }
+            }
+        });
+
         $("#confirm"+type.charAt(0).toUpperCase() + type.slice(1)+"Selection").on("click", function () {
             if (type === "album") {
                 const checkedBoxes = $('input[name="album' + metadataId + '[]"]:checked');
