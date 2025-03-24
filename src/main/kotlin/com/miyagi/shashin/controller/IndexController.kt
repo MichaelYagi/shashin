@@ -2,7 +2,6 @@ package com.miyagi.shashin.controller
 
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.UserRepository
-import com.miyagi.shashin.service.CustomUserDetailsService
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.stereotype.Controller

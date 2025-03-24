@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.Operation
 import org.apache.commons.text.StringEscapeUtils
 import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller

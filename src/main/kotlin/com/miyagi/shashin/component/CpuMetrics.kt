@@ -1,7 +1,6 @@
 package com.miyagi.shashin.component
 
 import com.google.javascript.jscomp.jarjar.javax.annotation.PostConstruct
-import com.miyagi.shashin.controller.DashboardController
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import io.micrometer.core.instrument.Gauge

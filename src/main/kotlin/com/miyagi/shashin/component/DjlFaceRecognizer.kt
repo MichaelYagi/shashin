@@ -16,7 +16,6 @@ import ai.djl.translate.Translator
 import ai.djl.translate.TranslatorContext
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.miyagi.shashin.ShashinApplication
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.RecognitionLabelPhotoRepository
 import com.miyagi.shashin.repository.RecognitionLabelRepository
@@ -27,13 +26,10 @@ import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import net.coobird.thumbnailator.Thumbnails
 import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.FileSystemResource
-import org.springframework.util.ResourceUtils
 import java.awt.image.BufferedImage
 import java.io.File
 import java.io.IOException
-import java.nio.file.Files
 import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
 import java.util.logging.Logger

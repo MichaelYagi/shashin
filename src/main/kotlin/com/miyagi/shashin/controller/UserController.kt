@@ -24,15 +24,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
 import org.springframework.data.domain.Sort
-import org.springframework.http.MediaType
 import org.springframework.security.access.annotation.Secured
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.bind.support.SessionStatus
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.io.ByteArrayInputStream
 import java.io.File
