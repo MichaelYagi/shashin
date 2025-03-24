@@ -1,16 +1,12 @@
 package com.miyagi.shashin.controller
 
-import ai.djl.repository.MRL.model
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.gson.Gson
-import com.miyagi.shashin.configuration.MultiSecurityConfig
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.*
 import com.sun.management.OperatingSystemMXBean
-import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.health.HealthComponent
@@ -21,8 +17,6 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.context.support.WebApplicationContextUtils
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 import java.lang.management.ManagementFactory
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -34,12 +28,6 @@ import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.CacheControl
 import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStreamReader
-import java.io.OutputStream
-import java.net.HttpURLConnection
-import java.net.URL
 import java.util.concurrent.TimeUnit
 import kotlin.collections.iterator
 import kotlin.collections.set

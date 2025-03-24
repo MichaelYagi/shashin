@@ -22,7 +22,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-import org.springframework.security.web.authentication.logout.LogoutHandler
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository
 import org.springframework.security.web.firewall.HttpFirewall
@@ -30,7 +29,6 @@ import org.springframework.security.web.firewall.StrictHttpFirewall
 import org.springframework.security.web.header.HeaderWriterFilter
 import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter
 import org.springframework.security.web.session.HttpSessionEventPublisher
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import javax.sql.DataSource

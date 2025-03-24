@@ -3,8 +3,6 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.miyagi.shashin.component.Message
-import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
@@ -22,16 +20,8 @@ import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 import java.util.*
 import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpSession
-import org.springframework.context.event.EventListener
 import org.springframework.http.MediaType
-import org.springframework.messaging.handler.annotation.MessageMapping
-import org.springframework.messaging.handler.annotation.SendTo
-import org.springframework.messaging.simp.annotation.SubscribeMapping
 import org.springframework.web.multipart.MultipartFile
-import org.springframework.web.socket.messaging.SessionConnectEvent
-import org.springframework.web.socket.messaging.SessionDisconnectEvent
-import org.springframework.web.socket.messaging.SessionSubscribeEvent
 import kotlin.collections.HashMap
 import kotlin.collections.mutableListOf
 

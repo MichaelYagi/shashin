@@ -1,11 +1,8 @@
 package com.miyagi.shashin.controller
 
-import ai.djl.Application
-import ai.djl.engine.Engine
 import ai.djl.modality.cv.Image
 import ai.djl.modality.cv.output.DetectedObjects
 import ai.djl.repository.zoo.Criteria
-import ai.djl.training.util.ProgressBar
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
@@ -22,7 +19,6 @@ import com.miyagi.shashin.service.RestartService
 import com.miyagi.shashin.util.*
 import com.miyagi.shashin.util.ImageProcessing.Companion.buildObjectRecognitionCriteria
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
-import kotlinx.coroutines.*
 import net.iakovlev.timeshape.TimeZoneEngine
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -72,7 +68,6 @@ import jakarta.servlet.http.HttpSession
 import jakarta.transaction.Transactional
 import org.springframework.data.jpa.repository.Modifying
 import java.util.stream.Collectors
-import kotlin.io.path.Path
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
 import kotlin.math.floor

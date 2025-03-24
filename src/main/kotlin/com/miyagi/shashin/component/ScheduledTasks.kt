@@ -1,11 +1,5 @@
 package com.miyagi.shashin.component
 
-import ai.djl.Application
-import ai.djl.engine.Engine
-import ai.djl.modality.cv.Image
-import ai.djl.modality.cv.output.DetectedObjects
-import ai.djl.repository.zoo.Criteria
-import ai.djl.training.util.ProgressBar
 import com.miyagi.shashin.ShashinApplication
 import com.miyagi.shashin.controller.TimelineController
 import com.miyagi.shashin.model.Notification

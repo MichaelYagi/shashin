@@ -38,8 +38,6 @@ import org.springframework.web.servlet.NoHandlerFoundException
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import org.springframework.web.servlet.resource.NoResourceFoundException
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
-import java.lang.management.ManagementFactory
-import java.lang.management.OperatingSystemMXBean
 import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.util.*
