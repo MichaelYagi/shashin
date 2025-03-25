@@ -1039,6 +1039,35 @@
             $("#"+type+"BatchSelectionLabel").text("");
         });
 
+        $('input[name="' + ((type === "album") ? "albums" : "recognitionLabel") + '[]"]').on("click", function () {
+            const nameValue = $(this).attr("value");
+            const inputData = (type === "album") ? $("#albumNameInput").val() : $("#tagBatchDataInput").val();
+            let inputDataArray = $.map(inputData.split(","), $.trim);
+
+            if ($(this).is(":checked") === true) {
+                if ($.inArray(nameValue, inputDataArray) === -1) {
+                    if (type === "album") {
+                        $("#albumNameInput").val((($("#albumNameInput").val().trim().length === 0) ? "" : $("#albumNameInput").val().trim() + ",") + nameValue);
+                    } else {
+                        $("#tagBatchDataInput").val((($("#tagBatchDataInput").val().trim().length === 0) ? "" : $("#tagBatchDataInput").val().trim() + ",") + nameValue);
+                    }
+                }
+            } else {
+                if ($.inArray(nameValue, inputDataArray) !== -1) {
+                    // Take value out of array
+                    inputDataArray = $.grep(inputDataArray, function (value) {
+                        return value !== nameValue;
+                    });
+
+                    if (type === "album") {
+                        $("#albumNameInput").val(inputDataArray.join(","));
+                    } else {
+                        $("#tagBatchDataInput").val(inputDataArray.join(","));
+                    }
+                }
+            }
+        });
+
         $("#confirmBatch"+type.charAt(0).toUpperCase() + type.slice(1)+"Selection").on("click", function () {
             if (type === "album") {
                 const checkedBoxes = $('#albumBatchSelectionList :checked');
