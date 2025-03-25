@@ -960,6 +960,25 @@
 
     shashin.createModalMultiselect = function(metadataId, type, html) {
         $("#"+type+"SelectionList").html(html);
+
+        const inputData = (type === "album") ? $("#albumnames").val() : $("#tagpeople").val();
+        let inputDataArray = $.map(inputData.split(","), $.trim);
+
+        const inputs = $('input[name="' + ((type === "album") ? "album" : "recognitionLabel") + metadataId + '[]"]');
+
+        for (let index in inputs) {
+            if ($.isNumeric(index) && inputs.hasOwnProperty(index)) {
+                const inputEl = inputs[index];
+                const nameValue = $(inputEl).val();
+
+                if ($.inArray(nameValue, inputDataArray) !== -1) {
+                    $(inputEl).attr('checked', true);
+                } else {
+                    $(inputEl).attr('checked', false);
+                }
+            }
+        }
+
         $("#"+type+"SelectionLabel").text("Select " + type.charAt(0).toUpperCase() + type.slice(1));
         $("#"+type+"Selection").modal('show');
 
@@ -967,7 +986,7 @@
             $("#"+type+"SelectionLabel").text("");
         });
 
-        $('input[name="' + ((type === "album") ? "album" : "recognitionLabel") + metadataId + '[]"]').on("click", function () {
+        inputs.on("click", function () {
             const nameValue = $(this).attr("value");
             const inputData = (type === "album") ? $("#albumnames").val() : $("#tagpeople").val();
             let inputDataArray = $.map(inputData.split(","), $.trim);
@@ -1038,6 +1057,24 @@
         $("#"+type+"BatchSelection").on('hide.bs.modal', function () {
             $("#"+type+"BatchSelectionLabel").text("");
         });
+
+        const inputData = (type === "album") ? $("#albumNameInput").val() : $("#tagBatchDataInput").val();
+        let inputDataArray = $.map(inputData.split(","), $.trim);
+
+        const inputs = $('input[name="' + ((type === "album") ? "albums" : "recognitionLabel") + '[]"]');
+
+        for (let index in inputs) {
+            if ($.isNumeric(index) && inputs.hasOwnProperty(index)) {
+                const inputEl = inputs[index];
+                const nameValue = $(inputEl).val();
+
+                if ($.inArray(nameValue, inputDataArray) !== -1) {
+                    $(inputEl).attr('checked', true);
+                } else {
+                    $(inputEl).attr('checked', false);
+                }
+            }
+        }
 
         $('input[name="' + ((type === "album") ? "albums" : "recognitionLabel") + '[]"]').on("click", function () {
             const nameValue = $(this).attr("value");
