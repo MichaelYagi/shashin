@@ -297,20 +297,31 @@ class APITests: BaseSeleniumTests() {
         }
 
         Assertions.assertTrue(jsonNode!!.has("metadataList"))
-        Assertions.assertTrue(jsonNode.get("metadataList").get(0).get("id").textValue() != "")
 
-        val metadataJsonObj = ObjectMapper().writeValueAsString(jsonNode.get("metadataList").get(0))
+        val metadataList = jsonNode.get("metadataList").toList()
+        var metadataId = ""
+        var metadata: Metadata? = null
         var gson = Gson()
-        val metadata = gson.fromJson(metadataJsonObj, Metadata::class.java)
-        val metadataId = metadata.getId()
+        for (metadataJson in metadataList) {
+            if (metadataJson.get("type").textValue().contains("image/")) {
+                val metadataJsonObj = ObjectMapper().writeValueAsString(metadataJson)
+                metadata = gson.fromJson(metadataJsonObj, Metadata::class.java)
+                metadataId = metadata.getId()
 
+                break
+            }
+        }
+
+        Assertions.assertTrue(metadataId != "")
+        Assertions.assertTrue(metadata != null)
+
+        var map = mutableMapOf<String, Any>()
         // Capture original dates
-        val originalYear = metadata.getYear()
+        val originalYear = metadata!!.getYear()
         val originalMonth = metadata.getMonth()
         val originalDay = metadata.getDay()
 
         // Update metadata with different dates
-        var map = mutableMapOf<String, Any>()
         map["id"] = metadataId
         map["year"] = "2001"
         map["month"] = "1"
