@@ -1,24 +1,17 @@
 package com.miyagi.shashin.unit
 
-import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
-import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import com.miyagi.shashin.util.TextUtils.Companion.sortPlaceNames
 import org.json.JSONObject
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.test.context.ActiveProfiles
-import java.time.LocalTime
 
 @SpringBootTest
 @ActiveProfiles("test")
 class TextUtilsTest {
-    var bcrypt = BCryptPasswordEncoder()
-
     @Value("\${app.rememberme.key}")
     private var rememberMeKey: String? = null
 
