@@ -7,11 +7,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
-import org.openqa.selenium.remote.DesiredCapabilities
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.FileSystemResource
 import java.io.File
-import java.net.URL
 import java.util.logging.Logger
 import jakarta.transaction.Transactional
 import org.springframework.data.jpa.repository.Modifying
