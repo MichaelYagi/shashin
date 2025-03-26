@@ -582,6 +582,14 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
     function exitSlideshow() {
         tearDownVideo();
 
+        slideshowStarted = false;
+        slideshowIsPaused = false;
+        slideshowCurrentIndex = 0;
+        slideshowMetadataIds = [];
+        slideshowCursorVisible = true;
+        slideshowProceed = true;
+        firstTime = true;
+        isFileDialogOpened = false;
         isActive = false;
 
         if (document.fullscreenEnabled && document.fullscreenElement !== null && document.exitFullscreen) {
