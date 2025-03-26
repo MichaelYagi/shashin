@@ -582,6 +582,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
     function exitSlideshow() {
         tearDownVideo();
 
+        $("#mediaSrc").css("opacity", "1");
         slideshowStarted = false;
         slideshowIsPaused = false;
         slideshowCurrentIndex = 0;
