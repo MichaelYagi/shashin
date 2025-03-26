@@ -3197,7 +3197,7 @@
         if (metadata.type.includes("video")) {
             overlays.push("isVideo");
             data.duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
-        } else if (metadata.width !== null && metadata.height !== null && metadata.width > metadata.height*2) {
+        } else if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null && metadata.originalImageWidth > metadata.originalImageHeight*2) {
             overlays.push("isPan");
         } else if (metadata.expectedExtension === "gif") {
             overlays.push("isGif");
