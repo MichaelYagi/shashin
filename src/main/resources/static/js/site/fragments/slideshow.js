@@ -572,6 +572,11 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
                 shashin.printMessageToConsole("Slideshow interval failed request", {tag: "slideshow"});
             }
         });
+
+        $("#slideshowIntervalSlide").on("input", function () {
+            slideshowIsElapsed = $(this).val() * 5;
+            $("#intervalValue").text(slideshowIsElapsed);
+        });
     }
 
     function exitSlideshow() {
