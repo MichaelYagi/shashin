@@ -28,6 +28,8 @@ class User {
     private var showPlacename: Boolean? = false
     @NotBlank
     private var notificationAlerts: Boolean? = true
+    @NotBlank
+    private var slideshowInterval: Int? = 10
     private var profile: String? = null
     private var authority: String? = null
     private var createdAt: String? = null
@@ -65,6 +67,14 @@ class User {
 
     fun setPassword(password: String?) {
         this.password = password
+    }
+
+    fun getSlideshowInterval(): Int? {
+        return this.slideshowInterval
+    }
+
+    fun setSlideshowInterval(slideshowInterval: Int?) {
+        this.slideshowInterval = slideshowInterval
     }
 
     fun getApikey(): String? {
@@ -173,6 +183,7 @@ class User {
         map["notificationAlerts"] = this.notificationAlerts
         map["createdAt"] = this.createdAt
         map["modifiedAt"] = this.modifiedAt
+        map["slideshowInterval"] = this.slideshowInterval
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {

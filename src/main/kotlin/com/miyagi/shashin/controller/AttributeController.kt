@@ -389,6 +389,9 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 if (currentUser.getNotificationAlerts() == null) {
                     currentUser.setNotificationAlerts(true)
                 }
+                if (currentUser.getSlideshowInterval() == null) {
+                    currentUser.setSlideshowInterval(10)
+                }
 
                 val mediaCount = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
                     metadataRepository?.countAllByTypeContains("image")
@@ -447,6 +450,9 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 }
                 if (currentUser.getNotificationAlerts() == null) {
                     currentUser.setNotificationAlerts(true)
+                }
+                if (currentUser.getSlideshowInterval() == null) {
+                    currentUser.setSlideshowInterval(10)
                 }
                 if (!currentUser.getApikey().isNullOrBlank()) {
                     model["apikey"] = currentUser.getApikey()!!

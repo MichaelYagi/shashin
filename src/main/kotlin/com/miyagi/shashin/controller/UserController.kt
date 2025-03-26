@@ -638,6 +638,30 @@ class UserController {
         return mapper.writeValueAsString(resp)
     }
 
+    @RequestMapping(value = ["/users/slideshowinterval"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
+    fun setSlideshowInterval(model: Model, @RequestBody requestBody: JsonNode): String? {
+        val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
+
+        resp["status"] = ApiResponse.FAIL.status
+        resp["msg"] = ""
+
+        if (userMap.containsKey("slideshowInterval") && userMap["slideshowInterval"] != null && userMap["slideshowInterval"]!!.toInt() > 0) {
+            val slideshowInterval = userMap["slideshowInterval"]!!.toInt()
+
+            val currentUserObj = model.getAttribute("currentUser") as User?
+            if (currentUserObj != null) {
+                currentUserObj.setSlideshowInterval(slideshowInterval)
+                userRepository?.save(currentUserObj)
+                resp["status"] = ApiResponse.SUCCESS.status
+                resp["msg"] = ""
+            }
+        }
+
+        return mapper.writeValueAsString(resp)
+    }
+
     @RequestMapping(value = ["/users/autoplayvideo"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
