@@ -1619,7 +1619,7 @@ class Util {
             });
         }
         if (metadata.thumbnailUrlOriginal != null || metadata.videoUrl != null) {
-            let relativeShareLink = "/api/v1/image/"+metadata.id;
+            let relativeShareLink = "/api/v1/image/" + metadata.id;
             if (metadata.videoUrl != null) {
                 relativeShareLink = metadata.videoUrl;
             }
@@ -1634,11 +1634,13 @@ class Util {
             }
 
             let shareDetailsHtml = "<a class='bi-download' href='" + relativeShareLink + "/download' title='Download photo' style='font-size: 1rem;'></a>&nbsp;&nbsp;&nbsp;" +
-                "<a class='"+((metadata.videoUrl != null) ? "bi-camera-video":"bi-file-image")+"' style='font-size: 1rem;' href='" + relativeShareLink.replace('/api/v1','') + page + "' title='View "+((metadata.videoUrl != null) ? "video":"image")+"' target='_blank'></a>";
+                "<a class='" + ((metadata.videoUrl != null) ? "bi-camera-video" : "bi-file-image") + "' style='font-size: 1rem;' href='" + relativeShareLink.replace('/api/v1', '') + page + "' title='View " + ((metadata.videoUrl != null) ? "video" : "image") + "' target='_blank'></a>";
 
             if (metadata.videoUrl === null && Util.isLocalNetwork() === false) {
-                shareDetailsHtml += "&nbsp;&nbsp;&nbsp;<a class='bi-camera' style='font-size: 1rem;' href='https://lens.google.com/uploadbyurl?url="+baseUrl+relativeShareLink+"' title='Search Google Lens' target='_blank'></a>";
+                shareDetailsHtml += "&nbsp;&nbsp;&nbsp;<a class='bi-camera' style='font-size: 1rem;' href='https://lens.google.com/uploadbyurl?url=" + baseUrl + relativeShareLink + "' title='Search Google Lens' target='_blank'></a>";
             }
+
+            shareDetailsHtml += "&nbsp;&nbsp;&nbsp;<a class='bi-pencil editDetails' tag='"+metadata.id+"' style='font-size: 1rem;' href='#' title='Edit Metadata'></a>";
 
             if ($(".shareUrlDetailsA").length > 0) {
                 shareDetailsHtml += timeLinkHtml;
@@ -1646,6 +1648,18 @@ class Util {
             } else {
                 $(".shareUrlDetails").html(shareDetailsHtml);
             }
+
+            $(".editDetails").on("click", function (e) {
+                e.preventDefault();
+
+                const bsOffcanvasEl = document.getElementById('propInfoSidebar');
+                const bsOffcanvas = bootstrap.Offcanvas.getInstance(bsOffcanvasEl);
+                if (bsOffcanvas !== null) {
+                    bsOffcanvas.hide();
+                }
+
+                shashin.openEditMetadataModal(metadata.id);
+            });
 
             $(".sharecopy").on("click", function (e) {
                 e.preventDefault();
@@ -1655,8 +1669,8 @@ class Util {
 }
 
 // Convenience functions
-(function($) {
-    $.fn.invisible = function() {
+(function ($) {
+    $.fn.invisible = function () {
         return this.css('visibility', 'hidden');
     };
     $.fn.visible = function() {
