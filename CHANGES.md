@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Panorama detection
+- Prevent saving in modal when selecting auto complete item
 
 ### Removed
 
