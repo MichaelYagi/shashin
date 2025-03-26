@@ -1186,6 +1186,9 @@
                 return false;
             },
             select: function (event, ui) {
+                event.preventDefault();
+                event.stopPropagation();
+
                 const inputValues = this.value.split(",");
                 $.each(inputValues, function(index, keywordItem) {
                     // do something with `item` (or `this` is also `item` if you like)
