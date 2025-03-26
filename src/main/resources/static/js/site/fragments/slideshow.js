@@ -1,8 +1,8 @@
-function initializeSlideshow(accessTimelineView, queryLimit) {
+function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) {
     let slideshowIntervalId;
     let slideshowStarted = false;
     let slideshowIsPaused = false;
-    let slideshowIsElapsed = 20; // Seconds
+    let slideshowIsElapsed = slideshowInterval; // Seconds
     let slideshowCurrentIndex = 0;
     let slideshowMetadataIds = [];
     let slideshowMouseTimer = null;
@@ -485,6 +485,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 "<span id='castKey' style='display: none;'><div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>c</strong></span></div><div class='col-9'>Start/stop casting</div></div></span>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>i</strong></span></div><div class='col-9'>Slide info</div></div>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>← →</strong></span></div><div class='col-9'>Go to next/previous slide</div></div>" +
+                "<div class='row mb-1'><div class='col-3 text-center'><input type='range' class='form-range' min='1' max='3' id='slideshowIntervalSlide'></div><div class='col-9'>5, 10 or 15s intervals</div></div>" +
                 "</div>";
 
             title = "Keyboard Shortcuts";
@@ -495,6 +496,7 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>Single Tap</strong></span></div><div class='col-9'>Play/pause</div></div>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>Double Tap</strong></span></div><div class='col-9'>Exit slideshow</div></div>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>Swipe ← →</strong></span></div><div class='col-9'>Go to next/previous slide</div></div>" +
+                "<div class='row mb-1'><div class='col-3 text-center'><input type='range' class='form-range' min='1' max='3' id='slideshowIntervalSlide'></div><div class='col-9'>5, 10 or 15s intervals</div></div>" +
                 "</div>";
 
             title = "Touch Bindings";
@@ -504,6 +506,8 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
             message,
             options
         );
+
+        $("#slideshowIntervalSlide").val(slideshowIsElapsed/5);
 
         if (typeof Castjs != "undefined" && cjsc !== null) {
             cjsc.on('available', () => {
@@ -535,6 +539,36 @@ function initializeSlideshow(accessTimelineView, queryLimit) {
                     cjsc.disconnect();
                     $("#toggleCastIcon").addClass('bi-cast').removeClass('bi-stop-circle');
                 }
+            }
+        });
+
+        $("#slideshowIntervalSlide").on("input", function () {
+            slideshowIsElapsed = $(this).val() * 5;
+
+            if (slideshowIsPaused === false) {
+                clearInterval(slideshowIntervalId);
+                slideshowIntervalId = window.setInterval(function () {
+                    if (slideshowIsPaused === false) {
+                        slideshowCurrentIndex++;
+                        getSlideshowImage(function () {
+                            slideshowProceed = true;
+                        });
+                    }
+                }, (slideshowIsElapsed * 1000));
+            }
+
+            const http = new Http("dark mode");
+            const json = {slideshowInterval: slideshowIsElapsed};
+            const data = http.ajax("post", "/users/slideshowinterval", JSON.stringify(json));
+
+            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                if (data.status === "success") {
+                    shashin.printMessageToConsole("Slideshow interval set: " + slideshowIsElapsed + "s", {tag: "slideshow"});
+                } else {
+                    shashin.printMessageToConsole("Slideshow interval failed to set", {tag: "slideshow"});
+                }
+            } else {
+                shashin.printMessageToConsole("Slideshow interval failed request", {tag: "slideshow"});
             }
         });
     }

@@ -155,6 +155,7 @@ CREATE TABLE `user` (
                         `showPlacename` BOOLEAN NOT NULL DEFAULT FALSE,
                         `darkMode` BOOLEAN NOT NULL DEFAULT FALSE,
                         `autoplayVideo` BOOLEAN NOT NULL DEFAULT FALSE,
+                        `slideshowInterval` INTEGER NOT NULL DEFAULT 10,
                         `createdAt` DATETIME DEFAULT NULL,
                         `modifiedAt` DATETIME DEFAULT NULL,
                         `apikey` VARCHAR(36) NOT NULL DEFAULT '00000000-00000000-00000000-00000000',

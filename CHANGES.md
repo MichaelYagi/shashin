@@ -4,6 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Interval setting for slideshow
 
 ### Changed
 - Dynamically update albums and people in metadata modal
