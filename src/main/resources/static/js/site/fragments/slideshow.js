@@ -485,7 +485,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
                 "<span id='castKey' style='display: none;'><div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>c</strong></span></div><div class='col-9'>Start/stop casting</div></div></span>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>i</strong></span></div><div class='col-9'>Slide info</div></div>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>← →</strong></span></div><div class='col-9'>Go to next/previous slide</div></div>" +
-                "<div class='row mb-1'><div class='col-3 text-center'><input type='range' class='form-range' min='1' max='3' id='slideshowIntervalSlide'></div><div class='col-9'><span id='intervalValue'>"+slideshowIsElapsed+"</span> second intervals</div></div>" +
+                "<div class='row mb-1'><div class='col-3 text-center'><input type='range' class='form-range' min='1' max='3' id='slideshowIntervalSlide'></div><div class='col-9'><span id='intervalValue'>"+slideshowIsElapsed+"</span> second interval</div></div>" +
                 "</div>";
 
             title = "Keyboard Shortcuts";
@@ -496,7 +496,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>Single Tap</strong></span></div><div class='col-9'>Play/pause</div></div>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>Double Tap</strong></span></div><div class='col-9'>Exit slideshow</div></div>" +
                 "<div class='row mb-1'><div class='col-3 text-center'><span class='badge bg-secondary'><strong>Swipe ← →</strong></span></div><div class='col-9'>Go to next/previous slide</div></div>" +
-                "<div class='row mb-1'><div class='col-3 text-center'><input type='range' class='form-range' min='1' max='3' id='slideshowIntervalSlide'></div><div class='col-9'><span id='intervalValue'>"+slideshowIsElapsed+"</span> second intervals</div></div>" +
+                "<div class='row mb-1'><div class='col-3 text-center'><input type='range' class='form-range' min='1' max='3' id='slideshowIntervalSlide'></div><div class='col-9'><span id='intervalValue'>"+slideshowIsElapsed+"</span> second interval</div></div>" +
                 "</div>";
 
             title = "Touch Bindings";
