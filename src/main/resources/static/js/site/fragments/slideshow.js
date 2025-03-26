@@ -542,7 +542,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
             }
         });
 
-        $("#slideshowIntervalSlide").on("input", function () {
+        $("#slideshowIntervalSlide").on("change", function () {
             slideshowIsElapsed = $(this).val() * 5;
             $("#intervalValue").text(slideshowIsElapsed);
 
