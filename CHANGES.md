@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Updated spring security version
 
 ### Fixed
+- Panorama detection
 
 ### Removed
 
