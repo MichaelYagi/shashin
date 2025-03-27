@@ -9,7 +9,9 @@
             <th:block th:if="${authority == 'ROLE_SUPER' || authority == 'ROLE_ADMIN' || authority == 'ROLE_USER'}">
             <li><a href="/articles/endpoints" th:attr="class='rounded' + ${activePage=='articles/endpoints' ? 'link-dark rounded active' : ''}">API Endpoints</a></li>
             </th:block>
+            <th:block th:if="${authority == 'ROLE_SUPER' || authority == 'ROLE_ADMIN'}">
             <li><a href="/articles/devnotes" th:attr="class='rounded' + ${activePage=='articles/devnotes' ? 'link-dark rounded active' : ''}">Dev Notes</a></li>
+            </th:block>
         </ul>
     </li>
 
