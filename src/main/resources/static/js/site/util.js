@@ -1640,7 +1640,7 @@ class Util {
                 shareDetailsHtml += "&nbsp;&nbsp;&nbsp;<a class='bi-camera' style='font-size: 1rem;' href='https://lens.google.com/uploadbyurl?url=" + baseUrl + relativeShareLink + "' title='Search Google Lens' target='_blank'></a>";
             }
 
-            shareDetailsHtml += "&nbsp;&nbsp;&nbsp;<a class='bi-pencil editDetails' tag='"+metadata.id+"' style='font-size: 1rem;' href='#' title='Edit Metadata'></a>";
+            // shareDetailsHtml += "&nbsp;&nbsp;&nbsp;<a class='bi-pencil editDetails' tag='"+metadata.id+"' style='font-size: 1rem;' href='#' title='Edit Metadata'></a>";
 
             if ($(".shareUrlDetailsA").length > 0) {
                 shareDetailsHtml += timeLinkHtml;
