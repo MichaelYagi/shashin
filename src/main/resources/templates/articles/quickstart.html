@@ -21,7 +21,7 @@ C:\Users\Michael\Videos</code></pre>
             </li>
             <li>Click <strong>Save</strong> near the bottom of the page.</li>
             <li>In the <a href="/settings/scan">Media Indexing</a> tab, click the <strong>Scan</strong> button.</li>
-            <li>After you see the message <strong>Scan Complete</strong>, view your media on the <a href="/timeline">timeline</a> page.</li>
+            <li>After you see the message <strong>Scan Complete</strong>, view your media on the <span id="startingPage"><a href="/timeline">timeline</a></span> page.</li>
         </ol>
 
         <h2 id="facerecognition">
@@ -63,6 +63,16 @@ C:\Users\Michael\Videos</code></pre>
 
         <p>Report issues <a href="mailto:myagi.developer@gmail.com" target="_blank">here</a>!</p>
     </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Safari 3.0+ "[object HTMLElementConstructor]"
+            const isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && window['safari'].pushNotification));
+            if (isSafari === true) {
+                $("#startingPage").html(<a href="/taken">recently taken</a>);
+            }
+        });
+    </script>
 </section>
 </body>
 </html>
