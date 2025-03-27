@@ -422,7 +422,7 @@ async function saveMetadata(e) {
                 $("#metadataModalStatus").attr("title", shashin.modalStatusFailMessage());
                 $("#metadataModalCancel").prop('disabled', false);
 
-                shashin.showToastMessage("Metadata", "Metadata Saved", {
+                shashin.showToastMessage("Metadata", "Could not save metadata", {
                     icon:"bi-exclamation-triangle",
                     iconColor:"#FF0000",
                     tag: "metadatamodal",
@@ -434,7 +434,7 @@ async function saveMetadata(e) {
             $("#metadataModalStatus").attr("title", shashin.modalStatusFailMessage());
             $("#metadataModalCancel").prop('disabled', false);
 
-            shashin.showToastMessage("Metadata", "Metadata Saved", {
+            shashin.showToastMessage("Metadata", "Could not save metadata", {
                 icon:"bi-exclamation-triangle",
                 iconColor:"#FF0000",
                 tag: "metadatamodal",
@@ -450,7 +450,7 @@ async function saveMetadata(e) {
         propMetadataModal._config.backdrop = true;
         propMetadataModal._config.keyboard = true;
 
-        shashin.showToastMessage("Metadata", "Metadata Saved", {
+        shashin.showToastMessage("Metadata", "Could not save metadata", {
             icon:"bi-exclamation-triangle",
             iconColor:"#FF0000",
             tag: "metadatamodal",
