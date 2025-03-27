@@ -42,6 +42,7 @@ class ArticlesController {
         return module
     }
 
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/articles/devnotes"], method = [RequestMethod.GET])
     fun getDevnotes(model: Model, request: HttpServletRequest): String {
         val module = "articles/devnotes"
