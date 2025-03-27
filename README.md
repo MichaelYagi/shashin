@@ -6,8 +6,7 @@ A self-hosted media gallery.
 <img src="https://michaelyagi.github.io/images/shashinss.png" alt="shashin"/>
 
 # Get Started
-* Download and open the latest artifact at [RepoFlow](https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin). It may take a few minutes to download dependencies and start the sever
-* Read the **Quick Start** guide at http://127.0.0.1:6624/articles
+Start from [here](https://michaelyagi.github.io/shashin/) to get setup.
 
 # Versions
 Must be updated in POM file and git tag with format v[Major][Minor][Patch].
