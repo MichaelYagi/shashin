@@ -18,6 +18,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Dynamically update albums and people in metadata modal
 - Updated spring security version
+- Access to dev articles
 
 ### Fixed
 - Panorama detection
