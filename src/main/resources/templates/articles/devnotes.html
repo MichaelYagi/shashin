@@ -118,12 +118,16 @@
             <code>placements</code> - Targets multiple placements to close.<br>
             <code>hide</code> - Flag to remove or hide toast message. If set to true, will only hide the element, else it will remove the element from the DOM. Default is false.
         </p>
-        <p>Example: <br>
-            <code>shashin.closeToastMessages({<br>
+        <p>Examples: <br>
+            <code>// Hides toast messages tagged 'testcode' or 'anothertag' targeting bottom center toast messages<br>
+                shashin.closeToastMessages({<br>
                 &nbsp;&nbsp;&nbsp;&nbsp;tags: ["testcode", "anothertag"],<br>
                 &nbsp;&nbsp;&nbsp;&nbsp;placement: shashin.toast.placement.bottom.center,<br>
                 &nbsp;&nbsp;&nbsp;&nbsp;hide: true<br>
                 });</code>
+            <br><br>
+            <code>// Removes all toast messages<br>
+                shashin.closeToastMessages();</code>
         </p>
 
         <hr>
