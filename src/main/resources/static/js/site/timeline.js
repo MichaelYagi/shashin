@@ -76,7 +76,7 @@
         if (typeof lgMetadataDetail !== "undefined") {
             lgConfig.plugins.push(lgMetadataDetail);
             lgConfig.metadataDetail = true;
-            lgConfig.metadataDetailFun = shashin.openInfoSidebar;
+            lgConfig.metadataDetailFun = shashin.openEditMetadataModal;
         }
         if (typeof lgVideoThumbnail !== "undefined") {
             lgConfig.plugins.push(lgVideoThumbnail);
@@ -1521,7 +1521,7 @@
         }
 
         const mediaContent = {};
-        mediaContent.metadataDetailFun = shashin.openInfoSidebar;
+        mediaContent.metadataDetailFun = shashin.openEditMetadataModal;
         mediaContent.videoThumbnailFun = shashin.processVideoThumbnail;
         mediaContent.args = metadata.id;
         mediaContent.thumb = "/api/v1/thumbnails/225/"+metadata.id;

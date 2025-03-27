@@ -385,7 +385,7 @@ async function saveMetadata(e) {
                         mediaContentList: mediaContentList,
                         refreshContent: refreshContent
                     };
-                    Util.reinitLightGalleryInstance(options);
+                    // Util.reinitLightGalleryInstance(options);
                 }
 
                 // refresh version
