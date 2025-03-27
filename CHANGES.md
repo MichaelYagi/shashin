@@ -4,6 +4,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Fixed
+
+### Removed
+
+## [2.8.3] - 2025-03-26
+### Added
 - Interval setting for slideshow
 
 ### Changed
