@@ -913,7 +913,7 @@ class Util {
                         if (typeof lgMetadataDetail !== "undefined") {
                             lgConfig.plugins.push(lgMetadataDetail);
                             lgConfig.metadataDetail = true;
-                            lgConfig.metadataDetailFun = shashin.openInfoSidebar;
+                            lgConfig.metadataDetailFun = shashin.openEditMetadataModal;
                         }
                         if (typeof lgVideoThumbnail !== "undefined") {
                             lgConfig.plugins.push(lgVideoThumbnail);
