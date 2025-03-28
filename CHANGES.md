@@ -24,7 +24,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Panorama detection
 - Prevent saving in modal when selecting auto complete item
 - Fixed articles modal access
-- Don't close modal on rescan confirmation
+- Don't close metadata modal on rescan confirmation
 
 ### Removed
 - Sidebar info
