@@ -8,11 +8,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 ### Fixed
-- Exit gallery when browser back button pressed
 
 ### Removed
 
-## [2.8.3] - 2025-03-27
+## [2.8.3] - 2025-03-28
 ### Added
 - Interval setting for slideshow
 
@@ -26,6 +25,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Prevent saving in modal when selecting auto complete item
 - Fixed articles modal access
 - Don't close metadata modal on rescan confirmation
+- Exit gallery when browser back button pressed
 
 ### Removed
 - Sidebar info
