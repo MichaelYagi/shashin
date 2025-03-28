@@ -4,21 +4,6 @@ async function setVarsTopNav(darkMode, placeNames, timezone, notificationAlerts,
     shashin.autoplayVideo = autoplayVideo;
     shashin.showNotifications = notificationAlerts;
 
-    // manage back button click (and backspace) to close light gallery close
-    let popFlag = false; // needed for safari
-    if (typeof history.pushState === "function") {
-        history.pushState("back", null, null);
-
-        $(window).on("popstate", function () {
-            history.pushState("back", null, null);
-            if (popFlag === true && $(".lg-show").length === 1) {
-                $(".lg-close").click();
-            }
-        });
-    }
-    setTimeout(function(){popFlag = true;},200);
-
-
     // Avoids aria-hidden warnings
     document.addEventListener('hide.bs.modal', function (event) {
         if (document.activeElement) {
