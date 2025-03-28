@@ -2126,6 +2126,20 @@
         if (document.getElementById(name)) {
             shashin.infiniteScrollGallery = document.getElementById(name);
 
+            // Close gallery on browser/mobile back button
+            shashin.infiniteScrollGallery.addEventListener('lgAfterOpen', function () {
+                if (window.history && window.history.pushState) {
+                    window.history.pushState('forward', null, "");
+
+                    $(window).on('popstate', function() {
+                        if (shashin.lg !== null) {
+                            shashin.lg.closeGallery();
+                        }
+                    });
+
+                }
+            });
+
             // Hide sidebar when going to next slide
             shashin.infiniteScrollGallery.addEventListener('lgBeforeSlide', _ => {
                 const bsOffcanvasEl = document.getElementById('propInfoSidebar');
