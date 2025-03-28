@@ -160,7 +160,7 @@
             <div class="modal-footer">
                 <div id="metadataModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 1.55rem;" role="status" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
                 <th:block th:if="${(authority == 'ROLE_SUPER' || authority == 'ROLE_ADMIN') and activePage != 'archived'}">
-                <button type="button" class="btn btn-primary" id="saveMetadata" data-bs-dismiss="modal">Save</button>
+                <button type="button" class="btn btn-primary" id="saveMetadata">Save</button>
                 <button id="metadataModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </th:block>
                 <th:block th:if="${authority == 'ROLE_USER'}">
