@@ -83,11 +83,20 @@
                 <div class="col">
                     <div class="card">
                         <div class="card-header">
-                            <h2 id="sidecarSizeText"></h2>
-                            <p class="text-muted" id="sidecarUsableSpaceText">Sidecar Data Size</p>
-                            <div id="sidecarUsageContainer" class="progress" role="progressbar" aria-label="Sidecar data used" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                                <div id="sidecarUsageGraph" class="progress-bar" style="width: 0">0%</div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <h2 id="sidecarSizeText"></h2>
+                                </div>
+                                <div class="col-sm-10 mt-2">
+                                    <div id="sidecarUsageContainer" class="progress" role="progressbar" aria-label="Sidecar data used" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                        <div id="sidecarUsageGraph" class="progress-bar" style="width: 0">0%</div>
+                                    </div>
+                                    <div class="d-flex justify-content-end text-muted">
+                                        <div id="sidecarUsableSpaceText"></div>
+                                    </div>
+                                </div>
                             </div>
+                            <p class="text-muted">Sidecar Data Size</p>
                         </div>
                         <div class="card-body">
                             <h5 class="card-title">Gallery Stats</h5>
@@ -107,7 +116,7 @@
                         <div class="card-body">
                             <h5 class="card-title">Media Stats</h5>
                             <p class="card-text">
-                                <canvas id="mediaChart" height="416"></canvas>
+                                <canvas id="mediaChart" height="400"></canvas>
                             </p>
                         </div>
                     </div>
@@ -259,7 +268,7 @@
                         }
                     }
                     $("#sidecarSizeText").html(data["sidecarSizeText"]);
-                    $("#sidecarUsableSpaceText").text("Sidecar Data Size - " + data["sidecarUsableSpaceText"] + " usable space left");
+                    $("#sidecarUsableSpaceText").text(data["sidecarUsableSpaceText"] + " usable space left");
                     $("#mediaCount").text(numberWithCommas(parseInt(data["photoCount"]) + parseInt(data["videoCount"])));
                     $("#cameraCount").text(numberWithCommas(parseInt(data["cameraTotalCount"])));
                     $("#keywordCount").text(numberWithCommas(parseInt(data["keywordTotalCount"])));
