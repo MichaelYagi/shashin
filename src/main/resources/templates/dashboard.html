@@ -217,12 +217,19 @@
                     }
 
                     const sidecarUsedSize = parseInt(data["sidecarUsedSize"]);
-                    const sidecarUsableSize = parseInt(data["sidecarUsableSize"]);
-                    const percentUsed = parseInt((sidecarUsedSize/sidecarUsableSize) * 100);
+                    const sidecarTotalSize = parseInt(data["sidecarSpaceTotal"]);
+                    const percentUsed = parseInt((sidecarUsedSize/sidecarTotalSize) * 100);
+
+                    shashin.printMessageToConsole("sidecar space used raw: "+data["sidecarUsedSize"], {tag: "dashboard"});
+                    shashin.printMessageToConsole("sidecar space used: "+data["sidecarSizeText"], {tag: "dashboard"});
+                    shashin.printMessageToConsole("sidecar space usable raw: "+data["sidecarUsableSize"], {tag: "dashboard"});
+                    shashin.printMessageToConsole("sidecar space usable: "+data["sidecarUsableSpaceText"], {tag: "dashboard"});
+                    shashin.printMessageToConsole("sidecar space total raw: "+data["sidecarSpaceTotal"], {tag: "dashboard"});
+                    shashin.printMessageToConsole("sidecar space total: "+data["sidecarTotalSpaceText"], {tag: "dashboard"});
 
                     if (percentUsed > 0) {
                         $("#sidecarUsageContainer").attr("aria-valuenow", percentUsed);
-                        $("#sidecarUsageGraph").css("width", percentUsed+"px");
+                        $("#sidecarUsageGraph").css("width", percentUsed+"%");
                         $("#sidecarUsageGraph").text(percentUsed+"%");
                         if (percentUsed > 90) {
                             if (percentUsed > 97) {
@@ -233,12 +240,13 @@
                             const http = new Http("get sidecar data");
                             const type = "sidecardatasize";
                             const maxUsed = "90";
+                            const sidecarTotalSpaceText = data["sidecarTotalSpaceText"];
                             http.ajax("get", "/notifications/exists/" + type + "/" + maxUsed).then(function (data) {
                                 if (data.hasOwnProperty("exists")) {
                                     const exists = data.exists;
                                     if (exists === false) {
                                         const json = {
-                                            message: data["sidecarUsableSpaceText"] + " usable space left",
+                                            message: sidecarTotalSpaceText + " usable space left",
                                             type: type,
                                             identifier: maxUsed
                                         };

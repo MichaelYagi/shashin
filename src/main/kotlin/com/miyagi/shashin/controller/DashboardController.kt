@@ -253,6 +253,20 @@ class DashboardController {
         response["sidecarUsableSpaceText"] = "${String.format("%.2f", sidecarUsabe)} $sidecarUsabeNotation"
         response["sidecarUsableSize"] = rawSidecarUsabe.toDouble()
 
+        var sidecarSpaceTotal = rawSidecarUsabe.toDouble() + sidecarSize.toDouble()
+        var sidecarSpaceTotalSizeProcessed = sidecarSpaceTotal.toDouble() / (kilo * kilo)
+        sidecarSizeNotation = "MB"
+        if (sidecarSpaceTotalSizeProcessed > kilo) {
+            sidecarSpaceTotalSizeProcessed /= kilo
+            sidecarSizeNotation = "GB"
+        }
+        if (sidecarSpaceTotalSizeProcessed > kilo) {
+            sidecarSpaceTotalSizeProcessed /= kilo
+            sidecarSizeNotation = "TB"
+        }
+        response["sidecarTotalSpaceText"] = "${String.format("%.2f", sidecarSpaceTotalSizeProcessed)} $sidecarSizeNotation"
+        response["sidecarSpaceTotal"] = sidecarSpaceTotal
+
         val reachable: Boolean = NetworkUtils.checkNominatimConnection(geocodeUrl+"status.php?format=json")
         response["nominatimAvailable"] = reachable
 
