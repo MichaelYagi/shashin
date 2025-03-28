@@ -219,12 +219,13 @@
                     const sidecarUsedSize = parseInt(data["sidecarUsedSize"]);
                     const sidecarUsableSize = parseInt(data["sidecarUsableSize"]);
                     const percentUsed = parseInt((sidecarUsedSize/sidecarUsableSize) * 100);
+
                     if (percentUsed > 0) {
                         $("#sidecarUsageContainer").attr("aria-valuenow", percentUsed);
                         $("#sidecarUsageGraph").css("width", percentUsed+"px");
-                        $("#sidecarUsageGraph").text(percentUsed);
+                        $("#sidecarUsageGraph").text(percentUsed+"%");
                         if (percentUsed > 90) {
-                            if (percentUsed > 98) {
+                            if (percentUsed > 97) {
                                 $("#sidecarUsageGraph").addClass("bg-danger");
                             } else {
                                 $("#sidecarUsageGraph").addClass("bg-warning");
