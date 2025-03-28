@@ -8,11 +8,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 ### Fixed
-- Don't close modal on rescan confirmation
 
 ### Removed
 
-## [2.8.3] - 2025-03-26
+## [2.8.3] - 2025-03-27
 ### Added
 - Interval setting for slideshow
 
@@ -25,6 +24,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Panorama detection
 - Prevent saving in modal when selecting auto complete item
 - Fixed articles modal access
+- Don't close modal on rescan confirmation
 
 ### Removed
 - Sidebar info
