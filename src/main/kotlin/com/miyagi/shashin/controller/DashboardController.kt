@@ -218,7 +218,9 @@ class DashboardController {
             sidecarSizeNotation = "TB"
         }
         response["sidecarSizeText"] = "${String.format("%.2f", sidecarSizeProcessed)} $sidecarSizeNotation"
+        response["sidecarUsedSize"] = sidecarSize.toDouble()
 
+        var rawSidecarUsabe: Double
         var sidecarUsabe: Double
         try {
             if (File(sidecarDir).exists()) {
@@ -226,15 +228,18 @@ class DashboardController {
                 dir = dir.toRealPath()
                 val fs = Files.getFileStore(dir)
                 sidecarUsabe = fs.usableSpace.toDouble() / (kilo * kilo).toDouble()
+                rawSidecarUsabe = fs.usableSpace.toDouble()
             } else {
                 var dir = Paths.get(rootPath)
                 dir = dir.toRealPath()
                 val fs = Files.getFileStore(dir)
                 sidecarUsabe = fs.usableSpace.toDouble() / (kilo * kilo).toDouble()
+                rawSidecarUsabe = fs.usableSpace.toDouble()
             }
         } catch (exception: Exception) {
             logger.log(Level.WARNING, "Error reading sidecar directory:" + exception.message)
             sidecarUsabe = 0.0
+            rawSidecarUsabe = 0.0
         }
         var sidecarUsabeNotation = "MB"
         if (sidecarUsabe > kilo) {
@@ -246,6 +251,7 @@ class DashboardController {
             sidecarUsabeNotation = "TB"
         }
         response["sidecarUsableSpaceText"] = "${String.format("%.2f", sidecarUsabe)} $sidecarUsabeNotation"
+        response["sidecarUsableSize"] = rawSidecarUsabe.toDouble()
 
         val reachable: Boolean = NetworkUtils.checkNominatimConnection(geocodeUrl+"status.php?format=json")
         response["nominatimAvailable"] = reachable

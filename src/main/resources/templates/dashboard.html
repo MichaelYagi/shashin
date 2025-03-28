@@ -85,6 +85,9 @@
                         <div class="card-header">
                             <h2 id="sidecarSizeText"></h2>
                             <p class="text-muted" id="sidecarUsableSpaceText">Sidecar Data Size</p>
+                            <div id="sidecarUsageContainer" class="progress" role="progressbar" aria-label="Sidecar data used" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                <div id="sidecarUsageGraph" class="progress-bar" style="width: 0">0%</div>
+                            </div>
                         </div>
                         <div class="card-body">
                             <h5 class="card-title">Gallery Stats</h5>
@@ -104,7 +107,7 @@
                         <div class="card-body">
                             <h5 class="card-title">Media Stats</h5>
                             <p class="card-text">
-                                <canvas id="mediaChart" height="400"></canvas>
+                                <canvas id="mediaChart" height="416"></canvas>
                             </p>
                         </div>
                     </div>
@@ -213,7 +216,40 @@
                         }
                     }
 
-                    $("#sidecarSizeText").text(data["sidecarSizeText"]);
+                    const sidecarUsedSize = parseInt(data["sidecarUsedSize"]);
+                    const sidecarUsableSize = parseInt(data["sidecarUsableSize"]);
+                    const percentUsed = parseInt((sidecarUsedSize/sidecarUsableSize) * 100);
+                    if (percentUsed > 0) {
+                        $("#sidecarUsageContainer").attr("aria-valuenow", percentUsed);
+                        $("#sidecarUsageGraph").css("width", percentUsed+"px");
+                        $("#sidecarUsageGraph").text(percentUsed);
+                        if (percentUsed > 90) {
+                            if (percentUsed > 98) {
+                                $("#sidecarUsageGraph").addClass("bg-danger");
+                            } else {
+                                $("#sidecarUsageGraph").addClass("bg-warning");
+                            }
+                            const http = new Http("get sidecar data");
+                            const type = "sidecardatasize";
+                            const maxUsed = "90";
+                            http.ajax("get", "/notifications/exists/" + type + "/" + maxUsed).then(function (data) {
+                                if (data.hasOwnProperty("exists")) {
+                                    const exists = data.exists;
+                                    if (exists === false) {
+                                        const json = {
+                                            message: data["sidecarUsableSpaceText"] + " usable space left",
+                                            type: type,
+                                            identifier: maxUsed
+                                        };
+                                        http.ajax("post", "/notifications/create", JSON.stringify(json)).then(function (data) {
+                                            shashin.printMessageToConsole(JSON.stringify(data), {tag: type});
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                    }
+                    $("#sidecarSizeText").html(data["sidecarSizeText"]);
                     $("#sidecarUsableSpaceText").text("Sidecar Data Size - " + data["sidecarUsableSpaceText"] + " usable space left");
                     $("#mediaCount").text(numberWithCommas(parseInt(data["photoCount"]) + parseInt(data["videoCount"])));
                     $("#cameraCount").text(numberWithCommas(parseInt(data["cameraTotalCount"])));
