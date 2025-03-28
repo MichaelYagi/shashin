@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 ### Fixed
+- Exit gallery when browser back button pressed
 
 ### Removed
 
