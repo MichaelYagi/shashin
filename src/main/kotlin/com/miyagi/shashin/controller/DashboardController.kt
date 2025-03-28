@@ -114,7 +114,7 @@ class DashboardController {
         } else if (processCpuLoad > 1) {
             invalidProcessCpuLoadCounter++
             logger.log(Level.INFO, "Raw process CPU load greater than 1.0: $processCpuLoad")
-            processCpuLoad = 1.0
+            processCpuLoad = 0.0
         }
 
         if (systemCpuLoad == null || systemCpuLoad < 0 || systemCpuLoad.isNaN()) {
@@ -124,11 +124,12 @@ class DashboardController {
         } else if (systemCpuLoad > 1) {
             invalidSystemCpuLoadCounter++
             logger.log(Level.INFO, "Raw system CPU load greater than 1.0: $systemCpuLoad")
-            systemCpuLoad = 1.0
+            systemCpuLoad = 0.0
         }
 
 //        logger.log(Level.INFO, "Processed process CPU load:$processCpuLoad")
 //        logger.log(Level.INFO, "Processed system CPU load:$systemCpuLoad")
+
 
         metricsMap["processCpuLoadPercentDouble"] = processCpuLoad
         metricsMap["systemCpuLoadPercentDouble"] = systemCpuLoad
