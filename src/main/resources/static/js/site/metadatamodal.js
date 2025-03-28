@@ -411,6 +411,8 @@ async function saveMetadata(e) {
                 });
                 $("#metadataModalCancel").prop('disabled', false);
 
+                $("#propMetadata").modal('hide');
+
                 shashin.showToastMessage("Metadata", "Metadata Saved", {
                     icon: "bi-info-circle",
                     iconColor: "#777777",
