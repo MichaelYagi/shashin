@@ -4,7 +4,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-- Usage graph for sidecar storage
 
 ### Changed
 
@@ -15,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [2.8.3] - 2025-03-28
 ### Added
 - Interval setting for slideshow
+- Usage graph for sidecar storage
 
 ### Changed
 - Dynamically update albums and people in metadata modal
@@ -27,6 +27,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed articles modal access
 - Don't close metadata modal on rescan confirmation
 - Exit gallery when browser back button pressed
+- Redirect to taken page in Safari after login/register
 
 ### Removed
 - Sidebar info
