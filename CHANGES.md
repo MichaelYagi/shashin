@@ -6,21 +6,22 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
-- Dashboard to count number of people tagged
 
 ### Fixed
 
 ### Removed
 
-## [2.8.3] - 2025-03-28
+## [2.8.3] - 2025-03-29
 ### Added
 - Interval setting for slideshow
 - Usage graph for sidecar storage
+- Missing latitude/longitude filter
 
 ### Changed
 - Dynamically update albums and people in metadata modal
 - Updated spring security version
 - Access to dev articles
+- Dashboard to count number of people tagged
 
 ### Fixed
 - Panorama detection

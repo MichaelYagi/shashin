@@ -558,6 +558,33 @@ class BrowseController: BaseController() {
                         ).toMutableList()
                     }
                 }
+            } else if (mediaType == "nolatlng") {
+                when (module) {
+                    "recent" -> {
+                        metadataList = metadataRepository.findRecentByNoCoordAndOffsetAndLimit(
+                            pageValue,
+                            size
+                        ).toMutableList()
+                    }
+                    "modified" -> {
+                        metadataList = metadataRepository.findModifiedByNoCoordAndOffsetAndLimit(
+                            pageValue,
+                            size
+                        ).toMutableList()
+                    }
+                    "taken" -> {
+                        metadataList = metadataRepository.findTakenByNoCoordAndOffsetAndLimit(
+                            pageValue,
+                            size
+                        ).toMutableList()
+                    }
+                    "accessed" -> {
+                        metadataList = metadataRepository.findLastAccessedByNoCoordAndOffsetAndLimit(
+                            pageValue,
+                            size
+                        ).toMutableList()
+                    }
+                }
             } else {
                 when (module) {
                     "recent" -> {

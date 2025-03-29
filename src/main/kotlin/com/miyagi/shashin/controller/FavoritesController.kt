@@ -134,6 +134,12 @@ class FavoritesController: BaseController() {
         if (currentUserObj != null) {
             val favoriteList = if (mediaType == "all") {
                 favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(), (page * size), size)
+            } else if (mediaType == "nolatlng") {
+                favoriteRepository.findAllByUserIdAndNoCoordAndOffsetAndLimit(
+                    currentUserObj.getId(),
+                    (page * size),
+                    size
+                )
             } else {
                 favoriteRepository.findAllByUserIdAndMediaTypeAndOffsetAndLimit(
                     currentUserObj.getId(),

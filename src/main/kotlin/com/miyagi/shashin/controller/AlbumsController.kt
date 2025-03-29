@@ -1494,6 +1494,12 @@ class AlbumsController: BaseController() {
                         page * size,
                         size
                     )
+                } else if (mediaType == "nolatlng") {
+                    albumPhotoRepository.findAllByAlbumIdAndNoCoordAndOffsetAndLimit(
+                        albumId,
+                        page * size,
+                        size
+                    )
                 } else {
                     albumPhotoRepository.findAllByAlbumIdAndMediaTypeAndOffsetAndLimit(
                         albumId,
