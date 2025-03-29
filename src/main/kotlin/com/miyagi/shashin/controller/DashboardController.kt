@@ -136,6 +136,11 @@ class DashboardController {
         metricsMap["invalidSystemCpuLoadCounter"] = invalidSystemCpuLoadCounter
         metricsMap["invalidProcessCpuLoadCounter"] = invalidProcessCpuLoadCounter
 
+        if (invalidSystemCpuLoadCounter > 5 || invalidProcessCpuLoadCounter > 5) {
+            invalidSystemCpuLoadCounter = 0
+            invalidProcessCpuLoadCounter = 0
+        }
+
         val dtf = DateTimeFormatter.ofPattern("HH:mm:ss")
         val now = LocalDateTime.now()
         metricsMap["timestamp"] = now.format(dtf)

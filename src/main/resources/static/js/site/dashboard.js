@@ -27,6 +27,30 @@ class Dashboard {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
+    static urlWithRndQueryParam(url, paramName) {
+        const ulrArr = url.split('#');
+        const urlQry = ulrArr[0].split('?');
+        const usp = new URLSearchParams(urlQry[1] || '');
+        usp.set(paramName || '_z', `${Date.now()}`);
+        urlQry[1] = usp.toString();
+        ulrArr[0] = urlQry.join('?');
+        return ulrArr.join('#');
+    }
+
+    static async handleHardReload(url) {
+        const newUrl = Dashboard.urlWithRndQueryParam(url);
+        await fetch(newUrl, {
+            headers: {
+                Pragma: 'no-cache',
+                Expires: '-1',
+                'Cache-Control': 'no-cache',
+            },
+        });
+        window.location.href = url;
+        // This is to ensure reload with url's having '#'
+        window.location.reload();
+    }
+
     displaySiteStatChart(data) {
         const ctx = $('#siteStatChart');
         new Chart(ctx, {
@@ -612,12 +636,10 @@ class Dashboard {
                     shashin.printMessageToConsole("invalidProcessCpuLoadCounter: "+invalidProcessCpuLoadCounter,{tag:"dashboard"});
 
                     // Reload page if NaN, 0 or greater than 1
-                    // if (invalidSystemCpuLoadCounter > 5 || invalidProcessCpuLoadCounter > 5) {
-                    //     invalidSystemCpuLoadCounter = 0;
-                    //     invalidProcessCpuLoadCounter = 0;
-                    //     shashin.printMessageToConsole("Crossed threshold for invalid system stat counter values. Reloading page.",{tag:"dashboard"});
-                    //     window.location.href = window.location.href;
-                    // }
+                    if (invalidSystemCpuLoadCounter > 5 || invalidProcessCpuLoadCounter > 5) {
+                        shashin.printMessageToConsole("Crossed threshold for invalid system stat counter values. Reloading page.",{tag:"dashboard"});
+                        Dashboard.handleHardReload(window.location.href).then(null);
+                    }
 
                     const processCpuLoadPercent = Math.ceil(systemStats.processCpuLoadPercentDouble*100)|0;
                     const processCpuLoadData = ~~processCpuLoadPercent;
