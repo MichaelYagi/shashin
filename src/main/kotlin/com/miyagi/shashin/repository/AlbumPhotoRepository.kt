@@ -26,6 +26,8 @@ interface AlbumPhotoRepository : CrudRepository<AlbumPhoto?, Int?> {
     fun findAllByAlbumIdAndOffsetAndLimit(@Param("albumId") albumId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<AlbumPhoto?>?
     @Query("SELECT DISTINCT ap.* FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.type LIKE %:type% ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC LIMIT :offset, :limit", nativeQuery = true)
     fun findAllByAlbumIdAndMediaTypeAndOffsetAndLimit(@Param("albumId") albumId: Int, @Param("type") type: String, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<AlbumPhoto?>?
+    @Query("SELECT DISTINCT ap.* FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND ((m.lat IS NULL OR m.lat == \"\") OR (m.lng IS NULL OR m.lng == \"\")) ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC LIMIT :offset, :limit", nativeQuery = true)
+    fun findAllByAlbumIdAndNoCoordAndOffsetAndLimit(@Param("albumId") albumId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<AlbumPhoto?>?
     fun findFirstByAlbumId(@Param("albumId") albumId: Int): AlbumPhoto?
     fun findAlbumPhotoByMetadataId(metadataId: String?): MutableIterable<AlbumPhoto?>?
     @Query("SELECT DISTINCT ap.* FROM albumphoto ap INNER JOIN useralbum ua ON ua.album_id = ap.album_id INNER JOIN album a ON ap.album_id = a.id WHERE ap.metadata_id = :metadataId AND ua.user_id = :userId", nativeQuery = true)

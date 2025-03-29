@@ -206,10 +206,12 @@ class TimelineController: BaseController() {
             mediaType = "all"
         }
 
-        val initialMetadataObj = if (mediaType != "all") {
-            metadataRepository.findDistinctFirstByHiddenIsFalseByMediaTypeOrderByYearDescMonthDescDayDesc(mediaType!!)
-        } else {
+        val initialMetadataObj = if (mediaType == "all") {
             metadataRepository.findDistinctFirstByHiddenIsFalseOrderByYearDescMonthDescDayDescTimeDesc()
+        } else if (mediaType == "nolatlng") {
+            metadataRepository.findDistinctFirstByHiddenIsFalseByNoCoordOrderByYearDescMonthDescDayDesc()
+        } else {
+            metadataRepository.findDistinctFirstByHiddenIsFalseByMediaTypeOrderByYearDescMonthDescDayDesc(mediaType!!)
         }
         var date = "undated"
         if (initialMetadataObj?.getYear() != null && initialMetadataObj.getMonth() != null && initialMetadataObj.getDay() != null) {
@@ -333,6 +335,8 @@ class TimelineController: BaseController() {
         response["metadataDates"] = mutableListOf<MetadataDate>()
         val metadataDates = if (mediaType == "all") {
             metadataRepository.findAllYearMonthDay()
+        } else if (mediaType == "nolatlng") {
+            metadataRepository.findAllYearMonthDayByNoCoord()
         } else {
             metadataRepository.findAllYearMonthDayByMediaType(mediaType)
         }
@@ -445,6 +449,11 @@ class TimelineController: BaseController() {
             if (metadataRepository.count() > 0) {
                 metadataList = if (mediaTypeFilter == "all") {
                     metadataRepository.findAllByOffsetAndLimit(
+                        pageValue,
+                        size
+                    ).toMutableList()
+                } else if (mediaTypeFilter == "nolatlng") {
+                    metadataRepository.findAllMissingCoordOffsetAndLimit(
                         pageValue,
                         size
                     ).toMutableList()
@@ -725,6 +734,8 @@ class TimelineController: BaseController() {
 
         val metadataDates = if (mediaType == "all") {
             metadataRepository.findAllYearMonthDay()
+        } else if (mediaType == "nolatlng") {
+            metadataRepository.findAllYearMonthDayByNoCoord()
         } else {
             metadataRepository.findAllYearMonthDayByMediaType(mediaType)
         }
@@ -775,6 +786,10 @@ class TimelineController: BaseController() {
                         metadataRepository.findAllByYearAndMonthAndDayAndHiddenEqualsOrderByYearDescMonthDescDayDescTimeDesc(
                             year, month, day, false
                         ).toMutableList()
+                    } else if (mediaTypeFilter == "nolatlng") {
+                        metadataRepository.findAllByNoCoordAndYearAndMonthAndDay(
+                            year, month, day
+                        ).toMutableList()
                     } else {
                         metadataRepository.findAllByTypeAndYearAndMonthAndDay(
                             mediaTypeFilter,
@@ -791,6 +806,10 @@ class TimelineController: BaseController() {
                     metadataList = if (mediaTypeFilter == "all") {
                         metadataRepository.findAllByYearAndMonthAndDayAndHiddenEqualsOrderByYearDescMonthDescDayDescTimeDesc(
                             year, month, day, false
+                        ).toMutableList()
+                    } else if (mediaTypeFilter == "nolatlng") {
+                        metadataRepository.findAllByNoCoordAndYearAndMonthAndDay(
+                            year, month, day
                         ).toMutableList()
                     } else {
                         metadataRepository.findAllByTypeAndYearAndMonthAndDay(

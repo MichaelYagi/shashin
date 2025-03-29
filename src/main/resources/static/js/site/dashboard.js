@@ -93,7 +93,7 @@ class Dashboard {
         new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Photos', 'Videos', 'Missing GPS Data', 'Archived'],
+                labels: ['Photos', 'Videos', 'Missing Coordinate Data', 'Archived'],
                 datasets: [{
                     data: [data.photoCount, data.videoCount, data.notLocatedCount, data.hiddenCount],
                     backgroundColor: [
