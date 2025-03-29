@@ -56,7 +56,7 @@ class Dashboard {
         new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Photos With People Tagged', 'Total Favorites', 'Total Comments', 'Total Albums'],
+                labels: ['Total People Tagged', 'Total Favorites', 'Total Comments', 'Total Albums'],
                 datasets: [{
                     data: [data.photosWithPeopleTaggedCount, data.favoritesCount, data.commentsCount, data.albumCount],
                     backgroundColor: [

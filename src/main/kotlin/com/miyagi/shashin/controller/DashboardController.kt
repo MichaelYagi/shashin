@@ -290,12 +290,17 @@ class DashboardController {
         }
 
         // Site stats
-        val photosWithPeopleTaggedCount = recognitionLabelPhotoRepository.countDistinctMetadataId()
+//        val photosWithPeopleTaggedCount = recognitionLabelPhotoRepository.countDistinctMetadataId()
+        val peopleList = metadataRepository?.findMetadataByPeople(
+            settings?.getRecognitionConfidenceThreshold()!!,
+            TextUtils.getObjectName()
+        )
         val favoritesCount = favoriteRepository.count()
         val commentsCount = commentRepository.count()
         val albumCount = albumRepository.count()
 
-        response["photosWithPeopleTaggedCount"] = photosWithPeopleTaggedCount
+//        response["photosWithPeopleTaggedCount"] = photosWithPeopleTaggedCount
+        response["photosWithPeopleTaggedCount"] = if (peopleList == null) 0 else peopleList.count()
         response["favoritesCount"] = favoritesCount
         response["commentsCount"] = commentsCount
         response["albumCount"] = albumCount
