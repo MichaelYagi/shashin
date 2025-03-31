@@ -34,6 +34,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 - Sidebar info
+- Change port field
 
 ## [2.8.2] - 2025-03-23
 ### Added
