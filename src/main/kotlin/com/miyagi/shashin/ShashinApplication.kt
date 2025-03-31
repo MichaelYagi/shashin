@@ -55,13 +55,15 @@ class ShashinApplication {
 			text.isEditable = false
 			text.margin = Insets(10,10,10,10)
 
-			val source = URLDataSource(this.javaClass.getResource("/static/images/favicon-32x32.png"))
-			var img = ImageIcon(source.url)
-			frame.iconImage = img.image
+			var source = URLDataSource(this.javaClass.getResource("/static/images/favicon-32x32.png"))
+			var iconimg = ImageIcon(source.url)
+			frame.iconImage = iconimg.image
+			source = URLDataSource(this.javaClass.getResource("/static/images/favicon-256x256.png"))
+			var taskbarimg = ImageIcon(source.url)
 			val taskbar = Taskbar.getTaskbar()
 			try {
 				// set icon for mac os (and other systems which do support this method)
-				taskbar.iconImage = img.image
+				taskbar.iconImage = taskbarimg.image
 			} catch (e: UnsupportedOperationException) {
 				println("The os does not support: 'taskbar.setIconImage'." + e.message)
 			} catch (e: SecurityException) {
