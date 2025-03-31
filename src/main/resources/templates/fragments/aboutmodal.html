@@ -38,7 +38,7 @@
             setTimeout(function () {
                 // Look through list of GH releases
                 const http = new Http("get releases");
-                http.ajax("get", "/releases").then(function (data) {
+                http.ajax("get", "/releases?v="+uuidv4()).then(function (data) {
                     shashin.printMessageToConsole(JSON.stringify(data), {tag: "release"});
 
                     if (data.hasOwnProperty("releases") && currentRelease !== "v") {
@@ -75,7 +75,7 @@
                     const type = "releases";
 
                     const http = new Http("get releases");
-                    http.ajax("get", "/notifications/exists/" + type + "/" + latestTag).then(function (data) {
+                    http.ajax("get", "/notifications/exists/" + type + "/" + latestTag + "?v=" + uuidv4()).then(function (data) {
                         if (data.hasOwnProperty("exists")) {
                             const exists = data.exists;
                             if (exists === false) {
