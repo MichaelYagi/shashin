@@ -1,26 +1,111 @@
 package com.miyagi.shashin
 
+import jakarta.activation.URLDataSource
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.context.event.ApplicationStartingEvent
 import org.springframework.boot.runApplication
 import org.springframework.cache.annotation.EnableCaching
+import org.springframework.context.ApplicationListener
+import org.springframework.core.io.FileSystemResource
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.scheduling.annotation.EnableScheduling
-import java.time.Instant
+import java.awt.BorderLayout
+import java.awt.Desktop
+import java.awt.Dimension
+import java.awt.FlowLayout
+import java.awt.GridBagConstraints
+import java.awt.GridBagLayout
+import java.awt.GridLayout
+import java.awt.Insets
+import java.io.File
+import java.io.IOException
+import java.net.URI
+import java.net.URISyntaxException
+import java.util.concurrent.TimeUnit
+import javax.swing.*
 
 
 @SpringBootApplication
 @EnableCaching
 @EnableScheduling
-class ShashinApplication
+class ShashinApplication {
 
-@Autowired
-var jdbcTemplate: JdbcTemplate? = null
+	companion object {
 
-fun main(args: Array<String>) {
-	System.setProperty("org.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH", "true")
-	System.setProperty("com.miyagi.shashin.serverStartUnixMS", (System.currentTimeMillis()).toString())
-	jdbcTemplate?.execute("PRAGMA journal_mode = WAL")
-	jdbcTemplate?.execute("PRAGMA synchronous = NORMAL")
-	runApplication<ShashinApplication>(*args)
+		@Autowired
+		var jdbcTemplate: JdbcTemplate? = null
+
+		@JvmStatic
+		fun main(args: Array<String>) {
+			System.setProperty("org.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH", "true")
+			System.setProperty("com.miyagi.shashin.serverStartUnixMS", (System.currentTimeMillis()).toString())
+			System.setProperty("java.awt.headless", "false")
+			jdbcTemplate?.execute("PRAGMA journal_mode = WAL")
+			jdbcTemplate?.execute("PRAGMA synchronous = NORMAL")
+
+			// Create simple GUI
+			var frame = JFrame("Shashin")
+			frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+			frame.size = Dimension(400, 100)
+			var panel = JPanel(BorderLayout())
+			panel.isOpaque = true
+			panel.setBounds(30, 30, 100, 100)
+			panel.requestFocus()
+			var text = JTextArea("Loading Shashin")
+			text.isOpaque = false
+			text.isEditable = false
+			text.margin = Insets(10,10,10,10)
+			val source = URLDataSource(this.javaClass.getResource("/static/images/favicon-32x32.png"))
+			var img = ImageIcon(source.url)
+			frame.setResizable(false)
+            frame.layout = FlowLayout(FlowLayout.LEADING, 3, 3)
+			frame.iconImage = img.image
+			panel.add(text, BorderLayout.CENTER)
+
+			try {
+				val app = SpringApplication(ShashinApplication::class.java)
+				app.addListeners(ApplicationStartingListener(frame, panel))
+				app.run(*args)
+			} catch (e: IOException) {
+				text.text = "Error: ${e.message}"
+			}
+
+			val startPage = "http://127.0.0.1:6624"
+			text.text = "Opening $startPage in browser.\r\nClose this window to quit Shashin."
+
+			TimeUnit.SECONDS.sleep(3)
+
+			SwingUtilities.invokeLater {
+				val desktop = Desktop.getDesktop()
+				try {
+					desktop.browse(URI(startPage))
+				} catch (e: IOException) {
+					e.printStackTrace()
+					text.text = "Error: ${e.message}."
+				} catch (e: URISyntaxException) {
+					e.printStackTrace()
+					text.text = "Error: ${e.message}."
+				}
+			}
+		}
+	}
+}
+
+class ApplicationStartingListener : ApplicationListener<ApplicationStartingEvent> {
+	private var jFrame: JFrame? = null
+	private var jPanel: JPanel? = null
+
+	constructor(jFrame: JFrame, jPanel: JPanel) {
+		this.jFrame = jFrame
+		this.jPanel = jPanel
+	}
+
+	override fun onApplicationEvent(event: ApplicationStartingEvent) {
+		if (this.jFrame != null) {
+			this.jFrame!!.contentPane = this.jPanel
+			this.jFrame!!.isVisible = true
+		}
+	}
 }
