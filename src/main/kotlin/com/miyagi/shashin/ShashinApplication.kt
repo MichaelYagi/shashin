@@ -5,21 +5,16 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.event.ApplicationStartingEvent
-import org.springframework.boot.runApplication
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.ApplicationListener
-import org.springframework.core.io.FileSystemResource
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.scheduling.annotation.EnableScheduling
 import java.awt.BorderLayout
 import java.awt.Desktop
 import java.awt.Dimension
 import java.awt.FlowLayout
-import java.awt.GridBagConstraints
-import java.awt.GridBagLayout
-import java.awt.GridLayout
 import java.awt.Insets
-import java.io.File
+import java.awt.Taskbar
 import java.io.IOException
 import java.net.URI
 import java.net.URISyntaxException
@@ -49,19 +44,32 @@ class ShashinApplication {
 			var frame = JFrame("Shashin")
 			frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
 			frame.size = Dimension(400, 100)
+
 			var panel = JPanel(BorderLayout())
 			panel.isOpaque = true
 			panel.setBounds(30, 30, 100, 100)
 			panel.requestFocus()
+
 			var text = JTextArea("Loading Shashin")
 			text.isOpaque = false
 			text.isEditable = false
 			text.margin = Insets(10,10,10,10)
+
 			val source = URLDataSource(this.javaClass.getResource("/static/images/favicon-32x32.png"))
 			var img = ImageIcon(source.url)
+			frame.iconImage = img.image
+			val taskbar = Taskbar.getTaskbar()
+			try {
+				// set icon for mac os (and other systems which do support this method)
+				taskbar.iconImage = img.image
+			} catch (e: UnsupportedOperationException) {
+				println("The os does not support: 'taskbar.setIconImage'." + e.message)
+			} catch (e: SecurityException) {
+				println("There was a security exception for: 'taskbar.setIconImage'." + e.message)
+			}
+
 			frame.setResizable(false)
             frame.layout = FlowLayout(FlowLayout.LEADING, 3, 3)
-			frame.iconImage = img.image
 			panel.add(text, BorderLayout.CENTER)
 
 			try {
