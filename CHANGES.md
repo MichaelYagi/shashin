@@ -11,11 +11,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 
-## [2.8.3] - 2025-03-29
+## [2.8.3] - 2025-03-30
 ### Added
 - Interval setting for slideshow
 - Usage graph for sidecar storage
 - Missing latitude/longitude filter
+- Simple GUI component
 
 ### Changed
 - Dynamically update albums and people in metadata modal
