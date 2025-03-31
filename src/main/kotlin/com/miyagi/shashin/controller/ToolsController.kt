@@ -80,7 +80,7 @@ class ToolsController {
         return ResponseEntity
             .ok()
 //            .cacheControl(CacheControl.maxAge(1, TimeUnit.SECONDS))
-            .cacheControl(CacheControl.maxAge(14, TimeUnit.DAYS))
+//            .cacheControl(CacheControl.maxAge(14, TimeUnit.DAYS))
             .body(json)
     }
 
