@@ -8,7 +8,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 ### Fixed
-- Truncating place name
 
 ### Removed
 
@@ -32,6 +31,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Don't close metadata modal on rescan confirmation
 - Exit gallery when browser back button pressed
 - Redirect to taken page in Safari after login/register
+- Truncating place name
 
 ### Removed
 - Sidebar info
