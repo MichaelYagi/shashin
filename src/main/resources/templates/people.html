@@ -19,7 +19,10 @@
                             <div class="card" style="width:235px;padding-top:10px;margin-right:-1px;margin-bottom:-1px;">
                                 <a th:href="'/person/'+${person.id}"  style="text-decoration: none !important;color: #777777;" th:id="'person'+${person.id}">
                                     <th:block th:if="${#maps.containsKey(coverUrls, person.id)}">
-                                        <img loading="lazy" draggable="false" class="card-img-top" th:src="${coverUrls.get(person.id)}" width="209" height="209">
+                                        <img loading="lazy" draggable="false" class="card-img-top" style="position: relative;" th:src="${coverUrls.get(person.id)}" width="209" height="209">
+                                        <th:block th:if="${settings.facialDetection==true and #maps.containsKey(counts, person.id)}">
+                                            <span class="position-absolute badge rounded-pill bg-danger" style="position: absolute;top: 1%;left: 1%;" th:text="${(counts.get(person.id) > 99) ? '99+' : counts.get(person.id) + (counts.get(person.id) == 1 ? ' match' : ' matches')}"></span>
+                                        </th:block>
                                     </th:block>
                                 </a>
                                 <div class="card-body" style="display: flex;flex-direction: column;">
@@ -27,9 +30,9 @@
                                     <p class="card-text">
                                         <span style="margin-top: auto;">
                                             <small class="text-muted" th:text="${person.tagCount + (person.tagCount == 1 ? ' item' : ' items')}"></small>
-                                            <th:block th:if="${settings.facialDetection==true and #maps.containsKey(counts, person.id)}">
-                                                <br><small class="text-muted" th:text="${counts.get(person.id) + (counts.get(person.id) == 1 ? ' match' : ' matches')}"></small>
-                                            </th:block>
+<!--                                            <th:block th:if="${settings.facialDetection==true and #maps.containsKey(counts, person.id)}">-->
+<!--                                                <br><small class="text-muted" th:text="${counts.get(person.id) + (counts.get(person.id) == 1 ? ' match' : ' matches')}"></small>-->
+<!--                                            </th:block>-->
                                         </span>
                                     </p>
                                 </div>
