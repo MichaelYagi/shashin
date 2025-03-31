@@ -87,22 +87,22 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-3">
+                                <div class="col-4">
                                     <label for="searchHistoryLimit" class="form-label"><strong>Search History Limit</strong> (Default 10)</label>
                                     <input class="form-control" id="searchHistoryLimit" name="searchHistoryLimit" th:value="${settings.searchHistoryLimit}">
                                 </div>
-                                <div class="col-3">
+                                <div class="col-4">
                                     <label for="matchScanLimit" class="form-label"><strong>Match Scan Limit</strong> (Default 30)</label>
                                     <input class="form-control" id="matchScanLimit" name="matchScanLimit" th:value="${settings.matchScanLimit}">
                                 </div>
-                                <div class="col-3">
+                                <div class="col-4">
                                     <label for="trainingDataLimit" class="form-label"><strong>Training Data Limit</strong> (Default 100)</label>
                                     <input class="form-control" id="trainingDataLimit" name="trainingDataLimit" th:value="${settings.trainingDataLimit}">
                                 </div>
-                                <div class="col-3">
-                                    <label for="changePort" class="form-label"><strong>Change Port</strong></label>&nbsp;<span id="changePortInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Restarts app after updated and saved"></span>
-                                    <input class="form-control" id="changePort" name="changePort" th:value="${settings.port}">
-                                </div>
+<!--                                <div class="col-3">-->
+<!--                                    <label for="changePort" class="form-label"><strong>Change Port</strong></label>&nbsp;<span id="changePortInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Restarts app after updated and saved"></span>-->
+                                    <input type="hidden" class="form-control" id="changePort" name="changePort" th:value="${settings.port}">
+<!--                                </div>-->
                             </div>
                             <div class="row">
                                 <div class="col-6">
