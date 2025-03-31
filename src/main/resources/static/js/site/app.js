@@ -690,12 +690,8 @@
                 $("#shortLocationLabel").attr("title", "");
                 if (metadata.hasOwnProperty("placeName") && metadata.placeName !== null && metadata.placeName !== "" &&
                     data.hasOwnProperty("shortPlaceName") && data.shortPlaceName !== null && data.shortPlaceName !== "") {
-                    let locationLabel = data.shortPlaceName;
-                    if (Util.isMobile() === false && locationLabel.length > 38) {
-                        locationLabel = $.trim(data.shortPlaceName).substring(0, 38).trim() + "...";
-                    }
                     const fullPlacenameArray = metadata.placeName.split(";");
-                    $("#shortLocationLabel").html(locationLabel);
+                    $("#shortLocationLabel").html(data.shortPlaceName);
                     $("#shortLocationLabel").attr("title", fullPlacenameArray[0]);
                 }
 
