@@ -1376,6 +1376,17 @@ async function showMap(mapdata, keywordMap) {
         shashin.showToastMessage("Map reset", "Map reset", {icon:"bi-info-circle", iconColor:"#777777", delay: 3000, tag: "mainmap"});
 
         $("#propMapFilter").modal('hide');
+
+        const url = window.location.href;
+        fetch(url, {
+            headers: {
+                Pragma: 'no-cache',
+                Expires: '-1',
+                'Cache-Control': 'no-cache',
+            },
+        });
+        window.location.href = url;
+        window.location.reload();
     });
 
     $("#mapFilterButton").on("click", function (e) {
