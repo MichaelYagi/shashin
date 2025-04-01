@@ -43,7 +43,7 @@
             </nav>
         </th:block>
 
-        <th:block th:if="${activePage == 'articles/quickstart' && (userCount == 0 || authority == 'ROLE_SUPER')}">
+        <th:block th:if="${activePage == 'articles/quickstart' && (userCount < 2 || authority == 'ROLE_SUPER')}">
             <nav class="d-none d-xl-block col-xl-4 float-end">
                 <ul class="section-nav">
                     <li class="toc-entry toc-h2"><a href="#quickstart">Quick Start</a></li>

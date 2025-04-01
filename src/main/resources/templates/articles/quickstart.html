@@ -5,7 +5,7 @@
 
 <section th:fragment="content">
     <div class="col-11 col-md-10 col-xl-9">
-        <th:block th:if="${userCount == 0 || authority == 'ROLE_SUPER'}">
+        <th:block th:if="${userCount < 2 || authority == 'ROLE_SUPER'}">
         <h2 id="quickstart">
             <div>Quick Start<a class="anchorjs-link" href="#quickstart" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
         </h2>
