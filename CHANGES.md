@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Taskbar icon for JFrame
 - Badges for matched people
+- Logout button on index pages
 
 ### Changed
 
