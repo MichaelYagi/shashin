@@ -5,24 +5,24 @@
 
 <section th:fragment="content">
     <div class="col-11 col-md-10 col-xl-9">
-        <th:block th:if="${userCount < 2 || authority == 'ROLE_SUPER'}">
+        <th:block th:if="${userCount == 0 || authority == 'ROLE_SUPER'}">
         <h2 id="quickstart">
             <div>Quick Start<a class="anchorjs-link" href="#quickstart" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
         </h2>
 
         <ol>
-            <li>For first time website setup, register your username and password on the <a href="/users/register">registration</a> page.</li>
-            <li><a href="/users/login">Login</a> as an administrator with the username and password you registered with.
-                <ol type="i"><li>Subsequent registrations need to processed by an administrator on the <a href="/settings/users">User Management</a> page.</li></ol>
+            <li>For first time website setup, register your username and password on the <a href="/users/register" target="_blank">registration</a> page.</li>
+            <li><a href="/users/login" target="_blank">Login</a> as an administrator with the username and password you registered with.
+                <ol type="i"><li>Subsequent registrations need to processed by an administrator on the <a href="/settings/users" target="_blank">User Management</a> page.</li></ol>
             </li>
-            <li>Once logged in as an administrator, go to the <a href="/settings">settings</a> page from the sidebar.</li>
-            <li>In the <a href="/settings">Settings</a> tab in the <strong>Media directories and files</strong> text area, point to where your photos or videos are stored, separating directories with a new line. Example:
+            <li>Once logged in as an administrator, go to the <a href="/settings" target="_blank">settings</a> page from the sidebar.</li>
+            <li>In the <a href="/settings" target="_blank">Settings</a> tab in the <strong>Media directories and files</strong> text area, point to where your photos or videos are stored, separating directories with a new line. Example:
 <pre class="mt-2"><code>C:\Users\Michael\Pictures
 C:\Users\Michael\Videos</code></pre>
             </li>
             <li>Click <strong>Save</strong> near the bottom of the page.</li>
-            <li>In the <a href="/settings/scan">Media Indexing</a> tab, click the <strong>Scan</strong> button.</li>
-            <li>After you see the message <strong>Scan Complete</strong>, view your media on the <span id="startingPage"><a href="/timeline">timeline</a></span> page.</li>
+            <li>In the <a href="/settings/scan" target="_blank">Media Indexing</a> tab, click the <strong>Scan</strong> button.</li>
+            <li>After you see the message <strong>Scan Complete</strong>, view your media on the <span id="startingPage"><a href="/timeline" target="_blank">timeline</a></span> page.</li>
         </ol>
         </th:block>
 
