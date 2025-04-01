@@ -1377,7 +1377,7 @@ async function showMap(mapdata, keywordMap) {
 
         $("#propMapFilter").modal('hide');
 
-        window.location = window.location
+        window.location = window.location;
 
         // Hard reload of page
         // const url = window.location.href;
