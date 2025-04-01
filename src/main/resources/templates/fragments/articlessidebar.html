@@ -6,7 +6,7 @@
     <li class="mb-1">
         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
             <li><a href="/articles/tips" th:attr="class='rounded' + ${activePage=='articles/tips' ? 'link-dark rounded active' : ''}">Tips & Tricks</a></li>
-            <th:block th:if="${authority == 'ROLE_SUPER'}">
+            <th:block th:if="${userCount == 0 || authority == 'ROLE_SUPER')">
             <li><a href="/articles/quickstart" th:attr="class='rounded' + ${activePage=='articles' or activePage=='articles/quickstart' ? 'link-dark rounded active' : ''}">Quick Start</a></li>
             </th:block>
             <th:block th:if="${authority == 'ROLE_SUPER' || authority == 'ROLE_ADMIN' || authority == 'ROLE_USER'}">
