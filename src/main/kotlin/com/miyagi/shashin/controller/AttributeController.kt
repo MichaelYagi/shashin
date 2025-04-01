@@ -109,6 +109,9 @@ class AttributeController: ResponseEntityExceptionHandler() {
     @Value("\${app.config.default.scheduledTime}")
     private lateinit var scheduledTime: String
 
+    @Value("\${app.rememberme.key}")
+    private var rememberMeKey: String? = null
+
     override fun handleHttpRequestMethodNotSupported(
         ex: HttpRequestMethodNotSupportedException,
         headers: HttpHeaders,
@@ -366,6 +369,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
         model["hasAlbums"] = false
         val currentUser: User?
         var currentUserId = 0
+        val cookieUser: User? = TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"), rememberMeKey.toString(), userRepository)
 
         model["requestResourceType"] = "web"
         if (!request.getHeader("X-API-KEY").isNullOrBlank()) {
@@ -470,6 +474,13 @@ class AttributeController: ResponseEntityExceptionHandler() {
             if (mediaCount != null) {
                 model["hasAlbums"] = mediaCount > 0
             }
+        } else if (cookieUser != null) {
+            currentUser = cookieUser
+
+            model["username"] = cookieUser.getUsername()
+            model["authority"] = cookieUser.getAuthority()
+            model["apikey"] = cookieUser.getApikey()!!
+            model["currentUser"] = cookieUser
         }
 
 //        timingEnd = Date()

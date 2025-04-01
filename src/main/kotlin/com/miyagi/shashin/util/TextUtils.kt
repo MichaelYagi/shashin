@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import com.miyagi.shashin.configuration.MultiSecurityConfig
 import com.miyagi.shashin.model.FreeFormText
 import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.UserRepository
 import jakarta.servlet.http.HttpServletRequest
@@ -150,7 +151,7 @@ class TextUtils {
             return seriesExpiryMap
         }
 
-        fun checkValidRememberMeToken(requestCookie: String?, rememberMeKey: String, userRepository: UserRepository?): Boolean {
+        fun checkValidRememberMeToken(requestCookie: String?, rememberMeKey: String, userRepository: UserRepository?): User? {
             if (requestCookie != null) {
                 val seriesExpiryMap = parseRememberMeCookie(requestCookie)
                 var cookieValue = seriesExpiryMap["cookieValue"].toString()
@@ -158,9 +159,10 @@ class TextUtils {
                 val series = seriesExpiryMap["series"]
                 var timeStamp = if (series != null && series != "") series.toLong() else 0L
                 var verifiedCookieValue = ""
+                var user: User? = null
 
                 if (cookieValue != "" && username != "") {
-                    val user = userRepository?.findByUsername(username)
+                    user = userRepository?.findByUsername(username)
                     if (user != null && user.getId() > 0 && user.getIsAuthorized() == true) {
                         verifiedCookieValue = verifyPersistenceToken(username.toString(), timeStamp.toString(), user.getPassword().toString(), rememberMeKey.toString()).toString()
                     }
@@ -191,10 +193,12 @@ class TextUtils {
 
                 cookieValue = removeTrailingEquals(cookieValue)
 
-                return verifiedCookieValue != "" && verifiedCookieValue == cookieValue && timeStamp != 0L && timeStamp > now
+                if (user != null && verifiedCookieValue != "" && verifiedCookieValue == cookieValue && timeStamp != 0L && timeStamp > now) {
+                    return user
+                }
             }
 
-            return false
+            return null
         }
 
         // See https://docs.spring.io/spring-security/reference/servlet/authentication/rememberme.html

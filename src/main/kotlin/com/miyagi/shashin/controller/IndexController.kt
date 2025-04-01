@@ -28,11 +28,12 @@ class IndexController {
         model["loggedIn"] = false
         val currentUserObj = model.getAttribute("currentUser") as User?
         val sessionUser = request.session.getAttribute("CurrentUser") as User?
+        val cookieAuthority = TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"), rememberMeKey.toString(), userRepository)
 
-        if ((currentUserObj != null && currentUserObj.getIsAuthorized() == true) ||
-            (sessionUser != null && sessionUser.getIsAuthorized() == true) ||
-            TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"), rememberMeKey.toString(), userRepository)
-        ) {
+        if ((currentUserObj != null && currentUserObj.getIsAuthorized() == true) || (sessionUser != null && sessionUser.getIsAuthorized() == true || cookieAuthority != null)) {
+            if (cookieAuthority != null) {
+                model["authority"] = cookieAuthority
+            }
             model["loggedIn"] = true
         }
 
@@ -50,8 +51,12 @@ class IndexController {
         model["loggedIn"] = false
         val currentUserObj = model.getAttribute("currentUser") as User?
         val sessionUser = request.session.getAttribute("CurrentUser") as User?
+        val cookieAuthority = TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"), rememberMeKey.toString(), userRepository)
 
-        if ((currentUserObj != null && currentUserObj.getIsAuthorized() == true) || (sessionUser != null && sessionUser.getIsAuthorized() == true) || TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"), rememberMeKey.toString(), userRepository)) {
+        if ((currentUserObj != null && currentUserObj.getIsAuthorized() == true) || (sessionUser != null && sessionUser.getIsAuthorized() == true || cookieAuthority != null)) {
+            if (cookieAuthority != null) {
+                model["authority"] = cookieAuthority
+            }
             model["loggedIn"] = true
         }
 
