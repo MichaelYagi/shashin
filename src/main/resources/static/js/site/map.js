@@ -1377,16 +1377,19 @@ async function showMap(mapdata, keywordMap) {
 
         $("#propMapFilter").modal('hide');
 
-        const url = window.location.href;
-        fetch(url, {
-            headers: {
-                Pragma: 'no-cache',
-                Expires: '-1',
-                'Cache-Control': 'no-cache',
-            },
-        });
-        window.location.href = url;
-        window.location.reload();
+        window.location = window.location
+
+        // Hard reload of page
+        // const url = window.location.href;
+        // fetch(url, {
+        //     headers: {
+        //         Pragma: 'no-cache',
+        //         Expires: '-1',
+        //         'Cache-Control': 'no-cache',
+        //     },
+        // });
+        // window.location.href = url;
+        // window.location.reload();
     });
 
     $("#mapFilterButton").on("click", function (e) {
