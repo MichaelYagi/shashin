@@ -5,6 +5,7 @@
 
 <section th:fragment="content">
     <div class="col-11 col-md-10 col-xl-9">
+        <th:block th:if="${userCount == 0 || authority == 'ROLE_SUPER'}">
         <h2 id="quickstart">
             <div>Quick Start<a class="anchorjs-link" href="#quickstart" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
         </h2>
@@ -23,6 +24,7 @@ C:\Users\Michael\Videos</code></pre>
             <li>In the <a href="/settings/scan">Media Indexing</a> tab, click the <strong>Scan</strong> button.</li>
             <li>After you see the message <strong>Scan Complete</strong>, view your media on the <span id="startingPage"><a href="/timeline">timeline</a></span> page.</li>
         </ol>
+        </th:block>
 
         <th:block th:if="${authority == 'ROLE_SUPER'}">
             <h2 id="facerecognition">
