@@ -442,7 +442,7 @@ class UserController {
             return "redirect:/recent"
         } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
             return "redirect:/albums"
-        } else if (TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"), rememberMeKey.toString(), userRepository)) {
+        } else if (TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"), rememberMeKey.toString(), userRepository) != null) {
             return "redirect:/users/login"
         } else {
             model["message"] = ""

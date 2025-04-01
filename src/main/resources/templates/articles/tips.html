@@ -1,0 +1,52 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      th:include="layouts/articles :: page(title=${titleDescriptor},activePage=${activePage})">
+<head></head>
+<body>
+
+<section th:fragment="content">
+    <div class="col-11 col-md-10 col-xl-9">
+        <h1>Tips & Tricks</h1>
+
+        <h2 id="filters">
+            <div>Filters<a class="anchorjs-link" href="#filters" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+        </h2>
+
+        <p>For the timeline, explore (excluding folders), favorites and album pages, you can filter by media type or photos with no coordinate data.</p>
+
+        <p>For example,</p>
+
+        <ul>
+            <li><code>/timeline/video</code> filters media by video</li>
+            <li><code>/taken/gif</code> filters media by gifs</li>
+            <li><code>/recent/nolatlng</code> filters media that are missing coordinates</li>
+        </ul>
+
+        <h2 id="multiselect">
+            <div>Multi Select<a class="anchorjs-link" href="#multiselect" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+        </h2>
+
+        <p>You can multi select photos, which is useful if editing multiple photos.</p>
+
+        <ul>
+            <li>Start by selecting a photo in multi select mode on the upper left corner of a photo</li>
+            <li>Hover over the last photo you want to select in a range of photos and press the <code>shift</code> to select the entire range of photos. The first photo in the range should have a blue outline.</li>
+            <li>You can deselect the photos by deselecting a photo within the range and press the <code>shift</code> to deselect the range of photos.</li>
+        </ul>
+
+        <h2 id="contact">
+            <div>Contact<a class="anchorjs-link" href="#contact" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+        </h2>
+
+        <p>Report issues <a href="mailto:myagi.developer@gmail.com" target="_blank">here</a>!</p>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (Util.isSafari() === true) {
+                $("#startingPage").html('<a href="/taken">recently taken</a>');
+            }
+        });
+    </script>
+</section>
+</body>
+</html>
