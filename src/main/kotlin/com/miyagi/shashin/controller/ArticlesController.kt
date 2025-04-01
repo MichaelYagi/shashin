@@ -22,19 +22,12 @@ class ArticlesController {
         val module = "articles/quickstart"
 
         model["loggedIn"] = false
-        var userCount = userRepository?.count()
         val currentUserObj = model.getAttribute("currentUser") as User?
         val sessionUser = request.session.getAttribute("CurrentUser") as User?
 
         if ((currentUserObj != null && currentUserObj.getIsAuthorized() == true) || (sessionUser != null && sessionUser.getIsAuthorized() == true)) {
             model["loggedIn"] = true
         }
-
-        if (userCount == null) {
-            userCount = 0
-        }
-
-        model["userCount"] = userCount
 
         val moduleArray = module.split("/")
         model["activePage"] = module

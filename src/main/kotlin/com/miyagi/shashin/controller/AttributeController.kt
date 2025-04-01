@@ -371,6 +371,8 @@ class AttributeController: ResponseEntityExceptionHandler() {
         var currentUserId = 0
         val cookieUser: User? = TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"), rememberMeKey.toString(), userRepository)
 
+        model["userCount"] = userRepository.count()
+
         model["requestResourceType"] = "web"
         if (!request.getHeader("X-API-KEY").isNullOrBlank()) {
             model["requestResourceType"] = "api"
