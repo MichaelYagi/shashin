@@ -15,7 +15,7 @@
             <th:block th:if="${currentUser.authority == 'ROLE_ADMIN' || currentUser.authority == 'ROLE_SUPER'}">
                 <!-- Show timeline view if not Safari -->
                 <!-- TODO: Fix timeline scrolling in Safari -->
-                <th:block th:if="${agentName != 'safari'}">
+                <th:block th:if="${agentName != 'Safari'}">
                     <li class="nav-item">
                         <a th:attr="class='nav-link list-group-item list-group-item-action rounded' + ${activeSidebar=='timeline' ? ' active' : ''}" href="/timeline">
                             <span class="bi-calendar4" style="font-size: 1rem;"></span> Timeline
