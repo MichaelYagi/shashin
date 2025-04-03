@@ -56,8 +56,12 @@ class Compreface {
                     html += '</a></div>';
                     if (resultObj.metadata_date != null && resultObj.metadata_date !== '') {
                         html += '<div class="thumbnail-centered" id="tncentered' + resultObj.image_id +'">';
-                        html += '<a href="/timeline#' + resultObj.metadata_date + '" target="_blank"><span class="bi-play-btn" ';
-                        html += 'style="font-size: 4rem;color: lightgray;">';
+                        if (Util.isSafari()) {
+                            html += '<a href="/taken" target="_blank">';
+                        } else {
+                            html += '<a href="/timeline#' + resultObj.metadata_date + '" target="_blank">';
+                        }
+                        html += '<span class="bi-play-btn" style="font-size: 4rem;color: lightgray;">';
                         html += '</span></a></div>';
                         html += '<div class="thumbnail-tr" id="tntr' + resultObj.image_id +'">';
                         html += '<span id=timelineviewable' + resultObj.image_id + '" class="bi-calendar overlayIcon overlayIconBackground">';

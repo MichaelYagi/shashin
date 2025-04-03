@@ -22,7 +22,7 @@
 
             <div id="infinite-scroll-gallery" class="row">
                 <th:block th:if="${not #lists.isEmpty(resultList)}">
-                    <span>Click image to view on timeline. Deleting Training images only deletes images from the CompreFace server. It does not delete Shashin images.</span><br><br>
+                    <span>Deleting Training images only deletes images from the CompreFace server.</span><br><br>
 
                     <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
                         function setPhotoOverlays(compreFaceImageId) {
@@ -195,7 +195,12 @@
                                 <div th:replace="~{fragments/topleftoverlay :: topleftoverlay(${faceObj.image_id})}"></div>
                                 <th:block th:if="${faceObj.metadata_date != null and faceObj.metadata_date != ''}">
                                     <div class="thumbnail-centered" th:id="${'tncentered'+faceObj.image_id}">
-                                        <a th:href="${'/timeline#'+faceObj.metadata_date}" target="_blank"><span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span></a>
+                                        <th:block th:if="${agentName == 'safari'}">
+                                            <a href="/taken" target="_blank"><span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span></a>
+                                        </th:block>
+                                        <th:block th:if="${agentName != 'safari'}">
+                                            <a th:href="${'/timeline#'+faceObj.metadata_date}" target="_blank"><span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span></a>
+                                        </th:block>
                                     </div>
                                     <div class="thumbnail-tr" th:id="${'tntr'+faceObj.image_id}">
                                         <span th:id="${'timelineviewable'+faceObj.image_id}" class="bi-calendar overlayIcon overlayIconBackground"></span>
