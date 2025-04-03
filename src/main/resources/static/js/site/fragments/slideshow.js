@@ -580,8 +580,6 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
     }
 
     function exitSlideshow() {
-        tearDownVideo();
-
         $("#mediaSrc").css("opacity", "1");
         slideshowStarted = false;
         slideshowIsPaused = false;
@@ -593,18 +591,24 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
         isFileDialogOpened = false;
         isActive = false;
 
+        $("#mediaInfo").css("display", "none");
+        exitSlideshowGallery();
+
+        // Background video teardown
+        tearDownVideo();
+
+        shashin.closeToastMessages({tag: "slide"});
+
+        // Disconnect from cast if connected
+        if (cjsc !== null && cjsc.available) {
+            cjsc.disconnect();
+        }
+
         if (document.fullscreenEnabled && document.fullscreenElement !== null && document.exitFullscreen) {
             document.exitFullscreen();
             if (document.exitFullscreen) {
                 document.exitFullscreen();
             }
-        }
-
-        $("#mediaInfo").css("display", "none");
-        exitSlideshowGallery();
-        shashin.closeToastMessages({tag: "slide"});
-        if (cjsc !== null && cjsc.available) {
-            cjsc.disconnect();
         }
     }
 
