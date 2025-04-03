@@ -100,17 +100,29 @@ class BrowseController: BaseController() {
     }
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
-    @RequestMapping(value = ["/recent","/recent/{mediaType}","/recent/{page}/{mediaType}"], method = [RequestMethod.GET])
-    fun getRecentlyAdded(model: Model,@PathVariable(required = false) page: Int?,@PathVariable(required = false) mediaType: String?): String {
+    @RequestMapping(value = ["/recent","/recent/{mediaType}"], method = [RequestMethod.GET])
+    fun getRecentlyAdded(model: Model,@PathVariable(required = false) mediaType: String?): String {
+        val module = "recent"
+        buildInitialPage(module,model,mediaType)
+
+        model["pageParam"] = 0
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
+    @RequestMapping(value = ["/recent/{page}/{mediaType}"], method = [RequestMethod.GET])
+    fun getRecentlyAddedPage(model: Model,@PathVariable(required = true) page: Int,@PathVariable(required = true) mediaType: String): String {
         val module = "recent"
 
-        var pageVal = 0
-        if (page != null) {
-            pageVal = page
+        val response = buildBrowseRecord(module,model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType)
+        for ((k, v) in response) {
+            model[k] = v!!
         }
 
-        buildInitialPage(module,model,mediaType,pageVal)
-
+        model["currentPage"] = (page+1)
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -209,17 +221,13 @@ class BrowseController: BaseController() {
     }
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
-    @RequestMapping(value = ["/taken","/taken/{mediaType}","/taken/{page}/{mediaType}"], method = [RequestMethod.GET])
-    fun getTaken(model: Model,@PathVariable(required = false) page: Int?,@PathVariable(required = false) mediaType: String?): String {
+    @RequestMapping(value = ["/taken","/taken/{mediaType}"], method = [RequestMethod.GET])
+    fun getTaken(model: Model,@PathVariable(required = false) mediaType: String?): String {
         val module = "taken"
 
-        var pageVal = 0
-        if (page != null) {
-            pageVal = page
-        }
+        buildInitialPage(module,model,mediaType)
 
-        buildInitialPage(module,model,mediaType,pageVal)
-
+        model["pageParam"] = 0
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -234,17 +242,47 @@ class BrowseController: BaseController() {
     }
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
-    @RequestMapping(value = ["/modified","/modified/{mediaType}","/modified/{page}/{mediaType}"], method = [RequestMethod.GET])
-    fun getModified(model: Model,@PathVariable(required = false) page: Int?,@PathVariable(required = false) mediaType: String?): String {
-        val module = "modified"
+    @RequestMapping(value = ["/taken/{page}/{mediaType}"], method = [RequestMethod.GET])
+    fun getTakenAddedPage(model: Model,@PathVariable(required = true) page: Int,@PathVariable(required = true) mediaType: String): String {
+        val module = "taken"
 
-        var pageVal = 0
-        if (page != null) {
-            pageVal = page
+        val response = buildBrowseRecord(module,model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType)
+        for ((k, v) in response) {
+            model[k] = v!!
         }
 
-        buildInitialPage(module,model,mediaType,pageVal)
+        model["currentPage"] = (page+1)
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
 
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
+    @RequestMapping(value = ["/modified","/modified/{mediaType}"], method = [RequestMethod.GET])
+    fun getModified(model: Model,@PathVariable(required = false) mediaType: String?): String {
+        val module = "modified"
+
+        buildInitialPage(module,model,mediaType)
+
+        model["pageParam"] = 0
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
+    @RequestMapping(value = ["/modified/{page}/{mediaType}"], method = [RequestMethod.GET])
+    fun getModifiedAddedPage(model: Model,@PathVariable(required = true) page: Int,@PathVariable(required = true) mediaType: String): String {
+        val module = "modified"
+
+        val response = buildBrowseRecord(module,model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType)
+        for ((k, v) in response) {
+            model[k] = v!!
+        }
+
+        model["currentPage"] = (page+1)
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -343,17 +381,30 @@ class BrowseController: BaseController() {
     }
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
-    @RequestMapping(value = ["/accessed","/accessed/{mediaType}","/accessed/{page}/{mediaType}"], method = [RequestMethod.GET])
-    fun getAccessed(model: Model,@PathVariable(required = false) page: Int?,@PathVariable(required = false) mediaType: String?): String {
+    @RequestMapping(value = ["/accessed","/accessed/{mediaType}"], method = [RequestMethod.GET])
+    fun getAccessed(model: Model,@PathVariable(required = false) mediaType: String?): String {
         val module = "accessed"
 
-        var pageVal = 0
-        if (page != null) {
-            pageVal = page
+        buildInitialPage(module,model,mediaType)
+
+        model["pageParam"] = 0
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
+    @RequestMapping(value = ["/accessed/{page}/{mediaType}"], method = [RequestMethod.GET])
+    fun getAccessedAddedPage(model: Model,@PathVariable(required = true) page: Int,@PathVariable(required = true) mediaType: String): String {
+        val module = "accessed"
+
+        val response = buildBrowseRecord(module,model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType)
+        for ((k, v) in response) {
+            model[k] = v!!
         }
 
-        buildInitialPage(module,model,mediaType,pageVal)
-
+        model["currentPage"] = (page+1)
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -533,6 +584,7 @@ class BrowseController: BaseController() {
         response["placenameMap"] = mutableMapOf<String, MutableList<String>?>()
         response["page"] = page
         response["size"] = size
+        response["totalPages"] = 0
 
         response["msg"] = "Could not get results"
         response["status"] = ApiResponse.FAIL.status
@@ -553,6 +605,8 @@ class BrowseController: BaseController() {
 
             var metadataList = mutableListOf<Metadata>()
             if (mediaType == "all") {
+                response["totalPages"] = metadataRepository.countAllByHiddenIsFalse()/size
+
                 when (module) {
                     "recent" -> {
                         metadataList = metadataRepository.findRecentByOffsetAndLimit(
@@ -580,6 +634,8 @@ class BrowseController: BaseController() {
                     }
                 }
             } else if (mediaType == "nolatlng") {
+                response["totalPages"] = metadataRepository.countByNoCoordAndOffsetAndLimit()/size
+
                 when (module) {
                     "recent" -> {
                         metadataList = metadataRepository.findRecentByNoCoordAndOffsetAndLimit(
@@ -607,6 +663,8 @@ class BrowseController: BaseController() {
                     }
                 }
             } else {
+                response["totalPages"] = metadataRepository.countByMediaTypeAndOffsetAndLimit(mediaType)/size
+
                 when (module) {
                     "recent" -> {
                         metadataList = metadataRepository.findRecentByMediaTypeAndOffsetAndLimit(
@@ -753,8 +811,8 @@ class BrowseController: BaseController() {
         return model
     }
 
-    private fun buildInitialPage(module: String, model: Model, mediaTypeFilter: String?, page: Int = 0): Model {
-        val response = buildBrowseRecord(module,model,page,model.getAttribute("queryLimit").toString().toInt(),mediaTypeFilter)
+    private fun buildInitialPage(module: String, model: Model, mediaTypeFilter: String?): Model {
+        val response = buildBrowseRecord(module,model,0,model.getAttribute("queryLimit").toString().toInt(),mediaTypeFilter)
 
         for ((k, v) in response) {
             model[k] = v!!

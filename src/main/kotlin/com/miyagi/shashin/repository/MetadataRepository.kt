@@ -75,6 +75,8 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
 
    fun countAllByHiddenIsTrue(): Int
 
+   fun countAllByHiddenIsFalse(): Int
+
    fun countAllByLatIsNullAndLngIsNull(): Int
 
    @Query("SELECT camera, COUNT(*) AS count FROM metadata WHERE camera IS NOT NULL GROUP BY camera ORDER BY count DESC", nativeQuery = true)
@@ -110,8 +112,14 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% ORDER BY added_at DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findRecentByMediaTypeAndOffsetAndLimit(@Param("offset") offset: Int, @Param("type") type: String?, @Param("limit") limit: Int): MutableIterable<Metadata>
 
+   @Query("SELECT COUNT(*) FROM metadata WHERE hidden = 0 AND type LIKE %:type%", nativeQuery = true)
+   fun countByMediaTypeAndOffsetAndLimit(@Param("type") type: String?): Int
+
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) ORDER BY added_at DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findRecentByNoCoordAndOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
+
+   @Query("SELECT COUNT(*) FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\"))", nativeQuery = true)
+   fun countByNoCoordAndOffsetAndLimit(): Int
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findTakenByMediaTypeAndOffsetAndLimit(@Param("offset") offset: Int, @Param("type") type: String?, @Param("limit") limit: Int): MutableIterable<Metadata>

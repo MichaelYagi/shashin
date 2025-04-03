@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Taskbar icon for JFrame
 - Badges for matched people
 - Logout button on index pages
-- Setting up pagination for recent, modified, taken and accessed pages (/page/mediatype)
+- Added pagination for recent, modified, taken and accessed pages (/page/mediatype)
 
 ### Changed
 

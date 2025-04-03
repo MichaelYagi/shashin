@@ -19,6 +19,13 @@
 
             <div id="scroll-gallery">
                 <th:block th:if="${not #lists.isEmpty(metadataList)}">
+                    <th:block th:if="${pageParam == null}">
+                        <div><a th:href="${'/modified' + ((mediaTypeFilter == 'all') ? '' : '/' + mediaTypeFilter)}" style="text-decoration:none;">Go to default view</a></div>
+                    </th:block>
+                    <th:block th:if="${pageParam != null}">
+                        <div><a th:href="${'/modified/0/' + mediaTypeFilter}" style="text-decoration:none;">Go to paged view</a></div>
+                    </th:block>
+
                     <div class="row image-group-padding">
                         <th:block th:each="metadata, iterStat: ${metadataList}">
 
@@ -85,6 +92,18 @@
                 </th:block>
             </div>
 
+            <th:block th:if="${pageParam == null and totalPages > 0 and currentPage > 0}">
+                <nav>
+                    <ul class="pagination pagination-md justify-content-center align-items-center mt-4">
+                        <th:block th:each="i : ${#numbers.sequence(1, totalPages, 1)}">
+                            <li th:class="${'page-item' + ((currentPage == i) ? ' active' : '')}">
+                                <a class="page-link" th:href="${'/modified/' + (i-1) + '/' + mediaTypeFilter}" th:text="${i}"></a>
+                            </li>
+                        </th:block>
+                    </ul>
+                </nav>
+            </th:block>
+
             <div th:replace="~{fragments/metadatabatchmodal :: metadatabatchmodal(${recognitionLabels},${allAlbumList})}"></div>
 
             <!-- Back to top button -->
@@ -112,7 +131,7 @@
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         const activePage = /*[[${activePage}]]*/ 'modified';
         const mediaTypeFilter = /*[[${mediaTypeFilter}]]*/ 'all';
-        const page = /*[[${page}]]*/ 0;
+        const page = /*[[${pageParam}]]*/ -1;
         /*]]>*/
 
         if (page === 0) {
@@ -133,6 +152,8 @@
                     // Util.checkErrorImage();
                 }
             });
+        } else {
+            Util.scrollToTopListener("#container");
         }
     });
 </script>
