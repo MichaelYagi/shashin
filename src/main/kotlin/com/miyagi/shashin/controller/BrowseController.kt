@@ -20,6 +20,7 @@ import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 import java.util.*
 import jakarta.servlet.http.HttpServletRequest
+import org.hibernate.query.Page
 import org.springframework.http.MediaType
 import org.springframework.web.multipart.MultipartFile
 import kotlin.collections.HashMap
@@ -99,11 +100,16 @@ class BrowseController: BaseController() {
     }
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
-    @RequestMapping(value = ["/recent","/recent/{mediaType}"], method = [RequestMethod.GET])
-    fun getRecentlyAdded(model: Model,@PathVariable(required = false) mediaType: String?): String {
+    @RequestMapping(value = ["/recent","/recent/{mediaType}","/recent/{page}/{mediaType}"], method = [RequestMethod.GET])
+    fun getRecentlyAdded(model: Model,@PathVariable(required = false) page: Int?,@PathVariable(required = false) mediaType: String?): String {
         val module = "recent"
 
-        buildInitialPage(module,model,mediaType)
+        var pageVal = 0
+        if (page != null) {
+            pageVal = page
+        }
+
+        buildInitialPage(module,model,mediaType,pageVal)
 
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -196,18 +202,23 @@ class BrowseController: BaseController() {
         )
     )
     @Secured("ROLE_SUPER","ROLE_ADMIN")
-    @RequestMapping(value = ["/recent/{page}","/recent/mediatype/{mediaType}/page/{page}","/api/v1/recent/{page}","/api/v1/recent/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/recent/mediatype/{mediaType}/page/{page}","/api/v1/recent/{page}","/api/v1/recent/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedRecent(model: Model, request: HttpServletRequest, @PathVariable page: Int,@PathVariable(required = false) mediaType: String?): String {
         return mapper.writeValueAsString(buildBrowseRecord("recent",model,page, model.getAttribute("queryLimit").toString().toInt(), mediaType))
     }
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
-    @RequestMapping(value = ["/taken","/taken/{mediaType}"], method = [RequestMethod.GET])
-    fun getTaken(model: Model,@PathVariable(required = false) mediaType: String?): String {
+    @RequestMapping(value = ["/taken","/taken/{mediaType}","/taken/{page}/{mediaType}"], method = [RequestMethod.GET])
+    fun getTaken(model: Model,@PathVariable(required = false) page: Int?,@PathVariable(required = false) mediaType: String?): String {
         val module = "taken"
 
-        buildInitialPage(module,model,mediaType)
+        var pageVal = 0
+        if (page != null) {
+            pageVal = page
+        }
+
+        buildInitialPage(module,model,mediaType,pageVal)
 
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -223,11 +234,16 @@ class BrowseController: BaseController() {
     }
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
-    @RequestMapping(value = ["/modified","/modified/{mediaType}"], method = [RequestMethod.GET])
-    fun getModified(model: Model,@PathVariable(required = false) mediaType: String?): String {
+    @RequestMapping(value = ["/modified","/modified/{mediaType}","/modified/{page}/{mediaType}"], method = [RequestMethod.GET])
+    fun getModified(model: Model,@PathVariable(required = false) page: Int?,@PathVariable(required = false) mediaType: String?): String {
         val module = "modified"
 
-        buildInitialPage(module,model,mediaType)
+        var pageVal = 0
+        if (page != null) {
+            pageVal = page
+        }
+
+        buildInitialPage(module,model,mediaType,pageVal)
 
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -327,11 +343,16 @@ class BrowseController: BaseController() {
     }
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
-    @RequestMapping(value = ["/accessed","/accessed/{mediaType}"], method = [RequestMethod.GET])
-    fun getAccessed(model: Model,@PathVariable(required = false) mediaType: String?): String {
+    @RequestMapping(value = ["/accessed","/accessed/{mediaType}","/accessed/{page}/{mediaType}"], method = [RequestMethod.GET])
+    fun getAccessed(model: Model,@PathVariable(required = false) page: Int?,@PathVariable(required = false) mediaType: String?): String {
         val module = "accessed"
 
-        buildInitialPage(module,model,mediaType)
+        var pageVal = 0
+        if (page != null) {
+            pageVal = page
+        }
+
+        buildInitialPage(module,model,mediaType,pageVal)
 
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -732,8 +753,7 @@ class BrowseController: BaseController() {
         return model
     }
 
-    private fun buildInitialPage(module: String, model: Model, mediaTypeFilter: String?): Model {
-        val page = 0
+    private fun buildInitialPage(module: String, model: Model, mediaTypeFilter: String?, page: Int = 0): Model {
         val response = buildBrowseRecord(module,model,page,model.getAttribute("queryLimit").toString().toInt(),mediaTypeFilter)
 
         for ((k, v) in response) {
