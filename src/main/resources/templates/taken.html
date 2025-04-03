@@ -134,25 +134,28 @@
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         const activePage = /*[[${activePage}]]*/ 'taken';
         const mediaTypeFilter = /*[[${mediaTypeFilter}]]*/ 'all';
+        const page = /*[[${page}]]*/ 0;
         /*]]>*/
 
-        const section = $("section");
-        let lastDate = "";
-        if (section.length > 0) {
-            const lastSection = $("section").last();
-            lastDate = lastSection.attr("id")
-            lastDate = dateFormat(lastDate.replace(/-/g, "/"), "yyyy-m-d");
-        }
-
-        const http = new Http(activePage);
-        http.ajax("get", "/metadata/list/"+activePage+"/0").then(function (data) {
-            if (data.hasOwnProperty("metadataList") === true) {
-                const metadataList = data["metadataList"];
-                const takenInstance = new Taken(metadataList, mediaTypeFilter, activePage, lastDate);
-                takenInstance.init();
-                // Util.checkErrorImage();
+        if (page === 0) {
+            const section = $("section");
+            let lastDate = "";
+            if (section.length > 0) {
+                const lastSection = $("section").last();
+                lastDate = lastSection.attr("id")
+                lastDate = dateFormat(lastDate.replace(/-/g, "/"), "yyyy-m-d");
             }
-        });
+
+            const http = new Http(activePage);
+            http.ajax("get", "/metadata/list/" + activePage + "/0").then(function (data) {
+                if (data.hasOwnProperty("metadataList") === true) {
+                    const metadataList = data["metadataList"];
+                    const takenInstance = new Taken(metadataList, mediaTypeFilter, activePage, lastDate);
+                    takenInstance.init();
+                    // Util.checkErrorImage();
+                }
+            });
+        }
     });
 </script>
 
