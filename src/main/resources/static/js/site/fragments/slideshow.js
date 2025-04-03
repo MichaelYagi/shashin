@@ -226,7 +226,11 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
                     if (accessTimelineView === false && data.hasOwnProperty("albumIds") === true && data.albumIds.hasOwnProperty(0) === true) {
                         description = "<a style='color:#DBE9F4;text-decoration:none;' href='/album/" + data.albumIds[0] + "' target='_blank'>" + takenDate.toLocaleDateString('en-us', options) + "</a>";
                     } else if (accessTimelineView === true) {
-                        description = "<a style='color:#DBE9F4;text-decoration:none;' href='/timeline#" + takenDateString + "' target='_blank'>" + takenDate.toLocaleDateString('en-us', options) + "</a>";
+                        if (Util.isSafari()) {
+                            description = "<a style='color:#DBE9F4;text-decoration:none;' href='/taken' target='_blank'>" + takenDate.toLocaleDateString('en-us', options) + "</a>";
+                        } else {
+                            description = "<a style='color:#DBE9F4;text-decoration:none;' href='/timeline#" + takenDateString + "' target='_blank'>" + takenDate.toLocaleDateString('en-us', options) + "</a>";
+                        }
                     }
 
                     if (data.shortPlaceName !== null && data.shortPlaceName !== "") {
