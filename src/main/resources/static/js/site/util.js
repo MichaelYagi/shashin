@@ -74,6 +74,29 @@ class Util {
         }
     }
 
+    static scrollToTopListener(elToScroll) {
+        const scrollToTopButton = $("#btn-back-to-top");
+        const showScrollToTop = function (scrollEl) {
+            if (scrollToTopButton.length > 0) {
+                if (scrollEl.scrollTop() > 0) {
+                    scrollToTopButton.css("display", "block");
+                } else {
+                    scrollToTopButton.css("display", "none");
+                }
+            }
+        };
+
+        $(elToScroll).on('scroll', function () {
+            showScrollToTop($(elToScroll));
+        });
+
+        if (scrollToTopButton.length > 0) {
+            scrollToTopButton.on("click", function () {
+                $(elToScroll)[0].scrollTo({top: 0, behavior: 'smooth'});
+            });
+        }
+    }
+
     static isInViewport(element) {
         if (element.length > 0) {
             const header = $('header');
