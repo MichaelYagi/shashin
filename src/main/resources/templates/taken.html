@@ -115,15 +115,7 @@
             </div>
 
             <th:block th:if="${pageParam == null and totalPages > 0 and currentPage > 0}">
-                <nav>
-                    <ul class="pagination pagination-md justify-content-center align-items-center mt-4">
-                        <th:block th:each="i : ${#numbers.sequence(0, totalPages, 1)}">
-                            <li th:class="${'page-item' + ((currentPage == i+1) ? ' active' : '')}">
-                                <a class="page-link" th:href="${'/taken/' + i + '/' + mediaTypeFilter}" th:text="${i+1}"></a>
-                            </li>
-                        </th:block>
-                    </ul>
-                </nav>
+                <nav id="pagination"></nav>
             </th:block>
 
             <div th:replace="~{fragments/metadatabatchmodal :: metadatabatchmodal(${recognitionLabels},${allAlbumList})}"></div>
@@ -154,6 +146,8 @@
         const activePage = /*[[${activePage}]]*/ 'taken';
         const mediaTypeFilter = /*[[${mediaTypeFilter}]]*/ 'all';
         const page = /*[[${pageParam}]]*/ -1;
+        const currentPage = /*[[${currentPage}]]*/ 0;
+        const totalPages = /*[[${totalPages}]]*/ 0;
         /*]]>*/
 
         if (page === 0) {
@@ -176,6 +170,16 @@
             });
         } else {
             Util.scrollToTopListener("#container");
+
+            const options = {
+                currentPage: currentPage,
+                totalPages: (totalPages+1),
+                pageUrl: function(type, page, current) {
+                    return '/'+activePage+'/' + (page-1) + '/' + mediaTypeFilter;
+                }
+            }
+            $('#pagination').bootstrapPaginator(options);
+            $('#pagination').removeClass("pagination");
         }
     });
 </script>
