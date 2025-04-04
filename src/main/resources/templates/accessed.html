@@ -20,10 +20,10 @@
             <div id="scroll-gallery">
                 <th:block th:if="${not #lists.isEmpty(metadataList)}">
                     <th:block th:if="${pageParam == null}">
-                        <div><a th:href="${'/accessed' + ((mediaTypeFilter == 'all') ? '' : '/' + mediaTypeFilter)}" style="text-decoration:none;">Go to default view</a></div>
+                        <div><a th:href="${'/accessed' + ((mediaTypeFilter == 'all') ? '' : '/' + mediaTypeFilter)}" class="ms-1" style="text-decoration:none;">Go to default view</a></div>
                     </th:block>
                     <th:block th:if="${pageParam != null}">
-                        <div><a th:href="${'/accessed/0/' + mediaTypeFilter}" style="text-decoration:none;">Go to paged view</a></div>
+                        <div><a th:href="${'/accessed/0/' + mediaTypeFilter}" class="ms-1" style="text-decoration:none;">Go to paged view</a></div>
                     </th:block>
 
                     <div class="row image-group-padding">
@@ -152,6 +152,9 @@
             const options = {
                 currentPage: currentPage,
                 totalPages: (totalPages+1),
+                onPageClicked: function(e,originalEvent,type,page) {
+                    $('#pagination').css("visibility","hidden");
+                },
                 pageUrl: function(type, page, current) {
                     return '/'+activePage+'/' + (page-1) + '/' + mediaTypeFilter;
                 }
