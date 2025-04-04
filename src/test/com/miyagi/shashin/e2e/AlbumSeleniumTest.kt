@@ -109,7 +109,8 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         mediaExcludeDirTextArea.sendKeys(testImageFile.parent+"/subdir")
 
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
-        saveSettings.click()
+//        saveSettings.click()
+        saveSettings.sendKeys(Keys.RETURN)
 
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Settings saved')]")))
 
