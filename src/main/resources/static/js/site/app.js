@@ -2272,7 +2272,7 @@
 
         var numOfPages = 15;
         if (Util.isMobile()) {
-            numOfPages = 6;
+            numOfPages = 5;
         }
 
         const options = {
