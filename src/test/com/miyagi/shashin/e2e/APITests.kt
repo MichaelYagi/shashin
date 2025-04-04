@@ -123,7 +123,7 @@ class APITests: BaseSeleniumTests() {
 
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
         saveSettings.click()
-//        println(this.driver?.pageSource)
+        println(this.driver?.pageSource)
 
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Settings saved')]")))
 
