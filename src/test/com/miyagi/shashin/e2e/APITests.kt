@@ -241,7 +241,7 @@ class APITests: BaseSeleniumTests() {
         Assertions.assertTrue(jsonNode.get("metadataList").get(0).get("id").textValue() != "")
         val metadataId = jsonNode.get("metadataList").get(0).get("id").textValue()
         val metadataObj = metadataRepository?.findById(metadataId)
-        var metadata: com.miyagi.shashin.model.Metadata = com.miyagi.shashin.model.Metadata()
+        var metadata: Metadata = Metadata()
         if (metadataObj != null && metadataObj.isPresent) {
             metadata = metadataObj.get()
             metadata.setLat("1.1111")
