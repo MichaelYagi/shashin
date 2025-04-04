@@ -128,6 +128,9 @@
                 }
             </style>
         </th:block>
+        <th:block th:if="${activePageLower == 'recent' || activePageLower == 'taken' || activePageLower == 'modified' || activePageLower == 'accessed'}">
+            <script src="/js/bootstrap-paginator.js" th:nonce="${cspNonce}"></script>
+        </th:block>
         <th:block th:if="${activePageLower == 'dashboard'}">
             <script src="/js/chart.min.js" th:nonce="${cspNonce}"></script>
             <script src="/js/chartjs-plugin-datalabels.min.js" th:nonce="${cspNonce}"></script>
