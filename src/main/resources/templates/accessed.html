@@ -148,19 +148,7 @@
             });
         } else {
             Util.scrollToTopListener("#container");
-
-            const options = {
-                currentPage: currentPage,
-                totalPages: (totalPages+1),
-                onPageClicked: function(e,originalEvent,type,page) {
-                    $('#pagination').css("visibility","hidden");
-                },
-                pageUrl: function(type, page, current) {
-                    return '/'+activePage+'/' + (page-1) + '/' + mediaTypeFilter;
-                }
-            }
-            $('#pagination').bootstrapPaginator(options);
-            $('#pagination').removeClass("pagination");
+            shashin.createPagination(currentPage,totalPages,activePage,mediaTypeFilter);
         }
     });
 </script>

@@ -2253,6 +2253,37 @@
         return configs;
     };
 
+    shashin.createPagination = function(currentPage,totalPages,activePage,mediaTypeFilter) {
+        const lgConfig = {
+            dynamic: true,
+            plugins: []
+        };
+        if (typeof lgMetadataDetail !== "undefined") {
+            lgConfig.plugins.push(lgMetadataDetail);
+            lgConfig.metadataDetail = true;
+            lgConfig.metadataDetailFun = shashin.openEditMetadataModal;
+        }
+        if (typeof lgVideoThumbnail !== "undefined") {
+            lgConfig.plugins.push(lgVideoThumbnail);
+            lgConfig.videoThumbnail = true;
+            lgConfig.videoThumbnailFun = shashin.processVideoThumbnail;
+        }
+        shashin.initLightGallery('scroll-gallery', lgConfig, '.mediaLink');
+
+        const options = {
+            currentPage: currentPage,
+            totalPages: (totalPages+1),
+            onPageClicked: function(e,originalEvent,type,page) {
+                $('#pagination').css("visibility","hidden");
+            },
+            pageUrl: function(type, page, current) {
+                return '/'+activePage+'/' + (page-1) + '/' + mediaTypeFilter;
+            }
+        }
+        $('#pagination').bootstrapPaginator(options);
+        $('#pagination').removeClass("pagination");
+    }
+
     shashin.getMapSource = function (source) {
         let mapSource = new ol.source.OSM();
 
