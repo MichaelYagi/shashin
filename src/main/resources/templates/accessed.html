@@ -95,9 +95,9 @@
             <th:block th:if="${pageParam == null and totalPages > 0 and currentPage > 0}">
                 <nav>
                     <ul class="pagination pagination-md justify-content-center align-items-center mt-4">
-                        <th:block th:each="i : ${#numbers.sequence(1, totalPages, 1)}">
-                            <li th:class="${'page-item' + ((currentPage == i) ? ' active' : '')}">
-                                <a class="page-link" th:href="${'/accessed/' + (i-1) + '/' + mediaTypeFilter}" th:text="${i}"></a>
+                        <th:block th:each="i : ${#numbers.sequence(0, totalPages, 1)}">
+                            <li th:class="${'page-item' + ((currentPage == i+1) ? ' active' : '')}">
+                                <a class="page-link" th:href="${'/accessed/' + i + '/' + mediaTypeFilter}" th:text="${i+1}"></a>
                             </li>
                         </th:block>
                     </ul>
