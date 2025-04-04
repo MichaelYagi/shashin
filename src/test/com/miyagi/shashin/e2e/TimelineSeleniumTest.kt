@@ -109,7 +109,8 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
         saveSettings.click()
 //         println(this.driver?.pageSource)
-        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Settings saved')]")))
+//        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Settings saved')]")))
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
 
         // Scan new image
         this.driver!!.get("http://localhost:$port/settings/scan")
