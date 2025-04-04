@@ -4,17 +4,22 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Fixed
+
+### Removed
+
+## [2.9.0] - 2025-04-03
+### Added
 - Taskbar icon for JFrame
 - Badges for matched people
 - Logout button on index pages
 - Added pagination for recent, modified, taken and accessed pages (/page/mediatype)
 
-### Changed
-
 ### Fixed
 - Access control for articles
-
-### Removed
 
 ## [2.8.3] - 2025-03-30
 ### Added
