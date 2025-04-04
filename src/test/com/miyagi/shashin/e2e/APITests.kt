@@ -127,6 +127,8 @@ class APITests: BaseSeleniumTests() {
             objectDetectionCheck.click()
         }
 
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
+
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
 //        saveSettings.click()
         saveSettings.sendKeys(Keys.RETURN)
