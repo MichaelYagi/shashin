@@ -105,6 +105,8 @@ class APITests: BaseSeleniumTests() {
         password.sendKeys("testsuper")
         login.click()
 
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
+
         this.driver!!.get("http://localhost:$port/settings")
 
         Thread.sleep(this.elementScanTimeoutMillis.toLong())
