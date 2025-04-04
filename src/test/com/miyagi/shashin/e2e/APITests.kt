@@ -123,11 +123,11 @@ class APITests: BaseSeleniumTests() {
 
 //        println("${testImageFile.parent}/subdir/dice.mp4\n${testImageFile.parent}/subdir/people.jpg")
 
-//        val objectDetectionCheck = this.driver!!.findElement(By.id("objectDetection"))
-//        objectDetectionCheck.sendKeys(Keys.SPACE)
-//        if (!objectDetectionCheck.isSelected) {
-//            objectDetectionCheck.click()
-//        }
+        val objectDetectionCheck = this.driver!!.findElement(By.id("objectDetection"))
+        objectDetectionCheck.sendKeys(Keys.SPACE)
+        if (!objectDetectionCheck.isSelected) {
+            objectDetectionCheck.click()
+        }
 
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
 //        saveSettings.click()
