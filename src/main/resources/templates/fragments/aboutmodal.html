@@ -30,7 +30,12 @@
 
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     $(document).ready(function() {
-        // $("#propAbout").on('shown.bs.modal', function () {
+        /*<![CDATA[*/
+        const activeProfile = /*[[${activeProfile}]]*/ 'prod';
+        /*]]>*/
+
+        if (activeProfile !== "test") {
+            // $("#propAbout").on('shown.bs.modal', function () {
             $("#gitVersionId").html("");
             // Get current build
             let currentRelease = 'v' + /*[[${buildProperties.getVersion()}]]*/ '';
@@ -38,19 +43,19 @@
             setTimeout(function () {
                 // Look through list of GH releases
                 const http = new Http("get releases");
-                http.ajax("get", "/releases?v="+uuidv4()).then(function (data) {
+                http.ajax("get", "/releases?v=" + uuidv4()).then(function (data) {
                     shashin.printMessageToConsole(JSON.stringify(data), {tag: "release"});
 
                     if (data.hasOwnProperty("releases") && currentRelease !== "v") {
 
                         const releaseArray = data.releases;
-                        let parsedCurrentRelease = parseInt(currentRelease.replace(/\D/g,''));
+                        let parsedCurrentRelease = parseInt(currentRelease.replace(/\D/g, ''));
 
                         for (let i in releaseArray) {
                             const releaseInfo = releaseArray[i];
 
                             if (releaseInfo.hasOwnProperty("tag_name")) {
-                                let parsedReleaseInfo = parseInt(releaseInfo.tag_name.replace(/\D/g,''));
+                                let parsedReleaseInfo = parseInt(releaseInfo.tag_name.replace(/\D/g, ''));
                                 // Look for matching release
                                 if (isNaN(parsedCurrentRelease) === false && isNaN(parsedCurrentRelease) === false && parsedCurrentRelease <= parsedReleaseInfo) {
                                     if (parsedCurrentRelease < parsedReleaseInfo) {
@@ -92,6 +97,8 @@
                     });
                 }
             }
-        // });
+
+            // });
+        }
     });
 </script>
