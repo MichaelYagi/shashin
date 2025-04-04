@@ -107,6 +107,8 @@ class APITests: BaseSeleniumTests() {
 
         this.driver!!.get("http://localhost:$port/settings")
 
+        Thread.sleep(this.elementScanTimeoutMillis.toLong())
+
         // Get test image data and populate in settings
         val classLoader = javaClass.classLoader
         val testImageUrl: URL = classLoader.getResource("testscreen.jpg")!!
@@ -121,13 +123,11 @@ class APITests: BaseSeleniumTests() {
 
 //        println("${testImageFile.parent}/subdir/dice.mp4\n${testImageFile.parent}/subdir/people.jpg")
 
-        val objectDetectionCheck = this.driver!!.findElement(By.id("objectDetection"))
-        objectDetectionCheck.sendKeys(Keys.SPACE)
-        if (!objectDetectionCheck.isSelected) {
-            objectDetectionCheck.click()
-        }
-
-        Thread.sleep(this.elementScanTimeoutMillis.toLong())
+//        val objectDetectionCheck = this.driver!!.findElement(By.id("objectDetection"))
+//        objectDetectionCheck.sendKeys(Keys.SPACE)
+//        if (!objectDetectionCheck.isSelected) {
+//            objectDetectionCheck.click()
+//        }
 
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
 //        saveSettings.click()

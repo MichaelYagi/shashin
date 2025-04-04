@@ -108,8 +108,6 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
         mediaExcludeDirTextArea.sendKeys(testImageFile.parent+"/subdir")
 
-        Thread.sleep(this.elementScanTimeoutMillis.toLong())
-
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
 //        saveSettings.click()
         saveSettings.sendKeys(Keys.RETURN)
