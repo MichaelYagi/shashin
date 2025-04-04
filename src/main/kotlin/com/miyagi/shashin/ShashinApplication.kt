@@ -40,6 +40,8 @@ class ShashinApplication {
 			jdbcTemplate?.execute("PRAGMA journal_mode = WAL")
 			jdbcTemplate?.execute("PRAGMA synchronous = NORMAL")
 
+			val profile = System.getProperty("spring.profiles.active")
+
 			// Create simple GUI
 			var frame = JFrame("Shashin")
 			frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
@@ -76,7 +78,9 @@ class ShashinApplication {
 
 			try {
 				val app = SpringApplication(ShashinApplication::class.java)
-				app.addListeners(ApplicationStartingListener(frame, panel))
+				if (profile == "prod") {
+					app.addListeners(ApplicationStartingListener(frame, panel))
+				}
 				app.run(*args)
 			} catch (e: IOException) {
 				text.text = "Error: ${e.message}"
@@ -87,16 +91,18 @@ class ShashinApplication {
 
 			TimeUnit.SECONDS.sleep(3)
 
-			SwingUtilities.invokeLater {
-				val desktop = Desktop.getDesktop()
-				try {
-					desktop.browse(URI(startPage))
-				} catch (e: IOException) {
-					e.printStackTrace()
-					text.text = "Error: ${e.message}."
-				} catch (e: URISyntaxException) {
-					e.printStackTrace()
-					text.text = "Error: ${e.message}."
+			if (profile == "prod") {
+				SwingUtilities.invokeLater {
+					val desktop = Desktop.getDesktop()
+					try {
+						desktop.browse(URI(startPage))
+					} catch (e: IOException) {
+						e.printStackTrace()
+						text.text = "Error: ${e.message}."
+					} catch (e: URISyntaxException) {
+						e.printStackTrace()
+						text.text = "Error: ${e.message}."
+					}
 				}
 			}
 		}
