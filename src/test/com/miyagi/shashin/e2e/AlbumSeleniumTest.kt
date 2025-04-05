@@ -105,12 +105,12 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val testImageUrl: URL = classLoader.getResource("testscreen.jpg")!!
         val testImageFile = File(testImageUrl.file)
 
-        var mediaDirTextArea = this.driver!!.findElement(By.ById("mediaDirTextArea"))
+        var mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
         mediaDirTextArea.clear()
         mediaDirTextArea.click()
         mediaDirTextArea.sendKeys(testImageFile.parent+"/subdir")
 
-        var mediaExcludeDirTextArea = this.driver!!.findElement(By.ById("mediaExcludeDirTextArea"))
+        var mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
         mediaExcludeDirTextArea.clear()
         mediaExcludeDirTextArea.click()
         mediaExcludeDirTextArea.sendKeys("${testImageFile.parent}/subdir/dice.mp4")
