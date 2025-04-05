@@ -117,15 +117,18 @@ class APITests: BaseSeleniumTests() {
         val testImageFile = File(testImageUrl.file)
 
         var mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
-        mediaDirTextArea.click()
-        mediaDirTextArea.sendKeys(testImageFile.parent+"/subdir")
+//        mediaDirTextArea.click()
+//        mediaDirTextArea.sendKeys(testImageFile.parent+"/subdir")
+        val action = Actions(this.driver!!)
+        action.moveToElement(mediaDirTextArea).click().sendKeys(testImageFile.parent+"/subdir").build().perform()
 
         println("mediaDirTextArea textarea text: ${testImageFile.parent+"/subdir"}")
         println("mediaDirTextArea value: ${mediaDirTextArea.getDomProperty("value")}")
 
         var mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
-        mediaExcludeDirTextArea.click()
-        mediaExcludeDirTextArea.sendKeys("${testImageFile.parent}/subdir/dice.mp4")
+//        mediaExcludeDirTextArea.click()
+//        mediaExcludeDirTextArea.sendKeys("${testImageFile.parent}/subdir/dice.mp4")
+        action.moveToElement(mediaExcludeDirTextArea).click().sendKeys(testImageFile.parent+"/subdir/dice.mp4").build().perform()
 
         println("mediaExcludeDirTextArea textarea text: ${testImageFile.parent+"/subdir/dice.mp4"}")
         println("mediaExcludeDirTextArea value: ${mediaExcludeDirTextArea.getDomProperty("value")}")
