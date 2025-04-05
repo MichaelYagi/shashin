@@ -105,6 +105,9 @@ class APITests: BaseSeleniumTests() {
         rememberMe.click()
         username.sendKeys("testsuper")
         password.sendKeys("testsuper")
+
+        println("username value: ${username.getDomProperty("value")}")
+
         login.click()
 
         this.driver!!.get("http://localhost:$port/settings")
