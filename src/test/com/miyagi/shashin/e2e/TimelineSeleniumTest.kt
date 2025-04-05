@@ -133,19 +133,19 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         val spanContainerEl = scrollContainer.findElement(By.xpath("./span[1]"))
         // Get the date id
         var dateId = ""
-        if (spanContainerEl !== null && spanContainerEl.getAttribute("id") !== null) {
-            if (spanContainerEl.getAttribute("id")?.contains("container") == true) {
-                dateId = spanContainerEl.getAttribute("id")?.substringAfter("container_").toString()
-            } else if (spanContainerEl.getAttribute("id")?.contains("tail") == true) {
-                dateId = spanContainerEl.getAttribute("id")?.substringAfter("tail_").toString()
-            } else if (spanContainerEl.getAttribute("id")?.contains("amp") == true) {
-                dateId = spanContainerEl.getAttribute("id")?.substringAfter("amp_").toString()
+        if (spanContainerEl !== null && spanContainerEl.getDomProperty("id") !== null) {
+            if (spanContainerEl.getDomProperty("id")?.contains("container") == true) {
+                dateId = spanContainerEl.getDomProperty("id")?.substringAfter("container_").toString()
+            } else if (spanContainerEl.getDomProperty("id")?.contains("tail") == true) {
+                dateId = spanContainerEl.getDomProperty("id")?.substringAfter("tail_").toString()
+            } else if (spanContainerEl.getDomProperty("id")?.contains("amp") == true) {
+                dateId = spanContainerEl.getDomProperty("id")?.substringAfter("amp_").toString()
             }
         }
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.id("row$dateId")))
         val parentEl = this.driver!!.findElement(By.id("row$dateId"))
         val childEl = parentEl.findElement(By.xpath("./div[1]"))
-        val imageId = childEl.getAttribute("id")
+        val imageId = childEl.getDomProperty("id")
         metadataId = imageId?.substringAfter("photoThumbnailContainer")
 
         Assertions.assertTrue(isUUID(metadataId!!))
@@ -154,7 +154,7 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("img[src^='/api/v1/thumbnails']")))
 //        println(this.driver?.pageSource)
         val imageEl = this.driver!!.findElement(By.id("image$metadataId"))
-        val imageSrc = imageEl.getAttribute("src")
+        val imageSrc = imageEl.getDomProperty("src")
         val imgSrcArray = imageSrc?.split("/")
         val length = imgSrcArray?.size
 
