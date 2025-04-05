@@ -105,9 +105,6 @@ class APITests: BaseSeleniumTests() {
         rememberMe.click()
         username.sendKeys("testsuper")
         password.sendKeys("testsuper")
-
-        println("username value: ${username.getDomProperty("value")}")
-
         login.click()
 
         this.driver!!.get("http://localhost:$port/settings")
@@ -486,47 +483,5 @@ class APITests: BaseSeleniumTests() {
         .andExpect(status().isOk)
         .andExpect(MockMvcResultMatchers.header().stringValues("Access-Control-Allow-Origin", "*"))
         .andExpect(MockMvcResultMatchers.header().stringValues("Access-Control-Allow-Methods", "GET"))
-    }
-
-    companion object {
-
-        @Autowired
-        private val settingsRepository: SettingsRepository? = null
-
-        private fun saveSettings() {
-            var settings = settingsRepository?.findFirstByOrderByIdAsc()
-            if (settings == null) {
-                settings = Settings()
-            }
-            settings.setSearchHistoryLimit(10)
-            settings.setQueryLimit(30)
-            settings.setObjectRecognitionConfidenceThreshold(0.20.toString())
-            settings.setRecognitionConfidenceThreshold(0.20.toString())
-            settings.setObjectDetection(true)
-            settings.setTrainingDataLimit(10)
-            settings.setScheduledTime("2:00")
-            settings.setCompreFaceServer("")
-            settings.setCompreFaceKey("")
-            settings.setMatchScanLimit(10)
-            settings.setNotificationLimit(10)
-            settings.setPort(6624.toString())
-            settings.setScanAutomatically(false)
-            settings.setScheduledMatching(false)
-            settings.setCreatedAt(TextUtils.getCurrentTimestamp())
-            settings.setModifiedAt(TextUtils.getCurrentTimestamp())
-            settingsRepository?.save(settings)
-        }
-
-        @JvmStatic
-        @BeforeAll
-        fun beforeAll() {
-            saveSettings()
-        }
-
-        @JvmStatic
-        @AfterAll
-        fun afterAll() {
-            settingsRepository?.deleteAll()
-        }
     }
 }
