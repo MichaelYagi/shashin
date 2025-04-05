@@ -104,17 +104,17 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val testImageUrl: URL = classLoader.getResource("testscreen.jpg")!!
         val testImageFile = File(testImageUrl.file)
 
-//        var mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
-//        mediaDirTextArea.clear()
-//        mediaDirTextArea.click()
-//        mediaDirTextArea.sendKeys(testImageFile.parent+"/subdir")
-        Actions(this.driver!!).sendKeys(testImageFile.parent+"/subdir").perform()
+        var mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
+        mediaDirTextArea.clear()
+        mediaDirTextArea.click()
+        mediaDirTextArea.sendKeys(testImageFile.parent+"/subdir")
+//        Actions(this.driver!!).sendKeys(testImageFile.parent+"/subdir").perform()
 
-//        var mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
-//        mediaExcludeDirTextArea.clear()
-//        mediaExcludeDirTextArea.click()
-//        mediaExcludeDirTextArea.sendKeys("${testImageFile.parent}/subdir/dice.mp4\n${testImageFile.parent}/subdir/people.jpg")
-        Actions(this.driver!!).sendKeys("${testImageFile.parent}/subdir/dice.mp4\n${testImageFile.parent}/subdir/people.jpg").perform()
+        var mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
+        mediaExcludeDirTextArea.clear()
+        mediaExcludeDirTextArea.click()
+        mediaExcludeDirTextArea.sendKeys("${testImageFile.parent}/subdir/dice.mp4\n${testImageFile.parent}/subdir/people.jpg")
+//        Actions(this.driver!!).sendKeys("${testImageFile.parent}/subdir/dice.mp4\n${testImageFile.parent}/subdir/people.jpg").perform()
 
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
         saveSettings.submit()
