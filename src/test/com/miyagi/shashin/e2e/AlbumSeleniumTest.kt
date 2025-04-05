@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.openqa.selenium.By
+import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.Keys
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.interactions.Actions
@@ -104,17 +105,19 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val testImageUrl: URL = classLoader.getResource("testscreen.jpg")!!
         val testImageFile = File(testImageUrl.file)
 
-        var mediaDirTextArea = this.driver!!.findElement(By.name("mediaDirList"))
+        var mediaDirTextArea = this.driver!!.findElement(By.ById("mediaDirTextArea"))
         mediaDirTextArea.clear()
         mediaDirTextArea.click()
         mediaDirTextArea.sendKeys(testImageFile.parent+"/subdir")
-//        Actions(this.driver!!).sendKeys(testImageFile.parent+"/subdir").perform()
 
-        var mediaExcludeDirTextArea = this.driver!!.findElement(By.name("mediaExcludeDirList"))
+        println(mediaDirTextArea.getDomProperty("value"))
+
+        var mediaExcludeDirTextArea = this.driver!!.findElement(By.ById("mediaExcludeDirTextArea"))
         mediaExcludeDirTextArea.clear()
         mediaExcludeDirTextArea.click()
         mediaExcludeDirTextArea.sendKeys("${testImageFile.parent}/subdir/dice.mp4")
-//        Actions(this.driver!!).sendKeys("${testImageFile.parent}/subdir/dice.mp4\n${testImageFile.parent}/subdir/people.jpg").perform()
+
+        println(mediaExcludeDirTextArea.getDomProperty("value"))
 
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
         saveSettings.submit()
