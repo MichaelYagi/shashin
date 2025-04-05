@@ -104,12 +104,17 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val testImageUrl: URL = classLoader.getResource("testscreen.jpg")!!
         val testImageFile = File(testImageUrl.file)
         val mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
+        mediaDirTextArea.click()
+        mediaDirTextArea.clear()
         mediaDirTextArea.sendKeys(testImageFile.parent)
+
         val mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
+        mediaExcludeDirTextArea.click()
+        mediaExcludeDirTextArea.clear()
         mediaExcludeDirTextArea.sendKeys(testImageFile.parent+"/subdir")
 
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
-        saveSettings.click()
+        saveSettings.submit()
 
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Settings saved')]")))
 
