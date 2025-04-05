@@ -105,8 +105,6 @@ class APITests: BaseSeleniumTests() {
         password.sendKeys("testsuper")
         login.click()
 
-        Thread.sleep(this.elementScanTimeoutMillis.toLong())
-
         this.driver!!.get("http://localhost:$port/settings")
 
         Thread.sleep(this.elementScanTimeoutMillis.toLong())
@@ -118,12 +116,12 @@ class APITests: BaseSeleniumTests() {
         val mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
         mediaDirTextArea.sendKeys(testImageFile.parent+"/subdir")
 
-//        println(testImageFile.parent+"/subdir")
+        println(testImageFile.parent+"/subdir")
 
         val mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
         mediaExcludeDirTextArea.sendKeys("${testImageFile.parent}/subdir/dice.mp4\n${testImageFile.parent}/subdir/people.jpg")
 
-//        println("${testImageFile.parent}/subdir/dice.mp4\n${testImageFile.parent}/subdir/people.jpg")
+        println("${testImageFile.parent}/subdir/dice.mp4\n${testImageFile.parent}/subdir/people.jpg")
 
         val objectDetectionCheck = this.driver!!.findElement(By.id("objectDetection"))
         objectDetectionCheck.sendKeys(Keys.SPACE)
@@ -132,8 +130,7 @@ class APITests: BaseSeleniumTests() {
         }
 
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
-//        saveSettings.click()
-        saveSettings.sendKeys(Keys.RETURN)
+        saveSettings.click()
 //        println(this.driver?.pageSource)
 
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Settings saved')]")))

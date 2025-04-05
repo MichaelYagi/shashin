@@ -95,8 +95,6 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         password.sendKeys("testsuper")
         login.click()
 
-        Thread.sleep(this.elementScanTimeoutMillis.toLong())
-
         this.driver!!.get("http://localhost:$port/settings")
 
         Thread.sleep(this.elementScanTimeoutMillis.toLong())
@@ -111,8 +109,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         mediaExcludeDirTextArea.sendKeys(testImageFile.parent+"/subdir")
 
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
-//        saveSettings.click()
-        saveSettings.sendKeys(Keys.RETURN)
+        saveSettings.click()
 
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Settings saved')]")))
 
