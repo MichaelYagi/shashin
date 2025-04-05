@@ -118,14 +118,14 @@ class APITests: BaseSeleniumTests() {
         mediaDirTextArea.clear()
         mediaDirTextArea.sendKeys(testImageFile.parent+"/subdir")
 
-//        println(testImageFile.parent+"/subdir")
+        println(testImageFile.parent+"/subdir")
 
         val mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
         mediaExcludeDirTextArea.click()
         mediaExcludeDirTextArea.clear()
         mediaExcludeDirTextArea.sendKeys("${testImageFile.parent}/subdir/dice.mp4\n${testImageFile.parent}/subdir/people.jpg")
 
-//        println("${testImageFile.parent}/subdir/dice.mp4\n${testImageFile.parent}/subdir/people.jpg")
+        println("${testImageFile.parent}/subdir/dice.mp4\n${testImageFile.parent}/subdir/people.jpg")
 
         val objectDetectionCheck = this.driver!!.findElement(By.id("objectDetection"))
         objectDetectionCheck.sendKeys(Keys.SPACE)
@@ -135,7 +135,7 @@ class APITests: BaseSeleniumTests() {
 
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
         saveSettings.submit()
-//        println(this.driver?.pageSource)
+        println(this.driver?.pageSource)
 
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Settings saved')]")))
 
