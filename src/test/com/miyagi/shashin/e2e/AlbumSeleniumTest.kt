@@ -171,7 +171,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val metadataModalEdit = this.driver!!.findElement(By.id("metadataModalEdit$metadataId"))
 
         //Creating object of an Actions class
-        val action = Actions(this.driver)
+        val action = Actions(this.driver!!)
 
         //Performing the mouse hover action on the target element.
         action.moveToElement(imageEl).perform()
