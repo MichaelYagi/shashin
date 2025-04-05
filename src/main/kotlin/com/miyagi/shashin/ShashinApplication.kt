@@ -39,26 +39,24 @@ class ShashinApplication {
 			System.setProperty("java.awt.headless", "false")
 			jdbcTemplate?.execute("PRAGMA journal_mode = WAL")
 			jdbcTemplate?.execute("PRAGMA synchronous = NORMAL")
-
-			val profile = System.getProperty("spring.profiles.active")
-
+			
 			// Create simple GUI
-			var frame = JFrame("Shashin")
+			val frame = JFrame("Shashin")
 			frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
 			frame.size = Dimension(400, 100)
 
-			var panel = JPanel(BorderLayout())
+			val panel = JPanel(BorderLayout())
 			panel.isOpaque = true
 			panel.setBounds(30, 30, 100, 100)
 			panel.requestFocus()
 
-			var text = JTextArea("Loading Shashin")
+			val text = JTextArea("Loading Shashin")
 			text.isOpaque = false
 			text.isEditable = false
 			text.margin = Insets(10,10,10,10)
 
 			var source = URLDataSource(this.javaClass.getResource("/static/images/favicon-32x32.png"))
-			var iconimg = ImageIcon(source.url)
+			val iconimg = ImageIcon(source.url)
 			frame.iconImage = iconimg.image
 			source = URLDataSource(this.javaClass.getResource("/static/images/favicon-256x256.png"))
 			var taskbarimg = ImageIcon(source.url)
@@ -78,9 +76,7 @@ class ShashinApplication {
 
 			try {
 				val app = SpringApplication(ShashinApplication::class.java)
-				if (profile == "prod") {
-					app.addListeners(ApplicationStartingListener(frame, panel))
-				}
+				app.addListeners(ApplicationStartingListener(frame, panel))
 				app.run(*args)
 			} catch (e: IOException) {
 				text.text = "Error: ${e.message}"
@@ -91,32 +87,25 @@ class ShashinApplication {
 
 			TimeUnit.SECONDS.sleep(3)
 
-			if (profile == "prod") {
-				SwingUtilities.invokeLater {
-					val desktop = Desktop.getDesktop()
-					try {
-						desktop.browse(URI(startPage))
-					} catch (e: IOException) {
-						e.printStackTrace()
-						text.text = "Error: ${e.message}."
-					} catch (e: URISyntaxException) {
-						e.printStackTrace()
-						text.text = "Error: ${e.message}."
-					}
+			SwingUtilities.invokeLater {
+				val desktop = Desktop.getDesktop()
+				try {
+					desktop.browse(URI(startPage))
+				} catch (e: IOException) {
+					e.printStackTrace()
+					text.text = "Error: ${e.message}."
+				} catch (e: URISyntaxException) {
+					e.printStackTrace()
+					text.text = "Error: ${e.message}."
 				}
 			}
 		}
 	}
 }
 
-class ApplicationStartingListener : ApplicationListener<ApplicationStartingEvent> {
-	private var jFrame: JFrame? = null
-	private var jPanel: JPanel? = null
-
-	constructor(jFrame: JFrame, jPanel: JPanel) {
-		this.jFrame = jFrame
-		this.jPanel = jPanel
-	}
+class ApplicationStartingListener(jFrame: JFrame, jPanel: JPanel) : ApplicationListener<ApplicationStartingEvent> {
+	private var jFrame: JFrame? = jFrame
+	private var jPanel: JPanel? = jPanel
 
 	override fun onApplicationEvent(event: ApplicationStartingEvent) {
 		if (this.jFrame != null) {
