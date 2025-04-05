@@ -109,18 +109,17 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         var mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
         mediaDirTextArea.click()
         mediaDirTextArea.sendKeys(mediaDirTextAreaText)
-        var mediaDirTextAreaValue = mediaDirTextArea.getDomProperty("value")
 
-        println("mediaDirTextArea textarea text: $mediaDirTextAreaText")
-        println("mediaDirTextArea value: ${mediaDirTextArea.getDomProperty("value")}")
+//        println("mediaDirTextArea textarea text: $mediaDirTextAreaText")
+//        println("mediaDirTextArea value: ${mediaDirTextArea.getDomProperty("value")}")
 
         val mediaExcludeDirTextAreaText = testImageFile.parent+"/subdir/dice.mp4"
         var mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
         mediaExcludeDirTextArea.click()
         mediaExcludeDirTextArea.sendKeys(mediaExcludeDirTextAreaText)
 
-        println("mediaExcludeDirTextArea textarea text: $mediaExcludeDirTextAreaText")
-        println("mediaExcludeDirTextArea value: ${mediaExcludeDirTextArea.getDomProperty("value")}")
+//        println("mediaExcludeDirTextArea textarea text: $mediaExcludeDirTextAreaText")
+//        println("mediaExcludeDirTextArea value: ${mediaExcludeDirTextArea.getDomProperty("value")}")
 
         var objectDetectionCheck = this.driver!!.findElement(By.id("objectDetection"))
         objectDetectionCheck.sendKeys(Keys.SPACE)
@@ -134,25 +133,6 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Settings saved')]")))
 
-        if (mediaDirTextAreaValue != null && mediaDirTextAreaValue.trim() == "") {
-            mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
-            mediaDirTextArea.click()
-            mediaDirTextArea.sendKeys(mediaDirTextAreaText)
-
-            println("mediaDirTextArea textarea text 2: $mediaDirTextAreaText")
-            println("mediaDirTextArea value 2: ${mediaDirTextArea.getDomProperty("value")}")
-
-            mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
-            mediaExcludeDirTextArea.click()
-            mediaExcludeDirTextArea.sendKeys(mediaExcludeDirTextAreaText)
-
-            println("mediaExcludeDirTextArea textarea text 2: $mediaExcludeDirTextAreaText")
-            println("mediaExcludeDirTextArea value 2: ${mediaExcludeDirTextArea.getDomProperty("value")}")
-
-            saveSettings = this.driver!!.findElement(By.id("saveSettings"))
-            saveSettings.submit()
-        }
-        
         // Scan new image
         this.driver!!.get("http://localhost:$port/settings/scan")
         val scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
