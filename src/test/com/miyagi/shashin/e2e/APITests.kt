@@ -119,16 +119,14 @@ class APITests: BaseSeleniumTests() {
         val testImageUrl: URL = classLoader.getResource("testscreen.jpg")!!
         val testImageFile = File(testImageUrl.file)
 
-        var mediaDirTextArea = this.driver!!.findElement(By.ById("mediaDirTextArea"))
-        mediaDirTextArea.clear()
+        var mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
         mediaDirTextArea.click()
         mediaDirTextArea.sendKeys(testImageFile.parent+"/subdir")
 
         println("mediaDirTextArea textarea text: ${testImageFile.parent+"/subdir"}")
         println("mediaDirTextArea value: ${mediaDirTextArea.getDomProperty("value")}")
 
-        var mediaExcludeDirTextArea = this.driver!!.findElement(By.ById("mediaExcludeDirTextArea"))
-        mediaExcludeDirTextArea.clear()
+        var mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
         mediaExcludeDirTextArea.click()
         mediaExcludeDirTextArea.sendKeys("${testImageFile.parent}/subdir/dice.mp4")
 
