@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test
 import org.openqa.selenium.By
 import org.openqa.selenium.Keys
 import org.openqa.selenium.WebElement
+import org.openqa.selenium.interactions.Actions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.springframework.beans.factory.annotation.Autowired
@@ -114,25 +115,19 @@ class APITests: BaseSeleniumTests() {
         val testImageUrl: URL = classLoader.getResource("testscreen.jpg")!!
         val testImageFile = File(testImageUrl.file)
 
-        var mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
-        mediaDirTextArea.clear()
-        mediaDirTextArea.click()
-        mediaDirTextArea.sendKeys(testImageFile.parent+"/subdir")
-        mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
-        mediaDirTextArea.clear()
-        mediaDirTextArea.click()
-        mediaDirTextArea.sendKeys(testImageFile.parent+"/subdir")
+//        var mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
+//        mediaDirTextArea.clear()
+//        mediaDirTextArea.click()
+//        mediaDirTextArea.sendKeys(testImageFile.parent+"/subdir")
+        Actions(this.driver!!).sendKeys(testImageFile.parent+"/subdir").perform()
 
 //        println(testImageFile.parent+"/subdir")
 
-        var mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
-        mediaExcludeDirTextArea.clear()
-        mediaExcludeDirTextArea.click()
-        mediaExcludeDirTextArea.sendKeys("${testImageFile.parent}/subdir/dice.mp4\n${testImageFile.parent}/subdir/people.jpg")
-        mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
-        mediaExcludeDirTextArea.clear()
-        mediaExcludeDirTextArea.click()
-        mediaExcludeDirTextArea.sendKeys("${testImageFile.parent}/subdir/dice.mp4\n${testImageFile.parent}/subdir/people.jpg")
+//        var mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
+//        mediaExcludeDirTextArea.clear()
+//        mediaExcludeDirTextArea.click()
+//        mediaExcludeDirTextArea.sendKeys("${testImageFile.parent}/subdir/dice.mp4\n${testImageFile.parent}/subdir/people.jpg")
+        Actions(this.driver!!).sendKeys("${testImageFile.parent}/subdir/dice.mp4\n${testImageFile.parent}/subdir/people.jpg").perform()
 
 //        println("${testImageFile.parent}/subdir/dice.mp4\n${testImageFile.parent}/subdir/people.jpg")
 
