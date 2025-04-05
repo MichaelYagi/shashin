@@ -94,7 +94,7 @@ workflows:
                   sudo apt-get install libappindicator3-1 libasound2 fonts-liberation xdg-utils
             # Install latest
             - browser-tools/install-browser-tools:
-                chrome-version: 127.0.6533.73
+                chrome-version: 127.0.6510.4
 #            - browser-tools/install-chrome
 #            - browser-tools/install-chromedriver
             - run:
