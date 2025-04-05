@@ -106,6 +106,10 @@ abstract class BaseSeleniumTests {
             System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
         }
 
+//        options.setBinary("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe");
+//        System.setProperty("webdriver.chrome.driver", "C:\\Users\\Michael\\Downloads\\chromedriver-win64\\chromedriver-win64\\chromedriver.exe")
+
+
         driver = ChromeDriver(options)
     }
 
