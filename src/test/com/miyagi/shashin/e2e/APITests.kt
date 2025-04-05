@@ -118,23 +118,24 @@ class APITests: BaseSeleniumTests() {
 
         var mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
         mediaDirTextArea.click()
-        var textValue = testImageFile.parent+"/subdir"
-        textValue.forEach { character ->
-            mediaDirTextArea.sendKeys(character.toString())
-        }
+        mediaDirTextArea.sendKeys(testImageFile.parent+"/subdir")
 
         println("mediaDirTextArea textarea text: ${testImageFile.parent+"/subdir"}")
         println("mediaDirTextArea value: ${mediaDirTextArea.getDomProperty("value")}")
 
         var mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
         mediaExcludeDirTextArea.click()
-        textValue = testImageFile.parent+"/subdir/dice.mp4"
-        textValue.forEach { character ->
-            mediaExcludeDirTextArea.sendKeys(character.toString())
-        }
+        mediaExcludeDirTextArea.sendKeys(testImageFile.parent+"/subdir/dice.mp4")
 
         println("mediaExcludeDirTextArea textarea text: ${testImageFile.parent+"/subdir/dice.mp4"}")
         println("mediaExcludeDirTextArea value: ${mediaExcludeDirTextArea.getDomProperty("value")}")
+
+        var uploadMediaDirectory = this.driver!!.findElement(By.id("uploadMediaDirectory"))
+        uploadMediaDirectory.click()
+        uploadMediaDirectory.sendKeys(testImageFile.parent+"/subdir")
+
+        println("uploadMediaDirectory input text: ${testImageFile.parent+"/subdir"}")
+        println("uploadMediaDirectory value: ${uploadMediaDirectory.getDomProperty("value")}")
 
         val objectDetectionCheck = this.driver!!.findElement(By.id("objectDetection"))
         objectDetectionCheck.sendKeys(Keys.SPACE)
