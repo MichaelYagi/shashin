@@ -111,7 +111,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         mediaDirTextArea.sendKeys(mediaDirTextAreaText)
 
 //        println("mediaDirTextArea textarea text: $mediaDirTextAreaText")
-//        println("mediaDirTextArea value: ${mediaDirTextArea.getDomProperty("value")}")
+//        println("mediaDirTextArea value: ${mediaDirTextArea.getDomAttribute("value")}")
 
         val mediaExcludeDirTextAreaText = testImageFile.parent+"/subdir/dice.mp4"
         var mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
@@ -119,7 +119,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         mediaExcludeDirTextArea.sendKeys(mediaExcludeDirTextAreaText)
 
 //        println("mediaExcludeDirTextArea textarea text: $mediaExcludeDirTextAreaText")
-//        println("mediaExcludeDirTextArea value: ${mediaExcludeDirTextArea.getDomProperty("value")}")
+//        println("mediaExcludeDirTextArea value: ${mediaExcludeDirTextArea.getDomAttribute("value")}")
 
         var objectDetectionCheck = this.driver!!.findElement(By.id("objectDetection"))
         objectDetectionCheck.sendKeys(Keys.SPACE)
@@ -156,19 +156,19 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val spanContainerEl = scrollContainer.findElement(By.xpath("./span[1]"))
         // Get the date id
         var dateId = ""
-        if (spanContainerEl !== null && spanContainerEl.getDomProperty("id") !== null) {
-            if (spanContainerEl.getDomProperty("id")?.contains("container") == true) {
-                dateId = spanContainerEl.getDomProperty("id")?.substringAfter("container_").toString()
-            } else if (spanContainerEl.getDomProperty("id")?.contains("tail") == true) {
-                dateId = spanContainerEl.getDomProperty("id")?.substringAfter("tail_").toString()
-            } else if (spanContainerEl.getDomProperty("id")?.contains("amp") == true) {
-                dateId = spanContainerEl.getDomProperty("id")?.substringAfter("amp_").toString()
+        if (spanContainerEl !== null && spanContainerEl.getDomAttribute("id") !== null) {
+            if (spanContainerEl.getDomAttribute("id")?.contains("container") == true) {
+                dateId = spanContainerEl.getDomAttribute("id")?.substringAfter("container_").toString()
+            } else if (spanContainerEl.getDomAttribute("id")?.contains("tail") == true) {
+                dateId = spanContainerEl.getDomAttribute("id")?.substringAfter("tail_").toString()
+            } else if (spanContainerEl.getDomAttribute("id")?.contains("amp") == true) {
+                dateId = spanContainerEl.getDomAttribute("id")?.substringAfter("amp_").toString()
             }
         }
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.id("row$dateId")))
         val parentEl = this.driver!!.findElement(By.id("row$dateId"))
         val childEl = parentEl.findElement(By.xpath("./div[1]"))
-        val imageId = childEl.getDomProperty("id")
+        val imageId = childEl.getDomAttribute("id")
         metadataId = imageId?.substringAfter("photoThumbnailContainer")
 
         // Check image src
@@ -211,7 +211,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         val albumCard = this.driver!!.findElement(By.xpath("//div[@class=\"card\"][1]"))
         val albumLink = albumCard.findElement(By.xpath("./a[1]"))
-        val albumIdentifier = albumLink.getDomProperty("id")
+        val albumIdentifier = albumLink.getDomAttribute("id")
         albumId = albumIdentifier?.substringAfter("album")?.toInt()
 
         val shareLink = this.driver!!.findElement(By.id("share$albumId"))
@@ -395,7 +395,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         // Check comment
         val commentList = this.driver!!.findElement(By.id("commentList"))
         val commentEl = commentList.findElement(By.xpath("./li[1]"))
-        val commentId = commentEl.getDomProperty("id")?.substringAfter("comment")
+        val commentId = commentEl.getDomAttribute("id")?.substringAfter("comment")
 
         Assertions.assertTrue(this.driver!!.findElement(By.id("commentcontent$commentId")).text.contains("Test comment"))
 
@@ -526,6 +526,6 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
     }
 
     private fun elementHasClass(element: WebElement, active: String?): Boolean {
-        return element.getDomProperty("class")!!.contains(active!!)
+        return element.getDomAttribute("class")!!.contains(active!!)
     }
 }
