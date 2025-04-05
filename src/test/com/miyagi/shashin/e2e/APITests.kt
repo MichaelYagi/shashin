@@ -262,7 +262,7 @@ class APITests: BaseSeleniumTests() {
             metadata = metadataObj.get()
             metadata.setLat("1.1111")
             metadata.setLng("1.1111")
-            metadataRepository.save(metadata)
+            metadataRepository?.save(metadata)
         }
 
         // Get metadata
