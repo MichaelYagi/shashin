@@ -110,14 +110,10 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         mediaDirTextArea.click()
         mediaDirTextArea.sendKeys(testImageFile.parent+"/subdir")
 
-        println(mediaDirTextArea.getDomProperty("value"))
-
         var mediaExcludeDirTextArea = this.driver!!.findElement(By.ById("mediaExcludeDirTextArea"))
         mediaExcludeDirTextArea.clear()
         mediaExcludeDirTextArea.click()
         mediaExcludeDirTextArea.sendKeys("${testImageFile.parent}/subdir/dice.mp4")
-
-        println(mediaExcludeDirTextArea.getDomProperty("value"))
 
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
         saveSettings.submit()
