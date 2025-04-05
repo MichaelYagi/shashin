@@ -113,14 +113,23 @@ class APITests: BaseSeleniumTests() {
         val classLoader = javaClass.classLoader
         val testImageUrl: URL = classLoader.getResource("testscreen.jpg")!!
         val testImageFile = File(testImageUrl.file)
-        val mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
+
+        var mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
+        mediaDirTextArea.clear()
+        mediaDirTextArea.click()
+        mediaDirTextArea.sendKeys(testImageFile.parent+"/subdir")
+        mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
         mediaDirTextArea.clear()
         mediaDirTextArea.click()
         mediaDirTextArea.sendKeys(testImageFile.parent+"/subdir")
 
 //        println(testImageFile.parent+"/subdir")
 
-        val mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
+        var mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
+        mediaExcludeDirTextArea.clear()
+        mediaExcludeDirTextArea.click()
+        mediaExcludeDirTextArea.sendKeys("${testImageFile.parent}/subdir/dice.mp4\n${testImageFile.parent}/subdir/people.jpg")
+        mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
         mediaExcludeDirTextArea.clear()
         mediaExcludeDirTextArea.click()
         mediaExcludeDirTextArea.sendKeys("${testImageFile.parent}/subdir/dice.mp4\n${testImageFile.parent}/subdir/people.jpg")
