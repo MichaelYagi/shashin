@@ -116,38 +116,53 @@ class APITests: BaseSeleniumTests() {
         val testImageUrl: URL = classLoader.getResource("testscreen.jpg")!!
         val testImageFile = File(testImageUrl.file)
 
+        val mediaDirTextAreaText = testImageFile.parent+"/subdir"
         var mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
         mediaDirTextArea.click()
-        mediaDirTextArea.sendKeys(testImageFile.parent+"/subdir")
+        mediaDirTextArea.sendKeys(mediaDirTextAreaText)
+        var mediaDirTextAreaValue = mediaDirTextArea.getDomProperty("value")
 
-        println("mediaDirTextArea textarea text: ${testImageFile.parent+"/subdir"}")
+        println("mediaDirTextArea textarea text: $mediaDirTextAreaText")
         println("mediaDirTextArea value: ${mediaDirTextArea.getDomProperty("value")}")
 
+        val mediaExcludeDirTextAreaText = testImageFile.parent+"/subdir/dice.mp4"
         var mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
         mediaExcludeDirTextArea.click()
-        mediaExcludeDirTextArea.sendKeys(testImageFile.parent+"/subdir/dice.mp4")
+        mediaExcludeDirTextArea.sendKeys(mediaExcludeDirTextAreaText)
 
-        println("mediaExcludeDirTextArea textarea text: ${testImageFile.parent+"/subdir/dice.mp4"}")
+        println("mediaExcludeDirTextArea textarea text: $mediaExcludeDirTextAreaText")
         println("mediaExcludeDirTextArea value: ${mediaExcludeDirTextArea.getDomProperty("value")}")
 
-        var uploadMediaDirectory = this.driver!!.findElement(By.id("uploadMediaDirectory"))
-        uploadMediaDirectory.click()
-        uploadMediaDirectory.sendKeys(testImageFile.parent+"/subdir")
-
-        println("uploadMediaDirectory input text: ${testImageFile.parent+"/subdir"}")
-        println("uploadMediaDirectory value: ${uploadMediaDirectory.getDomProperty("value")}")
-
-        val objectDetectionCheck = this.driver!!.findElement(By.id("objectDetection"))
+        var objectDetectionCheck = this.driver!!.findElement(By.id("objectDetection"))
         objectDetectionCheck.sendKeys(Keys.SPACE)
         if (!objectDetectionCheck.isSelected) {
             objectDetectionCheck.click()
         }
 
-        val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
+        var saveSettings = this.driver!!.findElement(By.id("saveSettings"))
         saveSettings.submit()
 //        println(this.driver?.pageSource)
 
         WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Settings saved')]")))
+
+        if (mediaDirTextAreaValue != null && mediaDirTextAreaValue.trim() == "") {
+            mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
+            mediaDirTextArea.click()
+            mediaDirTextArea.sendKeys(mediaDirTextAreaText)
+
+            println("mediaDirTextArea textarea text 2: $mediaDirTextAreaText")
+            println("mediaDirTextArea value 2: ${mediaDirTextArea.getDomProperty("value")}")
+
+            mediaExcludeDirTextArea = this.driver!!.findElement(By.id("mediaExcludeDirTextArea"))
+            mediaExcludeDirTextArea.click()
+            mediaExcludeDirTextArea.sendKeys(mediaExcludeDirTextAreaText)
+
+            println("mediaExcludeDirTextArea textarea text 2: $mediaExcludeDirTextAreaText")
+            println("mediaExcludeDirTextArea value 2: ${mediaExcludeDirTextArea.getDomProperty("value")}")
+
+            saveSettings = this.driver!!.findElement(By.id("saveSettings"))
+            saveSettings.submit()
+        }
 
         // Scan new image
         this.driver!!.get("http://localhost:$port/settings/scan")
