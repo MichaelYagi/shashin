@@ -87,19 +87,18 @@ workflows:
             - Run node tests
           pre-steps:
             - run:
-                name: Installing libraries
+                name: Installing Linux libraries and Chromedriver
                 command: |
                   sudo apt-get update
                   sudo apt-get install libgbm1 libgconf-2-4 libnss3 libxss1 lsb-release
                   sudo apt-get install libappindicator3-1 libasound2 fonts-liberation xdg-utils
             # Install latest
             - browser-tools/install-browser-tools:
-                name: Download Chromedrivers
                 chrome-version: 127.0.6533.119
 #            - browser-tools/install-chrome
 #            - browser-tools/install-chromedriver
             - run:
-                name: Check install
+                name: Check Chromedriver install
                 command: |
                   google-chrome --version
                   chromedriver --version
