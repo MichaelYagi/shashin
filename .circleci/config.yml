@@ -92,9 +92,11 @@ workflows:
                   sudo apt-get update
                   sudo apt-get install libgbm1 libgconf-2-4 libnss3 libxss1 lsb-release
                   sudo apt-get install libappindicator3-1 libasound2 fonts-liberation xdg-utils
-            # Install latest
+            # Install specific version
+            # https://www.ubuntuupdates.org/package/google_chrome/stable/main/base/google-chrome-stable?id=202706&page=1
             - browser-tools/install-browser-tools:
                 chrome-version: 127.0.6533.119
+            # Install latest
 #            - browser-tools/install-chrome
 #            - browser-tools/install-chromedriver
             - run:
