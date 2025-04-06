@@ -68,13 +68,19 @@
 
     var View = {
         firstPage: function(pagy, options, currentPageProxy) {
+            var link = $('<a class="page-link" href="javascript:void(0)">');
             var li = $('<li class="page-item">').append(
-                $('<a class="page-link" href="javascript:void(0)">')
+                link
                     .html(options.first)
                     .bind('click.bs-pagy', function() {
                         pagy.firstPage();
                         return false;
                     }));
+
+            if (options.hasOwnProperty("activePage") && options.hasOwnProperty("mediaTypeFilter") && options.activePage !== null && options.mediaTypeFilter !== null) {
+                link.attr("href",('/'+options.activePage+'/' + (pagy.firstPage()-1) + '/' + options.mediaTypeFilter));
+                link.unbind('click.bs-pagy');
+            }
 
             if (currentPageProxy.isFirst()) {
                 li.addClass("disabled");
@@ -84,14 +90,20 @@
         },
 
         prevPage: function(pagy, options, currentPageProxy) {
+            var link = $('<a class="page-link" href="javascript:void(0)">');
             var li = $('<li class="page-item">').append(
-                $('<a class="page-link" href="javascript:void(0)">')
+                link
                     .attr("rel", "prev")
                     .html(options.prev)
                     .bind('click.bs-pagy', function() {
                         pagy.prevPage();
                         return false;
                     }));
+
+            if (currentPageProxy.number() > -1 && options.hasOwnProperty("activePage") && options.hasOwnProperty("mediaTypeFilter") && options.activePage !== null && options.mediaTypeFilter !== null) {
+                link.attr("href",('/'+options.activePage+'/' + (currentPageProxy.number()-2) + '/' + options.mediaTypeFilter));
+                link.unbind('click.bs-pagy');
+            }
 
             if (currentPageProxy.isFirst()) {
                 li.addClass("disabled");
@@ -101,14 +113,20 @@
         },
 
         nextPage: function(pagy, options, currentPageProxy) {
+            var link = $('<a class="page-link" href="javascript:void(0)">');
             var li = $('<li class="page-item">').append(
-                $('<a class="page-link" href="#">')
+                link
                     .attr("rel", "next")
                     .html(options.next)
                     .bind('click.bs-pagy', function() {
                         pagy.nextPage();
                         return false;
                     }));
+
+            if (options.totalPages != null && currentPageProxy.number() < options.totalPages && options.hasOwnProperty("activePage") && options.hasOwnProperty("mediaTypeFilter") && options.activePage !== null && options.mediaTypeFilter !== null) {
+                link.attr("href",('/'+options.activePage+'/' + currentPageProxy.number() + '/' + options.mediaTypeFilter));
+                link.unbind('click.bs-pagy');
+            }
 
             if (currentPageProxy.isLast()) {
                 li.addClass("disabled");
@@ -118,13 +136,19 @@
         },
 
         lastPage: function(pagy, options, currentPageProxy) {
+            var link = $('<a class="page-link" href="javascript:void(0)">');
             var li = $('<li class="page-item">').append(
-                $('<a class="page-link" href="javascript:void(0)">')
-                    .html(options.last)
+                link
+                    .html(options.last);
                     .bind('click.bs-pagy', function() {
                         pagy.lastPage();
                         return false;
                     }));
+
+            if (options.hasOwnProperty("activePage") && options.hasOwnProperty("mediaTypeFilter") && options.activePage !== null && options.mediaTypeFilter !== null) {
+                link.attr("href",('/'+options.activePage+'/' + (pagy.lastPage()-1) + '/' + options.mediaTypeFilter));
+                link.unbind('click.bs-pagy');
+            }
 
             if (currentPageProxy.isLast()) {
                 li.addClass("disabled");
@@ -144,10 +168,15 @@
                 if (pageProxy.isNext()) { link.attr("rel", "next") }
                 if (pageProxy.isPrev()) { link.attr("rel", "prev") }
                 link.html(pageProxy.number());
-                link.bind('click.bs-pagy', function() {
-                    pagy.page(pageProxy.number());
-                    return false;
-                });
+
+                if (options.hasOwnProperty("activePage") && options.hasOwnProperty("mediaTypeFilter") && options.activePage !== null && options.mediaTypeFilter !== null) {
+                    link.attr("href",('/'+options.activePage+'/' + (pageProxy.number()-1) + '/' + options.mediaTypeFilter));
+                } else {
+                    link.bind('click.bs-pagy', function() {
+                        pagy.page(pageProxy.number());
+                        return false;
+                    });
+                }
                 return link;
             });
 
@@ -176,6 +205,8 @@
         , totalPages: null
         , innerWindow: 2
         , outerWindow: 0
+        , activePage: null
+        , mediaTypeFilter: null
         , first: '&laquo;'
         , prev: '&lsaquo;'
         , next: '&rsaquo;'

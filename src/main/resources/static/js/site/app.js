@@ -2276,10 +2276,8 @@
             totalPages: (totalPages+1),
             first: null,
             last: null,
-            page: function(page) {
-                window.location.href = '/'+activePage+'/' + (page-1) + '/' + mediaTypeFilter;
-                return true;
-            }
+            activePage: activePage,
+            mediaTypeFilter: mediaTypeFilter
         };
         $('#pagination').pagy(options);
     };
