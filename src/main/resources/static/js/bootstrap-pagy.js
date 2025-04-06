@@ -69,17 +69,15 @@
     var View = {
         firstPage: function (pagy, options, currentPageProxy) {
             var link = $('<a class="page-link" href="javascript:void(0)">');
-            link
-                .html(options.first);
+            link.html(options.first);
 
             if (options.hasOwnProperty("activePage") && options.hasOwnProperty("mediaTypeFilter") && options.activePage !== null && options.mediaTypeFilter !== null) {
                 link.attr("href", ('/' + options.activePage + '/' + (pagy.firstPage() - 1) + '/' + options.mediaTypeFilter));
             } else {
-                link
-                    .bind('click.bs-pagy', function () {
-                        pagy.firstPage();
-                        return false;
-                    });
+                link.bind('click.bs-pagy', function () {
+                    pagy.firstPage();
+                    return false;
+                });
             }
 
             var li = $('<li class="page-item">').append(link);
@@ -90,21 +88,17 @@
 
             return li;
         },
-
         prevPage: function (pagy, options, currentPageProxy) {
             var link = $('<a class="page-link" href="javascript:void(0)">');
-            link
-                .attr("rel", "prev")
-                .html(options.prev);
+            link.attr("rel", "prev").html(options.prev);
 
             if (currentPageProxy.number() > -1 && options.hasOwnProperty("activePage") && options.hasOwnProperty("mediaTypeFilter") && options.activePage !== null && options.mediaTypeFilter !== null) {
                 link.attr("href", ('/' + options.activePage + '/' + (currentPageProxy.number() - 2) + '/' + options.mediaTypeFilter));
             } else {
-                link
-                    .bind('click.bs-pagy', function () {
-                        pagy.prevPage();
-                        return false;
-                    });
+                link.bind('click.bs-pagy', function () {
+                    pagy.prevPage();
+                    return false;
+                });
             }
 
             var li = $('<li class="page-item">').append(link);
@@ -115,21 +109,17 @@
 
             return li;
         },
-
         nextPage: function (pagy, options, currentPageProxy) {
             var link = $('<a class="page-link" href="javascript:void(0)">');
-            link
-                .attr("rel", "next")
-                .html(options.next);
+            link.attr("rel", "next").html(options.next);
 
             if (options.totalPages != null && currentPageProxy.number() < options.totalPages && options.hasOwnProperty("activePage") && options.hasOwnProperty("mediaTypeFilter") && options.activePage !== null && options.mediaTypeFilter !== null) {
                 link.attr("href", ('/' + options.activePage + '/' + currentPageProxy.number() + '/' + options.mediaTypeFilter));
             } else {
-                link
-                    .bind('click.bs-pagy', function () {
-                        pagy.nextPage();
-                        return false;
-                    });
+                link.bind('click.bs-pagy', function () {
+                    pagy.nextPage();
+                    return false;
+                });
             }
 
             var li = $('<li class="page-item">').append(link);
@@ -140,7 +130,6 @@
 
             return li;
         },
-
         lastPage: function (pagy, options, currentPageProxy) {
             var link = $('<a class="page-link" href="javascript:void(0)">');
             link.html(options.last);
@@ -162,12 +151,6 @@
 
             return li;
         },
-
-        gap: function (pagy, options) {
-            return $('<li class="page-item">').addClass("disabled")
-                .append($('<a class="page-link" href="javascript:void(0)" style="pointer-events: none;">').html(options.gap));
-        },
-
         page: function (pagy, options, pageProxy) {
             var li = $('<li class="page-item">').append(function () {
                 var link = $('<a class="page-link" href="javascript:void(0)">');
@@ -196,6 +179,10 @@
             }
 
             return li;
+        },
+        gap: function (pagy, options) {
+            return $('<li class="page-item">').addClass("disabled")
+                .append($('<a class="page-link" href="javascript:void(0)" style="pointer-events: none;">').html(options.gap));
         }
     };
 
