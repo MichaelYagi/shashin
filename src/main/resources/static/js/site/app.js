@@ -2270,7 +2270,7 @@
         }
         shashin.initLightGallery('scroll-gallery', lgConfig, '.mediaLink');
 
-        var numOfPages = 15;
+        let numOfPages = 15;
         if (Util.isMobile()) {
             numOfPages = 5;
         }
