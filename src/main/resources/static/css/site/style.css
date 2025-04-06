@@ -392,7 +392,7 @@ footer {
 
 #btn-back-to-top {
   position: fixed;
-  bottom: 20px;
+  bottom: 5px;
   right: 40px;
   display: none;
 }
