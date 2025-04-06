@@ -140,7 +140,7 @@
             var link = $('<a class="page-link" href="javascript:void(0)">');
             var li = $('<li class="page-item">').append(
                 link
-                    .html(options.last);
+                    .html(options.last)
                     .bind('click.bs-pagy', function() {
                         pagy.lastPage();
                         return false;
