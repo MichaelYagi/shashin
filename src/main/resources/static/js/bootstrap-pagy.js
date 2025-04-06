@@ -19,69 +19,70 @@
  * MY: Modified to adapt to Shashin - 2025-04-05 */
 
 
-+function ($) { "use strict";
++function ($) {
+    "use strict";
 
-    var PageProxy = function(options, page) {
-        this.isCurrent = function() {
-            return page == options.currentPage;
-        }
+    var PageProxy = function (options, page) {
+        this.isCurrent = function () {
+            return page === options.currentPage;
+        };
 
-        this.isFirst = function() {
-            return page == 1;
-        }
+        this.isFirst = function () {
+            return page === 1;
+        };
 
-        this.isLast = function() {
-            return page == options.totalPages;
-        }
+        this.isLast = function () {
+            return page === options.totalPages;
+        };
 
-        this.isPrev = function() {
-            return page == (options.currentPage - 1);
-        }
+        this.isPrev = function () {
+            return page === (options.currentPage - 1);
+        };
 
-        this.isNext = function() {
-            return page == (options.currentPage + 1);
-        }
+        this.isNext = function () {
+            return page === (options.currentPage + 1);
+        };
 
-        this.isLeftOuter = function() {
+        this.isLeftOuter = function () {
             return page <= options.outerWindow;
-        }
+        };
 
-        this.isRightOuter = function() {
+        this.isRightOuter = function () {
             return (options.totalPages - page) < options.outerWindow;
-        }
+        };
 
-        this.isInsideWindow = function() {
+        this.isInsideWindow = function () {
             if (options.currentPage < options.innerWindow + 1) {
                 return page <= ((options.innerWindow * 2) + 1);
-            }
-            else if (options.currentPage > (options.totalPages - options.innerWindow)) {
+            } else if (options.currentPage > (options.totalPages - options.innerWindow)) {
                 return (options.totalPages - page) <= (options.innerWindow * 2);
-            }
-            else {
+            } else {
                 return Math.abs(options.currentPage - page) <= options.innerWindow;
             }
-        }
+        };
 
-        this.number = function() {
+        this.number = function () {
             return page;
-        }
-    }
+        };
+    };
 
     var View = {
-        firstPage: function(pagy, options, currentPageProxy) {
+        firstPage: function (pagy, options, currentPageProxy) {
             var link = $('<a class="page-link" href="javascript:void(0)">');
-            var li = $('<li class="page-item">').append(
+            link
+                .html(options.first);
+
+            if (options.hasOwnProperty("activePage") && options.hasOwnProperty("mediaTypeFilter") && options.activePage !== null && options.mediaTypeFilter !== null) {
+                link.attr("href", ('/' + options.activePage + '/' + (pagy.firstPage() - 1) + '/' + options.mediaTypeFilter));
+            } else {
                 link
-                    .html(options.first)
-                    .bind('click.bs-pagy', function() {
+                    .bind('click.bs-pagy', function () {
                         pagy.firstPage();
                         return false;
-                    }));
-
-            if (options.hasOwnProperty("activePage") && options.hasOwnProperty("mediaTypeFilter") && options.activePage !== null && options.mediaTypeFilter !== null) {
-                link.attr("href",('/'+options.activePage+'/' + (pagy.firstPage()-1) + '/' + options.mediaTypeFilter));
-                link.unbind('click.bs-pagy');
+                    });
             }
+
+            var li = $('<li class="page-item">').append(link);
 
             if (currentPageProxy.isFirst()) {
                 li.addClass("disabled");
@@ -90,21 +91,23 @@
             return li;
         },
 
-        prevPage: function(pagy, options, currentPageProxy) {
+        prevPage: function (pagy, options, currentPageProxy) {
             var link = $('<a class="page-link" href="javascript:void(0)">');
-            var li = $('<li class="page-item">').append(
-                link
-                    .attr("rel", "prev")
-                    .html(options.prev)
-                    .bind('click.bs-pagy', function() {
-                        pagy.prevPage();
-                        return false;
-                    }));
+            link
+                .attr("rel", "prev")
+                .html(options.prev);
 
             if (currentPageProxy.number() > -1 && options.hasOwnProperty("activePage") && options.hasOwnProperty("mediaTypeFilter") && options.activePage !== null && options.mediaTypeFilter !== null) {
-                link.attr("href",('/'+options.activePage+'/' + (currentPageProxy.number()-2) + '/' + options.mediaTypeFilter));
-                link.unbind('click.bs-pagy');
+                link.attr("href", ('/' + options.activePage + '/' + (currentPageProxy.number() - 2) + '/' + options.mediaTypeFilter));
+            } else {
+                link
+                    .bind('click.bs-pagy', function () {
+                        pagy.prevPage();
+                        return false;
+                    });
             }
+
+            var li = $('<li class="page-item">').append(link);
 
             if (currentPageProxy.isFirst()) {
                 li.addClass("disabled");
@@ -113,21 +116,23 @@
             return li;
         },
 
-        nextPage: function(pagy, options, currentPageProxy) {
+        nextPage: function (pagy, options, currentPageProxy) {
             var link = $('<a class="page-link" href="javascript:void(0)">');
-            var li = $('<li class="page-item">').append(
-                link
-                    .attr("rel", "next")
-                    .html(options.next)
-                    .bind('click.bs-pagy', function() {
-                        pagy.nextPage();
-                        return false;
-                    }));
+            link
+                .attr("rel", "next")
+                .html(options.next);
 
             if (options.totalPages != null && currentPageProxy.number() < options.totalPages && options.hasOwnProperty("activePage") && options.hasOwnProperty("mediaTypeFilter") && options.activePage !== null && options.mediaTypeFilter !== null) {
-                link.attr("href",('/'+options.activePage+'/' + currentPageProxy.number() + '/' + options.mediaTypeFilter));
-                link.unbind('click.bs-pagy');
+                link.attr("href", ('/' + options.activePage + '/' + currentPageProxy.number() + '/' + options.mediaTypeFilter));
+            } else {
+                link
+                    .bind('click.bs-pagy', function () {
+                        pagy.nextPage();
+                        return false;
+                    });
             }
+
+            var li = $('<li class="page-item">').append(link);
 
             if (currentPageProxy.isLast()) {
                 li.addClass("disabled");
@@ -136,20 +141,20 @@
             return li;
         },
 
-        lastPage: function(pagy, options, currentPageProxy) {
+        lastPage: function (pagy, options, currentPageProxy) {
             var link = $('<a class="page-link" href="javascript:void(0)">');
-            var li = $('<li class="page-item">').append(
-                link
-                    .html(options.last)
-                    .bind('click.bs-pagy', function() {
-                        pagy.lastPage();
-                        return false;
-                    }));
+            link.html(options.last);
 
             if (options.hasOwnProperty("activePage") && options.hasOwnProperty("mediaTypeFilter") && options.activePage !== null && options.mediaTypeFilter !== null) {
-                link.attr("href",('/'+options.activePage+'/' + (pagy.lastPage()-1) + '/' + options.mediaTypeFilter));
-                link.unbind('click.bs-pagy');
+                link.attr("href", ('/' + options.activePage + '/' + (pagy.lastPage() - 1) + '/' + options.mediaTypeFilter));
+            } else {
+                link.bind('click.bs-pagy', function () {
+                    pagy.lastPage();
+                    return false;
+                });
             }
+
+            var li = $('<li class="page-item">').append(link);
 
             if (currentPageProxy.isLast()) {
                 li.addClass("disabled");
@@ -158,26 +163,31 @@
             return li;
         },
 
-        gap: function(pagy, options) {
+        gap: function (pagy, options) {
             return $('<li class="page-item">').addClass("disabled")
                 .append($('<a class="page-link" href="javascript:void(0)" style="pointer-events: none;">').html(options.gap));
         },
 
-        page: function(pagy, options, pageProxy) {
-            var li = $('<li class="page-item">').append(function() {
+        page: function (pagy, options, pageProxy) {
+            var li = $('<li class="page-item">').append(function () {
                 var link = $('<a class="page-link" href="javascript:void(0)">');
-                if (pageProxy.isNext()) { link.attr("rel", "next") }
-                if (pageProxy.isPrev()) { link.attr("rel", "prev") }
+                if (pageProxy.isNext()) {
+                    link.attr("rel", "next");
+                }
+                if (pageProxy.isPrev()) {
+                    link.attr("rel", "prev");
+                }
                 link.html(pageProxy.number());
 
                 if (options.hasOwnProperty("activePage") && options.hasOwnProperty("mediaTypeFilter") && options.activePage !== null && options.mediaTypeFilter !== null) {
-                    link.attr("href",('/'+options.activePage+'/' + (pageProxy.number()-1) + '/' + options.mediaTypeFilter));
+                    link.attr("href", ('/' + options.activePage + '/' + (pageProxy.number() - 1) + '/' + options.mediaTypeFilter));
                 } else {
-                    link.bind('click.bs-pagy', function() {
+                    link.bind('click.bs-pagy', function () {
                         pagy.page(pageProxy.number());
                         return false;
                     });
                 }
+
                 return link;
             });
 
@@ -187,7 +197,7 @@
 
             return li;
         }
-    }
+    };
 
     // PAGY PUBLIC CLASS DEFINITION
     // ===============================
@@ -199,23 +209,25 @@
         this.$ul = this.$element.find("ul");
 
         this.render();
-    }
+    };
 
     Pagy.DEFAULTS = {
-        currentPage: null
-        , totalPages: null
-        , innerWindow: 2
-        , outerWindow: 0
-        , activePage: null
-        , mediaTypeFilter: null
-        , first: '&laquo;'
-        , prev: '&lsaquo;'
-        , next: '&rsaquo;'
-        , last: '&raquo;'
-        , gap: '..'
-        , truncate: false
-        , page: function(page) { return true }
-    }
+        currentPage: null,
+        totalPages: null,
+        innerWindow: 2,
+        outerWindow: 0,
+        activePage: null,
+        mediaTypeFilter: null,
+        first: '&laquo;',
+        prev: '&lsaquo;',
+        next: '&rsaquo;',
+        last: '&raquo;',
+        gap: '..',
+        truncate: false,
+        page: function (page) {
+            return true;
+        }
+    };
 
     Pagy.prototype.render = function () {
         var options = this.options;
@@ -223,8 +235,7 @@
         if (!options.totalPages) {
             this.$element.hide();
             return;
-        }
-        else {
+        } else {
             this.$element.show();
         }
 
@@ -246,8 +257,7 @@
             if (pageProxy.isLeftOuter() || pageProxy.isRightOuter() || pageProxy.isInsideWindow()) {
                 this.$ul.append(View.page(this, options, pageProxy));
                 wasTruncated = false;
-            }
-            else {
+            } else {
                 if (!wasTruncated && options.outerWindow > 0) {
                     this.$ul.append(View.gap(this, options));
                     wasTruncated = true;
@@ -264,7 +274,7 @@
                 this.$ul.append(View.lastPage(this, options, currentPageProxy));
             }
         }
-    }
+    };
 
     Pagy.prototype.page = function (page, totalPages) {
         var options = this.options;
@@ -283,23 +293,23 @@
         }
 
         return false;
-    }
+    };
 
     Pagy.prototype.firstPage = function () {
         return this.page(1);
-    }
+    };
 
     Pagy.prototype.lastPage = function () {
         return this.page(this.options.totalPages);
-    }
+    };
 
     Pagy.prototype.nextPage = function () {
         return this.page(this.options.currentPage + 1);
-    }
+    };
 
     Pagy.prototype.prevPage = function () {
         return this.page(this.options.currentPage - 1);
-    }
+    };
 
     // PAGY PLUGIN DEFINITION
     // =========================
@@ -310,8 +320,8 @@
         var args = arguments;
 
         return this.each(function () {
-            var $this   = $(this);
-            var data    = $this.data('bs.pagy');
+            var $this = $(this);
+            var data = $this.data('bs.pagy');
             var options = typeof option == 'object' && option;
 
             if (!data) $this.data('bs.pagy', (data = new Pagy(this, options)));
@@ -319,7 +329,7 @@
                 data[option].apply(data, Array.prototype.slice.call(args, 1));
             }
         });
-    }
+    };
 
     $.fn.pagy.Constructor = Pagy;
 
@@ -330,6 +340,6 @@
     $.fn.pagy.noConflict = function () {
         $.fn.pagy = old;
         return this;
-    }
+    };
 
 }(jQuery);
