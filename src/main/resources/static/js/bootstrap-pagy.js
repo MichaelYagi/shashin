@@ -71,8 +71,8 @@
             var link = $('<a class="page-link" href="javascript:void(0)">');
             link.html(options.first);
 
-            if (options.hasOwnProperty("activePage") && options.hasOwnProperty("mediaTypeFilter") && options.activePage !== null && options.mediaTypeFilter !== null) {
-                link.attr("href", ('/' + options.activePage + '/' + (pagy.firstPage() - 1) + '/' + options.mediaTypeFilter));
+            if (options.totalPages != null && options.totalPages > 0 && options.hasOwnProperty("activePage") && options.hasOwnProperty("mediaTypeFilter") && options.activePage !== null && options.mediaTypeFilter !== null) {
+                link.attr("href", ('/' + options.activePage + '/0/' + options.mediaTypeFilter));
             } else {
                 link.bind('click.bs-pagy', function () {
                     pagy.firstPage();
@@ -134,8 +134,8 @@
             var link = $('<a class="page-link" href="javascript:void(0)">');
             link.html(options.last);
 
-            if (options.hasOwnProperty("activePage") && options.hasOwnProperty("mediaTypeFilter") && options.activePage !== null && options.mediaTypeFilter !== null) {
-                link.attr("href", ('/' + options.activePage + '/' + (pagy.lastPage() - 1) + '/' + options.mediaTypeFilter));
+            if (options.hasOwnProperty("totalPages") && options.totalPages > 0 && options.hasOwnProperty("activePage") && options.hasOwnProperty("mediaTypeFilter") && options.activePage !== null && options.mediaTypeFilter !== null) {
+                link.attr("href", ('/' + options.activePage + '/' + (options.totalPages - 1) + '/' + options.mediaTypeFilter));
             } else {
                 link.bind('click.bs-pagy', function () {
                     pagy.lastPage();
@@ -152,6 +152,7 @@
             return li;
         },
         page: function (pagy, options, pageProxy) {
+
             var li = $('<li class="page-item">').append(function () {
                 var link = $('<a class="page-link" href="javascript:void(0)">');
                 if (pageProxy.isNext()) {

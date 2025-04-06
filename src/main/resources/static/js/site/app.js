@@ -2271,14 +2271,21 @@
         shashin.initLightGallery('scroll-gallery', lgConfig, '.mediaLink');
 
         const options = {
-            outerWindow: 1,
             currentPage: currentPage,
             totalPages: (totalPages+1),
-            first: null,
-            last: null,
             activePage: activePage,
-            mediaTypeFilter: mediaTypeFilter
+            mediaTypeFilter: mediaTypeFilter,
+            truncate: true
         };
+
+        if (Util.isMobile()) {
+            options.innerWindow = 1;
+        } else {
+            options.outerWindow = 1;
+            options.first = null;
+            options.last = null;
+        }
+
         $('#pagination').pagy(options);
     };
 
