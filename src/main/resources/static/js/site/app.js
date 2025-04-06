@@ -1134,7 +1134,7 @@
                 }
             }
         });
-    }
+    };
 
     shashin.syncCheckboxInputs = function(inputEl, checkboxElName) {
         $(inputEl).on( "blur", function(e) {
@@ -2270,25 +2270,19 @@
         }
         shashin.initLightGallery('scroll-gallery', lgConfig, '.mediaLink');
 
-        let numOfPages = 15;
-        if (Util.isMobile()) {
-            numOfPages = 5;
-        }
-
         const options = {
+            outerWindow: 1,
             currentPage: currentPage,
             totalPages: (totalPages+1),
-            numberOfPages: numOfPages,
-            onPageClicked: function(e,originalEvent,type,page) {
-                $('#pagination').css("visibility","hidden");
-            },
-            pageUrl: function(type, page, current) {
-                return '/'+activePage+'/' + (page-1) + '/' + mediaTypeFilter;
+            first: null,
+            last: null,
+            page: function(page) {
+                window.location.href = '/'+activePage+'/' + (page-1) + '/' + mediaTypeFilter;
+                return true;
             }
-        }
-        $('#pagination').bootstrapPaginator(options);
-        $('#pagination').removeClass("pagination");
-    }
+        };
+        $('#pagination').pagy(options);
+    };
 
     shashin.getMapSource = function (source) {
         let mapSource = new ol.source.OSM();
