@@ -1,6 +1,7 @@
 /* ========================================================================
  * Bootstrap-Pagy
  * http://getbootstrap.com/javascript/#popovers
+ * https://github.com/medihack/bootstrap-pagy
  * ========================================================================
  * Copyright 2013 Kai Schlamp
  *
