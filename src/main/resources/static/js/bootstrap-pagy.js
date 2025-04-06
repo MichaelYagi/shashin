@@ -69,7 +69,7 @@
     var View = {
         firstPage: function(pagy, options, currentPageProxy) {
             var li = $('<li class="page-item">').append(
-                $('<a class="page-link" href="#">')
+                $('<a class="page-link" href="javascript:void(0)">')
                     .html(options.first)
                     .bind('click.bs-pagy', function() {
                         pagy.firstPage();
@@ -85,7 +85,7 @@
 
         prevPage: function(pagy, options, currentPageProxy) {
             var li = $('<li class="page-item">').append(
-                $('<a class="page-link" href="#">')
+                $('<a class="page-link" href="javascript:void(0)">')
                     .attr("rel", "prev")
                     .html(options.prev)
                     .bind('click.bs-pagy', function() {
@@ -119,7 +119,7 @@
 
         lastPage: function(pagy, options, currentPageProxy) {
             var li = $('<li class="page-item">').append(
-                $('<a class="page-link" href="#">')
+                $('<a class="page-link" href="javascript:void(0)">')
                     .html(options.last)
                     .bind('click.bs-pagy', function() {
                         pagy.lastPage();
@@ -135,12 +135,12 @@
 
         gap: function(pagy, options) {
             return $('<li class="page-item">').addClass("disabled")
-                .append($('<a class="page-link" href="#" style="pointer-events: none;">').html(options.gap));
+                .append($('<a class="page-link" href="javascript:void(0)" style="pointer-events: none;">').html(options.gap));
         },
 
         page: function(pagy, options, pageProxy) {
             var li = $('<li class="page-item">').append(function() {
-                var link = $('<a class="page-link" href="#">');
+                var link = $('<a class="page-link" href="javascript:void(0)">');
                 if (pageProxy.isNext()) { link.attr("rel", "next") }
                 if (pageProxy.isPrev()) { link.attr("rel", "prev") }
                 link.html(pageProxy.number());
