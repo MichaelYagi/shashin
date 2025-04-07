@@ -124,4 +124,43 @@ class UITests: BaseSeleniumTests() {
 
         Assertions.assertFalse(hasToast as Boolean)
     }
+
+    @Test
+    @Throws(Exception::class)
+    fun shouldHavePagination() {
+        this.driver!!.get("http://localhost:$port/test")
+
+        val currentPage = 6
+
+        val js: JavascriptExecutor = this.driver as JavascriptExecutor
+
+        // Create nav element
+        js.executeScript("$($('<nav></nav>').attr('id','pagination').append($('<ul></ul>').addClass('pagination'))).appendTo('main');")
+
+        // Setup pagy options
+        js.executeScript("const options = {\n" +
+            "   currentPage: "+currentPage+",\n" +
+            "   totalPages: 12,\n" +
+            "   truncate: true,\n" +
+            "   innerWindow: 3,\n" +
+            "   outerWindow: 1,\n" +
+            "   first: null,\n" +
+            "   last: null,\n" +
+            "   href: function (index) {\n" +
+            "       return '/test/' + (index+1);\n" +
+            "   }\n" +
+            "};" +
+            "$('#pagination').pagy(options);"
+        )
+
+        // Count number of li elements
+        var liCount = js.executeScript("return document.getElementById('pagination').getElementsByTagName('li').length;")
+        Assertions.assertTrue(liCount!!.toString().toInt() == 13)
+
+        var notActiveClass = js.executeScript("return document.getElementById('pagination').firstChild.childNodes[3].className;")
+        Assertions.assertTrue(notActiveClass == "page-item")
+
+        var activeClass = js.executeScript("return document.getElementById('pagination').firstChild.childNodes[6].className;")
+        Assertions.assertTrue(activeClass == "page-item active")
+    }
 }
