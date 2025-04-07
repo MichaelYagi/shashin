@@ -36,6 +36,7 @@ import javax.sql.DataSource
 // Used to validate URL paths for login redirect
 class MultiSecurityConfig {
     companion object {
+        // Pages valid for session pages
         val validWebPaths = arrayOf(
             "timeline",
             "timeline\\/.*",
