@@ -2273,8 +2273,6 @@
         const options = {
             currentPage: currentPage,
             totalPages: (totalPages+1),
-            activePage: activePage,
-            mediaTypeFilter: mediaTypeFilter,
             truncate: true,
             href: function (page) {
                 return '/' + activePage + '/' + page + '/' + mediaTypeFilter;

@@ -221,8 +221,6 @@
         totalPages: null,
         innerWindow: 2,
         outerWindow: 0,
-        activePage: null,
-        mediaTypeFilter: null,
         first: '&laquo;',
         prev: '&lsaquo;',
         next: '&rsaquo;',
