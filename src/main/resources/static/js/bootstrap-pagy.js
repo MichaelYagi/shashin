@@ -180,6 +180,11 @@
                 return link;
             });
 
+            if (options.currentPage !== null && pageProxy.number() === options.currentPage) {
+                li.addClass("disabled");
+                li.attr("tabindex", "-1");
+            }
+
             if (pageProxy.isCurrent()) {
                 li.addClass("active");
             }
