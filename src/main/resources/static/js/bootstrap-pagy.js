@@ -18,7 +18,6 @@
  * limitations under the License.
  * ========================================================================
  * MY - 2025-04-05:
- *  Modified to adapt to Shashin
  *  Adapted to use BootStrap 5.3
  *  Use actual links instead of click listener
  *  Added property to create links based on page number
