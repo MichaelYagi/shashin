@@ -21,6 +21,7 @@
  *  Modified to adapt to Shashin
  *  Adapted to use BootStrap 5.3
  *  Use actual links instead of click listener
+ *  Added property to create links based on page number
  */
 
 
@@ -76,8 +77,8 @@
             var link = $('<a class="page-link" href="javascript:void(0)">');
             link.html(options.first);
 
-            if (options.hasOwnProperty("totalPages") && options.totalPages != null && options.totalPages > 0 && options.hasOwnProperty("activePage") && options.hasOwnProperty("mediaTypeFilter") && options.activePage !== null && options.mediaTypeFilter !== null) {
-                link.attr("href", ('/' + options.activePage + '/0/' + options.mediaTypeFilter));
+            if (options.hasOwnProperty("totalPages") && options.totalPages != null && options.totalPages > 0 && options.hasOwnProperty("href") && options.href !== null && $.isFunction(options.href)) {
+                link.attr("href", options.href(0));
             } else {
                 link.bind('click.bs-pagy', function () {
                     pagy.firstPage();
@@ -97,8 +98,8 @@
             var link = $('<a class="page-link" href="javascript:void(0)">');
             link.attr("rel", "prev").html(options.prev);
 
-            if (currentPageProxy.number() > -1 && options.hasOwnProperty("activePage") && options.hasOwnProperty("mediaTypeFilter") && options.activePage !== null && options.mediaTypeFilter !== null) {
-                link.attr("href", ('/' + options.activePage + '/' + (currentPageProxy.number() - 2) + '/' + options.mediaTypeFilter));
+            if (currentPageProxy.number() > -1 && options.hasOwnProperty("href") && options.href !== null && $.isFunction(options.href)) {
+                link.attr("href", options.href(currentPageProxy.number() - 2));
             } else {
                 link.bind('click.bs-pagy', function () {
                     pagy.prevPage();
@@ -118,8 +119,8 @@
             var link = $('<a class="page-link" href="javascript:void(0)">');
             link.attr("rel", "next").html(options.next);
 
-            if (options.hasOwnProperty("totalPages") && options.totalPages != null && currentPageProxy.number() < options.totalPages && options.hasOwnProperty("activePage") && options.hasOwnProperty("mediaTypeFilter") && options.activePage !== null && options.mediaTypeFilter !== null) {
-                link.attr("href", ('/' + options.activePage + '/' + currentPageProxy.number() + '/' + options.mediaTypeFilter));
+            if (options.hasOwnProperty("totalPages") && options.totalPages != null && currentPageProxy.number() < options.totalPages && options.hasOwnProperty("href") && options.href !== null && $.isFunction(options.href)) {
+                link.attr("href", options.href(currentPageProxy.number()));
             } else {
                 link.bind('click.bs-pagy', function () {
                     pagy.nextPage();
@@ -139,8 +140,8 @@
             var link = $('<a class="page-link" href="javascript:void(0)">');
             link.html(options.last);
 
-            if (options.hasOwnProperty("totalPages") && options.totalPages > 0 && options.hasOwnProperty("activePage") && options.hasOwnProperty("mediaTypeFilter") && options.activePage !== null && options.mediaTypeFilter !== null) {
-                link.attr("href", ('/' + options.activePage + '/' + (options.totalPages - 1) + '/' + options.mediaTypeFilter));
+            if (options.hasOwnProperty("totalPages") && options.totalPages > 0 && options.hasOwnProperty("href") && options.href !== null && $.isFunction(options.href)) {
+                link.attr("href", options.href(options.totalPages - 1));
             } else {
                 link.bind('click.bs-pagy', function () {
                     pagy.lastPage();
@@ -160,6 +161,10 @@
 
             var li = $('<li class="page-item">').append(function () {
                 var link = $('<a class="page-link" href="javascript:void(0)">');
+                if (options.currentPage !== null && pageProxy.number() === options.currentPage) {
+                    link = $('<span class="page-link">');
+                }
+
                 if (pageProxy.isNext()) {
                     link.attr("rel", "next");
                 }
@@ -168,8 +173,10 @@
                 }
                 link.html(pageProxy.number());
 
-                if (options.hasOwnProperty("activePage") && options.hasOwnProperty("mediaTypeFilter") && options.activePage !== null && options.mediaTypeFilter !== null) {
-                    link.attr("href", ('/' + options.activePage + '/' + (pageProxy.number() - 1) + '/' + options.mediaTypeFilter));
+                if (options.hasOwnProperty("href") && options.href !== null && $.isFunction(options.href)) {
+                    if (options.currentPage !== null && pageProxy.number() !== options.currentPage) {
+                        link.attr("href", options.href(pageProxy.number() - 1));
+                    }
                 } else {
                     link.bind('click.bs-pagy', function () {
                         pagy.page(pageProxy.number());
@@ -181,8 +188,8 @@
             });
 
             if (options.currentPage !== null && pageProxy.number() === options.currentPage) {
-                li.addClass("disabled");
                 li.attr("tabindex", "-1");
+                li.css("cursor", "default");
             }
 
             if (pageProxy.isCurrent()) {

@@ -2275,7 +2275,10 @@
             totalPages: (totalPages+1),
             activePage: activePage,
             mediaTypeFilter: mediaTypeFilter,
-            truncate: true
+            truncate: true,
+            href: function (page) {
+                return '/' + activePage + '/' + page + '/' + mediaTypeFilter;
+            }
         };
 
         if (Util.isMobile()) {
