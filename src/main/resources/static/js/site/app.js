@@ -2280,8 +2280,9 @@
         };
 
         if (Util.isMobile()) {
-            options.innerWindow = 1;
+            options.innerWindow = 2;
         } else {
+            options.innerWindow = 3;
             options.outerWindow = 1;
             options.first = null;
             options.last = null;
