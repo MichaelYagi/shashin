@@ -81,6 +81,15 @@ class TestController {
     }
 
     @Secured("ROLE_SUPER")
+    @GetMapping("/test/{page}")
+    fun test(model: Model, @PathVariable(required = true) page: Int?, request: HttpServletRequest, response: HttpServletResponse): String {
+        model["activePage"] = "test"
+        model["currentPage"] = page
+
+        return "test"
+    }
+
+    @Secured("ROLE_SUPER")
     @GetMapping("/sandbox")
     fun sandbox(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
         model["activePage"] = "sandbox"
