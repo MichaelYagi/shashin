@@ -131,6 +131,7 @@ class UITests: BaseSeleniumTests() {
         this.driver!!.get("http://localhost:$port/test")
 
         val currentPage = 6
+        val totalPages = 12
 
         val js: JavascriptExecutor = this.driver as JavascriptExecutor
 
@@ -140,7 +141,7 @@ class UITests: BaseSeleniumTests() {
         // Setup pagy options
         js.executeScript("const options = {\n" +
             "   currentPage: "+currentPage+",\n" +
-            "   totalPages: 12,\n" +
+            "   totalPages: "+totalPages+",\n" +
             "   truncate: true,\n" +
             "   innerWindow: 3,\n" +
             "   outerWindow: 1,\n" +
@@ -155,12 +156,12 @@ class UITests: BaseSeleniumTests() {
 
         // Count number of li elements
         var liCount = js.executeScript("return document.getElementById('pagination').getElementsByTagName('li').length;")
-        Assertions.assertTrue(liCount!!.toString().toInt() == 13)
+        Assertions.assertTrue(liCount!!.toString().toInt() == (totalPages+1))
 
         var notActiveClass = js.executeScript("return document.getElementById('pagination').firstChild.childNodes[3].className;")
         Assertions.assertTrue(notActiveClass == "page-item")
 
-        var activeClass = js.executeScript("return document.getElementById('pagination').firstChild.childNodes[6].className;")
+        var activeClass = js.executeScript("return document.getElementById('pagination').firstChild.childNodes[$currentPage].className;")
         Assertions.assertTrue(activeClass == "page-item active")
     }
 }
