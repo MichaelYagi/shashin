@@ -82,7 +82,7 @@ class TestController {
 
     @Secured("ROLE_SUPER")
     @GetMapping("/test/{page}")
-    fun test(model: Model, @PathVariable(required = true) page: Int?, request: HttpServletRequest, response: HttpServletResponse): String {
+    fun testPaged(model: Model, @PathVariable(required = true) page: Int?, request: HttpServletRequest, response: HttpServletResponse): String {
         model["activePage"] = "test"
         model["currentPage"] = page
 
