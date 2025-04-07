@@ -11,50 +11,51 @@
             <h2 class="mt-3">Test Page</h2>
             <img id="image" src="">
 
-<!--            Pagination test-->
-            <nav id="pagination1"><ul></ul></nav>
-            <nav id="pagination2"><ul></ul></nav>
-
-            <script type="text/javascript">
-                $(document).ready(function() {
-                    /*<![CDATA[*/
-                    const activePage = /*[[${activePage}]]*/ 'taken';
-                    const currentPage = /*[[${currentPage}]]*/ 0;
-                    /*]]>*/
-
-                    const options1 = {
-                        currentPage: currentPage,
-                        totalPages: 12,
-                        truncate: true,
-                        innerWindow: 3,
-                        outerWindow: 1,
-                        first: null,
-                        last: null,
-                        href: function (index) { //index starts from 0
-                            return '/' + activePage + '/' + index;
-                        }
-                    };
-
-                    $('#pagination1').pagy(options1);
-
-                    const options2 = {
-                        currentPage: currentPage,
-                        totalPages: 12,
-                        truncate: true,
-                        innerWindow: 2,
-                        href: function (index) { //index starts from 0
-                            return '/' + activePage + '/' + index;
-                        }
-                    };
-
-                    $('#pagination2').pagy(options2);
-                });
-            </script>
+            <!--Pagination test-->
+            <nav id="pagination1"><ul class="pagination"></ul></nav>
+            <nav id="pagination2"><ul class="pagination"></ul></nav>
 
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
             <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
         </main>
     </div>
+
+    <script th:inline="javascript" type="text/javascript">
+        $(document).ready(function() {
+            /*<![CDATA[*/
+            const activePage = /*[[${activePage}]]*/ 'test';
+            const currentPage = /*[[${currentPage}]]*/ 0;
+            /*]]>*/
+
+            const options1 = {
+                currentPage: currentPage,
+                totalPages: 12,
+                truncate: true,
+                innerWindow: 3,
+                outerWindow: 1,
+                first: null,
+                last: null,
+                href: function (index) { //index starts from 0
+                    return '/' + activePage + '/' + (index+1);
+                }
+            };
+
+            $('#pagination1').pagy(options1);
+
+            const options2 = {
+                currentPage: currentPage,
+                totalPages: 12,
+                truncate: true,
+                innerWindow: 2,
+                href: function (index) { //index starts from 0
+                    return '/' + activePage + '/' + (index+1);
+                }
+            };
+
+            $('#pagination2').pagy(options2);
+        });
+    </script>
+
 </div>
 
 </body>
