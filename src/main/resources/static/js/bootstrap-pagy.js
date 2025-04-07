@@ -19,8 +19,7 @@
  * ========================================================================
  * MY - 2025-04-05:
  *  Adapted to use BootStrap 5.3
- *  Use actual links instead of click listener
- *  Added property to create links based on page number
+ *  Added href option to create links based on page number
  */
 
 
