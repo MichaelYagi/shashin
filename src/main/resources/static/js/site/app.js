@@ -2274,8 +2274,8 @@
             currentPage: currentPage,
             totalPages: (totalPages+1),
             truncate: true,
-            href: function (page) {
-                return '/' + activePage + '/' + page + '/' + mediaTypeFilter;
+            href: function (index) { //index starts from 0
+                return '/' + activePage + '/' + index + '/' + mediaTypeFilter;
             }
         };
 
