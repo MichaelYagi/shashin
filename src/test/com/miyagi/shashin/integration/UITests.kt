@@ -163,5 +163,22 @@ class UITests: BaseSeleniumTests() {
 
         var activeClass = js.executeScript("return document.getElementById('pagination').firstChild.childNodes[$currentPage].className;")
         Assertions.assertTrue(activeClass == "page-item active")
+
+        js.executeScript("$($('<input type=\"text\" id=\"pagyPage\">')).appendTo('main');")
+        js.executeScript("$($('<nav></nav>').attr('id','pagination2').append($('<ul></ul>').addClass('pagination'))).appendTo('main');")
+        js.executeScript("const options = {\n" +
+                "   currentPage: "+currentPage+",\n" +
+                "   totalPages: "+totalPages+",\n" +
+                "   page: function (page) {\n" +
+                "       document.getElementById('pagyPage').value = page\n" +
+                "   }\n" +
+                "};" +
+                "$('#pagination2').pagy(options);"
+        )
+        js.executeScript("document.getElementById('pagination2').firstChild.childNodes[4].firstChild.click()")
+        activeClass = js.executeScript("return document.getElementById('pagination').firstChild.childNodes[$currentPage].className;")
+        Assertions.assertTrue(activeClass == "page-item active")
+        var pagyPage = js.executeScript("return document.getElementById('pagyPage').value")
+        Assertions.assertTrue(pagyPage?.toString()?.toInt() == currentPage)
     }
 }
