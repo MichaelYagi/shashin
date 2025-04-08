@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Test for Pagy
+- Added pagination pages to valid redirect pages
 
 ### Changed
 
