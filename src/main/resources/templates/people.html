@@ -26,13 +26,12 @@
                                     </th:block>
                                 </a>
                                 <div class="card-body" style="display: flex;flex-direction: column;">
-                                    <p class="card-text"><strong th:text="${person.name}"></strong></p>
                                     <p class="card-text">
                                         <span style="margin-top: auto;">
+                                            <a th:href="'/person/'+${person.id}" th:style="'text-decoration: none !important;' + ${currentUser.darkMode ? 'color: #FFFFFF;' : 'color: #000000;'}">
+                                                <strong th:text="${person.name}"></strong>
+                                            </a><br>
                                             <small class="text-muted" th:text="${person.tagCount + (person.tagCount == 1 ? ' item' : ' items')}"></small>
-<!--                                            <th:block th:if="${settings.facialDetection==true and #maps.containsKey(counts, person.id)}">-->
-<!--                                                <br><small class="text-muted" th:text="${counts.get(person.id) + (counts.get(person.id) == 1 ? ' match' : ' matches')}"></small>-->
-<!--                                            </th:block>-->
                                         </span>
                                     </p>
                                 </div>
