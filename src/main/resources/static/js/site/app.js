@@ -2286,31 +2286,33 @@
             shashin.initLightGallery(lgElement, lgConfig, '.mediaLink');
         }
 
-        const options = {
-            currentPage: currentPage,
-            totalPages: totalPages,
-            truncate: true,
-            href: function (index) { //index starts from 0
-                let link = '/' + activePage + '/' + index + '/' + mediaTypeFilter;
-                if (shareId !== "" && identifier > 0) {
-                    link = '/' + activePage + '/' + shareId + '/album/' + identifier + '/' + index;
-                } else if (identifier > 0) {
-                    link = '/' + activePage + '/' + identifier + '/' + index + '/' + mediaTypeFilter;
+        if (totalPages > 0) {
+            const options = {
+                currentPage: currentPage,
+                totalPages: totalPages,
+                truncate: true,
+                href: function (index) { //index starts from 0
+                    let link = '/' + activePage + '/' + index + '/' + mediaTypeFilter;
+                    if (shareId !== "" && identifier > 0) {
+                        link = '/' + activePage + '/' + shareId + '/album/' + identifier + '/' + index;
+                    } else if (identifier > 0) {
+                        link = '/' + activePage + '/' + identifier + '/' + index + '/' + mediaTypeFilter;
+                    }
+                    return link;
                 }
-                return link;
+            };
+
+            if (Util.isMobile()) {
+                options.innerWindow = 2;
+            } else {
+                options.innerWindow = 3;
+                options.outerWindow = 1;
+                options.first = null;
+                options.last = null;
             }
-        };
 
-        if (Util.isMobile()) {
-            options.innerWindow = 2;
-        } else {
-            options.innerWindow = 3;
-            options.outerWindow = 1;
-            options.first = null;
-            options.last = null;
+            $('#pagination').pagy(options);
         }
-
-        $('#pagination').pagy(options);
     };
 
     shashin.getMapSource = function (source) {
