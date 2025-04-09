@@ -2286,7 +2286,8 @@
             shashin.initLightGallery(lgElement, lgConfig, '.mediaLink');
         }
 
-        if (totalPages > 0) {
+        if (totalPages > 1) {
+
             const options = {
                 currentPage: currentPage,
                 totalPages: totalPages,
