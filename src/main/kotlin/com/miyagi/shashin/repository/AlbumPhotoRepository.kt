@@ -15,7 +15,7 @@ interface AlbumPhotoRepository : CrudRepository<AlbumPhoto?, Int?> {
     fun countByMetadataId(metadataId: String?): Int?
     fun countByAlbumId(albumId: Int?): Int?
     @Query("SELECT COUNT(DISTINCT ap.metadata_id) FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.type LIKE %:type%", nativeQuery = true)
-    fun countAlbumIdAndMediaType(@Param("albumId") albumId: Int): Int?
+    fun countAlbumIdAndMediaType(@Param("albumId") albumId: Int, @Param("type") type: String): Int?
     @Query("SELECT COUNT(DISTINCT ap.metadata_id) FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND ((m.lat IS NULL OR m.lat == \"\") OR (m.lng IS NULL OR m.lng == \"\"))", nativeQuery = true)
     fun countAlbumIdAndNoCoord(albumId: Int?): Int?
     @Query("SELECT COUNT(DISTINCT ap.metadata_id) FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.type NOT LIKE '%video%'", nativeQuery = true)

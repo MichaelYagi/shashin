@@ -1546,7 +1546,7 @@ class AlbumsController: BaseController() {
                         size
                     )
                 } else {
-                    response["totalPages"] = albumPhotoRepository.countAlbumIdAndMediaType(albumId)?.div(size)
+                    response["totalPages"] = albumPhotoRepository.countAlbumIdAndMediaType(albumId,mediaType)?.div(size)
 
                     albumPhotoRepository.findAllByAlbumIdAndMediaTypeAndOffsetAndLimit(
                         albumId,
