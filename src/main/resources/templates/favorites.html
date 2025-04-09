@@ -114,6 +114,8 @@
         const totalPages = /*[[${totalPages}]]*/ 0;
         /*]]>*/
 
+        shashin.updateSearchInput("Favorites");
+
         if (page === 0) {
             const section = $("section");
             let lastDate = "";
@@ -122,8 +124,6 @@
                 lastDate = lastSection.attr("id")
                 lastDate = dateFormat(lastDate.replace(/-/g, "/"), "yyyy-m-d");
             }
-
-            shashin.updateSearchInput("Favorites");
 
             const http = new Http(activePage);
             http.ajax("get", "/favorites/metadata/list/0").then(function (data) {
