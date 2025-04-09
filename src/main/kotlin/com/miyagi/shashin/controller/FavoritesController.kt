@@ -28,6 +28,7 @@ import jakarta.transaction.Transactional
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.iterator
+import kotlin.math.ceil
 
 @Suppress("UNCHECKED_CAST")
 @Controller
@@ -156,11 +157,11 @@ class FavoritesController: BaseController() {
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
             val favoriteList = if (mediaType == "all") {
-                response["totalPages"] = favoriteRepository.countAllByUserId(currentUserObj.getId())?.div(size)
+                response["totalPages"] = ceil((favoriteRepository.countAllByUserId(currentUserObj.getId())!!.toDouble()) / size.toDouble()).toInt()
 
                 favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(), (page * size), size)
             } else if (mediaType == "nolatlng") {
-                response["totalPages"] = favoriteRepository.countAllByUserIdAndNoCoord(currentUserObj.getId())?.div(size)
+                response["totalPages"] = ceil((favoriteRepository.countAllByUserIdAndNoCoord(currentUserObj.getId())!!.toDouble()) / size.toDouble()).toInt()
 
                 favoriteRepository.findAllByUserIdAndNoCoordAndOffsetAndLimit(
                     currentUserObj.getId(),
@@ -168,7 +169,7 @@ class FavoritesController: BaseController() {
                     size
                 )
             } else {
-                response["totalPages"] = favoriteRepository.countAllByUserIdAndMediaType(currentUserObj.getId(), mediaType)?.div(size)
+                response["totalPages"] = ceil((favoriteRepository.countAllByUserIdAndMediaType(currentUserObj.getId(), mediaType)!!.toDouble()) / size.toDouble()).toInt()
 
                 favoriteRepository.findAllByUserIdAndMediaTypeAndOffsetAndLimit(
                     currentUserObj.getId(),

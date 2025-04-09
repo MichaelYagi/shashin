@@ -41,6 +41,7 @@ import jakarta.transaction.Transactional
 import org.springframework.web.multipart.MultipartFile
 import kotlin.collections.count
 import kotlin.io.path.isDirectory
+import kotlin.math.ceil
 
 
 @Suppress("UNCHECKED_CAST")
@@ -1214,7 +1215,7 @@ class AlbumsController: BaseController() {
 
                 if (albumMetadataList.isNotEmpty()) {
                     val album = albumRepository.findById(albumId)
-                    response["totalPages"] = albumTotalCount?.div(size)
+                    response["totalPages"] = ceil((albumTotalCount!!.toDouble()) / size.toDouble()).toInt()
                     response["message"] = ""
                     response["album"] = album.get()
                     response["albumMetadataList"] = albumMetadataList
@@ -1559,7 +1560,7 @@ class AlbumsController: BaseController() {
             if ((currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") || (userAlbums != null && currentUserObj.getAuthority()!! == "ROLE_USER")) {
                 // Get album photos
                 val albumPhotos: MutableIterable<AlbumPhoto?>? = if (mediaType == "all") {
-                    response["totalPages"] = albumPhotoRepository.countByAlbumId(albumId)?.div(size)
+                    response["totalPages"] = ceil((albumPhotoRepository.countByAlbumId(albumId)!!.toDouble()) / size.toDouble()).toInt()
 
                     albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(
                         albumId,
@@ -1567,7 +1568,7 @@ class AlbumsController: BaseController() {
                         size
                     )
                 } else if (mediaType == "nolatlng") {
-                    response["totalPages"] = albumPhotoRepository.countAlbumIdAndNoCoord(albumId)?.div(size)
+                    response["totalPages"] = ceil((albumPhotoRepository.countAlbumIdAndNoCoord(albumId)!!.toDouble()) / size.toDouble()).toInt()
 
                     albumPhotoRepository.findAllByAlbumIdAndNoCoordAndOffsetAndLimit(
                         albumId,
@@ -1575,7 +1576,7 @@ class AlbumsController: BaseController() {
                         size
                     )
                 } else {
-                    response["totalPages"] = albumPhotoRepository.countAlbumIdAndMediaType(albumId,mediaType)?.div(size)
+                    response["totalPages"] = ceil((albumPhotoRepository.countAlbumIdAndMediaType(albumId,mediaType)!!.toDouble()) / size.toDouble()).toInt()
 
                     albumPhotoRepository.findAllByAlbumIdAndMediaTypeAndOffsetAndLimit(
                         albumId,
