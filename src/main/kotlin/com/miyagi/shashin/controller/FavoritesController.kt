@@ -25,6 +25,9 @@ import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.util.*
 import jakarta.transaction.Transactional
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.iterator
 
 @Suppress("UNCHECKED_CAST")
 @Controller
@@ -55,6 +58,7 @@ class FavoritesController: BaseController() {
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
+        model["pageParam"] = 0
 
         val response = buildFavorites(model,0,model.getAttribute("queryLimit").toString().toInt(),mediaType)
         for ((k, v) in response) {
@@ -112,6 +116,24 @@ class FavoritesController: BaseController() {
         return mapper.writeValueAsString(buildFavorites(model,page,size.orElse(model.getAttribute("queryLimit").toString().toInt()),mediaType))
     }
 
+    @RequestMapping(value = ["/favorites/{page}/{mediaType}"], method = [RequestMethod.GET])
+    fun getFavoritesPage(model: Model,@PathVariable(required = true) page: Int,@PathVariable(required = true) mediaType: String): String {
+        val module = "favorites"
+
+        val response = buildFavorites(model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType)
+        for ((k, v) in response) {
+            model[k] = v!!
+        }
+
+        getAllAttributeData(model)
+
+        model["currentPage"] = (page+1)
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
     private fun buildFavorites(model: Model, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt(), mediaTypeFilter: String?): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
@@ -121,6 +143,7 @@ class FavoritesController: BaseController() {
         response["keywordMap"] = mutableMapOf<String, String>()
         response["page"] = page
         response["size"] = size
+        response["totalPages"] = 0
 
         var mediaType = mediaTypeFilter
 
@@ -133,17 +156,23 @@ class FavoritesController: BaseController() {
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
             val favoriteList = if (mediaType == "all") {
+                response["totalPages"] = favoriteRepository.countAllByUserId(currentUserObj.getId())?.div(size)
+
                 favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(), (page * size), size)
             } else if (mediaType == "nolatlng") {
+                response["totalPages"] = favoriteRepository.countAllByUserIdAndNoCoord(currentUserObj.getId())?.div(size)
+
                 favoriteRepository.findAllByUserIdAndNoCoordAndOffsetAndLimit(
                     currentUserObj.getId(),
                     (page * size),
                     size
                 )
             } else {
+                response["totalPages"] = favoriteRepository.countAllByUserIdAndMediaType(currentUserObj.getId(), mediaType)?.div(size)
+
                 favoriteRepository.findAllByUserIdAndMediaTypeAndOffsetAndLimit(
                     currentUserObj.getId(),
-                    mediaType!!,
+                    mediaType,
                     (page * size),
                     size
                 )

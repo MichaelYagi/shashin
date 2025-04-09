@@ -2270,7 +2270,7 @@
         }
 
         let lgElement = 'scroll-gallery';
-        if (activePage === "album" || activePage === "share") {
+        if (activePage === "album" || activePage === "share" || activePage === "favorites") {
             lgElement = 'infinite-scroll-gallery';
         }
 
