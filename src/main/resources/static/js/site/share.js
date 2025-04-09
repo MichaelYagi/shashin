@@ -45,7 +45,7 @@ class ShareAlbum {
 
         if (false === this.eol) {
             $("#spinner").css("display", "block");
-            data = await this.http.ajax("get", "/share/" + self.getShareLink() + "/album/" + albumId + "/" + nextPage);
+            data = await this.http.ajax("get", "/share/" + self.getShareLink() + "/album/" + albumId + "/page/" + nextPage);
         }
 
         const mediaContentList = [];

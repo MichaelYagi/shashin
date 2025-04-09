@@ -993,9 +993,11 @@ class AlbumsController: BaseController() {
                 }
             }
 
+            model["pageParam"] = 0
             model["album"] = response["album"]!!
             model["albumMetadataList"] = response["albumMetadataList"]!!
             model["albumMetadataSize"] = response["albumMetadataSize"]!!
+            model["totalPages"] = response["totalPages"]!!
             model["shareLink"] = response["shareLink"]!!
             model["message"] = response["message"]!!
             model["msg"] = response["msg"]!!
@@ -1030,7 +1032,7 @@ class AlbumsController: BaseController() {
             summary = "Get paged results for shared album content.",
             description = "<strong>Get paged results for shared album content.</strong><br>" +
                     "<pre><code>" +
-                    "curl -X GET \"http://127.0.0.1:6624/api/v1/share/{shareLink}/album/{albumId}/{page}\" \\\n" +
+                    "curl -X GET \"http://127.0.0.1:6624/api/v1/share/{shareLink}/album/{albumId}/page/{page}\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
@@ -1071,12 +1073,30 @@ class AlbumsController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/share/{shareLink}/album/{albumId}/{page}","/api/v1/share/{shareLink}/album/{albumId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/share/{shareLink}/album/{albumId}/page/{page}", "/api/v1/share/{shareLink}/album/{albumId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedAnonymousShareAlbum(model: Model, @PathVariable shareLink: String, @PathVariable albumId: Int, @PathVariable page: Int): String? {
         val queryLimit = model.getAttribute("queryLimit").toString().toInt()
         val response = buildShareData(albumId,StringEscapeUtils.escapeHtml4(shareLink), queryLimit, page)
         return mapper.writeValueAsString(response)
+    }
+
+    @RequestMapping(value = ["/share/{shareLink}/album/{albumId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    fun getPaginationAnonymousShareAlbum(model: Model, @PathVariable shareLink: String, @PathVariable albumId: Int, @PathVariable page: Int): String? {
+        val queryLimit = model.getAttribute("queryLimit").toString().toInt()
+        val response = buildShareData(albumId,StringEscapeUtils.escapeHtml4(shareLink), queryLimit, page)
+
+        for ((k, v) in response) {
+            model[k] = v!!
+        }
+
+        val module = "share"
+
+        model["currentPage"] = (page+1)
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
     }
 
     @RouterOperation(
@@ -1140,6 +1160,7 @@ class AlbumsController: BaseController() {
         val tempAlbum = Album()
         tempAlbum.setId(0)
         response["album"] = tempAlbum
+        response["totalPages"] = 0
         response["albumMetadataList"] = mutableListOf<Metadata>()
         response["albumMetadataSize"] = 0
         response["shareLink"] = ""
@@ -1151,6 +1172,7 @@ class AlbumsController: BaseController() {
         val photoObj = albumRepository.findById(albumId)
         if (photoObj.isPresent && photoObj.get().getShareUrl() == shareLink) {
             val resultPage = page*size
+            val albumTotalCount = albumPhotoRepository.countAlbumId(albumId)
             val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId, resultPage, size)
             val albumMetadataList = ArrayList<Metadata>()
             if (albumPhotos != null) {
@@ -1163,6 +1185,7 @@ class AlbumsController: BaseController() {
 
                 if (albumMetadataList.isNotEmpty()) {
                     val album = albumRepository.findById(albumId)
+                    response["totalPages"] = albumTotalCount?.div(size)
                     response["message"] = ""
                     response["album"] = album.get()
                     response["albumMetadataList"] = albumMetadataList
@@ -1176,7 +1199,6 @@ class AlbumsController: BaseController() {
 
         return response
     }
-
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/album/metadata/list/{albumId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
@@ -1320,8 +1342,27 @@ class AlbumsController: BaseController() {
         getAllAttributeData(model)
 
         model["sharedAlbumUsers"] = userRepository.findAllUserBySharedAlbum(albumId)
+        model["pageParam"] = 0
 
         return model.getAttribute("activePage").toString()
+    }
+
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
+    @RequestMapping(value = ["/album/{albumId}/{page}/{mediaType}"], method = [RequestMethod.GET])
+    fun getAlbumsPaged(model: Model,@PathVariable(required = true) albumId: Int,@PathVariable(required = true) page: Int,@PathVariable(required = true) mediaType: String): String {
+        val response = buildAlbum(model,albumId,page,model.getAttribute("queryLimit").toString().toInt(),mediaType)
+
+        for ((k, v) in response) {
+            model[k] = v!!
+        }
+
+        val module = response["activePage"].toString()
+
+        model["currentPage"] = (page+1)
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
     }
 
     @RouterOperation(
@@ -1468,6 +1509,7 @@ class AlbumsController: BaseController() {
         response["keywordMap"] = mutableMapOf<String, String>()
         response["status"] = "noop"
         response["canEdit"] = (model.getAttribute("authority") == adminRole || model.getAttribute("authority") == superRole)
+        response["totalPages"] = 0
 
         var mediaType = mediaTypeFilter
 
@@ -1486,24 +1528,29 @@ class AlbumsController: BaseController() {
             }
 
             if ((currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") || (userAlbums != null && currentUserObj.getAuthority()!! == "ROLE_USER")) {
-
                 // Get album photos
                 val albumPhotos: MutableIterable<AlbumPhoto?>? = if (mediaType == "all") {
+                    response["totalPages"] = albumPhotoRepository.countByAlbumId(albumId)?.div(size)
+
                     albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(
                         albumId,
                         page * size,
                         size
                     )
                 } else if (mediaType == "nolatlng") {
+                    response["totalPages"] = albumPhotoRepository.countAlbumIdAndNoCoord(albumId)?.div(size)
+
                     albumPhotoRepository.findAllByAlbumIdAndNoCoordAndOffsetAndLimit(
                         albumId,
                         page * size,
                         size
                     )
                 } else {
+                    response["totalPages"] = albumPhotoRepository.countAlbumIdAndMediaType(albumId)?.div(size)
+
                     albumPhotoRepository.findAllByAlbumIdAndMediaTypeAndOffsetAndLimit(
                         albumId,
-                        mediaType!!,
+                        mediaType,
                         page * size,
                         size
                     )

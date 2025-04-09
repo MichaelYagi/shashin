@@ -10,10 +10,10 @@
                 <span class="display-6" th:utext="${'&lt;span id=&quot;albumNameTitle&quot;&gt;&lt;strong&gt;'+album.name + '&lt;/strong&gt;&lt;/span&gt;'}"></span>
             </div>
             <div class="flex-grow-1 d-flex align-items-center"></div>
-            <span style="font-size: 1rem;display: none;background: none;border: none;" th:class="${darkMode ? 'darkmodeIcons' : 'lightmodeIcons'}" id="albumNumberSelected"></span>&nbsp;&nbsp;&nbsp;
-            <button th:class="'bi-x-circle '+${darkMode ? 'darkmodeIcons' : 'lightmodeIcons'}" style="font-size: 1.5rem;display: none;background: none;border: none;" title="Cancel multi select" id="clearMultiSelect"></button>&nbsp;
+            <span style="font-size: 1rem;display: none;background: none;border: none;" th:class="${(darkMode != null && darkMode == true) ? 'darkmodeIcons' : 'lightmodeIcons'}" id="albumNumberSelected"></span>&nbsp;&nbsp;&nbsp;
+            <button th:class="'bi-x-circle '+${(darkMode != null && darkMode == true) ? 'darkmodeIcons' : 'lightmodeIcons'}" style="font-size: 1.5rem;display: none;background: none;border: none;" title="Cancel multi select" id="clearMultiSelect"></button>&nbsp;
             <form id="downloadWrapper" method="post" th:action="${'/download/share/' + shareLink + '/album/' + albumId}" style="display: inline-block;white-space: nowrap;">
-                <button th:id="${'download' + albumId}" th:class="'bi-download '+${darkMode ? 'darkmodeIcons' : 'lightmodeIcons'}" style="font-size: 1.5rem;background: none;border: none;" type="submit" name="download" th:value="${albumId}" title="Download all photos"></button>
+                <button th:id="${'download' + albumId}" th:class="'bi-download '+${(darkMode != null && darkMode == true) ? 'darkmodeIcons' : 'lightmodeIcons'}" style="font-size: 1.5rem;background: none;border: none;" type="submit" name="download" th:value="${albumId}" title="Download all photos"></button>
             </form>
         </div>
     </header>
@@ -33,6 +33,13 @@
                     <input id="albumId" type="hidden" th:value="${album.id}">
                     <input id="albumName" type="hidden" th:value="${album.name}">
                     <input id="shareLink" type="hidden" th:value="${shareLink}">
+
+                    <th:block th:if="${pageParam == null}">
+                        <div><a th:href="${'/share/' + shareLink + '/album/' + album.id}" class="ms-1" style="text-decoration:none;">Go to default view</a></div>
+                    </th:block>
+                    <th:block th:if="${pageParam != null}">
+                        <div><a th:href="${'/share/' + shareLink + '/album/' + album.id + '/0'}" class="ms-1" style="text-decoration:none;">Go to paged view</a></div>
+                    </th:block>
 
                     <div class="row image-group-padding">
                         <th:block th:each="metadata, iterStat: ${albumMetadataList}">
@@ -71,6 +78,7 @@
                             <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                                 /*<![CDATA[*/
                                 shashin.setPhotoOverlays({id:[[${metadata.id}]],lat:[[${metadata.lat}]],lng:[[${metadata.lng}]],year:[[${metadata.year}]],month:[[${metadata.month}]],day:[[${metadata.day}]],fileName:[[${metadata.fileName}]],thumbnailUrlSmall:[[${metadata.thumbnailUrlSmall}]],type:[[${metadata.type}]]}, /*[[${activePage}]]*/'share');
+                                $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000");
                                 /*]]>*/
                             </script>
 
@@ -90,6 +98,10 @@
                     <span class="appendAlbumPhotos" style="width:0;height:0;padding:0;display:none;">EOL</span>
                 </th:block>
             </div>
+
+            <th:block th:if="${pageParam == null and albumMetadataSize > 0 and currentPage > 0}">
+                <nav id="pagination"><ul class="pagination flex-wrap justify-content-center mt-3"></ul></nav>
+            </th:block>
 
             <!-- Back to top button -->
             <button type="button" class="btn btn-primary btn-floating btn-lg" id="btn-back-to-top">
@@ -116,9 +128,12 @@
         const activePage = /*[[${activePage}]]*/ 'share';
         const albumId = /*[[${album.id}]]*/ 0;
         const albumListSize = /*[[${albumMetadataSize}]]*/ 0;
+        const page = /*[[${pageParam}]]*/ -1;
+        const currentPage = /*[[${currentPage}]]*/ 0;
+        const totalPages = /*[[${totalPages}]]*/ 0;
         /*]]>*/
 
-        if (albumListSize > 0) {
+        if (albumListSize > 0 && page === 0) {
             const section = $("section");
             let lastDate = "";
             if (section.length > 0) {
@@ -128,7 +143,7 @@
             }
 
             const http = new Http(activePage);
-            http.ajax("get", "/share/" + shareLink + "/album/" + albumId + "/0").then(function (data) {
+            http.ajax("get", "/share/" + shareLink + "/album/" + albumId + "/page/0").then(function (data) {
                 if (data.hasOwnProperty("albumMetadataList") === true) {
                     const albumMetadataList = data["albumMetadataList"];
                     const shareAlbumInstance = new ShareAlbum(shareLink, activePage, albumId, albumMetadataList, lastDate);
@@ -136,6 +151,9 @@
                     // Util.checkErrorImage();
                 }
             });
+        } else {
+            Util.scrollToTopListener("#container");
+            shashin.createPagination(currentPage,totalPages,activePage,null,albumId,shareLink);
         }
     });
 </script>
