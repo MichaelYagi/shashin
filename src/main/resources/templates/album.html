@@ -204,6 +204,8 @@
         const totalPages = /*[[${totalPages}]]*/ 0;
         /*]]>*/
 
+        shashin.updateSearchInput(albumName);
+
         if (page === 0) {
             const section = $("section");
             let lastDate = "";
@@ -212,8 +214,6 @@
                 lastDate = lastSection.attr("id")
                 lastDate = dateFormat(lastDate.replace(/-/g, "/"), "yyyy-m-d");
             }
-
-            shashin.updateSearchInput(albumName);
 
             const http = new Http(activePage);
             http.ajax("get", "/album/metadata/list/" + albumId + "/0").then(function (data) {
