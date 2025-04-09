@@ -58,6 +58,7 @@ class MultiSecurityConfig {
             "person\\/(\\d+)",
             "matches\\/(\\d+)",
             "favorites",
+            "favorites\\/(\\d+)\\/.*",
             "map",
             "map\\?.*",
             "notifications",
