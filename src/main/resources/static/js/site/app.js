@@ -2275,8 +2275,14 @@
         }
 
         if ($("#"+lgElement).length === 0) {
-            shashin.printMessageToConsole("lightGallery element DNE",{tag:"pagination"});
-        } else {
+            shashin.printMessageToConsole("lightGallery element '"+lgElement+"' DNE",{tag:"pagination"});
+        }
+
+        if ($('.mediaLink').length === 0) {
+            shashin.printMessageToConsole("media element '.mediaLink' DNE",{tag:"pagination"});
+        }
+
+        if ($("#"+lgElement).length > 0 && $('.mediaLink').length > 0) {
             shashin.initLightGallery(lgElement, lgConfig, '.mediaLink');
         }
 
@@ -2303,7 +2309,7 @@
             options.first = null;
             options.last = null;
         }
-        
+
         $('#pagination').pagy(options);
     };
 
