@@ -345,7 +345,7 @@ class AlbumsController: BaseController() {
                 for (userAlbum in userAlbums) {
                     // Cleanup if DNE
 
-                    var albumPhotoCount = albumPhotoRepository.countByAlbumId(userAlbum?.getAlbumId())
+                    albumPhotoCount = albumPhotoRepository.countByAlbumId(userAlbum?.getAlbumId())
                     val album = albumRepository.findAlbumById(userAlbum?.getAlbumId())
 
                     if (albumPhotoCount != null && album != null && albumPhotoCount == 0 && album.getId() > 0 && userAlbum != null) {
