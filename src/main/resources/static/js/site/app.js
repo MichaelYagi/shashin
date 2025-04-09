@@ -2288,7 +2288,7 @@
 
         const options = {
             currentPage: currentPage,
-            totalPages: (totalPages+1),
+            totalPages: totalPages,
             truncate: true,
             href: function (index) { //index starts from 0
                 let link = '/' + activePage + '/' + index + '/' + mediaTypeFilter;

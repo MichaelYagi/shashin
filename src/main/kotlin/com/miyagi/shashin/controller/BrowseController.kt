@@ -25,6 +25,7 @@ import org.springframework.http.MediaType
 import org.springframework.web.multipart.MultipartFile
 import kotlin.collections.HashMap
 import kotlin.collections.mutableListOf
+import kotlin.math.ceil
 
 @Controller
 class BrowseController: BaseController() {
@@ -605,7 +606,7 @@ class BrowseController: BaseController() {
 
             var metadataList = mutableListOf<Metadata>()
             if (mediaType == "all") {
-                response["totalPages"] = metadataRepository.countAllByHiddenIsFalse()/size
+                response["totalPages"] = ceil((metadataRepository.countAllByHiddenIsFalse().toDouble()) / size.toDouble()).toInt()
 
                 when (module) {
                     "recent" -> {
@@ -634,7 +635,7 @@ class BrowseController: BaseController() {
                     }
                 }
             } else if (mediaType == "nolatlng") {
-                response["totalPages"] = metadataRepository.countByNoCoordAndOffsetAndLimit()/size
+                response["totalPages"] = ceil((metadataRepository.countByNoCoordAndOffsetAndLimit().toDouble()) / size.toDouble()).toInt()
 
                 when (module) {
                     "recent" -> {
@@ -663,7 +664,7 @@ class BrowseController: BaseController() {
                     }
                 }
             } else {
-                response["totalPages"] = metadataRepository.countByMediaTypeAndOffsetAndLimit(mediaType)/size
+                response["totalPages"] = ceil((metadataRepository.countByMediaTypeAndOffsetAndLimit(mediaType).toDouble()) / size.toDouble()).toInt()
 
                 when (module) {
                     "recent" -> {
