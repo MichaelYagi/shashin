@@ -2253,7 +2253,7 @@
         return configs;
     };
 
-    shashin.createPagination = function(currentPage,totalPages,activePage,mediaTypeFilter) {
+    shashin.createPagination = function(currentPage,totalPages,activePage,mediaTypeFilter,identifier=0,shareId="") {
         const lgConfig = {
             dynamic: true,
             plugins: []
@@ -2268,14 +2268,26 @@
             lgConfig.videoThumbnail = true;
             lgConfig.videoThumbnailFun = shashin.processVideoThumbnail;
         }
-        shashin.initLightGallery('scroll-gallery', lgConfig, '.mediaLink');
+
+        let lgElement = 'scroll-gallery';
+        if (activePage === "album" || activePage === "share") {
+            lgElement = 'infinite-scroll-gallery';
+        }
+
+        shashin.initLightGallery(lgElement, lgConfig, '.mediaLink');
 
         const options = {
             currentPage: currentPage,
             totalPages: (totalPages+1),
             truncate: true,
             href: function (index) { //index starts from 0
-                return '/' + activePage + '/' + index + '/' + mediaTypeFilter;
+                let link = '/' + activePage + '/' + index + '/' + mediaTypeFilter;
+                if (shareId !== "" && identifier > 0) {
+                    link = '/' + activePage + '/' + shareId + '/album/' + identifier + '/' + index;
+                } else if (identifier > 0) {
+                    link = '/' + activePage + '/' + identifier + '/' + index + '/' + mediaTypeFilter;
+                }
+                return link;
             }
         };
 

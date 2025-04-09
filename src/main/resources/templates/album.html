@@ -33,80 +33,96 @@
                 </div>
 
                 <div id="infinite-scroll-gallery">
-                    <div class="row image-group-padding">
-                        <th:block th:each="metadata, iterStat: ${albumMetadataList}">
-
-                            <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and albumMetadataList[iterStat.index-1].year==metadata.year and albumMetadataList[iterStat.index-1].month==metadata.month and albumMetadataList[iterStat.index-1].day==metadata.day}">
-                                <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                                    <section class="dateSection" th:id="${metadata.year+'-'+metadata.month+'-'+metadata.day}"><p><strong th:text="${#strings.replace(#dates.format(#dates.create(#numbers.formatInteger(metadata.year,10),#numbers.formatInteger(metadata.month,10),#numbers.formatInteger(metadata.day,10)), 'EEE, MMM d, yyyy'),'.','')}"></strong></p><div th:id="'dateBody'+${metadata.year+'-'+metadata.month+'-'+metadata.day}" class="row" style="margin-left: -1px;">
-                                </th:block>
+                    <th:block th:if="${not #lists.isEmpty(albumMetadataList)}">
+                        <th:block th:if="${agentName == 'Safari'}">
+                            <th:block th:if="${pageParam == null}">
+                                <div><a th:href="${'/album/' + album.id + '/' + ((mediaTypeFilter == 'all') ? '' : '/' + mediaTypeFilter)}" class="ms-1" style="text-decoration:none;">Go to default view</a></div>
                             </th:block>
-
-                            <div th:id="${'photoThumbnailContainer'+metadata.id}" class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
-                                <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
-
-                                <img loading="lazy" draggable="false" th:data-smallthumb="'/api/v1/thumbnails/225/'+${metadata.id}" th:data-xsmallthumb="${metadata.thumbnailUrlExtraSmall==null?'':'/api/v1/thumbnails/112/'+metadata.id}" th:src="'/api/v1/thumbnails/225/'+${metadata.id}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" th:height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
-                                <input type="hidden" th:name="'filename'+${metadata.id}" th:id="'filename'+${metadata.id}" th:value="${metadata.fileName}">
-                                <input type="hidden" th:name="'thumbnailCentered'+${metadata.id}" th:id="'thumbnailCentered'+${metadata.id}" th:value="'/api/v1/thumbnails/centered/'+${metadata.id}">
-
-                                <div th:replace="~{fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight},${metadata.expectedExtension},false)}"></div>
-
-                                <div th:replace="~{fragments/topleftoverlay :: topleftoverlay(${metadata.id})}"></div>
-
-                                <th:block th:if="${authority == 'ROLE_ADMIN' || authority == 'ROLE_SUPER'}">
-                                    <div th:replace="~{fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, null, 'albumModalEdit', 'albumSettings.openAlbumModal', 'overlayCommentText')}"></div>
-                                </th:block>
-
-                                <th:block th:if="${authority == 'ROLE_USER'}">
-                                    <div th:replace="~{fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, null, null, null, null)}"></div>
-                                </th:block>
-
-                                <div class="thumbnail-br" th:id="'tnbr'+${metadata.id}">
-                                    <a href="#" data-bs-toggle="modal" th:data-bs-target="'#propalbumphotocomment'+${metadata.id}" class="overlayCommentIconBackground overlayCommentText">
-                                        <span th:id="'brcommentcount'+${metadata.id}"><th:block th:text="${albumPhotoCommentsMap.containsKey(metadata.id) ? #lists.size(albumPhotoCommentsMap.get(metadata.id)) : '0'}"></th:block></span> <span th:id="'bricon'+${metadata.id}" class="bi-chat-square position-relative overlayCommentIcon">
-                                        </span>
-                                    </a>
-                                    <br>
-                                    <a href="#" th:id="'favorite'+${metadata.id}" class="text-decoration-none">
-                                        <span class="overlayIconBackground">
-                                            <span th:id="'briconcount'+${metadata.id}" th:text="${#maps.containsKey(favorites, metadata.id) ? favorites.get(metadata.id).get('count') : '0'}"></span>&nbsp;<span th:id="'brfavoriteicon'+${metadata.id}" th:class="${#maps.containsKey(favorites, metadata.id) and favorites.get(metadata.id).get('favorite')} ? 'bi-suit-heart-fill overlayIcon' : 'bi-suit-heart overlayIcon'"></span>
-                                        </span>
-                                    </a>
-                                </div>
-
-                                <div th:replace="~{fragments/centeredoverlay :: centeredoverlay(${metadata},${activePage},${currentUser},'shashin.openGallery',${iterStat.index})}"></div>
-
-                            </div>
-
-                            <span th:id="'albummodal'+${metadata.id}" style="width:0;height:0;padding:0"></span>
-
-                            <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
-                                /*<![CDATA[*/
-                                shashin.setPhotoOverlays({id:[[${metadata.id}]],lat:[[${metadata.lat}]],lng:[[${metadata.lng}]],year:[[${metadata.year}]],month:[[${metadata.month}]],day:[[${metadata.day}]],fileName:[[${metadata.fileName}]],thumbnailUrlSmall:[[${metadata.thumbnailUrlSmall}]],type:[[${metadata.type}]]}, /*[[${activePage}]]*/'album');
-                                albumModal.renderAlbumCommentsModal({id:[[${album.id}]]},{id:[[${metadata.id}]],fileName:[[${metadata.fileName}]]},/*[[${userMap}]]*/{},/*[[${albumPhotoCommentsMap}]]*/{},/*[[${canEdit}]]*/false)
-                                albumSettings.activateAlbumListeners({id:[[${metadata.id}]]})
-                                $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000");
-                                $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").on("click", function(e) {
-                                    e.preventDefault();
-                                    shashin.openEditMetadataModal(/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000");
-                                });
-                                /*]]>*/
-                            </script>
-
-                            <th:block th:if="${iterStat.count > 0 and !iterStat.last and metadata.year!=null and (albumMetadataList[iterStat.index+1].year+'-'+albumMetadataList[iterStat.index+1].month+'-'+albumMetadataList[iterStat.index+1].day)!=metadata.year+'-'+metadata.month+'-'+metadata.day}">
-                                <th:block th:remove="tag" th:utext="'&lt;/div&gt;&lt;/section&gt;'"></th:block>
-                                <span class="appendAlbumPhotos" style="width:0;height:0;padding:0"></span>
-                            </th:block>
-                            <th:block th:if="${iterStat.last and metadata.year!=null}">
-                                <th:block th:remove="tag" th:utext="'&lt;/div&gt;&lt;/section&gt;'"></th:block>
-                                <span class="appendAlbumPhotos" style="width:0;height:0;padding:0"></span>
+                            <th:block th:if="${pageParam != null}">
+                                <div><a th:href="${'/album/' + album.id + '/0/' + mediaTypeFilter}" class="ms-1" style="text-decoration:none;">Go to paged view</a></div>
                             </th:block>
                         </th:block>
-                    </div>
+
+                        <div class="row image-group-padding">
+                            <th:block th:each="metadata, iterStat: ${albumMetadataList}">
+
+                                <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and albumMetadataList[iterStat.index-1].year==metadata.year and albumMetadataList[iterStat.index-1].month==metadata.month and albumMetadataList[iterStat.index-1].day==metadata.day}">
+                                    <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                        <section class="dateSection" th:id="${metadata.year+'-'+metadata.month+'-'+metadata.day}"><p><strong th:text="${#strings.replace(#dates.format(#dates.create(#numbers.formatInteger(metadata.year,10),#numbers.formatInteger(metadata.month,10),#numbers.formatInteger(metadata.day,10)), 'EEE, MMM d, yyyy'),'.','')}"></strong></p><div th:id="'dateBody'+${metadata.year+'-'+metadata.month+'-'+metadata.day}" class="row" style="margin-left: -1px;">
+                                    </th:block>
+                                </th:block>
+
+                                <div th:id="${'photoThumbnailContainer'+metadata.id}" class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
+                                    <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
+
+                                    <img loading="lazy" draggable="false" th:data-smallthumb="'/api/v1/thumbnails/225/'+${metadata.id}" th:data-xsmallthumb="${metadata.thumbnailUrlExtraSmall==null?'':'/api/v1/thumbnails/112/'+metadata.id}" th:src="'/api/v1/thumbnails/225/'+${metadata.id}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" th:height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
+                                    <input type="hidden" th:name="'filename'+${metadata.id}" th:id="'filename'+${metadata.id}" th:value="${metadata.fileName}">
+                                    <input type="hidden" th:name="'thumbnailCentered'+${metadata.id}" th:id="'thumbnailCentered'+${metadata.id}" th:value="'/api/v1/thumbnails/centered/'+${metadata.id}">
+
+                                    <div th:replace="~{fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight},${metadata.expectedExtension},false)}"></div>
+
+                                    <div th:replace="~{fragments/topleftoverlay :: topleftoverlay(${metadata.id})}"></div>
+
+                                    <th:block th:if="${authority == 'ROLE_ADMIN' || authority == 'ROLE_SUPER'}">
+                                        <div th:replace="~{fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, null, 'albumModalEdit', 'albumSettings.openAlbumModal', 'overlayCommentText')}"></div>
+                                    </th:block>
+
+                                    <th:block th:if="${authority == 'ROLE_USER'}">
+                                        <div th:replace="~{fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, null, null, null, null)}"></div>
+                                    </th:block>
+
+                                    <div class="thumbnail-br" th:id="'tnbr'+${metadata.id}">
+                                        <a href="#" data-bs-toggle="modal" th:data-bs-target="'#propalbumphotocomment'+${metadata.id}" class="overlayCommentIconBackground overlayCommentText">
+                                            <span th:id="'brcommentcount'+${metadata.id}"><th:block th:text="${albumPhotoCommentsMap.containsKey(metadata.id) ? #lists.size(albumPhotoCommentsMap.get(metadata.id)) : '0'}"></th:block></span> <span th:id="'bricon'+${metadata.id}" class="bi-chat-square position-relative overlayCommentIcon">
+                                            </span>
+                                        </a>
+                                        <br>
+                                        <a href="#" th:id="'favorite'+${metadata.id}" class="text-decoration-none">
+                                            <span class="overlayIconBackground">
+                                                <span th:id="'briconcount'+${metadata.id}" th:text="${#maps.containsKey(favorites, metadata.id) ? favorites.get(metadata.id).get('count') : '0'}"></span>&nbsp;<span th:id="'brfavoriteicon'+${metadata.id}" th:class="${#maps.containsKey(favorites, metadata.id) and favorites.get(metadata.id).get('favorite')} ? 'bi-suit-heart-fill overlayIcon' : 'bi-suit-heart overlayIcon'"></span>
+                                            </span>
+                                        </a>
+                                    </div>
+
+                                    <div th:replace="~{fragments/centeredoverlay :: centeredoverlay(${metadata},${activePage},${currentUser},'shashin.openGallery',${iterStat.index})}"></div>
+
+                                </div>
+
+                                <span th:id="'albummodal'+${metadata.id}" style="width:0;height:0;padding:0"></span>
+
+                                <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
+                                    /*<![CDATA[*/
+                                    shashin.setPhotoOverlays({id:[[${metadata.id}]],lat:[[${metadata.lat}]],lng:[[${metadata.lng}]],year:[[${metadata.year}]],month:[[${metadata.month}]],day:[[${metadata.day}]],fileName:[[${metadata.fileName}]],thumbnailUrlSmall:[[${metadata.thumbnailUrlSmall}]],type:[[${metadata.type}]]}, /*[[${activePage}]]*/'album');
+                                    albumModal.renderAlbumCommentsModal({id:[[${album.id}]]},{id:[[${metadata.id}]],fileName:[[${metadata.fileName}]]},/*[[${userMap}]]*/{},/*[[${albumPhotoCommentsMap}]]*/{},/*[[${canEdit}]]*/false)
+                                    albumSettings.activateAlbumListeners({id:[[${metadata.id}]]})
+                                    $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000");
+                                    $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").on("click", function(e) {
+                                        e.preventDefault();
+                                        shashin.openEditMetadataModal(/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000");
+                                    });
+                                    /*]]>*/
+                                </script>
+
+                                <th:block th:if="${iterStat.count > 0 and !iterStat.last and metadata.year!=null and (albumMetadataList[iterStat.index+1].year+'-'+albumMetadataList[iterStat.index+1].month+'-'+albumMetadataList[iterStat.index+1].day)!=metadata.year+'-'+metadata.month+'-'+metadata.day}">
+                                    <th:block th:remove="tag" th:utext="'&lt;/div&gt;&lt;/section&gt;'"></th:block>
+                                    <span class="appendAlbumPhotos" style="width:0;height:0;padding:0"></span>
+                                </th:block>
+                                <th:block th:if="${iterStat.last and metadata.year!=null}">
+                                    <th:block th:remove="tag" th:utext="'&lt;/div&gt;&lt;/section&gt;'"></th:block>
+                                    <span class="appendAlbumPhotos" style="width:0;height:0;padding:0"></span>
+                                </th:block>
+                            </th:block>
+                        </div>
+                    </th:block>
                 </div>
             </th:block>
+
             <th:block th:if="${#lists.isEmpty(albumMetadataList)}">
                 <span class="appendAlbumPhotos" style="width:0;height:0;padding:0;display:none;">EOL</span>
+            </th:block>
+
+            <th:block th:if="${pageParam == null and totalPages > 0 and currentPage > 0}">
+                <nav id="pagination"><ul class="pagination flex-wrap justify-content-center mt-3"></ul></nav>
             </th:block>
 
             <!-- Back to top button -->
@@ -183,26 +199,34 @@
         const activePage = /*[[${activePage}]]*/ 'album';
         const mediaTypeFilter = /*[[${mediaTypeFilter}]]*/ 'all';
         const albumName = /*[[${album.name}]]*/ '';
+        const page = /*[[${pageParam}]]*/ -1;
+        const currentPage = /*[[${currentPage}]]*/ 0;
+        const totalPages = /*[[${totalPages}]]*/ 0;
         /*]]>*/
 
-        const section = $("section");
-        let lastDate = "";
-        if (section.length > 0) {
-            const lastSection = $("section").last();
-            lastDate = lastSection.attr("id")
-            lastDate = dateFormat(lastDate.replace(/-/g, "/"), "yyyy-m-d");
-        }
-
-        shashin.updateSearchInput(albumName);
-
-        const http = new Http(activePage);
-        http.ajax("get", "/album/metadata/list/"+albumId+"/0").then(function (data) {
-            if (data.hasOwnProperty("albumMetadataList") === true && data["albumMetadataList"].length > 0) {
-                const albumMetadataList = data["albumMetadataList"];
-                albumSettings.init(albumId, mediaTypeFilter, activePage, albumMetadataList, lastDate);
-                // Util.checkErrorImage();
+        if (page === 0) {
+            const section = $("section");
+            let lastDate = "";
+            if (section.length > 0) {
+                const lastSection = $("section").last();
+                lastDate = lastSection.attr("id")
+                lastDate = dateFormat(lastDate.replace(/-/g, "/"), "yyyy-m-d");
             }
-        });
+
+            shashin.updateSearchInput(albumName);
+
+            const http = new Http(activePage);
+            http.ajax("get", "/album/metadata/list/" + albumId + "/0").then(function (data) {
+                if (data.hasOwnProperty("albumMetadataList") === true && data["albumMetadataList"].length > 0) {
+                    const albumMetadataList = data["albumMetadataList"];
+                    albumSettings.init(albumId, mediaTypeFilter, activePage, albumMetadataList, lastDate);
+                    // Util.checkErrorImage();
+                }
+            });
+        } else {
+            Util.scrollToTopListener("#container");
+            shashin.createPagination(currentPage,totalPages,activePage,mediaTypeFilter,albumId);
+        }
     });
 </script>
 </body>

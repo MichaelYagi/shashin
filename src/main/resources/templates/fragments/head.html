@@ -128,7 +128,7 @@
                 }
             </style>
         </th:block>
-        <th:block th:if="${activePageLower == 'recent' || activePageLower == 'taken' || activePageLower == 'modified' || activePageLower == 'accessed' || activePageLower == 'test'}">
+        <th:block th:if="${activePageLower == 'recent' || activePageLower == 'taken' || activePageLower == 'modified' || activePageLower == 'accessed' || activePageLower == 'album' || activePageLower == 'share' || activePageLower == 'test'}">
             <script src="/js/bootstrap-pagy.js" th:nonce="${cspNonce}"></script>
         </th:block>
         <th:block th:if="${activePageLower == 'dashboard'}">
