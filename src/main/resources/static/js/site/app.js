@@ -2274,7 +2274,11 @@
             lgElement = 'infinite-scroll-gallery';
         }
 
-        shashin.initLightGallery(lgElement, lgConfig, '.mediaLink');
+        if ($("#"+lgElement).length === 0) {
+            shashin.printMessageToConsole("lightGallery element DNE",{tag:"pagination"});
+        } else {
+            shashin.initLightGallery(lgElement, lgConfig, '.mediaLink');
+        }
 
         const options = {
             currentPage: currentPage,
@@ -2299,7 +2303,7 @@
             options.first = null;
             options.last = null;
         }
-
+        
         $('#pagination').pagy(options);
     };
 
