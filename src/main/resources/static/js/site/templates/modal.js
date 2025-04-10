@@ -30,7 +30,7 @@ class ModalTemplates {
                         </ul>
                     </div>
                     <div class="modal-footer">
-                        <textarea class="form-control" id="commentText${metadata.id}" rows="2"></textarea>
+                        <textarea class="form-control" id="commentText${metadata.id}" rows="2" placeholder="Comment"></textarea>
                         <button type="button" class="btn btn-primary" id="saveCommentMetadata${metadata.id}">Save</button>
                         <button type="button" class="btn btn-primary" id="updateCommentMetadata${metadata.id}">Update</button>
                         <button type="button" class="btn btn-secondary" id="dismissModalCommentMetadata${metadata.id}" data-bs-dismiss="modal">Close</button>
