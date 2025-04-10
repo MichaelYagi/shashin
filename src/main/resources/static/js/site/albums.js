@@ -67,7 +67,7 @@ class Albums {
                         html += '<img loading="lazy" class="card-img-top" src="' + album.coverUrl + '" width="209" height="209" style="width: 209px;height: 209px;" draggable="false">';
                         html += '</a>';
                         html += '<div class="card-body" style="display: flex;flex-direction: column;">';
-                        html += '<p class="card-text"><strong id="albumName' + album.id + '">' + album.name + '</strong></p>';
+                        html += '<p class="card-text"><a href="/album/' + album.id + '" style="text-decoration: none !important;color: '+(darkMode ? '#FFFFFF;' : '#000000;')+';"><strong id="albumName' + album.id + '">' + album.name + '</strong></a></p>';
                         html += '<span style="margin-top: auto;"><a href="#" id="comment' + album.id + '" style="text-decoration: none;" title="Comments">';
                         html += '<span id="commentcount' + album.id + '">' + (album.id in data.albumsCommentsMap ? data.albumsCommentsMap[album.id].length : "0") + '</span>&nbsp;';
                         html += '<span class="bi-chat-square position-relative">';
