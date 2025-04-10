@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Total paged result calculation
+- UI for adding and deleting comments
 
 ### Removed
 

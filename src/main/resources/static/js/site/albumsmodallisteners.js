@@ -11,6 +11,12 @@
                 // Delete comment
                 $("#comment" + commentId).remove();
                 $("#commentcount" + albumId).text(commentCount);
+
+                if (commentCount > 0) {
+                    $("#commentListContainer").css("display","block");
+                } else {
+                    $("#commentListContainer").css("display","none");
+                }
             }
         }
 
@@ -309,6 +315,7 @@
 
         $("#propcommentalbums").on('hide.bs.modal', async function () {
             $("#commentList").empty();
+            $("#commentListContainer").css("display","none");
         });
 
         $("#propcommentalbums").on('shown.bs.modal', async function () {
@@ -427,6 +434,8 @@
                         });
                     }
                 }
+
+                $("#commentListContainer").css("display","block");
             }
         });
     };
@@ -434,6 +443,7 @@
     albumsModalListeners.setEditCommentModalListeners = function (commentId) {
         $("#propcommentalbums").on('hide.bs.modal', async function () {
             $("#commentList").empty();
+            $("#commentListContainer").css("display","none");
 
             $("#deletecomment"+commentId).off();
             $("#editcomment"+commentId).off();
