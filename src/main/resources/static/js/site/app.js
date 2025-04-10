@@ -2274,19 +2274,22 @@
             lgElement = 'infinite-scroll-gallery';
         }
 
+        let initGallery = true;
         if ($("#"+lgElement).length === 0) {
             shashin.printMessageToConsole("lightGallery element '"+lgElement+"' DNE",{tag:"pagination"});
+            initGallery = false;
         }
 
         if ($('.mediaLink').length === 0) {
             shashin.printMessageToConsole("media element '.mediaLink' DNE",{tag:"pagination"});
+            initGallery = false;
         }
 
-        if ($("#"+lgElement).length > 0 && $('.mediaLink').length > 0) {
+        if (initGallery === true) {
             shashin.initLightGallery(lgElement, lgConfig, '.mediaLink');
         }
 
-        if (totalPages > 1 && currentPage <= totalPages) {
+        if (initGallery === true && totalPages > 1 && currentPage <= totalPages) {
             const options = {
                 currentPage: currentPage,
                 totalPages: totalPages,
