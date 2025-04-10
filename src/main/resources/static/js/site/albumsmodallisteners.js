@@ -31,7 +31,7 @@
             $("#commentcontainer"+commentId).hide();
             $("#textareacontainer"+commentId).show();
             const commentText = $("#commentcontent" + commentId).html();
-            $("#textareacontainer"+commentId).html('<textarea class="form-control" id="commenttext' + commentId + '" rows="2">'+commentText+'</textarea>');
+            $("#textareacontainer"+commentId).html('<textarea class="form-control" id="commenttext' + commentId + '" rows="2" placeholder="Comment">'+commentText+'</textarea>');
         }
     };
 }( window.albumsCommentsSettings = window.albumsCommentsSettings || {}, jQuery ));
