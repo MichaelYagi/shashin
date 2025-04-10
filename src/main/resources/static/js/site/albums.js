@@ -25,6 +25,7 @@ class Albums {
             const commentId = $("#albumsCommentCommentId").val();
             const albumId = $("#albumsCommentAlbumId").val();
             albumsCommentsSettings.deleteComment(commentId, albumId);
+
             $("#propalbumstrashcomment").modal('hide');
         });
     }
@@ -283,6 +284,8 @@ class Albums {
                         html += '<script type="text/javascript" nonce="'+cspNonce+'">albumsModalListeners.setEditCommentModalListeners('+comments.commentId+');<\/script>';
                     });
 
+
+                    $("#commentListContainer").css("display","block");
                     $("#commentList").html(html);
                 }
 

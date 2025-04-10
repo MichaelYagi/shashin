@@ -253,6 +253,12 @@
         $('#propalbumphotocomment'+metadata.id).on('show.bs.modal', async function () {
             const http = new Http("mark comment read");
             const data = await http.ajax("get", "/notifications/markread/metadata/" + metadata.id);
+            let currentCount = parseInt($("#brcommentcount" + metadata.id).text());
+            if (currentCount > 0) {
+                $("#commentListContainer"+metadata.id).css("display","block");
+            } else {
+                $("#commentListContainer"+metadata.id).css("display","none");
+            }
         });
 
         shashin.updateFavorites("#favorite","#brfavoriteicon","#briconcount",metadata.id);
@@ -282,6 +288,13 @@
                 if (currentCount > 0) {
                     currentCount--;
                 }
+
+                if (currentCount > 0) {
+                    $("#commentListContainer"+metadataId).css("display","block");
+                } else {
+                    $("#commentListContainer"+metadataId).css("display","none");
+                }
+
                 $("#brcommentcount" + metadataId).text(currentCount);
             }
         }
@@ -314,11 +327,23 @@
             $("#commentMetadataId").val(metadataId);
             $("#commentCommentId").val(commentId);
             $("#proptrashcomment").modal('show');
+            let currentCount = parseInt($("#brcommentcount" + metadataId).text());
+            if (currentCount > 0) {
+                $("#commentListContainer"+metadataId).css("display","block");
+            } else {
+                $("#commentListContainer"+metadataId).css("display","none");
+            }
         });
 
         $("#editcomment" + commentId).on("click", function (e) {
             e.preventDefault();
             albumSettings.editComment(commentId, metadataId);
+            let currentCount = parseInt($("#brcommentcount" + metadataId).text());
+            if ((currentCount + 1) > 0) {
+                $("#commentListContainer"+metadataId).css("display","block");
+            } else {
+                $("#commentListContainer"+metadataId).css("display","none");
+            }
         });
     };
 
@@ -392,6 +417,13 @@
                 $("#textareacontainer" + currentCommentId).hide();
 
                 $("#currentCommentId" + metadata.id).val("");
+
+                let currentCount = parseInt($("#brcommentcount" + metadata.id).text());
+                if (currentCount > 0) {
+                    $("#commentListContainer"+metadata.id).css("display","block");
+                } else {
+                    $("#commentListContainer"+metadata.id).css("display","none");
+                }
             }
         });
 
@@ -438,6 +470,7 @@
 
                     let currentCount = parseInt($("#brcommentcount" + metadata.id).text());
                     $("#brcommentcount" + metadata.id).text(currentCount + 1);
+                    $("#commentListContainer"+metadata.id).css("display","block");
                 }
             }
         });
@@ -457,6 +490,9 @@
             html += ModalTemplates.AlbumComment({commentId:comments.commentId,commentText:comments.comment,userId:userMap.id,commentUserId:comments.userId,username:comments.username,userProfile:comments.userProfile,createdAt:comments.createdAt,canEdit:canEdit});
         }
 
+        if (commentIdArray.length > 0) {
+            $("#commentListContainer"+metadata.id).css("display","block");
+        }
         html += ModalTemplates.AlbumCommentsModalFooter({metadata:metadata});
 
         $("#albummodal"+metadata.id).after(html);
