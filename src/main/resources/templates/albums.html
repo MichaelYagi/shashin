@@ -26,7 +26,7 @@
                                 <img loading="lazy" draggable="false" class="card-img-top" th:src="${#strings.replace(#uris.escapePath(album.coverUrl),';','%3B')}" width="209" height="209" style="width: 209px;height: 209px;">
                             </a>
                             <div class="card-body" style="display: flex;flex-direction: column;">
-                                <p class="card-text"><strong th:id="'albumName'+${album.id}" th:text="${album.name}"></strong></p>
+                                <p class="card-text"><a th:href="'/album/'+${album.id}" th:style="'text-decoration: none !important;color: ' + ${currentUser.darkMode ? '#FFFFFF;' : '#000000;'}"><strong th:id="'albumName'+${album.id}" th:text="${album.name}"></strong></a></p>
 
                                 <span style="margin-top: auto;">
                                     <a href="#" th:id="'comment'+${album.id}" style="text-decoration: none;" title="Comments">
