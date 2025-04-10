@@ -229,13 +229,15 @@ class GalleryTemplates {
         </div>
     `};
 
-    static getFoldersCard({folder, thumbnailUrlCentered, count, appendClass}) { return `
+    static getFoldersCard({folder, thumbnailUrlCentered, count, appendClass, darkMode}) { return `
         <div class="card" style="width:235px;padding-top:10px;margin-right:-1px;margin-top:-1px;">
             <a href="/folder/${encodeURIComponent(encodeURIComponent(folder)).replace(";", "%3B")}" style="text-decoration: none !important;color: #777777;">
                 <img loading="lazy" draggable="false" class="card-img-top" src="${thumbnailUrlCentered}" width="209" height="209" style="width: 209px;height: 209px;">
             </a>
             <div class="card-body" style="display: flex;flex-direction: column;">
-                <p class="card-text"><strong>${folder}</strong></p>
+                <a href="/folder/${encodeURIComponent(encodeURIComponent(folder)).replace(";", "%3B")}" style="text-decoration: none !important;color: ${(darkMode ? '#FFFFFF;' : '#000000;')}">
+                    <p class="card-text"><strong>${folder}</strong></p>
+                </a>
                 <span style="margin-top: auto;">
                     <p class="card-text"><small class="text-muted">${count} ${((count === 1) ? `item` : `items`)}</small></p>
                 </span>
