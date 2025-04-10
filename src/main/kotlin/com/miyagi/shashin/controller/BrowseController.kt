@@ -20,10 +20,14 @@ import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 import java.util.*
 import jakarta.servlet.http.HttpServletRequest
+import org.apache.commons.text.StringEscapeUtils
 import org.hibernate.query.Page
 import org.springframework.http.MediaType
 import org.springframework.web.multipart.MultipartFile
 import kotlin.collections.HashMap
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.iterator
 import kotlin.collections.mutableListOf
 import kotlin.math.ceil
 
@@ -977,6 +981,7 @@ class BrowseController: BaseController() {
 
         getAllAttributeData(model)
 
+        model["pageParam"] = 0
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = decodedValue
@@ -1069,10 +1074,27 @@ class BrowseController: BaseController() {
         )
     )
     @Secured("ROLE_SUPER","ROLE_ADMIN")
-    @RequestMapping(value = ["/folder/{page}/{folder}","/api/v1/folder/{page}/{folder}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/folder/page/{page}/{folder}","/api/v1/folder/{page}/{folder}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedFolder(model: Model, request: HttpServletRequest, @PathVariable page: Int, @PathVariable folder: String): String {
         return mapper.writeValueAsString(buildFolder(model,URLDecoder.decode(folder, StandardCharsets.UTF_8.toString()),page))
+    }
+
+    @RequestMapping(value = ["/folder/{folder}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    fun getPaginationFolder(model: Model, @PathVariable folder: String,@PathVariable page: Int): String? {
+        val response = buildFolder(model,URLDecoder.decode(folder, StandardCharsets.UTF_8.toString()),page)
+
+        for ((k, v) in response) {
+            model[k] = v!!
+        }
+
+        val module = "folder"
+
+        model["currentPage"] = (page+1)
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
     }
 
     @RouterOperation(
@@ -1180,6 +1202,7 @@ class BrowseController: BaseController() {
         response["folder"] = folder
         response["page"] = page
         response["size"] = size
+        response["totalPages"] = 0
 
         response["msg"] = "Could not get results"
         response["status"] = ApiResponse.FAIL.status
@@ -1190,6 +1213,9 @@ class BrowseController: BaseController() {
 
             val favoritesMap = HashMap<String, HashMap<String, Any>>()
 
+
+            val folderTotalCount = metadataRepository.countFolder(folder)
+            response["totalPages"] = ceil((folderTotalCount.toDouble()) / size.toDouble()).toInt()
             val metadataList = metadataRepository.findAllByFolderOffsetAndLimit(
                 folder,
                 pageValue,

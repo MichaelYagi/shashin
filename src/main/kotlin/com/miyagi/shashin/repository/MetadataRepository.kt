@@ -185,6 +185,9 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE folder = :folder AND hidden = 0 ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllByFolderOffsetAndLimit(@Param("folder") folder: String,@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
+   @Query("SELECT COUNT(*) FROM metadata WHERE folder = :folder AND hidden = 0", nativeQuery = true)
+   fun countFolder(@Param("folder") folder: String): Int
+
    @Query("SELECT * FROM metadata WHERE id IN :metadataIds", nativeQuery = true)
    fun findAllByMetadataIds(metadataIds: Array<String>): MutableIterable<Metadata>
 
