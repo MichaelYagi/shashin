@@ -36,7 +36,7 @@ class Folders {
 
         if (false === this.eol) {
             $("#spinner").css("display", "block");
-            data = await this.http.ajax("get", "/" + activePage + "/" + nextPage);
+            data = await this.http.ajax("get", "/" + activePage + "/page/" + nextPage);
         }
 
         if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("foldersList") && data.status === shashin.apiResponse.SUCCESS) {

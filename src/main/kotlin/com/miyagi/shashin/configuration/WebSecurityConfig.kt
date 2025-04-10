@@ -51,6 +51,7 @@ class MultiSecurityConfig {
             "accessed\\/(\\d+)\\/.*",
             "modified",
             "modified\\/(\\d+)\\/.*",
+            "folders\\/(\\d+)",
             "folders",
             "folder\\/(.*)",
             "people",

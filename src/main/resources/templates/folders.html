@@ -39,6 +39,10 @@
                 <span class="appendFoldersPhotos" style="width:0;height:0;padding:0;display:none;">EOL</span>
             </th:block>
 
+            <th:block th:if="${pageParam == null and totalPages > 1 and currentPage > 0}">
+                <nav id="pagination"><ul class="pagination flex-wrap justify-content-center mt-3"></ul></nav>
+            </th:block>
+
             <!-- Back to top button -->
             <button type="button" class="btn btn-primary btn-floating btn-lg" id="btn-back-to-top">
                 <i class="bi-arrow-up-circle"></i>
@@ -58,11 +62,19 @@
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         const activePage = /*[[${activePage}]]*/ 'folders';
         const foldersList = /*[[${foldersList}]]*/ '[]';
+        const page = /*[[${pageParam}]]*/ -1;
+        const currentPage = /*[[${currentPage}]]*/ 0;
+        const totalPages = /*[[${totalPages}]]*/ 0;
         /*]]>*/
 
-        const foldersInstance = new Folders(foldersList, activePage);
-        foldersInstance.init();
-        // Util.checkErrorImage();
+        if (page === 0) {
+            const foldersInstance = new Folders(foldersList, activePage);
+            foldersInstance.init();
+            // Util.checkErrorImage();
+        } else {
+            Util.scrollToTopListener("#container");
+            shashin.createPagination(currentPage,totalPages,activePage,"");
+        }
     });
 </script>
 

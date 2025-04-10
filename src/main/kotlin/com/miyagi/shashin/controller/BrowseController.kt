@@ -836,6 +836,7 @@ class BrowseController: BaseController() {
         val module = "folders"
         buildInitialFoldersPage(model)
 
+        model["pageParam"] = 0
         model["foldersCount"] = metadataRepository.countByFolder()
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -854,6 +855,7 @@ class BrowseController: BaseController() {
         response["foldersList"] = mutableListOf<Folder>()
         response["page"] = page
         response["size"] = size
+        response["totalPages"] = 0
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -862,6 +864,8 @@ class BrowseController: BaseController() {
             val folderObj = metadataRepository.findFoldersOffsetAndLimit(pageValue, size)
 
             if (folderObj != null && folderObj.count() > 0) {
+                val folderCount = metadataRepository.countTotalFolders()
+                response["totalPages"] = ceil((folderCount.toDouble()) / size.toDouble()).toInt()
                 response["foldersList"] = folderObj
                 response["status"] = ApiResponse.SUCCESS.status
                 response["message"] = ""
@@ -915,10 +919,28 @@ class BrowseController: BaseController() {
         )
     )
     @Secured("ROLE_SUPER","ROLE_ADMIN")
-    @RequestMapping(value = ["/folders/{page}","/api/v1/folders/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/folders/page/{page}","/api/v1/folders/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedFolders(model: Model, request: HttpServletRequest, @PathVariable page: Int): String {
         return mapper.writeValueAsString(buildPagedFolders(model,page))
+    }
+
+    @Secured("ROLE_SUPER","ROLE_ADMIN")
+    @RequestMapping(value = ["/folders/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    fun getPaginationAnonymousShareAlbum(model: Model, @PathVariable page: Int): String? {
+        val response = buildPagedFolders(model, page)
+
+        for ((k, v) in response) {
+            model[k] = v!!
+        }
+
+        val module = "folders"
+
+        model["currentPage"] = (page+1)
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
     }
 
     @RouterOperation(

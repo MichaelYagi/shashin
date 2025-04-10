@@ -2289,14 +2289,16 @@
             shashin.initLightGallery(lgElement, lgConfig, '.mediaLink');
         }
 
-        if (initGallery === true && totalPages > 1 && currentPage <= totalPages) {
+        if (totalPages > 1 && currentPage <= totalPages) {
             const options = {
                 currentPage: currentPage,
                 totalPages: totalPages,
                 truncate: true,
                 href: function (index) { //index starts from 0
                     let link = '/' + activePage + '/' + index + '/' + mediaTypeFilter;
-                    if (activePage === "folder") {
+                    if (activePage === "folders") {
+                        link = '/' + activePage + '/' + index;
+                    } else if (activePage === "folder") {
                         link = '/' + activePage + '/' + encodeURIComponent(encodeURIComponent(identifier)).replace(";", "%3B") + '/' + index;
                     } else if (shareId !== "" && identifier > 0) {
                         link = '/' + activePage + '/' + shareId + '/album/' + identifier + '/' + index;
