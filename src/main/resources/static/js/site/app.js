@@ -2296,7 +2296,9 @@
                 truncate: true,
                 href: function (index) { //index starts from 0
                     let link = '/' + activePage + '/' + index + '/' + mediaTypeFilter;
-                    if (shareId !== "" && identifier > 0) {
+                    if (activePage === "folder") {
+                        link = '/' + activePage + '/' + encodeURIComponent(encodeURIComponent(identifier)).replace(";", "%3B") + '/' + index;
+                    } else if (shareId !== "" && identifier > 0) {
                         link = '/' + activePage + '/' + shareId + '/album/' + identifier + '/' + index;
                     } else if (identifier > 0) {
                         link = '/' + activePage + '/' + identifier + '/' + index + '/' + mediaTypeFilter;

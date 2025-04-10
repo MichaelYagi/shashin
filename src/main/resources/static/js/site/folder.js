@@ -55,7 +55,7 @@ class Folder {
 
         if (false === this.eol) {
             $("#spinner").css("display", "block");
-            data = await this.http.ajax("get", "/folder/" + nextPage + "/" + encodeURI(encodeURIComponent(folderName.replace(";", "%3B"))));
+            data = await this.http.ajax("get", "/folder/page/" + nextPage + "/" + encodeURI(encodeURIComponent(folderName.replace(";", "%3B"))));
         }
 
         const mediaContentList = [];

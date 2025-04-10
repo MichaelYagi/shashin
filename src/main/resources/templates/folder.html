@@ -86,6 +86,10 @@
 
             <div th:replace="~{fragments/metadatabatchmodal :: metadatabatchmodal(${recognitionLabels},${allAlbumList})}"></div>
 
+            <th:block th:if="${pageParam == null and totalPages > 1 and currentPage > 0}">
+                <nav id="pagination"><ul class="pagination flex-wrap justify-content-center mt-3"></ul></nav>
+            </th:block>
+
             <!-- Back to top button -->
             <button type="button" class="btn btn-primary btn-floating btn-lg" id="btn-back-to-top">
                 <i class="bi-arrow-up-circle"></i>
@@ -131,70 +135,77 @@
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         const activePage = /*[[${activePage}]]*/ 'folder';
         const folderName = /*[[${folder}]]*/ '';
+        const page = /*[[${pageParam}]]*/ -1;
+        const currentPage = /*[[${currentPage}]]*/ 0;
+        const totalPages = /*[[${totalPages}]]*/ 0;
         /*]]>*/
 
         shashin.updateSearchInput(folderName);
 
-        const http = new Http(activePage);
-        http.ajax("get", "/metadata/list/"+activePage+"/0?folder="+encodeURI(folderName).replace(";", "%3B")).then(function (data) {
-            if (data.hasOwnProperty("metadataList") === true) {
-                const metadataList = data["metadataList"];
-                const folderInstance = new Folder(metadataList, activePage, folderName);
-                folderInstance.init();
+        if (page === 0) {
+            const http = new Http(activePage);
+            http.ajax("get", "/metadata/list/" + activePage + "/0?folder=" + encodeURI(folderName).replace(";", "%3B")).then(function (data) {
+                if (data.hasOwnProperty("metadataList") === true) {
+                    const metadataList = data["metadataList"];
+                    const folderInstance = new Folder(metadataList, activePage, folderName);
+                    folderInstance.init();
+                }
+            });
+        } else {
+            Util.scrollToTopListener("#container");
+            shashin.createPagination(currentPage,totalPages,activePage,"",folderName);
+        }
 
+        $('#saveFolderModal').on("click", async function (e) {
+            e.preventDefault();
+            $("#folderModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
+            $("#folderModalStatus").visible();
+            $("#folderModalStatus").attr("title", "");
+            $("#folderModalCancel").prop('disabled', false);
 
-                $('#saveFolderModal').on("click", async function (e) {
-                    e.preventDefault();
-                    $("#folderModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-                    $("#folderModalStatus").visible();
-                    $("#folderModalStatus").attr("title", "");
+            let requestJson = {
+                setCoverFolder: $('#setCoverFolder').val() === "yes",
+                metadataId: $("#metadataId").val(),
+                folder: folderName
+            };
+
+            const http = new Http("updating folder");
+            const data = await http.ajax("post", "/folder/update", JSON.stringify(requestJson), function () {
+                $("#folderModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
+                $("#folderModalStatus").attr("title", shashin.modalStatusFailMessage());
+                $("#folderModalCancel").prop('disabled', false);
+            });
+
+            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                if (data.status === shashin.apiResponse.SUCCESS) {
+                    $("#folderModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                     $("#folderModalCancel").prop('disabled', false);
 
-                    let requestJson = {
-                        setCoverFolder: $('#setCoverFolder').val() === "yes",
-                        metadataId: $("#metadataId").val(),
-                        folder: folderName
-                    };
-
-                    const http = new Http("updating folder");
-                    const data = await http.ajax("post", "/folder/update", JSON.stringify(requestJson), function () {
-                        $("#folderModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
-                        $("#folderModalStatus").attr("title", shashin.modalStatusFailMessage());
-                        $("#folderModalCancel").prop('disabled', false);
+                    shashin.showToastMessage("Folder", "Folder Updated", {
+                        icon: "bi-info-circle",
+                        iconColor: "#777777",
+                        tag: "foldermodal",
+                        borderColor: "success"
                     });
 
-                    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                        if (data.status === shashin.apiResponse.SUCCESS) {
-                            $("#folderModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
-                            $("#folderModalCancel").prop('disabled', false);
-
-                            shashin.showToastMessage("Folder", "Folder Updated", {
-                                icon: "bi-info-circle",
-                                iconColor: "#777777",
-                                tag: "foldermodal",
-                                borderColor:"success"
-                            });
-
-                            $("#propFolderModal").modal('hide');
-                        } else {
-                            $("#folderModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
-                            $("#folderModalStatus").attr("title", shashin.modalStatusFailMessage());
-                            $("#folderModalCancel").prop('disabled', false);
-                        }
-                    } else {
-                        $("#folderModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
-                        $("#folderModalStatus").attr("title", shashin.modalStatusFailMessage());
-                        $("#folderModalCancel").prop('disabled', false);
-                    }
-
-                    return false;
-                });
-
-                $('#propAlbumModal').on('hide.bs.modal', function () {
-                    $("#albumsModalStatus").attr("class","spinner-grow me-auto");
-                    $("#albumsModalStatus").invisible();
-                });
+                    $("#propFolderModal").modal('hide');
+                } else {
+                    $("#folderModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                    $("#folderModalStatus").attr("title", shashin.modalStatusFailMessage());
+                    $("#folderModalCancel").prop('disabled', false);
+                }
+            } else {
+                $("#folderModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                $("#folderModalStatus").attr("title", shashin.modalStatusFailMessage());
+                $("#folderModalCancel").prop('disabled', false);
             }
+
+            return false;
+        });
+
+        $('#propAlbumModal').on('hide.bs.modal', function () {
+            $("#albumsModalStatus").attr("class", "spinner-grow me-auto");
+            $("#albumsModalStatus").invisible();
         });
     });
 </script>

@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Tests for Pagy
-- Added pagination for albums, shared albums, and favourites pages
+- Added pagination for albums, shared albums, folders, and favourites pages
 - Added pagination pages to valid redirect pages
 
 ### Changed
