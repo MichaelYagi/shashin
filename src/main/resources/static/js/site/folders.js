@@ -1,12 +1,13 @@
 class Folders {
 
-    constructor(foldersList, activePage) {
+    constructor(foldersList, activePage, darkMode) {
         this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
         this.foldersList = foldersList;
         this.eol = false;
         this.activePage = activePage;
+        this.darkMode = darkMode;
     }
 
     async init() {
@@ -29,6 +30,7 @@ class Folders {
 
     async updateFolders(nextPage,activePage) {
         this.rendering = true;
+        const darkMode = this.darkMode;
         const appendClass = "appendFoldersPhotos";
         let foldersList = [];
 
@@ -54,7 +56,8 @@ class Folders {
                         folder,
                         thumbnailUrlCentered,
                         count,
-                        appendClass
+                        appendClass,
+                        darkMode
                     })).insertBefore($("." + appendClass).last());
                 }
 

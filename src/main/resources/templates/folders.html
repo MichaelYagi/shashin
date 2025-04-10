@@ -23,7 +23,7 @@
                                 <img loading="lazy" draggable="false" class="card-img-top" th:src="'/api/v1/thumbnails/centered/'+${folder.metadataId}" width="209" height="209" style="width: 209px;height: 209px;">
                             </a>
                             <div class="card-body" style="display: flex;flex-direction: column;">
-                                <p class="card-text"><strong th:text="${folder.folder}"></strong></p>
+                                <p class="card-text"><a th:href="'/folder/'+${#strings.replace(#uris.escapePath(#uris.escapePathSegment(folder.folder)),';','%3B')}" th:style="'text-decoration: none !important;color: ' + ${currentUser.darkMode ? '#FFFFFF;' : '#000000;'}"><strong th:text="${folder.folder}"></strong></a></p>
                                 <span style="margin-top: auto;">
                                     <p class="card-text"><small class="text-muted" th:text="${folder.count + ((folder.count == 1) ? ' item' : ' items')}"></small></p>
                                 </span>
@@ -65,10 +65,11 @@
         const page = /*[[${pageParam}]]*/ -1;
         const currentPage = /*[[${currentPage}]]*/ 0;
         const totalPages = /*[[${totalPages}]]*/ 0;
+        const darkMode = /*[[${currentUser.darkMode}]]*/ false;
         /*]]>*/
 
         if (page === 0) {
-            const foldersInstance = new Folders(foldersList, activePage);
+            const foldersInstance = new Folders(foldersList, activePage, darkMode);
             foldersInstance.init();
             // Util.checkErrorImage();
         } else {
