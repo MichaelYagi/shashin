@@ -178,7 +178,7 @@ class TimelineTemplates {
             data-width="${metadata.originalImageWidth}"
             ` : ''}
             >
-            <span class="${(metadata.type.indexOf("video") >= 0) ? `bi-play-circle` : `bi-play-btn`}" style="font-size: ${isMobile ? '2' : '4'}rem;color: lightgray;"></span>
+            <span class="${(metadata.type.indexOf("video") >= 0) ? `bi-play-circle` : `bi-play-btn`}" style="font-size: ${isMobile ? '1.5' : '4'}rem;color: lightgray;"></span>
         </a>
     `};
 }
