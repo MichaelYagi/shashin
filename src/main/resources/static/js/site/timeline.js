@@ -23,6 +23,12 @@
     timelineSettings.scrollBar.fadeInTime = 100;
     timelineSettings.scrollBar.fadeOutTime = 100;
     timelineSettings.didJumpFromTimelineToc = false;
+    timelineSettings.thumbnailType = "225";
+    timelineSettings.thumbnailHeight = "225";
+    if (Util.isMobile()) {
+        timelineSettings.thumbnailType = "centered";
+        timelineSettings.thumbnailHeight = "100";
+    }
 
     const calculateDistanceToFooter = function() {
         return $(window).height() - $('#subfooter').offset().top;
@@ -182,7 +188,7 @@
             timelineSettings.rescanElements();
 
             setTimeout(() => {
-                const elements = Util.elementsInViewport($('img.photo-thumbnail-image:not([src*="/api/v1/thumbnails/225/)'));
+                const elements = Util.elementsInViewport($('img.photo-thumbnail-image:not([src*="/api/v1/thumbnails/'+timelineSettings.thumbnailType+'/)'));
                 if (elements.length > 0) {
                     timelineSettings.rescanElements(elements);
                 }
@@ -376,7 +382,7 @@
             if (preCalculatedElements !== undefined && preCalculatedElements !== null) {
                 elements = preCalculatedElements;
             } else {
-                elements = Util.elementsInViewport($('img.photo-thumbnail-image:not([src*="/api/v1/thumbnails/225/)'));
+                elements = Util.elementsInViewport($('img.photo-thumbnail-image:not([src*="/api/v1/thumbnails/'+timelineSettings.thumbnailType+'/)'));
             }
             $.each(elements, function(index, value) {
                 const imageId = $(value).attr('id');
@@ -1507,7 +1513,7 @@
         if ($("#image" + metadata.id).length === 1) {
             const version = Util.getMetadataLocalStorage();
             if ($("#image" + metadata.id).attr("src") === Util.getPlaceholderBackground()) {
-                $("#image" + metadata.id).attr("src", "/api/v1/thumbnails/225/" + metadata.id + (version === "" ? "" : "?v=" + version));
+                $("#image" + metadata.id).attr("src", "/api/v1/thumbnails/"+timelineSettings.thumbnailType+"/" + metadata.id + (version === "" ? "" : "?v=" + version));
             }
             $("#image" + metadata.id).css("background-color", "transparent");
         }
@@ -1524,14 +1530,14 @@
         mediaContent.metadataDetailFun = shashin.openEditMetadataModal;
         mediaContent.videoThumbnailFun = shashin.processVideoThumbnail;
         mediaContent.args = metadata.id;
-        mediaContent.thumb = "/api/v1/thumbnails/225/"+metadata.id;
+        mediaContent.thumb = "/api/v1/thumbnails/"+timelineSettings.thumbnailType+"/"+metadata.id;
         mediaContent.metadataId = metadata.id;
 
         if (metadata.type.indexOf("video") >= 0) {
             mediaContent.video = '{"source": [{"src":"' + encodeURI(metadata.videoUrl).replace(";", "%3B") + '", "type":"video/mp4"}], "attributes": {"preload": "auto", "controls": true, "autoplay": true}}';
             mediaContent.downloadUrl = encodeURI(metadata.videoUrl).replace(";", "%3B") + "/download";
             mediaContent.lgSize = metadata.originalImageWidth+"-"+metadata.originalImageHeight;
-            mediaContent.poster = ((null === metadata.thumbnailUrlOriginal || "" === metadata.thumbnailUrlOriginal) ? "/api/v1/thumbnails/225/"+metadata.id : "/api/v1/thumbnails/original/"+metadata.id) + "?v=" + Util.getMetadataLocalStorage();
+            mediaContent.poster = ((null === metadata.thumbnailUrlOriginal || "" === metadata.thumbnailUrlOriginal) ? "/api/v1/thumbnails/"+timelineSettings.thumbnailType+"/"+metadata.id : "/api/v1/thumbnails/original/"+metadata.id) + "?v=" + Util.getMetadataLocalStorage();
         } else {
             mediaContent.src = "/api/v1/thumbnails/original/"+metadata.id;
             mediaContent.downloadUrl = "/api/v1/"+metadata.id + "/download";
@@ -1542,7 +1548,7 @@
         }
 
         if ($("#mediaLink" + metadata.id).length === 0) {
-            $("#tncentered" + metadata.id).append(TimelineTemplates.TimelineGalleryCenterOverlay({metadata:metadata,mediaContent:mediaContent,uuid:Util.getMetadataLocalStorage()}));
+            $("#tncentered" + metadata.id).append(TimelineTemplates.TimelineGalleryCenterOverlay({metadata:metadata,mediaContent:mediaContent,uuid:Util.getMetadataLocalStorage(), isMobile:Util.isMobile(), thumbnailType:timelineSettings.thumbnailType, thumbnailHeight:timelineSettings.thumbnailHeight}));
         }
 
         if ($("#metadataModalEdit" + metadata.id).length === 0) {
@@ -1742,7 +1748,7 @@
                                         lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
                                         lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
 
-                                        let loopedHtml = TimelineTemplates.TimelinePreLoadGalleryBody({metadata:metadata});
+                                        let loopedHtml = TimelineTemplates.TimelinePreLoadGalleryBody({metadata:metadata, isMobile:Util.isMobile(), thumbnailType:timelineSettings.thumbnailType, thumbnailHeight:timelineSettings.thumbnailHeight});
                                         html += loopedHtml;
                                         internalHtml += loopedHtml;
 

@@ -222,6 +222,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
         val browserDetails = request.getHeader("User-Agent")
         var browser = ""
         var os = ""
+        var isMobile = false
         if (browserDetails != null) {
             val user = browserDetails.lowercase(Locale.getDefault())
 
@@ -262,8 +263,20 @@ class AttributeController: ResponseEntityExceptionHandler() {
             } else {
                 browser = "Unknown browser: $browserDetails"
             }
+
+            isMobile = TextUtils.isMobile(browserDetails)
         }
 //        logger.log(Level.INFO,"Browser Name: $browser")
+        model["isMobile"] = isMobile
+        var thumbnailType = "225"
+        var thumbnailHeight = "225"
+        if (isMobile) {
+            thumbnailType = "centered"
+            thumbnailHeight = "100"
+        }
+        model["thumbnailType"] = thumbnailType
+        model["thumbnailHeight"] = thumbnailHeight
+
         model["agentName"] = browser
 
         model["agentOS"] = os
