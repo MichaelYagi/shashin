@@ -4,6 +4,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Fixed
+
+### Removed
+
+## [2.9.1] - 2025-04-11
+### Added
 - Tests for Pagy
 - Added pagination for albums, shared albums, folders, and favourites pages
 - Added pagination pages to valid redirect pages
@@ -15,8 +24,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Total paged result calculation
 - UI for adding and deleting comments
-
-### Removed
 
 ## [2.9.0] - 2025-04-03
 ### Added
