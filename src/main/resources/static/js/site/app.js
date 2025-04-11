@@ -2497,7 +2497,7 @@
                 shashin.addToMetadataIdList(metadataId);
                 shashin.addToMetadataFilenamesList($('#filename' + metadataId).val());
                 shashin.addToMetadataThumbnailsList($('#thumbnailCentered' + metadataId).val());
-                if (isVideo) {
+                if (isVideo && Util.isMobile() === false) {
                     const jpgUrl = $("#image" + metadataId).attr("src").replace("/gif/" + metadataId, "/225/" + metadataId);
                     $("#image" + metadataId).attr("src", jpgUrl);
                 }
@@ -2520,7 +2520,7 @@
                 shashin.removeFromMetadataIdList(metadataId);
                 shashin.removeFromMetadataFilenamesList($('#filename' + metadataId).val());
                 shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadataId).val());
-                if (isVideo && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
+                if (isVideo  && Util.isMobile() === false && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
                 ) {
                     const gifUrl = $("#image" + metadataId).attr("src").replace("/225/" + metadataId, "/gif/" + metadataId);
                     $("#image" + metadataId).attr("src", gifUrl);
@@ -2607,7 +2607,7 @@
         }
 
         $("#image" + metadata.id).on('error', function() {
-            $("#image" + metadata.id).attr("src", "/api/v1/thumbnails/225/"+metadata.id);
+            $("#image" + metadata.id).attr("src", "/api/v1/thumbnails/"+(Util.isMobile() ? "100" : "255")+"/"+metadata.id);
         });
 
         $("#image" + metadata.id).on("click", function (e) {
@@ -2648,7 +2648,7 @@
                         shashin.addToMetadataIdList(metadata.id);
                         shashin.addToMetadataFilenamesList($('#filename' + metadata.id).val());
                         shashin.addToMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
-                        if (metadata.type.includes("video")) {
+                        if (metadata.type.includes("video") && Util.isMobile() === false) {
                             const jpgUrl = $("#image" + metadata.id).attr("src").replace("/gif/" + metadata.id, "/225/" + metadata.id);
                             $("#image" + metadata.id).attr("src", jpgUrl);
                         }
@@ -2672,7 +2672,7 @@
                         shashin.removeFromMetadataIdList(metadata.id);
                         shashin.removeFromMetadataFilenamesList($('#filename' + metadata.id).val());
                         shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
-                        if (metadata.type.includes("video") && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
+                        if (metadata.type.includes("video") && Util.isMobile() === false && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
                         ) {
                             const gifUrl = $("#image" + metadata.id).attr("src").replace("/225/" + metadata.id, "/gif/" + metadata.id);
                             $("#image" + metadata.id).attr("src", gifUrl);
@@ -2790,7 +2790,7 @@
                 });
             }
 
-            if (metadata.type.includes("video") && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
+            if (metadata.type.includes("video") && Util.isMobile() === false && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
             ) {
                 if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
                     const gifUrl = $("#image" + metadata.id).attr("src").replace("/225/" + metadata.id, "/gif/" + metadata.id);
@@ -2804,7 +2804,7 @@
             $(document).unbind("keydown");
             $(document).unbind("dblclick");
 
-            if (metadata.type.includes("video")) {
+            if (metadata.type.includes("video") && Util.isMobile() === false) {
                 const jpgUrl = $("#image" + metadata.id).attr("src").replace("/gif/" + metadata.id, "/225/" + metadata.id);
                 $("#image" + metadata.id).attr("src", jpgUrl);
             }
@@ -2888,7 +2888,7 @@
                                                 continue;
                                             }
 
-                                            const imageUrl = $("#image" + currentMetadataId).attr("src").replace("/gif/" + currentMetadataId, "/225/" + currentMetadataId);
+                                            const imageUrl = $("#image" + currentMetadataId).attr("src").replace("/gif/" + currentMetadataId, "/"+(Util.isMobile() ? "100" : "225")+"/" + currentMetadataId);
                                             $("#image" + currentMetadataId).attr("src", imageUrl);
                                             if (shashin.lastSelectedMetadataSelected === true) {
                                                 if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle") {
@@ -2916,7 +2916,7 @@
 
                                         if (currentMetadataId === compareTwo) {
                                             if (direction === "up") {
-                                                let imageUrl = $("#image" + metadata.id).attr("src").replace("/gif/" + metadata.id, "/225/" + metadata.id);
+                                                let imageUrl = $("#image" + metadata.id).attr("src").replace("/gif/" + metadata.id, "/"+(Util.isMobile() ? "100" : "225")+"/" + metadata.id);
                                                 $("#image" + metadata.id).attr("src", imageUrl);
                                                 if (shashin.lastSelectedMetadataSelected === true) {
                                                     if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
@@ -2935,7 +2935,7 @@
                                                     }
                                                 }
 
-                                                imageUrl = $("#image" + currentMetadataId).attr("src").replace("/gif/" + currentMetadataId, "/225/" + currentMetadataId);
+                                                imageUrl = $("#image" + currentMetadataId).attr("src").replace("/gif/" + currentMetadataId, "/"+(Util.isMobile() ? "100" : "225")+"/" + currentMetadataId);
                                                 $("#image" + currentMetadataId).attr("src", imageUrl);
                                                 if (shashin.lastSelectedMetadataSelected === true) {
                                                     if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle") {
@@ -3016,7 +3016,7 @@
                                             }
 
                                             if ($("#image" + metadataId).length > 0) {
-                                                const imageUrl = $("#image" + metadataId).attr("src").replace("/gif/" + metadataId, "/225/" + metadataId);
+                                                const imageUrl = $("#image" + metadataId).attr("src").replace("/gif/" + metadataId, "/"+(Util.isMobile() ? "100" : "225")+"/" + metadataId);
                                                 $("#image" + metadataId).attr("src", imageUrl);
                                             }
                                         }

@@ -175,7 +175,8 @@ class Person {
                                     activePage,
                                     metadata,
                                     overlayData,
-                                    uuid
+                                    uuid,
+                                    isMobile: Util.isMobile()
                                 })).insertBefore($("." + appendClass).last()).ready(function () {
                                     // Call JS and modal
                                     // personModalSettings.renderPersonModal(metadata, recognitionLabels, labelPhotoMap[metadata.id].labels);

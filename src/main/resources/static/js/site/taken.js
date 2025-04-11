@@ -146,7 +146,8 @@ class Taken {
                         activePage,
                         metadata,
                         overlayData,
-                        uuid
+                        uuid,
+                        isMobile: Util.isMobile()
                     }));
 
                     if ($("#dateBody"+currentDate).length > 0) {

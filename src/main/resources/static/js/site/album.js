@@ -4,6 +4,12 @@
     albumSettings.http = null;
     albumSettings.eol = false;
     albumSettings.lastDate = "";
+    albumSettings.thumbnailType = "225";
+    albumSettings.thumbnailHeight = "225";
+    if (Util.isMobile()) {
+        albumSettings.thumbnailType = "centered";
+        albumSettings.thumbnailHeight = "100";
+    }
 
     albumSettings.init = async function (albumId, mediaTypeFilter, activePage, albumMetadataList, lastDate) {
         albumSettings.http = new Http(activePage);
@@ -192,7 +198,8 @@
                                     activePage,
                                     metadata,
                                     overlayData,
-                                    uuid
+                                    uuid,
+                                    isMobile: Util.isMobile()
                                 }));
 
                                 if ($("#dateBody"+currentDate).length > 0) {

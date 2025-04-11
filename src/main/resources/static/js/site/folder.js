@@ -101,7 +101,8 @@ class Folder {
                             activePage,
                             metadata,
                             overlayData,
-                            uuid
+                            uuid,
+                            isMobile: Util.isMobile()
                         })).insertBefore($("." + appendClass).last());
                         shashin.updateFavorites("#favorite","#brfavoriteicon","#briconcount", metadata.id);
                     }
