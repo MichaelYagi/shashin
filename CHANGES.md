@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Kotlin function to detect mobile from user agent string
 
 ### Changed
+- Smaller centered images in mobile view in gallery
 
 ### Fixed
 - Total paged result calculation
