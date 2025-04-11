@@ -36,7 +36,7 @@
                             <div th:replace="~{fragments/topleftoverlay :: topleftoverlay(${metadata.id})}"></div>
                             <div th:replace="~{fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, null, null, null, null)}"></div>
 
-                            <div th:replace="~{fragments/centeredoverlay :: centeredoverlay(${metadata},${activePage},${currentUser},null,${iterStat.index})}"></div>
+                            <div th:replace="~{fragments/centeredoverlay :: centeredoverlay(${metadata},${activePage},${currentUser},null,${iterStat.index},${isMobile},${thumbnailType},${thumbnailHeight})}"></div>
                         </div>
 
                         <span th:id="'matchesmodal'+${metadata.id}" style="width:0;height:0;padding:0"></span>

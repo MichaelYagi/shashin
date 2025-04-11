@@ -57,7 +57,7 @@
 
                                 <div th:replace="~{fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight},${metadata.expectedExtension},false)}"></div>
 
-                                <div th:replace="~{fragments/centeredoverlay :: centeredoverlay(${metadata},${activePage},${currentUser},'shashin.openGallery',${iterStat.index})}"></div>
+                                <div th:replace="~{fragments/centeredoverlay :: centeredoverlay(${metadata},${activePage},${currentUser},'shashin.openGallery',${iterStat.index},${isMobile},${thumbnailType},${thumbnailHeight})}"></div>
 
                                 <div th:replace="~{fragments/topleftoverlay :: topleftoverlay(${metadata})}"></div>
 
