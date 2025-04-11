@@ -1,8 +1,8 @@
 class GalleryTemplates {
     static PhotoGalleryItem({activePage, metadata, overlayData, uuid, isMobile}) { return `
-        <div id="photoThumbnailContainer${metadata.id}" class="photo-thumbnail-container photo-thumbnail" style="width:${isMobile?100:metadata.thumbnailSmallWidth}px;height:${isMobile?100:metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
+        <div id="photoThumbnailContainer${metadata.id}" class="photo-thumbnail-container photo-thumbnail" style="width:${isMobile?120:metadata.thumbnailSmallWidth}px;height:${isMobile?120:metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
             <span class="lightGalleryIndexAnchor"></span>
-            <img loading="lazy" draggable="false" data-smallthumb="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+metadata.id}?v=${uuid}" data-xsmallthumb="${activePage !== 'timeline' && metadata.thumbnailUrlExtraSmall===null?'':"/api/v1/thumbnails/112/"+metadata.id}" src="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+metadata.id}?v=${uuid}" class="photo-thumbnail-image" id="image${metadata.id}" width="${isMobile?100:metadata.thumbnailSmallWidth}" height="${isMobile?100:metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
+            <img loading="lazy" draggable="false" data-smallthumb="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+metadata.id}?v=${uuid}" data-xsmallthumb="${activePage !== 'timeline' && metadata.thumbnailUrlExtraSmall===null?'':"/api/v1/thumbnails/112/"+metadata.id}" src="${"/api/v1/thumbnails/"+(isMobile ? "centered" : "225")+"/"+metadata.id}?v=${uuid}" class="photo-thumbnail-image" id="image${metadata.id}" width="${isMobile?120:metadata.thumbnailSmallWidth}" height="${isMobile?120:metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
             <input type="hidden" name="filename${metadata.id}" id="filename${metadata.id}" value="${metadata.fileName}">
             <input type="hidden" name="thumbnailCentered${metadata.id}" id="thumbnailCentered${metadata.id}" value="${"/api/v1/thumbnails/centered/"+metadata.id}">
             
@@ -203,7 +203,7 @@ class GalleryTemplates {
                     data-poster="${(data.metadata.thumbnailUrlOriginal === null || data.metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/225/"+data.metadata.id : "/api/v1/thumbnails/original/"+data.metadata.id}?v=${uuid}"
                     data-lg-size="${(data.metadata.originalImageWidth === null || data.metadata.originalImageWidth === "") ? `${data.metadata.thumbnailSmallWidth}-${data.metadata.thumbnailSmallHeight}` : `${data.metadata.originalImageWidth}-${data.metadata.originalImageHeight}`}"
                     data-video=\'{"source": [{"src":"${data.metadata.videoUrl}", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true, "autoplay": true}}\'>
-                    <span class="bi-play-circle" style="font-size: ${isMobile ?2:4}rem;color: lightgray;"></span>
+                    <span class="bi-play-circle" style="font-size: ${isMobile ?1.5:4}rem;color: lightgray;"></span>
                 </a>
                 `
                 :
@@ -212,7 +212,7 @@ class GalleryTemplates {
                     data-download-url="${"/api/v1/image/"+data.metadata.id}/download"
                     data-metadata-id="${data.metadata.id}"
                     ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}>
-                    <span class="bi-play-btn" style="font-size: ${isMobile ?2:4}rem;color: lightgray;"></span>
+                    <span class="bi-play-btn" style="font-size: ${isMobile ?1.5:4}rem;color: lightgray;"></span>
                 </a>
                 `
             }

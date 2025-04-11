@@ -272,7 +272,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
         var thumbnailHeight = "225"
         if (isMobile) {
             thumbnailType = "centered"
-            thumbnailHeight = "100"
+            thumbnailHeight = "120"
         }
         model["thumbnailType"] = thumbnailType
         model["thumbnailHeight"] = thumbnailHeight
