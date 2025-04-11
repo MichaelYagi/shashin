@@ -83,7 +83,12 @@
             <div id="spinner_top" class="spinner-border justify-content-center align-items-center" role="status" style="display: none"></div>
 
 <!--            <div id="infinite-scroll-gallery" style="max-width: 1500px;">-->
+            <th:block th:if="${isMobile}">
+            <div id="infinite-scroll-gallery" style="max-width: 95%;">
+            </th:block>
+            <th:block th:unless="${isMobile}">
             <div id="infinite-scroll-gallery" style="max-width: 75%;">
+            </th:block>
                 <th:block th:if="${not #lists.isEmpty(metadataList)}">
                     <th:block th:if="${metadataList[0].year==null or metadataList[0].month==null or metadataList[0].day==null}">
                         <span class="dateContainer" id="container_undated">
@@ -97,7 +102,7 @@
                         <span class="dateContainer" th:id="${'container_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day}">
                         <br th:id="${'br' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day}">
                         <section class="scrollspy metadataprocessed" th:id="${metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day}">
-                            <th:block th:if="${agentOS == 'Android' || agentOS == 'IPhone'}">
+                            <th:block th:if="${isMobile}">
                                 <div class="mb-3"><strong class="dateHeading p-1" th:text="${#strings.replace(#dates.format(#dates.create(#numbers.formatInteger(metadataList[0].year,10),#numbers.formatInteger(metadataList[0].month,10),#numbers.formatInteger(metadataList[0].day,10)), 'EEE, MMM d, yyyy'),'.','')}"></strong>
                                     <th:block th:if="${#lists.size(placeNameHeaders)==1 and placeNameHeaders[0]!=''}"><span class="text-muted" th:utext="${'&lt;a class=&quot;link-unstyled&quot; href=&quot;/search?term='+placeNameHeaders[0]+'&quot; target=&quot;_blank&quot id=&quot;placeNameHeader'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'&quot;&gt;'+placeNameHeaders[0]+'&lt;/a&gt;'}"></span></th:block>
                                     <th:block th:if="${#lists.size(placeNameHeaders)>1}">
@@ -120,16 +125,16 @@
                             <span style="display: none;" class="dayTaken" th:text="${metadataList[0].day}"></span>
                     </th:block>
 
-                    <th:block th:if="${agentOS == 'Android' || agentOS == 'IPhone'}">
+<!--                    <th:block th:if="${isMobile}">-->
                         <th:block th:each="metadata, iterStat: ${metadataList}">
-                            <div th:id="${'photoThumbnailContainer'+metadata.id}" th:class="${'photo-thumbnail-container photo-thumbnail '+(metadata.type.contains('video') ? 'is-video' : 'is-not-video')}" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
+                            <div th:id="${'photoThumbnailContainer'+metadata.id}" th:class="${'photo-thumbnail-container photo-thumbnail '+(metadata.type.contains('video') ? 'is-video' : 'is-not-video')}" th:style="${'width:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth)+'px;height:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight)+'px;padding-left:0;padding-right:0;'}">
                                 <a class="lightGalleryIndexAnchor" th:id="${'lightGalleryIndex'+metadata.id}"></a>
                                 <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                                    <input type="hidden" name="thumbnailUrl-undated[]" th:id="'thumbnailUrl_'+${metadata.id}" th:value="'/api/v1/thumbnails/225/'+${metadata.id}">
+                                    <input type="hidden" name="thumbnailUrl-undated[]" th:id="'thumbnailUrl_'+${metadata.id}" th:value="'/api/v1/thumbnails/'+${thumbnailType}+'/'+${metadata.id}">
                                     <span th:id="'thumbnailTag_'+${metadata.id}" class="thumbnailTag_undated" style="display:none;"></span>
                                 </th:block>
                                 <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                                    <input type="hidden" th:name="${'thumbnailUrl-'+metadata.year+'-'+metadata.month+'-'+metadata.day+'[]'}" th:id="'thumbnailUrl_'+${metadata.id}" th:value="'/api/v1/thumbnails/225/'+${metadata.id}">
+                                    <input type="hidden" th:name="${'thumbnailUrl-'+metadata.year+'-'+metadata.month+'-'+metadata.day+'[]'}" th:id="'thumbnailUrl_'+${metadata.id}" th:value="'/api/v1/thumbnails/'+${thumbnailType}+'/'+${metadata.id}">
                                     <span th:id="'thumbnailTag_'+${metadata.id}" th:class="${'thumbnailTag_'+metadata.year+'-'+metadata.month+'-'+metadata.day}" style="display:none;"></span>
                                 </th:block>
 
@@ -137,10 +142,10 @@
                                 <input type="hidden" th:name="'thumbnailCentered'+${metadata.id}" th:id="'thumbnailCentered'+${metadata.id}" th:value="'/api/v1/thumbnails/centered/'+${metadata.id}">
 
                                 <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                                    <img loading="lazy" draggable="false" class="photo-thumbnail-image thumbnailTag_undated" th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" th:height="${metadata.thumbnailSmallHeight}" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=">
+                                    <img loading="lazy" draggable="false" class="photo-thumbnail-image thumbnailTag_undated" th:id="'image'+${metadata.id}" th:width="${(isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth)}" th:height="${(isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight)}" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=">
                                 </th:block>
                                 <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                                    <img loading="lazy" draggable="false" th:class="'photo-thumbnail-image ' + ${'thumbnailTag_'+metadata.year+'-'+metadata.month+'-'+metadata.day}" th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" th:height="${metadata.thumbnailSmallHeight}" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=">
+                                    <img loading="lazy" draggable="false" th:class="'photo-thumbnail-image ' + ${'thumbnailTag_'+metadata.year+'-'+metadata.month+'-'+metadata.day}" th:id="'image'+${metadata.id}" th:width="${(isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth)}" th:height="${(isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight)}" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=">
                                 </th:block>
 
                                 <div th:id="'tntl'+${metadata.id}"></div>
@@ -156,7 +161,7 @@
                                 <span th:id="'metadatamodal'+${metadata.id}"></span>
                             </div>
                         </th:block>
-                    </th:block>
+<!--                    </th:block>-->
 
                     <th:block th:if="${metadataList[0].year==null or metadataList[0].month==null or metadataList[0].day==null}">
                         <span class="scrollspy metadataprocessed" id="tail_undated"></span>
@@ -179,10 +184,10 @@
 
             <div th:replace="~{fragments/metadatabatchmodal :: metadatabatchmodal(${recognitionLabels},${allAlbumList})}"></div>
 
-            <th:block th:if="${agentOS == 'Android' || agentOS == 'IPhone'}">
+            <th:block th:if="${isMobile}">
                 <div id="spinner_bottom" class="spinner-border justify-content-center align-items-center mt-2" role="status" style="display: none"></div>
             </th:block>
-            <th:block th:unless="${agentOS == 'Android' || agentOS == 'IPhone'}">
+            <th:block th:unless="${isMobile}">
                 <div id="spinner_bottom"></div>
             </th:block>
 

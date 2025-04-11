@@ -64,19 +64,19 @@ class TimelineTemplates {
         `}
     `};
 
-    static TimelinePreLoadGalleryBody({metadata}) { return `
-        <div id="photoThumbnailContainer${metadata.id}" class="photo-thumbnail-container photo-thumbnail ${(metadata.type.includes('video') ? `is-video` : `is-not-video`)}" style="width:${metadata.thumbnailSmallWidth}px;height:${metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
+    static TimelinePreLoadGalleryBody({metadata,isMobile,thumbnailType,thumbnailHeight}) { return `
+        <div id="photoThumbnailContainer${metadata.id}" class="photo-thumbnail-container photo-thumbnail ${(metadata.type.includes('video') ? `is-video` : `is-not-video`)}" style="width:${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}px;height:${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
             <a class="lightGalleryIndexAnchor" id="lightGalleryIndex${metadata.id}"></a>
             <input type="hidden" name="filename${metadata.id}" id="filename${metadata.id}" value="${metadata.fileName}">
             <input type="hidden" name="thumbnailCentered${metadata.id}" id="thumbnailCentered${metadata.id}" value="${"/api/v1/thumbnails/centered/"+metadata.id}">
             ${(metadata.year == null || metadata.month == null || metadata.day == null) ?
             `
-            <input type="hidden" name="thumbnailUrl-undated[]" id="thumbnailUrl_${metadata.id}" value="${"/api/v1/thumbnails/225/"+metadata.id }">
-            <img loading="lazy" draggable="false" class="photo-thumbnail-image thumbnailTag_undated" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}" src="${Util.getPlaceholderBackground()}">
+            <input type="hidden" name="thumbnailUrl-undated[]" id="thumbnailUrl_${metadata.id}" value="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id }">
+            <img loading="lazy" draggable="false" class="photo-thumbnail-image thumbnailTag_undated" id="image${metadata.id}" width="${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}" height="${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}" src="${Util.getPlaceholderBackground()}">
             ` :
             `
-            <input type="hidden" name="thumbnailUrl-${metadata.year}-${metadata.month}-${metadata.day}[]" id="thumbnailUrl_${metadata.id}" value="${"/api/v1/thumbnails/225/"+metadata.id}">
-            <img loading="lazy" draggable="false" class="photo-thumbnail-image thumbnailTag_${metadata.year}-${metadata.month}-${metadata.day}" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}" src="${Util.getPlaceholderBackground()}">
+            <input type="hidden" name="thumbnailUrl-${metadata.year}-${metadata.month}-${metadata.day}[]" id="thumbnailUrl_${metadata.id}" value="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id}">
+            <img loading="lazy" draggable="false" class="photo-thumbnail-image thumbnailTag_${metadata.year}-${metadata.month}-${metadata.day}" id="image${metadata.id}" width="${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}" height="${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}" src="${Util.getPlaceholderBackground()}">
             `}
             
             <div id="tntl${metadata.id}"></div>
@@ -160,25 +160,25 @@ class TimelineTemplates {
         </a>
     `};
 
-    static TimelineGalleryCenterOverlay({metadata, mediaContent, uuid}) { return `
+    static TimelineGalleryCenterOverlay({metadata, mediaContent, uuid, isMobile, thumbnailType, thumbnailHeight}) { return `
         <a class="mediaLink" 
             id="mediaLink${metadata.id}"
             data-download-url="${(metadata.type.indexOf("video") >= 0) ? encodeURI(metadata.videoUrl) : "/api/v1/image/"+metadata.id}/download"
             data-metadata-id="${metadata.id}"
-            data-lg-size="${(metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? `${metadata.thumbnailSmallWidth}-${metadata.thumbnailSmallHeight}` : `${metadata.originalImageWidth}-${metadata.originalImageHeight}`}"
-            ${(metadata.type.indexOf("video") >= 0) ? `data-video="${Util.encodeHtml(mediaContent.video)}" data-poster="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/225/"+metadata.id : "/api/v1/thumbnails/original/"+metadata.id}?v=${uuid}"` : `data-src="${"/api/v1/image/"+metadata.id}"`}
+            data-lg-size="${(metadata.originalImageWidth === null || metadata.originalImageWidth === "") ? `${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}-${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}` : `${metadata.originalImageWidth}-${metadata.originalImageHeight}`}"
+            ${(metadata.type.indexOf("video") >= 0) ? `data-video="${Util.encodeHtml(mediaContent.video)}" data-poster="${(metadata.thumbnailUrlOriginal === null || metadata.thumbnailUrlOriginal === "") ? "/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id : "/api/v1/thumbnails/original/"+metadata.id}?v=${uuid}"` : `data-src="${"/api/v1/image/"+metadata.id}"`}
             ${(metadata.description != null) ? `data-sub-html="${Util.encodeHtml(metadata.description)}"` : ''}
     
             ${(metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
             metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) ?
             `
-            data-lg-size="${metadata.thumbnailSmallWidth}-${metadata.thumbnailSmallHeight}-${metadata.thumbnailSmallWidth},${metadata.originalImageWidth}-${metadata.originalImageHeight}"
-            data-responsive="${"/api/v1/thumbnails/225/"+metadata.id} ${metadata.thumbnailSmallWidth}"
-            data-thumb="${"/api/v1/thumbnails/225/"+metadata.id}"
+            data-lg-size="${metadata.thumbnailSmallWidth}-${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}-${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth},${metadata.originalImageWidth}-${metadata.originalImageHeight}"
+            data-responsive="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id} ${metadata.thumbnailSmallWidth}"
+            data-thumb="${"/api/v1/thumbnails/"+thumbnailType+"/"+metadata.id}"
             data-width="${metadata.originalImageWidth}"
             ` : ''}
             >
-            <span class="${(metadata.type.indexOf("video") >= 0) ? `bi-play-circle` : `bi-play-btn`}" style="font-size: 4rem;color: lightgray;"></span>
+            <span class="${(metadata.type.indexOf("video") >= 0) ? `bi-play-circle` : `bi-play-btn`}" style="font-size: ${isMobile ? '2' : '4'}rem;color: lightgray;"></span>
         </a>
     `};
 }
