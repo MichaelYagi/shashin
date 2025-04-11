@@ -24,10 +24,10 @@
             <th:block th:if="${not #lists.isEmpty(lowMatchResults)}">
                 <div class="row image-group-padding">
                     <th:block th:each="metadata, iterStat: ${lowMatchResults}">
-                        <div th:id="${'photoThumbnailContainer'+metadata.id}" class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
+                        <div th:id="${'photoThumbnailContainer'+metadata.id}" class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth)+'px;height:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight)+'px;padding-left:0;padding-right:0;'}">
                             <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
 
-                            <img loading="lazy" draggable="false" th:src="'/api/v1/thumbnails/225/'+${metadata.id}" class="photo-thumbnail-image" th:width="${metadata.thumbnailSmallWidth}" th:height="${metadata.thumbnailSmallHeight}" th:id="'image'+${metadata.id}">
+                            <img loading="lazy" draggable="false" th:src="'/api/v1/thumbnails/'+${isMobile?'centered':'225'}+'/'+${metadata.id}" class="photo-thumbnail-image" th:width="${isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth}" th:height="${isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight}" th:id="'image'+${metadata.id}">
                             <input type="hidden" th:name="'filename'+${metadata.id}" th:id="'filename'+${metadata.id}" th:value="${metadata.fileName}">
                             <input type="hidden" th:name="'thumbnailCentered'+${metadata.id}" th:id="'thumbnailCentered'+${metadata.id}" th:value="'/api/v1/thumbnails/centered/'+${metadata.id}">
 
