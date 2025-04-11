@@ -336,6 +336,44 @@ describe('#Util tests', function() {
         assert.equal(msToString, "692 days 17:00:00");
     });
 
+    it('isMobile tests', function() {
+        navigator.__defineGetter__('userAgent', function(){
+            return 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36';
+        });
+        let isMobile = Util.isMobile();
+        assert.isTrue(isMobile);
+
+        navigator.__defineGetter__('userAgent', function(){
+            return 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko) Version/9.0.2 Safari/601.3.9';
+        });
+        isMobile = Util.isMobile();
+        assert.isFalse(isMobile);
+
+        navigator.__defineGetter__('userAgent', function(){
+            return 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36';
+        });
+        isMobile = Util.isMobile();
+        assert.isTrue(isMobile);
+
+        navigator.__defineGetter__('userAgent', function(){
+            return 'Mozilla/5.0 (Linux; Android 12; SM-X906C Build/QP1A.190711.020; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/80.0.3987.119 Mobile Safari/537.36';
+        });
+        isMobile = Util.isMobile();
+        assert.isTrue(isMobile);
+
+        navigator.__defineGetter__('userAgent', function(){
+            return 'Mozilla/5.0 (iPad; CPU OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1';
+        });
+        isMobile = Util.isMobile();
+        assert.isTrue(isMobile);
+
+        navigator.__defineGetter__('userAgent', function(){
+            return 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1';
+        });
+        isMobile = Util.isMobile();
+        assert.isTrue(isMobile);
+    });
+
     it('Get OS tests', function() {
         const windowRef = global.window;
 
