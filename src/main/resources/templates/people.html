@@ -13,7 +13,7 @@
             <div id="albumsMessage"></div>
 
             <th:block th:if="${not #lists.isEmpty(peopleList)}">
-                <div class="row image-group-padding">
+                <div th:class="'row' + ${isMobile ? '' : ' image-group-padding'}">
                     <th:block th:each="person, iterStat: ${peopleList}">
                         <th:block th:if="${person.name != null and person.name != 'null'}">
                             <div class="card" style="width:235px;padding-top:10px;margin-right:-1px;margin-bottom:-1px;">

@@ -41,13 +41,13 @@ class TimelineTemplates {
         <img class="me-1" loading="lazy" draggable="false" src="${thumbnailImage+(version === "" ? "" : "?v=" + version)}" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="${title}">
     `};
 
-    static TimelinePreLoadGalleryHeader({metadata, placeNameHeaders, listHtml}) { return `
+    static TimelinePreLoadGalleryHeader({metadata, placeNameHeaders, listHtml, isMobile}) { return `
         ${(metadata.year === null || metadata.month === null || metadata.day === null) ?
             `
         <span class="dateContainer" id="container_undated">
         <br id="brundated">
         <section class="scrollspy" id="undated"><p><strong class="undatedTimelinePhotos p-1">Undated</strong></p></section>
-        <div class="row image-group-padding" id="rowundated">
+        <div class="row${isMobile ? "" : "image-group-padding"}" id="rowundated">
         `
             :
             `
@@ -57,7 +57,7 @@ class TimelineTemplates {
         ${(placeNameHeaders.length === 1) ? `<span class="text-muted"><a class="link-unstyled" href="/search?term=`+placeNameHeaders[0]+`" target="_blank" id="placeNameHeader`+metadata.year+'-'+metadata.month+'-'+metadata.day+`">`+placeNameHeaders[0]+`</a></span>` : (placeNameHeaders.length > 1) ? `
         <span class="text-muted"><div class="dropdown" style="display: inline-block;"><a class="dropdown-toggle link-unstyled" data-bs-toggle="dropdown" href="#">`+placeNameHeaders[0]+`</a>
         <ul class="dropdown-menu">`+listHtml+`</ul></div></span>` : ``}</div></section>
-        <div class="row image-group-padding" id="row${metadata.year}-${metadata.month}-${metadata.day}">
+        <div class="row${isMobile ? "" : "image-group-padding"}" id="row${metadata.year}-${metadata.month}-${metadata.day}">
         <span style="display: none;" class="yearTaken">${metadata.year}</span>
         <span style="display: none;" class="monthTaken">${metadata.month}</span>
         <span style="display: none;" class="dayTaken">${metadata.day}</span>                    

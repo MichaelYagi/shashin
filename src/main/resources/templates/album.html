@@ -43,7 +43,7 @@
                             </th:block>
                         </th:block>
 
-                        <div class="row image-group-padding">
+                        <div th:class="'row' + ${isMobile ? '' : ' image-group-padding'}">
                             <th:block th:each="metadata, iterStat: ${albumMetadataList}">
 
                                 <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and albumMetadataList[iterStat.index-1].year==metadata.year and albumMetadataList[iterStat.index-1].month==metadata.month and albumMetadataList[iterStat.index-1].day==metadata.day}">

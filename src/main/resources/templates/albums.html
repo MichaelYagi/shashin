@@ -19,7 +19,7 @@
             <div id="albumsMessage"></div>
             
             <th:block th:if="${not #lists.isEmpty(albumsList)}">
-                <div class="row image-group-padding">
+                <div th:class="'row' + ${isMobile ? '' : ' image-group-padding'}">
                     <th:block th:each="album, iterStat: ${albumsList}">
                         <div class="card" style="width:235px;padding-top:10px;margin-right:-1px;margin-bottom:-1px;">
                             <a th:href="'/album/'+${album.id}" style="text-decoration: none !important;color: #777777;" th:id="'album'+${album.id}">

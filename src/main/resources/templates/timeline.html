@@ -87,7 +87,7 @@
             <div id="infinite-scroll-gallery" style="max-width: 95%;">
             </th:block>
             <th:block th:unless="${isMobile}">
-            <div id="infinite-scroll-gallery" style="max-width: 75%;">
+            <div id="infinite-scroll-gallery" style="max-width: 85%;">
             </th:block>
                 <th:block th:if="${not #lists.isEmpty(metadataList)}">
                     <th:block th:if="${metadataList[0].year==null or metadataList[0].month==null or metadataList[0].day==null}">
@@ -96,7 +96,7 @@
                         <section class="scrollspy metadataprocessed" id="undated">
                             <p><strong class="undatedTimelinePhotos p-1">Undated</strong></p>
                         </section>
-                        <div class="row image-group-padding" id="rowundated">
+                        <div th:class="'row' + ${isMobile ? '' : ' image-group-padding'}" id="rowundated">
                     </th:block>
                     <th:block th:unless="${metadataList[0].year==null or metadataList[0].month==null or metadataList[0].day==null}">
                         <span class="dateContainer" th:id="${'container_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day}">
@@ -119,7 +119,7 @@
                                 </div>
                             </th:block>
                         </section>
-                        <div class="row image-group-padding" th:id="${'row'+metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day}">
+                        <div th:class="'row' + ${isMobile ? '' : ' image-group-padding'}" th:id="${'row'+metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day}">
                             <span style="display: none;" class="yearTaken" th:text="${metadataList[0].year}"></span>
                             <span style="display: none;" class="monthTaken" th:text="${metadataList[0].month}"></span>
                             <span style="display: none;" class="dayTaken" th:text="${metadataList[0].day}"></span>

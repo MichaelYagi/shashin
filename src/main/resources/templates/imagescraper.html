@@ -11,7 +11,7 @@
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
 
-            <div class="row image-group-padding mt-4">
+            <div th:class="row' + ${isMobile ? '' : ' image-group-padding'} + 'mt-4">
                 <div class="input-group mb-3">
                     <button class="btn btn-primary" type="submit" id="submitForm" title="Get images from URL"><span class="bi-images"></span></button>
                     <input type="text" id="pageUrl" name="pageUrl" class="form-control" placeholder="Page URL" th:value="${pageUrl != ''?pageUrl:''}">
