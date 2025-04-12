@@ -1713,7 +1713,7 @@
                                     }
                                 }
 
-                                html += TimelineTemplates.TimelinePreLoadGalleryHeader({metadata:metadataList[0],placeNameHeaders:placeNameHeaders,listHtml:listHtml});
+                                html += TimelineTemplates.TimelinePreLoadGalleryHeader({metadata:metadataList[0],placeNameHeaders:placeNameHeaders,listHtml:listHtml,isMobile:Util.isMobile()});
                                 internalHtml += '<br id="br'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
                                     '<section class="scrollspy" id="'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
                                     '<div class="mb-3"><strong class="dateHeading p-1">'+Util.getDateString(metadataList[0].year, metadataList[0].month, metadataList[0].day)+'</strong>';
@@ -1728,7 +1728,7 @@
                                 }
 
                                 internalHtml += '</div></section>' +
-                                    '<div class="row image-group-padding" id="row'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
+                                    '<div class="row'+(Util.isMobile() ? "" : " image-group-padding")+'" id="row'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
                                     '<span style="display: none;" class="yearTaken">'+metadataList[0].year+'</span>' +
                                     '<span style="display: none;" class="monthTaken">'+metadataList[0].month+'</span>' +
                                     '<span style="display: none;" class="dayTaken">'+metadataList[0].day+'</span>';

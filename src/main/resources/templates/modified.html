@@ -28,7 +28,7 @@
                         </th:block>
                     </th:block>
 
-                    <div class="row image-group-padding">
+                    <div th:class="'row' + ${isMobile ? '' : ' image-group-padding'}">
                         <th:block th:each="metadata, iterStat: ${metadataList}">
 
                             <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadata.modifiedAt!=null and #dates.format(#dates.create(#strings.arraySplit(metadataList[iterStat.index-1].modifiedAt, '-')[0],#strings.arraySplit(metadataList[iterStat.index-1].modifiedAt, '-')[1],#strings.arraySplit(#strings.arraySplit(metadataList[iterStat.index-1].modifiedAt, '-')[2],' ')[0]),'yyyy-M-d')==#dates.format(#dates.create(#strings.arraySplit(metadata.modifiedAt, '-')[0],#strings.arraySplit(metadata.modifiedAt, '-')[1],#strings.arraySplit(#strings.arraySplit(metadata.modifiedAt, '-')[2],' ')[0]),'yyyy-M-d')}">

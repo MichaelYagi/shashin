@@ -20,7 +20,7 @@
             <div id="scroll-gallery">
                 <th:block th:if="${term != '' and not #lists.isEmpty(metadataSearchList)}">
 <!--                    <h1 th:text="'Results for \''+${term}+'\''"></h1>-->
-                    <div class="row image-group-padding">
+                    <div th:class="'row' + ${isMobile ? '' : ' image-group-padding'}">
                         <th:block th:each="metadata, iterStat: ${metadataSearchList}">
 
                             <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadataSearchList[iterStat.index-1].year==metadata.year and metadataSearchList[iterStat.index-1].month==metadata.month and metadataSearchList[iterStat.index-1].day==metadata.day}">
