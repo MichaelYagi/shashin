@@ -57,7 +57,7 @@ class TimelineTemplates {
         ${(placeNameHeaders.length === 1) ? `<span class="text-muted"><a class="link-unstyled" href="/search?term=`+placeNameHeaders[0]+`" target="_blank" id="placeNameHeader`+metadata.year+'-'+metadata.month+'-'+metadata.day+`">`+placeNameHeaders[0]+`</a></span>` : (placeNameHeaders.length > 1) ? `
         <span class="text-muted"><div class="dropdown" style="display: inline-block;"><a class="dropdown-toggle link-unstyled" data-bs-toggle="dropdown" href="#">`+placeNameHeaders[0]+`</a>
         <ul class="dropdown-menu">`+listHtml+`</ul></div></span>` : ``}</div></section>
-        <div class="row${isMobile ? "" : "image-group-padding"}" id="row${metadata.year}-${metadata.month}-${metadata.day}">
+        <div class="row${isMobile ? "" : " image-group-padding"}" id="row${metadata.year}-${metadata.month}-${metadata.day}">
         <span style="display: none;" class="yearTaken">${metadata.year}</span>
         <span style="display: none;" class="monthTaken">${metadata.month}</span>
         <span style="display: none;" class="dayTaken">${metadata.day}</span>                    
