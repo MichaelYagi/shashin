@@ -47,7 +47,7 @@ class TimelineTemplates {
         <span class="dateContainer" id="container_undated">
         <br id="brundated">
         <section class="scrollspy" id="undated"><p><strong class="undatedTimelinePhotos p-1">Undated</strong></p></section>
-        <div class="row${isMobile ? "" : "image-group-padding"}" id="rowundated">
+        <div class="row${isMobile ? "" : " image-group-padding"}" id="rowundated">
         `
             :
             `
