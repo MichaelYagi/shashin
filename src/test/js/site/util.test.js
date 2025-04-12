@@ -337,106 +337,118 @@ describe('#Util tests', function() {
     });
 
     it('isMobile tests', function() {
-        navigator.__defineGetter__('userAgent', function(){
-            return 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36';
-        });
+        const navigatorRef = global.navigator;
+
+        global.navigator = {
+            userAgent: 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36'
+        };
         let isMobile = Util.isMobile();
         assert.isTrue(isMobile);
 
-        navigator.__defineGetter__('userAgent', function(){
-            return 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko) Version/9.0.2 Safari/601.3.9';
-        });
+        global.navigator = {
+            userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko) Version/9.0.2 Safari/601.3.9'
+        };
         isMobile = Util.isMobile();
         assert.isFalse(isMobile);
 
-        navigator.__defineGetter__('userAgent', function(){
-            return 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36';
-        });
+        global.navigator = {
+            userAgent: 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36'
+        };
         isMobile = Util.isMobile();
         assert.isTrue(isMobile);
 
-        navigator.__defineGetter__('userAgent', function(){
-            return 'Mozilla/5.0 (Linux; Android 12; SM-X906C Build/QP1A.190711.020; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/80.0.3987.119 Mobile Safari/537.36';
-        });
+        global.navigator = {
+            userAgent: 'Mozilla/5.0 (Linux; Android 12; SM-X906C Build/QP1A.190711.020; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/80.0.3987.119 Mobile Safari/537.36'
+        };
         isMobile = Util.isMobile();
         assert.isTrue(isMobile);
 
-        navigator.__defineGetter__('userAgent', function(){
-            return 'Mozilla/5.0 (iPad; CPU OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1';
-        });
+        global.navigator = {
+            userAgent: 'Mozilla/5.0 (iPad; CPU OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1'
+        };
         isMobile = Util.isMobile();
         assert.isTrue(isMobile);
 
-        navigator.__defineGetter__('userAgent', function(){
-            return 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1';
-        });
+        global.navigator = {
+            userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1'
+        };
         isMobile = Util.isMobile();
         assert.isTrue(isMobile);
+
+        global.navigator = {
+            userAgent: undefined
+        };
+        isMobile = Util.isMobile();
+        assert.isFalse(isMobile);
+
+        global.navigator = {
+            userAgent: null
+        };
+        isMobile = Util.isMobile();
+        assert.isFalse(isMobile);
+
+        global.navigator = {
+            userAgent: ""
+        };
+        isMobile = Util.isMobile();
+        assert.isFalse(isMobile);
+
+        global.navigator = navigatorRef;
     });
 
     it('Get OS tests', function() {
-        const windowRef = global.window;
+        const navigatorRef = global.navigator;
 
-        global.window = {
-            navigator: {
-                userAgent: undefined,
-                platform: undefined,
-                userAgentData: {
-                    platform: undefined
-                }
+        global.navigator = {
+            userAgent: undefined,
+            platform: undefined,
+            userAgentData: {
+                platform: undefined
             }
         };
         let os = Util.getOS();
         assert.equal(os, "");
 
-        global.window = {
-            navigator: {
-                userAgent: undefined,
-                platform: "macppc",
-                userAgentData: {
-                    platform: undefined
-                }
+        global.navigator = {
+            userAgent: undefined,
+            platform: "macppc",
+            userAgentData: {
+                platform: undefined
             }
         };
         os = Util.getOS();
         assert.equal(os, "MacOS");
 
-        global.window = {
-            navigator: {
-                userAgent: undefined,
-                platform: undefined,
-                userAgentData: {
-                    platform: "WiNdOwS"
-                }
+        global.navigator = {
+            userAgent: undefined,
+            platform: undefined,
+            userAgentData: {
+                platform: "WiNdOwS"
             }
         };
         os = Util.getOS();
         assert.equal(os, "Windows");
 
-        global.window = {
-            navigator: {
-                userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
-                platform: undefined,
-                userAgentData: {
-                    platform: undefined
-                }
+        global.navigator = {
+            userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+            platform: undefined,
+            userAgentData: {
+                platform: undefined
             }
         };
         os = Util.getOS();
         assert.equal(os, "");
 
-        global.window = {
-            navigator: {
-                userAgent: 'Mozilla/5.0 (Linux; Android 15) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.6834.164 Mobile Safari/537.36',
-                platform: undefined,
-                userAgentData: {
-                    platform: undefined
-                }
+        global.navigator = {
+            userAgent: 'Mozilla/5.0 (Linux; Android 15) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.6834.164 Mobile Safari/537.36',
+            platform: undefined,
+            userAgentData: {
+                platform: undefined
             }
         };
         os = Util.getOS();
         assert.equal(os, "Android");
 
-        global.window = windowRef;
+        global.navigator = navigatorRef;
     });
 });
