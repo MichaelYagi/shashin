@@ -27,7 +27,7 @@
     timelineSettings.thumbnailHeight = "225";
     if (Util.isMobile()) {
         timelineSettings.thumbnailType = "centered";
-        timelineSettings.thumbnailHeight = "100";
+        timelineSettings.thumbnailHeight = "120";
     }
 
     const calculateDistanceToFooter = function() {
