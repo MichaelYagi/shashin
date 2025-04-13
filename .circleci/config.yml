@@ -94,7 +94,7 @@ workflows:
                 name: Compress Artifacts
                 command: |
                   touch shashin-$VERSION.tar
-                  tar -cvzf shashin-$VERSION.tar shashin-$VERSION.jar Shashin-$VERSION.exe reset_shashin_password.sh test-results
+                  tar -cvzf shashin-$VERSION.tar shashin-$VERSION.jar Shashin-$VERSION.exe shashin_reset_password.sh test-results
             - run: # Move artifacts to artifacts directory in preparation to persist
                 name: Create Artifacts Directory
                 command: |
@@ -167,4 +167,4 @@ jobs:
           command: |
             key=$GITHUB_CONTENTWRITE_KEY
             version=$VERSION
-            bash /home/circleci/project/artifacts/shashin_create_release_notes.sh $version $key
+            bash /home/circleci/project/artifacts/shashin_create_release_notes.sh $version $key /home/circleci/project/artifacts/CHANGES.md
