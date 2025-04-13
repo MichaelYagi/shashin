@@ -9,65 +9,64 @@ orbs:
   maven: circleci/maven@2.0.0
   node: circleci/node@7.1.0
   browser-tools: circleci/browser-tools@1.5.2
-  github-cli: circleci/github-cli@2.7.0
 
 workflows:
   shashin_workflow:
     jobs:
-#      - node/test:
-#          name: Run node tests
-#          filters: # job runs for all branches and all tags
-#            tags:
-#              only: /^v.*/
-#          test-results-for: mocha
-#          post-steps:
-#            - run:
-#                name: Save JS test results
-#                command: |
-#                  mkdir -p test-results/mocha/
-#                  find . -type f -regex ".*/test-results.xml" -exec cp {} test-results/mocha/ \;
-#                when: always
-#            - persist_to_workspace: # persist workspace across jobs
-#                root: .
-#                paths:
-#                  - test-results/mocha
+      - node/test:
+          name: Run node tests
+          filters: # job runs for all branches and all tags
+            tags:
+              only: /^v.*/
+          test-results-for: mocha
+          post-steps:
+            - run:
+                name: Save JS test results
+                command: |
+                  mkdir -p test-results/mocha/
+                  find . -type f -regex ".*/test-results.xml" -exec cp {} test-results/mocha/ \;
+                when: always
+            - persist_to_workspace: # persist workspace across jobs
+                root: .
+                paths:
+                  - test-results/mocha
       - maven/test: # checkout, build, test, and upload test results
           executor: java17
           name: Run junit tests # and package to tar
           filters: # job runs for all branches and all tags
             tags:
               only: /^v.*/
-#          command: '-Dapp.github.key=$GITHUB_KEY -Dapp.circleci.key=$CIRCLECI_KEY -Dspring.profiles.active=test clean install'
-          command: '-Dapp.github.key=$GITHUB_KEY -Dapp.circleci.key=$CIRCLECI_KEY -Dspring.profiles.active=test clean install -DskipTests'
-#          requires:
-#            - Run node tests
-#          pre-steps:
-#            - run:
-#                name: Installing Linux libraries and Chromedriver
-#                command: |
-#                  sudo apt-get update
-#                  sudo apt-get install libgbm1 libgconf-2-4 libnss3 libxss1 lsb-release
-#                  sudo apt-get install libappindicator3-1 libasound2 fonts-liberation xdg-utils
-            # Install specific version
-            # https://www.ubuntuupdates.org/package/google_chrome/stable/main/base/google-chrome-stable?id=202706&page=1
-#            - browser-tools/install-browser-tools:
-#                chrome-version: 127.0.6533.119
-            # Install latest
+          command: '-Dapp.github.key=$GITHUB_KEY -Dapp.circleci.key=$CIRCLECI_KEY -Dspring.profiles.active=test clean install'
+#          #command: '-Dapp.github.key=$GITHUB_KEY -Dapp.circleci.key=$CIRCLECI_KEY -Dspring.profiles.active=test clean install -DskipTests'
+          requires:
+            - Run node tests
+          pre-steps:
+            - run:
+                name: Installing Linux libraries and Chromedriver
+                command: |
+                  sudo apt-get update
+                  sudo apt-get install libgbm1 libgconf-2-4 libnss3 libxss1 lsb-release
+                  sudo apt-get install libappindicator3-1 libasound2 fonts-liberation xdg-utils
+            ## Install specific version
+            ## https://www.ubuntuupdates.org/package/google_chrome/stable/main/base/google-chrome-stable?id=202706&page=1
+            - browser-tools/install-browser-tools:
+                chrome-version: 127.0.6533.119
+#            # Install latest
 #            - browser-tools/install-chrome
 #            - browser-tools/install-chromedriver
-#            - run:
-#                name: Check Chromedriver install
-#                command: |
-#                  google-chrome --version
-#                  chromedriver --version
-#                  whereis chromedriver
+            - run:
+                name: Check Chromedriver install
+                command: |
+                  google-chrome --version
+                  chromedriver --version
+                  whereis chromedriver
           post-steps: # steps to run after steps
-#            - run:
-#                name: Save test results
-#                command: |
-#                  mkdir -p test-results/junit/
-#                  find . -type f -regex ".*/target/surefire-reports/.*" -exec cp {} test-results/junit/ \;
-#                when: always
+            - run:
+                name: Save test results
+                command: |
+                  mkdir -p test-results/junit/
+                  find . -type f -regex ".*/target/surefire-reports/.*" -exec cp {} test-results/junit/ \;
+                when: always
             - attach_workspace: # attach from another job
                 at: .
             - run:
@@ -83,19 +82,19 @@ workflows:
                   touch shashin-version.txt
                   echo $VERSION > shashin-version.txt
                   echo $(cat /home/circleci/project/shashin-version.txt)
-#            - run: # move from target to root for tar package
-#                name: Move jar artifact
-#                command: |
-#                  mv target/**.jar shashin-$VERSION.jar
-#            - run:
-#                name: Move exe artifact
-#                command: |
-#                  mv target/**.exe Shashin-$VERSION.exe
-#            - run:
-#                name: Compress Artifacts
-#                command: |
-#                  touch shashin-$VERSION.tar
-#                  tar -cvzf shashin-$VERSION.tar shashin-$VERSION.jar Shashin-$VERSION.exe reset_shashin_password.sh test-results
+            - run: # move from target to root for tar package
+                name: Move jar artifact
+                command: |
+                  mv target/**.jar shashin-$VERSION.jar
+            - run:
+                name: Move exe artifact
+                command: |
+                  mv target/**.exe Shashin-$VERSION.exe
+            - run:
+                name: Compress Artifacts
+                command: |
+                  touch shashin-$VERSION.tar
+                  tar -cvzf shashin-$VERSION.tar shashin-$VERSION.jar Shashin-$VERSION.exe reset_shashin_password.sh test-results
             - run: # Move artifacts to artifacts directory in preparation to persist
                 name: Create Artifacts Directory
                 command: |
@@ -103,9 +102,9 @@ workflows:
                   mv shashin-version.txt artifacts/shashin-version.txt
                   mv CHANGES.md artifacts/CHANGES.md
                   mv shashin_create_release_notes.sh artifacts/shashin_create_release_notes.sh
-#                  mv shashin-$VERSION.tar artifacts/shashin-$VERSION.tar
-#                  mv Shashin-$VERSION.exe artifacts/Shashin-$VERSION.exe
-#                  mv shashin-$VERSION.jar artifacts/shashin-$VERSION.jar
+                  mv shashin-$VERSION.tar artifacts/shashin-$VERSION.tar
+                  mv Shashin-$VERSION.exe artifacts/Shashin-$VERSION.exe
+                  mv shashin-$VERSION.jar artifacts/shashin-$VERSION.jar
             - persist_to_workspace: # persist the artifacts directory across jobs
                 root: .
                 paths: artifacts
@@ -115,8 +114,8 @@ workflows:
           filters: # job runs for no branches and only for tags starting with 'v'
             tags:
               only: /^v.*/
-#            branches:
-#              ignore: /.*/
+            branches:
+              ignore: /.*/
           name: Upload artifacts to repo
 
 jobs:
@@ -139,31 +138,30 @@ jobs:
           name: Checking version
           command: |
             echo $VERSION
-      # Upload to RepoFlow
-#      - run:
-#          name: Upload jar artifact
-#          command: |
-#            token=$REPOFLOW_TOKEN
-#            version=$VERSION
-#            curl --request POST \
-#            --header "Authorization: Bearer $token" \
-#            --header "Content-Type: multipart/form-data" \
-#            --form "packageFiles=@\"/home/circleci/project/artifacts/shashin-$version.jar\"" \
-#            --form "packageName=\"shashin\"" \
-#            --form "packageVersion=\"$version\"" \
-#            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
-#      - run:
-#          name: Upload windows artifact
-#          command: |
-#            token=$REPOFLOW_TOKEN
-#            version=$VERSION
-#            curl --request POST \
-#            --header "Authorization: Bearer $token" \
-#            --header "Content-Type: multipart/form-data" \
-#            --form "packageFiles=@\"/home/circleci/project/artifacts/Shashin-$version.exe\"" \
-#            --form "packageName=\"shashin\"" \
-#            --form "packageVersion=\"$version\"" \
-#            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
+      - run:
+          name: Upload jar artifact # Upload to RepoFlow
+          command: |
+            token=$REPOFLOW_TOKEN
+            version=$VERSION
+            curl --request POST \
+            --header "Authorization: Bearer $token" \
+            --header "Content-Type: multipart/form-data" \
+            --form "packageFiles=@\"/home/circleci/project/artifacts/shashin-$version.jar\"" \
+            --form "packageName=\"shashin\"" \
+            --form "packageVersion=\"$version\"" \
+            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
+      - run:
+          name: Upload windows artifact
+          command: |
+            token=$REPOFLOW_TOKEN
+            version=$VERSION
+            curl --request POST \
+            --header "Authorization: Bearer $token" \
+            --header "Content-Type: multipart/form-data" \
+            --form "packageFiles=@\"/home/circleci/project/artifacts/Shashin-$version.exe\"" \
+            --form "packageName=\"shashin\"" \
+            --form "packageVersion=\"$version\"" \
+            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
       - run:
           name: Create Github release # Create GH release
           command: |
