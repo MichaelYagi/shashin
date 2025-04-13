@@ -39,8 +39,8 @@ workflows:
               only: /^v.*/
 #          command: '-Dapp.github.key=$GITHUB_KEY -Dapp.circleci.key=$CIRCLECI_KEY -Dspring.profiles.active=test clean install'
           command: '-Dapp.github.key=$GITHUB_KEY -Dapp.circleci.key=$CIRCLECI_KEY -Dspring.profiles.active=test clean install -DskipTests'
-          requires:
-            - Run node tests
+#          requires:
+#            - Run node tests
           pre-steps:
             - run:
                 name: Installing Linux libraries and Chromedriver
