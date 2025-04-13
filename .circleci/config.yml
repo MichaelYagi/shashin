@@ -165,7 +165,7 @@ jobs:
 #            --form "packageVersion=\"$version\"" \
 #            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
       - run:
-          name: Create Github release
+          name: Create Github release # Create GH release
           command: |
             version=$VERSION
             bash /home/circleci/project/artifacts/shashin_create_release_notes.sh $version /home/circleci/project/artifacts/CHANGES.md
