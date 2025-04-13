@@ -69,23 +69,10 @@ jobs:
 workflows:
   shashin_workflow:
     jobs:
-      - node/test:
-          name: Run node tests
-          filters: # job runs for all branches and all tags
-            tags:
-              only: /^v.*/
-          test-results-for: mocha
-          post-steps:
-            - run:
-                name: Save JS test results
-                command: |
-                  mkdir -p test-results/mocha/
-                  find . -type f -regex ".*/test-results.xml" -exec cp {} test-results/mocha/ \;
-                when: always
-            - persist_to_workspace: # persist workspace across jobs
-                root: .
-                paths:
-                  - test-results/mocha
+      - test_github_release:
+          name: Upload artifacts to repo
+          executor: java17
+          steps:
             - run:
                 name: Set Version # get version from pom.xml
                 command: |
