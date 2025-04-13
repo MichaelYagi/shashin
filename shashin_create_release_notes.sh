@@ -1,14 +1,15 @@
 #!/bin/bash
 
-if [ "$#" -ne 2 ]; then
-    echo "Usage: $0 <version> <gh_token>"
+if [ "$#" -ne 3 ]; then
+    echo "Usage: $0 <version> <gh_token> <changes_file>"
     exit 1
 fi
 version=$1
 ghtoken=$2
+changesfile=$3
 
 # Get release notes from change log
-awk -v ver="${version}" '/^#+ \[/ { if (p) { exit }; if ($2 == "["ver"]") { p=1; next} } p && NF' "/home/circleci/project/artifacts/CHANGES.md" > shashin_release_notes.txt
+awk -v ver="${version}" '/^#+ \[/ { if (p) { exit }; if ($2 == "["ver"]") { p=1; next} } p && NF' "${changesfile}" > shashin_release_notes.txt
 
 # Replace newline
 release_notes=$(cat shashin_release_notes.txt)
