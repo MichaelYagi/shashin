@@ -10,51 +10,73 @@ orbs:
   node: circleci/node@7.1.0
   browser-tools: circleci/browser-tools@1.5.2
 
+#jobs:
+#  upload_to_repoflow:
+#    executor: java17
+#    steps:
+#      - attach_workspace: # attach artifacts directory from previous job
+#          at: .
+#      - store_artifacts: # Store artifacts temporarily in this job
+#          path: artifacts
+#      - run:
+#          name: Exporting version from file
+#          command: |
+#            echo 'export VERSION=$(cat /home/circleci/project/artifacts/shashin-version.txt)' >> $BASH_ENV
+#      - run:
+#          name: Exporting version to bash.env
+#          command: |
+#            cp $BASH_ENV bash.env
+#      - run:
+#          name: Checking version
+#          command: |
+#            echo $VERSION
+#      # Upload to RepoFlow
+#      - run:
+#          name: Upload jar artifact
+#          command: |
+#            token=$REPOFLOW_TOKEN
+#            version=$VERSION
+#            curl --request POST \
+#            --header "Authorization: Bearer $token" \
+#            --header "Content-Type: multipart/form-data" \
+#            --form "packageFiles=@\"/home/circleci/project/artifacts/shashin-$version.jar\"" \
+#            --form "packageName=\"shashin\"" \
+#            --form "packageVersion=\"$version\"" \
+#            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
+#      - run:
+#          name: Upload windows artifact
+#          command: |
+#            token=$REPOFLOW_TOKEN
+#            version=$VERSION
+#            curl --request POST \
+#            --header "Authorization: Bearer $token" \
+#            --header "Content-Type: multipart/form-data" \
+#            --form "packageFiles=@\"/home/circleci/project/artifacts/Shashin-$version.exe\"" \
+#            --form "packageName=\"shashin\"" \
+#            --form "packageVersion=\"$version\"" \
+#            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
+#      - run:
+#          name: Create Github release
+#          command: |
+#            ghtoken=$GITHUB_CONTENTWRITE_KEY
+#            version=$VERSION
+#            curl --request POST \
+#            --header "Authorization: Bearer $ghtoken" \
+#            --url "https://api.github.com/repos/michaelyagi/shashin/releases" \
+#            --data '{"tag_name":"v$version","body":"${'awk -v ver="$version" '/^#+ \[/ { if (p) { exit }; if ($2 == "["ver"]") { p=1; next} } p && NF' "/home/circleci/project/artifacts/CHANGES.md"'}"}'
+
+# test workflow start
 jobs:
-  upload_to_repoflow:
+  test_github_release:
     executor: java17
     steps:
-      - attach_workspace: # attach artifacts directory from previous job
-          at: .
-      - store_artifacts: # Store artifacts temporarily in this job
-          path: artifacts
       - run:
-          name: Exporting version from file
+          name: Set Version # get version from pom.xml
           command: |
-            echo 'export VERSION=$(cat /home/circleci/project/artifacts/shashin-version.txt)' >> $BASH_ENV
+            echo 'export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)' >> $BASH_ENV
       - run:
-          name: Exporting version to bash.env
           command: |
             cp $BASH_ENV bash.env
-      - run:
-          name: Checking version
-          command: |
-            echo $VERSION
-      # Upload to RepoFlow
-      - run:
-          name: Upload jar artifact
-          command: |
-            token=$REPOFLOW_TOKEN
-            version=$VERSION
-            curl --request POST \
-            --header "Authorization: Bearer $token" \
-            --header "Content-Type: multipart/form-data" \
-            --form "packageFiles=@\"/home/circleci/project/artifacts/shashin-$version.jar\"" \
-            --form "packageName=\"shashin\"" \
-            --form "packageVersion=\"$version\"" \
-            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
-      - run:
-          name: Upload windows artifact
-          command: |
-            token=$REPOFLOW_TOKEN
-            version=$VERSION
-            curl --request POST \
-            --header "Authorization: Bearer $token" \
-            --header "Content-Type: multipart/form-data" \
-            --form "packageFiles=@\"/home/circleci/project/artifacts/Shashin-$version.exe\"" \
-            --form "packageName=\"shashin\"" \
-            --form "packageVersion=\"$version\"" \
-            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
       - run:
           name: Create Github release
           command: |
@@ -65,31 +87,11 @@ jobs:
             --url "https://api.github.com/repos/michaelyagi/shashin/releases" \
             --data '{"tag_name":"v$version","body":"${'awk -v ver="$version" '/^#+ \[/ { if (p) { exit }; if ($2 == "["ver"]") { p=1; next} } p && NF' "/home/circleci/project/artifacts/CHANGES.md"'}"}'
 
-# test workflow start
 workflows:
   shashin_workflow:
     jobs:
       - test_github_release:
           name: Upload artifacts to repo
-          executor: java17
-          steps:
-            - run:
-                name: Set Version # get version from pom.xml
-                command: |
-                  echo 'export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)' >> $BASH_ENV
-            - run:
-                command: |
-                  cp $BASH_ENV bash.env
-            - run:
-                name: Create Github release
-                command: |
-                  ghtoken=$GITHUB_CONTENTWRITE_KEY
-                  version=$VERSION
-                  curl --request POST \
-                  --header "Authorization: Bearer $ghtoken" \
-                  --url "https://api.github.com/repos/michaelyagi/shashin/releases" \
-                  --data '{"tag_name":"v$version","body":"${'awk -v ver="$version" '/^#+ \[/ { if (p) { exit }; if ($2 == "["ver"]") { p=1; next} } p && NF' "/home/circleci/project/artifacts/CHANGES.md"'}"}'
-                  
 
 # Actual workflow start
 #workflows:
