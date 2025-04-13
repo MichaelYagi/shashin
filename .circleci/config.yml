@@ -83,19 +83,19 @@ workflows:
                   touch shashin-version.txt
                   echo $VERSION > shashin-version.txt
                   echo $(cat /home/circleci/project/shashin-version.txt)
-            - run: # move from target to root for tar package
-                name: Move jar artifact
-                command: |
-                  mv target/**.jar shashin-$VERSION.jar
-            - run:
-                name: Move exe artifact
-                command: |
-                  mv target/**.exe Shashin-$VERSION.exe
-            - run:
-                name: Compress Artifacts
-                command: |
-                  touch shashin-$VERSION.tar
-                  tar -cvzf shashin-$VERSION.tar shashin-$VERSION.jar Shashin-$VERSION.exe reset_shashin_password.sh test-results
+#            - run: # move from target to root for tar package
+#                name: Move jar artifact
+#                command: |
+#                  mv target/**.jar shashin-$VERSION.jar
+#            - run:
+#                name: Move exe artifact
+#                command: |
+#                  mv target/**.exe Shashin-$VERSION.exe
+#            - run:
+#                name: Compress Artifacts
+#                command: |
+#                  touch shashin-$VERSION.tar
+#                  tar -cvzf shashin-$VERSION.tar shashin-$VERSION.jar Shashin-$VERSION.exe reset_shashin_password.sh test-results
             - run: # Move artifacts to artifacts directory in preparation to persist
                 name: Create Artifacts Directory
                 command: |
