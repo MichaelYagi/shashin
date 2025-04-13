@@ -13,11 +13,11 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [2.9.1] - 2025-04-11
 ### Added
-- Tests for Pagy
-- Added pagination for albums, shared albums, folders, and favourites pages
-- Added pagination pages to valid redirect pages
+- Pagination for albums, shared albums, folders, and favourites pages
+- Pagination pages to valid redirect pages
+- Tests for Pagy pagination
 - Kotlin function to detect mobile from user agent string
-- Automated release notes
+- Automated release notes after test & build
 
 ### Changed
 - Smaller centered images in mobile view in gallery
