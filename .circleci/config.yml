@@ -163,6 +163,7 @@ jobs:
 #            --form "packageName=\"shashin\"" \
 #            --form "packageVersion=\"$version\"" \
 #            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
+    deploy:
       - gh/release:
           requires:
             - Upload windows artifact
