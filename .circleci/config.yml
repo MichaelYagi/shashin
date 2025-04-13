@@ -168,6 +168,7 @@ jobs:
           command: |
             ghtoken=$GITHUB_CONTENTWRITE_KEY
             version=$VERSION
+            echo ${version}
             curl --request POST \
             --header "Authorization: Bearer $ghtoken" \
             --url "https://api.github.com/repos/michaelyagi/shashin/releases" \
