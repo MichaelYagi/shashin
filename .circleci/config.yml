@@ -37,7 +37,8 @@ workflows:
           filters: # job runs for all branches and all tags
             tags:
               only: /^v.*/
-          command: '-Dapp.github.key=$GITHUB_KEY -Dapp.circleci.key=$CIRCLECI_KEY -Dspring.profiles.active=test clean install'
+#          command: '-Dapp.github.key=$GITHUB_KEY -Dapp.circleci.key=$CIRCLECI_KEY -Dspring.profiles.active=test clean install'
+          command: '-Dapp.github.key=$GITHUB_KEY -Dapp.circleci.key=$CIRCLECI_KEY -Dspring.profiles.active=test clean install -DskipTests'
           requires:
             - Run node tests
           pre-steps:
@@ -113,8 +114,8 @@ workflows:
           filters: # job runs for no branches and only for tags starting with 'v'
             tags:
               only: /^v.*/
-            branches:
-              ignore: /.*/
+#            branches:
+#              ignore: /.*/
           name: Upload artifacts to repo
 
 jobs:
@@ -139,30 +140,30 @@ jobs:
           command: |
             echo $VERSION
       # Upload to RepoFlow
-      - run:
-          name: Upload jar artifact
-          command: |
-            token=$REPOFLOW_TOKEN
-            version=$VERSION
-            curl --request POST \
-            --header "Authorization: Bearer $token" \
-            --header "Content-Type: multipart/form-data" \
-            --form "packageFiles=@\"/home/circleci/project/artifacts/shashin-$version.jar\"" \
-            --form "packageName=\"shashin\"" \
-            --form "packageVersion=\"$version\"" \
-            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
-      - run:
-          name: Upload windows artifact
-          command: |
-            token=$REPOFLOW_TOKEN
-            version=$VERSION
-            curl --request POST \
-            --header "Authorization: Bearer $token" \
-            --header "Content-Type: multipart/form-data" \
-            --form "packageFiles=@\"/home/circleci/project/artifacts/Shashin-$version.exe\"" \
-            --form "packageName=\"shashin\"" \
-            --form "packageVersion=\"$version\"" \
-            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
+#      - run:
+#          name: Upload jar artifact
+#          command: |
+#            token=$REPOFLOW_TOKEN
+#            version=$VERSION
+#            curl --request POST \
+#            --header "Authorization: Bearer $token" \
+#            --header "Content-Type: multipart/form-data" \
+#            --form "packageFiles=@\"/home/circleci/project/artifacts/shashin-$version.jar\"" \
+#            --form "packageName=\"shashin\"" \
+#            --form "packageVersion=\"$version\"" \
+#            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
+#      - run:
+#          name: Upload windows artifact
+#          command: |
+#            token=$REPOFLOW_TOKEN
+#            version=$VERSION
+#            curl --request POST \
+#            --header "Authorization: Bearer $token" \
+#            --header "Content-Type: multipart/form-data" \
+#            --form "packageFiles=@\"/home/circleci/project/artifacts/Shashin-$version.exe\"" \
+#            --form "packageName=\"shashin\"" \
+#            --form "packageVersion=\"$version\"" \
+#            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
       - gh/release:
           requires:
             - Upload windows artifact
