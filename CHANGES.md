@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Added
 
 ### Changed
+- Util.isMobile kept to a single source
 
 ### Fixed
 
