@@ -1,6 +1,6 @@
 # Change Log
 All notable additions, changes, fixes and removals to this project will be documented in this file.
-This project adheres to [Semantic Versioning](http://semver.org/).
+This project adheres to [Semantic Versioning](http://semver.org/), and follows [keep a change log](https://keepachangelog.com/) format.
 
 ## [Unreleased]
 ### Added
