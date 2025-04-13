@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added pagination for albums, shared albums, folders, and favourites pages
 - Added pagination pages to valid redirect pages
 - Kotlin function to detect mobile from user agent string
+- Automated release notes
 
 ### Changed
 - Smaller centered images in mobile view in gallery
