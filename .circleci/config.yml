@@ -41,33 +41,33 @@ workflows:
           command: '-Dapp.github.key=$GITHUB_KEY -Dapp.circleci.key=$CIRCLECI_KEY -Dspring.profiles.active=test clean install -DskipTests'
 #          requires:
 #            - Run node tests
-          pre-steps:
-            - run:
-                name: Installing Linux libraries and Chromedriver
-                command: |
-                  sudo apt-get update
-                  sudo apt-get install libgbm1 libgconf-2-4 libnss3 libxss1 lsb-release
-                  sudo apt-get install libappindicator3-1 libasound2 fonts-liberation xdg-utils
+#          pre-steps:
+#            - run:
+#                name: Installing Linux libraries and Chromedriver
+#                command: |
+#                  sudo apt-get update
+#                  sudo apt-get install libgbm1 libgconf-2-4 libnss3 libxss1 lsb-release
+#                  sudo apt-get install libappindicator3-1 libasound2 fonts-liberation xdg-utils
             # Install specific version
             # https://www.ubuntuupdates.org/package/google_chrome/stable/main/base/google-chrome-stable?id=202706&page=1
-            - browser-tools/install-browser-tools:
-                chrome-version: 127.0.6533.119
+#            - browser-tools/install-browser-tools:
+#                chrome-version: 127.0.6533.119
             # Install latest
 #            - browser-tools/install-chrome
 #            - browser-tools/install-chromedriver
-            - run:
-                name: Check Chromedriver install
-                command: |
-                  google-chrome --version
-                  chromedriver --version
-                  whereis chromedriver
+#            - run:
+#                name: Check Chromedriver install
+#                command: |
+#                  google-chrome --version
+#                  chromedriver --version
+#                  whereis chromedriver
           post-steps: # steps to run after steps
-            - run:
-                name: Save test results
-                command: |
-                  mkdir -p test-results/junit/
-                  find . -type f -regex ".*/target/surefire-reports/.*" -exec cp {} test-results/junit/ \;
-                when: always
+#            - run:
+#                name: Save test results
+#                command: |
+#                  mkdir -p test-results/junit/
+#                  find . -type f -regex ".*/target/surefire-reports/.*" -exec cp {} test-results/junit/ \;
+#                when: always
             - attach_workspace: # attach from another job
                 at: .
             - run:
@@ -102,9 +102,9 @@ workflows:
                   mkdir -p artifacts
                   mv shashin-version.txt artifacts/shashin-version.txt
                   mv CHANGES.md artifacts/CHANGES.md
-                  mv shashin-$VERSION.tar artifacts/shashin-$VERSION.tar
-                  mv Shashin-$VERSION.exe artifacts/Shashin-$VERSION.exe
-                  mv shashin-$VERSION.jar artifacts/shashin-$VERSION.jar
+#                  mv shashin-$VERSION.tar artifacts/shashin-$VERSION.tar
+#                  mv Shashin-$VERSION.exe artifacts/Shashin-$VERSION.exe
+#                  mv shashin-$VERSION.jar artifacts/shashin-$VERSION.jar
             - persist_to_workspace: # persist the artifacts directory across jobs
                 root: .
                 paths: artifacts
@@ -171,5 +171,5 @@ jobs:
             curl --request POST \
             --header "Authorization: Bearer $ghtoken" \
             --url "https://api.github.com/repos/michaelyagi/shashin/releases" \
-            --data '{"tag_name":"v$version"}'
-#            --data '{"tag_name":"v$version","body":"${'awk -v ver="$version" '/^#+ \[/ { if (p) { exit }; if ($2 == "["ver"]") { p=1; next} } p && NF' "/home/circleci/project/artifacts/CHANGES.md"'}"}'
+            --data '{"tag_name":"v${version}"}'
+#            --data '{"tag_name":"v${version}","body":"${'awk -v ver="${version}" '/^#+ \[/ { if (p) { exit }; if ($2 == "["ver"]") { p=1; next} } p && NF' "/home/circleci/project/artifacts/CHANGES.md"'}"}'
