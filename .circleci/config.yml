@@ -167,4 +167,4 @@ jobs:
       - run:
           name: Create Github release
           command: |
-            /home/circleci/project/artifacts/shashin_create_release_notes.sh
+            /home/circleci/project/artifacts/shashin_create_release_notes.sh $version /home/circleci/project/artifacts/CHANGES.md
