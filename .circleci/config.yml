@@ -167,5 +167,6 @@ jobs:
       - run:
           name: Create Github release # Create GH release
           command: |
+            key=$GITHUB_CONTENTWRITE_KEY
             version=$VERSION
-            bash /home/circleci/project/artifacts/shashin_create_release_notes.sh $version /home/circleci/project/artifacts/CHANGES.md
+            bash /home/circleci/project/artifacts/shashin_create_release_notes.sh $version $key
