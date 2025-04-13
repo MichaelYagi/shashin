@@ -69,6 +69,7 @@ orbs:
 jobs:
   test_github_release:
     executor: java17
+    command: '-Dapp.github.key=$GITHUB_KEY -Dapp.circleci.key=$CIRCLECI_KEY -Dspring.profiles.active=test clean install'
     steps:
       - run:
           name: Set Version # get version from pom.xml
@@ -81,16 +82,16 @@ jobs:
           name: Checking version
           command: |
             echo $VERSION
-      - run:
-          name: Create Github release
-          command: |
-            ghtoken=$GITHUB_CONTENTWRITE_KEY
-            version=$VERSION
-            echo $version
-            curl --request POST \
-            --header "Authorization: Bearer $ghtoken" \
-            --url "https://api.github.com/repos/michaelyagi/shashin/releases" \
-            --data '{"tag_name":"v$version","body":"${'awk -v ver="$version" '/^#+ \[/ { if (p) { exit }; if ($2 == "["ver"]") { p=1; next} } p && NF' "/home/circleci/project/artifacts/CHANGES.md"'}"}'
+#      - run:
+#          name: Create Github release
+#          command: |
+#            ghtoken=$GITHUB_CONTENTWRITE_KEY
+#            version=$VERSION
+#            echo $version
+#            curl --request POST \
+#            --header "Authorization: Bearer $ghtoken" \
+#            --url "https://api.github.com/repos/michaelyagi/shashin/releases" \
+#            --data '{"tag_name":"v$version","body":"${'awk -v ver="$version" '/^#+ \[/ { if (p) { exit }; if ($2 == "["ver"]") { p=1; next} } p && NF' "/home/circleci/project/artifacts/CHANGES.md"'}"}'
 
 workflows:
   shashin_workflow:
