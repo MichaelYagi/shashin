@@ -1583,6 +1583,14 @@ class AlbumsController: BaseController() {
                         page * size,
                         size
                     )
+                } else if (mediaType == "description") {
+                    response["totalPages"] = ceil((albumPhotoRepository.countAlbumIdAndDescription(albumId)!!.toDouble()) / size.toDouble()).toInt()
+
+                    albumPhotoRepository.findAllByAlbumIdAndDescriptionAndOffsetAndLimit(
+                        albumId,
+                        page * size,
+                        size
+                    )
                 } else {
                     response["totalPages"] = ceil((albumPhotoRepository.countAlbumIdAndMediaType(albumId,mediaType)!!.toDouble()) / size.toDouble()).toInt()
 

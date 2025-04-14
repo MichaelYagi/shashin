@@ -667,6 +667,35 @@ class BrowseController: BaseController() {
                         ).toMutableList()
                     }
                 }
+            } else if (mediaType == "description") {
+                response["totalPages"] = ceil((metadataRepository.countByDescriptionAndOffsetAndLimit().toDouble()) / size.toDouble()).toInt()
+
+                when (module) {
+                    "recent" -> {
+                        metadataList = metadataRepository.findRecentByDescriptionAndOffsetAndLimit(
+                            pageValue,
+                            size
+                        ).toMutableList()
+                    }
+                    "modified" -> {
+                        metadataList = metadataRepository.findModifiedByDescriptionAndOffsetAndLimit(
+                            pageValue,
+                            size
+                        ).toMutableList()
+                    }
+                    "taken" -> {
+                        metadataList = metadataRepository.findTakenByDescriptionAndOffsetAndLimit(
+                            pageValue,
+                            size
+                        ).toMutableList()
+                    }
+                    "accessed" -> {
+                        metadataList = metadataRepository.findLastAccessedByDescriptionAndOffsetAndLimit(
+                            pageValue,
+                            size
+                        ).toMutableList()
+                    }
+                }
             } else {
                 response["totalPages"] = ceil((metadataRepository.countByMediaTypeAndOffsetAndLimit(mediaType).toDouble()) / size.toDouble()).toInt()
 

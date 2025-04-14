@@ -52,6 +52,9 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllMissingCoordOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
+   fun findAllDescriptionOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
+
    fun findDistinctFirstByHiddenIsFalseOrderByYearDescMonthDescDayDescTimeDesc(): Metadata?
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT 1", nativeQuery = true)
@@ -59,6 +62,9 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT 1", nativeQuery = true)
    fun findDistinctFirstByHiddenIsFalseByNoCoordOrderByYearDescMonthDescDayDesc(): Metadata?
+
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT 1", nativeQuery = true)
+   fun findDistinctFirstByHiddenIsFalseByDescriptionOrderByYearDescMonthDescDayDesc(): Metadata?
 
    @Query("SELECT DISTINCT year,month,day FROM metadata WHERE hidden = 0 ORDER BY year DESC, month DESC, day DESC", nativeQuery = true)
    fun findAllYearMonthDay(): MutableIterable<MetadataDate>?
@@ -68,6 +74,9 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
 
    @Query("SELECT DISTINCT year,month,day FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findAllYearMonthDayByNoCoord(): MutableIterable<MetadataDate>?
+
+   @Query("SELECT DISTINCT year,month,day FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
+   fun findAllYearMonthDayByDescription(): MutableIterable<MetadataDate>?
 
    fun countMetadataById(metadataId: String): Int
 
@@ -109,6 +118,9 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) ORDER BY modified_at DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findModifiedByNoCoordAndOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" ORDER BY modified_at DESC LIMIT :offset, :limit", nativeQuery = true)
+   fun findModifiedByDescriptionAndOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
+
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% ORDER BY added_at DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findRecentByMediaTypeAndOffsetAndLimit(@Param("offset") offset: Int, @Param("type") type: String?, @Param("limit") limit: Int): MutableIterable<Metadata>
 
@@ -118,8 +130,14 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) ORDER BY added_at DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findRecentByNoCoordAndOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" ORDER BY added_at DESC LIMIT :offset, :limit", nativeQuery = true)
+   fun findRecentByDescriptionAndOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
+
    @Query("SELECT COUNT(*) FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\"))", nativeQuery = true)
    fun countByNoCoordAndOffsetAndLimit(): Int
+
+   @Query("SELECT COUNT(*) FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\"", nativeQuery = true)
+   fun countByDescriptionAndOffsetAndLimit(): Int
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findTakenByMediaTypeAndOffsetAndLimit(@Param("offset") offset: Int, @Param("type") type: String?, @Param("limit") limit: Int): MutableIterable<Metadata>
@@ -127,11 +145,17 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findTakenByNoCoordAndOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
+   fun findTakenByDescriptionAndOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
+
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% ORDER BY last_accessed_at DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findLastAccessedByMediaTypeAndOffsetAndLimit(@Param("offset") offset: Int, @Param("type") type: String?, @Param("limit") limit: Int): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) ORDER BY last_accessed_at DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findLastAccessedByNoCoordAndOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
+
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" ORDER BY last_accessed_at DESC LIMIT :offset, :limit", nativeQuery = true)
+   fun findLastAccessedByDescriptionAndOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
    fun findAllByYearAndMonthAndDayAndHiddenEqualsOrderByYearDescMonthDescDayDescTimeDesc(year: Int?, month: Int?, day: Int?, hidden: Boolean?): MutableIterable<Metadata>
 
@@ -149,6 +173,9 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
 
    @Query("SELECT * FROM metadata WHERE ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND year = :year AND month = :month AND day = :day AND hidden = 0 ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findAllByNoCoordAndYearAndMonthAndDay(@Param("year") year: Int?,@Param("month") month: Int?,@Param("day") day: Int?): MutableIterable<Metadata>
+
+   @Query("SELECT * FROM metadata WHERE description IS NOT NULL AND description != \"\" AND year = :year AND month = :month AND day = :day AND hidden = 0 ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
+   fun findAllByDescriptionAndYearAndMonthAndDay(@Param("year") year: Int?,@Param("month") month: Int?,@Param("day") day: Int?): MutableIterable<Metadata>
 
    @Query("SELECT rl.id,rl.name,rl.cover_url as coverUrl, COUNT(*) AS tagCount, m.thumbnail_url_centered AS thumbnailUrlCentered FROM metadata m INNER JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id INNER JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id WHERE rl.name != :objectName AND m.hidden = 0 AND rlp.confidence >= 0.0 AND rlp.confidence <= :recognitionConfidenceThreshold GROUP BY rl.id", nativeQuery = true)
    fun findMetadataByPeople(@Param("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String, @Param("objectName") objectName: String): MutableIterable<MetadataPeople>

@@ -18,6 +18,8 @@ interface AlbumPhotoRepository : CrudRepository<AlbumPhoto?, Int?> {
     fun countAlbumIdAndMediaType(@Param("albumId") albumId: Int, @Param("type") type: String): Int?
     @Query("SELECT COUNT(DISTINCT ap.metadata_id) FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND ((m.lat IS NULL OR m.lat == \"\") OR (m.lng IS NULL OR m.lng == \"\"))", nativeQuery = true)
     fun countAlbumIdAndNoCoord(albumId: Int?): Int?
+    @Query("SELECT COUNT(DISTINCT ap.metadata_id) FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.description IS NOT NULL AND m.description != \"\"", nativeQuery = true)
+    fun countAlbumIdAndDescription(albumId: Int?): Int?
     @Query("SELECT COUNT(DISTINCT ap.metadata_id) FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.type NOT LIKE '%video%'", nativeQuery = true)
     fun countPhotosByAlbumId(albumId: Int?): Int?
     @Query("SELECT COUNT(DISTINCT ap.metadata_id) FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.type LIKE '%video%'", nativeQuery = true)
@@ -34,6 +36,8 @@ interface AlbumPhotoRepository : CrudRepository<AlbumPhoto?, Int?> {
     fun findAllByAlbumIdAndMediaTypeAndOffsetAndLimit(@Param("albumId") albumId: Int, @Param("type") type: String, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<AlbumPhoto?>?
     @Query("SELECT DISTINCT ap.* FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND ((m.lat IS NULL OR m.lat == \"\") OR (m.lng IS NULL OR m.lng == \"\")) ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC LIMIT :offset, :limit", nativeQuery = true)
     fun findAllByAlbumIdAndNoCoordAndOffsetAndLimit(@Param("albumId") albumId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<AlbumPhoto?>?
+    @Query("SELECT DISTINCT ap.* FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.description IS NOT NULL AND m.description != \"\" ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC LIMIT :offset, :limit", nativeQuery = true)
+    fun findAllByAlbumIdAndDescriptionAndOffsetAndLimit(@Param("albumId") albumId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<AlbumPhoto?>?
     @Query("SELECT DISTINCT ap.* FROM albumphoto ap, metadata m, albumphotocomment apc WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND ap.album_id = apc.album_id AND apc.metadata_id = ap.metadata_id ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC LIMIT :offset, :limit", nativeQuery = true)
     fun findAllByAlbumIdAndCommentsOnlyAndOffsetAndLimit(@Param("albumId") albumId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<AlbumPhoto?>?
     @Query("SELECT COUNT(DISTINCT ap.metadata_id) FROM albumphoto ap, metadata m, albumphotocomment apc WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND ap.album_id = apc.album_id AND apc.metadata_id = ap.metadata_id", nativeQuery = true)
