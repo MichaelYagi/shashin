@@ -44,11 +44,11 @@
                                     </th:block>
                                     <th:block th:if="${authority == 'ROLE_ADMIN' || authority == 'ROLE_SUPER'}">
                                         <a href="#" th:id="'edit'+${album.id}"><span class="bi-pencil" title="Edit album"></span></a>
-                                        &nbsp;&nbsp;<a href="#" th:id="'share'+${album.id}"><span th:class="${album.shareUrl != null and album.shareUrl != '' ? 'bi-share-fill' : 'bi-share'}" th:title="${(album.shareUrl != null and album.shareUrl != '' ? 'Shared' : 'Share') + ' with other people'}"></span></a>
-                                        <span th:id="'userShare'+${album.id}" title="Shared with others users" th:style="${sharedAlbumsMap.containsKey(album.id) and (authority == 'ROLE_ADMIN' || authority == 'ROLE_SUPER') ? 'display: inline-block' : 'display: none'}">&nbsp;&nbsp;<span class="bi-person-up text-muted"></span></span>
-                                        &nbsp;&nbsp;<a href="#" th:id="'trash'+${album.id}" title="Delete album"><span class="bi-trash"></span></a>
+                                        <th:block th:unless="${isMobile}">&nbsp;</th:block>&nbsp;<a href="#" th:id="'share'+${album.id}"><span th:class="${album.shareUrl != null and album.shareUrl != '' ? 'bi-share-fill' : 'bi-share'}" th:title="${(album.shareUrl != null and album.shareUrl != '' ? 'Shared' : 'Share') + ' with other people'}"></span></a>
+                                        <span th:id="'userShare'+${album.id}" title="Shared with others users" th:style="${sharedAlbumsMap.containsKey(album.id) and (authority == 'ROLE_ADMIN' || authority == 'ROLE_SUPER') ? 'display: inline-block' : 'display: none'}"><th:block th:unless="${isMobile}">&nbsp;</th:block>&nbsp;<span class="bi-person-up text-muted"></span></span>
+                                        <th:block th:unless="${isMobile}">&nbsp;</th:block>&nbsp;<a href="#" th:id="'trash'+${album.id}" title="Delete album"><span class="bi-trash"></span></a>
                                     </th:block>
-                                    <p class="card-text"><small class="text-muted" th:text="${album.albumPhotoCount + (album.albumPhotoCount == 1 ? ' photo':' photos') + '&nbsp;&nbsp;&nbsp;&nbsp;' + album.albumVideoCount + (album.albumVideoCount == 1 ? ' video':' videos')}"></small></p>
+                                    <p class="card-text"><small class="text-muted" th:text="${album.albumPhotoCount + (album.albumPhotoCount == 1 ? ' photo':' photos') + (isMobile ? '' : '&nbsp;&nbsp;') + '&nbsp;&nbsp;' + album.albumVideoCount + (album.albumVideoCount == 1 ? ' video':' videos')}"></small></p>
                                 </span>
                             </div>
                         </div>

@@ -84,12 +84,12 @@ class Albums {
 
                         if (true === showControls) {
                             html += '<a href="#" id="edit' + album.id + '"><span class="bi-pencil" title="Edit album"></span></a>';
-                            html += '&nbsp;&nbsp;&nbsp;<a href="#" id="share' + album.id + '"><span class="' + (album.shareUrl != null && album.shareUrl !== '' ? 'bi-share-fill' : 'bi-share') + '" title="' + (album.shareUrl != null && album.shareUrl !== '' ? 'Shared' : 'Share') + ' with other people"></span></a>';
+                            html += (Util.isMobile() ? '&nbsp;' : '&nbsp;&nbsp;&nbsp;') + '<a href="#" id="share' + album.id + '"><span class="' + (album.shareUrl != null && album.shareUrl !== '' ? 'bi-share-fill' : 'bi-share') + '" title="' + (album.shareUrl != null && album.shareUrl !== '' ? 'Shared' : 'Share') + ' with other people"></span></a>';
                             html += '<span id="userShare' + album.id + '" title="Shared with other users" style="' + (sharedAlbumMap.hasOwnProperty(album.id) && showControls === true ? "display: inline-block" : "display: none") + '">&nbsp;&nbsp;&nbsp;<span class="bi-person-up text-muted"></span></span>';
-                            html += '&nbsp;&nbsp;&nbsp;<a href="#" id="trash' + album.id + '" title="Delete album"><span class="bi-trash"></span></a>';
+                            html += (Util.isMobile() ? '&nbsp;' : '&nbsp;&nbsp;&nbsp;') + '<a href="#" id="trash' + album.id + '" title="Delete album"><span class="bi-trash"></span></a>';
                         }
 
-                        html += '<p class="card-text"><small class="text-muted">' + album.albumPhotoCount + (album.albumPhotoCount === 1 ? ' photo' : ' photos') + '&nbsp;&nbsp;&nbsp;&nbsp;' + album.albumVideoCount + (album.albumVideoCount === 1 ? ' video' : ' videos') + '</small></p></span>';
+                        html += '<p class="card-text"><small class="text-muted">' + album.albumPhotoCount + (album.albumPhotoCount === 1 ? ' photo' : ' photos') + (Util.isMobile() ? '&nbsp;&nbsp;' : '&nbsp;&nbsp;&nbsp;&nbsp;') + album.albumVideoCount + (album.albumVideoCount === 1 ? ' video' : ' videos') + '</small></p></span>';
                         html += '</div></div>';
 
                         html += '<script type="text/javascript" nonce="' + cspNonce + '">Albums.setAlbumsEventListeners(' + album.id + ', "' + baseUrl + '", ' + showControls + ', "' + cspNonce + '");<\/script>';
