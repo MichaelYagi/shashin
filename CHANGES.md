@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ### Changed
 - Util.isMobile kept to a single source
+- Smaller centered images in mobile view in albums, folders and people view
 
 ### Fixed
 
