@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ## [Unreleased]
 ### Added
 - Commented filter in album view
+- UX improvement for snapshot feedback
 
 ### Changed
 - Util.isMobile kept to a single source
