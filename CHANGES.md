@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
-- Commented filter in album view
+- Comments filter in album view
 - UX improvement for snapshot feedback
 - Description filter for timeline, albums, shared albums, folders, and favourites pages
 
