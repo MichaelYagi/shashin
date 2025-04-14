@@ -27,6 +27,7 @@ class Snapshot {
 
         $("#import").on("click", function() {
             $("#msg").text("Importing data.");
+            shashin.showToastMessage("Importing data", "Importing metadata, albums and favorites", {tag:"importexport", icon:"bi-info-circle", iconColor:"#777777", autohide:false});
         });
 
         const tokenName = this.tokenName;
