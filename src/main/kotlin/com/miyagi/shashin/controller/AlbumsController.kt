@@ -1567,7 +1567,7 @@ class AlbumsController: BaseController() {
                         page * size,
                         size
                     )
-                } else if (mediaType == "commented") {
+                } else if (mediaType == "comments") {
                     response["totalPages"] = ceil((albumPhotoRepository.countByAlbumIdAndCommentsOnly(albumId)!!.toDouble()) / size.toDouble()).toInt()
 
                     albumPhotoRepository.findAllByAlbumIdAndCommentsOnlyAndOffsetAndLimit(
