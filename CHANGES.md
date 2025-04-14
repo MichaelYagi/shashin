@@ -4,13 +4,8 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
-- Comments filter in album view
-- UX improvement for snapshot feedback
-- Description filter for timeline, albums, shared albums, folders, and favourites pages
 
 ### Changed
-- Util.isMobile kept to a single source
-- Smaller centered images in mobile view in albums, folders and people view
 
 ### Fixed
 
@@ -23,9 +18,14 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 - Tests for Pagy pagination
 - Kotlin function to detect mobile from user agent string
 - Automated release notes after test & build
+- Comments filter in album view
+- UX improvement for snapshot feedback
+- Description filter for timeline, albums, shared albums, folders, and favourites pages
 
 ### Changed
 - Smaller centered images in mobile view in gallery
+- Util.isMobile kept to a single source
+- Smaller centered images in mobile view in albums, folders and people view
 
 ### Fixed
 - Total paged result calculation
