@@ -229,10 +229,10 @@ class GalleryTemplates {
         </div>
     `};
 
-    static getFoldersCard({folder, thumbnailUrlCentered, count, appendClass, darkMode}) { return `
-        <div class="card" style="width:235px;padding-top:10px;margin-right:-1px;margin-top:-1px;">
+    static getFoldersCard({folder, thumbnailUrlCentered, count, appendClass, darkMode, isMobile}) { return `
+        <div class="card" style="width:${isMobile ? '175' : '235'}px;padding-top:${isMobile ? '14' : '10'}px;margin-right:-1px;margin-top:-1px;">
             <a href="/folder/${encodeURIComponent(encodeURIComponent(folder)).replace(";", "%3B")}" style="text-decoration: none !important;color: #777777;">
-                <img loading="lazy" draggable="false" class="card-img-top" src="${thumbnailUrlCentered}" width="209" height="209" style="width: 209px;height: 209px;">
+                <img loading="lazy" draggable="false" class="card-img-top" src="${thumbnailUrlCentered}" width="${isMobile ? '148' : '209'}" height="${isMobile ? '148' : '209'}" style="width: ${isMobile ? '148' : '209'}px;height: ${isMobile ? '148' : '209'}px;">
             </a>
             <div class="card-body" style="display: flex;flex-direction: column;">
                 <a href="/folder/${encodeURIComponent(encodeURIComponent(folder)).replace(";", "%3B")}" style="text-decoration: none !important;color: ${(darkMode ? '#FFFFFF;' : '#000000;')}">

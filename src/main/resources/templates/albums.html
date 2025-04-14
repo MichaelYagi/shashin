@@ -21,9 +21,9 @@
             <th:block th:if="${not #lists.isEmpty(albumsList)}">
                 <div th:class="'row' + ${isMobile ? '' : ' image-group-padding'}">
                     <th:block th:each="album, iterStat: ${albumsList}">
-                        <div class="card" style="width:235px;padding-top:10px;margin-right:-1px;margin-bottom:-1px;">
+                        <div class="card" th:style="'width:'+${isMobile ? '175' : '235'}+'px;padding-top:'+${isMobile ? '14' : '10'}+'px;margin-right:-1px;margin-bottom:-1px;'">
                             <a th:href="'/album/'+${album.id}" style="text-decoration: none !important;color: #777777;" th:id="'album'+${album.id}">
-                                <img loading="lazy" draggable="false" class="card-img-top" th:src="${#strings.replace(#uris.escapePath(album.coverUrl),';','%3B')}" width="209" height="209" style="width: 209px;height: 209px;">
+                                <img loading="lazy" draggable="false" class="card-img-top" th:src="${#strings.replace(#uris.escapePath(album.coverUrl),';','%3B')}" th:width="${isMobile ? '148' : '209'}" th:height="${isMobile ? '148' : '209'}" th:style="'width: '+${isMobile ? '148' : '209'}+'px;height: '+${isMobile ? '148' : '209'}+'px;'">
                             </a>
                             <div class="card-body" style="display: flex;flex-direction: column;">
                                 <p class="card-text"><a th:href="'/album/'+${album.id}" th:style="'text-decoration: none !important;color: ' + ${currentUser.darkMode ? '#FFFFFF;' : '#000000;'}"><strong th:id="'albumName'+${album.id}" th:text="${album.name}"></strong></a></p>
