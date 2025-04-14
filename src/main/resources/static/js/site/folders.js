@@ -8,6 +8,7 @@ class Folders {
         this.eol = false;
         this.activePage = activePage;
         this.darkMode = darkMode;
+        this.isMobile = Util.isMobile();
     }
 
     async init() {
@@ -31,6 +32,7 @@ class Folders {
     async updateFolders(nextPage,activePage) {
         this.rendering = true;
         const darkMode = this.darkMode;
+        const isMobile = this.isMobile;
         const appendClass = "appendFoldersPhotos";
         let foldersList = [];
 
@@ -57,7 +59,8 @@ class Folders {
                         thumbnailUrlCentered,
                         count,
                         appendClass,
-                        darkMode
+                        darkMode,
+                        isMobile
                     })).insertBefore($("." + appendClass).last());
                 }
 

@@ -63,9 +63,9 @@ class Albums {
             if (albumsList !== null && albumsList.length > 0) {
                 albumsList.forEach(function (album) {
                     if ($("#album"+album.id).length === 0) {
-                        let html = '<div class="card" style="width:235px;padding-top:10px;margin-right:-1px;margin-bottom:-1px;">';
+                        let html = '<div class="card" style="width:'+(Util.isMobile() ? '175' : '235')+'px;padding-top:'+(Util.isMobile() ? '14' : '10')+'px;margin-right:-1px;margin-bottom:-1px;">';
                         html += '<a href="/album/' + album.id + '" style="text-decoration: none !important;color: #777777;" id="album' + album.id + '">';
-                        html += '<img loading="lazy" class="card-img-top" src="' + album.coverUrl + '" width="209" height="209" style="width: 209px;height: 209px;" draggable="false">';
+                        html += '<img loading="lazy" class="card-img-top" src="' + album.coverUrl + '" width="'+(Util.isMobile() ? '148' : '209')+'" height="'+(Util.isMobile() ? '148' : '209')+'" style="width: '+(Util.isMobile() ? '148' : '209')+'px;height: '+(Util.isMobile() ? '148' : '209')+'px;" draggable="false">';
                         html += '</a>';
                         html += '<div class="card-body" style="display: flex;flex-direction: column;">';
                         html += '<p class="card-text"><a href="/album/' + album.id + '" style="text-decoration: none !important;color: '+(darkMode ? '#FFFFFF;' : '#000000;')+';"><strong id="albumName' + album.id + '">' + album.name + '</strong></a></p>';

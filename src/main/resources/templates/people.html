@@ -16,10 +16,10 @@
                 <div th:class="'row' + ${isMobile ? '' : ' image-group-padding'}">
                     <th:block th:each="person, iterStat: ${peopleList}">
                         <th:block th:if="${person.name != null and person.name != 'null'}">
-                            <div class="card" style="width:235px;padding-top:10px;margin-right:-1px;margin-bottom:-1px;">
-                                <a th:href="'/person/'+${person.id}"  style="text-decoration: none !important;color: #777777;" th:id="'person'+${person.id}">
+                            <div class="card" th:style="'width:'+${isMobile ? '175' : '235'}+'px;padding-top:'+${isMobile ? '14' : '10'}+'px;margin-right:-1px;margin-bottom:-1px;'">
+                                <a th:href="'/person/'+${person.id}" style="text-decoration: none !important;color: #777777;" th:id="'person'+${person.id}">
                                     <th:block th:if="${#maps.containsKey(coverUrls, person.id)}">
-                                        <img loading="lazy" draggable="false" class="card-img-top" style="position: relative;" th:src="${coverUrls.get(person.id)}" width="209" height="209">
+                                        <img loading="lazy" draggable="false" class="card-img-top" style="position: relative;" th:src="${coverUrls.get(person.id)}" th:width="${isMobile ? '148' : '209'}" th:height="${isMobile ? '148' : '209'}">
                                         <th:block th:if="${settings.facialDetection==true and #maps.containsKey(counts, person.id)}">
                                             <span class="position-absolute badge rounded-pill bg-danger" style="position: absolute;bottom: 22%;left: 3%;" th:text="${(counts.get(person.id) > 99) ? '99+' : counts.get(person.id) + (counts.get(person.id) == 1 ? ' match' : ' matches')}"></span>
                                         </th:block>
