@@ -1567,6 +1567,14 @@ class AlbumsController: BaseController() {
                         page * size,
                         size
                     )
+                } else if (mediaType == "commented") {
+                    response["totalPages"] = ceil((albumPhotoRepository.countByAlbumIdAndCommentsOnly(albumId)!!.toDouble()) / size.toDouble()).toInt()
+
+                    albumPhotoRepository.findAllByAlbumIdAndCommentsOnlyAndOffsetAndLimit(
+                        albumId,
+                        page * size,
+                        size
+                    )
                 } else if (mediaType == "nolatlng") {
                     response["totalPages"] = ceil((albumPhotoRepository.countAlbumIdAndNoCoord(albumId)!!.toDouble()) / size.toDouble()).toInt()
 
