@@ -615,6 +615,14 @@
     };
 
     shashin.openEditMetadataModal = function (metadataId) {
+        shashin.showToastMessage("Opening Media Info", "Opening Info", {
+            placement:shashin.toast.placement.middle.center,
+            icon:"bi-info-circle",
+            iconColor:"#777777",
+            autohide:false,
+            tag:"metadatamodal"
+        });
+
         shashin.getCompleteMetadata(metadataId).then(async function (data) {
             if (data.hasOwnProperty("metadata") &&
                 data.hasOwnProperty("taggedPeopleList") &&
@@ -948,9 +956,13 @@
                     shashin.createAutocomplete("#lens", lensesAvailableList, false);
                 }
 
+
                 // Open modal window
                 $("#propMetadata").modal('show');
             }
+
+            shashin.closeToastMessages({tag:"metadatamodal"});
+
         });
     };
 
