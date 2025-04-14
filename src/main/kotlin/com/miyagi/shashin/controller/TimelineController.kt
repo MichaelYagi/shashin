@@ -210,6 +210,8 @@ class TimelineController: BaseController() {
             metadataRepository.findDistinctFirstByHiddenIsFalseOrderByYearDescMonthDescDayDescTimeDesc()
         } else if (mediaType == "nolatlng") {
             metadataRepository.findDistinctFirstByHiddenIsFalseByNoCoordOrderByYearDescMonthDescDayDesc()
+        } else if (mediaType == "description") {
+            metadataRepository.findDistinctFirstByHiddenIsFalseByDescriptionOrderByYearDescMonthDescDayDesc()
         } else {
             metadataRepository.findDistinctFirstByHiddenIsFalseByMediaTypeOrderByYearDescMonthDescDayDesc(mediaType!!)
         }
@@ -337,6 +339,8 @@ class TimelineController: BaseController() {
             metadataRepository.findAllYearMonthDay()
         } else if (mediaType == "nolatlng") {
             metadataRepository.findAllYearMonthDayByNoCoord()
+        } else if (mediaType == "description") {
+            metadataRepository.findAllYearMonthDayByDescription()
         } else {
             metadataRepository.findAllYearMonthDayByMediaType(mediaType)
         }
@@ -454,6 +458,11 @@ class TimelineController: BaseController() {
                     ).toMutableList()
                 } else if (mediaTypeFilter == "nolatlng") {
                     metadataRepository.findAllMissingCoordOffsetAndLimit(
+                        pageValue,
+                        size
+                    ).toMutableList()
+                } else if (mediaTypeFilter == "description") {
+                    metadataRepository.findAllDescriptionOffsetAndLimit(
                         pageValue,
                         size
                     ).toMutableList()
@@ -736,6 +745,8 @@ class TimelineController: BaseController() {
             metadataRepository.findAllYearMonthDay()
         } else if (mediaType == "nolatlng") {
             metadataRepository.findAllYearMonthDayByNoCoord()
+        } else if (mediaType == "description") {
+            metadataRepository.findAllYearMonthDayByDescription()
         } else {
             metadataRepository.findAllYearMonthDayByMediaType(mediaType)
         }
@@ -790,6 +801,10 @@ class TimelineController: BaseController() {
                         metadataRepository.findAllByNoCoordAndYearAndMonthAndDay(
                             year, month, day
                         ).toMutableList()
+                    } else if (mediaTypeFilter == "description") {
+                        metadataRepository.findAllByDescriptionAndYearAndMonthAndDay(
+                            year, month, day
+                        ).toMutableList()
                     } else {
                         metadataRepository.findAllByTypeAndYearAndMonthAndDay(
                             mediaTypeFilter,
@@ -809,6 +824,10 @@ class TimelineController: BaseController() {
                         ).toMutableList()
                     } else if (mediaTypeFilter == "nolatlng") {
                         metadataRepository.findAllByNoCoordAndYearAndMonthAndDay(
+                            year, month, day
+                        ).toMutableList()
+                    } else if (mediaTypeFilter == "description") {
+                        metadataRepository.findAllByDescriptionAndYearAndMonthAndDay(
                             year, month, day
                         ).toMutableList()
                     } else {

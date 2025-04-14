@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Added
 - Commented filter in album view
 - UX improvement for snapshot feedback
+- Description filter for timeline, albums, shared albums, folders, and favourites pages
 
 ### Changed
 - Util.isMobile kept to a single source

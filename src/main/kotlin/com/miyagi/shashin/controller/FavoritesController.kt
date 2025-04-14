@@ -168,6 +168,14 @@ class FavoritesController: BaseController() {
                     (page * size),
                     size
                 )
+            } else if (mediaType == "description") {
+                response["totalPages"] = ceil((favoriteRepository.countAllByUserIdAndDescription(currentUserObj.getId())!!.toDouble()) / size.toDouble()).toInt()
+
+                favoriteRepository.findAllByUserIdAndDescriptionAndOffsetAndLimit(
+                    currentUserObj.getId(),
+                    (page * size),
+                    size
+                )
             } else {
                 response["totalPages"] = ceil((favoriteRepository.countAllByUserIdAndMediaType(currentUserObj.getId(), mediaType)!!.toDouble()) / size.toDouble()).toInt()
 
