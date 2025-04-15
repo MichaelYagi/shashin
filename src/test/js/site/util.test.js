@@ -368,6 +368,10 @@ describe('#Util tests', function() {
         currVersion = "v1.12.7";
         latestVersion = "v3.12.7";
         assert.isTrue(Util.downloadLatestVersion(currVersion,latestVersion));
+
+        currVersion = "v0.2.0.1";
+        latestVersion = "v1.0.0";
+        assert.isFalse(Util.downloadLatestVersion(currVersion,latestVersion));
     });
 
     it('Get OS tests', function() {
