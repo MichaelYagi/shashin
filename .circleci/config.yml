@@ -100,7 +100,7 @@ workflows:
                 command: |
                   mkdir -p artifacts
                   mv shashin-version.txt artifacts/shashin-version.txt
-                  mv CHANGES.md artifacts/CHANGES.md
+                  mv CHANGELOG.md artifacts/CHANGELOG.md
                   mv shashin_create_release_notes.sh artifacts/shashin_create_release_notes.sh
                   mv shashin-$VERSION.tar artifacts/shashin-$VERSION.tar
                   mv Shashin-$VERSION.exe artifacts/Shashin-$VERSION.exe
@@ -167,4 +167,4 @@ jobs:
           command: |
             key=$GITHUB_CONTENTWRITE_KEY
             version=$VERSION
-            bash /home/circleci/project/artifacts/shashin_create_release_notes.sh $version $key /home/circleci/project/artifacts/CHANGES.md
+            bash /home/circleci/project/artifacts/shashin_create_release_notes.sh $version $key /home/circleci/project/artifacts/CHANGELOG.md
