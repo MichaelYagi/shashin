@@ -336,6 +336,40 @@ describe('#Util tests', function() {
         assert.equal(msToString, "692 days 17:00:00");
     });
 
+    it('Version checking', function() {
+        let currVersion = "v1.0.0";
+        let latestVersion = "v1.0.0";
+        assert.isFalse(Util.downloadLatestVersion(currVersion,latestVersion));
+
+        currVersion = "0.99.99";
+        latestVersion = "v1.0.0";
+        assert.isTrue(Util.downloadLatestVersion(currVersion,latestVersion));
+
+        currVersion = "v0.99.99";
+        latestVersion = "v1.0.0";
+        assert.isTrue(Util.downloadLatestVersion(currVersion,latestVersion));
+
+        currVersion = "v0.1b.0";
+        latestVersion = "v1.0.0";
+        assert.isFalse(Util.downloadLatestVersion(currVersion,latestVersion));
+
+        currVersion = "v0..0";
+        latestVersion = "v1.0.0";
+        assert.isFalse(Util.downloadLatestVersion(currVersion,latestVersion));
+
+        currVersion = "v0. .0";
+        latestVersion = "v1.0.0";
+        assert.isFalse(Util.downloadLatestVersion(currVersion,latestVersion));
+
+        currVersion = "v0. 2.0";
+        latestVersion = "v1.0.0";
+        assert.isFalse(Util.downloadLatestVersion(currVersion,latestVersion));
+
+        currVersion = "v1.12.7";
+        latestVersion = "v3.12.7";
+        assert.isTrue(Util.downloadLatestVersion(currVersion,latestVersion));
+    });
+
     it('Get OS tests', function() {
         const windowRef = global.window;
 

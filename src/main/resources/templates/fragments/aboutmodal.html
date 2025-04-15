@@ -55,7 +55,7 @@
 
                             if (releaseInfo.hasOwnProperty("tag_name")) {
                                 // Look for matching release
-                                if (downloadLatestVersion(currentRelease, releaseInfo.tag_name) === true) {
+                                if (Util.downloadLatestVersion(currentRelease, releaseInfo.tag_name) === true) {
                                     getLatestRelease(releaseInfo);
                                 }
                             }
@@ -64,66 +64,33 @@
                 });
             }, 0);
 
-            function downloadLatestVersion(currVersion, latestVersion) {
-                if (currVersion.charAt(0) === 'v') {
-                    currVersion = currVersion.substring(1);
-                }
+                function getLatestRelease(latestReleaseInfo) {
+                    if (latestReleaseInfo.hasOwnProperty("tag_name") && latestReleaseInfo.tag_name !== "") {
+                        let latestTag = latestReleaseInfo.tag_name;
+                        let parsedVersion = (latestTag.substring(0, 1) === "v") ? "/" + latestTag.substring(1, latestTag.length) : "";
 
-                if (latestVersion.charAt(0) === 'v') {
-                    latestVersion = latestVersion.substring(1);
-                }
+                        const message = "Version <a href='https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin" + parsedVersion + "' target='_blank'>" + latestTag.substring(1) + "</a> is available.";
+                        $("#gitVersionId").html("<br><em>" + message + "</em>");
+                        const type = "releases";
 
-                const currVersionArray = currVersion.split(".");
-                const latestVersionArray = latestVersion.split(".");
-
-                if (currVersionArray.length === 3 && latestVersionArray.length === 3 &&
-                    isNaN(currVersionArray[0]) === false && isNaN(currVersionArray[1]) === false && isNaN(currVersionArray[2]) === false &&
-                    isNaN(latestVersionArray[0]) === false && isNaN(latestVersionArray[1]) === false && isNaN(latestVersionArray[2]) === false)
-                {
-                    // Compare major
-                    if (parseInt(latestVersionArray[0]) > parseInt(currVersionArray[0])) {
-                        return true;
-                    }
-
-                    // Compare minor
-                    if (parseInt(latestVersionArray[1]) > parseInt(currVersionArray[1])) {
-                        return true;
-                    }
-
-                    // Compare patch
-                    return parseInt(latestVersionArray[2]) > parseInt(currVersionArray[2]);
-                }
-
-                return false;
-            }
-
-            function getLatestRelease(latestReleaseInfo) {
-                if (latestReleaseInfo.hasOwnProperty("tag_name") && latestReleaseInfo.tag_name !== "") {
-                    let latestTag = latestReleaseInfo.tag_name;
-                    let parsedVersion = (latestTag.substring(0, 1) === "v") ? "/" + latestTag.substring(1, latestTag.length) : "";
-
-                    const message = "Version <a href='https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin" + parsedVersion + "' target='_blank'>" + latestTag.substring(1) + "</a> is available.";
-                    $("#gitVersionId").html("<br><em>" + message + "</em>");
-                    const type = "releases";
-
-                    const http = new Http("get releases");
-                    http.ajax("get", "/notifications/exists/" + type + "/" + latestTag + "?v=" + uuidv4()).then(function (data) {
-                        if (data.hasOwnProperty("exists")) {
-                            const exists = data.exists;
-                            if (exists === false) {
-                                const json = {
-                                    message: message,
-                                    type: type,
-                                    identifier: latestTag
-                                };
-                                http.ajax("post", "/notifications/create", JSON.stringify(json)).then(function (data) {
-                                    shashin.printMessageToConsole(JSON.stringify(data), {tag: type});
-                                });
+                        const http = new Http("get releases");
+                        http.ajax("get", "/notifications/exists/" + type + "/" + latestTag + "?v=" + uuidv4()).then(function (data) {
+                            if (data.hasOwnProperty("exists")) {
+                                const exists = data.exists;
+                                if (exists === false) {
+                                    const json = {
+                                        message: message,
+                                        type: type,
+                                        identifier: latestTag
+                                    };
+                                    http.ajax("post", "/notifications/create", JSON.stringify(json)).then(function (data) {
+                                        shashin.printMessageToConsole(JSON.stringify(data), {tag: type});
+                                    });
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
-            }
 
             // });
         }
