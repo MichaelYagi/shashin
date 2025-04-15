@@ -1,15 +1,21 @@
 # Change Log
-All notable additions, changes, fixes and removals to this project will be documented in this file.
-This project adheres to [Semantic Versioning](http://semver.org/), and follows [keep a change log](https://keepachangelog.com/) format.
+All notable changes to this project will be documented in this file.
+This project adheres to [Semantic Versioning](http://semver.org/), and follows [keep a change log](https://keepachangelog.com/en/1.1.0/) v1.1.0 format.
+
+* Added for new features. 
+* Changed for changes in existing functionality. 
+* Deprecated for soon-to-be removed features. 
+* Removed for now removed features. 
+* Fixed for any bug fixes. 
+* Security in case of vulnerabilities.
 
 ## [Unreleased]
 ### Added
-
 ### Changed
-
-### Fixed
-
+### Deprecated
 ### Removed
+### Fixed
+### Security
 
 ## [2.9.1] - 2025-04-11
 ### Added

@@ -28,12 +28,12 @@ Creating and pushing tags will upload jar and exe artifacts to [RepoFlow](https:
 ## Release Process
 
 * Update version in `pom.xml` under `<project><version>{version}</version></project>`
-* Update `CHANGES.md` with the new version, and commit code - use `[skip ci]` in commit message
+* Update `CHANGELOG.md` with the new version, and commit code - use `[skip ci]` in commit message
     * Adhere to [keep a change log](https://keepachangelog.com/) as capturing dev notes depends on this format
 * Create tag:
     * `git tag v<version>`
     * `git push origin v<version>`
-    * This will kick off a build in circleci with artifacts uploaded to RepoFlow and generate release notes based on `CHANGES.md`
+    * This will kick off a build in circleci with artifacts uploaded to RepoFlow and generate release notes based on `CHANGELOG.md`
 
 # Docker
 `mvn -Pprod clean install`

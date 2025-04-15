@@ -676,7 +676,7 @@
                             <target>
                                 <copy file="${project.basedir}/shashin_create_release_notes.sh" tofile="${project.basedir}/target/shashin_create_release_notes.sh"/>
                                 <copy file="${project.basedir}/shashin_reset_password.sh" tofile="${project.basedir}/target/shashin_reset_password.sh"/>
-                                <copy file="${project.basedir}/CHANGES.md" tofile="${project.basedir}/target/CHANGES.md"/>
+                                <copy file="${project.basedir}/CHANGELOG.md" tofile="${project.basedir}/target/CHANGELOG.md"/>
                             </target>
                         </configuration>
                     </execution>
