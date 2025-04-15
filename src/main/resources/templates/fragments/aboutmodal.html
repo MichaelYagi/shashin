@@ -49,19 +49,14 @@
                     if (data.hasOwnProperty("releases") && currentRelease !== "v") {
 
                         const releaseArray = data.releases;
-                        let parsedCurrentRelease = parseInt(currentRelease.replace(/\D/g, ''));
 
-                        for (let i in releaseArray) {
-                            const releaseInfo = releaseArray[i];
+                        if (releaseArray.length > 0) {
+                            const releaseInfo = releaseArray[0];
 
                             if (releaseInfo.hasOwnProperty("tag_name")) {
-                                let parsedReleaseInfo = parseInt(releaseInfo.tag_name.replace(/\D/g, ''));
                                 // Look for matching release
-                                if (isNaN(parsedCurrentRelease) === false && isNaN(parsedCurrentRelease) === false && parsedCurrentRelease <= parsedReleaseInfo) {
-                                    if (parsedCurrentRelease < parsedReleaseInfo) {
-                                        getLatestRelease(releaseArray);
-                                    }
-                                    break;
+                                if (downloadLatestVersion(currentRelease, releaseInfo.tag_name) === true) {
+                                    getLatestRelease(releaseInfo);
                                 }
                             }
                         }
@@ -69,10 +64,42 @@
                 });
             }, 0);
 
-            function getLatestRelease(releaseArray) {
-                let latestTag = releaseArray[0].tag_name;
+            function downloadLatestVersion(currVersion, latestVersion) {
+                if (currVersion.charAt(0) === 'v') {
+                    currVersion = currVersion.substring(1);
+                }
 
-                if (latestTag.trim() !== "") {
+                if (latestVersion.charAt(0) === 'v') {
+                    latestVersion = latestVersion.substring(1);
+                }
+
+                const currVersionArray = currVersion.split(".");
+                const latestVersionArray = latestVersion.split(".");
+
+                if (currVersionArray.length === 3 && latestVersionArray.length === 3 &&
+                    isNaN(currVersionArray[0]) === false && isNaN(currVersionArray[1]) === false && isNaN(currVersionArray[2]) === false &&
+                    isNaN(latestVersionArray[0]) === false && isNaN(latestVersionArray[1]) === false && isNaN(latestVersionArray[2]) === false)
+                {
+                    // Compare major
+                    if (parseInt(latestVersionArray[0]) > parseInt(currVersionArray[0])) {
+                        return true;
+                    }
+
+                    // Compare minor
+                    if (parseInt(latestVersionArray[1]) > parseInt(currVersionArray[1])) {
+                        return true;
+                    }
+
+                    // Compare patch
+                    return parseInt(latestVersionArray[2]) > parseInt(currVersionArray[2]);
+                }
+
+                return false;
+            }
+
+            function getLatestRelease(latestReleaseInfo) {
+                if (latestReleaseInfo.hasOwnProperty("tag_name") && latestReleaseInfo.tag_name !== "") {
+                    let latestTag = latestReleaseInfo.tag_name;
                     let parsedVersion = (latestTag.substring(0, 1) === "v") ? "/" + latestTag.substring(1, latestTag.length) : "";
 
                     const message = "Version <a href='https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin" + parsedVersion + "' target='_blank'>" + latestTag.substring(1) + "</a> is available.";
