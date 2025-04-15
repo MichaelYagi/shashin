@@ -12,6 +12,41 @@ class Util {
         return "A8E2CC75-7F9D45CA-9CE65C4E-FFF50CE3";
     }
 
+    static downloadLatestVersion(currVersion, latestVersion) {
+        // If has whitespace
+        if (/\s/g.test(currVersion) === true || /\s/g.test(latestVersion) === true) {
+            return false;
+        }
+
+        if (currVersion.charAt(0) === 'v') {
+            currVersion = currVersion.substring(1);
+        }
+
+        if (latestVersion.charAt(0) === 'v') {
+            latestVersion = latestVersion.substring(1);
+        }
+
+        const currVersionArray = currVersion.split(".");
+        const latestVersionArray = latestVersion.split(".");
+
+        if (currVersionArray.length === 3 && latestVersionArray.length === 3 &&
+            currVersionArray[0].trim() !== "" && currVersionArray[1].trim() !== "" && currVersionArray[2].trim() !== "" &&
+            latestVersionArray[0].trim() !== "" && latestVersionArray[1].trim() !== "" && latestVersionArray[2].trim() !== "" &&
+            isNaN(currVersionArray[0]) === false && isNaN(currVersionArray[1]) === false && isNaN(currVersionArray[2]) === false &&
+            isNaN(latestVersionArray[0]) === false && isNaN(latestVersionArray[1]) === false && isNaN(latestVersionArray[2]) === false)
+        {
+            // Compare major, minor, patch
+            if (parseInt(latestVersionArray[0]) > parseInt(currVersionArray[0]) ||
+                parseInt(latestVersionArray[1]) > parseInt(currVersionArray[1]) ||
+                parseInt(latestVersionArray[2]) > parseInt(currVersionArray[2]))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     static detectSwipe(element, callback) {
         function handleTouchStart(evt) {
             const firstTouch = getTouches(evt)[0];
