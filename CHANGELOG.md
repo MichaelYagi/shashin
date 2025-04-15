@@ -11,10 +11,16 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
+
 ### Changed
+- Refactored Shashin version checking and added tests
+
 ### Deprecated
+
 ### Removed
+
 ### Fixed
+
 ### Security
 
 ## [2.9.1] - 2025-04-11
