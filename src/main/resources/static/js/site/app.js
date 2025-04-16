@@ -2177,6 +2177,21 @@
         shashin.lg = lightGallery(shashin.getLightGalleryElement(), configs);
 
         if (shashin.getLightGalleryElement() !== null) {
+
+            shashin.getLightGalleryElement().addEventListener('lgBeforeOpen', _ => {
+                shashin.showToastMessage("Opening Media", "Opening Media", {
+                    placement:shashin.toast.placement.middle.center,
+                    icon:"bi-info-circle",
+                    iconColor:"#777777",
+                    autohide:false,
+                    tag:"openlightgallery"
+                });
+            });
+
+            shashin.getLightGalleryElement().addEventListener('lgAfterOpen', _ => {
+                shashin.closeToastMessages({tag:"openlightgallery"});
+            });
+
             shashin.getLightGalleryElement().addEventListener('lgAfterClose', _ => {
                 shashin.closeToastMessages({tags: ["subhtml"]});
             });
