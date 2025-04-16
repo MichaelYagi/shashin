@@ -218,11 +218,11 @@ class GalleryTemplates {
             }
     
             <script type="text/javascript"${(shashin.nonce.length > 0 ? ` nonce="${shashin.nonce}"` : '')}>
-            $(document).ready(function () {
-                $("#mediaLink${id}").on("click", function (e) {
-                    e.preventDefault();
-                    ${data.cOnClickFunction}(e,${data.galleryIndex});
-                });
+                $(document).ready(function () {
+                    $("#mediaLink${id}").on("click", function (e) {
+                        e.preventDefault();
+                        ${data.cOnClickFunction}(e,${data.galleryIndex});
+                    });
                 });
             </script>
     
