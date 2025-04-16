@@ -1728,7 +1728,7 @@
                                 }
 
                                 internalHtml += '</div></section>' +
-                                    '<div class="row'+(Util.isMobile() ? "" : " image-group-padding")+'" id="row'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
+                                    '<div class="row'+(Util.isMobile() ? " ms-0" : " image-group-padding")+'" id="row'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
                                     '<span style="display: none;" class="yearTaken">'+metadataList[0].year+'</span>' +
                                     '<span style="display: none;" class="monthTaken">'+metadataList[0].month+'</span>' +
                                     '<span style="display: none;" class="dayTaken">'+metadataList[0].day+'</span>';
