@@ -34,7 +34,7 @@
 
                             <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadataList[iterStat.index-1].year==metadata.year and metadataList[iterStat.index-1].month==metadata.month and metadataList[iterStat.index-1].day==metadata.day}">
                                 <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                                    <section class="dateSection" th:id="${metadata.year+'-'+metadata.month+'-'+metadata.day}"><p><strong th:text="${#strings.replace(#dates.format(#dates.create(#numbers.formatInteger(metadata.year,10),#numbers.formatInteger(metadata.month,10),#numbers.formatInteger(metadata.day,10)), 'EEE, MMM d, yyyy'),'.','')}"></strong></p><div th:id="'dateBody'+${metadata.year+'-'+metadata.month+'-'+metadata.day}" class="row" style="margin-left: -1px;">
+                                    <section class="dateSection" th:id="${metadata.year+'-'+metadata.month+'-'+metadata.day}"><p><strong th:text="${#strings.replace(#dates.format(#dates.create(#numbers.formatInteger(metadata.year,10),#numbers.formatInteger(metadata.month,10),#numbers.formatInteger(metadata.day,10)), 'EEE, MMM d, yyyy'),'.','')}"></strong></p><div th:id="'dateBody'+${metadata.year+'-'+metadata.month+'-'+metadata.day}" class="row" style="margin-left: -2px;">
                                 </th:block>
                             </th:block>
                             

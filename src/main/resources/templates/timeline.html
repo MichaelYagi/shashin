@@ -11,7 +11,7 @@
         /*]]>*/
     });
 </script>
-<div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
+<div id="container" th:class="'container-fluid p'+${isMobile ? '-0' : 'b-3'}+' flex-grow-1 d-flex flex-column overflow-auto'">
     <div id="subcontainer" class="row flex-grow-sm-1 flex-grow-0">
         <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasToc" aria-labelledby="offcanvasTocLabel">
             <div class="offcanvas-header">
@@ -84,7 +84,7 @@
 
 <!--            <div id="infinite-scroll-gallery" style="max-width: 1500px;">-->
             <th:block th:if="${isMobile}">
-            <div id="infinite-scroll-gallery" style="max-width: 95%;">
+            <div id="infinite-scroll-gallery" style="max-width: 100%;">
             </th:block>
             <th:block th:unless="${isMobile}">
             <div id="infinite-scroll-gallery" style="max-width: 85%;">
@@ -96,7 +96,7 @@
                         <section class="scrollspy metadataprocessed" id="undated">
                             <p><strong class="undatedTimelinePhotos p-1">Undated</strong></p>
                         </section>
-                        <div th:class="'row' + ${isMobile ? '' : ' image-group-padding'}" id="rowundated">
+                        <div th:class="'row' + ${isMobile ? ' ms-0' : ' image-group-padding'}" id="rowundated">
                     </th:block>
                     <th:block th:unless="${metadataList[0].year==null or metadataList[0].month==null or metadataList[0].day==null}">
                         <span class="dateContainer" th:id="${'container_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day}">
@@ -119,7 +119,7 @@
                                 </div>
                             </th:block>
                         </section>
-                        <div th:class="'row' + ${isMobile ? '' : ' image-group-padding'}" th:id="${'row'+metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day}">
+                        <div th:class="'row' + ${isMobile ? ' ms-0' : ' image-group-padding'}" th:id="${'row'+metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day}">
                             <span style="display: none;" class="yearTaken" th:text="${metadataList[0].year}"></span>
                             <span style="display: none;" class="monthTaken" th:text="${metadataList[0].month}"></span>
                             <span style="display: none;" class="dayTaken" th:text="${metadataList[0].day}"></span>
