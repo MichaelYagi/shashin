@@ -2136,15 +2136,16 @@
 
             // Event listeners for light gallery
 
-            shashin.infiniteScrollGallery.addEventListener('lgBeforeOpen', _ => {
-                shashin.showToastMessage("Opening Media", "Opening Media", {
-                    placement:shashin.toast.placement.middle.center,
-                    icon:"bi-info-circle",
-                    iconColor:"#777777",
-                    autohide:false,
-                    tag:"openlightgallery"
-                });
-            });
+            // Replaced with mediaLink class click listener
+            // shashin.infiniteScrollGallery.addEventListener('lgBeforeOpen', _ => {
+            //     shashin.showToastMessage("Opening Media", "Opening Media", {
+            //         placement:shashin.toast.placement.middle.center,
+            //         icon:"bi-info-circle",
+            //         iconColor:"#777777",
+            //         autohide:false,
+            //         tag:"openlightgallery"
+            //     });
+            // });
 
             // Close gallery on browser/mobile back button
             shashin.infiniteScrollGallery.addEventListener('lgAfterOpen', function () {
@@ -2208,6 +2209,16 @@
     shashin.setLightGallery = function (additionalConfigs) {
         let configs = shashin.getLightGalleryConfigs(additionalConfigs);
         shashin.lg = lightGallery(shashin.getLightGalleryElement(), configs);
+
+        $(".mediaLink").on("click", _ => {
+            shashin.showToastMessage("Opening Media", "Opening Media", {
+                placement:shashin.toast.placement.middle.center,
+                icon:"bi-info-circle",
+                iconColor:"#777777",
+                autohide:false,
+                tag:"openlightgallery"
+            });
+        })
     };
 
     shashin.getLightGalleryElement = function () {
