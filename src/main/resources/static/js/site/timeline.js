@@ -208,6 +208,13 @@
                     prevClass = $(this).attr("class");
                 });
             }
+
+            $("img").hover(function () {
+                if (reinitGalleryFlag === false && timelineSettings.enableScrollSpy === true) {
+                    reinitGalleryFlag = true;
+                    Util.reinitLightGalleryInstance();
+                }
+            });
         });
 
         function renderViewport() {
@@ -515,13 +522,6 @@
                         }
                     });
                 }
-
-                $("img").hover(function () {
-                    if (reinitGalleryFlag === false && timelineSettings.enableScrollSpy === true) {
-                        reinitGalleryFlag = true;
-                        Util.reinitLightGalleryInstance();
-                    }
-                });
 
                 prevElements = elements;
             }
