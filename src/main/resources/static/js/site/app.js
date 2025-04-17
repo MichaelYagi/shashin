@@ -2134,6 +2134,8 @@
         if (document.getElementById(name)) {
             shashin.infiniteScrollGallery = document.getElementById(name);
 
+            // Event listeners for light gallery
+
             shashin.infiniteScrollGallery.addEventListener('lgBeforeOpen', _ => {
                 shashin.showToastMessage("Opening Media", "Opening Media", {
                     placement:shashin.toast.placement.middle.center,
