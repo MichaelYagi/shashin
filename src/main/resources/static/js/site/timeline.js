@@ -210,16 +210,6 @@
             }
 
             Util.reinitLightGalleryInstance();
-
-            $(".mediaLink").on("click", _ => {
-                shashin.showToastMessage("Opening Media", "Opening Media", {
-                    placement:shashin.toast.placement.middle.center,
-                    icon:"bi-info-circle",
-                    iconColor:"#777777",
-                    autohide:false,
-                    tag:"openlightgallery"
-                });
-            })
         });
 
         function renderViewport() {

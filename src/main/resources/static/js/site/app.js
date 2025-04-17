@@ -2136,21 +2136,8 @@
 
             // Event listeners for light gallery
 
-            // Replaced with mediaLink class click listener
-            // shashin.infiniteScrollGallery.addEventListener('lgBeforeOpen', _ => {
-            //     shashin.showToastMessage("Opening Media", "Opening Media", {
-            //         placement:shashin.toast.placement.middle.center,
-            //         icon:"bi-info-circle",
-            //         iconColor:"#777777",
-            //         autohide:false,
-            //         tag:"openlightgallery"
-            //     });
-            // });
-
             // Close gallery on browser/mobile back button
             shashin.infiniteScrollGallery.addEventListener('lgAfterOpen', function () {
-                shashin.closeToastMessages({tag:"openlightgallery"});
-
                 if (window.history && window.history.pushState) {
                     window.history.pushState('forward', null, "");
 
