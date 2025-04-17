@@ -2209,16 +2209,6 @@
     shashin.setLightGallery = function (additionalConfigs) {
         let configs = shashin.getLightGalleryConfigs(additionalConfigs);
         shashin.lg = lightGallery(shashin.getLightGalleryElement(), configs);
-
-        $(".mediaLink").on("click", _ => {
-            shashin.showToastMessage("Opening Media", "Opening Media", {
-                placement:shashin.toast.placement.middle.center,
-                icon:"bi-info-circle",
-                iconColor:"#777777",
-                autohide:false,
-                tag:"openlightgallery"
-            });
-        })
     };
 
     shashin.getLightGalleryElement = function () {
