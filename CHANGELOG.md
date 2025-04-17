@@ -18,6 +18,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Deprecated
 
 ### Removed
+- Duplicate lg listeners
 
 ### Fixed
 - UI margin adjustments for mobile views
