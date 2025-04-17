@@ -2134,8 +2134,20 @@
         if (document.getElementById(name)) {
             shashin.infiniteScrollGallery = document.getElementById(name);
 
+            shashin.infiniteScrollGallery.addEventListener('lgBeforeOpen', _ => {
+                shashin.showToastMessage("Opening Media", "Opening Media", {
+                    placement:shashin.toast.placement.middle.center,
+                    icon:"bi-info-circle",
+                    iconColor:"#777777",
+                    autohide:false,
+                    tag:"openlightgallery"
+                });
+            });
+
             // Close gallery on browser/mobile back button
             shashin.infiniteScrollGallery.addEventListener('lgAfterOpen', function () {
+                shashin.closeToastMessages({tag:"openlightgallery"});
+
                 if (window.history && window.history.pushState) {
                     window.history.pushState('forward', null, "");
 
@@ -2148,12 +2160,31 @@
                 }
             });
 
+            shashin.infiniteScrollGallery.addEventListener('lgAfterClose', _ => {
+                shashin.closeToastMessages({tags: ["subhtml"]});
+            });
+
             // Hide sidebar when going to next slide
-            shashin.infiniteScrollGallery.addEventListener('lgBeforeSlide', _ => {
+            shashin.infiniteScrollGallery.addEventListener('lgBeforeSlide', e => {
                 const bsOffcanvasEl = document.getElementById('propInfoSidebar');
                 const bsOffcanvas = bootstrap.Offcanvas.getInstance(bsOffcanvasEl);
                 if (bsOffcanvas !== null) {
                     bsOffcanvas.hide();
+                }
+
+                if (shashin.lg !== null && shashin.lg.hasOwnProperty("galleryItems")) {
+                    const galleryItems = shashin.lg.galleryItems;
+                    const currentIndex = e.detail.index;
+                    const galleryItem = galleryItems[currentIndex];
+
+                    if (galleryItem.hasOwnProperty("subHtml") && galleryItem.subHtml !== "") {
+                        let subhtml = galleryItem.subHtml;
+                        shashin.showToastMessage(null, subhtml, {
+                            tag: "subhtml",
+                            autohide: false,
+                            closeButton: false
+                        });
+                    }
                 }
             });
 
@@ -2175,44 +2206,6 @@
     shashin.setLightGallery = function (additionalConfigs) {
         let configs = shashin.getLightGalleryConfigs(additionalConfigs);
         shashin.lg = lightGallery(shashin.getLightGalleryElement(), configs);
-
-        if (shashin.getLightGalleryElement() !== null) {
-
-            shashin.getLightGalleryElement().addEventListener('lgBeforeOpen', _ => {
-                shashin.showToastMessage("Opening Media", "Opening Media", {
-                    placement:shashin.toast.placement.middle.center,
-                    icon:"bi-info-circle",
-                    iconColor:"#777777",
-                    autohide:false,
-                    tag:"openlightgallery"
-                });
-            });
-
-            shashin.getLightGalleryElement().addEventListener('lgAfterOpen', _ => {
-                shashin.closeToastMessages({tag:"openlightgallery"});
-            });
-
-            shashin.getLightGalleryElement().addEventListener('lgAfterClose', _ => {
-                shashin.closeToastMessages({tags: ["subhtml"]});
-            });
-
-            shashin.getLightGalleryElement().addEventListener('lgBeforeSlide', (event) => {
-                if (shashin.lg !== null && shashin.lg.hasOwnProperty("galleryItems")) {
-                    const galleryItems = shashin.lg.galleryItems;
-                    const currentIndex = event.detail.index;
-                    const galleryItem = galleryItems[currentIndex];
-
-                    if (galleryItem.hasOwnProperty("subHtml") && galleryItem.subHtml !== "") {
-                        let subhtml = galleryItem.subHtml;
-                        shashin.showToastMessage(null, subhtml, {
-                            tag: "subhtml",
-                            autohide: false,
-                            closeButton: false
-                        });
-                    }
-                }
-            });
-        }
     };
 
     shashin.getLightGalleryElement = function () {
