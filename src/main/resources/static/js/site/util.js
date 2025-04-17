@@ -889,13 +889,13 @@ class Util {
     /*
     Options:
     useDestroyMethod - bool default true
-    timeoutValue - int default 500
+    timeoutValue - int default 0
     mediaContentList - list of media content
     selector - default .mediaLink
     refreshContent - default false
      */
     static reinitLightGalleryInstance(options) {
-        let timeoutValue = 500;
+        let timeoutValue = 0;
         if (options === undefined || options === null) {
             options = {};
         }
