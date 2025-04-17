@@ -209,12 +209,14 @@
                 });
             }
 
-            $("img").hover(function () {
-                if (reinitGalleryFlag === false && timelineSettings.enableScrollSpy === true) {
-                    reinitGalleryFlag = true;
-                    Util.reinitLightGalleryInstance();
-                }
-            });
+            Util.reinitLightGalleryInstance();
+
+            // $("img").hover(function () {
+            //     if (reinitGalleryFlag === false && timelineSettings.enableScrollSpy === true) {
+            //         reinitGalleryFlag = true;
+            //         Util.reinitLightGalleryInstance();
+            //     }
+            // });
         });
 
         function renderViewport() {
