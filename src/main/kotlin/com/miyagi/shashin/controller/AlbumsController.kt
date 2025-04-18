@@ -1269,7 +1269,7 @@ class AlbumsController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/album/share/{albumId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    @Transactional
+//    @Transactional
     fun shareAlbum(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int): String? {
         val shareAlbum = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (shareAlbum.containsKey("albumId") && shareAlbum.containsKey("userShareMap")) {
