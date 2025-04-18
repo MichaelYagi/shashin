@@ -19,6 +19,7 @@ interface UserAlbumRepository : CrudRepository<UserAlbum?, Int?> {
     fun findAllOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<UserAlbum?>?
     fun findDistinctByUserIdAndAlbumId(userId: Int?, albumId: Int?): UserAlbum?
     fun findAllByOrderByUserIdAsc(): MutableIterable<UserAlbum?>?
+    fun findAllByAlbumId(albumId: Int?): MutableIterable<UserAlbum?>?
     fun deleteByAlbumId(albumId: Int?): Long?
     fun deleteByUserId(userId: Int?): Long?
 }
