@@ -1345,17 +1345,15 @@ class AlbumsController: BaseController() {
                 }
             }
 
-            Thread {
-                if (notificationObjList.count() > 0) {
-                    notificationRepository.saveAll(notificationObjList)
-                }
-                if (userAlbumList.count() > 0) {
-                    userAlbumRepository.saveAll(userAlbumList)
-                }
-                if (deleteUserAlbumList.count() > 0) {
-                    userAlbumRepository.deleteAll(deleteUserAlbumList)
-                }
-            }.start()
+            if (notificationObjList.count() > 0) {
+                notificationRepository.saveAll(notificationObjList)
+            }
+            if (userAlbumList.count() > 0) {
+                userAlbumRepository.saveAll(userAlbumList)
+            }
+            if (deleteUserAlbumList.count() > 0) {
+                userAlbumRepository.deleteAll(deleteUserAlbumList)
+            }
 
             resp["msg"] = "Shared!"
             resp["status"] = ApiResponse.SUCCESS.status
@@ -1903,25 +1901,23 @@ class AlbumsController: BaseController() {
                     val userAlbumObj = userAlbumRepository.findAllByAlbumId(albumId)
 
                     if (userAlbumObj != null) {
-                        Thread {
-                            val notificationObjList = mutableListOf<Notification>()
-                            for (userAlbum in userAlbumObj) {
-                                if (userAlbum != null) {
-                                    val notificationObj = Notification()
-                                    notificationObj.setImageUrl(albumObj.getCoverUrl())
-                                    notificationObj.setUserId(userAlbum.getUserId())
-                                    notificationObj.setCreatedAt(getCurrentTimestamp())
-                                    notificationObj.setModifiedAt(getCurrentTimestamp())
-                                    notificationObj.setRead(false)
-                                    notificationObj.setMessage("Album '" + oldName + "' renamed to '<a href='/album/$albumId' target='_blank'>${albumObj.getName()}</a>'")
-                                    notificationObjList.add(notificationObj)
-                                }
+                        val notificationObjList = mutableListOf<Notification>()
+                        for (userAlbum in userAlbumObj) {
+                            if (userAlbum != null) {
+                                val notificationObj = Notification()
+                                notificationObj.setImageUrl(albumObj.getCoverUrl())
+                                notificationObj.setUserId(userAlbum.getUserId())
+                                notificationObj.setCreatedAt(getCurrentTimestamp())
+                                notificationObj.setModifiedAt(getCurrentTimestamp())
+                                notificationObj.setRead(false)
+                                notificationObj.setMessage("Album '" + oldName + "' renamed to '<a href='/album/$albumId' target='_blank'>${albumObj.getName()}</a>'")
+                                notificationObjList.add(notificationObj)
                             }
+                        }
 
-                            if (notificationObjList.count() > 0) {
-                                notificationRepository.saveAll(notificationObjList)
-                            }
-                        }.start()
+                        if (notificationObjList.count() > 0) {
+                            notificationRepository.saveAll(notificationObjList)
+                        }
                     }
 
                     resp["msg"] = "Saved"
