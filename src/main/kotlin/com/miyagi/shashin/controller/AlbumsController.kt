@@ -929,9 +929,14 @@ class AlbumsController: BaseController() {
                     albumObj.get().setShareUrl(relativeShareUrl)
                     albumRepository.save(albumObj.get())
 
-                    var action = "<a href='/share/$relativeShareUrl/album/$albumIdRequest' target='_blank'>generated</a>"
+                    var action = "generated"
                     if (relativeShareUrl == null) {
                         action = "cleared"
+                    }
+
+                    var link = "<a href='/album/$albumIdRequest' target='_blank'>${albumObj.get().getName()}</a>"
+                    if (action == "generated") {
+                        link = "<a href='/share/$relativeShareUrl/album/$albumIdRequest' target='_blank'>${albumObj.get().getName()}</a>"
                     }
 
                     var coverUrl = ""
@@ -948,7 +953,7 @@ class AlbumsController: BaseController() {
                         notificationObj.setCreatedAt(getCurrentTimestamp())
                         notificationObj.setModifiedAt(getCurrentTimestamp())
                         notificationObj.setRead(false)
-                        notificationObj.setMessage("Share URL was $action for album '<a href='/album/$albumIdRequest' target='_blank'>${albumObj.get().getName()}</a>'")
+                        notificationObj.setMessage("Share URL was $action for album '$link'")
                         notificationObjList.add(notificationObj)
                     }
 
@@ -1340,15 +1345,17 @@ class AlbumsController: BaseController() {
                 }
             }
 
-            if (notificationObjList.count() > 0) {
-                notificationRepository.saveAll(notificationObjList)
-            }
-            if (userAlbumList.count() > 0) {
-                userAlbumRepository.saveAll(userAlbumList)
-            }
-            if (deleteUserAlbumList.count() > 0) {
-                userAlbumRepository.deleteAll(deleteUserAlbumList)
-            }
+            Thread {
+                if (notificationObjList.count() > 0) {
+                    notificationRepository.saveAll(notificationObjList)
+                }
+                if (userAlbumList.count() > 0) {
+                    userAlbumRepository.saveAll(userAlbumList)
+                }
+                if (deleteUserAlbumList.count() > 0) {
+                    userAlbumRepository.deleteAll(deleteUserAlbumList)
+                }
+            }.start()
 
             resp["msg"] = "Shared!"
             resp["status"] = ApiResponse.SUCCESS.status
@@ -1889,8 +1896,33 @@ class AlbumsController: BaseController() {
 
                 return if (foundAlbumRecord == null || foundAlbumRecord.getId() == albumId) {
                     val albumObj = albumRepository.findById(albumId).get()
+                    val oldName = albumObj.getName()
                     albumObj.setName(albumName)
                     albumRepository.save(albumObj)
+
+                    val userAlbumObj = userAlbumRepository.findAllByAlbumId(albumId)
+
+                    if (userAlbumObj != null) {
+                        Thread {
+                            val notificationObjList = mutableListOf<Notification>()
+                            for (userAlbum in userAlbumObj) {
+                                if (userAlbum != null) {
+                                    val notificationObj = Notification()
+                                    notificationObj.setImageUrl(albumObj.getCoverUrl())
+                                    notificationObj.setUserId(userAlbum.getUserId())
+                                    notificationObj.setCreatedAt(getCurrentTimestamp())
+                                    notificationObj.setModifiedAt(getCurrentTimestamp())
+                                    notificationObj.setRead(false)
+                                    notificationObj.setMessage("Album '" + oldName + "' changed to '<a href='/album/$albumId' target='_blank'>${albumObj.getName()}</a>'")
+                                    notificationObjList.add(notificationObj)
+                                }
+                            }
+
+                            if (notificationObjList.count() > 0) {
+                                notificationRepository.saveAll(notificationObjList)
+                            }
+                        }.start()
+                    }
 
                     resp["msg"] = "Saved"
                     resp["status"] = ApiResponse.SUCCESS.status
