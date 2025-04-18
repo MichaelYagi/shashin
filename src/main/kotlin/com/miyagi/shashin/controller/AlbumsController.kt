@@ -1316,7 +1316,7 @@ class AlbumsController: BaseController() {
                         userList.add(userObj.get().getUsername()!!)
                     }
                 } else {
-                    val userAlbumObj = userAlbumRepository.findDistinctByUserIdAndAlbumId(userId.toInt(),shareAlbumId)
+                    val userAlbumObj = userAlbumRepository.findFirstByUserIdAndAlbumId(userId.toInt(),shareAlbumId)
                     if (userAlbumObj != null) {
                         deleteUserAlbumList.add(userAlbumObj)
                     }
@@ -1559,7 +1559,7 @@ class AlbumsController: BaseController() {
         if (currentUserObj != null && albumId > 0) {
             var userAlbums: UserAlbum? = null
             if (currentUserObj.getAuthority()!! == "ROLE_USER") {
-                userAlbums = userAlbumRepository.findDistinctByUserIdAndAlbumId(currentUserObj.getId(), albumId)
+                userAlbums = userAlbumRepository.findFirstByUserIdAndAlbumId(currentUserObj.getId(), albumId)
             }
 
             if ((currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") || (userAlbums != null && currentUserObj.getAuthority()!! == "ROLE_USER")) {
@@ -1701,7 +1701,7 @@ class AlbumsController: BaseController() {
         if (currentUserObj != null && albumId > 0 && download == albumId) {
             var userAlbums: UserAlbum? = null
             if (currentUserObj.getAuthority()!! == "ROLE_USER") {
-                userAlbums = userAlbumRepository.findDistinctByUserIdAndAlbumId(currentUserObj.getId(), albumId)
+                userAlbums = userAlbumRepository.findFirstByUserIdAndAlbumId(currentUserObj.getId(), albumId)
             }
 
             if ((currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") || (userAlbums != null && currentUserObj.getAuthority()!! == "ROLE_USER")) {
