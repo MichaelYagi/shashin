@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.logout.LogoutHandler
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @Component
 class CustomLogoutHandler : LogoutHandler {
@@ -22,13 +23,15 @@ class CustomLogoutHandler : LogoutHandler {
             authentication = SecurityContextHolder.getContext().authentication
         }
 
-        if (authentication != null && !authentication.name.isNullOrBlank()) {
-            val user = userRepository?.findByUsername(authentication.name)
+        Thread {
+            if (authentication != null && !authentication.name.isNullOrBlank()) {
+                val user = userRepository?.findByUsername(authentication.name)
 
-            if (user != null) {
-                user.setModifiedAt(getCurrentTimestamp())
-                userRepository?.save(user)
+                if (user != null) {
+                    user.setModifiedAt(getCurrentTimestamp())
+                    userRepository?.save(user)
+                }
             }
-        }
+        }.start()
     }
 }

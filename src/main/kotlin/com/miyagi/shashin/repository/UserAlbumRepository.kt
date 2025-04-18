@@ -18,6 +18,7 @@ interface UserAlbumRepository : CrudRepository<UserAlbum?, Int?> {
     @Query("SELECT ua.* FROM useralbum ua INNER JOIN album a ON a.id = ua.album_id GROUP BY ua.album_id ORDER BY name COLLATE NOCASE ASC LIMIT :offset, :limit", nativeQuery = true)
     fun findAllOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<UserAlbum?>?
     fun findDistinctByUserIdAndAlbumId(userId: Int?, albumId: Int?): UserAlbum?
+    fun findFirstByUserIdAndAlbumId(userId: Int?, albumId: Int?): UserAlbum?
     fun findAllByOrderByUserIdAsc(): MutableIterable<UserAlbum?>?
     fun findAllByAlbumId(albumId: Int?): MutableIterable<UserAlbum?>?
     fun deleteByAlbumId(albumId: Int?): Long?
