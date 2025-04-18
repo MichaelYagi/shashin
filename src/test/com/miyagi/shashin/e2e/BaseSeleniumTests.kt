@@ -86,7 +86,7 @@ abstract class BaseSeleniumTests {
         deleteRecords()
 
 //        println(os)
-        WebDriverManager.chromedriver().setup()
+        WebDriverManager.chromedriver().browserVersion("127.0.6533.119").setup()
 //        val capabilities = DesiredCapabilities.chrome()
         val options = ChromeOptions()
         options.addArguments("--no-sandbox") // Bypass OS security model, MUST BE THE VERY FIRST OPTION
