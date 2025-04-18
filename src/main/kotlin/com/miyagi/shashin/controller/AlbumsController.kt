@@ -1913,7 +1913,7 @@ class AlbumsController: BaseController() {
                                     notificationObj.setCreatedAt(getCurrentTimestamp())
                                     notificationObj.setModifiedAt(getCurrentTimestamp())
                                     notificationObj.setRead(false)
-                                    notificationObj.setMessage("Album '" + oldName + "' changed to '<a href='/album/$albumId' target='_blank'>${albumObj.getName()}</a>'")
+                                    notificationObj.setMessage("Album '" + oldName + "' renamed to '<a href='/album/$albumId' target='_blank'>${albumObj.getName()}</a>'")
                                     notificationObjList.add(notificationObj)
                                 }
                             }
