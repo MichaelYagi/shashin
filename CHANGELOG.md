@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
+- Notifications for album name changes
 
 ### Changed
 - Refactored Shashin version checking and added tests
