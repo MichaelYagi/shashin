@@ -34,7 +34,7 @@ class TimelineTemplates {
     `};
 
     static HeaderThumbnail({metadata,version,showMap}) { return `
-        <img loading="lazy" draggable="false" src="${"/api/v1/thumbnails/centered/"+metadata.id+(version === "" ? "" : "?v=" + version)}" height="100" width="100" style="float: left;">${(metadata.lat !== null && metadata.lng !== null && showMap === true) ? `<div id="headerMap" class="map ps-2" style="width: 108px; height: 100px; overflow: hidden;"></div>` : ''}
+        <img loading="lazy" draggable="false" src="${"/api/v1/thumbnails/centered/"+metadata.id+(version === "" ? "" : "?v=" + version)}" height="100" width="100" class="mb-3">${(metadata.lat !== null && metadata.lng !== null && showMap === true) ? `<div id="headerMap" class="map ps-2" style="width: 108px; height: 100px; overflow: hidden;"></div>` : ''}
     `};
 
     static BatchHeaderThumbnail({thumbnailImage, title, version}) { return `
