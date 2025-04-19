@@ -23,7 +23,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ### Fixed
 - UI margin adjustments for mobile views
-- Timeline play button seizing up
+- Timeline view more responsive
 
 ### Security
 
