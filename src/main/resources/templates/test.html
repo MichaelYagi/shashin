@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <th:block th:include="fragments/asciiart :: asciiart()"></th:block>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:insert="~{fragments/head :: head(${activePage},${titleDescriptor})}"></head>
 <body>
 <div th:replace="~{fragments/topnav :: topnav(${currentUser},${activePage},'')}"></div>
