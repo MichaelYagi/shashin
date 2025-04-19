@@ -111,8 +111,8 @@ abstract class BaseSeleniumTests {
         // https://www.ubuntuupdates.org/package/google_chrome/stable/main/base/google-chrome-stable?id=202706&page=1
         // https://storage.googleapis.com/chrome-for-testing-public/127.0.6533.119/win64/chrome-win64.zip
         // https://storage.googleapis.com/chrome-for-testing-public/127.0.6533.119/win64/chromedriver-win64.zip
-//        options.setBinary("C:\\Users\\Michael\\Downloads\\chrome-win64\\chrome.exe")
-//        System.setProperty("webdriver.chrome.driver", "C:\\Users\\Michael\\Downloads\\chromedriver-win64\\chromedriver.exe")
+//        options.setBinary("C:\\Users\\micha\\Downloads\\chrome-win64\\chrome.exe")
+//        System.setProperty("webdriver.chrome.driver", "C:\\Users\\micha\\Downloads\\chromedriver-win64\\chromedriver.exe")
 
 
         driver = ChromeDriver(options)
