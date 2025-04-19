@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+<th:block th:include="fragments/asciiart :: asciiart()"></th:block>
 <head th:insert="~{fragments/head :: head(${activePage},${titleDescriptor})}"></head>
 
 <body class="thumb d-flex flex-column vh-100">
