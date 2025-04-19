@@ -155,7 +155,7 @@ class CommentsController {
 //                        if (user.getAuthority() == adminRole) {
 //                            createEntry = true
 //                        } else {
-                            val album = userAlbumRepository.findDistinctByUserIdAndAlbumId(user.getId(),albumId)
+                            val album = userAlbumRepository.findFirstByUserIdAndAlbumId(user.getId(),albumId)
                             if (album != null) {
                                 createEntry = true
                             }
@@ -291,7 +291,7 @@ class CommentsController {
 //                        if (user.getAuthority() == adminRole) {
 //                            createEntry = true
 //                        } else {
-                            val album = userAlbumRepository.findDistinctByUserIdAndAlbumId(user.getId(),albumId)
+                            val album = userAlbumRepository.findFirstByUserIdAndAlbumId(user.getId(),albumId)
                             if (album != null) {
                                 createEntry = true
                             }
