@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
 @Component
+@Transactional
 class CustomLogoutHandler : LogoutHandler {
 
     @Autowired
@@ -23,15 +24,13 @@ class CustomLogoutHandler : LogoutHandler {
             authentication = SecurityContextHolder.getContext().authentication
         }
 
-        Thread {
-            if (authentication != null && !authentication.name.isNullOrBlank()) {
-                val user = userRepository?.findByUsername(authentication.name)
+        if (authentication != null && !authentication.name.isNullOrBlank()) {
+            val user = userRepository?.findByUsername(authentication.name)
 
-                if (user != null) {
-                    user.setModifiedAt(getCurrentTimestamp())
-                    userRepository?.save(user)
-                }
+            if (user != null) {
+                user.setModifiedAt(getCurrentTimestamp())
+                userRepository?.save(user)
             }
-        }.start()
+        }
     }
 }
