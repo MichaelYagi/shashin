@@ -219,17 +219,17 @@
                 timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
                 timelineSettings.isScrolling = false;
 
-                // Only show overlays when scrolling stopped for current hovered image
-                let hovered = false;
-                $(".photo-thumbnail-image").mousemove(function () {
-                    timelineSettings.rescanElements();
-                    if (hovered === false) {
-                        const attrId = $(this).attr("id");
-                        const metadataId = attrId.substring(5, attrId.length);
-                        shashin.imageHover(this, metadataId);
-                    }
-                    hovered = true;
-                });
+                // // Only show overlays when scrolling stopped for current hovered image
+                // let hovered = false;
+                // $(".photo-thumbnail-image").mousemove(function () {
+                //     timelineSettings.rescanElements();
+                //     if (hovered === false) {
+                //         const attrId = $(this).attr("id");
+                //         const metadataId = attrId.substring(5, attrId.length);
+                //         shashin.imageHover(this, metadataId);
+                //     }
+                //     hovered = true;
+                // });
             }
         }
 
@@ -350,32 +350,32 @@
             }
         });
 
-        if (scrollTimer !== null) {
-            clearTimeout(scrollTimer);
-        }
-        scrollTimer = setTimeout(function() {
-            // Only show overlays when scrolling stopped for current hovered image
-            let hovered = false;
-            $(".photo-thumbnail-image").mousemove(function () {
-                if (hovered === false && timelineSettings.enableScrollSpy === true) {
-                    scrollByN(1);
-                    scrollByN(1);
-                    hovered = true;
-                }
-            });
-        }, 1500);
+        // if (scrollTimer !== null) {
+        //     clearTimeout(scrollTimer);
+        // }
+        // scrollTimer = setTimeout(function() {
+        //     // Only show overlays when scrolling stopped for current hovered image
+        //     let hovered = false;
+        //     $(".photo-thumbnail-image").mousemove(function () {
+        //         if (hovered === false && timelineSettings.enableScrollSpy === true) {
+        //             scrollByN(1);
+        //             scrollByN(1);
+        //             hovered = true;
+        //         }
+        //     });
+        // }, 1500);
 
-        // If there not many photos or no scrolling, activate hover icons
-        setTimeout(function() {
-            $(".photo-thumbnail-image").mousemove(function () {
-                if (firsthovered === false) {
-                    const attrId = $(this).attr("id");
-                    const metadataId = attrId.substring(5, attrId.length);
-                    shashin.imageHover(this, metadataId);
-                }
-
-            });
-        }, 3000);
+        // // If there not many photos or no scrolling, activate hover icons
+        // setTimeout(function() {
+        //     $(".photo-thumbnail-image").mousemove(function () {
+        //         if (firsthovered === false) {
+        //             const attrId = $(this).attr("id");
+        //             const metadataId = attrId.substring(5, attrId.length);
+        //             shashin.imageHover(this, metadataId);
+        //         }
+        //
+        //     });
+        // }, 3000);
     };
 
     timelineSettings.rescanElements = function (preCalculatedElements) {
