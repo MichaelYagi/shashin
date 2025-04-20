@@ -105,6 +105,7 @@ abstract class BaseSeleniumTests {
         if (os.contains("linux", ignoreCase = true)) {
             // https://storage.googleapis.com/chrome-for-testing-public/127.0.6533.119/linux64/chromedriver-linux64.zip
             // https://storage.googleapis.com/chrome-for-testing-public/127.0.6533.119/linux64/chrome-linux64.zip
+//            System.setProperty("webdriver.chrome.driver", "/mnt/c/Users/Michael/Downloads/chromedriver-linux64/chromedriver")
             System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
         } else if (os.contains("windows", ignoreCase = true)) {
             // Drivers to run locally
