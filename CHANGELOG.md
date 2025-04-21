@@ -19,8 +19,6 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Removed
 
 ### Fixed
-- EXIF format
-- Mobile view media at start
 
 ### Security
 
@@ -50,6 +48,8 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 - UI for adding and deleting comments
 - UI margin adjustments for mobile views
 - Timeline view more responsive
+- EXIF format
+- Mobile view media at start
 
 ## [2.9.0] - 2025-04-03
 ### Added
