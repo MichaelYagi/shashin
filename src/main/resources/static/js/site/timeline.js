@@ -353,17 +353,17 @@
         // if (scrollTimer !== null) {
         //     clearTimeout(scrollTimer);
         // }
-        // scrollTimer = setTimeout(function() {
+        scrollTimer = setTimeout(function() {
         //     // Only show overlays when scrolling stopped for current hovered image
         //     let hovered = false;
         //     $(".photo-thumbnail-image").mousemove(function () {
         //         if (hovered === false && timelineSettings.enableScrollSpy === true) {
-        //             scrollByN(1);
-        //             scrollByN(1);
+                    scrollByN(1);
+                    scrollByN(1);
         //             hovered = true;
         //         }
         //     });
-        // }, 1500);
+        }, 1500);
 
         // // If there not many photos or no scrolling, activate hover icons
         // setTimeout(function() {
