@@ -116,12 +116,6 @@ class MetadataProcessing() {
 
                 for (tag in directory.tags) {
                     if (tag.description != null) {
-                        val tagName = tag.tagName
-
-                        if ("unknowntag" !in tagName.lowercase()) {
-                            subExifMap["$tagName"] = tag.description
-                        }
-
                         when (tag.tagName) {
                             "Orientation", "Rotation" -> {
                                 if ((tag.description.contains("Rotate") && ((!jpegImageHeight && !jpegImageWidth) || directory.name == "Exif IFD0")) || directory.name == "MP4" || directory.name == "QuickTime") {
