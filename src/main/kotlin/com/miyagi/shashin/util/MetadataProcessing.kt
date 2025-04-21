@@ -88,7 +88,7 @@ class MetadataProcessing() {
         }
 
         this.metadataObj.setLastAccessedAt(getCurrentTimestamp())
-        val exifMap = hashMapOf<String, String>()
+        val exifMap = hashMapOf<String, HashMap<String, String>>()
 
 //        println("=================")
 
@@ -111,22 +111,16 @@ class MetadataProcessing() {
 
             var takenTagged = false
             for (directory in metadata.directories) {
+                val subExifMap = hashMapOf<String, String>()
+                val directoryName = directory.name
+
                 for (tag in directory.tags) {
                     if (tag.description != null) {
-                        val tagName = tag.tagName.replace(" ", "").replace("/", "")
-                        val directoryName = directory.name.replace(" ", "").replace("/", "")
-                        if ("unknowntag" !in tagName.lowercase()) {
-                            exifMap["$directoryName-$tagName"] = tag.description
-                        }
+                        val tagName = tag.tagName
 
-//                        if (file.name == "DSC00115.JPG") {
-//                            println(directory.name)
-//                            println(directory.tagCount)
-//                            println(file.path)
-//                            println(tag.tagName)
-//                            println(tag.description)
-//                            println()
-//                        }
+                        if ("unknowntag" !in tagName.lowercase()) {
+                            subExifMap["$tagName"] = tag.description
+                        }
 
                         when (tag.tagName) {
                             "Orientation", "Rotation" -> {
@@ -462,6 +456,8 @@ class MetadataProcessing() {
                         )
                     }
                 }
+
+                exifMap["$directoryName"] = subExifMap
             }
 
             if (this.metadataObj.getCamera().isNullOrBlank() && (!cameraMake.isNullOrBlank() || !cameraModel.isNullOrBlank())) {
@@ -567,8 +563,7 @@ class MetadataProcessing() {
 
         return metadataObj
     }
-
-    private fun saveExifdata(exifMap: HashMap<String, String>, _sidecarDir: String, path: String) {
+    private fun saveExifdata(exifMap: HashMap<String, HashMap<String, String>>, _sidecarDir: String, path: String) {
         if (exifMap.isNotEmpty()) {
             // Update Exif file
             val metadataDirectory = _sidecarDir.dropLast(1) + "/metadata"
