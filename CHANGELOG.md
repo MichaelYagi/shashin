@@ -20,6 +20,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ### Fixed
 - EXIF format
+- Mobile view media at start
 
 ### Security
 
