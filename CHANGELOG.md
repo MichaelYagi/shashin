@@ -11,19 +11,14 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
-- Notifications for album name changes
 
 ### Changed
-- Refactored Shashin version checking and added tests
 
 ### Deprecated
 
 ### Removed
-- Duplicate lg listeners
 
 ### Fixed
-- UI margin adjustments for mobile views
-- Timeline view more responsive
 
 ### Security
 
@@ -36,16 +31,23 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 - Automated release notes after test & build
 - Comments filter in album view
 - UX improvement for snapshot feedback
+- Notifications for album name changes
 - Description filter for timeline, albums, shared albums, folders, and favourites pages
 
 ### Changed
 - Smaller centered images in mobile view in gallery
 - Util.isMobile kept to a single source
 - Smaller centered images in mobile view in albums, folders and people view
+- Refactored Shashin version checking and added tests
+
+### Removed
+- Duplicate lg listeners
 
 ### Fixed
 - Total paged result calculation
 - UI for adding and deleting comments
+- UI margin adjustments for mobile views
+- Timeline view more responsive
 
 ## [2.9.0] - 2025-04-03
 ### Added
