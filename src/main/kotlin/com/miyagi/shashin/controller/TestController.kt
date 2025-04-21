@@ -170,80 +170,79 @@ class TestController {
 
                 val metadataList = metadataRepository.findAll()
 
-                if (metadataList != null) {
-                    var localIndex = 0
-                    currentIndex = 0
-                    totalIndex = metadataList.count()
-                    startTime = System.currentTimeMillis()
-                    val timesArray = mutableListOf<Long>()
+                var localIndex = 0
+                currentIndex = 0
+                totalIndex = metadataList.count()
+                startTime = System.currentTimeMillis()
+                val timesArray = mutableListOf<Long>()
 
-                    for ((index, metadata) in metadataList.withIndex()) {
-                        val elapsedStartTime = System.currentTimeMillis()
-                        println("iteration ${index + 1} out of $totalIndex")
-
+                for ((index, metadata) in metadataList.withIndex()) {
+                    val elapsedStartTime = System.currentTimeMillis()
+                    println("iteration ${index + 1} out of $totalIndex")
 
 
-                        if (metadata?.getThumbnailPathSmall() !== null) {
-                            val thumbnailPathSmall = metadata.getThumbnailPathSmall()
-                            var exifFilePath = thumbnailPathSmall?.replace("_225.*".toRegex(), ".exif.yaml")
-                            exifFilePath = exifFilePath?.replace("/thumbnails/", "/metadata/")
-                            println("processing $exifFilePath")
 
-                            val filePath = metadata.getPath()
-                            val file = File(filePath!!)
+                    if (metadata?.getThumbnailPathSmall() !== null) {
+                        val thumbnailPathSmall = metadata.getThumbnailPathSmall()
+                        var exifFilePath = thumbnailPathSmall?.replace("_225.*".toRegex(), ".exif.yaml")
+                        exifFilePath = exifFilePath?.replace("/thumbnails/", "/metadata/")
+                        println("processing $exifFilePath")
 
-                            val exifFile = File(exifFilePath!!)
-                            if (!exifFile.exists() && !file.exists()) {
-                                println("exif $exifFilePath doesn't exist")
-                                println("file $file doesn't exist")
-                                continue
-                            } else {
-                                val metadata = ImageMetadataReader.readMetadata(file)
-                                val exifMap = hashMapOf<String, HashMap<String, String>>()
+                        val filePath = metadata.getPath()
+                        val file = File(filePath!!)
 
-                                for (directory in metadata.directories) {
-                                    val subExifMap = hashMapOf<String, String>()
-                                    val directoryName = directory.name
+                        val exifFile = File(exifFilePath!!)
+                        if (!exifFile.exists() && !file.exists()) {
+                            println("exif $exifFilePath doesn't exist")
+                            println("file $file doesn't exist")
+                            continue
+                        } else {
+                            val metadata = ImageMetadataReader.readMetadata(file)
+                            val exifMap = hashMapOf<String, HashMap<String, String>>()
 
-                                    for (tag in directory.tags) {
-                                        if (tag.description != null) {
-                                            val tagName = tag.tagName
+                            for (directory in metadata.directories) {
+                                val subExifMap = hashMapOf<String, String>()
+                                val directoryName = directory.name
 
-                                            if ("unknowntag" !in tagName.lowercase()) {
-                                                subExifMap["$tagName"] = tag.description
-                                            }
+                                for (tag in directory.tags) {
+                                    if (tag.description != null) {
+                                        val tagName = tag.tagName
+
+                                        if ("unknowntag" !in tagName.lowercase()) {
+                                            subExifMap["$tagName"] = tag.description
                                         }
-
-                                        exifMap["$directoryName"] = subExifMap
                                     }
+
+                                    exifMap["$directoryName"] = subExifMap
                                 }
-
-                                if (exifMap.isNotEmpty()) {
-                                    val yamlFactory: YAMLFactory = YAMLFactory.builder()
-                                        .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
-                                        .disable(YAMLGenerator.Feature.SPLIT_LINES)
-                                        .build()
-                                    val om = ObjectMapper(yamlFactory)
-                                    om.writeValue(exifFile, exifMap)
-                                }
-
-
-                                localIndex++
-                                println("processed $exifFile")
                             }
 
-                            println("-------------")
+                            if (exifMap.isNotEmpty()) {
+                                val yamlFactory: YAMLFactory = YAMLFactory.builder()
+                                    .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
+                                    .disable(YAMLGenerator.Feature.SPLIT_LINES)
+                                    .build()
+                                val om = ObjectMapper(yamlFactory)
+                                om.writeValue(exifFile, exifMap)
+                            }
+
+
+                            localIndex++
+                            println("processed $exifFile")
                         }
 
-
-
-                        val endTime = System.currentTimeMillis()
-                        timesArray.add((endTime-elapsedStartTime))
-                        etr = progress(currentIndex, totalIndex, timesArray)
-                        currentIndex++
+                        println("-------------")
                     }
-                    println("Number exifs processed: $localIndex")
+
+
+
+                    val endTime = System.currentTimeMillis()
+                    timesArray.add((endTime-elapsedStartTime))
+                    etr = progress(currentIndex, totalIndex, timesArray)
+                    currentIndex++
                 }
+                println("Number exifs processed: $localIndex")
+
                 activeLink = ""
                 FileUtils.deleteThreadFiles("fixExif")
             }.start()
