@@ -4,7 +4,10 @@ import ai.djl.modality.cv.Image
 import ai.djl.modality.cv.ImageFactory
 import ai.djl.modality.cv.output.DetectedObjects
 import ai.djl.repository.zoo.Criteria
+import com.drew.imaging.ImageMetadataReader
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.google.javascript.jscomp.jarjar.com.google.common.io.Files
 import com.miyagi.shashin.component.DjlFaceRecognizer
 import com.miyagi.shashin.component.Message
@@ -149,6 +152,106 @@ class TestController {
     fun getTestAudio(response: HttpServletResponse?): ResponseEntity<FileSystemResource> {
         val path = "c:/Users/Michael/Downloads/testpics/Ray Bull - The New Thing Dies.mp3"
         return getFSR(path, "audio", "mpeg")
+    }
+
+    @Secured("ROLE_SUPER")
+    @RequestMapping(value = ["/fixexif"], method = [RequestMethod.GET])
+    @ResponseBody
+    fun fixExif(response: HttpServletResponse?): String? {
+        if (activeLink.isBlank()) {
+            activeLink = "fixExif"
+        }
+
+        FileUtils.deleteThreadFiles("repairscripts")
+
+        if (!FileUtils.checkThreadFileAlive("repairscripts") && FileUtils.createThreadFile("repairscripts") != null) {
+            Thread {
+                // Retroactively create gif
+
+                val metadataList = metadataRepository.findAll()
+
+                if (metadataList != null) {
+                    var localIndex = 0
+                    currentIndex = 0
+                    totalIndex = metadataList.count()
+                    startTime = System.currentTimeMillis()
+                    val timesArray = mutableListOf<Long>()
+
+                    for ((index, metadata) in metadataList.withIndex()) {
+                        val elapsedStartTime = System.currentTimeMillis()
+                        println("iteration ${index + 1} out of $totalIndex")
+
+
+
+                        if (metadata?.getThumbnailPathSmall() !== null) {
+                            val thumbnailPathSmall = metadata.getThumbnailPathSmall()
+                            var exifFilePath = thumbnailPathSmall?.replace("_225.*".toRegex(), ".exif.yaml")
+                            exifFilePath = exifFilePath?.replace("/thumbnails/", "/metadata/")
+                            println("processing $exifFilePath")
+
+                            val filePath = metadata.getPath()
+                            val file = File(filePath!!)
+
+                            val exifFile = File(exifFilePath!!)
+                            if (!exifFile.exists() && !file.exists()) {
+                                println("exif $exifFilePath doesn't exist")
+                                println("file $file doesn't exist")
+                                continue
+                            } else {
+                                val metadata = ImageMetadataReader.readMetadata(file)
+                                val exifMap = hashMapOf<String, HashMap<String, String>>()
+
+                                for (directory in metadata.directories) {
+                                    val subExifMap = hashMapOf<String, String>()
+                                    val directoryName = directory.name
+
+                                    for (tag in directory.tags) {
+                                        if (tag.description != null) {
+                                            val tagName = tag.tagName
+
+                                            if ("unknowntag" !in tagName.lowercase()) {
+                                                subExifMap["$tagName"] = tag.description
+                                            }
+                                        }
+
+                                        exifMap["$directoryName"] = subExifMap
+                                    }
+                                }
+
+                                if (exifMap.isNotEmpty()) {
+                                    val yamlFactory: YAMLFactory = YAMLFactory.builder()
+                                        .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
+                                        .disable(YAMLGenerator.Feature.SPLIT_LINES)
+                                        .build()
+                                    val om = ObjectMapper(yamlFactory)
+                                    om.writeValue(exifFile, exifMap)
+                                }
+
+
+                                localIndex++
+                                println("processed $exifFile")
+                            }
+
+                            println("-------------")
+                        }
+
+
+
+                        val endTime = System.currentTimeMillis()
+                        timesArray.add((endTime-elapsedStartTime))
+                        etr = progress(currentIndex, totalIndex, timesArray)
+                        currentIndex++
+                    }
+                    println("Number exifs processed: $localIndex")
+                }
+                activeLink = ""
+                FileUtils.deleteThreadFiles("fixExif")
+            }.start()
+        } else {
+            println("$activeLink already running")
+        }
+
+        return "sandbox"
     }
 
     @Secured("ROLE_SUPER")
