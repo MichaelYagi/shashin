@@ -50,6 +50,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 - Timeline view more responsive
 - EXIF format
 - Mobile view media at start
+- Mobile view in timeline
 
 ## [2.9.0] - 2025-04-03
 ### Added
