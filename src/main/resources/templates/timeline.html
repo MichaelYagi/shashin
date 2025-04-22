@@ -12,7 +12,7 @@
         /*]]>*/
     });
 </script>
-<div id="container" th:class="'container-fluid p'+${isMobile ? '-0' : 'b-3'}+' flex-grow-1 d-flex flex-column overflow-auto'">
+<div id="container" th:class="'container-fluid p'+${isMobile ? 's-0' : 'b-3'}+' flex-grow-1 d-flex flex-column overflow-auto'">
     <div id="subcontainer" class="row flex-grow-sm-1 flex-grow-0">
         <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasToc" aria-labelledby="offcanvasTocLabel">
             <div class="offcanvas-header">
@@ -104,7 +104,7 @@
                         <br th:id="${'br' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day}">
                         <section class="scrollspy metadataprocessed" th:id="${metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day}">
                             <th:block th:if="${isMobile}">
-                                <div class="mb-3"><strong class="dateHeading p-1" th:text="${#strings.replace(#dates.format(#dates.create(#numbers.formatInteger(metadataList[0].year,10),#numbers.formatInteger(metadataList[0].month,10),#numbers.formatInteger(metadataList[0].day,10)), 'EEE, MMM d, yyyy'),'.','')}"></strong>
+                                <div class="mb-3 ms-1"><strong class="dateHeading pe-1" th:text="${#strings.replace(#dates.format(#dates.create(#numbers.formatInteger(metadataList[0].year,10),#numbers.formatInteger(metadataList[0].month,10),#numbers.formatInteger(metadataList[0].day,10)), 'EEE, MMM d, yyyy'),'.','')}"></strong>
                                     <th:block th:if="${#lists.size(placeNameHeaders)==1 and placeNameHeaders[0]!=''}"><span class="text-muted" th:utext="${'&lt;a class=&quot;link-unstyled&quot; href=&quot;/search?term='+placeNameHeaders[0]+'&quot; target=&quot;_blank&quot id=&quot;placeNameHeader'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'&quot;&gt;'+placeNameHeaders[0]+'&lt;/a&gt;'}"></span></th:block>
                                     <th:block th:if="${#lists.size(placeNameHeaders)>1}">
                                         <span class="text-muted">
@@ -199,12 +199,14 @@
 </div>
 
 <!--Date Slider-->
-<th:block th:if="${not #lists.isEmpty(metadataDates)}">
-    <div class="sidebar-right" id="dateSliderContainer">
-        <div class="sidebar-right" id="dateSliderWrapper">
-            <div id="dateSlider" style="width: 14px;margin-right: 0;"></div>
+<th:block th:unless="${isMobile}">
+    <th:block th:if="${not #lists.isEmpty(metadataDates)}">
+        <div class="sidebar-right" id="dateSliderContainer">
+            <div class="sidebar-right" id="dateSliderWrapper">
+                <div id="dateSlider" style="width: 14px;margin-right: 0;"></div>
+            </div>
         </div>
-    </div>
+    </th:block>
 </th:block>
 
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
