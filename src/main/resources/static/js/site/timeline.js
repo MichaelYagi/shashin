@@ -1711,7 +1711,7 @@
                                 html += TimelineTemplates.TimelinePreLoadGalleryHeader({metadata:metadataList[0],placeNameHeaders:placeNameHeaders,listHtml:listHtml,isMobile:Util.isMobile()});
                                 internalHtml += '<br id="br'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
                                     '<section class="scrollspy" id="'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
-                                    '<div class="mb-3"><strong class="dateHeading p-1">'+Util.getDateString(metadataList[0].year, metadataList[0].month, metadataList[0].day)+'</strong>';
+                                    '<div class="mb-3 ms-1"><strong class="dateHeading pe-1">'+Util.getDateString(metadataList[0].year, metadataList[0].month, metadataList[0].day)+'</strong>';
 
                                 if (placeNameHeaders.length === 1 && placeNameHeaders[0].length > 0) {
                                     internalHtml += '<span class="text-muted"><a class="link-unstyled" href="/search?term='+placeNameHeaders[0]+'" target="_blank" id="placeNameHeader'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'"'+(hideText === true ? " style='display: none;'" : "")+'>'+placeNameHeaders[0]+'</a></span>';
