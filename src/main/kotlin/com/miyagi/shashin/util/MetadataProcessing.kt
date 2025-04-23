@@ -115,8 +115,9 @@ class MetadataProcessing() {
                 val directoryName = directory.name
 
                 for (tag in directory.tags) {
-                    exifMap["$directoryName"] = subExifMap
                     if (tag.description != null) {
+                        subExifMap[tag.tagName] = tag.description
+
                         when (tag.tagName) {
                             "Orientation", "Rotation" -> {
                                 if ((tag.description.contains("Rotate") && ((!jpegImageHeight && !jpegImageWidth) || directory.name == "Exif IFD0")) || directory.name == "MP4" || directory.name == "QuickTime") {
@@ -444,6 +445,8 @@ class MetadataProcessing() {
                                 this.metadataObj.setDuration(formatDuration(hours, minutes, seconds))
                             }
                         }
+
+                        exifMap["$directoryName"] = subExifMap
                     } else {
                         logger.log(
                             Level.WARNING,
