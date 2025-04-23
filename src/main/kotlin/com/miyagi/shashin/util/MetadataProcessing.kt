@@ -115,6 +115,7 @@ class MetadataProcessing() {
                 val directoryName = directory.name
 
                 for (tag in directory.tags) {
+                    exifMap["$directoryName"] = subExifMap
                     if (tag.description != null) {
                         when (tag.tagName) {
                             "Orientation", "Rotation" -> {
@@ -450,8 +451,6 @@ class MetadataProcessing() {
                         )
                     }
                 }
-
-                exifMap["$directoryName"] = subExifMap
             }
 
             if (this.metadataObj.getCamera().isNullOrBlank() && (!cameraMake.isNullOrBlank() || !cameraModel.isNullOrBlank())) {
