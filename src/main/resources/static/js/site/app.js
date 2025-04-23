@@ -2617,7 +2617,7 @@
         }
 
         $("#image" + metadata.id).on('error', function() {
-            $("#image" + metadata.id).attr("src", "/api/v1/thumbnails/"+(Util.isMobile() ? "100" : "255")+"/"+metadata.id);
+            $("#image" + metadata.id).attr("src", "/api/v1/thumbnails/"+(Util.isMobile() ? "100" : "225")+"/"+metadata.id);
         });
 
         $("#image" + metadata.id).on("click", function (e) {
