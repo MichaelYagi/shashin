@@ -43,6 +43,20 @@ class Util {
         ).css("background-color","#4A412A");
     }
 
+    static deuglify() {
+        $("body").removeClass("uglify");
+        $("strong").removeClass("blinkify");
+        $("h1, h2, h3, h4, h4, h5").removeClass("marquee");
+        $("input").css("background-color","");
+        $("textarea").css("background-color","");
+        $("img").css({"background-color": "", "opacity": ""});
+        $(".offcanvas," +
+            ".modal," +
+            ".dropdown-menu," +
+            ".card"
+        ).css("background-color","");
+    }
+
     static getYearCreated() {
         return 2021;
     }

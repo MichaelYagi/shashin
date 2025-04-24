@@ -63,11 +63,13 @@
 
             Util.konamiCodeListener(function(sequenceComplete) {
                if (sequenceComplete === true) {
-                   Util.uglify();
-
-                   $("#container").on( "scroll", function() {
+                   if (shashin.uglified === false) {
                        Util.uglify();
-                   });
+                       shashin.uglified = true;
+                   } else {
+                       Util.deuglify();
+                       shashin.uglified = false;
+                   }
                }
             });
         </script>

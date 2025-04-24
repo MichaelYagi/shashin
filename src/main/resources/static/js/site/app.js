@@ -70,6 +70,7 @@
         'b': 'b'
     };
     shashin.konamiCode = ['up', 'up', 'down', 'down', 'left', 'right', 'left', 'right', 'b', 'a'];
+    shashin.uglified = false;
 
     function fixContentHeight() {
         if ($("div[data-role='dialog']").is(":visible")) {
