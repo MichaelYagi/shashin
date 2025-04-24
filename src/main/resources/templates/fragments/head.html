@@ -64,8 +64,13 @@
             Util.konamiCodeListener(function(sequenceComplete) {
                if (sequenceComplete === true) {
                    $("body").addClass("uglify");
-                   $("input").css("background-color","#4A412A");
-                   $("textarea").css("background-color","#4A412A");
+                   $("input," +
+                   "textarea," +
+                   ".offcanvas," +
+                   ".modal," +
+                   ".dropdown-menu," +
+                   ".card"
+                   ).css("background-color","#4A412A");
                }
             });
         </script>

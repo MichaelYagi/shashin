@@ -502,6 +502,6 @@ footer {
 .uglify {
   background: radial-gradient(#a400ff 0, #3b3b3b 10%, #d6d2d200 15%, #0b243a 50%, #d6d2d2 65%, #26483f 80%, #d6d2d200 95%),
   repeating-linear-gradient(45deg, #a78b4178, #a548a07a 50px),
-  repeating-linear-gradient(135deg, #634610, #71b737 50px);
-  font-family: "Comic Sans MS", "Comic Sans", cursive;
+  repeating-linear-gradient(135deg, #634610, #71b737 50px) !important;
+  font-family: "Comic Sans MS", "Comic Sans", cursive !important;
 }
