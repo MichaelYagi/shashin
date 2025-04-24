@@ -1,29 +1,46 @@
 class Util {
 
     static konamiCodeListener(callback) {
-        shashin.konamiCodePosition = 0;
+        let konamiCodePosition = 0;
+        const konamiCode = ['up', 'up', 'down', 'down', 'left', 'right', 'left', 'right', 'b', 'a'];
+        const konamiAllowedKeys = {
+            37: 'left',
+            38: 'up',
+            39: 'right',
+            40: 'down',
+            65: 'a',
+            66: 'b',
+            'ArrowLeft': 'left',
+            'ArrowUp': 'up',
+            'ArrowRight': 'right',
+            'ArrowDown': 'down',
+            'KeyA': 'a',
+            'KeyB': 'b',
+            'a': 'a',
+            'b': 'b'
+        };
 
         // add keydown event listener
         document.addEventListener('keydown', function(e) {
             // get the value of the key code from the key map
-            const key = shashin.konamiAllowedKeys[e.key || e.code || e.which || e.keyCode];
+            const key = konamiAllowedKeys[e.key || e.code || e.which || e.keyCode];
             // get the value of the required key from the konami code
-            const requiredKey = shashin.konamiCode[shashin.konamiCodePosition];
+            const requiredKey = konamiCode[konamiCodePosition];
             // compare the key with the required key
             if (key === requiredKey) {
 
                 // move to the next key in the konami code sequence
-                shashin.konamiCodePosition++;
+                konamiCodePosition++;
 
                 // if the last key is reached, activate cheats
-                if (shashin.konamiCodePosition === shashin.konamiCode.length) {
-                    shashin.konamiCodePosition = 0;
+                if (konamiCodePosition === konamiCode.length) {
+                    konamiCodePosition = 0;
                     callback(true);
                 } else {
                     callback(false);
                 }
             } else {
-                shashin.konamiCodePosition = 0;
+                konamiCodePosition = 0;
                 callback(false);
             }
         });

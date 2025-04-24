@@ -52,24 +52,6 @@
         log: 2,
         warn: 3
     });
-    shashin.konamiCodePosition = 0;
-    shashin.konamiAllowedKeys = {
-        37: 'left',
-        38: 'up',
-        39: 'right',
-        40: 'down',
-        65: 'a',
-        66: 'b',
-        'ArrowLeft': 'left',
-        'ArrowUp': 'up',
-        'ArrowRight': 'right',
-        'ArrowDown': 'down',
-        'KeyA': 'a',
-        'KeyB': 'b',
-        'a': 'a',
-        'b': 'b'
-    };
-    shashin.konamiCode = ['up', 'up', 'down', 'down', 'left', 'right', 'left', 'right', 'b', 'a'];
     shashin.uglified = false;
 
     function fixContentHeight() {
