@@ -21,6 +21,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Fixed
 
 ### Security
+- Bump org.apache.httpcomponents.client5:httpclient5 from 5.4.1 to 5.4.3
 
 ## [2.9.1] - 2025-04-11
 ### Added
