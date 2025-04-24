@@ -29,6 +29,20 @@ class Util {
         });
     }
 
+    static uglify() {
+        $("body").addClass("uglify");
+        $("strong").addClass("blinkify");
+        $("h1, h2, h3, h4, h4, h5").addClass("marquee");
+        $("input").css("background-color","#9AF444");
+        $("textarea").css("background-color","#EB449A");
+        $("img").css({"background-color": "#4A412A", "opacity": "0.3"});
+        $(".offcanvas," +
+            ".modal," +
+            ".dropdown-menu," +
+            ".card"
+        ).css("background-color","#4A412A");
+    }
+
     static getYearCreated() {
         return 2021;
     }

@@ -499,9 +499,29 @@ footer {
   overflow:hidden;
 }
 
+/*Do some ugly stuff*/
 .uglify {
   background: radial-gradient(#a400ff 0, #3b3b3b 10%, #d6d2d200 15%, #0b243a 50%, #d6d2d2 65%, #26483f 80%, #d6d2d200 95%),
   repeating-linear-gradient(45deg, #a78b4178, #a548a07a 50px),
   repeating-linear-gradient(135deg, #634610, #71b737 50px) !important;
   font-family: "Comic Sans MS", "Comic Sans", cursive !important;
+}
+
+.blinkify {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
+.marquee{
+  min-width:100%;
+  animation: marquee 7s linear infinite;
+}
+@keyframes marquee {
+  from{margin-left : 120%;}
+  to{margin-left: -20%;}
 }
