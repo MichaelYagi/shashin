@@ -60,6 +60,14 @@
             Util.isMobile = function () {
                 return isMobile;
             };
+
+            Util.konamiCodeListener(function(sequenceComplete) {
+               if (sequenceComplete === true) {
+                   $("body").addClass("uglify");
+                   $("input").css("background-color","#4A412A");
+                   $("textarea").css("background-color","#4A412A");
+               }
+            });
         </script>
 
         <th:block th:if="${currentUser.darkMode or {param.m != null and param.m == 'dark'}}">

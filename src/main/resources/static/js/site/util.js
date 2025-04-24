@@ -1,5 +1,34 @@
 class Util {
 
+    static konamiCodeListener(callback) {
+        shashin.konamiCodePosition = 0;
+
+        // add keydown event listener
+        document.addEventListener('keydown', function(e) {
+            // get the value of the key code from the key map
+            const key = shashin.konamiAllowedKeys[e.key || e.code || e.which || e.keyCode];
+            // get the value of the required key from the konami code
+            const requiredKey = shashin.konamiCode[shashin.konamiCodePosition];
+            // compare the key with the required key
+            if (key === requiredKey) {
+
+                // move to the next key in the konami code sequence
+                shashin.konamiCodePosition++;
+
+                // if the last key is reached, activate cheats
+                if (shashin.konamiCodePosition === shashin.konamiCode.length) {
+                    shashin.konamiCodePosition = 0;
+                    callback(true);
+                } else {
+                    callback(false);
+                }
+            } else {
+                shashin.konamiCodePosition = 0;
+                callback(false);
+            }
+        });
+    }
+
     static getYearCreated() {
         return 2021;
     }
