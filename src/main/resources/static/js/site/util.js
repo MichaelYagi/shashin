@@ -124,7 +124,7 @@ class Util {
         mediaChart.update();
 
         const cameraChart = Chart.getChart('cameraChart');
-        cameraChart.data.datasets[0].backgroundColor = (uglify === true ? ['rgb(74, 65, 42)'] : ['rgba(54, 162, 235, 1)']);
+        cameraChart.data.datasets[0].backgroundColor = (uglify === true ? ['rgb(93, 73, 9)'] : ['rgba(54, 162, 235, 1)']);
         cameraChart.update();
 
         const userChart = Chart.getChart('userChart');
@@ -182,16 +182,16 @@ class Util {
         osChart.update();
 
         const keywordChart = Chart.getChart('keywordChart');
-        keywordChart.data.datasets[0].backgroundColor = (uglify === true ? ['rgb(74, 65, 42)'] : ['rgba(54, 162, 235, 1)']);
+        keywordChart.data.datasets[0].backgroundColor = (uglify === true ? ['rgb(93, 73, 9)'] : ['rgba(54, 162, 235, 1)']);
         keywordChart.update();
 
         const cpuChart = Chart.getChart('cpuChart');
-        cpuChart.data.datasets[0].borderColor = (uglify === true ? ['rgb(74, 65, 42)'] : ['rgb(54, 162, 235)']);
+        cpuChart.data.datasets[0].borderColor = (uglify === true ? ['rgb(93, 73, 9)'] : ['rgb(54, 162, 235)']);
         cpuChart.data.datasets[1].borderColor = (uglify === true ? ['rgb(53, 39, 4)'] : ['rgb(255, 206, 86)']);
         cpuChart.update();
 
         const memoryChart = Chart.getChart('memoryChart');
-        memoryChart.data.datasets[0].borderColor = (uglify === true ? ['rgb(74, 65, 42)'] : ['rgba(54, 162, 235, 1)']);
+        memoryChart.data.datasets[0].borderColor = (uglify === true ? ['rgb(93, 73, 9)'] : ['rgba(54, 162, 235, 1)']);
         memoryChart.update();
     }
 
