@@ -147,14 +147,14 @@ class Util {
         }
         userChart.data.datasets[0].backgroundColor = userColors;
         userChart.data.datasets[0].borderColor = userBorders;
-        cameraChart.update();
+        userChart.update();
 
         const browserChart = Chart.getChart('browserChart');
         userColors = [];
         userBorders = [];
         for (let i = 0; i < browserChart.data.datasets[0].data.length; i++) {
             let colors = Dashboard.randomPastelHsla(Dashboard.getRandomInt(1,360));
-            if (uglified === true) {
+            if (uglify === true) {
                 colors = colorSelection[Dashboard.getRandomInt(0,4)];
             }
             userColors.push(colors[0]);
@@ -169,7 +169,7 @@ class Util {
         userBorders = [];
         for (let i = 0; i < osChart.data.datasets[0].data.length; i++) {
             let colors = Dashboard.randomPastelHsla(Dashboard.getRandomInt(1,360));
-            if (uglified === true) {
+            if (uglify === true) {
                 colors = colorSelection[Dashboard.getRandomInt(0,4)];
             }
             userColors.push(colors[0]);
