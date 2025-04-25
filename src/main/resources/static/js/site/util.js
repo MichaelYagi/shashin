@@ -60,89 +60,7 @@ class Util {
         ).css("background-color","#4A412A");
 
         if (activePage === "dashboard") {
-            const bgColor = [
-                'rgba(159, 43, 96, 0.2)',
-                'rgba(96, 54, 49, 0.2)',
-                'rgba(122, 73, 11, 0.2)',
-                'rgba(219, 96, 14, 0.2)'
-            ];
-
-            const bColor = [
-                'rgba(159, 43, 96, 1)',
-                'rgba(96, 54, 49, 1)',
-                'rgba(122, 73, 11, 1)',
-                'rgba(219, 96, 14, 1)'
-            ];
-
-            const siteStatChart = Chart.getChart('siteStatChart');
-            siteStatChart.data.datasets[0].backgroundColor = bgColor;
-            siteStatChart.data.datasets[0].borderColor = bColor;
-            siteStatChart.update();
-
-            const mediaChart = Chart.getChart('mediaChart');
-            mediaChart.data.datasets[0].backgroundColor = bgColor;
-            mediaChart.data.datasets[0].borderColor = bColor;
-            mediaChart.update();
-
-            const cameraChart = Chart.getChart('cameraChart');
-            cameraChart.data.datasets[0].backgroundColor = ['rgba(96, 54, 49, 1)'];
-            cameraChart.update();
-
-            const userChart = Chart.getChart('userChart');
-            const colorSelection = [
-                ['rgba(225,48,111,0.8)','rgba(225,48,111,1.0)'],
-                ['rgba(159,43,96,0.8)','rgba(159,43,96,1.0)'],
-                ['rgba(96,54,49,0.8)','rgba(96,54,49,1.0)'],
-                ['rgba(122,73,11,0.8)','rgba(122,73,11,1.0)'],
-                ['rgba(219,96,14,0.8)','rgba(219,96,14,1.0)']
-            ];
-            let userColors = [];
-            let userBorders = [];
-            for (let i = 0; i < 5; i++) {
-                let colors = colorSelection[Dashboard.getRandomInt(0,4)];
-                userColors.push(colors[0]);
-                userBorders.push(colors[1]);
-            }
-            userChart.data.datasets[0].backgroundColor = userColors;
-            userChart.data.datasets[0].borderColor = userBorders;
-            userChart.update();
-
-            const browserChart = Chart.getChart('browserChart');
-            userColors = [];
-            userBorders = [];
-            for (let i = 0; i < 5; i++) {
-                let colors = colorSelection[Dashboard.getRandomInt(0,4)];
-                userColors.push(colors[0]);
-                userBorders.push(colors[1]);
-            }
-            browserChart.data.datasets[0].backgroundColor = userColors;
-            browserChart.data.datasets[0].borderColor = userBorders;
-            browserChart.update();
-
-            const osChart = Chart.getChart('osChart');
-            userColors = [];
-            userBorders = [];
-            for (let i = 0; i < 5; i++) {
-                let colors = colorSelection[Dashboard.getRandomInt(0,4)];
-                userColors.push(colors[0]);
-                userBorders.push(colors[1]);
-            }
-            osChart.data.datasets[0].backgroundColor = userColors;
-            osChart.data.datasets[0].borderColor = userBorders;
-            osChart.update();
-
-            const keywordChart = Chart.getChart('keywordChart');
-            keywordChart.data.datasets[0].backgroundColor = ['rgba(96, 54, 49, 1)'];
-            keywordChart.update();
-
-            const cpuChart = Chart.getChart('cpuChart');
-            cpuChart.data.datasets[0].borderColor = 'rgba(96, 54, 49)';
-            cpuChart.data.datasets[1].borderColor = 'rgba(99,78,46)';
-            cpuChart.update();
-
-            const memoryChart = Chart.getChart('memoryChart');
-            memoryChart.data.datasets[0].borderColor = 'rgba(96, 54, 49)';
-            memoryChart.update();
+            Util.updateDashboardColors(true);
         }
     }
 
@@ -160,83 +78,119 @@ class Util {
         ).css("background-color","");
 
         if (activePage === "dashboard") {
-            const bgColor = [
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ];
-
-            const bColor = [
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ];
-
-            const siteStatChart = Chart.getChart('siteStatChart');
-            siteStatChart.data.datasets[0].backgroundColor = bgColor;
-            siteStatChart.data.datasets[0].borderColor = bColor;
-            siteStatChart.update();
-
-            const mediaChart = Chart.getChart('mediaChart');
-            mediaChart.data.datasets[0].backgroundColor = bgColor;
-            mediaChart.data.datasets[0].borderColor = bColor;
-            mediaChart.update();
-
-            const cameraChart = Chart.getChart('cameraChart');
-            cameraChart.data.datasets[0].backgroundColor = ['rgba(54, 162, 235, 1)'];
-            cameraChart.update();
-
-            const userChart = Chart.getChart('userChart');
-            let userColors = [];
-            let userBorders = [];
-            for (let i = 0; i < 5; i++) {
-                let colors = Dashboard.randomPastelHsla(Dashboard.getRandomInt(1,360));
-                userColors.push(colors[0]);
-                userBorders.push(colors[1]);
-            }
-            userChart.data.datasets[0].backgroundColor = userColors;
-            userChart.data.datasets[0].borderColor = userBorders;
-            cameraChart.update();
-
-            const browserChart = Chart.getChart('browserChart');
-            userColors = [];
-            userBorders = [];
-            for (let i = 0; i < 5; i++) {
-                let colors = Dashboard.randomPastelHsla(Dashboard.getRandomInt(1,360));
-                userColors.push(colors[0]);
-                userBorders.push(colors[1]);
-            }
-            browserChart.data.datasets[0].backgroundColor = userColors;
-            browserChart.data.datasets[0].borderColor = userBorders;
-            browserChart.update();
-
-            const osChart = Chart.getChart('osChart');
-            userColors = [];
-            userBorders = [];
-            for (let i = 0; i < 5; i++) {
-                let colors = Dashboard.randomPastelHsla(Dashboard.getRandomInt(1,360));
-                userColors.push(colors[0]);
-                userBorders.push(colors[1]);
-            }
-            osChart.data.datasets[0].backgroundColor = userColors;
-            osChart.data.datasets[0].borderColor = userBorders;
-            osChart.update();
-
-            const keywordChart = Chart.getChart('keywordChart');
-            keywordChart.data.datasets[0].backgroundColor = ['rgba(54, 162, 235, 1)'];
-            keywordChart.update();
-
-            const cpuChart = Chart.getChart('cpuChart');
-            cpuChart.data.datasets[0].borderColor = 'rgb(54, 162, 235)';
-            cpuChart.data.datasets[1].borderColor = 'rgb(255, 206, 86)';
-            cpuChart.update();
-
-            const memoryChart = Chart.getChart('memoryChart');
-            memoryChart.data.datasets[0].borderColor = 'rgb(54, 162, 235)';
-            memoryChart.update();
+            Util.updateDashboardColors(false);
         }
+    }
+
+    static updateDashboardColors(uglify) {
+        let bgColor = [
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)'
+        ];
+
+        let bColor = [
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)'
+        ];
+
+        if (uglify === true) {
+            bgColor = [
+                'rgba(159, 43, 96, 0.2)',
+                'rgba(96, 54, 49, 0.2)',
+                'rgba(122, 73, 11, 0.2)',
+                'rgba(219, 96, 14, 0.2)'
+            ];
+
+            bColor = [
+                'rgba(159, 43, 96, 1)',
+                'rgba(96, 54, 49, 1)',
+                'rgba(122, 73, 11, 1)',
+                'rgba(219, 96, 14, 1)'
+            ];
+        }
+
+        const siteStatChart = Chart.getChart('siteStatChart');
+        siteStatChart.data.datasets[0].backgroundColor = bgColor;
+        siteStatChart.data.datasets[0].borderColor = bColor;
+        siteStatChart.update();
+
+        const mediaChart = Chart.getChart('mediaChart');
+        mediaChart.data.datasets[0].backgroundColor = bgColor;
+        mediaChart.data.datasets[0].borderColor = bColor;
+        mediaChart.update();
+
+        const cameraChart = Chart.getChart('cameraChart');
+        cameraChart.data.datasets[0].backgroundColor = (uglify === true ? ['rgba(96, 54, 49, 1)'] : ['rgba(54, 162, 235, 1)']);
+        cameraChart.update();
+
+        const userChart = Chart.getChart('userChart');
+        let userColors = [];
+        let userBorders = [];
+        const colorSelection = [
+            ['rgba(225,48,111,0.8)','rgba(225,48,111,1.0)'],
+            ['rgba(159,43,96,0.8)','rgba(159,43,96,1.0)'],
+            ['rgba(96,54,49,0.8)','rgba(96,54,49,1.0)'],
+            ['rgba(122,73,11,0.8)','rgba(122,73,11,1.0)'],
+            ['rgba(219,96,14,0.8)','rgba(219,96,14,1.0)']
+        ];
+        for (let i = 0; i < userChart.data.datasets[0].data.length; i++) {
+            let colors = Dashboard.randomPastelHsla(Dashboard.getRandomInt(1,360));
+            if (uglify === true) {
+                colors = colorSelection[Dashboard.getRandomInt(0,4)];
+            }
+            userColors.push(colors[0]);
+            userBorders.push(colors[1]);
+        }
+        userChart.data.datasets[0].backgroundColor = userColors;
+        userChart.data.datasets[0].borderColor = userBorders;
+        cameraChart.update();
+
+        const browserChart = Chart.getChart('browserChart');
+        userColors = [];
+        userBorders = [];
+        for (let i = 0; i < browserChart.data.datasets[0].data.length; i++) {
+            let colors = Dashboard.randomPastelHsla(Dashboard.getRandomInt(1,360));
+            if (shashin.uglified === true) {
+                colors = colorSelection[Dashboard.getRandomInt(0,4)];
+            }
+            userColors.push(colors[0]);
+            userBorders.push(colors[1]);
+        }
+        browserChart.data.datasets[0].backgroundColor = userColors;
+        browserChart.data.datasets[0].borderColor = userBorders;
+        browserChart.update();
+
+        const osChart = Chart.getChart('osChart');
+        userColors = [];
+        userBorders = [];
+        for (let i = 0; i < osChart.data.datasets[0].data.length; i++) {
+            let colors = Dashboard.randomPastelHsla(Dashboard.getRandomInt(1,360));
+            if (shashin.uglified === true) {
+                colors = colorSelection[Dashboard.getRandomInt(0,4)];
+            }
+            userColors.push(colors[0]);
+            userBorders.push(colors[1]);
+        }
+        osChart.data.datasets[0].backgroundColor = userColors;
+        osChart.data.datasets[0].borderColor = userBorders;
+        osChart.update();
+
+        const keywordChart = Chart.getChart('keywordChart');
+        keywordChart.data.datasets[0].backgroundColor = (uglify === true ? ['rgba(96, 54, 49, 1)'] : ['rgba(54, 162, 235, 1)']);
+        keywordChart.update();
+
+        const cpuChart = Chart.getChart('cpuChart');
+        cpuChart.data.datasets[0].borderColor = (uglify === true ? ['rgba(96, 54, 49)'] : ['rgba(54, 162, 235)']);
+        cpuChart.data.datasets[1].borderColor = (uglify === true ? ['rgba(99,78,46)'] : ['rgb(255, 206, 86)']);
+        cpuChart.update();
+
+        const memoryChart = Chart.getChart('memoryChart');
+        memoryChart.data.datasets[0].borderColor = (uglify === true ? ['rgba(96, 54, 49, 1)'] : ['rgba(54, 162, 235, 1)']);
+        memoryChart.update();
     }
 
     static getYearCreated() {
