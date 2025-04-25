@@ -23,6 +23,41 @@ class Dashboard {
         ];
     }
 
+    static randomPastelRgba() {
+        const randNum = Dashboard.getRandomInt(0,27);
+
+        const rgbaList = [
+            ['rgba(159, 179, 223, 0.8)', 'rgba(159, 179, 223, 1)'],
+            ['rgba(158, 198, 243, 0.8)', 'rgba(158, 198, 243, 1)'],
+            ['rgba(189, 221, 228, 0.8)', 'rgba(189, 221, 228, 1)'],
+            ['rgba(255, 241, 213, 0.8)', 'rgba(255, 241, 213, 1)'],
+            ['rgba(173, 178, 212, 0.8)', 'rgba(173, 178, 212, 1)'],
+            ['rgba(199, 217, 221, 0.8)', 'rgba(199, 217, 221, 1)'],
+            ['rgba(213, 229, 213, 0.8)', 'rgba(213, 229, 213, 1)'],
+            ['rgba(238, 241, 218, 0.8)', 'rgba(238, 241, 218, 1)'],
+            ['rgba(183, 177, 242, 0.8)', 'rgba(183, 177, 242, 1)'],
+            ['rgba(253, 183, 234, 0.8)','rgba(253, 183, 234, 1)'],
+            ['rgba(255, 220, 204, 0.8)','rgba(255, 220, 204, 1)'],
+            ['rgba(251, 243, 185, 0.8)','rgba(251, 243, 185, 1)'],
+            ['rgba(247, 207, 216, 0.8)','rgba(247, 207, 216, 1)'],
+            ['rgba(244, 248, 211, 0.8)','rgba(244, 248, 211, 1)'],
+            ['rgba(166, 214, 214, 0.8)','rgba(166, 214, 214, 1)'],
+            ['rgba(142, 125, 190, 0.8)','rgba(142, 125, 190, 1)'],
+            ['rgba(92, 114, 133, 0.8)','rgba(92, 114, 133, 1)'],
+            ['rgba(226, 224, 200, 0.8)','rgba(226, 224, 200, 1)'],
+            ['rgba(191, 236, 255, 0.8)','rgba(191, 236, 255, 1)'],
+            ['rgba(255, 246, 227, 0.8)','rgba(255, 246, 227, 1)'],
+            ['rgba(205, 193, 255, 0.8)','rgba(205, 193, 255, 1)'],
+            ['rgba(255, 204, 234, 0.8)','rgba(255, 204, 234, 1)'],
+            ['rgba(120, 157, 188, 0.8)','rgba(120, 157, 188, 1)'],
+            ['rgba(255, 227, 227, 0.8)','rgba(255, 227, 227, 1)'],
+            ['rgba(254, 249, 242, 0.8)','rgba(254, 249, 242, 1)'],
+            ['rgba(201, 233, 210, 0.8)','rgba(201, 233, 210, 1)']
+        ];
+
+        return rgbaList[randNum];
+    }
+
     static getRandomInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
@@ -223,9 +258,12 @@ class Dashboard {
         const userBorders = [];
 
         for (let i = 0; i < counts.length; i++) {
-            const hsl = Dashboard.randomPastelHsla(Dashboard.getRandomInt(1,360));
-            userColors.push(hsl[0]);
-            userBorders.push(hsl[1]);
+            // const hsl = Dashboard.randomPastelHsla(Dashboard.getRandomInt(1,360));
+            // userColors.push(hsl[0]);
+            // userBorders.push(hsl[1]);
+            const rgb = Dashboard.randomPastelRgba();
+            userColors.push(rgb[0]);
+            userBorders.push(rgb[1]);
         }
 
         new Chart(ctx, {
@@ -301,12 +339,12 @@ class Dashboard {
         const agentNameBorders = [];
 
         for (let i = 0; i < agentNameCountObj.length; i++) {
-            const hsl = Dashboard.randomPastelHsla(Dashboard.getRandomInt(1,360));
+            const rgb = Dashboard.randomPastelRgba();
             const agentNameObj = agentNameCountObj[i];
             agentNameCounts.push(agentNameObj.x);
             agentNames.push(agentNameObj.y);
-            agentNameColors.push(hsl[0]);
-            agentNameBorders.push(hsl[1]);
+            agentNameColors.push(rgb[0]);
+            agentNameBorders.push(rgb[1]);
         }
 
         new Chart(ctx, {
@@ -374,12 +412,12 @@ class Dashboard {
         const osNameBorders = [];
 
         for (let i = 0; i < osNameCountObj.length; i++) {
-            const hsl = Dashboard.randomPastelHsla(Dashboard.getRandomInt(1,360));
+            const rgb = Dashboard.randomPastelRgba();
             const osNameObj = osNameCountObj[i];
             osNameCounts.push(osNameObj.x);
             osNames.push(osNameObj.y);
-            osNameColors.push(hsl[0]);
-            osNameBorders.push(hsl[1]);
+            osNameColors.push(rgb[0]);
+            osNameBorders.push(rgb[1]);
         }
 
         new Chart(ctx, {
