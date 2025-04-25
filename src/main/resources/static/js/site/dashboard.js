@@ -6,26 +6,7 @@ class Dashboard {
         this.pieChartFontSize = 13;
     }
 
-    static randomPastelHsla(hue) {
-        if (hue < 1) {
-            hue = 1;
-        }
-
-        // const saturation = Math.floor(Dashboard.getRandomInt(60,70));
-        // const lightness = Math.floor(Dashboard.getRandomInt(62,72));
-        const saturation = 70;
-        const lightness = 72;
-        hue = Math.floor(hue);
-
-        return [
-            'hsla('+hue+', '+saturation+'%, '+lightness+'%, 0.8)',
-            'hsla('+hue+', '+saturation+'%, '+lightness+'%, 1)'
-        ];
-    }
-
     static randomPastelRgba() {
-        const randNum = Dashboard.getRandomInt(0,27);
-
         const rgbaList = [
             ['rgba(159, 179, 223, 0.8)', 'rgba(159, 179, 223, 1)'],
             ['rgba(158, 198, 243, 0.8)', 'rgba(158, 198, 243, 1)'],
@@ -54,6 +35,8 @@ class Dashboard {
             ['rgba(254, 249, 242, 0.8)','rgba(254, 249, 242, 1)'],
             ['rgba(201, 233, 210, 0.8)','rgba(201, 233, 210, 1)']
         ];
+
+        const randNum = Dashboard.getRandomInt(0,(rgbaList.length-1));
 
         return rgbaList[randNum];
     }
@@ -258,9 +241,6 @@ class Dashboard {
         const userBorders = [];
 
         for (let i = 0; i < counts.length; i++) {
-            // const hsl = Dashboard.randomPastelHsla(Dashboard.getRandomInt(1,360));
-            // userColors.push(hsl[0]);
-            // userBorders.push(hsl[1]);
             const rgb = Dashboard.randomPastelRgba();
             userColors.push(rgb[0]);
             userBorders.push(rgb[1]);
