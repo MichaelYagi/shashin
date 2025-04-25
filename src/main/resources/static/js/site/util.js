@@ -140,7 +140,7 @@ class Util {
             ['rgba(149, 116, 9,0.8)','rgba(149, 116, 9,1.0)']
         ];
         for (let i = 0; i < userChart.data.datasets[0].data.length; i++) {
-            let colors = Dashboard.randomPastelHsla(Dashboard.getRandomInt(1,360));
+            let colors = Dashboard.randomPastelRgba();
             if (uglify === true) {
                 colors = colorSelection[Dashboard.getRandomInt(0,4)];
             }
@@ -155,7 +155,7 @@ class Util {
         userColors = [];
         userBorders = [];
         for (let i = 0; i < browserChart.data.datasets[0].data.length; i++) {
-            let colors = Dashboard.randomPastelHsla(Dashboard.getRandomInt(1,360));
+            let colors = Dashboard.randomPastelRgba();
             if (uglify === true) {
                 colors = colorSelection[Dashboard.getRandomInt(0,4)];
             }
@@ -170,7 +170,7 @@ class Util {
         userColors = [];
         userBorders = [];
         for (let i = 0; i < osChart.data.datasets[0].data.length; i++) {
-            let colors = Dashboard.randomPastelHsla(Dashboard.getRandomInt(1,360));
+            let colors = Dashboard.randomPastelRgba();
             if (uglify === true) {
                 colors = colorSelection[Dashboard.getRandomInt(0,4)];
             }
