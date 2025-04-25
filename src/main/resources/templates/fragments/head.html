@@ -54,6 +54,7 @@
         <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
             /*<![CDATA[*/
             const isMobile = /*[[${isMobile}]]*/ false;
+            const activePage = /*[[${activePage}]]*/ "";
             /*]]>*/
 
             // Use value already implemented in Kotlin
@@ -64,10 +65,10 @@
             Util.konamiCodeListener(function(sequenceComplete) {
                if (sequenceComplete === true) {
                    if (shashin.uglified === false) {
-                       Util.uglify();
+                       Util.uglify(activePage);
                        shashin.uglified = true;
                    } else {
-                       Util.deuglify();
+                       Util.deuglify(activePage);
                        shashin.uglified = false;
                    }
                }
