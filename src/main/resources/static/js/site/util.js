@@ -99,17 +99,17 @@ class Util {
 
         if (uglify === true) {
             bgColor = [
-                'rgba(159, 43, 96, 0.2)',
-                'rgba(96, 54, 49, 0.2)',
-                'rgba(122, 73, 11, 0.2)',
-                'rgba(219, 96, 14, 0.2)'
+                'rgba(74, 65, 42, 0.2)',
+                'rgba(90, 74, 19, 0.2)',
+                'rgba(53, 39, 4, 0.2)',
+                'rgba(74, 72, 33, 0.2)'
             ];
 
             bColor = [
-                'rgba(159, 43, 96, 1)',
-                'rgba(96, 54, 49, 1)',
-                'rgba(122, 73, 11, 1)',
-                'rgba(219, 96, 14, 1)'
+                'rgba(74, 65, 42, 1)',
+                'rgba(90, 74, 19, 1)',
+                'rgba(53, 39, 4, 1)',
+                'rgba(74, 72, 33, 1)'
             ];
         }
 
@@ -124,18 +124,20 @@ class Util {
         mediaChart.update();
 
         const cameraChart = Chart.getChart('cameraChart');
-        cameraChart.data.datasets[0].backgroundColor = (uglify === true ? ['rgba(96, 54, 49, 1)'] : ['rgba(54, 162, 235, 1)']);
+        cameraChart.data.datasets[0].backgroundColor = (uglify === true ? ['rgb(74, 65, 42)'] : ['rgba(54, 162, 235, 1)']);
         cameraChart.update();
 
         const userChart = Chart.getChart('userChart');
         let userColors = [];
         let userBorders = [];
         const colorSelection = [
-            ['rgba(225,48,111,0.8)','rgba(225,48,111,1.0)'],
-            ['rgba(159,43,96,0.8)','rgba(159,43,96,1.0)'],
-            ['rgba(96,54,49,0.8)','rgba(96,54,49,1.0)'],
-            ['rgba(122,73,11,0.8)','rgba(122,73,11,1.0)'],
-            ['rgba(219,96,14,0.8)','rgba(219,96,14,1.0)']
+            ['rgba(90, 74, 19,0.8)','rgba(90, 74, 19,1.0)'],
+            ['rgba(53, 39, 4,0.8)','rgba(53, 39, 4,1.0)'],
+            ['rgba(74, 72, 33,0.8)','rgba(74, 72, 33,1.0)'],
+            ['rgba(73, 65, 42,0.8)','rgba(73, 65, 42,1.0)'],
+            ['rgba(92, 96, 37,0.8)','rgba(92, 96, 37,1.0)'],
+            ['rgba(98, 70, 5, 0.8)','rgba(98, 70, 5, 1.0)'],
+            ['rgba(149, 116, 9,0.8)','rgba(149, 116, 9,1.0)']
         ];
         for (let i = 0; i < userChart.data.datasets[0].data.length; i++) {
             let colors = Dashboard.randomPastelHsla(Dashboard.getRandomInt(1,360));
@@ -180,16 +182,16 @@ class Util {
         osChart.update();
 
         const keywordChart = Chart.getChart('keywordChart');
-        keywordChart.data.datasets[0].backgroundColor = (uglify === true ? ['rgba(96, 54, 49, 1)'] : ['rgba(54, 162, 235, 1)']);
+        keywordChart.data.datasets[0].backgroundColor = (uglify === true ? ['rgb(74, 65, 42)'] : ['rgba(54, 162, 235, 1)']);
         keywordChart.update();
 
         const cpuChart = Chart.getChart('cpuChart');
-        cpuChart.data.datasets[0].borderColor = (uglify === true ? ['rgba(96, 54, 49)'] : ['rgba(54, 162, 235)']);
-        cpuChart.data.datasets[1].borderColor = (uglify === true ? ['rgba(99,78,46)'] : ['rgb(255, 206, 86)']);
+        cpuChart.data.datasets[0].borderColor = (uglify === true ? ['rgb(74, 65, 42)'] : ['rgb(54, 162, 235)']);
+        cpuChart.data.datasets[1].borderColor = (uglify === true ? ['rgb(53, 39, 4)'] : ['rgb(255, 206, 86)']);
         cpuChart.update();
 
         const memoryChart = Chart.getChart('memoryChart');
-        memoryChart.data.datasets[0].borderColor = (uglify === true ? ['rgba(96, 54, 49, 1)'] : ['rgba(54, 162, 235, 1)']);
+        memoryChart.data.datasets[0].borderColor = (uglify === true ? ['rgb(74, 65, 42)'] : ['rgba(54, 162, 235, 1)']);
         memoryChart.update();
     }
 
