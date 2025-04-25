@@ -249,7 +249,7 @@ class Dashboard {
                     },
                     title: {
                         display: true,
-                        text: 'Users',
+                        text: 'User Roles',
                         font: {
                             size: 14,
                             weight: 'bold'
@@ -330,7 +330,7 @@ class Dashboard {
                     },
                     title: {
                         display: true,
-                        text: 'Browsers',
+                        text: 'Requests by Browser',
                         font: {
                             size: 14,
                             weight: 'bold'
@@ -403,7 +403,7 @@ class Dashboard {
                     },
                     title: {
                         display: true,
-                        text: 'OS',
+                        text: 'Requests by OS',
                         font: {
                             size: 14,
                             weight: 'bold'
