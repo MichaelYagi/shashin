@@ -852,6 +852,17 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
                             tag: "slide"
                         }
                     );
+                } else {
+                    shashin.closeToastMessages({tag: "slide", placement: shashin.toast.placement.top.center});
+                    shashin.showToastMessage("Decreased interval",
+                        "Interval at minimum "+slideshowIsElapsed+" seconds.",
+                        {
+                            icon: "bi-info-circle",
+                            autohide: true,
+                            placement:shashin.toast.placement.top.center,
+                            tag: "slide"
+                        }
+                    );
                 }
             }
 
@@ -867,6 +878,17 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
                     shashin.closeToastMessages({tag: "slide", placement: shashin.toast.placement.top.center});
                     shashin.showToastMessage("Increased interval",
                         "Increased interval to "+slideshowIsElapsed+" seconds.",
+                        {
+                            icon: "bi-info-circle",
+                            autohide: true,
+                            placement:shashin.toast.placement.top.center,
+                            tag: "slide"
+                        }
+                    );
+                } else {
+                    shashin.closeToastMessages({tag: "slide", placement: shashin.toast.placement.top.center});
+                    shashin.showToastMessage("Decreased interval",
+                        "Interval at maximum "+slideshowIsElapsed+" seconds.",
                         {
                             icon: "bi-info-circle",
                             autohide: true,
