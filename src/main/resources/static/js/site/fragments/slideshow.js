@@ -525,6 +525,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
         slideshowStarted = false;
         slideshowProceed = true;
 
+        shashin.closeToastMessages({tag: "slide"});
+
         $("#slideshowAlbumSelection").modal('hide');
 
         $("#mediaInfo").html("");
