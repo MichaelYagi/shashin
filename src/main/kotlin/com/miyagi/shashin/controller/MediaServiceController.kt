@@ -595,7 +595,7 @@ class MediaServiceController {
     @RequestMapping(value = ["/api/v1/random/metadata/type/{type}", "/random/metadata/type/{type}"], method = [(RequestMethod.GET)], produces = ["application/json"])
     @ResponseBody
     @Throws(IOException::class)
-    fun getRandomImageByType(model: Model, request: HttpServletRequest, @PathVariable type: String, @RequestParam slideAlbumsOnly: Optional<Boolean>): String {
+    fun getRandomImageByType(model: Model, request: HttpServletRequest, @PathVariable type: String, @RequestParam includeSlideAlbums: Optional<Boolean>): String {
         val mapper = ObjectMapper()
         val resp = mutableMapOf<String, Any?>()
         val currentUser = model.getAttribute("currentUser") as User?
@@ -613,7 +613,7 @@ class MediaServiceController {
 
         if (currentUser != null) {
             var slideshowAlbums: Array<String> = arrayOf("all")
-            if ((slideAlbumsOnly.isPresent && slideAlbumsOnly.get())) {
+            if ((includeSlideAlbums.isPresent && includeSlideAlbums.get())) {
                 val slideshowObj = slideshowAlbumRepository.findFirstByUserId(currentUser.getId())
                 println("testzzz")
                 println(slideshowObj.toString())
