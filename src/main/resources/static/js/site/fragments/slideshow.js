@@ -571,7 +571,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>i</strong></span></div><div class='col-8'>Slide info</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>← →</strong></span></div><div class='col-8'>Go to next/previous slide</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>a</strong></span></div><div class='col-8'>Album Filter</div></div>" +
-                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>- =</strong></span></div><div class='col-8'>Slideshow interval</div></div>" +
+                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>- =</strong></span></div><div class='col-8'>Increase/decrease interval</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='4' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowIsElapsed+"</span> second interval</div></div>" +
                 "<div class='row mb-1'><button class='btn btn-secondary' type='button' id='slideshowAlbumNameData' value=''>Albums Filter</button></div>" +
                 "</div>";
