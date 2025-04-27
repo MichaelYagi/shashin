@@ -571,6 +571,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>i</strong></span></div><div class='col-8'>Slide info</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>← →</strong></span></div><div class='col-8'>Go to next/previous slide</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>a</strong></span></div><div class='col-8'>Album Filter</div></div>" +
+                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>- =</strong></span></div><div class='col-8'>Slideshow interval</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='4' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowIsElapsed+"</span> second interval</div></div>" +
                 "<div class='row mb-1'><button class='btn btn-secondary' type='button' id='slideshowAlbumNameData' value=''>Albums Filter</button></div>" +
                 "</div>";
@@ -642,39 +643,43 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
 
         $("#slideshowIntervalSlide").on("change", function () {
             slideshowIsElapsed = $(this).val() * 5;
-            $("#intervalValue").text(slideshowIsElapsed);
-
-            if (slideshowIsPaused === false) {
-                clearInterval(slideshowIntervalId);
-                slideshowIntervalId = window.setInterval(function () {
-                    if (slideshowIsPaused === false) {
-                        slideshowCurrentIndex++;
-                        getSlideshowImage(function () {
-                            slideshowProceed = true;
-                        });
-                    }
-                }, (slideshowIsElapsed * 1000));
-            }
-
-            const http = new Http("dark mode");
-            const json = {slideshowInterval: slideshowIsElapsed};
-            const data = http.ajax("post", "/users/slideshowinterval", JSON.stringify(json));
-
-            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                if (data.status === "success") {
-                    shashin.printMessageToConsole("Slideshow interval set: " + slideshowIsElapsed + "s", {tag: "slideshow"});
-                } else {
-                    shashin.printMessageToConsole("Slideshow interval failed to set", {tag: "slideshow"});
-                }
-            } else {
-                shashin.printMessageToConsole("Slideshow interval failed request", {tag: "slideshow"});
-            }
+            changeSideshowInterval();
         });
 
         $("#slideshowIntervalSlide").on("input", function () {
             slideshowIsElapsed = $(this).val() * 5;
             $("#intervalValue").text(slideshowIsElapsed);
         });
+    }
+
+    function changeSideshowInterval() {
+        $("#intervalValue").text(slideshowIsElapsed);
+
+        if (slideshowIsPaused === false) {
+            clearInterval(slideshowIntervalId);
+            slideshowIntervalId = window.setInterval(function () {
+                if (slideshowIsPaused === false) {
+                    slideshowCurrentIndex++;
+                    getSlideshowImage(function () {
+                        slideshowProceed = true;
+                    });
+                }
+            }, (slideshowIsElapsed * 1000));
+        }
+
+        const http = new Http("dark mode");
+        const json = {slideshowInterval: slideshowIsElapsed};
+        const data = http.ajax("post", "/users/slideshowinterval", JSON.stringify(json));
+
+        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+            if (data.status === "success") {
+                shashin.printMessageToConsole("Slideshow interval set: " + slideshowIsElapsed + "s", {tag: "slideshow"});
+            } else {
+                shashin.printMessageToConsole("Slideshow interval failed to set", {tag: "slideshow"});
+            }
+        } else {
+            shashin.printMessageToConsole("Slideshow interval failed request", {tag: "slideshow"});
+        }
     }
 
     function exitSlideshow() {
@@ -822,6 +827,50 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
                 }
 
                 $("#slideshowAlbumSelection").modal('show');
+            }
+
+            // Decrease elapsed time
+            if (e.key === "-" || e.code === "Minus" || e.which === 189 || e.keyCode === 189) {
+                const min = 5;
+                const currElapsed = slideshowIsElapsed;
+
+                if ((currElapsed - 5) >= min) {
+                    slideshowIsElapsed = currElapsed - 5;
+                    changeSideshowInterval();
+
+                    shashin.closeToastMessages({tag: "slide", placement: shashin.toast.placement.top.center});
+                    shashin.showToastMessage("Decreased interval",
+                        "Decreased interval to "+slideshowIsElapsed+" seconds.",
+                        {
+                            icon: "bi-info-circle",
+                            autohide: true,
+                            placement:shashin.toast.placement.top.center,
+                            tag: "slide"
+                        }
+                    );
+                }
+            }
+
+            // Increase elapsed time
+            if (e.key === "=" || e.code === "Equal" || e.which === 187 || e.keyCode === 187) {
+                const max = 20;
+                const currElapsed = slideshowIsElapsed;
+
+                if ((currElapsed + 5) <= max) {
+                    slideshowIsElapsed = currElapsed + 5;
+                    changeSideshowInterval();
+
+                    shashin.closeToastMessages({tag: "slide", placement: shashin.toast.placement.top.center});
+                    shashin.showToastMessage("Increased interval",
+                        "Increased interval to "+slideshowIsElapsed+" seconds.",
+                        {
+                            icon: "bi-info-circle",
+                            autohide: true,
+                            placement:shashin.toast.placement.top.center,
+                            tag: "slide"
+                        }
+                    );
+                }
             }
 
             if (e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.which === 37 || e.keyCode === 37 || e.key === "ArrowRight" || e.code === "ArrowRight" || e.which === 39 || e.keyCode === 39) {
