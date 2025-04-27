@@ -35,7 +35,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
             if (albumsArray.length > 0) {
                 html += '<button class="dropdown-item" type="button">' +
                     '<input type="checkbox" data-album-id=0 class="slideshowAlbum" value="all" name="album[]" id="album-0"'+(slideshowAlbumArray.includes("all") ? ' checked="checked"' : '')+'> ' +
-                    '<label for="album-0">all</label>' +
+                    '<label for="album-0">All</label>' +
                 '</button>';
             }
             for (let index in albumsArray) {
