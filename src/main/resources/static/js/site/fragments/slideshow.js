@@ -80,14 +80,17 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
                     albums:checkedValues
                 };
                 http.ajax("post", "/slideshowalbums", JSON.stringify(json)).then(function (data) {
-                    if (data.status === "success") {
-                        shashin.printMessageToConsole("New random image after configuring albums chosen", {tag: "slideshow"});
-                        http.ajax("get", "/random/metadata/type/image?slideAlbumsOnly=true").then(function (data) {
-                            processSlideData(data, "new", function () {
-                                slideshowProceed = true;
-                            });
-                        });
+                    if (data.status !== "success") {
+                        shashin.printMessageToConsole("Error getting random image after configuring albums chosen", {tag: "slideshow"});
                     }
+                    // if (data.status === "success") {
+                    //     shashin.printMessageToConsole("New random image after configuring albums chosen", {tag: "slideshow"});
+                    //     http.ajax("get", "/random/metadata/type/image?slideAlbumsOnly=true").then(function (data) {
+                    //         processSlideData(data, "new", function () {
+                    //             slideshowProceed = true;
+                    //         });
+                    //     });
+                    // }
                 });
             });
         }
