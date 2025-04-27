@@ -658,6 +658,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
 
     function changeSideshowInterval() {
         $("#intervalValue").text(slideshowIsElapsed);
+        $("#slideshowIntervalSlide").val(slideshowIsElapsed/5);
 
         if (slideshowIsPaused === false) {
             clearInterval(slideshowIntervalId);
