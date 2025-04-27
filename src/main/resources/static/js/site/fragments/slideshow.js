@@ -771,9 +771,12 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
         if ($("#slideshowContainer").css("display") === "block") {
 
             if (e.key === "Escape" || e.code === "Escape" || e.which === 27 || e.keyCode === 27) {
-                document.body.style.overflow = 'visible';
-
-                exitSlideshow();
+                if ($("#slideshowAlbumSelection").hasClass("show")) {
+                    $("#slideshowAlbumSelection").modal('hide');
+                } else {
+                    document.body.style.overflow = 'visible';
+                    exitSlideshow();
+                }
             }
 
             if (e.key === "x" || e.code === "KeyX" || e.which === 88 || e.keyCode === 88) {
