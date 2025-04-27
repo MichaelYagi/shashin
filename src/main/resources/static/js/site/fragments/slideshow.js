@@ -579,10 +579,10 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>i</strong></span></div><div class='col-8'>Slide info</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>← →</strong></span></div><div class='col-8'>Go to next/previous slide</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='4' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowIsElapsed+"</span> second interval</div></div>" +
-                "<div class='row mb-1'><button class='btn btn-secondary' type='button' id='slideshowAlbumNameData' value=''>Albums</button></div>" +
+                "<div class='row mb-1'><button class='btn btn-secondary' type='button' id='slideshowAlbumNameData' value=''>Albums Filter</button></div>" +
                 "</div>";
 
-            title = "Keyboard Shortcuts";
+            title = "Settings & Keyboard Shortcuts";
         } else {
             message = "<div class='container'>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Swipe Up</strong></span></div><div class='col-8'>Show/close this window</div></div>" +
@@ -591,10 +591,10 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Double Tap</strong></span></div><div class='col-8'>Exit slideshow</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Swipe ← →</strong></span></div><div class='col-8'>Go to next/previous slide</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='4' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowIsElapsed+"</span> second interval</div></div>" +
-                "<div class='row mb-1'><button class='btn btn-secondary' type='button' id='slideshowAlbumNameData' value=''>Albums</button></div>" +
+                "<div class='row mb-1'><button class='btn btn-secondary' type='button' id='slideshowAlbumNameData' value=''>Albums Filter</button></div>" +
                 "</div>";
 
-            title = "Touch Bindings";
+            title = "Settings & Touch Bindings";
         }
 
         shashin.showToastMessage(title,
