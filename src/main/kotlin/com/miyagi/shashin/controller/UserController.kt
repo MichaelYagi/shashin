@@ -10,6 +10,7 @@ import com.miyagi.shashin.repository.FavoriteRepository
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.PersistentLoginsExpiryRepository
 import com.miyagi.shashin.repository.PersistentLoginsRepository
+import com.miyagi.shashin.repository.SlideshowAlbumRepository
 import com.miyagi.shashin.repository.UserAlbumRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.ApiResponse
@@ -74,6 +75,9 @@ class UserController {
 
     @Autowired
     var userRepository: UserRepository? = null
+
+    @Autowired
+    var slideshowAlbumRepository: SlideshowAlbumRepository? = null
 
     @Autowired
     private val userAlbumRepository: UserAlbumRepository? = null
@@ -532,6 +536,12 @@ class UserController {
                     ).toString()
                 )
 
+                // Create sideshow entry
+                val slideshowAlbum = SlideshowAlbum()
+                slideshowAlbum.setUserId(newUser.getId())
+                slideshowAlbum.setAlbums("all")
+                slideshowAlbumRepository?.save(slideshowAlbum)
+
                 if ((userCount != null) && (userCount.toInt() == 0)) {
                     newUser.setAuthority("ROLE_SUPER")
                     newUser.setIsAuthorized(true)
@@ -942,6 +952,7 @@ class UserController {
                 userAlbumRepository?.deleteByUserId(userId)
                 favoriteRepository?.deleteByUserId(userId)
                 commentRepository?.deleteByUserId(userId)
+                slideshowAlbumRepository?.deleteByUserId(userId)
             }
 
             response["userIds"] = usersDeleted

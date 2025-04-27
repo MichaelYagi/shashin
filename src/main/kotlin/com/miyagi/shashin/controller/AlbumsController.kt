@@ -79,6 +79,9 @@ class AlbumsController: BaseController() {
     private lateinit var albumPhotoCommentRepository: AlbumPhotoCommentRepository
 
     @Autowired
+    private lateinit var slideshowAlbumRepository: SlideshowAlbumRepository
+
+    @Autowired
     private val keywordRepository: KeywordRepository? = null
 
     @Autowired
@@ -292,6 +295,72 @@ class AlbumsController: BaseController() {
         return mapper.writeValueAsString(buildAlbums(model, page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt())))
     }
 
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
+    @RequestMapping(value = ["/slideshowalbums"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getAlbums(model: Model, @RequestParam size: Optional<Int>): String {
+        var response = mutableMapOf<String, Any?>()
+        var slideshowAlbumResponse = mutableMapOf<String, Any?>()
+        val currentUserObj = model.getAttribute("currentUser") as User?
+
+        var userAlbumCount = size.orElse(model.getAttribute("queryLimit").toString().toInt())
+        var slideshowAlbum: SlideshowAlbum? = SlideshowAlbum()
+        if (currentUserObj != null) {
+            userAlbumCount = userAlbumRepository.countUserAlbumsByUserId(currentUserObj.getId())
+            slideshowAlbum = slideshowAlbumRepository.findFirstByUserId(currentUserObj.getId())
+            if (slideshowAlbum == null) {
+                slideshowAlbum = SlideshowAlbum()
+                slideshowAlbum.setUserId(currentUserObj.getId())
+                slideshowAlbum.setAlbums("all")
+            }
+
+            val albumsString = slideshowAlbum.getAlbums()
+            val albumsArray = albumsString?.split(",")?.map { it -> it.trim() }
+
+            slideshowAlbumResponse["userId"] = slideshowAlbum.getUserId()
+            slideshowAlbumResponse["albums"] = albumsArray
+        }
+
+        response = buildAlbums(model, 0, userAlbumCount)
+        response["slideshowAlbum"] = slideshowAlbumResponse
+
+        return mapper.writeValueAsString(response)
+    }
+
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
+    @RequestMapping(value = ["/slideshowalbums"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    fun postAlbums(model: Model,@RequestBody requestBody: JsonNode): String {
+        val response = mutableMapOf<String, Any?>()
+        response["msg"] = "Fail!"
+        response["status"] = ApiResponse.FAIL.status
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        val albumMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+
+        if (currentUserObj != null && albumMap.containsKey("albums")) {
+            val albumIdArray = albumMap["albums"] as ArrayList<String>
+
+            var slideshowAlbum = slideshowAlbumRepository.findFirstByUserId(currentUserObj.getId())
+            if (slideshowAlbum == null) {
+                slideshowAlbum = SlideshowAlbum()
+                slideshowAlbum.setUserId(currentUserObj.getId())
+            }
+
+            if ("0" in albumIdArray) {
+                slideshowAlbum.setAlbums("all")
+            } else {
+                slideshowAlbum.setAlbums(albumIdArray.joinToString(","))
+            }
+            slideshowAlbumRepository.save(slideshowAlbum)
+
+            response["msg"] = "Success!"
+            response["status"] = ApiResponse.SUCCESS.status
+        }
+
+        return mapper.writeValueAsString(response)
+    }
+
     private fun buildAlbums(model: Model, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
@@ -342,11 +411,13 @@ class AlbumsController: BaseController() {
                 val albums = ArrayList<HashMap<String, Any>>()
                 var albumVideoCount: Int?
                 var albumPhotoCount: Int?
+                var albumPhotoOnlyCount: Int?
 
                 for (userAlbum in userAlbums) {
                     // Cleanup if DNE
 
                     albumPhotoCount = albumPhotoRepository.countByAlbumId(userAlbum?.getAlbumId())
+                    albumPhotoOnlyCount = albumPhotoRepository.countPhotosByAlbumId(userAlbum?.getAlbumId())
                     val album = albumRepository.findAlbumById(userAlbum?.getAlbumId())
 
                     if (albumPhotoCount != null && album != null && albumPhotoCount == 0 && album.getId() > 0 && userAlbum != null) {
@@ -376,10 +447,10 @@ class AlbumsController: BaseController() {
                             val albumMap = HashMap<String, Any>()
                             val albumObj = albumRepository.findById(userAlbum.getAlbumId()!!)
 
-                            if (albumPhotoCount == null) {
-                                albumPhotoCount = 0
+                            if (albumPhotoOnlyCount == null) {
+                                albumPhotoOnlyCount = 0
                             }
-                            totalImageCount += albumPhotoCount
+                            totalImageCount += albumPhotoOnlyCount
                             albumVideoCount = albumPhotoRepository.countVideosByAlbumId(userAlbum.getAlbumId()!!)
                             if (albumVideoCount == null) {
                                 albumVideoCount = 0
@@ -398,7 +469,7 @@ class AlbumsController: BaseController() {
                             albumMap["coverUrl"] = coverUrl
                             albumMap["shareUrl"] =
                                 if (albumObj.get().getShareUrl() == null) "" else albumObj.get().getShareUrl()!!
-                            albumMap["albumPhotoCount"] = albumPhotoCount
+                            albumMap["albumPhotoCount"] = albumPhotoOnlyCount
                             albumMap["albumVideoCount"] = albumVideoCount
                             albums.add(albumMap)
 
