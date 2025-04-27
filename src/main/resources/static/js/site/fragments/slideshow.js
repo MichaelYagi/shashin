@@ -83,14 +83,6 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
                     if (data.status !== "success") {
                         shashin.printMessageToConsole("Error getting random image after configuring albums chosen", {tag: "slideshow"});
                     }
-                    // if (data.status === "success") {
-                    //     shashin.printMessageToConsole("New random image after configuring albums chosen", {tag: "slideshow"});
-                    //     http.ajax("get", "/random/metadata/type/image?slideAlbumsOnly=true").then(function (data) {
-                    //         processSlideData(data, "new", function () {
-                    //             slideshowProceed = true;
-                    //         });
-                    //     });
-                    // }
                 });
             });
         }
@@ -130,7 +122,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
                 });
             } else {
                 shashin.printMessageToConsole("New random image", {tag: "slideshow"});
-                http.ajax("get", "/random/metadata/type/image?slideAlbumsOnly=true").then(function (data) {
+                http.ajax("get", "/random/metadata/type/image?includeSlideAlbums=true").then(function (data) {
                     processSlideData(data, "new", callback);
                 });
             }
