@@ -615,6 +615,7 @@ class MediaServiceController {
             var slideshowAlbums: Array<String> = arrayOf("all")
             if ((slideAlbumsOnly.isPresent && slideAlbumsOnly.get())) {
                 val slideshowObj = slideshowAlbumRepository.findFirstByUserId(currentUser.getId())
+                println("testzzz")
                 println(slideshowObj.toString())
                 if (slideshowObj != null) {
                     slideshowAlbums = slideshowObj.getAlbums()!!.split(",").toTypedArray()
@@ -628,8 +629,10 @@ class MediaServiceController {
                 } else if (slideshowAlbums.contains("all") && currentUser.getAuthority()!! == "ROLE_USER") {
                     metadataRepository.findRandomAlbumMediaByUser(currentUser.getId(), type)
                 } else if (slideshowAlbums.isNotEmpty()) {
+                    println("testzzz1")
                     val randomIndex = (0..slideshowAlbums.lastIndex).random()
                     val albumId = slideshowAlbums[randomIndex]
+                    println(albumId)
                     metadataRepository.findRandomAlbumMediaByUserAndAlbum(currentUser.getId(), albumId.toInt(), type)
                 } else {
                     null
