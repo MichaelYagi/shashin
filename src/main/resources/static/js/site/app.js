@@ -3230,7 +3230,8 @@
             const tokenSize = "ShashinShareAlbumSize";
             const configuredAttempts = 120;
 
-            shashin.showToastMessage("Downloading share album", "Downloading share album \""+albumName+"\". Downloading photos only.", {icon:"bi-info-circle", iconColor:"#777777", autohide:false});
+            shashin.closeToastMessages({tag:"sharedownload"});
+            shashin.showToastMessage("Downloading share album", "Downloading share album \""+albumName+"\". Downloading photos only.", {icon:"bi-info-circle", iconColor:"#777777", autohide:true, tag:"sharedownload"});
             setTimeout(function () { $("#download"+albumId).removeAttr("href"); }, 0);
             Util.setCookie(tokenName, "", "/");
             Util.setCookie(tokenSize, "", "/");
