@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
+- Filter for slideshow
 
 ### Changed
 

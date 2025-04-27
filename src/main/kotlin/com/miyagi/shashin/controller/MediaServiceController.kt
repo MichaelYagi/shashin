@@ -8,6 +8,7 @@ import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.AlbumRepository
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.NotificationRepository
+import com.miyagi.shashin.repository.SlideshowAlbumRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.*
 import com.miyagi.shashin.util.TextUtils.Companion.getCacheControl
@@ -62,6 +63,9 @@ class MediaServiceController {
 
     @Autowired
     private lateinit var notificationRepository: NotificationRepository
+
+    @Autowired
+    private lateinit var slideshowAlbumRepository: SlideshowAlbumRepository
 
     @Value("\${app.sidecar.path}")
     private var relativeSidecarDir: String? = null
@@ -591,7 +595,7 @@ class MediaServiceController {
     @RequestMapping(value = ["/api/v1/random/metadata/type/{type}", "/random/metadata/type/{type}"], method = [(RequestMethod.GET)], produces = ["application/json"])
     @ResponseBody
     @Throws(IOException::class)
-    fun getRandomImageByType(model: Model, request: HttpServletRequest, @PathVariable type: String, @RequestParam albumsOnly: Optional<Boolean>): String {
+    fun getRandomImageByType(model: Model, request: HttpServletRequest, @PathVariable type: String, @RequestParam slideAlbumsOnly: Optional<Boolean>): String {
         val mapper = ObjectMapper()
         val resp = mutableMapOf<String, Any?>()
         val currentUser = model.getAttribute("currentUser") as User?
@@ -608,11 +612,25 @@ class MediaServiceController {
         resp["baseUrl"] = baseUrl
 
         if (currentUser != null) {
+            var slideshowAlbums: Array<String> = arrayOf("all")
+            if ((slideAlbumsOnly.isPresent && slideAlbumsOnly.get())) {
+                val slideshowObj = slideshowAlbumRepository.findFirstByUserId(currentUser.getId())
+                println(slideshowObj.toString())
+                if (slideshowObj != null) {
+                    slideshowAlbums = slideshowObj.getAlbums()!!.split(",").toTypedArray()
+                    //slideshowAlbums = slideshowAlbums.filter { it != "all" }.toTypedArray()
+                }
+            }
+
             val randomMetadata =
-                (if (!(albumsOnly.isPresent && albumsOnly.get()) && (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER")) {
+                (if (slideshowAlbums.contains("all") && (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER")) {
                     metadataRepository.findRandomMetadataMedia(type)
-                } else if (!albumsOnly.isPresent || (albumsOnly.isPresent && albumsOnly.get())) {
+                } else if (slideshowAlbums.contains("all") && currentUser.getAuthority()!! == "ROLE_USER") {
                     metadataRepository.findRandomAlbumMediaByUser(currentUser.getId(), type)
+                } else if (slideshowAlbums.isNotEmpty()) {
+                    val randomIndex = (0..slideshowAlbums.lastIndex).random()
+                    val albumId = slideshowAlbums[randomIndex]
+                    metadataRepository.findRandomAlbumMediaByUserAndAlbum(currentUser.getId(), albumId.toInt(), type)
                 } else {
                     null
                 })

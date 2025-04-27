@@ -24,6 +24,22 @@
     <span id="mediaInfo" style="color:#FFFFFF;text-shadow:#000000 1px 0 10px;position:fixed;left:50%;bottom:20px;transform: translate(-50%, -50%);margin: 0 auto;display:none;"></span>
 </div>
 
+<div class="modal fade" id="slideshowAlbumSelection" tabindex="-1" role="dialog" aria-labelledby="dropdownSelection" style="z-index: 9999;">
+    <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="slideshowAlbumSelectionLabel">Select Album</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="slideshowAlbumSelectionList"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="confirmSlideshowAlbumSelection">Select</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelSlideshowAlbumSelection">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <header class="py-2"> <!--  mb-1 border-bottom shadow -->
     <div class="container-fluid align-items-center d-flex">
         <div class="flex-shrink-0">

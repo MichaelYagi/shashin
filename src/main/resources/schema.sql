@@ -163,6 +163,15 @@ CREATE TABLE `user` (
                         CHECK(`password` <> '')
 );
 
+DROP TABLE IF EXISTS `slideshowalbum`;
+CREATE TABLE `slideshowalbum` (
+                             `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                             `userId` INTEGER,
+                             `albums` VARCHAR(255) DEFAULT 'all',
+                             UNIQUE(`userId`) ON CONFLICT IGNORE,
+                             FOREIGN KEY (`userId`) REFERENCES user(`id`)
+);
+
 DROP TABLE IF EXISTS `useragent`;
 CREATE TABLE `useragent` (
                              `id` INTEGER PRIMARY KEY AUTOINCREMENT,

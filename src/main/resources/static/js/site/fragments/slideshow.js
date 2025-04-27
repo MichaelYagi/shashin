@@ -25,6 +25,74 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
     const fadeOutTime = 1000;
     let isActive = false;
 
+    const http = new Http("getAlbums");
+    http.ajax("get", "/slideshowalbums").then(function (data) {
+        if (data.hasOwnProperty("albumsList") && data.hasOwnProperty("slideshowAlbum")  && data.slideshowAlbum.hasOwnProperty("albums") && data.albumsList.length > 0 && data.slideshowAlbum.albums.length > 0) {
+            const albumsArray = data.albumsList;
+            const slideshowAlbumArray = data.slideshowAlbum.albums;
+
+            let html = "";
+            if (albumsArray.length > 0) {
+                html += '<button class="dropdown-item" type="button">' +
+                    '<input type="checkbox" data-album-id=0 class="slideshowAlbum" value="all" name="album[]" id="album-0"'+(slideshowAlbumArray.includes("all") ? ' checked="checked"' : '')+'> ' +
+                    '<label for="album-0">all</label>' +
+                '</button>';
+            }
+            for (let index in albumsArray) {
+                if (albumsArray.hasOwnProperty(index)) {
+                    const album = albumsArray[index];
+                    if (album.hasOwnProperty("albumPhotoCount") && album.albumPhotoCount > 0) {
+                        html += '<button class="dropdown-item" type="button">' +
+                            '<input type="checkbox" data-album-id=' + album.id + ' class="slideshowAlbum" value="' + album.name + '" name="album[]" id="album-' + album.id + '"' + (slideshowAlbumArray.includes(String(album.id)) ? ' checked="checked"' : '') + '> ' +
+                            '<label for="album-' + album.id + '">' + album.name + '</label>' +
+                            '</button>';
+                    }
+                }
+            }
+            $("#slideshowAlbumSelectionList").html(html);
+
+            $(".slideshowAlbum").on("click", function () {
+                const albumId = parseInt($(this).attr("data-album-id"));
+
+                if (albumId === 0) {
+                    if ($('#album-' + albumId).prop("checked") === true) {
+                        $(".slideshowAlbum").prop('checked',false);
+                        $('#album-' + albumId).prop('checked', true);
+                    }
+                } else {
+                    if ($('#album-' + albumId).prop("checked") === true) {
+                        $('#album-0').prop('checked', false);
+                    }
+                }
+
+                if ($('.slideshowAlbum:checked').length === 0) {
+                    $('#album-0').prop('checked', true);
+                }
+            });
+
+            $("#confirmSlideshowAlbumSelection").on("click", function () {
+                const http = new Http("getAlbums");
+                const checkedValues = [];
+                $('.slideshowAlbum:checked').each(function() {
+                    checkedValues.push($(this).attr("data-album-id"));
+                });
+                const json = {
+                    albums:checkedValues
+                };
+                http.ajax("post", "/slideshowalbums", JSON.stringify(json)).then(function (data) {
+                    if (data.status === "success") {
+                        shashin.printMessageToConsole("New random image after configuring albums chosen", {tag: "slideshow"});
+                        http.ajax("get", "/random/metadata/type/image?slideAlbumsOnly=true").then(function (data) {
+                            processSlideData(data, "new", function () {
+                                slideshowProceed = true;
+                            });
+                        });
+                    }
+                });
+            });
+        }
+    });
+
     function getSlideshowImage(callback) {
         const http = new Http("show slideshow");
 
@@ -41,7 +109,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
                 });
             } else {
                 shashin.printMessageToConsole("New random image", {tag: "slideshow"});
-                http.ajax("get", "/random/metadata/type/image").then(function (data) {
+                http.ajax("get", "/random/metadata/type/image?slideAlbumsOnly=true").then(function (data) {
                     processSlideData(data, "new", callback);
                 });
             }
@@ -490,6 +558,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>i</strong></span></div><div class='col-8'>Slide info</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>← →</strong></span></div><div class='col-8'>Go to next/previous slide</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='4' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowIsElapsed+"</span> second interval</div></div>" +
+                "<div class='row mb-1'><button class='btn btn-secondary' type='button' id='slideshowAlbumNameData' value=''>Albums</button></div>" +
                 "</div>";
 
             title = "Keyboard Shortcuts";
@@ -501,6 +570,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Double Tap</strong></span></div><div class='col-8'>Exit slideshow</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Swipe ← →</strong></span></div><div class='col-8'>Go to next/previous slide</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='4' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowIsElapsed+"</span> second interval</div></div>" +
+                "<div class='row mb-1'><button class='btn btn-secondary' type='button' id='slideshowAlbumNameData' value=''>Albums</button></div>" +
                 "</div>";
 
             title = "Touch Bindings";
@@ -519,6 +589,16 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
                 $("#toggleCast").css({"display": "block"});
             });
         }
+
+        $("#slideshowAlbumNameData").on("click", function (e) {
+            e.preventDefault();
+
+            if (slideshowIsPaused === false) {
+                slideshowGalleryPlayPause();
+            }
+
+            $("#slideshowAlbumSelection").modal('show');
+        });
 
         $("#toggleCast").on("click", function (e) {
             e.preventDefault();

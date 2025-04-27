@@ -99,6 +99,9 @@ class SettingsController {
     private val folderDataRepository: FolderDataRepository? = null
 
     @Autowired
+    private val slideshowAlbumRepository: SlideshowAlbumRepository? = null
+
+    @Autowired
     private val userRepository: UserRepository? = null
 
     @Autowired
@@ -687,6 +690,7 @@ class SettingsController {
                 userAlbumRepository?.deleteAll()
                 keywordRepository?.deleteAll()
                 folderDataRepository?.deleteAll()
+                slideshowAlbumRepository?.deleteAll()
 
                 // Cleanup CompreFace subjects
                 val settings = model.getAttribute("settings") as Settings
