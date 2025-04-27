@@ -814,6 +814,15 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
                 }
             }
 
+            // Show album filter
+            if (e.key === "a" || e.code === "KeyA" || e.which === 65 || e.keyCode === 65) {
+                if (slideshowIsPaused === false) {
+                    slideshowGalleryPlayPause();
+                }
+
+                $("#slideshowAlbumSelection").modal('show');
+            }
+
             if (e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.which === 37 || e.keyCode === 37 || e.key === "ArrowRight" || e.code === "ArrowRight" || e.which === 39 || e.keyCode === 39) {
                 if (((e.key === "ArrowLeft" || e.code === "ArrowLeft" || e.which === 37 || e.keyCode === 37) && slideshowCurrentIndex === 0) === false && slideshowProceed === true) {
 
