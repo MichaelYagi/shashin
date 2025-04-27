@@ -303,8 +303,10 @@ class Albums {
             const downloadLocation = $("#download"+albumId).attr("href");
             const albumName = $("#albumName"+albumId).text();
 
+
             // $("#albumsMessage").html("<span class='spinner-grow spinner-grow-sm'></span> <strong>Exporting album \""+albumName+"\". Downloading photos only.</strong>").animate({opacity: 100}, 0);
-            shashin.showToastMessage("Downloading album", "Downloading album \""+albumName+"\". Downloading photos only.", {icon:"bi-info-circle", iconColor:"#777777", autohide:false});
+            shashin.closeToastMessages({tag:"albumdownload"});
+            shashin.showToastMessage("Downloading album", "Downloading album \""+albumName+"\". Downloading photos only.", {icon:"bi-info-circle", iconColor:"#777777", autohide:true, tag:"albumdownload"});
             setTimeout(function () { $("#download"+albumId).removeAttr("href"); }, 0);
                 Util.setCookie(tokenName, "", "/");
                 Util.setCookie(tokenSize, "", "/");
