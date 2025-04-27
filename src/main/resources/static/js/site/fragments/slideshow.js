@@ -96,6 +96,24 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
         }
     });
 
+    $('#slideshowAlbumSelection').on('hidden.bs.modal', function (e) {
+        const http = new Http("getAlbums");
+        http.ajax("get", "/slideshowalbums").then(function (data) {
+            if (data.hasOwnProperty("slideshowAlbum")  && data.slideshowAlbum.hasOwnProperty("albums") && data.slideshowAlbum.albums.length > 0) {
+                $(".slideshowAlbum").prop('checked', false);
+
+                const slideshowAlbumArray = data.slideshowAlbum.albums;
+                for (let index in slideshowAlbumArray) {
+                    if (slideshowAlbumArray.hasOwnProperty(index)) {
+                        const slideshowId = (slideshowAlbumArray[index] === "all" ? 0 : parseInt(slideshowAlbumArray[index]));
+                        $('#album-'+slideshowId).prop('checked', true);
+                    }
+                }
+            }
+
+        });
+    });
+
     function getSlideshowImage(callback) {
         const http = new Http("show slideshow");
 
