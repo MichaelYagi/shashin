@@ -149,8 +149,11 @@ class AtomFeedView : AbstractAtomFeedView() {
                                         val content = Content()
                                         content.type = "text/html"
                                         content.value = "<img src='$baseUrl/api/v1/thumbnails/225/${metadata.getId()}'><br>${descVal.dropLast(3)}"
-                                        entry.summary = content
                                         entry.contents = listOf(content)
+                                        val summaryContent = Content()
+                                        summaryContent.type = "text/html"
+                                        summaryContent.value = descVal.dropLast(3)
+                                        entry.summary = summaryContent
 
                                         val link = Link()
                                         link.href = "$baseUrl/api/v1/image/${metadata.getId()}"
