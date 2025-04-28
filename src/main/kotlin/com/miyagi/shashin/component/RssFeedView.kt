@@ -77,15 +77,19 @@ class RssFeedView : AbstractRssFeedView() {
             if (currentUser != null) {
                 val randomAlbums = albumRepository?.findRandomAlbumsByUser(currentUser.getId())
                 if (randomAlbums != null && randomAlbums.count() > 0) {
+                    var queryLimit = 20
+                    if (model.containsKey("queryLimit")) {
+                        queryLimit = model["queryLimit"] as Int
+                    }
                     for (randomAlbum in randomAlbums) {
-                        val albumPhotos = albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, 20)
+                        val albumPhotos = albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, queryLimit)
 
                         if (albumPhotos != null) {
                             for (albumPhoto in albumPhotos) {
                                 val metadata = metadataRepository?.findByMetadataId(albumPhoto?.getMetadataId()!!)
 
                                 if (metadata != null) {
-                                    val album = albumRepository?.findAlbumById(albumPhoto?.getAlbumId())
+                                    val album = albumRepository?.findAlbumById(albumPhoto.getAlbumId())
                                     val entry = Item()
                                     entry.title = metadata.getTitle()
                                     val description = Description()

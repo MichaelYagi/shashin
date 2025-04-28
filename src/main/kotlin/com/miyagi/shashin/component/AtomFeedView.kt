@@ -98,10 +98,15 @@ class AtomFeedView : AbstractAtomFeedView() {
             if (currentUser != null) {
                 val randomAlbums = albumRepository?.findRandomAlbumsByUser(currentUser.getId())
                 if (randomAlbums != null && randomAlbums.count() > 0) {
+                    var queryLimit = 20
+                    if (model.containsKey("queryLimit")) {
+                        queryLimit = model["queryLimit"] as Int
+                    }
+
                     for (randomAlbum in randomAlbums) {
                         var albumPhotos: MutableIterable<AlbumPhoto?>? = null
                         try {
-                            albumPhotos = albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, 20)
+                            albumPhotos = albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, queryLimit)
                         } catch (e: Exception) {
                             logger.log(Level.WARNING, "albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit error: ${e.message}")
                         }
