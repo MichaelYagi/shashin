@@ -294,6 +294,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
                     if (type === "new") {
                         slideshowMetadataIds.push(data.metadata.id);
                     }
+
+                    // Remove first if over query limit
                     if (slideshowMetadataIds.length > queryLimit) {
                         slideshowMetadataIds.splice(0, 1); // At position 0, remove 1
                         slideshowCurrentIndex--;
