@@ -82,6 +82,15 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
                 http.ajax("post", "/slideshowalbums", JSON.stringify(json)).then(function (data) {
                     if (data.status !== "success") {
                         shashin.printMessageToConsole("Error getting random image after configuring albums chosen", {tag: "slideshow"});
+                        shashin.showToastMessage("Error",
+                            "Something went wrong getting random album image.",
+                            {
+                                icon: "bi-exclamation-triangle",
+                                iconColor:"#FF0000",
+                                borderColor:"danger",
+                                autohide: true
+                            }
+                        );
                     }
                 });
             });
