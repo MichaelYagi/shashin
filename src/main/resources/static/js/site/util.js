@@ -371,14 +371,16 @@ class Util {
                     shashin.showToastMessage("Could not copy", textToCopy + " could not be copied", {
                         icon: "bi-exclamation-triangle",
                         iconColor: "#FF0000",
-                        borderColor:"danger"
+                        borderColor:"danger",
+                        tag: "clipboard"
                     });
                 } else {
                     status = true;
 
                     shashin.showToastMessage("Copied to clipboard", textToCopy + " copied to clipboard", {
                         icon: "bi-info-circle",
-                        iconColor: "#777777"
+                        iconColor: "#777777",
+                        tag: "clipboard"
                     });
                 }
 

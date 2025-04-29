@@ -57,16 +57,18 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
 
     function copyLink(link,callback) {
         if (link !== null && link !== "") {
+            shashin.closeToastMessages({tag: "clipboard"});
             Util.copyToClipboard(link, function (successfullyCopied) {
                 if (successfullyCopied) {
                     callback(true);
                 } else {
-                    shashin.showToastMessage("Could not copy text", "Link must not be blank", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
+                    shashin.showToastMessage("Could not copy text", "Link must not be blank", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger", tag: "clipboard"});
                     callback(false);
                 }
             });
         } else {
-            shashin.showToastMessage("Could not copy text", "Link must not be blank", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
+            shashin.closeToastMessages({tag: "clipboard"});
+            shashin.showToastMessage("Could not copy text", "Link must not be blank", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger", tag: "clipboard"});
             callback(false);
         }
     }
