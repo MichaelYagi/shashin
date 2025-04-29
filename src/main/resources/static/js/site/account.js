@@ -26,6 +26,51 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
         }
     });
 
+    $("#rssCopyLink").on("click", function (e) {
+        e.preventDefault();
+
+        copyLink($("#rssCopyLink").attr("data-clipboard-text"),function (success) {
+            if (success === true) {
+                $("#copyRssLinkIcon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
+                $('#copyRssLinkIcon').fadeOut(5000, function () {
+                    $(this).removeClass("bi-clipboard-check").removeClass("bi-clipboard-x").addClass("bi-clipboard-plus");
+                }).fadeIn(400);
+            } else {
+                $("#copyRssLinkIcon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
+            }
+        });
+    });
+    $("#atomCopyLink").on("click", function (e) {
+        e.preventDefault();
+
+        copyLink($("#atomCopyLink").attr("data-clipboard-text"),function (success) {
+            if (success === true) {
+                $("#copyAtomLinkIcon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
+                $('#copyAtomLinkIcon').fadeOut(5000, function () {
+                    $(this).removeClass("bi-clipboard-check").removeClass("bi-clipboard-x").addClass("bi-clipboard-plus");
+                }).fadeIn(400);
+            } else {
+                $("#copyAtomLinkIcon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
+            }
+        });
+    });
+
+    function copyLink(link,callback) {
+        if (link !== null && link !== "") {
+            Util.copyToClipboard(link, function (successfullyCopied) {
+                if (successfullyCopied) {
+                    callback(true);
+                } else {
+                    shashin.showToastMessage("Could not copy text", "Link must not be blank", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
+                    callback(false);
+                }
+            });
+        } else {
+            shashin.showToastMessage("Could not copy text", "Link must not be blank", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
+            callback(false);
+        }
+    }
+
     $("#slideshowAlbumNameDataId").on("click", function (e) {
         e.preventDefault();
         $("#slideshowAlbumSelection").modal('show');
