@@ -29,7 +29,7 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
     $("#rssCopyLink").on("click", function (e) {
         e.preventDefault();
 
-        copyLink($("#rssCopyLink").attr("data-clipboard-text"),function (success) {
+        copyLink($("#rssFeedLink").attr("href"),function (success) {
             if (success === true) {
                 $("#rssCopyLink").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
                 $('#rssCopyLink').fadeOut(5000, function () {
@@ -43,7 +43,7 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
     $("#atomCopyLink").on("click", function (e) {
         e.preventDefault();
 
-        copyLink($("#atomCopyLink").attr("data-clipboard-text"),function (success) {
+        copyLink($("#atomFeedLink").attr("href"),function (success) {
             if (success === true) {
                 $("#atomCopyLink").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
                 $('#atomCopyLink').fadeOut(5000, function () {
