@@ -100,13 +100,24 @@
                             </button>
                         </div>
                         <div class="input-group mb-3">
-                            RSS feed&nbsp;<a id="rssFeedLink" th:href="${rssFeedLink}" th:text="${rssFeedLink}" target="_blank"></a>
-                        </div>
-                        <div class="input-group mb-3">
-                            ATOM feed&nbsp;<a id="atomFeedLink" th:href="${atomFeedLink}" th:text="${atomFeedLink}" target="_blank"></a>
-                        </div>
-                        <div class="input-group mb-3">
                             View API documentation&nbsp;<a href="/articles/endpoints">here</a>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row align-items-center justify-content-center mt-4">
+                <div class="col-lg-6">
+                    <div class="input-group mb-2">
+                        <h1 class="display-1" style="font-size:1.5rem;">RSS/XML & Slideshow</h1>
+                    </div>
+
+                    <div class="input-group mb-2">
+                        <div class="input-group mb-3">
+                            RSS feed&nbsp;<a id="rssFeedLink" th:href="${rssFeedLink}" th:text="${rssFeedLink}" target="_blank"></a>&nbsp;<a href='#' id="rssCopyLink" class='bi-clipboard-plus' th:data-clipboard-text='${rssFeedLink}' title='Copy RSS link' style='font-size: 1rem;'></a>
+                        </div>
+                        <div class="input-group mb-3">
+                            ATOM feed&nbsp;<a id="atomFeedLink" th:href="${atomFeedLink}" th:text="${atomFeedLink}" target="_blank"></a>&nbsp;<a href='#' id="atomCopyLink" class='bi-clipboard-plus' th:data-clipboard-text='${atomFeedLink}' title='Copy Atom link' style='font-size: 1rem;'></a>
                         </div>
                         <div class="input-group mb-3">
                             <button class='btn btn-secondary' type='button' id='slideshowAlbumNameDataId' value=''>Feed and Slideshow Filter</button>
