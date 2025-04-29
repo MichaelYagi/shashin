@@ -134,7 +134,7 @@ class RssFeedView : AbstractRssFeedView() {
                     }
                     val descVal = "$metadataDescription<br>$place"
 
-                    description.value = "<img src='$baseUrl/api/v1/thumbnails/225/${metadata.getId()}'><br>${descVal.dropLast(3)}"
+                    description.value = "<img src='$baseUrl/api/v1/thumbnails/225/${metadata.getId()}'><br>${descVal}"
                     entry.description = description
                     entry.link = "$baseUrl/api/v1/image/${metadata.getId()}"
                     entry.uri = "$baseUrl/api/v1/image/${metadata.getId()}"
