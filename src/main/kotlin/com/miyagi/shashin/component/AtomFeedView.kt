@@ -150,13 +150,13 @@ class AtomFeedView : AbstractAtomFeedView() {
                         place = placeArray[0].trim()
                     }
                     if (metadata.getDescription() != null && metadata.getDescription() != "") {
-                        metadataDescription = metadata.getDescription()!!.trim()
+                        metadataDescription = metadata.getDescription()!!.trim() + " - "
                     }
-                    val descVal = "$metadataDescription<br>$place"
+                    val descVal = "$metadataDescription$place"
 
                     val content = Content()
                     content.type = "text/html"
-                    content.value = "<img src='$baseUrl/api/v1/thumbnails/225/${metadata.getId()}'><br>${descVal}"
+                    content.value = "<img src='$baseUrl/api/v1/thumbnails/225/${metadata.getId()}'><br>${descVal.dropLast(3)}"
                     entry.contents = listOf(content)
                     val summaryContent = Content()
                     summaryContent.type = "text/html"

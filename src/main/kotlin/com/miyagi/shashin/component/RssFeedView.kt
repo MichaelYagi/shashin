@@ -130,9 +130,9 @@ class RssFeedView : AbstractRssFeedView() {
                         place = placeArray[0].trim()
                     }
                     if (metadata.getDescription() != null && metadata.getDescription() != "") {
-                        metadataDescription = metadata.getDescription()!!.trim()
+                        metadataDescription = metadata.getDescription()!!.trim() + " - "
                     }
-                    val descVal = "$metadataDescription<br>$place"
+                    val descVal = "$metadataDescription$place"
 
                     description.value = "<img src='$baseUrl/api/v1/thumbnails/225/${metadata.getId()}'><br>${descVal}"
                     entry.description = description
