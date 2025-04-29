@@ -145,15 +145,14 @@ class AtomFeedView : AbstractAtomFeedView() {
 
                     var place = ""
                     var metadataDescription = ""
-                    var albumName = ""
                     if (metadata.getPlaceName() != null && metadata.getPlaceName() != "") {
                         val placeArray = metadata.getPlaceName()!!.split(";")
-                        place = placeArray[0].trim() + " - "
+                        place = placeArray[0].trim()
                     }
                     if (metadata.getDescription() != null && metadata.getDescription() != "") {
-                        metadataDescription = metadata.getDescription()!!.trim() + " - "
+                        metadataDescription = metadata.getDescription()!!.trim()
                     }
-                    val descVal = "$albumName$metadataDescription$place"
+                    val descVal = "$metadataDescription<br>$place"
 
                     val content = Content()
                     content.type = "text/html"
