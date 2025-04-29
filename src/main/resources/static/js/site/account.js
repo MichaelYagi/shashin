@@ -26,6 +26,19 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
         }
     });
 
+    $("#slideshowAlbumNameDataId").on("click", function (e) {
+        e.preventDefault();
+        $("#slideshowAlbumSelection").modal('show');
+
+        $("body").on("keyup", function (e) {
+            if (e.key === "Escape" || e.code === "Escape" || e.which === 27 || e.keyCode === 27) {
+                if ($("#slideshowAlbumSelection").hasClass("show")) {
+                    $("#slideshowAlbumSelection").modal('hide');
+                }
+            }
+        });
+    });
+
     $("#updateapikey").on("click", async function (e) {
         $("#apikeyUpdateConfirmation").modal('show');
     });
