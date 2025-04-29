@@ -1,8 +1,12 @@
 package com.miyagi.shashin.component
 
+import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.model.SlideshowAlbum
 import com.miyagi.shashin.repository.AlbumPhotoRepository
 import com.miyagi.shashin.repository.AlbumRepository
 import com.miyagi.shashin.repository.MetadataRepository
+import com.miyagi.shashin.repository.SlideshowAlbumRepository
+import com.miyagi.shashin.repository.UserAlbumRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.rometools.rome.feed.rss.*
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,6 +18,7 @@ import java.nio.file.Files
 import java.util.*
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import kotlin.collections.MutableList
 import kotlin.io.path.Path
 
 
@@ -34,6 +39,12 @@ class RssFeedView : AbstractRssFeedView() {
 
     @Autowired
     var metadataRepository: MetadataRepository? = null
+
+    @Autowired
+    var slideshowAlbumRepository: SlideshowAlbumRepository? = null
+
+    @Autowired
+    var userAlbumRepository: UserAlbumRepository? = null
 
     override fun buildFeedMetadata(model: MutableMap<String, Any>, feed: Channel, request: HttpServletRequest) {
         feed.title = "$appName RSS Feed"
@@ -74,57 +85,69 @@ class RssFeedView : AbstractRssFeedView() {
         if (model.containsKey("apiKey")) {
             val apiKey = model["apiKey"] as String?
             val currentUser = userRepository?.findByApikey(apiKey)
-            if (currentUser != null) {
-                val randomAlbums = albumRepository?.findRandomAlbumsByUser(currentUser.getId())
-                if (randomAlbums != null && randomAlbums.count() > 0) {
-                    var queryLimit = 20
-                    if (model.containsKey("queryLimit")) {
-                        queryLimit = model["queryLimit"] as Int
+            if (currentUser != null && currentUser.getIsAuthorized() == true) {
+                var queryLimit = 20
+                if (model.containsKey("queryLimit")) {
+                    queryLimit = model["queryLimit"] as Int
+                }
+
+                var slideshowAlbum = slideshowAlbumRepository?.findFirstByUserId(currentUser.getId())
+                if (slideshowAlbum == null) {
+                    slideshowAlbum = SlideshowAlbum()
+                    slideshowAlbum.setUserId(currentUser.getId())
+                    slideshowAlbum.setAlbums("all")
+                }
+
+                val albumsString = slideshowAlbum.getAlbums()
+                var albumsArray = albumsString?.split(",")?.map { it -> it.trim() }
+                var randomMetadata = mutableListOf<Metadata>()
+
+                if (albumsArray != null && albumsArray.contains("all") && (currentUser.getAuthority() == "ROLE_ADMIN" || currentUser.getAuthority() == "ROLE_SUPER")) {
+                    randomMetadata = metadataRepository?.findRandomMetadatasMedia("image", queryLimit) as MutableList<Metadata>
+                } else {
+                    val albumsIntArray = if (albumsArray != null && albumsArray.contains("all")) {
+                        userAlbumRepository?.findAlbumIdsByUserId(currentUser.getId())
+                    } else {
+                        albumsString?.split(",")?.map { it -> it.trim().toInt() } as MutableList<Int>?
                     }
-                    for (randomAlbum in randomAlbums) {
-                        val albumPhotos = albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, queryLimit)
 
-                        if (albumPhotos != null) {
-                            for (albumPhoto in albumPhotos) {
-                                val metadata = metadataRepository?.findByMetadataId(albumPhoto?.getMetadataId()!!)
-
-                                if (metadata != null) {
-                                    val album = albumRepository?.findAlbumById(albumPhoto.getAlbumId())
-                                    val entry = Item()
-                                    entry.title = metadata.getTitle()
-                                    val description = Description()
-                                    var place = ""
-                                    var metadataDescription = ""
-                                    var albumName = ""
-                                    if (metadata.getPlaceName() != null && metadata.getPlaceName() != "") {
-                                        val placeArray = metadata.getPlaceName()!!.split(";")
-                                        place = placeArray[0].trim() + " - "
-                                    }
-                                    if (metadata.getDescription() != null && metadata.getDescription() != "") {
-                                        metadataDescription = metadata.getDescription()!!.trim() + " - "
-                                    }
-                                    if (album?.getName() != null && album.getName() != "") {
-                                        albumName = album.getName()!!.trim() + " - "
-                                    }
-                                    val descVal = "$albumName$metadataDescription$place"
-
-                                    description.value = "<img src='$baseUrl/api/v1/thumbnails/225/${metadata.getId()}'><br>${descVal.dropLast(3)}"
-                                    entry.description = description
-                                    entry.link = "$baseUrl/api/v1/image/${metadata.getId()}"
-                                    entry.uri = "$baseUrl/api/v1/image/${metadata.getId()}"
-                                    val guid = Guid()
-                                    guid.value = "$baseUrl/api/v1/image/${metadata.getId()}"
-                                    entry.guid = guid
-                                    val enc = Enclosure()
-                                    enc.url = "$baseUrl/api/v1/image/${metadata.getId()}"
-                                    enc.type = metadata.getType()
-                                    enc.length = Files.size(Path(metadata.getPath()!!))
-                                    entry.enclosures = mutableListOf(enc)
-                                    rssList.add(entry)
-                                }
-                            }
-                        }
+                    if (albumsArray != null) {
+                        randomMetadata = albumPhotoRepository?.findRandomImagesByAlbumIdsAndLimit(
+                            albumsIntArray!!,
+                            queryLimit
+                        ) as MutableList<Metadata>
                     }
+                }
+
+                for (metadata in randomMetadata) {
+                    val entry = Item()
+                    entry.title = metadata.getTitle()
+                    val description = Description()
+                    var place = ""
+                    var metadataDescription = ""
+                    var albumName = ""
+                    if (metadata.getPlaceName() != null && metadata.getPlaceName() != "") {
+                        val placeArray = metadata.getPlaceName()!!.split(";")
+                        place = placeArray[0].trim() + " - "
+                    }
+                    if (metadata.getDescription() != null && metadata.getDescription() != "") {
+                        metadataDescription = metadata.getDescription()!!.trim() + " - "
+                    }
+                    val descVal = "$albumName$metadataDescription$place"
+
+                    description.value = "<img src='$baseUrl/api/v1/thumbnails/225/${metadata.getId()}'><br>${descVal.dropLast(3)}"
+                    entry.description = description
+                    entry.link = "$baseUrl/api/v1/image/${metadata.getId()}"
+                    entry.uri = "$baseUrl/api/v1/image/${metadata.getId()}"
+                    val guid = Guid()
+                    guid.value = "$baseUrl/api/v1/image/${metadata.getId()}"
+                    entry.guid = guid
+                    val enc = Enclosure()
+                    enc.url = "$baseUrl/api/v1/image/${metadata.getId()}"
+                    enc.type = metadata.getType()
+                    enc.length = Files.size(Path(metadata.getPath()!!))
+                    entry.enclosures = mutableListOf(enc)
+                    rssList.add(entry)
                 }
             }
         }
