@@ -31,12 +31,12 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
 
         copyLink($("#rssCopyLink").attr("data-clipboard-text"),function (success) {
             if (success === true) {
-                $("#copyRssLinkIcon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
-                $('#copyRssLinkIcon').fadeOut(5000, function () {
+                $("#rssCopyLink").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
+                $('#rssCopyLink').fadeOut(5000, function () {
                     $(this).removeClass("bi-clipboard-check").removeClass("bi-clipboard-x").addClass("bi-clipboard-plus");
                 }).fadeIn(400);
             } else {
-                $("#copyRssLinkIcon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
+                $("#rssCopyLink").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
             }
         });
     });
@@ -45,12 +45,12 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
 
         copyLink($("#atomCopyLink").attr("data-clipboard-text"),function (success) {
             if (success === true) {
-                $("#copyAtomLinkIcon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
-                $('#copyAtomLinkIcon').fadeOut(5000, function () {
+                $("#atomCopyLink").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
+                $('#atomCopyLink').fadeOut(5000, function () {
                     $(this).removeClass("bi-clipboard-check").removeClass("bi-clipboard-x").addClass("bi-clipboard-plus");
                 }).fadeIn(400);
             } else {
-                $("#copyAtomLinkIcon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
+                $("#atomCopyLink").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
             }
         });
     });
