@@ -11,14 +11,21 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
-- Filter for slideshow
-- Keyboard shortcuts for slideshow
 
 ### Changed
 
 ### Deprecated
 
 ### Removed
+
+### Fixed
+
+### Security
+
+## [2.10.0] - 2025-05-01
+### Added
+- Filter for slideshow
+- Keyboard shortcuts for slideshow
 
 ### Fixed
 - Counts for pictures and videos in albums view
