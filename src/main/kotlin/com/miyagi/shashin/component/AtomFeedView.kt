@@ -2,9 +2,12 @@ package com.miyagi.shashin.component
 
 import com.miyagi.shashin.model.AlbumPhoto
 import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.model.SlideshowAlbum
 import com.miyagi.shashin.repository.AlbumPhotoRepository
 import com.miyagi.shashin.repository.AlbumRepository
 import com.miyagi.shashin.repository.MetadataRepository
+import com.miyagi.shashin.repository.SlideshowAlbumRepository
+import com.miyagi.shashin.repository.UserAlbumRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
 import com.rometools.rome.feed.atom.*
@@ -41,6 +44,12 @@ class AtomFeedView : AbstractAtomFeedView() {
 
     @Autowired
     var metadataRepository: MetadataRepository? = null
+
+    @Autowired
+    var slideshowAlbumRepository: SlideshowAlbumRepository? = null
+
+    @Autowired
+    var userAlbumRepository: UserAlbumRepository? = null
 
     override fun buildFeedMetadata(model: MutableMap<String, Any>, feed: Feed, request: HttpServletRequest) {
         val content = Content()
@@ -95,87 +104,82 @@ class AtomFeedView : AbstractAtomFeedView() {
         if (model.containsKey("apiKey")) {
             val apiKey = model["apiKey"] as String?
             val currentUser = userRepository?.findByApikey(apiKey)
-            if (currentUser != null) {
-                val randomAlbums = albumRepository?.findRandomAlbumsByUser(currentUser.getId())
-                if (randomAlbums != null && randomAlbums.count() > 0) {
-                    var queryLimit = 20
-                    if (model.containsKey("queryLimit")) {
-                        queryLimit = model["queryLimit"] as Int
+            if (currentUser != null && currentUser.getIsAuthorized() == true) {
+                var queryLimit = 20
+                if (model.containsKey("queryLimit")) {
+                    queryLimit = model["queryLimit"] as Int
+                }
+
+                var slideshowAlbum = slideshowAlbumRepository?.findFirstByUserId(currentUser.getId())
+                if (slideshowAlbum == null) {
+                    slideshowAlbum = SlideshowAlbum()
+                    slideshowAlbum.setUserId(currentUser.getId())
+                    slideshowAlbum.setAlbums("all")
+                }
+
+                val albumsString = slideshowAlbum.getAlbums()
+                var albumsArray = albumsString?.split(",")?.map { it -> it.trim() }
+                var randomMetadata = mutableListOf<Metadata>()
+
+                if (albumsArray != null && albumsArray.contains("all") && (currentUser.getAuthority() == "ROLE_ADMIN" || currentUser.getAuthority() == "ROLE_SUPER")) {
+                    randomMetadata = metadataRepository?.findRandomMetadatasMedia("image", queryLimit) as MutableList<Metadata>
+                } else {
+                    val albumsIntArray = if (albumsArray != null && albumsArray.contains("all")) {
+                        userAlbumRepository?.findAlbumIdsByUserId(currentUser.getId())
+                    } else {
+                        albumsString?.split(",")?.map { it -> it.trim().toInt() } as MutableList<Int>?
                     }
 
-                    for (randomAlbum in randomAlbums) {
-                        var albumPhotos: MutableIterable<AlbumPhoto?>? = null
-                        try {
-                            albumPhotos = albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit(randomAlbum.getAlbumId()!!, queryLimit)
-                        } catch (e: Exception) {
-                            logger.log(Level.WARNING, "albumPhotoRepository?.findRandomImagesByAlbumIdAndLimit error: ${e.message}")
-                        }
-
-                        if (albumPhotos != null) {
-                            for (albumPhoto in albumPhotos) {
-
-                                var metadataOpt: Metadata? = null
-
-                                if (metadataRepository != null && metadataRepository!!.count() > 0) {
-                                    try {
-                                        metadataOpt = metadataRepository?.findByMetadataId(albumPhoto?.getMetadataId()!!)
-                                    } catch (e: Exception) {
-                                        logger.log(Level.WARNING, "metadataRepository?.findByMetadataId error: ${e.message}")
-                                    }
-
-                                    if (metadataOpt != null) {
-                                        val metadata = metadataOpt
-                                        val album = albumRepository?.findAlbumById(albumPhoto?.getAlbumId())
-
-                                        val entry = Entry()
-                                        entry.id = "$baseUrl/api/v1/image/${metadata.getId()}"
-                                        entry.title = metadata.getTitle()
-
-                                        var place = ""
-                                        var metadataDescription = ""
-                                        var albumName = ""
-                                        if (metadata.getPlaceName() != null && metadata.getPlaceName() != "") {
-                                            val placeArray = metadata.getPlaceName()!!.split(";")
-                                            place = placeArray[0].trim() + " - "
-                                        }
-                                        if (metadata.getDescription() != null && metadata.getDescription() != "") {
-                                            metadataDescription = metadata.getDescription()!!.trim() + " - "
-                                        }
-                                        if (album?.getName() != null && album.getName() != "") {
-                                            albumName = album.getName()!!.trim() + " - "
-                                        }
-                                        val descVal = "$albumName$metadataDescription$place"
-
-                                        val content = Content()
-                                        content.type = "text/html"
-                                        content.value = "<img src='$baseUrl/api/v1/thumbnails/225/${metadata.getId()}'><br>${descVal.dropLast(3)}"
-                                        entry.contents = listOf(content)
-                                        val summaryContent = Content()
-                                        summaryContent.type = "text/html"
-                                        summaryContent.value = descVal.dropLast(3)
-                                        entry.summary = summaryContent
-
-                                        val link = Link()
-                                        link.href = "$baseUrl/api/v1/image/${metadata.getId()}"
-                                        link.rel = "enclosure"
-                                        link.type = metadata.getType()
-                                        link.length = Files.size(Path(metadata.getPath()!!))
-                                        entry.alternateLinks = listOf(link)
-                                        val author: SyndPerson = Person()
-                                        author.name = metadata.getId()
-                                        entry.authors = listOf(author)
-                                        entry.alternateLinks = listOf(link)
-                                        val pattern = "EEE, MMM d, yyyy 'at' h:mm a"
-                                        val simpleDateFormat = SimpleDateFormat(pattern)
-                                        entry.updated =
-                                            simpleDateFormat.parse(TextUtils.formatToLongDateWithTime((metadata.getCreatedAt()!!)))
-
-                                        atomList.add(entry)
-                                    }
-                                }
-                            }
-                        }
+                    if (albumsArray != null) {
+                        randomMetadata = albumPhotoRepository?.findRandomImagesByAlbumIdsAndLimit(
+                            albumsIntArray!!,
+                            queryLimit
+                        ) as MutableList<Metadata>
                     }
+                }
+
+                for (metadata in randomMetadata) {
+                    val entry = Entry()
+                    entry.id = "$baseUrl/api/v1/image/${metadata.getId()}"
+                    entry.title = metadata.getTitle()
+
+                    var place = ""
+                    var metadataDescription = ""
+                    var albumName = ""
+                    if (metadata.getPlaceName() != null && metadata.getPlaceName() != "") {
+                        val placeArray = metadata.getPlaceName()!!.split(";")
+                        place = placeArray[0].trim() + " - "
+                    }
+                    if (metadata.getDescription() != null && metadata.getDescription() != "") {
+                        metadataDescription = metadata.getDescription()!!.trim() + " - "
+                    }
+                    val descVal = "$albumName$metadataDescription$place"
+
+                    val content = Content()
+                    content.type = "text/html"
+                    content.value = "<img src='$baseUrl/api/v1/thumbnails/225/${metadata.getId()}'><br>${descVal.dropLast(3)}"
+                    entry.contents = listOf(content)
+                    val summaryContent = Content()
+                    summaryContent.type = "text/html"
+                    summaryContent.value = descVal.dropLast(3)
+                    entry.summary = summaryContent
+
+                    val link = Link()
+                    link.href = "$baseUrl/api/v1/image/${metadata.getId()}"
+                    link.rel = "enclosure"
+                    link.type = metadata.getType()
+                    link.length = Files.size(Path(metadata.getPath()!!))
+                    entry.alternateLinks = listOf(link)
+                    val author: SyndPerson = Person()
+                    author.name = metadata.getId()
+                    entry.authors = listOf(author)
+                    entry.alternateLinks = listOf(link)
+                    val pattern = "EEE, MMM d, yyyy 'at' h:mm a"
+                    val simpleDateFormat = SimpleDateFormat(pattern)
+                    entry.updated =
+                        simpleDateFormat.parse(TextUtils.formatToLongDateWithTime((metadata.getCreatedAt()!!)))
+
+                    atomList.add(entry)
                 }
             }
         }

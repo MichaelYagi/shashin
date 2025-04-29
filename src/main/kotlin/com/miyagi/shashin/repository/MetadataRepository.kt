@@ -242,6 +242,9 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = 0 AND original_image_width > original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomMetadataMediaLandscape(@Param("type") type: String): Metadata?
 
+   @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = 0 ORDER BY RANDOM() LIMIT :limit", nativeQuery = true)
+   fun findRandomMetadatasMedia(@Param("type") type: String, @Param("limit") limit: Int): MutableIterable<Metadata>
+
    @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomMetadataMedia(@Param("type") type: String): Metadata?
 
