@@ -64,33 +64,33 @@
                 });
             }, 0);
 
-                function getLatestRelease(latestReleaseInfo) {
-                    if (latestReleaseInfo.hasOwnProperty("tag_name") && latestReleaseInfo.tag_name !== "") {
-                        let latestTag = latestReleaseInfo.tag_name;
-                        let parsedVersion = (latestTag.substring(0, 1) === "v") ? "/" + latestTag.substring(1, latestTag.length) : "";
+            function getLatestRelease(latestReleaseInfo) {
+                if (latestReleaseInfo.hasOwnProperty("tag_name") && latestReleaseInfo.tag_name !== "") {
+                    let latestTag = latestReleaseInfo.tag_name;
+                    let parsedVersion = (latestTag.substring(0, 1) === "v") ? "/" + latestTag.substring(1, latestTag.length) : "";
 
-                        const message = "Version <a href='https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin" + parsedVersion + "' target='_blank'>" + latestTag.substring(1) + "</a> is available.";
-                        $("#gitVersionId").html("<br><em>" + message + "</em>");
-                        const type = "releases";
+                    const message = "Version <a href='https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin" + parsedVersion + "' target='_blank'>" + latestTag.substring(1) + "</a> is available.";
+                    $("#gitVersionId").html("<br><em>" + message + "</em>");
+                    const type = "releases";
 
-                        const http = new Http("get releases");
-                        http.ajax("get", "/notifications/exists/" + type + "/" + latestTag + "?v=" + uuidv4()).then(function (data) {
-                            if (data.hasOwnProperty("exists")) {
-                                const exists = data.exists;
-                                if (exists === false) {
-                                    const json = {
-                                        message: message,
-                                        type: type,
-                                        identifier: latestTag
-                                    };
-                                    http.ajax("post", "/notifications/create", JSON.stringify(json)).then(function (data) {
-                                        shashin.printMessageToConsole(JSON.stringify(data), {tag: type});
-                                    });
-                                }
+                    const http = new Http("get releases");
+                    http.ajax("get", "/notifications/exists/" + type + "/" + latestTag + "?v=" + uuidv4()).then(function (data) {
+                        if (data.hasOwnProperty("exists")) {
+                            const exists = data.exists;
+                            if (exists === false) {
+                                const json = {
+                                    message: message,
+                                    type: type,
+                                    identifier: latestTag
+                                };
+                                http.ajax("post", "/notifications/create", JSON.stringify(json)).then(function (data) {
+                                    shashin.printMessageToConsole(JSON.stringify(data), {tag: type});
+                                });
                             }
-                        });
-                    }
+                        }
+                    });
                 }
+            }
 
             // });
         }

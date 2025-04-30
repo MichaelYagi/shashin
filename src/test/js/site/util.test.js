@@ -372,6 +372,11 @@ describe('#Util tests', function() {
         currVersion = "v0.2.0.1";
         latestVersion = "v1.0.0";
         assert.isFalse(Util.downloadLatestVersion(currVersion,latestVersion));
+
+        // Edge case for dev environment
+        currVersion = "v2.10.0";
+        latestVersion = "v2.9.1";
+        assert.isFalse(Util.downloadLatestVersion(currVersion,latestVersion));
     });
 
     it('Get OS tests', function() {
