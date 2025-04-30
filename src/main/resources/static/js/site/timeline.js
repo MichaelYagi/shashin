@@ -473,7 +473,7 @@
 
                     if (id.indexOf("tail_") === -1 && index < 2 && timelineSettings.prevAnchor !== id) {
                         // Scrolling behavior different on Chrome iOS
-                        if (Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                        if (Util.isSafari() === true || Util.isFirefox() === true || Util.isMobile() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                             timelineSettings.renderThumbnailsAlt(id, mediaTypeFilter).then(function (msg) {
                                 if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
                                     timelineSettings.setScrollSpyActive(id);
@@ -494,31 +494,33 @@
                     }
                 });
 
-                // Scrolling behavior different on Chrome iOS
-                if (((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && timelineSettings.isScrolling === false) || timelineSettings.isScrolling === true) && (Util.isSafari() === false || Util.isFirefox() === false) && !(Util.getOS() === "iOS" && Util.isChrome() === true)) {
-                    timelineSettings.renderThumbnails(elements, mediaTypeFilter, timelineDates).then(function (msg) {
-                        if (msg === timelineSettings.success) {
-                            // Set TOC active element
-                            const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
-                            elementsInViewport.each(function (index) {
-                                let id = $(this).attr("id");
-                                if (id.indexOf("tail_") === -1 && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
-                                    timelineSettings.setScrollSpyActive(id);
-                                    return false;
-                                } else if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                    if (id.indexOf("tail_") > -1) {
-                                        id = id.split("tail_")[1];
+                if (Util.isMobile() === false) {
+                    // Scrolling behavior different on Chrome iOS
+                    if (((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && timelineSettings.isScrolling === false) || timelineSettings.isScrolling === true) && (Util.isSafari() === false || Util.isFirefox() === false) && !(Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                        timelineSettings.renderThumbnails(elements, mediaTypeFilter, timelineDates).then(function (msg) {
+                            if (msg === timelineSettings.success) {
+                                // Set TOC active element
+                                const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
+                                elementsInViewport.each(function (index) {
+                                    let id = $(this).attr("id");
+                                    if (id.indexOf("tail_") === -1 && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
+                                        timelineSettings.setScrollSpyActive(id);
+                                        return false;
+                                    } else if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                        if (id.indexOf("tail_") > -1) {
+                                            id = id.split("tail_")[1];
+                                        }
+                                        timelineSettings.setScrollSpyActive(id);
+                                        return false;
                                     }
-                                    timelineSettings.setScrollSpyActive(id);
-                                    return false;
-                                }
-                            });
-                            // Util.checkErrorImage();
-                        }
-                    });
-                }
+                                });
+                                // Util.checkErrorImage();
+                            }
+                        });
+                    }
 
-                prevElements = elements;
+                    prevElements = elements;
+                }
             }
         }
     };
