@@ -235,28 +235,29 @@ class Util {
             isNaN(currVersionArray[0]) === false && isNaN(currVersionArray[1]) === false && isNaN(currVersionArray[2]) === false &&
             isNaN(latestVersionArray[0]) === false && isNaN(latestVersionArray[1]) === false && isNaN(latestVersionArray[2]) === false)
         {
+            if (parseInt(latestVersionArray[0]) === parseInt(currVersionArray[0]) &&
+                parseInt(latestVersionArray[1]) === parseInt(currVersionArray[1]) &&
+                parseInt(latestVersionArray[2]) === parseInt(currVersionArray[2])
+            ) {
+                return false;
+            }
+
             // Compare major, minor, patch
             if (parseInt(latestVersionArray[0]) > parseInt(currVersionArray[0])) {
                 return true;
-            }
-
-            if (parseInt(latestVersionArray[0]) < parseInt(currVersionArray[0])) {
+            } else if (parseInt(latestVersionArray[0]) < parseInt(currVersionArray[0])) {
                 return false;
             }
 
             if (parseInt(latestVersionArray[1]) > parseInt(currVersionArray[1])) {
                 return true;
-            }
-
-            if (parseInt(latestVersionArray[1]) < parseInt(currVersionArray[1])) {
+            } else if (parseInt(latestVersionArray[1]) < parseInt(currVersionArray[1])) {
                 return false;
             }
 
             if (parseInt(latestVersionArray[2]) > parseInt(currVersionArray[2])) {
                 return true;
-            }
-
-            if (parseInt(latestVersionArray[2]) < parseInt(currVersionArray[2])) {
+            } else if (parseInt(latestVersionArray[2]) < parseInt(currVersionArray[2])) {
                 return false;
             }
         }
