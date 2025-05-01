@@ -379,7 +379,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
 
 //        timingStart = Date()
 
-        model["hasAlbums"] = false
+        model["hasMedia"] = false
         val currentUser: User?
         var currentUserId = 0
         val cookieUser: User? = TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"), rememberMeKey.toString(), userRepository)
@@ -419,7 +419,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 })
 
                 if (mediaCount != null) {
-                    model["hasAlbums"] = mediaCount > 0
+                    model["hasMedia"] = mediaCount > 0
                 }
             } else {
                 logger.log(Level.INFO, "{\"message\":\"Invalid API Key\"}")
@@ -487,7 +487,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
             })
 
             if (mediaCount != null) {
-                model["hasAlbums"] = mediaCount > 0
+                model["hasMedia"] = mediaCount > 0
             }
         } else if (cookieUser != null) {
             currentUser = cookieUser

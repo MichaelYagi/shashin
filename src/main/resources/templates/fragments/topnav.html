@@ -215,7 +215,7 @@
             <div class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownMenuButton" style="z-index: 9999">
                 <h6 class="dropdown-header" th:text="${currentUser.username}"></h6>
                 <a th:class="'dropdown-item'+${activePage=='account'?' active':''}" href="/users/account">Manage Account</a>
-                <th:block th:if="${hasAlbums}">
+                <th:block th:if="${hasMedia}">
                     <a href="#" class="dropdown-item" id="viewSlideshow">View Slideshow</a>
                 </th:block>
                 <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#propAbout">About</a>
