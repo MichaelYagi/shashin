@@ -39,64 +39,68 @@ class ShashinApplication {
 			System.setProperty("java.awt.headless", "false")
 			jdbcTemplate?.execute("PRAGMA journal_mode = WAL")
 			jdbcTemplate?.execute("PRAGMA synchronous = NORMAL")
-			
-			// Create simple GUI
-			val frame = JFrame("Shashin")
-			frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
-			frame.size = Dimension(400, 100)
 
-			val panel = JPanel(BorderLayout())
-			panel.isOpaque = true
-			panel.setBounds(30, 30, 100, 100)
-			panel.requestFocus()
+			val os = System.getProperty("os.name")
 
-			val text = JTextArea("Loading Shashin")
-			text.isOpaque = false
-			text.isEditable = false
-			text.margin = Insets(10,10,10,10)
+			if (os.lowercase().contains("windows") || os.lowercase().contains("mac")) {
+				// Create simple GUI
+				val frame = JFrame("Shashin")
+				frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+				frame.size = Dimension(400, 100)
 
-			var source = URLDataSource(this.javaClass.getResource("/static/images/favicon-32x32.png"))
-			val iconimg = ImageIcon(source.url)
-			frame.iconImage = iconimg.image
-			source = URLDataSource(this.javaClass.getResource("/static/images/favicon-256x256.png"))
-			var taskbarimg = ImageIcon(source.url)
-			val taskbar = Taskbar.getTaskbar()
-			try {
-				// set icon for mac os (and other systems which do support this method)
-				taskbar.iconImage = taskbarimg.image
-			} catch (e: UnsupportedOperationException) {
-				println("The os does not support: 'taskbar.setIconImage'." + e.message)
-			} catch (e: SecurityException) {
-				println("There was a security exception for: 'taskbar.setIconImage'." + e.message)
-			}
+				val panel = JPanel(BorderLayout())
+				panel.isOpaque = true
+				panel.setBounds(30, 30, 100, 100)
+				panel.requestFocus()
 
-			frame.setResizable(false)
-            frame.layout = FlowLayout(FlowLayout.LEADING, 3, 3)
-			panel.add(text, BorderLayout.CENTER)
+				val text = JTextArea("Loading Shashin")
+				text.isOpaque = false
+				text.isEditable = false
+				text.margin = Insets(10, 10, 10, 10)
 
-			try {
-				val app = SpringApplication(ShashinApplication::class.java)
-				app.addListeners(ApplicationStartingListener(frame, panel))
-				app.run(*args)
-			} catch (e: IOException) {
-				text.text = "Error: ${e.message}"
-			}
-
-			val startPage = "http://127.0.0.1:6624"
-			text.text = "Opening $startPage in browser.\r\nClose this window to quit Shashin."
-
-			TimeUnit.SECONDS.sleep(3)
-
-			SwingUtilities.invokeLater {
-				val desktop = Desktop.getDesktop()
+				var source = URLDataSource(this.javaClass.getResource("/static/images/favicon-32x32.png"))
+				val iconimg = ImageIcon(source.url)
+				frame.iconImage = iconimg.image
+				source = URLDataSource(this.javaClass.getResource("/static/images/favicon-256x256.png"))
+				var taskbarimg = ImageIcon(source.url)
+				val taskbar = Taskbar.getTaskbar()
 				try {
-					desktop.browse(URI(startPage))
+					// set icon for mac os (and other systems which do support this method)
+					taskbar.iconImage = taskbarimg.image
+				} catch (e: UnsupportedOperationException) {
+					println("The os does not support: 'taskbar.setIconImage'." + e.message)
+				} catch (e: SecurityException) {
+					println("There was a security exception for: 'taskbar.setIconImage'." + e.message)
+				}
+
+				frame.setResizable(false)
+				frame.layout = FlowLayout(FlowLayout.LEADING, 3, 3)
+				panel.add(text, BorderLayout.CENTER)
+
+				try {
+					val app = SpringApplication(ShashinApplication::class.java)
+					app.addListeners(ApplicationStartingListener(frame, panel))
+					app.run(*args)
 				} catch (e: IOException) {
-					e.printStackTrace()
-					text.text = "Error: ${e.message}."
-				} catch (e: URISyntaxException) {
-					e.printStackTrace()
-					text.text = "Error: ${e.message}."
+					text.text = "Error: ${e.message}"
+				}
+
+				val startPage = "http://127.0.0.1:6624"
+				text.text = "Opening $startPage in browser.\r\nClose this window to quit Shashin."
+
+				TimeUnit.SECONDS.sleep(3)
+
+				SwingUtilities.invokeLater {
+					val desktop = Desktop.getDesktop()
+					try {
+						desktop.browse(URI(startPage))
+					} catch (e: IOException) {
+						e.printStackTrace()
+						text.text = "Error: ${e.message}."
+					} catch (e: URISyntaxException) {
+						e.printStackTrace()
+						text.text = "Error: ${e.message}."
+					}
 				}
 			}
 		}
