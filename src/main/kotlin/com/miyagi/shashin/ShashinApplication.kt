@@ -40,6 +40,7 @@ class ShashinApplication {
 			jdbcTemplate?.execute("PRAGMA journal_mode = WAL")
 			jdbcTemplate?.execute("PRAGMA synchronous = NORMAL")
 
+			val app = SpringApplication(ShashinApplication::class.java)
 			val os = System.getProperty("os.name")
 
 			if (os.lowercase().contains("windows") || os.lowercase().contains("mac")) {
@@ -78,7 +79,6 @@ class ShashinApplication {
 				panel.add(text, BorderLayout.CENTER)
 
 				try {
-					val app = SpringApplication(ShashinApplication::class.java)
 					app.addListeners(ApplicationStartingListener(frame, panel))
 					app.run(*args)
 				} catch (e: IOException) {
@@ -102,6 +102,8 @@ class ShashinApplication {
 						text.text = "Error: ${e.message}."
 					}
 				}
+			} else {
+				app.run(*args)
 			}
 		}
 	}
