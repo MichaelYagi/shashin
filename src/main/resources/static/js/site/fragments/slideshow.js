@@ -27,21 +27,27 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval) 
 
     const http = new Http("getAlbums");
     http.ajax("get", "/slideshowalbums").then(function (data) {
-        if (data.hasOwnProperty("albumsList") && data.hasOwnProperty("slideshowAlbum")  && data.slideshowAlbum.hasOwnProperty("albums") && data.albumsList.length > 0 && data.slideshowAlbum.albums.length > 0) {
+        if (data.hasOwnProperty("albumsList") && data.hasOwnProperty("slideshowAlbum")  && data.slideshowAlbum.hasOwnProperty("albums") && data.slideshowAlbum.albums.length > 0) {
             const albumsArray = data.albumsList;
             const slideshowAlbumArray = data.slideshowAlbum.albums;
 
             let html = "";
-            if (albumsArray.length > 0) {
+            if (slideshowAlbumArray.length > 0) {
                 html += '<button class="dropdown-item" type="button">' +
                     '<input type="checkbox" data-album-id=0 class="slideshowAlbum" value="all" name="album[]" id="album-0"'+(slideshowAlbumArray.includes("all") ? ' checked="checked"' : '')+'> ' +
                     '<label for="album-0">All</label>' +
-                '</button><hr>';
+                '</button>';
             }
+
+            let hrFlag = false;
             for (let index in albumsArray) {
                 if (albumsArray.hasOwnProperty(index)) {
                     const album = albumsArray[index];
                     if (album.hasOwnProperty("albumPhotoCount") && album.albumPhotoCount > 0) {
+                        if (hrFlag === false) {
+                            html += "<hr>";
+                            hrFlag = true;
+                        }
                         html += '<button class="dropdown-item" type="button">' +
                             '<input type="checkbox" data-album-id=' + album.id + ' class="slideshowAlbum" value="' + album.name + '" name="album[]" id="album-' + album.id + '"' + (slideshowAlbumArray.includes(String(album.id)) ? ' checked="checked"' : '') + '> ' +
                             '<label for="album-' + album.id + '">' + album.name + '</label>' +

@@ -307,6 +307,9 @@ class AlbumsController: BaseController() {
         var slideshowAlbum: SlideshowAlbum? = SlideshowAlbum()
         if (currentUserObj != null) {
             userAlbumCount = userAlbumRepository.countUserAlbumsByUserId(currentUserObj.getId())
+            if (userAlbumCount == 0) {
+                slideshowAlbumRepository.deleteByUserId(currentUserObj.getId())
+            }
             slideshowAlbum = slideshowAlbumRepository.findFirstByUserId(currentUserObj.getId())
             if (slideshowAlbum == null) {
                 slideshowAlbum = SlideshowAlbum()
@@ -314,10 +317,10 @@ class AlbumsController: BaseController() {
                 slideshowAlbum.setAlbums("all")
             }
 
-            val albumsString = slideshowAlbum.getAlbums()
+            val albumsString = slideshowAlbum?.getAlbums()
             val albumsArray = albumsString?.split(",")?.map { it -> it.trim() }
 
-            slideshowAlbumResponse["userId"] = slideshowAlbum.getUserId()
+            slideshowAlbumResponse["userId"] = slideshowAlbum?.getUserId()
             slideshowAlbumResponse["albums"] = albumsArray
         }
 
