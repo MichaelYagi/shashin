@@ -2467,12 +2467,14 @@ class SettingsController {
 
                         FileUtils.writeToThreadFileAndLogMessage(threadText, threadFile)
                     } else {
-                        threadText = file.path + " already scanned"
                         if (!FileUtils.allowableMediaFiles().contains(mediaExtension)) {
                             threadText = file.path + " media extension invalid"
+                            logger.log(Level.INFO, "Extension invalid: " + file.name)
+                        } else {
+                            threadText = file.path + " already scanned"
+                            logger.log(Level.INFO, "Entry exists: " + file.name)
                         }
                         FileUtils.writeToThreadFileAndLogMessage(threadText, threadFile)
-                        logger.log(Level.INFO, "Entry exists: " + file.name)
                     }
                 }
 
