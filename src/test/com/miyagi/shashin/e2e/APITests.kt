@@ -336,9 +336,9 @@ class APITests: BaseSeleniumTests() {
 
         // Update metadata with different dates
         map["id"] = metadataId
-        map["year"] = getRandomWithExclusion(1979, 2025, originalYear!!.toInt())
-        map["month"] = getRandomWithExclusion(1, 12, originalMonth!!.toInt())
-        map["day"] = getRandomWithExclusion(1, 28, originalDay!!.toInt())
+        map["year"] = TextUtils.getRandomWithExclusion(1979, 2025, listOf(originalYear!!.toInt()))
+        map["month"] = TextUtils.getRandomWithExclusion(1, 12, listOf(originalMonth!!.toInt()))
+        map["day"] = TextUtils.getRandomWithExclusion(1, 28, listOf(originalDay!!.toInt()))
         map["time"] = "23:01:02"
         map["offset"] = "+02:00"
         map["keywords"] = ""
@@ -414,17 +414,6 @@ class APITests: BaseSeleniumTests() {
         Assertions.assertTrue(jsonNode.get("metadata").get("year").toString().toInt() == originalYear)
         Assertions.assertTrue(jsonNode.get("metadata").get("month").toString().toInt() == originalMonth)
         Assertions.assertTrue(jsonNode.get("metadata").get("day").toString().toInt() == originalDay)
-    }
-
-    fun getRandomWithExclusion(start: Int, end: Int, vararg exclude: Int): Int {
-        var random = start + Random.nextInt(end - start + 1 - exclude.size)
-        for (ex in exclude) {
-            if (random < ex) {
-                break
-            }
-            random++
-        }
-        return random
     }
 
     @Test

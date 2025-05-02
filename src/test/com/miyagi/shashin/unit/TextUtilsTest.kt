@@ -602,4 +602,19 @@ class TextUtilsTest {
         isMobile = TextUtils.isMobile("802s asdf")
         Assertions.assertTrue(isMobile)
     }
+
+    @Test
+    fun getRandomWithExclusionTest() {
+        var number = TextUtils.getRandomWithExclusion(1, 5)
+        Assertions.assertTrue(number in 1..5)
+
+        number = TextUtils.getRandomWithExclusion(1, 5, listOf(1,2,3,5))
+        Assertions.assertTrue(number == 4)
+
+        number = TextUtils.getRandomWithExclusion(1, 5, listOf(1,3,5))
+        Assertions.assertTrue(number == 2 || number == 4)
+
+        number = TextUtils.getRandomWithExclusion(1, 10, listOf(1,3,5,6,9))
+        Assertions.assertTrue(number == 2 || number == 4 || number == 7 || number == 8 || number == 10)
+    }
 }
