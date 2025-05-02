@@ -30,6 +30,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Fixed
 - Counts for pictures and videos in albums view
 - RSS/ATOM feeds to show image preview and use slideshow filters
+- Album filter logic
 
 ### Security
 - Bump org.apache.httpcomponents.client5:httpclient5 from 5.4.1 to 5.4.3
