@@ -269,6 +269,9 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT m.* FROM user u INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = :albumId INNER JOIN albumphoto ap ON ap.album_id = :albumId AND ap.album_id = :albumId INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% AND m.hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMediaByUserAndAlbum(@Param("userId") userId: Int, @Param("albumId") albumId: Int, @Param("type") type: String): Metadata?
 
+   @Query("SELECT m.* FROM user u INNER JOIN albumphoto ap ON ap.album_id = :albumId AND ap.album_id = :albumId INNER JOIN metadata m ON ap.metadata_id = m.id WHERE m.type LIKE %:type% AND m.hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   fun findRandomAlbumMediaByAlbum(@Param("albumId") albumId: Int, @Param("type") type: String): Metadata?
+
    @Query("SELECT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.file_name LIKE %:filename% AND m.hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMediaAndFilterByUser(@Param("userId") userId: Int, @Param("filename") filename: String): Metadata?
 
@@ -280,4 +283,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
 
    @Query("SELECT COUNT(*) FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type%", nativeQuery = true)
    fun countAlbumByMedia(@Param("userId") userId: Int, @Param("type") type: String): Int
+
+   @Query("SELECT COUNT(*) FROM album a INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE m.type LIKE %:type%", nativeQuery = true)
+   fun countAlbumByMediaAsAdmin(@Param("type") type: String): Int
 }

@@ -1,5 +1,4 @@
 function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, albumImageCount) {
-    console.log(albumImageCount)
     let slideshowIntervalId;
     let slideshowStarted = false;
     let slideshowIsPaused = false;
@@ -595,7 +594,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>a</strong></span></div><div class='col-8'>Album Filter</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>- =</strong></span></div><div class='col-8'>Increase/decrease interval</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='4' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowIsElapsed+"</span> second interval</div></div>";
-                if (albumImageCount > 1) {
+                if ((albumImageCount > 1 && accessTimelineView === false) || (albumImageCount > 0 && accessTimelineView === true)) {
                     message += "<div class='row mb-1'><button class='btn btn-secondary' type='button' id='slideshowAlbumNameData' value=''>Albums Filter</button></div>";
                 }
             message += "</div>";
@@ -609,7 +608,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Double Tap</strong></span></div><div class='col-8'>Exit slideshow</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Swipe ← →</strong></span></div><div class='col-8'>Go to next/previous slide</div></div>" +
                 "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='4' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowIsElapsed+"</span> second interval</div></div>";
-                if (albumImageCount > 1) {
+                if ((albumImageCount > 1 && accessTimelineView === false) || (albumImageCount > 0 && accessTimelineView === true)) {
                     message += "<div class='row mb-1'><button class='btn btn-secondary' type='button' id='slideshowAlbumNameData' value=''>Albums Filter</button></div>";
                 }
             message += "</div>";
@@ -851,7 +850,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             }
 
             // Show album filter
-            if (albumImageCount > 1 && (e.key === "a" || e.code === "KeyA" || e.which === 65 || e.keyCode === 65)) {
+            if ((albumImageCount > 1 && accessTimelineView === false) || (albumImageCount > 0 && accessTimelineView === true) && (e.key === "a" || e.code === "KeyA" || e.which === 65 || e.keyCode === 65)) {
                 if (slideshowIsPaused === false) {
                     slideshowGalleryPlayPause();
                 }

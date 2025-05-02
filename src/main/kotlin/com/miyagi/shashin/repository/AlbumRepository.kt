@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface AlbumRepository : CrudRepository<Album?, Int?> {
+    @Query("SELECT COUNT(*) FROM album", nativeQuery = true)
+    fun countAllAlbums(): Int
     @Query("SELECT a.id as albumId, COUNT(ap.metadata_id) as photoCount FROM album a LEFT JOIN albumphoto ap ON a.id = ap.album_id GROUP BY a.id", nativeQuery = true)
     fun countNumberOfPhotosInAlbums(): MutableIterable<AlbumPhotoCount?>?
     @Query("SELECT DISTINCT m.id FROM metadata m LEFT JOIN albumphoto ap ON ap.metadata_id = m.id LEFT JOIN album a ON ap.album_id = a.id WHERE a.id = :albumId AND m.lat IS NOT NULL AND m.lng IS NOT NULL ORDER BY name COLLATE NOCASE ASC", nativeQuery = true)

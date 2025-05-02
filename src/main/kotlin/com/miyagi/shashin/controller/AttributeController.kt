@@ -419,7 +419,11 @@ class AttributeController: ResponseEntityExceptionHandler() {
                     metadataRepository?.countAlbumByMedia(currentUser.getId(), "image")
                 })
 
-                val albumImageCount = metadataRepository?.countAlbumByMedia(currentUser.getId(), "image")
+                val albumImageCount = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+                    metadataRepository?.countAlbumByMediaAsAdmin("image")
+                } else {
+                    metadataRepository?.countAlbumByMedia(currentUser.getId(), "image")
+                })
 
                 if (albumImageCount != null) {
                     model["albumImageCount"] = albumImageCount
@@ -493,7 +497,11 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 metadataRepository?.countAlbumByMedia(currentUser.getId(), "image")
             })
 
-            val albumImageCount = metadataRepository?.countAlbumByMedia(currentUser.getId(), "image")
+            val albumImageCount = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+                metadataRepository?.countAlbumByMediaAsAdmin("image")
+            } else {
+                metadataRepository?.countAlbumByMedia(currentUser.getId(), "image")
+            })
 
             if (albumImageCount != null) {
                 model["albumImageCount"] = albumImageCount
