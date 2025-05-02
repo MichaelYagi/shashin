@@ -306,7 +306,11 @@ class AlbumsController: BaseController() {
         var userAlbumCount = size.orElse(model.getAttribute("queryLimit").toString().toInt())
         var slideshowAlbum: SlideshowAlbum? = SlideshowAlbum()
         if (currentUserObj != null) {
-            userAlbumCount = userAlbumRepository.countUserAlbumsByUserId(currentUserObj.getId())
+            userAlbumCount = if (currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER") {
+                albumRepository.countAllAlbums()
+            } else {
+                userAlbumRepository.countUserAlbumsByUserId(currentUserObj.getId())
+            }
             if (userAlbumCount == 0) {
                 slideshowAlbumRepository.deleteByUserId(currentUserObj.getId())
             }
@@ -317,10 +321,10 @@ class AlbumsController: BaseController() {
                 slideshowAlbum.setAlbums("all")
             }
 
-            val albumsString = slideshowAlbum?.getAlbums()
+            val albumsString = slideshowAlbum.getAlbums()
             val albumsArray = albumsString?.split(",")?.map { it -> it.trim() }
 
-            slideshowAlbumResponse["userId"] = slideshowAlbum?.getUserId()
+            slideshowAlbumResponse["userId"] = slideshowAlbum.getUserId()
             slideshowAlbumResponse["albums"] = albumsArray
         }
 

@@ -629,7 +629,15 @@ class MediaServiceController {
                 } else if (slideshowAlbums.isNotEmpty()) {
                     val randomIndex = (0..slideshowAlbums.lastIndex).random()
                     val albumId = slideshowAlbums[randomIndex]
-                    metadataRepository.findRandomAlbumMediaByUserAndAlbum(currentUser.getId(), albumId.toInt(), type)
+                    if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+                        metadataRepository.findRandomAlbumMediaByAlbum(albumId.toInt(), type)
+                    } else {
+                        metadataRepository.findRandomAlbumMediaByUserAndAlbum(
+                            currentUser.getId(),
+                            albumId.toInt(),
+                            type
+                        )
+                    }
                 } else {
                     null
                 })
