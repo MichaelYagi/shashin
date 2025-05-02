@@ -379,7 +379,8 @@ class AttributeController: ResponseEntityExceptionHandler() {
 
 //        timingStart = Date()
 
-        model["hasMedia"] = false
+        model["hasImageMedia"] = false
+        model["albumImageCount"] = 0
         val currentUser: User?
         var currentUserId = 0
         val cookieUser: User? = TextUtils.checkValidRememberMeToken(request.getHeader("Cookie"), rememberMeKey.toString(), userRepository)
@@ -412,14 +413,20 @@ class AttributeController: ResponseEntityExceptionHandler() {
                     currentUser.setSlideshowInterval(10)
                 }
 
-                val mediaCount = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+                val mediaImageCount = (if (currentUser.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
                     metadataRepository?.countAllByTypeContains("image")
                 } else {
                     metadataRepository?.countAlbumByMedia(currentUser.getId(), "image")
                 })
 
-                if (mediaCount != null) {
-                    model["hasMedia"] = mediaCount > 0
+                val albumImageCount = metadataRepository?.countAlbumByMedia(currentUser.getId(), "image")
+
+                if (albumImageCount != null) {
+                    model["albumImageCount"] = albumImageCount
+                }
+
+                if (mediaImageCount != null) {
+                    model["hasImageMedia"] = mediaImageCount > 0
                 }
             } else {
                 logger.log(Level.INFO, "{\"message\":\"Invalid API Key\"}")
@@ -480,14 +487,20 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 model["currentUser"] = currentUser
             }
 
-            val mediaCount = (if (currentUser?.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
+            val mediaImageCount = (if (currentUser?.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
                 metadataRepository?.countAllByTypeContains("image")
             } else {
                 metadataRepository?.countAlbumByMedia(currentUser.getId(), "image")
             })
 
-            if (mediaCount != null) {
-                model["hasMedia"] = mediaCount > 0
+            val albumImageCount = metadataRepository?.countAlbumByMedia(currentUser.getId(), "image")
+
+            if (albumImageCount != null) {
+                model["albumImageCount"] = albumImageCount
+            }
+
+            if (mediaImageCount != null) {
+                model["hasImageMedia"] = mediaImageCount > 0
             }
         } else if (cookieUser != null) {
             currentUser = cookieUser
