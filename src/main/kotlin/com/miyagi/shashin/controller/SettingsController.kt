@@ -1938,6 +1938,7 @@ class SettingsController {
                                 }
                             }
 
+                            // Place name, face and object recognition, if enabled
                             Thread {
                                 var webClient: WebClient? = null
                                 if (settings != null && compreFaceServerConnected) {
@@ -1959,6 +1960,7 @@ class SettingsController {
                                     val metadataObj = metadataRepository?.findByMetadataId(metadataId)
 
                                     if (metadataObj != null) {
+                                        // Set place name
                                         val lat = metadataObj.getLat()
                                         val lng = metadataObj.getLng()
                                         if (!lat.isNullOrBlank() && !lng.isNullOrBlank()) {
@@ -1987,9 +1989,10 @@ class SettingsController {
                                             }
                                         }
 
+                                        // Recognize face during index scan
                                         try {
-                                            // Recognize face during index scan
                                             if (settings != null && settings.getFacialDetection() == true) {
+                                                // Using CompreFace
                                                 if (webClient != null && compreFaceServerConnected) {
                                                     try {
                                                         // Have at least 3 people tagged
@@ -2206,6 +2209,7 @@ class SettingsController {
                                                             "Issue connecting to face recognizer: " + metadataObj.getPath() + ": " + e.localizedMessage
                                                         )
                                                     }
+                                                // ...or DJL
                                                 } else {
                                                     val classLoader: ClassLoader =
                                                         ShashinApplication::class.java.classLoader
@@ -2216,7 +2220,7 @@ class SettingsController {
                                                     if (vggfaceFileExists && retinafaceFileExists) {
                                                         val testImage = mutableListOf<Metadata>()
                                                         testImage.add(metadataObj)
-                                                        val trainingData = metadataRepository?.findTrainingData(
+                                                        val trainingData = metadataRepository.findTrainingData(
                                                             settings.getRecognitionConfidenceThreshold()!!,
                                                             settings.getTrainingDataLimit()!!
                                                         )
@@ -2264,12 +2268,13 @@ class SettingsController {
                                                 }
                                             }
 
+                                            // Detect objects
                                             if (settings?.getObjectDetection() == true && criteria != null) {
                                                 val threshold = settings.getObjectRecognitionConfidenceThreshold()
 
                                                 val keywordMap = ImageProcessing.objectRecognizer(
                                                     metadataObj,
-                                                    criteria!!,
+                                                    criteria,
                                                     threshold.toString().toDouble(),
                                                     threadFile,
                                                     shouldStop.get()
@@ -2298,6 +2303,7 @@ class SettingsController {
                                     )
                                 }
 
+                                // Send notifications
                                 if (superAdminsUsers != null && recognitionCount > 0) {
                                     val notificationObjList = mutableListOf<Notification>()
                                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
@@ -2406,19 +2412,22 @@ class SettingsController {
                         var metadataObj: Metadata? = Metadata()
 
                         if (!shouldStop.get() && FileUtils.allowableMediaFiles().contains(mediaExtension)) {
+                            // Process metadata
                             val metadataProcessing = MetadataProcessing(apiVersion!!, file, sidecarDir, metadataObj!!, geocodeUrl!!)
                             metadataObj = metadataProcessing.populateMetadata()
                             if (metadataObj.getId().isNotEmpty()) {
-                                // Check for entry
+                                // Check for duplicate entry
                                 val metadataCount = metadataRepository?.countMetadataById(metadataObj.getId())
 
                                 if (metadataCount == 0) {
+                                    // Process thumbnails
                                     val imageProcessing = ImageProcessing(apiVersion, file, sidecarDir, metadataObj)
                                     metadataObj = imageProcessing.createThumbnails()
                                     if (metadataObj?.getThumbnailSmallWidth() != null && metadataObj.getThumbnailSmallHeight() != null && metadataObj.getThumbnailUrlSmall() != null) {
                                         metadataObj.setHidden(false)
                                         metadataObj.setUploadedBy(uploadUserId)
 
+                                        // SAVE METADATA
                                         metadataRepository.save(metadataObj)
 
                                         // Create folder cover URL
