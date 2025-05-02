@@ -58,6 +58,7 @@ import kotlin.collections.toTypedArray
 import kotlin.collections.withIndex
 import kotlin.math.abs
 import kotlin.math.floor
+import kotlin.random.Random
 
 
 @Component
@@ -65,6 +66,17 @@ class TextUtils {
     companion object {
 
         private var logger: Logger = Logger.getLogger(TextUtils::class.simpleName)
+
+        fun getRandomWithExclusion(start: Int, end: Int, exclude: List<Int> = listOf()): Int {
+            var random = start + Random.nextInt(end - start + 1 - exclude.size)
+            for (ex in exclude) {
+                if (random < ex) {
+                    break
+                }
+                random++
+            }
+            return random
+        }
 
         fun isMobile(userAgent: String?): Boolean {
             var isMobile = false; //initiate as false
