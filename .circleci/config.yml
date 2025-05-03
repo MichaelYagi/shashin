@@ -94,7 +94,7 @@ workflows:
                 name: Compress Artifacts
                 command: |
                   touch shashin-$VERSION.tar
-                  tar -cvzf shashin-$VERSION.tar shashin-$VERSION.jar Shashin-$VERSION.exe shashin_reset_password.sh test-results
+                  tar -cvzf ReadmeFirst.txt shashin-$VERSION.tar shashin-$VERSION.jar Shashin-$VERSION.exe shashin_reset_password.sh test-results
             - run: # Move artifacts to artifacts directory in preparation to persist
                 name: Create Artifacts Directory
                 command: |
@@ -102,6 +102,7 @@ workflows:
                   mv shashin-version.txt artifacts/shashin-version.txt
                   mv CHANGELOG.md artifacts/CHANGELOG.md
                   mv shashin_create_release_notes.sh artifacts/shashin_create_release_notes.sh
+                  mv ReadmeFirst.txt artifacts/ReadmeFirst.txt
                   mv shashin-$VERSION.tar artifacts/shashin-$VERSION.tar
                   mv Shashin-$VERSION.exe artifacts/Shashin-$VERSION.exe
                   mv shashin-$VERSION.jar artifacts/shashin-$VERSION.jar
@@ -159,6 +160,18 @@ jobs:
             --header "Authorization: Bearer $token" \
             --header "Content-Type: multipart/form-data" \
             --form "packageFiles=@\"/home/circleci/project/artifacts/Shashin-$version.exe\"" \
+            --form "packageName=\"shashin\"" \
+            --form "packageVersion=\"$version\"" \
+            --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
+      - run:
+          name: Upload readme
+          command: |
+            token=$REPOFLOW_TOKEN
+            version=$VERSION
+            curl --request POST \
+            --header "Authorization: Bearer $token" \
+            --header "Content-Type: multipart/form-data" \
+            --form "packageFiles=@\"/home/circleci/project/artifacts/ReadmeFirst.txt\"" \
             --form "packageName=\"shashin\"" \
             --form "packageVersion=\"$version\"" \
             --url "https://api.repoflow.io/upload/myagidevel-8191/shashin/single"
