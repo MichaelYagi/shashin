@@ -5,117 +5,130 @@
     <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editPhotosModalLabel">Edit Photos</h5>
+                <h5 class="modal-title" id="editPhotosModalLabel"><span id="editPhotosNamesModalLabel" class="mb-1"></span><br><br><span class="mt-2">Edit Photos</span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <ul class="nav nav-pills nav-fill ms-3 me-3 mt-3 mb-2">
+                <li class="nav-item" id="batchGeneralTabNav">
+                    <a class="nav-link show active" data-bs-toggle="tab" id="batchGeneralTabLink" href="#generalBatchTab">Update</a>
+                </li>
+                <li class="nav-item" id="batchMapTabNav">
+                    <a class="nav-link" data-bs-toggle="tab" id="batchMapTabLink" href="#mapBatchTab">Map</a>
+                </li>
+            </ul>
             <div class="modal-body ui-front" id="propBatchMetadataBody">
-                <span id="editPhotosNamesModalLabel"></span><br><br>
-                <p class="text-muted">Empty fields will be ignored. Data will be overwritten unless checking add to existing fields.</p>
-                <form id="saveBatchData">
-                    <input type="hidden" id="batchMetadataIds" name="batchMetadataIds" value="">
-                    <input type="hidden" id="batchFilenames" name="batchFilenames" value="">
+                <div class="tab-content">
+                    <div class="tab-pane container show active" id="generalBatchTab">
+                        <p class="text-muted">Empty fields will be ignored. Data will be overwritten unless checking add to existing fields.</p>
+                        <form id="saveBatchData">
+                            <input type="hidden" id="batchMetadataIds" name="batchMetadataIds" value="">
+                            <input type="hidden" id="batchFilenames" name="batchFilenames" value="">
 
-                    <div class="form-group row">
-                        <div class="col-sm">
-                            <label for="cameraBatchData" class="col-form-label">Camera</label>
-                            <input type="text" class="form-control" id="cameraBatchData" name="cameraBatchData" value="">
-                            <input type="hidden" id="camerasBatchString" th:value="${cameras}">
-                        </div>
-                        <div class="col-sm">
-                            <label for="lensBatchData" class="col-form-label">Lens</label>
-                            <input type="text" class="form-control" id="lensBatchData" name="lensBatchData" value="">
-                            <input type="hidden" id="lensesBatchString" th:value="${lenses}">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm">
-                            <label for="yearTakenBatchData" class="col-form-label">Year taken</label>
-                            <input type="number" class="form-control" id="yearTakenBatchData" name="yearTakenBatchData" value="" maxlength="4" min="1826">
-                        </div>
-                        <div class="col-sm">
-                            <label for="monthTakenBatchData" class="col-form-label">Month taken</label>
-                            <input type="number" class="form-control" id="monthTakenBatchData" name="monthTakenBatchData" value="" maxlength="2" min="1" max="12">
-                        </div>
-                        <div class="col-sm">
-                            <label for="dayTakenBatchData" class="col-form-label">Day taken</label>
-                            <input type="number" class="form-control" id="dayTakenBatchData" name="dayTakenBatchData" value="" maxlength="2" min="1" max="31">
-                        </div>
-                        <div class="col-sm">
-                            <label for="offsetTakenBatchData" class="col-form-label">GMT Offset</label>
-                            <select class="form-select" id="offsetTakenBatchData" name="offsetTakenBatchData">
-                                <option value="">--GMT--</option>
-                                <th:block th:each="offset, iterStat: ${timeOffsets}">
-                                    <option th:value="${offset}" th:text="${offset}"></option>
-                                </th:block>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm">
-                            <label for="latlngBatchData" class="col-form-label">Latitude, Longitude</label>
-                            <input type="text" class="form-control" id="latlngBatchData" name="latlngBatchData" value="">
-                        </div>
-                        <div class="col-sm">
-                            <label for="keywordsBatchData" class="col-form-label">Keywords (comma separated)</label>
-                            <input type="text" class="form-control" id="keywordsBatchData" name="keywordsBatchData" value="">
-                            <input type="hidden" id="keywordsBatchString" th:value="${keywords}">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm"></div>
-                        <div class="col-sm">
-                            <input type="checkbox" name="addtoexistingkeywords" id="addtoexistingkeywords">
-                            <label class="form-check-label" for="addtoexistingkeywords">Add to existing keywords</label>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm">
-                            <label for="albumNameInput" class="col-form-label">Add to Album (comma separated)</label>
-                            <div class="input-group" id="batchAlbumNames">
-                                <div class="input-group" id="albumListForModal">
-                                    <input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="">
-                                    <button class="btn btn-secondary" type="button" id="albumBatchNameData" style="display: none;">Albums</button>
+                            <div class="form-group row">
+                                <div class="col-sm">
+                                    <label for="cameraBatchData" class="col-form-label">Camera</label>
+                                    <input type="text" class="form-control" id="cameraBatchData" name="cameraBatchData" value="">
+                                    <input type="hidden" id="camerasBatchString" th:value="${cameras}">
                                 </div>
-                                <br>
-                                <div>
-                                    <input type="checkbox" name="addtoexistingalbums" id="addtoexistingalbums">
-                                    <label class="form-check-label" for="addtoexistingalbums">Add to existing albums</label>
+                                <div class="col-sm">
+                                    <label for="lensBatchData" class="col-form-label">Lens</label>
+                                    <input type="text" class="form-control" id="lensBatchData" name="lensBatchData" value="">
+                                    <input type="hidden" id="lensesBatchString" th:value="${lenses}">
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-sm">
-                            <label for="tagBatchDataInput" class="col-form-label">Tag People (comma separated)</label>
-                            <div class="input-group" id="batchLabelIds">
-                                <input type="text" class="form-control" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">
-                                <button class="btn btn-secondary" type="button" id="peopleBatchNameData" style="display: none;">People</button>
+                            <div class="form-group row">
+                                <div class="col-sm">
+                                    <label for="yearTakenBatchData" class="col-form-label">Year taken</label>
+                                    <input type="number" class="form-control" id="yearTakenBatchData" name="yearTakenBatchData" value="" maxlength="4" min="1826">
+                                </div>
+                                <div class="col-sm">
+                                    <label for="monthTakenBatchData" class="col-form-label">Month taken</label>
+                                    <input type="number" class="form-control" id="monthTakenBatchData" name="monthTakenBatchData" value="" maxlength="2" min="1" max="12">
+                                </div>
+                                <div class="col-sm">
+                                    <label for="dayTakenBatchData" class="col-form-label">Day taken</label>
+                                    <input type="number" class="form-control" id="dayTakenBatchData" name="dayTakenBatchData" value="" maxlength="2" min="1" max="31">
+                                </div>
+                                <div class="col-sm">
+                                    <label for="offsetTakenBatchData" class="col-form-label">GMT Offset</label>
+                                    <select class="form-select" id="offsetTakenBatchData" name="offsetTakenBatchData">
+                                        <option value="">--GMT--</option>
+                                        <th:block th:each="offset, iterStat: ${timeOffsets}">
+                                            <option th:value="${offset}" th:text="${offset}"></option>
+                                        </th:block>
+                                    </select>
+                                </div>
                             </div>
-                            <div>
-                                <input type="checkbox" name="addtoexistingpeople" id="addtoexistingpeople">
-                                <label class="form-check-label" for="addtoexistingpeople">Add to existing people</label>
+                            <div class="form-group row">
+                                <div class="col-sm">
+                                    <label for="latlngBatchData" class="col-form-label">Latitude, Longitude</label>
+                                    <input type="text" class="form-control" id="latlngBatchData" name="latlngBatchData" value="">
+                                </div>
+                                <div class="col-sm">
+                                    <label for="keywordsBatchData" class="col-form-label">Keywords (comma separated)</label>
+                                    <input type="text" class="form-control" id="keywordsBatchData" name="keywordsBatchData" value="">
+                                    <input type="hidden" id="keywordsBatchString" th:value="${keywords}">
+                                </div>
                             </div>
-                        </div>
+                            <div class="form-group row">
+                                <div class="col-sm"></div>
+                                <div class="col-sm">
+                                    <input type="checkbox" name="addtoexistingkeywords" id="addtoexistingkeywords">
+                                    <label class="form-check-label" for="addtoexistingkeywords">Add to existing keywords</label>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm">
+                                    <label for="albumNameInput" class="col-form-label">Add to Album (comma separated)</label>
+                                    <div class="input-group" id="batchAlbumNames">
+                                        <div class="input-group" id="albumListForModal">
+                                            <input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="">
+                                            <button class="btn btn-secondary" type="button" id="albumBatchNameData" style="display: none;">Albums</button>
+                                        </div>
+                                        <br>
+                                        <div>
+                                            <input type="checkbox" name="addtoexistingalbums" id="addtoexistingalbums">
+                                            <label class="form-check-label" for="addtoexistingalbums">Add to existing albums</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
+                                    <label for="tagBatchDataInput" class="col-form-label">Tag People (comma separated)</label>
+                                    <div class="input-group" id="batchLabelIds">
+                                        <input type="text" class="form-control" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">
+                                        <button class="btn btn-secondary" type="button" id="peopleBatchNameData" style="display: none;">People</button>
+                                    </div>
+                                    <div>
+                                        <input type="checkbox" name="addtoexistingpeople" id="addtoexistingpeople">
+                                        <label class="form-check-label" for="addtoexistingpeople">Add to existing people</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary col-12 mt-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBatchMetadata" aria-expanded="false" aria-controls="collapseBatchMetadata">
+                                More
+                            </button>
+                            <div class="collapse mt-3" id="collapseBatchMetadata">
+                                <div class="form-group row">
+                                    <div class="col-sm">
+                                        <input type="checkbox" name="batchhidden" id="batchhidden">
+                                        <label class="form-check-label" for="batchhidden">Archive media</label>
+                                    </div>
+                                    <div class="col-sm">
+                                        <input type="checkbox" name="batchisobject" id="batchisobject">
+                                        <label class="form-check-label" for="batchisobject">Unidentified people</label>
+                                    </div>
+                                    <div class="col-sm">
+                                        <input type="checkbox" name="batchrescan" id="batchrescan">
+                                        <label class="form-check-label" for="batchrescan">Rescan media</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                    <button class="btn btn-secondary col-12 mt-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBatchMetadata" aria-expanded="false" aria-controls="collapseBatchMetadata">
-                        More
-                    </button>
-                    <div class="collapse mt-3" id="collapseBatchMetadata">
-                        <div class="form-group row">
-                            <div class="col-sm">
-                                <input type="checkbox" name="batchhidden" id="batchhidden">
-                                <label class="form-check-label" for="batchhidden">Archive media</label>
-                            </div>
-                            <div class="col-sm">
-                                <input type="checkbox" name="batchisobject" id="batchisobject">
-                                <label class="form-check-label" for="batchisobject">Unidentified people</label>
-                            </div>
-                            <div class="col-sm">
-                                <input type="checkbox" name="batchrescan" id="batchrescan">
-                                <label class="form-check-label" for="batchrescan">Rescan media</label>
-                            </div>
-                        </div>
+                    <div class="tab-pane container fade" id="mapBatchTab">
+                        <div data-role="dialog" id="modalbatchmap" class="map" style="width: 100%;height: 400px"></div>
                     </div>
-                </form>
-
+                </div>
             </div>
             <div class="modal-footer">
                 <div id="metadataBatchModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 1.55rem;" role="status" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
