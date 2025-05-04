@@ -1689,6 +1689,61 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @RequestMapping(value = ["/metadata/update/coordinates/{metadataId}","/api/v1/update/metadata/coordinates/{metadataId}"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
+    @ResponseBody
+    fun updateLocationMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String, response: HttpServletResponse): String? {
+//        println(requestBody)
+
+        resp["msg"] = "Failed!"
+        resp["status"] = ApiResponse.FAIL.status
+
+        val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+
+        if (metadataMap.containsKey("id") &&
+            metadataMap.containsKey("latlng")  &&
+            metadataMap["id"].toString() == metadataId
+        ) {
+            val coordArray = metadataMap["latlng"].toString().split(",")
+            if (coordArray.size == 2) {
+                setCoordinates(metadataMap["id"].toString(),coordArray[0],coordArray[1])
+
+                resp["msg"] = "Saved!"
+                resp["status"] = ApiResponse.SUCCESS.status
+            }
+        }
+
+        return mapper.writeValueAsString(resp)
+    }
+
+    private fun setCoordinates(metadataId: String, lat: String, lng: String) {
+        if (lat != "" && lng != "" && metadataId != "") {
+
+            val metadataObj = metadataRepository.findById(metadataId)
+
+            if (metadataObj.isPresent) {
+                Thread {
+                    val coordinateMap = TextUtils.processCoordinates(geocodeUrl!!, "${lat.trim()},${lng.trim()}")
+                    if (coordinateMap["lat"] != null && coordinateMap["lng"] != null) {
+                        metadataObj.get().setLat(coordinateMap["lat"])
+                        metadataObj.get().setLng(coordinateMap["lng"])
+                    }
+
+                    if (coordinateMap["place"] != null) {
+                        metadataObj.get().setPlaceName(coordinateMap["place"])
+                    }
+                    if (coordinateMap["timezone"] != null) {
+                        metadataObj.get().setTimeZone(coordinateMap["timezone"])
+                    }
+
+                    metadataObj.get().setModifiedAt(getCurrentTimestamp())
+                    metadataRepository.save(metadataObj.get())
+                }.start()
+            }
+        }
+    }
+
     private fun notifyAlbumUpdate(albumIdAddedList: MutableList<Int>, currentUserObj: User?) {
         var adminAlbumsMessage = ""
         val filteredUserAlbumsMap = mutableMapOf<Int,MutableList<String>>()

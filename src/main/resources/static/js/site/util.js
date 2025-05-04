@@ -693,7 +693,7 @@ class Util {
                         $("#mapTabNav").show();
                         Util.setMetadataLocalStorage();
                     } else {
-                        $("#mapTabNav").hide();
+                        // $("#mapTabNav").hide();
                     }
                     if (takenDateUpdated === true) {
                         const dateGalleryRemoved = shashin.removeThumbnail((rescannedMetadata.id !== metadataIdArray[0]) ? metadataIdArray[0] : rescannedMetadata.id);
