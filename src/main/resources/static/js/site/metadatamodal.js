@@ -307,7 +307,7 @@ async function saveMetadata(e) {
                         $("#metadataModalEdit" + metadataId + " span").removeClass("bi-info-square").addClass("bi-info-circle");
                         $("#mapTabNav").show();
                     } else {
-                        $("#mapTabNav").hide();
+                        // $("#mapTabNav").hide();
                     }
 
                     $("#infoModalEdit" + metadataId + " span").removeClass("bi-info-circle").addClass("bi-info-square");
@@ -315,7 +315,7 @@ async function saveMetadata(e) {
                         $("#infoModalEdit" + metadataId + " span").removeClass("bi-info-square").addClass("bi-info-circle");
                         $("#mapTabNav").show();
                     } else {
-                        $("#mapTabNav").hide();
+                        // $("#mapTabNav").hide();
                     }
 
                     if (prevLat !== metadataObj.lat || prevLng !== metadataObj.lng) {

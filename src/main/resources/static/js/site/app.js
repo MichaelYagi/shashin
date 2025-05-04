@@ -792,7 +792,7 @@
                 $("#latlng").val(latlngValue);
                 $("#mapTabNav").show();
                 if (latlngValue === "") {
-                    $("#mapTabNav").hide();
+                    // $("#mapTabNav").hide();
                 } else {
                     $("#placeName").prop('disabled', false);
                 }
@@ -1534,6 +1534,7 @@
     };
 
     shashin.openMap = function (metadata) {
+
         shashin.printMessageToConsole("Opening Map with metadata");
         shashin.printMessageToConsole(metadata);
 
@@ -1562,196 +1563,287 @@
                 queryParamDates = '&sd='+metadata.year+'-'+month+'-01&ed='+metadata.year+'-'+month+'-'+lastDay;
             }
             $("#mapTabMessage").html(TimelineTemplates.MapLinks({metadata:metadata, placeNameDisplayName:placeNameDisplayName, queryParamDates:queryParamDates}));
+        }
 
-            if (shashin.map === null) {
-                const duration = 400;
-                const interactions = [
-                    new ol.interaction.DoubleClickZoom({
-                        duration: duration
-                    }),
-                    new ol.interaction.KeyboardPan({
-                        pixelDelta: 256
-                    }),
-                    new ol.interaction.KeyboardZoom({
-                        duration: duration
-                    }),
-                    new ol.interaction.MouseWheelZoom({
-                        duration: duration
-                    }),
-                    new ol.interaction.PinchRotate(),
-                    new ol.interaction.PinchZoom({
-                        duration: duration
-                    }),
-                    new ol.interaction.DragPan({
-                        kinetic: new ol.Kinetic(-0.005, 0.05, 100)
-                    }),
-                    new ol.interaction.DblClickDragZoom(),
-                    new ol.interaction.DragZoom(),
-                    new ol.interaction.DragRotate()
-                ];
+        if (shashin.map === null) {
+            const duration = 400;
+            const interactions = [
+                new ol.interaction.DoubleClickZoom({
+                    duration: duration
+                }),
+                new ol.interaction.KeyboardPan({
+                    pixelDelta: 256
+                }),
+                new ol.interaction.KeyboardZoom({
+                    duration: duration
+                }),
+                new ol.interaction.MouseWheelZoom({
+                    duration: duration
+                }),
+                new ol.interaction.PinchRotate(),
+                new ol.interaction.PinchZoom({
+                    duration: duration
+                }),
+                new ol.interaction.DragPan({
+                    kinetic: new ol.Kinetic(-0.005, 0.05, 100)
+                }),
+                new ol.interaction.DblClickDragZoom(),
+                new ol.interaction.DragZoom(),
+                new ol.interaction.DragRotate()
+            ];
 
-                shashin.map = new ol.Map({
-                    controls: [],
-                    layers: [
-                        new ol.layer.Tile({
-                            visible: true,
-                            source: shashin.getMapSource("osm")
-                        })
-                    ],
-                    target: 'modalmap',
-                    interactions: interactions
+            shashin.map = new ol.Map({
+                controls: [],
+                layers: [
+                    new ol.layer.Tile({
+                        visible: true,
+                        source: shashin.getMapSource("osm")
+                    })
+                ],
+                target: 'modalmap',
+                interactions: interactions
+            });
+        } else {
+            const baseLayer = new ol.layer.Tile({
+                visible: true,
+                source: shashin.getMapSource("osm")
+            });
+            shashin.map.addLayer(baseLayer);
+        }
+
+        const attributions = new ol.control.Attribution({collapsible: true});
+
+        shashin.map.addControl(attributions);
+
+        const copyPlacename = function (obj) {
+            if (obj.hasOwnProperty("data") && obj.data !== null && obj.data !== "" && obj.data.placename !== null && obj.data.placename !== "") {
+                const copyText = obj.data.placename;
+                Util.copyToClipboard(copyText);
+            }
+        };
+
+        const setCoordinates = function (obj) {
+            const coordArray = ol.proj.toLonLat(obj.coordinate);
+            if (coordArray.length > 1) {
+                const coords = coordArray[1]+","+coordArray[0];
+                const json = {
+                    id: metadata.id,
+                    latlng: coords
+                };
+                const http = new Http("save location");
+                http.ajax("put", "/metadata/update/coordinates/" + metadata.id + "?v="+uuidv4(), JSON.stringify(json), function (response) {
+                    shashin.showToastMessage("Could not update location", "Could not update location", {
+                        icon: "bi-exclamation-triangle",
+                        iconColor: "#FF0000",
+                        borderColor:"danger"
+                    });
+                }).then(function (response) {
+                    if (response.hasOwnProperty("status")) {
+                        if (response.status !== shashin.apiResponse.SUCCESS) {
+                            shashin.showToastMessage("Could not update location", "Could not update location", {
+                                icon: "bi-exclamation-triangle",
+                                iconColor: "#FF0000",
+                                borderColor: "danger"
+                            });
+                        } else {
+                            Util.setMetadataLocalStorage();
+
+                            // Update marker and center
+                            shashin.map.getLayers().forEach(layer => {
+                                if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties().name === "maplocation") {
+                                    shashin.map.removeLayer(layer);
+                                }
+                            });
+
+                            shashin.map.getView().setCenter(ol.proj.fromLonLat([coordArray[0], coordArray[1]]));
+                            shashin.map.getView().setZoom(18);
+
+                            shashin.feature = new ol.Feature({
+                                geometry: new ol.geom.Point(ol.proj.fromLonLat([coordArray[0], coordArray[1]]))
+                            });
+
+                            const iconSize = 30;
+                            const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + iconSize + '" height="' + iconSize + '" fill="currentColor" class="bi bi-geo-alt-fill" style="color: orangered;" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg>';
+                            const styleIcon = new ol.style.Style({
+                                image: new ol.style.Icon({
+                                    opacity: 1,
+                                    src: 'data:image/svg+xml;utf8,' + svg,
+                                    anchor: [0.5, iconSize],
+                                    anchorXUnits: 'fraction',
+                                    anchorYUnits: 'pixels',
+                                    anchorOrigin: 'top-left',
+                                    offset: [0, 0]
+                                })
+                            });
+                            shashin.feature.setStyle(styleIcon);
+                            shashin.layer = new ol.layer.Vector({
+                                source: new ol.source.Vector({
+                                    features: [shashin.feature]
+                                })
+                            });
+                            shashin.layer.set('name', 'maplocation');
+                            shashin.map.addLayer(shashin.layer);
+                            $("#latlng").val(coordArray[1]+","+coordArray[0]);
+                            $("#metadataModalEdit" + metadata.id + " span").removeClass("bi-info-square").addClass("bi-info-circle");
+                        }
+                    } else {
+                        shashin.showToastMessage("Could not update location", "Could not update location", {
+                            icon: "bi-exclamation-triangle",
+                            iconColor: "#FF0000",
+                            borderColor:"danger"
+                        });
+                    }
                 });
-            } else {
-                const baseLayer = new ol.layer.Tile({
-                    visible: true,
-                    source: shashin.getMapSource("osm")
-                });
-                shashin.map.addLayer(baseLayer);
+            }
+        };
+
+        const copyCoordinates = function (obj) {
+            const coordArray = ol.proj.toLonLat(obj.coordinate);
+            if (coordArray.length > 1) {
+                const copyText = coordArray[1]+","+coordArray[0];
+                Util.copyToClipboard(copyText);
+            }
+        };
+
+        const recenterCoordinates = function (obj) {
+            shashin.map.getView().setCenter(ol.proj.fromLonLat([metadata.lng, metadata.lat]));
+            shashin.map.getView().setZoom(shashin.initialMapZoom);
+        };
+
+        shashin.contextMenu = new ContextMenu({
+            width: 300,
+            defaultItems: false // defaultItems are (for now) Zoom In/Zoom Out
+        });
+        shashin.contextMenu.on('close', function (evt) {
+            shashin.map.getLayers().forEach(layer => {
+                if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties().name === "tempCoordinates") {
+                    shashin.map.removeLayer(layer);
+                }
+            });
+        });
+
+        const showContextMenu = (evt, coordArray, data) => {
+            // Clear all previous coordinates
+            shashin.map.getLayers().forEach(layer => {
+                if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties().name === "tempCoordinates") {
+                    shashin.map.removeLayer(layer);
+                }
+            });
+
+            // Create icon for temp coordinate
+            const feature = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.fromLonLat(coordArray)),
+                name: 'tempMarker'
+            });
+
+            const iconSize = 25;
+            const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + iconSize + '" height="' + iconSize + '" fill="currentColor" class="bi bi-geo-alt-fill" style="color: grey;" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg>';
+            const icon = 'data:image/svg+xml;utf8,' + svg;
+
+            const styleIcon = new ol.style.Style({
+                image: new ol.style.Icon({
+                    opacity: 1,
+                    src: icon,
+                    anchor: [0.5, iconSize],
+                    anchorXUnits: 'fraction',
+                    anchorYUnits: 'pixels',
+                    anchorOrigin: 'top-left',
+                    offset: [0, 0]
+                })
+            });
+
+            feature.setStyle(styleIcon);
+            feature.setId("tempCoordinates");
+
+            shashin.tempVector = new ol.source.Vector({
+                features: [feature]
+            });
+
+            const layer = new ol.layer.Vector({
+                source: shashin.tempVector
+            });
+            layer.set('name', 'tempCoordinates');
+            shashin.map.addLayer(layer);
+
+            feature.setStyle(styleIcon);
+            layer.getSource().addFeature(feature);
+
+            // Create menu for context menu
+            const copyText = coordArray[1] + "," + coordArray[0];
+            shashin.contextMenu.updatePosition([evt.pixel[0], evt.pixel[1] + 12]);
+
+            const contextValueArray = [];
+
+            let contextItem = {};
+            if (data.hasOwnProperty("placename") && data.placename.length > 0) {
+                contextItem = {
+                    text: "<strong>" + data.placename + "</strong>",
+                    // classname: "ol-ctx-menu-separator" // Make unselectable text
+                    classname: "context-text-wrap",
+                    callback: copyPlacename
+                };
+                contextItem.data = {placename: data.placename};
+
+                contextValueArray.push(contextItem);
+                contextValueArray.push("-");
             }
 
-            const attributions = new ol.control.Attribution({collapsible: true});
-
-            shashin.map.addControl(attributions);
-
-            const copyPlacename = function (obj) {
-                if (obj.hasOwnProperty("data") && obj.data !== null && obj.data !== "" && obj.data.placename !== null && obj.data.placename !== "") {
-                    const copyText = obj.data.placename;
-                    Util.copyToClipboard(copyText);
-                }
-            };
-
-            const copyCoordinates = function (obj) {
-                const coordArray = ol.proj.toLonLat(obj.coordinate);
-                if (coordArray.length > 1) {
-                    const copyText = coordArray[1]+","+coordArray[0];
-                    Util.copyToClipboard(copyText);
-                }
-            };
-
-            const recenterCoordinates = function (obj) {
-                shashin.map.getView().setCenter(ol.proj.fromLonLat([metadata.lng, metadata.lat]));
-                shashin.map.getView().setZoom(shashin.initialMapZoom);
-            };
-
-            shashin.contextMenu = new ContextMenu({
-                width: 300,
-                defaultItems: false // defaultItems are (for now) Zoom In/Zoom Out
-            });
-            shashin.contextMenu.on('close', function (evt) {
-                shashin.map.getLayers().forEach(layer => {
-                    if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties().name === "tempCoordinates") {
-                        shashin.map.removeLayer(layer);
-                    }
-                });
-            });
-
-            const showContextMenu = (evt, coordArray, data) => {
-                // Clear all previous coordinates
-                shashin.map.getLayers().forEach(layer => {
-                    if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties().name === "tempCoordinates") {
-                        shashin.map.removeLayer(layer);
-                    }
-                });
-
-                // Create icon for temp coordinate
-                const feature = new ol.Feature({
-                    geometry: new ol.geom.Point(ol.proj.fromLonLat(coordArray)),
-                    name: 'tempMarker'
-                });
-
-                const iconSize = 25;
-                const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + iconSize + '" height="' + iconSize + '" fill="currentColor" class="bi bi-geo-alt-fill" style="color: grey;" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg>';
-                const icon = 'data:image/svg+xml;utf8,' + svg;
-
-                const styleIcon = new ol.style.Style({
-                    image: new ol.style.Icon({
-                        opacity: 1,
-                        src: icon,
-                        anchor: [0.5, iconSize],
-                        anchorXUnits: 'fraction',
-                        anchorYUnits: 'pixels',
-                        anchorOrigin: 'top-left',
-                        offset: [0, 0]
-                    })
-                });
-
-                feature.setStyle(styleIcon);
-                feature.setId("tempCoordinates");
-
-                shashin.tempVector = new ol.source.Vector({
-                    features: [feature]
-                });
-
-                const layer = new ol.layer.Vector({
-                    source: shashin.tempVector
-                });
-                layer.set('name', 'tempCoordinates');
-                shashin.map.addLayer(layer);
-
-                feature.setStyle(styleIcon);
-                layer.getSource().addFeature(feature);
-
-                // Create menu for context menu
-                const copyText = coordArray[1] + "," + coordArray[0];
-                shashin.contextMenu.updatePosition([evt.pixel[0], evt.pixel[1] + 12]);
-
-                const contextValueArray = [];
-
-                let contextItem = {};
-                if (data.hasOwnProperty("placename") && data.placename.length > 0) {
-                    contextItem = {
-                        text: "<strong>" + data.placename + "</strong>",
-                        // classname: "ol-ctx-menu-separator" // Make unselectable text
-                        classname: "context-text-wrap",
-                        callback: copyPlacename
-                    };
-                    contextItem.data = {placename: data.placename};
-
-                    contextValueArray.push(contextItem);
-                    contextValueArray.push("-");
-                }
-
+            if ($("#latlng").length > 0 && $("#generalTabLink").hasClass("show")) {
                 contextValueArray.push(
                     {
-                        text: copyText, // Copy coordinates from context menu
-                        callback: copyCoordinates
-                    },
-                    {
-                        text: "Recenter", // Recenter map to media location
-                        callback: recenterCoordinates
+                        text: "Set Coordinates", // Set coordinates in modal field
+                        callback: setCoordinates
                     }
                 );
-
-                shashin.contextMenu.extend(contextValueArray);
-            };
-            shashin.contextMenu.on('open', function (evt) {
-                shashin.contextMenu.clear();
-                const coordArray = ol.proj.toLonLat(evt.coordinate);
-                const http = new Http("get place data");
-
-                if (coordArray.length > 1) {
-                    const json = {
-                        lat: coordArray[1],
-                        lng: coordArray[0]
-                    };
-
-                    if (shashin.showPlacename === true) {
-                        http.ajax("post", "/placedata", JSON.stringify(json)).then(function (data) {
-                            showContextMenu(evt, coordArray, data);
-                        });
-                    } else {
-                        showContextMenu(evt, coordArray, {});
-                    }
-                }
-            });
-
-            shashin.map.addControl(shashin.contextMenu);
-
-            if (shashin.layer !== null) {
-                shashin.layer.getSource().clear();
             }
 
-            shashin.map.getView().setCenter(ol.proj.fromLonLat([metadata.lng, metadata.lat]));
+            contextValueArray.push(
+                {
+                    text: copyText, // Copy coordinates from context menu
+                    callback: copyCoordinates
+                },
+                {
+                    text: "Recenter", // Recenter map to media location
+                    callback: recenterCoordinates
+                }
+            );
+
+            shashin.contextMenu.extend(contextValueArray);
+        };
+
+        shashin.contextMenu.on('open', function (evt) {
+            shashin.contextMenu.clear();
+            const coordArray = ol.proj.toLonLat(evt.coordinate);
+            const http = new Http("get place data");
+
+            if (coordArray.length > 1) {
+                const json = {
+                    lat: coordArray[1],
+                    lng: coordArray[0]
+                };
+
+                if (shashin.showPlacename === true) {
+                    http.ajax("post", "/placedata", JSON.stringify(json)).then(function (data) {
+                        showContextMenu(evt, coordArray, data);
+                    });
+                } else {
+                    showContextMenu(evt, coordArray, {});
+                }
+            }
+        });
+
+        shashin.map.addControl(shashin.contextMenu);
+
+        if (shashin.layer !== null) {
+            shashin.layer.getSource().clear();
+        }
+
+        shashin.map.getView().setCenter(ol.proj.fromLonLat([metadata.lng, metadata.lat]));
+
+        if (Object.keys(metadata).length > 0 &&
+            metadata.lat !== null && metadata.lng !== null &&
+            metadata.lat !== "" && metadata.lng !== ""
+        ) {
             shashin.map.getView().setZoom(shashin.initialMapZoom);
 
             shashin.feature = new ol.Feature({
@@ -1778,18 +1870,22 @@
                     features: [shashin.feature]
                 })
             });
+            shashin.layer.set('name', 'maplocation');
             shashin.map.addLayer(shashin.layer);
-
-            setTimeout(fixContentHeight, 1000);
         } else {
-            if (shashin.layer !== null) {
-                shashin.layer.getSource().clear();
-            }
-            $("#map").css("display","none");
-            $("#mapTabMessage > .wrapper").contents().unwrap();
-            $("#mapTabMessage").text("No map data");
-            $("#mapTabMessage").css("display","block");
+            shashin.map.getView().setZoom(0);
         }
+
+        setTimeout(fixContentHeight, 1000);
+        // else {
+        //     if (shashin.layer !== null) {
+        //         shashin.layer.getSource().clear();
+        //     }
+        //     $("#map").css("display","none");
+        //     $("#mapTabMessage > .wrapper").contents().unwrap();
+        //     $("#mapTabMessage").text("No map data");
+        //     $("#mapTabMessage").css("display","block");
+        // }
     };
 
     shashin.processVideoThumbnail = function(metadataId, lightGalleryId, lightGalleryIndex) {
