@@ -305,6 +305,7 @@ async function saveMetadata(e) {
                     $("#metadataModalEdit" + metadataId + " span").removeClass("bi-info-circle").addClass("bi-info-square");
                     if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlng").val() !== "") {
                         $("#metadataModalEdit" + metadataId + " span").removeClass("bi-info-square").addClass("bi-info-circle");
+                        shashin.map = null;
                         $("#mapTabNav").show();
                     } else {
                         // $("#mapTabNav").hide();
@@ -313,6 +314,7 @@ async function saveMetadata(e) {
                     $("#infoModalEdit" + metadataId + " span").removeClass("bi-info-circle").addClass("bi-info-square");
                     if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlng").val() !== "") {
                         $("#infoModalEdit" + metadataId + " span").removeClass("bi-info-square").addClass("bi-info-circle");
+                        shashin.map = null;
                         $("#mapTabNav").show();
                     } else {
                         // $("#mapTabNav").hide();

@@ -43,8 +43,21 @@
         }
         $("#albumNameInput").val(albumsString);
     };
-
 }( window.metadataBatchModal = window.metadataBatchModal || {}, jQuery ));
+
+$("#batchMapTabLink").on("click", function (e) {
+    e.preventDefault();
+
+    const propBatchMetadataModal = document.getElementById('propBatchMetadata');
+    const modal = bootstrap.Modal.getInstance(propBatchMetadataModal);
+    modal.handleUpdate();
+
+    const metadataIds = shashin.getMetadataIdList();
+
+    if (shashin.map === null && metadataIds.length > 0) {
+        shashin.openMap();
+    }
+});
 
 $("#batchrescan").on("click", async function (e) {
     if ($("#batchrescan").prop("checked")) {
@@ -344,6 +357,11 @@ $("#batchisobject").on("click", function (e) {
 
 // Clear message on modal close
 $('#propBatchMetadata').on('hide.bs.modal', function () {
+    if (shashin.map !== null) {
+        // Set map target to null and reset
+        shashin.map.setTarget(null);
+        shashin.map = null;
+    }
     $("#metadataBatchModalStatus").attr("class","spinner-grow me-auto");
     $("#metadataBatchModalStatus").invisible();
     $("#msgBatchMetadata").html("");
@@ -365,6 +383,10 @@ $('#propBatchMetadata').on('hide.bs.modal', function () {
     $("#collapseBatchMetadata").collapse("hide");
     metadataBatchModal.closeBatchTagPeopleDropdown();
     metadataBatchModal.closeBatchTagAlbumDropdown();
+    if ($("#batchGeneralTabLink").length > 0) {
+        const tab = new bootstrap.Tab($("#batchGeneralTabLink"));
+        tab.show();
+    }
     shashin.clearTimelineSelection();
 });
 
