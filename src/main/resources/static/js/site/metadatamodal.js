@@ -486,6 +486,7 @@ $('#propMetadata').on('hide.bs.modal', function () {
     $("#saveTimelineModalForm :input").prop("disabled", false);
     $("#shortLocationLabel").html("");
     $("#shortLocationLabel").attr("title", "");
+    $("#mapTabMessage").text("Save coordinates in the context menu");
 
     if ($("#generalTabLink").length > 0) {
         const tab = new bootstrap.Tab($("#generalTabLink"));
