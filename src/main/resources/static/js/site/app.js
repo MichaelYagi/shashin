@@ -1631,6 +1631,13 @@
         };
 
         const saveCoordinates = function (obj) {
+            shashin.showToastMessage("Saving location", "Saving location", {
+                icon: "bi-info-circle",
+                iconColor: "#777777",
+                tag: "latlng",
+                autohide: false,
+                borderColor:"success"
+            });
             const coordArray = ol.proj.toLonLat(obj.coordinate);
             if (coordArray.length > 1) {
                 const coords = coordArray[1]+","+coordArray[0];
@@ -1640,6 +1647,9 @@
                 };
                 const http = new Http("save location");
                 http.ajax("put", "/metadata/update/coordinates/" + metadata.id + "?v="+uuidv4(), JSON.stringify(json), function (response) {
+                    shashin.closeToastMessages({
+                        tag: "latlng"
+                    });
                     shashin.showToastMessage("Could not update location", "Could not update location", {
                         icon: "bi-exclamation-triangle",
                         iconColor: "#FF0000",
@@ -1647,6 +1657,9 @@
                         borderColor:"danger"
                     });
                 }).then(function (response) {
+                    shashin.closeToastMessages({
+                        tag: "latlng"
+                    });
                     if (response.hasOwnProperty("status")) {
                         if (response.status !== shashin.apiResponse.SUCCESS) {
                             shashin.showToastMessage("Could not update location", "Could not update location", {
@@ -1664,6 +1677,22 @@
                                 tag: "latlng",
                                 borderColor:"success"
                             });
+
+                            const metadata = {};
+                            if (response.hasOwnProperty("coordinates") && (response.coordinates).hasOwnProperty("lat") && (response.coordinates).hasOwnProperty("lng")) {
+                                metadata.lat = response.coordinates.lat;
+                                metadata.lng = response.coordinates.lng;
+
+                                if ((response.coordinates).hasOwnProperty("timezone")) {
+                                    $("#offsetTaken").val(response.coordinates.timezone);
+                                }
+
+                                if ((response.coordinates).hasOwnProperty("place")) {
+                                    const placeNameDisplayNameArr = (response.coordinates.place).split(";");
+                                    const placeNameDisplayName = placeNameDisplayNameArr[0];
+                                    $("#mapTabMessage").html(TimelineTemplates.MapLinks({metadata:metadata, placeNameDisplayName:placeNameDisplayName, queryParamDates:""}));
+                                }
+                            }
 
                             // Update marker and center
                             shashin.map.getLayers().forEach(layer => {
