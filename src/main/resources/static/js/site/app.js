@@ -791,8 +791,8 @@
                 const latlngValue = (metadata.hasOwnProperty("lat") && metadata.hasOwnProperty("lng") && metadata.lat != null && metadata.lng != null && metadata.lat !== "" && metadata.lng !== "") ? ($.trim(metadata.lat) + ',' + $.trim(metadata.lng)) : '';
                 $("#latlng").val(latlngValue);
                 $("#mapTabNav").show();
-                if (latlngValue === "") {
-                    // $("#mapTabNav").hide();
+                if (latlngValue === "" && $("#generalTabNav").length === 0) {
+                    $("#mapTabNav").hide();
                 } else {
                     $("#placeName").prop('disabled', false);
                 }
@@ -1718,7 +1718,7 @@
         const setBatchCoordinates = function (obj) {
             const coordArray = ol.proj.toLonLat(obj.coordinate);
             if (coordArray.length > 1) {
-                const coords = coordArray[1]+","+coordArray[0];
+                // const coords = coordArray[1]+","+coordArray[0];
                 // const json = {
                 //     id: metadata.id,
                 //     latlng: coords
@@ -1870,7 +1870,7 @@
                 contextValueArray.push("-");
             }
 
-            if ($("#propMetadata").hasClass('show') === true) {
+            if ($("#propMetadata").hasClass('show') === true && $("#generalTabNav").length > 0) {
                 contextValueArray.push(
                     {
                         text: "Save Coordinates", // Set coordinates in modal field
@@ -1885,6 +1885,7 @@
                     }
                 );
             }
+
 
             contextValueArray.push(
                 {
