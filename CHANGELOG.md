@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
+- Map context to save or set coordinates from the map
 
 ### Changed
 
