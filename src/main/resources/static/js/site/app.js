@@ -1719,10 +1719,10 @@
             const coordArray = ol.proj.toLonLat(obj.coordinate);
             if (coordArray.length > 1) {
                 const coords = coordArray[1]+","+coordArray[0];
-                const json = {
-                    id: metadata.id,
-                    latlng: coords
-                };
+                // const json = {
+                //     id: metadata.id,
+                //     latlng: coords
+                // };
                 // const http = new Http("save location");
                 // http.ajax("put", "/metadata/update/batch/coordinates?v="+uuidv4(), JSON.stringify(json), function (response) {
                 //     shashin.showToastMessage("Could not update location", "Could not update location", {
