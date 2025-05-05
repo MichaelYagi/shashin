@@ -1718,49 +1718,64 @@
         const setBatchCoordinates = function (obj) {
             const coordArray = ol.proj.toLonLat(obj.coordinate);
             if (coordArray.length > 1) {
-                // Update marker and center
-                shashin.map.getLayers().forEach(layer => {
-                    if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties().name === "maplocation") {
-                        shashin.map.removeLayer(layer);
-                    }
-                });
+                const coords = coordArray[1]+","+coordArray[0];
+                const json = {
+                    id: metadata.id,
+                    latlng: coords
+                };
+                // const http = new Http("save location");
+                // http.ajax("put", "/metadata/update/batch/coordinates?v="+uuidv4(), JSON.stringify(json), function (response) {
+                //     shashin.showToastMessage("Could not update location", "Could not update location", {
+                //         icon: "bi-exclamation-triangle",
+                //         iconColor: "#FF0000",
+                //         tag: "latlng",
+                //         borderColor:"danger"
+                //     });
+                // }).then(function (response) {
+                    // Update marker and center
+                    shashin.map.getLayers().forEach(layer => {
+                        if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties().name === "maplocation") {
+                            shashin.map.removeLayer(layer);
+                        }
+                    });
 
-                shashin.map.getView().setCenter(ol.proj.fromLonLat([coordArray[0], coordArray[1]]));
-                shashin.map.getView().setZoom(18);
+                    shashin.map.getView().setCenter(ol.proj.fromLonLat([coordArray[0], coordArray[1]]));
+                    shashin.map.getView().setZoom(18);
 
-                shashin.feature = new ol.Feature({
-                    geometry: new ol.geom.Point(ol.proj.fromLonLat([coordArray[0], coordArray[1]]))
-                });
+                    shashin.feature = new ol.Feature({
+                        geometry: new ol.geom.Point(ol.proj.fromLonLat([coordArray[0], coordArray[1]]))
+                    });
 
-                const iconSize = 30;
-                const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + iconSize + '" height="' + iconSize + '" fill="currentColor" class="bi bi-geo-alt-fill" style="color: orangered;" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg>';
-                const styleIcon = new ol.style.Style({
-                    image: new ol.style.Icon({
-                        opacity: 1,
-                        src: 'data:image/svg+xml;utf8,' + svg,
-                        anchor: [0.5, iconSize],
-                        anchorXUnits: 'fraction',
-                        anchorYUnits: 'pixels',
-                        anchorOrigin: 'top-left',
-                        offset: [0, 0]
-                    })
-                });
-                shashin.feature.setStyle(styleIcon);
-                shashin.layer = new ol.layer.Vector({
-                    source: new ol.source.Vector({
-                        features: [shashin.feature]
-                    })
-                });
-                shashin.layer.set('name', 'maplocation');
-                shashin.map.addLayer(shashin.layer);
-                $("#latlngBatchData").val(coordArray[1]+","+coordArray[0]);
+                    const iconSize = 30;
+                    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + iconSize + '" height="' + iconSize + '" fill="currentColor" class="bi bi-geo-alt-fill" style="color: orangered;" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg>';
+                    const styleIcon = new ol.style.Style({
+                        image: new ol.style.Icon({
+                            opacity: 1,
+                            src: 'data:image/svg+xml;utf8,' + svg,
+                            anchor: [0.5, iconSize],
+                            anchorXUnits: 'fraction',
+                            anchorYUnits: 'pixels',
+                            anchorOrigin: 'top-left',
+                            offset: [0, 0]
+                        })
+                    });
+                    shashin.feature.setStyle(styleIcon);
+                    shashin.layer = new ol.layer.Vector({
+                        source: new ol.source.Vector({
+                            features: [shashin.feature]
+                        })
+                    });
+                    shashin.layer.set('name', 'maplocation');
+                    shashin.map.addLayer(shashin.layer);
+                    $("#latlngBatchData").val(coordArray[1]+","+coordArray[0]);
 
-                shashin.showToastMessage("Location copied", "Location copied to Latitude, Longitude field", {
-                    icon: "bi-info-circle",
-                    iconColor: "#777777",
-                    tag: "latlng",
-                    borderColor:"success"
-                });
+                    shashin.showToastMessage("Location set", "Coordinates set in Latitude/Longitude field", {
+                        icon: "bi-info-circle",
+                        iconColor: "#777777",
+                        tag: "latlng",
+                        borderColor:"success"
+                    });
+                // });
             }
         };
 
@@ -1836,7 +1851,7 @@
             layer.getSource().addFeature(feature);
 
             // Create menu for context menu
-            const copyText = coordArray[1] + "," + coordArray[0];
+            const copyText = "Copy " + coordArray[1] + "," + coordArray[0];
             shashin.contextMenu.updatePosition([evt.pixel[0], evt.pixel[1] + 12]);
 
             const contextValueArray = [];
@@ -1865,7 +1880,7 @@
             } else if ($("#propBatchMetadata").hasClass('show') === true) {
                 contextValueArray.push(
                     {
-                        text: "Set Coordinates Field", // Set coordinates in modal field
+                        text: "Set Lat/Lng Field", // Set coordinates in modal field
                         callback: setBatchCoordinates
                     }
                 );

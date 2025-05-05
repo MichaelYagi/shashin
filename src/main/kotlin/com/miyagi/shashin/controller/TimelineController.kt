@@ -1689,6 +1689,41 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
+
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @RequestMapping(value = ["/metadata/update/batch/coordinates","/api/v1/update/metadata/batch/coordinates"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
+    @ResponseBody
+    fun updateBatchLocationMetadata(model: Model, @RequestBody requestBody: JsonNode, response: HttpServletResponse): String? {
+        resp["msg"] = "Failed!"
+        resp["status"] = ApiResponse.FAIL.status
+
+        val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+
+        if (metadataMap.containsKey("ids") &&
+            metadataMap.containsKey("latlng")
+        ) {
+            val coordArray = metadataMap["latlng"].toString().split(",")
+            val idArray: Array<String>? = mapper.readValue(metadataMap["ids"].toString(), object : TypeReference<Array<String>>() {})
+
+            if (idArray != null && coordArray.size == 2 && idArray.isNotEmpty()) {
+                Thread {
+                    for (metadataId in idArray) {
+                        setCoordinates(metadataId, coordArray[0], coordArray[1])
+                    }
+                }.start()
+
+                resp["msg"] = "Saved!"
+                resp["status"] = ApiResponse.SUCCESS.status
+            }
+
+            resp["msg"] = "Saved!"
+            resp["status"] = ApiResponse.SUCCESS.status
+        }
+
+        return mapper.writeValueAsString(resp)
+    }
+
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/metadata/update/coordinates/{metadataId}","/api/v1/update/metadata/coordinates/{metadataId}"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
@@ -1702,12 +1737,14 @@ class TimelineController: BaseController() {
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
         if (metadataMap.containsKey("id") &&
-            metadataMap.containsKey("latlng")  &&
+            metadataMap.containsKey("latlng") &&
             metadataMap["id"].toString() == metadataId
         ) {
             val coordArray = metadataMap["latlng"].toString().split(",")
             if (coordArray.size == 2) {
-                setCoordinates(metadataMap["id"].toString(),coordArray[0],coordArray[1])
+                Thread {
+                    setCoordinates(metadataMap["id"].toString(), coordArray[0], coordArray[1])
+                }.start()
 
                 resp["msg"] = "Saved!"
                 resp["status"] = ApiResponse.SUCCESS.status
@@ -1723,23 +1760,21 @@ class TimelineController: BaseController() {
             val metadataObj = metadataRepository.findById(metadataId)
 
             if (metadataObj.isPresent) {
-                Thread {
-                    val coordinateMap = TextUtils.processCoordinates(geocodeUrl!!, "${lat.trim()},${lng.trim()}")
-                    if (coordinateMap["lat"] != null && coordinateMap["lng"] != null) {
-                        metadataObj.get().setLat(coordinateMap["lat"])
-                        metadataObj.get().setLng(coordinateMap["lng"])
-                    }
+                val coordinateMap = TextUtils.processCoordinates(geocodeUrl!!, "${lat.trim()},${lng.trim()}")
+                if (coordinateMap["lat"] != null && coordinateMap["lng"] != null) {
+                    metadataObj.get().setLat(coordinateMap["lat"])
+                    metadataObj.get().setLng(coordinateMap["lng"])
+                }
 
-                    if (coordinateMap["place"] != null) {
-                        metadataObj.get().setPlaceName(coordinateMap["place"])
-                    }
-                    if (coordinateMap["timezone"] != null) {
-                        metadataObj.get().setTimeZone(coordinateMap["timezone"])
-                    }
+                if (coordinateMap["place"] != null) {
+                    metadataObj.get().setPlaceName(coordinateMap["place"])
+                }
+                if (coordinateMap["timezone"] != null) {
+                    metadataObj.get().setTimeZone(coordinateMap["timezone"])
+                }
 
-                    metadataObj.get().setModifiedAt(getCurrentTimestamp())
-                    metadataRepository.save(metadataObj.get())
-                }.start()
+                metadataObj.get().setModifiedAt(getCurrentTimestamp())
+                metadataRepository.save(metadataObj.get())
             }
         }
     }
