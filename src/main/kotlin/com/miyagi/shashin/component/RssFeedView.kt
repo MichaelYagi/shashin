@@ -47,6 +47,11 @@ class RssFeedView : AbstractRssFeedView() {
     var userAlbumRepository: UserAlbumRepository? = null
 
     override fun buildFeedMetadata(model: MutableMap<String, Any>, feed: Channel, request: HttpServletRequest) {
+        var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
+        if (request.scheme == "https") {
+            baseUrlBuilder = baseUrlBuilder.scheme("https")
+        }
+
         feed.title = "$appName RSS Feed"
         feed.description = "$appName images - Invalid key"
         feed.feedType = "rss_2.0"
@@ -59,14 +64,18 @@ class RssFeedView : AbstractRssFeedView() {
             }
         }
 
-        var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
-        if (request.scheme == "https") {
-            baseUrlBuilder = baseUrlBuilder.scheme("https")
-        }
         var apiKey = ""
         if (model.containsKey("apiKey")) {
             apiKey = model["apiKey"] as String
         }
+
+        val image = Image()
+        image.link = "${baseUrlBuilder.build().toUriString()}/$apiKey/rss"
+        image.url = "${baseUrlBuilder.build().toUriString()}/images/favicon-256x256.png"
+        image.title = "$appName RSS Feed"
+        image.width = 56
+        image.height = 56
+        feed.image = image
         feed.link = "${baseUrlBuilder.build().toUriString()}/$apiKey/rss"
         feed.lastBuildDate = Date()
     }
