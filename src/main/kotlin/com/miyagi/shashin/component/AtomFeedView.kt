@@ -82,6 +82,9 @@ class AtomFeedView : AbstractAtomFeedView() {
         link.rel = "self"
         link.title = "$appName ATOM feed URL"
 
+        feed.icon = "${baseUrlBuilder.build().toUriString()}/images/favicon.ico"
+        feed.logo = "${baseUrlBuilder.build().toUriString()}/images/favicon-256x256.png"
+
         feed.alternateLinks = listOf(link)
         feed.id = "${baseUrlBuilder.build().toUriString()}/$apiKey/atom"
         feed.updated = Date()
