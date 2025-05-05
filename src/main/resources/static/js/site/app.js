@@ -1679,16 +1679,16 @@
                             });
 
                             const metadata = {};
-                            if (response.hasOwnProperty("coordinates") && (response.coordinates).hasOwnProperty("lat") && (response.coordinates).hasOwnProperty("lng")) {
-                                metadata.lat = response.coordinates.lat;
-                                metadata.lng = response.coordinates.lng;
+                            if (response.hasOwnProperty("metadata") && (response.metadata).hasOwnProperty("lat") && (response.metadata).hasOwnProperty("lng")) {
+                                metadata.lat = response.metadata.lat;
+                                metadata.lng = response.metadata.lng;
 
-                                if ((response.coordinates).hasOwnProperty("timezone")) {
-                                    $("#offsetTaken").val(response.coordinates.timezone);
+                                if ((response.metadata).hasOwnProperty("timeZone")) {
+                                    $("#offsetTaken").val(response.metadata.timeZone);
                                 }
 
-                                if ((response.coordinates).hasOwnProperty("place")) {
-                                    const placeNameDisplayNameArr = (response.coordinates.place).split(";");
+                                if ((response.metadata).hasOwnProperty("placeName")) {
+                                    const placeNameDisplayNameArr = (response.metadata.placeName).split(";");
                                     const placeNameDisplayName = placeNameDisplayNameArr[0];
                                     $("#mapTabMessage").html(TimelineTemplates.MapLinks({metadata:metadata, placeNameDisplayName:placeNameDisplayName, queryParamDates:""}));
                                 }
