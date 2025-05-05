@@ -1708,9 +1708,12 @@ class TimelineController: BaseController() {
 
             if (idArray != null && coordArray.size == 2 && idArray.isNotEmpty()) {
                 Thread {
+                    val metadataList = mutableListOf<Metadata>()
                     for (metadataId in idArray) {
-                        setCoordinates(metadataId, coordArray[0], coordArray[1])
+                        val metadata = setCoordinates(metadataId, coordArray[0], coordArray[1])
+                        metadataList.add(metadata)
                     }
+                    metadataRepository.saveAll(metadataList)
                 }.start()
 
                 resp["msg"] = "Saved!"
@@ -1730,11 +1733,11 @@ class TimelineController: BaseController() {
     @ResponseBody
     fun updateLocationMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String, response: HttpServletResponse): String? {
 //        println(requestBody)
-        var coordinateMap = mapOf<String, String?>()
+        var metadata = Metadata()
 
         resp["msg"] = "Failed!"
         resp["status"] = ApiResponse.FAIL.status
-        resp["coordinates"] = coordinateMap
+        resp["metadata"] = metadata
 
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
@@ -1744,9 +1747,10 @@ class TimelineController: BaseController() {
         ) {
             val coordArray = metadataMap["latlng"].toString().split(",")
             if (coordArray.size == 2) {
-                coordinateMap = setCoordinates(metadataMap["id"].toString(), coordArray[0], coordArray[1])
+                metadata = setCoordinates(metadataMap["id"].toString(), coordArray[0], coordArray[1])
+                metadataRepository.save(metadata)
 
-                resp["coordinates"] = coordinateMap
+                resp["metadata"] = metadata
                 resp["msg"] = "Saved!"
                 resp["status"] = ApiResponse.SUCCESS.status
             }
@@ -1755,7 +1759,7 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
-    private fun setCoordinates(metadataId: String, lat: String, lng: String): Map<String, String?> {
+    private fun setCoordinates(metadataId: String, lat: String, lng: String): Metadata {
         var coordinateMap = mapOf<String, String?>()
         if (lat != "" && lng != "" && metadataId != "") {
 
@@ -1776,15 +1780,14 @@ class TimelineController: BaseController() {
                 }
 
                 metadataObj.get().setModifiedAt(getCurrentTimestamp())
-                metadataRepository.save(metadataObj.get())
 
-                return coordinateMap
+                return metadataObj.get()
             }
 
-            return coordinateMap
+            return metadataObj.get()
         }
 
-        return coordinateMap
+        return Metadata()
     }
 
     private fun notifyAlbumUpdate(albumIdAddedList: MutableList<Int>, currentUserObj: User?) {
