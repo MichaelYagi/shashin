@@ -1730,9 +1730,11 @@ class TimelineController: BaseController() {
     @ResponseBody
     fun updateLocationMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String, response: HttpServletResponse): String? {
 //        println(requestBody)
+        var coordinateMap = mapOf<String, String?>()
 
         resp["msg"] = "Failed!"
         resp["status"] = ApiResponse.FAIL.status
+        resp["coordinates"] = coordinateMap
 
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
@@ -1742,10 +1744,9 @@ class TimelineController: BaseController() {
         ) {
             val coordArray = metadataMap["latlng"].toString().split(",")
             if (coordArray.size == 2) {
-                Thread {
-                    setCoordinates(metadataMap["id"].toString(), coordArray[0], coordArray[1])
-                }.start()
+                coordinateMap = setCoordinates(metadataMap["id"].toString(), coordArray[0], coordArray[1])
 
+                resp["coordinates"] = coordinateMap
                 resp["msg"] = "Saved!"
                 resp["status"] = ApiResponse.SUCCESS.status
             }
@@ -1754,13 +1755,14 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
-    private fun setCoordinates(metadataId: String, lat: String, lng: String) {
+    private fun setCoordinates(metadataId: String, lat: String, lng: String): Map<String, String?> {
+        var coordinateMap = mapOf<String, String?>()
         if (lat != "" && lng != "" && metadataId != "") {
 
             val metadataObj = metadataRepository.findById(metadataId)
 
             if (metadataObj.isPresent) {
-                val coordinateMap = TextUtils.processCoordinates(geocodeUrl!!, "${lat.trim()},${lng.trim()}")
+                coordinateMap = TextUtils.processCoordinates(geocodeUrl!!, "${lat.trim()},${lng.trim()}")
                 if (coordinateMap["lat"] != null && coordinateMap["lng"] != null) {
                     metadataObj.get().setLat(coordinateMap["lat"])
                     metadataObj.get().setLng(coordinateMap["lng"])
@@ -1775,8 +1777,14 @@ class TimelineController: BaseController() {
 
                 metadataObj.get().setModifiedAt(getCurrentTimestamp())
                 metadataRepository.save(metadataObj.get())
+
+                return coordinateMap
             }
+
+            return coordinateMap
         }
+
+        return coordinateMap
     }
 
     private fun notifyAlbumUpdate(albumIdAddedList: MutableList<Int>, currentUserObj: User?) {
