@@ -1,6 +1,7 @@
 package com.miyagi.shashin.service
 
 import com.miyagi.shashin.util.ImageProcessing
+import org.springframework.cache.annotation.CacheConfig
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.core.io.FileSystemResource
 import org.springframework.stereotype.Service
@@ -13,6 +14,7 @@ import java.util.logging.Level
 import java.util.logging.Logger
 
 @Service
+@CacheConfig(cacheNames=["filestats"])
 class FileStats {
     private var logger: Logger = Logger.getLogger(FileStats::class.simpleName)
 
