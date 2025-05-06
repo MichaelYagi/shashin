@@ -34,6 +34,7 @@ class FileStats {
         var sidecarSize = 0.toLong()
 
         if (session.getAttribute("sidecarSize") == null) {
+            logger.log(Level.WARNING, "Setting sidecarSize session attribute")
             try {
                 val files = if (Files.isSymbolicLink(Paths.get(sidecarDir))) {
                     val path = Path(sidecarDir)
@@ -53,6 +54,7 @@ class FileStats {
                 logger.log(Level.WARNING, "Error calculating sidecar size:" + e.message)
             }
         } else {
+            logger.log(Level.WARNING, "Using sidecarSize session attribute")
             sidecarSize = session.getAttribute("sidecarSize").toString().toLong()
         }
 
