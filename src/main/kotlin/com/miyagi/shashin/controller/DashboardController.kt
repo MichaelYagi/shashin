@@ -7,6 +7,7 @@ import com.miyagi.shashin.component.StatMessage
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
+import com.miyagi.shashin.util.MetricsUtil
 import com.miyagi.shashin.util.NetworkUtils
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -206,6 +207,8 @@ class DashboardController {
         response["uptimeText"] = TextUtils.getServerUptimeFormatted()
         response["uptimeMS"] = TextUtils.getServerUptimeMS()
 
+        val metricsUtil = MetricsUtil()
+        metricsUtil.start("file stats")
         // Files stats
         val kilo = 1024
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
@@ -280,6 +283,8 @@ class DashboardController {
         }
         response["sidecarTotalSizeText"] = "${String.format("%.2f", sidecarSpaceTotalSizeProcessed)} $sidecarSizeNotation"
         response["sidecarTotalSizeB"] = sidecarTotalSizeB
+
+        metricsUtil.end()
 
         val settings = model.getAttribute("settings") as Settings?
 
@@ -408,6 +413,7 @@ class DashboardController {
             response["keywordTotalCount"] = keywordCount
         }
 
+        metricsUtil.start("media stats")
         // Media stats
         val photoCount = metadataRepository.countAllByTypeContains("image")
         val videoCount = metadataRepository.countAllByTypeContains("video")
@@ -417,6 +423,7 @@ class DashboardController {
         response["videoCount"] = videoCount
         response["notLocatedCount"] = notLocatedCount
         response["hiddenCount"] = hiddenCount
+        metricsUtil.end()
 
         response["message"] = ""
         response["msg"] = ""
