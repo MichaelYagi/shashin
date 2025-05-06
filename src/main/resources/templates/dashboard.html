@@ -226,11 +226,11 @@
                         }
                     }
 
-                    const sidecarUsedSize = parseInt(data["sidecarUsedSize"]);
+                    const sidecarUsedSizeKB = parseInt(data["sidecarUsedSizeKB"]);
                     const sidecarTotalSize = parseInt(data["sidecarSpaceTotal"]);
-                    const percentUsed = parseInt((sidecarUsedSize/sidecarTotalSize) * 100);
+                    const percentUsed = parseInt((sidecarUsedSizeKB/sidecarTotalSize) * 100);
 
-                    shashin.printMessageToConsole("sidecar space used raw: "+data["sidecarUsedSize"], {tag: "dashboard"});
+                    shashin.printMessageToConsole("sidecar space used raw: "+data["sidecarUsedSizeKB"], {tag: "dashboard"});
                     shashin.printMessageToConsole("sidecar space used: "+data["sidecarSizeText"], {tag: "dashboard"});
                     shashin.printMessageToConsole("sidecar space usable raw: "+data["sidecarUsableSize"], {tag: "dashboard"});
                     shashin.printMessageToConsole("sidecar space usable: "+data["sidecarUsableSpaceText"], {tag: "dashboard"});

@@ -189,11 +189,18 @@ class DashboardController {
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/dashboard/data","/api/v1/dashboard/data"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getSharedAlbumsApi(model: Model): String {
+    fun getDashboardApi(model: Model): String {
         return mapper.writeValueAsString(buildDashboardData(model))
     }
 
-    private fun buildDashboardData(model: Model): MutableMap<String, Any?> {
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @RequestMapping(value = ["/stats/data","/api/v1/stats/data"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getStatsApi(model: Model): String {
+        return mapper.writeValueAsString(buildDashboardData(model,true))
+    }
+
+    private fun buildDashboardData(model: Model, simplified: Boolean = false): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         response["uptime"] = TextUtils.getServerUptime()
@@ -273,94 +280,132 @@ class DashboardController {
         response["sidecarTotalSpaceText"] = "${String.format("%.2f", sidecarSpaceTotalSizeProcessed)} $sidecarSizeNotation"
         response["sidecarSpaceTotal"] = sidecarSpaceTotal
 
-        val reachable: Boolean = NetworkUtils.checkNominatimConnection(geocodeUrl+"status.php?format=json")
-        response["nominatimAvailable"] = reachable
-
-        response["compreFaceAvailable"] = null
         val settings = model.getAttribute("settings") as Settings?
-        if (settings?.getCompreFaceKey() != null &&
-            settings.getCompreFaceKey() != "" && settings.getCompreFaceServer() != null &&
-            settings.getCompreFaceServer() != "")
-        {
-            val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
-                settings.getCompreFaceServer(),
-                settings.getCompreFaceKey()
-            )
-            response["compreFaceAvailable"] = faceRecogServicesAvailable
-        }
 
-        // Site stats
+        if (!simplified) {
+            val reachable: Boolean = NetworkUtils.checkNominatimConnection(geocodeUrl + "status.php?format=json")
+            response["nominatimAvailable"] = reachable
+
+            response["compreFaceAvailable"] = null
+            if (settings?.getCompreFaceKey() != null &&
+                settings.getCompreFaceKey() != "" && settings.getCompreFaceServer() != null &&
+                settings.getCompreFaceServer() != ""
+            ) {
+                val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
+                    settings.getCompreFaceServer(),
+                    settings.getCompreFaceKey()
+                )
+                response["compreFaceAvailable"] = faceRecogServicesAvailable
+            }
+
+            // Site stats
 //        val photosWithPeopleTaggedCount = recognitionLabelPhotoRepository.countDistinctMetadataId()
-        val peopleList = metadataRepository?.findMetadataByPeople(
-            settings?.getRecognitionConfidenceThreshold()!!,
-            TextUtils.getObjectName()
-        )
-        val favoritesCount = favoriteRepository.count()
-        val commentsCount = commentRepository.count()
-        val albumCount = albumRepository.count()
+            val peopleList = metadataRepository?.findMetadataByPeople(
+                settings?.getRecognitionConfidenceThreshold()!!,
+                TextUtils.getObjectName()
+            )
+            val favoritesCount = favoriteRepository.count()
+            val commentsCount = commentRepository.count()
+            val albumCount = albumRepository.count()
 
 //        response["photosWithPeopleTaggedCount"] = photosWithPeopleTaggedCount
-        response["photosWithPeopleTaggedCount"] = if (peopleList == null) 0 else peopleList.count()
-        response["favoritesCount"] = favoritesCount
-        response["commentsCount"] = commentsCount
-        response["albumCount"] = albumCount
+            response["photosWithPeopleTaggedCount"] = if (peopleList == null) 0 else peopleList.count()
+            response["favoritesCount"] = favoritesCount
+            response["commentsCount"] = commentsCount
+            response["albumCount"] = albumCount
 
-        // Browser stats
-        val browserCounts = useragentRepository.countByAgentName()
-        val browserCountList = ArrayList<HashMap<String, Any>>()
 
-        for (agentNameCount in browserCounts) {
-            val agentNameCountMap = HashMap<String, Any>()
-            var agentName = agentNameCount.getAgentName().toString()
-            if (agentNameCount.getAgentName() == null) {
-                agentName = "Unknown"
+            // Browser stats
+            val browserCounts = useragentRepository.countByAgentName()
+            val browserCountList = ArrayList<HashMap<String, Any>>()
+
+            for (agentNameCount in browserCounts) {
+                val agentNameCountMap = HashMap<String, Any>()
+                var agentName = agentNameCount.getAgentName().toString()
+                if (agentNameCount.getAgentName() == null) {
+                    agentName = "Unknown"
+                }
+                agentNameCountMap["y"] = agentName
+                agentNameCountMap["x"] = agentNameCount.getCount().toString().toInt()
+                browserCountList.add(agentNameCountMap)
             }
-            agentNameCountMap["y"] = agentName
-            agentNameCountMap["x"] = agentNameCount.getCount().toString().toInt()
-            browserCountList.add(agentNameCountMap)
-        }
-        response["agentNameCountJson"] = mapper.writeValueAsString(browserCountList)
+            response["agentNameCountJson"] = mapper.writeValueAsString(browserCountList)
 
-        // OS name stats
-        val osNameCounts = useragentRepository.countByOsName()
-        val osNameCountList = ArrayList<HashMap<String, Any>>()
+            // OS name stats
+            val osNameCounts = useragentRepository.countByOsName()
+            val osNameCountList = ArrayList<HashMap<String, Any>>()
 
-        for (osNameCount in osNameCounts) {
-            val osNameCountMap = HashMap<String, Any>()
-            var osName = osNameCount.getOsName().toString()
-            if (osNameCount.getOsName() == null) {
-                osName = "Unknown"
+            for (osNameCount in osNameCounts) {
+                val osNameCountMap = HashMap<String, Any>()
+                var osName = osNameCount.getOsName().toString()
+                if (osNameCount.getOsName() == null) {
+                    osName = "Unknown"
+                }
+                osNameCountMap["y"] = osName
+                osNameCountMap["x"] = osNameCount.getCount().toString().toInt()
+                osNameCountList.add(osNameCountMap)
             }
-            osNameCountMap["y"] = osName
-            osNameCountMap["x"] = osNameCount.getCount().toString().toInt()
-            osNameCountList.add(osNameCountMap)
-        }
-        response["osNameCountJson"] = mapper.writeValueAsString(osNameCountList)
+            response["osNameCountJson"] = mapper.writeValueAsString(osNameCountList)
 
-        // Camera stats
-        val cameraCounts = metadataRepository.countByCameraType()
-        val cameraCountList = ArrayList<HashMap<String, Any>>()
-        var cameraTotals = 0
-        if (cameraCounts.count() > 0) {
-            val maxCameraCount = cameraCounts.toList()[0].getCount()
-            for (cameraCount in cameraCounts) {
-                cameraTotals++
-                if (cameraCount.getCamera() != null && cameraCount.getCount() != null && cameraCount.getCount()!! > maxCameraCount!!*0.03) {
-                    val cameraCountMap = HashMap<String, Any>()
-                    var cameraName = cameraCount.getCamera().toString()
-                    cameraCountMap["y"] = cameraName
-                    cameraCountMap["x"] = cameraCount.getCount().toString().toInt()
-                    cameraCountList.add(cameraCountMap)
+            // Camera stats
+            val cameraCounts = metadataRepository.countByCameraType()
+            val cameraCountList = ArrayList<HashMap<String, Any>>()
+            var cameraTotals = 0
+            if (cameraCounts.count() > 0) {
+                val maxCameraCount = cameraCounts.toList()[0].getCount()
+                for (cameraCount in cameraCounts) {
+                    cameraTotals++
+                    if (cameraCount.getCamera() != null && cameraCount.getCount() != null && cameraCount.getCount()!! > maxCameraCount!! * 0.03) {
+                        val cameraCountMap = HashMap<String, Any>()
+                        var cameraName = cameraCount.getCamera().toString()
+                        cameraCountMap["y"] = cameraName
+                        cameraCountMap["x"] = cameraCount.getCount().toString().toInt()
+                        cameraCountList.add(cameraCountMap)
+                    }
                 }
             }
-        }
-        response["cameraCountJson"] = mapper.writeValueAsString(cameraCountList)
-        response["cameraTotalCount"] = cameraTotals
+            response["cameraCountJson"] = mapper.writeValueAsString(cameraCountList)
+            response["cameraTotalCount"] = cameraTotals
 
-        val browserCount = useragentRepository.countDistinctAgentName()
-        val osCount = useragentRepository.countDistinctOsName()
-        response["browserTotalCount"] = browserCount
-        response["osTotalCount"] = osCount
+            val browserCount = useragentRepository.countDistinctAgentName()
+            val osCount = useragentRepository.countDistinctOsName()
+            response["browserTotalCount"] = browserCount
+            response["osTotalCount"] = osCount
+
+            // User stats
+            val allowedUserCount = userRepository.countAllByIsAuthorizedIsTrueAndAuthorityEquals(userRole!!)
+            val notAllowedUserCount = userRepository.countAllByIsAuthorizedIsFalseAndAuthorityEquals(userRole!!)
+            val allowedAdminCount = userRepository.countAllByIsAuthorizedIsTrueAndAuthorityEquals(adminRole!!)
+            val notAllowedAdminCount = userRepository.countAllByIsAuthorizedIsFalseAndAuthorityEquals(adminRole!!)
+            val allowedSuperCount = userRepository.countAllByIsAuthorizedIsTrueAndAuthorityEquals(superRole!!)
+            val notAllowedSuperCount = userRepository.countAllByIsAuthorizedIsFalseAndAuthorityEquals(superRole!!)
+            response["allowedUserCount"] = allowedUserCount
+            response["notAllowedUserCount"] = notAllowedUserCount
+            response["allowedAdminCount"] = allowedAdminCount
+            response["notAllowedAdminCount"] = notAllowedAdminCount
+            response["allowedSuperCount"] = allowedSuperCount
+            response["notAllowedSuperCount"] = notAllowedSuperCount
+
+            // Keyword stats
+            val keywordCounts = keywordRepository.countByKeyword()
+            val keywordCountList = ArrayList<HashMap<String, Any>>()
+            var keywordCount = 0
+            if (keywordCounts.count() > 0) {
+                val maxKwCount = keywordCounts.toList()[0].getCount()
+                for (kwCount in keywordCounts) {
+                    keywordCount++
+                    if (kwCount.getCount() != null && kwCount.getCount()!! > maxKwCount!!*0.03) {
+                        val keywordCountMap = HashMap<String, Any>()
+                        val keyword = kwCount.getKeyword().toString()
+                        keywordCountMap["y"] = keyword
+                        keywordCountMap["x"] = kwCount.getCount().toString().toInt()
+                        keywordCountList.add(keywordCountMap)
+                    }
+                }
+            }
+            response["keywordCountJson"] = mapper.writeValueAsString(keywordCountList)
+            response["keywordTotalCount"] = keywordCount
+        }
 
         // Media stats
         val photoCount = metadataRepository.countAllByTypeContains("image")
@@ -371,40 +416,6 @@ class DashboardController {
         response["videoCount"] = videoCount
         response["notLocatedCount"] = notLocatedCount
         response["hiddenCount"] = hiddenCount
-
-        // User stats
-        val allowedUserCount = userRepository.countAllByIsAuthorizedIsTrueAndAuthorityEquals(userRole!!)
-        val notAllowedUserCount = userRepository.countAllByIsAuthorizedIsFalseAndAuthorityEquals(userRole!!)
-        val allowedAdminCount = userRepository.countAllByIsAuthorizedIsTrueAndAuthorityEquals(adminRole!!)
-        val notAllowedAdminCount = userRepository.countAllByIsAuthorizedIsFalseAndAuthorityEquals(adminRole!!)
-        val allowedSuperCount = userRepository.countAllByIsAuthorizedIsTrueAndAuthorityEquals(superRole!!)
-        val notAllowedSuperCount = userRepository.countAllByIsAuthorizedIsFalseAndAuthorityEquals(superRole!!)
-        response["allowedUserCount"] = allowedUserCount
-        response["notAllowedUserCount"] = notAllowedUserCount
-        response["allowedAdminCount"] = allowedAdminCount
-        response["notAllowedAdminCount"] = notAllowedAdminCount
-        response["allowedSuperCount"] = allowedSuperCount
-        response["notAllowedSuperCount"] = notAllowedSuperCount
-
-        // Keyword stats
-        val keywordCounts = keywordRepository.countByKeyword()
-        val keywordCountList = ArrayList<HashMap<String, Any>>()
-        var keywordCount = 0
-        if (keywordCounts.count() > 0) {
-            val maxKwCount = keywordCounts.toList()[0].getCount()
-            for (kwCount in keywordCounts) {
-                keywordCount++
-                if (kwCount.getCount() != null && kwCount.getCount()!! > maxKwCount!!*0.03) {
-                    val keywordCountMap = HashMap<String, Any>()
-                    val keyword = kwCount.getKeyword().toString()
-                    keywordCountMap["y"] = keyword
-                    keywordCountMap["x"] = kwCount.getCount().toString().toInt()
-                    keywordCountList.add(keywordCountMap)
-                }
-            }
-        }
-        response["keywordCountJson"] = mapper.writeValueAsString(keywordCountList)
-        response["keywordTotalCount"] = keywordCount
 
         response["message"] = ""
         response["msg"] = ""
