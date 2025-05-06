@@ -916,12 +916,13 @@ class SettingsController {
     }
 
     @Secured("ROLE_SUPER")
-    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
+    @CacheEvict(value = ["getFileStats", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     @RequestMapping(value = ["/settings/scan"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun postScan(
         model: Model,
+        session: HttpSession,
         @RequestParam submit: String,
         @RequestParam deleteThread: Boolean,
         @RequestParam stopScan: Boolean,
@@ -941,6 +942,7 @@ class SettingsController {
         }
 
         if (submit == "Scan") {
+            session.setAttribute("sidecarSize", null)
             resp["msg"] = scanMediaDirectories(reindexFiles)
         }
 
@@ -1509,7 +1511,7 @@ class SettingsController {
         return false
     }
 
-    @CacheEvict(value = ["getFileStats", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     fun scanMediaDirectories(reindexFiles: Boolean, addToAlbum: Int = 0, uploadUserId: Int = 0): String {
         recognitionCount = 0
         val superAdmins = userRepository?.findAllByAuthorityEquals(superRole!!)
