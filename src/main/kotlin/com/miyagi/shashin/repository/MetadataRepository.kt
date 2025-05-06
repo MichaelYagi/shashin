@@ -80,15 +80,12 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
 
    fun countMetadataById(metadataId: String): Int
 
-   @Cacheable(value = ["countAllByTypeContains"])
    fun countAllByTypeContains(type: String): Int
 
-   @Cacheable(value = ["countAllByHiddenIsTrue"])
    fun countAllByHiddenIsTrue(): Int
 
    fun countAllByHiddenIsFalse(): Int
 
-   @Cacheable(value = ["countAllByLatIsNullAndLngIsNull"])
    fun countAllByLatIsNullAndLngIsNull(): Int
 
    @Query("SELECT camera, COUNT(*) AS count FROM metadata WHERE camera IS NOT NULL GROUP BY camera ORDER BY count DESC", nativeQuery = true)
