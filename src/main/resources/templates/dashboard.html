@@ -93,7 +93,7 @@
                                         <div id="sidecarUsageGraph" class="progress-bar" style="width: 0">0%</div>
                                     </div>
                                     <div class="d-flex justify-content-end">
-                                        <div id="sidecarUsableSpaceText"></div>
+                                        <div id="sidecarUsableSizeText"></div>
                                     </div>
                                 </div>
                             </div>
@@ -227,15 +227,15 @@
                     }
 
                     const sidecarUsedSizeKB = parseInt(data["sidecarUsedSizeKB"]);
-                    const sidecarTotalSize = parseInt(data["sidecarSpaceTotal"]);
+                    const sidecarTotalSize = parseInt(data["sidecarTotalSpace"]);
                     const percentUsed = parseInt((sidecarUsedSizeKB/sidecarTotalSize) * 100);
 
                     shashin.printMessageToConsole("sidecar space used raw: "+data["sidecarUsedSizeKB"], {tag: "dashboard"});
                     shashin.printMessageToConsole("sidecar space used: "+data["sidecarUsedSizeText"], {tag: "dashboard"});
                     shashin.printMessageToConsole("sidecar space usable raw: "+data["sidecarUsableSize"], {tag: "dashboard"});
-                    shashin.printMessageToConsole("sidecar space usable: "+data["sidecarUsableSpaceText"], {tag: "dashboard"});
-                    shashin.printMessageToConsole("sidecar space total raw: "+data["sidecarSpaceTotal"], {tag: "dashboard"});
-                    shashin.printMessageToConsole("sidecar space total: "+data["sidecarTotalSpaceText"], {tag: "dashboard"});
+                    shashin.printMessageToConsole("sidecar space usable: "+data["sidecarUsableSizeText"], {tag: "dashboard"});
+                    shashin.printMessageToConsole("sidecar space total raw: "+data["sidecarTotalSpace"], {tag: "dashboard"});
+                    shashin.printMessageToConsole("sidecar space total: "+data["sidecarTotalSizeText"], {tag: "dashboard"});
 
                     if (percentUsed > 0) {
                         $("#sidecarUsageContainer").attr("aria-valuenow", percentUsed);
@@ -250,13 +250,13 @@
                             const http = new Http("get sidecar data");
                             const type = "sidecardatasize";
                             const maxUsed = "90";
-                            const sidecarTotalSpaceText = data["sidecarTotalSpaceText"];
+                            const sidecarTotalSizeText = data["sidecarTotalSizeText"];
                             http.ajax("get", "/notifications/exists/" + type + "/" + maxUsed).then(function (data) {
                                 if (data.hasOwnProperty("exists")) {
                                     const exists = data.exists;
                                     if (exists === false) {
                                         const json = {
-                                            message: sidecarTotalSpaceText + " usable space left",
+                                            message: sidecarTotalSizeText + " usable space left",
                                             type: type,
                                             identifier: maxUsed
                                         };
@@ -269,7 +269,7 @@
                         }
                     }
                     $("#sidecarUsedSizeText").html(data["sidecarUsedSizeText"]);
-                    $("#sidecarUsableSpaceText").html("<small class='text-muted'>" + data["sidecarUsableSpaceText"] + " usable space left</small>");
+                    $("#sidecarUsableSizeText").html("<small class='text-muted'>" + data["sidecarUsableSizeText"] + " usable space left</small>");
                     $("#mediaCount").text(numberWithCommas(parseInt(data["photoCount"]) + parseInt(data["videoCount"])));
                     $("#cameraCount").text(numberWithCommas(parseInt(data["cameraTotalCount"])));
                     $("#keywordCount").text(numberWithCommas(parseInt(data["keywordTotalCount"])));
