@@ -230,7 +230,7 @@ class DashboardController {
             sidecarSizeProcessed /= kilo
             sidecarSizeNotation = "TB"
         }
-        response["sidecarSizeText"] = "${String.format("%.2f", sidecarSizeProcessed)} $sidecarSizeNotation"
+        response["sidecarUsedSizeText"] = "${String.format("%.2f", sidecarSizeProcessed)} $sidecarSizeNotation"
         response["sidecarUsedSize"] = sidecarSize.toDouble()
 
         var rawSidecarUsabe: Double
