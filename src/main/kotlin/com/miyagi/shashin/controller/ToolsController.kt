@@ -181,15 +181,16 @@ class ToolsController {
 
     @RequestMapping(value = ["/api/v1/status"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getStatusApi(model: Model): String {
-        val healthData = buildHealthData(model)
+    fun getStatusApi(model: Model,@RequestParam ignoreBuildCheck: Optional<Boolean>): String {
+        val ignoreBuild = ignoreBuildCheck.orElse(false)
+        val healthData = buildHealthData(model,ignoreBuild)
         return "{\"status\":\""+healthData["status"]+"\"}"
     }
 
     @GetMapping("/health")
-    fun getHealth(model: Model): String {
-
-        for ((k, v) in buildHealthData(model)) {
+    fun getHealth(model: Model,@RequestParam ignoreBuildCheck: Optional<Boolean>): String {
+        val ignoreBuild = ignoreBuildCheck.orElse(false)
+        for ((k, v) in buildHealthData(model,ignoreBuild)) {
             model[k] = v!!
         }
 
@@ -204,7 +205,7 @@ class ToolsController {
         return mapper.writeValueAsString(buildHealthData(model))
     }
 
-    private fun buildHealthData(model: Model): MutableMap<String, Any?> {
+    private fun buildHealthData(model: Model, ignoreBuildCheck: Boolean = false): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         val serverTimingStart = Date()
@@ -290,21 +291,26 @@ class ToolsController {
 
         response["buildVersion"] = if (buildProperties != null) buildProperties?.version.toString() else "Missing"
 
-        metricsUtil.start("circleci endpoint")
-        val circleciTimingStart = Date()
-        val passing: Boolean = NetworkUtils.checkCircleCiStatus(circleCiKey)
-        if (passing) {
-            response["circleCIBuild"] = "OK"
-        } else {
-            response["circleCIBuild"] = "FAIL"
-            // Don't include as part of status, credits might run out resulting
-            // status = "FAIL"
-        }
-        val circleciTimingEnd = Date()
-        val circleciTimingDiff: Long = circleciTimingEnd.time - circleciTimingStart.time
+        if (ignoreBuildCheck == false) {
+            metricsUtil.start("circleci endpoint")
+            val circleciTimingStart = Date()
+            val passing: Boolean = NetworkUtils.checkCircleCiStatus(circleCiKey)
+            if (passing) {
+                response["circleCIBuild"] = "OK"
+            } else {
+                response["circleCIBuild"] = "FAIL"
+                // Don't include as part of status, credits might run out resulting
+                // status = "FAIL"
+            }
+            val circleciTimingEnd = Date()
+            val circleciTimingDiff: Long = circleciTimingEnd.time - circleciTimingStart.time
 //        response["circleCIBuildTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(circleciTimingDiff))
-        logger.log(Level.INFO, "HealthEP - CircleCI connection time: ${SimpleDateFormat("mm:ss.SSS").format(Date(circleciTimingDiff))}")
-        metricsUtil.end()
+            logger.log(
+                Level.INFO,
+                "HealthEP - CircleCI connection time: ${SimpleDateFormat("mm:ss.SSS").format(Date(circleciTimingDiff))}"
+            )
+            metricsUtil.end()
+        }
 
         metricsUtil.start("system check")
         val systemMap = mutableMapOf<String, Any?>()
