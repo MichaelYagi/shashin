@@ -227,14 +227,14 @@
                     }
 
                     const sidecarUsedSizeKB = parseInt(data["sidecarUsedSizeKB"]);
-                    const sidecarTotalSize = parseInt(data["sidecarTotalSpace"]);
+                    const sidecarTotalSize = parseInt(data["sidecarTotalSize"]);
                     const percentUsed = parseInt((sidecarUsedSizeKB/sidecarTotalSize) * 100);
 
                     shashin.printMessageToConsole("sidecar space used raw: "+data["sidecarUsedSizeKB"], {tag: "dashboard"});
                     shashin.printMessageToConsole("sidecar space used: "+data["sidecarUsedSizeText"], {tag: "dashboard"});
                     shashin.printMessageToConsole("sidecar space usable raw: "+data["sidecarUsableSize"], {tag: "dashboard"});
                     shashin.printMessageToConsole("sidecar space usable: "+data["sidecarUsableSizeText"], {tag: "dashboard"});
-                    shashin.printMessageToConsole("sidecar space total raw: "+data["sidecarTotalSpace"], {tag: "dashboard"});
+                    shashin.printMessageToConsole("sidecar space total raw: "+data["sidecarTotalSize"], {tag: "dashboard"});
                     shashin.printMessageToConsole("sidecar space total: "+data["sidecarTotalSizeText"], {tag: "dashboard"});
 
                     if (percentUsed > 0) {
