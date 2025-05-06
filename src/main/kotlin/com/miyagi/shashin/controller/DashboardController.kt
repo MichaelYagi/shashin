@@ -193,18 +193,18 @@ class DashboardController {
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/dashboard/data","/api/v1/dashboard/data"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getDashboardApi(model: Model): String {
-        return mapper.writeValueAsString(buildDashboardData(model))
+    fun getDashboardApi(model: Model, session: HttpSession): String {
+        return mapper.writeValueAsString(buildDashboardData(model,session))
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/stats/data","/api/v1/stats/data"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getStatsApi(model: Model): String {
-        return mapper.writeValueAsString(buildDashboardData(model,true))
+    fun getStatsApi(model: Model, session: HttpSession): String {
+        return mapper.writeValueAsString(buildDashboardData(model,session,true))
     }
 
-    private fun buildDashboardData(model: Model, simplified: Boolean = false): MutableMap<String, Any?> {
+    private fun buildDashboardData(model: Model, session: HttpSession, simplified: Boolean = false): MutableMap<String, Any?> {
         var response = mutableMapOf<String, Any?>()
 
         val metricsUtil = MetricsUtil()
@@ -212,7 +212,7 @@ class DashboardController {
         // Files stats
 
         val fileStats = FileStats()
-        response = fileStats.getFileStats(model)
+        response = fileStats.getFileStats(model, session)
 
         metricsUtil.end()
 

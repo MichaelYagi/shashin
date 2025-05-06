@@ -1,6 +1,7 @@
 package com.miyagi.shashin.service
 
 import com.miyagi.shashin.util.ImageProcessing
+import jakarta.servlet.http.HttpSession
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
@@ -23,7 +24,7 @@ class FileStats {
     private var logger: Logger = Logger.getLogger(FileStats::class.simpleName)
 
     @Cacheable("getFileStats")
-    fun getFileStats(model: Model): MutableMap<String, Any?> {
+    fun getFileStats(model: Model, session: HttpSession): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         // Files stats
@@ -32,22 +33,27 @@ class FileStats {
         val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
         var sidecarSize = 0.toLong()
 
-        try {
-            val files = if (Files.isSymbolicLink(Paths.get(sidecarDir))) {
-                val path = Path(sidecarDir)
-                val realPath = path.toRealPath()
-                val directory = realPath.toFile()
-                directory.walk().filter { it.isFile }.toList()
-            } else {
-                val directory = File(sidecarDir)
-                directory.walk().filter { it.isFile }.toList()
-            }
+        if (session.getAttribute("sidecarSize") == null) {
+            try {
+                val files = if (Files.isSymbolicLink(Paths.get(sidecarDir))) {
+                    val path = Path(sidecarDir)
+                    val realPath = path.toRealPath()
+                    val directory = realPath.toFile()
+                    directory.walk().filter { it.isFile }.toList()
+                } else {
+                    val directory = File(sidecarDir)
+                    directory.walk().filter { it.isFile }.toList()
+                }
 
-            files.map { file ->
-                sidecarSize += file.length()
+                files.map { file ->
+                    sidecarSize += file.length()
+                }
+                session.setAttribute("sidecarSize", sidecarSize)
+            } catch (e: Exception) {
+                logger.log(Level.WARNING, "Error calculating sidecar size:" + e.message)
             }
-        } catch (e: Exception) {
-            logger.log(Level.WARNING, "Error calculating sidecar size:" + e.message)
+        } else {
+            sidecarSize = session.getAttribute("sidecarSize").toString().toLong()
         }
 
         var sidecarSizeProcessed = sidecarSize.toDouble() / (kilo * kilo)
