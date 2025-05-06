@@ -215,8 +215,6 @@ class ToolsController {
 
         response["serverTiming"] = "00:00:000"
 
-        val metricsOverallUtil = MetricsUtil()
-        metricsOverallUtil.start("health total time")
         val metricsUtil = MetricsUtil()
         metricsUtil.start("health endpoint")
         val health: HealthComponent? = healthEndpoint!!.health()
@@ -340,7 +338,6 @@ class ToolsController {
         response["serverTiming"] = SimpleDateFormat("mm:ss:SSS").format(Date(serverTimingDiff))
         logger.log(Level.INFO, "HealthEP - Total request time: ${SimpleDateFormat("mm:ss:SSS").format(Date(serverTimingDiff))}")
         metricsUtil.end()
-        metricsOverallUtil.end()
 
         response["status"] = status
 
