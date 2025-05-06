@@ -68,6 +68,7 @@ import jakarta.servlet.http.HttpSession
 import jakarta.transaction.Transactional
 import org.springframework.data.jpa.repository.Modifying
 import java.util.stream.Collectors
+import kotlin.io.path.Path
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
 import kotlin.math.floor
@@ -943,7 +944,7 @@ class SettingsController {
 
         if (submit == "Scan") {
             session.setAttribute("sidecarSize", null)
-            resp["msg"] = scanMediaDirectories(reindexFiles)
+            resp["msg"] = scanMediaDirectories(reindexFiles,session)
         }
 
         return mapper.writeValueAsString(resp)
@@ -1512,7 +1513,7 @@ class SettingsController {
     }
 
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
-    fun scanMediaDirectories(reindexFiles: Boolean, addToAlbum: Int = 0, uploadUserId: Int = 0): String {
+    fun scanMediaDirectories(reindexFiles: Boolean, session: HttpSession? = null, addToAlbum: Int = 0, uploadUserId: Int = 0): String {
         recognitionCount = 0
         val superAdmins = userRepository?.findAllByAuthorityEquals(superRole!!)
 
@@ -1942,6 +1943,29 @@ class SettingsController {
 
                             // Place name, face and object recognition, if enabled
                             Thread {
+                                if (session != null && session.getAttribute("sidecarSize") == null) {
+                                    var sidecarSize = 0.toLong()
+
+                                    try {
+                                        val files = if (Files.isSymbolicLink(Paths.get(sidecarDir))) {
+                                            val path = Path(sidecarDir)
+                                            val realPath = path.toRealPath()
+                                            val directory = realPath.toFile()
+                                            directory.walk().filter { it.isFile }.toList()
+                                        } else {
+                                            val directory = File(sidecarDir)
+                                            directory.walk().filter { it.isFile }.toList()
+                                        }
+
+                                        files.map { file ->
+                                            sidecarSize += file.length()
+                                        }
+                                        session.setAttribute("sidecarSize", sidecarSize)
+                                    } catch (e: Exception) {
+                                        logger.log(Level.WARNING, "Error calculating sidecar size:" + e.message)
+                                    }
+                                }
+
                                 var webClient: WebClient? = null
                                 if (settings != null && compreFaceServerConnected) {
                                     webClient = WebClient.create(settings.getCompreFaceServer()!!)

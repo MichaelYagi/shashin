@@ -37,6 +37,7 @@ import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
 import jakarta.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpSession
 import jakarta.transaction.Transactional
 import org.springframework.web.multipart.MultipartFile
 import kotlin.collections.count
@@ -814,7 +815,7 @@ class AlbumsController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/album/media/upload/batch/{albumId}","/api/v1/album/media/upload/batch/{albumId}"], method = [RequestMethod.POST], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = ["application/json"])
     @ResponseBody
-    fun postUploadToAlbum(model: Model, @PathVariable albumId: Int, @RequestParam("files[]") media: List<MultipartFile>): String {
+    fun postUploadToAlbum(model: Model, session: HttpSession, @PathVariable albumId: Int, @RequestParam("files[]") media: List<MultipartFile>): String {
         resp["msg"] = "Could not save"
         resp["status"] = ApiResponse.FAIL.status
 
@@ -830,7 +831,7 @@ class AlbumsController: BaseController() {
             val notUploadedFiles = fileUploadedMap["notUploadedFiles"] as MutableList<String>
 
             if (!uploadedFiles.isEmpty()) {
-                settingsController.scanMediaDirectories(false, albumId, currentUserObj.getId())
+                settingsController.scanMediaDirectories(false, session, albumId, currentUserObj.getId())
             }
 
             if (!notUploadedFiles.isEmpty() && !uploadedFiles.isEmpty()) {

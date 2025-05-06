@@ -20,6 +20,7 @@ import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 import java.util.*
 import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpSession
 import org.apache.commons.text.StringEscapeUtils
 import org.hibernate.query.Page
 import org.springframework.http.MediaType
@@ -67,7 +68,7 @@ class BrowseController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/metadata/media/upload/batch","/api/v1/metadata/media/upload/batch"], method = [RequestMethod.POST], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = ["application/json"])
     @ResponseBody
-    fun postUploadToTimeline(model: Model, @RequestParam("files[]") media: List<MultipartFile>): String {
+    fun postUploadToTimeline(model: Model, session: HttpSession, @RequestParam("files[]") media: List<MultipartFile>): String {
         resp["msg"] = "Could not save"
         resp["status"] = ApiResponse.FAIL.status
 
@@ -83,7 +84,7 @@ class BrowseController: BaseController() {
             val notUploadedFiles = fileUploadedMap["notUploadedFiles"] as MutableList<String>
 
             if (!uploadedFiles.isEmpty()) {
-                settingsController.scanMediaDirectories(false, 0, currentUserObj.getId())
+                settingsController.scanMediaDirectories(false, session, 0, currentUserObj.getId())
             }
 
             if (!notUploadedFiles.isEmpty() && !uploadedFiles.isEmpty()) {
