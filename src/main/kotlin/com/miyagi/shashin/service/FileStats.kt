@@ -1,6 +1,9 @@
 package com.miyagi.shashin.service
 
 import com.miyagi.shashin.util.ImageProcessing
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import org.springframework.cache.annotation.CacheConfig
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.core.io.FileSystemResource
@@ -12,6 +15,7 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.logging.Level
 import java.util.logging.Logger
+import kotlin.io.path.Path
 
 @Service
 @CacheConfig(cacheNames=["filestats"])
@@ -27,16 +31,25 @@ class FileStats {
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
         val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
         var sidecarSize = 0.toLong()
+
         try {
-            sidecarSize = if (Files.isSymbolicLink(Paths.get(sidecarDir))) {
-                Files.walk(Paths.get(sidecarDir), FileVisitOption.FOLLOW_LINKS)
-                    .mapToLong { p -> p.toFile().length() }.sum()
+            val files = if (Files.isSymbolicLink(Paths.get(sidecarDir))) {
+                val path = Path(sidecarDir)
+                val realPath = path.toRealPath()
+                val directory = realPath.toFile()
+                directory.walk().filter { it.isFile }.toList()
             } else {
-                Files.walk(Paths.get(sidecarDir)).mapToLong { p -> p.toFile().length() }.sum()
+                val directory = File(sidecarDir)
+                directory.walk().filter { it.isFile }.toList()
+            }
+
+            files.map { file ->
+                sidecarSize += file.length()
             }
         } catch (e: Exception) {
             logger.log(Level.WARNING, "Error calculating sidecar size:" + e.message)
         }
+
         var sidecarSizeProcessed = sidecarSize.toDouble() / (kilo * kilo)
         var sidecarSizeNotation = "MB"
         if (sidecarSizeProcessed > kilo) {
