@@ -86,7 +86,7 @@
                         <div class="card-header">
                             <div class="row">
                                 <div class="col-sm-3">
-                                    <h2 id="sidecarSizeText"></h2>
+                                    <h2 id="sidecarUsedSizeText"></h2>
                                 </div>
                                 <div class="col-sm-9 mt-2">
                                     <div id="sidecarUsageContainer" class="progress" role="progressbar" aria-label="Sidecar data used" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
@@ -231,7 +231,7 @@
                     const percentUsed = parseInt((sidecarUsedSizeKB/sidecarTotalSize) * 100);
 
                     shashin.printMessageToConsole("sidecar space used raw: "+data["sidecarUsedSizeKB"], {tag: "dashboard"});
-                    shashin.printMessageToConsole("sidecar space used: "+data["sidecarSizeText"], {tag: "dashboard"});
+                    shashin.printMessageToConsole("sidecar space used: "+data["sidecarUsedSizeText"], {tag: "dashboard"});
                     shashin.printMessageToConsole("sidecar space usable raw: "+data["sidecarUsableSize"], {tag: "dashboard"});
                     shashin.printMessageToConsole("sidecar space usable: "+data["sidecarUsableSpaceText"], {tag: "dashboard"});
                     shashin.printMessageToConsole("sidecar space total raw: "+data["sidecarSpaceTotal"], {tag: "dashboard"});
@@ -268,7 +268,7 @@
                             });
                         }
                     }
-                    $("#sidecarSizeText").html(data["sidecarSizeText"]);
+                    $("#sidecarUsedSizeText").html(data["sidecarUsedSizeText"]);
                     $("#sidecarUsableSpaceText").html("<small class='text-muted'>" + data["sidecarUsableSpaceText"] + " usable space left</small>");
                     $("#mediaCount").text(numberWithCommas(parseInt(data["photoCount"]) + parseInt(data["videoCount"])));
                     $("#cameraCount").text(numberWithCommas(parseInt(data["cameraTotalCount"])));
