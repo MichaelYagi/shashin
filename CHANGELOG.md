@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 - Map context to save or set coordinates from the map
 
 ### Changed
+- Dashboard stats API keys
 
 ### Deprecated
 
