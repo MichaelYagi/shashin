@@ -263,11 +263,11 @@ class DashboardController {
             sidecarUsabe /= kilo
             sidecarUsabeNotation = "TB"
         }
-        response["sidecarUsableSpaceText"] = "${String.format("%.2f", sidecarUsabe)} $sidecarUsabeNotation"
+        response["sidecarUsableSizeText"] = "${String.format("%.2f", sidecarUsabe)} $sidecarUsabeNotation"
         response["sidecarUsableSize"] = rawSidecarUsabe.toDouble()
 
-        var sidecarSpaceTotal = rawSidecarUsabe.toDouble() + sidecarSize.toDouble()
-        var sidecarSpaceTotalSizeProcessed = sidecarSpaceTotal.toDouble() / (kilo * kilo)
+        var sidecarTotalSpace = rawSidecarUsabe.toDouble() + sidecarSize.toDouble()
+        var sidecarSpaceTotalSizeProcessed = sidecarTotalSpace.toDouble() / (kilo * kilo)
         sidecarSizeNotation = "MB"
         if (sidecarSpaceTotalSizeProcessed > kilo) {
             sidecarSpaceTotalSizeProcessed /= kilo
@@ -277,8 +277,8 @@ class DashboardController {
             sidecarSpaceTotalSizeProcessed /= kilo
             sidecarSizeNotation = "TB"
         }
-        response["sidecarTotalSpaceText"] = "${String.format("%.2f", sidecarSpaceTotalSizeProcessed)} $sidecarSizeNotation"
-        response["sidecarSpaceTotal"] = sidecarSpaceTotal
+        response["sidecarTotalSizeText"] = "${String.format("%.2f", sidecarSpaceTotalSizeProcessed)} $sidecarSizeNotation"
+        response["sidecarTotalSpace"] = sidecarTotalSpace
 
         val settings = model.getAttribute("settings") as Settings?
 
