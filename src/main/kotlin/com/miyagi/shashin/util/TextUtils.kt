@@ -1034,7 +1034,12 @@ class TextUtils {
             }
         }
 
-        fun getServerUptime(): String {
+        fun getServerUptimeMS(): Long {
+            val runtimeMXBean = ManagementFactory.getRuntimeMXBean()
+            return runtimeMXBean.uptime
+        }
+
+        fun getServerUptimeFormatted(): String {
             val runtimeMXBean = ManagementFactory.getRuntimeMXBean()
             val seconds: Long = runtimeMXBean.uptime / 1000
             val minutes = seconds / 60
