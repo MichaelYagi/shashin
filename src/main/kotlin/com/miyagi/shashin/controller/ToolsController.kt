@@ -215,13 +215,19 @@ class ToolsController {
 
         response["serverTiming"] = "00:00:000"
 
+        val metricsOverallUtil = MetricsUtil()
+        metricsOverallUtil.start("health total time")
+        val metricsUtil = MetricsUtil()
+        metricsUtil.start("health endpoint")
         val health: HealthComponent? = healthEndpoint!!.health()
         if (health == null || health.status.code != "UP") {
             status = "FAIL"
         }
+        metricsUtil.end()
 
         response["uptimeText"] = TextUtils.getServerUptimeFormatted()
 
+        metricsUtil.start("nominatim endpoint")
         val nominatimTimingStart = Date()
         val reachable: Boolean = NetworkUtils.checkNominatimConnection(geocodeUrl+"status.php?format=json")
         if (reachable) {
@@ -234,7 +240,9 @@ class ToolsController {
         val nominatimTimingDiff: Long = nominatimTimingEnd.time - nominatimTimingStart.time
 //        response["nominatimTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(nominatimTimingDiff))
         logger.log(Level.INFO, "HealthEP - Nominatim connection time: ${SimpleDateFormat("mm:ss.SSS").format(Date(nominatimTimingDiff))}")
+        metricsUtil.end()
 
+        metricsUtil.start("compreface endpoint")
         // If enabled - status fail if not available
         val settings = model.getAttribute("settings") as Settings?
         if (settings?.getCompreFaceKey() != null &&
@@ -258,10 +266,12 @@ class ToolsController {
 //            response["compreFaceTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(compreFaceTimingDiff))
             logger.log(Level.INFO, "HealthEP - CompreFace connection time: ${SimpleDateFormat("mm:ss.SSS").format(Date(compreFaceTimingDiff))}")
         }
+        metricsUtil.end()
 
         val dbTimingStart = Date()
         var sqlLiteQueryCount = 0
 
+        metricsUtil.start("SQL check")
         try {
             val metadataResult = metaRepository.findAllByOffsetAndLimit(0, 500)
             sqlLiteQueryCount = metadataResult.count()
@@ -274,6 +284,7 @@ class ToolsController {
             logger.log(Level.WARNING, "HealthEP - Error querying SQLLite: ${e.message}")
         }
         val dbTimingEnd = Date()
+        metricsUtil.end()
 
         val dbTimingDiff: Long = dbTimingEnd.time - dbTimingStart.time
 //        response["sqlLiteQueryTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(dbTimingDiff))
@@ -281,6 +292,7 @@ class ToolsController {
 
         response["buildVersion"] = if (buildProperties != null) buildProperties?.version.toString() else "Missing"
 
+        metricsUtil.start("circleci endpoint")
         val circleciTimingStart = Date()
         val passing: Boolean = NetworkUtils.checkCircleCiStatus(circleCiKey)
         if (passing) {
@@ -294,7 +306,9 @@ class ToolsController {
         val circleciTimingDiff: Long = circleciTimingEnd.time - circleciTimingStart.time
 //        response["circleCIBuildTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(circleciTimingDiff))
         logger.log(Level.INFO, "HealthEP - CircleCI connection time: ${SimpleDateFormat("mm:ss.SSS").format(Date(circleciTimingDiff))}")
+        metricsUtil.end()
 
+        metricsUtil.start("system check")
         val systemMap = mutableMapOf<String, Any?>()
         val memoryMXBean = ManagementFactory.getMemoryMXBean()
         systemMap["initialMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.init.toDouble() / 1073741824)
@@ -325,6 +339,8 @@ class ToolsController {
 
         response["serverTiming"] = SimpleDateFormat("mm:ss:SSS").format(Date(serverTimingDiff))
         logger.log(Level.INFO, "HealthEP - Total request time: ${SimpleDateFormat("mm:ss:SSS").format(Date(serverTimingDiff))}")
+        metricsUtil.end()
+        metricsOverallUtil.end()
 
         response["status"] = status
 
