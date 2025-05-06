@@ -22,7 +22,7 @@
                             <div class="card-text">
                                 <div class="row pb-5">
                                     <div class="col-sm text-center">
-                                        <h1 class="display-6" id="uptime"></h1>
+                                        <h1 class="display-6" id="uptimeText"></h1>
                                     </div>
 
                                     <div class="col-sm text-center" id="nominatimStatusContainer" style="display: none">
@@ -189,7 +189,7 @@
         if (shashinServerStartUnixMS > 0) {
             setInterval(function () {
                 const elapsed = Date.now()-shashinServerStartUnixMS;
-                $("#uptime").html("Uptime <code>" + Util.convertMSToDayTime(elapsed) + "</code>");
+                $("#uptimeText").html("Uptime <code>" + Util.convertMSToDayTime(elapsed) + "</code>");
             }, 1000);
         }
 
