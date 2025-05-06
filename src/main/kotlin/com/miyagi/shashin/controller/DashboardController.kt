@@ -6,6 +6,7 @@ import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.StatMessage
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.service.FileStats
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.MetricsUtil
 import com.miyagi.shashin.util.NetworkUtils
@@ -34,8 +35,10 @@ import java.time.format.DateTimeFormatter
 import java.util.logging.Level
 import java.util.logging.Logger
 import jakarta.servlet.http.HttpSession
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.web.bind.annotation.*
 import java.lang.management.MemoryMXBean
+import kotlin.collections.set
 
 
 @Controller
@@ -202,89 +205,19 @@ class DashboardController {
     }
 
     private fun buildDashboardData(model: Model, simplified: Boolean = false): MutableMap<String, Any?> {
-        val response = mutableMapOf<String, Any?>()
-
-        response["uptimeText"] = TextUtils.getServerUptimeFormatted()
-        response["uptimeMS"] = TextUtils.getServerUptimeMS()
+        var response = mutableMapOf<String, Any?>()
 
         val metricsUtil = MetricsUtil()
         metricsUtil.start("file stats")
         // Files stats
-        val kilo = 1024
-        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
-        val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
-        var sidecarSize = 0.toLong()
-        try {
-            sidecarSize = if (Files.isSymbolicLink(Paths.get(sidecarDir))) {
-                Files.walk(Paths.get(sidecarDir), FileVisitOption.FOLLOW_LINKS)
-                    .mapToLong { p -> p.toFile().length() }.sum()
-            } else {
-                Files.walk(Paths.get(sidecarDir)).mapToLong { p -> p.toFile().length() }.sum()
-            }
-        } catch (e: Exception) {
-            logger.log(Level.WARNING, "Error calculating sidecar size:" + e.message)
-        }
-        var sidecarSizeProcessed = sidecarSize.toDouble() / (kilo * kilo)
-        var sidecarSizeNotation = "MB"
-        if (sidecarSizeProcessed > kilo) {
-            sidecarSizeProcessed /= kilo
-            sidecarSizeNotation = "GB"
-        }
-        if (sidecarSizeProcessed > kilo) {
-            sidecarSizeProcessed /= kilo
-            sidecarSizeNotation = "TB"
-        }
-        response["sidecarUsedSizeText"] = "${String.format("%.2f", sidecarSizeProcessed)} $sidecarSizeNotation"
-        response["sidecarUsedSizeB"] = sidecarSize.toDouble()
 
-        var rawSidecarUsabe: Double
-        var sidecarUsabe: Double
-        try {
-            if (File(sidecarDir).exists()) {
-                var dir = Paths.get(sidecarDir)
-                dir = dir.toRealPath()
-                val fs = Files.getFileStore(dir)
-                sidecarUsabe = fs.usableSpace.toDouble() / (kilo * kilo).toDouble()
-                rawSidecarUsabe = fs.usableSpace.toDouble()
-            } else {
-                var dir = Paths.get(rootPath)
-                dir = dir.toRealPath()
-                val fs = Files.getFileStore(dir)
-                sidecarUsabe = fs.usableSpace.toDouble() / (kilo * kilo).toDouble()
-                rawSidecarUsabe = fs.usableSpace.toDouble()
-            }
-        } catch (exception: Exception) {
-            logger.log(Level.WARNING, "Error reading sidecar directory:" + exception.message)
-            sidecarUsabe = 0.0
-            rawSidecarUsabe = 0.0
-        }
-        var sidecarUsabeNotation = "MB"
-        if (sidecarUsabe > kilo) {
-            sidecarUsabe /= kilo
-            sidecarUsabeNotation = "GB"
-        }
-        if (sidecarUsabe > kilo) {
-            sidecarUsabe /= kilo
-            sidecarUsabeNotation = "TB"
-        }
-        response["sidecarUsableSizeText"] = "${String.format("%.2f", sidecarUsabe)} $sidecarUsabeNotation"
-        response["sidecarUsableSizeB"] = rawSidecarUsabe.toDouble()
-
-        var sidecarTotalSizeB = rawSidecarUsabe.toDouble() + sidecarSize.toDouble()
-        var sidecarSpaceTotalSizeProcessed = sidecarTotalSizeB.toDouble() / (kilo * kilo)
-        sidecarSizeNotation = "MB"
-        if (sidecarSpaceTotalSizeProcessed > kilo) {
-            sidecarSpaceTotalSizeProcessed /= kilo
-            sidecarSizeNotation = "GB"
-        }
-        if (sidecarSpaceTotalSizeProcessed > kilo) {
-            sidecarSpaceTotalSizeProcessed /= kilo
-            sidecarSizeNotation = "TB"
-        }
-        response["sidecarTotalSizeText"] = "${String.format("%.2f", sidecarSpaceTotalSizeProcessed)} $sidecarSizeNotation"
-        response["sidecarTotalSizeB"] = sidecarTotalSizeB
+        val fileStats = FileStats()
+        response = fileStats.getFileStats(model)
 
         metricsUtil.end()
+
+        response["uptimeText"] = TextUtils.getServerUptimeFormatted()
+        response["uptimeMS"] = TextUtils.getServerUptimeMS()
 
         val settings = model.getAttribute("settings") as Settings?
 
