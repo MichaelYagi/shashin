@@ -12,7 +12,7 @@
 <h1>Health Check</h1>
 
 <th:block th:utext="${'Status: '+ (status == 'OK' ? status : '<span style=&quot;color: red;&quot;>'+status+'</span>')}"></th:block><br><br>
-<th:block th:text="${'Uptime: '+uptime}"></th:block><br>
+<th:block th:text="${'Uptime: '+uptimeText}"></th:block><br>
 <th:block th:text="${'Server timing: '+serverTiming}"></th:block><br>
 <span id="plt" style="display: none;"></span>
 <th:block th:utext="${'SQLite connection: '+(sqlLiteAvailable == 'OK' ? sqlLiteAvailable : '<span style=&quot;color: red;&quot;>'+sqlLiteAvailable+'</span>')}"></th:block><br>

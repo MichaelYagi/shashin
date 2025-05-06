@@ -203,7 +203,7 @@ class DashboardController {
     private fun buildDashboardData(model: Model, simplified: Boolean = false): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
-        response["uptime"] = TextUtils.getServerUptimeFormatted()
+        response["uptimeText"] = TextUtils.getServerUptimeFormatted()
         response["uptimeMS"] = TextUtils.getServerUptimeMS()
 
         // Files stats

@@ -220,7 +220,7 @@ class ToolsController {
             status = "FAIL"
         }
 
-        response["uptime"] = TextUtils.getServerUptimeFormatted()
+        response["uptimeText"] = TextUtils.getServerUptimeFormatted()
 
         val nominatimTimingStart = Date()
         val reachable: Boolean = NetworkUtils.checkNominatimConnection(geocodeUrl+"status.php?format=json")
