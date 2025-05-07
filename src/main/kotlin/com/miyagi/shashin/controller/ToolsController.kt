@@ -342,7 +342,7 @@ class ToolsController {
         val serverTimingDiff: Long = serverTimingEnd.time - serverTimingStart.time
 
         response["serverTimingMS"] = serverTimingDiff
-        response["serverTimingText"] = SimpleDateFormat("mm:ss:SSS").format(Date(serverTimingDiff))
+        response["serverTimingText"] = serverTimingDiff.toString()+"ms"//SimpleDateFormat("mm:ss:SSS").format(Date(serverTimingDiff))
         logger.log(Level.INFO, "HealthEP - Total request time: ${SimpleDateFormat("mm:ss:SSS").format(Date(serverTimingDiff))}")
         metricsUtil.end()
 
