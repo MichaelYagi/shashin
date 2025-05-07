@@ -253,7 +253,7 @@ class DashboardController {
             val albumCount = albumRepository.count()
 
 //        response["photosWithPeopleTaggedCount"] = photosWithPeopleTaggedCount
-            response["photosWithPeopleTaggedCount"] = if (peopleList == null) 0 else peopleList.count()
+            response["photosWithPeopleTaggedCount"] = peopleList.count()
             response["favoritesCount"] = favoritesCount
             response["commentsCount"] = commentsCount
             response["albumCount"] = albumCount
