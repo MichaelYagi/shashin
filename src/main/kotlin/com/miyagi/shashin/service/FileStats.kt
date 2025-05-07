@@ -130,8 +130,7 @@ class FileStats {
 
         metricsUtil.end()
 
-        response["sidecarStatsElapsedTimeMS"] = metricsUtil.getTotalElapsedTime()
-        response["sidecarStatsElapsedTimeText"] = metricsUtil.getTotalElapsedTime().toString() + "ms"
+        logger.log(Level.WARNING, "Sidecar file stats elapsed time:" + metricsUtil.getTotalElapsedTime())
 
         return response
     }
