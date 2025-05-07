@@ -124,7 +124,7 @@ class FileStats {
 
         metricsUtil.end()
 
-        response["sidecarStatsElapsedTime"] = metricsUtil.getTotalElapsedTime()
+        response["sidecarStatsElapsedTimeMS"] = metricsUtil.getTotalElapsedTime()
         response["sidecarStatsElapsedTimeText"] = metricsUtil.getTotalElapsedTime().toString() + "ms"
 
         return response
