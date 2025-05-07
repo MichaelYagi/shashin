@@ -1671,7 +1671,7 @@
                         } else {
                             Util.setMetadataLocalStorage();
 
-                            shashin.showToastMessage("Location saved", "Saved location", {
+                            shashin.showToastMessage("Location saved", "Location saved. Refreshing map.", {
                                 icon: "bi-info-circle",
                                 iconColor: "#777777",
                                 tag: "latlng",
