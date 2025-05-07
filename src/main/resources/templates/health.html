@@ -13,7 +13,7 @@
 
 <th:block th:utext="${'Status: '+ (status == 'OK' ? status : '<span style=&quot;color: red;&quot;>'+status+'</span>')}"></th:block><br><br>
 <th:block th:text="${'Uptime: '+uptimeText}"></th:block><br>
-<th:block th:text="${'Server timing: '+serverTiming}"></th:block><br>
+<th:block th:text="${'Server timing: '+serverTiminTextg}"></th:block><br>
 <span id="plt" style="display: none;"></span>
 <th:block th:utext="${'SQLite connection: '+(sqlLiteAvailable == 'OK' ? sqlLiteAvailable : '<span style=&quot;color: red;&quot;>'+sqlLiteAvailable+'</span>')}"></th:block><br>
 <!--<th:block th:text="${'SQLite lookup for '+sqlLiteQueryCount+' metadata record'+(sqlLiteQueryCount != 1 ? 's' : '')+' elapsed time: '+sqlLiteQueryTiming}"></th:block><br>-->
