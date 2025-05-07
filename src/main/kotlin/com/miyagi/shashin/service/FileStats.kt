@@ -32,7 +32,7 @@ class FileStats {
         metricsUtil.start("filestats")
 
         // Files stats
-        val kilo = 1024
+        val kilo = 1000 //1024
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
         val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
         var sidecarSizeNotation = ""
