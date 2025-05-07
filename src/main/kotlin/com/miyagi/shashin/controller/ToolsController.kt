@@ -184,7 +184,7 @@ class ToolsController {
     fun getStatusApi(model: Model,@RequestParam ignoreBuildCheck: Optional<Boolean>): String {
         val ignoreBuild = ignoreBuildCheck.orElse(false)
         val healthData = buildHealthData(model,ignoreBuild)
-        return "{\"status\":\""+healthData["status"]+"\",\"serverTimingText\":\""+healthData["serverTimingText"]+"\"}"
+        return "{\"status\":\""+healthData["status"]+"\",\"endpointElapsedTimeText\":\""+healthData["endpointElapsedTimeText"]+"\"}"
     }
 
     @GetMapping("/health")
@@ -214,7 +214,7 @@ class ToolsController {
 
         response["status"] = status
 
-        response["serverTiming"] = "00:00:000"
+        response["endpointElapsedTimeText"] = "00:00:000"
 
         val metricsUtil = MetricsUtil()
         metricsUtil.start("health endpoint")
@@ -341,8 +341,8 @@ class ToolsController {
 
         val serverTimingDiff: Long = serverTimingEnd.time - serverTimingStart.time
 
-        response["serverTimingMS"] = serverTimingDiff
-        response["serverTimingText"] = serverTimingDiff.toString()+"ms"//SimpleDateFormat("mm:ss:SSS").format(Date(serverTimingDiff))
+        response["endpointElapsedTimeMS"] = serverTimingDiff
+        response["endpointElapsedTimeText"] = serverTimingDiff.toString()+"ms"//SimpleDateFormat("mm:ss:SSS").format(Date(serverTimingDiff))
         logger.log(Level.INFO, "HealthEP - Total request time: ${SimpleDateFormat("mm:ss:SSS").format(Date(serverTimingDiff))}")
         metricsUtil.end()
 
