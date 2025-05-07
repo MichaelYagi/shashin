@@ -32,7 +32,7 @@ class FileStats {
         metricsUtil.start("filestats")
 
         // Files stats
-        val kilo = 1024
+        val kilo = 9.3132257461548E-7
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
         val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
         var sidecarSizeNotation = ""
@@ -40,7 +40,6 @@ class FileStats {
         var rawSidecarUsabe: Double
         var sidecarUsabe: Double
         var rawSidecarTotal: Double = 0.0
-        var sidecarTotal: Double = 0.0
         try {
             if (File(sidecarDir).exists()) {
                 var dir = Paths.get(sidecarDir)
@@ -48,7 +47,6 @@ class FileStats {
                 val fs = Files.getFileStore(dir)
                 sidecarUsabe = fs.usableSpace.toDouble() / (kilo * kilo).toDouble()
                 rawSidecarUsabe = fs.usableSpace.toDouble()
-                sidecarTotal = fs.totalSpace.toDouble() / (kilo * kilo).toDouble()
                 rawSidecarTotal = fs.totalSpace.toDouble()
             } else {
                 var dir = Paths.get(rootPath)
@@ -56,7 +54,6 @@ class FileStats {
                 val fs = Files.getFileStore(dir)
                 sidecarUsabe = fs.usableSpace.toDouble() / (kilo * kilo).toDouble()
                 rawSidecarUsabe = fs.usableSpace.toDouble()
-                sidecarTotal = fs.totalSpace.toDouble() / (kilo * kilo).toDouble()
                 rawSidecarTotal = fs.totalSpace.toDouble()
             }
         } catch (exception: Exception) {
@@ -90,7 +87,7 @@ class FileStats {
         response["sidecarTotalSizeText"] = "${String.format("%.2f", sidecarSpaceTotalSizeProcessed)} $sidecarSizeNotation"
         response["sidecarTotalSizeB"] = sidecarTotalSizeB
 
-        var sidecarSize = sidecarTotalSizeB-rawSidecarUsabe
+        val sidecarSize = sidecarTotalSizeB-rawSidecarUsabe
 
 //        var sidecarSize = 0.toLong()
 //        if (session.getAttribute("sidecarSize") == null) {
