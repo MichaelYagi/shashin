@@ -369,8 +369,8 @@ class DashboardController {
         response["hiddenCount"] = hiddenCount
         metricsUtil.end()
 
-        response["statsEndpointElapsedTimeMS"] = metricsUtil.getTotalElapsedTime()
-        response["statsEndpointElapsedTimeText"] = metricsUtil.getTotalElapsedTime().toString() + "ms"
+        response["endpointElapsedTimeMS"] = metricsUtil.getTotalElapsedTime()
+        response["endpointElapsedTimeText"] = metricsUtil.getTotalElapsedTime().toString() + "ms"
 
         response["message"] = ""
         response["msg"] = ""
