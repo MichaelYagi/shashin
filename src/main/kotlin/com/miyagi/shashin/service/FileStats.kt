@@ -1,6 +1,7 @@
 package com.miyagi.shashin.service
 
 import com.miyagi.shashin.util.ImageProcessing
+import com.miyagi.shashin.util.MetricsUtil
 import jakarta.servlet.http.HttpSession
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -26,6 +27,9 @@ class FileStats {
     @Cacheable("getFileStats")
     fun getFileStats(model: Model, session: HttpSession): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
+
+        val metricsUtil = MetricsUtil()
+        metricsUtil.start("filestats")
 
         // Files stats
         val kilo = 1024
@@ -117,6 +121,11 @@ class FileStats {
         }
         response["sidecarTotalSizeText"] = "${String.format("%.2f", sidecarSpaceTotalSizeProcessed)} $sidecarSizeNotation"
         response["sidecarTotalSizeB"] = sidecarTotalSizeB
+
+        metricsUtil.end()
+
+        response["sidecarStatsElapsedTime"] = metricsUtil.getTotalElapsedTime()
+        response["sidecarStatsElapsedTimeText"] = metricsUtil.getTotalElapsedTime().toString() + "ms"
 
         return response
     }

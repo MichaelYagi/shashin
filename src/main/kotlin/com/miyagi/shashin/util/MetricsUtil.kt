@@ -22,6 +22,10 @@ class MetricsUtil {
     @Value("\${app.config.default.slaMS}")
     private var slaMS: Long? = null
 
+    fun getTotalElapsedTime(): Long {
+        return totalElapsedTime
+    }
+
     fun start(lmodule: String = "") {
         if (lmodule != "") {
             module = lmodule
