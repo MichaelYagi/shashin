@@ -1678,7 +1678,6 @@
                                 borderColor:"success"
                             });
 
-                            const metadata = {};
                             if (response.hasOwnProperty("metadata") && (response.metadata).hasOwnProperty("lat") && (response.metadata).hasOwnProperty("lng")) {
                                 metadata.lat = response.metadata.lat;
                                 metadata.lng = response.metadata.lng;
@@ -1690,8 +1689,16 @@
                                 if ((response.metadata).hasOwnProperty("placeName")) {
                                     const placeNameDisplayNameArr = (response.metadata.placeName).split(";");
                                     const placeNameDisplayName = placeNameDisplayNameArr[0];
-                                    $("#mapTabMessage").html(TimelineTemplates.MapLinks({metadata:metadata, placeNameDisplayName:placeNameDisplayName, queryParamDates:""}));
+                                    const placeName = TimelineTemplates.MapLinks({metadata:metadata, placeNameDisplayName:placeNameDisplayName, queryParamDates:""});
+                                    $("#mapTabMessage").html(placeName);
+
+                                    if (response.hasOwnProperty("shortPlaceName")) {
+                                        $("#shortLocationLabel").html(response.shortPlaceName);
+                                        $("#shortLocationLabel").attr("title", placeNameDisplayName);
+                                    }
                                 }
+
+                                $("#metadataModalEdit"+metadata.id+" span").removeClass("bi-info-square").addClass("bi-info-circle");
                             }
 
                             // Update marker and center

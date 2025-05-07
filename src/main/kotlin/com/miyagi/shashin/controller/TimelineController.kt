@@ -1738,6 +1738,7 @@ class TimelineController: BaseController() {
         resp["msg"] = "Failed!"
         resp["status"] = ApiResponse.FAIL.status
         resp["metadata"] = metadata
+        resp["shortPlaceName"] = ""
 
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
@@ -1748,6 +1749,7 @@ class TimelineController: BaseController() {
             val coordArray = metadataMap["latlng"].toString().split(",")
             if (coordArray.size == 2) {
                 metadata = setCoordinates(metadataMap["id"].toString(), coordArray[0], coordArray[1])
+                resp["shortPlaceName"] = TextUtils.formatPlaceNameForHeader(metadata.getPlaceName())
                 metadataRepository.save(metadata)
 
                 resp["metadata"] = metadata
