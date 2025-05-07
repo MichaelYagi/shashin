@@ -214,10 +214,10 @@ class DashboardController {
         val fileStats = FileStats()
         response = fileStats.getFileStats(model, session)
 
-        metricsUtil.end()
-
         response["uptimeText"] = TextUtils.getServerUptimeFormatted()
         response["uptimeMS"] = TextUtils.getServerUptimeMS()
+
+        metricsUtil.end()
 
         val settings = model.getAttribute("settings") as Settings?
 
