@@ -358,6 +358,9 @@ class DashboardController {
         response["hiddenCount"] = hiddenCount
         metricsUtil.end()
 
+        response["dashboardElapsedTime"] = metricsUtil.getTotalElapsedTime()
+        response["dashboardElapsedTimeText"] = metricsUtil.getTotalElapsedTime().toString() + "ms"
+
         response["message"] = ""
         response["msg"] = ""
         response["status"] = ApiResponse.SUCCESS.status
