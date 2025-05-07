@@ -35,48 +35,12 @@ class FileStats {
         val kilo = 1024
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
         val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
-        var sidecarSize = 0.toLong()
-
-        if (session.getAttribute("sidecarSize") == null) {
-            logger.log(Level.WARNING, "Setting sidecarSize session attribute")
-            try {
-                val files = if (Files.isSymbolicLink(Paths.get(sidecarDir))) {
-                    val path = Path(sidecarDir)
-                    val realPath = path.toRealPath()
-                    val directory = realPath.toFile()
-                    directory.walk().filter { it.isFile }.toList()
-                } else {
-                    val directory = File(sidecarDir)
-                    directory.walk().filter { it.isFile }.toList()
-                }
-
-                files.map { file ->
-                    sidecarSize += file.length()
-                }
-                session.setAttribute("sidecarSize", sidecarSize)
-            } catch (e: Exception) {
-                logger.log(Level.WARNING, "Error calculating sidecar size:" + e.message)
-            }
-        } else {
-            logger.log(Level.WARNING, "Using sidecarSize session attribute")
-            sidecarSize = session.getAttribute("sidecarSize").toString().toLong()
-        }
-
-        var sidecarSizeProcessed = sidecarSize.toDouble() / (kilo * kilo)
-        var sidecarSizeNotation = "MB"
-        if (sidecarSizeProcessed > kilo) {
-            sidecarSizeProcessed /= kilo
-            sidecarSizeNotation = "GB"
-        }
-        if (sidecarSizeProcessed > kilo) {
-            sidecarSizeProcessed /= kilo
-            sidecarSizeNotation = "TB"
-        }
-        response["sidecarUsedSizeText"] = "${String.format("%.2f", sidecarSizeProcessed)} $sidecarSizeNotation"
-        response["sidecarUsedSizeB"] = sidecarSize.toDouble()
+        var sidecarSizeNotation = ""
 
         var rawSidecarUsabe: Double
         var sidecarUsabe: Double
+        var rawSidecarTotal: Double = 0.0
+        var sidecarTotal: Double = 0.0
         try {
             if (File(sidecarDir).exists()) {
                 var dir = Paths.get(sidecarDir)
@@ -84,12 +48,16 @@ class FileStats {
                 val fs = Files.getFileStore(dir)
                 sidecarUsabe = fs.usableSpace.toDouble() / (kilo * kilo).toDouble()
                 rawSidecarUsabe = fs.usableSpace.toDouble()
+                sidecarTotal = fs.totalSpace.toDouble() / (kilo * kilo).toDouble()
+                rawSidecarTotal = fs.totalSpace.toDouble()
             } else {
                 var dir = Paths.get(rootPath)
                 dir = dir.toRealPath()
                 val fs = Files.getFileStore(dir)
                 sidecarUsabe = fs.usableSpace.toDouble() / (kilo * kilo).toDouble()
                 rawSidecarUsabe = fs.usableSpace.toDouble()
+                sidecarTotal = fs.totalSpace.toDouble() / (kilo * kilo).toDouble()
+                rawSidecarTotal = fs.totalSpace.toDouble()
             }
         } catch (exception: Exception) {
             logger.log(Level.WARNING, "Error reading sidecar directory:" + exception.message)
@@ -108,7 +76,7 @@ class FileStats {
         response["sidecarUsableSizeText"] = "${String.format("%.2f", sidecarUsabe)} $sidecarUsabeNotation"
         response["sidecarUsableSizeB"] = rawSidecarUsabe.toDouble()
 
-        var sidecarTotalSizeB = rawSidecarUsabe.toDouble() + sidecarSize.toDouble()
+        var sidecarTotalSizeB = rawSidecarTotal.toDouble()
         var sidecarSpaceTotalSizeProcessed = sidecarTotalSizeB.toDouble() / (kilo * kilo)
         sidecarSizeNotation = "MB"
         if (sidecarSpaceTotalSizeProcessed > kilo) {
@@ -121,6 +89,47 @@ class FileStats {
         }
         response["sidecarTotalSizeText"] = "${String.format("%.2f", sidecarSpaceTotalSizeProcessed)} $sidecarSizeNotation"
         response["sidecarTotalSizeB"] = sidecarTotalSizeB
+
+        var sidecarSize = sidecarTotalSizeB-rawSidecarUsabe
+
+//        var sidecarSize = 0.toLong()
+//        if (session.getAttribute("sidecarSize") == null) {
+//            logger.log(Level.WARNING, "Setting sidecarSize session attribute")
+//            try {
+//                val files = if (Files.isSymbolicLink(Paths.get(sidecarDir))) {
+//                    val path = Path(sidecarDir)
+//                    val realPath = path.toRealPath()
+//                    val directory = realPath.toFile()
+//                    directory.walk().filter { it.isFile }.toList()
+//                } else {
+//                    val directory = File(sidecarDir)
+//                    directory.walk().filter { it.isFile }.toList()
+//                }
+//
+//                files.map { file ->
+//                    sidecarSize += file.length()
+//                }
+//                session.setAttribute("sidecarSize", sidecarSize)
+//            } catch (e: Exception) {
+//                logger.log(Level.WARNING, "Error calculating sidecar size:" + e.message)
+//            }
+//        } else {
+//            logger.log(Level.WARNING, "Using sidecarSize session attribute")
+//            sidecarSize = session.getAttribute("sidecarSize").toString().toLong()
+//        }
+
+        var sidecarSizeProcessed = sidecarSize.toDouble() / (kilo * kilo)
+        sidecarSizeNotation = "MB"
+        if (sidecarSizeProcessed > kilo) {
+            sidecarSizeProcessed /= kilo
+            sidecarSizeNotation = "GB"
+        }
+        if (sidecarSizeProcessed > kilo) {
+            sidecarSizeProcessed /= kilo
+            sidecarSizeNotation = "TB"
+        }
+        response["sidecarUsedSizeText"] = "${String.format("%.2f", sidecarSizeProcessed)} $sidecarSizeNotation"
+        response["sidecarUsedSizeB"] = sidecarSize.toDouble()
 
         metricsUtil.end()
 
