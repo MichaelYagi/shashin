@@ -184,7 +184,7 @@ class ToolsController {
     fun getStatusApi(model: Model,@RequestParam ignoreBuildCheck: Optional<Boolean>): String {
         val ignoreBuild = ignoreBuildCheck.orElse(false)
         val healthData = buildHealthData(model,ignoreBuild)
-        return "{\"status\":\""+healthData["status"]+"\"}"
+        return "{\"status\":\""+healthData["status"]+"\",\"serverTimingText\":\""+healthData["serverTimingText"]+"\"}"
     }
 
     @GetMapping("/health")
