@@ -222,24 +222,29 @@ class DashboardController {
         val settings = model.getAttribute("settings") as Settings?
 
         if (!simplified) {
+            metricsUtil.start("nominatim check")
             val reachable: Boolean = NetworkUtils.checkNominatimConnection(geocodeUrl + "status.php?format=json")
             response["nominatimAvailable"] = reachable
+            metricsUtil.end()
 
             response["compreFaceAvailable"] = null
             if (settings?.getCompreFaceKey() != null &&
                 settings.getCompreFaceKey() != "" && settings.getCompreFaceServer() != null &&
                 settings.getCompreFaceServer() != ""
             ) {
+                metricsUtil.start("compreFace check")
                 val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
                     settings.getCompreFaceServer(),
                     settings.getCompreFaceKey()
                 )
                 response["compreFaceAvailable"] = faceRecogServicesAvailable
+                metricsUtil.end()
             }
 
+            metricsUtil.start("site stats")
             // Site stats
 //        val photosWithPeopleTaggedCount = recognitionLabelPhotoRepository.countDistinctMetadataId()
-            val peopleList = metadataRepository?.findMetadataByPeople(
+            val peopleList = metadataRepository.findMetadataByPeople(
                 settings?.getRecognitionConfidenceThreshold()!!,
                 TextUtils.getObjectName()
             )
@@ -252,8 +257,9 @@ class DashboardController {
             response["favoritesCount"] = favoritesCount
             response["commentsCount"] = commentsCount
             response["albumCount"] = albumCount
+            metricsUtil.end()
 
-
+            metricsUtil.start("UA stats")
             // Browser stats
             val browserCounts = useragentRepository.countByAgentName()
             val browserCountList = ArrayList<HashMap<String, Any>>()
@@ -310,8 +316,10 @@ class DashboardController {
             val osCount = useragentRepository.countDistinctOsName()
             response["browserTotalCount"] = browserCount
             response["osTotalCount"] = osCount
+            metricsUtil.end()
 
             // User stats
+            metricsUtil.start("user stats")
             val allowedUserCount = userRepository.countAllByIsAuthorizedIsTrueAndAuthorityEquals(userRole!!)
             val notAllowedUserCount = userRepository.countAllByIsAuthorizedIsFalseAndAuthorityEquals(userRole!!)
             val allowedAdminCount = userRepository.countAllByIsAuthorizedIsTrueAndAuthorityEquals(adminRole!!)
@@ -324,8 +332,10 @@ class DashboardController {
             response["notAllowedAdminCount"] = notAllowedAdminCount
             response["allowedSuperCount"] = allowedSuperCount
             response["notAllowedSuperCount"] = notAllowedSuperCount
+            metricsUtil.end()
 
             // Keyword stats
+            metricsUtil.start("keyword stats")
             val keywordCounts = keywordRepository.countByKeyword()
             val keywordCountList = ArrayList<HashMap<String, Any>>()
             var keywordCount = 0
@@ -344,6 +354,7 @@ class DashboardController {
             }
             response["keywordCountJson"] = mapper.writeValueAsString(keywordCountList)
             response["keywordTotalCount"] = keywordCount
+            metricsUtil.end()
         }
 
         metricsUtil.start("media stats")
