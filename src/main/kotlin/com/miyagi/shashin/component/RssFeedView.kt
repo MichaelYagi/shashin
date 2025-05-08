@@ -8,6 +8,7 @@ import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.SlideshowAlbumRepository
 import com.miyagi.shashin.repository.UserAlbumRepository
 import com.miyagi.shashin.repository.UserRepository
+import com.miyagi.shashin.util.TextUtils
 import com.rometools.rome.feed.rss.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -134,14 +135,22 @@ class RssFeedView : AbstractRssFeedView() {
                     val description = Description()
                     var place = ""
                     var metadataDescription = ""
+                    var taken = ""
+
+                    if (metadata.getYear() != null && metadata.getYear() != 0 &&
+                        metadata.getMonth() != null && metadata.getMonth() != 0 &&
+                        metadata.getDay() != null && metadata.getDay() != 0)
+                    {
+                        taken = TextUtils.formatToLongDate("${metadata.getYear()}-${metadata.getMonth()}-${metadata.getDay()}")
+                    }
                     if (metadata.getPlaceName() != null && metadata.getPlaceName() != "") {
                         val placeArray = metadata.getPlaceName()!!.split(";")
-                        place = placeArray[0].trim()
+                        place = (if (taken != "") "<br>" else "") + placeArray[0].trim()
                     }
                     if (metadata.getDescription() != null && metadata.getDescription() != "") {
-                        metadataDescription = (if (place != "") "<br><br>" else "") + metadata.getDescription()!!.trim()
+                        metadataDescription = (if (place != "") "<br>" else "") + metadata.getDescription()!!.trim()
                     }
-                    val descVal = "$place$metadataDescription"
+                    val descVal = "$taken$place$metadataDescription"
 
                     description.value = "<img src='$baseUrl/api/v1/thumbnails/225/${metadata.getId()}'><br>${descVal}"
                     entry.description = description

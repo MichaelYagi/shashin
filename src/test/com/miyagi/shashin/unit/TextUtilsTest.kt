@@ -155,7 +155,13 @@ class TextUtilsTest {
         Assertions.assertEquals("Thu, Nov 9, 2023", longDate)
 
         longDate = TextUtils.formatToLongDate("2023-11-9")
-        Assertions.assertEquals("", longDate)
+        Assertions.assertEquals("Thu, Nov 9, 2023", longDate)
+
+        longDate = TextUtils.formatToLongDate("2023/11/9")
+        Assertions.assertEquals("Thu, Nov 9, 2023", longDate)
+
+        longDate = TextUtils.formatToLongDate("2023/9/25")
+        Assertions.assertEquals("Mon, Sep 25, 2023", longDate)
     }
 
     @Test
