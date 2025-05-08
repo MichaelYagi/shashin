@@ -318,7 +318,7 @@ class TextUtils {
                     }
                 }
             }
-            return formattedDate
+            return formattedDate.replace(".", "")
         }
 
         fun formatToAbbrDate(oldDate: String): String {
