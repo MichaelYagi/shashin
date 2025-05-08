@@ -154,14 +154,14 @@ class AtomFeedView : AbstractAtomFeedView() {
                         metadata.getMonth() != null && metadata.getMonth() != 0 &&
                         metadata.getDay() != null && metadata.getDay() != 0)
                     {
-                        taken = "<p>"+TextUtils.formatToLongDate("${metadata.getYear()}-${metadata.getMonth()}-${metadata.getDay()}")+"</p>"
+                        taken = TextUtils.formatToLongDate("${metadata.getYear()}-${metadata.getMonth()}-${metadata.getDay()}")
                     }
                     if (metadata.getPlaceName() != null && metadata.getPlaceName() != "") {
                         val placeArray = metadata.getPlaceName()!!.split(";")
-                        place = "<p>"+placeArray[0].trim()+"</p>"
+                        place = (if (taken != "") " • " else "") + placeArray[0].trim()
                     }
                     if (metadata.getDescription() != null && metadata.getDescription() != "") {
-                        metadataDescription = "<p>"+metadata.getDescription()!!.trim()+"</p>"
+                        metadataDescription = (if (place != "") " • " else "") + metadata.getDescription()!!.trim()
                     }
                     val descVal = "$taken$place$metadataDescription"
 
