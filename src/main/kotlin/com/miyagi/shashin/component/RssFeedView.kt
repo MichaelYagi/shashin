@@ -145,10 +145,10 @@ class RssFeedView : AbstractRssFeedView() {
                     }
                     if (metadata.getPlaceName() != null && metadata.getPlaceName() != "") {
                         val placeArray = metadata.getPlaceName()!!.split(";")
-                        place = (if (taken != "") " <br>" else "") + placeArray[0].trim()
+                        place = (if (taken != "") " - " else "") + placeArray[0].trim()
                     }
                     if (metadata.getDescription() != null && metadata.getDescription() != "") {
-                        metadataDescription = (if (place != "") " <br>" else "") + metadata.getDescription()!!.trim()
+                        metadataDescription = (if (place != "") " • " else "") + metadata.getDescription()!!.trim()
                     }
                     val descVal = "$taken$place$metadataDescription"
 
