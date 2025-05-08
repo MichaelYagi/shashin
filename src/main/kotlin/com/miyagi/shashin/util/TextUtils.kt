@@ -296,44 +296,40 @@ class TextUtils {
 
         fun formatToLongDate(rawDate: String): String? {
             var rawDateArray = rawDate.split("-")
-            var year: Int? = null
-            var month: Int? = null
-            var day: Int? = null
+
+            if (rawDateArray.size != 3) {
+                rawDateArray = rawDate.split("/")
+            }
+
             if (rawDateArray.size == 3) {
-                year = rawDateArray[0].toIntOrNull()
-                month = rawDateArray[1].toIntOrNull()
-                day = rawDateArray[2].toIntOrNull()
+                if (rawDateArray[0].length < 4) {
+                    logger.log(Level.WARNING, "Could not format date $rawDate. Year invalid. Must be format yyyy-MM-dd or yyyy/MM/dd")
+                    return null
+                }
+
+                val year = rawDateArray[0].toIntOrNull()
+                val month = rawDateArray[1].toIntOrNull()
+                val day = rawDateArray[2].toIntOrNull()
+
                 if (year != null && month != null && day != null) {
                     if (month !in 1..12) {
                         logger.log(Level.WARNING, "Could not format date $rawDate. Month invalid. Must be format yyyy-MM-dd or yyyy/MM/dd")
                         return null
                     }
+
                     if (day !in 1..31) {
                         logger.log(Level.WARNING, "Could not format date $rawDate. Day invalid. Must be format yyyy-MM-dd or yyyy/MM/dd")
                         return null
                     }
                 }
             } else {
-                rawDateArray = rawDate.split("/")
-                if (rawDateArray.size == 3) {
-                    year = rawDateArray[0].toIntOrNull()
-                    month = rawDateArray[1].toIntOrNull()
-                    day = rawDateArray[2].toIntOrNull()
-                    if (year != null && month != null && day != null) {
-                        if (month !in 1..12) {
-                            logger.log(Level.WARNING, "Could not format date $rawDate. Month invalid. Must be format yyyy-MM-dd or yyyy/MM/dd")
-                            return null
-                        }
-                        if (day !in 1..31) {
-                            logger.log(Level.WARNING, "Could not format date $rawDate. Day invalid. Must be format yyyy-MM-dd or yyyy/MM/dd")
-                            return null
-                        }
-                    }
-                }
+                logger.log(Level.WARNING, "Could not format date $rawDate. Must be format yyyy-MM-dd or yyyy/MM/dd")
+                return null
             }
 
             var formattedDate = ""
             var newSdf = SimpleDateFormat("EEE, MMM d, yyyy")
+
             var sdf = SimpleDateFormat(getCommonDateFormat())
 
             try {
