@@ -294,27 +294,63 @@ class TextUtils {
             return input.toIntOrNull() != null
         }
 
-        fun formatToLongDate(oldDate: String): String {
+        fun formatToLongDate(rawDate: String): String? {
+            var rawDateArray = rawDate.split("-")
+            var year: Int? = null
+            var month: Int? = null
+            var day: Int? = null
+            if (rawDateArray.size == 3) {
+                year = rawDateArray[0].toIntOrNull()
+                month = rawDateArray[1].toIntOrNull()
+                day = rawDateArray[2].toIntOrNull()
+                if (year != null && month != null && day != null) {
+                    if (month !in 1..12) {
+                        logger.log(Level.WARNING, "Could not format date $rawDate. Month invalid. Must be format yyyy-MM-dd or yyyy/MM/dd")
+                        return null
+                    }
+                    if (day !in 1..31) {
+                        logger.log(Level.WARNING, "Could not format date $rawDate. Day invalid. Must be format yyyy-MM-dd or yyyy/MM/dd")
+                        return null
+                    }
+                }
+            } else {
+                rawDateArray = rawDate.split("/")
+                if (rawDateArray.size == 3) {
+                    year = rawDateArray[0].toIntOrNull()
+                    month = rawDateArray[1].toIntOrNull()
+                    day = rawDateArray[2].toIntOrNull()
+                    if (year != null && month != null && day != null) {
+                        if (month !in 1..12) {
+                            logger.log(Level.WARNING, "Could not format date $rawDate. Month invalid. Must be format yyyy-MM-dd or yyyy/MM/dd")
+                            return null
+                        }
+                        if (day !in 1..31) {
+                            logger.log(Level.WARNING, "Could not format date $rawDate. Day invalid. Must be format yyyy-MM-dd or yyyy/MM/dd")
+                            return null
+                        }
+                    }
+                }
+            }
+
             var formattedDate = ""
+            var newSdf = SimpleDateFormat("EEE, MMM d, yyyy")
+            var sdf = SimpleDateFormat(getCommonDateFormat())
+
             try {
-                val sdf = SimpleDateFormat(getCommonDateFormat())
-                val newSdf = SimpleDateFormat("EEE, MMM d, yyyy")
-                val temp = sdf.parse(oldDate)
-                formattedDate = newSdf.format(temp)
+                var parsed = sdf.parse(rawDate)
+                formattedDate = newSdf.format(parsed)
             } catch (_: Exception) {
                 try {
-                    val sdf = SimpleDateFormat("yyyy-MM-dd")
-                    val newSdf = SimpleDateFormat("EEE, MMM d, yyyy")
-                    val temp = sdf.parse(oldDate)
-                    formattedDate = newSdf.format(temp)
-                } catch (e: Exception) {
+                    sdf = SimpleDateFormat("yyyy-MM-dd")
+                    var parsed = sdf.parse(rawDate)
+                    formattedDate = newSdf.format(parsed)
+                } catch (_: Exception) {
                     try {
-                        val sdf = SimpleDateFormat("yyyy/MM/dd")
-                        val newSdf = SimpleDateFormat("EEE, MMM d, yyyy")
-                        val temp = sdf.parse(oldDate)
-                        formattedDate = newSdf.format(temp)
+                        sdf = SimpleDateFormat("yyyy/MM/dd")
+                        var parsed = sdf.parse(rawDate)
+                        formattedDate = newSdf.format(parsed)
                     } catch (e: Exception) {
-                        logger.log(Level.WARNING, "Could not format date $oldDate. ${e.message}")
+                        logger.log(Level.WARNING, "Could not format date $rawDate. ${e.message}. Must be format yyyy-MM-dd or yyyy/MM/dd")
                     }
                 }
             }

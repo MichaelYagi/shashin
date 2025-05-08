@@ -151,17 +151,20 @@ class TextUtilsTest {
 
     @Test
     fun formatToLongDateTest() {
-        var longDate = TextUtils.formatToLongDate("2023-11-9 01:00:00")
-        Assertions.assertEquals("Thu, Nov 9, 2023", longDate)
+        var longDate = TextUtils.formatToLongDate("2023-9-25 01:00:00")
+        Assertions.assertEquals("Mon, Sep 25, 2023", longDate)
 
-        longDate = TextUtils.formatToLongDate("2023-11-9")
-        Assertions.assertEquals("Thu, Nov 9, 2023", longDate)
-
-        longDate = TextUtils.formatToLongDate("2023/11/9")
-        Assertions.assertEquals("Thu, Nov 9, 2023", longDate)
+        longDate = TextUtils.formatToLongDate("2023-12-31")
+        Assertions.assertEquals("Sun, Dec 31, 2023", longDate)
 
         longDate = TextUtils.formatToLongDate("2023/9/25")
         Assertions.assertEquals("Mon, Sep 25, 2023", longDate)
+
+        longDate = TextUtils.formatToLongDate("2023-12-32")
+        Assertions.assertEquals(null, longDate)
+
+        longDate = TextUtils.formatToLongDate("2023/22/9")
+        Assertions.assertEquals(null, longDate)
     }
 
     @Test
@@ -169,7 +172,7 @@ class TextUtilsTest {
         var longDateWithTime = TextUtils.formatToLongDateWithTime("2023-11-9 01:00:00")
         Assertions.assertEquals("Thu, Nov 9, 2023 at 1:00 AM", longDateWithTime)
 
-        longDateWithTime = TextUtils.formatToLongDate("2023-11-9")
+        longDateWithTime = TextUtils.formatToLongDate("2023-11-9").toString()
         Assertions.assertEquals("", longDateWithTime)
     }
 

@@ -135,7 +135,7 @@ class RssFeedView : AbstractRssFeedView() {
                     val description = Description()
                     var place = ""
                     var metadataDescription = ""
-                    var taken = ""
+                    var taken: String? = null
 
                     if (metadata.getYear() != null && metadata.getYear() != 0 &&
                         metadata.getMonth() != null && metadata.getMonth() != 0 &&
@@ -145,7 +145,7 @@ class RssFeedView : AbstractRssFeedView() {
                     }
                     if (metadata.getPlaceName() != null && metadata.getPlaceName() != "") {
                         val placeArray = metadata.getPlaceName()!!.split(";")
-                        place = (if (taken != "") " - " else "") + placeArray[0].trim()
+                        place = (if (taken != null) " - " else "") + placeArray[0].trim()
                     }
                     if (metadata.getDescription() != null && metadata.getDescription() != "") {
                         metadataDescription = (if (place != "") " • " else "") + metadata.getDescription()!!.trim()
