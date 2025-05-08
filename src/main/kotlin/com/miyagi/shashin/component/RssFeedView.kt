@@ -141,18 +141,18 @@ class RssFeedView : AbstractRssFeedView() {
                         metadata.getMonth() != null && metadata.getMonth() != 0 &&
                         metadata.getDay() != null && metadata.getDay() != 0)
                     {
-                        taken = TextUtils.formatToLongDate("${metadata.getYear()}-${metadata.getMonth()}-${metadata.getDay()}")
+                        taken = "<p>"+TextUtils.formatToLongDate("${metadata.getYear()}-${metadata.getMonth()}-${metadata.getDay()}")+"</p>"
                     }
                     if (metadata.getPlaceName() != null && metadata.getPlaceName() != "") {
                         val placeArray = metadata.getPlaceName()!!.split(";")
-                        place = (if (taken != "") "<br>" else "") + placeArray[0].trim()
+                        place = "<p>"+placeArray[0].trim()+"</p>"
                     }
                     if (metadata.getDescription() != null && metadata.getDescription() != "") {
-                        metadataDescription = (if (place != "") "<br>" else "") + metadata.getDescription()!!.trim()
+                        metadataDescription = "<p>"+metadata.getDescription()!!.trim()+"</p>"
                     }
                     val descVal = "$taken$place$metadataDescription"
 
-                    description.value = "<img src='$baseUrl/api/v1/thumbnails/225/${metadata.getId()}'><br>${descVal}"
+                    description.value = "<img src='$baseUrl/api/v1/thumbnails/225/${metadata.getId()}'>${descVal}"
                     entry.description = description
                     entry.link = "$baseUrl/api/v1/image/${metadata.getId()}"
                     entry.uri = "$baseUrl/api/v1/image/${metadata.getId()}"

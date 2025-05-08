@@ -154,20 +154,20 @@ class AtomFeedView : AbstractAtomFeedView() {
                         metadata.getMonth() != null && metadata.getMonth() != 0 &&
                         metadata.getDay() != null && metadata.getDay() != 0)
                     {
-                        taken = TextUtils.formatToLongDate("${metadata.getYear()}-${metadata.getMonth()}-${metadata.getDay()}")
+                        taken = "<p>"+TextUtils.formatToLongDate("${metadata.getYear()}-${metadata.getMonth()}-${metadata.getDay()}")+"</p>"
                     }
                     if (metadata.getPlaceName() != null && metadata.getPlaceName() != "") {
                         val placeArray = metadata.getPlaceName()!!.split(";")
-                        place = (if (taken != "") "<br>" else "") + placeArray[0].trim()
+                        place = "<p>"+placeArray[0].trim()+"</p>"
                     }
                     if (metadata.getDescription() != null && metadata.getDescription() != "") {
-                        metadataDescription = (if (place != "") "<br>" else "") + metadata.getDescription()!!.trim()
+                        metadataDescription = "<p>"+metadata.getDescription()!!.trim()+"</p>"
                     }
                     val descVal = "$taken$place$metadataDescription"
 
                     val content = Content()
                     content.type = "text/html"
-                    content.value = "<img src='$baseUrl/api/v1/thumbnails/225/${metadata.getId()}'><br>${descVal}"
+                    content.value = "<img src='$baseUrl/api/v1/thumbnails/225/${metadata.getId()}'>${descVal}"
                     entry.contents = listOf(content)
                     val summaryContent = Content()
                     summaryContent.type = "text/html"
