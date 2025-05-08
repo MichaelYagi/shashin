@@ -301,8 +301,22 @@ class TextUtils {
                 val newSdf = SimpleDateFormat("EEE, MMM d, yyyy")
                 val temp = sdf.parse(oldDate)
                 formattedDate = newSdf.format(temp)
-            } catch (e: Exception) {
-                logger.log(Level.WARNING, "Could not format date $oldDate. ${e.message}")
+            } catch (_: Exception) {
+                try {
+                    val sdf = SimpleDateFormat("yyyy-MM-dd")
+                    val newSdf = SimpleDateFormat("EEE, MMM d, yyyy")
+                    val temp = sdf.parse(oldDate)
+                    formattedDate = newSdf.format(temp)
+                } catch (e: Exception) {
+                    try {
+                        val sdf = SimpleDateFormat("yyyy/MM/dd")
+                        val newSdf = SimpleDateFormat("EEE, MMM d, yyyy")
+                        val temp = sdf.parse(oldDate)
+                        formattedDate = newSdf.format(temp)
+                    } catch (e: Exception) {
+                        logger.log(Level.WARNING, "Could not format date $oldDate. ${e.message}")
+                    }
+                }
             }
             return formattedDate
         }
