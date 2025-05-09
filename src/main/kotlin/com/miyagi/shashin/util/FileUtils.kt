@@ -61,7 +61,7 @@ class FileUtils {
         }
 
         fun allowableRawImageFiles(): Array<String> {
-            return arrayOf("nef","cr2","orf","arw","rw2","rwl","srw")
+            return arrayOf("nef","cr2","orf","arw","rw2","rwl","srw","raf","dng","tiff")
         }
 
         fun isRaw(extension: String): Boolean {

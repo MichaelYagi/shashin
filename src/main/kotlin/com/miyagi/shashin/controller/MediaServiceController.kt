@@ -11,6 +11,7 @@ import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.SlideshowAlbumRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.*
+import com.miyagi.shashin.util.ImageProcessing.Companion.rotateImage
 import com.miyagi.shashin.util.TextUtils.Companion.getCacheControl
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
@@ -43,6 +44,7 @@ import net.coobird.thumbnailator.Thumbnails
 import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
+import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.IOException
 import javax.imageio.ImageIO
@@ -456,7 +458,7 @@ class MediaServiceController {
             if (attachFile) {
                 // Sanitize filename
                 val filename = resource.filename.replace(validFileNameRegex, "_")
-                response?.setHeader("Content-Disposition", "attachment; filename=$filename")
+                response.setHeader("Content-Disposition", "attachment; filename=$filename")
             }
             headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
             return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
@@ -911,13 +913,22 @@ class MediaServiceController {
             metadata.setFreeFormString(TextUtils.getMetadataFreeformString(model))
             metadataRepository.save(metadata)
 
-            val path = metadataObj.get().getPath()!!
+            var path = metadataObj.get().getPath()!!
             var resource = FileSystemResource(path)
+            var type = metadataObj.get().getType()
             val headers = HttpHeaders()
+
+            // If raw, use metadata image
+            if (metadata.getExpectedExtension() in FileUtils.allowableRawImageFiles()) {
+                path = metadata.getThumbnailPathSmall()!!.replace("_225.jpg","_original.jpg")
+                resource = FileSystemResource(path)
+                type = "image/jpg"
+            }
+
             try {
                 headers.contentLength = resource.contentLength()
-                if (metadataObj.get().getType() != null && "/" in metadataObj.get().getType()!!) {
-                    val typeList = metadataObj.get().getType()!!.split("/")
+                if (type != null && "/" in type) {
+                    val typeList = type.split("/")
                     if (typeList.count() == 2) {
                         headers.contentType = MediaType(typeList[0], typeList[1])
                     }
@@ -925,7 +936,7 @@ class MediaServiceController {
                 if (attachFile) {
                     // Sanitize filename
                     val filename = resource.filename.replace(validFileNameRegex, "_")
-                    response?.setHeader("Content-Disposition", "attachment; filename=$filename")
+                    response.setHeader("Content-Disposition", "attachment; filename=$filename")
                 }
                 headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
                 return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)

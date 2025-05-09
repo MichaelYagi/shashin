@@ -456,6 +456,10 @@ class MetadataProcessing() {
                 }
             }
 
+            if (this.metadataObj.getType().isNullOrBlank() && !this.metadataObj.getExpectedExtension().isNullOrBlank()) {
+                this.metadataObj.setType("image/${this.metadataObj.getExpectedExtension()}")
+            }
+
             if (this.metadataObj.getCamera().isNullOrBlank() && (!cameraMake.isNullOrBlank() || !cameraModel.isNullOrBlank())) {
                 var camera = ""
                 if (!cameraMake.isNullOrBlank()) {
