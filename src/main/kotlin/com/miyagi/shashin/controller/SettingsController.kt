@@ -943,7 +943,6 @@ class SettingsController {
         }
 
         if (submit == "Scan") {
-            session.setAttribute("sidecarSize", null)
             resp["msg"] = scanMediaDirectories(reindexFiles,session)
         }
 
@@ -1943,29 +1942,6 @@ class SettingsController {
 
                             // Place name, face and object recognition, if enabled
                             Thread {
-                                if (session != null && session.getAttribute("sidecarSize") == null) {
-                                    var sidecarSize = 0.toLong()
-
-                                    try {
-                                        val files = if (Files.isSymbolicLink(Paths.get(sidecarDir))) {
-                                            val path = Path(sidecarDir)
-                                            val realPath = path.toRealPath()
-                                            val directory = realPath.toFile()
-                                            directory.walk().filter { it.isFile }.toList()
-                                        } else {
-                                            val directory = File(sidecarDir)
-                                            directory.walk().filter { it.isFile }.toList()
-                                        }
-
-                                        files.map { file ->
-                                            sidecarSize += file.length()
-                                        }
-                                        session.setAttribute("sidecarSize", sidecarSize)
-                                    } catch (e: Exception) {
-                                        logger.log(Level.WARNING, "Error calculating sidecar size:" + e.message)
-                                    }
-                                }
-
                                 var webClient: WebClient? = null
                                 if (settings != null && compreFaceServerConnected) {
                                     webClient = WebClient.create(settings.getCompreFaceServer()!!)

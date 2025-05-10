@@ -40,6 +40,7 @@ class FileStats {
         var rawSidecarUsabe: Double
         var sidecarUsabe: Double
         var rawSidecarTotal: Double = 0.0
+        var sidecarSize: Long = 0
         try {
             if (File(sidecarDir).exists()) {
                 var dir = Paths.get(sidecarDir)
@@ -48,6 +49,7 @@ class FileStats {
                 sidecarUsabe = fs.usableSpace.toDouble() / (kilo * kilo).toDouble()
                 rawSidecarUsabe = fs.usableSpace.toDouble()
                 rawSidecarTotal = fs.totalSpace.toDouble()
+                sidecarSize = org.apache.commons.io.FileUtils.sizeOfDirectory(File(sidecarDir))
             } else {
                 var dir = Paths.get(rootPath)
                 dir = dir.toRealPath()
@@ -55,12 +57,14 @@ class FileStats {
                 sidecarUsabe = fs.usableSpace.toDouble() / (kilo * kilo).toDouble()
                 rawSidecarUsabe = fs.usableSpace.toDouble()
                 rawSidecarTotal = fs.totalSpace.toDouble()
+                sidecarSize = org.apache.commons.io.FileUtils.sizeOfDirectory(File(rootPath))
             }
         } catch (exception: Exception) {
             logger.log(Level.WARNING, "Error reading sidecar directory:" + exception.message)
             sidecarUsabe = 0.0
             rawSidecarUsabe = 0.0
         }
+
         var sidecarUsabeNotation = "MB"
         if (sidecarUsabe > kilo) {
             sidecarUsabe /= kilo
@@ -86,8 +90,6 @@ class FileStats {
         }
         response["sidecarTotalSizeText"] = "${String.format("%.2f", sidecarSpaceTotalSizeProcessed)} $sidecarSizeNotation"
         response["sidecarTotalSizeB"] = sidecarTotalSizeB
-
-        val sidecarSize = sidecarTotalSizeB-rawSidecarUsabe
 
 //        var sidecarSize = 0.toLong()
 //        if (session.getAttribute("sidecarSize") == null) {
