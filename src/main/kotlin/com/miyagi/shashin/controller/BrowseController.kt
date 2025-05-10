@@ -84,7 +84,7 @@ class BrowseController: BaseController() {
             val notUploadedFiles = fileUploadedMap["notUploadedFiles"] as MutableList<String>
 
             if (!uploadedFiles.isEmpty()) {
-                settingsController.scanMediaDirectories(false, session, 0, currentUserObj.getId())
+                settingsController.scanMediaDirectories(false, 0, currentUserObj.getId())
             }
 
             if (!notUploadedFiles.isEmpty() && !uploadedFiles.isEmpty()) {

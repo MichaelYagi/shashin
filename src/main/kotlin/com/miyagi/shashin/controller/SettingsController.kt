@@ -943,7 +943,7 @@ class SettingsController {
         }
 
         if (submit == "Scan") {
-            resp["msg"] = scanMediaDirectories(reindexFiles,session)
+            resp["msg"] = scanMediaDirectories(reindexFiles)
         }
 
         return mapper.writeValueAsString(resp)
@@ -1512,7 +1512,7 @@ class SettingsController {
     }
 
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
-    fun scanMediaDirectories(reindexFiles: Boolean, session: HttpSession? = null, addToAlbum: Int = 0, uploadUserId: Int = 0): String {
+    fun scanMediaDirectories(reindexFiles: Boolean, addToAlbum: Int = 0, uploadUserId: Int = 0): String {
         recognitionCount = 0
         val superAdmins = userRepository?.findAllByAuthorityEquals(superRole!!)
 
@@ -1905,6 +1905,31 @@ class SettingsController {
                                 }
 
                                 FileUtils.deleteEmptyDirectoriesOfFolder(File(sidecarDir))
+                            }
+
+                            var sidecarSize = 0.toLong()
+
+                            try {
+                                val files = if (Files.isSymbolicLink(Paths.get(sidecarDir))) {
+                                    val path = Path(sidecarDir)
+                                    val realPath = path.toRealPath()
+                                    val directory = realPath.toFile()
+                                    directory.walk().filter { it.isFile }.toList()
+                                } else {
+                                    val directory = File(sidecarDir)
+                                    directory.walk().filter { it.isFile }.toList()
+                                }
+
+                                files.map { file ->
+                                    sidecarSize += file.length()
+                                }
+
+                                val sidecarSizeUpdate = settingsRepository?.findFirstByOrderByIdAsc()
+                                sidecarSizeUpdate?.setSidecarSizeK(sidecarSize)
+                                settingsRepository?.save(sidecarSizeUpdate!!)
+
+                            } catch (e: Exception) {
+                                logger.log(Level.WARNING, "Error calculating sidecar size:" + e.message)
                             }
 
                             if (shouldStop.get()) {

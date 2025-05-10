@@ -89,6 +89,7 @@ CREATE TABLE `settings` (
                             `compreFaceKey` VARCHAR(36),
                             `compreFaceServer` VARCHAR(150),
                             `uploadMediaDirectory` VARCHAR(255) DEFAULT NULL,
+                            `sidecarSizeK` REAL DEFAULT 0,
                             `createdAt` DATETIME DEFAULT NULL,
                             `modifiedAt` DATETIME DEFAULT NULL
 );

@@ -43,6 +43,7 @@ class Settings {
     private var scheduledTime: String? = null
     @NotBlank
     private var uploadMediaDirectory: String? = null
+    private var sidecarSizeK: Long? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
 
@@ -98,6 +99,14 @@ class Settings {
 
     fun setMatchScanLimit(matchScanLimit: Int?) {
         this.matchScanLimit = matchScanLimit
+    }
+
+    fun getSidecarSizeK(): Long? {
+        return this.sidecarSizeK
+    }
+
+    fun setSidecarSizeK(sidecarSizeK: Long?) {
+        this.sidecarSizeK = sidecarSizeK
     }
 
     fun getTrainingDataLimit(): Int? {
@@ -215,6 +224,7 @@ class Settings {
         map["scheduledMatching"] = this.scheduledMatching
         map["scheduledTime"] = this.scheduledTime
         map["uploadMediaDirectory"] = this.uploadMediaDirectory
+        map["sidecarSizeK"] = this.sidecarSizeK
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {
