@@ -22,12 +22,13 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ### Security
 
-## [2.10.1] - 2025-05-09
+## [2.10.2] - 2025-05-09
 ### Added
 - Map context to save or set coordinates from the map
 
 ### Changed
 - Dashboard stats API keys
+- Improved file stats performance
 
 ## [2.10.0] - 2025-05-01
 ### Added
