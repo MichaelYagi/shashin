@@ -68,6 +68,48 @@ class FileUtils {
             return allowableRawImageFiles().contains(extension.lowercase())
         }
 
+        fun sidecarDiskUsage(sidecarDir: String): Map<String, Double> {
+            var rawSidecarUsabe: Double = 0.0
+            var rawSidecarTotal: Double = 0.0
+            val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+
+            try {
+                var dir = Paths.get(rootPath)
+                dir = dir.toRealPath()
+                if (File(sidecarDir).exists()) {
+                    dir = Paths.get(sidecarDir)
+                }
+                val fs = Files.getFileStore(dir)
+                rawSidecarUsabe = fs.usableSpace.toDouble()
+                rawSidecarTotal = fs.totalSpace.toDouble()
+            } catch (exception: Exception) {
+                logger.log(Level.WARNING, "Error reading sidecar directory:" + exception.message)
+            }
+
+            return mapOf("rawSidecarUsabe" to rawSidecarUsabe,"rawSidecarTotal" to rawSidecarTotal)
+        }
+
+        fun sidecarDiskUsed(sidecarDir: String): Long {
+            var sidecarSize = 0.toLong()
+
+            try {
+                var directory = File(sidecarDir)
+                if (Files.isSymbolicLink(Paths.get(sidecarDir))) {
+                    val path = Path(sidecarDir)
+                    val realPath = path.toRealPath()
+                    directory = realPath.toFile()
+                }
+                val files = directory.walk().filter { it.isFile }.toList()
+                files.map { file ->
+                    sidecarSize += file.length()
+                }
+            } catch (e: Exception) {
+                logger.log(Level.WARNING, "Error calculating sidecar size:" + e.message)
+            }
+
+            return sidecarSize
+        }
+
         fun probeFileExtension(file: File): String {
             var mediaExtension = file.extension.lowercase()
             if (mediaExtension == "") {

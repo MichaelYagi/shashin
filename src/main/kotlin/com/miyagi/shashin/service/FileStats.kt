@@ -2,6 +2,7 @@ package com.miyagi.shashin.service
 
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.SettingsRepository
+import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.ImageProcessing
 import com.miyagi.shashin.util.MetricsUtil
 import jakarta.servlet.http.HttpSession
@@ -39,36 +40,19 @@ class FileStats {
         val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
         var sidecarSizeNotation = ""
 
-        var rawSidecarUsabe: Double
-        var sidecarUsabe: Double
+        var rawSidecarUsabe: Double = 0.0
+        var sidecarUsabe: Double = 0.0
         var rawSidecarTotal: Double = 0.0
         var sidecarSize: Double = 0.0
         if (settings != null && settings.getSidecarSizeK() != null) {
             sidecarSize = settings.getSidecarSizeK()!!.toDouble()
         }
 
-        try {
-            if (File(sidecarDir).exists()) {
-                var dir = Paths.get(sidecarDir)
-                dir = dir.toRealPath()
-                val fs = Files.getFileStore(dir)
-                sidecarUsabe = fs.usableSpace.toDouble() / (kilo * kilo).toDouble()
-                rawSidecarUsabe = fs.usableSpace.toDouble()
-                rawSidecarTotal = fs.totalSpace.toDouble()
-            } else {
-                var dir = Paths.get(rootPath)
-                dir = dir.toRealPath()
-                val fs = Files.getFileStore(dir)
-                sidecarUsabe = fs.usableSpace.toDouble() / (kilo * kilo).toDouble()
-                rawSidecarUsabe = fs.usableSpace.toDouble()
-                rawSidecarTotal = fs.totalSpace.toDouble()
-            }
-        } catch (exception: Exception) {
-            logger.log(Level.WARNING, "Error reading sidecar directory:" + exception.message)
-            rawSidecarUsabe = 0.0
-            sidecarUsabe = 0.0
-            rawSidecarTotal = 0.0
-            sidecarSize = 0.0
+        val diskUsageMap = FileUtils.sidecarDiskUsage(sidecarDir)
+        if (diskUsageMap["rawSidecarUsabe"] != null && diskUsageMap["rawSidecarTotal"] != null) {
+            rawSidecarUsabe = diskUsageMap["rawSidecarUsabe"]!!
+            rawSidecarTotal = diskUsageMap["rawSidecarTotal"]!!
+            sidecarUsabe = rawSidecarUsabe / (kilo * kilo).toDouble()
         }
 
         logger.log(Level.INFO, "Sidecar used: $sidecarSize")
@@ -100,32 +84,6 @@ class FileStats {
         }
         response["sidecarTotalSizeText"] = "${String.format("%.2f", sidecarSpaceTotalSizeProcessed)} $sidecarSizeNotation"
         response["sidecarTotalSizeB"] = sidecarTotalSizeB
-
-//        var sidecarSize = 0.toLong()
-//        if (session.getAttribute("sidecarSize") == null) {
-//            logger.log(Level.WARNING, "Setting sidecarSize session attribute")
-//            try {
-//                val files = if (Files.isSymbolicLink(Paths.get(sidecarDir))) {
-//                    val path = Path(sidecarDir)
-//                    val realPath = path.toRealPath()
-//                    val directory = realPath.toFile()
-//                    directory.walk().filter { it.isFile }.toList()
-//                } else {
-//                    val directory = File(sidecarDir)
-//                    directory.walk().filter { it.isFile }.toList()
-//                }
-//
-//                files.map { file ->
-//                    sidecarSize += file.length()
-//                }
-//                session.setAttribute("sidecarSize", sidecarSize)
-//            } catch (e: Exception) {
-//                logger.log(Level.WARNING, "Error calculating sidecar size:" + e.message)
-//            }
-//        } else {
-//            logger.log(Level.WARNING, "Using sidecarSize session attribute")
-//            sidecarSize = session.getAttribute("sidecarSize").toString().toLong()
-//        }
 
         var sidecarSizeProcessed = sidecarSize.toDouble() / (kilo * kilo)
         sidecarSizeNotation = "MB"

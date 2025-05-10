@@ -1907,30 +1907,10 @@ class SettingsController {
                                 FileUtils.deleteEmptyDirectoriesOfFolder(File(sidecarDir))
                             }
 
-                            var sidecarSize = 0.toLong()
-
-                            try {
-                                val files = if (Files.isSymbolicLink(Paths.get(sidecarDir))) {
-                                    val path = Path(sidecarDir)
-                                    val realPath = path.toRealPath()
-                                    val directory = realPath.toFile()
-                                    directory.walk().filter { it.isFile }.toList()
-                                } else {
-                                    val directory = File(sidecarDir)
-                                    directory.walk().filter { it.isFile }.toList()
-                                }
-
-                                files.map { file ->
-                                    sidecarSize += file.length()
-                                }
-
-                                val sidecarSizeUpdate = settingsRepository?.findFirstByOrderByIdAsc()
-                                sidecarSizeUpdate?.setSidecarSizeK(sidecarSize)
-                                settingsRepository?.save(sidecarSizeUpdate!!)
-
-                            } catch (e: Exception) {
-                                logger.log(Level.WARNING, "Error calculating sidecar size:" + e.message)
-                            }
+                            var sidecarSize = FileUtils.sidecarDiskUsed(sidecarDir)
+                            val sidecarSizeUpdate = settingsRepository?.findFirstByOrderByIdAsc()
+                            sidecarSizeUpdate?.setSidecarSizeK(sidecarSize)
+                            settingsRepository?.save(sidecarSizeUpdate!!)
 
                             if (shouldStop.get()) {
                                 logger.log(Level.INFO, "Scan Stopped")
