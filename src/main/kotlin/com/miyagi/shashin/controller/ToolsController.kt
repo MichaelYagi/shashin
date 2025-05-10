@@ -85,6 +85,33 @@ class ToolsController {
     }
 
     @CrossOrigin(origins = ["*"], originPatterns = [], allowedHeaders = ["*"], methods = [RequestMethod.GET], maxAge = 3600)
+    @RequestMapping(value = ["/api/v1/latest/tag"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getLatestTag(): ResponseEntity<String> {
+        var response = mutableMapOf<String, Any?>()
+        response["tag"] = ""
+        response["status"] = ApiResponse.FAIL.status
+        response["msg"] = ""
+
+        if (githubKey != null && githubKey != "") {
+            val array = TextUtils.getReleases(githubKey!!)
+            if (array != null && array.isNotEmpty()) {
+                response["tag"] = array[0]
+                response["status"] = ApiResponse.SUCCESS.status
+            }
+        } else {
+            response["msg"] = "Could not complete request"
+        }
+
+        val json = mapper.writeValueAsString(response)
+        return ResponseEntity
+            .ok()
+//            .cacheControl(CacheControl.maxAge(1, TimeUnit.SECONDS))
+            .cacheControl(CacheControl.maxAge(14, TimeUnit.DAYS))
+            .body(json)
+    }
+
+    @CrossOrigin(origins = ["*"], originPatterns = [], allowedHeaders = ["*"], methods = [RequestMethod.GET], maxAge = 3600)
     @RequestMapping(value = ["/api/v1/tags"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getTags(): ResponseEntity<String> {
