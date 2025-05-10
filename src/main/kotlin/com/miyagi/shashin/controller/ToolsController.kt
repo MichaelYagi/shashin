@@ -85,18 +85,19 @@ class ToolsController {
     }
 
     @CrossOrigin(origins = ["*"], originPatterns = [], allowedHeaders = ["*"], methods = [RequestMethod.GET], maxAge = 3600)
-    @RequestMapping(value = ["/api/v1/latest/tag"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/latest/release"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getLatestTag(): ResponseEntity<String> {
         var response = mutableMapOf<String, Any?>()
-        response["tag"] = ""
+        response["release"] = null
         response["status"] = ApiResponse.FAIL.status
         response["msg"] = ""
 
         if (githubKey != null && githubKey != "") {
             val array = TextUtils.getReleases(githubKey!!)
-            if (array != null && array.isNotEmpty()) {
-                response["tag"] = array[0]
+            if (array != null && array.isNotEmpty() && array[0].containsKey("name")) {
+                val tagMap = array[0]["name"]
+                response["release"] = tagMap
                 response["status"] = ApiResponse.SUCCESS.status
             }
         } else {
