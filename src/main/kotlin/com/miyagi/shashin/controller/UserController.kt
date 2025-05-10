@@ -602,32 +602,13 @@ class UserController {
     fun getLoginUser(model: Model, session: HttpSession, @RequestParam(name="error",required=false) error: String?, @RequestParam(name="msg",required=false) message: String?): String {
         val module = "login"
 
-        var sidecarSize = 0.toLong()
-
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
         val sidecarDir = rootPath + relativeSidecarDir
 
-        try {
-            val files = if (Files.isSymbolicLink(Paths.get(sidecarDir))) {
-                val path = Path(sidecarDir)
-                val realPath = path.toRealPath()
-                val directory = realPath.toFile()
-                directory.walk().filter { it.isFile }.toList()
-            } else {
-                val directory = File(sidecarDir)
-                directory.walk().filter { it.isFile }.toList()
-            }
-
-            files.map { file ->
-                sidecarSize += file.length()
-            }
-
-            val sidecarSizeUpdate = settingsRepository?.findFirstByOrderByIdAsc()
-            sidecarSizeUpdate?.setSidecarSizeK(sidecarSize)
-            settingsRepository?.save(sidecarSizeUpdate!!)
-        } catch (e: Exception) {
-            logger.log(Level.WARNING, "Error calculating sidecar size:" + e.message)
-        }
+        var sidecarSize = FileUtils.sidecarDiskUsed(sidecarDir)
+        val sidecarSizeUpdate = settingsRepository?.findFirstByOrderByIdAsc()
+        sidecarSizeUpdate?.setSidecarSizeK(sidecarSize)
+        settingsRepository?.save(sidecarSizeUpdate!!)
 
         val userCount = userRepository?.count()
         if ((userCount != null) && (userCount.toInt() == 0)) {
