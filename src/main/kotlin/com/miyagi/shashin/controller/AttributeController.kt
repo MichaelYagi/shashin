@@ -339,6 +339,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
             model["facialRecogEnabled"] = false
             settingsObj.setRecognitionConfidenceThreshold(recognitionConfidenceThresholdProperty)
             settingsObj.setObjectRecognitionConfidenceThreshold(objectRecognitionConfidenceThresholdProperty)
+            settingsObj.setSidecarSizeK(0)
             settingsObj.setCreatedAt(getCurrentTimestamp())
             settingsObj.setModifiedAt(getCurrentTimestamp())
             model["settings"] = settingsObj

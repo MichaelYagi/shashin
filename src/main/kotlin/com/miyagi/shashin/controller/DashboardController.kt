@@ -14,7 +14,6 @@ import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.event.EventListener
-import org.springframework.core.io.FileSystemResource
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.annotation.SubscribeMapping
@@ -25,17 +24,12 @@ import org.springframework.ui.set
 import org.springframework.web.socket.messaging.SessionConnectEvent
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import org.springframework.web.socket.messaging.SessionSubscribeEvent
-import java.io.File
 import java.lang.management.ManagementFactory
-import java.nio.file.FileVisitOption
-import java.nio.file.Files
-import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.logging.Level
 import java.util.logging.Logger
 import jakarta.servlet.http.HttpSession
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.web.bind.annotation.*
 import java.lang.management.MemoryMXBean
 import kotlin.collections.set
@@ -75,6 +69,9 @@ class DashboardController {
 
     @Autowired
     private lateinit var keywordRepository: KeywordRepository
+
+    @Autowired
+    private lateinit var settingsRepository: SettingsRepository
 
     @Autowired
     private lateinit var useragentRepository: UseragentRepository
@@ -193,18 +190,20 @@ class DashboardController {
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/dashboard/data","/api/v1/dashboard/data"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getDashboardApi(model: Model, session: HttpSession): String {
-        return mapper.writeValueAsString(buildDashboardData(model,session))
+    fun getDashboardApi(model: Model): String {
+        val settings = model.getAttribute("settings") as Settings?
+        return mapper.writeValueAsString(buildDashboardData(model,settings))
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/stats/data","/api/v1/stats/data"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getStatsApi(model: Model, session: HttpSession): String {
-        return mapper.writeValueAsString(buildDashboardData(model,session,true))
+    fun getStatsApi(model: Model): String {
+        val settings = model.getAttribute("settings") as Settings?
+        return mapper.writeValueAsString(buildDashboardData(model,settings,true))
     }
 
-    private fun buildDashboardData(model: Model, session: HttpSession, simplified: Boolean = false): MutableMap<String, Any?> {
+    private fun buildDashboardData(model: Model, settings: Settings?, simplified: Boolean = false): MutableMap<String, Any?> {
         var response = mutableMapOf<String, Any?>()
 
         val metricsUtil = MetricsUtil()
@@ -212,7 +211,7 @@ class DashboardController {
         // Files stats
 
         val fileStats = FileStats()
-        response = fileStats.getFileStats(model, session)
+        response = fileStats.getFileStats(model, settings)
 
         response["uptimeText"] = TextUtils.getServerUptimeFormatted()
         response["uptimeMS"] = TextUtils.getServerUptimeMS()

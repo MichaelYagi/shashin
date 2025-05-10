@@ -1,5 +1,7 @@
 package com.miyagi.shashin.service
 
+import com.miyagi.shashin.model.Settings
+import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.util.ImageProcessing
 import com.miyagi.shashin.util.MetricsUtil
 import jakarta.servlet.http.HttpSession
@@ -25,7 +27,7 @@ class FileStats {
     private var logger: Logger = Logger.getLogger(FileStats::class.simpleName)
 
     @Cacheable("getFileStats")
-    fun getFileStats(model: Model, session: HttpSession): MutableMap<String, Any?> {
+    fun getFileStats(model: Model, settings: Settings?): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         val metricsUtil = MetricsUtil()
@@ -40,7 +42,11 @@ class FileStats {
         var rawSidecarUsabe: Double
         var sidecarUsabe: Double
         var rawSidecarTotal: Double = 0.0
-        var sidecarSize: Long = 0
+        var sidecarSize: Double = 0.0
+        if (settings != null && settings.getSidecarSizeK() != null) {
+            sidecarSize = settings.getSidecarSizeK()!!.toDouble()
+        }
+
         try {
             if (File(sidecarDir).exists()) {
                 var dir = Paths.get(sidecarDir)
@@ -49,7 +55,6 @@ class FileStats {
                 sidecarUsabe = fs.usableSpace.toDouble() / (kilo * kilo).toDouble()
                 rawSidecarUsabe = fs.usableSpace.toDouble()
                 rawSidecarTotal = fs.totalSpace.toDouble()
-                sidecarSize = org.apache.commons.io.FileUtils.sizeOfDirectory(File(sidecarDir))
             } else {
                 var dir = Paths.get(rootPath)
                 dir = dir.toRealPath()
@@ -57,19 +62,18 @@ class FileStats {
                 sidecarUsabe = fs.usableSpace.toDouble() / (kilo * kilo).toDouble()
                 rawSidecarUsabe = fs.usableSpace.toDouble()
                 rawSidecarTotal = fs.totalSpace.toDouble()
-                sidecarSize = org.apache.commons.io.FileUtils.sizeOfDirectory(File(rootPath))
             }
         } catch (exception: Exception) {
             logger.log(Level.WARNING, "Error reading sidecar directory:" + exception.message)
             rawSidecarUsabe = 0.0
             sidecarUsabe = 0.0
             rawSidecarTotal = 0.0
-            sidecarSize = 0
+            sidecarSize = 0.0
         }
 
-        logger.log(Level.INFO, "Sidecar used:" + sidecarSize)
-        logger.log(Level.INFO, "Sidecar usable:" + rawSidecarUsabe)
-        logger.log(Level.INFO, "Sidecar Total:" + rawSidecarTotal)
+        logger.log(Level.INFO, "Sidecar used: $sidecarSize")
+        logger.log(Level.INFO, "Sidecar usable: $rawSidecarUsabe")
+        logger.log(Level.INFO, "Sidecar Total: $rawSidecarTotal")
 
         var sidecarUsabeNotation = "MB"
         if (sidecarUsabe > kilo) {

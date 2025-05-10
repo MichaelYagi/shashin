@@ -831,7 +831,7 @@ class AlbumsController: BaseController() {
             val notUploadedFiles = fileUploadedMap["notUploadedFiles"] as MutableList<String>
 
             if (!uploadedFiles.isEmpty()) {
-                settingsController.scanMediaDirectories(false, session, albumId, currentUserObj.getId())
+                settingsController.scanMediaDirectories(false, albumId, currentUserObj.getId())
             }
 
             if (!notUploadedFiles.isEmpty() && !uploadedFiles.isEmpty()) {

@@ -10,6 +10,7 @@ import com.miyagi.shashin.repository.FavoriteRepository
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.PersistentLoginsExpiryRepository
 import com.miyagi.shashin.repository.PersistentLoginsRepository
+import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.repository.SlideshowAlbumRepository
 import com.miyagi.shashin.repository.UserAlbumRepository
 import com.miyagi.shashin.repository.UserRepository
@@ -42,10 +43,14 @@ import java.util.logging.Logger
 import javax.imageio.ImageIO
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpSession
 import org.springframework.http.ResponseCookie
 import org.springframework.transaction.annotation.Transactional
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.time.Instant
 import kotlin.collections.set
+import kotlin.io.path.Path
 import kotlin.text.toLong
 
 
@@ -81,6 +86,9 @@ class UserController {
 
     @Autowired
     private val userAlbumRepository: UserAlbumRepository? = null
+
+    @Autowired
+    private val settingsRepository: SettingsRepository? = null
 
     @Autowired
     private val favoriteRepository: FavoriteRepository? = null
@@ -591,8 +599,35 @@ class UserController {
     }
 
     @GetMapping("/users/login")
-    fun getLoginUser(model: Model, @RequestParam(name="error",required=false) error: String?, @RequestParam(name="msg",required=false) message: String?): String {
+    fun getLoginUser(model: Model, session: HttpSession, @RequestParam(name="error",required=false) error: String?, @RequestParam(name="msg",required=false) message: String?): String {
         val module = "login"
+
+        var sidecarSize = 0.toLong()
+
+        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+        val sidecarDir = rootPath + relativeSidecarDir
+
+        try {
+            val files = if (Files.isSymbolicLink(Paths.get(sidecarDir))) {
+                val path = Path(sidecarDir)
+                val realPath = path.toRealPath()
+                val directory = realPath.toFile()
+                directory.walk().filter { it.isFile }.toList()
+            } else {
+                val directory = File(sidecarDir)
+                directory.walk().filter { it.isFile }.toList()
+            }
+
+            files.map { file ->
+                sidecarSize += file.length()
+            }
+
+            val sidecarSizeUpdate = settingsRepository?.findFirstByOrderByIdAsc()
+            sidecarSizeUpdate?.setSidecarSizeK(sidecarSize)
+            settingsRepository?.save(sidecarSizeUpdate!!)
+        } catch (e: Exception) {
+            logger.log(Level.WARNING, "Error calculating sidecar size:" + e.message)
+        }
 
         val userCount = userRepository?.count()
         if ((userCount != null) && (userCount.toInt() == 0)) {
