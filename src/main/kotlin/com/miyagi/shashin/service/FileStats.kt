@@ -61,9 +61,15 @@ class FileStats {
             }
         } catch (exception: Exception) {
             logger.log(Level.WARNING, "Error reading sidecar directory:" + exception.message)
-            sidecarUsabe = 0.0
             rawSidecarUsabe = 0.0
+            sidecarUsabe = 0.0
+            rawSidecarTotal = 0.0
+            sidecarSize = 0
         }
+
+        logger.log(Level.INFO, "Sidecar used:" + sidecarSize)
+        logger.log(Level.INFO, "Sidecar usable:" + rawSidecarUsabe)
+        logger.log(Level.INFO, "Sidecar Total:" + rawSidecarTotal)
 
         var sidecarUsabeNotation = "MB"
         if (sidecarUsabe > kilo) {
@@ -132,7 +138,7 @@ class FileStats {
 
         metricsUtil.end()
 
-        logger.log(Level.WARNING, "Sidecar file stats elapsed time:" + metricsUtil.getTotalElapsedTime())
+        logger.log(Level.INFO, "Sidecar file stats elapsed time:" + metricsUtil.getTotalElapsedTime())
 
         return response
     }
