@@ -11,10 +11,8 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
-- Map context to save or set coordinates from the map
 
 ### Changed
-- Dashboard stats API keys
 
 ### Deprecated
 
@@ -23,6 +21,13 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Fixed
 
 ### Security
+
+## [2.10.1] - 2025-05-09
+### Added
+- Map context to save or set coordinates from the map
+
+### Changed
+- Dashboard stats API keys
 
 ## [2.10.0] - 2025-05-01
 ### Added
