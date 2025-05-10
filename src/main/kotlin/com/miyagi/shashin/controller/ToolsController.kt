@@ -89,15 +89,17 @@ class ToolsController {
     @ResponseBody
     fun getLatestTag(): ResponseEntity<String> {
         var response = mutableMapOf<String, Any?>()
-        response["release"] = null
+        response["releaseVersion"] = null
+        response["releaseVersionName"] = null
         response["status"] = ApiResponse.FAIL.status
         response["msg"] = ""
 
         if (githubKey != null && githubKey != "") {
             val array = TextUtils.getReleases(githubKey!!)
             if (array != null && array.isNotEmpty() && array[0].containsKey("name")) {
-                val tagMap = array[0]["name"]
-                response["release"] = tagMap
+                val latestReleaseName = array[0]["name"]
+                response["releaseVersion"] = latestReleaseName.toString().drop(1)
+                response["releaseVersionName"] = latestReleaseName
                 response["status"] = ApiResponse.SUCCESS.status
             }
         } else {
