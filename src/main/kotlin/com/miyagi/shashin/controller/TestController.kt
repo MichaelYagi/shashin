@@ -10,6 +10,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.google.javascript.jscomp.jarjar.com.google.common.io.Files
 import com.miyagi.shashin.component.DjlFaceRecognizer
+import com.miyagi.shashin.component.DuplicateImageChecker
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScaperMessage
 import com.miyagi.shashin.model.Metadata
@@ -43,6 +44,7 @@ import java.util.concurrent.TimeUnit
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
+import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 import kotlin.String
 
@@ -79,6 +81,35 @@ class TestController {
     @GetMapping("/test")
     fun test(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
         model["activePage"] = "test"
+
+        return "test"
+    }
+
+    @Secured("ROLE_SUPER")
+    @PostMapping("/test")
+    fun posttest(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
+        model["activePage"] = "test"
+        model["text"] = "Enter fields"
+        model["setone"] = ""
+        model["settwo"] = ""
+
+        // C:\Users\Michael\Downloads\PXL_20230721_142144451.MP.jpg
+        // C:\Users\Michael\Downloads\PXL_20210930_164602780.jpg
+        // C:\Users\Michael\Downloads\PXL_20210930_164602780_resize.jpg
+        if (request.getParameter("setone") != null && request.getParameter("settwo") != null) {
+            var setOneFilename = request.getParameter("setone").toString()
+            var setTwoFilename = request.getParameter("settwo").toString()
+
+            model["setone"] = setOneFilename
+            model["settwo"] = setTwoFilename
+
+            val i = DuplicateImageChecker()
+            i.setFirstImage(setOneFilename)
+            i.setSecondImage(setTwoFilename)
+            val isDuplicate = i.isDuplicate()
+
+            model["text"] = isDuplicate.toString() + " - " + i.getDifference()
+        }
 
         return "test"
     }
