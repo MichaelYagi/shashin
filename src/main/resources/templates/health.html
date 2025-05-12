@@ -51,8 +51,7 @@ Uptime:&nbsp;<span id="uptimeText" th:text="${uptimeText}"></span><br>
 
     if (shashinServerStartUnixMS > 0) {
         setInterval(function () {
-            const elapsed = Date.now()-shashinServerStartUnixMS;
-            document.getElementById("uptimeText").textContent = Util.convertMSToDayTime(elapsed);
+            document.getElementById("uptimeText").textContent = Util.convertMSToDayTime(Date.now()-shashinServerStartUnixMS);
         }, 1000);
     }
 
