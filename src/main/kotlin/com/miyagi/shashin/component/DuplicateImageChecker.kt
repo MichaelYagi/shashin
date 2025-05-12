@@ -16,6 +16,7 @@ class DuplicateImageChecker {
     private var two: BufferedImage? = null
     private var difference = 0.0
     private var threshold = 15
+    private var crop = false
 
     private var logger: Logger = Logger.getLogger(DuplicateImageChecker::class.simpleName)
 
@@ -35,17 +36,25 @@ class DuplicateImageChecker {
 
             var size = if (adjustedWidth > adjustedHeight) adjustedHeight else adjustedWidth
 
-            one = Thumbnails.of(one)
-                .outputQuality(0.5)
-                .crop(Positions.CENTER)
-                .size(size, size)
-                .asBufferedImage()
+            val oneTn = Thumbnails.of(one).outputQuality(0.5)
 
-            two = Thumbnails.of(two)
-                .outputQuality(0.5)
-                .crop(Positions.CENTER)
-                .size(size, size)
-                .asBufferedImage()
+            if (crop) {
+                oneTn.crop(Positions.CENTER).size(size, size)
+            } else {
+                oneTn.size(adjustedWidth, adjustedHeight)
+            }
+
+            one = oneTn.asBufferedImage()
+
+            val twoTn = Thumbnails.of(two).outputQuality(0.5)
+
+            if (crop) {
+                twoTn.crop(Positions.CENTER).size(size, size)
+            } else {
+                twoTn.size(adjustedWidth, adjustedHeight)
+            }
+
+            two = twoTn.asBufferedImage()
 
             if (one!!.width == two!!.width && one!!.height == two!!.height) {
                 val width = one!!.width
@@ -127,6 +136,10 @@ class DuplicateImageChecker {
     // 1-100
     fun setThreshold(threshold: Int) {
         this.threshold = threshold
+    }
+
+    fun setCrop(crop: Boolean) {
+        this.crop = crop
     }
 
     fun getDifference(): Double? {
