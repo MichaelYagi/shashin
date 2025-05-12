@@ -46,13 +46,13 @@ Uptime:&nbsp;<span id="uptimeText" th:text="${uptimeText}"></span><br>
 
 <script th:inline="javascript" type="text/javascript">
     /*<![CDATA[*/
-    let shashinServerStartUnixMS = /*[[${uptimeMS}]]*/ 0;
+    let shashinServerStartUnixMS = /*[[${shashinServerStartUnixMS}]]*/ 0;
     /*]]>*/
 
     if (shashinServerStartUnixMS > 0) {
         setInterval(function () {
-            shashinServerStartUnixMS += 1000;
-            document.getElementById("uptimeText").textContent = Util.convertMSToDayTime(shashinServerStartUnixMS);
+            const elapsed = Date.now()-shashinServerStartUnixMS;
+            document.getElementById("uptimeText").textContent = Util.convertMSToDayTime(elapsed);
         }, 1000);
     }
 

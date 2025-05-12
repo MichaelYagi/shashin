@@ -36,6 +36,9 @@ import kotlin.collections.set
 @Controller
 class ToolsController {
 
+    @Value("#{systemProperties['com.miyagi.shashin.serverStartUnixMS']}")
+    private var shashinServerStartUnixMS: String? = null
+
     @Autowired
     private lateinit var metaRepository: MetadataRepository
 
@@ -254,6 +257,7 @@ class ToolsController {
         }
         metricsUtil.end()
 
+        response["shashinServerStartUnixMS"] = shashinServerStartUnixMS
         response["uptimeText"] = TextUtils.getServerUptimeFormatted()
         response["uptimeMS"] = TextUtils.getServerUptimeMS()
 
