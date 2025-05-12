@@ -1,125 +1,114 @@
 package com.miyagi.shashin.component
 
-import com.miyagi.shashin.util.FileUtils
 import net.coobird.thumbnailator.Thumbnails
 import net.coobird.thumbnailator.geometry.Positions
 import java.awt.image.BufferedImage
+import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.IOException
+import java.util.Base64
+import java.util.logging.Logger
 import javax.imageio.ImageIO
-import kotlin.math.abs
-import kotlin.math.min
 
+//https://stackoverflow.com/questions/17282272/comparing-images-to-find-duplicates
 class DuplicateImageChecker {
     private var one: BufferedImage? = null
     private var two: BufferedImage? = null
     private var difference = 0.0
-    private var x = 0
-    private var y = 0
+    private var threshold = 15
+
+    private var logger: Logger = Logger.getLogger(DuplicateImageChecker::class.simpleName)
 
     fun isDuplicate(): Boolean {
-        if (one == null || two == null) {
 
+        if (one != null && two != null) {
+            var adjustedWidth = one!!.width
+            var adjustedHeight = one!!.height
+
+            if (one!!.width > two!!.width) {
+                adjustedWidth = two!!.width
+            }
+
+            if (one!!.height > two!!.height) {
+                adjustedHeight = two!!.height
+            }
+
+            var size = if (adjustedWidth > adjustedHeight) adjustedHeight else adjustedWidth
+
+            one = Thumbnails.of(one)
+                .outputQuality(0.5)
+                .crop(Positions.CENTER)
+                .size(size, size)
+                .asBufferedImage()
+
+            two = Thumbnails.of(two)
+                .outputQuality(0.5)
+                .crop(Positions.CENTER)
+                .size(size, size)
+                .asBufferedImage()
+
+            if (one!!.width == two!!.width && one!!.height == two!!.height) {
+                val width = one!!.width
+                val height = one!!.height
+
+                var diff = 0.0
+                for (y in 0 until height) {
+                    for (x in 0 until width) {
+                        diff += pixelDiff(one!!.getRGB(x, y), two!!.getRGB(x, y))
+                    }
+                }
+                val maxDiff = 3L * 255 * width * height
+
+                difference = diff / maxDiff
+
+                return (100.0 * (difference)).toInt() < threshold
+            }
+
+            difference = 0.0
+            return false
+        } else {
+            difference = 0.0
             return false
         }
-
-        if (one!!.width + one!!.height < two!!.width + two!!.height) {
-            val tmpOne = one
-            val tmpTwo = two
-            one = tmpTwo
-            two = tmpOne
-        }
-
-        var width = one!!.width
-        var height = one!!.height
-        if (one!!.width > two!!.width) {
-            width = two!!.width
-            height = two!!.height
-        }
-
-        one = Thumbnails.of(one)
-            .outputQuality(0.5)
-            .size(height, width)
-            .asBufferedImage()
-
-        two = Thumbnails.of(two)
-            .outputQuality(0.5)
-            .size(height, width)
-            .asBufferedImage()
-
-        var f = 20
-        val w1 = min(50, (one?.width ?: 0) - (two?.width ?: 0))
-        val h1 = min(50, (one?.height ?: 0) - (two?.height ?: 0))
-        val w2 = min(5, (one?.width ?: 0) - (two?.width ?: 0))
-        val h2 = min(5, (one?.height ?: 0) - (two?.height ?: 0))
-
-        for (i in 0..(one?.width ?: 0) - (two?.width ?: 0) step f) {
-            for (j in 0..(one?.height ?: 0) - (two?.height ?: 0) step f) {
-                compareSubset(i, j, f)
-            }
-        }
-
-        one = one?.getSubimage(
-            maxOf(0, x - w1),
-            maxOf(0, y - h1),
-            min(two?.width?.plus(w1) ?: 0, (one?.width ?: 0) - x + w1),
-            min(two?.height?.plus(h1) ?: 0, (one?.height ?: 0) - y + h1)
-        )
-        x = 0
-        y = 0
-        difference = 0.0
-        f = 5
-        for (i in 0..(one?.width ?: 0) - (two?.width ?: 0) step f) {
-            for (j in 0..(one?.height ?: 0) - (two?.height ?: 0) step f) {
-                compareSubset(i, j, f)
-            }
-        }
-        one = one?.getSubimage(
-            maxOf(0, x - w2),
-            maxOf(0, y - h2),
-            min(two?.width?.plus(w2) ?: 0, (one?.width ?: 0) - x + w2),
-            min(two?.height?.plus(h2) ?: 0, (one?.height ?: 0) - y + h2)
-        )
-        f = 1
-        for (i in 0..(one?.width ?: 0) - (two?.width ?: 0) step f) {
-            for (j in 0..(one?.height ?: 0) - (two?.height ?: 0) step f) {
-                compareSubset(i, j, f)
-            }
-        }
-
-        return difference < 0.1
     }
 
-    private fun compareSubset(a: Int, b: Int, f: Int) {
-        var diff = 0.0
-        for (i in 0 until (two?.width ?: 0) step f) {
-            for (j in 0 until (two?.height ?: 0) step f) {
-                val onepx = one?.getRGB(i + a, j + b) ?: 0
-                val twopx = two?.getRGB(i, j) ?: 0
-                val r1 = (onepx shr 16)
-                val g1 = (onepx shr 8) and 0xff
-                val b1 = (onepx) and 0xff
-                val r2 = (twopx shr 16)
-                val g2 = (twopx shr 8) and 0xff
-                val b2 = (twopx) and 0xff
-                diff += (abs(r1 - r2) + abs(g1 - g2) + abs(b1 - b2)) / 3.0 / 255.0
-            }
-        }
-        val percentDiff = diff * f * f / ((two?.width ?: 0) * (two?.height ?: 0))
-        if (percentDiff < difference || difference == 0.0) {
-            difference = percentDiff
-            x = a
-            y = b
-        }
+    private fun pixelDiff(rgb1: Int, rgb2: Int): Int {
+        val r1 = (rgb1 shr 16) and 0xff
+        val g1 = (rgb1 shr 8) and 0xff
+        val b1 = rgb1 and 0xff
+        val r2 = (rgb2 shr 16) and 0xff
+        val g2 = (rgb2 shr 8) and 0xff
+        val b2 = rgb2 and 0xff
+        return Math.abs(r1 - r2) + Math.abs(g1 - g2) + Math.abs(b1 - b2)
     }
 
     fun getFirstImage(): BufferedImage? {
         return one
     }
 
+    fun getBase64FirstImage(): String? {
+        if (one != null) {
+            var os = ByteArrayOutputStream()
+            ImageIO.write(one, "jpg", os)
+            return Base64.getEncoder().encodeToString(os.toByteArray())
+        }
+        return null
+    }
+
+    fun getBase64SecondImage(): String? {
+        if (two != null) {
+            var os = ByteArrayOutputStream()
+            ImageIO.write(two, "jpg", os)
+            return Base64.getEncoder().encodeToString(os.toByteArray())
+        }
+        return null
+    }
+
     fun setFirstImage(one: String) {
-        val bi = ImageIO.read(File(one))
-        this.one = bi
+        val file = File(one)
+        if (file.exists()) {
+            val bi = ImageIO.read(file)
+            this.one = bi
+        }
     }
 
     fun getSecondImage(): BufferedImage? {
@@ -127,8 +116,16 @@ class DuplicateImageChecker {
     }
 
     fun setSecondImage(two: String) {
-        val bi = ImageIO.read(File(two))
-        this.two = bi
+        val file = File(two)
+        if (file.exists()) {
+            val bi = ImageIO.read(file)
+            this.two = bi
+        }
+    }
+
+    // 1-100
+    fun setThreshold(threshold: Int) {
+        this.threshold = threshold
     }
 
     fun getDifference(): Double? {

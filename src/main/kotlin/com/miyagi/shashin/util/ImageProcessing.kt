@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.javascript.jscomp.jarjar.com.google.common.io.Files
 import com.miyagi.shashin.ShashinApplication
 import com.miyagi.shashin.component.DjlFaceRecognizer
+import com.miyagi.shashin.component.DuplicateImageChecker
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.twelvemonkeys.image.ConvolveWithEdgeOp
@@ -1088,6 +1089,17 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             }
 
             return criteria
+        }
+
+        fun isDuplicate(filename1: String?, filename2: String?): Boolean {
+            var isDuplicate = false
+            if (filename1 != null && filename2 != null) {
+                val i = DuplicateImageChecker()
+                i.setFirstImage(filename1)
+                i.setSecondImage(filename2)
+                isDuplicate = i.isDuplicate()
+            }
+            return isDuplicate
         }
     }
 }

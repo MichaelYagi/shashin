@@ -45,6 +45,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
 import java.awt.image.BufferedImage
+import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
 import kotlin.String
 
@@ -92,6 +93,7 @@ class TestController {
         model["text"] = "Enter fields"
         model["setone"] = ""
         model["settwo"] = ""
+        model["base64_1"] = ""
 
         // C:\Users\Michael\Downloads\PXL_20230721_142144451.MP.jpg
         // C:\Users\Michael\Downloads\PXL_20210930_164602780.jpg
@@ -108,7 +110,12 @@ class TestController {
             i.setSecondImage(setTwoFilename)
             val isDuplicate = i.isDuplicate()
 
-            model["text"] = isDuplicate.toString() + " - " + i.getDifference()
+            model["text"] = "isDupe: "+isDuplicate.toString() + " - " + i.getDifference()
+
+            // data:image/png;base64,
+            val pre = "data:image/png;base64, "
+            model["base64_1"] = pre + i.getBase64FirstImage()
+            model["base64_2"] = pre + i.getBase64SecondImage()
         }
 
         return "test"
@@ -119,6 +126,9 @@ class TestController {
     fun testPaged(model: Model, @PathVariable(required = true) page: Int?, request: HttpServletRequest, response: HttpServletResponse): String {
         model["activePage"] = "test"
         model["currentPage"] = page
+
+        model["base64_1"] = ""
+        model["base64_2"] = ""
 
         return "test"
     }
