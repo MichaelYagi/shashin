@@ -255,6 +255,7 @@ class ToolsController {
         metricsUtil.end()
 
         response["uptimeText"] = TextUtils.getServerUptimeFormatted()
+        response["uptimeMS"] = TextUtils.getServerUptimeMS()
 
         metricsUtil.start("nominatim endpoint")
         val nominatimTimingStart = Date()
