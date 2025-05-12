@@ -8,6 +8,7 @@ import java.io.File
 import java.util.Base64
 import java.util.logging.Logger
 import javax.imageio.ImageIO
+import kotlin.math.abs
 
 //https://stackoverflow.com/questions/17282272/comparing-images-to-find-duplicates
 class DuplicateImageChecker {
@@ -78,7 +79,7 @@ class DuplicateImageChecker {
         val r2 = (rgb2 shr 16) and 0xff
         val g2 = (rgb2 shr 8) and 0xff
         val b2 = rgb2 and 0xff
-        return Math.abs(r1 - r2) + Math.abs(g1 - g2) + Math.abs(b1 - b2)
+        return abs(r1 - r2) + abs(g1 - g2) + abs(b1 - b2)
     }
 
     fun getFirstImage(): BufferedImage? {
