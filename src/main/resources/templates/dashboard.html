@@ -188,8 +188,7 @@
 
         if (shashinServerStartUnixMS > 0) {
             setInterval(function () {
-                const elapsed = Date.now()-shashinServerStartUnixMS;
-                $("#uptimeText").html("Uptime <code>" + Util.convertMSToDayTime(elapsed) + "</code>");
+                $("#uptimeText").html("Uptime <code>" + Util.convertMSToDayTime(Date.now()-shashinServerStartUnixMS) + "</code>");
             }, 1000);
         }
 
