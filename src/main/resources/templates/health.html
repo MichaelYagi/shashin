@@ -45,22 +45,9 @@
             const loadTime = window.performance.timing.domContentLoadedEventEnd - window.performance.timing.navigationStart;
             if (loadTime > 0) {
                 const pltEl = document.getElementById("plt");
-                pltEl.innerText = "Page load time: " + msToTime(loadTime);
+                pltEl.innerText = "Page load time: " + loadTime + "ms";
                 pltEl.setAttribute('style', 'display:block');
             }
-
-            function msToTime(duration) {
-                let milliseconds = parseInt(duration % 1000),
-                    seconds = parseInt((duration / 1000) % 60),
-                    minutes = parseInt((duration / (1000 * 60)) % 60);
-
-                minutes = (minutes < 10) ? "0" + minutes : minutes;
-                seconds = (seconds < 10) ? "0" + seconds : seconds;
-                milliseconds = milliseconds.toString().padStart(3, '0');
-
-                return minutes + ":" + seconds + "." + milliseconds;
-            }
-
         }
     }
 </script>
