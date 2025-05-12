@@ -36,20 +36,25 @@
 <th:block th:text="${'Local server time: '+localServerTime}"></th:block><br>
 
 <script type="text/javascript">
-    if (typeof performance !== "undefined" &&
-        typeof performance.timing !== "undefined" &&
-        typeof performance.timing.domContentLoadedEventEnd !== "undefined" &&
-        typeof performance.timing.navigationStart !== "undefined"
-    ) {
-        window.onload = function () {
-            const loadTime = window.performance.timing.domContentLoadedEventEnd - window.performance.timing.navigationStart;
-            if (loadTime > 0) {
+    document.addEventListener("readystatechange", function(e) {
+        if (e.target.readyState === "complete") {
+            let pageLoad = 0;
+
+            if (performance) {
+                pageLoad = performance.now();
+            } else if (e.target.timeline.currentTime && e.target.timeline.currentTime > 0) {
+                pageLoad = e.target.timeline.currentTime;
+            } else if (e.timeStamp && e.timeStamp > 0) {
+                pageLoad = e.timeStamp;
+            }
+
+            if (pageLoad > 0) {
                 const pltEl = document.getElementById("plt");
-                pltEl.innerText = "Page load time: " + loadTime + "ms";
+                pltEl.innerText = "Page load time: " + Math.round(pageLoad) + "ms";
                 pltEl.setAttribute('style', 'display:block');
             }
         }
-    }
+    });
 </script>
 
 </body>
