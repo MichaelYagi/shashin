@@ -12,7 +12,7 @@
 <h1>Health Check</h1>
 
 <th:block th:utext="${'Status: '+ (status == 'OK' ? status : '<span style=&quot;color: red;&quot;>'+status+'</span>')}"></th:block><br><br>
-<th:block th:text="${'Uptime: '+uptimeText}"></th:block><br>
+Uptime:&nbsp;<span id="uptimeText" th:text="${uptimeText}"></span><br>
 <th:block th:text="${'Endpoint processing timing: '+endpointProcessingTimeText}"></th:block><br>
 <span id="plt" style="display: none;"></span>
 <th:block th:utext="${'SQLite connection: '+(sqlLiteAvailable == 'OK' ? sqlLiteAvailable : '<span style=&quot;color: red;&quot;>'+sqlLiteAvailable+'</span>')}"></th:block><br>
@@ -35,7 +35,18 @@
 <th:block th:text="${'Build Version: '+buildVersion}"></th:block><br>
 <th:block th:text="${'Local server time: '+localServerTime}"></th:block><br>
 
-<script type="text/javascript">
+<script th:inline="javascript" type="text/javascript">
+    /*<![CDATA[*/
+    let shashinServerStartUnixMS = /*[[${uptimeMS}]]*/ 0;
+    /*]]>*/
+
+    if (shashinServerStartUnixMS > 0) {
+        setInterval(function () {
+            shashinServerStartUnixMS += 1000;
+            document.getElementById("uptimeText").textContent = convertMSToDayTime(shashinServerStartUnixMS);
+        }, 1000);
+    }
+
     document.addEventListener("readystatechange", function(e) {
         if (e.target.readyState === "complete") {
             let pageLoad = 0;
@@ -55,6 +66,14 @@
             }
         }
     });
+
+    function convertMSToDayTime(ms) {
+        const seconds = Math.floor(ms / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+        return ((days > 0) ? (days.toString() + " day"+((Number(days) === 1) ? "" : "s")+ " ") : "") + (((hours % 24) < 10) ? "0" : "") + (hours % 24) + ":" + (((minutes % 60) < 10) ? "0" : "") + (minutes % 60) + ":" + (((seconds % 60) < 10) ? "0" : "") + (seconds % 60);
+    }
 </script>
 
 </body>
