@@ -4,6 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Health Check</title>
+    <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
+        <script src="/js/site/util.js" th:nonce="${cspNonce}"></script>
+        <script src="/js/site/app.js" th:nonce="${cspNonce}"></script>
+    </th:block>
+    <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
+        <script src="/js/site/min/util.min.js" th:nonce="${cspNonce}"></script>
+        <script src="/js/site/min/app.min.js" th:nonce="${cspNonce}"></script>
+    </th:block>
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
 </head>
@@ -43,7 +51,7 @@ Uptime:&nbsp;<span id="uptimeText" th:text="${uptimeText}"></span><br>
     if (shashinServerStartUnixMS > 0) {
         setInterval(function () {
             shashinServerStartUnixMS += 1000;
-            document.getElementById("uptimeText").textContent = convertMSToDayTime(shashinServerStartUnixMS);
+            document.getElementById("uptimeText").textContent = Util.convertMSToDayTime(shashinServerStartUnixMS);
         }, 1000);
     }
 
@@ -66,14 +74,6 @@ Uptime:&nbsp;<span id="uptimeText" th:text="${uptimeText}"></span><br>
             }
         }
     });
-
-    function convertMSToDayTime(ms) {
-        const seconds = Math.floor(ms / 1000);
-        const minutes = Math.floor(seconds / 60);
-        const hours = Math.floor(minutes / 60);
-        const days = Math.floor(hours / 24);
-        return ((days > 0) ? (days.toString() + " day"+((Number(days) === 1) ? "" : "s")+ " ") : "") + (((hours % 24) < 10) ? "0" : "") + (hours % 24) + ":" + (((minutes % 60) < 10) ? "0" : "") + (minutes % 60) + ":" + (((seconds % 60) < 10) ? "0" : "") + (seconds % 60);
-    }
 </script>
 
 </body>
