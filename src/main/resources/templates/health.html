@@ -38,7 +38,7 @@ Uptime:&nbsp;<span id="uptimeText" th:text="${uptimeText}"></span><br>
 <th:block th:text="${'Committed memory: '+system.committedMemoryGB+' GB'}"></th:block><br>
 <th:block th:text="${'System CPU Usage: '+system.processCpuLoadPercent+'%'}"></th:block><br>
 <th:block th:text="${'JVM CPU Usage: '+system.processCpuLoadPercent+'%'}"></th:block><br>
-<!--<th:block th:text="${'Available cores: '+system.availableCores}"></th:block><br>-->
+<th:block th:text="${'Available cores: '+system.availableCores}"></th:block><br>
 <th:block th:text="${'OS: '+system.os}"></th:block><br>
 <th:block th:utext="${'Build Status: '+(circleCIBuild == 'OK' ? circleCIBuild : '<span style=&quot;color: red;&quot;>'+circleCIBuild+'</span>')}"></th:block><br>
 <th:block th:text="${'Build Version: '+buildVersion}"></th:block><br>
