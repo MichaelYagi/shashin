@@ -766,11 +766,35 @@ class Util {
     }
 
     static convertMSToDayTime(ms) {
-        const seconds = Math.floor(ms / 1000);
-        const minutes = Math.floor(seconds / 60);
-        const hours = Math.floor(minutes / 60);
-        const days = Math.floor(hours / 24);
-        return ((days > 0) ? (days.toString() + " day"+((Number(days) === 1) ? "" : "s")+ " ") : "") + (((hours % 24) < 10) ? "0" : "") + (hours % 24) + ":" + (((minutes % 60) < 10) ? "0" : "") + (minutes % 60) + ":" + (((seconds % 60) < 10) ? "0" : "") + (seconds % 60);
+        let years,
+            months,
+            days,
+            hours,
+            minutes,
+            seconds;
+
+        seconds = Math.floor(ms / 1000);
+        minutes = Math.floor(seconds / 60);
+        seconds = seconds % 60;
+        hours = Math.floor(minutes / 60);
+        minutes = minutes % 60;
+        days = Math.floor(hours / 24);
+        years = Math.floor(days / 365);
+        hours = hours % 24;
+        months = Math.floor(days / 30);
+        days = days % 30;
+        months = months % 12;
+
+        let ymd = ((years > 0) ? " " + years + " year" + (years === 1 ? "" : "s") : "") +
+            ((months > 0) ? " " + months + " month" + (months === 1 ? "" : "s") : "") +
+            ((days > 0) ? " " + days + " day" + (days === 1 ? "" : "s") : "");
+        ymd = ymd.trim();
+
+        const hms = (((hours % 24) < 10) ? "0" : "") + (hours % 24) + ":" +
+            (((minutes % 60) < 10) ? "0" : "") + (minutes % 60) + ":" +
+            (((seconds % 60) < 10) ? "0" : "") + (seconds % 60);
+
+        return ((ymd.length === 0) ? "" : ymd + " ") + hms;
     }
 
     static getMetadataLocalStorage(date) {
