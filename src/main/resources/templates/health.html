@@ -69,7 +69,7 @@ Uptime:&nbsp;<span id="uptimeText" th:text="${uptimeText}"></span><br>
 
             if (pageLoad > 0) {
                 const pltEl = document.getElementById("plt");
-                pltEl.innerText = "Page load time: " + Math.round(pageLoad) + "ms";
+                pltEl.innerText = "Page load time: " + Math.round(pageLoad) + " ms";
                 pltEl.setAttribute('style', 'display:block');
             }
         }
