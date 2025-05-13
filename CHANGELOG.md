@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Deprecated
 
 ### Removed
+- Automatic browser opening after server start
 
 ### Fixed
 
