@@ -369,7 +369,7 @@ class DashboardController {
         metricsUtil.end()
 
         response["endpointProcessingTimeMS"] = metricsUtil.getTotalElapsedTime()
-        response["endpointProcessingTimeText"] = metricsUtil.getTotalElapsedTime().toString() + "ms"
+        response["endpointProcessingTimeText"] = metricsUtil.getTotalElapsedTime().toString() + " ms"
 
         response["message"] = ""
         response["msg"] = ""

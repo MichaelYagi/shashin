@@ -247,7 +247,7 @@ class ToolsController {
 
         response["status"] = status
 
-        response["endpointProcessingTimeText"] = "00:00:000"
+        response["endpointProcessingTimeText"] = "0 ms"
 
         val metricsUtil = MetricsUtil()
         metricsUtil.start("health endpoint")
@@ -377,7 +377,7 @@ class ToolsController {
         val serverTimingDiff: Long = serverTimingEnd.time - serverTimingStart.time
 
         response["endpointProcessingTimeMS"] = serverTimingDiff
-        response["endpointProcessingTimeText"] = serverTimingDiff.toString()+"ms"//SimpleDateFormat("mm:ss:SSS").format(Date(serverTimingDiff))
+        response["endpointProcessingTimeText"] = "$serverTimingDiff ms"
         logger.log(Level.INFO, "HealthEP - Total request time: ${SimpleDateFormat("mm:ss:SSS").format(Date(serverTimingDiff))}")
         metricsUtil.end()
 
