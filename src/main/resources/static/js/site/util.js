@@ -768,6 +768,7 @@ class Util {
     static convertMSToDayTime(ms) {
         let years,
             months,
+            weeks,
             days,
             hours,
             minutes,
@@ -780,13 +781,15 @@ class Util {
         minutes = minutes % 60;
         days = Math.floor(hours / 24);
         years = Math.floor(days / 365);
+        weeks = Math.floor(days / 7);
         hours = hours % 24;
         months = Math.floor(days / 30);
         days = days % 30;
+        weeks = weeks % 51;
         months = months % 12;
 
         let ymd = ((years > 0) ? " " + years + " year" + (years === 1 ? "" : "s") : "") +
-            ((months > 0) ? " " + months + " month" + (months === 1 ? "" : "s") : "") +
+            ((weeks > 0) ? " " + weeks + " week" + (weeks === 1 ? "" : "s") : "") +
             ((days > 0) ? " " + days + " day" + (days === 1 ? "" : "s") : "");
         ymd = ymd.trim();
 

@@ -330,10 +330,10 @@ describe('#Util tests', function() {
         assert.equal(msToString, "13:51:15");
 
         msToString = Util.convertMSToDayTime(60*35*57*25*1000);
-        assert.equal(msToString, "1 month 4 days 15:15:00");
+        assert.equal(msToString, "4 weeks 4 days 15:15:00");
 
         msToString = Util.convertMSToDayTime(1200*35*57*25*1000);
-        assert.equal(msToString, "1 year 11 months 2 days 17:00:00");
+        assert.equal(msToString, "1 year 47 weeks 2 days 17:00:00");
     });
 
     it('Version checking', function() {
