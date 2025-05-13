@@ -86,22 +86,22 @@ class ShashinApplication {
 				}
 
 				val startPage = "http://127.0.0.1:6624"
-				text.text = "Opening $startPage in browser.\r\nClose this window to quit Shashin."
+				text.text = "Visit $startPage.\r\nClose this window to quit Shashin."
 
-				TimeUnit.SECONDS.sleep(3)
-
-				SwingUtilities.invokeLater {
-					val desktop = Desktop.getDesktop()
-					try {
-						desktop.browse(URI(startPage))
-					} catch (e: IOException) {
-						e.printStackTrace()
-						text.text = "Error: ${e.message}."
-					} catch (e: URISyntaxException) {
-						e.printStackTrace()
-						text.text = "Error: ${e.message}."
-					}
-				}
+//				TimeUnit.SECONDS.sleep(3)
+//
+//				SwingUtilities.invokeLater {
+//					val desktop = Desktop.getDesktop()
+//					try {
+//						desktop.browse(URI(startPage))
+//					} catch (e: IOException) {
+//						e.printStackTrace()
+//						text.text = "Error: ${e.message}."
+//					} catch (e: URISyntaxException) {
+//						e.printStackTrace()
+//						text.text = "Error: ${e.message}."
+//					}
+//				}
 			} else {
 				app.run(*args)
 			}
