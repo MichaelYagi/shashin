@@ -41,6 +41,8 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpSession
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 @Suppress("UNCHECKED_CAST")
 @Controller
@@ -162,110 +164,114 @@ class PeopleController: BaseController() {
 
             val superAdmins = userRepository?.findAllByAuthorityEquals(superRole)
 
-            Thread {
-                val threadFile = FileUtils.createThreadFile(threadExtensionName)
-                val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
-                val vggfaceFileExists = classLoader.getResource("lib/vggface2.pt") != null
-                val retinafaceFileExists = classLoader.getResource("lib/retinaface.pt") != null
-
-                if ((!vggfaceFileExists || !retinafaceFileExists) && !NetworkUtils.checkCompreFaceConnection(
-                        settings.getCompreFaceServer(),
-                        settings.getCompreFaceKey()
-                    )) {
-                    if (superAdmins != null) {
-                        val notificationObjList = mutableListOf<Notification>()
-                        val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
-                        sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
-                        for (admin in superAdmins) {
-                            val notificationObj = Notification()
-                            notificationObj.setUserId(admin.getId())
-                            notificationObj.setCreatedAt(getCurrentTimestamp())
-                            notificationObj.setModifiedAt(getCurrentTimestamp())
-                            notificationObj.setRead(false)
-                            notificationObj.setMessage("Missing lib files for DJL face scan")
-                            notificationObjList.add(notificationObj)
-                        }
-                        if (notificationObjList.isNotEmpty()) {
-                            notificationRepository?.saveAll(notificationObjList)
-                        }
-                    }
-                }
-
-                // Object and person recognition
-                if (threadFile != null) {
-                    var recognitionCount = 0
-                    if (settings.getFacialDetection() == true) {
-                        recognitionCount = ImageProcessing.subjectRecognizer(
-                            metadataRepository,
-                            recognitionLabelRepository,
-                            recognitionLabelPhotoRepository,
-                            relativeSidecarDir!!,
-                            settings,
-                            threadFile,
-                            shouldStop
-                        )
-                    }
-
-                    val adminSupers = userRepository?.findAllByAuthorityEquals(superRole)
-
-                    if (adminSupers != null && recognitionCount > 0) {
-                        val notificationObjList = mutableListOf<Notification>()
-                        val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
-                        sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
-                        for (adminSuper in adminSupers) {
-                            val notificationObj = Notification()
-                            notificationObj.setUserId(adminSuper.getId())
-                            notificationObj.setCreatedAt(getCurrentTimestamp())
-                            notificationObj.setModifiedAt(getCurrentTimestamp())
-                            notificationObj.setRead(false)
-                            notificationObj.setMessage("$recognitionCount faces recognized during match indexing at ${sdtf.format(Date())}.")
-                            notificationObjList.add(notificationObj)
-                        }
-                        if (notificationObjList.isNotEmpty()) {
-                            notificationRepository?.saveAll(notificationObjList)
-                        }
-                    }
-
-                    if (settings.getObjectDetection() == true) {
-                        val withoutKeywords = metadataRepository?.findWithoutKeywords(settings.getMatchScanLimit()!!)
-
-                        if (withoutKeywords != null) {
-                            val criteria = buildObjectRecognitionCriteria()
-                            val threshold = settings.getObjectRecognitionConfidenceThreshold()
-
-                            if (criteria != null) {
-                                for (withoutKeyword in withoutKeywords) {
-                                    if (shouldStop.get()) {
-                                        break
-                                    }
-
-                                    val metadataWithoutKeywordsObj =
-                                        metadataRepository?.findById(withoutKeyword.getId())?.get()
-
-                                    val keywordMap = ImageProcessing.objectRecognizer(
-                                        metadataWithoutKeywordsObj!!,
-                                        criteria,
-                                        threshold.toString().toDouble(),
-                                        threadFile,
-                                        shouldStop.get()
-                                    )
-
-                                    ImageProcessing.processObjects(keywordMap.keys.toTypedArray().toList(), metadataWithoutKeywordsObj, keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!)
-                                }
-                            }
-                        }
-                    }
-                }
-
-                shouldStop.set(false)
-                FileUtils.deleteThreadFiles(threadExtensionName)
-                FileUtils.writeToThreadFileAndLogMessage("Matching Complete", threadFile!!)
-            }.start()
+            doPrediction(settings, superAdmins)
         }
 
         resp["msg"] = "Start Matching"
         resp["status"] = ApiResponse.SUCCESS.status
         return mapper.writeValueAsString(resp)
+    }
+
+    fun doPrediction(settings: Settings, superAdmins: MutableIterable<User>?) = runBlocking {
+        launch {
+            val threadFile = FileUtils.createThreadFile(threadExtensionName)
+            val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
+            val vggfaceFileExists = classLoader.getResource("lib/vggface2.pt") != null
+            val retinafaceFileExists = classLoader.getResource("lib/retinaface.pt") != null
+
+            if ((!vggfaceFileExists || !retinafaceFileExists) && !NetworkUtils.checkCompreFaceConnection(
+                    settings.getCompreFaceServer(),
+                    settings.getCompreFaceKey()
+                )) {
+                if (superAdmins != null) {
+                    val notificationObjList = mutableListOf<Notification>()
+                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                    sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                    for (admin in superAdmins) {
+                        val notificationObj = Notification()
+                        notificationObj.setUserId(admin.getId())
+                        notificationObj.setCreatedAt(getCurrentTimestamp())
+                        notificationObj.setModifiedAt(getCurrentTimestamp())
+                        notificationObj.setRead(false)
+                        notificationObj.setMessage("Missing lib files for DJL face scan")
+                        notificationObjList.add(notificationObj)
+                    }
+                    if (notificationObjList.isNotEmpty()) {
+                        notificationRepository?.saveAll(notificationObjList)
+                    }
+                }
+            }
+
+            // Object and person recognition
+            if (threadFile != null) {
+                var recognitionCount = 0
+                if (settings.getFacialDetection() == true) {
+                    recognitionCount = ImageProcessing.subjectRecognizer(
+                        metadataRepository,
+                        recognitionLabelRepository,
+                        recognitionLabelPhotoRepository,
+                        relativeSidecarDir!!,
+                        settings,
+                        threadFile,
+                        shouldStop
+                    )
+                }
+
+                val adminSupers = userRepository?.findAllByAuthorityEquals(superRole)
+
+                if (adminSupers != null && recognitionCount > 0) {
+                    val notificationObjList = mutableListOf<Notification>()
+                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                    sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                    for (adminSuper in adminSupers) {
+                        val notificationObj = Notification()
+                        notificationObj.setUserId(adminSuper.getId())
+                        notificationObj.setCreatedAt(getCurrentTimestamp())
+                        notificationObj.setModifiedAt(getCurrentTimestamp())
+                        notificationObj.setRead(false)
+                        notificationObj.setMessage("$recognitionCount faces recognized during match indexing at ${sdtf.format(Date())}.")
+                        notificationObjList.add(notificationObj)
+                    }
+                    if (notificationObjList.isNotEmpty()) {
+                        notificationRepository?.saveAll(notificationObjList)
+                    }
+                }
+
+                if (settings.getObjectDetection() == true) {
+                    val withoutKeywords = metadataRepository?.findWithoutKeywords(settings.getMatchScanLimit()!!)
+
+                    if (withoutKeywords != null) {
+                        val criteria = buildObjectRecognitionCriteria()
+                        val threshold = settings.getObjectRecognitionConfidenceThreshold()
+
+                        if (criteria != null) {
+                            for (withoutKeyword in withoutKeywords) {
+                                if (shouldStop.get()) {
+                                    break
+                                }
+
+                                val metadataWithoutKeywordsObj =
+                                    metadataRepository?.findById(withoutKeyword.getId())?.get()
+
+                                val keywordMap = ImageProcessing.objectRecognizer(
+                                    metadataWithoutKeywordsObj!!,
+                                    criteria,
+                                    threshold.toString().toDouble(),
+                                    threadFile,
+                                    shouldStop.get()
+                                )
+
+                                ImageProcessing.processObjects(keywordMap.keys.toTypedArray().toList(), metadataWithoutKeywordsObj, keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!)
+                            }
+                        }
+                    }
+                }
+            }
+
+            shouldStop.set(false)
+            FileUtils.deleteThreadFiles(threadExtensionName)
+            FileUtils.writeToThreadFileAndLogMessage("Matching Complete", threadFile!!)
+        }
     }
 
     @GetMapping("/person/matches/{personId}")
@@ -1194,20 +1200,13 @@ class PeopleController: BaseController() {
         if (personMap.containsKey("personName") &&
             personMap.containsKey("metadataId")
         ) {
+            val personName = personMap["personName"].toString()
+            val metadataId = personMap["metadataId"].toString()
+            val metadata = metadataRepository?.findById(metadataId)
+            val compreFaceImageIdMap = mutableMapOf<String, Any?>()
+            val settings = model.getAttribute("settings") as Settings
 
-            Thread {
-                val personName = personMap["personName"].toString()
-                val metadataId = personMap["metadataId"].toString()
-                val metadata = metadataRepository?.findById(metadataId)
-                val compreFaceImageIdMap = mutableMapOf<String, Any?>()
-
-                ImageProcessing.buildPersonUpload(
-                    model.getAttribute("settings") as Settings,
-                    personName,
-                    metadata?.get(),
-                    compreFaceImageIdMap
-                )
-            }.start()
+            personUpload(settings, personName, metadata?.get(), compreFaceImageIdMap)
 
             resp["responseData"] = mutableMapOf<String, Any?>()
             resp["msg"] = ""
@@ -1217,6 +1216,17 @@ class PeopleController: BaseController() {
         }
 
         return mapper.writeValueAsString(resp)
+    }
+
+    fun personUpload(settings: Settings, personName: String?, metadata: Metadata?, compreFaceImageIdMap: MutableMap<String, Any?>) = runBlocking {
+        launch {
+            ImageProcessing.buildPersonUpload(
+                settings,
+                personName,
+                metadata,
+                compreFaceImageIdMap
+            )
+        }
     }
 
     @RequestMapping(value = ["/person/recognition/recognize/{metadataId}"], method = [RequestMethod.GET], produces = ["application/json"])
