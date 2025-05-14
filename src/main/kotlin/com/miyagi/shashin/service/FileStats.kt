@@ -1,26 +1,15 @@
 package com.miyagi.shashin.service
 
 import com.miyagi.shashin.model.Settings
-import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.util.FileUtils
-import com.miyagi.shashin.util.ImageProcessing
 import com.miyagi.shashin.util.MetricsUtil
-import jakarta.servlet.http.HttpSession
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.runBlocking
 import org.springframework.cache.annotation.CacheConfig
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.core.io.FileSystemResource
 import org.springframework.stereotype.Service
 import org.springframework.ui.Model
-import java.io.File
-import java.nio.file.FileVisitOption
-import java.nio.file.Files
-import java.nio.file.Paths
 import java.util.logging.Level
 import java.util.logging.Logger
-import kotlin.io.path.Path
 
 @Service
 @CacheConfig(cacheNames=["filestats"])

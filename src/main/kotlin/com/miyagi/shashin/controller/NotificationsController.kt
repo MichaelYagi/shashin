@@ -20,8 +20,6 @@ import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import java.util.*
 import jakarta.transaction.Transactional
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 @Controller
 @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
@@ -123,8 +121,8 @@ class NotificationsController {
         return "{\"msg\":\"\",\"status\":\"success\"}"
     }
 
-    fun markNotificationsRead(userId: Int) = runBlocking {
-        launch {
+    fun markNotificationsRead(userId: Int) {
+        Thread {
             val notificationList =
                 notificationRepository.findAllByUserIdOrderByCreatedAtDesc(userId)
             if (notificationList != null && notificationList.count() > 0) {
@@ -141,7 +139,7 @@ class NotificationsController {
                     notificationRepository.saveAll(notifications)
                 }
             }
-        }
+        }.start()
     }
 
     @GetMapping("/notifications/mediascan", produces = ["application/json"])
@@ -240,8 +238,8 @@ class NotificationsController {
         return "{\"msg\":\"\",\"status\":\"success\"}"
     }
 
-    fun markNotificationsReadByTypeAndIdentifier(userId: Int, type: String, identifier: String) = runBlocking {
-        launch {
+    fun markNotificationsReadByTypeAndIdentifier(userId: Int, type: String, identifier: String) {
+        Thread {
             var notificationList = notificationRepository.findAllByTypeAndId(
                 type,
                 identifier,
@@ -262,7 +260,7 @@ class NotificationsController {
                     notificationRepository.saveAll(notifications)
                 }
             }
-        }
+        }.start()
     }
 
     @GetMapping("/notifications/check", produces = ["application/json"])
@@ -314,8 +312,8 @@ class NotificationsController {
         return "{\"msg\":\"\",\"status\":\"success\"}"
     }
 
-    fun markNotificationsReadByUsers(notificationIdList: Map<String, Any>) = runBlocking {
-        launch {
+    fun markNotificationsReadByUsers(notificationIdList: Map<String, Any>) {
+        Thread {
             val notificationIds = notificationIdList["notificationIds"] as ArrayList<*>
             val notificationObjList = mutableListOf<Notification>()
 
@@ -329,7 +327,7 @@ class NotificationsController {
             if (notificationObjList.isNotEmpty()) {
                 notificationRepository.saveAll(notificationObjList)
             }
-        }
+        }.start()
     }
 
     @RequestMapping(value = ["/notifications/markallread/notification"], method = [RequestMethod.GET], produces = ["application/json"])
@@ -351,8 +349,8 @@ class NotificationsController {
         return "{\"msg\":\"\",\"status\":\"success\"}"
     }
 
-    fun markAllNotificationsReadByUsersCR(notificationList: MutableIterable<Notification?>?) = runBlocking {
-        launch {
+    fun markAllNotificationsReadByUsersCR(notificationList: MutableIterable<Notification?>?) {
+        Thread {
             val notificationObjList = mutableListOf<Notification>()
             if (notificationList != null) {
                 for (notificationObj in notificationList) {
@@ -365,6 +363,6 @@ class NotificationsController {
             if (notificationObjList.isNotEmpty()) {
                 notificationRepository.saveAll(notificationObjList)
             }
-        }
+        }.start()
     }
 }
