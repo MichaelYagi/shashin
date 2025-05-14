@@ -39,7 +39,10 @@ import java.util.logging.Logger
 import javax.imageio.ImageIO
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.transaction.Transactional
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
+import kotlin.String
 import kotlin.collections.ArrayList
 import kotlin.io.path.Path
 import kotlin.io.path.isDirectory
@@ -1113,11 +1116,7 @@ class TimelineController: BaseController() {
                     }
                 }
 
-                Thread {
-                    for (metadataId in metadataIdArray) {
-                        ImageProcessing.createVideoGif(metadataId, metadataRepository, true)
-                    }
-                }.start()
+                createVideoGif(metadataIdArray, metadataRepository, true)
 
                 return if (errorDetected) {
                     resp["msg"] = "Some data not saved"
@@ -1137,6 +1136,16 @@ class TimelineController: BaseController() {
         resp["msg"] = "Could not save"
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
+    }
+
+    fun createVideoGif(metadataIdArray: ArrayList<String>?, metadataRepository: MetadataRepository, overwrite: Boolean) = runBlocking {
+        if (metadataIdArray != null) {
+            launch {
+                for (metadataId in metadataIdArray) {
+                    ImageProcessing.createVideoGif(metadataId, metadataRepository, overwrite)
+                }
+            }
+        }
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
@@ -1636,24 +1645,8 @@ class TimelineController: BaseController() {
 
                         if (metadataObj.get().getLat() != newlat || metadataObj.get().getLng() != newlng) {
                             setAndSave = true
-                            Thread {
-                                val coordinateMap = TextUtils.processCoordinates(geocodeUrl!!, metadataMap["latlng"].toString())
-                                if (coordinateMap["lat"] != null && coordinateMap["lng"] != null) {
-                                    metadataObj.get().setLat(coordinateMap["lat"])
-                                    metadataObj.get().setLng(coordinateMap["lng"])
-                                }
 
-                                if (coordinateMap["place"] != null) {
-                                    metadataObj.get().setPlaceName(coordinateMap["place"])
-                                    resp["shortPlaceName"] = TextUtils.formatPlaceNameForHeader(coordinateMap["place"])
-                                }
-                                if (coordinateMap["timezone"] != null) {
-                                    metadataObj.get().setTimeZone(coordinateMap["timezone"])
-                                }
-
-                                metadataObj.get().setModifiedAt(getCurrentTimestamp())
-                                metadataRepository.save(metadataObj.get())
-                            }.start()
+                            processCoordinates(metadataMap, metadataObj)
                         }
                     }
                 }
@@ -1670,12 +1663,10 @@ class TimelineController: BaseController() {
                 notifyAlbumUpdate(albumIdAddedList,currentUserObj)
 
                 metricsUtil.start("Metadata Update - Getting attributes")
-//                Thread {
-                    val attrResponse = getAllAttributeData(model)
-                    for ((k, v) in attrResponse) {
-                        resp[k] = v
-                    }
-//                }.start()
+                val attrResponse = getAllAttributeData(model)
+                for ((k, v) in attrResponse) {
+                    resp[k] = v
+                }
                 metricsUtil.end()
 
                 return mapper.writeValueAsString(resp)
@@ -1689,6 +1680,28 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
+    fun processCoordinates(metadataMap: Map<String, Any>, metadataObj: Optional<Metadata?>) = runBlocking {
+        if (metadataObj.isPresent && metadataMap.containsKey("latlng")) {
+            launch {
+                val coordinateMap = TextUtils.processCoordinates(geocodeUrl!!, metadataMap["latlng"].toString())
+                if (coordinateMap["lat"] != null && coordinateMap["lng"] != null) {
+                    metadataObj.get().setLat(coordinateMap["lat"])
+                    metadataObj.get().setLng(coordinateMap["lng"])
+                }
+
+                if (coordinateMap["place"] != null) {
+                    metadataObj.get().setPlaceName(coordinateMap["place"])
+                    resp["shortPlaceName"] = TextUtils.formatPlaceNameForHeader(coordinateMap["place"])
+                }
+                if (coordinateMap["timezone"] != null) {
+                    metadataObj.get().setTimeZone(coordinateMap["timezone"])
+                }
+
+                metadataObj.get().setModifiedAt(getCurrentTimestamp())
+                metadataRepository.save(metadataObj.get())
+            }
+        }
+    }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/metadata/update/batch/coordinates","/api/v1/update/metadata/batch/coordinates"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
@@ -1707,14 +1720,7 @@ class TimelineController: BaseController() {
             val idArray: Array<String>? = mapper.readValue(metadataMap["ids"].toString(), object : TypeReference<Array<String>>() {})
 
             if (idArray != null && coordArray.size == 2 && idArray.isNotEmpty()) {
-                Thread {
-                    val metadataList = mutableListOf<Metadata>()
-                    for (metadataId in idArray) {
-                        val metadata = setCoordinates(metadataId, coordArray[0], coordArray[1])
-                        metadataList.add(metadata)
-                    }
-                    metadataRepository.saveAll(metadataList)
-                }.start()
+                setCoordinatesCR(idArray, coordArray)
 
                 resp["msg"] = "Saved!"
                 resp["status"] = ApiResponse.SUCCESS.status
@@ -1725,6 +1731,21 @@ class TimelineController: BaseController() {
         }
 
         return mapper.writeValueAsString(resp)
+    }
+
+    fun setCoordinatesCR(idArray: Array<String>?, coordArray: List<String>) = runBlocking {
+        launch {
+            val metadataList = mutableListOf<Metadata>()
+            if (!idArray.isNullOrEmpty() && coordArray.size == 2) {
+                for (metadataId in idArray) {
+                    val metadata = setCoordinates(metadataId, coordArray[0], coordArray[1])
+                    metadataList.add(metadata)
+                }
+            }
+            if (metadataList.size > 0) {
+                metadataRepository.saveAll(metadataList)
+            }
+        }
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
@@ -2148,45 +2169,7 @@ class TimelineController: BaseController() {
 
             // Process keyword and lat/lng data
             if (latlng != null && latlng != "") {
-                Thread {
-                    val coordinateMap = TextUtils.processCoordinates(geocodeUrl!!, latlng)
-                    val lat = coordinateMap["lat"]
-                    val lng = coordinateMap["lng"]
-                    val timezone = coordinateMap["timezone"]
-                    val place = coordinateMap["place"]
-
-                    if (latlng.isNotEmpty() && (lat == null || lng == null)) {
-                        logger.log(Level.WARNING, "Could not save location due to invalid latlng.")
-                    } else {
-                        val metadataLocationList = mutableListOf<Metadata>()
-                        for (idVal in idArray) {
-                            val id = StringEscapeUtils.escapeHtml4(idVal)
-                            val metadataObj: Optional<Metadata?> = metadataRepository.findById(id)
-                            if (metadataObj.isPresent) {
-                                val metadata = metadataObj.get()
-
-                                if (metadata.getLat() != lat || metadata.getLng() != lng) {
-                                    metadata.setLat(lat)
-                                    metadata.setLng(lng)
-
-                                    if (timezone != null) {
-                                        metadata.setTimeZone(timezone)
-                                    }
-
-                                    if (place != null) {
-                                        metadata.setPlaceName(place)
-                                    }
-
-                                    metadataLocationList.add(metadata)
-                                }
-                            }
-                        }
-
-                        if (metadataLocationList.size > 0) {
-                            metadataRepository.saveAll(metadataLocationList)
-                        }
-                    }
-                }.start()
+                setLocation(latlng, idArray)
             }
 
             var keywordList = mutableListOf<String>()
@@ -2306,12 +2289,10 @@ class TimelineController: BaseController() {
                 // Update record
                 metadataRepository.saveAll(metadataList)
 
-//                Thread {
-                    val attrResponse = getAllAttributeData(model)
-                    for ((k, v) in attrResponse) {
-                        resp[k] = v
-                    }
-//                }.start()
+                val attrResponse = getAllAttributeData(model)
+                for ((k, v) in attrResponse) {
+                    resp[k] = v
+                }
 
                 metricsUtil.end()
 
@@ -2327,6 +2308,50 @@ class TimelineController: BaseController() {
         resp["msg"] = "Could not save"
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
+    }
+
+    fun setLocation(latlng: String, idArray: Array<String>?) = runBlocking {
+        launch {
+            val coordinateMap = TextUtils.processCoordinates(geocodeUrl!!, latlng)
+            val lat = coordinateMap["lat"]
+            val lng = coordinateMap["lng"]
+            val timezone = coordinateMap["timezone"]
+            val place = coordinateMap["place"]
+
+            if (latlng.isNotEmpty() && (lat == null || lng == null)) {
+                logger.log(Level.WARNING, "Could not save location due to invalid latlng.")
+            } else {
+                val metadataLocationList = mutableListOf<Metadata>()
+                if (idArray != null) {
+                    for (idVal in idArray) {
+                        val id = StringEscapeUtils.escapeHtml4(idVal)
+                        val metadataObj: Optional<Metadata?> = metadataRepository.findById(id)
+                        if (metadataObj.isPresent) {
+                            val metadata = metadataObj.get()
+
+                            if (metadata.getLat() != lat || metadata.getLng() != lng) {
+                                metadata.setLat(lat)
+                                metadata.setLng(lng)
+
+                                if (timezone != null) {
+                                    metadata.setTimeZone(timezone)
+                                }
+
+                                if (place != null) {
+                                    metadata.setPlaceName(place)
+                                }
+
+                                metadataLocationList.add(metadata)
+                            }
+                        }
+                    }
+                }
+
+                if (metadataLocationList.size > 0) {
+                    metadataRepository.saveAll(metadataLocationList)
+                }
+            }
+        }
     }
 
     @Transactional
@@ -3101,39 +3126,32 @@ class TimelineController: BaseController() {
                             recognitionLabelPhotoObj.setConfidence("0.0")
                             recognitionLabelPhotoList.add(recognitionLabelPhotoObj)
 
-                            Thread {
-//                                    val uploadResp = mapper.writeValueAsString(
-                                    ImageProcessing.buildPersonUpload(
-                                        settings,
-                                        recognitionLabel,
-                                        metadataObj,
-                                        compreFaceImageIdMap
-                                    )
-//                                    )
-
-//                                    val jsonRespObj = mapper.readTree(uploadResp)
-//                                    var compreFaceImageId: String? = null
-//                                    if (jsonRespObj.has("responseDataUpload") && jsonRespObj["responseDataUpload"].has("image_id")) {
-//                                        compreFaceImageId = jsonRespObj["responseDataUpload"]["image_id"].toString()
-//                                        compreFaceImageId = compreFaceImageId.drop(1).dropLast(1)
-//                                    } else if (jsonRespObj.has("responseData") && jsonRespObj["responseData"].has("image_id")) {
-//                                        compreFaceImageId = jsonRespObj["responseData"]["image_id"].toString()
-//                                        compreFaceImageId = compreFaceImageId.drop(1).dropLast(1)
-//                                    }
-                            }.start()
+                            buildPersonUpload(
+                                settings,
+                                recognitionLabel,
+                                metadataObj,
+                                compreFaceImageIdMap
+                            )
                         }
                     }
                 }
-
-//                    if (recognitionLabelList.isNotEmpty()) {
-//                        recognitionLabelRepository?.saveAll(recognitionLabelList)
-//                    }
 
                 if (recognitionLabelPhotoList.isNotEmpty()) {
                     recognitionLabelPhotoRepository?.saveAll(recognitionLabelPhotoList)
                 }
 
             }
+        }
+    }
+
+    fun buildPersonUpload(settings: Settings, recognitionLabel: String, metadataObj: Metadata?, compreFaceImageIdMap: MutableMap<String, Any?>) = runBlocking {
+        launch {
+            ImageProcessing.buildPersonUpload(
+                settings,
+                recognitionLabel,
+                metadataObj,
+                compreFaceImageIdMap
+            )
         }
     }
 }
