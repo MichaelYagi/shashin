@@ -42,6 +42,7 @@ Uptime:&nbsp;<span id="uptimeText" th:text="${uptimeText}"></span><br>
 <th:block th:text="${'OS: '+system.os}"></th:block><br>
 <th:block th:utext="${'Build Status: '+(circleCIBuild == 'OK' ? circleCIBuild : '<span style=&quot;color: red;&quot;>'+circleCIBuild+'</span>')}"></th:block><br>
 <th:block th:text="${'Build Version: '+buildVersion}"></th:block><br>
+<th:block th:text="${'UTC Timestamp: '+utcTimestampMS}"></th:block><br>
 Local server time:&nbsp;<span id="serverTime" th:text="${localServerTime}"></span><br>
 
 <script th:inline="javascript" type="text/javascript">
