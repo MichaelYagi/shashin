@@ -36,13 +36,13 @@ Uptime:&nbsp;<span id="uptimeText" th:text="${uptimeText}"></span><br>
 <th:block th:text="${'Used heap memory: '+system.usedHeapMemoryGB+' GB'}"></th:block><br>
 <th:block th:text="${'Max heap memory: '+system.maxHeapMemoryGB+' GB'}"></th:block><br>
 <th:block th:text="${'Committed memory: '+system.committedMemoryGB+' GB'}"></th:block><br>
-<th:block th:text="${'System CPU Usage: '+system.processCpuLoadPercent+'%'}"></th:block><br>
-<th:block th:text="${'JVM CPU Usage: '+system.processCpuLoadPercent+'%'}"></th:block><br>
+<th:block th:text="${'System CPU usage: '+system.processCpuLoadPercent+'%'}"></th:block><br>
+<th:block th:text="${'JVM CPU usage: '+system.processCpuLoadPercent+'%'}"></th:block><br>
 <th:block th:text="${'Available cores: '+system.availableCores}"></th:block><br>
 <th:block th:text="${'OS: '+system.os}"></th:block><br>
-<th:block th:utext="${'Build Status: '+(circleCIBuild == 'OK' ? circleCIBuild : '<span style=&quot;color: red;&quot;>'+circleCIBuild+'</span>')}"></th:block><br>
-<th:block th:text="${'Build Version: '+buildVersion}"></th:block><br>
-UTC Timestamp: <span th:title="${localServerTime}"><th:block th:text="${system.utcTimestampMS}"></th:block></span><br>
+<th:block th:utext="${'Build status: '+(circleCIBuild == 'OK' ? circleCIBuild : '<span style=&quot;color: red;&quot;>'+circleCIBuild+'</span>')}"></th:block><br>
+<th:block th:text="${'Build version: '+buildVersion}"></th:block><br>
+UTC timestamp: <span th:title="${localServerTime}"><th:block th:text="${system.utcTimestampMS}"></th:block></span><br>
 Local server time:&nbsp;<span id="serverTime" th:text="${localServerTime}"></span><br>
 
 <script th:inline="javascript" type="text/javascript">
