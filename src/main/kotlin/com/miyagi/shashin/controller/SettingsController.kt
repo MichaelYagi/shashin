@@ -14,6 +14,7 @@ import com.miyagi.shashin.component.DjlFaceRecognizer
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.*
+import com.miyagi.shashin.model.MediaDirectory
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.service.RestartService
 import com.miyagi.shashin.util.*
@@ -66,9 +67,10 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
 import jakarta.transaction.Transactional
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.springframework.data.jpa.repository.Modifying
 import java.util.stream.Collectors
-import kotlin.io.path.Path
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
 import kotlin.math.floor
@@ -1550,21 +1552,7 @@ class SettingsController {
         currentMediaCount = 0
 
         if (mediaDirs != null && mediaDirs.count() > 0) {
-            Thread {
-                val metricsUtil = MetricsUtil()
-                metricsUtil.start("Counting files in media directories")
-                for (mediaDir in mediaDirs) {
-                    val dir = Paths.get(mediaDir?.getDirectory()!!)
-                    if (Files.exists(dir)) {
-                        totalMediaCount += FileUtils.fileCount(mediaDir.getDirectory()!!)
-                    }
-                }
-                logger.log(
-                    Level.INFO,
-                    "Total file count for media is $totalMediaCount"
-                )
-                metricsUtil.end()
-            }.start()
+            totalMediaCount(mediaDirs)
 
             var mediaDirNotFound = false
             for (mediaDir in mediaDirs) {
@@ -1582,764 +1570,7 @@ class SettingsController {
                     deleteThreadScan()
 
                     // Iterate through directory in another thread
-                    Thread {
-                        //Create file with thread name and write file name iterated
-                        val threadFile = FileUtils.createThreadFile("shashinscan")
-                        if (threadFile != null) {
-                            // Check for deleted original files
-                            val metadataList = metadataRepository?.findAll()
-
-                            if (metadataList != null) {
-                                var deleteCount = 0
-                                var deletedList = mutableListOf<String>()
-
-                                for (metadata in metadataList) {
-                                    if (shouldStop.get()) {
-                                        FileUtils.writeToThreadFileAndLogMessage("Scan Stopped", threadFile)
-                                        break
-                                    }
-                                    if (metadata != null) {
-                                        if (!metadata.getPath().isNullOrBlank()) {
-                                            FileUtils.writeToThreadFileAndLogMessage(
-                                                "checking for changes for file - " + metadata.getPath(),
-                                                threadFile
-                                            )
-
-                                            // Check if metadata path still exists, if not, delete media
-                                            var basePathExists = false
-                                            var excludeBasePathExists = false
-
-                                            for (mediaDir in mediaDirs) {
-                                                basePathExists = metadata.getPath()!!
-                                                    .startsWith(mediaDir!!.getDirectory().toString())
-
-                                                if (basePathExists) {
-                                                    break
-                                                }
-                                            }
-
-                                            if (mediaExcludeDirs != null) {
-                                                for (mediaExcludeDir in mediaExcludeDirs) {
-                                                    excludeBasePathExists = metadata.getPath()!!
-                                                        .startsWith(mediaExcludeDir?.getDirectory().toString())
-
-                                                    if (excludeBasePathExists) {
-                                                        break
-                                                    }
-                                                }
-                                            }
-
-                                            val checkFile = File(metadata.getPath()!!)
-                                            if (!checkFile.exists() || !basePathExists || excludeBasePathExists) {
-                                                deleteCount++
-
-                                                deletedList.add(metadata.getFileName().toString())
-
-                                                // Delete side car and metadata files
-                                                if (!metadata.getThumbnailPathCentered().isNullOrBlank()) {
-                                                    val fileObj = File(metadata.getThumbnailPathCentered()!!)
-                                                    if (fileObj.delete()) {
-                                                        logger.log(
-                                                            Level.INFO,
-                                                            "Deleted thumbnail centered file: " + fileObj.name
-                                                        )
-                                                    } else {
-                                                        logger.log(
-                                                            Level.WARNING,
-                                                            "Failed to delete thumbnail centered file: " + fileObj.name
-                                                        )
-                                                    }
-                                                }
-                                                if (!metadata.getThumbnailPathSmall().isNullOrBlank()) {
-                                                    val fileObj = File(metadata.getThumbnailPathSmall()!!)
-                                                    if (fileObj.delete()) {
-                                                        logger.log(
-                                                            Level.INFO,
-                                                            "Deleted thumbnail small file: " + fileObj.name
-                                                        )
-                                                    } else {
-                                                        logger.log(
-                                                            Level.WARNING,
-                                                            "Failed to delete thumbnail small file: " + fileObj.name
-                                                        )
-                                                    }
-                                                }
-                                                if (!metadata.getThumbnailPathExtraSmall().isNullOrBlank()) {
-                                                    val fileObj = File(metadata.getThumbnailPathExtraSmall()!!)
-                                                    if (fileObj.delete()) {
-                                                        logger.log(
-                                                            Level.INFO,
-                                                            "Deleted thumbnail x-small file: " + fileObj.name
-                                                        )
-                                                    } else {
-                                                        logger.log(
-                                                            Level.WARNING,
-                                                            "Failed to delete thumbnail x-small file: " + fileObj.name
-                                                        )
-                                                    }
-                                                }
-                                                if (!metadata.getMapMarkerPath().isNullOrBlank()) {
-                                                    val fileObj = File(metadata.getMapMarkerPath()!!)
-                                                    if (fileObj.delete()) {
-                                                        logger.log(
-                                                            Level.INFO,
-                                                            "Deleted map marker file: " + fileObj.name
-                                                        )
-                                                    } else {
-                                                        logger.log(
-                                                            Level.WARNING,
-                                                            "Failed to delete map marker file: " + fileObj.name
-                                                        )
-                                                    }
-                                                }
-
-                                                val metadataDir = sidecarDir + "metadata/"
-                                                val thumbnailDir = sidecarDir.replace('\\', '/') + "thumbnails"
-                                                var relativePath: String? =
-                                                    metadata.getThumbnailPathCentered()?.replace('\\', '/')?.lowercase()
-                                                        ?.replace(thumbnailDir.lowercase(), "")
-                                                relativePath = relativePath?.replace("_centered.jpg", "")
-
-                                                if (relativePath != null) {
-                                                    val metadataExifFile = "$metadataDir$relativePath.exif.yaml"
-                                                    val fileObj = File(metadataExifFile)
-                                                    if (fileObj.delete()) {
-                                                        logger.log(Level.INFO, "Deleted EXIF file: " + fileObj.name)
-                                                    } else {
-                                                        logger.log(
-                                                            Level.WARNING,
-                                                            "Failed to delete EXIF file: " + fileObj.name
-                                                        )
-                                                    }
-                                                }
-
-                                                // Delete comments
-                                                logger.log(
-                                                    Level.FINE,
-                                                    "File " + metadata.getPath() + " no longer exists. Deleting metadata: " + metadata.getId()
-                                                )
-                                                val albumPhotoCommentList =
-                                                    albumPhotoCommentRepository?.findByMetadataId(metadata.getId())
-                                                if (albumPhotoCommentList != null) {
-                                                    for (albumPhotoComment in albumPhotoCommentList) {
-                                                        if (albumPhotoComment != null) {
-                                                            val commentCount =
-                                                                commentRepository?.countById(albumPhotoComment.getId())
-                                                            if (commentCount != null && commentCount > 0) {
-                                                                commentRepository.deleteById(albumPhotoComment.getId())
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                                albumPhotoCommentRepository?.deleteByMetadataId(metadata.getId())
-                                                logger.log(
-                                                    Level.INFO,
-                                                    "Removed comment records for: " + metadata.getId()
-                                                )
-
-                                                // Delete from favorites
-                                                favoriteRepository?.deleteByMetadataId(metadata.getId())
-                                                logger.log(
-                                                    Level.INFO,
-                                                    "Removed favorite records for: " + metadata.getId()
-                                                )
-
-                                                // Delete from keywords
-                                                keywordPhotoRepository?.deleteAllByMetadataId(metadata.getId())
-                                                val keywords = keywordRepository?.findAll()
-                                                if (keywords != null) {
-                                                    for (keywordObj in keywords) {
-                                                        val keywordCount =
-                                                            keywordPhotoRepository?.countByKeywordId(keywordObj!!.getId())
-                                                        if (keywordCount != null && keywordCount == 0) {
-                                                            keywordRepository?.deleteById(keywordObj!!.getId())
-                                                        }
-                                                    }
-                                                }
-                                                logger.log(
-                                                    Level.INFO,
-                                                    "Removed keywords records for: " + metadata.getId()
-                                                )
-
-                                                // Delete from album
-                                                albumPhotoRepository?.deleteByMetadataId(metadata.getId())
-                                                val albumPhotoCounts = albumRepository?.countNumberOfPhotosInAlbums()
-                                                if (albumPhotoCounts != null) {
-                                                    for (albumPhotoCount in albumPhotoCounts) {
-                                                        if (albumPhotoCount != null) {
-                                                            if (albumPhotoCount.getPhotoCount() == 0) {
-                                                                // Delete the album
-                                                                albumRepository?.deleteById(albumPhotoCount.getAlbumId()!!)
-                                                                userAlbumRepository?.deleteByAlbumId(albumPhotoCount.getAlbumId()!!)
-                                                            } else {
-                                                                val firstAlbumPhoto =
-                                                                    albumPhotoRepository?.findFirstByAlbumId(
-                                                                        albumPhotoCount.getAlbumId()!!
-                                                                    )
-                                                                val metadataObj =
-                                                                    metadataRepository?.findById(firstAlbumPhoto?.getMetadataId()!!)
-                                                                val albumObj =
-                                                                    albumRepository?.findById(albumPhotoCount.getAlbumId()!!)
-
-                                                                if (metadataObj != null && metadataObj.isPresent && albumObj != null && albumObj.isPresent &&
-                                                                    albumObj.get().getCoverUrl() == metadata.getThumbnailUrlCentered()
-                                                                ) {
-                                                                    albumObj.get().setCoverUrl(
-                                                                        metadataObj.get().getThumbnailUrlCentered()
-                                                                    )
-                                                                    albumRepository.save(albumObj.get())
-                                                                    logger.log(
-                                                                        Level.INFO,
-                                                                        "Set the album cover in scanning new files"
-                                                                    )
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                                logger.log(Level.INFO, "Removed album records for: " + metadata.getId())
-
-                                                // Delete tagged people
-                                                val recognitionLabelPhotos =
-                                                    recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
-                                                if (settings != null && compreFaceServerConnected) {
-                                                    val webClient = WebClient.create(settings.getCompreFaceServer()!!)
-                                                    if (recognitionLabelPhotos != null) {
-                                                        for (recognitionLabelPhoto in recognitionLabelPhotos) {
-                                                            if (recognitionLabelPhoto.getCompreFaceImageId() != null && recognitionLabelPhoto.getCompreFaceImageId()!!
-                                                                    .isNotBlank()
-                                                            ) {
-                                                                webClient.delete()
-                                                                    .uri("api/v1/recognition/faces/${recognitionLabelPhoto.getCompreFaceImageId()}")
-                                                                    .header(
-                                                                        "x-api-key",
-                                                                        settings.getCompreFaceKey()
-                                                                    )
-                                                                    .retrieve()
-                                                                    .bodyToMono(String::class.java)
-                                                                    .block()
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                                recognitionLabelPhotoRepository?.deleteByMetadataId(metadata.getId())
-
-                                                val folder = metadata.getFolder()
-
-                                                // Delete metadata
-                                                metadataRepository.deleteById(metadata.getId())
-
-                                                // Check folder data
-                                                val metadataFolderCount = metadataRepository.countAllByFolder(folder.toString())
-                                                if (metadataFolderCount == 0) {
-                                                    val folderData = folderDataRepository!!.findByFolder(folder.toString())
-                                                    folderDataRepository.deleteById(folderData.getId()!!)
-                                                }
-
-                                                logger.log(
-                                                    Level.INFO,
-                                                    "Removed metadata records for: " + metadata.getId()
-                                                )
-                                            } else if (!reindexFiles) {
-                                                alreadyScannedFilepaths.add(checkFile.path)
-                                            }
-                                        }
-                                    }
-                                }
-
-                                if (deleteCount > 0) {
-                                    // Set notification for scanCount and date and link to /recent
-                                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
-                                    val msg =
-                                        "Deleted <a href='#' data-bs-toggle='tooltip' title='${deletedList.joinToString("\n")}'>$deleteCount</a> images/videos at " + sdtf.format(Date()) + "."
-                                    if (superAdmins != null) {
-                                        val notificationObjList = mutableListOf<Notification>()
-                                        for (admin in superAdmins) {
-                                            val notificationObj = Notification()
-                                            notificationObj.setUserId(admin.getId())
-                                            notificationObj.setCreatedAt(getCurrentTimestamp())
-                                            notificationObj.setModifiedAt(getCurrentTimestamp())
-                                            notificationObj.setRead(false)
-                                            notificationObj.setMessage(msg)
-                                            notificationObjList.add(notificationObj)
-                                        }
-                                        if (notificationObjList.isNotEmpty()) {
-                                            notificationRepository?.saveAll(notificationObjList)
-                                        }
-                                    }
-                                }
-                            }
-
-                            // Scan for new files
-                            if (!shouldStop.get()) {
-                                var webClient: WebClient? = null
-                                if (settings != null && compreFaceServerConnected) {
-                                    webClient = WebClient.create(settings.getCompreFaceServer()!!)
-                                }
-
-                                val recognitionLabelPhotoLabels =
-                                    recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
-
-                                var criteria: Criteria<Image, DetectedObjects>? = null
-                                if (settings?.getObjectDetection() == true) {
-                                    criteria = buildObjectRecognitionCriteria()
-                                }
-
-                                for (mediaDir in mediaDirs) {
-                                    if (mediaDir != null) {
-                                        getFile(
-                                            mediaDir.getDirectory().toString(),
-                                            threadFile,
-                                            sidecarDir,
-                                            mediaDir.getDirectory().toString(),
-                                            mediaExcludeDirs,
-                                            settings,
-                                            criteria,
-                                            webClient,
-                                            recognitionLabelPhotoLabels,
-                                            compreFaceServerConnected,
-                                            addToAlbum,
-                                            uploadUserId
-                                        )
-                                    }
-                                }
-
-                                FileUtils.deleteEmptyDirectoriesOfFolder(File(sidecarDir))
-                            }
-
-                            var sidecarSize = FileUtils.sidecarDiskUsed(sidecarDir)
-                            val sidecarSizeUpdate = settingsRepository?.findFirstByOrderByIdAsc()
-                            sidecarSizeUpdate?.setSidecarSizeK(sidecarSize)
-                            settingsRepository?.save(sidecarSizeUpdate!!)
-
-                            if (shouldStop.get()) {
-                                logger.log(Level.INFO, "Scan Stopped")
-                            } else {
-                                logger.log(Level.INFO, "Scan Complete")
-                            }
-
-                            val metadataArrayCount = metadataIdArray.count()
-                            if (superAdmins != null && metadataArrayCount > 0) {
-                                val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
-
-                                // Set notification for scanCount and date and link to /recent
-                                var msg =
-                                    "Scan complete for <a href='/recent' target='_blank'>$metadataArrayCount images/videos</a>"
-                                if (recognitionCount > 0) {
-                                    msg += " and <a href='/people' target='_blank'>$recognitionCount faces recognized</a>"
-                                }
-                                msg += " at ${sdtf.format(Date())}."
-
-                                val notificationObjList = mutableListOf<Notification>()
-                                for (admin in superAdmins) {
-                                    val notificationObj = Notification()
-                                    notificationObj.setUserId(admin.getId())
-                                    notificationObj.setCreatedAt(getCurrentTimestamp())
-                                    notificationObj.setModifiedAt(getCurrentTimestamp())
-                                    notificationObj.setRead(false)
-                                    notificationObj.setMessage(msg)
-                                    notificationObjList.add(notificationObj)
-                                }
-                                if (notificationObjList.isNotEmpty()) {
-                                    notificationRepository?.saveAll(notificationObjList)
-                                }
-                            }
-
-                            // Place name, face and object recognition, if enabled
-                            Thread {
-                                var webClient: WebClient? = null
-                                if (settings != null && compreFaceServerConnected) {
-                                    webClient = WebClient.create(settings.getCompreFaceServer()!!)
-                                }
-                                val recognitionLabelPhotoLabels =
-                                    recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
-
-                                val superAdminsUsers = userRepository?.findAllByAuthorityEquals(superRole!!)
-
-                                var threadText: String
-
-                                var criteria: Criteria<Image, DetectedObjects>? = null
-                                if (settings?.getObjectDetection() == true) {
-                                    criteria = buildObjectRecognitionCriteria()
-                                }
-
-                                for ((index, metadataId) in metadataIdArray.withIndex()) {
-                                    val metadataObj = metadataRepository?.findByMetadataId(metadataId)
-
-                                    if (metadataObj != null) {
-                                        // Set place name
-                                        val lat = metadataObj.getLat()
-                                        val lng = metadataObj.getLng()
-                                        if (!lat.isNullOrBlank() && !lng.isNullOrBlank()) {
-                                            val geoDataJson = TextUtils.getGeoData(geocodeUrl!!, lat, lng)
-
-                                            val buildPlace = TextUtils.getPlaceNameFromJson(geoDataJson)
-                                            if (buildPlace.isNotBlank()) {
-                                                metadataObj.setPlaceName(buildPlace)
-
-                                                val engine = TimeZoneEngine.initialize()
-                                                val maybeZoneId: Optional<ZoneId> =
-                                                    engine.query(
-                                                        lat.toString().toDouble(),
-                                                        lng.toString().toDouble()
-                                                    )
-                                                val zone = ZoneId.of(maybeZoneId.get().id)
-                                                val dt = LocalDateTime.now()
-                                                val zdt: ZonedDateTime = dt.atZone(zone)
-                                                val offset = zdt.offset
-                                                metadataObj.setTimeZone(offset.toString())
-                                                logger.log(
-                                                    Level.INFO,
-                                                    "Place set for " + metadataObj.getFileName()
-                                                )
-                                                metadataRepository.save(metadataObj)
-                                            }
-                                        }
-
-                                        // Recognize face during index scan
-                                        try {
-                                            if (settings != null && settings.getFacialDetection() == true) {
-                                                // Using CompreFace
-                                                if (webClient != null && compreFaceServerConnected) {
-                                                    try {
-                                                        // Have at least 3 people tagged
-                                                        val compreFaceTagAllow = 3
-                                                        if (recognitionLabelPhotoLabels!!.count() >= compreFaceTagAllow) {
-                                                            var builder = MultipartBodyBuilder()
-                                                            builder.part(
-                                                                "file",
-                                                                FileSystemResource(metadataObj.getThumbnailPathSmall()!!)
-                                                            )
-
-                                                            var response: String? = null
-
-                                                            try {
-                                                                response = webClient!!.post()
-                                                                    .uri("api/v1/recognition/recognize")
-                                                                    .header(
-                                                                        HttpHeaders.CONTENT_TYPE,
-                                                                        MediaType.MULTIPART_FORM_DATA.toString()
-                                                                    )
-                                                                    .header(
-                                                                        "x-api-key",
-                                                                        settings.getCompreFaceKey()
-                                                                    )
-                                                                    .body(BodyInserters.fromMultipartData(builder.build()))
-                                                                    .retrieve()
-                                                                    .bodyToMono(String::class.java)
-                                                                    .block()
-
-                                                                logger.log(
-                                                                    Level.INFO,
-                                                                    "Recognizing face for " + metadataObj.getPath() + ": " + response
-                                                                )
-                                                            } catch (e: Exception) {
-                                                                val recognitionLabelRecord =
-                                                                    recognitionLabelRepository?.findByNameIgnoreCase(
-                                                                        TextUtils.getObjectName()
-                                                                    )
-                                                                var recognitionLabelObj = RecognitionLabel()
-                                                                if (recognitionLabelRecord == null) {
-                                                                    recognitionLabelObj.setName(TextUtils.getObjectName())
-                                                                    recognitionLabelObj.setCreatedAt(
-                                                                        getCurrentTimestamp()
-                                                                    )
-                                                                    recognitionLabelObj.setModifiedAt(
-                                                                        getCurrentTimestamp()
-                                                                    )
-                                                                    recognitionLabelRepository?.save(
-                                                                        recognitionLabelObj
-                                                                    )
-                                                                } else {
-                                                                    recognitionLabelObj = recognitionLabelRecord
-                                                                }
-
-                                                                val recognitionLabelPhotoObj =
-                                                                    RecognitionLabelPhoto()
-                                                                recognitionLabelPhotoObj.setMetadataId(metadataObj.getId())
-                                                                recognitionLabelPhotoObj.setRecognitionLabelId(
-                                                                    recognitionLabelObj.getId()
-                                                                )
-                                                                recognitionLabelPhotoObj.setConfidence("-0.1")
-                                                                recognitionLabelPhotoRepository?.save(
-                                                                    recognitionLabelPhotoObj
-                                                                )
-
-                                                                logger.log(
-                                                                    Level.WARNING,
-                                                                    "Error recognizing face for " + metadataObj.getPath() + ": " + e.localizedMessage
-                                                                )
-                                                            }
-
-                                                            if (response != null) {
-                                                                var jsonObj = mapper.readTree(response)
-                                                                val resultMap = mapper.convertValue(
-                                                                    jsonObj,
-                                                                    object :
-                                                                        TypeReference<Map<String, ArrayList<Map<String, Any>>>>() {})
-                                                                val resultList =
-                                                                    resultMap["result"] as ArrayList<Map<String, Any>>
-                                                                if (resultList.isNotEmpty() && resultList[0].containsKey(
-                                                                        "subjects"
-                                                                    )
-                                                                ) {
-                                                                    for (singleResult in resultList) {
-                                                                        val subjects =
-                                                                            singleResult["subjects"] as ArrayList<Map<String, Any>>
-
-                                                                        for (subjectObj in subjects) {
-                                                                            var subject = ""
-                                                                            var similarity = 0.0
-
-                                                                            if (subjectObj.isNotEmpty()) {
-                                                                                subject =
-                                                                                    subjectObj["subject"].toString()
-                                                                                similarity =
-                                                                                    subjectObj["similarity"].toString()
-                                                                                        .toDouble()
-                                                                            }
-
-                                                                            if (similarity != 1.0 && (similarity <= 0.0 || similarity >= settings.getRecognitionConfidenceThreshold()
-                                                                                    .toString().toDouble())
-                                                                            ) {
-
-                                                                                builder = MultipartBodyBuilder()
-                                                                                builder.part(
-                                                                                    "file",
-                                                                                    FileSystemResource(metadataObj.getThumbnailPathSmall()!!)
-                                                                                )
-
-                                                                                response = null
-
-                                                                                try {
-                                                                                    response = webClient!!.post()
-                                                                                        .uri("api/v1/recognition/faces?subject=${subject}")
-                                                                                        .header(
-                                                                                            HttpHeaders.CONTENT_TYPE,
-                                                                                            MediaType.MULTIPART_FORM_DATA.toString()
-                                                                                        )
-                                                                                        .header(
-                                                                                            "x-api-key",
-                                                                                            settings.getCompreFaceKey()
-                                                                                        )
-                                                                                        .body(
-                                                                                            BodyInserters.fromMultipartData(
-                                                                                                builder.build()
-                                                                                            )
-                                                                                        )
-                                                                                        .retrieve()
-                                                                                        .bodyToMono(String::class.java)
-                                                                                        .block()
-                                                                                } catch (e: Exception) {
-                                                                                    logger.log(
-                                                                                        Level.WARNING,
-                                                                                        "Error uploading face for " + subject + ": " + e.localizedMessage
-                                                                                    )
-                                                                                }
-
-                                                                                var compreFaceImageId: String? =
-                                                                                    null
-                                                                                if (response != null) {
-                                                                                    jsonObj =
-                                                                                        mapper.readTree(response)
-                                                                                    if (jsonObj.has("image_id")) {
-                                                                                        compreFaceImageId =
-                                                                                            jsonObj["image_id"].toString()
-                                                                                        compreFaceImageId =
-                                                                                            compreFaceImageId.drop(1)
-                                                                                                .dropLast(1)
-                                                                                    }
-                                                                                }
-
-                                                                                logger.log(
-                                                                                    Level.INFO,
-                                                                                    "Uploaded face for " + metadataObj.getPath() + " for subject " + subject + ": " + response
-                                                                                )
-
-                                                                                val recognitionLabelObj =
-                                                                                    recognitionLabelRepository?.findByNameIgnoreCase(
-                                                                                        subject
-                                                                                    )
-
-                                                                                if (recognitionLabelObj != null) {
-                                                                                    val recognitionLabelPhoto =
-                                                                                        recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
-                                                                                            recognitionLabelObj.getId(),
-                                                                                            metadataObj.getId()
-                                                                                        )
-
-                                                                                    if (recognitionLabelPhoto == 0) {
-                                                                                        val recognitionLabelPhotoObj =
-                                                                                            RecognitionLabelPhoto()
-                                                                                        recognitionLabelPhotoObj.setMetadataId(
-                                                                                            metadataObj.getId()
-                                                                                        )
-                                                                                        recognitionLabelPhotoObj.setRecognitionLabelId(
-                                                                                            recognitionLabelObj.getId()
-                                                                                        )
-                                                                                        recognitionLabelPhotoObj.setConfidence(
-                                                                                            similarity.toString()
-                                                                                        )
-                                                                                        if (compreFaceImageId != null) {
-                                                                                            recognitionLabelPhotoObj.setCompreFaceImageId(
-                                                                                                compreFaceImageId
-                                                                                            )
-                                                                                        }
-                                                                                        recognitionLabelPhotoRepository?.save(
-                                                                                            recognitionLabelPhotoObj
-                                                                                        )
-
-                                                                                        metadataObj.setModifiedAt(
-                                                                                            getCurrentTimestamp()
-                                                                                        )
-                                                                                        metadataRepository?.save(
-                                                                                            metadataObj
-                                                                                        )
-
-                                                                                        recognitionCount++
-                                                                                    }
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                        } else {
-                                                            logger.log(
-                                                                Level.INFO,
-                                                                "You need to manually tag at least $compreFaceTagAllow different people to use face recognition service"
-                                                            )
-                                                        }
-                                                    } catch (e: Exception) {
-                                                        logger.log(
-                                                            Level.INFO,
-                                                            "Issue connecting to face recognizer: " + metadataObj.getPath() + ": " + e.localizedMessage
-                                                        )
-                                                    }
-                                                // ...or DJL
-                                                } else {
-                                                    val classLoader: ClassLoader =
-                                                        ShashinApplication::class.java.classLoader
-                                                    val vggfaceFileExists =
-                                                        classLoader.getResource("lib/vggface2.pt") != null
-                                                    val retinafaceFileExists =
-                                                        classLoader.getResource("lib/retinaface.pt") != null
-                                                    if (vggfaceFileExists && retinafaceFileExists) {
-                                                        val testImage = mutableListOf<Metadata>()
-                                                        testImage.add(metadataObj)
-                                                        val trainingData = metadataRepository.findTrainingData(
-                                                            settings.getRecognitionConfidenceThreshold()!!,
-                                                            settings.getTrainingDataLimit()!!
-                                                        )
-
-                                                        val faceRecognizer = DjlFaceRecognizer(
-                                                            testImage,
-                                                            trainingData!!,
-                                                            recognitionLabelPhotoRepository,
-                                                            recognitionLabelRepository,
-                                                            settings,
-                                                            relativeSidecarDir!!,
-                                                            threadFile,
-                                                            shouldStop
-                                                        )
-                                                        recognitionCount += faceRecognizer.startPredict()
-                                                    } else {
-                                                        logger.log(
-                                                            Level.WARNING,
-                                                            "Missing lib files for DJL face scan"
-                                                        )
-                                                        FileUtils.writeToThreadFileAndLogMessage(
-                                                            "Missing lib files for DJL face scan",
-                                                            threadFile
-                                                        )
-
-                                                        if (superAdminsUsers != null && index < 1) {
-                                                            val notificationObjList = mutableListOf<Notification>()
-                                                            val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
-                                                            sdtf.timeZone =
-                                                                TimeZone.getTimeZone(ZoneId.systemDefault())
-                                                            for (admin in superAdminsUsers) {
-                                                                val notificationObj = Notification()
-                                                                notificationObj.setUserId(admin.getId())
-                                                                notificationObj.setCreatedAt(getCurrentTimestamp())
-                                                                notificationObj.setModifiedAt(getCurrentTimestamp())
-                                                                notificationObj.setRead(false)
-                                                                notificationObj.setMessage("Missing lib files for DJL face scan.")
-                                                                notificationObjList.add(notificationObj)
-                                                            }
-                                                            if (notificationObjList.isNotEmpty()) {
-                                                                notificationRepository?.saveAll(notificationObjList)
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-
-                                            // Detect objects
-                                            if (settings?.getObjectDetection() == true && criteria != null) {
-                                                val threshold = settings.getObjectRecognitionConfidenceThreshold()
-
-                                                val keywordMap = ImageProcessing.objectRecognizer(
-                                                    metadataObj,
-                                                    criteria,
-                                                    threshold.toString().toDouble(),
-                                                    threadFile,
-                                                    shouldStop.get()
-                                                )
-
-                                                ImageProcessing.processObjects(keywordMap.keys.toTypedArray().toList(), metadataObj, keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!)
-                                            }
-
-                                            threadText = metadataObj.getPath() + " indexed"
-                                        } catch (e: Exception) {
-                                            logger.log(
-                                                Level.SEVERE,
-                                                "Error saving metadata: " + metadataObj.getPath() + ": " + e.localizedMessage
-                                            )
-                                            threadText = "Error saving metadata: " + metadataObj.getPath() + "."
-                                        }
-                                        FileUtils.writeToThreadFileAndLogMessage(threadText, threadFile)
-                                    }
-                                    ImageProcessing.createVideoGif(metadataId, metadataRepository)
-
-                                    val completedPercent: Double = ((index+1).toDouble() / metadataArrayCount.toDouble()) * 100
-
-                                    logger.log(
-                                        Level.INFO,
-                                        "${floor(completedPercent).toInt()}% completed scanning location and facial data"
-                                    )
-                                }
-
-                                // Send notifications
-                                if (superAdminsUsers != null && recognitionCount > 0) {
-                                    val notificationObjList = mutableListOf<Notification>()
-                                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
-                                    sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
-                                    for (admin in superAdminsUsers) {
-                                        val notificationObj = Notification()
-                                        notificationObj.setUserId(admin.getId())
-                                        notificationObj.setCreatedAt(getCurrentTimestamp())
-                                        notificationObj.setModifiedAt(getCurrentTimestamp())
-                                        notificationObj.setRead(false)
-                                        notificationObj.setMessage("$recognitionCount faces recognized during media indexing at ${sdtf.format(Date())}.")
-                                        notificationObjList.add(notificationObj)
-                                    }
-                                    if (notificationObjList.isNotEmpty()) {
-                                        notificationRepository?.saveAll(notificationObjList)
-                                    }
-                                }
-
-                                metadataIdArray.clear()
-                            }.start()
-
-                            // Delete thread file
-                            if (threadFile.delete()) {
-                                logger.log(Level.FINE, "Thread file deleted: " + threadFile.name)
-                            } else {
-                                logger.log(Level.SEVERE, "Could not delete thread file: " + threadFile.name)
-                            }
-                        }
-                    }.start()
+                    scanProcess(settings, mediaDirs, mediaExcludeDirs, sidecarDir, compreFaceServerConnected, superAdmins, reindexFiles, addToAlbum, uploadUserId)
 
                     return "Start Scan"
                 }
@@ -2372,6 +1603,795 @@ class SettingsController {
 //        msg = "Start Scan"
 //
 //        return msg
+    }
+
+    fun scanProcess(settings: Settings?, mediaDirs: MutableList<MediaDirectory?>?, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, sidecarDir: String, compreFaceServerConnected: Boolean, superAdmins: MutableIterable<User>?, reindexFiles: Boolean, addToAlbum: Int, uploadUserId: Int) = runBlocking {
+        launch {
+            //Create file with thread name and write file name iterated
+            val threadFile = FileUtils.createThreadFile("shashinscan")
+            if (threadFile != null) {
+                // Check for deleted original files
+                val metadataList = metadataRepository?.findAll()
+
+                if (metadataList != null) {
+                    var deleteCount = 0
+                    var deletedList = mutableListOf<String>()
+
+                    for (metadata in metadataList) {
+                        if (shouldStop.get()) {
+                            FileUtils.writeToThreadFileAndLogMessage("Scan Stopped", threadFile)
+                            break
+                        }
+                        if (metadata != null) {
+                            if (!metadata.getPath().isNullOrBlank()) {
+                                FileUtils.writeToThreadFileAndLogMessage(
+                                    "checking for changes for file - " + metadata.getPath(),
+                                    threadFile
+                                )
+
+                                // Check if metadata path still exists, if not, delete media
+                                var basePathExists = false
+                                var excludeBasePathExists = false
+
+                                if (mediaDirs != null) {
+                                    for (mediaDir in mediaDirs) {
+                                        basePathExists = metadata.getPath()!!
+                                            .startsWith(mediaDir!!.getDirectory().toString())
+
+                                        if (basePathExists) {
+                                            break
+                                        }
+                                    }
+                                }
+
+                                if (mediaExcludeDirs != null) {
+                                    for (mediaExcludeDir in mediaExcludeDirs) {
+                                        excludeBasePathExists = metadata.getPath()!!
+                                            .startsWith(mediaExcludeDir?.getDirectory().toString())
+
+                                        if (excludeBasePathExists) {
+                                            break
+                                        }
+                                    }
+                                }
+
+                                val checkFile = File(metadata.getPath()!!)
+                                if (!checkFile.exists() || !basePathExists || excludeBasePathExists) {
+                                    deleteCount++
+
+                                    deletedList.add(metadata.getFileName().toString())
+
+                                    // Delete side car and metadata files
+                                    if (!metadata.getThumbnailPathCentered().isNullOrBlank()) {
+                                        val fileObj = File(metadata.getThumbnailPathCentered()!!)
+                                        if (fileObj.delete()) {
+                                            logger.log(
+                                                Level.INFO,
+                                                "Deleted thumbnail centered file: " + fileObj.name
+                                            )
+                                        } else {
+                                            logger.log(
+                                                Level.WARNING,
+                                                "Failed to delete thumbnail centered file: " + fileObj.name
+                                            )
+                                        }
+                                    }
+                                    if (!metadata.getThumbnailPathSmall().isNullOrBlank()) {
+                                        val fileObj = File(metadata.getThumbnailPathSmall()!!)
+                                        if (fileObj.delete()) {
+                                            logger.log(
+                                                Level.INFO,
+                                                "Deleted thumbnail small file: " + fileObj.name
+                                            )
+                                        } else {
+                                            logger.log(
+                                                Level.WARNING,
+                                                "Failed to delete thumbnail small file: " + fileObj.name
+                                            )
+                                        }
+                                    }
+                                    if (!metadata.getThumbnailPathExtraSmall().isNullOrBlank()) {
+                                        val fileObj = File(metadata.getThumbnailPathExtraSmall()!!)
+                                        if (fileObj.delete()) {
+                                            logger.log(
+                                                Level.INFO,
+                                                "Deleted thumbnail x-small file: " + fileObj.name
+                                            )
+                                        } else {
+                                            logger.log(
+                                                Level.WARNING,
+                                                "Failed to delete thumbnail x-small file: " + fileObj.name
+                                            )
+                                        }
+                                    }
+                                    if (!metadata.getMapMarkerPath().isNullOrBlank()) {
+                                        val fileObj = File(metadata.getMapMarkerPath()!!)
+                                        if (fileObj.delete()) {
+                                            logger.log(
+                                                Level.INFO,
+                                                "Deleted map marker file: " + fileObj.name
+                                            )
+                                        } else {
+                                            logger.log(
+                                                Level.WARNING,
+                                                "Failed to delete map marker file: " + fileObj.name
+                                            )
+                                        }
+                                    }
+
+                                    val metadataDir = sidecarDir + "metadata/"
+                                    val thumbnailDir = sidecarDir.replace('\\', '/') + "thumbnails"
+                                    var relativePath: String? =
+                                        metadata.getThumbnailPathCentered()?.replace('\\', '/')?.lowercase()
+                                            ?.replace(thumbnailDir.lowercase(), "")
+                                    relativePath = relativePath?.replace("_centered.jpg", "")
+
+                                    if (relativePath != null) {
+                                        val metadataExifFile = "$metadataDir$relativePath.exif.yaml"
+                                        val fileObj = File(metadataExifFile)
+                                        if (fileObj.delete()) {
+                                            logger.log(Level.INFO, "Deleted EXIF file: " + fileObj.name)
+                                        } else {
+                                            logger.log(
+                                                Level.WARNING,
+                                                "Failed to delete EXIF file: " + fileObj.name
+                                            )
+                                        }
+                                    }
+
+                                    // Delete comments
+                                    logger.log(
+                                        Level.FINE,
+                                        "File " + metadata.getPath() + " no longer exists. Deleting metadata: " + metadata.getId()
+                                    )
+                                    val albumPhotoCommentList =
+                                        albumPhotoCommentRepository?.findByMetadataId(metadata.getId())
+                                    if (albumPhotoCommentList != null) {
+                                        for (albumPhotoComment in albumPhotoCommentList) {
+                                            if (albumPhotoComment != null) {
+                                                val commentCount =
+                                                    commentRepository?.countById(albumPhotoComment.getId())
+                                                if (commentCount != null && commentCount > 0) {
+                                                    commentRepository.deleteById(albumPhotoComment.getId())
+                                                }
+                                            }
+                                        }
+                                    }
+                                    albumPhotoCommentRepository?.deleteByMetadataId(metadata.getId())
+                                    logger.log(
+                                        Level.INFO,
+                                        "Removed comment records for: " + metadata.getId()
+                                    )
+
+                                    // Delete from favorites
+                                    favoriteRepository?.deleteByMetadataId(metadata.getId())
+                                    logger.log(
+                                        Level.INFO,
+                                        "Removed favorite records for: " + metadata.getId()
+                                    )
+
+                                    // Delete from keywords
+                                    keywordPhotoRepository?.deleteAllByMetadataId(metadata.getId())
+                                    val keywords = keywordRepository?.findAll()
+                                    if (keywords != null) {
+                                        for (keywordObj in keywords) {
+                                            val keywordCount =
+                                                keywordPhotoRepository?.countByKeywordId(keywordObj!!.getId())
+                                            if (keywordCount != null && keywordCount == 0) {
+                                                keywordRepository?.deleteById(keywordObj!!.getId())
+                                            }
+                                        }
+                                    }
+                                    logger.log(
+                                        Level.INFO,
+                                        "Removed keywords records for: " + metadata.getId()
+                                    )
+
+                                    // Delete from album
+                                    albumPhotoRepository?.deleteByMetadataId(metadata.getId())
+                                    val albumPhotoCounts = albumRepository?.countNumberOfPhotosInAlbums()
+                                    if (albumPhotoCounts != null) {
+                                        for (albumPhotoCount in albumPhotoCounts) {
+                                            if (albumPhotoCount != null) {
+                                                if (albumPhotoCount.getPhotoCount() == 0) {
+                                                    // Delete the album
+                                                    albumRepository?.deleteById(albumPhotoCount.getAlbumId()!!)
+                                                    userAlbumRepository?.deleteByAlbumId(albumPhotoCount.getAlbumId()!!)
+                                                } else {
+                                                    val firstAlbumPhoto =
+                                                        albumPhotoRepository?.findFirstByAlbumId(
+                                                            albumPhotoCount.getAlbumId()!!
+                                                        )
+                                                    val metadataObj =
+                                                        metadataRepository?.findById(firstAlbumPhoto?.getMetadataId()!!)
+                                                    val albumObj =
+                                                        albumRepository?.findById(albumPhotoCount.getAlbumId()!!)
+
+                                                    if (metadataObj != null && metadataObj.isPresent && albumObj != null && albumObj.isPresent &&
+                                                        albumObj.get().getCoverUrl() == metadata.getThumbnailUrlCentered()
+                                                    ) {
+                                                        albumObj.get().setCoverUrl(
+                                                            metadataObj.get().getThumbnailUrlCentered()
+                                                        )
+                                                        albumRepository.save(albumObj.get())
+                                                        logger.log(
+                                                            Level.INFO,
+                                                            "Set the album cover in scanning new files"
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    logger.log(Level.INFO, "Removed album records for: " + metadata.getId())
+
+                                    // Delete tagged people
+                                    val recognitionLabelPhotos =
+                                        recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
+                                    if (settings != null && compreFaceServerConnected) {
+                                        val webClient = WebClient.create(settings.getCompreFaceServer()!!)
+                                        if (recognitionLabelPhotos != null) {
+                                            for (recognitionLabelPhoto in recognitionLabelPhotos) {
+                                                if (recognitionLabelPhoto.getCompreFaceImageId() != null && recognitionLabelPhoto.getCompreFaceImageId()!!
+                                                        .isNotBlank()
+                                                ) {
+                                                    webClient.delete()
+                                                        .uri("api/v1/recognition/faces/${recognitionLabelPhoto.getCompreFaceImageId()}")
+                                                        .header(
+                                                            "x-api-key",
+                                                            settings.getCompreFaceKey()
+                                                        )
+                                                        .retrieve()
+                                                        .bodyToMono(String::class.java)
+                                                        .block()
+                                                }
+                                            }
+                                        }
+                                    }
+                                    recognitionLabelPhotoRepository?.deleteByMetadataId(metadata.getId())
+
+                                    val folder = metadata.getFolder()
+
+                                    // Delete metadata
+                                    metadataRepository.deleteById(metadata.getId())
+
+                                    // Check folder data
+                                    val metadataFolderCount = metadataRepository.countAllByFolder(folder.toString())
+                                    if (metadataFolderCount == 0) {
+                                        val folderData = folderDataRepository!!.findByFolder(folder.toString())
+                                        folderDataRepository.deleteById(folderData.getId()!!)
+                                    }
+
+                                    logger.log(
+                                        Level.INFO,
+                                        "Removed metadata records for: " + metadata.getId()
+                                    )
+                                } else if (!reindexFiles) {
+                                    alreadyScannedFilepaths.add(checkFile.path)
+                                }
+                            }
+                        }
+                    }
+
+                    if (deleteCount > 0) {
+                        // Set notification for scanCount and date and link to /recent
+                        val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                        val msg =
+                            "Deleted <a href='#' data-bs-toggle='tooltip' title='${deletedList.joinToString("\n")}'>$deleteCount</a> images/videos at " + sdtf.format(Date()) + "."
+                        if (superAdmins != null) {
+                            val notificationObjList = mutableListOf<Notification>()
+                            for (admin in superAdmins) {
+                                val notificationObj = Notification()
+                                notificationObj.setUserId(admin.getId())
+                                notificationObj.setCreatedAt(getCurrentTimestamp())
+                                notificationObj.setModifiedAt(getCurrentTimestamp())
+                                notificationObj.setRead(false)
+                                notificationObj.setMessage(msg)
+                                notificationObjList.add(notificationObj)
+                            }
+                            if (notificationObjList.isNotEmpty()) {
+                                notificationRepository?.saveAll(notificationObjList)
+                            }
+                        }
+                    }
+                }
+
+                // Scan for new files
+                if (!shouldStop.get()) {
+                    var webClient: WebClient? = null
+                    if (settings != null && compreFaceServerConnected) {
+                        webClient = WebClient.create(settings.getCompreFaceServer()!!)
+                    }
+
+                    val recognitionLabelPhotoLabels =
+                        recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
+
+                    var criteria: Criteria<Image, DetectedObjects>? = null
+                    if (settings?.getObjectDetection() == true) {
+                        criteria = buildObjectRecognitionCriteria()
+                    }
+
+                    if (mediaDirs != null) {
+                        for (mediaDir in mediaDirs) {
+                            if (mediaDir != null) {
+                                getFile(
+                                    mediaDir.getDirectory().toString(),
+                                    threadFile,
+                                    sidecarDir,
+                                    mediaDir.getDirectory().toString(),
+                                    mediaExcludeDirs,
+                                    settings,
+                                    criteria,
+                                    webClient,
+                                    recognitionLabelPhotoLabels,
+                                    compreFaceServerConnected,
+                                    addToAlbum,
+                                    uploadUserId
+                                )
+                            }
+                        }
+                    }
+
+                    FileUtils.deleteEmptyDirectoriesOfFolder(File(sidecarDir))
+                }
+
+                var sidecarSize = FileUtils.sidecarDiskUsed(sidecarDir)
+                val sidecarSizeUpdate = settingsRepository?.findFirstByOrderByIdAsc()
+                sidecarSizeUpdate?.setSidecarSizeK(sidecarSize)
+                settingsRepository?.save(sidecarSizeUpdate!!)
+
+                if (shouldStop.get()) {
+                    logger.log(Level.INFO, "Scan Stopped")
+                } else {
+                    logger.log(Level.INFO, "Scan Complete")
+                }
+
+                val metadataArrayCount = metadataIdArray.count()
+                if (superAdmins != null && metadataArrayCount > 0) {
+                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+
+                    // Set notification for scanCount and date and link to /recent
+                    var msg =
+                        "Scan complete for <a href='/recent' target='_blank'>$metadataArrayCount images/videos</a>"
+                    if (recognitionCount > 0) {
+                        msg += " and <a href='/people' target='_blank'>$recognitionCount faces recognized</a>"
+                    }
+                    msg += " at ${sdtf.format(Date())}."
+
+                    val notificationObjList = mutableListOf<Notification>()
+                    for (admin in superAdmins) {
+                        val notificationObj = Notification()
+                        notificationObj.setUserId(admin.getId())
+                        notificationObj.setCreatedAt(getCurrentTimestamp())
+                        notificationObj.setModifiedAt(getCurrentTimestamp())
+                        notificationObj.setRead(false)
+                        notificationObj.setMessage(msg)
+                        notificationObjList.add(notificationObj)
+                    }
+                    if (notificationObjList.isNotEmpty()) {
+                        notificationRepository?.saveAll(notificationObjList)
+                    }
+                }
+
+                // Place name, face and object recognition, if enabled
+                objectAndFacialRecognition(settings, compreFaceServerConnected, threadFile, metadataArrayCount)
+
+                // Delete thread file
+                if (threadFile.delete()) {
+                    logger.log(Level.FINE, "Thread file deleted: " + threadFile.name)
+                } else {
+                    logger.log(Level.SEVERE, "Could not delete thread file: " + threadFile.name)
+                }
+            }
+        }
+    }
+
+    fun objectAndFacialRecognition(settings: Settings?, compreFaceServerConnected: Boolean, threadFile: File, metadataArrayCount: Int) = runBlocking {
+        launch {
+            var webClient: WebClient? = null
+            if (settings != null && compreFaceServerConnected) {
+                webClient = WebClient.create(settings.getCompreFaceServer()!!)
+            }
+            val recognitionLabelPhotoLabels =
+                recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
+
+            val superAdminsUsers = userRepository?.findAllByAuthorityEquals(superRole!!)
+
+            var threadText: String
+
+            var criteria: Criteria<Image, DetectedObjects>? = null
+            if (settings?.getObjectDetection() == true) {
+                criteria = buildObjectRecognitionCriteria()
+            }
+
+            for ((index, metadataId) in metadataIdArray.withIndex()) {
+                val metadataObj = metadataRepository?.findByMetadataId(metadataId)
+
+                if (metadataObj != null) {
+                    // Set place name
+                    val lat = metadataObj.getLat()
+                    val lng = metadataObj.getLng()
+                    if (!lat.isNullOrBlank() && !lng.isNullOrBlank()) {
+                        val geoDataJson = TextUtils.getGeoData(geocodeUrl!!, lat, lng)
+
+                        val buildPlace = TextUtils.getPlaceNameFromJson(geoDataJson)
+                        if (buildPlace.isNotBlank()) {
+                            metadataObj.setPlaceName(buildPlace)
+
+                            val engine = TimeZoneEngine.initialize()
+                            val maybeZoneId: Optional<ZoneId> =
+                                engine.query(
+                                    lat.toString().toDouble(),
+                                    lng.toString().toDouble()
+                                )
+                            val zone = ZoneId.of(maybeZoneId.get().id)
+                            val dt = LocalDateTime.now()
+                            val zdt: ZonedDateTime = dt.atZone(zone)
+                            val offset = zdt.offset
+                            metadataObj.setTimeZone(offset.toString())
+                            logger.log(
+                                Level.INFO,
+                                "Place set for " + metadataObj.getFileName()
+                            )
+                            metadataRepository.save(metadataObj)
+                        }
+                    }
+
+                    // Recognize face during index scan
+                    try {
+                        if (settings != null && settings.getFacialDetection() == true) {
+                            // Using CompreFace
+                            if (webClient != null && compreFaceServerConnected) {
+                                try {
+                                    // Have at least 3 people tagged
+                                    val compreFaceTagAllow = 3
+                                    if (recognitionLabelPhotoLabels!!.count() >= compreFaceTagAllow) {
+                                        var builder = MultipartBodyBuilder()
+                                        builder.part(
+                                            "file",
+                                            FileSystemResource(metadataObj.getThumbnailPathSmall()!!)
+                                        )
+
+                                        var response: String? = null
+
+                                        try {
+                                            response = webClient!!.post()
+                                                .uri("api/v1/recognition/recognize")
+                                                .header(
+                                                    HttpHeaders.CONTENT_TYPE,
+                                                    MediaType.MULTIPART_FORM_DATA.toString()
+                                                )
+                                                .header(
+                                                    "x-api-key",
+                                                    settings.getCompreFaceKey()
+                                                )
+                                                .body(BodyInserters.fromMultipartData(builder.build()))
+                                                .retrieve()
+                                                .bodyToMono(String::class.java)
+                                                .block()
+
+                                            logger.log(
+                                                Level.INFO,
+                                                "Recognizing face for " + metadataObj.getPath() + ": " + response
+                                            )
+                                        } catch (e: Exception) {
+                                            val recognitionLabelRecord =
+                                                recognitionLabelRepository?.findByNameIgnoreCase(
+                                                    TextUtils.getObjectName()
+                                                )
+                                            var recognitionLabelObj = RecognitionLabel()
+                                            if (recognitionLabelRecord == null) {
+                                                recognitionLabelObj.setName(TextUtils.getObjectName())
+                                                recognitionLabelObj.setCreatedAt(
+                                                    getCurrentTimestamp()
+                                                )
+                                                recognitionLabelObj.setModifiedAt(
+                                                    getCurrentTimestamp()
+                                                )
+                                                recognitionLabelRepository?.save(
+                                                    recognitionLabelObj
+                                                )
+                                            } else {
+                                                recognitionLabelObj = recognitionLabelRecord
+                                            }
+
+                                            val recognitionLabelPhotoObj =
+                                                RecognitionLabelPhoto()
+                                            recognitionLabelPhotoObj.setMetadataId(metadataObj.getId())
+                                            recognitionLabelPhotoObj.setRecognitionLabelId(
+                                                recognitionLabelObj.getId()
+                                            )
+                                            recognitionLabelPhotoObj.setConfidence("-0.1")
+                                            recognitionLabelPhotoRepository?.save(
+                                                recognitionLabelPhotoObj
+                                            )
+
+                                            logger.log(
+                                                Level.WARNING,
+                                                "Error recognizing face for " + metadataObj.getPath() + ": " + e.localizedMessage
+                                            )
+                                        }
+
+                                        if (response != null) {
+                                            var jsonObj = mapper.readTree(response)
+                                            val resultMap = mapper.convertValue(
+                                                jsonObj,
+                                                object :
+                                                    TypeReference<Map<String, ArrayList<Map<String, Any>>>>() {})
+                                            val resultList =
+                                                resultMap["result"] as ArrayList<Map<String, Any>>
+                                            if (resultList.isNotEmpty() && resultList[0].containsKey(
+                                                    "subjects"
+                                                )
+                                            ) {
+                                                for (singleResult in resultList) {
+                                                    val subjects =
+                                                        singleResult["subjects"] as ArrayList<Map<String, Any>>
+
+                                                    for (subjectObj in subjects) {
+                                                        var subject = ""
+                                                        var similarity = 0.0
+
+                                                        if (subjectObj.isNotEmpty()) {
+                                                            subject =
+                                                                subjectObj["subject"].toString()
+                                                            similarity =
+                                                                subjectObj["similarity"].toString()
+                                                                    .toDouble()
+                                                        }
+
+                                                        if (similarity != 1.0 && (similarity <= 0.0 || similarity >= settings.getRecognitionConfidenceThreshold()
+                                                                .toString().toDouble())
+                                                        ) {
+
+                                                            builder = MultipartBodyBuilder()
+                                                            builder.part(
+                                                                "file",
+                                                                FileSystemResource(metadataObj.getThumbnailPathSmall()!!)
+                                                            )
+
+                                                            response = null
+
+                                                            try {
+                                                                response = webClient!!.post()
+                                                                    .uri("api/v1/recognition/faces?subject=${subject}")
+                                                                    .header(
+                                                                        HttpHeaders.CONTENT_TYPE,
+                                                                        MediaType.MULTIPART_FORM_DATA.toString()
+                                                                    )
+                                                                    .header(
+                                                                        "x-api-key",
+                                                                        settings.getCompreFaceKey()
+                                                                    )
+                                                                    .body(
+                                                                        BodyInserters.fromMultipartData(
+                                                                            builder.build()
+                                                                        )
+                                                                    )
+                                                                    .retrieve()
+                                                                    .bodyToMono(String::class.java)
+                                                                    .block()
+                                                            } catch (e: Exception) {
+                                                                logger.log(
+                                                                    Level.WARNING,
+                                                                    "Error uploading face for " + subject + ": " + e.localizedMessage
+                                                                )
+                                                            }
+
+                                                            var compreFaceImageId: String? =
+                                                                null
+                                                            if (response != null) {
+                                                                jsonObj =
+                                                                    mapper.readTree(response)
+                                                                if (jsonObj.has("image_id")) {
+                                                                    compreFaceImageId =
+                                                                        jsonObj["image_id"].toString()
+                                                                    compreFaceImageId =
+                                                                        compreFaceImageId.drop(1)
+                                                                            .dropLast(1)
+                                                                }
+                                                            }
+
+                                                            logger.log(
+                                                                Level.INFO,
+                                                                "Uploaded face for " + metadataObj.getPath() + " for subject " + subject + ": " + response
+                                                            )
+
+                                                            val recognitionLabelObj =
+                                                                recognitionLabelRepository?.findByNameIgnoreCase(
+                                                                    subject
+                                                                )
+
+                                                            if (recognitionLabelObj != null) {
+                                                                val recognitionLabelPhoto =
+                                                                    recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
+                                                                        recognitionLabelObj.getId(),
+                                                                        metadataObj.getId()
+                                                                    )
+
+                                                                if (recognitionLabelPhoto == 0) {
+                                                                    val recognitionLabelPhotoObj =
+                                                                        RecognitionLabelPhoto()
+                                                                    recognitionLabelPhotoObj.setMetadataId(
+                                                                        metadataObj.getId()
+                                                                    )
+                                                                    recognitionLabelPhotoObj.setRecognitionLabelId(
+                                                                        recognitionLabelObj.getId()
+                                                                    )
+                                                                    recognitionLabelPhotoObj.setConfidence(
+                                                                        similarity.toString()
+                                                                    )
+                                                                    if (compreFaceImageId != null) {
+                                                                        recognitionLabelPhotoObj.setCompreFaceImageId(
+                                                                            compreFaceImageId
+                                                                        )
+                                                                    }
+                                                                    recognitionLabelPhotoRepository?.save(
+                                                                        recognitionLabelPhotoObj
+                                                                    )
+
+                                                                    metadataObj.setModifiedAt(
+                                                                        getCurrentTimestamp()
+                                                                    )
+                                                                    metadataRepository?.save(
+                                                                        metadataObj
+                                                                    )
+
+                                                                    recognitionCount++
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        logger.log(
+                                            Level.INFO,
+                                            "You need to manually tag at least $compreFaceTagAllow different people to use face recognition service"
+                                        )
+                                    }
+                                } catch (e: Exception) {
+                                    logger.log(
+                                        Level.INFO,
+                                        "Issue connecting to face recognizer: " + metadataObj.getPath() + ": " + e.localizedMessage
+                                    )
+                                }
+                                // ...or DJL
+                            } else {
+                                val classLoader: ClassLoader =
+                                    ShashinApplication::class.java.classLoader
+                                val vggfaceFileExists =
+                                    classLoader.getResource("lib/vggface2.pt") != null
+                                val retinafaceFileExists =
+                                    classLoader.getResource("lib/retinaface.pt") != null
+                                if (vggfaceFileExists && retinafaceFileExists) {
+                                    val testImage = mutableListOf<Metadata>()
+                                    testImage.add(metadataObj)
+                                    val trainingData = metadataRepository.findTrainingData(
+                                        settings.getRecognitionConfidenceThreshold()!!,
+                                        settings.getTrainingDataLimit()!!
+                                    )
+
+                                    val faceRecognizer = DjlFaceRecognizer(
+                                        testImage,
+                                        trainingData!!,
+                                        recognitionLabelPhotoRepository,
+                                        recognitionLabelRepository,
+                                        settings,
+                                        relativeSidecarDir!!,
+                                        threadFile,
+                                        shouldStop
+                                    )
+                                    recognitionCount += faceRecognizer.startPredict()
+                                } else {
+                                    logger.log(
+                                        Level.WARNING,
+                                        "Missing lib files for DJL face scan"
+                                    )
+                                    FileUtils.writeToThreadFileAndLogMessage(
+                                        "Missing lib files for DJL face scan",
+                                        threadFile
+                                    )
+
+                                    if (superAdminsUsers != null && index < 1) {
+                                        val notificationObjList = mutableListOf<Notification>()
+                                        val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                                        sdtf.timeZone =
+                                            TimeZone.getTimeZone(ZoneId.systemDefault())
+                                        for (admin in superAdminsUsers) {
+                                            val notificationObj = Notification()
+                                            notificationObj.setUserId(admin.getId())
+                                            notificationObj.setCreatedAt(getCurrentTimestamp())
+                                            notificationObj.setModifiedAt(getCurrentTimestamp())
+                                            notificationObj.setRead(false)
+                                            notificationObj.setMessage("Missing lib files for DJL face scan.")
+                                            notificationObjList.add(notificationObj)
+                                        }
+                                        if (notificationObjList.isNotEmpty()) {
+                                            notificationRepository?.saveAll(notificationObjList)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // Detect objects
+                        if (settings?.getObjectDetection() == true && criteria != null) {
+                            val threshold = settings.getObjectRecognitionConfidenceThreshold()
+
+                            val keywordMap = ImageProcessing.objectRecognizer(
+                                metadataObj,
+                                criteria,
+                                threshold.toString().toDouble(),
+                                threadFile,
+                                shouldStop.get()
+                            )
+
+                            ImageProcessing.processObjects(keywordMap.keys.toTypedArray().toList(), metadataObj, keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!)
+                        }
+
+                        threadText = metadataObj.getPath() + " indexed"
+                    } catch (e: Exception) {
+                        logger.log(
+                            Level.SEVERE,
+                            "Error saving metadata: " + metadataObj.getPath() + ": " + e.localizedMessage
+                        )
+                        threadText = "Error saving metadata: " + metadataObj.getPath() + "."
+                    }
+                    FileUtils.writeToThreadFileAndLogMessage(threadText, threadFile)
+                }
+                ImageProcessing.createVideoGif(metadataId, metadataRepository)
+
+                val completedPercent: Double = ((index+1).toDouble() / metadataArrayCount.toDouble()) * 100
+
+                logger.log(
+                    Level.INFO,
+                    "${floor(completedPercent).toInt()}% completed scanning location and facial data"
+                )
+            }
+
+            // Send notifications
+            if (superAdminsUsers != null && recognitionCount > 0) {
+                val notificationObjList = mutableListOf<Notification>()
+                val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                for (admin in superAdminsUsers) {
+                    val notificationObj = Notification()
+                    notificationObj.setUserId(admin.getId())
+                    notificationObj.setCreatedAt(getCurrentTimestamp())
+                    notificationObj.setModifiedAt(getCurrentTimestamp())
+                    notificationObj.setRead(false)
+                    notificationObj.setMessage("$recognitionCount faces recognized during media indexing at ${sdtf.format(Date())}.")
+                    notificationObjList.add(notificationObj)
+                }
+                if (notificationObjList.isNotEmpty()) {
+                    notificationRepository?.saveAll(notificationObjList)
+                }
+            }
+
+            metadataIdArray.clear()
+        }
+    }
+
+    fun totalMediaCount(mediaDirs: MutableList<MediaDirectory?>?) = runBlocking {
+        if (mediaDirs != null) {
+            launch {
+                val metricsUtil = MetricsUtil()
+                metricsUtil.start("Counting files in media directories")
+                for (mediaDir in mediaDirs) {
+                    val dir = Paths.get(mediaDir?.getDirectory()!!)
+                    if (Files.exists(dir)) {
+                        totalMediaCount += FileUtils.fileCount(mediaDir.getDirectory()!!)
+                    }
+                }
+                logger.log(
+                    Level.INFO,
+                    "Total file count for media is $totalMediaCount"
+                )
+                metricsUtil.end()
+            }
+        }
     }
 
     private fun deleteThreadScan() {
