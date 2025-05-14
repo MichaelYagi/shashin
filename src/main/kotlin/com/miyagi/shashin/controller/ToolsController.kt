@@ -28,6 +28,7 @@ import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.CacheControl
 import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import java.time.ZoneId
 import java.util.concurrent.TimeUnit
 import kotlin.collections.iterator
 import kotlin.collections.set
@@ -380,6 +381,8 @@ class ToolsController {
         response["endpointProcessingTimeText"] = "$serverTimingDiff ms"
         logger.log(Level.INFO, "HealthEP - Total request time: ${SimpleDateFormat("mm:ss:SSS").format(Date(serverTimingDiff))}")
         metricsUtil.end()
+
+        response["serverTimezone"] = ZoneId.systemDefault()
 
         response["status"] = status
 
