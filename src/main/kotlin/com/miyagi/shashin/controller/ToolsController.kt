@@ -3,6 +3,7 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.*
@@ -25,6 +26,7 @@ import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
 import jakarta.servlet.http.HttpServletRequest
+import org.springframework.context.annotation.Bean
 import org.springframework.http.CacheControl
 import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -60,7 +62,14 @@ class ToolsController {
 
     private var logger: Logger = Logger.getLogger(ToolsController::class.simpleName)
 
-    val mapper = ObjectMapper()
+    @Bean
+    fun jacksonObjectMapper(): ObjectMapper {
+        val objectMapper = ObjectMapper()
+        objectMapper.registerModule(JavaTimeModule())
+        return objectMapper
+    }
+
+    val mapper = jacksonObjectMapper()
     val resp = mutableMapOf<String, Any?>()
 
     @RequestMapping(value = ["/releases", "/api/v1/releases"], method = [RequestMethod.GET], produces = ["application/json"])
