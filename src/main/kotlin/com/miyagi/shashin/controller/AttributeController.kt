@@ -345,9 +345,6 @@ class AttributeController: ResponseEntityExceptionHandler() {
             model["settings"] = settingsObj
         }
 
-        // Check for face recog files
-//        FileUtils.loadFaceRecogFiles(settings)
-
         model["searchHistoryLimit"] = searchHistoryLimit
         model["queryLimit"] = queryLimit
         model["apiVersion"] = apiVersion
