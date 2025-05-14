@@ -3,12 +3,15 @@ package com.miyagi.shashin.component
 import com.miyagi.shashin.ShashinApplication
 import com.miyagi.shashin.controller.TimelineController
 import com.miyagi.shashin.model.Notification
+import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ImageProcessing.Companion.subjectRecognizer
 import com.miyagi.shashin.util.ImageProcessing
 import com.miyagi.shashin.util.ImageProcessing.Companion.buildObjectRecognitionCriteria
 import com.miyagi.shashin.util.NetworkUtils
 import com.miyagi.shashin.util.TextUtils
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
@@ -143,64 +146,36 @@ class ScheduledTasks {
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
 
         if (settings != null && settings.getScheduledMatching()!!) {
+            scheduledScan(settings)
+        }
+    }
 
-            Thread {
+    fun scheduledScan(settings: Settings) = runBlocking {
+        launch {
+            logger.log(
+                Level.INFO,
+                "Scheduled scanning started at " + TextUtils.getCurrentTimestamp()
+            )
 
-                logger.log(
-                    Level.INFO,
-                    "Scheduled scanning started at " + TextUtils.getCurrentTimestamp()
-                )
+            val superAdmins = userRepository?.findAllByAuthorityEquals(superRole!!)
 
-                val superAdmins = userRepository?.findAllByAuthorityEquals(superRole!!)
+            // Object and person recognition
 
-                // Object and person recognition
+            // Start subject matching
+            logger.log(
+                Level.INFO,
+                "Scheduled scanning for facial recognition started at " + TextUtils.getCurrentTimestamp()
+            )
 
-                // Start subject matching
-                logger.log(
-                    Level.INFO,
-                    "Scheduled scanning for facial recognition started at " + TextUtils.getCurrentTimestamp()
-                )
+            val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
+            val vggfaceFileExists = classLoader.getResource("lib/vggface2.pt") != null
+            val retinafaceFileExists = classLoader.getResource("lib/retinaface.pt") != null
 
-                val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
-                val vggfaceFileExists = classLoader.getResource("lib/vggface2.pt") != null
-                val retinafaceFileExists = classLoader.getResource("lib/retinaface.pt") != null
-
-                if ((!vggfaceFileExists || !retinafaceFileExists) && !NetworkUtils.checkCompreFaceConnection(
-                        settings.getCompreFaceServer(),
-                        settings.getCompreFaceKey()
-                    )) {
-                    if (superAdmins != null) {
-                        val notificationObjList = mutableListOf<Notification>()
-                        val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
-                        sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
-                        for (admin in superAdmins) {
-                            val notificationObj = Notification()
-                            notificationObj.setUserId(admin.getId())
-                            notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
-                            notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
-                            notificationObj.setRead(false)
-                            notificationObj.setMessage("Missing lib files for DJL face scan")
-                            notificationObjList.add(notificationObj)
-                        }
-                        if (notificationObjList.isNotEmpty()) {
-                            notificationRepository?.saveAll(notificationObjList)
-                        }
-                    }
-                }
-
-                var recognitionCount = 0
-                if (settings.getFacialDetection() == true) {
-                    recognitionCount = subjectRecognizer(
-                        metadataRepository,
-                        recognitionLabelRepository,
-                        recognitionLabelPhotoRepository,
-                        relativeSidecarDir!!,
-                        settings,
-                        null,
-                        null
-                    )
-                }
-                if (superAdmins != null && recognitionCount > 0) {
+            if ((!vggfaceFileExists || !retinafaceFileExists) && !NetworkUtils.checkCompreFaceConnection(
+                    settings.getCompreFaceServer(),
+                    settings.getCompreFaceKey()
+                )) {
+                if (superAdmins != null) {
                     val notificationObjList = mutableListOf<Notification>()
                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                     sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
@@ -210,49 +185,79 @@ class ScheduledTasks {
                         notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
                         notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
                         notificationObj.setRead(false)
-                        notificationObj.setMessage("$recognitionCount faces recognized during scheduled scanning at ${sdtf.format(Date())}.")
+                        notificationObj.setMessage("Missing lib files for DJL face scan")
                         notificationObjList.add(notificationObj)
                     }
                     if (notificationObjList.isNotEmpty()) {
                         notificationRepository?.saveAll(notificationObjList)
                     }
                 }
+            }
 
-                // Start object recognition
-                if (settings.getObjectDetection() == true) {
-                    logger.log(
-                        Level.INFO,
-                        "Scheduled scanning for object recognition started at " + TextUtils.getCurrentTimestamp()
-                    )
+            var recognitionCount = 0
+            if (settings.getFacialDetection() == true) {
+                recognitionCount = subjectRecognizer(
+                    metadataRepository,
+                    recognitionLabelRepository,
+                    recognitionLabelPhotoRepository,
+                    relativeSidecarDir!!,
+                    settings,
+                    null,
+                    null
+                )
+            }
+            if (superAdmins != null && recognitionCount > 0) {
+                val notificationObjList = mutableListOf<Notification>()
+                val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                for (admin in superAdmins) {
+                    val notificationObj = Notification()
+                    notificationObj.setUserId(admin.getId())
+                    notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
+                    notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                    notificationObj.setRead(false)
+                    notificationObj.setMessage("$recognitionCount faces recognized during scheduled scanning at ${sdtf.format(Date())}.")
+                    notificationObjList.add(notificationObj)
+                }
+                if (notificationObjList.isNotEmpty()) {
+                    notificationRepository?.saveAll(notificationObjList)
+                }
+            }
 
-                    val threshold = settings.getObjectRecognitionConfidenceThreshold()
-                    val withoutKeywords = metadataRepository?.findWithoutKeywords(settings.getMatchScanLimit()!!)
+            // Start object recognition
+            if (settings.getObjectDetection() == true) {
+                logger.log(
+                    Level.INFO,
+                    "Scheduled scanning for object recognition started at " + TextUtils.getCurrentTimestamp()
+                )
 
-                    if (withoutKeywords != null) {
-                        val criteria = buildObjectRecognitionCriteria()
+                val threshold = settings.getObjectRecognitionConfidenceThreshold()
+                val withoutKeywords = metadataRepository?.findWithoutKeywords(settings.getMatchScanLimit()!!)
 
-                        if (criteria != null) {
-                            for (withoutKeyword in withoutKeywords) {
-                                val metadataWithoutKeywordsObj =
-                                    metadataRepository?.findById(withoutKeyword.getId())?.get()
+                if (withoutKeywords != null) {
+                    val criteria = buildObjectRecognitionCriteria()
 
-                                val keywordMap = ImageProcessing.objectRecognizer(
-                                    metadataWithoutKeywordsObj!!,
-                                    criteria,
-                                    threshold.toString().toDouble()
-                                )
+                    if (criteria != null) {
+                        for (withoutKeyword in withoutKeywords) {
+                            val metadataWithoutKeywordsObj =
+                                metadataRepository?.findById(withoutKeyword.getId())?.get()
 
-                                ImageProcessing.processObjects(keywordMap.keys.toTypedArray().toList(), metadataWithoutKeywordsObj, keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!)
-                            }
+                            val keywordMap = ImageProcessing.objectRecognizer(
+                                metadataWithoutKeywordsObj!!,
+                                criteria,
+                                threshold.toString().toDouble()
+                            )
+
+                            ImageProcessing.processObjects(keywordMap.keys.toTypedArray().toList(), metadataWithoutKeywordsObj, keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!)
                         }
                     }
                 }
+            }
 
-                logger.log(
-                    Level.INFO,
-                    "Scheduled scanning completed at " + TextUtils.getCurrentTimestamp()
-                )
-            }.start()
+            logger.log(
+                Level.INFO,
+                "Scheduled scanning completed at " + TextUtils.getCurrentTimestamp()
+            )
         }
     }
 }
