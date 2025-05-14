@@ -40,6 +40,8 @@ import java.util.logging.Logger
 import jakarta.activation.URLDataSource
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import net.coobird.thumbnailator.Thumbnails
 import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
@@ -165,34 +167,41 @@ class MediaServiceController {
                 return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
             }
         } else {
-            Thread {
-                val admins = userRepository.findAllAdmins()
-                val userIp = model.getAttribute("clientIP").toString()
-                if (!TextUtils.isLocalIp(userIp)) {
-                    val notificationObjList = mutableListOf<Notification>()
-                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
-                    sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
-                    for (admin in admins) {
-                        val notificationObj = Notification()
-                        notificationObj.setUserId(admin.getId())
-                        notificationObj.setCreatedAt(getCurrentTimestamp())
-                        notificationObj.setModifiedAt(getCurrentTimestamp())
-                        notificationObj.setRead(false)
-                        val message =
-                            "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to view invalid image with metadata ID $metadataId at ${
-                                sdtf.format(Date())
-                            }"
-                        notificationObj.setMessage(message)
-                        notificationObjList.add(notificationObj)
-                    }
-
-                    if (notificationObjList.isNotEmpty()) {
-                        notificationRepository.saveAll(notificationObjList)
-                    }
-                }
-            }.start()
+            val userIp = model.getAttribute("clientIP").toString()
+            val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+            sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+            val message =
+                "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to view invalid image with metadata ID $metadataId at ${
+                    sdtf.format(Date())
+                }"
+            notifyAdmins(userIp, message)
 
             return ResponseEntity<FileSystemResource>(null, null, HttpStatus.NOT_FOUND)
+        }
+    }
+
+    fun notifyAdmins(userIp: String, message: String) = runBlocking {
+        val admins = userRepository.findAllAdmins()
+
+        if (!TextUtils.isLocalIp(userIp)) {
+            launch {
+                val notificationObjList = mutableListOf<Notification>()
+                val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                for (admin in admins) {
+                    val notificationObj = Notification()
+                    notificationObj.setUserId(admin.getId())
+                    notificationObj.setCreatedAt(getCurrentTimestamp())
+                    notificationObj.setModifiedAt(getCurrentTimestamp())
+                    notificationObj.setRead(false)
+                    notificationObj.setMessage(message)
+                    notificationObjList.add(notificationObj)
+                }
+
+                if (notificationObjList.isNotEmpty()) {
+                    notificationRepository.saveAll(notificationObjList)
+                }
+            }
         }
     }
 
@@ -332,32 +341,14 @@ class MediaServiceController {
 
             return getVideoFactory(model, request, response, metadata, path)
         } else {
-            Thread {
-                val admins = userRepository.findAllAdmins()
-                val userIp = model.getAttribute("clientIP").toString()
-                if (!TextUtils.isLocalIp(userIp)) {
-                    val notificationObjList = mutableListOf<Notification>()
-                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
-                    sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
-                    for (admin in admins) {
-                        val notificationObj = Notification()
-                        notificationObj.setUserId(admin.getId())
-                        notificationObj.setCreatedAt(getCurrentTimestamp())
-                        notificationObj.setModifiedAt(getCurrentTimestamp())
-                        notificationObj.setRead(false)
-                        val message =
-                            "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to play invalid video at ${
-                                sdtf.format(Date())
-                            }"
-                        notificationObj.setMessage(message)
-                        notificationObjList.add(notificationObj)
-                    }
-
-                    if (notificationObjList.isNotEmpty()) {
-                        notificationRepository.saveAll(notificationObjList)
-                    }
-                }
-            }.start()
+            val userIp = model.getAttribute("clientIP").toString()
+            val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+            sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+            val message =
+                "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to play invalid video at ${
+                    sdtf.format(Date())
+                }"
+            notifyAdmins(userIp, message)
 
             return ResponseEntity<FileSystemResource>(null, null, HttpStatus.NOT_FOUND)
         }
@@ -379,32 +370,14 @@ class MediaServiceController {
 
             return getVideoFactory(model, request, response, metadataObj.get(), metadataObj.get().getPath()!!, true)
         } else {
-            Thread {
-                val admins = userRepository.findAllAdmins()
-                val userIp = model.getAttribute("clientIP").toString()
-                if (!TextUtils.isLocalIp(userIp)) {
-                    val notificationObjList = mutableListOf<Notification>()
-                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
-                    sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
-                    for (admin in admins) {
-                        val notificationObj = Notification()
-                        notificationObj.setUserId(admin.getId())
-                        notificationObj.setCreatedAt(getCurrentTimestamp())
-                        notificationObj.setModifiedAt(getCurrentTimestamp())
-                        notificationObj.setRead(false)
-                        val message =
-                            "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to download video with metadata ID $metadataId at ${
-                                sdtf.format(Date())
-                            }"
-                        notificationObj.setMessage(message)
-                        notificationObjList.add(notificationObj)
-                    }
-
-                    if (notificationObjList.isNotEmpty()) {
-                        notificationRepository.saveAll(notificationObjList)
-                    }
-                }
-            }.start()
+            val userIp = model.getAttribute("clientIP").toString()
+            val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+            sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+            val message =
+                "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to download video with metadata ID $metadataId at ${
+                    sdtf.format(Date())
+                }"
+            notifyAdmins(userIp, message)
 
             return ResponseEntity<FileSystemResource>(null, null, HttpStatus.NOT_FOUND)
         }
@@ -527,12 +500,7 @@ class MediaServiceController {
             val metadata = metadataRepository.findByMetadataId(metadataId)
 
             if (metadata != null) {
-                Thread {
-                    metadata.setLastAccessedAt(getCurrentTimestamp())
-                    metadata.setLastAccessedBy(currentUser.getId())
-                    metadata.setFreeFormString(TextUtils.getMetadataFreeformString(model))
-                    metadataRepository.save(metadata)
-                }.start()
+                updateLastAccessed(model, currentUser.getId(), metadata)
 
                 resp["albumIds"] = albumRepository.findAlbumIdsByMetadataId(metadata.getId())
                 resp["metadata"] = metadata
@@ -544,6 +512,15 @@ class MediaServiceController {
         }
 
         return mapper.writeValueAsString(resp)
+    }
+
+    fun updateLastAccessed(model: Model, userId: Int, metadata: Metadata) = runBlocking {
+        launch {
+            metadata.setLastAccessedAt(getCurrentTimestamp())
+            metadata.setLastAccessedBy(userId)
+            metadata.setFreeFormString(TextUtils.getMetadataFreeformString(model))
+            metadataRepository.save(metadata)
+        }
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
@@ -574,12 +551,7 @@ class MediaServiceController {
             })
 
             if (randomMetadata != null) {
-                Thread {
-                    randomMetadata.setLastAccessedAt(getCurrentTimestamp())
-                    randomMetadata.setLastAccessedBy(currentUser.getId())
-                    randomMetadata.setFreeFormString(TextUtils.getMetadataFreeformString(model))
-                    metadataRepository.save(randomMetadata)
-                }.start()
+                updateLastAccessed(model, currentUser.getId(), randomMetadata)
 
                 resp["albumIds"] = albumRepository.findAlbumIdsByMetadataId(randomMetadata.getId())
                 resp["metadata"] = randomMetadata
@@ -645,12 +617,7 @@ class MediaServiceController {
                 })
 
             if (randomMetadata != null) {
-                Thread {
-                    randomMetadata.setLastAccessedAt(getCurrentTimestamp())
-                    randomMetadata.setLastAccessedBy(currentUser.getId())
-                    randomMetadata.setFreeFormString(TextUtils.getMetadataFreeformString(model))
-                    metadataRepository.save(randomMetadata)
-                }.start()
+                updateLastAccessed(model, currentUser.getId(), randomMetadata)
 
                 resp["albumIds"] = albumRepository.findAlbumIdsByMetadataId(randomMetadata.getId())
                 resp["metadata"] = randomMetadata
@@ -730,12 +697,7 @@ class MediaServiceController {
                 }
 
             if (randomMetadata != null) {
-                Thread {
-                    randomMetadata.setLastAccessedAt(getCurrentTimestamp())
-                    randomMetadata.setLastAccessedBy(currentUser.getId())
-                    randomMetadata.setFreeFormString(TextUtils.getMetadataFreeformString(model))
-                    metadataRepository.save(randomMetadata)
-                }.start()
+                updateLastAccessed(model, currentUser.getId(), randomMetadata)
 
                 val imageHeight = height.orElse(randomMetadata.getOriginalImageHeight())
                 val imageWidth = width.orElse(randomMetadata.getOriginalImageWidth())
@@ -963,32 +925,14 @@ class MediaServiceController {
                 return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
             }
         } else {
-            Thread {
-                val admins = userRepository.findAllAdmins()
-                val userIp = model.getAttribute("clientIP").toString()
-                if (!TextUtils.isLocalIp(userIp)) {
-                    val notificationObjList = mutableListOf<Notification>()
-                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
-                    sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
-                    for (admin in admins) {
-                        val notificationObj = Notification()
-                        notificationObj.setUserId(admin.getId())
-                        notificationObj.setCreatedAt(getCurrentTimestamp())
-                        notificationObj.setModifiedAt(getCurrentTimestamp())
-                        notificationObj.setRead(false)
-                        val message =
-                            "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to view invalid image with metadata ID $metadataId at ${
-                                sdtf.format(Date())
-                            }"
-                        notificationObj.setMessage(message)
-                        notificationObjList.add(notificationObj)
-                    }
-
-                    if (notificationObjList.isNotEmpty()) {
-                        notificationRepository.saveAll(notificationObjList)
-                    }
-                }
-            }.start()
+            val userIp = model.getAttribute("clientIP").toString()
+            val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+            sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+            val message =
+                "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to view invalid image with metadata ID $metadataId at ${
+                    sdtf.format(Date())
+                }"
+            notifyAdmins(userIp, message)
 
             return ResponseEntity<FileSystemResource>(null, null, HttpStatus.NOT_FOUND)
         }
