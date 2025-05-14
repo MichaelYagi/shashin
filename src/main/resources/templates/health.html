@@ -42,16 +42,41 @@ Uptime:&nbsp;<span id="uptimeText" th:text="${uptimeText}"></span><br>
 <th:block th:text="${'OS: '+system.os}"></th:block><br>
 <th:block th:utext="${'Build Status: '+(circleCIBuild == 'OK' ? circleCIBuild : '<span style=&quot;color: red;&quot;>'+circleCIBuild+'</span>')}"></th:block><br>
 <th:block th:text="${'Build Version: '+buildVersion}"></th:block><br>
-<th:block th:text="${'Local server time: '+localServerTime}"></th:block><br>
+Local server time:&nbsp;<span id="serverTime" th:text="${localServerTime}"></span><br>
 
 <script th:inline="javascript" type="text/javascript">
     /*<![CDATA[*/
     let shashinServerStartUnixMS = /*[[${shashinServerStartUnixMS}]]*/ 0;
+    let serverTimezone = /*[[${serverTimezone}]]*/ '';
     /*]]>*/
 
     if (shashinServerStartUnixMS > 0) {
         setInterval(function () {
             document.getElementById("uptimeText").textContent = Util.convertMSToDayTime(Date.now()-shashinServerStartUnixMS);
+
+            const options = {
+                timeZone: serverTimezone,
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            };
+            const serverTime = new Date().toLocaleString("en-US", options);
+            // Parse: 05/13/2025, 17:06:23
+            const dateTimeArray = serverTime.split(", ");
+            if (dateTimeArray.length === 2) {
+                const rawDate = dateTimeArray[0];
+                const rawDateArray = rawDate.split("/");
+                const month = rawDateArray[0];
+                const day = rawDateArray[1];
+                const year = rawDateArray[2];
+                const time = dateTimeArray[1];
+
+                document.getElementById("serverTime").textContent = year + "-" + month + "-" + day + " " + time + " " + serverTimezone;
+            }
         }, 1000);
     }
 
