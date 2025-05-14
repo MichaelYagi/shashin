@@ -67,8 +67,6 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
 import jakarta.transaction.Transactional
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.springframework.data.jpa.repository.Modifying
 import java.util.stream.Collectors
 import kotlin.io.path.isDirectory
@@ -1605,8 +1603,8 @@ class SettingsController {
 //        return msg
     }
 
-    fun scanProcess(settings: Settings?, mediaDirs: MutableList<MediaDirectory?>?, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, sidecarDir: String, compreFaceServerConnected: Boolean, superAdmins: MutableIterable<User>?, reindexFiles: Boolean, addToAlbum: Int, uploadUserId: Int) = runBlocking {
-        launch {
+    fun scanProcess(settings: Settings?, mediaDirs: MutableList<MediaDirectory?>?, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, sidecarDir: String, compreFaceServerConnected: Boolean, superAdmins: MutableIterable<User>?, reindexFiles: Boolean, addToAlbum: Int, uploadUserId: Int) {
+        Thread {
             //Create file with thread name and write file name iterated
             val threadFile = FileUtils.createThreadFile("shashinscan")
             if (threadFile != null) {
@@ -1983,11 +1981,11 @@ class SettingsController {
                     logger.log(Level.SEVERE, "Could not delete thread file: " + threadFile.name)
                 }
             }
-        }
+        }.start()
     }
 
-    fun objectAndFacialRecognition(settings: Settings?, compreFaceServerConnected: Boolean, threadFile: File, metadataArrayCount: Int) = runBlocking {
-        launch {
+    fun objectAndFacialRecognition(settings: Settings?, compreFaceServerConnected: Boolean, threadFile: File, metadataArrayCount: Int) {
+        Thread {
             var webClient: WebClient? = null
             if (settings != null && compreFaceServerConnected) {
                 webClient = WebClient.create(settings.getCompreFaceServer()!!)
@@ -2371,12 +2369,12 @@ class SettingsController {
             }
 
             metadataIdArray.clear()
-        }
+        }.start()
     }
 
-    fun totalMediaCount(mediaDirs: MutableList<MediaDirectory?>?) = runBlocking {
+    fun totalMediaCount(mediaDirs: MutableList<MediaDirectory?>?) {
         if (mediaDirs != null) {
-            launch {
+            Thread {
                 val metricsUtil = MetricsUtil()
                 metricsUtil.start("Counting files in media directories")
                 for (mediaDir in mediaDirs) {
@@ -2390,7 +2388,7 @@ class SettingsController {
                     "Total file count for media is $totalMediaCount"
                 )
                 metricsUtil.end()
-            }
+            }.start()
         }
     }
 

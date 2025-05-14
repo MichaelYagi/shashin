@@ -10,8 +10,6 @@ import com.miyagi.shashin.util.ImageProcessing
 import com.miyagi.shashin.util.ImageProcessing.Companion.buildObjectRecognitionCriteria
 import com.miyagi.shashin.util.NetworkUtils
 import com.miyagi.shashin.util.TextUtils
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
@@ -150,8 +148,8 @@ class ScheduledTasks {
         }
     }
 
-    fun scheduledScan(settings: Settings) = runBlocking {
-        launch {
+    fun scheduledScan(settings: Settings) {
+        Thread {
             logger.log(
                 Level.INFO,
                 "Scheduled scanning started at " + TextUtils.getCurrentTimestamp()
@@ -258,6 +256,6 @@ class ScheduledTasks {
                 Level.INFO,
                 "Scheduled scanning completed at " + TextUtils.getCurrentTimestamp()
             )
-        }
+        }.start()
     }
 }

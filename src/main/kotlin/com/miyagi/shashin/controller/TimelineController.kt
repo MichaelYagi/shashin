@@ -39,8 +39,6 @@ import java.util.logging.Logger
 import javax.imageio.ImageIO
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.transaction.Transactional
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import kotlin.String
 import kotlin.collections.ArrayList
@@ -1138,13 +1136,13 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
-    fun createVideoGif(metadataIdArray: ArrayList<String>?, metadataRepository: MetadataRepository, overwrite: Boolean) = runBlocking {
+    fun createVideoGif(metadataIdArray: ArrayList<String>?, metadataRepository: MetadataRepository, overwrite: Boolean) {
         if (metadataIdArray != null) {
-            launch {
+            Thread {
                 for (metadataId in metadataIdArray) {
                     ImageProcessing.createVideoGif(metadataId, metadataRepository, overwrite)
                 }
-            }
+            }.start()
         }
     }
 
@@ -1680,9 +1678,9 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
-    fun processCoordinates(metadataMap: Map<String, Any>, metadataObj: Optional<Metadata?>) = runBlocking {
+    fun processCoordinates(metadataMap: Map<String, Any>, metadataObj: Optional<Metadata?>) {
         if (metadataObj.isPresent && metadataMap.containsKey("latlng")) {
-            launch {
+            Thread {
                 val coordinateMap = TextUtils.processCoordinates(geocodeUrl!!, metadataMap["latlng"].toString())
                 if (coordinateMap["lat"] != null && coordinateMap["lng"] != null) {
                     metadataObj.get().setLat(coordinateMap["lat"])
@@ -1699,7 +1697,7 @@ class TimelineController: BaseController() {
 
                 metadataObj.get().setModifiedAt(getCurrentTimestamp())
                 metadataRepository.save(metadataObj.get())
-            }
+            }.start()
         }
     }
 
@@ -1733,8 +1731,8 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
-    fun setCoordinatesCR(idArray: Array<String>?, coordArray: List<String>) = runBlocking {
-        launch {
+    fun setCoordinatesCR(idArray: Array<String>?, coordArray: List<String>) {
+        Thread {
             val metadataList = mutableListOf<Metadata>()
             if (!idArray.isNullOrEmpty() && coordArray.size == 2) {
                 for (metadataId in idArray) {
@@ -1745,7 +1743,7 @@ class TimelineController: BaseController() {
             if (metadataList.size > 0) {
                 metadataRepository.saveAll(metadataList)
             }
-        }
+        }.start()
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
@@ -2310,8 +2308,8 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
-    fun setLocation(latlng: String, idArray: Array<String>?) = runBlocking {
-        launch {
+    fun setLocation(latlng: String, idArray: Array<String>?) {
+        Thread {
             val coordinateMap = TextUtils.processCoordinates(geocodeUrl!!, latlng)
             val lat = coordinateMap["lat"]
             val lng = coordinateMap["lng"]
@@ -2351,7 +2349,7 @@ class TimelineController: BaseController() {
                     metadataRepository.saveAll(metadataLocationList)
                 }
             }
-        }
+        }.start()
     }
 
     @Transactional
@@ -3144,14 +3142,14 @@ class TimelineController: BaseController() {
         }
     }
 
-    fun buildPersonUpload(settings: Settings, recognitionLabel: String, metadataObj: Metadata?, compreFaceImageIdMap: MutableMap<String, Any?>) = runBlocking {
-        launch {
+    fun buildPersonUpload(settings: Settings, recognitionLabel: String, metadataObj: Metadata?, compreFaceImageIdMap: MutableMap<String, Any?>) {
+        Thread {
             ImageProcessing.buildPersonUpload(
                 settings,
                 recognitionLabel,
                 metadataObj,
                 compreFaceImageIdMap
             )
-        }
+        }.start()
     }
 }

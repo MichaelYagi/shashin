@@ -41,8 +41,6 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpSession
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 @Suppress("UNCHECKED_CAST")
 @Controller
@@ -172,8 +170,8 @@ class PeopleController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
-    fun doPrediction(settings: Settings, superAdmins: MutableIterable<User>?) = runBlocking {
-        launch {
+    fun doPrediction(settings: Settings, superAdmins: MutableIterable<User>?) {
+        Thread {
             val threadFile = FileUtils.createThreadFile(threadExtensionName)
             val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
             val vggfaceFileExists = classLoader.getResource("lib/vggface2.pt") != null
@@ -271,7 +269,7 @@ class PeopleController: BaseController() {
             shouldStop.set(false)
             FileUtils.deleteThreadFiles(threadExtensionName)
             FileUtils.writeToThreadFileAndLogMessage("Matching Complete", threadFile!!)
-        }
+        }.start()
     }
 
     @GetMapping("/person/matches/{personId}")
@@ -1218,15 +1216,15 @@ class PeopleController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
-    fun personUpload(settings: Settings, personName: String?, metadata: Metadata?, compreFaceImageIdMap: MutableMap<String, Any?>) = runBlocking {
-        launch {
+    fun personUpload(settings: Settings, personName: String?, metadata: Metadata?, compreFaceImageIdMap: MutableMap<String, Any?>) {
+        Thread {
             ImageProcessing.buildPersonUpload(
                 settings,
                 personName,
                 metadata,
                 compreFaceImageIdMap
             )
-        }
+        }.start()
     }
 
     @RequestMapping(value = ["/person/recognition/recognize/{metadataId}"], method = [RequestMethod.GET], produces = ["application/json"])

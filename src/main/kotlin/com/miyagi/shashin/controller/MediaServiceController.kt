@@ -40,13 +40,10 @@ import java.util.logging.Logger
 import jakarta.activation.URLDataSource
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import net.coobird.thumbnailator.Thumbnails
 import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
-import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.IOException
 import javax.imageio.ImageIO
@@ -180,11 +177,11 @@ class MediaServiceController {
         }
     }
 
-    fun notifyAdmins(userIp: String, message: String) = runBlocking {
+    fun notifyAdmins(userIp: String, message: String) {
         val admins = userRepository.findAllAdmins()
 
         if (!TextUtils.isLocalIp(userIp)) {
-            launch {
+            Thread {
                 val notificationObjList = mutableListOf<Notification>()
                 val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                 sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
@@ -201,7 +198,7 @@ class MediaServiceController {
                 if (notificationObjList.isNotEmpty()) {
                     notificationRepository.saveAll(notificationObjList)
                 }
-            }
+            }.start()
         }
     }
 
@@ -514,13 +511,13 @@ class MediaServiceController {
         return mapper.writeValueAsString(resp)
     }
 
-    fun updateLastAccessed(model: Model, userId: Int, metadata: Metadata) = runBlocking {
-        launch {
+    fun updateLastAccessed(model: Model, userId: Int, metadata: Metadata) {
+        Thread {
             metadata.setLastAccessedAt(getCurrentTimestamp())
             metadata.setLastAccessedBy(userId)
             metadata.setFreeFormString(TextUtils.getMetadataFreeformString(model))
             metadataRepository.save(metadata)
-        }
+        }.start()
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
