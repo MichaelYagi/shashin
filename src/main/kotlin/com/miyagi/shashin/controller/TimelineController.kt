@@ -878,7 +878,7 @@ class TimelineController: BaseController() {
     fun getAllTimeline(model: Model): String {
         val response = mutableMapOf<String, Any?>()
         val currentUserObj = model.getAttribute("currentUser") as User?
-        response["allMetadata"] = mutableListOf<MapData>()
+        response["allMetadata"] = mutableListOf<MetadataMinimal>()
         response["msg"] = "Not logged in"
         response["status"] = ApiResponse.FAIL.status
 
