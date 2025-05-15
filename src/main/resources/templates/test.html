@@ -2,7 +2,7 @@
 <th:block th:insert="~{fragments/asciiart :: asciiart()}"></th:block>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:insert="~{fragments/head :: head(${activePage},${titleDescriptor})}"></head>
-<script src="/js/site/services/dexie.js" th:nonce="${cspNonce}"></script>
+<script src="/js/dexie.js" th:nonce="${cspNonce}"></script>
 <body>
 <div th:replace="~{fragments/topnav :: topnav(${currentUser},${activePage},'')}"></div>
 
