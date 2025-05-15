@@ -42,6 +42,7 @@ import jakarta.transaction.Transactional
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import kotlin.String
 import kotlin.collections.ArrayList
+import kotlin.collections.set
 import kotlin.io.path.Path
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
@@ -869,6 +870,30 @@ class TimelineController: BaseController() {
         }
 
         return response
+    }
+
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @RequestMapping(value = ["/timeline/all/dates","/api/v1/timeline/all/dates"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getAllTimeline(model: Model): String {
+        val response = mutableMapOf<String, Any?>()
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        response["allMetadata"] = mutableListOf<MapData>()
+        response["msg"] = "Not logged in"
+        response["status"] = ApiResponse.FAIL.status
+
+        if (currentUserObj != null) {
+            if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
+                response["allMetadata"] = metadataRepository.findAllTimeline()
+            } else {
+                response["allMetadata"] = metadataRepository.findByAlbumMetadataByUserId(currentUserObj.getId())
+            }
+
+            response["msg"] = ""
+            response["status"] = ApiResponse.SUCCESS.status
+        }
+
+        return mapper.writeValueAsString(response)
     }
 
     @RouterOperation(
