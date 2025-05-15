@@ -7,8 +7,6 @@ interface MetadataMinimal {
     fun getLng(): String?
     fun getThumbnailPathSmall(): String?
     fun getThumbnailUrlSmall(): String?
-    fun getThumbnailPathExtraSmall(): String?
-    fun getThumbnailUrlExtraSmall(): String?
     fun getThumbnailPathCentered(): String?
     fun getThumbnailUrlCentered(): String?
     fun getThumbnailUrlOriginal(): String?
