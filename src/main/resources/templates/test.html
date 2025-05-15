@@ -2,6 +2,7 @@
 <th:block th:insert="~{fragments/asciiart :: asciiart()}"></th:block>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:insert="~{fragments/head :: head(${activePage},${titleDescriptor})}"></head>
+<script src="/js/site/services/dexie.js" th:nonce="${cspNonce}"></script>
 <body>
 <div th:replace="~{fragments/topnav :: topnav(${currentUser},${activePage},'')}"></div>
 
@@ -11,15 +12,15 @@
         <main role="main" class="col">
             <h2 class="mt-3">Test Page</h2>
 
-            <span id="sometext" th:text="${text}"></span>
-            <form action="/test" method="post">
-                <input type="text" name="setone" th:value="${setone}" style="width: 90%"><br>
-                <input type="text" name="settwo" th:value="${settwo}" style="width: 90%"><br>
-                <input type="submit">
-            </form>
+<!--            <span id="sometext" th:text="${text}"></span>-->
+<!--            <form action="/test" method="post">-->
+<!--                <input type="text" name="setone" th:value="${setone}" style="width: 90%"><br>-->
+<!--                <input type="text" name="settwo" th:value="${settwo}" style="width: 90%"><br>-->
+<!--                <input type="submit">-->
+<!--            </form>-->
 
-            <img th:src="${base64_1}" style="width: 200px"><br>
-            <img th:src="${base64_2}" style="width: 200px"><br>
+<!--            <img th:src="${base64_1}" style="width: 200px"><br>-->
+<!--            <img th:src="${base64_2}" style="width: 200px"><br>-->
 
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
             <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
@@ -32,6 +33,29 @@
             const activePage = /*[[${activePage}]]*/ 'test';
             const currentPage = /*[[${currentPage}]]*/ 0;
             /*]]>*/
+
+            setTimeout(function () {
+                const http = new Http("indexeddb test");
+                http.ajax("get", "/timeline/all/dates").then(async function (data) {
+                    if (data.hasOwnProperty("allMetadata")) {
+                        const metadataList = data.allMetadata;
+
+                        const db = new Dexie("MetadataDatabase");
+                        db.version(1).stores({
+                            metadataList: `
+                                id,
+                                [year+month+day]
+                            `
+                        });
+
+                        // 2024-12-26
+                        const metadataArray = db.metadataList.bulkPut(metadataList);
+                        metadataArray.then(() => {
+                            console.log(db.metadataList.where({year: 2024, month: 12, day: 26}).toArray())
+                        });
+                    }
+                });
+            }, 0);
         });
     </script>
 
