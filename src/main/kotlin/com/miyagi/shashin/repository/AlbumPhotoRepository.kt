@@ -13,7 +13,6 @@ import jakarta.transaction.Transactional
 @Transactional
 interface AlbumPhotoRepository : CrudRepository<AlbumPhoto?, Int?> {
     fun countByMetadataIdAndAlbumId(metadataId: String?, albumId: Int?): Int?
-    fun countByMetadataId(metadataId: String?): Int?
     fun countByAlbumId(albumId: Int?): Int?
     @Query("SELECT COUNT(DISTINCT ap.metadata_id) FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.type LIKE %:type% AND m.hidden = 0", nativeQuery = true)
     fun countAlbumIdAndMediaType(@Param("albumId") albumId: Int, @Param("type") type: String): Int?

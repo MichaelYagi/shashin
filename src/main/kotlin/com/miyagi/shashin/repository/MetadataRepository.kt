@@ -24,7 +24,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN albumphoto ap ON m.id = ap.metadata_id LEFT JOIN useralbum ua ON ap.album_id = ua.album_id LEFT JOIN album a ON a.id = ua.album_id WHERE m.hidden = 0 AND ua.user_id = :userId ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
    fun findByAlbumMetadataByUserId(@Param("userId") userId: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) DESC\n", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) DESC\n", nativeQuery = true)
    fun findMetadataIdBetweenTakenAt(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
    @Cacheable(value = ["allAlbumMetadataWithCoordinates"], key = "{#userId}")
@@ -229,7 +229,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE id IN :metadataIds", nativeQuery = true)
    fun findAllByMetadataIds(metadataIds: Array<String>): MutableIterable<Metadata>
 
-   @Query("SELECT year, month, COUNT(*) as count FROM metadata group by year, month order by year DESC, month DESC", nativeQuery = true)
+   @Query("SELECT year, month, COUNT(*) as count FROM metadata WHERE hidden = 0 GROUP BY year, month order by year DESC, month DESC", nativeQuery = true)
    fun countByYearAndMonth(): MutableIterable<MetadataYearMonthCount>
 
    @Query("SELECT COUNT(DISTINCT m.id) AS count FROM metadata m LEFT JOIN albumphoto ap on m.id = ap.metadata_id LEFT JOIN useralbum ua on ap.album_id = ua.album_id LEFT JOIN recognitionlabelphoto rlp on m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl on rlp.recognition_label_id = rl.id WHERE m.hidden = 0 AND rl.id = :recognitionLabelId AND rlp.confidence >= 0.0 AND rlp.confidence <= :recognitionConfidenceThreshold AND ua.user_id = :userId", nativeQuery = true)
@@ -289,9 +289,9 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT m.* FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.file_name LIKE %:filename% AND m.hidden = 0 AND m.original_image_width < m.original_image_height ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomAlbumMediaAndFilterByUserPortrait(@Param("userId") userId: Int, @Param("filename") filename: String): Metadata?
 
-   @Query("SELECT COUNT(*) FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type%", nativeQuery = true)
+   @Query("SELECT COUNT(*) FROM user u, album a INNER JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE u.id = :userId AND m.type LIKE %:type% AND m.hidden = 0", nativeQuery = true)
    fun countAlbumByMedia(@Param("userId") userId: Int, @Param("type") type: String): Int
 
-   @Query("SELECT COUNT(*) FROM album a INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE m.type LIKE %:type%", nativeQuery = true)
+   @Query("SELECT COUNT(*) FROM album a INNER JOIN albumphoto ap ON a.id = ap.album_id INNER JOIN metadata m ON ap.metadata_id = m.id WHERE m.type LIKE %:type% AND m.hidden = 0", nativeQuery = true)
    fun countAlbumByMediaAsAdmin(@Param("type") type: String): Int
 }
