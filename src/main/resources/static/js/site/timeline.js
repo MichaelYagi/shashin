@@ -1618,7 +1618,7 @@
     };
 
     function renderPreviewsUsingBackend(date, mediaTypeFilter) {
-        shashin.printMessageToConsole("Using backend with media type "+mediaTypeFilter,{tag:"timeline"});
+        shashin.printMessageToConsole("Using backend with media type "+mediaTypeFilter,{tag:"timelineQuery"});
 
         const http = new Http("attaching associated metadata");
         const version = Util.getMetadataLocalStorage();
@@ -1663,25 +1663,23 @@
                 query = timelineSettings.db.metadataList.where({year: year, month: month, day: day}).and(metadata => metadata.type.includes(mediaTypeFilter));
             }
 
-            query.onsuccess = function () {
-                shashin.printMessageToConsole("Using dexie with media type "+mediaTypeFilter,{tag:"timeline"});
-                
-                query.toArray(function (metadataList) {
-                    const favoritesMap = timelineSettings.favoritesMap;
+            shashin.printMessageToConsole("Using dexie with media type " + mediaTypeFilter, {tag: "timelineQuery"});
 
-                    if (metadataList.length > 0) {
-                        for (const index in metadataList) {
-                            const metadata = metadataList[index];
+            query.toArray(function (metadataList) {
+                const favoritesMap = timelineSettings.favoritesMap;
 
-                            setTimeout(function () {
-                                if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id)) === true) {
-                                    timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
-                                }
-                            }, 0);
-                        }
+                if (metadataList.length > 0) {
+                    for (const index in metadataList) {
+                        const metadata = metadataList[index];
+
+                        setTimeout(function () {
+                            if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id)) === true) {
+                                timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
+                            }
+                        }, 0);
                     }
-                });
-            };
+                }
+            });
 
             query.onerror = function () {
                 renderPreviewsUsingBackend(date, mediaTypeFilter);
