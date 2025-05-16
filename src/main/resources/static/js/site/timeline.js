@@ -198,10 +198,14 @@
             }
 
             if (Util.isMobile() === false && $("#dateSliderWrapper:not(:hover)").length > 0) {
+                let timeoutValue = 1000;
+                if (timelineSettings.db !== null) {
+                    timeoutValue = 0;
+                }
                 setTimeout(() => {
                     $("#dateSlider").fadeOut(timelineSettings.scrollBar.fadeOutTime).invisible();
                     timelineSettings.rescanElements();
-                }, 1000);
+                }, timeoutValue);
             }
 
             timelineSettings.rescanElements();
@@ -237,18 +241,6 @@
                 const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
                 timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
                 timelineSettings.isScrolling = false;
-
-                // // Only show overlays when scrolling stopped for current hovered image
-                // let hovered = false;
-                // $(".photo-thumbnail-image").mousemove(function () {
-                //     timelineSettings.rescanElements();
-                //     if (hovered === false) {
-                //         const attrId = $(this).attr("id");
-                //         const metadataId = attrId.substring(5, attrId.length);
-                //         shashin.imageHover(this, metadataId);
-                //     }
-                //     hovered = true;
-                // });
             }
         }
 
@@ -273,11 +265,15 @@
                 topScroll = true;
             }
 
-            let delayInMs = e.timeStamp - lastDate;
-            let offset = st - lastOffset;
-            let speedInpxPerMs = offset / delayInMs;
-            if (speedInpxPerMs < 0.20 && speedInpxPerMs > 0.15) {
+            if (timelineSettings.db !== null) {
                 timelineSettings.rescanElements();
+            } else {
+                let delayInMs = e.timeStamp - lastDate;
+                let offset = st - lastOffset;
+                let speedInpxPerMs = offset / delayInMs;
+                if (speedInpxPerMs < 0.20 && speedInpxPerMs > 0.15) {
+                    timelineSettings.rescanElements();
+                }
             }
 
             // Used for multiselect - see app.js: batchSelect()
