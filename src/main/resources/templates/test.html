@@ -23,7 +23,9 @@
 <!--            <img th:src="${base64_2}" style="width: 200px"><br>-->
 
             <span id="dbtest" style="display: none;">
-                <input type="text" id="year" placeholder="year"><input type="text" id="month" placeholder="month"><input type="text" id="day" placeholder="day"><br><br>
+                <input type="text" id="year" placeholder="year"><input type="text" id="month" placeholder="month"><input type="text" id="day" placeholder="day"><br>
+                <input type="text" id="mediaType" placeholder="media type"><br>
+                <br><br>
                 <input id="dateSubmit" type="submit">
             </span>
 
@@ -61,26 +63,45 @@
 
                         db.metadataList.bulkPut(metadataList);
 
-                        // let year = 2024;
-                        // let month = 5;
-                        // let day = 5;
+                        let year = 2024;
+                        let month = 5;
+                        let day = 5;
+                        let mediaType = "image";
 
-                        // db.metadataList.where({year: year, month: month, day: day}).toArray(function (metadataList) {
-                        //     console.log(metadataList);
-                        // });
+                        let query;
+                        if (mediaType === "all" || mediaType === "") {
+                            query = db.metadataList.where({year: year, month: month, day: day});
+                        } else {
+                            query = db.metadataList.where({year: year, month: month, day: day}).and(metadata => metadata.type.includes(mediaType));
+                        }
 
-                        // $("#dateSubmit").on("click", function (e) {
-                        //     e.preventDefault();
-                        //
-                        //     year = parseInt($("#year").val());
-                        //     month = parseInt($("#month").val());
-                        //     day = parseInt($("#day").val());
-                        //
-                        //     db.metadataList.where({year: year, month: month, day: day}).toArray(function (metadataList) {
-                        //         console.log(metadataList);
-                        //         $("#result").text(JSON.stringify(metadataList));
-                        //     });
-                        // })
+                        query.toArray(function (metadataList) {
+                            console.log(metadataList);
+                        });
+
+                        $("#dateSubmit").on("click", function (e) {
+                            e.preventDefault();
+
+                            year = parseInt($("#year").val());
+                            month = parseInt($("#month").val());
+                            day = parseInt($("#day").val());
+                            mediaType = $("#mediaType").val();
+
+                            if (mediaType === "all" || mediaType === "") {
+                                console.log("test1");
+                                console.log(mediaType)
+                                query = db.metadataList.where({year: year, month: month, day: day});
+                            } else {
+                                console.log("test2");
+                                console.log(mediaType)
+                                query = db.metadataList.where({year: year, month: month, day: day}).and(metadata => metadata.type.includes(mediaType));
+                            }
+
+                            query.toArray(function (metadataList) {
+                                console.log(metadataList);
+                                $("#result").text(JSON.stringify(metadataList));
+                            });
+                        })
                     }
                 });
             }, 0);
