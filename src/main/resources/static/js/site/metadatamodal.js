@@ -414,7 +414,7 @@ async function saveMetadata(e) {
 
                 // Reload page
                 if (
-                    (activePage !== "recent" && activePage !== "modified" && activePage !== "folder" && activePage !== "taken" && takenDateUpdated === true) ||
+                    (activePage !== "timeline" && activePage !== "recent" && activePage !== "modified" && activePage !== "folder" && activePage !== "taken" && takenDateUpdated === true) ||
                     (metadataObj.hidden === true && activePage !== "timeline") ||
                     activePage === "matches" ||
                     (Util.arraysEqual(prevPeopleArray, peopleArray) === false && activePage === "person") ||
