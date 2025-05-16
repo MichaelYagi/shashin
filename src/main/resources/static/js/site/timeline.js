@@ -431,9 +431,7 @@
                     const metadata = metadataList[0];
 
                     setTimeout(function () {
-                        if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id)) === true) {
-                            timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
-                        }
+                        timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
                     }, 0);
                 }
             });
