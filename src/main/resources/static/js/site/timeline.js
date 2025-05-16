@@ -1617,58 +1617,67 @@
         }
     };
 
-    // Hook up data to edit albums, favorites and people labels
-    timelineSettings.attachAssociatedMetadata = async function(date,mediaTypeFilter) {
-        if (timelineSettings.db !== null) {
-            const dateArray = date.split("-");
-            if (dateArray.length === 3) {
-                const year = dateArray[0];
-                const month = dateArray[1];
-                const day = dateArray[2];
+    function beDbCall(date,mediaTypeFilter) {
+        const http = new Http("attaching associated metadata");
+        const version = Util.getMetadataLocalStorage();
+        http.ajax("get", "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + (version === "" ? "" : "?v=" + version)).then(function (data) {
+            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                if (data.status === timelineSettings.success) {
+                    if (data.hasOwnProperty("metadataList") &&
+                        data.hasOwnProperty("favorites")
+                    ) {
+                        const metadataList = data.metadataList;
+                        const favoritesMap = data.favorites;
 
-                timelineSettings.db.metadataList.where({year: year, month: month, day: day}).toArray(function (metadataList) {
-                    const favoritesMap = timelineSettings.favoritesMap;
+                        if (metadataList.length > 0) {
+                            for (const index in metadataList) {
+                                const metadata = metadataList[index];
 
-                    if (metadataList.length > 0) {
-                        for (const index in metadataList) {
-                            const metadata = metadataList[index];
-
-                            setTimeout(function () {
-                                if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id)) === true) {
-                                    timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
-                                }
-                            }, 0);
-                        }
-                    }
-                });
-            }
-        } else {
-            const http = new Http("attaching associated metadata");
-            const version = Util.getMetadataLocalStorage();
-            http.ajax("get", "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + (version === "" ? "" : "?v=" + version)).then(function (data) {
-                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                    if (data.status === timelineSettings.success) {
-                        if (data.hasOwnProperty("metadataList") &&
-                            data.hasOwnProperty("favorites")
-                        ) {
-                            const metadataList = data.metadataList;
-                            const favoritesMap = data.favorites;
-
-                            if (metadataList.length > 0) {
-                                for (const index in metadataList) {
-                                    const metadata = metadataList[index];
-
-                                    setTimeout(function () {
-                                        if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id)) === true) {
-                                            timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
-                                        }
-                                    }, 0);
-                                }
+                                setTimeout(function () {
+                                    if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id)) === true) {
+                                        timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
+                                    }
+                                }, 0);
                             }
                         }
                     }
                 }
+            }
+        });
+    }
+
+    // Hook up data to edit albums, favorites and people labels
+    timelineSettings.attachAssociatedMetadata = async function(date, mediaTypeFilter) {
+        const dateArray = date.split("-");
+        if (timelineSettings.db !== null && dateArray.length === 3) {
+            const year = dateArray[0];
+            const month = dateArray[1];
+            const day = dateArray[2];
+
+            let query;
+            if (mediaTypeFilter === "all" || mediaTypeFilter === "") {
+                query = timelineSettings.db.metadataList.where({year: year, month: month, day: day});
+            } else {
+                query = timelineSettings.db.metadataList.where({year: year, month: month, day: day}).and(metadata => metadata.type.includes(mediaTypeFilter));
+            }
+
+            query.toArray(function (metadataList) {
+                const favoritesMap = timelineSettings.favoritesMap;
+
+                if (metadataList.length > 0) {
+                    for (const index in metadataList) {
+                        const metadata = metadataList[index];
+
+                        setTimeout(function () {
+                            if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id)) === true) {
+                                timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
+                            }
+                        }, 0);
+                    }
+                }
             });
+        } else {
+            beDbCall(date,mediaTypeFilter);
         }
     };
 
