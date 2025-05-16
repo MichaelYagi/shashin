@@ -20,7 +20,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT DISTINCT m.id, m.type, m.lat, m.lng, m.year, m.month, m.day, m.thumbnail_url_small as thumbnailUrlSmall, m.thumbnail_url_original as thumbnailUrlOriginal, m.video_url as videoUrl, m.original_image_width as originalImageWidth, m.original_image_height as originalImageHeight, m.map_marker_url as mapMarkerUrl, m.place_name as placeName FROM metadata m LEFT JOIN albumphoto ap ON m.id = ap.metadata_id LEFT JOIN useralbum ua ON ap.album_id = ua.album_id LEFT JOIN album a ON a.id = ua.album_id WHERE m.hidden = 0 AND ua.user_id = :userId AND m.lat IS NOT NULL AND m.lat != \"\" AND m.lng IS NOT NULL AND m.lng != \"\" ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
    fun findByAlbumMetadataByUserIdForMap(@Param("userId") userId: Int): MutableIterable<MapData>
 
-   @Cacheable(value = ["allMetadataMinimal"], key = "{#userId}")
+   @Cacheable(value = ["allMetadata"], key = "{#userId}")
    @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN albumphoto ap ON m.id = ap.metadata_id LEFT JOIN useralbum ua ON ap.album_id = ua.album_id LEFT JOIN album a ON a.id = ua.album_id WHERE m.hidden = 0 AND ua.user_id = :userId ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
    fun findByAlbumMetadataByUserId(@Param("userId") userId: Int): MutableIterable<Metadata>
 
@@ -39,7 +39,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT metadata.id, metadata.type, metadata.lat, metadata.lng, metadata.year, metadata.month, metadata.day, metadata.thumbnail_url_small as thumbnailUrlSmall, metadata.thumbnail_url_original as thumbnailUrlOriginal, metadata.video_url as videoUrl, metadata.original_image_width as originalImageWidth, metadata.original_image_height as originalImageHeight, metadata.map_marker_url as mapMarkerUrl, metadata.place_name as placeName FROM metadata WHERE hidden = 0 AND lat IS NOT NULL AND lat != \"\" AND lng IS NOT NULL AND lng != \"\" ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findTimelineAllForMap(): MutableIterable<MapData>
 
-   @Cacheable(value = ["allMetadataMinimal"])
+   @Cacheable(value = ["allMetadata"])
    @Query("SELECT * FROM metadata WHERE hidden = 0 ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findAllTimeline(): MutableIterable<Metadata>
 
