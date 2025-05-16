@@ -22,6 +22,13 @@
 <!--            <img th:src="${base64_1}" style="width: 200px"><br>-->
 <!--            <img th:src="${base64_2}" style="width: 200px"><br>-->
 
+            <span id="dbtest" style="display: none;">
+                <input type="text" id="year" placeholder="year"><input type="text" id="month" placeholder="month"><input type="text" id="day" placeholder="day"><br><br>
+                <input id="dateSubmit" type="submit">
+            </span>
+
+            <span id="result"></span>
+
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
             <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
         </main>
@@ -38,6 +45,8 @@
                 const http = new Http("indexeddb test");
                 http.ajax("get", "/timeline/all/dates").then(async function (data) {
                     if (data.hasOwnProperty("allMetadata")) {
+                        $("#dbtest").css("display","block");
+
                         const metadataList = data.allMetadata;
 
                         const db = new Dexie("MetadataDatabase");
@@ -48,11 +57,28 @@
                             `
                         });
 
-                        // 2024-12-26
-                        const metadataArray = db.metadataList.bulkPut(metadataList);
-                        metadataArray.then(() => {
-                            console.log(db.metadataList.where({year: 2024, month: 12, day: 26}).toArray())
-                        });
+                        db.metadataList.bulkPut(metadataList);
+
+                        let year = 2024;
+                        let month = 5;
+                        let day = 5;
+
+                        // db.metadataList.where({year: year, month: month, day: day}).toArray(function (metadataList) {
+                        //     console.log(metadataList);
+                        // });
+
+                        $("#dateSubmit").on("click", function (e) {
+                            e.preventDefault();
+
+                            year = parseInt($("#year").val());
+                            month = parseInt($("#month").val());
+                            day = parseInt($("#day").val());
+
+                            db.metadataList.where({year: year, month: month, day: day}).toArray(function (metadataList) {
+                                console.log(metadataList);
+                                $("#result").text(JSON.stringify(metadataList));
+                            });
+                        })
                     }
                 });
             }, 0);
