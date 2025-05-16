@@ -419,17 +419,39 @@
     };
 
     timelineSettings.renderMetadata = function(metadataId) {
-        const imageIdentifier = "#image" + metadataId;
-        if ($(imageIdentifier).length > 0 && $(imageIdentifier).src === undefined) {
-            const http = new Http("attaching associated metadata in viewport");
-            const version = Util.getMetadataLocalStorage();
-            http.ajax("get", "/metadata/" + metadataId + (version === "" ? "" : "?v=" + version)).then(function (data) {
-                if (data !== undefined && data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                    const metadata = data.metadata;
-                    const favoritesMap = data.favorites;
-                    timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
+        if (timelineSettings.db !== null) {
+            const query = timelineSettings.db.metadataList.where({id: metadataId});
+
+            shashin.printMessageToConsole("Using dexie to render metadata " + metadataId, {tag: "timelineRenderMetadata"});
+
+            query.toArray(function (metadataList) {
+                const favoritesMap = timelineSettings.favoritesMap;
+
+                if (metadataList.length > 0) {
+                    const metadata = metadataList[0];
+
+                    setTimeout(function () {
+                        if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id)) === true) {
+                            timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
+                        }
+                    }, 0);
                 }
             });
+        } else {
+            shashin.printMessageToConsole("Using backend to render metadata " + metadataId, {tag: "timelineRenderMetadata"});
+
+            const imageIdentifier = "#image" + metadataId;
+            if ($(imageIdentifier).length > 0 && $(imageIdentifier).src === undefined) {
+                const http = new Http("attaching associated metadata in viewport");
+                const version = Util.getMetadataLocalStorage();
+                http.ajax("get", "/metadata/" + metadataId + (version === "" ? "" : "?v=" + version)).then(function (data) {
+                    if (data !== undefined && data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                        const metadata = data.metadata;
+                        const favoritesMap = data.favorites;
+                        timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
+                    }
+                });
+            }
         }
     };
 
