@@ -82,8 +82,9 @@
                         metadataList: `id, [year+month+day]`
                     });
 
-                    timelineSettings.db.metadataList.bulkPut(metadataList);
-                    timelineSettings.dbOperationComplete = true;
+                    timelineSettings.db.metadataList.bulkPut(metadataList).then(() => {
+                        timelineSettings.dbOperationComplete = true;
+                    });
                 }
             });
         }, 0);
