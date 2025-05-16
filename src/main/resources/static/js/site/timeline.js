@@ -1617,26 +1617,41 @@
         }
     };
 
-    function renderPreviews(metadataList, favoritesMap) {
-        if (metadataList.length > 0) {
-            for (const index in metadataList) {
-                const metadata = metadataList[index];
+    function renderPreviewsUsingBackend(date, mediaTypeFilter) {
+        shashin.printMessageToConsole("Using backend with media type "+mediaTypeFilter,{tag:"timeline"});
 
-                setTimeout(function () {
-                    if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id)) === true) {
-                        timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
+        const http = new Http("attaching associated metadata");
+        const version = Util.getMetadataLocalStorage();
+        http.ajax("get", "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + (version === "" ? "" : "?v=" + version)).then(function (data) {
+            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                if (data.status === timelineSettings.success) {
+                    if (data.hasOwnProperty("metadataList") &&
+                        data.hasOwnProperty("favorites")
+                    ) {
+                        const metadataList = data.metadataList;
+                        const favoritesMap = data.favorites;
+
+                        if (metadataList.length > 0) {
+                            for (const index in metadataList) {
+                                const metadata = metadataList[index];
+
+                                setTimeout(function () {
+                                    if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id)) === true) {
+                                        timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
+                                    }
+                                }, 0);
+                            }
+                        }
                     }
-                }, 0);
+                }
             }
-        }
+        });
     }
 
     // Hook up data to edit albums, favorites and people labels
     timelineSettings.attachAssociatedMetadata = async function(date, mediaTypeFilter) {
         const dateArray = date.split("-");
         if (timelineSettings.db !== null && dateArray.length === 3) {
-            shashin.printMessageToConsole("Using dexie with media type "+mediaTypeFilter,{tag:"timeline"});
-
             const year = dateArray[0];
             const month = dateArray[1];
             const day = dateArray[2];
@@ -1648,30 +1663,31 @@
                 query = timelineSettings.db.metadataList.where({year: year, month: month, day: day}).and(metadata => metadata.type.includes(mediaTypeFilter));
             }
 
-            query.toArray(function (metadataList) {
-                const favoritesMap = timelineSettings.favoritesMap;
+            query.onsuccess = function () {
+                shashin.printMessageToConsole("Using dexie with media type "+mediaTypeFilter,{tag:"timeline"});
+                
+                query.toArray(function (metadataList) {
+                    const favoritesMap = timelineSettings.favoritesMap;
 
-                renderPreviews(metadataList, favoritesMap);
-            });
-        } else {
-            shashin.printMessageToConsole("Using backend with media type "+mediaTypeFilter,{tag:"timeline"});
+                    if (metadataList.length > 0) {
+                        for (const index in metadataList) {
+                            const metadata = metadataList[index];
 
-            const http = new Http("attaching associated metadata");
-            const version = Util.getMetadataLocalStorage();
-            http.ajax("get", "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + (version === "" ? "" : "?v=" + version)).then(function (data) {
-                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                    if (data.status === timelineSettings.success) {
-                        if (data.hasOwnProperty("metadataList") &&
-                            data.hasOwnProperty("favorites")
-                        ) {
-                            const metadataList = data.metadataList;
-                            const favoritesMap = data.favorites;
-
-                            renderPreviews(metadataList, favoritesMap);
+                            setTimeout(function () {
+                                if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id)) === true) {
+                                    timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
+                                }
+                            }, 0);
                         }
                     }
-                }
-            });
+                });
+            };
+
+            query.onerror = function () {
+                renderPreviewsUsingBackend(date, mediaTypeFilter);
+            };
+        } else {
+            renderPreviewsUsingBackend(date, mediaTypeFilter);
         }
     };
 
