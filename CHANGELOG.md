@@ -21,8 +21,10 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 - Automatic browser opening after server start
 
 ### Fixed
+- Don't show hidden photos in albums
 
 ### Security
+- Updated bonigarcia web driver manager version
 
 ## [2.10.2] - 2025-05-09
 ### Added
