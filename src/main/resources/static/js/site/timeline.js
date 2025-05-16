@@ -25,6 +25,8 @@
     timelineSettings.didJumpFromTimelineToc = false;
     timelineSettings.thumbnailType = "225";
     timelineSettings.thumbnailHeight = "225";
+    timelineSettings.favoritesMap = null;
+    timelineSettings.db = null;
     if (Util.isMobile()) {
         timelineSettings.thumbnailType = "centered";
         timelineSettings.thumbnailHeight = "120";
@@ -66,6 +68,23 @@
         timelineSettings.timelineDates = metadataDates;
         timelineSettings.metadataYearMonthCount = metadataYearMonthCount;
         timelineSettings.timelineDatesHash = timelineDatesHash;
+
+        setTimeout(function () {
+            const http = new Http("indexeddb test");
+            http.ajax("get", "/timeline/all/dates").then(async function (data) {
+                if (data.hasOwnProperty("allMetadata") && data.hasOwnProperty("favorites")) {
+                    const metadataList = data.allMetadata;
+                    timelineSettings.favoritesMap = data.favorites;
+
+                    timelineSettings.db = new Dexie("MetadataDatabase");
+                    timelineSettings.db.version(1).stores({
+                        metadataList: `id, [year+month+day]`
+                    });
+
+                    timelineSettings.db.metadataList.bulkPut(metadataList);
+                }
+            });
+        }, 0);
 
         Util.setMetadataLocalStorage();
 
@@ -1600,32 +1619,57 @@
 
     // Hook up data to edit albums, favorites and people labels
     timelineSettings.attachAssociatedMetadata = async function(date,mediaTypeFilter) {
-        const http = new Http("attaching associated metadata");
-        const version = Util.getMetadataLocalStorage();
-        http.ajax("get", "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + (version === "" ? "" : "?v=" + version)).then(function (data) {
-            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                if (data.status === timelineSettings.success) {
-                    if (data.hasOwnProperty("metadataList") &&
-                        data.hasOwnProperty("favorites")
-                    ) {
-                        const metadataList = data.metadataList;
-                        const favoritesMap = data.favorites;
+        if (timelineSettings.db !== null) {
+            const dateArray = date.split("-");
+            if (dateArray.length === 3) {
+                const year = dateArray[0];
+                const month = dateArray[1];
+                const day = dateArray[2];
 
-                        if (metadataList.length > 0) {
-                            for (const index in metadataList) {
-                                const metadata = metadataList[index];
+                timelineSettings.db.metadataList.where({year: year, month: month, day: day}).toArray(function (metadataList) {
+                    const favoritesMap = timelineSettings.favoritesMap;
 
-                                setTimeout(function () {
-                                    if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id)) === true) {
-                                        timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
-                                    }
-                                }, 0);
+                    if (metadataList.length > 0) {
+                        for (const index in metadataList) {
+                            const metadata = metadataList[index];
+
+                            setTimeout(function () {
+                                if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id)) === true) {
+                                    timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
+                                }
+                            }, 0);
+                        }
+                    }
+                });
+            }
+        } else {
+            const http = new Http("attaching associated metadata");
+            const version = Util.getMetadataLocalStorage();
+            http.ajax("get", "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + (version === "" ? "" : "?v=" + version)).then(function (data) {
+                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                    if (data.status === timelineSettings.success) {
+                        if (data.hasOwnProperty("metadataList") &&
+                            data.hasOwnProperty("favorites")
+                        ) {
+                            const metadataList = data.metadataList;
+                            const favoritesMap = data.favorites;
+
+                            if (metadataList.length > 0) {
+                                for (const index in metadataList) {
+                                    const metadata = metadataList[index];
+
+                                    setTimeout(function () {
+                                        if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id)) === true) {
+                                            timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
+                                        }
+                                    }, 0);
+                                }
                             }
                         }
                     }
                 }
-            }
-        });
+            });
+        }
     };
 
     timelineSettings.createEmptyContainer = async function(date, attachToId, height) {

@@ -877,17 +877,34 @@ class TimelineController: BaseController() {
     @ResponseBody
     fun getAllTimeline(model: Model): String {
         val response = mutableMapOf<String, Any?>()
+        val favoritesMap = HashMap<String, HashMap<String, Any>>()
         val currentUserObj = model.getAttribute("currentUser") as User?
         response["allMetadata"] = mutableListOf<Metadata>()
         response["msg"] = "Not logged in"
         response["status"] = ApiResponse.FAIL.status
+        response["favorites"] = favoritesMap
 
         if (currentUserObj != null) {
-            if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
-                response["allMetadata"] = metadataRepository.findAllTimeline()
+            val metadataList = if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
+                metadataRepository.findAllTimeline()
             } else {
-                response["allMetadata"] = metadataRepository.findByAlbumMetadataByUserId(currentUserObj.getId())
+                metadataRepository.findByAlbumMetadataByUserId(currentUserObj.getId())
             }
+
+            response["allMetadata"] = metadataList;
+
+            val favoriteCounts = favoriteRepository.countByMetadataIdIn(metadataList.map { it.getId() }.toList())
+
+            if (favoriteCounts.count() > 0) {
+                for (favoriteCount in favoriteCounts) {
+                    favoritesMap[favoriteCount.getMetadataId()!!] = hashMapOf(
+                        "favorite" to (favoriteCount.getUserId() == currentUserObj.getId()),
+                        "count" to favoriteCount.getCount() as Any
+                    )
+                }
+            }
+
+            response["favorites"] = favoritesMap
 
             response["msg"] = ""
             response["status"] = ApiResponse.SUCCESS.status
