@@ -1651,7 +1651,7 @@
             query.toArray(function (metadataList) {
                 const favoritesMap = timelineSettings.favoritesMap;
 
-                renderPreviews(metadataList, favoritesMap)
+                renderPreviews(metadataList, favoritesMap);
             });
         } else {
             shashin.printMessageToConsole("Using backend with media type "+mediaTypeFilter,{tag:"timeline"});
@@ -1667,7 +1667,7 @@
                             const metadataList = data.metadataList;
                             const favoritesMap = data.favorites;
 
-                            renderPreviews(metadataList, favoritesMap)
+                            renderPreviews(metadataList, favoritesMap);
                         }
                     }
                 }
