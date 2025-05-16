@@ -1617,39 +1617,26 @@
         }
     };
 
-    function beDbCall(date,mediaTypeFilter) {
-        const http = new Http("attaching associated metadata");
-        const version = Util.getMetadataLocalStorage();
-        http.ajax("get", "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + (version === "" ? "" : "?v=" + version)).then(function (data) {
-            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                if (data.status === timelineSettings.success) {
-                    if (data.hasOwnProperty("metadataList") &&
-                        data.hasOwnProperty("favorites")
-                    ) {
-                        const metadataList = data.metadataList;
-                        const favoritesMap = data.favorites;
+    function renderPreviews(metadataList, favoritesMap) {
+        if (metadataList.length > 0) {
+            for (const index in metadataList) {
+                const metadata = metadataList[index];
 
-                        if (metadataList.length > 0) {
-                            for (const index in metadataList) {
-                                const metadata = metadataList[index];
-
-                                setTimeout(function () {
-                                    if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id)) === true) {
-                                        timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
-                                    }
-                                }, 0);
-                            }
-                        }
+                setTimeout(function () {
+                    if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id)) === true) {
+                        timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
                     }
-                }
+                }, 0);
             }
-        });
+        }
     }
 
     // Hook up data to edit albums, favorites and people labels
     timelineSettings.attachAssociatedMetadata = async function(date, mediaTypeFilter) {
         const dateArray = date.split("-");
         if (timelineSettings.db !== null && dateArray.length === 3) {
+            shashin.printMessageToConsole("Using dexie with media type "+mediaTypeFilter,{tag:"timeline"});
+
             const year = dateArray[0];
             const month = dateArray[1];
             const day = dateArray[2];
@@ -1664,20 +1651,27 @@
             query.toArray(function (metadataList) {
                 const favoritesMap = timelineSettings.favoritesMap;
 
-                if (metadataList.length > 0) {
-                    for (const index in metadataList) {
-                        const metadata = metadataList[index];
+                renderPreviews(metadataList, favoritesMap)
+            });
+        } else {
+            shashin.printMessageToConsole("Using backend with media type "+mediaTypeFilter,{tag:"timeline"});
 
-                        setTimeout(function () {
-                            if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id)) === true) {
-                                timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
-                            }
-                        }, 0);
+            const http = new Http("attaching associated metadata");
+            const version = Util.getMetadataLocalStorage();
+            http.ajax("get", "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + (version === "" ? "" : "?v=" + version)).then(function (data) {
+                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                    if (data.status === timelineSettings.success) {
+                        if (data.hasOwnProperty("metadataList") &&
+                            data.hasOwnProperty("favorites")
+                        ) {
+                            const metadataList = data.metadataList;
+                            const favoritesMap = data.favorites;
+
+                            renderPreviews(metadataList, favoritesMap)
+                        }
                     }
                 }
             });
-        } else {
-            beDbCall(date,mediaTypeFilter);
         }
     };
 
