@@ -236,6 +236,25 @@ async function saveMetadata(e) {
             });
         }
 
+        if (activePage === "timeline" && timelineSettings.db !== null) {
+            setTimeout(function () {
+                const http = new Http("indexeddb test");
+                http.ajax("get", "/timeline/all/dates").then(async function (data) {
+                    if (data.hasOwnProperty("allMetadata") && data.hasOwnProperty("favorites")) {
+                        const metadataList = data.allMetadata;
+                        timelineSettings.favoritesMap = data.favorites;
+
+                        timelineSettings.db = new Dexie("MetadataDatabase");
+                        timelineSettings.db.version(1).stores({
+                            metadataList: `id, [year+month+day]`
+                        });
+
+                        timelineSettings.db.metadataList.bulkPut(metadataList);
+                    }
+                });
+            }, 0);
+        }
+
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             if (data.status === shashin.apiResponse.SUCCESS) {
                 if (data.hasOwnProperty("keywords") && data.keywords !== "") {
