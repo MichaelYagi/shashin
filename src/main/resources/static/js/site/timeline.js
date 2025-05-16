@@ -27,6 +27,7 @@
     timelineSettings.thumbnailHeight = "225";
     timelineSettings.favoritesMap = null;
     timelineSettings.db = null;
+    timelineSettings.dbOperationComplete = false;
     if (Util.isMobile()) {
         timelineSettings.thumbnailType = "centered";
         timelineSettings.thumbnailHeight = "120";
@@ -82,6 +83,7 @@
                     });
 
                     timelineSettings.db.metadataList.bulkPut(metadataList);
+                    timelineSettings.dbOperationComplete = true;
                 }
             });
         }, 0);
@@ -199,7 +201,7 @@
 
             if (Util.isMobile() === false && $("#dateSliderWrapper:not(:hover)").length > 0) {
                 let timeoutValue = 1000;
-                if (timelineSettings.db !== null) {
+                if (timelineSettings.dbOperationComplete === true) {
                     timeoutValue = 0;
                 }
                 setTimeout(() => {
@@ -265,7 +267,7 @@
                 topScroll = true;
             }
 
-            if (timelineSettings.db !== null) {
+            if (timelineSettings.dbOperationComplete === true) {
                 timelineSettings.rescanElements();
             } else {
                 let delayInMs = e.timeStamp - lastDate;
@@ -415,7 +417,7 @@
     };
 
     timelineSettings.renderMetadata = function(metadataId) {
-        if (timelineSettings.db !== null) {
+        if (timelineSettings.dbOperationComplete === true) {
             const query = timelineSettings.db.metadataList.where({id: metadataId});
 
             shashin.printMessageToConsole("Using dexie to render metadata " + metadataId, {tag: "timelineRenderMetadata"});
@@ -1667,7 +1669,7 @@
     // Hook up data to edit albums, favorites and people labels
     timelineSettings.attachAssociatedMetadata = async function(date, mediaTypeFilter) {
         const dateArray = date.split("-");
-        if (timelineSettings.db !== null && dateArray.length === 3) {
+        if (timelineSettings.dbOperationComplete === true && dateArray.length === 3) {
             const year = dateArray[0];
             const month = dateArray[1];
             const day = dateArray[2];
