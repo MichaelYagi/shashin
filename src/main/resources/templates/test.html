@@ -41,6 +41,8 @@
             const currentPage = /*[[${currentPage}]]*/ 0;
             /*]]>*/
 
+            let db = null;
+
             setTimeout(function () {
                 const http = new Http("indexeddb test");
                 http.ajax("get", "/timeline/all/dates").then(async function (data) {
@@ -49,7 +51,7 @@
 
                         const metadataList = data.allMetadata;
 
-                        const db = new Dexie("MetadataDatabase");
+                        db = new Dexie("MetadataDatabase");
                         db.version(1).stores({
                             metadataList: `
                                 id,
@@ -59,29 +61,46 @@
 
                         db.metadataList.bulkPut(metadataList);
 
-                        let year = 2024;
-                        let month = 5;
-                        let day = 5;
+                        // let year = 2024;
+                        // let month = 5;
+                        // let day = 5;
 
                         // db.metadataList.where({year: year, month: month, day: day}).toArray(function (metadataList) {
                         //     console.log(metadataList);
                         // });
 
-                        $("#dateSubmit").on("click", function (e) {
-                            e.preventDefault();
-
-                            year = parseInt($("#year").val());
-                            month = parseInt($("#month").val());
-                            day = parseInt($("#day").val());
-
-                            db.metadataList.where({year: year, month: month, day: day}).toArray(function (metadataList) {
-                                console.log(metadataList);
-                                $("#result").text(JSON.stringify(metadataList));
-                            });
-                        })
+                        // $("#dateSubmit").on("click", function (e) {
+                        //     e.preventDefault();
+                        //
+                        //     year = parseInt($("#year").val());
+                        //     month = parseInt($("#month").val());
+                        //     day = parseInt($("#day").val());
+                        //
+                        //     db.metadataList.where({year: year, month: month, day: day}).toArray(function (metadataList) {
+                        //         console.log(metadataList);
+                        //         $("#result").text(JSON.stringify(metadataList));
+                        //     });
+                        // })
                     }
                 });
             }, 0);
+
+            $("#dateSubmit").on("click", function (e) {
+                e.preventDefault();
+
+                const year = parseInt($("#year").val());
+                const month = parseInt($("#month").val());
+                const day = parseInt($("#day").val());
+
+                if (db !== null) {
+                    db.metadataList.where({year: year, month: month, day: day}).toArray(function (metadataList) {
+                        console.log(metadataList);
+                        $("#result").text(JSON.stringify(metadataList));
+                    });
+                } else {
+                    $("#result").text("DB not initiated");
+                }
+            })
         });
     </script>
 
