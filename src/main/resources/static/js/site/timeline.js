@@ -1675,43 +1675,43 @@
 
     // Hook up data to edit albums, favorites and people labels
     timelineSettings.attachAssociatedMetadata = async function(date, mediaTypeFilter) {
-        const dateArray = date.split("-");
-        if (timelineSettings.dbOperationComplete === true && dateArray.length === 3) {
-            const year = parseInt(dateArray[0]);
-            const month = parseInt(dateArray[1]);
-            const day = parseInt(dateArray[2]);
-
-            let query;
-            if (mediaTypeFilter === "all" || mediaTypeFilter === "") {
-                query = timelineSettings.db.metadataList.where({year: year, month: month, day: day});
-            } else {
-                query = timelineSettings.db.metadataList.where({year: year, month: month, day: day}).and(metadata => metadata.type.includes(mediaTypeFilter));
-            }
-
-            shashin.printMessageToConsole("Using dexie with media type " + mediaTypeFilter, {tags: ["timelineQuery","dexie"]});
-
-            query.toArray(function (metadataList) {
-                const favoritesMap = timelineSettings.favoritesMap;
-
-                if (metadataList.length > 0) {
-                    for (const index in metadataList) {
-                        const metadata = metadataList[index];
-
-                        setTimeout(function () {
-                            if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id)) === true) {
-                                timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
-                            }
-                        }, 0);
-                    }
-                }
-            });
-
-            query.onerror = function () {
-                renderPreviewsUsingBackend(date, mediaTypeFilter);
-            };
-        } else {
+        // const dateArray = date.split("-");
+        // if (timelineSettings.dbOperationComplete === true && dateArray.length === 3) {
+        //     const year = parseInt(dateArray[0]);
+        //     const month = parseInt(dateArray[1]);
+        //     const day = parseInt(dateArray[2]);
+        //
+        //     let query;
+        //     if (mediaTypeFilter === "all" || mediaTypeFilter === "") {
+        //         query = timelineSettings.db.metadataList.where({year: year, month: month, day: day});
+        //     } else {
+        //         query = timelineSettings.db.metadataList.where({year: year, month: month, day: day}).and(metadata => metadata.type.includes(mediaTypeFilter));
+        //     }
+        //
+        //     shashin.printMessageToConsole("Using dexie with media type " + mediaTypeFilter, {tags: ["timelineQuery","dexie"]});
+        //
+        //     query.toArray(function (metadataList) {
+        //         const favoritesMap = timelineSettings.favoritesMap;
+        //
+        //         if (metadataList.length > 0) {
+        //             for (const index in metadataList) {
+        //                 const metadata = metadataList[index];
+        //
+        //                 setTimeout(function () {
+        //                     if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id)) === true) {
+        //                         timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
+        //                     }
+        //                 }, 0);
+        //             }
+        //         }
+        //     });
+        //
+        //     query.onerror = function () {
+        //         renderPreviewsUsingBackend(date, mediaTypeFilter);
+        //     };
+        // } else {
             renderPreviewsUsingBackend(date, mediaTypeFilter);
-        }
+        // }
     };
 
     timelineSettings.createEmptyContainer = async function(date, attachToId, height) {
