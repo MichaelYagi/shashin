@@ -883,6 +883,7 @@ class TimelineController: BaseController() {
         response["msg"] = "Not logged in"
         response["status"] = ApiResponse.FAIL.status
         response["favorites"] = favoritesMap
+        response["placeNameHeaders"] = mutableListOf<String>()
 
         if (currentUserObj != null) {
             val metadataList = if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
@@ -891,7 +892,9 @@ class TimelineController: BaseController() {
                 metadataRepository.findByAlbumMetadataByUserId(currentUserObj.getId())
             }
 
-            response["allMetadata"] = metadataList;
+            response["allMetadata"] = metadataList
+
+            response["placeNameHeaders"] = sortPlaceNames(metadataList)
 
             val favoriteCounts = favoriteRepository.countByMetadataIdIn(metadataList.map { it.getId() }.toList())
 
