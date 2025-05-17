@@ -215,12 +215,16 @@
 
             timelineSettings.rescanElements();
 
+            let timeoutValue = 2500;
+            if (timelineSettings.dbOperationComplete === true) {
+                timeoutValue = 0;
+            }
             setTimeout(() => {
                 const elements = Util.elementsInViewport($('img.photo-thumbnail-image:not([src*="/api/v1/thumbnails/'+timelineSettings.thumbnailType+'/)'));
                 if (elements.length > 0) {
                     timelineSettings.rescanElements(elements);
                 }
-            }, 2500);
+            }, timeoutValue);
 
             // Clean up
             if (timelineSettings.didJumpFromTimelineToc === true) {
