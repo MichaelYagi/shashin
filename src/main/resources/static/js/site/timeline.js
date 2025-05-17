@@ -216,9 +216,9 @@
             timelineSettings.rescanElements();
 
             let timeoutValue = 2500;
-            if (timelineSettings.dbOperationComplete === true) {
-                timeoutValue = 0;
-            }
+            // if (timelineSettings.dbOperationComplete === true) {
+            //     timeoutValue = 0;
+            // }
             setTimeout(() => {
                 const elements = Util.elementsInViewport($('img.photo-thumbnail-image:not([src*="/api/v1/thumbnails/'+timelineSettings.thumbnailType+'/)'));
                 if (elements.length > 0) {
