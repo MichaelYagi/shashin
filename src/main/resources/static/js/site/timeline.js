@@ -1906,31 +1906,31 @@
         let ret = shashin.apiResponse.FAIL;
         $("#msgTimeline").html("");
 
-        if (timelineSettings.dbOperationComplete === true) {
-            const dateArray = date.split("-");
-            const year = parseInt(dateArray[0]);
-            const month = parseInt(dateArray[1]);
-            const day = parseInt(dateArray[2]);
-
-            let query;
-            if (mediaTypeFilter === "all" || mediaTypeFilter === "") {
-                query = timelineSettings.db.metadataList.where({year: year, month: month, day: day});
-            } else {
-                query = timelineSettings.db.metadataList.where({year: year, month: month, day: day}).and(metadata => metadata.type.includes(mediaTypeFilter));
-            }
-
-            shashin.printMessageToConsole("Using dexie with media type " + mediaTypeFilter, {tag: "timelineQuery"});
-
-            query.toArray(function (metadataList) {
-                if (metadataList.length > 0) {
-                    ret = updateTimeline(date, mediaTypeFilter, action, attachToId, metadataList, timelineSettings.placeNameHeaders);
-                } else {
-                    $(".attachMetadataPhotos").last().text("EOL").css("display", "none");
-                    ret = timelineSettings.success;
-                }
-                return ret;
-            });
-        } else {
+        // if (timelineSettings.dbOperationComplete === true) {
+        //     const dateArray = date.split("-");
+        //     const year = parseInt(dateArray[0]);
+        //     const month = parseInt(dateArray[1]);
+        //     const day = parseInt(dateArray[2]);
+        //
+        //     let query;
+        //     if (mediaTypeFilter === "all" || mediaTypeFilter === "") {
+        //         query = timelineSettings.db.metadataList.where({year: year, month: month, day: day});
+        //     } else {
+        //         query = timelineSettings.db.metadataList.where({year: year, month: month, day: day}).and(metadata => metadata.type.includes(mediaTypeFilter));
+        //     }
+        //
+        //     shashin.printMessageToConsole("Using dexie with media type " + mediaTypeFilter, {tag: "timelineQuery"});
+        //
+        //     query.toArray(function (metadataList) {
+        //         if (metadataList.length > 0) {
+        //             ret = updateTimeline(date, mediaTypeFilter, action, attachToId, metadataList, timelineSettings.placeNameHeaders);
+        //         } else {
+        //             $(".attachMetadataPhotos").last().text("EOL").css("display", "none");
+        //             ret = timelineSettings.success;
+        //         }
+        //         return ret;
+        //     });
+        // } else {
             const version = Util.getMetadataLocalStorage();
 
             const ajaxParams = {
@@ -1971,7 +1971,7 @@
 
                     return ret;
                 });
-        }
+        // }
     };
 
     timelineSettings.activateMetadataListeners = function(metadataId) {
