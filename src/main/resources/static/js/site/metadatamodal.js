@@ -240,9 +240,10 @@ async function saveMetadata(e) {
             setTimeout(function () {
                 const http = new Http("indexeddb test");
                 http.ajax("get", "/timeline/all/dates").then(async function (data) {
-                    if (data.hasOwnProperty("allMetadata") && data.hasOwnProperty("favorites")) {
+                    if (data.hasOwnProperty("allMetadata") && data.hasOwnProperty("favorites") && data.hasOwnProperty("placeNameHeaders")) {
                         const metadataList = data.allMetadata;
                         timelineSettings.favoritesMap = data.favorites;
+                        timelineSettings.placeNameHeaders = data.placeNameHeaders;
 
                         timelineSettings.db = new Dexie("MetadataDatabase");
                         timelineSettings.db.version(1).stores({

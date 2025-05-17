@@ -26,6 +26,7 @@
     timelineSettings.thumbnailType = "225";
     timelineSettings.thumbnailHeight = "225";
     timelineSettings.favoritesMap = null;
+    timelineSettings.placeNameHeaders = null;
     timelineSettings.db = null;
     timelineSettings.dbOperationComplete = false;
     if (Util.isMobile()) {
@@ -73,9 +74,10 @@
         setTimeout(function () {
             const http = new Http("indexeddb test");
             http.ajax("get", "/timeline/all/dates").then(async function (data) {
-                if (data.hasOwnProperty("allMetadata") && data.hasOwnProperty("favorites")) {
+                if (data.hasOwnProperty("allMetadata") && data.hasOwnProperty("favorites") && data.hasOwnProperty("placeNameHeaders")) {
                     const metadataList = data.allMetadata;
                     timelineSettings.favoritesMap = data.favorites;
+                    timelineSettings.placeNameHeaders = data.placeNameHeaders;
 
                     timelineSettings.db = new Dexie("MetadataDatabase");
                     timelineSettings.db.version(1).stores({
@@ -1671,9 +1673,9 @@
     timelineSettings.attachAssociatedMetadata = async function(date, mediaTypeFilter) {
         const dateArray = date.split("-");
         if (timelineSettings.dbOperationComplete === true && dateArray.length === 3) {
-            const year = dateArray[0];
-            const month = dateArray[1];
-            const day = dateArray[2];
+            const year = parseInt(dateArray[0]);
+            const month = parseInt(dateArray[1]);
+            const day = parseInt(dateArray[2]);
 
             let query;
             if (mediaTypeFilter === "all" || mediaTypeFilter === "") {
@@ -1725,217 +1727,251 @@
         return ret;
     };
 
+    function updateTimeline(date,mediaTypeFilter,action,attachToId,metadataList,placeNameHeaders) {
+        let ret = shashin.apiResponse.FAIL;
+
+        let html = "";
+        // When it's an empty container, create barebones html
+        let internalHtml = "";
+
+        let idCheck = "undated";
+        if (metadataList[0].year !== null &&
+            metadataList[0].month !== null &&
+            metadataList[0].day !== null)
+        {
+            idCheck = metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day;
+        }
+
+        const currentTimelineIndex = timelineSettings.timelineDatesHash[idCheck];
+        let nextTimelineIndex = currentTimelineIndex-1;
+
+        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+            nextTimelineIndex = currentTimelineIndex+1;
+        }
+
+        let hideText = false;
+        if (timelineSettings.timelineDates.hasOwnProperty(nextTimelineIndex)) {
+            const nextTimeline = timelineSettings.timelineDates[nextTimelineIndex];
+            const nextTimelineDate = nextTimeline.year + "-" + nextTimeline.month + "-" + nextTimeline.day;
+
+            if (placeNameHeaders.length === 1 &&
+                placeNameHeaders[0] === $("#placeNameHeader"+nextTimelineDate).text()
+            ) {
+                //placeNameHeaders[0] = "";
+                hideText = true;
+            }
+        }
+
+        let listHtml = "";
+        if (placeNameHeaders.length > 1) {
+            for (const index in placeNameHeaders) {
+                const placeNameHeader = placeNameHeaders[index];
+                listHtml += '        <li class="text-muted"><a class="dropdown-item" href="/search?term='+placeNameHeader+'" target="_blank">'+placeNameHeader+'</a></li>\n';
+            }
+        }
+
+        html += TimelineTemplates.TimelinePreLoadGalleryHeader({metadata:metadataList[0],placeNameHeaders:placeNameHeaders,listHtml:listHtml,isMobile:Util.isMobile()});
+        internalHtml += '<br id="br'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
+            '<section class="scrollspy" id="'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
+            '<div class="mb-3 ms-1"><strong class="dateHeading pe-1">'+Util.getDateString(metadataList[0].year, metadataList[0].month, metadataList[0].day)+'</strong>';
+
+        if (placeNameHeaders.length === 1 && placeNameHeaders[0].length > 0) {
+            internalHtml += '<span class="text-muted"><a class="link-unstyled" href="/search?term='+placeNameHeaders[0]+'" target="_blank" id="placeNameHeader'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'"'+(hideText === true ? " style='display: none;'" : "")+'>'+placeNameHeaders[0]+'</a></span>';
+        } else if (placeNameHeaders.length > 1) {
+            internalHtml += '<span class="text-muted"><div class="dropdown" style="display: inline-block;"><a class="dropdown-toggle link-unstyled" data-bs-toggle="dropdown" href="#">'+placeNameHeaders[0]+'</a>\n' +
+                '    <ul class="dropdown-menu">\n';
+            internalHtml += listHtml;
+            internalHtml += '    </ul></div></span>';
+        }
+
+        internalHtml += '</div></section>' +
+            '<div class="row'+(Util.isMobile() ? " ms-0" : " image-group-padding")+'" id="row'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
+            '<span style="display: none;" class="yearTaken">'+metadataList[0].year+'</span>' +
+            '<span style="display: none;" class="monthTaken">'+metadataList[0].month+'</span>' +
+            '<span style="display: none;" class="dayTaken">'+metadataList[0].day+'</span>';
+
+        if ($("#"+idCheck).length === 0) {
+            for (let index in metadataList) {
+                index = parseInt(index);
+                const metadata = metadataList[index];
+
+                const yearTakenCount = $(".yearTaken").length;
+                const monthTakenCount = $(".monthTaken").length;
+                const dayTakenCount = $(".dayTaken").length;
+                let lastYearTaken = $(".yearTaken").length === 0 ? (metadataList[0].year === null ? "" : metadataList[0].year) : $(".yearTaken").get(yearTakenCount - 1).innerText;
+                let lastMonthTaken = $(".monthTaken").length === 0 ? (metadataList[0].month === null ? "" : metadataList[0].month) : $(".monthTaken").get(monthTakenCount - 1).innerText;
+                let lastDayTaken = $(".dayTaken").length === 0 ? (metadataList[0].day === null ? "" : metadataList[0].day) : $(".dayTaken").get(dayTakenCount - 1).innerText;
+                lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
+                lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
+                lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
+
+                let loopedHtml = TimelineTemplates.TimelinePreLoadGalleryBody({metadata:metadata, isMobile:Util.isMobile(), thumbnailType:timelineSettings.thumbnailType, thumbnailHeight:timelineSettings.thumbnailHeight});
+                html += loopedHtml;
+                internalHtml += loopedHtml;
+
+                $("#metadataModalEdit" + metadata.id).attr("tag", metadata.id);
+            }
+
+            const lastDateParts = $("#offcanvasTocBody div a").last().attr("id").split("offcanvas_");
+            const lastDate = lastDateParts[1];
+
+            html += TimelineTemplates.TimelinePreLoadGalleryFooter({metadata:metadataList[0],lastDate:lastDate});
+            internalHtml += '<span class="scrollspy metadataprocessed" id="tail_'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'"></span></div>';
+
+            const tempScrollTop = $("#container").scrollTop();
+
+            let htmlEl = $(html);
+
+            if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                    $("#infinite-scroll-gallery").invisible();
+                }
+            }
+
+            setTimeout(function () {
+                if (action === "above") {
+                    htmlEl.insertBefore($("#container_" + attachToId)).ready(function () {
+                        // deferred.resolve(timelineSettings.success);
+                        ret = timelineSettings.success;
+                        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                            if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                                $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                $("#infinite-scroll-gallery").visible();
+                            }
+                        }
+                    });
+                } else if (action === "emptyContainer") {
+                    $("#container_"+date).removeAttr("style");
+                    $("#container_"+date).html(internalHtml);
+                    $('<span class="attachMetadataPhotos" id="amp_'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'" style="visibility: hidden"></span>').insertAfter($("#container_"+date));
+                } else if (action === "new") {
+                    $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
+                        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                            if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                                $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                $("#infinite-scroll-gallery").visible();
+                            }
+                        }
+                        // deferred.resolve(timelineSettings.success);
+                        ret = timelineSettings.success;
+                    });
+                } else {
+                    if (attachToId == null) {
+                        if ($(".attachMetadataPhotos").length > 0) {
+                            htmlEl.insertAfter($(".attachMetadataPhotos").last()).ready(function () {
+                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                    if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                        $("#infinite-scroll-gallery").visible();
+                                    }
+                                }
+                                // deferred.resolve(timelineSettings.success);
+                                ret = timelineSettings.success;
+                            });
+                        } else {
+                            $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
+                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                    if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                        $("#infinite-scroll-gallery").visible();
+                                    }
+                                }
+                                // deferred.resolve(timelineSettings.success);
+                                ret = timelineSettings.success;
+                            });
+                        }
+                    } else {
+                        htmlEl.insertAfter($("#amp_" + attachToId)).ready(function () {
+                            if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                                    $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                    $("#infinite-scroll-gallery").visible();
+                                }
+                            }
+                            // deferred.resolve(timelineSettings.success);
+                            ret = timelineSettings.success;
+                        });
+                    }
+                }
+            }, 0);
+        } else {
+            // Already attached
+            ret = timelineSettings.success;
+        }
+
+        return ret;
+    }
+
     timelineSettings.updateTimeline = async function(date,mediaTypeFilter,action,attachToId) {
+        let ret = shashin.apiResponse.FAIL;
         $("#msgTimeline").html("");
 
-        const version = Util.getMetadataLocalStorage();
+        if (timelineSettings.dbOperationComplete === true) {
+            const dateArray = date.split("-");
+            const year = parseInt(dateArray[0]);
+            const month = parseInt(dateArray[1]);
+            const day = parseInt(dateArray[2]);
 
-        const ajaxParams = {
-            type: 'get',
-            url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata" + (version === "" ? "" : "?v=" + version),
-            contentType: 'application/json; charset=utf-8',
-            async: true,
-            retries: shashin.ajaxRetries
-        };
+            let query;
+            if (mediaTypeFilter === "all" || mediaTypeFilter === "") {
+                query = timelineSettings.db.metadataList.where({year: year, month: month, day: day});
+            } else {
+                query = timelineSettings.db.metadataList.where({year: year, month: month, day: day}).and(metadata => metadata.type.includes(mediaTypeFilter));
+            }
 
-        return await $.ajax(ajaxParams)
-            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating timeline");}).then(function (data) {
-                let ret = shashin.apiResponse.FAIL;
-                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                    let message = "Error";
-                    if (data.status === timelineSettings.success) {
-                        if (data.hasOwnProperty("metadataList")) {
-                            const metadataList = data.metadataList;
+            shashin.printMessageToConsole("Using dexie with media type " + mediaTypeFilter, {tag: "timelineQuery"});
 
-                            if (metadataList.length > 0) {
-                                let html = "";
-                                // When it's an empty container, create barebones html
-                                let internalHtml = "";
+            query.toArray(function (metadataList) {
+                if (metadataList.length > 0) {
+                    ret = updateTimeline(date, mediaTypeFilter, action, attachToId, metadataList, timelineSettings.placeNameHeaders);
+                } else {
+                    $(".attachMetadataPhotos").last().text("EOL").css("display", "none");
+                    ret = timelineSettings.success;
+                }
+                return ret;
+            });
+        } else {
+            const version = Util.getMetadataLocalStorage();
 
-                                let idCheck = "undated";
-                                if (metadataList[0].year !== null &&
-                                    metadataList[0].month !== null &&
-                                    metadataList[0].day !== null)
-                                {
-                                    idCheck = metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day;
-                                }
+            const ajaxParams = {
+                type: 'get',
+                url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata" + (version === "" ? "" : "?v=" + version),
+                contentType: 'application/json; charset=utf-8',
+                async: true,
+                retries: shashin.ajaxRetries
+            };
 
-                                const placeNameHeaders = data.placeNameHeaders;
+            return await $.ajax(ajaxParams)
+                .fail(function (xhr, textStatus) {
+                    shashin.onFail(xhr, textStatus, ajaxParams, " updating timeline");
+                }).then(function (data) {
+                    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                        let message = "Error";
+                        if (data.status === timelineSettings.success) {
+                            if (data.hasOwnProperty("metadataList")) {
+                                const metadataList = data.metadataList;
 
-                                const currentTimelineIndex = timelineSettings.timelineDatesHash[idCheck];
-                                let nextTimelineIndex = currentTimelineIndex-1;
-
-                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                    nextTimelineIndex = currentTimelineIndex+1;
-                                }
-
-                                let hideText = false;
-                                if (timelineSettings.timelineDates.hasOwnProperty(nextTimelineIndex)) {
-                                    const nextTimeline = timelineSettings.timelineDates[nextTimelineIndex];
-                                    const nextTimelineDate = nextTimeline.year + "-" + nextTimeline.month + "-" + nextTimeline.day;
-
-                                    if (placeNameHeaders.length === 1 &&
-                                        placeNameHeaders[0] === $("#placeNameHeader"+nextTimelineDate).text()
-                                    ) {
-                                        //placeNameHeaders[0] = "";
-                                        hideText = true;
-                                    }
-                                }
-
-                                let listHtml = "";
-                                if (placeNameHeaders.length > 1) {
-                                    for (const index in placeNameHeaders) {
-                                        const placeNameHeader = placeNameHeaders[index];
-                                        listHtml += '        <li class="text-muted"><a class="dropdown-item" href="/search?term='+placeNameHeader+'" target="_blank">'+placeNameHeader+'</a></li>\n';
-                                    }
-                                }
-
-                                html += TimelineTemplates.TimelinePreLoadGalleryHeader({metadata:metadataList[0],placeNameHeaders:placeNameHeaders,listHtml:listHtml,isMobile:Util.isMobile()});
-                                internalHtml += '<br id="br'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
-                                    '<section class="scrollspy" id="'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
-                                    '<div class="mb-3 ms-1"><strong class="dateHeading pe-1">'+Util.getDateString(metadataList[0].year, metadataList[0].month, metadataList[0].day)+'</strong>';
-
-                                if (placeNameHeaders.length === 1 && placeNameHeaders[0].length > 0) {
-                                    internalHtml += '<span class="text-muted"><a class="link-unstyled" href="/search?term='+placeNameHeaders[0]+'" target="_blank" id="placeNameHeader'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'"'+(hideText === true ? " style='display: none;'" : "")+'>'+placeNameHeaders[0]+'</a></span>';
-                                } else if (placeNameHeaders.length > 1) {
-                                    internalHtml += '<span class="text-muted"><div class="dropdown" style="display: inline-block;"><a class="dropdown-toggle link-unstyled" data-bs-toggle="dropdown" href="#">'+placeNameHeaders[0]+'</a>\n' +
-                                        '    <ul class="dropdown-menu">\n';
-                                    internalHtml += listHtml;
-                                    internalHtml += '    </ul></div></span>';
-                                }
-
-                                internalHtml += '</div></section>' +
-                                    '<div class="row'+(Util.isMobile() ? " ms-0" : " image-group-padding")+'" id="row'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
-                                    '<span style="display: none;" class="yearTaken">'+metadataList[0].year+'</span>' +
-                                    '<span style="display: none;" class="monthTaken">'+metadataList[0].month+'</span>' +
-                                    '<span style="display: none;" class="dayTaken">'+metadataList[0].day+'</span>';
-
-                                if ($("#"+idCheck).length === 0) {
-                                    for (let index in metadataList) {
-                                        index = parseInt(index);
-                                        const metadata = metadataList[index];
-
-                                        const yearTakenCount = $(".yearTaken").length;
-                                        const monthTakenCount = $(".monthTaken").length;
-                                        const dayTakenCount = $(".dayTaken").length;
-                                        let lastYearTaken = $(".yearTaken").length === 0 ? (metadataList[0].year === null ? "" : metadataList[0].year) : $(".yearTaken").get(yearTakenCount - 1).innerText;
-                                        let lastMonthTaken = $(".monthTaken").length === 0 ? (metadataList[0].month === null ? "" : metadataList[0].month) : $(".monthTaken").get(monthTakenCount - 1).innerText;
-                                        let lastDayTaken = $(".dayTaken").length === 0 ? (metadataList[0].day === null ? "" : metadataList[0].day) : $(".dayTaken").get(dayTakenCount - 1).innerText;
-                                        lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
-                                        lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
-                                        lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
-
-                                        let loopedHtml = TimelineTemplates.TimelinePreLoadGalleryBody({metadata:metadata, isMobile:Util.isMobile(), thumbnailType:timelineSettings.thumbnailType, thumbnailHeight:timelineSettings.thumbnailHeight});
-                                        html += loopedHtml;
-                                        internalHtml += loopedHtml;
-
-                                        $("#metadataModalEdit" + metadata.id).attr("tag", metadata.id);
-                                    }
-
-                                    const lastDateParts = $("#offcanvasTocBody div a").last().attr("id").split("offcanvas_");
-                                    const lastDate = lastDateParts[1];
-
-                                    html += TimelineTemplates.TimelinePreLoadGalleryFooter({metadata:metadataList[0],lastDate:lastDate});
-                                    internalHtml += '<span class="scrollspy metadataprocessed" id="tail_'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'"></span></div>';
-
-                                    const tempScrollTop = $("#container").scrollTop();
-
-                                    let htmlEl = $(html);
-
-                                    if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                        if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
-                                            $("#infinite-scroll-gallery").invisible();
-                                        }
-                                    }
-
-                                    setTimeout(function () {
-                                        if (action === "above") {
-                                            htmlEl.insertBefore($("#container_" + attachToId)).ready(function () {
-                                                // deferred.resolve(timelineSettings.success);
-                                                ret = timelineSettings.success;
-                                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                    if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
-                                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                        $("#infinite-scroll-gallery").visible();
-                                                    }
-                                                }
-                                            });
-                                        } else if (action === "emptyContainer") {
-                                            $("#container_"+date).removeAttr("style");
-                                            $("#container_"+date).html(internalHtml);
-                                            $('<span class="attachMetadataPhotos" id="amp_'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'" style="visibility: hidden"></span>').insertAfter($("#container_"+date));
-                                        } else if (action === "new") {
-                                            $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
-                                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                    if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
-                                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                        $("#infinite-scroll-gallery").visible();
-                                                    }
-                                                }
-                                                // deferred.resolve(timelineSettings.success);
-                                                ret = timelineSettings.success;
-                                            });
-                                        } else {
-                                            if (attachToId == null) {
-                                                if ($(".attachMetadataPhotos").length > 0) {
-                                                    htmlEl.insertAfter($(".attachMetadataPhotos").last()).ready(function () {
-                                                        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                            if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
-                                                                $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                                $("#infinite-scroll-gallery").visible();
-                                                            }
-                                                        }
-                                                        // deferred.resolve(timelineSettings.success);
-                                                        ret = timelineSettings.success;
-                                                    });
-                                                } else {
-                                                    $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
-                                                        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                            if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
-                                                                $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                                $("#infinite-scroll-gallery").visible();
-                                                            }
-                                                        }
-                                                        // deferred.resolve(timelineSettings.success);
-                                                        ret = timelineSettings.success;
-                                                    });
-                                                }
-                                            } else {
-                                                htmlEl.insertAfter($("#amp_" + attachToId)).ready(function () {
-                                                    if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                        if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
-                                                            $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                            $("#infinite-scroll-gallery").visible();
-                                                        }
-                                                    }
-                                                    // deferred.resolve(timelineSettings.success);
-                                                    ret = timelineSettings.success;
-                                                });
-                                            }
-                                        }
-                                    }, 0);
+                                if (metadataList.length > 0) {
+                                    ret = updateTimeline(date, mediaTypeFilter, action, attachToId, metadataList, data.placeNameHeaders);
                                 } else {
-                                    // Already attached
+                                    $(".attachMetadataPhotos").last().text("EOL").css("display", "none");
                                     ret = timelineSettings.success;
                                 }
-                            } else {
-                                $(".attachMetadataPhotos").last().text("EOL").css("display", "none");
                                 ret = timelineSettings.success;
                             }
                             ret = timelineSettings.success;
+                        } else {
+                            message = '<div class="alert alert-danger" role="alert">' + data.msg + '</div>';
+                            $("#msgTimeline").html(message);
+                            ret = shashin.apiResponse.FAIL;
                         }
-                        ret = timelineSettings.success;
-                    } else {
-                        message = '<div class="alert alert-danger" role="alert">' + data.msg + '</div>';
-                        $("#msgTimeline").html(message);
-                        ret = shashin.apiResponse.FAIL;
                     }
-                }
 
-                //$("#placeholder").remove();
+                    //$("#placeholder").remove();
 
-                return ret;
-            });
+                    return ret;
+                });
+        }
     };
 
     timelineSettings.activateMetadataListeners = function(metadataId) {
