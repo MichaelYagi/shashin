@@ -282,8 +282,12 @@ class TextUtils {
             return "yyyy-MM-dd HH:mm:ss"
         }
 
-        fun getEpochDateTime() : String {
+        fun getEpochDateTime(): String {
             return "1970-01-01 00:00:00"
+        }
+
+        fun getExifDateTimeDefault(): String {
+            return "1904-01-01 00:00:00"
         }
 
         fun isNumber(input: String): Boolean {

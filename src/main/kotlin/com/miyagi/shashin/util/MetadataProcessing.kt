@@ -183,8 +183,8 @@ class MetadataProcessing() {
                                     val gmtPattern = TextUtils.getCommonDateFormat()
                                     val gmtFormat = SimpleDateFormat(gmtPattern, Locale.ENGLISH)
                                     gmtFormat.timeZone = TimeZone.getTimeZone("GMT")
-                                    if (gmtFormat.format(date) == TextUtils.getEpochDateTime()) {
-                                        formattedDate = TextUtils.getCurrentTimestamp()
+                                    if (gmtFormat.format(date) == TextUtils.getEpochDateTime() || gmtFormat.format(date) == TextUtils.getExifDateTimeDefault()) {
+                                        formattedDate = getCurrentTimestamp()
                                         logger.log(
                                             Level.INFO,
                                             "Epoch time detected for " + file.name + ". Changing CreatedAt/TakenAt datetime to the current datetime"
