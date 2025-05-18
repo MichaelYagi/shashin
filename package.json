@@ -10,7 +10,8 @@
     "mocha-junit-reporter": "^2.0.2",
     "mocha-multi": "^1.1.6",
     "nyc": "^15.1.0",
-    "prettier": "2.7.1"
+    "prettier": "2.7.1",
+    "sinon": "20.0.0"
   },
   "dependencies": {
     "blob-polyfill": "^6.0.20211015"
