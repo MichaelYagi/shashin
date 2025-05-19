@@ -126,7 +126,7 @@
                             <span style="display: none;" class="dayTaken" th:text="${metadataList[0].day}"></span>
                     </th:block>
 
-<!--                    <th:block th:if="${isMobile}">-->
+                    <th:block th:if="${isMobile}">
                         <th:block th:each="metadata, iterStat: ${metadataList}">
                             <div th:id="${'photoThumbnailContainer'+metadata.id}" th:class="${'photo-thumbnail-container photo-thumbnail '+(metadata.type.contains('video') ? 'is-video' : 'is-not-video')}" th:style="${'width:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth)+'px;height:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight)+'px;padding-left:0;padding-right:0;'}">
                                 <a class="lightGalleryIndexAnchor" th:id="${'lightGalleryIndex'+metadata.id}"></a>
@@ -162,7 +162,7 @@
                                 <span th:id="'metadatamodal'+${metadata.id}"></span>
                             </div>
                         </th:block>
-<!--                    </th:block>-->
+                    </th:block>
 
                     <th:block th:if="${metadataList[0].year==null or metadataList[0].month==null or metadataList[0].day==null}">
                         <span class="scrollspy metadataprocessed" id="tail_undated"></span>
