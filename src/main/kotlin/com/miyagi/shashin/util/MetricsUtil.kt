@@ -3,11 +3,14 @@ package com.miyagi.shashin.util
 import org.springframework.beans.factory.annotation.Value
 import java.util.logging.Level
 import java.util.logging.Logger
+import kotlin.collections.MutableMap
 
 class MetricsUtil {
     private var counter: Int = 0
 
     private var timings: MutableList<Long> = mutableListOf()
+
+    private var metricsList: MutableList<MutableMap<String, Any>> = mutableListOf()
 
     private var elapsedTime: Long = 0L
 
@@ -31,6 +34,10 @@ class MetricsUtil {
 
     @Value("\${app.config.default.slaMS}")
     private var slaMS: Long? = null
+
+    fun getMetricsList(): MutableList<MutableMap<String, Any>> {
+        return metricsList
+    }
 
     fun getAllTimings(): List<Long> {
         return timings
@@ -92,6 +99,7 @@ class MetricsUtil {
             totalElapsedTime += elapsedTime
 
             timings.add(elapsedTime)
+            metricsList.add(mutableMapOf("module" to module, "elapsedTime" to elapsedTime))
 
             if (elapsedTime > maxTime || maxTime == 0L) {
                 maxTime = elapsedTime
