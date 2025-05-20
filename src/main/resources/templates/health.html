@@ -43,7 +43,7 @@ Uptime:&nbsp;<span id="uptimeText" th:text="${uptimeText}"></span><br>
 <th:block th:text="${'JVM CPU usage: '+system.processCpuLoadPercent+'%'}"></th:block><br>
 <th:block th:text="${'Available cores: '+system.availableCores}"></th:block><br>
 <th:block th:text="${'OS: '+system.os}"></th:block><br>
-<th:block th:utext="${'Build status: '+(circleCIBuild == 'OK' ? circleCIBuild : '<span style=&quot;color: red;&quot;>'+circleCIBuild+'</span>')}"></th:block><br>
+<th:block th:utext="${'Build status: '+(circleCIBuild == 'OK' || circleCIBuild == 'N/A' ? circleCIBuild : '<span style=&quot;color: red;&quot;>'+circleCIBuild+'</span>')}"></th:block><br>
 <th:block th:text="${'Build version: '+buildVersion}"></th:block><br>
 UTC timestamp: <span th:title="${localServerTime}"><th:block th:text="${system.utcTimestampMS}"></th:block></span><br>
 Local server time:&nbsp;<span id="serverTime" th:text="${localServerTime}"></span><br>
