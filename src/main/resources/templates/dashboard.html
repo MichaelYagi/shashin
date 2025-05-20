@@ -12,8 +12,8 @@
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
 
-            <div class="row pb-4 mt-4">
-                <div class="col">
+            <div class="row mt-4">
+                <div class="col pb-4">
                     <div class="card">
                         <div class="card-header">
                             <h5 class="card-title">Usage</h5>
@@ -52,8 +52,56 @@
                 </div>
             </div>
 
-            <div class="row pb-4">
-                <div class="col">
+            <div class="row">
+                <div class="col pb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="card-title">Page Metrics</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-text">
+                                <div class="row pb-5">
+                                    <div class="col-sm-4">
+                                        <strong>Endpoint Total Time</strong>
+                                    </div>
+
+                                    <div class="col-sm">
+                                        <span id="endpointProcessingTimeMS"></span>
+                                    </div>
+                                </div>
+                                <div class="row pb-5">
+                                    <div class="col-sm-4">
+                                        <strong>Endpoint Average Time</strong>
+                                    </div>
+
+                                    <div class="col-sm">
+                                        <span id="endpointAverageProcessingTimeMS"></span>
+                                    </div>
+                                </div>
+                                <div class="row pb-5">
+                                    <div class="col-sm-4">
+                                        <strong>Endpoint Fastest Time</strong>
+                                    </div>
+
+                                    <div class="col-sm">
+                                        <span id="endpointFastestProcessingTimeMS"></span>
+                                    </div>
+                                </div>
+                                <div class="row pb-5">
+                                    <div class="col-sm-4">
+                                        <strong>Endpoint Slowest Time</strong>
+                                    </div>
+
+                                    <div class="col-sm">
+                                        <span id="endpointSlowestProcessingTimeMS"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col pb-4">
                     <div class="card">
                         <div class="card-header">
                             <h5 class="card-title">CPU</h5>
@@ -66,7 +114,7 @@
                     </div>
                 </div>
 
-                <div class="col">
+                <div class="col pb-4">
                     <div class="card">
                         <div class="card-header">
                             <h5 class="card-title">Memory</h5>
@@ -80,8 +128,8 @@
                 </div>
             </div>
 
-            <div class="row pb-4">
-                <div class="col">
+            <div class="row">
+                <div class="col pb-4">
                     <div class="card">
                         <div class="card-header">
                             <div class="row">
@@ -108,7 +156,7 @@
                     </div>
                 </div>
 
-                <div class="col">
+                <div class="col pb-4">
                     <div class="card">
                         <div class="card-header">
                             <h2 id="mediaCount"></h2>
@@ -124,8 +172,8 @@
                 </div>
             </div>
 
-            <div class="row pb-4">
-                <div class="col">
+            <div class="row">
+                <div class="col pb-4">
                     <div class="card">
                         <div class="card-header">
                             <h2 id="cameraCount"></h2>
@@ -140,7 +188,7 @@
                     </div>
                 </div>
 
-                <div class="col">
+                <div class="col pb-4">
                     <div class="card">
                         <div class="card-header">
                             <h2 id="keywordCount"></h2>
@@ -203,6 +251,8 @@
                 });
                 const http = new Http("dashboard data");
                 http.ajax("get", "/dashboard/data").then(function (data) {
+                    shashin.printMessageToConsole(JSON.stringify(data), {tags: ["dashboard", "data"]});
+
                     if (data["nominatimAvailable"] !== null) {
                         $("#nominatimStatusContainer").css("display", "block");
                         $("#nominatimStatus").css({
@@ -224,22 +274,38 @@
                             $("#compreFaceText").html('<a href="/settings" target="_blank">CompreFace</a>');
                         }
                     }
+                    $("#endpointProcessingTimeMS").text("0 ms");
+                    if (data["endpointProcessingTimeMS"] !== null) {
+                        $("#endpointProcessingTimeMS").text(data["endpointProcessingTimeMS"] + " ms");
+                    }
+                    $("#endpointAverageProcessingTimeMS").text("0 ms");
+                    if (data["endpointAverageProcessingTimeMS"] !== null) {
+                        $("#endpointAverageProcessingTimeMS").text(data["endpointAverageProcessingTimeMS"] + " ms");
+                    }
+                    $("#endpointFastestProcessingTimeMS").text("0 ms");
+                    if (data["endpointFastestProcessingTimeMS"] !== null && data["endpointFastestProcessingTimeModule"] !== null) {
+                        $("#endpointFastestProcessingTimeMS").text(data["endpointFastestProcessingTimeMS"] + " ms processing module " + data["endpointFastestProcessingTimeModule"]);
+                    }
+                    $("#endpointSlowestProcessingTimeMS").text("0 ms");
+                    if (data["endpointSlowestProcessingTimeMS"] !== null && data["endpointSlowestProcessingTimeModule"] !== null) {
+                        $("#endpointSlowestProcessingTimeMS").text(data["endpointSlowestProcessingTimeMS"] + " ms processing module " + data["endpointSlowestProcessingTimeModule"]);
+                    }
 
                     const sidecarUsedSizeB = parseInt(data["sidecarUsedSizeB"]);
                     const sidecarTotalSizeB = parseInt(data["sidecarTotalSizeB"]);
-                    const percentUsed = parseInt((sidecarUsedSizeB/sidecarTotalSizeB) * 100);
+                    const percentUsed = parseInt((sidecarUsedSizeB / sidecarTotalSizeB) * 100);
 
-                    shashin.printMessageToConsole("sidecar space used raw: "+data["sidecarUsedSizeB"], {tag: "dashboard"});
-                    shashin.printMessageToConsole("sidecar space used: "+data["sidecarUsedSizeText"], {tag: "dashboard"});
-                    shashin.printMessageToConsole("sidecar space usable raw: "+data["sidecarUsableSizeB"], {tag: "dashboard"});
-                    shashin.printMessageToConsole("sidecar space usable: "+data["sidecarUsableSizeText"], {tag: "dashboard"});
-                    shashin.printMessageToConsole("sidecar space total raw: "+data["sidecarTotalSizeB"], {tag: "dashboard"});
-                    shashin.printMessageToConsole("sidecar space total: "+data["sidecarTotalSizeText"], {tag: "dashboard"});
+                    shashin.printMessageToConsole("sidecar space used raw: " + data["sidecarUsedSizeB"], {tag: "dashboard"});
+                    shashin.printMessageToConsole("sidecar space used: " + data["sidecarUsedSizeText"], {tag: "dashboard"});
+                    shashin.printMessageToConsole("sidecar space usable raw: " + data["sidecarUsableSizeB"], {tag: "dashboard"});
+                    shashin.printMessageToConsole("sidecar space usable: " + data["sidecarUsableSizeText"], {tag: "dashboard"});
+                    shashin.printMessageToConsole("sidecar space total raw: " + data["sidecarTotalSizeB"], {tag: "dashboard"});
+                    shashin.printMessageToConsole("sidecar space total: " + data["sidecarTotalSizeText"], {tag: "dashboard"});
 
                     if (percentUsed > 0) {
                         $("#sidecarUsageContainer").attr("aria-valuenow", percentUsed);
-                        $("#sidecarUsageGraph").css("width", percentUsed+"%");
-                        $("#sidecarUsageGraph").text(percentUsed+"%");
+                        $("#sidecarUsageGraph").css("width", percentUsed + "%");
+                        $("#sidecarUsageGraph").text(percentUsed + "%");
                         if (percentUsed > 90) {
                             if (percentUsed > 97) {
                                 $("#sidecarUsageGraph").addClass("bg-danger");
