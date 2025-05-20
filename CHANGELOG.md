@@ -22,6 +22,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ### Fixed
 - Don't show hidden photos in albums
+- Health and status endpoint performance
 
 ### Security
 - Updated bonigarcia web driver manager version

@@ -368,6 +368,11 @@ class DashboardController {
         response["hiddenCount"] = hiddenCount
         metricsUtil.end()
 
+        response["endpointSlowestProcessingTimeMS"] = metricsUtil.getMaxTime()
+        response["endpointSlowestProcessingTimeModule"] = metricsUtil.getMaxTimeModule().toString()
+        response["endpointFastestProcessingTimeMS"] = metricsUtil.getMinTime()
+        response["endpointFastestProcessingTimeModule"] = metricsUtil.getMinTimeModule().toString()
+        response["endpointAverageProcessingTimeMS"] = String.format("%.2f", metricsUtil.getAverageTime()).toDouble()
         response["endpointProcessingTimeMS"] = metricsUtil.getTotalElapsedTime()
         response["endpointProcessingTimeText"] = metricsUtil.getTotalElapsedTime().toString() + " ms"
 

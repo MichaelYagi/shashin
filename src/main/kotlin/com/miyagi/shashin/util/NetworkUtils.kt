@@ -126,26 +126,28 @@ class NetworkUtils {
         fun checkNominatimConnection(nominatimUrl: String?): Boolean {
             var available = false
             if (!nominatimUrl.isNullOrBlank()) {
-                val response: ResponseEntity<String>?
-                try {
-                    val webClient = WebClient.create(nominatimUrl)
-                    response = webClient.get()
-                        .retrieve()
-                        .toEntity(String::class.java)
-                        .block()
-
-                    if (response != null) {
-                        val jsonResult = response.body
-                        val mapper = ObjectMapper()
-                        val jsonObj = mapper.readTree(jsonResult)
-                        val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
-                        if (resultMap.containsKey("status") && resultMap["status"] == 0) {
-                            available = true
-                        }
-                    }
-                } catch (e: Exception) {
-                    available = false
-                }
+                available = pingURL(nominatimUrl, null, 1000)
+//
+//                val response: ResponseEntity<String>?
+//                try {
+//                    val webClient = WebClient.create(nominatimUrl)
+//                    response = webClient.get()
+//                        .retrieve()
+//                        .toEntity(String::class.java)
+//                        .block()
+//
+//                    if (response != null) {
+//                        val jsonResult = response.body
+//                        val mapper = ObjectMapper()
+//                        val jsonObj = mapper.readTree(jsonResult)
+//                        val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
+//                        if (resultMap.containsKey("status") && resultMap["status"] == 0) {
+//                            available = true
+//                        }
+//                    }
+//                } catch (e: Exception) {
+//                    available = false
+//                }
             }
 
             return available
