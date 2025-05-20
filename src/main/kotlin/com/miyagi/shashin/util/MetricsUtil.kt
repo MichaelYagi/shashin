@@ -7,9 +7,19 @@ import java.util.logging.Logger
 class MetricsUtil {
     private var counter: Int = 0
 
-    private var elapsedTime: Long = 0
+    private var timings: MutableList<Long> = mutableListOf()
 
-    private var totalElapsedTime: Long = 0
+    private var elapsedTime: Long = 0L
+
+    private var minTime: Long = 0L
+
+    private var minTimeModule: String = ""
+
+    private var maxTime: Long = 0L
+
+    private var maxTimeModule: String = ""
+
+    private var totalElapsedTime: Long = 0L
 
     private var startTime: Long? = null
 
@@ -22,8 +32,32 @@ class MetricsUtil {
     @Value("\${app.config.default.slaMS}")
     private var slaMS: Long? = null
 
+    fun getAllTimings(): List<Long> {
+        return timings
+    }
+
+    fun getAverageTime(): Double {
+        return timings.average()
+    }
+
     fun getTotalElapsedTime(): Long {
         return totalElapsedTime
+    }
+
+    fun getMaxTime(): Long {
+        return maxTime
+    }
+
+    fun getMaxTimeModule(): String {
+        return maxTimeModule
+    }
+
+    fun getMinTime(): Long {
+        return minTime
+    }
+
+    fun getMinTimeModule(): String {
+        return minTimeModule
     }
 
     fun start(lmodule: String = "") {
@@ -56,6 +90,18 @@ class MetricsUtil {
         if (startTime != null) {
             elapsedTime = endTime!! - startTime!!
             totalElapsedTime += elapsedTime
+
+            timings.add(elapsedTime)
+
+            if (elapsedTime > maxTime || maxTime == 0L) {
+                maxTime = elapsedTime
+                maxTimeModule = module
+            }
+
+            if (elapsedTime < minTime || minTime == 0L) {
+                minTime = elapsedTime
+                minTimeModule = module
+            }
 
             if (counter > 1) {
                 logger.log(Level.INFO, "$counter calls for this instance elapsed time: $totalElapsedTime ms.")
