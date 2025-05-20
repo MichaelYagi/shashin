@@ -219,7 +219,7 @@ class ToolsController {
             }
         }
 
-        return "{\"comprefaceStatus\":$status,\"stats\":${ApiResponse.SUCCESS.status},\"msg\":\"\"}"
+        return "{\"comprefaceStatus\":$status,\"status\":\"${ApiResponse.SUCCESS.status}\",\"msg\":\"\"}"
     }
 
     @RequestMapping(value = ["/api/v1/status"], method = [RequestMethod.GET], produces = ["application/json"])
