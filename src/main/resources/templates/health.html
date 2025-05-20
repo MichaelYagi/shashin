@@ -20,7 +20,7 @@
 
 <h1>Health Check</h1>
 
-<th:block th:utext="${'Status: '+ (status == 'OK' ? status : '<span style=&quot;color: red;&quot;>'+status+'</span>')}"></th:block><br><br>
+<th:block th:utext="${'Status: '+ (serverStatus == 'OK' ? serverStatus : '<span style=&quot;color: red;&quot;>'+serverStatus+'</span>')}"></th:block><br><br>
 Uptime:&nbsp;<span id="uptimeText" th:text="${uptimeText}"></span><br>
 <th:block th:text="${'Endpoint processing timing: '+endpointProcessingTimeText}"></th:block><br>
 <span id="plt" style="display: none;"></span>
