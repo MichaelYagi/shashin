@@ -251,8 +251,6 @@ class ToolsController {
     private fun buildHealthData(model: Model, ignoreBuildCheck: Boolean = false): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
-        val serverTimingStart = Date()
-
         var status = "OK"
 
         response["serverStatus"] = status
@@ -336,6 +334,7 @@ class ToolsController {
 
         response["buildVersion"] = if (buildProperties != null) buildProperties?.version.toString() else "Missing"
 
+        response["circleCIBuild"] = "N/A"
         if (ignoreBuildCheck == false) {
             metricsUtil.start("circleci endpoint")
             val circleciTimingStart = Date()
@@ -344,12 +343,11 @@ class ToolsController {
                 response["circleCIBuild"] = "OK"
             } else {
                 response["circleCIBuild"] = "FAIL"
-                // Don't include as part of status, credits might run out resulting
+                // Don't include as part of status, credits might run out resulting in fail
                 // status = "FAIL"
             }
             val circleciTimingEnd = Date()
             val circleciTimingDiff: Long = circleciTimingEnd.time - circleciTimingStart.time
-//        response["circleCIBuildTiming"] = SimpleDateFormat("mm:ss.SSS").format(Date(circleciTimingDiff))
             logger.log(
                 Level.INFO,
                 "HealthEP - CircleCI connection time: ${SimpleDateFormat("mm:ss.SSS").format(Date(circleciTimingDiff))}"
