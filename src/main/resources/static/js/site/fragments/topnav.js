@@ -20,7 +20,7 @@ async function setVarsTopNav(darkMode, placeNames, timezone, notificationAlerts,
     setTimeout(function () {
         const http = new Http("check compreface status");
         http.ajax("get", "/status/compreface").then(function (data) {
-            if (data.hasOwnProperty("status") && data.status === false) {
+            if (data.hasOwnProperty("comprefaceStatus") && data.comprefaceStatus === false) {
                 shashin.showToastMessage("CompreFace server check failed", "Check CompreFace server connection.", {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",

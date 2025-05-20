@@ -219,7 +219,7 @@ class ToolsController {
             }
         }
 
-        return "{\"status\":$status,\"msg\":\"\"}"
+        return "{\"comprefaceStatus\":$status,\"stats\":${ApiResponse.SUCCESS.status},\"msg\":\"\"}"
     }
 
     @RequestMapping(value = ["/api/v1/status"], method = [RequestMethod.GET], produces = ["application/json"])
@@ -227,7 +227,7 @@ class ToolsController {
     fun getStatusApi(model: Model,@RequestParam ignoreBuildCheck: Optional<Boolean>): String {
         val ignoreBuild = ignoreBuildCheck.orElse(false)
         val healthData = buildHealthData(model,ignoreBuild)
-        return "{\"status\":\""+healthData["status"]+"\",\"endpointProcessingTimeText\":\""+healthData["endpointProcessingTimeText"]+"\"}"
+        return "{\"serverStatus\":\""+healthData["serverStatus"]+"\",\"endpointProcessingTimeText\":\""+healthData["endpointProcessingTimeText"]+"\"}"
     }
 
     @GetMapping("/health")
@@ -255,7 +255,7 @@ class ToolsController {
 
         var status = "OK"
 
-        response["status"] = status
+        response["serverStatus"] = status
 
         response["endpointProcessingTimeText"] = "0 ms"
 
@@ -393,7 +393,10 @@ class ToolsController {
 
         response["serverTimezone"] = ZoneId.systemDefault()
 
-        response["status"] = status
+        response["serverStatus"] = status
+
+        response["msg"] = ""
+        response["status"] = ApiResponse.SUCCESS.status
 
         return response
     }
