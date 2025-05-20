@@ -446,7 +446,7 @@ class APITests {
         var os = ""
         if (jsonString.isNotBlank()) {
             jsonNode = mapper.readTree(jsonString)
-            status = jsonNode.get("status").textValue()
+            status = jsonNode.get("serverStatus").textValue()
             os = jsonNode.get("system").get("os").textValue()
         }
 
@@ -464,7 +464,7 @@ class APITests {
         var singleStatus = ""
         if (jsonString.isNotBlank()) {
             jsonNode = mapper.readTree(jsonString)
-            singleStatus = jsonNode.get("status").textValue()
+            singleStatus = jsonNode.get("serverStatus").textValue()
         }
 
         Assertions.assertTrue(singleStatus == "OK")
