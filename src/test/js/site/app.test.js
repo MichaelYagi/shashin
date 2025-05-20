@@ -20,31 +20,25 @@ describe('#shashin app tests', function() {
     it('enable debug console output', function() {
         const consoleSpy = sinon.spy(console, 'log');
 
-        // console.log(shashin)
         shashin.enableDebug();
         assert.isTrue(shashin.showDebug);
 
         shashin.printMessageToConsole("test message", {tags: ["test"]});
-
-        assert.isTrue(consoleSpy.calledWith("test message. Tag: test"));
-
         shashin.printMessageToConsole("tik");
-
-        assert.isTrue(consoleSpy.calledWith("tik. Tag: all"));
-
         shashin.printMessageToConsole("tok", {tags: ["tik"]});
-
-        assert.isTrue(consoleSpy.calledWith("tok. Tag: tik"));
-
         shashin.printMessageToConsole("fail", {tags: ["sinon","tik","tok"]});
+        shashin.printMessageToConsole("fail", {tags: ["sinon","tik","all","tok"]});
 
-        assert.isTrue(consoleSpy.calledWith("fail. Tag: sinon"));
-        assert.isTrue(consoleSpy.calledWith("fail. Tag: tik"));
-        assert.isTrue(consoleSpy.calledWith("fail. Tag: tok"));
-
+        assert.isTrue(consoleSpy.calledWith("test message. Tags: test"));
+        assert.isTrue(consoleSpy.calledWith("tik. Tags: all"));
+        assert.isTrue(consoleSpy.calledWith("tok. Tags: tik"));
+        assert.isTrue(consoleSpy.calledWith("fail. Tags: sinon,tik,tok"));
         assert.isFalse(consoleSpy.calledWith("failz. Tag: sinon"));
+        assert.isTrue(consoleSpy.calledWith("fail. Tags: all"));
 
         consoleSpy.restore();
+
+        // assert.isTrue(true);
     });
 
     it('disable debug console output', function() {
