@@ -381,15 +381,16 @@ class ToolsController {
         systemMap["os"] = System.getProperty("os.name") + " v" + System.getProperty("os.version") + " " + System.getProperty("os.arch")
         systemMap["utcTimestampMS"] = System.currentTimeMillis()
         response["system"] = systemMap
-
-        val serverTimingEnd = Date()
-
-        val serverTimingDiff: Long = serverTimingEnd.time - serverTimingStart.time
-
-        response["endpointProcessingTimeMS"] = serverTimingDiff
-        response["endpointProcessingTimeText"] = "$serverTimingDiff ms"
-        logger.log(Level.INFO, "HealthEP - Total request time: ${SimpleDateFormat("mm:ss:SSS").format(Date(serverTimingDiff))}")
         metricsUtil.end()
+
+        response["endpointSlowestProcessingTimeMS"] = metricsUtil.getMaxTime()
+        response["endpointSlowestProcessingTimeModule"] = metricsUtil.getMaxTimeModule().toString()
+        response["endpointFastestProcessingTimeMS"] = metricsUtil.getMinTime()
+        response["endpointFastestProcessingTimeModule"] = metricsUtil.getMinTimeModule().toString()
+        response["endpointAverageProcessingTimeMS"] = String.format("%.2f", metricsUtil.getAverageTime()).toDouble()
+        response["endpointProcessingTimeMS"] = metricsUtil.getTotalElapsedTime()
+        response["endpointProcessingTimeText"] = metricsUtil.getTotalElapsedTime().toString() + " ms"
+        logger.log(Level.INFO, "HealthEP - Total request time: ${SimpleDateFormat("mm:ss:SSS").format(Date(metricsUtil.getTotalElapsedTime()))}")
 
         response["serverTimezone"] = ZoneId.systemDefault()
 
