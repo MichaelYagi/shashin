@@ -427,7 +427,7 @@
         if (timelineSettings.dbOperationComplete === true) {
             const query = timelineSettings.db.metadataList.where({id: metadataId});
 
-            shashin.printMessageToConsole("Using dexie to render metadata " + metadataId, {tags: ["timelineRenderMetadata","dexie"]});
+            shashin.printMessageToConsole("Using dexie to renderMetadata " + metadataId, {tags: ["timelineRenderMetadata","dexie"]});
 
             query.toArray(function (metadataList) {
                 const favoritesMap = timelineSettings.favoritesMap;
@@ -1693,7 +1693,7 @@
                 query = timelineSettings.db.metadataList.where({year: year, month: month, day: day}).and(metadata => metadata.type.includes(mediaTypeFilter));
             }
 
-            shashin.printMessageToConsole("Using dexie with media type " + mediaTypeFilter, {tags: ["timelineQuery","dexie"]});
+            shashin.printMessageToConsole("attachAssociatedMetadata using dexie with media type " + mediaTypeFilter + " for " + date, {tags: ["timelineQuery","dexie"]});
 
             query.toArray(function (metadataList) {
                 const favoritesMap = timelineSettings.favoritesMap;
