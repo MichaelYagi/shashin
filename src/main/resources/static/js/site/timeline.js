@@ -1077,12 +1077,17 @@
                                 }
                             } else {
                                 // 1 sec delay for smoother scrolling
-                                setTimeout(async () => {
+                                let toValue = 1000;
+                                if (timelineSettings.dbOperationComplete === true) {
+                                    toValue = 0;
+                                }
+
+                                setTimeout(async() => {
                                     if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
                                         await timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
                                         timelineSettings.distanceToFooter = calculateDistanceToFooter();
                                     }
-                                }, 1000);
+                                }, toValue);
                             }
 
                             timelineSettings.distanceToFooter = calculateDistanceToFooter();
