@@ -108,9 +108,10 @@ class TestController {
             val i = DuplicateImageChecker()
             i.setFirstImage(setOneFilename)
             i.setSecondImage(setTwoFilename)
+            i.setCrop(true)
             val isDuplicate = i.isDuplicate()
 
-            model["text"] = "isDupe: "+isDuplicate.toString() + " - " + i.getDifference()
+            model["text"] = "isDupe: "+isDuplicate.toString() + " - " + i.getDifference() + " - isDifferentSize: " + i.getDifferentSize().toString()
 
             // data:image/png;base64,
             val pre = "data:image/png;base64, "
