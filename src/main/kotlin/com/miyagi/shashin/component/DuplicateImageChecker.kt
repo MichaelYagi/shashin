@@ -14,7 +14,7 @@ import kotlin.math.abs
 class DuplicateImageChecker {
     private var one: BufferedImage? = null
     private var two: BufferedImage? = null
-    private var difference = 0.0
+    private var similarity = 0.0
     private var threshold = 85.0
     private var crop = false
     private var differentSize = false
@@ -69,17 +69,17 @@ class DuplicateImageChecker {
                 }
                 val maxDiff = 3L * 255 * width * height
 
-                difference = 1.0-(diff / maxDiff)
+                similarity = 1.0-(diff / maxDiff)
 
-                return (100.0 * difference) >= threshold
+                return (100.0 * similarity) >= threshold
             } else {
                 differentSize = true
             }
 
-            difference = 1.0
+            similarity = 0.0
             return false
         } else {
-            difference = 1.0
+            similarity = 0.0
             return false
         }
     }
@@ -153,8 +153,8 @@ class DuplicateImageChecker {
         return this.crop
     }
 
-    fun getDifference(): Double? {
-        return difference
+    fun getSimilarity(): Double? {
+        return similarity
     }
 
     fun getDifferentSize(): Boolean {

@@ -111,7 +111,7 @@ class TestController {
             i.setCrop(true)
             val isDuplicate = i.isDuplicate()
 
-            model["text"] = "isDupe: "+isDuplicate.toString() + " - " + i.getDifference() + " - isDifferentSize: " + i.getDifferentSize().toString()
+            model["text"] = "isDupe: "+i.getSimilarity().toString() + " - " + i.isDuplicate() + " - isDifferentSize: " + i.getDifferentSize().toString()
 
             // data:image/png;base64,
             val pre = "data:image/png;base64, "
