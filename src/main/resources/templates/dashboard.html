@@ -279,8 +279,8 @@
                         $("#endpointProcessingTimeMS").text(data["endpointProcessingTimeMS"] + " ms");
                     }
                     $("#endpointAverageProcessingTimeMS").text("0 ms");
-                    if (data["endpointAverageProcessingTimeMS"] !== null) {
-                        $("#endpointAverageProcessingTimeMS").text(data["endpointAverageProcessingTimeMS"] + " ms");
+                    if (data["endpointAverageProcessingTimeMS"] !== null && data["endpointAllTimings"] !== null) {
+                        $("#endpointAverageProcessingTimeMS").text(data["endpointAverageProcessingTimeMS"] + " ms for " + data["endpointAllTimings"].length + " calls");
                     }
                     $("#endpointFastestProcessingTimeMS").text("0 ms");
                     if (data["endpointFastestProcessingTimeMS"] !== null && data["endpointFastestProcessingTimeModule"] !== null) {
