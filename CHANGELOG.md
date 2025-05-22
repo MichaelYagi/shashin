@@ -11,7 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
-- Dexie.js
+- Dexie.js for timeline
 
 ### Changed
 
