@@ -373,6 +373,7 @@ class DashboardController {
         response["endpointFastestProcessingTimeMS"] = metricsUtil.getMinTime()
         response["endpointFastestProcessingTimeModule"] = metricsUtil.getMinTimeModule().toString()
         response["endpointAverageProcessingTimeMS"] = String.format("%.2f", metricsUtil.getAverageTime()).toDouble()
+        response["endpointAllTimings"] = metricsUtil.getAllTimings()
         response["endpointProcessingTimeMS"] = metricsUtil.getTotalElapsedTime()
         response["endpointProcessingTimeText"] = metricsUtil.getTotalElapsedTime().toString() + " ms"
 
