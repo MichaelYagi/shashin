@@ -11,11 +11,20 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
-- Dexie.js for timeline
 
 ### Changed
 
 ### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [2.10.3] - 2025-05-22
+### Added
+- Dexie.js for timeline
 
 ### Removed
 - Automatic browser opening after server start
