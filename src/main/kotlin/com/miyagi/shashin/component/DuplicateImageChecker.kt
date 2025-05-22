@@ -15,8 +15,9 @@ class DuplicateImageChecker {
     private var one: BufferedImage? = null
     private var two: BufferedImage? = null
     private var difference = 0.0
-    private var threshold = 15
+    private var threshold = 85.0
     private var crop = false
+    private var differentSize = false
 
     private var logger: Logger = Logger.getLogger(DuplicateImageChecker::class.simpleName)
 
@@ -68,15 +69,17 @@ class DuplicateImageChecker {
                 }
                 val maxDiff = 3L * 255 * width * height
 
-                difference = diff / maxDiff
+                difference = 1.0-(diff / maxDiff)
 
-                return (100.0 * (difference)).toInt() < threshold
+                return (100.0 * difference) >= threshold
+            } else {
+                differentSize = true
             }
 
-            difference = 0.0
+            difference = 1.0
             return false
         } else {
-            difference = 0.0
+            difference = 1.0
             return false
         }
     }
@@ -134,15 +137,27 @@ class DuplicateImageChecker {
     }
 
     // 1-100
-    fun setThreshold(threshold: Int) {
+    fun setThreshold(threshold: Double) {
         this.threshold = threshold
+    }
+
+    fun getThreshold(): Double {
+        return this.threshold
     }
 
     fun setCrop(crop: Boolean) {
         this.crop = crop
     }
 
+    fun getCrop(): Boolean {
+        return this.crop
+    }
+
     fun getDifference(): Double? {
         return difference
+    }
+
+    fun getDifferentSize(): Boolean {
+        return differentSize
     }
 }
