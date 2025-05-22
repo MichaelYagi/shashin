@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import java.io.File
 import java.util.logging.Level
 import java.util.logging.Logger
 import kotlin.io.path.Path
@@ -178,7 +179,11 @@ class AtomFeedView : AbstractAtomFeedView() {
                     link.href = "$baseUrl/api/v1/image/${metadata.getId()}"
                     link.rel = "enclosure"
                     link.type = metadata.getType()
-                    link.length = Files.size(Path(metadata.getPath()!!))
+                    if (File(metadata.getPath()!!).exists()) {
+                        link.length = Files.size(Path(metadata.getPath()!!))
+                    } else {
+                        throw Exception("File not found: ${metadata.getPath()}")
+                    }
                     entry.alternateLinks = listOf(link)
                     val author: SyndPerson = Person()
                     author.name = metadata.getId()

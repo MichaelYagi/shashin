@@ -19,6 +19,7 @@ import java.nio.file.Files
 import java.util.*
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import java.io.File
 import kotlin.collections.MutableList
 import kotlin.io.path.Path
 
@@ -162,7 +163,11 @@ class RssFeedView : AbstractRssFeedView() {
                     val enc = Enclosure()
                     enc.url = "$baseUrl/api/v1/image/${metadata.getId()}"
                     enc.type = metadata.getType()
-                    enc.length = Files.size(Path(metadata.getPath()!!))
+                    if (File(metadata.getPath()!!).exists()) {
+                        enc.length = Files.size(Path(metadata.getPath()!!))
+                    } else {
+                        throw Exception("File not found: ${metadata.getPath()}")
+                    }
                     entry.enclosures = mutableListOf(enc)
                     rssList.add(entry)
                 }
