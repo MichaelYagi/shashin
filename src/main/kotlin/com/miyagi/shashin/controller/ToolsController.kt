@@ -109,8 +109,11 @@ class ToolsController {
 
         if (githubKey != null && githubKey != "") {
             val array = TextUtils.getReleases(githubKey!!)
-            if (array != null && array.isNotEmpty() && array[0].containsKey("name")) {
-                val latestReleaseName = array[0]["name"]
+            if (array != null && array.isNotEmpty() && array[0].containsKey("name") && array[0].containsKey("tag_name")) {
+                var latestReleaseName = array[0]["name"]
+                if (latestReleaseName == null) {
+                    latestReleaseName = array[0]["tag_name"]
+                }
                 response["releaseVersion"] = latestReleaseName.toString().drop(1)
                 response["releaseVersionName"] = latestReleaseName
                 response["status"] = ApiResponse.SUCCESS.status
