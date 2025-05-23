@@ -5,6 +5,8 @@ import ai.djl.modality.cv.ImageFactory
 import ai.djl.modality.cv.output.DetectedObjects
 import ai.djl.repository.zoo.Criteria
 import com.drew.imaging.ImageMetadataReader
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
@@ -16,6 +18,7 @@ import com.miyagi.shashin.component.ScaperMessage
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.ImageProcessing
 import com.miyagi.shashin.util.ImageProcessing.Companion.buildObjectRecognitionCriteria
@@ -87,23 +90,29 @@ class TestController {
     }
 
     @Secured("ROLE_SUPER")
-    @PostMapping("/test")
-    fun posttest(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
-        model["activePage"] = "test"
-        model["text"] = "Enter fields"
-        model["setone"] = ""
-        model["settwo"] = ""
-        model["base64_1"] = ""
+    @RequestMapping(value = ["/test"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun posttest(model: Model, request: HttpServletRequest, response: HttpServletResponse, @RequestBody requestBody: JsonNode): String {
+        val payloadMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
+        val response = mutableMapOf<String, Any?>()
+
+        response["activePage"] = "test"
+        response["text"] = "Enter fields"
+        response["setone"] = ""
+        response["settwo"] = ""
+        response["base64_1"] = ""
+        response["msg"] = ""
+        response["status"] = ApiResponse.FAIL.status
 
         // C:\Users\Michael\Downloads\PXL_20230721_142144451.MP.jpg
         // C:\Users\Michael\Downloads\PXL_20210930_164602780.jpg
         // C:\Users\Michael\Downloads\PXL_20210930_164602780_resize.jpg
-        if (request.getParameter("setone") != null && request.getParameter("settwo") != null) {
-            var setOneFilename = request.getParameter("setone").toString()
-            var setTwoFilename = request.getParameter("settwo").toString()
+        if (payloadMap.containsKey("setone") && payloadMap.containsKey("settwo")) {
+            var setOneFilename = payloadMap["setone"].toString()
+            var setTwoFilename = payloadMap["settwo"].toString()
 
-            model["setone"] = setOneFilename
-            model["settwo"] = setTwoFilename
+            response["setone"] = setOneFilename
+            response["settwo"] = setTwoFilename
 
             val i = DuplicateImageChecker()
             i.setFirstImage(setOneFilename)
@@ -111,15 +120,17 @@ class TestController {
             i.setCrop(true)
             val isDuplicate = i.isDuplicate()
 
-            model["text"] = "isDupe: "+i.getSimilarity().toString() + " - " + i.isDuplicate() + " - isDifferentSize: " + i.getDifferentSize().toString()
+            response["text"] = "isDupe: "+i.getSimilarity().toString() + " - " + isDuplicate + " - isDifferentSize: " + i.getDifferentSize().toString()
 
             // data:image/png;base64,
             val pre = "data:image/png;base64, "
-            model["base64_1"] = pre + i.getBase64FirstImage()
-            model["base64_2"] = pre + i.getBase64SecondImage()
+            response["base64_1"] = pre + i.getBase64FirstImage()
+            response["base64_2"] = pre + i.getBase64SecondImage()
+
+            response["status"] = ApiResponse.SUCCESS.status
         }
 
-        return "test"
+        return mapper.writeValueAsString(response)
     }
 
     @Secured("ROLE_SUPER")
