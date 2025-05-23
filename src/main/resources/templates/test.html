@@ -97,7 +97,7 @@
 
                                 for (let index in metadataList) {
                                     const metadata = metadataList[index];
-                                    html += "<img class='dataPath' data-path='"+metadata.path+"' src='/api/v1/thumbnails/centered/"+metadata.id+"' height='100px' width='100px'>";
+                                    html += "<img class='dataPath' data-path='"+metadata.thumbnailPathCentered+"' src='/api/v1/thumbnails/centered/"+metadata.id+"' height='100px' width='100px'>";
                                 }
 
                                 $("#photos").html(html);
