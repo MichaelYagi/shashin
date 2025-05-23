@@ -240,7 +240,7 @@ async function saveMetadata(e) {
             setTimeout(function () {
                 const http = new Http("timeline");
                 http.ajax("get", "/timeline/yearmonthcounts/all").then(function (data) {
-                    if (data.hasOwnProperty("metadataDates") && data.hasOwnProperty("metadataYearMonthCount")) {
+                    if (data.hasOwnProperty("metadataDates") && data.hasOwnProperty("metadataYearMonthCount") && data.hasOwnProperty("metadataDatesHash")) {
                         timelineSettings.timelineDates = data.metadataDates;
                         timelineSettings.metadataYearMonthCount = data.metadataYearMonthCount;
                         timelineSettings.timelineDatesHash = data.metadataDatesHash;
