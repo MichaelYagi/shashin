@@ -114,7 +114,7 @@ class ToolsController {
                 if (latestReleaseName == null) {
                     latestReleaseName = array[0]["tag_name"]
                 }
-                response["releaseVersion"] = latestReleaseName.toString().drop(1)
+                response["releaseVersion"] = if (latestReleaseName == null) latestReleaseName else latestReleaseName.toString().drop(1)
                 response["releaseVersionName"] = latestReleaseName
                 response["status"] = ApiResponse.SUCCESS.status
             }
