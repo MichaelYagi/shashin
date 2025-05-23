@@ -13,15 +13,13 @@
             <h2 class="mt-3">Test Page</h2>
 
             <h3 class="mt-3">Dupe Detector</h3>
-            <span id="sometext" th:text="${text}"></span>
-            <form action="/test" method="post">
-                <input type="text" name="setone" th:value="${setone}" style="width: 90%"><br>
-                <input type="text" name="settwo" th:value="${settwo}" style="width: 90%"><br>
-                <input type="submit">
-            </form>
-
-            <img th:src="${base64_1}" style="width: 200px"><br>
-            <img th:src="${base64_2}" style="width: 200px"><br>
+            <span id="sometext"></span>
+            <input type="text" id="setone" name="setone" style="width: 90%"><br>
+            <input type="text" id="settwo" name="settwo" style="width: 90%"><br>
+            <button id="dupeSubmit">Is duplicate?</button>
+            <br>
+            <img id="base64_1" src="" style="width: 200px"><br>
+            <img id="base64_2" src="" style="width: 200px"><br>
 
             <h3 class="mt-3">Dexie Test</h3>
 
@@ -29,7 +27,7 @@
                 <input type="text" id="year" placeholder="year"><input type="text" id="month" placeholder="month"><input type="text" id="day" placeholder="day"><br>
                 <input type="text" id="mediaType" placeholder="media type"><br>
                 <button id="randomDate" style="display: none">Get random date</button>
-                <br><br>
+                <br>
                 <input id="dateSubmit" type="submit">
             </span>
 
@@ -133,22 +131,21 @@
                 });
             }, 0);
 
-            $("#dateSubmit").on("click", function (e) {
+            $("#dupeSubmit").on("click", function (e) {
                 e.preventDefault();
 
-                const year = parseInt($("#year").val());
-                const month = parseInt($("#month").val());
-                const day = parseInt($("#day").val());
-
-                if (db !== null) {
-                    db.metadataList.where({year: year, month: month, day: day}).toArray(function (metadataList) {
-                        console.log(metadataList);
-                        $("#result").text(JSON.stringify(metadataList));
-                    });
-                } else {
-                    $("#result").text("DB not initiated");
-                }
-            })
+                const http = new Http("dupe detect");
+                const json = {
+                    setone: $("#setone").val(),
+                    settwo: $("#settwo").val()
+                };
+                http.ajax("post", "/test", JSON.stringify(json)).then(function (results) {
+                    // console.log(results)
+                    $("#base64_1").attr("src",results.base64_1);
+                    $("#base64_2").attr("src",results.base64_2);
+                    $("#sometext").text(results.text);
+                });
+            });
         });
     </script>
 
