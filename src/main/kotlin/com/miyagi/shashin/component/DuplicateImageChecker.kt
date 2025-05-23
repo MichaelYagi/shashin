@@ -1,6 +1,5 @@
 package com.miyagi.shashin.component
 
-import com.sun.javafx.iio.common.ImageTools.scaleImage
 import net.coobird.thumbnailator.Thumbnails
 import net.coobird.thumbnailator.geometry.Positions
 import java.awt.image.BufferedImage
