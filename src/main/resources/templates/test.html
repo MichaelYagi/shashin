@@ -90,13 +90,42 @@
 
                             function display(metadataList) {
                                 let html = "";
+
+                                if (metadataList.length > 0) {
+                                    html += "<a href='/timeline#" + metadataList[0].year + "-" + metadataList[0].month + "-" + metadataList[0].day + "' target='_blank'>Open in timeline</a><br>";
+                                }
+
                                 for (let index in metadataList) {
                                     const metadata = metadataList[index];
-                                    html += "<a href='/timeline#"+metadata.year+"-"+metadata.month+"-"+metadata.day+"' target='_blank'><img src='/api/v1/thumbnails/centered/"+metadata.id+"' height='100px' width='100px'></a>";
+                                    html += "<img class='dataPath' data-path='"+metadata.path+"' src='/api/v1/thumbnails/centered/"+metadata.id+"' height='100px' width='100px'>";
                                 }
+
                                 $("#photos").html(html);
                                 $("#result").text(JSON.stringify(metadataList, undefined, 2));
+
+                                if ($(".dataPath").length > 1) {
+                                    $(".dataPath").on("click", function (e) {
+                                        fillInput($(this).attr("data-path"));
+                                    })
+
+                                    const fillInput = function (filePath) {
+                                        if ($("#setone").val() !== "" && $("#settwo").val() === "") {
+                                            $("#settwo").val(filePath);
+                                        } else if ($("#settwo").val() !== "" && $("#setone").val() === "") {
+                                            $("#setone").val(filePath);
+                                        } else if ($("#setone").val() !== "" && $("#settwo").val() !== "") {
+                                            $("#setone").val("");
+                                            $("#settwo").val("");
+
+                                            $("#setone").val(filePath);
+                                        } else if ($("#setone").val() === "" && $("#settwo").val() === "") {
+                                            $("#setone").val(filePath);
+                                        }
+                                    }
+                                }
                             }
+
+
                         });
 
                         http.ajax("get", "/timeline/yearmonthcounts/all").then(function (data) {
@@ -107,28 +136,30 @@
 
                                 $("#randomDate").css("display", "block");
 
-                                const num = getRandomInteger(1, timelineDatesData.length);
-                                const timelineDateData = timelineDatesData[num];
-                                $("#year").val(timelineDateData.year);
-                                $("#month").val(timelineDateData.month);
-                                $("#day").val(timelineDateData.day);
-
-                                $("#dateSubmit").click();
-
-                                $("#randomDate").on("click", function (e) {
-                                    e.preventDefault();
-
+                                if (timelineDatesData.length > 0) {
                                     const num = getRandomInteger(1, timelineDatesData.length);
                                     const timelineDateData = timelineDatesData[num];
                                     $("#year").val(timelineDateData.year);
                                     $("#month").val(timelineDateData.month);
                                     $("#day").val(timelineDateData.day);
 
-                                    $("#photos").empty();
-                                    $("#result").empty();
-
                                     $("#dateSubmit").click();
-                                });
+
+                                    $("#randomDate").on("click", function (e) {
+                                        e.preventDefault();
+
+                                        const num = getRandomInteger(1, timelineDatesData.length);
+                                        const timelineDateData = timelineDatesData[num];
+                                        $("#year").val(timelineDateData.year);
+                                        $("#month").val(timelineDateData.month);
+                                        $("#day").val(timelineDateData.day);
+
+                                        $("#photos").empty();
+                                        $("#result").empty();
+
+                                        $("#dateSubmit").click();
+                                    });
+                                }
                             }
 
                             function getRandomInteger(min, max) {
