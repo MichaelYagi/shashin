@@ -225,7 +225,7 @@
 
         const http = new Http("timeline");
         http.ajax("get", "/timeline/yearmonthcounts/"+mediaTypeFilter).then(function (data) {
-            if (data.hasOwnProperty("metadataDates") && data.hasOwnProperty("metadataYearMonthCount")) {
+            if (data.hasOwnProperty("metadataDates") && data.hasOwnProperty("metadataYearMonthCount") && data.hasOwnProperty("metadataDatesHash")) {
                 const timelineYearMonthCountsData = data["metadataYearMonthCount"];
                 const timelineDatesData = data["metadataDates"];
                 const timelineDatesHash = data["metadataDatesHash"];
