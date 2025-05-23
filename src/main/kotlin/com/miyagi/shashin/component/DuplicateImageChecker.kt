@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.Base64
+import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
 import kotlin.math.abs
@@ -121,6 +122,8 @@ class DuplicateImageChecker {
         if (file.exists()) {
             val bi = ImageIO.read(file)
             this.one = bi
+        } else {
+            logger.log(Level.INFO, "File $one does not exist for image 1")
         }
     }
 
@@ -133,6 +136,8 @@ class DuplicateImageChecker {
         if (file.exists()) {
             val bi = ImageIO.read(file)
             this.two = bi
+        } else {
+            logger.log(Level.INFO, "File $two does not exist for image 2")
         }
     }
 
