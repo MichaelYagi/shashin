@@ -6,6 +6,7 @@ import net.coobird.thumbnailator.geometry.Positions
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.IOException
 import java.util.Base64
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -16,6 +17,8 @@ import kotlin.math.abs
 class DuplicateImageChecker {
     private var one: BufferedImage? = null
     private var two: BufferedImage? = null
+    private var oneFileName: String? = null
+    private var twoFileName: String? = null
     private var similarity = 0.0
     private var threshold = 85.0
     private var crop = false
@@ -24,8 +27,39 @@ class DuplicateImageChecker {
 
     private var logger: Logger = Logger.getLogger(DuplicateImageChecker::class.simpleName)
 
-    fun isDuplicate(): Boolean {
+    private fun isGreyScale(image: BufferedImage): Boolean {
+        try {
+            val width = image.width
+            val height = image.height
 
+            var pixel: Int
+            var red: Int
+            var green: Int
+            var blue: Int
+
+            for (i in 0 until width) {
+                for (j in 0 until height) {
+                    // scan through each pixel
+                    pixel = image.getRGB(i, j)
+                    red = (pixel shr 16) and 0xff
+                    green = (pixel shr 8) and 0xff
+                    blue = pixel and 0xff
+
+                    // check if R=G=B
+                    if (red != green || green != blue) {
+                        return false
+                    }
+                }
+            }
+
+            return true
+        } catch (e: IOException) {
+            logger.log(Level.INFO, "Error detecting greyscale", e)
+            return false
+        }
+    }
+
+    fun isDuplicate(): Boolean {
         if (one != null && two != null) {
             var adjustedWidth = one!!.width
             var adjustedHeight = one!!.height
@@ -96,6 +130,8 @@ class DuplicateImageChecker {
 
                 similarity = 1.0-(diff / maxDiff)
 
+                similarity = String.format("%.2f", similarity).toDouble()
+
                 return (100.0 * similarity) >= threshold
             } else {
                 differentSize = true
@@ -141,7 +177,16 @@ class DuplicateImageChecker {
         return null
     }
 
+    fun getFirstFilename(): String? {
+        return oneFileName
+    }
+
+    fun getSecondFilename(): String? {
+        return twoFileName
+    }
+
     fun setFirstImage(one: String) {
+        oneFileName = one
         val file = File(one)
         if (file.exists()) {
             val bi = ImageIO.read(file)
@@ -156,6 +201,7 @@ class DuplicateImageChecker {
     }
 
     fun setSecondImage(two: String) {
+        twoFileName = two
         val file = File(two)
         if (file.exists()) {
             val bi = ImageIO.read(file)
