@@ -80,12 +80,16 @@
                             mediaType = $("#mediaType").val();
 
                             if (mediaType === "all" || mediaType === "") {
-                                query = db.metadataList.where({year: year, month: month, day: day});
+                                query = db.metadataList.where({year: year, month: month, day: day}).reverse().sortBy("time", function (metadataList) {
+                                    display(metadataList);
+                                });
                             } else {
-                                query = db.metadataList.where({year: year, month: month, day: day}).and(metadata => metadata.type.includes(mediaType));
+                                query = db.metadataList.where({year: year, month: month, day: day}).and(metadata => metadata.type.includes(mediaType)).reverse().sortBy("time", function (metadataList) {
+                                    display(metadataList);
+                                });
                             }
 
-                            query.toArray(function (metadataList) {
+                            function display(metadataList) {
                                 let html = "";
                                 for (let index in metadataList) {
                                     const metadata = metadataList[index];
@@ -93,7 +97,7 @@
                                 }
                                 $("#photos").html(html);
                                 $("#result").text(JSON.stringify(metadataList, undefined, 2));
-                            });
+                            }
                         })
                     }
                 });
