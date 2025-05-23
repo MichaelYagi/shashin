@@ -105,6 +105,11 @@
 
                                 if ($(".dataPath").length > 1) {
                                     $(".dataPath").on("click", function (e) {
+                                        e.preventDefault();
+
+                                        $("#base64_1").attr("src","");
+                                        $("#base64_2").attr("src","");
+
                                         fillInput($(this).attr("data-path"));
                                     })
 
@@ -147,6 +152,9 @@
 
                                     $("#randomDate").on("click", function (e) {
                                         e.preventDefault();
+
+                                        $("#base64_1").attr("src","");
+                                        $("#base64_2").attr("src","");
 
                                         const num = getRandomInteger(1, timelineDatesData.length);
                                         const timelineDateData = timelineDatesData[num];

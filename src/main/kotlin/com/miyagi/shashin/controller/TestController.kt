@@ -118,6 +118,7 @@ class TestController {
             i.setFirstImage(setOneFilename)
             i.setSecondImage(setTwoFilename)
             i.setCrop(true)
+            i.setGreyScale(true)
             val isDuplicate = i.isDuplicate()
 
             response["text"] = "isDupe: "+i.getSimilarity().toString() + " - " + isDuplicate + " - isDifferentSize: " + i.getDifferentSize().toString()
