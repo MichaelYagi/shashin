@@ -121,7 +121,7 @@ class TestController {
 //            i.setGreyScale(true)
             val isDuplicate = i.isDuplicate()
 
-            response["text"] = "Is duplicate: " + isDuplicate + "\n" + "Similarity: " + i.getSimilarity().toString()
+            response["text"] = "Is duplicate: " + isDuplicate + "<br>" + "Similarity: " + i.getSimilarity().toString()
 
             // data:image/png;base64,
             val pre = "data:image/png;base64, "
