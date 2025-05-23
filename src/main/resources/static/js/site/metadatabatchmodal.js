@@ -197,24 +197,37 @@ async function saveBatchMetadata(e) {
             });
         }
 
-        if (activePage === "timeline" && timelineSettings.db !== null) {
+        if (activePage === "timeline") {
             setTimeout(function () {
-                const http = new Http("indexeddb test");
-                http.ajax("get", "/timeline/all/dates").then(async function (data) {
-                    if (data.hasOwnProperty("allMetadata") && data.hasOwnProperty("favorites") && data.hasOwnProperty("placeNameHeaders")) {
-                        const metadataList = data.allMetadata;
-                        timelineSettings.favoritesMap = data.favorites;
-                        timelineSettings.placeNameHeaders = data.placeNameHeaders;
-
-                        timelineSettings.db = new Dexie("MetadataDatabase");
-                        timelineSettings.db.version(1).stores({
-                            metadataList: `id, [year+month+day]`
-                        });
-
-                        timelineSettings.db.metadataList.bulkPut(metadataList);
+                const http = new Http("timeline");
+                http.ajax("get", "/timeline/yearmonthcounts/all").then(function (data) {
+                    if (data.hasOwnProperty("metadataDates") && data.hasOwnProperty("metadataYearMonthCount")) {
+                        timelineSettings.timelineDates = data.metadataDates;
+                        timelineSettings.metadataYearMonthCount = data.metadataYearMonthCount;
+                        timelineSettings.timelineDatesHash = data.metadataDatesHash;
                     }
                 });
             }, 0);
+
+            if (timelineSettings.db !== null) {
+                setTimeout(function () {
+                    const http = new Http("indexeddb test");
+                    http.ajax("get", "/timeline/all/dates").then(async function (data) {
+                        if (data.hasOwnProperty("allMetadata") && data.hasOwnProperty("favorites") && data.hasOwnProperty("placeNameHeaders")) {
+                            const metadataList = data.allMetadata;
+                            timelineSettings.favoritesMap = data.favorites;
+                            timelineSettings.placeNameHeaders = data.placeNameHeaders;
+
+                            timelineSettings.db = new Dexie("MetadataDatabase");
+                            timelineSettings.db.version(1).stores({
+                                metadataList: `id, [year+month+day]`
+                            });
+
+                            timelineSettings.db.metadataList.bulkPut(metadataList);
+                        }
+                    });
+                }, 0);
+            }
         }
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
