@@ -25,8 +25,8 @@
 
             <span id="dbtest" style="display: none;">
                 <input type="text" id="year" placeholder="year"><input type="text" id="month" placeholder="month"><input type="text" id="day" placeholder="day"><br>
-                <input type="text" id="mediaType" placeholder="media type"><br>
-                <button id="randomDate" style="display: none">Get random date</button><button id="dateSubmit">Get images for date using Dexie query</button>
+                <input type="text" id="mediaType" placeholder="media type"><button id="dateSubmit">Execute query</button><br>
+                <button id="randomDate" style="display: none">Get random date</button>
             </span>
 
             <span id="photos"></span>
@@ -51,7 +51,6 @@
                 const http = new Http("indexeddb test");
                 http.ajax("get", "/timeline/all/dates").then(async function (data) {
                     if (data.hasOwnProperty("allMetadata")) {
-                        $("#dbtest").css("display","block");
 
                         const metadataList = data.allMetadata;
 
@@ -98,44 +97,46 @@
                                 $("#photos").html(html);
                                 $("#result").text(JSON.stringify(metadataList, undefined, 2));
                             }
-                        })
-                    }
-                });
-
-                http.ajax("get", "/timeline/yearmonthcounts/all").then(function (data) {
-                    if (data.hasOwnProperty("metadataDates") && data.hasOwnProperty("metadataYearMonthCount")) {
-                        const timelineDatesData = data["metadataDates"];
-
-                        $("#randomDate").css("display", "block");
-
-                        const num = getRandomInteger(1, timelineDatesData.length);
-                        const timelineDateData = timelineDatesData[num];
-                        $("#year").val(timelineDateData.year);
-                        $("#month").val(timelineDateData.month);
-                        $("#day").val(timelineDateData.day);
-
-                        $("#dateSubmit").click();
-
-                        $("#randomDate").on("click", function (e) {
-                            e.preventDefault();
-
-                            const num = getRandomInteger(1, timelineDatesData.length);
-                            const timelineDateData = timelineDatesData[num];
-                            $("#year").val(timelineDateData.year);
-                            $("#month").val(timelineDateData.month);
-                            $("#day").val(timelineDateData.day);
-
-                            $("#photos").empty();
-                            $("#result").empty();
-
-                            $("#dateSubmit").click();
                         });
-                    }
 
-                    function getRandomInteger(min, max) {
-                        min = Math.ceil(min);
-                        max = Math.floor(max);
-                        return Math.floor(Math.random() * (max - min + 1)) + min;
+                        http.ajax("get", "/timeline/yearmonthcounts/all").then(function (data) {
+                            if (data.hasOwnProperty("metadataDates") && data.hasOwnProperty("metadataYearMonthCount")) {
+                                $("#dbtest").css("display","block");
+
+                                const timelineDatesData = data["metadataDates"];
+
+                                $("#randomDate").css("display", "block");
+
+                                const num = getRandomInteger(1, timelineDatesData.length);
+                                const timelineDateData = timelineDatesData[num];
+                                $("#year").val(timelineDateData.year);
+                                $("#month").val(timelineDateData.month);
+                                $("#day").val(timelineDateData.day);
+
+                                $("#dateSubmit").click();
+
+                                $("#randomDate").on("click", function (e) {
+                                    e.preventDefault();
+
+                                    const num = getRandomInteger(1, timelineDatesData.length);
+                                    const timelineDateData = timelineDatesData[num];
+                                    $("#year").val(timelineDateData.year);
+                                    $("#month").val(timelineDateData.month);
+                                    $("#day").val(timelineDateData.day);
+
+                                    $("#photos").empty();
+                                    $("#result").empty();
+
+                                    $("#dateSubmit").click();
+                                });
+                            }
+
+                            function getRandomInteger(min, max) {
+                                min = Math.ceil(min);
+                                max = Math.floor(max);
+                                return Math.floor(Math.random() * (max - min + 1)) + min;
+                            }
+                        });
                     }
                 });
             }, 0);
