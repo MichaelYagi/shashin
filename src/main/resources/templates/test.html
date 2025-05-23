@@ -114,6 +114,8 @@
                         $("#month").val(timelineDateData.month);
                         $("#day").val(timelineDateData.day);
 
+                        $("#dateSubmit").click();
+
                         $("#randomDate").on("click", function (e) {
                             e.preventDefault();
 
@@ -125,6 +127,8 @@
 
                             $("#photos").empty();
                             $("#result").empty();
+
+                            $("#dateSubmit").click();
                         });
                     }
 
