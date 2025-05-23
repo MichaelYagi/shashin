@@ -89,7 +89,7 @@
                                 let html = "";
                                 for (let index in metadataList) {
                                     const metadata = metadataList[index];
-                                    html += "<img src='/api/v1/thumbnails/centered/"+metadata.id+"' height='100px' width='100px'>";
+                                    html += "<a href='/timeline#"+metadata.year+"-"+metadata.month+"-"+metadata.day+"' target='_blank'><img src='/api/v1/thumbnails/centered/"+metadata.id+"' height='100px' width='100px'></a>";
                                 }
                                 $("#photos").html(html);
                                 $("#result").text(JSON.stringify(metadataList, undefined, 2));
