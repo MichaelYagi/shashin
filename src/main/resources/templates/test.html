@@ -13,7 +13,7 @@
             <h2 class="mt-3">Test Page</h2>
 
             <h3 class="mt-3">Dupe Detector</h3>
-            <span id="sometext">Loading ...</span>
+            <span id="sometext"></span>
             <input type="text" id="setone" name="setone" style="width: 90%"><br>
             <input type="text" id="settwo" name="settwo" style="width: 90%"><br>
             <button id="dupeSubmit">Is duplicate?</button>
@@ -31,7 +31,7 @@
 
             <span id="photos"></span>
 
-            <pre id="result"></pre>
+            <pre id="result">Loading...</pre>
 
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
             <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
