@@ -1,5 +1,6 @@
 package com.miyagi.shashin.component
 
+import com.sun.javafx.iio.common.ImageTools.scaleImage
 import net.coobird.thumbnailator.Thumbnails
 import net.coobird.thumbnailator.geometry.Positions
 import java.awt.image.BufferedImage
@@ -19,6 +20,7 @@ class DuplicateImageChecker {
     private var threshold = 85.0
     private var crop = false
     private var differentSize = false
+    private var greyScale = false
 
     private var logger: Logger = Logger.getLogger(DuplicateImageChecker::class.simpleName)
 
@@ -40,13 +42,26 @@ class DuplicateImageChecker {
 
             val oneTn = Thumbnails.of(one).outputQuality(0.5)
 
+            var width = adjustedWidth
+            var height = adjustedHeight
             if (crop) {
+                width = size
+                height = size
                 oneTn.crop(Positions.CENTER).size(size, size)
             } else {
                 oneTn.size(adjustedWidth, adjustedHeight)
             }
 
-            one = oneTn.asBufferedImage()
+            var oneTnBI = oneTn.asBufferedImage()
+            if (greyScale) {
+                val grayscaleImage  = BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY)
+                val g2d = grayscaleImage.createGraphics()
+                g2d.drawImage(oneTnBI, 0, 0, null)
+                g2d.dispose()
+                oneTnBI = grayscaleImage
+            }
+
+            one = oneTnBI
 
             val twoTn = Thumbnails.of(two).outputQuality(0.5)
 
@@ -56,7 +71,16 @@ class DuplicateImageChecker {
                 twoTn.size(adjustedWidth, adjustedHeight)
             }
 
-            two = twoTn.asBufferedImage()
+            var twoTnBI = twoTn.asBufferedImage()
+            if (greyScale) {
+                val grayscaleImage = BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY)
+                val g2d = grayscaleImage.createGraphics()
+                g2d.drawImage(twoTnBI, 0, 0, null)
+                g2d.dispose()
+                twoTnBI = grayscaleImage
+            }
+
+            two = twoTnBI
 
             if (one!!.width == two!!.width && one!!.height == two!!.height) {
                 val width = one!!.width
@@ -152,6 +176,10 @@ class DuplicateImageChecker {
 
     fun setCrop(crop: Boolean) {
         this.crop = crop
+    }
+
+    fun setGreyScale(greyScale: Boolean) {
+        this.greyScale = greyScale
     }
 
     fun getCrop(): Boolean {
