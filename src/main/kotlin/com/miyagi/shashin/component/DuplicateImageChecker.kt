@@ -118,6 +118,7 @@ class DuplicateImageChecker {
             if (one!!.width == two!!.width && one!!.height == two!!.height) {
                 similarity = compareImages()
 
+                // Format to 2 decimal points
                 similarity = String.format("%.2f", similarity).toDouble()
 
                 return (100.0 * similarity) >= threshold
