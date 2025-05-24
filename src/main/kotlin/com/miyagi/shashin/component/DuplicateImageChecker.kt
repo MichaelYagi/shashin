@@ -116,18 +116,7 @@ class DuplicateImageChecker {
             two = twoTnBI
 
             if (one!!.width == two!!.width && one!!.height == two!!.height) {
-                val width = one!!.width
-                val height = one!!.height
-
-                var diff = 0.0
-                for (y in 0 until height) {
-                    for (x in 0 until width) {
-                        diff += pixelDiff(one!!.getRGB(x, y), two!!.getRGB(x, y))
-                    }
-                }
-                val maxDiff = 3L * 255 * width * height
-
-                similarity = 1.0-(diff / maxDiff)
+                similarity = compareImages()
 
                 similarity = String.format("%.2f", similarity).toDouble()
 
@@ -142,6 +131,21 @@ class DuplicateImageChecker {
             similarity = 0.0
             return false
         }
+    }
+
+    private fun compareImages(): Double {
+        val width = one!!.width
+        val height = one!!.height
+
+        var diff = 0.0
+        for (y in 0 until height) {
+            for (x in 0 until width) {
+                diff += pixelDiff(one!!.getRGB(x, y), two!!.getRGB(x, y))
+            }
+        }
+        val maxDiff = 3L * 255 * width * height
+
+        return 1.0-(diff / maxDiff)
     }
 
     private fun pixelDiff(rgb1: Int, rgb2: Int): Int {
