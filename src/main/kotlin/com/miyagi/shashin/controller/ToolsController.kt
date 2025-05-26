@@ -389,6 +389,7 @@ class ToolsController {
         response["endpointFastestProcessingTimeMS"] = metricsUtil.getMinTime()
         response["endpointFastestProcessingTimeModule"] = metricsUtil.getMinTimeModule().toString()
         response["endpointAverageProcessingTimeMS"] = String.format("%.2f", metricsUtil.getAverageTime()).toDouble()
+        response["endpointAllTimings"] = metricsUtil.getAllTimings()
         response["endpointProcessingTimeMS"] = metricsUtil.getTotalElapsedTime()
         response["endpointProcessingTimeText"] = metricsUtil.getTotalElapsedTime().toString() + " ms"
         logger.log(Level.INFO, "HealthEP - Total request time: ${SimpleDateFormat("mm:ss:SSS").format(Date(metricsUtil.getTotalElapsedTime()))}")
