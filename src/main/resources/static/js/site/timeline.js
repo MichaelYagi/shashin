@@ -33,6 +33,7 @@
         timelineSettings.thumbnailType = "centered";
         timelineSettings.thumbnailHeight = "120";
     }
+    timelineSettings.useDexie = false;
 
     const calculateDistanceToFooter = function() {
         return $(window).height() - $('#subfooter').offset().top;
@@ -71,25 +72,27 @@
         timelineSettings.metadataYearMonthCount = metadataYearMonthCount;
         timelineSettings.timelineDatesHash = timelineDatesHash;
 
-        setTimeout(function () {
-            const http = new Http("indexeddb test");
-            http.ajax("get", "/timeline/all/dates").then(async function (data) {
-                if (data.hasOwnProperty("allMetadata") && data.hasOwnProperty("favorites") && data.hasOwnProperty("placeNameHeaders")) {
-                    const metadataList = data.allMetadata;
-                    timelineSettings.favoritesMap = data.favorites;
-                    timelineSettings.placeNameHeaders = data.placeNameHeaders;
+        if (timelineSettings.useDexie === true) {
+            setTimeout(function () {
+                const http = new Http("indexeddb test");
+                http.ajax("get", "/timeline/all/dates").then(async function (data) {
+                    if (data.hasOwnProperty("allMetadata") && data.hasOwnProperty("favorites") && data.hasOwnProperty("placeNameHeaders")) {
+                        const metadataList = data.allMetadata;
+                        timelineSettings.favoritesMap = data.favorites;
+                        timelineSettings.placeNameHeaders = data.placeNameHeaders;
 
-                    timelineSettings.db = new Dexie("MetadataDatabase");
-                    timelineSettings.db.version(1).stores({
-                        metadataList: `id, [year+month+day]`
-                    });
+                        timelineSettings.db = new Dexie("MetadataDatabase");
+                        timelineSettings.db.version(1).stores({
+                            metadataList: `id, [year+month+day]`
+                        });
 
-                    timelineSettings.db.metadataList.bulkPut(metadataList).then(() => {
-                        timelineSettings.dbOperationComplete = true;
-                    });
-                }
-            });
-        }, 0);
+                        timelineSettings.db.metadataList.bulkPut(metadataList).then(() => {
+                            timelineSettings.dbOperationComplete = true;
+                        });
+                    }
+                });
+            }, 0);
+        }
 
         Util.setMetadataLocalStorage();
 
