@@ -204,6 +204,7 @@ class ToolsController {
         val currentUserObj = model.getAttribute("currentUser") as User?
 
         var status = true
+        var message = ""
 
         if (settings != null && currentUserObj != null && currentUserObj.getAuthority() != null && (currentUserObj.getAuthority()!! == "ROLE_ADMIN" || currentUserObj.getAuthority()!! == "ROLE_SUPER")) {
             val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
@@ -220,9 +221,16 @@ class ToolsController {
             } else {
                 faceRecogServicesAvailable
             }
+
+            if (status == false) {
+                message = "Check CompreFace server connection"
+                if (currentUserObj.getAuthority() == "ROLE_SUPER") {
+                    message += " and <a href='/settings' target='_blank'>settings</a>"
+                }
+            }
         }
 
-        return "{\"comprefaceStatus\":$status,\"status\":\"${ApiResponse.SUCCESS.status}\",\"msg\":\"\"}"
+        return "{\"comprefaceStatus\":$status,\"status\":\"${ApiResponse.SUCCESS.status}\",\"msg\":\"\",\"message\":\"$message\"}"
     }
 
     @RequestMapping(value = ["/api/v1/status"], method = [RequestMethod.GET], produces = ["application/json"])
