@@ -27,6 +27,7 @@ Uptime:&nbsp;<span id="uptimeText" th:text="${uptimeText}"></span><br>
 <th:block th:text="${'Endpoint slowest timing: '+endpointSlowestProcessingTimeMS+' ms processing module '+endpointSlowestProcessingTimeModule}"></th:block><br>
 <th:block th:text="${'Endpoint fastest timing: '+endpointFastestProcessingTimeMS+' ms processing module '+endpointFastestProcessingTimeModule}"></th:block><br>
 <th:block th:text="${'Endpoint average timing: '+endpointAverageProcessingTimeMS+' ms over ' + #lists.size(endpointAllTimings) + ' calls'}"></th:block><br>
+<th:block th:utext="${'Image check: '+(imageCheck == 'OK' ? imageCheck : '<span style=&quot;color: red;&quot;>'+imageCheck+'</span>')}"></th:block><br>
 <th:block th:utext="${'SQLite connection: '+(sqlLiteAvailable == 'OK' ? sqlLiteAvailable : '<span style=&quot;color: red;&quot;>'+sqlLiteAvailable+'</span>')}"></th:block><br>
 <!--<th:block th:text="${'SQLite lookup for '+sqlLiteQueryCount+' metadata record'+(sqlLiteQueryCount != 1 ? 's' : '')+' elapsed time: '+sqlLiteQueryTiming}"></th:block><br>-->
 <th:block th:utext="${'Nominatim connection: '+(nominatimAvailable == 'OK' ? nominatimAvailable : '<span style=&quot;color: red;&quot;>'+nominatimAvailable+'</span>')}"></th:block><br>

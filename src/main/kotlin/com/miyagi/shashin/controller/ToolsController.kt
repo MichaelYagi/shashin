@@ -30,6 +30,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.http.CacheControl
 import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import java.io.File
 import java.time.ZoneId
 import java.util.concurrent.TimeUnit
 import kotlin.collections.iterator
@@ -337,6 +338,17 @@ class ToolsController {
             logger.log(Level.WARNING, "HealthEP - Error querying SQLLite: ${e.message}")
         }
         val dbTimingEnd = Date()
+        metricsUtil.end()
+
+        metricsUtil.start("Image check")
+        response["imageCheck"] = "OK"
+        if (metaRepository.count() > 0) {
+            val metadataResult = metaRepository.findRandomMetadata()
+            if (metadataResult != null && !File(metadataResult.getPath().toString()).exists()) {
+                response["imageCheck"] = "FAIL"
+                status = "FAIL"
+            }
+        }
         metricsUtil.end()
 
         val dbTimingDiff: Long = dbTimingEnd.time - dbTimingStart.time
