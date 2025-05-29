@@ -2041,8 +2041,8 @@ class SettingsController {
                             // Using CompreFace
                             if (webClient != null && compreFaceServerConnected) {
                                 try {
-                                    // Have at least 3 people tagged
-                                    val compreFaceTagAllow = 3
+                                    // Have at least 1 people tagged
+                                    val compreFaceTagAllow = 1
                                     if (recognitionLabelPhotoLabels!!.count() >= compreFaceTagAllow) {
                                         var builder = MultipartBodyBuilder()
                                         builder.part(
