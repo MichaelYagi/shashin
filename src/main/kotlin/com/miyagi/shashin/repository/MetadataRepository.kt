@@ -256,7 +256,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomMetadataMedia(@Param("type") type: String): Metadata?
 
-   @Query("SELECT * FROM metadata WHERE type ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+   @Query("SELECT * FROM metadata ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
    fun findRandomMetadata(): Metadata?
 
    @Query("SELECT * FROM metadata WHERE file_name LIKE %:filename% AND hidden = 0 ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
