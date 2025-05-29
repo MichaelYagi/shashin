@@ -702,6 +702,8 @@ class MediaServiceController {
                 var resource: FileSystemResource?
                 val path: String?
 
+                val headers = HttpHeaders()
+
                 if (imageHeight == randomMetadata.getOriginalImageHeight() && imageWidth == randomMetadata.getOriginalImageWidth()) {
                     resource = FileSystemResource(File(randomMetadata.getPath()!!))
                     path = randomMetadata.getPath()!!
@@ -736,7 +738,8 @@ class MediaServiceController {
                         )
                     }
 
-                    val img = ImageIO.read(file)
+                    if (file.exists()) {
+                        val img = ImageIO.read(file)
 
 //                    if (rotation != 0) {
 //                        img = ImageProcessing.rotateImage(img, rotation.toDouble())
@@ -746,42 +749,55 @@ class MediaServiceController {
 //                        )
 //                    }
 
-                    val thumbnails = Thumbnails.of(img).outputQuality(1.0)
+                        val thumbnails = Thumbnails.of(img).outputQuality(1.0)
 
-                    val mediaExtension = FileUtils.probeFileExtension(file)
+                        val mediaExtension = FileUtils.probeFileExtension(file)
 
-                    if (mediaExtension == "gif") {
-                        thumbnails
-                            .imageType(BufferedImage.TYPE_INT_ARGB)
-                    }
+                        if (mediaExtension == "gif") {
+                            thumbnails
+                                .imageType(BufferedImage.TYPE_INT_ARGB)
+                        }
 
-                    val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp." + outputExtension)
+                        val tempFile = File(System.getProperty("java.io.tmpdir") + "/temp." + outputExtension)
 
-                    if (imageHeight <= randomMetadata.getOriginalImageHeight()!!) {
-                        thumbnails.height(imageHeight)
+                        if (imageHeight <= randomMetadata.getOriginalImageHeight()!!) {
+                            thumbnails.height(imageHeight)
+                        } else {
+                            thumbnails.height(randomMetadata.getOriginalImageHeight()!!)
+                        }
+
+                        if (imageWidth <= randomMetadata.getOriginalImageWidth()!!) {
+                            thumbnails.width(imageWidth)
+                        } else {
+                            thumbnails.width(randomMetadata.getOriginalImageWidth()!!)
+                        }
+
+                        thumbnails.toFile(tempFile)
+
+                        try {
+                            ImageIO.write(ImageIO.read(tempFile), outputExtension, tempFile)
+                        } catch (_: IOException) {
+                            logger.log(Level.WARNING, "Could not read file: " + tempFile.path)
+                        }
+
+                        resource = FileSystemResource(tempFile)
+                        path = tempFile.path
                     } else {
-                        thumbnails.height(randomMetadata.getOriginalImageHeight()!!)
+                        logger.log(
+                            Level.SEVERE,
+                            "Error setting image ResponseEntity for "+randomMetadata.getPath()+". File not found."
+                        )
+
+                        val source = URLDataSource(this.javaClass.getResource("/static/images/fnf.png"))
+                        resource = FileSystemResource(source.url.path)
+                        headers.contentLength = resource.contentLength()
+                        headers.contentType = MediaType("image", "png")
+                        headers.setCacheControl(CacheControl.noCache())
+                        return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
                     }
-
-                    if (imageWidth <= randomMetadata.getOriginalImageWidth()!!) {
-                        thumbnails.width(imageWidth)
-                    } else {
-                        thumbnails.width(randomMetadata.getOriginalImageWidth()!!)
-                    }
-
-                    thumbnails.toFile(tempFile)
-
-                    try {
-                        ImageIO.write(ImageIO.read(tempFile), outputExtension, tempFile)
-                    } catch (_: IOException) {
-                        logger.log(Level.WARNING, "Could not read file: " + tempFile.path)
-                    }
-
-                    resource = FileSystemResource(tempFile)
-                    path = tempFile.path
                 }
 
-                val headers = HttpHeaders()
+
                 try {
                     headers.contentLength = resource.contentLength()
                     if (randomMetadata.getType() != null && "/" in randomMetadata.getType()!!) {
