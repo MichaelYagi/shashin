@@ -21,6 +21,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Fixed
 - People recognition query 
 - Update timeline maps after metadata edits
+- People view queries
 
 ### Security
 
