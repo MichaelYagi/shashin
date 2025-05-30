@@ -692,10 +692,16 @@ class PeopleController: BaseController() {
             val settings = model.getAttribute("settings") as Settings
 
             if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
-                peopleList = metadataRepository?.findAlbumPhotoByPeople(settings.getRecognitionConfidenceThreshold()!!,currentUserObj.getId(),TextUtils.getObjectName())
+                peopleList = metadataRepository?.findAlbumPhotoByPeople(
+//                    settings.getRecognitionConfidenceThreshold()!!,
+                    "1.0",
+                    currentUserObj.getId(),
+                    TextUtils.getObjectName()
+                )
             } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole") || currentUserObj.getAuthority() == model.getAttribute("superRole")) {
                 peopleList = metadataRepository?.findMetadataByPeople(
-                    settings.getRecognitionConfidenceThreshold()!!,
+//                    settings.getRecognitionConfidenceThreshold()!!,
+                    "1.0",
                     TextUtils.getObjectName()
                 )
             }
