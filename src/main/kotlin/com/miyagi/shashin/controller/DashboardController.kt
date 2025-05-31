@@ -31,6 +31,7 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import jakarta.servlet.http.HttpSession
 import org.springframework.web.bind.annotation.*
+import java.io.File
 import java.lang.management.MemoryMXBean
 import kotlin.collections.set
 
@@ -353,6 +354,16 @@ class DashboardController {
             }
             response["keywordCountJson"] = mapper.writeValueAsString(keywordCountList)
             response["keywordTotalCount"] = keywordCount
+            metricsUtil.end()
+
+            metricsUtil.start("image status check")
+            response["mediaAvailable"] = true
+            if (metadataRepository.count() > 0) {
+                val metadataResult = metadataRepository.findRandomMetadata()
+                if (metadataResult != null && !File(metadataResult.getPath().toString()).exists()) {
+                    response["mediaAvailable"] = false
+                }
+            }
             metricsUtil.end()
         }
 

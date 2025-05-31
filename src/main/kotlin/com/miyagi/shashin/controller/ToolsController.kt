@@ -341,11 +341,11 @@ class ToolsController {
         metricsUtil.end()
 
         metricsUtil.start("Image check")
-        response["imageCheck"] = "OK"
+        response["mediaCheck"] = "OK"
         if (metaRepository.count() > 0) {
             val metadataResult = metaRepository.findRandomMetadata()
             if (metadataResult != null && !File(metadataResult.getPath().toString()).exists()) {
-                response["imageCheck"] = "FAIL"
+                response["mediaCheck"] = "FAIL"
                 status = "FAIL"
             }
         }

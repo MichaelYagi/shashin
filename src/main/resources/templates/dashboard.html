@@ -25,6 +25,10 @@
                                         <h1 class="display-6" id="uptimeText"></h1>
                                     </div>
 
+                                    <div class="col-sm text-center" id="mediaStatusContainer" style="display: none">
+                                        <h1 class="display-6">Media&nbsp;<span id="mediaStatus"></span></h1>
+                                    </div>
+
                                     <div class="col-sm text-center" id="nominatimStatusContainer" style="display: none">
                                         <h1 class="display-6">Nominatim&nbsp;<span id="nominatimStatus"></span></h1>
                                     </div>
@@ -253,6 +257,14 @@
                 http.ajax("get", "/dashboard/data").then(function (data) {
                     shashin.printMessageToConsole(JSON.stringify(data), {tags: ["dashboard", "data"]});
 
+                    if (data["imageAvailable"] !== null) {
+                        $("#mediaStatusContainer").css("display", "block");
+                        $("#mediaStatus").css({
+                            "color": (data["mediaAvailable"] ? "green" : "red"),
+                            "font-size": "2rem"
+                        });
+                        $("#mediaStatus").addClass((data["mediaAvailable"] ? "bi-check-circle" : "bi-x-circle"));
+                    }
                     if (data["nominatimAvailable"] !== null) {
                         $("#nominatimStatusContainer").css("display", "block");
                         $("#nominatimStatus").css({
