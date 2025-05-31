@@ -148,7 +148,7 @@ class MediaServiceController {
                     headers.contentLength = resource.contentLength()
                     headers.contentType = MediaType("image", "png")
                     headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
-                    return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
+                    return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.NOT_FOUND)
                 }
             } else {
                 logger.log(
@@ -161,7 +161,7 @@ class MediaServiceController {
                 headers.contentLength = resource.contentLength()
                 headers.contentType = MediaType("image", "png")
                 headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
-                return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
+                return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.NOT_FOUND)
             }
         } else {
             val userIp = model.getAttribute("clientIP").toString()
@@ -416,22 +416,17 @@ class MediaServiceController {
                 "Error setting video ResponseEntity for "+path+": " + e.message
             )
 
-            val source = URLDataSource(this.javaClass.getResource("/static/images/fnf.png"))
+            val source = URLDataSource(this.javaClass.getResource("/static/media/fnf.mp4"))
             resource = FileSystemResource(source.url.path)
             headers.contentLength = resource.contentLength()
-            if (metadataObj.getType() != null && "/" in metadataObj.getType()!!) {
-                val typeList = metadataObj.getType()!!.split("/")
-                if (typeList.count() == 2) {
-                    headers.contentType = MediaType(typeList[0], typeList[1])
-                }
-            }
+            headers.contentType = MediaType("video", "mp4")
             if (attachFile) {
                 // Sanitize filename
                 val filename = resource.filename.replace(validFileNameRegex, "_")
                 response.setHeader("Content-Disposition", "attachment; filename=$filename")
             }
             headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
-            return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
+            return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.NOT_FOUND)
         }
     }
 
@@ -793,7 +788,7 @@ class MediaServiceController {
                         headers.contentLength = resource.contentLength()
                         headers.contentType = MediaType("image", "png")
                         headers.setCacheControl(CacheControl.noCache())
-                        return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
+                        return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.NOT_FOUND)
                     }
                 }
 
@@ -822,7 +817,7 @@ class MediaServiceController {
                     headers.contentLength = resource.contentLength()
                     headers.contentType = MediaType("image", "png")
                     headers.setCacheControl(CacheControl.noCache())
-                    return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
+                    return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.NOT_FOUND)
                 }
             }
         }
@@ -839,7 +834,7 @@ class MediaServiceController {
         headers.contentType = MediaType("image", "png")
 
         headers.setCacheControl(CacheControl.noCache())
-        return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
+        return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.NOT_FOUND)
     }
 
     @RequestMapping(value = ["/api/v1/random/image/filename/{filename}", "/random/image/filename/{filename}"], method = [(RequestMethod.GET)], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
@@ -935,7 +930,7 @@ class MediaServiceController {
                     response?.setHeader("Content-Disposition", "attachment; filename=$filename")
                 }
                 headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
-                return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
+                return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.NOT_FOUND)
             }
         } else {
             val userIp = model.getAttribute("clientIP").toString()
