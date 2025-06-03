@@ -785,12 +785,12 @@ class Util {
         hours = hours % 24;
         months = Math.floor(days / 30);
         days = days % 30;
-        weeks = weeks % 51;
+        weeks = weeks % 52;
         months = months % 12;
 
         let ymd = ((years > 0) ? " " + years + " year" + (years === 1 ? "" : "s") : "") +
             ((weeks > 0) ? " " + weeks + " week" + (weeks === 1 ? "" : "s") : "") +
-            ((days > 0) ? " " + days + " day" + (days === 1 ? "" : "s") : "");
+            ((days > 0 && ((days % 7) !== 0)) ? " " + (days % 7) + " day" + ((days % 7) === 1 ? "" : "s") : "");
         ymd = ymd.trim();
 
         const hms = (((hours % 24) < 10) ? "0" : "") + (hours % 24) + ":" +

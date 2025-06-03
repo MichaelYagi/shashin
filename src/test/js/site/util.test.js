@@ -329,11 +329,32 @@ describe('#Util tests', function() {
         msToString = Util.convertMSToDayTime(35*57*25*1000);
         assert.equal(msToString, "13:51:15");
 
+        msToString = Util.convertMSToDayTime(86400000);
+        assert.equal(msToString, "1 day 00:00:00");
+
+        msToString = Util.convertMSToDayTime(172800000);
+        assert.equal(msToString, "2 days 00:00:00");
+
         msToString = Util.convertMSToDayTime(60*35*57*25*1000);
         assert.equal(msToString, "4 weeks 4 days 15:15:00");
 
         msToString = Util.convertMSToDayTime(1200*35*57*25*1000);
-        assert.equal(msToString, "1 year 47 weeks 2 days 17:00:00");
+        assert.equal(msToString, "1 year 46 weeks 2 days 17:00:00");
+
+        msToString = Util.convertMSToDayTime(604800000);
+        assert.equal(msToString, "1 week 00:00:00");
+
+        msToString = Util.convertMSToDayTime(691200000);
+        assert.equal(msToString, "1 week 1 day 00:00:00");
+
+        msToString = Util.convertMSToDayTime(1468423000);
+        assert.equal(msToString, "2 weeks 2 days 23:53:43");
+
+        msToString = Util.convertMSToDayTime(1814400000);
+        assert.equal(msToString, "3 weeks 00:00:00");
+
+        msToString = Util.convertMSToDayTime(109725000000);
+        assert.equal(msToString, "3 years 25 weeks 2 days 23:10:00");
     });
 
     it('Version checking', function() {
