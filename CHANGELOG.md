@@ -22,6 +22,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 - People recognition query 
 - Update timeline maps after metadata edits
 - People view queries
+- convertMSToDayTime JS function
 
 ### Security
 
