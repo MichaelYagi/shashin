@@ -766,36 +766,25 @@ class Util {
     }
 
     static convertMSToDayTime(ms) {
-        let years,
-            months,
-            weeks,
-            days,
-            hours,
-            minutes,
-            seconds;
+        const dt = new Date(ms);
+        const units = {
+            'years': (dt.getUTCFullYear() - 1970),
+            'months': dt.getUTCMonth(),
+            'days': dt.getUTCDate() - 1,
+            'T': null,
+            'hours': dt.getUTCHours(),
+            'minutes': dt.getUTCMinutes(),
+            'seconds': dt.getUTCSeconds()
+        };
 
-        seconds = Math.floor(ms / 1000);
-        minutes = Math.floor(seconds / 60);
-        seconds = seconds % 60;
-        hours = Math.floor(minutes / 60);
-        minutes = minutes % 60;
-        days = Math.floor(hours / 24);
-        years = Math.floor(days / 365);
-        weeks = Math.floor(days / 7);
-        hours = hours % 24;
-        months = Math.floor(days / 30);
-        days = days % 30;
-        weeks = weeks % 52;
-        months = months % 12;
-
-        let ymd = ((years > 0) ? " " + years + " year" + (years === 1 ? "" : "s") : "") +
-            ((weeks > 0) ? " " + weeks + " week" + (weeks === 1 ? "" : "s") : "") +
-            ((days > 0 && ((days % 7) !== 0)) ? " " + (days % 7) + " day" + ((days % 7) === 1 ? "" : "s") : "");
+        let ymd = ((units.years > 0) ? " " + units.years + " year" + (units.years === 1 ? "" : "s") : "") +
+            ((units.months > 0) ? " " + units.months + " month" + (units.months === 1 ? "" : "s") : "") +
+            ((units.days > 0) ? " " + units.days + " day" + (units.days === 1 ? "" : "s") : "");
         ymd = ymd.trim();
 
-        const hms = (((hours % 24) < 10) ? "0" : "") + (hours % 24) + ":" +
-            (((minutes % 60) < 10) ? "0" : "") + (minutes % 60) + ":" +
-            (((seconds % 60) < 10) ? "0" : "") + (seconds % 60);
+        const hms = ((units.hours < 10) ? "0" : "") + units.hours + ":" +
+            ((units.minutes < 10) ? "0" : "") + units.minutes + ":" +
+            ((units.seconds < 10) ? "0" : "") + units.seconds;
 
         return ((ymd.length === 0) ? "" : ymd + " ") + hms;
     }
