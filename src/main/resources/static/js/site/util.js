@@ -771,7 +771,6 @@ class Util {
             'years': (dt.getUTCFullYear() - 1970),
             'months': dt.getUTCMonth(),
             'days': dt.getUTCDate() - 1,
-            'T': null,
             'hours': dt.getUTCHours(),
             'minutes': dt.getUTCMinutes(),
             'seconds': dt.getUTCSeconds()
