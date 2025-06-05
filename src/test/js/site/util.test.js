@@ -359,6 +359,9 @@ describe('#Util tests', function() {
         msToString = Util.convertMSToDayTime(63115200000);
         assert.equal(msToString, "2 years 12:00:00");
 
+        msToString = Util.convertMSToDayTime(31536000000);
+        assert.equal(msToString, "1 year 00:00:00");
+
         msToString = Util.convertMSToDayTime(31449600000);
         assert.equal(msToString, "11 months 30 days 00:00:00");
 
@@ -370,9 +373,6 @@ describe('#Util tests', function() {
 
         msToString = Util.convertMSToDayTime(2678400000);
         assert.equal(msToString, "1 month 00:00:00");
-
-        msToString = Util.convertMSToDayTime(3600000);
-        assert.equal(msToString, "01:00:00");
     });
 
     it('Version checking', function() {
