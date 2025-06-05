@@ -240,7 +240,7 @@
 
         if (shashinServerStartUnixMS > 0) {
             setInterval(function () {
-                $("#uptimeText").html("Uptime <code>" + Util.convertMSToDayTime(Date.now()-shashinServerStartUnixMS) + "</code>");
+                $("#uptimeText").html("Uptime <code>" + Util.convertMSToRelativeTime(Date.now()-shashinServerStartUnixMS) + "</code>");
             }, 1000);
         }
 
