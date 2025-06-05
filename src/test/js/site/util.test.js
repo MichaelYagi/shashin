@@ -317,64 +317,64 @@ describe('#Util tests', function() {
     });
 
     it('MS to string tests', function() {
-        let msToString = Util.convertMSToDayTime(1000);
+        let msToString = Util.convertMSToRelativeTime(1000);
         assert.equal(msToString, "00:00:01");
 
-        msToString = Util.convertMSToDayTime(60*1000);
+        msToString = Util.convertMSToRelativeTime(60*1000);
         assert.equal(msToString, "00:01:00");
 
-        msToString = Util.convertMSToDayTime(60*60*1000);
+        msToString = Util.convertMSToRelativeTime(60*60*1000);
         assert.equal(msToString, "01:00:00");
 
-        msToString = Util.convertMSToDayTime(35*57*25*1000);
+        msToString = Util.convertMSToRelativeTime(35*57*25*1000);
         assert.equal(msToString, "13:51:15");
 
-        msToString = Util.convertMSToDayTime(86400000);
+        msToString = Util.convertMSToRelativeTime(86400000);
         assert.equal(msToString, "1 day 00:00:00");
 
-        msToString = Util.convertMSToDayTime(172800000);
+        msToString = Util.convertMSToRelativeTime(172800000);
         assert.equal(msToString, "2 days 00:00:00");
 
-        msToString = Util.convertMSToDayTime(2992500000);
+        msToString = Util.convertMSToRelativeTime(2992500000);
         assert.equal(msToString, "1 month 3 days 15:15:00");
 
-        msToString = Util.convertMSToDayTime(59850000000);
+        msToString = Util.convertMSToRelativeTime(59850000000);
         assert.equal(msToString, "1 year 10 months 23 days 17:00:00");
 
-        msToString = Util.convertMSToDayTime(604800000);
+        msToString = Util.convertMSToRelativeTime(604800000);
         assert.equal(msToString, "7 days 00:00:00");
 
-        msToString = Util.convertMSToDayTime(691200000);
+        msToString = Util.convertMSToRelativeTime(691200000);
         assert.equal(msToString, "8 days 00:00:00");
 
-        msToString = Util.convertMSToDayTime(1468423000);
+        msToString = Util.convertMSToRelativeTime(1468423000);
         assert.equal(msToString, "16 days 23:53:43");
 
-        msToString = Util.convertMSToDayTime(1814400000);
+        msToString = Util.convertMSToRelativeTime(1814400000);
         assert.equal(msToString, "21 days 00:00:00");
 
-        msToString = Util.convertMSToDayTime(109725000000);
+        msToString = Util.convertMSToRelativeTime(109725000000);
         assert.equal(msToString, "3 years 5 months 22 days 23:10:00");
 
-        msToString = Util.convertMSToDayTime(63115200000);
+        msToString = Util.convertMSToRelativeTime(63115200000);
         assert.equal(msToString, "2 years 12:00:00");
 
-        msToString = Util.convertMSToDayTime(31536000000);
+        msToString = Util.convertMSToRelativeTime(31536000000);
         assert.equal(msToString, "1 year 00:00:00");
 
-        msToString = Util.convertMSToDayTime(31449600000);
+        msToString = Util.convertMSToRelativeTime(31449600000);
         assert.equal(msToString, "11 months 30 days 00:00:00");
 
-        msToString = Util.convertMSToDayTime(24445800000);
+        msToString = Util.convertMSToRelativeTime(24445800000);
         assert.equal(msToString, "9 months 9 days 22:30:00");
 
-        msToString = Util.convertMSToDayTime(2592000000);
+        msToString = Util.convertMSToRelativeTime(2592000000);
         assert.equal(msToString, "30 days 00:00:00");
 
-        msToString = Util.convertMSToDayTime(2678400000);
+        msToString = Util.convertMSToRelativeTime(2678400000);
         assert.equal(msToString, "1 month 00:00:00");
 
-        msToString = Util.convertMSToDayTime(598500000000);
+        msToString = Util.convertMSToRelativeTime(598500000000);
         assert.equal(msToString, "18 years 11 months 18 days 02:00:00");
     });
 

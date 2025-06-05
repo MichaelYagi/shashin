@@ -57,7 +57,7 @@ Local server time:&nbsp;<span id="serverTime" th:text="${localServerTime}"></spa
 
     if (shashinServerStartUnixMS > 0) {
         setInterval(function () {
-            document.getElementById("uptimeText").textContent = Util.convertMSToDayTime(Date.now()-shashinServerStartUnixMS);
+            document.getElementById("uptimeText").textContent = Util.convertMSToRelativeTime(Date.now()-shashinServerStartUnixMS);
 
             const options = {
                 timeZone: serverTimezone,

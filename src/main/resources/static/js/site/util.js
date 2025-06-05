@@ -765,7 +765,7 @@ class Util {
         });
     }
 
-    static convertMSToDayTime(ms) {
+    static convertMSToRelativeTime(ms) {
         const dt = new Date(ms);
         const units = {
             'years': (dt.getUTCFullYear() - 1970),
