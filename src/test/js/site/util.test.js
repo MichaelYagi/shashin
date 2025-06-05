@@ -365,6 +365,9 @@ describe('#Util tests', function() {
         msToString = Util.convertMSToRelativeTime(31449600000);
         assert.equal(msToString, "11 months 30 days 00:00:00");
 
+        msToString = Util.convertMSToRelativeTime(31536000000);
+        assert.equal(msToString, "1 year 00:00:00");
+
         msToString = Util.convertMSToRelativeTime(24445800000);
         assert.equal(msToString, "9 months 9 days 22:30:00");
 
