@@ -264,6 +264,7 @@
                             "font-size": "2rem"
                         });
                         $("#mediaStatus").addClass((data["mediaAvailable"] ? "bi-check-circle" : "bi-x-circle"));
+                        $("#mediaStatus").attr("title", "Media is " + (data["mediaAvailable"] ? "" : "not " ) + "available");
                     }
                     if (data["nominatimAvailable"] !== null) {
                         $("#nominatimStatusContainer").css("display", "block");
@@ -272,6 +273,7 @@
                             "font-size": "2rem"
                         });
                         $("#nominatimStatus").addClass((data["nominatimAvailable"] ? "bi-check-circle" : "bi-x-circle"));
+                        $("#nominatimStatus").attr("title", "Nominatim is " + (data["nominatimAvailable"] ? "" : "not " ) + "available");
                     }
                     if (data["compreFaceAvailable"] !== null) {
                         $("#compreFaceStatusContainer").css("display", "block");
@@ -279,6 +281,7 @@
                             "color": (data["compreFaceAvailable"] ? "green" : "red"),
                             "font-size": "2rem"
                         });
+                        $("#compreFaceStatus").attr("title", "CompreFace is " + (data["compreFaceAvailable"] ? "" : "not " ) + "available");
                         $("#compreFaceStatus").addClass((data["compreFaceAvailable"] ? "bi-check-circle" : "bi-x-circle"));
                         if (data["compreFaceAvailable"]) {
                             $("#compreFaceText").text('CompreFace');
