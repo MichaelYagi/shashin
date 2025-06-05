@@ -335,26 +335,44 @@ describe('#Util tests', function() {
         msToString = Util.convertMSToDayTime(172800000);
         assert.equal(msToString, "2 days 00:00:00");
 
-        msToString = Util.convertMSToDayTime(60*35*57*25*1000);
-        assert.equal(msToString, "4 weeks 4 days 15:15:00");
+        msToString = Util.convertMSToDayTime(2992500000);
+        assert.equal(msToString, "1 month 3 days 15:15:00");
 
-        msToString = Util.convertMSToDayTime(1200*35*57*25*1000);
-        assert.equal(msToString, "1 year 46 weeks 2 days 17:00:00");
+        msToString = Util.convertMSToDayTime(59850000000);
+        assert.equal(msToString, "1 year 10 months 23 days 17:00:00");
 
         msToString = Util.convertMSToDayTime(604800000);
-        assert.equal(msToString, "1 week 00:00:00");
+        assert.equal(msToString, "7 days 00:00:00");
 
         msToString = Util.convertMSToDayTime(691200000);
-        assert.equal(msToString, "1 week 1 day 00:00:00");
+        assert.equal(msToString, "8 days 00:00:00");
 
         msToString = Util.convertMSToDayTime(1468423000);
-        assert.equal(msToString, "2 weeks 2 days 23:53:43");
+        assert.equal(msToString, "16 days 23:53:43");
 
         msToString = Util.convertMSToDayTime(1814400000);
-        assert.equal(msToString, "3 weeks 00:00:00");
+        assert.equal(msToString, "21 days 00:00:00");
 
         msToString = Util.convertMSToDayTime(109725000000);
-        assert.equal(msToString, "3 years 25 weeks 2 days 23:10:00");
+        assert.equal(msToString, "3 years 5 months 22 days 23:10:00");
+
+        msToString = Util.convertMSToDayTime(63115200000);
+        assert.equal(msToString, "2 years 12:00:00");
+
+        msToString = Util.convertMSToDayTime(31449600000);
+        assert.equal(msToString, "11 months 30 days 00:00:00");
+
+        msToString = Util.convertMSToDayTime(24445800000);
+        assert.equal(msToString, "9 months 9 days 22:30:00");
+
+        msToString = Util.convertMSToDayTime(2592000000);
+        assert.equal(msToString, "30 days 00:00:00");
+
+        msToString = Util.convertMSToDayTime(2678400000);
+        assert.equal(msToString, "1 month 00:00:00");
+
+        msToString = Util.convertMSToDayTime(3600000);
+        assert.equal(msToString, "01:00:00");
     });
 
     it('Version checking', function() {
