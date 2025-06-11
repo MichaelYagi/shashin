@@ -19,12 +19,15 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Removed
 
 ### Fixed
-- People recognition query 
+
+### Security
+
+## [2.10.4] - 2025-06-10
+### Fixed
+- People recognition query
 - Update timeline maps after metadata edits
 - People view queries
 - convertMSToRelativeTime JS function
-
-### Security
 
 ## [2.10.3] - 2025-05-22
 ### Added
