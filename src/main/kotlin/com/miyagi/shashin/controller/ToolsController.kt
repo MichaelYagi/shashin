@@ -132,6 +132,30 @@ class ToolsController {
     }
 
     @CrossOrigin(origins = ["*"], originPatterns = [], allowedHeaders = ["*"], methods = [RequestMethod.GET], maxAge = 3600)
+    @RequestMapping(value = ["/api/v1/version"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getVersion(): ResponseEntity<String> {
+        var response = mutableMapOf<String, Any?>()
+        response["version"] = null
+        response["versionName"] = null
+        response["status"] = ApiResponse.FAIL.status
+        response["msg"] = ""
+
+        if (buildProperties != null) {
+            response["status"] = ApiResponse.SUCCESS.status
+            response["version"] = buildProperties!!.version
+            response["versionName"] = "v"+buildProperties!!.version
+        }
+
+        val json = mapper.writeValueAsString(response)
+        return ResponseEntity
+            .ok()
+//            .cacheControl(CacheControl.maxAge(1, TimeUnit.SECONDS))
+            .cacheControl(CacheControl.maxAge(14, TimeUnit.DAYS))
+            .body(json)
+    }
+
+    @CrossOrigin(origins = ["*"], originPatterns = [], allowedHeaders = ["*"], methods = [RequestMethod.GET], maxAge = 3600)
     @RequestMapping(value = ["/api/v1/tags"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getTags(): ResponseEntity<String> {
