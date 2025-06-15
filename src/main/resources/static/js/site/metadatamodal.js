@@ -480,12 +480,14 @@ async function saveMetadata(e) {
         }
         propMetadataModal._config.backdrop = true;
         propMetadataModal._config.keyboard = true;
+        $('#propMetadata').modal({keyboard: true});
 
         $("#propMetadata").modal('hide');
     } else {
         $("#metadataModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
         propMetadataModal._config.backdrop = true;
         propMetadataModal._config.keyboard = true;
+        $('#propMetadata').modal({keyboard: true});
 
         shashin.showToastMessage("Metadata", "Could not save metadata", {
             icon:"bi-exclamation-triangle",
@@ -506,6 +508,7 @@ $('#propMetadata').on('hide.bs.modal', function () {
         shashin.map = null;
     }
 
+    $('#propMetadata').modal({keyboard: true});
     $("#collapseMetadata").collapse("hide");
     $("#metadataModalStatus").attr("class","spinner-grow me-auto");
     $("#metadataModalStatus").invisible();

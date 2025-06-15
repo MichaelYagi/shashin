@@ -1,4 +1,5 @@
 (function( shashin, $, undefined ) {
+    shashin.openedInfoFromLG = false;
     shashin.showDebug = false;
     shashin.showTrace = false;
     shashin.writeLog = false;

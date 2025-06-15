@@ -39,6 +39,7 @@
                         $("#metadataId").val(funObject.args);
                         funObject.fn(funObject.args);
                         if ($('#propMetadata').length > 0) {
+                            shashin.openedInfoFromLG = true;
                             $('#propMetadata').modal({keyboard: false});
                         }
                     } else if (shashin) {
