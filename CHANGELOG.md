@@ -19,6 +19,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Removed
 
 ### Fixed
+- Modal bug when pressing the 'i' key
 
 ### Security
 
