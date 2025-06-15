@@ -38,6 +38,9 @@
                     if (typeof funObject.fn === 'function' && funObject.args !== null && funObject.args.length > 0) {
                         $("#metadataId").val(funObject.args);
                         funObject.fn(funObject.args);
+                        if ($('#propMetadata').length > 0) {
+                            $('#propMetadata').modal({keyboard: false});
+                        }
                     } else if (shashin) {
                         shashin.showToastMessage("Could not get media details", "Could not get media details. Function or metadata ID not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
                     }
