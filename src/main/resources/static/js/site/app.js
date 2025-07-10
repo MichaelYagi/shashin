@@ -3128,8 +3128,12 @@
         }, 1000);
     }
 
-    shashin.batchSelect = function(metadataId, view, opaque, transparent) {
+    shashin.batchSelect = function(metadataId, view, addBorder, opaque, transparent) {
         shashin.printMessageToConsole("Select action", {tag: "multiselect"});
+
+        if (addBorder === undefined) {
+            addBorder = true;
+        }
 
         if (opaque === undefined) {
             opaque = 0.3;
@@ -3291,7 +3295,7 @@
                     $('.photo-thumbnail-image').removeClass("pb-1");
 
                     // Put a border around select point
-                    if (shashin.getMetadataIdList().length > 0) {
+                    if (shashin.getMetadataIdList().length > 0 && addBorder) {
                         $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
                         $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
                         shashin.multiSelected = true;
@@ -3352,7 +3356,7 @@
                             $('.photo-thumbnail-image').removeClass("pb-1");
 
                             // Put a border around select point
-                            if (/*$("#image" + shashin.lastSelectedMetadataId).length > 0 && */shashin.getMetadataIdList().length > 0) {
+                            if (/*$("#image" + shashin.lastSelectedMetadataId).length > 0 && */shashin.getMetadataIdList().length > 0 && addBorder) {
                                 $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
                                 $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
                                 shashin.multiSelected = true;
@@ -3647,7 +3651,7 @@
                                 shashin.lastSelectedMetadataSelected = true;
                             }
 
-                            shashin.batchSelect(firstMetadataId, "timeline");
+                            shashin.batchSelect(firstMetadataId, "timeline", false);
                         }
                     });
                 }, 0);
