@@ -47,6 +47,7 @@
     shashin.lastSelectedMetadataId = "";
     shashin.lastSelectedMetadataSelected = false;
     shashin.multiSelected = false;
+    shashin.mediaTypeFilter = 'all';
     shashin.consoleTypes = Object.freeze({
         error: 0,
         info: 1,
@@ -2707,143 +2708,6 @@
             selectClick(metadata.id, view, opaque, transparent, metadataIdArray, true);
         });
 
-        function selectClick(metadataId, view, opaque, transparent, metadataIdArray, clicked) {
-            let isVideo = false;
-
-            if ($("#photoThumbnailContainer"+metadataId).hasClass("is-video")) {
-                isVideo = true;
-            }
-
-            if ($("#tlicon" + metadataId).attr("class") === "bi-circle") {
-                $("#tntl" + metadataId).show();
-                $("#tlicon" + metadataId).addClass('bi-circle-fill').removeClass('bi-circle');
-                $("#image" + metadataId).css("opacity", opaque);
-                $("#tncentered" + metadataId).hide();
-                $("#tnbr" + metadataId).hide();
-                $("#tnbl" + metadataId).hide();
-                if (clicked) {
-                    shashin.lastSelectedMetadataId = metadataId;
-                    shashin.lastSelectedMetadataSelected = true;
-                    $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                    $('.photo-thumbnail-image').removeClass("pb-1");
-                    if (shashin.multiSelected === true) {
-                        $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
-                        $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
-                    }
-                }
-                // List of selected media
-                shashin.addToMetadataIdList(metadataId);
-                shashin.addToMetadataFilenamesList($('#filename' + metadataId).val());
-                shashin.addToMetadataThumbnailsList($('#thumbnailCentered' + metadataId).val());
-                if (isVideo && Util.isMobile() === false) {
-                    const jpgUrl = $("#image" + metadataId).attr("src").replace("/gif/" + metadataId, "/225/" + metadataId);
-                    $("#image" + metadataId).attr("src", jpgUrl);
-                }
-            } else {
-                $("#tntl" + metadataId).show();
-                $("#tlicon" + metadataId).addClass('bi-circle').removeClass('bi-circle-fill');
-                $("#image" + metadataId).css("opacity", opaque);
-                $("#tntr" + metadataId).show();
-                $("#tncentered" + metadataId).show();
-                $("#tnbr" + metadataId).show();
-                $("#tnbl" + metadataId).show();
-                if (clicked) {
-                    shashin.lastSelectedMetadataId = metadata.id;
-                    shashin.lastSelectedMetadataSelected = false;
-                    $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                    $('.photo-thumbnail-image').removeClass("pb-1");
-                    $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
-                    $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
-                }
-                shashin.removeFromMetadataIdList(metadataId);
-                shashin.removeFromMetadataFilenamesList($('#filename' + metadataId).val());
-                shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadataId).val());
-                if (isVideo  && Util.isMobile() === false && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
-                ) {
-                    const gifUrl = $("#image" + metadataId).attr("src").replace("/225/" + metadataId, "/gif/" + metadataId);
-                    $("#image" + metadataId).attr("src", gifUrl);
-                }
-            }
-
-            metadataIdArray = shashin.getMetadataIdList();
-
-            if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
-                $("#appSearch").hide();
-                if (view === "album" || view === "favorites" || view === "archived") {
-                    $("#albumAppTools").show();
-                    if (view === "album") {
-                        $("#albumTools").hide();
-                    }
-                } else if (view === "timeline" || view === "recent" || view === "modified" || view === "taken" || view === "accessed" || view === "folder" || view === "search") {
-                    $("#timelineAppTools").show();
-                    if (view === "timeline" || view === "folder") {
-                        $("#timelineTools").hide();
-                    }
-                } else if (view === "matches" || view === "person" || view === "compreface") {
-                    $("#matchesAppTools").show();
-                    $("#timelineTools").hide();
-                }
-
-                // Hide all center and bottom left icons
-                $('.thumbnail-br').hide();
-                $('.thumbnail-bl').hide();
-                //$('.thumbnail-tr').hide();
-                $('.thumbnail-centered').hide();
-            } else {
-                $("#appSearch").show();
-                $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                $('.photo-thumbnail-image').removeClass("pb-1");
-                shashin.multiSelected = false;
-                $("#timelineAppTools").hide();
-                $("#albumAppTools").hide();
-                $("#matchesAppTools").hide();
-                if (view === "timeline" || view === "folder" || view === "matches" || view === "person" || view === "compreface") {
-                    $("#timelineTools").show();
-                } else if (view === "album") {
-                    $("#albumTools").show();
-                }
-            }
-
-            const metadataList = shashin.getMetadataIdList();
-            let timelineSelectCount = $('.bi-circle-fill').length;
-            if (metadataList.length > 0) {
-                timelineSelectCount = metadataList.length;
-            }
-
-            $("#timelineNumberSelected").text(timelineSelectCount + " Selected");
-            $("#matchesNumberSelected").text($('.bi-circle-fill').length + " Selected");
-            $("#favoritesNumberSelected").text($('.bi-circle-fill').length + " Selected");
-            $("#trashNumberSelected").text($('.bi-circle-fill').length + " Selected");
-            $("#albumNumberSelected").text($('.bi-circle-fill').length + " Selected");
-
-            if (view === "share") {
-                const albumId = $("#albumId").val();
-                const albumName = $("#albumName").val();
-                const shareLink = $("#shareLink").val();
-                const downloadEl = $("#download" + albumId);
-
-                if ($('.bi-circle-fill').length > 0) {
-                    $("#clearMultiSelect").show();
-                    $("#albumNumberSelected").show();
-                    downloadEl.attr("name", "downloadArray");
-                    downloadEl.attr("value", JSON.stringify(metadataList));
-                    downloadEl.attr("title", "Download selected media");
-                } else {
-                    shashin.clearAlbumSelection();
-                    $("#clearMultiSelect").hide();
-                    $("#multiSelectMetadataIds").val("[]");
-                    $("#albumNumberSelected").hide();
-                    downloadEl.attr("name", "download");
-                    downloadEl.attr("value", albumId);
-                    downloadEl.attr("title", "Download all photos");
-                }
-
-                $("#download"+albumId).on("click", function() {
-                    trackShareDownload(albumId,albumName,shareLink);
-                });
-            }
-        }
-
         $("#image" + metadata.id).on('error', function() {
             $("#image" + metadata.id).attr("src", "/api/v1/thumbnails/"+(Util.isMobile() ? "100" : "225")+"/"+metadata.id);
         });
@@ -2993,6 +2857,8 @@
                         trackShareDownload(albumId,albumName,shareLink);
                     });
                 }
+
+                setDateSection(metadata.id);
             }
         });
 
@@ -3007,13 +2873,13 @@
                 if (Util.getOS() === "MacOS" && (e.key === "s" || e.code === "KeyS" || e.which === 83 || e.keyCode === 83)) {
                     shashin.printMessageToConsole("s key pressed", {tag: "multiselect"});
 
-                    batchSelect();
+                    metadataIdArray = shashin.batchSelect(metadata.id, view);
                 }
 
                 if (e.key === "Shift" || e.code === "ShiftLeft" || e.code === "ShiftRight" || e.which === 16 || e.keyCode === 16) {
                     shashin.printMessageToConsole("Shift key pressed", {tag: "multiselect"});
 
-                    batchSelect();
+                    metadataIdArray = shashin.batchSelect(metadata.id, view);
                 }
             });
 
@@ -3022,7 +2888,7 @@
                     e.preventDefault();
 
                     shashin.printMessageToConsole("double tap detected", {tag: "multiselect"});
-                    batchSelect();
+                    metadataIdArray = shashin.batchSelect(metadata.id, view);
 
                     clearTimeout(shashin.touchTimer);
                 });
@@ -3047,241 +2913,6 @@
                 $("#image" + metadata.id).attr("src", jpgUrl);
             }
         });
-
-        function batchSelect() {
-            shashin.printMessageToConsole("Select action", {tag: "multiselect"});
-
-            metadataIdArray = shashin.getMetadataIdList();
-
-            if (metadataIdArray.length > 0) {
-                setTimeout(function () {
-                    $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                    $('.photo-thumbnail-image').removeClass("pb-1");
-
-                    if (shashin.lastSelectedMetadataId !== "" && shashin.lastSelectedMetadataId !== metadata.id) {
-                        const selectionHash = getElementLocation($("#photoThumbnailContainer" + shashin.lastSelectedMetadataId)[0]);
-                        const lastSelectionPos = [selectionHash.x, selectionHash.y];
-
-                        const pointerHash = getElementLocation($("#photoThumbnailContainer" + metadata.id)[0]);
-                        const pointerPos = [pointerHash.x, pointerHash.y];
-
-                        if (view !== "timeline" && lastSelectionPos[0] !== null && lastSelectionPos[1] !== null && pointerPos[0] !== null && pointerPos[1] !== null) {
-                            shashin.printMessageToConsole("Selected Media point [x, y]: " + JSON.stringify(lastSelectionPos) + ". MetadataId: " + shashin.lastSelectedMetadataId, {tag: "multiselect"});
-                            shashin.printMessageToConsole("Shift Key point [x, y]: " + JSON.stringify(pointerPos) + ". MetadataId: " + metadata.id, {tag: "multiselect"});
-
-                            const direction = (pointerPos[1] > lastSelectionPos[1] || (pointerPos[0] > lastSelectionPos[0] && pointerPos[1] >= lastSelectionPos[1])) ? "down" : "up";
-
-                            shashin.printMessageToConsole("Select direction: " + direction, {tag: "multiselect"});
-
-                            // Avoids infinite loops
-                            const whileLimit = 1000;
-                            if ($("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).length > 0) {
-                                let container = $("#photoThumbnailContainer" + ((direction === "down") ? shashin.lastSelectedMetadataId : metadata.id));
-
-                                // Get row that selected metadata is in
-                                let selectedRowMetadataIds = container.siblings().addBack().map(function () {
-                                    const metadataId = this.id.split("photoThumbnailContainer");
-                                    return metadataId[1];
-                                }).toArray();
-
-                                // Check if above row contains shift selected metadata
-                                let found = ($.inArray(((direction === "down") ? metadata.id : shashin.lastSelectedMetadataId), selectedRowMetadataIds) !== -1);
-
-                                // If not found, check other rows and add to collection. if found, exit out of loop
-                                let index = 0;
-                                while (found === false) {
-                                    if (index > whileLimit) {
-                                        break;
-                                    }
-
-                                    let nextContainer = container.parent().parent().nextUntil().filter((view === "timeline") ? ".dateContainer:first" : ".dateSection:first");
-
-                                    container = $(nextContainer[0]).children("div.row").children("div");
-
-                                    let metadataIdArray = container.siblings().addBack().map(function () {
-                                        const metadataId = this.id.split("photoThumbnailContainer");
-                                        return metadataId[1];
-                                    }).toArray();
-                                    found = ($.inArray(((direction === "down") ? metadata.id : shashin.lastSelectedMetadataId), metadataIdArray) !== -1);
-
-                                    $.merge(selectedRowMetadataIds, metadataIdArray);
-                                    index++;
-                                }
-
-                                shashin.printMessageToConsole("Looped " + index + " times finding metadata", {tag: "multiselect"});
-
-                                // Loop through all collected rows and select from selected metadata to shift selected metadata
-                                let start = false;
-                                let lastSelectedMetadataId = shashin.lastSelectedMetadataId;
-
-                                for (let index in selectedRowMetadataIds) {
-                                    if (selectedRowMetadataIds.hasOwnProperty(index)) {
-                                        const currentMetadataId = selectedRowMetadataIds[index];
-                                        const compareOne = (direction === "down") ? lastSelectedMetadataId : metadata.id;
-
-                                        if (currentMetadataId === compareOne || start === true) {
-                                            if (currentMetadataId === compareOne) {
-                                                lastSelectedMetadataId = (direction === "down") ? currentMetadataId : shashin.lastSelectedMetadataId;
-                                                start = true;
-                                                continue;
-                                            }
-
-                                            const imageUrl = $("#image" + currentMetadataId).attr("src").replace("/gif/" + currentMetadataId, "/"+(Util.isMobile() ? "100" : "225")+"/" + currentMetadataId);
-                                            $("#image" + currentMetadataId).attr("src", imageUrl);
-                                            if (shashin.lastSelectedMetadataSelected === true) {
-                                                if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle") {
-                                                    selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray, false);
-                                                    $("#image" + currentMetadataId).css("opacity", opaque);
-                                                }
-                                            } else {
-                                                if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle-fill") {
-                                                    selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray, false);
-                                                    if (currentMetadataId !== metadata.id) {
-                                                        $("#image" + currentMetadataId).css("opacity", transparent);
-                                                        if (shashin.lastSelectedMetadataId !== currentMetadataId) {
-                                                            $("#tntl" + currentMetadataId).css("display", "none");
-                                                        }
-                                                    }
-                                                }
-                                            }
-
-                                            if (direction === "down") {
-                                                lastSelectedMetadataId = currentMetadataId;
-                                            }
-                                        }
-
-                                        const compareTwo = (direction === "down") ? metadata.id : lastSelectedMetadataId;
-
-                                        if (currentMetadataId === compareTwo) {
-                                            if (direction === "up") {
-                                                let imageUrl = $("#image" + metadata.id).attr("src").replace("/gif/" + metadata.id, "/"+(Util.isMobile() ? "100" : "225")+"/" + metadata.id);
-                                                $("#image" + metadata.id).attr("src", imageUrl);
-                                                if (shashin.lastSelectedMetadataSelected === true) {
-                                                    if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
-                                                        selectClick(metadata.id, view, opaque, transparent, metadataIdArray, false);
-                                                        $("#image" + metadata.id).css("opacity", opaque);
-                                                    }
-                                                } else {
-                                                    if ($("#tlicon" + metadata.id).attr("class") === "bi-circle-fill") {
-                                                        selectClick(metadata.id, view, opaque, transparent, metadataIdArray, false);
-                                                        if (currentMetadataId !== metadata.id) {
-                                                            $("#image" + metadata.id).css("opacity", transparent);
-                                                            if (shashin.lastSelectedMetadataId !== metadata.id) {
-                                                                $("#tntl" + metadata.id).css("display", "none");
-                                                            }
-                                                        }
-                                                    }
-                                                }
-
-                                                imageUrl = $("#image" + currentMetadataId).attr("src").replace("/gif/" + currentMetadataId, "/"+(Util.isMobile() ? "100" : "225")+"/" + currentMetadataId);
-                                                $("#image" + currentMetadataId).attr("src", imageUrl);
-                                                if (shashin.lastSelectedMetadataSelected === true) {
-                                                    if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle") {
-                                                        selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray, false);
-                                                        $("#image" + currentMetadataId).css("opacity", opaque);
-                                                    }
-                                                } else {
-                                                    if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle-fill") {
-                                                        selectClick(currentMetadataId, view, opaque, transparent, metadataIdArray, false);
-                                                        if (currentMetadataId !== metadata.id) {
-                                                            $("#image" + currentMetadataId).css("opacity", transparent);
-                                                            if (shashin.lastSelectedMetadataId !== currentMetadataId) {
-                                                                $("#tntl" + currentMetadataId).css("display", "none");
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-
-                            $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                            $('.photo-thumbnail-image').removeClass("pb-1");
-
-                            // Put a border around select point
-                            if (shashin.getMetadataIdList().length > 0) {
-                                $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
-                                $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
-                                shashin.multiSelected = true;
-                            }
-                        } else if (view === "timeline") {
-                            const http = new Http("get ranged metadata");
-                            const version = Util.getMetadataLocalStorage();
-                            http.ajax("get", "/metadata/range/"+view+"/"+shashin.lastSelectedMetadataId+"/"+metadata.id+(version === "" ? "" : "?v=" + version)).then(function (data) {
-                                if (data !== null && data.hasOwnProperty("metadataIdArray")) {
-                                    const metadataIdArray = data.metadataIdArray;
-
-                                    for (let index in metadataIdArray) {
-                                        if (metadataIdArray.hasOwnProperty(index)) {
-                                            const metadataArray = metadataIdArray[index];
-                                            const metadataId = metadataArray[0];
-
-                                            if (shashin.lastSelectedMetadataSelected === true) {
-                                                if ($("#tlicon" + metadataId).attr("class") === "bi-circle") {
-                                                    selectClick(metadataId, view, opaque, transparent, metadataIdArray, false);
-                                                    $("#image" + metadataId).css("opacity", opaque);
-                                                }
-                                            } else {
-                                                if ($("#tlicon" + metadataId).attr("class") === "bi-circle-fill") {
-                                                    selectClick(metadataId, view, opaque, transparent, metadataIdArray, false);
-                                                    if (metadataId !== metadata.id) {
-                                                        $("#image" + metadataId).css("opacity", transparent);
-                                                        if (shashin.lastSelectedMetadataId !== metadataId) {
-                                                            $("#tntl" + metadataId).css("display", "none");
-                                                        }
-                                                    }
-                                                }
-                                            }
-
-                                            if (shashin.lastSelectedMetadataSelected === true) {
-                                                shashin.addToMetadataIdList(metadataId);
-                                                shashin.addToMetadataFilenamesList(metadataArray[1]);
-                                                shashin.addToMetadataThumbnailsList(metadataArray[2]);
-                                                $("#timelineNumberSelected").text(shashin.getMetadataIdList().length + " Selected");
-                                            } else {
-                                                shashin.removeFromMetadataIdList(metadataId);
-                                                shashin.removeFromMetadataFilenamesList(metadataArray[1]);
-                                                shashin.removeFromMetadataThumbnailsList(metadataArray[2]);
-                                                $("#timelineNumberSelected").text(shashin.getMetadataIdList().length + " Selected");
-                                            }
-
-                                            if (shashin.getMetadataIdList().length === 0) {
-                                                shashin.clearTimelineSelection();
-                                            }
-
-                                            if ($("#image" + metadataId).length > 0) {
-                                                const imageUrl = $("#image" + metadataId).attr("src").replace("/gif/" + metadataId, "/"+(Util.isMobile() ? "100" : "225")+"/" + metadataId);
-                                                $("#image" + metadataId).attr("src", imageUrl);
-                                            }
-                                        }
-                                    }
-
-                                    $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                                    $('.photo-thumbnail-image').removeClass("pb-1");
-
-                                    // Put a border around select point
-                                    if (/*$("#image" + shashin.lastSelectedMetadataId).length > 0 && */shashin.getMetadataIdList().length > 0) {
-                                        $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
-                                        $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
-                                        shashin.multiSelected = true;
-                                    }
-                                }
-                            });
-                        } else {
-                            shashin.printMessageToConsole("lastSelectionPos undefined or null", {tag: "multiselect"});
-                        }
-                    } else {
-                        shashin.lastSelectedMetadataId = "";
-                        shashin.multiSelected = false;
-                    }
-
-                }, 0);
-            }
-        }
 
         $("#image" + metadata.id).hover(function () {
             // Only show overlays when scrolling stopped in timeline view
@@ -3450,50 +3081,534 @@
                 $(this).siblings(".photo-thumbnail-image").css("opacity", transparent);
             }
         });
+    };
 
-        function trackShareDownload(albumId,albumName,shareLink) {
-            let downloadTimer;
-            const tokenName = "ShashinShareAlbumName";
-            const tokenSize = "ShashinShareAlbumSize";
-            const configuredAttempts = 120;
+    function trackShareDownload(albumId,albumName,shareLink) {
+        let downloadTimer;
+        const tokenName = "ShashinShareAlbumName";
+        const tokenSize = "ShashinShareAlbumSize";
+        const configuredAttempts = 120;
 
-            shashin.closeToastMessages({tag:"sharedownload"});
-            shashin.showToastMessage("Downloading share album", "Downloading share album \""+albumName+"\". Downloading photos only.", {icon:"bi-info-circle", iconColor:"#777777", autohide:true, tag:"sharedownload"});
-            setTimeout(function () { $("#download"+albumId).removeAttr("href"); }, 0);
-            Util.setCookie(tokenName, "", "/");
-            Util.setCookie(tokenSize, "", "/");
+        shashin.closeToastMessages({tag:"sharedownload"});
+        shashin.showToastMessage("Downloading share album", "Downloading share album \""+albumName+"\". Downloading photos only.", {icon:"bi-info-circle", iconColor:"#777777", autohide:true, tag:"sharedownload"});
+        setTimeout(function () { $("#download"+albumId).removeAttr("href"); }, 0);
+        Util.setCookie(tokenName, "", "/");
+        Util.setCookie(tokenSize, "", "/");
 
-            let attempts = configuredAttempts;
+        let attempts = configuredAttempts;
 
-            downloadTimer = setInterval( function() {
-                const tokenCookieValue = Util.getCookie(tokenName);
-                const tokenCookieSize = Util.getCookie(tokenSize);
+        downloadTimer = setInterval( function() {
+            const tokenCookieValue = Util.getCookie(tokenName);
+            const tokenCookieSize = Util.getCookie(tokenSize);
 
-                if ((tokenCookieValue !== "" && tokenCookieSize !== "") || attempts === 0) {
-                    if (attempts === 0) {
-                        // $("#albumsMessage").html("&nbsp;").animate({opacity: 0}, 5000);
+            if ((tokenCookieValue !== "" && tokenCookieSize !== "") || attempts === 0) {
+                if (attempts === 0) {
+                    // $("#albumsMessage").html("&nbsp;").animate({opacity: 0}, 5000);
+                } else {
+                    shashin.showToastMessage("Share album download", "<strong>File name</strong> " + tokenCookieValue + " <strong>File size</strong> " + Util.formatBytes(tokenCookieSize), {icon:"bi-info-circle", iconColor:"#777777"});
+                    Util.deleteCookie(tokenName, "/");
+                    Util.deleteCookie(tokenSize, "/");
+                    window.clearInterval(downloadTimer);
+
+                    shashin.clearAlbumSelection();
+                    $("#clearMultiSelect").hide();
+                    $("#multiSelectMetadataIds").val("[]");
+                    $("#albumNumberSelected").hide();
+                    const downloadEl = $("#download" + albumId);
+                    downloadEl.attr("name", "download");
+                    downloadEl.attr("value", albumId);
+                    downloadEl.attr("title", "Download all photos");
+                    downloadEl.on("click", function() {
+                        trackShareDownload(albumId,albumName,shareLink);
+                    });
+                }
+            }
+
+            attempts--;
+        }, 1000);
+    }
+
+    shashin.batchSelect = function(metadataId, view, opaque, transparent) {
+        shashin.printMessageToConsole("Select action", {tag: "multiselect"});
+
+        if (opaque === undefined) {
+            opaque = 0.3;
+        }
+
+        if (transparent === undefined) {
+            transparent = 1.0;
+        }
+
+        let metadataIdArrayCopy = shashin.getMetadataIdList();
+
+        if (metadataIdArrayCopy.length > 0) {
+            //setTimeout(function () {
+            $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+            $('.photo-thumbnail-image').removeClass("pb-1");
+
+            if (shashin.lastSelectedMetadataId !== "" && shashin.lastSelectedMetadataId !== metadataId) {
+                const selectionHash = getElementLocation($("#photoThumbnailContainer" + shashin.lastSelectedMetadataId)[0]);
+                const lastSelectionPos = [selectionHash.x, selectionHash.y];
+
+                const pointerHash = getElementLocation($("#photoThumbnailContainer" + metadataId)[0]);
+                const pointerPos = [pointerHash.x, pointerHash.y];
+
+                if (view !== "timeline" && lastSelectionPos[0] !== null && lastSelectionPos[1] !== null && pointerPos[0] !== null && pointerPos[1] !== null) {
+                    shashin.printMessageToConsole("Selected Media point [x, y]: " + JSON.stringify(lastSelectionPos) + ". MetadataId: " + shashin.lastSelectedMetadataId, {tag: "multiselect"});
+                    shashin.printMessageToConsole("Shift Key point [x, y]: " + JSON.stringify(pointerPos) + ". MetadataId: " + metadataId, {tag: "multiselect"});
+
+                    const direction = (pointerPos[1] > lastSelectionPos[1] || (pointerPos[0] > lastSelectionPos[0] && pointerPos[1] >= lastSelectionPos[1])) ? "down" : "up";
+
+                    shashin.printMessageToConsole("Select direction: " + direction, {tag: "multiselect"});
+
+                    // Avoids infinite loops
+                    const whileLimit = 1000;
+                    if ($("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).length > 0) {
+                        let container = $("#photoThumbnailContainer" + ((direction === "down") ? shashin.lastSelectedMetadataId : metadataId));
+
+                        // Get row that selected metadata is in
+                        let selectedRowMetadataIds = container.siblings().addBack().map(function () {
+                            const metadataId = this.id.split("photoThumbnailContainer");
+                            return metadataId[1];
+                        }).toArray();
+
+                        // Check if above row contains shift selected metadata
+                        let found = ($.inArray(((direction === "down") ? metadataId : shashin.lastSelectedMetadataId), selectedRowMetadataIds) !== -1);
+
+                        // If not found, check other rows and add to collection. if found, exit out of loop
+                        let index = 0;
+                        while (found === false) {
+                            if (index > whileLimit) {
+                                break;
+                            }
+
+                            let nextContainer = container.parent().parent().nextUntil().filter((view === "timeline") ? ".dateContainer:first" : ".dateSection:first");
+
+                            container = $(nextContainer[0]).children("div.row").children("div");
+
+                            metadataIdArrayCopy = container.siblings().addBack().map(function () {
+                                const metadataId = this.id.split("photoThumbnailContainer");
+                                return metadataId[1];
+                            }).toArray();
+                            found = ($.inArray(((direction === "down") ? metadataId : shashin.lastSelectedMetadataId), metadataIdArrayCopy) !== -1);
+
+                            $.merge(selectedRowMetadataIds, metadataIdArrayCopy);
+                            index++;
+                        }
+
+                        shashin.printMessageToConsole("Looped " + index + " times finding metadata", {tag: "multiselect"});
+
+                        // Loop through all collected rows and select from selected metadata to shift selected metadata
+                        let start = false;
+                        let lastSelectedMetadataId = shashin.lastSelectedMetadataId;
+
+                        for (let index in selectedRowMetadataIds) {
+                            if (selectedRowMetadataIds.hasOwnProperty(index)) {
+                                const currentMetadataId = selectedRowMetadataIds[index];
+                                const compareOne = (direction === "down") ? lastSelectedMetadataId : metadataId;
+
+                                if (currentMetadataId === compareOne || start === true) {
+                                    if (currentMetadataId === compareOne) {
+                                        lastSelectedMetadataId = (direction === "down") ? currentMetadataId : shashin.lastSelectedMetadataId;
+                                        start = true;
+                                        continue;
+                                    }
+
+                                    const imageUrl = $("#image" + currentMetadataId).attr("src").replace("/gif/" + currentMetadataId, "/"+(Util.isMobile() ? "100" : "225")+"/" + currentMetadataId);
+                                    $("#image" + currentMetadataId).attr("src", imageUrl);
+                                    if (shashin.lastSelectedMetadataSelected === true) {
+                                        if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle") {
+                                            selectClick(currentMetadataId, view, opaque, transparent, metadataIdArrayCopy, false);
+                                            $("#image" + currentMetadataId).css("opacity", opaque);
+                                        }
+                                    } else {
+                                        if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle-fill") {
+                                            selectClick(currentMetadataId, view, opaque, transparent, metadataIdArrayCopy, false);
+                                            if (currentMetadataId !== metadataId) {
+                                                $("#image" + currentMetadataId).css("opacity", transparent);
+                                                if (shashin.lastSelectedMetadataId !== currentMetadataId) {
+                                                    $("#tntl" + currentMetadataId).css("display", "none");
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    if (direction === "down") {
+                                        lastSelectedMetadataId = currentMetadataId;
+                                    }
+                                }
+
+                                const compareTwo = (direction === "down") ? metadataId : lastSelectedMetadataId;
+
+                                if (currentMetadataId === compareTwo) {
+                                    if (direction === "up") {
+                                        let imageUrl = $("#image" + metadataId).attr("src").replace("/gif/" + metadataId, "/"+(Util.isMobile() ? "100" : "225")+"/" + metadataId);
+                                        $("#image" + metadataId).attr("src", imageUrl);
+                                        if (shashin.lastSelectedMetadataSelected === true) {
+                                            if ($("#tlicon" + metadataId).attr("class") === "bi-circle") {
+                                                selectClick(metadataId, view, opaque, transparent, metadataIdArrayCopy, false);
+                                                $("#image" + metadataId).css("opacity", opaque);
+                                            }
+                                        } else {
+                                            if ($("#tlicon" + metadataId).attr("class") === "bi-circle-fill") {
+                                                selectClick(metadataId, view, opaque, transparent, metadataIdArrayCopy, false);
+                                                if (currentMetadataId !== metadataId) {
+                                                    $("#image" + metadataId).css("opacity", transparent);
+                                                    if (shashin.lastSelectedMetadataId !== metadataId) {
+                                                        $("#tntl" + metadataId).css("display", "none");
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        imageUrl = $("#image" + currentMetadataId).attr("src").replace("/gif/" + currentMetadataId, "/"+(Util.isMobile() ? "100" : "225")+"/" + currentMetadataId);
+                                        $("#image" + currentMetadataId).attr("src", imageUrl);
+                                        if (shashin.lastSelectedMetadataSelected === true) {
+                                            if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle") {
+                                                selectClick(currentMetadataId, view, opaque, transparent, metadataIdArrayCopy, false);
+                                                $("#image" + currentMetadataId).css("opacity", opaque);
+                                            }
+                                        } else {
+                                            if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle-fill") {
+                                                selectClick(currentMetadataId, view, opaque, transparent, metadataIdArrayCopy, false);
+                                                if (currentMetadataId !== metadataId) {
+                                                    $("#image" + currentMetadataId).css("opacity", transparent);
+                                                    if (shashin.lastSelectedMetadataId !== currentMetadataId) {
+                                                        $("#tntl" + currentMetadataId).css("display", "none");
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                    $('.photo-thumbnail-image').removeClass("pb-1");
+
+                    // Put a border around select point
+                    if (shashin.getMetadataIdList().length > 0) {
+                        $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
+                        $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
+                        shashin.multiSelected = true;
+                    }
+                } else if (view === "timeline") {
+                    const http = new Http("get ranged metadata");
+                    const version = Util.getMetadataLocalStorage();
+                    http.ajax("get", "/metadata/range/"+view+"/"+shashin.lastSelectedMetadataId+"/"+metadataId+(version === "" ? "" : "?v=" + version)).then(function (data) {
+                        if (data !== null && data.hasOwnProperty("metadataIdArray")) {
+                            const metadataIdArray = data.metadataIdArray;
+
+                            for (let index in metadataIdArray) {
+                                if (metadataIdArray.hasOwnProperty(index)) {
+                                    const metadataArray = metadataIdArray[index];
+                                    const metadataIdValue = metadataArray[0];
+
+                                    if (shashin.lastSelectedMetadataSelected === true) {
+                                        if ($("#tlicon" + metadataIdValue).attr("class") === "bi-circle") {
+                                            selectClick(metadataIdValue, view, opaque, transparent, metadataIdArray, false);
+                                            $("#image" + metadataIdValue).css("opacity", opaque);
+                                        }
+                                    } else {
+                                        if ($("#tlicon" + metadataIdValue).attr("class") === "bi-circle-fill") {
+                                            selectClick(metadataIdValue, view, opaque, transparent, metadataIdArray, false);
+                                            if (metadataIdValue !== metadataId) {
+                                                $("#image" + metadataIdValue).css("opacity", transparent);
+                                                if (shashin.lastSelectedMetadataId !== metadataIdValue) {
+                                                    $("#tntl" + metadataIdValue).css("display", "none");
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    if (shashin.lastSelectedMetadataSelected === true) {
+                                        shashin.addToMetadataIdList(metadataIdValue);
+                                        shashin.addToMetadataFilenamesList(metadataArray[1]);
+                                        shashin.addToMetadataThumbnailsList(metadataArray[2]);
+                                        $("#timelineNumberSelected").text(shashin.getMetadataIdList().length + " Selected");
+                                    } else {
+                                        shashin.removeFromMetadataIdList(metadataIdValue);
+                                        shashin.removeFromMetadataFilenamesList(metadataArray[1]);
+                                        shashin.removeFromMetadataThumbnailsList(metadataArray[2]);
+                                        $("#timelineNumberSelected").text(shashin.getMetadataIdList().length + " Selected");
+                                    }
+
+                                    if (shashin.getMetadataIdList().length === 0) {
+                                        shashin.clearTimelineSelection();
+                                    }
+
+                                    if ($("#image" + metadataIdValue).length > 0) {
+                                        const imageUrl = $("#image" + metadataIdValue).attr("src").replace("/gif/" + metadataIdValue, "/"+(Util.isMobile() ? "100" : "225")+"/" + metadataIdValue);
+                                        $("#image" + metadataIdValue).attr("src", imageUrl);
+                                    }
+                                }
+                            }
+
+                            $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                            $('.photo-thumbnail-image').removeClass("pb-1");
+
+                            // Put a border around select point
+                            if (/*$("#image" + shashin.lastSelectedMetadataId).length > 0 && */shashin.getMetadataIdList().length > 0) {
+                                $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
+                                $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
+                                shashin.multiSelected = true;
+                            }
+                        }
+                    });
+                } else {
+                    shashin.printMessageToConsole("lastSelectionPos undefined or null", {tag: "multiselect"});
+                }
+            } else {
+                shashin.lastSelectedMetadataId = "";
+                shashin.multiSelected = false;
+            }
+
+            //}, 0);
+        }
+
+        return metadataIdArrayCopy;
+    }
+
+    function selectClick(metadataId, view, opaque, transparent, metadataIdArray, clicked) {
+        let isVideo = false;
+
+        if ($("#photoThumbnailContainer"+metadataId).hasClass("is-video")) {
+            isVideo = true;
+        }
+
+        if ($("#tlicon" + metadataId).attr("class") === "bi-circle") {
+            $("#tntl" + metadataId).show();
+            $("#tlicon" + metadataId).addClass('bi-circle-fill').removeClass('bi-circle');
+            $("#image" + metadataId).css("opacity", opaque);
+            $("#tncentered" + metadataId).hide();
+            $("#tnbr" + metadataId).hide();
+            $("#tnbl" + metadataId).hide();
+            if (clicked) {
+                shashin.lastSelectedMetadataId = metadataId;
+                shashin.lastSelectedMetadataSelected = true;
+                $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                $('.photo-thumbnail-image').removeClass("pb-1");
+                if (shashin.multiSelected === true) {
+                    $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
+                    $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
+                }
+            }
+            // List of selected media
+            shashin.addToMetadataIdList(metadataId);
+            shashin.addToMetadataFilenamesList($('#filename' + metadataId).val());
+            shashin.addToMetadataThumbnailsList($('#thumbnailCentered' + metadataId).val());
+            if (isVideo && Util.isMobile() === false) {
+                const jpgUrl = $("#image" + metadataId).attr("src").replace("/gif/" + metadataId, "/225/" + metadataId);
+                $("#image" + metadataId).attr("src", jpgUrl);
+            }
+        } else {
+            $("#tntl" + metadataId).show();
+            $("#tlicon" + metadataId).addClass('bi-circle').removeClass('bi-circle-fill');
+            $("#image" + metadataId).css("opacity", opaque);
+            $("#tntr" + metadataId).show();
+            $("#tncentered" + metadataId).show();
+            $("#tnbr" + metadataId).show();
+            $("#tnbl" + metadataId).show();
+            if (clicked) {
+                shashin.lastSelectedMetadataId = metadata.id;
+                shashin.lastSelectedMetadataSelected = false;
+                $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+                $('.photo-thumbnail-image').removeClass("pb-1");
+                $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
+                $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
+            }
+            shashin.removeFromMetadataIdList(metadataId);
+            shashin.removeFromMetadataFilenamesList($('#filename' + metadataId).val());
+            shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadataId).val());
+            if (isVideo  && Util.isMobile() === false && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
+            ) {
+                const gifUrl = $("#image" + metadataId).attr("src").replace("/225/" + metadataId, "/gif/" + metadataId);
+                $("#image" + metadataId).attr("src", gifUrl);
+            }
+        }
+
+        metadataIdArray = shashin.getMetadataIdList();
+
+        if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
+            $("#appSearch").hide();
+            if (view === "album" || view === "favorites" || view === "archived") {
+                $("#albumAppTools").show();
+                if (view === "album") {
+                    $("#albumTools").hide();
+                }
+            } else if (view === "timeline" || view === "recent" || view === "modified" || view === "taken" || view === "accessed" || view === "folder" || view === "search") {
+                $("#timelineAppTools").show();
+                if (view === "timeline" || view === "folder") {
+                    $("#timelineTools").hide();
+                }
+            } else if (view === "matches" || view === "person" || view === "compreface") {
+                $("#matchesAppTools").show();
+                $("#timelineTools").hide();
+            }
+
+            // Hide all center and bottom left icons
+            $('.thumbnail-br').hide();
+            $('.thumbnail-bl').hide();
+            //$('.thumbnail-tr').hide();
+            $('.thumbnail-centered').hide();
+        } else {
+            $("#appSearch").show();
+            $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+            $('.photo-thumbnail-image').removeClass("pb-1");
+            shashin.multiSelected = false;
+            $("#timelineAppTools").hide();
+            $("#albumAppTools").hide();
+            $("#matchesAppTools").hide();
+            if (view === "timeline" || view === "folder" || view === "matches" || view === "person" || view === "compreface") {
+                $("#timelineTools").show();
+            } else if (view === "album") {
+                $("#albumTools").show();
+            }
+        }
+
+        const metadataList = shashin.getMetadataIdList();
+        let timelineSelectCount = $('.bi-circle-fill').length;
+        if (metadataList.length > 0) {
+            timelineSelectCount = metadataList.length;
+        }
+
+        $("#timelineNumberSelected").text(timelineSelectCount + " Selected");
+        $("#matchesNumberSelected").text($('.bi-circle-fill').length + " Selected");
+        $("#favoritesNumberSelected").text($('.bi-circle-fill').length + " Selected");
+        $("#trashNumberSelected").text($('.bi-circle-fill').length + " Selected");
+        $("#albumNumberSelected").text($('.bi-circle-fill').length + " Selected");
+
+        if (view === "share") {
+            const albumId = $("#albumId").val();
+            const albumName = $("#albumName").val();
+            const shareLink = $("#shareLink").val();
+            const downloadEl = $("#download" + albumId);
+
+            if ($('.bi-circle-fill').length > 0) {
+                $("#clearMultiSelect").show();
+                $("#albumNumberSelected").show();
+                downloadEl.attr("name", "downloadArray");
+                downloadEl.attr("value", JSON.stringify(metadataList));
+                downloadEl.attr("title", "Download selected media");
+            } else {
+                shashin.clearAlbumSelection();
+                $("#clearMultiSelect").hide();
+                $("#multiSelectMetadataIds").val("[]");
+                $("#albumNumberSelected").hide();
+                downloadEl.attr("name", "download");
+                downloadEl.attr("value", albumId);
+                downloadEl.attr("title", "Download all photos");
+            }
+
+            $("#download"+albumId).on("click", function() {
+                trackShareDownload(albumId,albumName,shareLink);
+            });
+        }
+
+        setDateSection(metadataId);
+    }
+
+    function setDateSection(metadataId) {
+        setTimeout(function () {
+            const rowId = $($("#photoThumbnailContainer" + metadataId).parent()[0]).attr("id");
+            const date = rowId.replace("row", "");
+
+            const http = new Http("get month data");
+            http.ajax("get", "/timeline/mediatype/" + shashin.mediaTypeFilter + "/date/" + date + "/metadata").then(function (data) {
+                if (data.hasOwnProperty("status")) {
+                    const dataCount = data.metadataList.length;
+                    const selectedDateCount = $("#row" + date + " > .photo-thumbnail > .thumbnail-tl a span.bi-circle-fill").length;
+
+                    if (dataCount === selectedDateCount) {
+                        $("#select" + date).addClass("bi-circle-fill").removeClass("bi-circle");
                     } else {
-                        shashin.showToastMessage("Share album download", "<strong>File name</strong> " + tokenCookieValue + " <strong>File size</strong> " + Util.formatBytes(tokenCookieSize), {icon:"bi-info-circle", iconColor:"#777777"});
-                        Util.deleteCookie(tokenName, "/");
-                        Util.deleteCookie(tokenSize, "/");
-                        window.clearInterval(downloadTimer);
-
-                        shashin.clearAlbumSelection();
-                        $("#clearMultiSelect").hide();
-                        $("#multiSelectMetadataIds").val("[]");
-                        $("#albumNumberSelected").hide();
-                        const downloadEl = $("#download" + albumId);
-                        downloadEl.attr("name", "download");
-                        downloadEl.attr("value", albumId);
-                        downloadEl.attr("title", "Download all photos");
-                        downloadEl.on("click", function() {
-                            trackShareDownload(albumId,albumName,shareLink);
-                        });
+                        $("#select" + date).removeClass("bi-circle-fill").addClass("bi-circle");
                     }
                 }
+            });
+        }, 0);
+    }
 
-                attempts--;
-            }, 1000);
+    shashin.monthHeadingListener = function (activePage, mediaTypeFilter) {
+        if (activePage === "timeline" || activePage === undefined) {
+            $(".scrollspy").off('mouseenter').on("mouseenter", function () {
+                if ($("#select" + this.id).length > 0 && $("#select" + this.id).hasClass("show-day-select") === false) {
+                    if ($("#row" + this.id + " div.photo-thumbnail-container").length > 1) {
+                        $("#select" + this.id).css("display", "inline-block");
+                        //$("#select" + this.id).fadeIn("slow");
+                        $("#select" + this.id).addClass("show-day-select");
+                    }
+                }
+            });
+
+            $(".scrollspy").off('mouseleave').on("mouseleave", function () {
+                if ($("#select" + this.id).length > 0 && $("#select" + this.id).hasClass("show-day-select")) {
+                    if ($("#row" + this.id + " div.photo-thumbnail-container").length > 1) {
+                        $("#select" + this.id).css("display", "none");
+                        //$("#select" + this.id).fadeOut("slow");
+                        $("#select" + this.id).removeClass("show-day-select");
+                    }
+                }
+            });
+
+            $(".day-select").off('click').on("click", function () {
+                if ($("#" + this.id).length > 0 && $("#" + this.id).css("display") === "inline-block") {
+                    const dateId = this.id.replace('select','');
+
+                    setTimeout(function () {
+                        const http = new Http("get month data");
+
+                        http.ajax("get", "/timeline/mediatype/"+mediaTypeFilter+"/date/"+dateId+"/metadata").then(function (data) {
+                            if (data.hasOwnProperty("status")) {
+                                let firstMetadataId = null;
+                                for (let index in data.metadataList) {
+                                    index = parseInt(index);
+
+                                    if (isNaN(index) === false) {
+                                        const metadataId = data.metadataList[index].id;
+
+                                        if (index === 0) {
+                                            shashin.lastSelectedMetadataId = metadataId;
+                                        } else if (index === data.metadataList.length-1) {
+                                            firstMetadataId = metadataId;
+                                        }
+
+                                        shashin.addToMetadataIdList(metadataId);
+                                    }
+                                }
+
+                                if ($("#select"+dateId).hasClass("bi-circle-fill")) {
+                                    $("#select"+dateId).removeClass("bi-circle-fill").addClass("bi-circle");
+                                    shashin.lastSelectedMetadataSelected = false;
+                                } else {
+                                    $("#select"+dateId).addClass("bi-circle-fill").removeClass("bi-circle");
+                                    shashin.lastSelectedMetadataSelected = true;
+                                }
+
+                                shashin.batchSelect(firstMetadataId, "timeline");
+                            }
+                        });
+                    }, 0);
+                }
+            });
+        }
+
+        if (activePage === "album" || activePage === undefined) {
+            // $(".dateSection p").on("mouseover", function (e) {
+            //     console.log("hovering over date in album");
+            //     console.log(this.parentNode.id);
+            // });
+        }
+
+        if (activePage === "explore" || activePage === undefined) {
+            // $(".dateSection mb-3").on("mouseover", function (e) {
+            //     console.log("hovering over date in explore");
+            //     console.log(this.parentNode.id);
+            // });
         }
     };
 
