@@ -11,7 +11,6 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
-- Select photos by date in timeline, taken, and albums
 
 ### Changed
 
@@ -20,9 +19,15 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Removed
 
 ### Fixed
-- Modal bug when pressing the 'i' key
 
 ### Security
+
+## [2.11.0] - 2025-07-10
+### Added
+- Select photos by date in timeline, taken, and albums
+
+### Fixed
+- Modal bug when pressing the 'i' key
 
 ## [2.10.4] - 2025-06-10
 ### Fixed
