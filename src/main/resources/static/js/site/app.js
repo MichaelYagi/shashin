@@ -3515,13 +3515,18 @@
     function setDateSection(metadataId) {
         setTimeout(function () {
             const rowId = $($("#photoThumbnailContainer" + metadataId).parent()[0]).attr("id");
-            const date = rowId.replace("row", "");
+
+            let date = rowId.replace("row", "");
+            date = date.replace("dateBody", "");
 
             const http = new Http("get month data");
             http.ajax("get", "/timeline/mediatype/" + shashin.mediaTypeFilter + "/date/" + date + "/metadata").then(function (data) {
                 if (data.hasOwnProperty("status")) {
                     const dataCount = data.metadataList.length;
-                    const selectedDateCount = $("#row" + date + " > .photo-thumbnail > .thumbnail-tl a span.bi-circle-fill").length;
+                    let selectedDateCount = $("#row" + date + " > .photo-thumbnail > .thumbnail-tl a span.bi-circle-fill").length;
+                    if (selectedDateCount === 0) {
+                        selectedDateCount = $("#dateBody" + date + " > .photo-thumbnail > .thumbnail-tl a span.bi-circle-fill").length;
+                    }
 
                     if (dataCount === selectedDateCount) {
                         $("#select" + date).addClass("bi-circle-fill").removeClass("bi-circle");
@@ -3554,48 +3559,100 @@
                     }
                 }
             });
+        }
 
-            $(".day-select").off('click').on("click", function () {
-                if ($("#" + this.id).length > 0 && $("#" + this.id).css("display") === "inline-block") {
-                    const dateId = this.id.replace('select','');
+        if (activePage === "album" || activePage === undefined) {
+            $(".dateSection").off('mouseenter').on("mouseenter", function () {
+                const dateId = $(this).parent().attr("id");
 
-                    setTimeout(function () {
-                        const http = new Http("get month data");
+                if ($("#select" + dateId).length > 0 && $("#select" + dateId).hasClass("show-day-select") === false) {
+                    if ($("#dateBody" + dateId + " div.photo-thumbnail-container").length > 1) {
+                        $("#select" + dateId).css("display", "inline-block");
+                        //$("#select" + this.id).fadeIn("slow");
+                        $("#select" + dateId).addClass("show-day-select");
+                    }
+                }
+            });
 
-                        http.ajax("get", "/timeline/mediatype/"+mediaTypeFilter+"/date/"+dateId+"/metadata").then(function (data) {
-                            if (data.hasOwnProperty("status")) {
-                                let firstMetadataId = null;
-                                for (let index in data.metadataList) {
-                                    index = parseInt(index);
+            $(".dateSection").off('mouseleave').on("mouseleave", function () {
+                const dateId = $(this).parent().attr("id");
 
-                                    if (isNaN(index) === false) {
-                                        const metadataId = data.metadataList[index].id;
-
-                                        if (index === 0) {
-                                            shashin.lastSelectedMetadataId = metadataId;
-                                        } else if (index === data.metadataList.length-1) {
-                                            firstMetadataId = metadataId;
-                                        }
-
-                                        shashin.addToMetadataIdList(metadataId);
-                                    }
-                                }
-
-                                if ($("#select"+dateId).hasClass("bi-circle-fill")) {
-                                    $("#select"+dateId).removeClass("bi-circle-fill").addClass("bi-circle");
-                                    shashin.lastSelectedMetadataSelected = false;
-                                } else {
-                                    $("#select"+dateId).addClass("bi-circle-fill").removeClass("bi-circle");
-                                    shashin.lastSelectedMetadataSelected = true;
-                                }
-
-                                shashin.batchSelect(firstMetadataId, "timeline");
-                            }
-                        });
-                    }, 0);
+                if ($("#select" + dateId).length > 0 && $("#select" + dateId).hasClass("show-day-select")) {
+                    if ($("#dateBody" + dateId + " div.photo-thumbnail-container").length > 1) {
+                        $("#select" + dateId).css("display", "none");
+                        //$("#select" + this.id).fadeOut("slow");
+                        $("#select" + dateId).removeClass("show-day-select");
+                    }
                 }
             });
         }
+
+        if (activePage === "taken" || activePage === undefined) {
+            $(".dateHeader").off('mouseenter').on("mouseenter", function () {
+                const dateHeaderId = $(this).attr("id");
+                const dateId = dateHeaderId.replace("dateHeader", "");
+
+                if ($("#select" + dateId).length > 0 && $("#select" + dateId).hasClass("show-day-select") === false) {
+                    if ($("#dateBody" + dateId + " div.photo-thumbnail-container").length > 1) {
+                        $("#select" + dateId).css("display", "inline-block");
+                        $("#select" + dateId).addClass("show-day-select");
+                    }
+                }
+            });
+
+            $(".dateHeader").off('mouseleave').on("mouseleave", function () {
+                const dateHeaderId = $(this).attr("id");
+                const dateId = dateHeaderId.replace("dateHeader", "");
+
+                if ($("#select" + dateId).length > 0 && $("#select" + dateId).hasClass("show-day-select")) {
+                    if ($("#dateBody" + dateId + " div.photo-thumbnail-container").length > 1) {
+                        $("#select" + dateId).css("display", "none");
+                        $("#select" + dateId).removeClass("show-day-select");
+                    }
+                }
+            });
+        }
+
+        $(".day-select").off('click').on("click", function () {
+            if ($("#" + this.id).length > 0 && $("#" + this.id).css("display") === "inline-block") {
+                const dateId = this.id.replace('select','');
+
+                setTimeout(function () {
+                    const http = new Http("get month data");
+
+                    http.ajax("get", "/timeline/mediatype/"+mediaTypeFilter+"/date/"+dateId+"/metadata").then(function (data) {
+                        if (data.hasOwnProperty("status")) {
+                            let firstMetadataId = null;
+                            for (let index in data.metadataList) {
+                                index = parseInt(index);
+
+                                if (isNaN(index) === false) {
+                                    const metadataId = data.metadataList[index].id;
+
+                                    if (index === 0) {
+                                        shashin.lastSelectedMetadataId = metadataId;
+                                    } else if (index === data.metadataList.length-1) {
+                                        firstMetadataId = metadataId;
+                                    }
+
+                                    shashin.addToMetadataIdList(metadataId);
+                                }
+                            }
+
+                            if ($("#select"+dateId).hasClass("bi-circle-fill")) {
+                                $("#select"+dateId).removeClass("bi-circle-fill").addClass("bi-circle");
+                                shashin.lastSelectedMetadataSelected = false;
+                            } else {
+                                $("#select"+dateId).addClass("bi-circle-fill").removeClass("bi-circle");
+                                shashin.lastSelectedMetadataSelected = true;
+                            }
+
+                            shashin.batchSelect(firstMetadataId, "timeline");
+                        }
+                    });
+                }, 0);
+            }
+        });
     };
 
     function getElementLocation(el) {

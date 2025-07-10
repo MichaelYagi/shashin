@@ -49,7 +49,7 @@
 
                                 <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and albumMetadataList[iterStat.index-1].year==metadata.year and albumMetadataList[iterStat.index-1].month==metadata.month and albumMetadataList[iterStat.index-1].day==metadata.day}">
                                     <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                                        <section class="dateSection" th:id="${metadata.year+'-'+metadata.month+'-'+metadata.day}"><p><strong th:text="${#strings.replace(#dates.format(#dates.create(#numbers.formatInteger(metadata.year,10),#numbers.formatInteger(metadata.month,10),#numbers.formatInteger(metadata.day,10)), 'EEE, MMM d, yyyy'),'.','')}"></strong></p><div th:id="'dateBody'+${metadata.year+'-'+metadata.month+'-'+metadata.day}" class="row" style="margin-left: -2px;">
+                                        <section class="dateSection" th:id="${metadata.year+'-'+metadata.month+'-'+metadata.day}"><span th:id="'select'+${metadata.year}+'-'+${metadata.month}+'-'+${metadata.day}" class="bi-circle pe-2 day-select" style="font-size: 0.85rem;color: lightgray;display: none"></span><strong th:text="${#strings.replace(#dates.format(#dates.create(#numbers.formatInteger(metadata.year,10),#numbers.formatInteger(metadata.month,10),#numbers.formatInteger(metadata.day,10)), 'EEE, MMM d, yyyy'),'.','')}"></strong><div th:id="'dateBody'+${metadata.year+'-'+metadata.month+'-'+metadata.day}" class="row" style="margin-left: -2px;">
                                     </th:block>
                                 </th:block>
 
@@ -93,6 +93,7 @@
 
                                 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                                     /*<![CDATA[*/
+                                    shashin.monthHeadingListener([[${activePage}]], [[${mediaTypeFilter}]]);
                                     shashin.setPhotoOverlays({id:[[${metadata.id}]],lat:[[${metadata.lat}]],lng:[[${metadata.lng}]],year:[[${metadata.year}]],month:[[${metadata.month}]],day:[[${metadata.day}]],fileName:[[${metadata.fileName}]],thumbnailUrlSmall:[[${metadata.thumbnailUrlSmall}]],type:[[${metadata.type}]]}, /*[[${activePage}]]*/'album');
                                     albumModal.renderAlbumCommentsModal({id:[[${album.id}]]},{id:[[${metadata.id}]],fileName:[[${metadata.fileName}]]},/*[[${userMap}]]*/{},/*[[${albumPhotoCommentsMap}]]*/{},/*[[${canEdit}]]*/false)
                                     albumSettings.activateAlbumListeners({id:[[${metadata.id}]]})
@@ -198,7 +199,7 @@
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         const activePage = /*[[${activePage}]]*/ 'album';
-        const mediaTypeFilter = /*[[${mediaTypeFilter}]]*/ 'all';
+        shashin.mediaTypeFilter = /*[[${mediaTypeFilter}]]*/ 'all';
         const albumName = /*[[${album.name}]]*/ '';
         const page = /*[[${pageParam}]]*/ -1;
         const currentPage = /*[[${currentPage}]]*/ 0;
@@ -220,13 +221,13 @@
             http.ajax("get", "/album/metadata/list/" + albumId + "/0").then(function (data) {
                 if (data.hasOwnProperty("albumMetadataList") === true && data["albumMetadataList"].length > 0) {
                     const albumMetadataList = data["albumMetadataList"];
-                    albumSettings.init(albumId, mediaTypeFilter, activePage, albumMetadataList, lastDate);
+                    albumSettings.init(albumId, shashin.mediaTypeFilter, activePage, albumMetadataList, lastDate);
                     // Util.checkErrorImage();
                 }
             });
         } else {
             Util.scrollToTopListener("#container");
-            shashin.createPagination(currentPage,totalPages,activePage,mediaTypeFilter,albumId);
+            shashin.createPagination(currentPage,totalPages,activePage,shashin.mediaTypeFilter,albumId);
         }
     });
 </script>
