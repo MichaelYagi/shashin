@@ -3596,20 +3596,6 @@
                 }
             });
         }
-
-        if (activePage === "album" || activePage === undefined) {
-            // $(".dateSection p").on("mouseover", function (e) {
-            //     console.log("hovering over date in album");
-            //     console.log(this.parentNode.id);
-            // });
-        }
-
-        if (activePage === "explore" || activePage === undefined) {
-            // $(".dateSection mb-3").on("mouseover", function (e) {
-            //     console.log("hovering over date in explore");
-            //     console.log(this.parentNode.id);
-            // });
-        }
     };
 
     function getElementLocation(el) {
