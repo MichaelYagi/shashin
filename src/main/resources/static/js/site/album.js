@@ -190,7 +190,7 @@
                                 const uuid = uuidv4();
 
                                 if ($("#"+currentDate).length === 0 && dateHeadingObj !== null) {
-                                    const headerAndBody = '<section class="dateSection" id="'+dateHeadingObj.heading+'"><div class="mb-3" id="dateHeader'+dateHeadingObj.heading+'"><strong>'+dateHeadingObj.display+'</strong>&nbsp;'+(dateHeadingObj.hasOwnProperty("placename")?dateHeadingObj.placename:'')+'</div><div id="dateBody'+dateHeadingObj.heading+'" class="row" class="row" style="margin-left:-2px;"></div></section>';
+                                    const headerAndBody = '<section class="dateSection" id="'+dateHeadingObj.heading+'"><span id="select'+metadata.year+"'-'"+metadata.month+"'-'"+metadata.day+'" class="bi-circle pe-2 day-select" style="font-size: 0.85rem;color: lightgray;display: none"></span><div class="mb-3" id="dateHeader'+dateHeadingObj.heading+'"><strong>'+dateHeadingObj.display+'</strong>&nbsp;'+(dateHeadingObj.hasOwnProperty("placename")?dateHeadingObj.placename:'')+'</div><div id="dateBody'+dateHeadingObj.heading+'" class="row" class="row" style="margin-left:-2px;"></div></section>';
                                     $(headerAndBody).insertBefore($("." + appendClass).last());
                                 }
 
@@ -224,6 +224,8 @@
                         $(".appendAlbumPhotos").last().text("EOL").css("display","none");
                         albumSettings.rendering = false;
                     }
+
+                    shashin.monthHeadingListener(activePage, mediaTypeFilter);
                 }
             } else {
                 albumSettings.eol = true;
