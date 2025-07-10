@@ -11,7 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
-- Select photos by date in timeline
+- Select photos by date in timeline, taken, and albums
 
 ### Changed
 
