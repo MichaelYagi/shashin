@@ -1060,7 +1060,7 @@ class AlbumsController: BaseController() {
         val module = "share"
 
         val queryLimit = model.getAttribute("queryLimit").toString().toInt()
-        val response = buildShareData(albumId,shareLink, queryLimit, 0)
+        val response = buildShareData(model, albumId, shareLink, queryLimit, 0)
 
         if (response["status"] === ApiResponse.SUCCESS.status) {
             val userIp = model.getAttribute("clientIP").toString()
@@ -1116,12 +1116,7 @@ class AlbumsController: BaseController() {
             model["message"] = response["message"]!!
             model["msg"] = response["msg"]!!
             model["status"] = response["status"]!!
-            val currentUserObj = model.getAttribute("currentUser") as User?
-            model["darkMode"] = false
-            if (currentUserObj != null) {
-                model["darkMode"] = currentUserObj.getDarkMode()!!
-            }
-
+            model["darkMode"] = response["darkMode"]!!
             model["activePage"] = module
             model["activeSidebar"] = module
             if (album?.getName() != null) {
@@ -1191,14 +1186,14 @@ class AlbumsController: BaseController() {
     @ResponseBody
     fun getPagedAnonymousShareAlbum(model: Model, @PathVariable shareLink: String, @PathVariable albumId: Int, @PathVariable page: Int): String? {
         val queryLimit = model.getAttribute("queryLimit").toString().toInt()
-        val response = buildShareData(albumId,StringEscapeUtils.escapeHtml4(shareLink), queryLimit, page)
+        val response = buildShareData(model, albumId,StringEscapeUtils.escapeHtml4(shareLink), queryLimit, page)
         return mapper.writeValueAsString(response)
     }
 
     @RequestMapping(value = ["/share/{shareLink}/album/{albumId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     fun getPaginationAnonymousShareAlbum(model: Model, @PathVariable shareLink: String, @PathVariable albumId: Int, @PathVariable page: Int): String? {
         val queryLimit = model.getAttribute("queryLimit").toString().toInt()
-        val response = buildShareData(albumId,StringEscapeUtils.escapeHtml4(shareLink), queryLimit, page)
+        val response = buildShareData(model, albumId,StringEscapeUtils.escapeHtml4(shareLink), queryLimit, page)
 
         for ((k, v) in response) {
             model[k] = v!!
@@ -1264,11 +1259,11 @@ class AlbumsController: BaseController() {
     @RequestMapping(value = ["/api/v1/share/{shareLink}/album/{albumId}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedSizeAnonymousShareAlbum(model: Model, @PathVariable shareLink: String, @PathVariable albumId: Int, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>): String? {
-        val response = buildShareData(albumId,StringEscapeUtils.escapeHtml4(shareLink), size.orElse(model.getAttribute("queryLimit").toString().toInt()), page.orElse(0))
+        val response = buildShareData(model, albumId, StringEscapeUtils.escapeHtml4(shareLink), size.orElse(model.getAttribute("queryLimit").toString().toInt()), page.orElse(0))
         return mapper.writeValueAsString(response)
     }
 
-    private fun buildShareData(albumId: Int,shareLink: String, size: Int, page: Int): MutableMap<String, Any?> {
+    private fun buildShareData(model: Model, albumId: Int, shareLink: String, size: Int, page: Int): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
         response["message"] = "Nothing to see here."
         val tempAlbum = Album()
@@ -1282,6 +1277,11 @@ class AlbumsController: BaseController() {
         response["size"] = size
         response["msg"] = "No results"
         response["status"] = ApiResponse.FAIL.status
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        response["darkMode"] = false
+        if (currentUserObj != null) {
+            response["darkMode"] = currentUserObj.getDarkMode()!!
+        }
 
         val photoObj = albumRepository.findById(albumId)
         if (photoObj.isPresent && photoObj.get().getShareUrl() == shareLink) {
