@@ -648,7 +648,7 @@ class Util {
                     $("#description").val("");
                     if (rescannedMetadata.description !== null) {
                         $("#description").val(rescannedMetadata.description);
-                        $("#descriptionCharacterCount").val(500-rescannedMetadata.description.length);
+                        $("#descriptionCharacterCount").text(500-rescannedMetadata.description.length);
                     }
                     $("#duration").val("");
                     if (rescannedMetadata.duration !== null) {
