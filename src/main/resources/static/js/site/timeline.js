@@ -519,6 +519,8 @@
                     let id = $(this).attr("id");
 
                     if (id.indexOf("tail_") === -1 && index < 2 && timelineSettings.prevAnchor !== id) {
+                        shashin.dayHeadingListener(id, "timeline", mediaTypeFilter);
+
                         // Scrolling behavior different on Chrome iOS
                         if (Util.isSafari() === true || Util.isFirefox() === true || Util.isMobile() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                             timelineSettings.renderThumbnailsAlt(id, mediaTypeFilter).then(function (msg) {
@@ -995,7 +997,7 @@
                 for (let index = startingIndexTop; index < timelineArr.length; index++) {
                     const timelineDate = timelineArr[index];
                     prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
-
+                    shashin.dayHeadingListener(prevDate, "timeline", mediaTypeFilter);
                     if (Util.getDateObject(currentDate) < Util.getDateObject(prevDate)) {
                         if ($("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) ||
                             ((Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
@@ -1042,7 +1044,7 @@
                 for (let index = startingIndexBottom; index < timelineArr.length; index++) {
                     const timelineDate = timelineArr[index];
                     let prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
-
+                    shashin.dayHeadingListener(prevDate, "timeline", mediaTypeFilter);
                     if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate) && closeToFooter() === true) {
                         if (timelineSettings.currentScrollDirection ===
                             timelineSettings.ScrollDirection.down && $("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) || ((Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
@@ -1683,7 +1685,6 @@
 
     // Hook up data to edit albums, favorites and people labels
     timelineSettings.attachAssociatedMetadata = async function(date, mediaTypeFilter) {
-        shashin.dayHeadingListener(date, "timeline", mediaTypeFilter);
         const dateArray = date.split("-");
         if (timelineSettings.dbOperationComplete === true && dateArray.length === 3) {
             const year = parseInt(dateArray[0]);
