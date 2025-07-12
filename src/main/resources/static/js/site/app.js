@@ -2858,7 +2858,9 @@
                     });
                 }
 
-                setDateSection(metadata.id);
+                if (view !== "share") {
+                    setDateSection(metadata.id);
+                }
             }
         });
 
@@ -3526,7 +3528,9 @@
             });
         }
 
-        setDateSection(metadataId);
+        if (view !== "share") {
+            setDateSection(metadataId);
+        }
     }
 
     function setDateSection(metadataId) {
@@ -3540,7 +3544,7 @@
 
             const http = new Http("get month data");
             http.ajax("get", "/timeline/mediatype/" + shashin.mediaTypeFilter + "/date/" + date + "/metadata").then(function (data) {
-                if (data.hasOwnProperty("status")) {
+                if (data && data.hasOwnProperty("status")) {
                     const metadataList = data.metadataList;
                     let dateAllSelected = true;
 
