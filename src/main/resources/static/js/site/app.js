@@ -712,6 +712,7 @@
 
                 if (metadata.description !== null) {
                     $("#description").val(metadata.description);
+                    $("#descriptionCharacterCount").val(500-metadata.description.length);
                 }
 
                 if (metadata.camera !== null) {
