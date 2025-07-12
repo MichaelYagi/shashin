@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Added
 
 ### Changed
+- Refactored date batch selection
 
 ### Deprecated
 
