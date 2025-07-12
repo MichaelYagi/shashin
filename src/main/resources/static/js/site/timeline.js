@@ -1785,7 +1785,7 @@
         html += TimelineTemplates.TimelinePreLoadGalleryHeader({metadata:metadataList[0],placeNameHeaders:placeNameHeaders,listHtml:listHtml,isMobile:Util.isMobile()});
         internalHtml += '<br id="br'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
             '<section class="scrollspy" id="'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
-            '<div class="mb-3 ms-1"><span id="select'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'" class="bi-circle pe-2 day-select" style="font-size: 0.85rem;color: lightgray;display: none"></span><strong class="dateHeading pe-1">'+Util.getDateString(metadataList[0].year, metadataList[0].month, metadataList[0].day)+'</strong>';
+            '<div style="margin-left: -11px; padding-left: 13px;margin-top: -25px; padding-top: 25px;margin-bottom: 0; padding-bottom: 15px;"><span id="select'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'" class="bi-circle pe-2 day-select" style="font-size: 0.85rem;color: lightgray;display: none"></span><strong class="dateHeading pe-1">'+Util.getDateString(metadataList[0].year, metadataList[0].month, metadataList[0].day)+'</strong>';
 
         if (placeNameHeaders.length === 1 && placeNameHeaders[0].length > 0) {
             internalHtml += '<span class="text-muted"><a class="link-unstyled" href="/search?term='+placeNameHeaders[0]+'" target="_blank" id="placeNameHeader'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'"'+(hideText === true ? " style='display: none;'" : "")+'>'+placeNameHeaders[0]+'</a></span>';

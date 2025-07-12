@@ -3568,6 +3568,8 @@
             let listenerEl = "#"+date;
             let dateBody = "#row";
             let animateEl = "#" + date + " .dateHeading";
+            let marginLeftAnimate = "13.609px";
+            let marginLeftOrigin = "0";
             if (view === "album") {
                 listenerEl = "#dateHeader"+date;
                 dateBody = "#dateBody";
@@ -3576,13 +3578,14 @@
                 listenerEl = "#dateHeader"+date;
                 dateBody = "#dateBody";
                 animateEl = "#dateHeader" + date;
+                marginLeftOrigin = "-16px";
             }
 
             $(listenerEl).off('mouseenter').on("mouseenter", function () {
                 if ($("#select" + date).length > 0 && $(dateBody + date + " div.photo-thumbnail-container").length > 1) {
-                    $(animateEl).animate({"marginLeft": "13.609px"}, "fast", function () {
+                    $(animateEl).animate({"marginLeft": marginLeftAnimate}, "fast", function () {
                         // Complete
-                        $(animateEl).css("margin-left", "0px");
+                        $(animateEl).css("margin-left", marginLeftOrigin);
                         $("#select" + date).fadeIn("fast");
                         $("#select" + date).addClass("show-day-select");
                         $("#select" + date).css("display", "inline-block");
