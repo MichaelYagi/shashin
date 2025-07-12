@@ -966,7 +966,7 @@ class AlbumsController: BaseController() {
             val seed = System.currentTimeMillis()
             val random = Random(seed)
             val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
-            val length = random.nextInt(minLength, maxLength + 1)
+            val length = minLength + random.nextInt(maxLength - minLength + 1)
 
             resp["relativeShareLink"] = (1..length)
                 .map { charPool[random.nextInt(charPool.size)] }
