@@ -20,6 +20,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Removed
 
 ### Fixed
+- Bug when selecting image in share view
 
 ### Security
 
