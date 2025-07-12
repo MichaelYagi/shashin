@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ### Changed
 - Refactored date batch selection
+- Moved share link generation to back end
 
 ### Deprecated
 
@@ -22,6 +23,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Fixed
 - Bug when selecting image in share view 
 - Share view dark mode
+- Cancel when selecting in paged mode
 
 ### Security
 

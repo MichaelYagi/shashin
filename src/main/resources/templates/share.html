@@ -155,6 +155,8 @@
         } else {
             Util.scrollToTopListener("#container");
             shashin.createPagination(currentPage,totalPages,activePage,null,albumId,shareLink);
+            const shareAlbumInstance = new ShareAlbum();
+            shareAlbumInstance.clearMultiSelectListener();
         }
     });
 </script>

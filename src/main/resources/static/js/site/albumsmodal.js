@@ -11,7 +11,7 @@
         let relativeShareLink = "";
 
         if (action === "generate") {
-            relativeShareLink = albumsModalSettings.makeShareLinkId(8, 11);
+            relativeShareLink = await albumsModalSettings.makeShareLinkId(albumId);
             $("#shareLink").val(relativeShareLink);
             $("#share"+albumId+" span").removeClass('bi-share').addClass('bi-share-fill');
             $("#share"+albumId+" span").attr("title", "Shared with other people");
@@ -63,17 +63,20 @@
         }
     };
 
-    albumsModalSettings.makeShareLinkId = function (minLength, maxLength) {
-        const length = Math.floor(
-            Math.random() * (Math.ceil(maxLength) - Math.floor(minLength) + 1) + minLength
-        );
-        let result = '';
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        const charactersLength = characters.length;
-        for (let i = 0; i < length; i++ ) {
-            result += characters.charAt(Math.floor(Math.random() *
-                charactersLength));
+    albumsModalSettings.makeShareLinkId = async function (albumId) {
+        const http = new Http("create rand link");
+        const data = await http.ajax("get", "/share/album/" + albumId + "/create");
+        let result = "";
+        if (data.hasOwnProperty("relativeShareLink") && data.relativeShareLink !== "") {
+            result = data.relativeShareLink;
+        } else {
+            shashin.showToastMessage("Something went wrong!", "Could not generate share link", {
+                icon:"bi-exclamation-triangle",
+                iconColor:"#FF0000",
+                borderColor:"danger"
+            });
         }
+
         return result;
     };
 }( window.albumsModalSettings = window.albumsModalSettings || {}, jQuery ));
