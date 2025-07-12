@@ -158,9 +158,9 @@ class Taken {
                     if ($("#"+currentDate).length > 0 && nextDate !== "" && currentDate !== nextDate) {
                         $("<span class='"+appendClass+"' style='width:0;height:0;padding:0'></span>").insertAfter($("#"+currentDate));
                     }
-                }
 
-                shashin.monthHeadingListener(activePage, mediaTypeFilter);
+                    shashin.dayHeadingListener(currentDate, activePage, mediaTypeFilter);
+                }
 
                 this.rendering = false;
                 $("#spinner").css("display", "none");

@@ -130,6 +130,7 @@
                             index = parseInt(index);
                             const currentMediaLinkIndex = (mediaLinkLength + index);
                             const metadata = albumMetadataList[index];
+                            const currentDate = metadata.year + "-" + metadata.month + "-" + metadata.day;
 
                             if ($("#photoThumbnailContainer"+metadata.id).length === 0) {
 
@@ -149,7 +150,6 @@
                                     lastDate = albumSettings.lastDate;
                                     albumSettings.lastDate = "";
                                 }
-                                const currentDate = metadata.year + "-" + metadata.month + "-" + metadata.day;
                                 const nextDate = albumMetadataList.hasOwnProperty(index+1) ? albumMetadataList[index+1].year + "-" + albumMetadataList[index+1].month + "-" + albumMetadataList[index+1].day : "";
                                 const displayCurrentDate = dateFormat(currentDate.replace(/-/g, "/"), "ddd, mmm d, yyyy");
 
@@ -190,7 +190,7 @@
                                 const uuid = uuidv4();
 
                                 if ($("#"+currentDate).length === 0 && dateHeadingObj !== null) {
-                                    const headerAndBody = '<section class="dateSection" id="'+dateHeadingObj.heading+'"><span id="select'+metadata.year+"'-'"+metadata.month+"'-'"+metadata.day+'" class="bi-circle pe-2 day-select" style="font-size: 0.85rem;color: lightgray;display: none"></span><div class="mb-3" id="dateHeader'+dateHeadingObj.heading+'"><strong>'+dateHeadingObj.display+'</strong>&nbsp;'+(dateHeadingObj.hasOwnProperty("placename")?dateHeadingObj.placename:'')+'</div><div id="dateBody'+dateHeadingObj.heading+'" class="row" class="row" style="margin-left:-2px;"></div></section>';
+                                    const headerAndBody = '<section class="dateSection" id="'+dateHeadingObj.heading+'"><div class="mb-3 dateHeader" id="dateHeader'+dateHeadingObj.heading+'"><span id="select'+metadata.year+'-'+metadata.month+'-'+metadata.day+'" class="bi-circle pe-2 day-select" style="font-size: 0.85rem;color: lightgray;display: none"></span><strong>'+dateHeadingObj.display+'</strong></div><div id="dateBody'+dateHeadingObj.heading+'" class="row" class="row" style="margin-left:-2px;"></div></section>';
                                     $(headerAndBody).insertBefore($("." + appendClass).last());
                                 }
 
@@ -214,6 +214,8 @@
                                     $("<span class='"+appendClass+"' style='width:0;height:0;padding:0'></span>").insertAfter($("#"+currentDate));
                                 }
                             }
+
+                            shashin.dayHeadingListener(currentDate, activePage, mediaTypeFilter);
                         }
 
                         $("#spinner").css("display","none");
@@ -224,8 +226,6 @@
                         $(".appendAlbumPhotos").last().text("EOL").css("display","none");
                         albumSettings.rendering = false;
                     }
-
-                    shashin.monthHeadingListener(activePage, mediaTypeFilter);
                 }
             } else {
                 albumSettings.eol = true;
