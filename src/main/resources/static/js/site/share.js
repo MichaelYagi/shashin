@@ -17,7 +17,7 @@ class ShareAlbum {
         setTimeout(async () => {
             shashin.pageLoader(await this.loadNextPage.bind(this), ".appendAlbumPhotos", this.albumMetadataList, this.activePage);
         }, 0);
-        await this.renderDownload();
+        await this.clearMultiSelectListener();
     }
 
     async loadNextPage() {
@@ -144,7 +144,7 @@ class ShareAlbum {
         return mediaContentList;
     }
 
-    async renderDownload() {
+    async clearMultiSelectListener() {
         const albumId = this.albumId;
         const shareLink = this.shareLink;
 

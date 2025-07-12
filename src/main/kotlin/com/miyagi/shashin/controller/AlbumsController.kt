@@ -950,6 +950,35 @@ class AlbumsController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @RequestMapping(value = ["/share/album/{albumId}/create","/api/v1/share/album/{albumId}/create"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun createShareLink(@PathVariable albumId: Int): String? {
+        resp["relativeShareLink"] = ""
+        resp["msg"] = "Could not generate link"
+        resp["status"] = ApiResponse.FAIL.status
+
+        val photoObj = albumRepository.findById(albumId)
+        if (photoObj.isPresent) {
+            val minLength = 8
+            val maxLength = 11
+
+            val seed = System.currentTimeMillis()
+            val random = Random(seed)
+            val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+            val length = random.nextInt(minLength, maxLength + 1)
+
+            resp["relativeShareLink"] = (1..length)
+                .map { charPool[random.nextInt(charPool.size)] }
+                .joinToString("")
+
+            resp["msg"] = "generated link"
+            resp["status"] = ApiResponse.SUCCESS.status
+        }
+
+        return mapper.writeValueAsString(resp)
+    }
+
     @RouterOperation(
         operation =
         Operation(
