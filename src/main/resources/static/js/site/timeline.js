@@ -1683,7 +1683,7 @@
 
     // Hook up data to edit albums, favorites and people labels
     timelineSettings.attachAssociatedMetadata = async function(date, mediaTypeFilter) {
-        shashin.monthHeadingListener("timeline", mediaTypeFilter);
+        shashin.dayHeadingListener(date, "timeline", mediaTypeFilter);
         const dateArray = date.split("-");
         if (timelineSettings.dbOperationComplete === true && dateArray.length === 3) {
             const year = parseInt(dateArray[0]);

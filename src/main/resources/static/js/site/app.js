@@ -2820,16 +2820,16 @@
                     $("#matchesAppTools").hide();
                 }
 
-                let timelineSelectCount = $('.bi-circle-fill').length;
+                let selectCount = $('.bi-circle-fill').length;
                 if (metadataIdArray.length > 0) {
-                    timelineSelectCount = metadataIdArray.length;
+                    selectCount = metadataIdArray.length;
                 }
 
-                $("#timelineNumberSelected").text(timelineSelectCount+" Selected");
-                $("#matchesNumberSelected").text($('.bi-circle-fill').length+" Selected");
-                $("#favoritesNumberSelected").text($('.bi-circle-fill').length+" Selected");
-                $("#trashNumberSelected").text($('.bi-circle-fill').length+" Selected");
-                $("#albumNumberSelected").text($('.bi-circle-fill').length+" Selected");
+                $("#timelineNumberSelected").text(selectCount+" Selected");
+                $("#matchesNumberSelected").text(selectCount+" Selected");
+                $("#favoritesNumberSelected").text(selectCount+" Selected");
+                $("#trashNumberSelected").text(selectCount+" Selected");
+                $("#albumNumberSelected").text(selectCount+" Selected");
 
                 if (view === "share") {
                     const albumId = $("#albumId").val();
@@ -3157,7 +3157,7 @@
                 const pointerHash = getElementLocation($("#photoThumbnailContainer" + metadataId)[0]);
                 const pointerPos = [pointerHash.x, pointerHash.y];
 
-                if (view !== "timeline" && lastSelectionPos[0] !== null && lastSelectionPos[1] !== null && pointerPos[0] !== null && pointerPos[1] !== null) {
+                if (view !== "timeline" && addBorder && lastSelectionPos[0] !== null && lastSelectionPos[1] !== null && pointerPos[0] !== null && pointerPos[1] !== null) {
                     shashin.printMessageToConsole("Selected Media point [x, y]: " + JSON.stringify(lastSelectionPos) + ". MetadataId: " + shashin.lastSelectedMetadataId, {tag: "multiselect"});
                     shashin.printMessageToConsole("Shift Key point [x, y]: " + JSON.stringify(pointerPos) + ". MetadataId: " + metadataId, {tag: "multiselect"});
 
@@ -3300,12 +3300,21 @@
                         $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
                         shashin.multiSelected = true;
                     }
-                } else if (view === "timeline") {
+                } else if (view === "timeline" || addBorder === false) {
                     const http = new Http("get ranged metadata");
                     const version = Util.getMetadataLocalStorage();
                     http.ajax("get", "/metadata/range/"+view+"/"+shashin.lastSelectedMetadataId+"/"+metadataId+(version === "" ? "" : "?v=" + version)).then(function (data) {
                         if (data !== null && data.hasOwnProperty("metadataIdArray")) {
                             const metadataIdArray = data.metadataIdArray;
+
+
+                            if (shashin.getMetadataIdList().length > 0) {
+                                if (view === "album") {
+                                    $("#albumAppTools").css("display", "block");
+                                }
+                            } else {
+                                $("#albumAppTools").css("display", "none");
+                            }
 
                             for (let index in metadataIdArray) {
                                 if (metadataIdArray.hasOwnProperty(index)) {
@@ -3333,16 +3342,15 @@
                                         shashin.addToMetadataIdList(metadataIdValue);
                                         shashin.addToMetadataFilenamesList(metadataArray[1]);
                                         shashin.addToMetadataThumbnailsList(metadataArray[2]);
-                                        $("#timelineNumberSelected").text(shashin.getMetadataIdList().length + " Selected");
                                     } else {
                                         shashin.removeFromMetadataIdList(metadataIdValue);
                                         shashin.removeFromMetadataFilenamesList(metadataArray[1]);
                                         shashin.removeFromMetadataThumbnailsList(metadataArray[2]);
-                                        $("#timelineNumberSelected").text(shashin.getMetadataIdList().length + " Selected");
                                     }
 
                                     if (shashin.getMetadataIdList().length === 0) {
                                         shashin.clearTimelineSelection();
+                                        $("#albumAppTools").css("display", "none");
                                     }
 
                                     if ($("#image" + metadataIdValue).length > 0) {
@@ -3350,6 +3358,11 @@
                                         $("#image" + metadataIdValue).attr("src", imageUrl);
                                     }
                                 }
+                            }
+
+                            if (shashin.getMetadataIdList().length > 0) {
+                                $("#albumNumberSelected").text(shashin.getMetadataIdList().length + " Selected");
+                                $("#timelineNumberSelected").text(shashin.getMetadataIdList().length + " Selected");
                             }
 
                             $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
@@ -3418,7 +3431,7 @@
             $("#tnbr" + metadataId).show();
             $("#tnbl" + metadataId).show();
             if (clicked) {
-                shashin.lastSelectedMetadataId = metadata.id;
+                shashin.lastSelectedMetadataId = metadataId;
                 shashin.lastSelectedMetadataSelected = false;
                 $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
                 $('.photo-thumbnail-image').removeClass("pb-1");
@@ -3475,16 +3488,16 @@
         }
 
         const metadataList = shashin.getMetadataIdList();
-        let timelineSelectCount = $('.bi-circle-fill').length;
+        let selectCount = $('.bi-circle-fill').length;
         if (metadataList.length > 0) {
-            timelineSelectCount = metadataList.length;
+            selectCount = metadataList.length;
         }
 
-        $("#timelineNumberSelected").text(timelineSelectCount + " Selected");
-        $("#matchesNumberSelected").text($('.bi-circle-fill').length + " Selected");
-        $("#favoritesNumberSelected").text($('.bi-circle-fill').length + " Selected");
-        $("#trashNumberSelected").text($('.bi-circle-fill').length + " Selected");
-        $("#albumNumberSelected").text($('.bi-circle-fill').length + " Selected");
+        $("#timelineNumberSelected").text(selectCount + " Selected");
+        $("#matchesNumberSelected").text(selectCount + " Selected");
+        $("#favoritesNumberSelected").text(selectCount + " Selected");
+        $("#trashNumberSelected").text(selectCount + " Selected");
+        $("#albumNumberSelected").text(selectCount + " Selected");
 
         if (view === "share") {
             const albumId = $("#albumId").val();
@@ -3523,16 +3536,24 @@
             let date = rowId.replace("row", "");
             date = date.replace("dateBody", "");
 
+            const selectedMetadata = JSON.parse($("#multiSelectMetadataIds").val());
+
             const http = new Http("get month data");
             http.ajax("get", "/timeline/mediatype/" + shashin.mediaTypeFilter + "/date/" + date + "/metadata").then(function (data) {
                 if (data.hasOwnProperty("status")) {
-                    const dataCount = data.metadataList.length;
-                    let selectedDateCount = $("#row" + date + " > .photo-thumbnail > .thumbnail-tl a span.bi-circle-fill").length;
-                    if (selectedDateCount === 0) {
-                        selectedDateCount = $("#dateBody" + date + " > .photo-thumbnail > .thumbnail-tl a span.bi-circle-fill").length;
+                    const metadataList = data.metadataList;
+                    let dateAllSelected = true;
+
+                    for (let index in metadataList) {
+                        const metadata = metadataList[index];
+
+                        if (selectedMetadata.includes(metadata.id) !== true) {
+                            dateAllSelected = false;
+                            break;
+                        }
                     }
 
-                    if (dataCount === selectedDateCount) {
+                    if (dateAllSelected) {
                         $("#select" + date).addClass("bi-circle-fill").removeClass("bi-circle");
                     } else {
                         $("#select" + date).removeClass("bi-circle-fill").addClass("bi-circle");
@@ -3542,89 +3563,77 @@
         }, 0);
     }
 
-    shashin.monthHeadingListener = function (activePage, mediaTypeFilter) {
-        if (activePage === "timeline" || activePage === undefined) {
-            $(".scrollspy").off('mouseenter').on("mouseenter", function () {
-                if ($("#select" + this.id).length > 0 && $("#select" + this.id).hasClass("show-day-select") === false) {
-                    if ($("#row" + this.id + " div.photo-thumbnail-container").length > 1) {
-                        $("#select" + this.id).css("display", "inline-block");
-                        //$("#select" + this.id).fadeIn("slow");
-                        $("#select" + this.id).addClass("show-day-select");
-                    }
-                }
-            });
+    shashin.dayHeadingListener = function (date, activePage, mediaTypeFilter) {
+        function enterAction(date, view) {
+            let listenerEl = "#"+date;
+            let dateBody = "#row";
+            let animateEl = "#" + date + " .dateHeading";
+            if (view === "album") {
+                listenerEl = "#dateHeader"+date;
+                dateBody = "#dateBody";
+                animateEl = "#" + date + " strong";
+            } else if (view === "taken") {
+                listenerEl = "#dateHeader"+date;
+                dateBody = "#dateBody";
+                animateEl = "#dateHeader" + date;
+            }
 
-            $(".scrollspy").off('mouseleave').on("mouseleave", function () {
-                if ($("#select" + this.id).length > 0 && $("#select" + this.id).hasClass("show-day-select")) {
-                    if ($("#row" + this.id + " div.photo-thumbnail-container").length > 1) {
-                        $("#select" + this.id).css("display", "none");
-                        //$("#select" + this.id).fadeOut("slow");
-                        $("#select" + this.id).removeClass("show-day-select");
-                    }
-                }
-            });
-        }
-
-        if (activePage === "album" || activePage === undefined) {
-            $(".dateSection").off('mouseenter').on("mouseenter", function () {
-                const dateId = $(this).parent().attr("id");
-
-                if ($("#select" + dateId).length > 0 && $("#select" + dateId).hasClass("show-day-select") === false) {
-                    if ($("#dateBody" + dateId + " div.photo-thumbnail-container").length > 1) {
-                        $("#select" + dateId).css("display", "inline-block");
-                        //$("#select" + this.id).fadeIn("slow");
-                        $("#select" + dateId).addClass("show-day-select");
-                    }
-                }
-            });
-
-            $(".dateSection").off('mouseleave').on("mouseleave", function () {
-                const dateId = $(this).parent().attr("id");
-
-                if ($("#select" + dateId).length > 0 && $("#select" + dateId).hasClass("show-day-select")) {
-                    if ($("#dateBody" + dateId + " div.photo-thumbnail-container").length > 1) {
-                        $("#select" + dateId).css("display", "none");
-                        //$("#select" + this.id).fadeOut("slow");
-                        $("#select" + dateId).removeClass("show-day-select");
-                    }
+            $(listenerEl).off('mouseenter').on("mouseenter", function () {
+                if ($("#select" + date).length > 0 && $(dateBody + date + " div.photo-thumbnail-container").length > 1) {
+                    $(animateEl).animate({"marginLeft": "13.609px"}, "fast", function () {
+                        // Complete
+                        $(animateEl).css("margin-left", "0px");
+                        $("#select" + date).fadeIn("fast");
+                        $("#select" + date).addClass("show-day-select");
+                        $("#select" + date).css("display", "inline-block");
+                    });
                 }
             });
         }
 
-        if (activePage === "taken" || activePage === undefined) {
-            $(".dateHeader").off('mouseenter').on("mouseenter", function () {
-                const dateHeaderId = $(this).attr("id");
-                const dateId = dateHeaderId.replace("dateHeader", "");
+        function leaveAction(date, view) {
+            let listenerEl = "#"+date;
+            let dateBody = "#row";
+            let animateEl = "#" + date + " .dateHeading";
+            if (view === "album") {
+                listenerEl = "#dateHeader"+date;
+                dateBody = "#dateBody";
+                animateEl = "#" + date + " strong";
+            } else if (view === "taken") {
+                listenerEl = "#dateHeader"+date;
+                dateBody = "#dateBody";
+                animateEl = "#dateHeader" + date;
+            }
 
-                if ($("#select" + dateId).length > 0 && $("#select" + dateId).hasClass("show-day-select") === false) {
-                    if ($("#dateBody" + dateId + " div.photo-thumbnail-container").length > 1) {
-                        $("#select" + dateId).css("display", "inline-block");
-                        $("#select" + dateId).addClass("show-day-select");
-                    }
-                }
-            });
+            $(listenerEl).off('mouseleave').on("mouseleave", function () {
+                if ($("#select" + date).length > 0 && $(dateBody + date + " div.photo-thumbnail-container").length > 1) {
+                    $(animateEl).stop(false, true);
+                    $("#select" + date).stop(false, true);
+                    $("#select" + date).removeClass("show-day-select");
+                    $("#select" + date).css("display", "none");
 
-            $(".dateHeader").off('mouseleave').on("mouseleave", function () {
-                const dateHeaderId = $(this).attr("id");
-                const dateId = dateHeaderId.replace("dateHeader", "");
-
-                if ($("#select" + dateId).length > 0 && $("#select" + dateId).hasClass("show-day-select")) {
-                    if ($("#dateBody" + dateId + " div.photo-thumbnail-container").length > 1) {
-                        $("#select" + dateId).css("display", "none");
-                        $("#select" + dateId).removeClass("show-day-select");
-                    }
+                    $("#select" + date).fadeOut(500, function () {
+                        $("#select" + date).removeClass("show-day-select");
+                        $("#select" + date).css("display", "none");
+                    });
                 }
             });
         }
 
-        $(".day-select").off('click').on("click", function () {
-            if ($("#" + this.id).length > 0 && $("#" + this.id).css("display") === "inline-block") {
-                const dateId = this.id.replace('select','');
+        enterAction(date, activePage);
+        leaveAction(date, activePage);
 
+        let clickEl = "#dateHeader"+date;
+        if (activePage === "timeline") {
+            clickEl = "#"+date;
+        }
+
+        $(clickEl).off("click").on("click", function () {
+            if ($("#" + date).length > 0 && $("#select" + date).css("display") === "inline-block") {
                 setTimeout(function () {
                     const http = new Http("get month data");
 
-                    http.ajax("get", "/timeline/mediatype/"+mediaTypeFilter+"/date/"+dateId+"/metadata").then(function (data) {
+                    http.ajax("get", "/timeline/mediatype/"+mediaTypeFilter+"/date/"+date+"/metadata").then(function (data) {
                         if (data.hasOwnProperty("status")) {
                             let firstMetadataId = null;
                             for (let index in data.metadataList) {
@@ -3643,15 +3652,15 @@
                                 }
                             }
 
-                            if ($("#select"+dateId).hasClass("bi-circle-fill")) {
-                                $("#select"+dateId).removeClass("bi-circle-fill").addClass("bi-circle");
+                            if ($("#select"+date).hasClass("bi-circle-fill")) {
+                                $("#select"+date).removeClass("bi-circle-fill").addClass("bi-circle");
                                 shashin.lastSelectedMetadataSelected = false;
                             } else {
-                                $("#select"+dateId).addClass("bi-circle-fill").removeClass("bi-circle");
+                                $("#select"+date).addClass("bi-circle-fill").removeClass("bi-circle");
                                 shashin.lastSelectedMetadataSelected = true;
                             }
 
-                            shashin.batchSelect(firstMetadataId, "timeline", false);
+                            shashin.batchSelect(firstMetadataId, activePage, false);
                         }
                     });
                 }, 0);
