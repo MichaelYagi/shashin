@@ -3542,7 +3542,7 @@
             date = date.replace("dateBody", "");
             const selectedMetadata = JSON.parse($("#multiSelectMetadataIds").val());
 
-            if (view === "timeline") {
+            if (view === "timeline" || view === "taken") {
                 const http = new Http("get month data");
                 http.ajax("get", "/timeline/mediatype/" + shashin.mediaTypeFilter + "/date/" + date + "/metadata").then(function (data) {
                     if (data && data.hasOwnProperty("status")) {
@@ -3565,8 +3565,6 @@
                         }
                     }
                 });
-            } else {
-
             }
         }, 0);
     }
