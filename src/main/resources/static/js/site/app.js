@@ -3160,12 +3160,11 @@
                 const pointerHash = getElementLocation($("#photoThumbnailContainer" + metadataId)[0]);
                 const pointerPos = [pointerHash.x, pointerHash.y];
 
+                const direction = (pointerPos[1] > lastSelectionPos[1] || (pointerPos[0] > lastSelectionPos[0] && pointerPos[1] >= lastSelectionPos[1])) ? "down" : "up";
+
                 if (view !== "timeline" && addBorder && lastSelectionPos[0] !== null && lastSelectionPos[1] !== null && pointerPos[0] !== null && pointerPos[1] !== null) {
                     shashin.printMessageToConsole("Selected Media point [x, y]: " + JSON.stringify(lastSelectionPos) + ". MetadataId: " + shashin.lastSelectedMetadataId, {tag: "multiselect"});
                     shashin.printMessageToConsole("Shift Key point [x, y]: " + JSON.stringify(pointerPos) + ". MetadataId: " + metadataId, {tag: "multiselect"});
-
-                    const direction = (pointerPos[1] > lastSelectionPos[1] || (pointerPos[0] > lastSelectionPos[0] && pointerPos[1] >= lastSelectionPos[1])) ? "down" : "up";
-
                     shashin.printMessageToConsole("Select direction: " + direction, {tag: "multiselect"});
 
                     // Avoids infinite loops
@@ -3306,7 +3305,8 @@
                 } else if (view === "timeline" || addBorder === false) {
                     const http = new Http("get ranged metadata");
                     const version = Util.getMetadataLocalStorage();
-                    http.ajax("get", "/metadata/range/"+view+"/"+shashin.lastSelectedMetadataId+"/"+metadataId+(version === "" ? "" : "?v=" + version)).then(function (data) {
+
+                    http.ajax("get", "/metadata/range/"+direction+"/"+shashin.lastSelectedMetadataId+"/"+metadataId+(version === "" ? "" : "?v=" + version)).then(function (data) {
                         if (data !== null && data.hasOwnProperty("metadataIdArray")) {
                             const metadataIdArray = data.metadataIdArray;
 

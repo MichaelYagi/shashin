@@ -120,17 +120,15 @@ class TimelineController: BaseController() {
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/metadata/range/{view}/{anchorId}/{selectId}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/metadata/range/{direction}/{anchorId}/{selectId}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) view: String?,@PathVariable(required = true) anchorId: String?, @PathVariable(required = true) selectId: String?): String {
+    fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) direction: String?,@PathVariable(required = true) anchorId: String?, @PathVariable(required = true) selectId: String?): String {
         val retMetadataIdArray = mutableListOf<MutableList<String>>()
         val response = mutableMapOf<String, Any?>()
 
         response["msg"] = "Could not get results"
         response["status"] = ApiResponse.FAIL.status
         response["metadataIdArray"] = mutableListOf<MutableList<String>>()
-
-        var direction = "down"
 
         if (anchorId !== null && anchorId !== "" && selectId !== null && selectId !== "" && anchorId !== selectId) {
             val anchorMetadata = metadataRepository.findByMetadataId(anchorId)
@@ -158,10 +156,9 @@ class TimelineController: BaseController() {
 
             var startDate = selectMetadataString
             var endDate = anchorMetadataString
-            if (anchorMetadataDateObj <= selectMetadataDateObj) {
+            if (anchorMetadataDateObj < selectMetadataDateObj) {
                 startDate = anchorMetadataString
                 endDate = selectMetadataString
-                direction = "up"
             }
 
             // If timeline view
