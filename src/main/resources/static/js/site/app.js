@@ -2859,9 +2859,7 @@
                     });
                 }
 
-                if (view !== "share") {
-                    setDateSection(metadata.id, view);
-                }
+                setDateSection(metadata.id, view);
             }
         });
 
@@ -3529,9 +3527,7 @@
             });
         }
 
-        if (view !== "share") {
-            setDateSection(metadataId, view);
-        }
+        setDateSection(metadataId, view);
     }
 
     function setDateSection(metadataId, view) {
