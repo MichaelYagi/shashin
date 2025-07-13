@@ -25,6 +25,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 - Bug when selecting image in share view 
 - Share view dark mode
 - Cancel when selecting in paged mode
+- Batch select if same date
 
 ### Security
 
