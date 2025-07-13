@@ -3583,10 +3583,12 @@
                 listenerEl = "#dateHeader"+date;
                 dateBody = "#dateBody";
                 animateEl = "#dateHeader" + date;
-                marginLeftOrigin = "-16px";
+                marginLeftAnimate = "-15px";
+                marginLeftOrigin = "-15px";
             }
 
             $(listenerEl).off('mouseenter').on("mouseenter", function () {
+                console.log("testzzz1")
                 if ($("#select" + date).length > 0 && $(dateBody + date + " div.photo-thumbnail-container").length > 1) {
                     $(animateEl).animate({"marginLeft": marginLeftAnimate}, "fast", function () {
                         // Complete
