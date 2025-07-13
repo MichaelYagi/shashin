@@ -861,6 +861,7 @@ class AlbumsController: BaseController() {
             val albumObj = albumRepository.findAlbumById(albumId)
 
             for (metadataId in idArray) {
+                println("idArray:"+metadataId)
                 MetadataProcessing.deleteAlbumPhoto(metadataRepository, albumRepository, albumPhotoRepository, metadataId, albumId)
             }
 
@@ -1341,6 +1342,39 @@ class AlbumsController: BaseController() {
         }
 
         return response
+    }
+
+    @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @RequestMapping(value = ["/album/mediatype/{mediaTypeFilter}/date/{date}/{albumId}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getAlbumMetadataListFromDate(@PathVariable mediaTypeFilter: String, @PathVariable date: String, @PathVariable albumId: Int): String? {
+        val response = mutableMapOf<String, Any?>()
+        response["msg"] = "No Results"
+        response["status"] = ApiResponse.FAIL.status
+        response["metadataList"] = mutableListOf<Metadata>()
+        val dateArray = date.split("-")
+
+        if (dateArray.size == 3) {
+            val year = dateArray[0].toInt()
+            val month = dateArray[1].toInt()
+            val day = dateArray[2].toInt()
+
+            response["msg"] = ""
+            response["status"] = ApiResponse.SUCCESS.status
+            response["metadataList"] = if (mediaTypeFilter == "comments") {
+                albumPhotoRepository.findAllMetadataByAlbumIdAndCommentsOnly(albumId, year, month, day) as MutableList<Metadata>
+            } else if (mediaTypeFilter == "nolatlng") {
+                albumPhotoRepository.findAllMetadataByAlbumIdAndNoCoord(albumId, year, month, day) as MutableList<Metadata>
+            } else if (mediaTypeFilter == "description") {
+                albumPhotoRepository.findAllMetadataByAlbumIdAndDescription(albumId, year, month, day) as MutableList<Metadata>
+            } else if (mediaTypeFilter == "all" || mediaTypeFilter == "") {
+                albumRepository.findAlbumMetadataByDate(albumId, year, month, day) as MutableList<Metadata>
+            } else {
+                albumRepository.findAlbumMetadataByDateAndFilter(albumId, mediaTypeFilter, year, month, day) as MutableList<Metadata>
+            }
+        }
+
+        return mapper.writeValueAsString(response)
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
