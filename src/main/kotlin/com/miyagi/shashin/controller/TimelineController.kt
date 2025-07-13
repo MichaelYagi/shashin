@@ -569,7 +569,7 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,false))
     }
 
-    @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}/metadata"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataOnlyByDate"], key = "{#date, #mediaType}")
