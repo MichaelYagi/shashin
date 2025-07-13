@@ -59,11 +59,7 @@ function getMetadataModalUpdateText() {
     return "Updating location ...";
 }
 
-$("#description").on("input", function () {
-    $("#descriptionCharacterCount").text(500-$(this).val().length);
-});
-
-$("#description").on("paste", function () {
+$("#description").on("input paste", function () {
     $("#descriptionCharacterCount").text(500-$(this).val().length);
 });
 
