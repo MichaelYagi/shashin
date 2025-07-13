@@ -1344,7 +1344,7 @@ class AlbumsController: BaseController() {
         return response
     }
 
-    @Secured("ROLE_SUPER", "ROLE_ADMIN")
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/album/mediatype/{mediaTypeFilter}/date/{date}/{albumId}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getAlbumMetadataListFromDate(@PathVariable mediaTypeFilter: String, @PathVariable date: String, @PathVariable albumId: Int): String? {
