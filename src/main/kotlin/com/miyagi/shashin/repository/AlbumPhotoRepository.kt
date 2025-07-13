@@ -13,6 +13,14 @@ import jakarta.transaction.Transactional
 @Transactional
 interface AlbumPhotoRepository : CrudRepository<AlbumPhoto?, Int?> {
     fun countByMetadataIdAndAlbumId(metadataId: String?, albumId: Int?): Int?
+
+    @Query("SELECT DISTINCT m.* FROM albumphoto ap, metadata m, albumphotocomment apc WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND ap.album_id = apc.album_id AND apc.metadata_id = ap.metadata_id AND m.year = :year AND m.month = :month AND m.day = :day AND m.hidden = 0 ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time", nativeQuery = true)
+    fun findAllMetadataByAlbumIdAndCommentsOnly(@Param("albumId") albumId: Int, @Param("year") year: Int, @Param("month") month: Int, @Param("day") day: Int): MutableIterable<Metadata>?
+    @Query("SELECT DISTINCT m.* FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND ((m.lat IS NULL OR m.lat == \"\") OR (m.lng IS NULL OR m.lng == \"\")) AND m.hidden = 0 AND m.year = :year AND m.month = :month AND m.day = :day ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time", nativeQuery = true)
+    fun findAllMetadataByAlbumIdAndNoCoord(@Param("albumId") albumId: Int, @Param("year") year: Int, @Param("month") month: Int, @Param("day") day: Int): MutableIterable<Metadata>?
+    @Query("SELECT DISTINCT m.* FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.description IS NOT NULL AND m.description != \"\" AND m.hidden = 0 AND m.year = :year AND m.month = :month AND m.day = :day ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
+    fun findAllMetadataByAlbumIdAndDescription(@Param("albumId") albumId: Int, @Param("year") year: Int, @Param("month") month: Int, @Param("day") day: Int): MutableIterable<Metadata>?
+
     fun countByAlbumId(albumId: Int?): Int?
     @Query("SELECT COUNT(DISTINCT ap.metadata_id) FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.type LIKE %:type% AND m.hidden = 0", nativeQuery = true)
     fun countAlbumIdAndMediaType(@Param("albumId") albumId: Int, @Param("type") type: String): Int?

@@ -8,6 +8,14 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface AlbumRepository : CrudRepository<Album?, Int?> {
+
+    @Query("SELECT DISTINCT m.* FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.type LIKE %:type% AND m.year = :year AND m.month = :month AND m.day = :day AND m.hidden = 0 ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
+    fun findAlbumMetadataByDateAndFilter(@Param("albumId") albumId: Int, @Param("type") type: String, @Param("year") year: Int, @Param("month") month: Int, @Param("day") day: Int): MutableIterable<Metadata>?
+
+    @Query("SELECT DISTINCT m.* FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.year = :year AND m.month = :month AND m.day = :day AND m.hidden = 0 ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
+    fun findAlbumMetadataByDate(@Param("albumId") albumId: Int, @Param("year") year: Int, @Param("month") month: Int, @Param("day") day: Int): MutableIterable<Metadata>?
+
+
     @Query("SELECT COUNT(*) FROM album", nativeQuery = true)
     fun countAllAlbums(): Int
     @Query("SELECT a.id as albumId, COUNT(ap.metadata_id) as photoCount FROM album a LEFT JOIN albumphoto ap ON a.id = ap.album_id GROUP BY a.id", nativeQuery = true)

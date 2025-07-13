@@ -3538,9 +3538,15 @@
             date = date.replace("dateBody", "");
             const selectedMetadata = JSON.parse($("#multiSelectMetadataIds").val());
 
-            if (view === "timeline" || view === "taken") {
+            if (view === "timeline" || view === "taken" || view === "album") {
+                let url = "/timeline/mediatype/" + shashin.mediaTypeFilter + "/date/" + date + "/metadata";
+                if (view === "album") {
+                    const albumId = $("#albumId").val();
+                    url = "/album/mediatype/" + shashin.mediaTypeFilter + "/date/" + date + "/" + albumId;
+                }
+
                 const http = new Http("get month data");
-                http.ajax("get", "/timeline/mediatype/" + shashin.mediaTypeFilter + "/date/" + date + "/metadata").then(function (data) {
+                http.ajax("get", url).then(function (data) {
                     if (data && data.hasOwnProperty("status")) {
                         const metadataList = data.metadataList;
                         let dateAllSelected = true;

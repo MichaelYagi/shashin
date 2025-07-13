@@ -601,6 +601,7 @@ class MetadataProcessing() {
             val count = albumPhotoRepository.countByAlbumId(albumId)
             if (count != null && count.toInt() > 0) {
                 var metadataObj = metadataRepository.findById(metadataId)
+                println("metadataId:"+metadataId)
                 val coverAlbumUrl = metadataObj.get().getThumbnailUrlCentered()
                 val album = albumRepository.findById(albumId)
                 if (album.isPresent && album.get().getCoverUrl() == coverAlbumUrl) {
