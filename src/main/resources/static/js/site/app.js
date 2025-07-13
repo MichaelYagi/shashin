@@ -2860,7 +2860,7 @@
                 }
 
                 if (view !== "share") {
-                    setDateSection(metadata.id);
+                    setDateSection(metadata.id, view);
                 }
             }
         });
@@ -3530,41 +3530,44 @@
         }
 
         if (view !== "share") {
-            setDateSection(metadataId);
+            setDateSection(metadataId, view);
         }
     }
 
-    function setDateSection(metadataId) {
+    function setDateSection(metadataId, view) {
         setTimeout(function () {
             const rowId = $($("#photoThumbnailContainer" + metadataId).parent()[0]).attr("id");
 
             let date = rowId.replace("row", "");
             date = date.replace("dateBody", "");
-
             const selectedMetadata = JSON.parse($("#multiSelectMetadataIds").val());
 
-            const http = new Http("get month data");
-            http.ajax("get", "/timeline/mediatype/" + shashin.mediaTypeFilter + "/date/" + date + "/metadata").then(function (data) {
-                if (data && data.hasOwnProperty("status")) {
-                    const metadataList = data.metadataList;
-                    let dateAllSelected = true;
+            if (view === "timeline") {
+                const http = new Http("get month data");
+                http.ajax("get", "/timeline/mediatype/" + shashin.mediaTypeFilter + "/date/" + date + "/metadata").then(function (data) {
+                    if (data && data.hasOwnProperty("status")) {
+                        const metadataList = data.metadataList;
+                        let dateAllSelected = true;
 
-                    for (let index in metadataList) {
-                        const metadata = metadataList[index];
+                        for (let index in metadataList) {
+                            const metadata = metadataList[index];
 
-                        if (selectedMetadata.includes(metadata.id) !== true) {
-                            dateAllSelected = false;
-                            break;
+                            if (selectedMetadata.includes(metadata.id) !== true) {
+                                dateAllSelected = false;
+                                break;
+                            }
+                        }
+
+                        if (dateAllSelected) {
+                            $("#select" + date).addClass("bi-circle-fill").removeClass("bi-circle");
+                        } else {
+                            $("#select" + date).removeClass("bi-circle-fill").addClass("bi-circle");
                         }
                     }
+                });
+            } else {
 
-                    if (dateAllSelected) {
-                        $("#select" + date).addClass("bi-circle-fill").removeClass("bi-circle");
-                    } else {
-                        $("#select" + date).removeClass("bi-circle-fill").addClass("bi-circle");
-                    }
-                }
-            });
+            }
         }, 0);
     }
 
@@ -3588,7 +3591,6 @@
             }
 
             $(listenerEl).off('mouseenter').on("mouseenter", function () {
-                console.log("testzzz1")
                 if ($("#select" + date).length > 0 && $(dateBody + date + " div.photo-thumbnail-container").length > 1) {
                     $(animateEl).animate({"marginLeft": marginLeftAnimate}, "fast", function () {
                         // Complete
