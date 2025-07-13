@@ -3777,6 +3777,7 @@
         shashin.removeAllMetadataFilenamesList();
         shashin.removeAllMetadataThumbnailsList();
         shashin.removeAllMetadataIdList();
+        $(".day-select").hide();
         $(".thumbnail-centered").hide();
         //$(".thumbnail-tr").hide();
         $(".thumbnail-br").hide();
@@ -3784,6 +3785,7 @@
         $(".thumbnail-tl").hide();
         $(".photo-thumbnail-image").css("opacity", 1.0);
         $(".thumbnail-tl a span").addClass('bi-circle').removeClass('bi-circle-fill');
+        $(".day-select").addClass('bi-circle').removeClass('bi-circle-fill');
 
         $("#appSearch").show();
         shashin.multiSelected = false;
@@ -3809,6 +3811,7 @@
         shashin.removeAllMetadataFilenamesList();
         shashin.removeAllMetadataThumbnailsList();
         shashin.removeAllMetadataIdList();
+        $(".day-select").hide();
         $(".thumbnail-centered").hide();
         //$(".thumbnail-tr").hide();
         $(".thumbnail-br").hide();
@@ -3816,6 +3819,7 @@
         $(".thumbnail-tl").hide();
         $(".photo-thumbnail-image").css("opacity", 1.0);
         $(".thumbnail-tl a span").addClass('bi-circle').removeClass('bi-circle-fill');
+        $(".day-select").addClass('bi-circle').removeClass('bi-circle-fill');
 
         $("#appSearch").show();
         shashin.multiSelected = false;
