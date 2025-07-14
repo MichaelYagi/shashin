@@ -3584,10 +3584,14 @@
             let animateEl = "#" + date + " .dateHeading";
             let marginLeftAnimate = "13.609px";
             let marginLeftOrigin = "0";
-            if (view === "album" || view === "accessed" || view === "modified" || view === "recent") {
-                listenerEl = "#dateHeader"+date;
+            if (view === "accessed" || view === "modified" || view === "recent") {
+                listenerEl = "#dateHeader" + date;
                 dateBody = "#dateBody";
-                animateEl = "#" + date + " strong";
+                animateEl = "#dateHeader" + date + " > span.text-muted";
+            } else if (view === "album") {
+                listenerEl = "#dateHeader" + date;
+                dateBody = "#dateBody";
+                animateEl = "#dateHeader" + date + " > strong";
             } else if (view === "taken") {
                 listenerEl = "#dateHeader"+date;
                 dateBody = "#dateBody";
