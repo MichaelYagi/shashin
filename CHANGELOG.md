@@ -11,23 +11,25 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+## [2.11.1] - 2025-07-13
+### Added
 - Character count for description field
 
 ### Changed
 - Refactored date batch selection
 - Moved share link generation to back end
 
-### Deprecated
-
-### Removed
-
 ### Fixed
-- Bug when selecting image in share view 
+- Bug when selecting image in share view
 - Share view dark mode
 - Cancel when selecting in paged mode
 - Batch select if same date
-
-### Security
 
 ## [2.11.0] - 2025-07-10
 ### Added
