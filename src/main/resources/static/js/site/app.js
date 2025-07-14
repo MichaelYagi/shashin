@@ -3617,10 +3617,14 @@
             let listenerEl = "#"+date;
             let dateBody = "#row";
             let animateEl = "#" + date + " .dateHeading";
-            if (view === "album" || view === "accessed" || view === "modified" || view === "recent") {
-                listenerEl = "#dateHeader"+date;
+            if (view === "album") {
+                listenerEl = "#dateHeader" + date;
                 dateBody = "#dateBody";
                 animateEl = "#" + date + " strong";
+            } else if (view === "accessed" || view === "modified" || view === "recent") {
+                listenerEl = "#dateHeader" + date;
+                dateBody = "#dateBody";
+                animateEl = "#" + date + " span.text-muted";
             } else if (view === "taken") {
                 listenerEl = "#dateHeader"+date;
                 dateBody = "#dateBody";
