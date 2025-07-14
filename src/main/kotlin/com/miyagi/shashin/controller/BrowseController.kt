@@ -25,6 +25,7 @@ import org.apache.commons.text.StringEscapeUtils
 import org.hibernate.query.Page
 import org.springframework.http.MediaType
 import org.springframework.web.multipart.MultipartFile
+import java.text.SimpleDateFormat
 import kotlin.collections.HashMap
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -858,6 +859,163 @@ class BrowseController: BaseController() {
         model["foldersCount"] = metadataRepository.countByFolder()
 
         return model
+    }
+
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
+    @RequestMapping(value = ["/browse/mediatype/{mediaTypeFilter}/date/{date}/{view}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getBrowseMetadataListFromDate(@PathVariable mediaTypeFilter: String, @PathVariable date: String, @PathVariable view: String): String? {
+        val response = mutableMapOf<String, Any?>()
+        response["msg"] = "No Results"
+        response["status"] = ApiResponse.FAIL.status
+        response["metadataList"] = mutableListOf<Metadata>()
+        val dateArray = date.split("-")
+
+        if (dateArray.size == 3) {
+            val year = dateArray[0].toInt()
+            val month = dateArray[1].toInt()
+            val day = dateArray[2].toInt()
+
+            val dbDate = year.toString() + "-" + (if (month > 9) month.toString() else "0$month") + "-" + (if (day > 9) day.toString() else "0$day")
+            val startDate = "$dbDate 00:00:00"
+            val endDate = "$dbDate 23:59:59"
+
+            response["msg"] = ""
+            response["status"] = ApiResponse.SUCCESS.status
+            var metadataList = mutableListOf<Metadata>()
+
+            // accessed, modified, added, taken in timeline controller
+            if (mediaTypeFilter == "all") {
+                when (view) {
+                    "accessed" -> {
+                        metadataList = metadataRepository.findLastAccessedByDate(
+                            startDate, endDate
+                        ).toMutableList()
+                    }
+                    "modified" -> {
+                        metadataList = metadataRepository.findModifiedByDate(
+                            startDate, endDate
+                        ).toMutableList()
+                    }
+                    "recent" -> {
+                        metadataList = metadataRepository.findRecentByDate(
+                            startDate, endDate
+                        ).toMutableList()
+                    }
+                }
+            } else if (mediaTypeFilter == "nolatlng") {
+                when (view) {
+                    "accessed" -> {
+                        metadataList = metadataRepository.findLastAccessedByNoCoordAndDate(
+                            startDate, endDate
+                        ).toMutableList()
+                    }
+                    "modified" -> {
+                        metadataList = metadataRepository.findModifiedByNoCoordAndDate(
+                            startDate, endDate
+                        ).toMutableList()
+                    }
+                    "recent" -> {
+                        metadataList = metadataRepository.findRecentByNoCoordAndDate(
+                            startDate, endDate
+                        ).toMutableList()
+                    }
+                }
+            } else if (mediaTypeFilter == "description") {
+                when (view) {
+                    "accessed" -> {
+                        metadataList = metadataRepository.findLastAccessedByDescriptionAndDate(
+                            startDate, endDate
+                        ).toMutableList()
+                    }
+                    "modified" -> {
+                        metadataList = metadataRepository.findModifiedByDescriptionAndDate(
+                            startDate, endDate
+                        ).toMutableList()
+                    }
+                    "recent" -> {
+                        metadataList = metadataRepository.findRecentByDescriptionAndDate(
+                            startDate, endDate
+                        ).toMutableList()
+                    }
+                }
+            } else {
+                when (view) {
+                    "accessed" -> {
+                        metadataList = metadataRepository.findLastAccessedByMediaTypeAndDate(
+                            mediaTypeFilter, startDate, endDate
+                        ).toMutableList()
+                    }
+                    "modified" -> {
+                        metadataList = metadataRepository.findModifiedByMediaTypeAndDate(
+                            mediaTypeFilter, startDate, endDate
+                        ).toMutableList()
+                    }
+                    "recent" -> {
+                        metadataList = metadataRepository.findRecentByMediaTypeAndOffsetAndLimit(
+                            startDate, endDate
+                        ).toMutableList()
+                    }
+                }
+            }
+
+            response["metadataList"] = metadataList
+        }
+
+        return mapper.writeValueAsString(response)
+    }
+
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
+    @RequestMapping(value = ["/browse/range/{metadataId}/{view}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) metadataId: String?, @PathVariable(required = true) view: String?): String {
+        val retMetadataIdArray = mutableListOf<MutableList<String>>()
+        val response = mutableMapOf<String, Any?>()
+
+        response["msg"] = "Could not get results"
+        response["status"] = ApiResponse.FAIL.status
+        response["metadataIdArray"] = mutableListOf<MutableList<String>>()
+
+        if (metadataId !== null && metadataId !== "") {
+            val metadata = metadataRepository.findByMetadataId(metadataId)
+
+            var metadataDate = ""
+
+            if (view == "accessed") {
+                metadataDate = metadata?.getLastAccessedAt().toString()
+            } else if (view == "modified") {
+                metadataDate = metadata?.getModifiedAt().toString()
+            } else if (view == "recent") {
+                metadataDate = metadata?.getAddedAt().toString()
+            }
+
+            val ymdArray = metadataDate.split(" ")
+            val ymd = ymdArray[0]
+
+            var startDate = "$ymd 00:00:00"
+            var endDate = "$ymd 23:59:59"
+
+            var metadatas: MutableList<Metadata>? = null
+            if (view == "accessed") {
+                metadatas = metadataRepository.findMetadataIdBetweenAccessedAt(startDate, endDate)
+            } else if (view == "modified") {
+                metadatas = metadataRepository.findMetadataIdBetweenModifiedAt(startDate, endDate)
+            } else if (view == "recent") {
+                metadatas = metadataRepository.findMetadataIdBetweenAddedAt(startDate, endDate)
+            }
+
+            if (metadatas != null && metadatas.isNotEmpty()) {
+                for (metadata in metadatas) {
+                    retMetadataIdArray.add(mutableListOf(metadata.getId(),metadata.getFileName()!!, "/api/v1/thumbnails/centered/"+metadata.getId()))
+                }
+
+                response["msg"] = "Success"
+                response["status"] = ApiResponse.SUCCESS.status
+                response["metadataIdArray"] = retMetadataIdArray
+            }
+        }
+
+        return mapper.writeValueAsString(response)
     }
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")

@@ -115,7 +115,7 @@ class Recent {
                         const uuid = uuidv4();
 
                         if ($("#"+currentDate).length === 0 && dateHeadingObj !== null) {
-                            const headerAndBody = '<section class="dateSection" id="' + currentDate + '"><div class="mb-3" id="dateHeader' + currentDate + '"><span class="text-muted">Added </span><strong>' + dateHeadingObj.display + '</strong>&nbsp;' + (dateHeadingObj.hasOwnProperty("placename") ? dateHeadingObj.placename : '') + '</div><div id="dateBody' + currentDate + '" class="row" style="margin-left:-2px;"></div></section>';
+                            const headerAndBody = '<section class="dateSection" id="' + currentDate + '"><p></p><div class="dateHeader" style="margin-left: -16px; padding-left: 13px;margin-top: -40px; padding-top: 25px;margin-bottom: -16px; padding-bottom: 15px;" id="dateHeader'+currentDate+'"><span id="select'+currentDate+'" class="bi-circle pe-2 day-select" style="font-size: 0.85rem;color: lightgray;display: none"></span><span class="text-muted">Added </span><strong>' + dateHeadingObj.display + '</strong>&nbsp;' + (dateHeadingObj.hasOwnProperty("placename") ? dateHeadingObj.placename : '') + '</div><p></p><div id="dateBody' + currentDate + '" class="row" style="margin-left:-2px;"></div></section>';
                             $(headerAndBody).insertBefore($("." + appendClass).last());
                         }
 
@@ -135,6 +135,8 @@ class Recent {
                         if ($("#"+currentDate).length > 0 && nextDate !== "" && currentDate !== nextDate) {
                             $("<span class='"+appendClass+"' style='width:0;height:0;padding:0'></span>").insertAfter($("#"+currentDate));
                         }
+
+                        shashin.dayHeadingListener(currentDate, activePage, mediaTypeFilter);
                     }
                 }
 
