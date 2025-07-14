@@ -3300,14 +3300,18 @@
                         $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
                         shashin.multiSelected = true;
                     }
-                } else if (view === "timeline" || addBorder === false) {
+                } else if (view === "timeline" || view === "accessed" || view === "modified" || view === "recent" || addBorder === false) {
                     const http = new Http("get ranged metadata");
                     const version = Util.getMetadataLocalStorage();
 
-                    http.ajax("get", "/metadata/range/"+direction+"/"+shashin.lastSelectedMetadataId+"/"+metadataId+(version === "" ? "" : "?v=" + version)).then(function (data) {
+                    let url = "/metadata/range/"+direction+"/"+shashin.lastSelectedMetadataId+"/"+metadataId;
+                    if (view === "accessed" || view === "modified" || view === "recent") {
+                        url = "/browse/range/"+metadataId+"/"+view;
+                    }
+
+                    http.ajax("get", url+(version === "" ? "" : "?v=" + version)).then(function (data) {
                         if (data !== null && data.hasOwnProperty("metadataIdArray")) {
                             const metadataIdArray = data.metadataIdArray;
-
 
                             if (shashin.getMetadataIdList().length > 0) {
                                 if (view === "album") {
@@ -3538,11 +3542,13 @@
             date = date.replace("dateBody", "");
             const selectedMetadata = JSON.parse($("#multiSelectMetadataIds").val());
 
-            if (view === "timeline" || view === "taken" || view === "album") {
+            if (view === "timeline" || view === "taken" || view === "album" || view === "accessed" || view === "modified" || view === "recent") {
                 let url = "/timeline/mediatype/" + shashin.mediaTypeFilter + "/date/" + date + "/metadata";
                 if (view === "album") {
                     const albumId = $("#albumId").val();
                     url = "/album/mediatype/" + shashin.mediaTypeFilter + "/date/" + date + "/" + albumId;
+                } else if (view === "accessed" || view === "modified" || view === "recent") {
+                    url = "/browse/mediatype/" + shashin.mediaTypeFilter + "/date/" + date + "/" + view;
                 }
 
                 const http = new Http("get month data");
@@ -3578,7 +3584,7 @@
             let animateEl = "#" + date + " .dateHeading";
             let marginLeftAnimate = "13.609px";
             let marginLeftOrigin = "0";
-            if (view === "album") {
+            if (view === "album" || view === "accessed" || view === "modified" || view === "recent") {
                 listenerEl = "#dateHeader"+date;
                 dateBody = "#dateBody";
                 animateEl = "#" + date + " strong";
@@ -3607,7 +3613,7 @@
             let listenerEl = "#"+date;
             let dateBody = "#row";
             let animateEl = "#" + date + " .dateHeading";
-            if (view === "album") {
+            if (view === "album" || view === "accessed" || view === "modified" || view === "recent") {
                 listenerEl = "#dateHeader"+date;
                 dateBody = "#dateBody";
                 animateEl = "#" + date + " strong";
@@ -3645,7 +3651,15 @@
                 setTimeout(function () {
                     const http = new Http("get month data");
 
-                    http.ajax("get", "/timeline/mediatype/"+mediaTypeFilter+"/date/"+date+"/metadata").then(function (data) {
+                    let url = "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata";
+                    if (activePage === "album") {
+                        const albumId = $("#albumId").val();
+                        url = "/album/mediatype/" + mediaTypeFilter + "/date/" + date + "/" + albumId;
+                    } else if (activePage === "accessed" || activePage === "modified" || activePage === "recent") {
+                        url = "/browse/mediatype/" + mediaTypeFilter + "/date/" + date + "/" + activePage;
+                    }
+
+                    http.ajax("get", url).then(function (data) {
                         if (data.hasOwnProperty("status")) {
                             let firstMetadataId = null;
                             for (let index in data.metadataList) {
