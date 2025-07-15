@@ -3579,30 +3579,23 @@
 
     shashin.dayHeadingListener = function (date, activePage, mediaTypeFilter) {
         function enterAction(date, view) {
-            let listenerEl = "#"+date;
-            let dateBody = "#row";
-            let animateEl = "#" + date + " .dateHeading";
-            let marginLeftAnimate = "13.609px";
-            let marginLeftOrigin = "0";
-            if (view === "accessed" || view === "modified" || view === "recent") {
-                listenerEl = "#dateHeader" + date;
-                dateBody = "#dateBody";
-                animateEl = "#dateHeader" + date + " > span.text-muted";
+            let listenerEl = "#dateHeader" + date;
+            let dateBody = "#dateBody";
+            let animateEl = "#dateHeader" + date + " > span.text-muted";
+
+            if (view === "timeline") {
+                listenerEl = "#" + date;
+                dateBody = "#row";
+                animateEl = "#" + date + " .dateHeading";
             } else if (view === "album") {
-                listenerEl = "#dateHeader" + date;
-                dateBody = "#dateBody";
                 animateEl = "#dateHeader" + date + " > strong";
-            } else if (view === "taken") {
-                listenerEl = "#dateHeader"+date;
-                dateBody = "#dateBody";
-                animateEl = "#dateHeader" + date + " > span.text-muted";
             }
 
             $(listenerEl).off('mouseenter').on("mouseenter", function () {
                 if ($("#select" + date).length > 0 && $(dateBody + date + " div.photo-thumbnail-container").length > 1) {
-                    $(animateEl).first().animate({"marginLeft": marginLeftAnimate}, "fast", function () {
+                    $(animateEl).first().animate({"marginLeft": "13.609px"}, "fast", function () {
                         // Complete
-                        $(animateEl).first().css("margin-left", marginLeftOrigin);
+                        $(animateEl).first().css("margin-left", "0");
                         $("#select" + date).fadeIn("fast");
                         $("#select" + date).addClass("show-day-select");
                         $("#select" + date).css("display", "inline-block");
@@ -3612,21 +3605,16 @@
         }
 
         function leaveAction(date, view) {
-            let listenerEl = "#"+date;
-            let dateBody = "#row";
-            let animateEl = "#" + date + " .dateHeading";
-            if (view === "album") {
-                listenerEl = "#dateHeader" + date;
-                dateBody = "#dateBody";
+            let listenerEl = "#dateHeader" + date;
+            let dateBody = "#dateBody";
+            let animateEl = "#" + date + " span.text-muted";
+
+            if (view === "timeline") {
+                listenerEl = "#"+date;
+                dateBody = "#row";
+                animateEl = "#" + date + " .dateHeading";
+            } else if (view === "album") {
                 animateEl = "#" + date + " strong";
-            } else if (view === "accessed" || view === "modified" || view === "recent") {
-                listenerEl = "#dateHeader" + date;
-                dateBody = "#dateBody";
-                animateEl = "#" + date + " span.text-muted";
-            } else if (view === "taken") {
-                listenerEl = "#dateHeader"+date;
-                dateBody = "#dateBody";
-                animateEl = "#" + date + " span.text-muted";
             }
 
             $(listenerEl).off('mouseleave').on("mouseleave", function () {
