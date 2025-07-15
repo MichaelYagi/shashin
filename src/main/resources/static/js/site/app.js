@@ -3306,8 +3306,9 @@
                     const http = new Http("get ranged metadata");
                     const version = Util.getMetadataLocalStorage();
 
+                    // timeline
                     let url = "/metadata/range/"+direction+"/"+shashin.lastSelectedMetadataId+"/"+metadataId;
-                    if (view === "accessed" || view === "modified" || view === "recent") {
+                    if (view === "accessed" || view === "modified" || view === "recent"|| view === "taken") {
                         url = "/browse/range/"+metadataId+"/"+view;
                     }
 

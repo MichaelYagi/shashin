@@ -987,6 +987,8 @@ class BrowseController: BaseController() {
                 metadataDate = metadata?.getModifiedAt().toString()
             } else if (view == "recent") {
                 metadataDate = metadata?.getAddedAt().toString()
+            } else {
+                metadataDate = metadata?.getTakenAt().toString()
             }
 
             val ymdArray = metadataDate.split(" ")
@@ -1002,6 +1004,8 @@ class BrowseController: BaseController() {
                 metadatas = metadataRepository.findMetadataIdBetweenModifiedAt(startDate, endDate)
             } else if (view == "recent") {
                 metadatas = metadataRepository.findMetadataIdBetweenAddedAt(startDate, endDate)
+            } else {
+                metadatas = metadataRepository.findMetadataIdBetweenTakenAt(startDate, endDate)
             }
 
             if (metadatas != null && metadatas.isNotEmpty()) {
