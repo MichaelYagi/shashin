@@ -3382,6 +3382,10 @@
                                 $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
                                 shashin.multiSelected = true;
                             }
+
+                            if (addBorder === false) {
+                                shashin.lastSelectedMetadataId = "";
+                            }
                         }
                     });
                 } else {
