@@ -3595,16 +3595,14 @@
             } else if (view === "taken") {
                 listenerEl = "#dateHeader"+date;
                 dateBody = "#dateBody";
-                animateEl = "#dateHeader" + date;
-                marginLeftAnimate = "-15px";
-                marginLeftOrigin = "-15px";
+                animateEl = "#dateHeader" + date + " > span.text-muted";
             }
 
             $(listenerEl).off('mouseenter').on("mouseenter", function () {
                 if ($("#select" + date).length > 0 && $(dateBody + date + " div.photo-thumbnail-container").length > 1) {
-                    $(animateEl).animate({"marginLeft": marginLeftAnimate}, "fast", function () {
+                    $(animateEl).first().animate({"marginLeft": marginLeftAnimate}, "fast", function () {
                         // Complete
-                        $(animateEl).css("margin-left", marginLeftOrigin);
+                        $(animateEl).first().css("margin-left", marginLeftOrigin);
                         $("#select" + date).fadeIn("fast");
                         $("#select" + date).addClass("show-day-select");
                         $("#select" + date).css("display", "inline-block");
@@ -3628,12 +3626,12 @@
             } else if (view === "taken") {
                 listenerEl = "#dateHeader"+date;
                 dateBody = "#dateBody";
-                animateEl = "#dateHeader" + date;
+                animateEl = "#" + date + " span.text-muted";
             }
 
             $(listenerEl).off('mouseleave').on("mouseleave", function () {
                 if ($("#select" + date).length > 0 && $(dateBody + date + " div.photo-thumbnail-container").length > 1) {
-                    $(animateEl).stop(false, true);
+                    $(animateEl).first().stop(false, true);
                     $("#select" + date).stop(false, true);
                     $("#select" + date).removeClass("show-day-select");
                     $("#select" + date).css("display", "none");
