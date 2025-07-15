@@ -11,13 +11,15 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
-- Select photos by date in Added, Modified and Accessed views
-
 ### Changed
 ### Deprecated
 ### Removed
 ### Fixed
 ### Security
+
+## [2.11.2] - 2025-07-14
+### Added
+- Select photos by date in Added, Modified and Accessed views
 
 ## [2.11.1] - 2025-07-13
 ### Added
