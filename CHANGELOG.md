@@ -15,6 +15,8 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Deprecated
 ### Removed
 ### Fixed
+- Taken at view shift select and date select
+
 ### Security
 
 ## [2.11.2] - 2025-07-14
