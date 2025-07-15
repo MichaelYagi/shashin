@@ -3160,6 +3160,7 @@
 
                 const direction = (pointerPos[1] > lastSelectionPos[1] || (pointerPos[0] > lastSelectionPos[0] && pointerPos[1] >= lastSelectionPos[1])) ? "down" : "up";
 
+                // Visually select for shift select for non timeline view
                 if (view !== "timeline" && addBorder && lastSelectionPos[0] !== null && lastSelectionPos[1] !== null && pointerPos[0] !== null && pointerPos[1] !== null) {
                     shashin.printMessageToConsole("Selected Media point [x, y]: " + JSON.stringify(lastSelectionPos) + ". MetadataId: " + shashin.lastSelectedMetadataId, {tag: "multiselect"});
                     shashin.printMessageToConsole("Shift Key point [x, y]: " + JSON.stringify(pointerPos) + ". MetadataId: " + metadataId, {tag: "multiselect"});
@@ -3301,6 +3302,7 @@
                         shashin.multiSelected = true;
                     }
                 } else if (view === "timeline" || view === "accessed" || view === "modified" || view === "recent" || addBorder === false) {
+                    // timeline shift select for timeline or date select
                     const http = new Http("get ranged metadata");
                     const version = Util.getMetadataLocalStorage();
 
@@ -3373,7 +3375,7 @@
                             $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
                             $('.photo-thumbnail-image').removeClass("pb-1");
 
-                            // Put a border around select point
+                            // Put a border around select point for timeline
                             if (/*$("#image" + shashin.lastSelectedMetadataId).length > 0 && */shashin.getMetadataIdList().length > 0 && addBorder) {
                                 $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
                                 $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
