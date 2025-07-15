@@ -3301,14 +3301,14 @@
                         $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
                         shashin.multiSelected = true;
                     }
-                } else if (view === "timeline" || view === "accessed" || view === "modified" || view === "recent" || addBorder === false) {
+                } else if (view === "timeline" || view === "accessed" || view === "modified" || view === "recent" || view === "taken" || addBorder === false) {
                     // timeline shift select for timeline or date select
                     const http = new Http("get ranged metadata");
                     const version = Util.getMetadataLocalStorage();
 
                     // timeline
                     let url = "/metadata/range/"+direction+"/"+shashin.lastSelectedMetadataId+"/"+metadataId;
-                    if (view === "accessed" || view === "modified" || view === "recent"|| view === "taken") {
+                    if (view === "accessed" || view === "modified" || view === "recent" || view === "taken") {
                         url = "/browse/range/"+metadataId+"/"+view;
                     }
 
@@ -3792,7 +3792,7 @@
         shashin.removeAllMetadataFilenamesList();
         shashin.removeAllMetadataThumbnailsList();
         shashin.removeAllMetadataIdList();
-        $(".day-select").hide();
+        // $(".day-select").hide();
         $(".thumbnail-centered").hide();
         //$(".thumbnail-tr").hide();
         $(".thumbnail-br").hide();
