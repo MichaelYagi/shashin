@@ -190,7 +190,7 @@
                                 const uuid = uuidv4();
 
                                 if ($("#"+currentDate).length === 0 && dateHeadingObj !== null) {
-                                    const headerAndBody = '<section class="dateSection" id="'+dateHeadingObj.heading+'"><div class="dateHeader" style="margin-left: -17px; padding-left: 17px;margin-top: -25px; padding-top: 25px;margin-bottom: 0; padding-bottom: 15px;" id="dateHeader'+dateHeadingObj.heading+'"><span id="select'+metadata.year+'-'+metadata.month+'-'+metadata.day+'" class="bi-circle pe-2 day-select" style="font-size: 0.85rem;color: lightgray;display: none"></span><strong>'+dateHeadingObj.display+'</strong></div><div id="dateBody'+dateHeadingObj.heading+'" class="row" class="row" style="margin-left:-2px;"></div></section>';
+                                    const headerAndBody = '<section class="dateSection" id="'+dateHeadingObj.heading+'"><div class="dateHeader" id="dateHeader'+dateHeadingObj.heading+'"><span id="select'+metadata.year+'-'+metadata.month+'-'+metadata.day+'" class="bi-circle pe-2 day-select" style="font-size: 0.85rem;color: lightgray;display: none"></span><strong>'+dateHeadingObj.display+'</strong></div><div id="dateBody'+dateHeadingObj.heading+'" class="row" class="row" style="margin-left:-2px;"></div></section>';
                                     $(headerAndBody).insertBefore($("." + appendClass).last());
                                 }
 
