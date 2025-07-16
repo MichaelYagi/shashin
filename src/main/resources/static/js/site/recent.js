@@ -115,7 +115,7 @@ class Recent {
                         const uuid = uuidv4();
 
                         if ($("#"+currentDate).length === 0 && dateHeadingObj !== null) {
-                            const headerAndBody = '<section class="dateSection" id="' + currentDate + '"><div class="dateHeader" style="margin-left: -17px; padding-left: 15px;margin-top: -24px; padding-top: 25px;margin-bottom: 0; padding-bottom: 15px;" id="dateHeader'+currentDate+'"><span id="select'+currentDate+'" class="bi-circle pe-2 day-select" style="font-size: 0.85rem;color: lightgray;display: none"></span><span class="text-muted">Added </span><strong>' + dateHeadingObj.display + '</strong>&nbsp;' + (dateHeadingObj.hasOwnProperty("placename") ? dateHeadingObj.placename : '') + '</div><div id="dateBody' + currentDate + '" class="row" style="margin-left:-2px;"></div></section>';
+                            const headerAndBody = '<section class="dateSection" id="' + currentDate + '"><div class="dateHeader" style="margin-left: -17px; padding-left: 17px;margin-top: -24px; padding-top: 25px;margin-bottom: 0; padding-bottom: 15px;" id="dateHeader'+currentDate+'"><span id="select'+currentDate+'" class="bi-circle pe-2 day-select" style="font-size: 0.85rem;color: lightgray;display: none"></span><span class="text-muted">Added </span><strong>' + dateHeadingObj.display + '</strong>&nbsp;' + (dateHeadingObj.hasOwnProperty("placename") ? dateHeadingObj.placename : '') + '</div><div id="dateBody' + currentDate + '" class="row" style="margin-left:-2px;"></div></section>';
                             $(headerAndBody).insertBefore($("." + appendClass).last());
                         }
 
