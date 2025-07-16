@@ -138,7 +138,7 @@ class Taken {
                     const uuid = uuidv4();
 
                     if ($("#"+currentDate).length === 0 && dateHeadingObj !== null) {
-                        const headerAndBody = '<section class="dateSection" id="' + currentDate + '"><div class="dateHeader" style="margin-left: -17px; padding-left: 13px;margin-top: -25px; padding-top: 25px;margin-bottom: 0; padding-bottom: 15px;" id="dateHeader' + currentDate + '"><span id="select'+metadata.year+"-"+metadata.month+"-"+metadata.day+'" class="bi-circle pe-2 day-select" style="font-size: 0.85rem;color: lightgray;display: none"></span><span class="text-muted">Taken </span><strong>' + dateHeadingObj.display + '</strong>&nbsp;' + (dateHeadingObj.hasOwnProperty("placename") ? dateHeadingObj.placename : '') + '</div><div id="dateBody' + currentDate + '" class="row" style="margin-left:-2px;"></div></section>';
+                        const headerAndBody = '<section class="dateSection" id="' + currentDate + '"><div class="dateHeader" style="margin-left: -17px; padding-left: 15px;margin-top: -25px; padding-top: 25px;margin-bottom: 0; padding-bottom: 15px;" id="dateHeader' + currentDate + '"><span id="select'+metadata.year+"-"+metadata.month+"-"+metadata.day+'" class="bi-circle pe-2 day-select" style="font-size: 0.85rem;color: lightgray;display: none"></span><span class="text-muted">Taken </span><strong>' + dateHeadingObj.display + '</strong>&nbsp;' + (dateHeadingObj.hasOwnProperty("placename") ? dateHeadingObj.placename : '') + '</div><div id="dateBody' + currentDate + '" class="row" style="margin-left:-2px;"></div></section>';
                         $(headerAndBody).insertBefore($("." + appendClass).last());
                     }
 
