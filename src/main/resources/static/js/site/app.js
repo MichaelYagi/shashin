@@ -3642,10 +3642,7 @@
         enterAction(date, activePage);
         leaveAction(date, activePage);
 
-        let clickEl = "#dateHeader"+date;
-        if (activePage === "timeline") {
-            clickEl = "#"+date;
-        }
+        let clickEl = "#select"+date;
 
         $(clickEl).off("click").on("click", function () {
             if ($("#" + date).length > 0 && $("#select" + date).css("display") === "inline-block") {
