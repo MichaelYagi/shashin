@@ -89,7 +89,9 @@
 
                             <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                                 /*<![CDATA[*/
-                                shashin.dayHeadingListener([[${metadata.year+'-'+metadata.month+'-'+metadata.day}]],[[${activePage}]], [[${mediaTypeFilter}]]);
+                                if ([[${pageParam}]] === 0) {
+                                    shashin.dayHeadingListener([[${metadata.year+'-'+metadata.month+'-'+metadata.day}]],[[${activePage}]], [[${mediaTypeFilter}]]);
+                                }
                                 shashin.updateFavorites("#favorite","#brfavoriteicon","#briconcount",/*[[${metadata.id}]]*/"");
                                 $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",/*[[${metadata.id}]]*/"");
                                 $("#metadataModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").on("click", function(e) {
