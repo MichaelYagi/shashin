@@ -37,6 +37,15 @@ header {
   margin-top: 1px;
 }
 
+.dateHeader {
+  margin-left: -17px;
+  padding-left: 17px;
+  margin-top: -25px;
+  padding-top: 25px;
+  margin-bottom: 0;
+  padding-bottom: 15px;
+}
+
 #container {
   margin-top: 1px;
 }
