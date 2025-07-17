@@ -2751,134 +2751,26 @@
             function imageClickEvent() {
                 // Fill top left icon when clicking anywhere on thumbnail
                 if ($('.bi-circle-fill')[0] || metadataIdArray.length > 0) {
-                    if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
+                    const isSelected = $("#tlicon" + metadata.id).attr("class") === "bi-circle";
+                    const isVideo = metadata.type.includes("video");
 
-                        shashin.lastSelectedMetadataId = metadata.id;
-                        shashin.lastSelectedMetadataSelected = true;
+                    shashin.lastSelectedMetadataId = metadata.id;
+                    shashin.lastSelectedMetadataSelected = isSelected;
 
-                        $("#tntl" + metadata.id).show();
-                        $("#tlicon" + metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
-                        $("#image" + metadata.id).css("opacity", opaque);
-                        $("#tncentered" + metadata.id).hide();
-                        $("#tnbr" + metadata.id).hide();
-                        $("#tnbl" + metadata.id).hide();
-                        $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                        $('.photo-thumbnail-image').removeClass("pb-1");
-                        if (shashin.multiSelected === true) {
-                            $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
-                            $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
-                        }
-                        // List of selected media
-                        shashin.addToMetadataIdList(metadata.id);
-                        shashin.addToMetadataFilenamesList($('#filename' + metadata.id).val());
-                        shashin.addToMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
-                        if (metadata.type.includes("video") && Util.isMobile() === false) {
-                            const jpgUrl = $("#image" + metadata.id).attr("src").replace("/gif/" + metadata.id, "/225/" + metadata.id);
-                            $("#image" + metadata.id).attr("src", jpgUrl);
-                        }
-                    } else {
-                        $("#tntl" + metadata.id).show();
+                    updateSelectionUI(metadata.id, isSelected, opaque);
 
-                        shashin.lastSelectedMetadataId = metadata.id;
-                        shashin.lastSelectedMetadataSelected = false;
+                    updateSelectionState(metadata.id, isSelected, isVideo, view);
 
-                        $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
-                        $("#image" + metadata.id).css("opacity", opaque);
-                        $("#tncentered" + metadata.id).show();
-                        $("#tnbr" + metadata.id).show();
-                        $("#tnbl" + metadata.id).show();
-                        $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                        $('.photo-thumbnail-image').removeClass("pb-1");
-                        if (shashin.multiSelected === true) {
-                            $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
-                            $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
-                        }
-                        shashin.removeFromMetadataIdList(metadata.id);
-                        shashin.removeFromMetadataFilenamesList($('#filename' + metadata.id).val());
-                        shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
-                        if (metadata.type.includes("video") && Util.isMobile() === false && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
-                        ) {
-                            const gifUrl = $("#image" + metadata.id).attr("src").replace("/225/" + metadata.id, "/gif/" + metadata.id);
-                            $("#image" + metadata.id).attr("src", gifUrl);
-                        }
-                    }
+                    updateBorderUI(metadata.id);
                 }
 
                 metadataIdArray = shashin.getMetadataIdList();
 
-                if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
-                    $("#appSearch").hide();
-                    if (view === "album" || view === "favorites" || view === "archived") {
-                        $("#albumAppTools").show();
-                        if (view === "album") {
-                            $("#albumTools").hide();
-                        }
-                    } else if (view === "timeline" || view === "recent" || view === "modified" || view === "taken" || view === "folder" || view === "search") {
-                        $("#timelineAppTools").show();
-                        if (view === "timeline" || view === "folder") {
-                            $("#timelineTools").hide();
-                        }
-                    } else if (view === "matches" || view === "person" || view === "compreface") {
-                        $("#matchesAppTools").show();
-                        $("#timelineTools").hide();
-                    }
+                updateToolbarUI(view, metadataIdArray);
 
-                    // Hide all center and bottom left icons
-                    $('.thumbnail-br').hide();
-                    $('.thumbnail-bl').hide();
-                    $('.thumbnail-centered').hide();
-                } else {
-                    $("#appSearch").show();
-                    $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                    $('.photo-thumbnail-image').removeClass("pb-1");
-                    shashin.multiSelected = false;
-                    $("#timelineAppTools").hide();
-                    if (view === "timeline" || view === "folder" || view === "matches" || view === "person" || view === "compreface") {
-                        $("#timelineTools").show();
-                    } else if (view === "album") {
-                        $("#albumTools").show();
-                    }
-                    $("#albumAppTools").hide();
-                    $("#matchesAppTools").hide();
-                }
+                updateSelectionCount(metadataIdArray);
 
-                let selectCount = $('.bi-circle-fill').length;
-                if (metadataIdArray.length > 0) {
-                    selectCount = metadataIdArray.length;
-                }
-
-                $("#timelineNumberSelected").text(selectCount+" Selected");
-                $("#matchesNumberSelected").text(selectCount+" Selected");
-                $("#favoritesNumberSelected").text(selectCount+" Selected");
-                $("#trashNumberSelected").text(selectCount+" Selected");
-                $("#albumNumberSelected").text(selectCount+" Selected");
-
-                if (view === "share") {
-                    const albumId = $("#albumId").val();
-                    const albumName = $("#albumName").val();
-                    const shareLink = $("#shareLink").val();
-                    const downloadEl = $("#download" + albumId);
-
-                    if ($('.bi-circle-fill').length > 0) {
-                        $("#clearMultiSelect").show();
-                        $("#albumNumberSelected").show();
-                        downloadEl.attr("name", "downloadArray");
-                        downloadEl.attr("value", JSON.stringify(metadataIdArray));
-                        downloadEl.attr("title", "Download selected media");
-                    } else {
-                        shashin.clearAlbumSelection();
-                        $("#clearMultiSelect").hide();
-                        $("#multiSelectMetadataIds").val("[]");
-                        $("#albumNumberSelected").hide();
-                        downloadEl.attr("name", "download");
-                        downloadEl.attr("value", albumId);
-                        downloadEl.attr("title", "Download all photos");
-                    }
-
-                    $("#download"+albumId).on("click", function() {
-                        trackShareDownload(albumId,albumName,shareLink);
-                    });
-                }
+                updateShareUI(view, metadataIdArray);
 
                 setDateSection(metadata.id, view);
             }
@@ -3430,142 +3322,139 @@
     };
 
     function selectClick(metadataId, view, opaque, transparent, metadataIdArray, clicked) {
-        let isVideo = false;
+        const isSelected = $("#tlicon" + metadataId).attr("class") === "bi-circle";
+        const isVideo = $("#photoThumbnailContainer" + metadataId).hasClass("is-video");
 
-        if ($("#photoThumbnailContainer"+metadataId).hasClass("is-video")) {
-            isVideo = true;
-        }
+        updateSelectionUI(metadataId, isSelected, opaque);
+        updateSelectionState(metadataId, isSelected, isVideo, view);
 
-        if ($("#tlicon" + metadataId).attr("class") === "bi-circle") {
-            $("#tntl" + metadataId).show();
-            $("#tlicon" + metadataId).addClass('bi-circle-fill').removeClass('bi-circle');
-            $("#image" + metadataId).css("opacity", opaque);
-            $("#tncentered" + metadataId).hide();
-            $("#tnbr" + metadataId).hide();
-            $("#tnbl" + metadataId).hide();
-            if (clicked) {
-                shashin.lastSelectedMetadataId = metadataId;
-                shashin.lastSelectedMetadataSelected = true;
-                $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                $('.photo-thumbnail-image').removeClass("pb-1");
-                if (shashin.multiSelected === true) {
-                    $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
-                    $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
-                }
-            }
-            // List of selected media
-            shashin.addToMetadataIdList(metadataId);
-            shashin.addToMetadataFilenamesList($('#filename' + metadataId).val());
-            shashin.addToMetadataThumbnailsList($('#thumbnailCentered' + metadataId).val());
-            if (isVideo && Util.isMobile() === false) {
-                const jpgUrl = $("#image" + metadataId).attr("src").replace("/gif/" + metadataId, "/225/" + metadataId);
-                $("#image" + metadataId).attr("src", jpgUrl);
-            }
-        } else {
-            $("#tntl" + metadataId).show();
-            $("#tlicon" + metadataId).addClass('bi-circle').removeClass('bi-circle-fill');
-            $("#image" + metadataId).css("opacity", opaque);
-            $("#tntr" + metadataId).show();
-            $("#tncentered" + metadataId).show();
-            $("#tnbr" + metadataId).show();
-            $("#tnbl" + metadataId).show();
-            if (clicked) {
-                shashin.lastSelectedMetadataId = metadataId;
-                shashin.lastSelectedMetadataSelected = false;
-                $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                $('.photo-thumbnail-image').removeClass("pb-1");
-                $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
-                $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
-            }
-            shashin.removeFromMetadataIdList(metadataId);
-            shashin.removeFromMetadataFilenamesList($('#filename' + metadataId).val());
-            shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadataId).val());
-            if (isVideo  && Util.isMobile() === false && (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false))
-            ) {
-                const gifUrl = $("#image" + metadataId).attr("src").replace("/225/" + metadataId, "/gif/" + metadataId);
-                $("#image" + metadataId).attr("src", gifUrl);
-            }
+        if (clicked) {
+            shashin.lastSelectedMetadataId = metadataId;
+            shashin.lastSelectedMetadataSelected = isSelected;
+            updateBorderUI(metadataId);
         }
 
         metadataIdArray = shashin.getMetadataIdList();
 
-        if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
-            $("#appSearch").hide();
-            if (view === "album" || view === "favorites" || view === "archived") {
-                $("#albumAppTools").show();
-                if (view === "album") {
-                    $("#albumTools").hide();
-                }
-            } else if (view === "timeline" || view === "recent" || view === "modified" || view === "taken" || view === "accessed" || view === "folder" || view === "search") {
-                $("#timelineAppTools").show();
-                if (view === "timeline" || view === "folder") {
-                    $("#timelineTools").hide();
-                }
-            } else if (view === "matches" || view === "person" || view === "compreface") {
-                $("#matchesAppTools").show();
-                $("#timelineTools").hide();
+        updateToolbarUI(view, metadataIdArray);
+
+        updateSelectionCount(metadataIdArray);
+
+        updateShareUI(view, metadataIdArray);
+
+        setDateSection(metadataId, view);
+    }
+
+    function updateSelectionUI(metadataId, isSelected, opaque) {
+        $("#tntl" + metadataId).show();
+        $("#tlicon" + metadataId)
+            .toggleClass('bi-circle-fill', isSelected)
+            .toggleClass('bi-circle', !isSelected);
+        $("#image" + metadataId).css("opacity", opaque);
+        $("#tncentered" + metadataId).toggle(!isSelected);
+        $("#tnbr" + metadataId).toggle(!isSelected);
+        $("#tnbl" + metadataId).toggle(!isSelected);
+    }
+
+    function updateSelectionState(metadataId, isSelected, isVideo, view) {
+        if (isSelected) {
+            shashin.addToMetadataIdList(metadataId);
+            shashin.addToMetadataFilenamesList($('#filename' + metadataId).val());
+            shashin.addToMetadataThumbnailsList($('#thumbnailCentered' + metadataId).val());
+            if (isVideo && !Util.isMobile()) {
+                const jpgUrl = $("#image" + metadataId).attr("src").replace("/gif/" + metadataId, "/225/" + metadataId);
+                $("#image" + metadataId).attr("src", jpgUrl);
+            }
+        } else {
+            shashin.removeFromMetadataIdList(metadataId);
+            shashin.removeFromMetadataFilenamesList($('#filename' + metadataId).val());
+            shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadataId).val());
+            if (isVideo && !Util.isMobile() && (view !== "timeline" || (timelineSettings && !timelineSettings.isScrolling))) {
+                const gifUrl = $("#image" + metadataId).attr("src").replace("/225/" + metadataId, "/gif/" + metadataId);
+                $("#image" + metadataId).attr("src", gifUrl);
+            }
+        }
+    }
+
+    function updateBorderUI(metadataId) {
+        $('.photo-thumbnail-container').removeClass("border border-3 border-primary");
+        $('.photo-thumbnail-image').removeClass("pb-1");
+        if (shashin.multiSelected === true) {
+            $("#photoThumbnailContainer" + metadataId).addClass("border border-3 border-primary");
+            $("#image" + metadataId).addClass("pb-1");
+        }
+    }
+
+    function updateToolbarUI(view, metadataIdArray) {
+        const hasSelection = $('.bi-circle-fill')[0] || metadataIdArray.length > 0;
+        $("#appSearch").toggle(!hasSelection);
+
+        const showTools = (selector, hideSelector) => {
+            $(selector).show();
+            if (hideSelector) $(hideSelector).hide();
+        };
+
+        if (hasSelection) {
+            if (["album", "favorites", "archived"].includes(view)) {
+                showTools("#albumAppTools", view === "album" ? "#albumTools" : null);
+            } else if (["timeline", "recent", "modified", "taken", "folder", "search"].includes(view)) {
+                showTools("#timelineAppTools", ["timeline", "folder"].includes(view) ? "#timelineTools" : null);
+            } else if (["matches", "person", "compreface"].includes(view)) {
+                showTools("#matchesAppTools", "#timelineTools");
             }
 
-            // Hide all center and bottom left icons
-            $('.thumbnail-br').hide();
-            $('.thumbnail-bl').hide();
-            //$('.thumbnail-tr').hide();
-            $('.thumbnail-centered').hide();
+            $(".thumbnail-br, .thumbnail-bl, .thumbnail-centered").hide();
         } else {
-            $("#appSearch").show();
-            $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
-            $('.photo-thumbnail-image').removeClass("pb-1");
+            $(".photo-thumbnail-container").removeClass("border border-3 border-primary");
+            $(".photo-thumbnail-image").removeClass("pb-1");
             shashin.multiSelected = false;
-            $("#timelineAppTools").hide();
-            $("#albumAppTools").hide();
-            $("#matchesAppTools").hide();
-            if (view === "timeline" || view === "folder" || view === "matches" || view === "person" || view === "compreface") {
+            $("#timelineAppTools, #albumAppTools, #matchesAppTools").hide();
+
+            if (["timeline", "folder", "matches", "person", "compreface"].includes(view)) {
                 $("#timelineTools").show();
             } else if (view === "album") {
                 $("#albumTools").show();
             }
         }
+    }
 
-        const metadataList = shashin.getMetadataIdList();
-        let selectCount = $('.bi-circle-fill').length;
-        if (metadataList.length > 0) {
-            selectCount = metadataList.length;
-        }
+    function updateSelectionCount(metadataIdArray) {
+        const count = metadataIdArray.length || $('.bi-circle-fill').length;
+        const label = count + " Selected";
+        $("#timelineNumberSelected, #matchesNumberSelected, #favoritesNumberSelected, #trashNumberSelected, #albumNumberSelected").text(label);
+    }
 
-        $("#timelineNumberSelected").text(selectCount + " Selected");
-        $("#matchesNumberSelected").text(selectCount + " Selected");
-        $("#favoritesNumberSelected").text(selectCount + " Selected");
-        $("#trashNumberSelected").text(selectCount + " Selected");
-        $("#albumNumberSelected").text(selectCount + " Selected");
+    function updateShareUI(view, metadataIdArray) {
+        if (view !== "share") return;
 
-        if (view === "share") {
-            const albumId = $("#albumId").val();
-            const albumName = $("#albumName").val();
-            const shareLink = $("#shareLink").val();
-            const downloadEl = $("#download" + albumId);
+        const albumId = $("#albumId").val();
+        const albumName = $("#albumName").val();
+        const shareLink = $("#shareLink").val();
+        const downloadEl = $("#download" + albumId);
 
-            if ($('.bi-circle-fill').length > 0) {
-                $("#clearMultiSelect").show();
-                $("#albumNumberSelected").show();
-                downloadEl.attr("name", "downloadArray");
-                downloadEl.attr("value", JSON.stringify(metadataList));
-                downloadEl.attr("title", "Download selected media");
-            } else {
-                shashin.clearAlbumSelection();
-                $("#clearMultiSelect").hide();
-                $("#multiSelectMetadataIds").val("[]");
-                $("#albumNumberSelected").hide();
-                downloadEl.attr("name", "download");
-                downloadEl.attr("value", albumId);
-                downloadEl.attr("title", "Download all photos");
-            }
-
-            $("#download"+albumId).on("click", function() {
-                trackShareDownload(albumId,albumName,shareLink);
+        if ($('.bi-circle-fill').length > 0) {
+            $("#clearMultiSelect").show();
+            $("#albumNumberSelected").show();
+            downloadEl.attr({
+                name: "downloadArray",
+                value: JSON.stringify(metadataIdArray),
+                title: "Download selected media"
+            });
+        } else {
+            shashin.clearAlbumSelection();
+            $("#clearMultiSelect").hide();
+            $("#multiSelectMetadataIds").val("[]");
+            $("#albumNumberSelected").hide();
+            downloadEl.attr({
+                name: "download",
+                value: albumId,
+                title: "Download all photos"
             });
         }
 
-        setDateSection(metadataId, view);
+        downloadEl.off("click").on("click", () => {
+            trackShareDownload(albumId, albumName, shareLink);
+        });
     }
 
     function setDateSection(metadataId, view) {
