@@ -41,16 +41,13 @@
 
     const closeToFooter = function() {
         let distanceToFooterThreshold = -500;
-        // if (Util.isMobile() || Util.getOS() === "Android" || Util.getOS() === "iOS") {
-        //     distanceToFooterThreshold = -500;
-        // }
         return (timelineSettings.distanceToFooter === 9999 || (timelineSettings.distanceToFooter > distanceToFooterThreshold && timelineSettings.distanceToFooter < 1) || Util.elementsInViewport($("#subfooter")).length > 0);
     };
 
     const scrollByN = function(scrollBy = 1) {
-        document.getElementById("container").scrollBy({top: scrollBy, behavior: "smooth"});
+        document.getElementById("container").scrollBy({top: scrollBy, behavior: "instant"});
         if (document.getElementsByTagName("MAIN").length > 0) {
-            document.getElementsByTagName("MAIN")[0].scrollBy({top: scrollBy, behavior: "smooth"});
+            document.getElementsByTagName("MAIN")[0].scrollBy({top: scrollBy, behavior: "instant"});
         }
     };
 
@@ -236,10 +233,7 @@
                 containerTop  === (galleryTop-1) ||
                 containerTop  === (galleryTop+1)
             ) {
-                // timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
-                // setTimeout(() => {
-                scrollByN(1);
-                // }, 500);
+                scrollByN();
 
                 timelineSettings.enableScrollSpy = true;
                 debounce(renderViewport, 300);
@@ -270,9 +264,7 @@
             timelineSettings.rescanElements();
 
             let timeoutValue = 2500;
-            // if (timelineSettings.dbOperationComplete === true) {
-            //     timeoutValue = 0;
-            // }
+
             setTimeout(() => {
                 const elements = Util.elementsInViewport($('img.photo-thumbnail-image:not([src*="/api/v1/thumbnails/'+timelineSettings.thumbnailType+'/)'));
                 if (elements.length > 0) {
