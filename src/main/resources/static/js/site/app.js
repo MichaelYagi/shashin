@@ -3427,7 +3427,7 @@
         }
 
         return metadataIdArrayCopy;
-    }
+    };
 
     function selectClick(metadataId, view, opaque, transparent, metadataIdArray, clicked) {
         let isVideo = false;
