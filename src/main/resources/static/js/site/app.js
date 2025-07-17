@@ -3048,274 +3048,158 @@
         }, 1000);
     }
 
-    shashin.batchSelect = function(metadataId, view, addBorder, opaque, transparent) {
-        shashin.printMessageToConsole("Select action", {tag: "multiselect"});
-
-        if (addBorder === undefined) {
-            addBorder = true;
-        }
-
-        if (opaque === undefined) {
-            opaque = 0.3;
-        }
-
-        if (transparent === undefined) {
-            transparent = 1.0;
-        }
+    shashin.batchSelect = function(metadataId, view, addBorder = true, opaque = 0.3, transparent = 1.0) {
+        shashin.printMessageToConsole("Select action", { tag: "multiselect" });
 
         let metadataIdArrayCopy = shashin.getMetadataIdList();
 
-        if (metadataIdArrayCopy.length > 0) {
-            //setTimeout(function () {
-            $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
+        if (metadataIdArrayCopy.length === 0) {
+            return metadataIdArrayCopy;
+        }
+
+        const resetBorders = () => {
+            $('.photo-thumbnail-container').removeClass("border border-3 border-primary");
             $('.photo-thumbnail-image').removeClass("pb-1");
+        };
 
-            if (shashin.lastSelectedMetadataId !== "" && shashin.lastSelectedMetadataId !== metadataId) {
-                const selectionHash = getElementLocation($("#photoThumbnailContainer" + shashin.lastSelectedMetadataId)[0]);
-                const lastSelectionPos = [selectionHash.x, selectionHash.y];
+        const updateImageSelection = (id, view, isSelected, opacityLevel, metadataArray) => {
+            const imageUrl = $("#image" + id).attr("src").replace("/gif/" + id, "/" + (Util.isMobile() ? "100" : "225") + "/" + id);
+            $("#image" + id).attr("src", imageUrl);
 
-                const pointerHash = getElementLocation($("#photoThumbnailContainer" + metadataId)[0]);
-                const pointerPos = [pointerHash.x, pointerHash.y];
+            const iconClass = $("#tlicon" + id).attr("class");
+            const shouldSelect = (isSelected && iconClass === "bi-circle") || (!isSelected && iconClass === "bi-circle-fill");
 
-                const direction = (pointerPos[1] > lastSelectionPos[1] || (pointerPos[0] > lastSelectionPos[0] && pointerPos[1] >= lastSelectionPos[1])) ? "down" : "up";
+            if (shouldSelect) {
+                selectClick(id, view, opaque, transparent, metadataArray, false);
+                $("#image" + id).css("opacity", opacityLevel);
 
-                // Visually select for shift select for non timeline view
-                if (view !== "timeline" && addBorder && lastSelectionPos[0] !== null && lastSelectionPos[1] !== null && pointerPos[0] !== null && pointerPos[1] !== null) {
-                    shashin.printMessageToConsole("Selected Media point [x, y]: " + JSON.stringify(lastSelectionPos) + ". MetadataId: " + shashin.lastSelectedMetadataId, {tag: "multiselect"});
-                    shashin.printMessageToConsole("Shift Key point [x, y]: " + JSON.stringify(pointerPos) + ". MetadataId: " + metadataId, {tag: "multiselect"});
-                    shashin.printMessageToConsole("Select direction: " + direction, {tag: "multiselect"});
-
-                    // Avoids infinite loops
-                    const whileLimit = 1000;
-                    if ($("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).length > 0) {
-                        let container = $("#photoThumbnailContainer" + ((direction === "down") ? shashin.lastSelectedMetadataId : metadataId));
-
-                        // Get row that selected metadata is in
-                        let selectedRowMetadataIds = container.siblings().addBack().map(function () {
-                            const metadataId = this.id.split("photoThumbnailContainer");
-                            return metadataId[1];
-                        }).toArray();
-
-                        // Check if above row contains shift selected metadata
-                        let found = ($.inArray(((direction === "down") ? metadataId : shashin.lastSelectedMetadataId), selectedRowMetadataIds) !== -1);
-
-                        // If not found, check other rows and add to collection. if found, exit out of loop
-                        let index = 0;
-                        while (found === false) {
-                            if (index > whileLimit) {
-                                break;
-                            }
-
-                            let nextContainer = container.parent().parent().nextUntil().filter((view === "timeline") ? ".dateContainer:first" : ".dateSection:first");
-
-                            container = $(nextContainer[0]).children("div.row").children("div");
-
-                            metadataIdArrayCopy = container.siblings().addBack().map(function () {
-                                const metadataId = this.id.split("photoThumbnailContainer");
-                                return metadataId[1];
-                            }).toArray();
-                            found = ($.inArray(((direction === "down") ? metadataId : shashin.lastSelectedMetadataId), metadataIdArrayCopy) !== -1);
-
-                            $.merge(selectedRowMetadataIds, metadataIdArrayCopy);
-                            index++;
-                        }
-
-                        shashin.printMessageToConsole("Looped " + index + " times finding metadata", {tag: "multiselect"});
-
-                        // Loop through all collected rows and select from selected metadata to shift selected metadata
-                        let start = false;
-                        let lastSelectedMetadataId = shashin.lastSelectedMetadataId;
-
-                        for (let index in selectedRowMetadataIds) {
-                            if (selectedRowMetadataIds.hasOwnProperty(index)) {
-                                const currentMetadataId = selectedRowMetadataIds[index];
-                                const compareOne = (direction === "down") ? lastSelectedMetadataId : metadataId;
-
-                                if (currentMetadataId === compareOne || start === true) {
-                                    if (currentMetadataId === compareOne) {
-                                        lastSelectedMetadataId = (direction === "down") ? currentMetadataId : shashin.lastSelectedMetadataId;
-                                        start = true;
-                                        continue;
-                                    }
-
-                                    const imageUrl = $("#image" + currentMetadataId).attr("src").replace("/gif/" + currentMetadataId, "/"+(Util.isMobile() ? "100" : "225")+"/" + currentMetadataId);
-                                    $("#image" + currentMetadataId).attr("src", imageUrl);
-                                    if (shashin.lastSelectedMetadataSelected === true) {
-                                        if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle") {
-                                            selectClick(currentMetadataId, view, opaque, transparent, metadataIdArrayCopy, false);
-                                            $("#image" + currentMetadataId).css("opacity", opaque);
-                                        }
-                                    } else {
-                                        if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle-fill") {
-                                            selectClick(currentMetadataId, view, opaque, transparent, metadataIdArrayCopy, false);
-                                            if (currentMetadataId !== metadataId) {
-                                                $("#image" + currentMetadataId).css("opacity", transparent);
-                                                if (shashin.lastSelectedMetadataId !== currentMetadataId) {
-                                                    $("#tntl" + currentMetadataId).css("display", "none");
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    if (direction === "down") {
-                                        lastSelectedMetadataId = currentMetadataId;
-                                    }
-                                }
-
-                                const compareTwo = (direction === "down") ? metadataId : lastSelectedMetadataId;
-
-                                if (currentMetadataId === compareTwo) {
-                                    if (direction === "up") {
-                                        let imageUrl = $("#image" + metadataId).attr("src").replace("/gif/" + metadataId, "/"+(Util.isMobile() ? "100" : "225")+"/" + metadataId);
-                                        $("#image" + metadataId).attr("src", imageUrl);
-                                        if (shashin.lastSelectedMetadataSelected === true) {
-                                            if ($("#tlicon" + metadataId).attr("class") === "bi-circle") {
-                                                selectClick(metadataId, view, opaque, transparent, metadataIdArrayCopy, false);
-                                                $("#image" + metadataId).css("opacity", opaque);
-                                            }
-                                        } else {
-                                            if ($("#tlicon" + metadataId).attr("class") === "bi-circle-fill") {
-                                                selectClick(metadataId, view, opaque, transparent, metadataIdArrayCopy, false);
-                                                if (currentMetadataId !== metadataId) {
-                                                    $("#image" + metadataId).css("opacity", transparent);
-                                                    if (shashin.lastSelectedMetadataId !== metadataId) {
-                                                        $("#tntl" + metadataId).css("display", "none");
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        imageUrl = $("#image" + currentMetadataId).attr("src").replace("/gif/" + currentMetadataId, "/"+(Util.isMobile() ? "100" : "225")+"/" + currentMetadataId);
-                                        $("#image" + currentMetadataId).attr("src", imageUrl);
-                                        if (shashin.lastSelectedMetadataSelected === true) {
-                                            if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle") {
-                                                selectClick(currentMetadataId, view, opaque, transparent, metadataIdArrayCopy, false);
-                                                $("#image" + currentMetadataId).css("opacity", opaque);
-                                            }
-                                        } else {
-                                            if ($("#tlicon" + currentMetadataId).attr("class") === "bi-circle-fill") {
-                                                selectClick(currentMetadataId, view, opaque, transparent, metadataIdArrayCopy, false);
-                                                if (currentMetadataId !== metadataId) {
-                                                    $("#image" + currentMetadataId).css("opacity", transparent);
-                                                    if (shashin.lastSelectedMetadataId !== currentMetadataId) {
-                                                        $("#tntl" + currentMetadataId).css("display", "none");
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                    $('.photo-thumbnail-image').removeClass("pb-1");
-
-                    // Put a border around select point
-                    if (shashin.getMetadataIdList().length > 0 && addBorder) {
-                        $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
-                        $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
-                        shashin.multiSelected = true;
-                    }
-                } else if (view === "timeline" || view === "accessed" || view === "modified" || view === "recent" || view === "taken" || addBorder === false) {
-                    // timeline shift select for timeline or date select
-                    const http = new Http("get ranged metadata");
-                    const version = Util.getMetadataLocalStorage();
-
-                    // timeline
-                    let url = "/metadata/range/"+direction+"/"+shashin.lastSelectedMetadataId+"/"+metadataId;
-                    if (view === "accessed" || view === "modified" || view === "recent" || view === "taken") {
-                        url = "/browse/range/"+metadataId+"/"+view;
-                    }
-
-                    http.ajax("get", url+(version === "" ? "" : "?v=" + version)).then(function (data) {
-                        if (data !== null && data.hasOwnProperty("metadataIdArray")) {
-                            const metadataIdArray = data.metadataIdArray;
-
-                            if (shashin.getMetadataIdList().length > 0) {
-                                if (view === "album") {
-                                    $("#albumAppTools").css("display", "block");
-                                }
-                            } else {
-                                $("#albumAppTools").css("display", "none");
-                            }
-
-                            for (let index in metadataIdArray) {
-                                if (metadataIdArray.hasOwnProperty(index)) {
-                                    const metadataArray = metadataIdArray[index];
-                                    const metadataIdValue = metadataArray[0];
-
-                                    if (shashin.lastSelectedMetadataSelected === true) {
-                                        if ($("#tlicon" + metadataIdValue).attr("class") === "bi-circle") {
-                                            selectClick(metadataIdValue, view, opaque, transparent, metadataIdArray, false);
-                                            $("#image" + metadataIdValue).css("opacity", opaque);
-                                        }
-                                    } else {
-                                        if ($("#tlicon" + metadataIdValue).attr("class") === "bi-circle-fill") {
-                                            selectClick(metadataIdValue, view, opaque, transparent, metadataIdArray, false);
-                                            if (metadataIdValue !== metadataId) {
-                                                $("#image" + metadataIdValue).css("opacity", transparent);
-                                                if (shashin.lastSelectedMetadataId !== metadataIdValue) {
-                                                    $("#tntl" + metadataIdValue).css("display", "none");
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    if (shashin.lastSelectedMetadataSelected === true) {
-                                        shashin.addToMetadataIdList(metadataIdValue);
-                                        shashin.addToMetadataFilenamesList(metadataArray[1]);
-                                        shashin.addToMetadataThumbnailsList(metadataArray[2]);
-                                    } else {
-                                        shashin.removeFromMetadataIdList(metadataIdValue);
-                                        shashin.removeFromMetadataFilenamesList(metadataArray[1]);
-                                        shashin.removeFromMetadataThumbnailsList(metadataArray[2]);
-                                    }
-
-                                    if (shashin.getMetadataIdList().length === 0) {
-                                        shashin.clearTimelineSelection();
-                                        $("#albumAppTools").css("display", "none");
-                                    }
-
-                                    if ($("#image" + metadataIdValue).length > 0) {
-                                        const imageUrl = $("#image" + metadataIdValue).attr("src").replace("/gif/" + metadataIdValue, "/"+(Util.isMobile() ? "100" : "225")+"/" + metadataIdValue);
-                                        $("#image" + metadataIdValue).attr("src", imageUrl);
-                                    }
-                                }
-                            }
-
-                            if (shashin.getMetadataIdList().length > 0) {
-                                $("#albumNumberSelected").text(shashin.getMetadataIdList().length + " Selected");
-                                $("#timelineNumberSelected").text(shashin.getMetadataIdList().length + " Selected");
-                            }
-
-                            $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
-                            $('.photo-thumbnail-image').removeClass("pb-1");
-
-                            // Put a border around select point for timeline
-                            if (/*$("#image" + shashin.lastSelectedMetadataId).length > 0 && */shashin.getMetadataIdList().length > 0 && addBorder) {
-                                $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
-                                $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
-                                shashin.multiSelected = true;
-                            }
-
-                            if (addBorder === false) {
-                                shashin.lastSelectedMetadataId = "";
-                            }
-                        }
-                    });
-                } else {
-                    shashin.printMessageToConsole("lastSelectionPos undefined or null", {tag: "multiselect"});
+                if (!isSelected && id !== metadataId && shashin.lastSelectedMetadataId !== id) {
+                    $("#tntl" + id).css("display", "none");
                 }
-            } else {
-                shashin.lastSelectedMetadataId = "";
-                shashin.multiSelected = false;
             }
+        };
 
-            //}, 0);
+        const applyBorderToLastSelected = () => {
+            if (shashin.getMetadataIdList().length > 0 && addBorder) {
+                $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border border-3 border-primary");
+                $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
+                shashin.multiSelected = true;
+            }
+        };
+
+        resetBorders();
+
+        if (shashin.lastSelectedMetadataId && shashin.lastSelectedMetadataId !== metadataId) {
+            const selectionHash = getElementLocation($("#photoThumbnailContainer" + shashin.lastSelectedMetadataId)[0]);
+            const pointerHash = getElementLocation($("#photoThumbnailContainer" + metadataId)[0]);
+
+            const direction = (pointerHash.y > selectionHash.y || (pointerHash.x > selectionHash.x && pointerHash.y >= selectionHash.y)) ? "down" : "up";
+
+            if (view !== "timeline" && addBorder) {
+                // Non-timeline selection logic...
+                shashin.printMessageToConsole("Selected Media point [x, y]: " + JSON.stringify([selectionHash.x, selectionHash.y]), { tag: "multiselect" });
+                shashin.printMessageToConsole("Shift Key point [x, y]: " + JSON.stringify([pointerHash.x, pointerHash.y]), { tag: "multiselect" });
+                shashin.printMessageToConsole("Select direction: " + direction, { tag: "multiselect" });
+
+                const whileLimit = 1000;
+                let container = $("#photoThumbnailContainer" + (direction === "down" ? shashin.lastSelectedMetadataId : metadataId));
+                let selectedRowMetadataIds = container.siblings().addBack().map(function () {
+                    return this.id.split("photoThumbnailContainer")[1];
+                }).toArray();
+
+                let found = selectedRowMetadataIds.includes(direction === "down" ? metadataId : shashin.lastSelectedMetadataId);
+                let index = 0;
+
+                while (!found && index < whileLimit) {
+                    let nextContainer = container.parent().parent().nextUntil().filter(view === "timeline" ? ".dateContainer:first" : ".dateSection:first");
+                    container = $(nextContainer[0]).children("div.row").children("div");
+
+                    metadataIdArrayCopy = container.siblings().addBack().map(function () {
+                        return this.id.split("photoThumbnailContainer")[1];
+                    }).toArray();
+
+                    found = metadataIdArrayCopy.includes(direction === "down" ? metadataId : shashin.lastSelectedMetadataId);
+                    $.merge(selectedRowMetadataIds, metadataIdArrayCopy);
+                    index++;
+                }
+
+                shashin.printMessageToConsole("Looped " + index + " times finding metadata", { tag: "multiselect" });
+
+                let start = false;
+                let lastSelectedMetadataId = shashin.lastSelectedMetadataId;
+
+                for (const currentMetadataId of selectedRowMetadataIds) {
+                    const compareOne = direction === "down" ? lastSelectedMetadataId : metadataId;
+                    const compareTwo = direction === "down" ? metadataId : lastSelectedMetadataId;
+
+                    if (currentMetadataId === compareOne || start) {
+                        if (currentMetadataId === compareOne) {
+                            lastSelectedMetadataId = direction === "down" ? currentMetadataId : shashin.lastSelectedMetadataId;
+                            start = true;
+                            continue;
+                        }
+
+                        updateImageSelection(currentMetadataId, view, shashin.lastSelectedMetadataSelected, shashin.lastSelectedMetadataSelected ? opaque : transparent, metadataIdArrayCopy);
+                        if (direction === "down") lastSelectedMetadataId = currentMetadataId;
+                    }
+
+                    if (currentMetadataId === compareTwo) {
+                        updateImageSelection(metadataId, view, shashin.lastSelectedMetadataSelected, shashin.lastSelectedMetadataSelected ? opaque : transparent, metadataIdArrayCopy);
+                        updateImageSelection(currentMetadataId, view, shashin.lastSelectedMetadataSelected, shashin.lastSelectedMetadataSelected ? opaque : transparent, metadataIdArrayCopy);
+                        break;
+                    }
+                }
+
+                resetBorders();
+                applyBorderToLastSelected();
+            } else if (["timeline", "accessed", "modified", "recent", "taken"].includes(view) || !addBorder) {
+                const http = new Http("get ranged metadata");
+                const version = Util.getMetadataLocalStorage();
+                let url = view === "timeline"
+                    ? `/metadata/range/${direction}/${shashin.lastSelectedMetadataId}/${metadataId}`
+                    : `/browse/range/${metadataId}/${view}`;
+
+                if (version) url += `?v=${version}`;
+
+                http.ajax("get", url).then(data => {
+                    if (data.hasOwnProperty("metadataIdArray")) {
+                        const metadataIdArray = data.metadataIdArray;
+
+                        metadataIdArray.forEach(([id, filename, thumbnail]) => {
+                            updateImageSelection(id, view, shashin.lastSelectedMetadataSelected, shashin.lastSelectedMetadataSelected ? opaque : transparent, metadataIdArray);
+
+                            if (shashin.lastSelectedMetadataSelected) {
+                                shashin.addToMetadataIdList(id);
+                                shashin.addToMetadataFilenamesList(filename);
+                                shashin.addToMetadataThumbnailsList(thumbnail);
+                            } else {
+                                shashin.removeFromMetadataIdList(id);
+                                shashin.removeFromMetadataFilenamesList(filename);
+                                shashin.removeFromMetadataThumbnailsList(thumbnail);
+                            }
+
+                            const imageId = $("#image" + id);
+                            if (imageId.length > 0) {
+                                const imageUrl = imageId.attr("src").replace("/gif/" + id, "/" + (Util.isMobile() ? "100" : "225") + "/" + id);
+                                imageId.attr("src", imageUrl);
+                            }
+                        });
+
+                        updateSelectionCount(shashin.getMetadataIdList());
+                        resetBorders();
+                        applyBorderToLastSelected();
+
+                        if (!addBorder) {
+                            shashin.lastSelectedMetadataId = "";
+                        }
+                    }
+                });
+            } else {
+                shashin.printMessageToConsole("lastSelectionPos undefined or null", { tag: "multiselect" });
+            }
+        } else {
+            shashin.lastSelectedMetadataId = "";
+            shashin.multiSelected = false;
         }
 
         return metadataIdArrayCopy;
