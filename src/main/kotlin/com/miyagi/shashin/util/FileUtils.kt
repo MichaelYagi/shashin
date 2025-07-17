@@ -27,6 +27,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
+import java.util.zip.Deflater
 import java.util.zip.ZipEntry
 import java.util.zip.ZipException
 import java.util.zip.ZipFile
@@ -559,6 +560,8 @@ class FileUtils {
          */
         @Throws(IOException::class)
         private fun zipSubFolder(out: ZipOutputStream, folder: File, basePathLength: Int) {
+            out.setLevel(Deflater.NO_COMPRESSION)
+            val metricsUtil = MetricsUtil()
             val buffer = 2048
             val fileList = folder.listFiles()
             var origin: BufferedInputStream?
@@ -574,6 +577,7 @@ class FileUtils {
                             val relativePath = unmodifiedFilePath.substring(basePathLength + 1)
                             val fi = FileInputStream(unmodifiedFilePath)
                             origin = BufferedInputStream(fi, buffer)
+                            metricsUtil.start("Zip Entry: " + file.name)
                             val entry = ZipEntry(relativePath)
                             entry.time = file.lastModified() // to keep modification time after unzipping
                             out.putNextEntry(entry)
@@ -581,6 +585,7 @@ class FileUtils {
                             while (origin.read(data, 0, buffer).also { count = it } != -1) {
                                 out.write(data, 0, count)
                             }
+                            metricsUtil.end()
                             origin.close()
                             out.closeEntry()
                         }
