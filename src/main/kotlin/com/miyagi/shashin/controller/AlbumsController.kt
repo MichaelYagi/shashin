@@ -8,6 +8,7 @@ import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.MetadataProcessing
+import com.miyagi.shashin.util.MetricsUtil
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import com.miyagi.shashin.util.TextUtils.Companion.returnForbiddenError
@@ -1857,7 +1858,7 @@ class AlbumsController: BaseController() {
                     for (albumPhoto in albumPhotos) {
                         if (albumPhoto != null) {
                             val metadata = metadataRepository.findById(albumPhoto.getMetadataId()!!)
-                            if (metadata.isPresent && !metadata.get().getType()?.contains("video", ignoreCase = true)!!) {
+                            //if (metadata.isPresent && !metadata.get().getType()?.contains("video", ignoreCase = true)!!) {
                                 val tempFile = File(metadata.get().getPath()!!)
                                 if (tempFile.exists()) {
                                     val tempFileTo =
@@ -1873,12 +1874,12 @@ class AlbumsController: BaseController() {
                                         "Exporting album photo. File does not exist: " + tempFile.absolutePath
                                     )
                                 }
-                            } else {
-                                logger.log(
-                                    Level.INFO,
-                                    "Ignoring album video: " + metadata.get().getPath()
-                                )
-                            }
+//                            } else {
+//                                logger.log(
+//                                    Level.INFO,
+//                                    "Ignoring album video: " + metadata.get().getPath()
+//                                )
+//                            }
                         }
                     }
 
@@ -1930,12 +1931,14 @@ class AlbumsController: BaseController() {
 
             if (albumPhotos != null && albumObj.isPresent && albumObj.get().getShareUrl() == shareLink) {
                 val tempExportBaseDir = Files.createTempDirectory(albumId.toString())
+                val metricsUtil = MetricsUtil()
 
                 if (download.isPresent && download.get() == albumId) {
                     for (albumPhoto in albumPhotos) {
                         if (albumPhoto != null) {
                             val metadata = metadataRepository.findById(albumPhoto.getMetadataId()!!)
-                            if (!metadata.get().getType()?.contains("video", ignoreCase = true)!!) {
+                            //if (!metadata.get().getType()?.contains("video", ignoreCase = true)!!) {
+                                metricsUtil.start("Share album download: " + metadata.get().getPath()!!)
                                 val tempFile = File(metadata.get().getPath()!!)
                                 if (tempFile.exists()) {
                                     val tempFileTo =
@@ -1951,12 +1954,13 @@ class AlbumsController: BaseController() {
                                         "Exporting album photo. File does not exist: " + tempFile.absolutePath
                                     )
                                 }
-                            } else {
-                                logger.log(
-                                    Level.INFO,
-                                    "Ignoring album video: " + metadata.get().getPath()
-                                )
-                            }
+                                metricsUtil.end()
+//                            } else {
+//                                logger.log(
+//                                    Level.INFO,
+//                                    "Ignoring album video: " + metadata.get().getPath()
+//                                )
+//                            }
                         }
                     }
                 } else if (downloadArray.isPresent && downloadArray.get() != "") {
@@ -1965,21 +1969,26 @@ class AlbumsController: BaseController() {
                     if (metadataIdArray != null) {
                         for (metadataId in metadataIdArray) {
                             val metadata = metadataRepository.findById(metadataId)
-                            val tempFile = File(metadata.get().getPath()!!)
-                            if (tempFile.exists()) {
-                                val tempFileTo =
-                                    File(tempExportBaseDir.toString() + "/" + metadata.get().getFileName())
-                                Files.copy(
-                                    tempFile.toPath(),
-                                    tempFileTo.toPath(),
-                                    StandardCopyOption.REPLACE_EXISTING
-                                )
-                            } else {
-                                logger.log(
-                                    Level.INFO,
-                                    "Exporting album photo. File does not exist: " + tempFile.absolutePath
-                                )
-                            }
+                            //if (!metadata.get().getType()?.contains("video", ignoreCase = true)!!) {
+                                println(metadata.get().getType())
+                                metricsUtil.start("Share album download: " + metadata.get().getPath()!!)
+                                val tempFile = File(metadata.get().getPath()!!)
+                                if (tempFile.exists()) {
+                                    val tempFileTo =
+                                        File(tempExportBaseDir.toString() + "/" + metadata.get().getFileName())
+                                    Files.copy(
+                                        tempFile.toPath(),
+                                        tempFileTo.toPath(),
+                                        StandardCopyOption.REPLACE_EXISTING
+                                    )
+                                } else {
+                                    logger.log(
+                                        Level.INFO,
+                                        "Exporting album photo. File does not exist: " + tempFile.absolutePath
+                                    )
+                                }
+                                metricsUtil.end()
+                            //}
                         }
                     }
                 }
@@ -1990,6 +1999,7 @@ class AlbumsController: BaseController() {
                     FileUtils.deleteDirectory(tempDir)
 
                     if (outputZipFile != null) {
+                        metricsUtil.start("Sending")
                         outputZipFile.deleteOnExit()
 
                         val resource = InputStreamResource(FileInputStream(outputZipFile))
@@ -2007,6 +2017,8 @@ class AlbumsController: BaseController() {
                         headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
                         headers.add("Pragma", "no-cache")
                         headers.add("Expires", "0")
+
+                        metricsUtil.end()
 
                         return ResponseEntity.ok()
                             .headers(headers)

@@ -2259,6 +2259,11 @@
             span = $("#" + buttonId).find("span");
         }
 
+        let activePage = "";
+        if ($("#activePage").length > 0) {
+            activePage = $("#activePage").val();
+        }
+
         if (typeof buttonId === 'undefined' || (span !== null && span.hasClass('bi-download'))) {
             if ((span !== null && span.hasClass('bi-download'))) {
                 span.addClass('spinner-grow').removeClass('bi-download');
@@ -2273,6 +2278,14 @@
 
             const endpoint = "/metadata/download/batch";
 
+            shashin.closeToastMessages({tag:"downloadselected"});
+            shashin.showToastMessage("Downloading media", "Downloading "+activePage+" media.", {
+                icon:"bi-info-circle",
+                iconColor:"#777777",
+                autohide:false,
+                tag:"downloadselected"
+            });
+
             if (Util.isMobile() === false) {
                 shashin.downloadInstance = $.fileDownload(endpoint, {
                     httpMethod: "POST",
@@ -2284,6 +2297,8 @@
                         if (span !== null) {
                             span.addClass('bi-download').removeClass('spinner-grow');
                         }
+
+                        shashin.closeToastMessages({tag:"downloadselected"});
                     },
                     failCallback: function (html, url) {
                         shashin.printMessageToConsole("Media ZIP download fail", {
@@ -2299,6 +2314,8 @@
                         if (span !== null) {
                             span.addClass('bi-download').removeClass('spinner-grow');
                         }
+
+                        shashin.closeToastMessages({tag:"downloadselected"});
                     }
                 });
             } else {
@@ -2323,6 +2340,8 @@
                         if (span !== null) {
                             span.addClass('bi-download').removeClass('spinner-grow');
                         }
+
+                        shashin.closeToastMessages({tag:"downloadselected"});
                     }).catch(() => {
                         shashin.printMessageToConsole("Media ZIP download fail using fetch()", {
                             consoleType: shashin.consoleTypes.error
@@ -2330,6 +2349,8 @@
                         if (span !== null) {
                             span.addClass('bi-download').removeClass('spinner-grow');
                         }
+
+                        shashin.closeToastMessages({tag:"downloadselected"});
                     });
             }
         }
@@ -3091,7 +3112,12 @@
         const configuredAttempts = 120;
 
         shashin.closeToastMessages({tag:"sharedownload"});
-        shashin.showToastMessage("Downloading share album", "Downloading share album \""+albumName+"\". Downloading photos only.", {icon:"bi-info-circle", iconColor:"#777777", autohide:true, tag:"sharedownload"});
+        shashin.showToastMessage("Downloading share album", "Downloading share album \""+albumName+"\".", {
+            icon:"bi-info-circle",
+            iconColor:"#777777",
+            autohide:false,
+            tag:"sharedownload"
+        });
         setTimeout(function () { $("#download"+albumId).removeAttr("href"); }, 0);
         Util.setCookie(tokenName, "", "/");
         Util.setCookie(tokenSize, "", "/");
@@ -3115,6 +3141,7 @@
                     $("#clearMultiSelect").hide();
                     $("#multiSelectMetadataIds").val("[]");
                     $("#albumNumberSelected").hide();
+                    shashin.closeToastMessages({tag:"sharedownload"});
                     const downloadEl = $("#download" + albumId);
                     downloadEl.attr("name", "download");
                     downloadEl.attr("value", albumId);
