@@ -300,17 +300,23 @@
         }
 
         // Scroll event handler
-        let lastOffset = $("#container").scrollTop();
+        const $container = $("#container");
+        const $gallery = $("#infinite-scroll-gallery");
+        const $spinnerBottom = $("#spinner_bottom");
+        const $attachMetadataPhotos = $(".attachMetadataPhotos");
+        const $footer = $("footer");
+        const $offcanvasToc = $("#offcanvasToc");
+
+        let lastOffset = $container.scrollTop();
         let lastDate = new Date().getTime();
+
         const scrollHandler = function (e) {
             firsthovered = true;
 
             if (scrollTimer !== null) {
                 clearTimeout(scrollTimer);
             }
-            scrollTimer = setTimeout(function() {
-                triggerScrollStop();
-            }, 200);
+            scrollTimer = setTimeout(triggerScrollStop, 200);
 
             timelineSettings.distanceToFooter = calculateDistanceToFooter();
             timelineSettings.isScrolling = true;
@@ -331,24 +337,20 @@
                 }
             }
 
-            // Used for multiselect - see app.js: batchSelect()
             if (shashin.lastSelectedMetadataId !== "" && shashin.multiSelected === true && shashin.getMetadataIdList().length > 0) {
-                $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border").addClass("border-3").addClass("border-primary");
+                $("#photoThumbnailContainer" + shashin.lastSelectedMetadataId).addClass("border border-3 border-primary");
                 $("#image" + shashin.lastSelectedMetadataId).addClass("pb-1");
             }
 
-            // Prevent flickering
             const elementsInViewPort = Util.elementsInViewport($(".scrollspy"));
-
             let showSlider = true;
-            if (Util.isMobile() === false) {
-                if (Util.isInViewport($("footer")) === false &&
+
+            if (!Util.isMobile()) {
+                if (!Util.isInViewport($footer) &&
                     timelineSettings.elementTracking.length > 0 &&
                     elementsInViewPort.length === timelineSettings.elementTracking.length &&
-                    ((Util.isFirefox() === true && timelineSettings.elementTracking[0] === elementsInViewPort[0]) ||
-                        timelineSettings.elementTracking[0].isSameNode(elementsInViewPort[0])) &&
-                    ((Util.isFirefox() === true && timelineSettings.elementTracking[timelineSettings.elementTracking.length - 1] === elementsInViewPort[elementsInViewPort.length - 1]) ||
-                        timelineSettings.elementTracking[timelineSettings.elementTracking.length - 1].isSameNode(elementsInViewPort[elementsInViewPort.length - 1]))
+                    timelineSettings.elementTracking[0].isSameNode(elementsInViewPort[0]) &&
+                    timelineSettings.elementTracking[timelineSettings.elementTracking.length - 1].isSameNode(elementsInViewPort[elementsInViewPort.length - 1])
                 ) {
                     timelineSettings.isScrolling = false;
                 }
@@ -356,24 +358,22 @@
             }
 
             lastDate = e.timeStamp;
-            lastOffset = $(e.target).scrollTop();
+            lastOffset = st;
 
-            if ($(".attachMetadataPhotos").last().text() !== "EOL" && $("#spinner_bottom").css("display") === "block") {
+            if ($attachMetadataPhotos.last().text() !== "EOL" && $spinnerBottom.css("display") === "block") {
                 timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
             }
 
             if (timelineSettings.isScrolling === true || showSlider === true) {
                 $("#dateSlider").fadeIn(timelineSettings.scrollBar.fadeInTime).visible();
 
-                const dropdownElementList = document.querySelectorAll('.dropdown-toggle');
-                dropdownElementList.forEach(function (dropdownToggleEl, i) {
+                document.querySelectorAll('.dropdown-toggle').forEach(dropdownToggleEl => {
                     const dropDown = new bootstrap.Dropdown(dropdownToggleEl);
                     dropDown.hide();
                 });
             }
 
-            // Hack to prevent infinite scroll upwards and throttle scrolling
-            if (topScroll === true && topOfPage === false && Util.isMobile() === false) {
+            if (topScroll === true && topOfPage === false && !Util.isMobile()) {
                 if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
                     timelineSettings.isScrolling = true;
                 }
@@ -383,33 +383,27 @@
             topOfPage = $(elementsInViewPort[0]).attr("id") === firstDate;
 
             requestAnimationFrame(() => {
-                const container = document.getElementById("container");
-                const wasAtTop = container.scrollTop === 0;
-                if (wasAtTop) {
-                    setTimeout(function () {
-                        scrollByN();
-                    }, 500);
+                if ($container.scrollTop() === 0) {
+                    setTimeout(() => scrollByN(), 500);
                 }
             });
 
-            // Scroll to the timeline TOC
-            if (typeof $("#offcanvasToc").css('visibility') !== 'undefined' && $("#offcanvasToc").css('visibility') === "visible" && timelineSettings.enableScrollSpy === true) {
+            if ($offcanvasToc.css('visibility') === "visible" && timelineSettings.enableScrollSpy === true) {
                 timelineSettings.scrollToTimelineToc(elementsInViewPort);
             }
 
             if (timelineSettings.enableScrollSpy === true) {
-                // Clean up
                 if (timelineSettings.didJumpFromTimelineToc === true) {
                     let prevClass = "";
                     let deleteElements = false;
-                    $('#infinite-scroll-gallery').children().each(function () {
+                    $gallery.children().each(function () {
                         const currClass = $(this).attr("class");
                         if (prevClass === currClass || deleteElements === true) {
                             $(this).css("display", "none");
                             deleteElements = true;
-                            shashin.printMessageToConsole("Cleaning up IDs after jump:"+$(this).attr("id"),{tag:"timeline"});
+                            shashin.printMessageToConsole("Cleaning up IDs after jump:" + $(this).attr("id"), { tag: "timeline" });
                         }
-                        prevClass = $(this).attr("class");
+                        prevClass = currClass;
                     });
                     timelineSettings.didJumpFromTimelineToc = false;
                 }
