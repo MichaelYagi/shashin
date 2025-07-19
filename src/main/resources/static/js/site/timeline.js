@@ -1,9 +1,4 @@
 (function( timelineSettings, $, undefined ) {
-    const closeToFooter = function() {
-        let distanceToFooterThreshold = -500;
-        return (timelineSettings.distanceToFooter === 9999 || (timelineSettings.distanceToFooter > distanceToFooterThreshold && timelineSettings.distanceToFooter < 1) || Util.elementsInViewport($("#subfooter")).length > 0);
-    };
-
     function preloadAdjacentSections(anchor, mediaTypeFilter) {
         const index = timelineSettings.timelineDatesHash[anchor];
         const preloadDepth = 2;
@@ -110,7 +105,7 @@
         if (prevElements === null ||
             (elements.length > 0 && Util.arraysEqual(elements, prevElements) === false && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) ||
             (elements.length > 0 && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) ||
-            (Util.elementsInViewport($("#"+lastDate)).length === 0 && closeToFooter() === true && Util.atEndOfPage($("#container")[0]))
+            (Util.elementsInViewport($("#"+lastDate)).length === 0 && timelineSettings.closeToFooter() === true && Util.atEndOfPage($("#container")[0]))
         ) {
             $(".bi-play-btn").invisible();
             $(".bi-play-circle").invisible();
@@ -681,7 +676,7 @@
                     const timelineDate = timelineArr[index];
                     let prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
                     shashin.dayHeadingListener(prevDate, "timeline", mediaTypeFilter);
-                    if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate) && closeToFooter() === true) {
+                    if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate) && timelineSettings.closeToFooter() === true) {
                         if (timelineSettings.currentScrollDirection ===
                             timelineSettings.ScrollDirection.down && $("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) || ((Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
                             const numberOfPhotos = timelineSettings.metadataYearMonthCount[timelineDate.year + "-" + timelineDate.month];
@@ -734,7 +729,7 @@
                             timelineSettings.distanceToFooter = timelineSettings.calculateDistanceToFooter();
 
                             // Break if footer not in viewport
-                            if (closeToFooter() === false) {
+                            if (timelineSettings.closeToFooter() === false) {
                                 currentDate = prevDate;
                                 break;
                             }
