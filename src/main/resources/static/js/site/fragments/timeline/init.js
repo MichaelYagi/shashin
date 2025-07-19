@@ -9,13 +9,6 @@
         Util.reinitLightGalleryInstance();
     };
 
-    const scrollByN = function(scrollBy = 1) {
-        document.getElementById("container").scrollBy({top: scrollBy, behavior: "instant"});
-        if (document.getElementsByTagName("MAIN").length > 0) {
-            document.getElementsByTagName("MAIN")[0].scrollBy({top: scrollBy, behavior: "instant"});
-        }
-    };
-
     let scrollStopRAF;
     const triggerScrollStop = () => {
         if (scrollStopRAF) cancelAnimationFrame(scrollStopRAF);
@@ -154,7 +147,7 @@
                 containerTop  === (galleryTop-1) ||
                 containerTop  === (galleryTop+1)
             ) {
-                scrollByN();
+                timelineSettings.crollByN();
 
                 timelineSettings.enableScrollSpy = true;
                 debounce(renderViewport, 300);
@@ -305,7 +298,7 @@
 
             requestAnimationFrame(() => {
                 if ($container.scrollTop() === 0) {
-                    setTimeout(() => scrollByN(), 500);
+                    setTimeout(() => timelineSettings.scrollByN(), 500);
                 }
             });
 
@@ -342,7 +335,7 @@
         });
 
         scrollTimer = setTimeout(function() {
-            scrollByN(2);
+            timelineSettings.scrollByN(2);
         }, 1500);
     };
 }( window.timelineSettings = window.timelineSettings || {}, jQuery ));
