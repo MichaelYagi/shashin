@@ -172,6 +172,12 @@
             <th:block th:if="${activePageLower == 'album'}">
                 <script src="/js/site/album.js" th:nonce="${cspNonce}"></script>
             </th:block>
+            <th:block th:if="${activePageLower == 'timeline'}">
+                <script src="/js/site/fragments/timeline/constants.js" th:nonce="${cspNonce}"></script>
+                <script src="/js/site/fragments/timeline/util.js" th:nonce="${cspNonce}"></script>
+                <script src="/js/site/fragments/timeline/init.js" th:nonce="${cspNonce}"></script>
+                <script src="/js/site/timeline.js" th:nonce="${cspNonce}"></script>
+            </th:block>
             <th:block th:if="${activePageLower == 'recent'}">
                 <script src="/js/site/recent.js" th:nonce="${cspNonce}"></script>
             </th:block>
@@ -231,6 +237,12 @@
             </th:block>
             <th:block th:if="${activePageLower == 'album'}">
                 <script src="/js/site/min/album.min.js" th:nonce="${cspNonce}"></script>
+            </th:block>
+            <th:block th:if="${activePageLower == 'timeline'}">
+                <script src="/js/site/min/fragments/timeline/constants.min.js" th:nonce="${cspNonce}"></script>
+                <script src="/js/site/min/fragments/timeline/util.min.js" th:nonce="${cspNonce}"></script>
+                <script src="/js/site/min/fragments/timeline/init.min.js" th:nonce="${cspNonce}"></script>
+                <script src="/js/site/min/timeline.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
             <th:block th:if="${activePageLower == 'recent'}">
                 <script src="/js/site/min/recent.min.js" th:nonce="${cspNonce}"></script>
