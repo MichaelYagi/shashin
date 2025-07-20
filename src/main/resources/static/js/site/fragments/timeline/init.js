@@ -147,7 +147,7 @@
                 containerTop  === (galleryTop-1) ||
                 containerTop  === (galleryTop+1)
             ) {
-                timelineSettings.crollByN();
+                timelineSettings.scrollByN();
 
                 timelineSettings.enableScrollSpy = true;
                 debounce(renderViewport, 300);
