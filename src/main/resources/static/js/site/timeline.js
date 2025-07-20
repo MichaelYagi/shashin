@@ -1080,16 +1080,15 @@
             }
         }
 
-        if ('requestIdleCallback' in window) {
-            requestIdleCallback(() => preloadAdjacentSections(anchor, mediaTypeFilter));
-        } else {
+        // if ('requestIdleCallback' in window) {
+        //     requestIdleCallback(() => preloadAdjacentSections(anchor, mediaTypeFilter));
+        // } else {
             setTimeout(() => preloadAdjacentSections(anchor, mediaTypeFilter), 500);
-        }
+        // }
 
         timelineSettings.setScrollSpyActive(anchor);
-        timelineSettings.scrollToTimelineToc(Util.elementsInViewport($(".scrollspy")));
-
         timelineSettings.enableScrollSpy = true;
+        timelineSettings.scrollToTimelineToc(Util.elementsInViewport($(".scrollspy")));
     };
 
     timelineSettings.observeAnchorChange = function(id, functionCall) {
