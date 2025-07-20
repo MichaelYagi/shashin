@@ -105,19 +105,19 @@ $("#albumAppToolsBatchDownload").on("click", function(e) {
 $("#appToolsDeselectAll").on("click", function(e) {
     e.preventDefault();
 
-    shashin.clearTimelineSelection();
+    shashin.clearSelection("timeline");
 });
 
 $("#albumAppToolsDeselectAll").on("click", function(e) {
     e.preventDefault();
 
-    shashin.clearAlbumSelection();
+    shashin.clearSelection("album");
 });
 
 $("#comprefaceDeselectAll").on("click", function(e) {
     e.preventDefault();
 
-    shashin.clearTimelineSelection();
+    shashin.clearSelection("timeline");
 });
 
 $("#appToolsAddAlbum").on("click", function(e) {

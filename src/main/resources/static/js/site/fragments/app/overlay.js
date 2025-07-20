@@ -22,7 +22,7 @@
         $("#select" + metadata.id).on("click", function (e) {
             e.preventDefault();
 
-            selectClick(metadata.id, view, opaque, transparent, metadataIdArray, true);
+            shashin.selectClick(metadata.id, view, opaque, transparent, metadataIdArray, true);
         });
 
         $("#image" + metadata.id).on('error', function() {
@@ -363,5 +363,72 @@
         }
 
         return {overlays:overlays,data:data};
+    };
+
+    shashin.imageHover = function (_this, metadataId) {
+        const metadataIdArray = shashin.getMetadataIdList();
+        const index = metadataIdArray.indexOf(metadataId);
+
+        $(_this).css("opacity", 0.3);
+        $(_this).siblings().show();
+        if ($("#tlicon" + metadataId).attr("class") === "bi-circle-fill" || index > -1) {
+            $("#tncentered" + metadataId).hide();
+            $("#tnbl" + metadataId).hide();
+            $("#tnbr" + metadataId).hide();
+            //$("#tntr" + metadata.id).hide();
+        }
+        if ($('.bi-circle-fill')[0] || $(_this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
+            $('.thumbnail-bl').hide();
+            $('.thumbnail-centered').hide();
+            //$('.thumbnail-tr').hide();
+            $('.thumbnail-br').hide();
+        }
+    };
+
+    shashin.clearSelection = function (viewType) {
+        if (shashin.downloadInstance !== null) {
+            shashin.downloadInstance.abort();
+            shashin.downloadInstance = null;
+            shashin.showToastMessage("Download cancelled", "Download cancelled.", {
+                icon: "bi-info-circle",
+                iconColor: "#777777"
+            });
+            $("button").find("span").addClass('bi-download').removeClass('spinner-grow');
+        }
+
+        shashin.lastSelectedMetadataId = "";
+        shashin.lastSelectedMetadataSelected = false;
+        shashin.removeAllMetadataFilenamesList();
+        shashin.removeAllMetadataThumbnailsList();
+        shashin.removeAllMetadataIdList();
+
+        $(".day-select").hide(); // You can toggle this per viewType if needed
+        $(".thumbnail-centered").hide();
+        $(".thumbnail-br").hide();
+        $(".thumbnail-bl").hide();
+        $(".thumbnail-tl").hide();
+        $(".photo-thumbnail-image").css("opacity", 1.0);
+        $(".thumbnail-tl a span").addClass('bi-circle').removeClass('bi-circle-fill');
+        $(".day-select").addClass('bi-circle').removeClass('bi-circle-fill');
+
+        $("#appSearch").show();
+        shashin.multiSelected = false;
+        $(".photo-thumbnail-container").removeClass("border border-3 border-primary");
+        $(".photo-thumbnail-image").removeClass("pb-1");
+
+        // Hide all tool panels first
+        $("#timelineAppTools").hide();
+        $("#albumAppTools").hide();
+        $("#matchesAppTools").hide();
+        $("#comprefaceAppTools").hide();
+
+        // Toggle specific tool panel based on viewType
+        if (viewType === 'timeline') {
+            $("#timelineTools").show();
+            $("#albumTools").hide();
+        } else if (viewType === 'album') {
+            $("#timelineTools").hide();
+            $("#albumTools").show();
+        }
     };
 }( window.shashin = window.shashin || {}, jQuery ));
