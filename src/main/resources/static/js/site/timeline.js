@@ -13,7 +13,7 @@
                 if ($("#" + aboveId).length === 0) {
                     timelineSettings.updateTimeline(aboveId, mediaTypeFilter, "above", anchor).then(msg => {
                         if (msg === timelineSettings.success) {
-                            timelineSettings.attachAssociatedMetadata(aboveId, mediaTypeFilter);
+                            void timelineSettings.attachAssociatedMetadata(aboveId, mediaTypeFilter);
                         }
                     });
                 }
@@ -25,7 +25,7 @@
                 if ($("#" + belowId).length === 0) {
                     timelineSettings.updateTimeline(belowId, mediaTypeFilter, "below", anchor).then(msg => {
                         if (msg === timelineSettings.success) {
-                            timelineSettings.attachAssociatedMetadata(belowId, mediaTypeFilter);
+                            void timelineSettings.attachAssociatedMetadata(belowId, mediaTypeFilter);
                         }
                     });
                 }
