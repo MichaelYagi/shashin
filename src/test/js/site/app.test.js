@@ -3,7 +3,10 @@ const sinon = require("sinon");
 require("mocha");
 require('../helper.js');
 
-const shashin = require('../../../main/resources/static/js/site/app');
+const constants = require('../../../main/resources/static/js/site/fragments/app/constants.js');
+const appjs = require('../../../main/resources/static/js/site/app.js');
+
+global.shashin = { ...constants, ...appjs };
 global.Castjs = require('../../../main/resources/static/js/cast.min');
 global.lightGallery = require('../../../main/resources/static/js/lightgallery.min');
 global.lgZoom = require('../../../main/resources/static/js/lg-zoom.min');

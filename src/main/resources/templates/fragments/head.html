@@ -41,12 +41,14 @@
         <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
             <script src="/js/site/notificationutil.js" th:nonce="${cspNonce}"></script>
             <script src="/js/site/util.js" th:nonce="${cspNonce}"></script>
+            <script src="/js/site/fragments/app/constants.js" th:nonce="${cspNonce}"></script>
             <script src="/js/site/app.js" th:nonce="${cspNonce}"></script>
             <script src="/js/site/services/http.js" th:nonce="${cspNonce}"></script>
         </th:block>
         <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
             <script src="/js/site/min/notificationutil.min.js" th:nonce="${cspNonce}"></script>
             <script src="/js/site/min/util.min.js" th:nonce="${cspNonce}"></script>
+            <script src="/js/site/min/fragments/app/constants.min.js" th:nonce="${cspNonce}"></script>
             <script src="/js/site/min/app.min.js" th:nonce="${cspNonce}"></script>
             <script src="/js/site/min/services/http.min.js" th:nonce="${cspNonce}"></script>
         </th:block>
