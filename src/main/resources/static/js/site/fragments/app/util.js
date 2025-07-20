@@ -66,20 +66,6 @@
         }
     };
 
-    function getStackTrace() {
-        let stack;
-
-        try {
-            throw new Error('');
-        }
-        catch (error) {
-            stack = error.stack || '';
-        }
-
-        stack = stack.split('\n').map(function (line) { return line.trim(); });
-        return stack.splice(stack[0] === 'Error' ? 2 : 1);
-    }
-
     shashin.printMessageToConsole = function (msg, options) {
         // error, info, log, warn
         let consoleType = shashin.consoleTypes.log;
@@ -163,6 +149,20 @@
                     }
                 }
             }
+        }
+
+        function getStackTrace() {
+            let stack;
+
+            try {
+                throw new Error('');
+            }
+            catch (error) {
+                stack = error.stack || '';
+            }
+
+            stack = stack.split('\n').map(function (line) { return line.trim(); });
+            return stack.splice(stack[0] === 'Error' ? 2 : 1);
         }
     };
 
