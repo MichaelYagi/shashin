@@ -585,26 +585,6 @@
         }
     };
 
-    shashin.imageHover = function (_this, metadataId) {
-        const metadataIdArray = shashin.getMetadataIdList();
-        const index = metadataIdArray.indexOf(metadataId);
-
-        $(_this).css("opacity", 0.3);
-        $(_this).siblings().show();
-        if ($("#tlicon" + metadataId).attr("class") === "bi-circle-fill" || index > -1) {
-            $("#tncentered" + metadataId).hide();
-            $("#tnbl" + metadataId).hide();
-            $("#tnbr" + metadataId).hide();
-            //$("#tntr" + metadata.id).hide();
-        }
-        if ($('.bi-circle-fill')[0] || $(_this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
-            $('.thumbnail-bl').hide();
-            $('.thumbnail-centered').hide();
-            //$('.thumbnail-tr').hide();
-            $('.thumbnail-br').hide();
-        }
-    };
-
     shashin.trackShareDownload = function(albumId,albumName,shareLink) {
         let downloadTimer;
         const tokenName = "ShashinShareAlbumName";
@@ -637,7 +617,7 @@
                     Util.deleteCookie(tokenSize, "/");
                     window.clearInterval(downloadTimer);
 
-                    shashin.clearAlbumSelection();
+                    shashin.clearSelection("album");
                     $("#clearMultiSelect").hide();
                     $("#multiSelectMetadataIds").val("[]");
                     $("#albumNumberSelected").hide();
@@ -654,74 +634,6 @@
 
             attempts--;
         }, 1000);
-    };
-
-    shashin.clearTimelineSelection = function () {
-        if (shashin.downloadInstance !== null) {
-            shashin.downloadInstance.abort();
-            shashin.downloadInstance = null;
-            shashin.showToastMessage("Download cancelled", "Download cancelled.", {icon:"bi-info-circle", iconColor:"#777777"});
-            $("button").find("span").addClass('bi-download').removeClass('spinner-grow');
-        }
-        shashin.lastSelectedMetadataId = "";
-        shashin.lastSelectedMetadataSelected = false;
-        shashin.removeAllMetadataFilenamesList();
-        shashin.removeAllMetadataThumbnailsList();
-        shashin.removeAllMetadataIdList();
-        // $(".day-select").hide();
-        $(".thumbnail-centered").hide();
-        //$(".thumbnail-tr").hide();
-        $(".thumbnail-br").hide();
-        $(".thumbnail-bl").hide();
-        $(".thumbnail-tl").hide();
-        $(".photo-thumbnail-image").css("opacity", 1.0);
-        $(".thumbnail-tl a span").addClass('bi-circle').removeClass('bi-circle-fill');
-        $(".day-select").addClass('bi-circle').removeClass('bi-circle-fill');
-
-        $("#appSearch").show();
-        shashin.multiSelected = false;
-        $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
-        $('.photo-thumbnail-image').removeClass("pb-1");
-        $("#timelineAppTools").hide();
-        $("#timelineTools").show();
-        $("#albumTools").hide();
-        $("#albumAppTools").hide();
-        $("#matchesAppTools").hide();
-        $("#comprefaceAppTools").hide();
-    };
-
-    shashin.clearAlbumSelection = function () {
-        if (shashin.downloadInstance !== null) {
-            shashin.downloadInstance.abort();
-            shashin.downloadInstance = null;
-            shashin.showToastMessage("Download cancelled", "Download cancelled.", {icon:"bi-info-circle", iconColor:"#777777"});
-            $("button").find("span").addClass('bi-download').removeClass('spinner-grow');
-        }
-        shashin.lastSelectedMetadataId = "";
-        shashin.lastSelectedMetadataSelected = false;
-        shashin.removeAllMetadataFilenamesList();
-        shashin.removeAllMetadataThumbnailsList();
-        shashin.removeAllMetadataIdList();
-        $(".day-select").hide();
-        $(".thumbnail-centered").hide();
-        //$(".thumbnail-tr").hide();
-        $(".thumbnail-br").hide();
-        $(".thumbnail-bl").hide();
-        $(".thumbnail-tl").hide();
-        $(".photo-thumbnail-image").css("opacity", 1.0);
-        $(".thumbnail-tl a span").addClass('bi-circle').removeClass('bi-circle-fill');
-        $(".day-select").addClass('bi-circle').removeClass('bi-circle-fill');
-
-        $("#appSearch").show();
-        shashin.multiSelected = false;
-        $('.photo-thumbnail-container').removeClass("border").removeClass("border-3").removeClass("border-primary");
-        $('.photo-thumbnail-image').removeClass("pb-1");
-        $("#timelineAppTools").hide();
-        $("#timelineTools").hide();
-        $("#albumTools").show();
-        $("#albumAppTools").hide();
-        $("#matchesAppTools").hide();
-        $("#comprefaceAppTools").hide();
     };
 
     shashin.matchingListeners = function () {

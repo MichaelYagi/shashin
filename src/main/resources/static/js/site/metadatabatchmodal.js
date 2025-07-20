@@ -420,7 +420,7 @@ $('#propBatchMetadata').on('hide.bs.modal', function () {
         const tab = new bootstrap.Tab($("#batchGeneralTabLink"));
         tab.show();
     }
-    shashin.clearTimelineSelection();
+    shashin.clearSelection("timeline");
 });
 
 // Clear message on input editing

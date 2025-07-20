@@ -21,7 +21,7 @@
             const shouldSelect = (isSelected && iconClass === "bi-circle") || (!isSelected && iconClass === "bi-circle-fill");
 
             if (shouldSelect) {
-                selectClick(id, view, opaque, transparent, metadataArray, false);
+                shashin.selectClick(id, view, opaque, transparent, metadataArray, false);
                 $("#image" + id).css("opacity", opacityLevel);
 
                 if (!isSelected && id !== metadataId && shashin.lastSelectedMetadataId !== id) {
@@ -154,7 +154,7 @@
         return metadataIdArrayCopy;
     };
 
-    function selectClick(metadataId, view, opaque, transparent, metadataIdArray, clicked) {
+    shashin.selectClick = function(metadataId, view, opaque, transparent, metadataIdArray, clicked) {
         const isSelected = $("#tlicon" + metadataId).attr("class") === "bi-circle";
         const isVideo = $("#photoThumbnailContainer" + metadataId).hasClass("is-video");
 
@@ -176,7 +176,7 @@
         shashin.updateShareUI(view, metadataIdArray);
 
         shashin.setDateSection(metadataId, view);
-    }
+    };
 
     shashin.updateSelectionUI = function(metadataId, isSelected, opaque) {
         $("#tntl" + metadataId).show();
@@ -274,7 +274,7 @@
                 title: "Download selected media"
             });
         } else {
-            shashin.clearAlbumSelection();
+            shashin.clearSelection("album");
             $("#clearMultiSelect").hide();
             $("#multiSelectMetadataIds").val("[]");
             $("#albumNumberSelected").hide();
