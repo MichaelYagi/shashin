@@ -3,7 +3,7 @@
         const firstElem = $('.scrollspy')[0];
         const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
 
-        timelineSettings.attachAssociatedMetadata(firstElem.id, mediaTypeFilter);
+        void timelineSettings.attachAssociatedMetadata(firstElem.id, mediaTypeFilter);
         timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
         timelineSettings.setScrollSpyActive($(firstElem));
         Util.reinitLightGalleryInstance();
