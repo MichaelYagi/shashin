@@ -3,10 +3,18 @@ const sinon = require("sinon");
 require("mocha");
 require('../helper.js');
 
-const constants = require('../../../main/resources/static/js/site/fragments/app/constants.js');
+const constantsjs = require('../../../main/resources/static/js/site/fragments/app/constants.js');
+const toastjs = require('../../../main/resources/static/js/site/fragments/app/toast.js');
+const modaljs = require('../../../main/resources/static/js/site/fragments/app/modal.js');
+const batchjs = require('../../../main/resources/static/js/site/fragments/app/batch.js');
+const lightgalleryjs = require('../../../main/resources/static/js/site/fragments/app/lightgallery.js');
+const mapjs = require('../../../main/resources/static/js/site/fragments/app/map.js');
+const metadatajs = require('../../../main/resources/static/js/site/fragments/app/metadata.js');
+const overlayjs = require('../../../main/resources/static/js/site/fragments/app/overlay.js');
+const utiljs = require('../../../main/resources/static/js/site/fragments/app/util.js');
 const appjs = require('../../../main/resources/static/js/site/app.js');
 
-global.shashin = { ...constants, ...appjs };
+global.shashin = { ...constantsjs, ...toastjs, ...modaljs, ...batchjs, ...lightgalleryjs, ...mapjs, ...metadatajs, ...overlayjs, ...utiljs, ...appjs };
 global.Castjs = require('../../../main/resources/static/js/cast.min');
 global.lightGallery = require('../../../main/resources/static/js/lightgallery.min');
 global.lgZoom = require('../../../main/resources/static/js/lg-zoom.min');

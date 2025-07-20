@@ -7,10 +7,28 @@
     <script src="/js/jquery-3.5.1.min.js" th:nonce="${cspNonce}"></script>
     <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
         <script src="/js/site/util.js" th:nonce="${cspNonce}"></script>
+        <script src="/js/site/fragments/app/constants.js" th:nonce="${cspNonce}"></script>
+        <script src="/js/site/fragments/app/toast.js" th:nonce="${cspNonce}"></script>
+        <script src="/js/site/fragments/app/modal.js" th:nonce="${cspNonce}"></script>
+        <script src="/js/site/fragments/app/batch.js" th:nonce="${cspNonce}"></script>
+        <script src="/js/site/fragments/app/lightgallery.js" th:nonce="${cspNonce}"></script>
+        <script src="/js/site/fragments/app/map.js" th:nonce="${cspNonce}"></script>
+        <script src="/js/site/fragments/app/metadata.js" th:nonce="${cspNonce}"></script>
+        <script src="/js/site/fragments/app/overlay.js" th:nonce="${cspNonce}"></script>
+        <script src="/js/site/fragments/app/util.js" th:nonce="${cspNonce}"></script>
         <script src="/js/site/app.js" th:nonce="${cspNonce}"></script>
     </th:block>
     <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
         <script src="/js/site/min/util.min.js" th:nonce="${cspNonce}"></script>
+        <script src="/js/site/min/fragments/app/constants.min.js" th:nonce="${cspNonce}"></script>
+        <script src="/js/site/min/fragments/app/toast.min.js" th:nonce="${cspNonce}"></script>
+        <script src="/js/site/min/fragments/app/modal.min.js" th:nonce="${cspNonce}"></script>
+        <script src="/js/site/min/fragments/app/batch.min.js" th:nonce="${cspNonce}"></script>
+        <script src="/js/site/min/fragments/app/lightgallery.min.js" th:nonce="${cspNonce}"></script>
+        <script src="/js/site/min/fragments/app/map.min.js" th:nonce="${cspNonce}"></script>
+        <script src="/js/site/min/fragments/app/metadata.min.js" th:nonce="${cspNonce}"></script>
+        <script src="/js/site/min/fragments/app/overlay.min.js" th:nonce="${cspNonce}"></script>
+        <script src="/js/site/min/fragments/app/util.min.js" th:nonce="${cspNonce}"></script>
         <script src="/js/site/min/app.min.js" th:nonce="${cspNonce}"></script>
     </th:block>
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
