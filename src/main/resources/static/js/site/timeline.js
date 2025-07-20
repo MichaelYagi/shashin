@@ -11,9 +11,11 @@
                 const aboveDate = timelineSettings.timelineDates[aboveIndex];
                 const aboveId = `${aboveDate.year}-${aboveDate.month}-${aboveDate.day}`;
                 if ($("#" + aboveId).length === 0) {
-                    timelineSettings.updateTimeline(aboveId, mediaTypeFilter, "above", anchor).then(msg => {
+                    timelineSettings.updateTimeline(aboveId, mediaTypeFilter, "above", anchor).then(function(msg) {
                         if (msg === timelineSettings.success) {
-                            void timelineSettings.attachAssociatedMetadata(aboveId, mediaTypeFilter);
+                            timelineSettings.attachAssociatedMetadata(aboveId, mediaTypeFilter).then(() => {}).catch(error => {
+                                shashin.printMessageToConsole("Metadata attachment failed:" + error,{tag:"timeline"});
+                            });
                         }
                     });
                 }
@@ -23,9 +25,11 @@
                 const belowDate = timelineSettings.timelineDates[belowIndex];
                 const belowId = `${belowDate.year}-${belowDate.month}-${belowDate.day}`;
                 if ($("#" + belowId).length === 0) {
-                    timelineSettings.updateTimeline(belowId, mediaTypeFilter, "below", anchor).then(msg => {
+                    timelineSettings.updateTimeline(belowId, mediaTypeFilter, "below", anchor).then(function(msg) {
                         if (msg === timelineSettings.success) {
-                            void timelineSettings.attachAssociatedMetadata(belowId, mediaTypeFilter);
+                            timelineSettings.attachAssociatedMetadata(belowId, mediaTypeFilter).then(() => {}).catch(error => {
+                                shashin.printMessageToConsole("Metadata attachment failed:" + error,{tag:"timeline"});
+                            });
                         }
                     });
                 }

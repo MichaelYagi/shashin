@@ -3,7 +3,9 @@
         const firstElem = $('.scrollspy')[0];
         const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
 
-        void timelineSettings.attachAssociatedMetadata(firstElem.id, mediaTypeFilter);
+        timelineSettings.attachAssociatedMetadata(firstElem.id, mediaTypeFilter).then(() => {}).catch(error => {
+            shashin.printMessageToConsole("Metadata attachment failed:" + error,{tag:"timeline"});
+        });
         timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
         timelineSettings.setScrollSpyActive($(firstElem));
         Util.reinitLightGalleryInstance();
