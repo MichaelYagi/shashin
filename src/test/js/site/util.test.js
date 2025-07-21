@@ -104,10 +104,14 @@ describe('#Util tests', function() {
             $("<div/>", {
                 id: 'tail_metadataelement',
                 height: 9
+            }),
+            $("<div/>", {
+                id: 'container_metadataelement',
+                height: 23
             })
         );
 
-        assert.equal(Util.getDateGalleryHeight("metadataelement"),31);
+        assert.equal(Util.getDateGalleryHeight("metadataelement"),23);
         Util.removeDateGallery("metadataelement");
         assert.equal(Util.getDateGalleryHeight("metadataelement"),0);
     });
