@@ -439,7 +439,7 @@
         }
 
         // Render mid
-        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
+        // if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
             action = "new";
             if (attachAboveArray.length > 0) {
                 attachPoint = attachAboveArray[attachAboveArray.length - 1];
@@ -467,7 +467,7 @@
                     await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
                 }
             }
-        }
+        // }
 
         shashin.printMessageToConsole("==============================================",{tag:"timeline"});
         $("#spinner_top").css("display", "none");
