@@ -1375,12 +1375,11 @@ class Util {
         // console.log("$(\"#\" + id).outerHeight(true):"+$("#" + id).outerHeight(true))
 
 
-        return $("#br" + id).outerHeight(true) +
-        $("#row" + id).outerHeight(true) +
-        $("#" + id).outerHeight(true);
-
-        // $("#amp_" + id).outerHeight(true) +
-        // $("#container_" + id).outerHeight(true);
+        return $("#container_" + id).outerHeight(true);
+        // $("#br" + id).outerHeight(true) +
+        // $("#row" + id).outerHeight(true) +
+        // $("#" + id).outerHeight(true) +
+        // $("#amp_" + id).outerHeight(true);
     }
 
     static getLgFunction(that, functionName) {
