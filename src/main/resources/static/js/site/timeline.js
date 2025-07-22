@@ -560,12 +560,7 @@
                         Util.isInViewport($("#row" + section[index + 1].id)) === false &&
                         Util.isInViewport($("#tail_" + section[index + 1].id)) === false &&
                         Util.isInViewport($("#container_" + section[index + 1].id)) === false &&
-                        Util.isInViewport($("#amp_" + section[index + 1].id)) === false &&
-                        Util.isInViewport($("#br" + element.id)) === false &&
-                        Util.isInViewport($("#row" + element.id)) === false &&
-                        Util.isInViewport($("#tail_" + element.id)) === false &&
-                        Util.isInViewport($("#container_" + element.id)) === false &&
-                        Util.isInViewport($("#amp_" + element.id)) === false
+                        Util.isInViewport($("#amp_" + section[index + 1].id)) === false
                     ) {
                         Util.removeDateGallery(element.id);
                         sectionArray.pop();
