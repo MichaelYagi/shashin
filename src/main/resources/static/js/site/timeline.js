@@ -154,7 +154,7 @@
                         shashin.dayHeadingListener(id, "timeline", mediaTypeFilter);
 
                         // Scrolling behavior different on Chrome iOS
-                        if (Util.isSafari() === true || Util.isFirefox() === true || Util.isMobile() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                        if (Util.isFirefox() === true || Util.isMobile() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                             timelineSettings.renderThumbnailsAlt(id, mediaTypeFilter).then(function (msg) {
                                 if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
                                     timelineSettings.setScrollSpyActive(id);
@@ -177,7 +177,7 @@
 
                 if (Util.isMobile() === false) {
                     // Scrolling behavior different on Chrome iOS
-                    if (((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && timelineSettings.isScrolling === false) || timelineSettings.isScrolling === true) && (Util.isSafari() === false || Util.isFirefox() === false) && !(Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                    if (((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && timelineSettings.isScrolling === false) || timelineSettings.isScrolling === true) && Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) {
                         timelineSettings.renderThumbnails(elements, mediaTypeFilter, timelineDates).then(function (msg) {
                             if (msg === timelineSettings.success) {
                                 // Set TOC active element
@@ -440,33 +440,33 @@
 
         // Render mid
         // if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
-            action = "new";
-            if (attachAboveArray.length > 0) {
-                attachPoint = attachAboveArray[attachAboveArray.length - 1];
-                action = "below";
-            } else if (attachBelowArray.length > 0) {
-                attachPoint = attachBelowArray[0];
-                action = "above";
-            }
+        action = "new";
+        if (attachAboveArray.length > 0) {
+            attachPoint = attachAboveArray[attachAboveArray.length - 1];
+            action = "below";
+        } else if (attachBelowArray.length > 0) {
+            attachPoint = attachBelowArray[0];
+            action = "above";
+        }
 
-            shashin.printMessageToConsole("attempting to attaching id mid " + id + " " + action + " " + attachPoint + " length " + $("#" + id).length,{tag:"timeline"});
+        shashin.printMessageToConsole("attempting to attaching id mid " + id + " " + action + " " + attachPoint + " length " + $("#" + id).length,{tag:"timeline"});
 
-            // Hack for attaching mid point
-            if (attachAboveArray.length > 0 && attachBelowArray.length > 0 && $('section')[$('section').length - 1].id === id && $("#" + id).length === 1) {
-                shashin.printMessageToConsole("removing already existing id " + id + " for mid point",{tag:"timeline"});
-                Util.removeDateGallery(id);
-            }
+        // Hack for attaching mid point
+        if (attachAboveArray.length > 0 && attachBelowArray.length > 0 && $('section')[$('section').length - 1].id === id && $("#" + id).length === 1) {
+            shashin.printMessageToConsole("removing already existing id " + id + " for mid point",{tag:"timeline"});
+            Util.removeDateGallery(id);
+        }
 
-            // Render mid
-            if ($("#" + id).length === 0) {
-                shashin.printMessageToConsole("attaching mid attachPoint:" + attachPoint,{tag:"timeline"});
-                shashin.printMessageToConsole("attaching id:" + id,{tag:"timeline"});
-                shashin.printMessageToConsole("attaching mid action:" + action,{tag:"timeline"});
-                const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, action, attachPoint);
-                if (msg === timelineSettings.success && $("#" + id).length === 1) {
-                    await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
-                }
+        // Render mid
+        if ($("#" + id).length === 0) {
+            shashin.printMessageToConsole("attaching mid attachPoint:" + attachPoint,{tag:"timeline"});
+            shashin.printMessageToConsole("attaching id:" + id,{tag:"timeline"});
+            shashin.printMessageToConsole("attaching mid action:" + action,{tag:"timeline"});
+            const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, action, attachPoint);
+            if (msg === timelineSettings.success && $("#" + id).length === 1) {
+                await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
             }
+        }
         // }
 
         shashin.printMessageToConsole("==============================================",{tag:"timeline"});
@@ -540,7 +540,7 @@
                     Util.isInViewport($("#container_" + element.id)) === false &&
                     Util.elementsInViewport($(".photo-thumbnail-image.thumbnailTag_" + element.id)).length === 0
                 ) {
-                    if (Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                    if (Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                         section.invisible();
                     }
 
@@ -583,7 +583,7 @@
                 prevIndex = currentTimelineIndex;
             });
 
-            if (Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+            if (Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                 if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
                     $('#container').scrollTop(tempScrollTop - removeHeight);
                 } else if (topHeight > 0) {
@@ -634,8 +634,8 @@
                     prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
                     shashin.dayHeadingListener(prevDate, "timeline", mediaTypeFilter);
                     if (Util.getDateObject(currentDate) < Util.getDateObject(prevDate)) {
-                        if ($("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) ||
-                            ((Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
+                        if ($("#" + currentDate).length === 0 && ((Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) ||
+                            ((Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
                             // Render currentDate
                             const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
 
@@ -682,7 +682,7 @@
                     shashin.dayHeadingListener(prevDate, "timeline", mediaTypeFilter);
                     if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate) && timelineSettings.closeToFooter() === true) {
                         if (timelineSettings.currentScrollDirection ===
-                            timelineSettings.ScrollDirection.down && $("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) || ((Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
+                            timelineSettings.ScrollDirection.down && $("#" + currentDate).length === 0 && ((Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) || ((Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
                             const numberOfPhotos = timelineSettings.metadataYearMonthCount[timelineDate.year + "-" + timelineDate.month];
 
                             let sectionHeight = 0;
@@ -698,10 +698,10 @@
                             // Stage 1 - create a placeholder dive to enable scrolling through additional content based on current date section
                             const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
                             // if (Util.isMobile() === false) {
-                                shashin.printMessageToConsole("timelineSettings.createEmptyContainer called",{tag:"timeline"});
-                                // Stage 1 - create an empty block
-                                await timelineSettings.createEmptyContainer(currentDate, anchorPoint, sectionHeight);
-                                action = "emptyContainer";
+                            shashin.printMessageToConsole("timelineSettings.createEmptyContainer called",{tag:"timeline"});
+                            // Stage 1 - create an empty block
+                            await timelineSettings.createEmptyContainer(currentDate, anchorPoint, sectionHeight);
+                            action = "emptyContainer";
                             // } else {
                             //     action = "below";
                             // }
@@ -1477,7 +1477,7 @@
             let htmlEl = $(html);
 
             if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                if (Util.getOS() === "iOS" && Util.isChrome() === true) {
                     $("#infinite-scroll-gallery").invisible();
                 }
             }
@@ -1491,7 +1491,7 @@
                         // deferred.resolve(timelineSettings.success);
                         ret = timelineSettings.success;
                         if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                            if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                            if (Util.getOS() === "iOS" && Util.isChrome() === true && Util.isSafari() === true) {
                                 //$("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
                                 // Scroll back to anchor element
                                 requestAnimationFrame(() => {
@@ -1510,7 +1510,7 @@
                 } else if (action === "new") {
                     $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
                         if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                            if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                            if (Util.getOS() === "iOS" && Util.isChrome() === true && Util.isSafari() === true) {
                                 $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
                                 $("#infinite-scroll-gallery").visible();
                             }
@@ -1523,7 +1523,7 @@
                         if ($(".attachMetadataPhotos").length > 0) {
                             htmlEl.insertAfter($(".attachMetadataPhotos").last()).ready(function () {
                                 if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                    if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                                    if (Util.getOS() === "iOS" && Util.isChrome() === true && Util.isSafari() === true) {
                                         $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
                                         $("#infinite-scroll-gallery").visible();
                                     }
@@ -1534,7 +1534,7 @@
                         } else {
                             $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
                                 if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                    if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                                    if (Util.getOS() === "iOS" && Util.isChrome() === true && Util.isSafari() === true) {
                                         $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
                                         $("#infinite-scroll-gallery").visible();
                                     }
@@ -1546,7 +1546,7 @@
                     } else {
                         htmlEl.insertAfter($("#amp_" + attachToId)).ready(function () {
                             if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                                if (Util.getOS() === "iOS" && Util.isChrome() === true && Util.isSafari() === true) {
                                     $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
                                     $("#infinite-scroll-gallery").visible();
                                 }
@@ -1597,44 +1597,44 @@
         //         return ret;
         //     };
         // } else {
-            const version = Util.getMetadataLocalStorage();
+        const version = Util.getMetadataLocalStorage();
 
-            const ajaxParams = {
-                type: 'get',
-                url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata" + (version === "" ? "" : "?v=" + version),
-                contentType: 'application/json; charset=utf-8',
-                async: true,
-                retries: shashin.ajaxRetries
-            };
+        const ajaxParams = {
+            type: 'get',
+            url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata" + (version === "" ? "" : "?v=" + version),
+            contentType: 'application/json; charset=utf-8',
+            async: true,
+            retries: shashin.ajaxRetries
+        };
 
-            return await $.ajax(ajaxParams)
-                .fail(function (xhr, textStatus) {
-                    shashin.onFail(xhr, textStatus, ajaxParams, " updating timeline");
-                }).then(function (data) {
-                    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                        let message = "Error";
-                        if (data.status === timelineSettings.success) {
-                            if (data.hasOwnProperty("metadataList")) {
-                                const metadataList = data.metadataList;
+        return await $.ajax(ajaxParams)
+            .fail(function (xhr, textStatus) {
+                shashin.onFail(xhr, textStatus, ajaxParams, " updating timeline");
+            }).then(function (data) {
+                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                    let message = "Error";
+                    if (data.status === timelineSettings.success) {
+                        if (data.hasOwnProperty("metadataList")) {
+                            const metadataList = data.metadataList;
 
-                                if (metadataList.length > 0) {
-                                    ret = updateTimeline(date, mediaTypeFilter, action, attachToId, metadataList, data.placeNameHeaders);
-                                } else {
-                                    $(".attachMetadataPhotos").last().text("EOL").css("display", "none");
-                                    ret = timelineSettings.success;
-                                }
+                            if (metadataList.length > 0) {
+                                ret = updateTimeline(date, mediaTypeFilter, action, attachToId, metadataList, data.placeNameHeaders);
+                            } else {
+                                $(".attachMetadataPhotos").last().text("EOL").css("display", "none");
                                 ret = timelineSettings.success;
                             }
                             ret = timelineSettings.success;
-                        } else {
-                            message = '<div class="alert alert-danger" role="alert">' + data.msg + '</div>';
-                            $("#msgTimeline").html(message);
-                            ret = shashin.apiResponse.FAIL;
                         }
+                        ret = timelineSettings.success;
+                    } else {
+                        message = '<div class="alert alert-danger" role="alert">' + data.msg + '</div>';
+                        $("#msgTimeline").html(message);
+                        ret = shashin.apiResponse.FAIL;
                     }
+                }
 
-                    return ret;
-                });
+                return ret;
+            });
         // }
     };
 
