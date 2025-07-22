@@ -1,4 +1,46 @@
 (function( timelineSettings, $, undefined ) {
+    // left: 37, up: 38, right: 39, down: 40,
+// spacebar: 32, pageup: 33, pagedown: 34, end: 35, home: 36
+    var keys = {37: 1, 38: 1, 39: 1, 40: 1};
+
+    function preventDefault(e) {
+        e.preventDefault();
+    }
+
+    function preventDefaultForScrollKeys(e) {
+        if (keys[e.keyCode]) {
+            preventDefault(e);
+            return false;
+        }
+    }
+
+    // modern Chrome requires { passive: false } when adding event
+    const supportsPassive = false;
+    try {
+        window.addEventListener("test", null, Object.defineProperty({}, 'passive', {
+            get: function () { supportsPassive = true; }
+        }));
+    } catch(e) {}
+
+    const wheelOpt = supportsPassive ? { passive: false } : false;
+    const wheelEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';
+
+    // call this to Disable
+    function disableScroll() {
+        window.addEventListener('DOMMouseScroll', preventDefault, false); // older FF
+        window.addEventListener(wheelEvent, preventDefault, wheelOpt); // modern desktop
+        window.addEventListener('touchmove', preventDefault, wheelOpt); // mobile
+        window.addEventListener('keydown', preventDefaultForScrollKeys, false);
+    }
+
+    // call this to Enable
+    function enableScroll() {
+        window.removeEventListener('DOMMouseScroll', preventDefault, false);
+        window.removeEventListener(wheelEvent, preventDefault, wheelOpt);
+        window.removeEventListener('touchmove', preventDefault, wheelOpt);
+        window.removeEventListener('keydown', preventDefaultForScrollKeys, false);
+    }
+
     const renderInitPage = function(mediaTypeFilter) {
         const firstElem = $('.scrollspy')[0];
         const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
@@ -27,6 +69,7 @@
     };
 
     timelineSettings.init = function(mediaTypeFilter, metadataDates, metadataYearMonthCount, timelineDatesHash) {
+        disableScroll();
         timelineSettings.timelineDates = metadataDates;
         timelineSettings.metadataYearMonthCount = metadataYearMonthCount;
         timelineSettings.timelineDatesHash = timelineDatesHash;
@@ -317,7 +360,7 @@
                         if (prevClass === currClass || deleteElements === true) {
                             $(this).css("display", "none");
                             deleteElements = true;
-                            shashin.printMessageToConsole("Cleaning up IDs after jump:" + $(this).attr("id"), { tag: "timeline" });
+                            shashin.printMessageToConsole("Cleaning up IDs after jump:" + $(this).attr("id"), {tag: "timeline"});
                         }
                         prevClass = currClass;
                     });
@@ -338,6 +381,8 @@
 
         scrollTimer = setTimeout(function() {
             timelineSettings.scrollByN(2);
+            enableScroll();
+            timelineSettings.timelineInitialized = true;
         }, 1500);
     };
 }( window.timelineSettings = window.timelineSettings || {}, jQuery ));
