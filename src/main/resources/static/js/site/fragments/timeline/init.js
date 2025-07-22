@@ -15,7 +15,7 @@
     }
 
     // modern Chrome requires { passive: false } when adding event
-    const supportsPassive = false;
+    let supportsPassive = false;
     try {
         window.addEventListener("test", null, Object.defineProperty({}, 'passive', {
             get: function () { supportsPassive = true; }
