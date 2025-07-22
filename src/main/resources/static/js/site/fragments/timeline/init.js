@@ -382,7 +382,6 @@
         scrollTimer = setTimeout(function() {
             timelineSettings.scrollByN(2);
             enableScroll();
-            timelineSettings.timelineInitialized = true;
         }, 1500);
     };
 }( window.timelineSettings = window.timelineSettings || {}, jQuery ));
