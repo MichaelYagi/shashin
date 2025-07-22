@@ -552,7 +552,9 @@
                         Util.isInViewport($("#amp_" + element.id)) === false
                     ) {
                         // removeHeight += Util.getDateGalleryHeight(element.id);
-                        Util.removeDateGallery(element.id);
+                        if (Util.isSafari() === false) {
+                            Util.removeDateGallery(element.id);
+                        }
                         removedElements.push(element.id);
                         sectionArray.pop();
                     } else if (section[index + 1] !== undefined &&
@@ -562,7 +564,9 @@
                         Util.isInViewport($("#container_" + section[index + 1].id)) === false &&
                         Util.isInViewport($("#amp_" + section[index + 1].id)) === false
                     ) {
-                        Util.removeDateGallery(element.id);
+                        if (Util.isSafari() === false) {
+                            Util.removeDateGallery(element.id);
+                        }
                         sectionArray.pop();
                     }
                 }
@@ -572,7 +576,9 @@
 
                 if (prevIndex > 0 && prevIndex + 1 !== currentTimelineIndex) {
                     shashin.printMessageToConsole("Removing from timeline " + element.id,{tag:"timeline"});
-                    Util.removeDateGallery(element.id);
+                    if (Util.isSafari() === false) {
+                        Util.removeDateGallery(element.id);
+                    }
                 }
 
                 prevIndex = currentTimelineIndex;
