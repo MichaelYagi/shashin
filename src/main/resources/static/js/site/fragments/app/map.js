@@ -285,7 +285,7 @@
         };
 
         const saveCoordinates = function (obj) {
-            shashin.showToastMessage("Saving location", "Saving location", {
+            shashin.showToastMessage(shashini18n.main.toast.minimap.title, shashini18n.main.toast.minimap.message.success, {
                 icon: "bi-info-circle",
                 iconColor: "#777777",
                 tag: "latlng",
@@ -304,7 +304,7 @@
                     shashin.closeToastMessages({
                         tag: "latlng"
                     });
-                    shashin.showToastMessage("Could not update location", "Could not update location", {
+                    shashin.showToastMessage(shashini18n.main.toast.minimap.title, shashini18n.main.toast.minimap.message.fail, {
                         icon: "bi-exclamation-triangle",
                         iconColor: "#FF0000",
                         tag: "latlng",
@@ -316,7 +316,7 @@
                     });
                     if (response.hasOwnProperty("status")) {
                         if (response.status !== shashin.apiResponse.SUCCESS) {
-                            shashin.showToastMessage("Could not update location", "Could not update location", {
+                            shashin.showToastMessage(shashini18n.main.toast.minimap.title, shashini18n.main.toast.minimap.message.fail, {
                                 icon: "bi-exclamation-triangle",
                                 iconColor: "#FF0000",
                                 tag: "latlng",
@@ -325,7 +325,7 @@
                         } else {
                             Util.setMetadataLocalStorage();
 
-                            shashin.showToastMessage("Location saved", "Location saved. Refreshing map.", {
+                            shashin.showToastMessage(shashini18n.main.toast.minimap.title, shashini18n.main.toast.minimap.message.success, {
                                 icon: "bi-info-circle",
                                 iconColor: "#777777",
                                 tag: "latlng",
@@ -394,7 +394,7 @@
                             $("#metadataModalEdit" + metadata.id + " span").removeClass("bi-info-square").addClass("bi-info-circle");
                         }
                     } else {
-                        shashin.showToastMessage("Could not update location", "Could not update location", {
+                        shashin.showToastMessage(shashini18n.main.toast.minimap.title, shashini18n.main.toast.minimap.message.fail, {
                             icon: "bi-exclamation-triangle",
                             iconColor: "#FF0000",
                             tag: "latlng",
@@ -408,20 +408,6 @@
         const setBatchCoordinates = function (obj) {
             const coordArray = ol.proj.toLonLat(obj.coordinate);
             if (coordArray.length > 1) {
-                // const coords = coordArray[1]+","+coordArray[0];
-                // const json = {
-                //     id: metadata.id,
-                //     latlng: coords
-                // };
-                // const http = new Http("save location");
-                // http.ajax("put", "/metadata/update/batch/coordinates?v="+uuidv4(), JSON.stringify(json), function (response) {
-                //     shashin.showToastMessage("Could not update location", "Could not update location", {
-                //         icon: "bi-exclamation-triangle",
-                //         iconColor: "#FF0000",
-                //         tag: "latlng",
-                //         borderColor:"danger"
-                //     });
-                // }).then(function (response) {
                 // Update marker and center
                 shashin.map.getLayers().forEach(layer => {
                     if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties().name === "maplocation") {
@@ -459,7 +445,7 @@
                 shashin.map.addLayer(shashin.layer);
                 $("#latlngBatchData").val(coordArray[1]+","+coordArray[0]);
 
-                shashin.showToastMessage("Location set", "Coordinates set in Latitude/Longitude field", {
+                shashin.showToastMessage(shashini18n.main.toast.minimap.title, shashini18n.main.toast.minimap.context.location.message, {
                     icon: "bi-info-circle",
                     iconColor: "#777777",
                     tag: "latlng",
@@ -541,7 +527,7 @@
             layer.getSource().addFeature(feature);
 
             // Create menu for context menu
-            const copyText = "Copy " + coordArray[1] + "," + coordArray[0];
+            const copyText = shashini18n.main.toast.minimap.context.copy + " " + coordArray[1] + "," + coordArray[0];
             shashin.contextMenu.updatePosition([evt.pixel[0], evt.pixel[1] + 12]);
 
             const contextValueArray = [];
@@ -563,14 +549,14 @@
             if ($("#propMetadata").hasClass('show') === true && $("#generalTabNav").length > 0) {
                 contextValueArray.push(
                     {
-                        text: "Save Coordinates", // Set coordinates in modal field
+                        text: shashini18n.main.toast.minimap.context.savecoord, // Set coordinates in modal field
                         callback: saveCoordinates
                     }
                 );
             } else if ($("#propBatchMetadata").hasClass('show') === true) {
                 contextValueArray.push(
                     {
-                        text: "Set Lat/Lng Field", // Set coordinates in modal field
+                        text: shashini18n.main.toast.minimap.context.setlatlng, // Set coordinates in modal field
                         callback: setBatchCoordinates
                     }
                 );
@@ -583,7 +569,7 @@
                     callback: copyCoordinates
                 },
                 {
-                    text: "Recenter", // Recenter map to media location
+                    text: shashini18n.main.toast.minimap.context.recenter, // Recenter map to media location
                     callback: recenterCoordinates
                 }
             );
