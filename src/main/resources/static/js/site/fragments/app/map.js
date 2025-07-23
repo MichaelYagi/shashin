@@ -445,7 +445,7 @@
                 shashin.map.addLayer(shashin.layer);
                 $("#latlngBatchData").val(coordArray[1]+","+coordArray[0]);
 
-                shashin.showToastMessage(shashini18n.main.toast.minimap.title, shashini18n.main.toast.minimap.context.location.message, {
+                shashin.showToastMessage(shashini18n.main.toast.minimap.title, shashini18n.main.context.minimap.location.message, {
                     icon: "bi-info-circle",
                     iconColor: "#777777",
                     tag: "latlng",
@@ -527,7 +527,7 @@
             layer.getSource().addFeature(feature);
 
             // Create menu for context menu
-            const copyText = shashini18n.main.toast.minimap.context.copy + " " + coordArray[1] + "," + coordArray[0];
+            const copyText = shashini18n.main.context.minimap.copy + " " + coordArray[1] + "," + coordArray[0];
             shashin.contextMenu.updatePosition([evt.pixel[0], evt.pixel[1] + 12]);
 
             const contextValueArray = [];
@@ -549,14 +549,14 @@
             if ($("#propMetadata").hasClass('show') === true && $("#generalTabNav").length > 0) {
                 contextValueArray.push(
                     {
-                        text: shashini18n.main.toast.minimap.context.savecoord, // Set coordinates in modal field
+                        text: shashini18n.main.context.minimap.savecoord, // Set coordinates in modal field
                         callback: saveCoordinates
                     }
                 );
             } else if ($("#propBatchMetadata").hasClass('show') === true) {
                 contextValueArray.push(
                     {
-                        text: shashini18n.main.toast.minimap.context.setlatlng, // Set coordinates in modal field
+                        text: shashini18n.main.context.minimap.setlatlng, // Set coordinates in modal field
                         callback: setBatchCoordinates
                     }
                 );
@@ -569,7 +569,7 @@
                     callback: copyCoordinates
                 },
                 {
-                    text: shashini18n.main.toast.minimap.context.recenter, // Recenter map to media location
+                    text: shashini18n.main.context.minimap.recenter, // Recenter map to media location
                     callback: recenterCoordinates
                 }
             );
