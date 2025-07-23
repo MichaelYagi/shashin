@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.util.*
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -298,7 +299,7 @@ class TextUtils {
             return input.toIntOrNull() != null
         }
 
-        fun formatToLongDate(rawDate: String): String? {
+        fun formatToLongDate(rawDate: String, locale: String = "en"): String? {
             var rawDateArray = rawDate.split("-")
 
             if (rawDateArray.size != 3) {
@@ -332,7 +333,8 @@ class TextUtils {
             }
 
             var formattedDate = ""
-            var newSdf = SimpleDateFormat("EEE, MMM d, yyyy")
+            var locale = Locale(locale)
+            var newSdf = SimpleDateFormat("EEE, MMM d, yyyy", locale)
 
             var sdf = SimpleDateFormat(getCommonDateFormat())
 

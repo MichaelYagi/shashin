@@ -1015,17 +1015,21 @@ class Util {
         return containerElement.get(0).scrollHeight > containerElement.get(0).clientHeight;
     }
 
-    static getDateString(year,month,day) {
+    static getDateString(year,month,day,locale = "en") {
         if (year !== null && year !== "" &&
             month !== null && month !== "" &&
             day !== null && day !== ""
         ) {
             let date = new Date(month+"/"+day+"/"+year);
             if (date.toString() !== "Invalid Date") {
-                let shortMonth = Util.getShortMonths(date.getMonth());
-                let adjustedDay = date.getDate();
-                let dayOfWeek = Util.getShortDay(date.getDay());
-                return dayOfWeek + ", " + shortMonth + " " + adjustedDay + ", " + year;
+                const options = {
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                };
+                const localFormatter = new Intl.DateTimeFormat(locale, options);
+                return localFormatter.format(date);
             }
         }
         return "";
