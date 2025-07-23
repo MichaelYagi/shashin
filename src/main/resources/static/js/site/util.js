@@ -386,7 +386,7 @@ class Util {
                 let status = false;
 
                 if (successful === false) {
-                    shashin.showToastMessage(shashini18n.main.toast.util.copy.title, textToCopy + " " + shashini18n.main.toast.util.copy.message.fail, {
+                    shashin.showToastMessage(shashin.getTranslatedValue('main.toast.util.copy.title'), textToCopy + " " + shashin.getTranslatedValue('main.toast.util.copy.message.fail'), {
                         icon: "bi-exclamation-triangle",
                         iconColor: "#FF0000",
                         borderColor:"danger",
@@ -395,7 +395,7 @@ class Util {
                 } else {
                     status = true;
 
-                    shashin.showToastMessage(shashini18n.main.toast.util.copy.title, textToCopy + " " + shashini18n.main.toast.util.copy.message.success, {
+                    shashin.showToastMessage(shashin.getTranslatedValue('main.toast.util.copy.title'), textToCopy + " " + shashin.getTranslatedValue('main.toast.util.copy.message.success'), {
                         icon: "bi-info-circle",
                         iconColor: "#777777",
                         tag: "clipboard"
@@ -406,7 +406,7 @@ class Util {
                     callback(status);
                 }
             } catch (err) {
-                shashin.showToastMessage(shashini18n.main.toast.util.copy.title, textToCopy + " " + shashini18n.main.toast.util.copy.message.fail + ": " + err, {
+                shashin.showToastMessage(shashin.getTranslatedValue('main.toast.util.copy.title'), textToCopy + " " + shashin.getTranslatedValue('main.toast.util.copy.message.fail') + ": " + err, {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",
                     borderColor:"danger"
@@ -419,7 +419,7 @@ class Util {
         } else {
             shashin.printMessageToConsole("copyToClipboard using navigator.clipboard",{tag:"clipboard"});
             navigator.clipboard.writeText(textToCopy).then(function () {
-                shashin.showToastMessage(shashini18n.main.toast.util.copy.title, textToCopy + " " + shashini18n.main.toast.util.copy.message.success, {
+                shashin.showToastMessage(shashin.getTranslatedValue('main.toast.util.copy.title'), textToCopy + " " + shashin.getTranslatedValue('main.toast.util.copy.message.success'), {
                     icon: "bi-info-circle",
                     iconColor: "#777777"
                 });
@@ -428,7 +428,7 @@ class Util {
                     callback(true);
                 }
             }).catch(function (err) {
-                shashin.showToastMessage(shashini18n.main.toast.util.copy.title, textToCopy + " " + shashini18n.main.toast.util.copy.message.fail + ": " + err, {
+                shashin.showToastMessage(shashin.getTranslatedValue('main.toast.util.copy.title'), textToCopy + " " + shashin.getTranslatedValue('main.toast.util.copy.message.fail') + ": " + err, {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",
                     borderColor:"danger"

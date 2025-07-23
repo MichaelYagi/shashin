@@ -444,7 +444,7 @@ async function saveMetadata(e) {
 
                 $("#propMetadata").modal('hide');
 
-                shashin.showToastMessage(shashini18n.main.toast.metadata.title, shashini18n.main.toast.metadata.message.success, {
+                shashin.showToastMessage(shashin.getTranslatedValue('main.toast.metadata.title'), shashin.getTranslatedValue('main.toast.metadata.message.success'), {
                     icon: "bi-info-circle",
                     iconColor: "#777777",
                     tag: "metadatamodal",
@@ -455,7 +455,7 @@ async function saveMetadata(e) {
                 $("#metadataModalStatus").attr("title", shashin.modalStatusFailMessage());
                 $("#metadataModalCancel").prop('disabled', false);
 
-                shashin.showToastMessage(shashini18n.main.toast.metadata.title, shashini18n.main.toast.metadata.message.fail, {
+                shashin.showToastMessage(shashin.getTranslatedValue('main.toast.metadata.title'), shashin.getTranslatedValue('main.toast.metadata.message.fail'), {
                     icon:"bi-exclamation-triangle",
                     iconColor:"#FF0000",
                     tag: "metadatamodal",
@@ -467,7 +467,7 @@ async function saveMetadata(e) {
             $("#metadataModalStatus").attr("title", shashin.modalStatusFailMessage());
             $("#metadataModalCancel").prop('disabled', false);
 
-            shashin.showToastMessage(shashini18n.main.toast.metadata.title, shashini18n.main.toast.metadata.message.fail, {
+            shashin.showToastMessage(shashin.getTranslatedValue('main.toast.metadata.title'), shashin.getTranslatedValue('main.toast.metadata.message.fail'), {
                 icon:"bi-exclamation-triangle",
                 iconColor:"#FF0000",
                 tag: "metadatamodal",
@@ -485,7 +485,7 @@ async function saveMetadata(e) {
         propMetadataModal._config.keyboard = true;
         $('#propMetadata').modal({keyboard: true});
 
-        shashin.showToastMessage(shashini18n.main.toast.metadata.title, shashini18n.main.toast.metadata.message.fail, {
+        shashin.showToastMessage(shashin.getTranslatedValue('main.toast.metadata.title'), shashin.getTranslatedValue('main.toast.metadata.message.fail'), {
             icon:"bi-exclamation-triangle",
             iconColor:"#FF0000",
             tag: "metadatamodal",
@@ -608,7 +608,7 @@ $("#exifTabLink").on("click", async function (e) {
     $("#exifInfo").val(exif);
 
     if (exif.trim() === "") {
-        $("#exifInfo").val(shashini18n.main.modal.exif.na);
+        $("#exifInfo").val(shashin.getTranslatedValue('main.modal.exif.na'));
     }
 });
 

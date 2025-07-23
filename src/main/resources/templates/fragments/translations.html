@@ -4,109 +4,97 @@
 
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     /*<![CDATA[*/
-    const shashini18n =  {};
-    shashini18n.lang = {};
-    shashini18n.main = {};
-    shashini18n.main.details = {};
-    shashini18n.main.sidebar = {};
-    shashini18n.main.toast = {};
-    shashini18n.main.toast.minimap = {};
-    shashini18n.main.toast.minimap.message = {};
-    shashini18n.main.toast.metadata = {};
-    shashini18n.main.toast.metadata.message = {};
-    shashini18n.main.toast.util = {}
-    shashini18n.main.toast.util.copy = {}
-    shashini18n.main.toast.util.copy.message = {}
-    shashini18n.main.context = {}
-    shashini18n.main.context.minimap = {}
-    shashini18n.main.context.minimap.location = {}
-    shashini18n.main.modal = {};
-    shashini18n.main.modal.map = {};
-    shashini18n.main.modal.rescan = {};
-    shashini18n.main.modal.exif = {};
-    shashini18n.main.modal.description = {};
-    shashini18n.main.modal.taken = {};
-    shashini18n.main.modal.control = {};
-    shashini18n.main.modal.tab = {};
+    const shashini18n = {
+        'lang.en': /*[[#{lang.en}]]*/ '',
+        'lang.ja': /*[[#{lang.ja}]]*/ '',
 
-    shashini18n.lang.en=/*[[#{lang.en}]]*/ '';
-    shashini18n.lang.ja=/*[[#{lang.ja}]]*/ '';
-    shashini18n.main.sidebar.timeline=/*[[#{main.sidebar.timeline}]]*/ '';
-    shashini18n.main.sidebar.albums=/*[[#{main.sidebar.albums}]]*/ '';
-    shashini18n.main.sidebar.explore=/*[[#{main.sidebar.explore}]]*/ '';
-    shashini18n.main.sidebar.people=/*[[#{main.sidebar.people}]]*/ '';
-    shashini18n.main.sidebar.favorites=/*[[#{main.sidebar.favorites}]]*/ '';
-    shashini18n.main.sidebar.map=/*[[#{main.sidebar.map}]]*/ '';
-    shashini18n.main.sidebar.notifications=/*[[#{main.sidebar.notifications}]]*/ '';
-    shashini18n.main.sidebar.settings=/*[[#{main.sidebar.settings}]]*/ '';
-    shashini18n.main.sidebar.dashboard=/*[[#{main.sidebar.dashboard}]]*/ '';
-    shashini18n.main.modal.title=/*[[#{main.modal.title}]]*/ '';
-    shashini18n.main.modal.camera=/*[[#{main.modal.camera}]]*/ '';
-    shashini18n.main.modal.lens=/*[[#{main.modal.lens}]]*/ '';
-    shashini18n.main.modal.duration=/*[[#{main.modal.duration}]]*/ '';
-    shashini18n.main.modal.description=/*[[#{main.modal.description}]]*/ '';
-    shashini18n.main.modal.description.count=/*[[#{main.modal.description.count}]]*/ '';
-    shashini18n.main.modal.taken.year=/*[[#{main.modal.taken.year}]]*/ '';
-    shashini18n.main.modal.taken.month=/*[[#{main.modal.taken.month}]]*/ '';
-    shashini18n.main.modal.taken.day=/*[[#{main.modal.taken.day}]]*/ '';
-    shashini18n.main.modal.taken.time=/*[[#{main.modal.taken.time}]]*/ '';
-    shashini18n.main.modal.taken.gmt=/*[[#{main.modal.taken.gmt}]]*/ '';
-    shashini18n.main.modal.latlng=/*[[#{main.modal.latlng}]]*/ '';
-    shashini18n.main.modal.keywords=/*[[#{main.modal.keywords}]]*/ '';
-    shashini18n.main.modal.albums=/*[[#{main.modal.albums}]]*/ '';
-    shashini18n.main.modal.people=/*[[#{main.modal.people}]]*/ '';
-    shashini18n.main.modal.archive=/*[[#{main.modal.archive}]]*/ '';
-    shashini18n.main.modal.unidentified=/*[[#{main.modal.unidentified}]]*/ '';
-    shashini18n.main.modal.rescan=/*[[#{main.modal.rescan}]]*/ '';
-    shashini18n.main.modal.rescan.metadata=/*[[#{main.modal.rescan.metadata}]]*/ '';
-    shashini18n.main.modal.rescan.confirm=/*[[#{main.modal.rescan.confirm}]]*/ '';
-    shashini18n.main.modal.map.message=/*[[#{main.modal.map.message}]]*/ '';
-    shashini18n.main.modal.save=/*[[#{main.modal.save}]]*/ '';
-    shashini18n.main.modal.confirm=/*[[#{main.modal.confirm}]]*/ '';
-    shashini18n.main.modal.cancel=/*[[#{main.modal.cancel}]]*/ '';
-    shashini18n.main.modal.close=/*[[#{main.modal.close}]]*/ '';
-    shashini18n.main.modal.control.albums=/*[[#{main.modal.control.albums}]]*/ '';
-    shashini18n.main.modal.control.people=/*[[#{main.modal.control.people}]]*/ '';
-    shashini18n.main.modal.control.more=/*[[#{main.modal.control.people}]]*/ '';
-    shashini18n.main.modal.tab.update=/*[[#{main.modal.tab.update}]]*/ '';
-    shashini18n.main.modal.tab.info=/*[[#{main.modal.tab.info}]]*/ '';
-    shashini18n.main.modal.tab.exif=/*[[#{main.modal.tab.exif}]]*/ '';
-    shashini18n.main.modal.header=/*[[#{main.modal.header}]]*/ '';
-    shashini18n.main.modal.exif.na=/*[[#{main.modal.exif.na}]]*/ '';
-    shashini18n.main.details.metadataid=/*[[#{main.details.metadataid}]]*/ '';
-    shashini18n.main.details.filename=/*[[#{main.details.filename}]]*/ '';
-    shashini18n.main.details.filetype=/*[[#{main.details.filetype}]]*/ '';
-    shashini18n.main.details.keywords=/*[[#{main.details.keywords}]]*/ '';
-    shashini18n.main.details.coordinates=/*[[#{main.details.coordinates}]]*/ '';
-    shashini18n.main.details.location=/*[[#{main.details.location}]]*/ '';
-    shashini18n.main.details.locationtype=/*[[#{main.details.locationtype}]]*/ '';
-    shashini18n.main.details.compression=/*[[#{main.details.compression}]]*/ '';
-    shashini18n.main.details.resolution=/*[[#{main.details.resolution}]]*/ '';
-    shashini18n.main.details.exposure=/*[[#{main.details.exposure}]]*/ '';
-    shashini18n.main.details.iso=/*[[#{main.details.iso}]]*/ '';
-    shashini18n.main.details.fstop=/*[[#{main.details.fstop}]]*/ '';
-    shashini18n.main.details.focal=/*[[#{main.details.focal}]]*/ '';
-    shashini18n.main.details.quality=/*[[#{main.details.quality}]]*/ '';
-    shashini18n.main.details.taken=/*[[#{main.details.taken}]]*/ '';
-    shashini18n.main.details.created=/*[[#{main.details.created}]]*/ '';
-    shashini18n.main.details.added=/*[[#{main.details.added}]]*/ '';
-    shashini18n.main.details.modified=/*[[#{main.details.modified}]]*/ '';
-    shashini18n.main.details.accessed=/*[[#{main.details.accessed}]]*/ '';
-    shashini18n.main.details.accessedby=/*[[#{main.details.accessedby}]]*/ '';
-    shashini18n.main.details.uploadedby=/*[[#{main.details.uploadedby}]]*/ '';
-    shashini18n.main.toast.util.copy.title=/*[[#{main.toast.util.copy.title}]]*/ '';
-    shashini18n.main.toast.util.copy.message.success=/*[[#{main.toast.util.copy.message.success}]]*/ '';
-    shashini18n.main.toast.util.copy.message.fail=/*[[#{main.toast.util.copy.message.fail}]]*/ '';
-    shashini18n.main.toast.metadata.title=/*[[#{main.toast.metadata.title}]]*/ '';
-    shashini18n.main.toast.metadata.message.success=/*[[#{main.toast.metadata.message.success}]]*/ '';
-    shashini18n.main.toast.metadata.message.fail=/*[[#{main.toast.metadata.message.fail}]]*/ '';
-    shashini18n.main.toast.minimap.title=/*[[#{main.toast.minimap.title}]]*/ '';
-    shashini18n.main.toast.minimap.message.success=/*[[#{main.toast.minimap.message.success}]]*/ '';
-    shashini18n.main.toast.minimap.message.fail=/*[[#{main.toast.minimap.message.fail}]]*/ '';
-    shashini18n.main.context.minimap.location.message=/*[[#{main.context.minimap.location.message}]]*/ '';
-    shashini18n.main.context.minimap.copy=/*[[#{main.context.minimap.copy}]]*/ '';
-    shashini18n.main.context.minimap.savecoord=/*[[#{main.context.minimap.savecoord}]]*/ '';
-    shashini18n.main.context.minimap.setlatlng=/*[[#{main.context.minimap.setlatlng}]]*/ '';
-    shashini18n.main.context.minimap.recenter=/*[[#{main.context.minimap.recenter}]]*/ '';
+        'main.sidebar.timeline': /*[[#{main.sidebar.timeline}]]*/ '',
+        'main.sidebar.albums': /*[[#{main.sidebar.albums}]]*/ '',
+        'main.sidebar.explore': /*[[#{main.sidebar.explore}]]*/ '',
+        'main.sidebar.people': /*[[#{main.sidebar.people}]]*/ '',
+        'main.sidebar.favorites': /*[[#{main.sidebar.favorites}]]*/ '',
+        'main.sidebar.map': /*[[#{main.sidebar.map}]]*/ '',
+        'main.sidebar.notifications': /*[[#{main.sidebar.notifications}]]*/ '',
+        'main.sidebar.settings': /*[[#{main.sidebar.settings}]]*/ '',
+        'main.sidebar.dashboard': /*[[#{main.sidebar.dashboard}]]*/ '',
+
+        'main.details.metadataid': /*[[#{main.details.metadataid}]]*/ '',
+        'main.details.filename': /*[[#{main.details.filename}]]*/ '',
+        'main.details.filetype': /*[[#{main.details.filetype}]]*/ '',
+        'main.details.keywords': /*[[#{main.details.keywords}]]*/ '',
+        'main.details.coordinates': /*[[#{main.details.coordinates}]]*/ '',
+        'main.details.location': /*[[#{main.details.location}]]*/ '',
+        'main.details.locationtype': /*[[#{main.details.locationtype}]]*/ '',
+        'main.details.compression': /*[[#{main.details.compression}]]*/ '',
+        'main.details.resolution': /*[[#{main.details.resolution}]]*/ '',
+        'main.details.exposure': /*[[#{main.details.exposure}]]*/ '',
+        'main.details.iso': /*[[#{main.details.iso}]]*/ '',
+        'main.details.fstop': /*[[#{main.details.fstop}]]*/ '',
+        'main.details.focal': /*[[#{main.details.focal}]]*/ '',
+        'main.details.quality': /*[[#{main.details.quality}]]*/ '',
+        'main.details.taken': /*[[#{main.details.taken}]]*/ '',
+        'main.details.created': /*[[#{main.details.created}]]*/ '',
+        'main.details.added': /*[[#{main.details.added}]]*/ '',
+        'main.details.modified': /*[[#{main.details.modified}]]*/ '',
+        'main.details.accessed': /*[[#{main.details.accessed}]]*/ '',
+        'main.details.accessedby': /*[[#{main.details.accessedby}]]*/ '',
+        'main.details.uploadedby': /*[[#{main.details.uploadedby}]]*/ '',
+
+        'main.toast.util.copy.title': /*[[#{main.toast.util.copy.title}]]*/ '',
+        'main.toast.util.copy.message.success': /*[[#{main.toast.util.copy.message.success}]]*/ '',
+        'main.toast.util.copy.message.fail': /*[[#{main.toast.util.copy.message.fail}]]*/ '',
+
+        'main.toast.metadata.title': /*[[#{main.toast.metadata.title}]]*/ '',
+        'main.toast.metadata.message.success': /*[[#{main.toast.metadata.message.success}]]*/ '',
+        'main.toast.metadata.message.fail': /*[[#{main.toast.metadata.message.fail}]]*/ '',
+
+        'main.toast.minimap.title': /*[[#{main.toast.minimap.title}]]*/ '',
+        'main.toast.minimap.message.success': /*[[#{main.toast.minimap.message.success}]]*/ '',
+        'main.toast.minimap.message.fail': /*[[#{main.toast.minimap.message.fail}]]*/ '',
+
+        'main.context.minimap.location.message': /*[[#{main.context.minimap.location.message}]]*/ '',
+        'main.context.minimap.copy': /*[[#{main.context.minimap.copy}]]*/ '',
+        'main.context.minimap.savecoord': /*[[#{main.context.minimap.savecoord}]]*/ '',
+        'main.context.minimap.setlatlng': /*[[#{main.context.minimap.setlatlng}]]*/ '',
+        'main.context.minimap.recenter': /*[[#{main.context.minimap.recenter}]]*/ '',
+
+        'main.modal.title': /*[[#{main.modal.title}]]*/ '',
+        'main.modal.camera': /*[[#{main.modal.camera}]]*/ '',
+        'main.modal.lens': /*[[#{main.modal.lens}]]*/ '',
+        'main.modal.duration': /*[[#{main.modal.duration}]]*/ '',
+        'main.modal.description': /*[[#{main.modal.description}]]*/ '',
+        'main.modal.description.count': /*[[#{main.modal.description.count}]]*/ '',
+        'main.modal.taken.year': /*[[#{main.modal.taken.year}]]*/ '',
+        'main.modal.taken.month': /*[[#{main.modal.taken.month}]]*/ '',
+        'main.modal.taken.day': /*[[#{main.modal.taken.day}]]*/ '',
+        'main.modal.taken.time': /*[[#{main.modal.taken.time}]]*/ '',
+        'main.modal.taken.gmt': /*[[#{main.modal.taken.gmt}]]*/ '',
+        'main.modal.latlng': /*[[#{main.modal.latlng}]]*/ '',
+        'main.modal.keywords': /*[[#{main.modal.keywords}]]*/ '',
+        'main.modal.albums': /*[[#{main.modal.albums}]]*/ '',
+        'main.modal.people': /*[[#{main.modal.people}]]*/ '',
+        'main.modal.archive': /*[[#{main.modal.archive}]]*/ '',
+        'main.modal.unidentified': /*[[#{main.modal.unidentified}]]*/ '',
+        'main.modal.rescan': /*[[#{main.modal.rescan}]]*/ '',
+        'main.modal.rescan.metadata': /*[[#{main.modal.rescan.metadata}]]*/ '',
+        'main.modal.rescan.confirm': /*[[#{main.modal.rescan.confirm}]]*/ '',
+        'main.modal.map.message': /*[[#{main.modal.map.message}]]*/ '',
+        'main.modal.save': /*[[#{main.modal.save}]]*/ '',
+        'main.modal.confirm': /*[[#{main.modal.confirm}]]*/ '',
+        'main.modal.cancel': /*[[#{main.modal.cancel}]]*/ '',
+        'main.modal.close': /*[[#{main.modal.close}]]*/ '',
+        'main.modal.control.albums': /*[[#{main.modal.control.albums}]]*/ '',
+        'main.modal.control.people': /*[[#{main.modal.control.people}]]*/ '',
+        'main.modal.control.more': /*[[#{main.modal.control.people}]]*/ '',
+        'main.modal.tab.update': /*[[#{main.modal.tab.update}]]*/ '',
+        'main.modal.tab.info': /*[[#{main.modal.tab.info}]]*/ '',
+        'main.modal.tab.exif': /*[[#{main.modal.tab.exif}]]*/ '',
+        'main.modal.header': /*[[#{main.modal.header}]]*/ '',
+        'main.modal.exif.na': /*[[#{main.modal.exif.na}]]*/ ''
+    };
+    
+    shashin.getTranslatedValue = function (keyPath) {
+        return shashini18n[keyPath] ?? null;
+    }
     /*]]>*/
 </script>

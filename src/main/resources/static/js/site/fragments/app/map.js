@@ -285,7 +285,7 @@
         };
 
         const saveCoordinates = function (obj) {
-            shashin.showToastMessage(shashini18n.main.toast.minimap.title, shashini18n.main.toast.minimap.message.success, {
+            shashin.showToastMessage(shashin.getTranslatedValue('main.toast.minimap.title'), shashin.getTranslatedValue('main.toast.minimap.message.success'), {
                 icon: "bi-info-circle",
                 iconColor: "#777777",
                 tag: "latlng",
@@ -304,7 +304,7 @@
                     shashin.closeToastMessages({
                         tag: "latlng"
                     });
-                    shashin.showToastMessage(shashini18n.main.toast.minimap.title, shashini18n.main.toast.minimap.message.fail, {
+                    shashin.showToastMessage(shashin.getTranslatedValue('main.toast.minimap.title'), shashin.getTranslatedValue('main.toast.minimap.message.fail'), {
                         icon: "bi-exclamation-triangle",
                         iconColor: "#FF0000",
                         tag: "latlng",
@@ -316,7 +316,7 @@
                     });
                     if (response.hasOwnProperty("status")) {
                         if (response.status !== shashin.apiResponse.SUCCESS) {
-                            shashin.showToastMessage(shashini18n.main.toast.minimap.title, shashini18n.main.toast.minimap.message.fail, {
+                            shashin.showToastMessage(shashin.getTranslatedValue('main.toast.minimap.title'), shashin.getTranslatedValue('main.toast.minimap.message.fail'), {
                                 icon: "bi-exclamation-triangle",
                                 iconColor: "#FF0000",
                                 tag: "latlng",
@@ -325,7 +325,7 @@
                         } else {
                             Util.setMetadataLocalStorage();
 
-                            shashin.showToastMessage(shashini18n.main.toast.minimap.title, shashini18n.main.toast.minimap.message.success, {
+                            shashin.showToastMessage(shashin.getTranslatedValue('main.toast.minimap.title'), shashin.getTranslatedValue('main.toast.minimap.message.success'), {
                                 icon: "bi-info-circle",
                                 iconColor: "#777777",
                                 tag: "latlng",
@@ -394,7 +394,7 @@
                             $("#metadataModalEdit" + metadata.id + " span").removeClass("bi-info-square").addClass("bi-info-circle");
                         }
                     } else {
-                        shashin.showToastMessage(shashini18n.main.toast.minimap.title, shashini18n.main.toast.minimap.message.fail, {
+                        shashin.showToastMessage(shashin.getTranslatedValue('main.toast.minimap.title'), shashin.getTranslatedValue('main.toast.minimap.message.fail'), {
                             icon: "bi-exclamation-triangle",
                             iconColor: "#FF0000",
                             tag: "latlng",
@@ -445,7 +445,7 @@
                 shashin.map.addLayer(shashin.layer);
                 $("#latlngBatchData").val(coordArray[1]+","+coordArray[0]);
 
-                shashin.showToastMessage(shashini18n.main.toast.minimap.title, shashini18n.main.context.minimap.location.message, {
+                shashin.showToastMessage(shashin.getTranslatedValue('main.toast.minimap.title'), shashin.getTranslatedValue('main.context.minimap.location.message'), {
                     icon: "bi-info-circle",
                     iconColor: "#777777",
                     tag: "latlng",
@@ -527,7 +527,7 @@
             layer.getSource().addFeature(feature);
 
             // Create menu for context menu
-            const copyText = shashini18n.main.context.minimap.copy + " " + coordArray[1] + "," + coordArray[0];
+            const copyText = shashin.getTranslatedValue('main.context.minimap.copy') + " " + coordArray[1] + "," + coordArray[0];
             shashin.contextMenu.updatePosition([evt.pixel[0], evt.pixel[1] + 12]);
 
             const contextValueArray = [];
@@ -549,14 +549,14 @@
             if ($("#propMetadata").hasClass('show') === true && $("#generalTabNav").length > 0) {
                 contextValueArray.push(
                     {
-                        text: shashini18n.main.context.minimap.savecoord, // Set coordinates in modal field
+                        text: shashin.getTranslatedValue('main.context.minimap.savecoord'), // Set coordinates in modal field
                         callback: saveCoordinates
                     }
                 );
             } else if ($("#propBatchMetadata").hasClass('show') === true) {
                 contextValueArray.push(
                     {
-                        text: shashini18n.main.context.minimap.setlatlng, // Set coordinates in modal field
+                        text: shashin.getTranslatedValue('main.context.minimap.setlatlng'), // Set coordinates in modal field
                         callback: setBatchCoordinates
                     }
                 );
@@ -569,7 +569,7 @@
                     callback: copyCoordinates
                 },
                 {
-                    text: shashini18n.main.context.minimap.recenter, // Recenter map to media location
+                    text: shashin.getTranslatedValue('main.context.minimap.recenter'), // Recenter map to media location
                     callback: recenterCoordinates
                 }
             );
