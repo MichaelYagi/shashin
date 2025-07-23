@@ -467,7 +467,7 @@ async function saveMetadata(e) {
             $("#metadataModalStatus").attr("title", shashin.modalStatusFailMessage());
             $("#metadataModalCancel").prop('disabled', false);
 
-            shashin.showToastMessage("Metadata", "Could not save metadata", {
+            shashin.showToastMessage(shashini18n.main.toast.metadata.title, shashini18n.main.toast.metadata.message.fail, {
                 icon:"bi-exclamation-triangle",
                 iconColor:"#FF0000",
                 tag: "metadatamodal",
@@ -485,7 +485,7 @@ async function saveMetadata(e) {
         propMetadataModal._config.keyboard = true;
         $('#propMetadata').modal({keyboard: true});
 
-        shashin.showToastMessage("Metadata", "Could not save metadata", {
+        shashin.showToastMessage(shashini18n.main.toast.metadata.title, shashini18n.main.toast.metadata.message.fail, {
             icon:"bi-exclamation-triangle",
             iconColor:"#FF0000",
             tag: "metadatamodal",
@@ -608,7 +608,7 @@ $("#exifTabLink").on("click", async function (e) {
     $("#exifInfo").val(exif);
 
     if (exif.trim() === "") {
-        $("#exifInfo").val("EXIF data not available");
+        $("#exifInfo").val(shashini18n.main.modal.exif.na);
     }
 });
 
