@@ -17,15 +17,15 @@
                     </li>
                 </th:block>
                 <li class="nav-item" id="detailsTabNav">
-                    <a th:class="'nav-link'+${(authority == 'ROLE_USER' or activePage == 'archived') ? ' show active':''}" data-bs-toggle="tab" id="detailsTabLink" href="#detailsTab">Info</a>
+                    <a th:class="'nav-link'+${(authority == 'ROLE_USER' or activePage == 'archived') ? ' show active':''}" data-bs-toggle="tab" id="detailsTabLink" href="#detailsTab"><th:block th:text="#{main.modal.tab.info}"></th:block></a>
                 </li>
                 <th:block th:if="${authority == 'ROLE_SUPER' || authority == 'ROLE_ADMIN'}">
                     <li class="nav-item" id="exifTabNav">
-                        <a class="nav-link" data-bs-toggle="tab" id="exifTabLink" href="#exifTab">EXIF</a>
+                        <a class="nav-link" data-bs-toggle="tab" id="exifTabLink" href="#exifTab"><th:block th:text="#{main.modal.tab.exif}"></th:block></a>
                     </li>
                 </th:block>
                 <li class="nav-item" id="mapTabNav">
-                    <a class="nav-link" data-bs-toggle="tab" id="mapTabLink" href="#mapTab">Map</a>
+                    <a class="nav-link" data-bs-toggle="tab" id="mapTabLink" href="#mapTab"><th:block th:text="#{main.sidebar.map}"></th:block></a>
                 </li>
             </ul>
             <div class="modal-body ui-front" id="propMetadataBody">
@@ -156,7 +156,7 @@
                     </div>
                     </th:block>
                     <div class="tab-pane container fade" id="mapTab">
-                        <span id="mapTabMessage">Save coordinates in the context menu</span>
+                        <span id="mapTabMessage"><th:block th:text="#{main.modal.map.message}"></th:block></label></span>
                         <div data-role="dialog" id="modalmap" class="map" style="width: 100%;height: 400px"></div>
                     </div>
                 </div>
@@ -164,11 +164,11 @@
             <div class="modal-footer">
                 <div id="metadataModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 1.55rem;" role="status" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
                 <th:block th:if="${(authority == 'ROLE_SUPER' || authority == 'ROLE_ADMIN') and activePage != 'archived'}">
-                <button type="button" class="btn btn-primary" id="saveMetadata">Save</button>
-                <button id="metadataModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveMetadata"><th:block th:text="#{main.modal.save}"></th:block></button>
+                <button id="metadataModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal"><th:block th:text="#{main.modal.cancel}"></th:block></button>
                 </th:block>
                 <th:block th:if="${authority == 'ROLE_USER'}">
-                <button id="metadataModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="metadataModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal"><th:block th:text="#{main.modal.close}"></th:block></button>
                 </th:block>
             </div>
         </div>
@@ -179,13 +179,13 @@
     <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="rescanMetadataModalLabel">Rescan Metadata</h5>
+                <h5 class="modal-title" id="rescanMetadataModalLabel"><th:block th:text="#{main.modal.rescan.metadata}"></th:block></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">Are you sure you want to rescan metadata? Some data you have manually changed may be lost!</div>
+            <div class="modal-body"><th:block th:text="#{main.modal.rescan.confirm}"></th:block></div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="confirmRescanMetadata">Confirm</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelRescanMetadata">Cancel</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="confirmRescanMetadata"><th:block th:text="#{main.modal.confirm}"></th:block></button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelRescanMetadata"><th:block th:text="#{main.modal.cancel}"></th:block></button>
             </div>
         </div>
     </div>
@@ -200,8 +200,7 @@
             </div>
             <div class="modal-body" id="albumSelectionList"></div>
             <div class="modal-footer">
-<!--                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="confirmAlbumSelection">Select</button>-->
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelAlbumSelection">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelAlbumSelection"><th:block th:text="#{main.modal.close}"></th:block></button>
             </div>
         </div>
     </div>
@@ -216,8 +215,7 @@
             </div>
             <div class="modal-body" id="peopleSelectionList"></div>
             <div class="modal-footer">
-<!--                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="confirmPeopleSelection">Select</button>-->
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelPeopleSelection">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelPeopleSelection"><th:block th:text="#{main.modal.close}"></th:block></button>
             </div>
         </div>
     </div>
