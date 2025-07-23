@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body th:fragment="translations()">
+
+<script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
+    /*<![CDATA[*/
+    const shashini18n =  {};
+    shashini18n.lang = {};
+    shashini18n.main = {};
+    shashini18n.main.sidebar = {};
+    shashini18n.main.toast = {};
+    shashini18n.main.modal = {};
+    shashini18n.main.toast.metadata = {};
+    shashini18n.main.toast.metadata.message = {};
+    shashini18n.main.modal.description = {};
+    shashini18n.main.modal.taken = {};
+    shashini18n.main.modal.control = {};
+    shashini18n.main.modal.tab = {};
+
+    shashini18n.lang.en=/*[[#{lang.en}]]*/ 'English';
+    shashini18n.lang.ja=/*[[#{lang.ja}]]*/ 'Japanese';
+    shashini18n.main.sidebar.timeline=/*[[#{main.sidebar.timeline}]]*/ 'Timeline';
+    shashini18n.main.sidebar.albums=/*[[#{main.sidebar.albums}]]*/ 'Albums';
+    shashini18n.main.sidebar.explore=/*[[#{main.sidebar.explore}]]*/ 'Explore';
+    shashini18n.main.sidebar.people=/*[[#{main.sidebar.people}]]*/ 'People';
+    shashini18n.main.sidebar.favorites=/*[[#{main.sidebar.favorites}]]*/ 'Favorites';
+    shashini18n.main.sidebar.map=/*[[#{main.sidebar.map}]]*/ 'Map';
+    shashini18n.main.sidebar.notifications=/*[[#{main.sidebar.notifications}]]*/ 'Notifications';
+    shashini18n.main.sidebar.settings=/*[[#{main.sidebar.settings}]]*/ 'Settings';
+    shashini18n.main.sidebar.dashboard=/*[[#{main.sidebar.dashboard}]]*/ 'Dashboard';
+    shashini18n.main.modal.title=/*[[#{main.modal.title}]]*/ 'Title';
+    shashini18n.main.modal.camera=/*[[#{main.modal.camera}]]*/ 'Camera';
+    shashini18n.main.modal.lens=/*[[#{main.modal.lens}]]*/ 'Lens';
+    shashini18n.main.modal.duration=/*[[#{main.modal.duration}]]*/ 'Video Duration';
+    shashini18n.main.modal.description=/*[[#{main.modal.description}]]*/ 'Description';
+    shashini18n.main.modal.description.count=/*[[#{main.modal.description.count}]]*/ 'Characters left';
+    shashini18n.main.modal.taken.year=/*[[#{main.modal.taken.year}]]*/ 'Year taken';
+    shashini18n.main.modal.taken.month=/*[[#{main.modal.taken.month}]]*/ 'Month taken';
+    shashini18n.main.modal.taken.day=/*[[#{main.modal.taken.day}]]*/ 'Day taken';
+    shashini18n.main.modal.taken.time=/*[[#{main.modal.taken.time}]]*/ 'Time taken';
+    shashini18n.main.modal.taken.gmt=/*[[#{main.modal.taken.gmt}]]*/ 'GMT Offset';
+    shashini18n.main.modal.latlng=/*[[#{main.modal.latlng}]]*/ 'Latitude, Longitude';
+    shashini18n.main.modal.keywords=/*[[#{main.modal.keywords}]]*/ 'Keywords (comma separated)';
+    shashini18n.main.modal.albums=/*[[#{main.modal.albums}]]*/ 'Add to Album (comma separated)';
+    shashini18n.main.modal.people=/*[[#{main.modal.people}]]*/ 'Tag People (comma separated)';
+    shashini18n.main.modal.archive=/*[[#{main.modal.archive}]]*/ 'Archive media';
+    shashini18n.main.modal.unidentified=/*[[#{main.modal.unidentified}]]*/ 'Unidentified people';
+    shashini18n.main.modal.rescan=/*[[#{main.modal.rescan}]]*/ 'Rescan media';
+    shashini18n.main.modal.control.albums=/*[[#{main.modal.control.albums}]]*/ 'Albums';
+    shashini18n.main.modal.control.people=/*[[#{main.modal.control.people}]]*/ 'People';
+    shashini18n.main.modal.control.more=/*[[#{main.modal.control.people}]]*/ 'More';
+    shashini18n.main.modal.tab.update=/*[[#{main.modal.tab.update}]]*/ 'Update';
+    shashini18n.main.modal.header=/*[[#{main.modal.header}]]*/ 'Edit';
+    shashini18n.main.toast.metadata.title=/*[[#{main.toast.metadata.title}]]*/ 'Metadata';
+    shashini18n.main.toast.metadata.message.success=/*[[#{main.toast.metadata.message.success}]]*/ 'Metadata Saved';
+    shashini18n.main.toast.metadata.message.fail=/*[[#{main.toast.metadata.message.fail}]]*/ "Could not save metadata";
+    /*]]>*/
+</script>

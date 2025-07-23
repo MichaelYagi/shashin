@@ -17,7 +17,7 @@ import org.springframework.web.util.UrlPathHelper
 import java.util.Locale
 
 @Configuration
-@PropertySource(value = ["classpath:/messages_ja.properties"], encoding = "UTF-8")
+@PropertySource(value = ["classpath:messages_ja.properties"], encoding = "UTF-8")
 class MvcConfig : WebMvcConfigurer {
 
     @Value("\${app.sidecar.path}")

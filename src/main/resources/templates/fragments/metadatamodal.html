@@ -7,13 +7,13 @@
     <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="propMetadataModalTitle"><div id="propMetadataModalThumbnail"></div>Edit &ldquo;<span id="metadataModalTitle"></span>&rdquo;</h5>
+                <h5 class="modal-title" id="propMetadataModalTitle"><div id="propMetadataModalThumbnail"></div><th:block th:text="#{main.modal.header}"></th:block> &ldquo;<span id="metadataModalTitle"></span>&rdquo;</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <ul class="nav nav-pills nav-fill ms-3 me-3 mt-3 mb-2">
                 <th:block th:if="${(authority == 'ROLE_SUPER' || authority == 'ROLE_ADMIN') and activePage != 'archived'}">
                     <li class="nav-item" id="generalTabNav">
-                        <a class="nav-link show active" data-bs-toggle="tab" id="generalTabLink" href="#generalTab">Update</a>
+                        <a class="nav-link show active" data-bs-toggle="tab" id="generalTabLink" href="#generalTab"><th:block th:text="#{main.modal.tab.update}"></th:block></a>
                     </li>
                 </th:block>
                 <li class="nav-item" id="detailsTabNav">
@@ -38,51 +38,51 @@
                         <form id="saveTimelineModalForm">
                             <div class="form-group row">
                                 <div class="col-sm">
-                                    <label for="title" class="col-form-label">Title</label>
+                                    <label for="title" class="col-form-label"><th:block th:text="#{main.modal.title}"></th:block></label>
                                     <input type="text" class="form-control" id="title" name="title" value="">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <div class="col-sm">
-                                    <label for="camera" class="col-form-label">Camera</label>
+                                    <label for="camera" class="col-form-label"><th:block th:text="#{main.modal.camera}"></th:block></label>
                                     <input type="text" class="form-control" id="camera" name="camera" value="">
                                     <input type="hidden" id="camerasString" th:value="${cameras}">
                                 </div>
                                 <div class="col-sm">
-                                    <label for="lens" class="col-form-label">Lens</label>
+                                    <label for="lens" class="col-form-label"><th:block th:text="#{main.modal.lens}"></th:block></label>
                                     <input type="text" class="form-control" id="lens" name="lens" value="">
                                     <input type="hidden" id="lensesString" th:value="${lenses}">
                                 </div>
                                 <div class="col-sm" id="videoduration" style="display: none;">
-                                    <label for="duration" class="col-form-label">Video Duration</label>
+                                    <label for="duration" class="col-form-label"><th:block th:text="#{main.modal.duration}"></th:block></label>
                                     <input type="text" class="form-control" id="duration" name="duration" value="">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <div class="col-sm">
-                                    <label for="description" class="col-form-label">Description</label> <small class="float-end mt-3">Characters Left: <span id="descriptionCharacterCount">500</span></small>
+                                    <label for="description" class="col-form-label"><th:block th:text="#{main.modal.description}"></th:block></label> <small class="float-end mt-3"><th:block th:text="#{main.modal.description.count}"></th:block>: <span id="descriptionCharacterCount">500</span></small>
                                     <textarea class="form-control" id="description" name="description" value="" maxlength="500" rows="3"></textarea>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <div class="col-sm">
-                                    <label for="yearTaken" class="col-form-label">Year taken</label>
+                                    <label for="yearTaken" class="col-form-label"><th:block th:text="#{main.modal.taken.year}"></th:block></label>
                                     <input type="number" class="form-control" id="yearTaken" name="year" value="" maxlength="4" min="1826">
                                 </div>
                                 <div class="col-sm">
-                                    <label for="monthTaken" class="col-form-label">Month taken</label>
+                                    <label for="monthTaken" class="col-form-label"><th:block th:text="#{main.modal.taken.month}"></th:block></label>
                                     <input type="number" class="form-control" id="monthTaken" name="month" value="" maxlength="2" min="1" max="12">
                                 </div>
                                 <div class="col-sm">
-                                    <label for="dayTaken" class="col-form-label">Day taken</label>
+                                    <label for="dayTaken" class="col-form-label"><th:block th:text="#{main.modal.taken.day}"></th:block></label>
                                     <input type="number" class="form-control" id="dayTaken" name="day" value="" maxlength="2" min="1" max="31">
                                 </div>
                                 <div class="col-sm">
-                                    <label for="timeTaken" class="col-form-label">Time taken</label>
+                                    <label for="timeTaken" class="col-form-label"><th:block th:text="#{main.modal.taken.time}"></th:block></label>
                                     <input type="text" class="form-control" id="timeTaken" name="time" value="" placeholder="hh:mm:ss" maxlength="8">
                                 </div>
                                 <div class="col-sm">
-                                    <label for="offsetTaken" class="col-form-label">GMT Offset</label>
+                                    <label for="offsetTaken" class="col-form-label"><th:block th:text="#{main.modal.taken.gmt}"></th:block></label>
                                     <select class="form-select" id="offsetTaken" name="offset">
                                         <option value="">--GMT--</option>
                                         <th:block th:each="offset, iterStat: ${timeOffsets}">
@@ -95,52 +95,52 @@
                             <div class="form-group row">
                                 <div class="col-sm-6">
                                     <div class="row">
-                                        <label for="latlng" class="col-form-label text-truncate">Latitude, Longitude&nbsp;<small class="text-muted"><span id="shortLocationLabel"></span></small></label>
+                                        <label for="latlng" class="col-form-label text-truncate"><th:block th:text="#{main.modal.latlng}"></th:block>&nbsp;<small class="text-muted"><span id="shortLocationLabel"></span></small></label>
                                     </div>
                                     <div>
                                         <input type="text" class="form-control" id="latlng" name="latlng" value="">
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
-                                    <label for="keywords" class="col-form-label">Keywords (comma separated)</label>
+                                    <label for="keywords" class="col-form-label"><th:block th:text="#{main.modal.keywords}"></th:block></label>
                                     <input type="text" class="form-control" id="keywords" name="keywords" value="">
                                     <input type="hidden" id="keywordsString" th:value="${keywords}">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <div class="col-sm">
-                                    <label for="albumnames" class="col-form-label">Add to Album (comma separated)</label>
+                                    <label for="albumnames" class="col-form-label"><th:block th:text="#{main.modal.albums}"></th:block></label>
                                     <div class="input-group" id="metadataAlbumNames">
                                         <div class="input-group">
                                             <input type="text" class="form-control" aria-label="Albums Name" id="albumnames" name="albumnames" value="">
-                                            <button class="btn btn-secondary" type="button" id="albumNameData" style="display: none;">Albums</button>
+                                            <button class="btn btn-secondary" type="button" id="albumNameData" style="display: none;"><th:block th:text="#{main.modal.control.albums}"></th:block></button>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-sm">
-                                    <label for="tagpeople" class="col-form-label">Tag People (comma separated)</label>
+                                    <label for="tagpeople" class="col-form-label"><th:block th:text="#{main.modal.people}"></th:block></label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" aria-label="Tag People" id="tagpeople" name="tagpeople" value="">
-                                        <button class="btn btn-secondary" type="button" id="peopleNameData" style="display: none;">People</button>
+                                        <button class="btn btn-secondary" type="button" id="peopleNameData" style="display: none;"><th:block th:text="#{main.modal.control.people}"></th:block></button>
                                     </div>
                                 </div>
                             </div>
                             <button class="btn btn-secondary col-12 mt-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMetadata" aria-expanded="false" aria-controls="collapseMetadata">
-                                More
+                                <th:block th:text="#{main.modal.control.more}"></th:block>
                             </button>
                             <div class="collapse mt-3" id="collapseMetadata">
                                 <div class="form-group row">
                                     <div class="col-sm">
                                         <input type="checkbox" name="hidden" id="hidden">
-                                        <label class="form-check-label" for="hidden">Archive media</label>
+                                        <label class="form-check-label" for="hidden"><th:block th:text="#{main.modal.archive}"></th:block></label>
                                     </div>
                                     <div class="col-sm">
                                         <input type="checkbox" name="isobject" id="isobject">
-                                        <label class="form-check-label" for="isobject">Unidentified people</label>
+                                        <label class="form-check-label" for="isobject"><th:block th:text="#{main.modal.unidentified}"></th:block></label>
                                     </div>
                                     <div class="col-sm">
                                         <input type="checkbox" name="rescan" id="rescan">
-                                        <label class="form-check-label" for="rescan">Rescan media</label>
+                                        <label class="form-check-label" for="rescan"><th:block th:text="#{main.modal.rescan}"></th:block></label>
                                     </div>
                                 </div>
                             </div>
