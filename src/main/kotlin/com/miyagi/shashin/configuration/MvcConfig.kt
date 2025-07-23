@@ -1,15 +1,23 @@
 package com.miyagi.shashin.configuration
 
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.PropertySource
 import org.springframework.core.io.FileSystemResource
+import org.springframework.web.servlet.LocaleResolver
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor
+import org.springframework.web.servlet.i18n.SessionLocaleResolver
 import org.springframework.web.servlet.resource.PathResourceResolver
 import org.springframework.web.util.UrlPathHelper
+import java.util.Locale
 
 @Configuration
+@PropertySource(value = ["classpath:/messages_ja.properties"], encoding = "UTF-8")
 class MvcConfig : WebMvcConfigurer {
 
     @Value("\${app.sidecar.path}")
@@ -41,5 +49,19 @@ class MvcConfig : WebMvcConfigurer {
         val urlPathHelper = UrlPathHelper()
         urlPathHelper.isUrlDecode = true
         configurer.setUrlPathHelper(urlPathHelper)
+    }
+
+    @Bean
+    fun localeResolver(): LocaleResolver {
+        val slr = SessionLocaleResolver()
+        slr.setDefaultLocale(Locale.ENGLISH) // Set your default locale
+        return slr
+    }
+
+    override fun addInterceptors(registry: InterceptorRegistry) {
+        val localeChangeInterceptor = LocaleChangeInterceptor().apply {
+            paramName = "lang" // Parameter name for locale change
+        }
+        registry.addInterceptor(localeChangeInterceptor)
     }
 }

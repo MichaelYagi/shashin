@@ -18,54 +18,54 @@
                 <th:block th:if="${agentName != 'Safari'}">
                     <li class="nav-item">
                         <a th:attr="class='nav-link list-group-item list-group-item-action rounded' + ${activeSidebar=='timeline' ? ' active' : ''}" href="/timeline">
-                            <span class="bi-calendar4" style="font-size: 1rem;"></span> Timeline
+                            <span class="bi-calendar4" style="font-size: 1rem;"></span> <th:block th:text="#{main.sidebar.timeline}"></th:block>
                         </a>
                     </li>
                 </th:block>
             </th:block>
             <li class="nav-item">
                 <a th:attr="class='nav-link list-group-item list-group-item-action rounded' + ${activeSidebar=='albums' or activeSidebar=='album'? ' active' : ''}" href="/albums">
-                    <span class="bi-images" style="font-size: 1rem;"></span> Albums
+                    <span class="bi-images" style="font-size: 1rem;"></span> <th:block th:text="#{main.sidebar.albums}"></th:block>
                 </a>
             </li>
             <th:block th:if="${currentUser.authority == 'ROLE_ADMIN' || currentUser.authority == 'ROLE_SUPER'}">
                 <li class="nav-item">
                     <a th:attr="class='nav-link list-group-item list-group-item-action rounded' + ${activeSidebar=='recent' or activeSidebar=='modified' or activeSidebar=='accessed' or activeSidebar=='folders' or activeSidebar=='folder' or activeSidebar=='taken' or activeSidebar=='archived' ? ' active' : ''}" href="/recent">
-                        <span class="bi-search" style="font-size: 1rem;"></span> Explore
+                        <span class="bi-search" style="font-size: 1rem;"></span> <th:block th:text="#{main.sidebar.explore}"></th:block>
                     </a>
                 </li>
             </th:block>
             <li class="nav-item">
                 <a th:attr="class='nav-link list-group-item list-group-item-action rounded' + ${activeSidebar=='people' or activeSidebar=='person' or activeSidebar=='matches' or activeSidebar=='compreface' ? ' active' : ''}" href="/people">
-                    <span id="sidebarPeople" class="bi-person-square position-relative" style="font-size: 1rem;"></span> People
+                    <span id="sidebarPeople" class="bi-person-square position-relative" style="font-size: 1rem;"></span> <th:block th:text="#{main.sidebar.people}"></th:block>
                 </a>
             </li>
             <li class="nav-item">
                 <a th:attr="class='nav-link list-group-item list-group-item-action rounded' + ${activeSidebar=='favorites' ? ' active' : ''}" href="/favorites">
-                    <span class="bi-suit-heart" style="font-size: 1rem;"></span> Favorites
+                    <span class="bi-suit-heart" style="font-size: 1rem;"></span> <th:block th:text="#{main.sidebar.favorites}"></th:block>
                 </a>
             </li>
             <li class="nav-item">
                 <a th:attr="class='nav-link list-group-item list-group-item-action rounded' + ${activeSidebar=='map' ? ' active' : ''}" href="/map">
-                    <span class="bi-map" style="font-size: 1rem;"></span> Map
+                    <span class="bi-map" style="font-size: 1rem;"></span> <th:block th:text="#{main.sidebar.map}"></th:block>
                 </a>
             </li>
             <li class="nav-item">
                 <a th:attr="class='nav-link list-group-item list-group-item-action rounded' + ${activeSidebar=='notifications' ? ' active' : ''} + ' position-relative'" href="/notifications">
-                    <span id="sidebarNotification" class="bi-bell position-relative" style="font-size: 1rem;"></span> Notifications
+                    <span id="sidebarNotification" class="bi-bell position-relative" style="font-size: 1rem;"></span> <th:block th:text="#{main.sidebar.notifications}"></th:block>
                 </a>
             </li>
             <th:block th:if="${currentUser.authority == 'ROLE_SUPER'}">
                 <li class="nav-item">
                     <a th:attr="class='nav-link list-group-item list-group-item-action rounded' + ${activeSidebar=='settings' or activeSidebar=='scan' or activeSidebar=='users' or activeSidebar=='match' or activeSidebar=='logs' or activeSidebar=='snapshot' ? ' active' : ''}" href="/settings">
-                        <span class="bi-gear" style="font-size: 1rem;"></span> Settings
+                        <span class="bi-gear" style="font-size: 1rem;"></span> <th:block th:text="#{main.sidebar.settings}"></th:block>
                     </a>
                 </li>
             </th:block>
             <th:block th:if="${currentUser.authority == 'ROLE_ADMIN' || currentUser.authority == 'ROLE_SUPER'}">
                 <li class="nav-item">
                     <a th:attr="class='nav-link list-group-item list-group-item-action rounded' + ${activeSidebar=='dashboard' ? ' active' : ''}" href="/dashboard">
-                        <span class="bi-speedometer" style="font-size: 1rem;"></span> Dashboard
+                        <span class="bi-speedometer" style="font-size: 1rem;"></span> <th:block th:text="#{main.sidebar.dashboard}"></th:block>
                     </a>
                 </li>
             </th:block>
