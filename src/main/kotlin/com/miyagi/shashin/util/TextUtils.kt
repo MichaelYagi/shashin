@@ -359,11 +359,12 @@ class TextUtils {
             return formattedDate.replace(".", "")
         }
 
-        fun formatToAbbrDate(oldDate: String): String {
+        fun formatToAbbrDate(oldDate: String, locale: String = "en"): String {
             var formattedDate = ""
             try {
+                var locale = Locale(locale)
                 val sdf = SimpleDateFormat(getCommonDateFormat())
-                val newSdf = SimpleDateFormat("MMM d, yyyy")
+                val newSdf = SimpleDateFormat("MMM d, yyyy", locale)
                 val temp = sdf.parse(oldDate)
                 formattedDate = newSdf.format(temp)
             } catch (e: Exception) {
@@ -372,11 +373,12 @@ class TextUtils {
             return formattedDate
         }
 
-        fun formatToLongDateWithTime(oldDate: String): String {
+        fun formatToLongDateWithTime(oldDate: String, locale: String = "en"): String {
             var formattedDate = ""
             try {
+                var locale = Locale(locale)
                 val sdf = SimpleDateFormat(getCommonDateFormat())
-                val newSdf = SimpleDateFormat("EEE, MMM d, yyyy 'at' h:mm aa")
+                val newSdf = SimpleDateFormat("EEE, MMM d, yyyy 'at' h:mm aa", locale)
                 val temp = sdf.parse(oldDate)
                 formattedDate = newSdf.format(temp)
             } catch (e: Exception) {
