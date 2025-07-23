@@ -2,6 +2,8 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="topnav(currentUser,activePage,term)">
 
+<span th:replace="~{fragments/translations.html :: translations()}"></span>
+
 <div th:replace="~{fragments/aboutmodal :: aboutmodal(${activeProfile}, ${buildProperties}, ${operatingSystemInfo}, ${copyrightYear}, ${currentUser.darkMode})}"></div>
 
 <div th:replace="~{fragments/toastmessages :: toastmessages()}"></div>

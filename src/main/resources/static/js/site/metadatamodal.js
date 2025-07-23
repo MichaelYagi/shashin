@@ -1,8 +1,4 @@
 (function( metadataModal, $, undefined ) {
-    function getUpdateText() {
-        return "Updating location ...";
-    }
-
     metadataModal.toggleTagPeopleDropdown = function (metadataId) {
         $("#tagpeopledropdown"+metadataId).dropdown('toggle');
     };
@@ -54,10 +50,6 @@
     };
 
 }( window.metadataModal = window.metadataModal || {}, jQuery ));
-
-function getMetadataModalUpdateText() {
-    return "Updating location ...";
-}
 
 $("#description").on("input paste", function () {
     $("#descriptionCharacterCount").text(500-$(this).val().length);
@@ -452,7 +444,7 @@ async function saveMetadata(e) {
 
                 $("#propMetadata").modal('hide');
 
-                shashin.showToastMessage("Metadata", "Metadata Saved", {
+                shashin.showToastMessage(shashini18n.main.toast.metadata.title, shashini18n.main.toast.metadata.message.success, {
                     icon: "bi-info-circle",
                     iconColor: "#777777",
                     tag: "metadatamodal",
@@ -463,7 +455,7 @@ async function saveMetadata(e) {
                 $("#metadataModalStatus").attr("title", shashin.modalStatusFailMessage());
                 $("#metadataModalCancel").prop('disabled', false);
 
-                shashin.showToastMessage("Metadata", "Could not save metadata", {
+                shashin.showToastMessage(shashini18n.main.toast.metadata.title, shashini18n.main.toast.metadata.message.fail, {
                     icon:"bi-exclamation-triangle",
                     iconColor:"#FF0000",
                     tag: "metadatamodal",
