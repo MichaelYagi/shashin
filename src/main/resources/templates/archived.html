@@ -25,7 +25,7 @@
                         <th:block th:each="metadata, iterStat: ${metadataList}">
 
                             <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadata.modifiedAt!=null and #dates.format(#dates.create(#strings.arraySplit(metadataList[iterStat.index-1].modifiedAt, '-')[0],#strings.arraySplit(metadataList[iterStat.index-1].modifiedAt, '-')[1],#strings.arraySplit(#strings.arraySplit(metadataList[iterStat.index-1].modifiedAt, '-')[2],' ')[0]),'yyyy-M-d')==#dates.format(#dates.create(#strings.arraySplit(metadata.modifiedAt, '-')[0],#strings.arraySplit(metadata.modifiedAt, '-')[1],#strings.arraySplit(#strings.arraySplit(metadata.modifiedAt, '-')[2],' ')[0]),'yyyy-M-d')}">
-                                <section class="dateSection" th:id="${#dates.format(#dates.create(#strings.arraySplit(metadata.modifiedAt, '-')[0],#strings.arraySplit(metadata.modifiedAt, '-')[1],#strings.arraySplit(#strings.arraySplit(metadata.modifiedAt, '-')[2],' ')[0]),'yyyy-MM-dd')}"><p><span class="text-muted">Archived </span><strong th:text="${#strings.replace(#dates.format(#dates.create(#strings.arraySplit(metadata.modifiedAt, '-')[0],#strings.arraySplit(metadata.modifiedAt, '-')[1],#strings.arraySplit(#strings.arraySplit(metadata.modifiedAt, '-')[2],' ')[0]), 'EEE, MMM d, yyyy'),'.','')}"></strong></p><div th:id="'dateBody'+${metadata.year+'-'+metadata.month+'-'+metadata.day}" class="row" style="margin-left: -2px;">
+                                <section class="dateSection" th:id="${#dates.format(#dates.create(#strings.arraySplit(metadata.modifiedAt, '-')[0],#strings.arraySplit(metadata.modifiedAt, '-')[1],#strings.arraySplit(#strings.arraySplit(metadata.modifiedAt, '-')[2],' ')[0]),'yyyy-MM-dd')}"><p><span class="text-muted"><th:block th:text="#{main.pages.browse.header.archived}"></th:block> </span><strong th:text="${formattedDateMap[metadata.id]}"></strong></p><div th:id="'dateBody'+${metadata.year+'-'+metadata.month+'-'+metadata.day}" class="row" style="margin-left: -2px;">
                             </th:block>
 
                             <div th:id="${'photoThumbnailContainer'+metadata.id}" class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth)+'px;height:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight)+'px;padding-left:0;padding-right:0;'}">
@@ -93,6 +93,7 @@
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         const activePage = /*[[${activePage}]]*/ 'trash';
+        const locale = /*[[${locale}]]*/ 'en';
         /*]]>*/
 
         const section = $("section");
@@ -107,7 +108,7 @@
         http.ajax("get", "/archived/metadata/list/0").then(function (data) {
             if (data.hasOwnProperty("metadataList") === true) {
                 const metadataList = data["metadataList"];
-                const trashInstance = new Archived(activePage, metadataList, lastDate);
+                const trashInstance = new Archived(activePage, metadataList, lastDate, locale);
                 trashInstance.init();
                 // Util.checkErrorImage();
             }

@@ -34,7 +34,7 @@
 
                             <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadata.year!=null and (metadataList[iterStat.index-1].year+'-'+metadataList[iterStat.index-1].month+'-'+metadataList[iterStat.index-1].day)==metadata.year+'-'+metadata.month+'-'+metadata.day}">
                                 <section class="dateSection" th:id="${metadata.year+'-'+metadata.month+'-'+metadata.day}">
-                                    <div class="dateHeader" th:id="'dateHeader'+${metadata.year}+'-'+${metadata.month}+'-'+${metadata.day}"><span th:id="'select'+${metadata.year}+'-'+${metadata.month}+'-'+${metadata.day}" class="bi-circle pe-2 day-select" style="font-size: 0.85rem;color: lightgray;display: none"></span><span class="text-muted">Taken </span><strong th:text="${#strings.replace(#dates.format(#dates.create(#numbers.formatInteger(metadata.year,10),#numbers.formatInteger(metadata.month,10),#numbers.formatInteger(metadata.day,10)), 'EEE, MMM d, yyyy'),'.','')}"></strong>
+                                    <div class="dateHeader" th:id="'dateHeader'+${metadata.year}+'-'+${metadata.month}+'-'+${metadata.day}"><span th:id="'select'+${metadata.year}+'-'+${metadata.month}+'-'+${metadata.day}" class="bi-circle pe-2 day-select" style="font-size: 0.85rem;color: lightgray;display: none"></span><span class="text-muted"><th:block th:text="#{main.pages.browse.header.taken}"></th:block> </span><strong th:text="${formattedDateMap[metadata.id]}"></strong>
                                         <th:block th:if="${#strings.arrayJoin(placenameMap.get(metadata.year+'-'+metadata.month+'-'+metadata.day),',') != '' and (iterStat.first or #strings.arrayJoin(placenameMap.get(metadata.year+'-'+metadata.month+'-'+metadata.day),',') != #strings.arrayJoin(placenameMap.get(metadataList[iterStat.index-1].year+'-'+metadataList[iterStat.index-1].month+'-'+metadataList[iterStat.index-1].day),','))}">
                                             <th:block th:if="${placenameMap.containsKey(metadata.year+'-'+metadata.month+'-'+metadata.day) and #lists.size(placenameMap.get(metadata.year+'-'+metadata.month+'-'+metadata.day))==1 and placenameMap.get(metadata.year+'-'+metadata.month+'-'+metadata.day)[0]!=''}">
                                                 <span class="text-muted">
@@ -154,6 +154,7 @@
         const page = /*[[${pageParam}]]*/ -1;
         const currentPage = /*[[${currentPage}]]*/ 0;
         const totalPages = /*[[${totalPages}]]*/ 0;
+        const locale = /*[[${locale}]]*/ 'en';
         /*]]>*/
 
         if (page === 0) {
@@ -169,7 +170,7 @@
             http.ajax("get", "/metadata/list/" + activePage + "/0").then(function (data) {
                 if (data.hasOwnProperty("metadataList") === true) {
                     const metadataList = data["metadataList"];
-                    const takenInstance = new Taken(metadataList, mediaTypeFilter, activePage, lastDate);
+                    const takenInstance = new Taken(metadataList, mediaTypeFilter, activePage, lastDate, locale);
                     takenInstance.init();
                     // Util.checkErrorImage();
                 }

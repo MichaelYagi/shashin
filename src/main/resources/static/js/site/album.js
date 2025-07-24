@@ -6,14 +6,16 @@
     albumSettings.lastDate = "";
     albumSettings.thumbnailType = "225";
     albumSettings.thumbnailHeight = "225";
+    albumSettings.locale = "en";
     if (Util.isMobile()) {
         albumSettings.thumbnailType = "centered";
         albumSettings.thumbnailHeight = "120";
     }
 
-    albumSettings.init = async function (albumId, mediaTypeFilter, activePage, albumMetadataList, lastDate) {
+    albumSettings.init = async function (albumId, mediaTypeFilter, activePage, albumMetadataList, lastDate, locale) {
         albumSettings.http = new Http(activePage);
         albumSettings.lastDate = lastDate;
+        albumSettings.locale = locale;
 
         const lgConfig = {
             dynamic:true,
@@ -151,7 +153,7 @@
                                     albumSettings.lastDate = "";
                                 }
                                 const nextDate = albumMetadataList.hasOwnProperty(index+1) ? albumMetadataList[index+1].year + "-" + albumMetadataList[index+1].month + "-" + albumMetadataList[index+1].day : "";
-                                const displayCurrentDate = dateFormat(currentDate.replace(/-/g, "/"), "ddd, mmm d, yyyy");
+                                const displayCurrentDate = Util.getDateString(metadata.year, metadata.month, metadata.day, albumSettings.locale);
 
                                 if (lastDate !== currentDate || $("#"+currentDate).length === 0) {
                                     dateHeadingObj = {

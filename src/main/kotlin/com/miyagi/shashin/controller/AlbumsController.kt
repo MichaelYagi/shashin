@@ -1140,6 +1140,7 @@ class AlbumsController: BaseController() {
 
             model["pageParam"] = 0
             model["album"] = response["album"]!!
+            model["formattedDateMap"] = response["formattedDateMap"]!!
             model["albumMetadataList"] = response["albumMetadataList"]!!
             model["albumMetadataSize"] = response["albumMetadataSize"]!!
             model["totalPages"] = response["totalPages"]!!
@@ -1302,6 +1303,7 @@ class AlbumsController: BaseController() {
         response["album"] = tempAlbum
         response["totalPages"] = 0
         response["albumMetadataList"] = mutableListOf<Metadata>()
+        response["formattedDateMap"] = mutableMapOf<String, String>()
         response["albumMetadataSize"] = 0
         response["shareLink"] = ""
         response["page"] = page
@@ -1320,11 +1322,14 @@ class AlbumsController: BaseController() {
             val albumTotalCount = albumPhotoRepository.countAlbumId(albumId)
             val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId, resultPage, size)
             val albumMetadataList = ArrayList<Metadata>()
+            val formattedDateMap = HashMap<String, String>()
             if (albumPhotos != null) {
                 for (albumPhoto in albumPhotos) {
                     if (albumPhoto != null) {
                         val metadata = metadataRepository.findById(albumPhoto.getMetadataId()!!)
                         albumMetadataList.add(metadata.get())
+                        val date = metadata.get().getYear().toString() + "-" + metadata.get().getMonth().toString() + "-" + metadata.get().getDay().toString()
+                        formattedDateMap[metadata.get().getId().toString()] = TextUtils.formatToLongDate(date, model.getAttribute("locale").toString()).toString()
                     }
                 }
 
@@ -1333,6 +1338,7 @@ class AlbumsController: BaseController() {
                     response["totalPages"] = ceil((albumTotalCount!!.toDouble()) / size.toDouble()).toInt()
                     response["message"] = ""
                     response["album"] = album.get()
+                    response["formattedDateMap"] = formattedDateMap
                     response["albumMetadataList"] = albumMetadataList
                     response["albumMetadataSize"] = albumMetadataList.size
                     response["shareLink"] = shareLink
@@ -1680,6 +1686,7 @@ class AlbumsController: BaseController() {
         response["albumId"] = 0
         response["albumMetadataList"] = mutableListOf<Metadata>()
         response["albumPhotoCommentsMap"] = mutableMapOf<String, ArrayList<HashMap<String, Any>>>()
+        response["formattedDateMap"] = mutableMapOf<String, String>()
         response["userMap"] = mutableMapOf<String, Any>()
         response["favorites"] = mutableMapOf<String, String>()
         response["msg"] = "No results"
@@ -1752,12 +1759,15 @@ class AlbumsController: BaseController() {
                 val albumMetadataList = ArrayList<Metadata>()
                 if (albumPhotos != null) {
                     val albumPhotosCommentsMap = HashMap<String, ArrayList<HashMap<String, Any>>>()
+                    val formattedDateMap = HashMap<String, String>()
 
                     for (albumPhoto in albumPhotos) {
                         val albumPhotoCommentsList = ArrayList<HashMap<String, Any>>()
                         if (albumPhoto != null) {
                             val metadata = metadataRepository.findById(albumPhoto.getMetadataId()!!)
                             albumMetadataList.add(metadata.get())
+                            val date = metadata.get().getYear().toString() + "-" + metadata.get().getMonth().toString() + "-" + metadata.get().getDay().toString()
+                            formattedDateMap[metadata.get().getId().toString()] = TextUtils.formatToLongDate(date, model.getAttribute("locale").toString()).toString()
 
                             val favorites = favoriteRepository.findAllByMetadataId(albumPhoto.getMetadataId())
                             if (favorites != null) {
@@ -1799,6 +1809,7 @@ class AlbumsController: BaseController() {
                         response["titleDescriptor"] = album.get().getName()
                         response["favorites"] = favoritesMap
                         response["albumPhotoCommentsMap"] = albumPhotosCommentsMap
+                        response["formattedDateMap"] = formattedDateMap
                         response["album"] = album.get()
                         var coverUrl = ""
                         if (album.get().getCoverUrl() != null) {

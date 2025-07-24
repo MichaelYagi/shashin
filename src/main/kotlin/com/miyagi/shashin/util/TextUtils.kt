@@ -335,6 +335,9 @@ class TextUtils {
             var formattedDate = ""
             var locale = Locale(locale)
             var newSdf = SimpleDateFormat("EEE, MMM d, yyyy", locale)
+            if (locale.toString() == "ja") { // If Japanese
+                newSdf = SimpleDateFormat("yyyy年MMMd日(EEE)", locale)
+            }
 
             var sdf = SimpleDateFormat(getCommonDateFormat())
 
@@ -1359,9 +1362,9 @@ class TextUtils {
                 connection.readTimeout = 1000
                 connection.requestMethod = "GET"
 
-                if (locale != null) {
-                    connection.setRequestProperty("Accept-Language", locale)
-                }
+//                if (locale != null) {
+//                    connection.setRequestProperty("Accept-Language", locale)
+//                }
 
                 BufferedReader(
                     InputStreamReader(connection.inputStream, "utf-8")

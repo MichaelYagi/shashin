@@ -1,6 +1,6 @@
 class Modified {
 
-    constructor(metadataList, mediaTypeFilter, activePage, lastDate) {
+    constructor(metadataList, mediaTypeFilter, activePage, lastDate, locale) {
         this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
@@ -9,6 +9,7 @@ class Modified {
         this.activePage = activePage;
         this.eol = false;
         this.lastDate = lastDate;
+        this.locale = locale;
         const lgConfig = {
             dynamic:true,
             plugins:[]
@@ -92,7 +93,8 @@ class Modified {
                         }
                         const currentDate = dateFormat(metadata.modifiedAt.replace(/-/g, "/"), "yyyy-m-d");
                         const nextDate = metadataList.hasOwnProperty(index+1) ? dateFormat(metadataList[index+1].modifiedAt.replace(/-/g, "/"), "yyyy-m-d") : "";
-                        const displayCurrentDate = dateFormat(metadata.modifiedAt.replace(/-/g, "/"), "ddd, mmm d, yyyy");
+                        const currentDateArray = currentDate.split("-");
+                        const displayCurrentDate = Util.getDateString(currentDateArray[0], currentDateArray[1], currentDateArray[2], this.locale);
 
                         if (lastDate !== currentDate || $("#"+currentDate).length === 0) {
                             dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
@@ -113,7 +115,7 @@ class Modified {
                         const uuid = uuidv4();
 
                         if ($("#"+currentDate).length === 0 && dateHeadingObj !== null) {
-                            const headerAndBody = '<section class="dateSection" id="'+currentDate+'"><div class="dateHeader" id="dateHeader'+currentDate+'"><span id="select'+currentDate+'" class="bi-circle pe-2 day-select" style="font-size: 0.85rem;color: lightgray;display: none"></span><span class="text-muted">Modified </span><strong>'+dateHeadingObj.display+'</strong>&nbsp;'+(dateHeadingObj.hasOwnProperty("placename")?dateHeadingObj.placename:'')+'</div><div id="dateBody'+currentDate+'" class="row" class="row" style="margin-left:-2px;"></div></section>';
+                            const headerAndBody = '<section class="dateSection" id="'+currentDate+'"><div class="dateHeader" id="dateHeader'+currentDate+'"><span id="select'+currentDate+'" class="bi-circle pe-2 day-select" style="font-size: 0.85rem;color: lightgray;display: none"></span><span class="text-muted">'+shashin.getTranslatedValue('main.pages.browse.header.modified')+' </span><strong>'+dateHeadingObj.display+'</strong>&nbsp;'+(dateHeadingObj.hasOwnProperty("placename")?dateHeadingObj.placename:'')+'</div><div id="dateBody'+currentDate+'" class="row" class="row" style="margin-left:-2px;"></div></section>';
                             $(headerAndBody).insertBefore($("." + appendClass).last());
                         }
 

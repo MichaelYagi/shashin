@@ -3,22 +3,22 @@
 <body>
 <ul class="nav nav-pills nav-fill ps-3 pe-3 pt-3" id="browserGroup" th:fragment="browse(activePage)">
     <li class="nav-item">
-        <a th:attr="class='nav-link' + ${activePage=='recent' ? ' active' : ''}" href="/recent">Recently Added</a>
+        <a th:attr="class='nav-link' + ${activePage=='recent' ? ' active' : ''}" href="/recent"><th:block th:text="#{main.pages.browse.tabs.recent}"></th:block></a>
     </li>
     <li class="nav-item">
-        <a th:attr="class='nav-link' + ${activePage=='modified' ? ' active' : ''}" href="/modified">Recently Modified</a>
+        <a th:attr="class='nav-link' + ${activePage=='modified' ? ' active' : ''}" href="/modified"><th:block th:text="#{main.pages.browse.tabs.modified}"></th:block></a>
     </li>
     <li class="nav-item">
-        <a th:attr="class='nav-link' + ${activePage=='taken' ? ' active' : ''}" href="/taken">Recently Taken</a>
+        <a th:attr="class='nav-link' + ${activePage=='taken' ? ' active' : ''}" href="/taken"><th:block th:text="#{main.pages.browse.tabs.taken}"></th:block></a>
     </li>
     <li class="nav-item">
-        <a th:attr="class='nav-link' + ${activePage=='accessed' ? ' active' : ''}" href="/accessed">Recently Accessed</a>
+        <a th:attr="class='nav-link' + ${activePage=='accessed' ? ' active' : ''}" href="/accessed"><th:block th:text="#{main.pages.browse.tabs.accessed}"></th:block></a>
     </li>
     <li class="nav-item">
-        <a th:attr="class='nav-link' + ${activePage=='archived' ? ' active' : ''}" href="/archived">Recently Archived</a>
+        <a th:attr="class='nav-link' + ${activePage=='archived' ? ' active' : ''}" href="/archived"><th:block th:text="#{main.pages.browse.tabs.archived}"></th:block></a>
     </li>
     <li class="nav-item">
-        <a th:attr="class='nav-link' + ${activePage=='folders' ? ' active' : ''}" href="/folders">Folders <span class="badge bg-secondary" th:text="${foldersCount}"></span></a>
+        <a th:attr="class='nav-link' + ${activePage=='folders' ? ' active' : ''}" href="/folders"><th:block th:text="#{main.pages.browse.tabs.folders}"></th:block> <span class="badge bg-secondary" th:text="${foldersCount}"></span></a>
     </li>
 </ul>
 </body>
