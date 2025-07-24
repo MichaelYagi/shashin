@@ -24,17 +24,17 @@
                         <input type="hidden" id="selectedPathInput" value="">
 
                         <div class="input-group mb-2">
-                            <h1 class="display-1" style="font-size:1.5rem;">Basic Settings</h1>
+                            <h1 class="display-1" style="font-size:1.5rem;"><th:block th:text="#{main.pages.settings.basic}"></th:block></h1>
                         </div>
                         <div class="card mt-2 px-2 pt-2 pb-2">
                             <div class="row">
                                 <div class="col-12">
-                                    <label for="mediaDirTextArea" class="form-label"><strong>Media directories and files</strong> (separate by line)</label>&nbsp;<span id="inclusionListInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="When Automatic Media Indexing is enabled, changing this value will restart the app"></span>
+                                    <label for="mediaDirTextArea" class="form-label"><strong><th:block th:text="#{main.pages.settings.directories}"></th:block></strong> (<th:block th:text="#{main.pages.settings.seperated}"></th:block>)</label>&nbsp;<span id="inclusionListInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" th:title="#{main.pages.settings.directories.tooltip}"></span>
                                     <div>
                                         <textarea class="form-control" id="mediaDirTextArea" name="mediaDirList" rows="5"><th:block th:text="${mediaDirList}"></th:block></textarea>
                                     </div>
 
-                                    <label for="mediaExcludeDirTextArea" class="form-label"><strong>Excluded media directories and files</strong> (separate by line)</label>&nbsp;<span id="exclusionListInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Exclusion list takes precedence over inclusion list"></span>
+                                    <label for="mediaExcludeDirTextArea" class="form-label"><strong><th:block th:text="#{main.pages.settings.excluded}"></th:block></strong> (<th:block th:text="#{main.pages.settings.seperated}"></th:block>)</label>&nbsp;<span id="exclusionListInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" th:title="#{main.pages.settings.seperated.tooltip}"></span>
                                     <div>
                                         <textarea class="form-control" id="mediaExcludeDirTextArea" name="mediaExcludeDirList" rows="3"><th:block th:text="${mediaExcludeDirList}"></th:block></textarea>
                                     </div>
@@ -43,17 +43,17 @@
 
                             <div class="row">
                                 <div class="col-12">
-                                    <label for="uploadMediaDirectory" class="form-label"><strong>Media upload directory</strong></label>&nbsp;<span id="mediaUploadInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Define with a valid directory to allow media uploads. Uploads can be done on album and explore pages."></span>
+                                    <label for="uploadMediaDirectory" class="form-label"><strong><th:block th:text="#{main.pages.settings.uploaded}"></th:block></strong></label>&nbsp;<span id="mediaUploadInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" th:title="#{main.pages.settings.uploaded.tooltip}"></span>
                                     <input class="form-control" id="uploadMediaDirectory" name="uploadMediaDirectory" th:value="${settings.uploadMediaDirectory}">
                                 </div>
                             </div>
                             <div class="card mt-2">
                                 <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDirectories" aria-expanded="false" aria-controls="collapseDirectories">
-                                    Browse Directories
+                                    <th:block th:text="#{main.pages.settings.control.browse}"></th:block>
                                 </button>
                                 <div class="collapse" id="collapseDirectories">
-                                    <input class="form-control" type="text" id="selectedPath" placeholder="Select Directory" readonly>
-                                    <button id="parentFolder" type="button" class="btn btn-secondary btn-sm mt-1"><i class="bi-arrow-90deg-up"></i></button>&nbsp;<button type="button" id="selectFolder" class="btn btn-primary btn-sm mt-1">Select</button>
+                                    <input class="form-control" type="text" id="selectedPath" th:placeholder="#{main.pages.settings.control.browse.selectdirectory}" readonly>
+                                    <button id="parentFolder" type="button" class="btn btn-secondary btn-sm mt-1"><i class="bi-arrow-90deg-up"></i></button>&nbsp;<button type="button" id="selectFolder" class="btn btn-primary btn-sm mt-1"><th:block th:text="#{main.pages.settings.control.browse.button.select}"></th:block></button>
 
                                     <div class="card-body scroll" style="height: 300px">
                                         <ul class="card-body list-group list-group-flush" id="dirList" style="list-style-type: none;">
@@ -66,38 +66,38 @@
                         <br>
 
                         <div class="input-group mb-2">
-                            <h1 class="display-1" style="font-size:1.5rem;">Advanced Settings</h1>
+                            <h1 class="display-1" style="font-size:1.5rem;"><th:block th:text="#{main.pages.settings.advanced}"></th:block></h1>
                         </div>
                         <div class="card mt-2 px-2 pt-2 pb-2">
                             <div class="row">
                                 <div class="col-3">
-                                    <label for="recognitionConfidenceThreshold" class="form-label"><strong>Facial Recognition Confidence Threshold</strong> (Default 0.8)</label>
+                                    <label for="recognitionConfidenceThreshold" class="form-label"><strong><th:block th:text="#{main.pages.settings.tweaks.facial}"></th:block></strong> (<th:block th:text="#{main.pages.settings.tweaks.default}"></th:block> 0.8)</label>
                                     <input class="form-control" id="recognitionConfidenceThreshold" name="recognitionConfidenceThreshold" th:value="${settings.recognitionConfidenceThreshold}">
                                 </div>
                                 <div class="col-3">
-                                    <label for="objectRecognitionConfidenceThreshold" class="form-label"><strong>Object Recognition Confidence Threshold</strong> (Default 0.45)</label>
+                                    <label for="objectRecognitionConfidenceThreshold" class="form-label"><strong><th:block th:text="#{main.pages.settings.tweaks.object}"></th:block></strong> (<th:block th:text="#{main.pages.settings.tweaks.default}"></th:block> 0.45)</label>
                                     <input class="form-control" id="objectRecognitionConfidenceThreshold" name="objectRecognitionConfidenceThreshold" th:value="${settings.objectRecognitionConfidenceThreshold}">
                                 </div>
                                 <div class="col-3">
-                                    <label for="queryLimit" class="form-label"><strong>Paging Results Query Limit</strong> (Default 30)</label>
+                                    <label for="queryLimit" class="form-label"><strong><th:block th:text="#{main.pages.settings.tweaks.pagination}"></th:block></strong> (<th:block th:text="#{main.pages.settings.tweaks.default}"></th:block> 30)</label>
                                     <input class="form-control" id="queryLimit" name="queryLimit" th:value="${settings.queryLimit}">
                                 </div>
                                 <div class="col-3">
-                                    <label for="notificationLimit" class="form-label"><strong>Notification Limit</strong> (Default 20)</label>
+                                    <label for="notificationLimit" class="form-label"><strong><th:block th:text="#{main.pages.settings.tweaks.notification}"></th:block></strong> (<th:block th:text="#{main.pages.settings.tweaks.default}"></th:block> 20)</label>
                                     <input class="form-control" id="notificationLimit" name="notificationLimit" th:value="${settings.notificationLimit}">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-4">
-                                    <label for="searchHistoryLimit" class="form-label"><strong>Search History Limit</strong> (Default 10)</label>
+                                    <label for="searchHistoryLimit" class="form-label"><strong><th:block th:text="#{main.pages.settings.tweaks.search}"></th:block></strong> (<th:block th:text="#{main.pages.settings.tweaks.default}"></th:block> 10)</label>
                                     <input class="form-control" id="searchHistoryLimit" name="searchHistoryLimit" th:value="${settings.searchHistoryLimit}">
                                 </div>
                                 <div class="col-4">
-                                    <label for="matchScanLimit" class="form-label"><strong>Match Scan Limit</strong> (Default 30)</label>
+                                    <label for="matchScanLimit" class="form-label"><strong><th:block th:text="#{main.pages.settings.tweaks.match}"></th:block></strong> (<th:block th:text="#{main.pages.settings.tweaks.default}"></th:block> 30)</label>
                                     <input class="form-control" id="matchScanLimit" name="matchScanLimit" th:value="${settings.matchScanLimit}">
                                 </div>
                                 <div class="col-4">
-                                    <label for="trainingDataLimit" class="form-label"><strong>Training Data Limit</strong> (Default 100)</label>
+                                    <label for="trainingDataLimit" class="form-label"><strong><th:block th:text="#{main.pages.settings.tweaks.training}"></th:block></strong> (<th:block th:text="#{main.pages.settings.tweaks.default}"></th:block> 100)</label>
                                     <input class="form-control" id="trainingDataLimit" name="trainingDataLimit" th:value="${settings.trainingDataLimit}">
                                 </div>
 <!--                                <div class="col-3">-->
@@ -107,36 +107,36 @@
                             </div>
                             <div class="row">
                                 <div class="col-6">
-                                    <label for="compreFaceServer" class="form-label"><strong>CompreFace Endpoint</strong> (eg. http://127.0.0.1:8000/)&nbsp;<span id="compreFaceInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Setup your own CompreFace server (https://github.com/exadel-inc/CompreFace) for facial recognition."></span></label>
+                                    <label for="compreFaceServer" class="form-label"><strong><th:block th:text="#{main.pages.settings.comprefaceurl}"></th:block></strong> (<th:block th:text="#{main.pages.settings.comprefaceurl.example}"></th:block> http://127.0.0.1:8000/)&nbsp;<span id="compreFaceInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" th:title="#{main.pages.settings.comprefaceurl.tooltip}"></span></label>
                                     <input class="form-control" id="compreFaceServer" name="compreFaceServer" th:value="${settings.compreFaceServer}">
                                 </div>
                                 <div class="col-6">
-                                    <label for="compreFaceKey" class="form-label"><strong>CompreFace API key</strong></label>&nbsp;<span id="faceRecogAvailableStatusInfo" th:style="${'color: '+faceRecogAvailableStatusColor+';font-size: 1rem;'}" th:class="${faceRecogAvailableStatusIcon}" data-bs-toggle="tooltip" th:title="${faceRecogAvailableStatusText}"></span>
+                                    <label for="compreFaceKey" class="form-label"><strong><th:block th:text="#{main.pages.settings.comprefacekey}"></th:block></strong></label>&nbsp;<span id="faceRecogAvailableStatusInfo" th:style="${'color: '+faceRecogAvailableStatusColor+';font-size: 1rem;'}" th:class="${faceRecogAvailableStatusIcon}" data-bs-toggle="tooltip" th:title="${faceRecogAvailableStatusText}"></span>
                                     <input class="form-control" id="compreFaceKey" name="compreFaceKey" th:value="${settings.compreFaceKey}">
                                 </div>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="objectDetection" name="objectDetection" th:checked="${settings.objectDetection}">
                                 <label class="form-check-label" for="objectDetection">
-                                    <strong>Enable object detection</strong>&nbsp;<span id="objectDetectionInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Enabling puts CPU under load during processing"></span>
+                                    <strong><th:block th:text="#{main.pages.settings.enableobject}"></th:block></strong>&nbsp;<span id="objectDetectionInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" th:title="#{main.pages.settings.enableobject.tooltip}"></span>
                                 </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="facialDetection" name="facialDetection" th:checked="${settings.facialDetection}">
                                 <label class="form-check-label" for="objectDetection">
-                                    <strong>Enable face detection</strong>&nbsp;<span id="objectFacialInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Enabling puts CPU under load during processing, unless CompreFace is setup"></span>
+                                    <strong><th:block th:text="#{main.pages.settings.enableface}"></th:block></strong>&nbsp;<span id="objectFacialInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" th:title="#{main.pages.settings.enableface.tooltip}"></span>
                                 </label>
                             </div>
                             <div class="form-check">
                                 <div>
                                     <input class="form-check-input" type="checkbox" id="scheduledMatching" name="scheduledMatching" th:checked="${settings.scheduledMatching}">
                                     <label class="form-check-label" for="scheduledMatching">
-                                        <strong>Enable scheduled background matching</strong>&nbsp;<span id="scheduledMatchingInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Scans people and objects as a background job"></span>
+                                        <strong><th:block th:text="#{main.pages.settings.enableschedule}"></th:block></strong>&nbsp;<span id="scheduledMatchingInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" th:title="#{main.pages.settings.enableschedule.tooltip}"></span>
                                     </label>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="scheduledTime">Time at which tasks run</label>&nbsp;<span id="scheduledTimeInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Restarts app after updated and saved"></span>
+                                    <label for="scheduledTime"><th:block th:text="#{main.pages.settings.taskschedule}"></th:block></label>&nbsp;<span id="scheduledTimeInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" th:title="#{main.pages.settings.taskschedule.tooltip}"></span>
                                     <div class="col-sm-1">
                                         <select class="form-select" id="scheduledTime" name="scheduledTime">
                                             <th:block th:each="time, iterStat: ${timeScheduleList}">
@@ -155,7 +155,7 @@
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="scanAutomatically" name="scanAutomatically" th:checked="${settings.scanAutomatically}">
                                 <label class="form-check-label" for="scanAutomatically">
-                                    <strong>Automatic Media Indexing</strong>&nbsp;<span id="scanAutomaticallyInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" title="Automatically scans media when changes detected in media directories"></span>
+                                    <strong><th:block th:text="#{main.pages.settings.autoscanning}"></th:block></strong>&nbsp;<span id="scanAutomaticallyInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-bs-toggle="tooltip" th:title="#{main.pages.settings.autoscanning.tooltip}"></span>
                                 </label>
                             </div>
                         </div>
@@ -164,7 +164,7 @@
 
                         <div class="row">
                             <div class="col-12">
-                                <button type="submit" class="btn btn-primary" name="saveSettings" id="saveSettings" value="Save">Save</button>
+                                <button type="submit" class="btn btn-primary" name="saveSettings" id="saveSettings" value="Save"><th:block th:text="#{main.modal.save}"></th:block></button>
                             </div>
                         </div>
 
@@ -172,13 +172,13 @@
 
                         <div class="card mt-2">
                             <button class="btn btn-danger dropdown-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDelete" aria-expanded="false" aria-controls="collapseDelete">
-                                Delete Content
+                                <th:block th:text="#{main.pages.settings.control.delete}"></th:block>
                             </button>
                             <div class="collapse alert-danger" id="collapseDelete">
                                 <div class="alert" role="alert">
-                                    <p><span class="bi-exclamation-triangle-fill"></span> Warning!</p>
-                                    <p>This will wipe all sidecar media content. Thumbnails and metadata will be removed, and you will no longer see your media unless you scan again.</p>
-                                    <a href="#" class="btn btn-danger" id="deleteContent">Delete</a>
+                                    <p><span class="bi-exclamation-triangle-fill"></span> <th:block th:text="#{main.pages.settings.control.delete.warning}"></th:block></p>
+                                    <p><th:block th:text="#{main.pages.settings.control.delete.message}"></th:block></p>
+                                    <a href="#" class="btn btn-danger" id="deleteContent"><th:block th:text="#{main.pages.settings.control.delete.button}"></th:block></a>
                                 </div>
                             </div>
                         </div>
