@@ -19,6 +19,7 @@ import org.springframework.beans.TypeMismatchException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.info.BuildProperties
+import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
@@ -215,6 +216,8 @@ class AttributeController: ResponseEntityExceptionHandler() {
     @ModelAttribute
     @Transactional
     fun addAttributes(model: Model, request: HttpServletRequest, response: HttpServletResponse, authentication: Authentication?) {
+        model["locale"] = LocaleContextHolder.getLocale()
+
 //        val totalTimingStart = Date()
 //        var timingStart = Date()
         val logger: Logger = Logger.getLogger(AttributeController::class.simpleName)
