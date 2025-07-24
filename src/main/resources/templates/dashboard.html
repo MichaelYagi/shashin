@@ -229,7 +229,7 @@
 
         const shashinServerStartUnixMS = Number(shashinServerStartUnixMSStr);
 
-        shashin.updateSearchInput("Dashboard");
+        shashin.updateSearchInput(shashin.getTranslatedValue("main.sidebar.dashboard"));
 
         function numberWithCommas(x) {
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");

@@ -217,7 +217,7 @@
 </th:block>
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     $(document).ready(function () {
-        shashin.updateSearchInput("Timeline");
+        shashin.updateSearchInput(shashin.getTranslatedValue("main.sidebar.timeline"));
 
         /*<![CDATA[*/
         shashin.mediaTypeFilter = /*[[${mediaTypeFilter}]]*/ 'all';
