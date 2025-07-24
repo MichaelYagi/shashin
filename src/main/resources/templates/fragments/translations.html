@@ -7,7 +7,6 @@
     const shashini18n = {
         'lang.en': /*[[#{lang.en}]]*/ '',
         'lang.ja': /*[[#{lang.ja}]]*/ '',
-
         'main.sidebar.timeline': /*[[#{main.sidebar.timeline}]]*/ '',
         'main.sidebar.albums': /*[[#{main.sidebar.albums}]]*/ '',
         'main.sidebar.explore': /*[[#{main.sidebar.explore}]]*/ '',
@@ -17,7 +16,6 @@
         'main.sidebar.notifications': /*[[#{main.sidebar.notifications}]]*/ '',
         'main.sidebar.settings': /*[[#{main.sidebar.settings}]]*/ '',
         'main.sidebar.dashboard': /*[[#{main.sidebar.dashboard}]]*/ '',
-
         'main.details.metadataid': /*[[#{main.details.metadataid}]]*/ '',
         'main.details.filename': /*[[#{main.details.filename}]]*/ '',
         'main.details.filetype': /*[[#{main.details.filetype}]]*/ '',
@@ -39,7 +37,8 @@
         'main.details.accessed': /*[[#{main.details.accessed}]]*/ '',
         'main.details.accessedby': /*[[#{main.details.accessedby}]]*/ '',
         'main.details.uploadedby': /*[[#{main.details.uploadedby}]]*/ '',
-
+        'main.pages.albums.photo': /*[[#{main.pages.albums.photo}]]*/ '',
+        'main.pages.albums.video': /*[[#{main.pages.albums.video}]]*/ '',
         'main.pages.browse.header.recent': /*[[#{main.pages.browse.header.recent}]]*/ '',
         'main.pages.browse.header.modified': /*[[#{main.pages.browse.header.modified}]]*/ '',
         'main.pages.browse.header.taken': /*[[#{main.pages.browse.header.taken}]]*/ '',
@@ -55,14 +54,12 @@
         'main.pages.people.tabs.person': /*[[#{main.pages.people.tabs.person}]]*/ '',
         'main.pages.people.tabs.matches': /*[[#{main.pages.people.tabs.matches}]]*/ '',
         'main.pages.people.tabs.training': /*[[#{main.pages.people.tabs.training}]]*/ '',
-
         'main.pages.settings.tabs.settings': /*[[#{main.pages.settings.tabs.settings}]]*/ '',
         'main.pages.settings.tabs.media': /*[[#{main.pages.settings.tabs.media}]]*/ '',
         'main.pages.settings.tabs.match': /*[[#{main.pages.settings.tabs.match}]]*/ '',
         'main.pages.settings.tabs.user': /*[[#{main.pages.settings.tabs.user}]]*/ '',
         'main.pages.settings.tabs.importexport': /*[[#{main.pages.settings.tabs.importexport}]]*/ '',
         'main.pages.settings.tabs.logs': /*[[#{main.pages.settings.tabs.logs}]]*/ '',
-
         'main.pages.settings.basic': /*[[#{main.pages.settings.basic}]]*/ '',
         'main.pages.settings.directories': /*[[#{main.pages.settings.directories}]]*/ '',
         'main.pages.settings.excluded': /*[[#{main.pages.settings.excluded}]]*/ '',
@@ -73,7 +70,6 @@
         'main.pages.settings.control.browse.button.selectfolder': /*[[#{main.pages.settings.control.browse.button.selectfolder}]]*/ '',
         'main.pages.settings.control.browse.button.excludefolder': /*[[#{main.pages.settings.control.browse.button.excludefolder}]]*/ '',
         'main.pages.settings.control.browse.button.uploadfolder': /*[[#{main.pages.settings.control.browse.button.uploadfolder}]]*/ '',
-
         'main.pages.settings.control.browse.selectdirectory': /*[[#{main.pages.settings.control.browse.selectdirectory}]]*/ '',
         'main.pages.settings.control.browse.selectfolder': /*[[#{main.pages.settings.control.browse.selectfolder}]]*/ '',
         'main.pages.settings.advanced': /*[[#{main.pages.settings.advanced}]]*/ '',
@@ -97,7 +93,6 @@
         'main.pages.settings.control.delete.warning': /*[[#{main.pages.settings.control.delete.warning}]]*/ '',
         'main.pages.settings.control.delete.message': /*[[#{main.pages.settings.control.delete.message}]]*/ '',
         'main.pages.settings.control.delete.button': /*[[#{main.pages.settings.control.delete.button}]]*/ '',
-
         'main.pages.settings.directories.tooltip': /*[[#{main.pages.settings.directories.tooltip}]]*/ '',
         'main.pages.settings.seperated.tooltip': /*[[#{main.pages.settings.seperated.tooltip}]]*/ '',
         'main.pages.settings.uploaded.tooltip': /*[[#{main.pages.settings.uploaded.tooltip}]]*/ '',
@@ -107,54 +102,42 @@
         'main.pages.settings.enableschedule.tooltip': /*[[#{main.pages.settings.enableschedule.tooltip}]]*/ '',
         'main.pages.settings.taskschedule.tooltip': /*[[#{main.pages.settings.taskschedule.tooltip}]]*/ '',
         'main.pages.settings.autoscanning.tooltip': /*[[#{main.pages.settings.autoscanning.tooltip}]]*/ '',
-
         'main.pages.scan.control.button.scan': /*[[#{main.pages.scan.control.button.scan}]]*/ '',
         'main.pages.scan.control.button.stop': /*[[#{main.pages.scan.control.button.stop}]]*/ '',
         'main.pages.scan.recheck': /*[[#{main.pages.scan.recheck}]]*/ '',
-
-        'main.pages.match.info': /*[[#{main.pages.scan.recheck}]]*/ '',
-
-        'main.pages.users.profile': /*[[#{main.pages.scan.recheck}]]*/ '',
-        'main.pages.users.userid': /*[[#{main.pages.scan.userid}]]*/ '',
-        'main.pages.users.username': /*[[#{main.pages.scan.username}]]*/ '',
-        'main.pages.users.role': /*[[#{main.pages.scan.role}]]*/ '',
-        'main.pages.users.authorized': /*[[#{main.pages.scan.authorized}]]*/ '',
-        'main.pages.users.created': /*[[#{main.pages.scan.created}]]*/ '',
-        'main.pages.users.modified': /*[[#{main.pages.scan.modified}]]*/ '',
-        'main.pages.users.resetpass': /*[[#{main.pages.scan.resetpass}]]*/ '',
-        'main.pages.users.deleteuser': /*[[#{main.pages.scan.deleteuser}]]*/ '',
-
+        'main.pages.match.info': /*[[#{main.pages.match.info}]]*/ '',
+        'main.pages.users.profile': /*[[#{main.pages.users.profile}]]*/ '',
+        'main.pages.users.userid': /*[[#{main.pages.users.userid}]]*/ '',
+        'main.pages.users.username': /*[[#{main.pages.users.username}]]*/ '',
+        'main.pages.users.role': /*[[#{main.pages.users.role}]]*/ '',
+        'main.pages.users.authorized': /*[[#{main.pages.users.authorized}]]*/ '',
+        'main.pages.users.created': /*[[#{main.pages.users.created}]]*/ '',
+        'main.pages.users.modified': /*[[#{main.pages.users.modified}]]*/ '',
+        'main.pages.users.resetpass': /*[[#{main.pages.users.resetpass}]]*/ '',
+        'main.pages.users.deleteuser': /*[[#{main.pages.users.deleteuser}]]*/ '',
         'main.pages.snapshot.exportbutton': /*[[#{main.pages.snapshot.exportbutton}]]*/ '',
         'main.pages.snapshot.importbutton': /*[[#{main.pages.snapshot.importbutton}]]*/ '',
         'main.pages.snapshot.importcheck': /*[[#{main.pages.snapshot.importcheck}]]*/ '',
         'main.pages.snapshot.info': /*[[#{main.pages.snapshot.info}]]*/ '',
-
         'main.pages.logs.limitbutton': /*[[#{main.pages.logs.limitbutton}]]*/ '',
-
         'main.pages.notifications.info': /*[[#{main.pages.notifications.info}]]*/ '',
-
         'main.toast.util.copy.title': /*[[#{main.toast.util.copy.title}]]*/ '',
         'main.toast.util.copy.message.success': /*[[#{main.toast.util.copy.message.success}]]*/ '',
         'main.toast.util.copy.message.fail': /*[[#{main.toast.util.copy.message.fail}]]*/ '',
-
         'main.toast.metadata.title': /*[[#{main.toast.metadata.title}]]*/ '',
         'main.toast.metadata.message.success': /*[[#{main.toast.metadata.message.success}]]*/ '',
         'main.toast.metadata.message.fail': /*[[#{main.toast.metadata.message.fail}]]*/ '',
-
         'main.toast.minimap.title': /*[[#{main.toast.minimap.title}]]*/ '',
         'main.toast.minimap.message.success': /*[[#{main.toast.minimap.message.success}]]*/ '',
         'main.toast.minimap.message.fail': /*[[#{main.toast.minimap.message.fail}]]*/ '',
-
         'main.toast.settings.title.fail': /*[[#{main.toast.settings.title.fail}]]*/ '',
         'main.toast.settings.input.title.fail': /*[[#{main.toast.settings.input.title.fail}]]*/ '',
         'main.toast.settings.input.message.fail': /*[[#{main.toast.settings.input.message.fail}]]*/ '',
-
         'main.context.minimap.location.message': /*[[#{main.context.minimap.location.message}]]*/ '',
         'main.context.minimap.copy': /*[[#{main.context.minimap.copy}]]*/ '',
         'main.context.minimap.savecoord': /*[[#{main.context.minimap.savecoord}]]*/ '',
         'main.context.minimap.setlatlng': /*[[#{main.context.minimap.setlatlng}]]*/ '',
         'main.context.minimap.recenter': /*[[#{main.context.minimap.recenter}]]*/ '',
-
         'main.modal.title': /*[[#{main.modal.title}]]*/ '',
         'main.modal.camera': /*[[#{main.modal.camera}]]*/ '',
         'main.modal.lens': /*[[#{main.modal.lens}]]*/ '',
@@ -182,7 +165,7 @@
         'main.modal.close': /*[[#{main.modal.close}]]*/ '',
         'main.modal.control.albums': /*[[#{main.modal.control.albums}]]*/ '',
         'main.modal.control.people': /*[[#{main.modal.control.people}]]*/ '',
-        'main.modal.control.more': /*[[#{main.modal.control.people}]]*/ '',
+        'main.modal.control.more': /*[[#{main.modal.control.more}]]*/ '',
         'main.modal.tab.update': /*[[#{main.modal.tab.update}]]*/ '',
         'main.modal.tab.info': /*[[#{main.modal.tab.info}]]*/ '',
         'main.modal.tab.exif': /*[[#{main.modal.tab.exif}]]*/ '',
