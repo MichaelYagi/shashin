@@ -4,14 +4,14 @@
 <ul class="nav nav-pills nav-fill ms-3 me-3 mt-3" th:fragment="person(activePage,parameter,counts,faceRecogServicesAvailable,authority,facialDetection)">
     <th:block th:if="${facialDetection && counts.get('person') > 0 and (authority == 'ROLE_ADMIN' or authority == 'ROLE_SUPER')}">
         <li class="nav-item">
-            <a th:attr="class='nav-link' + ${activePage=='person' ? ' active' : ''}" th:href="${'/person/'+parameter}">Person <span class="badge bg-secondary" th:text="${counts.get('person')}"></span></a>
+            <a th:attr="class='nav-link' + ${activePage=='person' ? ' active' : ''}" th:href="${'/person/'+parameter}"><th:block th:text="#{main.pages.people.tabs.person}"></th:block> <span class="badge bg-secondary" th:text="${counts.get('person')}"></span></a>
         </li>
         <li class="nav-item">
-            <a th:attr="class='nav-link' + ${activePage=='matches' ? ' active' : ''}" th:href="${'/person/matches/'+parameter}">Matches <span class="badge bg-secondary" th:text="${counts.get('matches')}"></span></a>
+            <a th:attr="class='nav-link' + ${activePage=='matches' ? ' active' : ''}" th:href="${'/person/matches/'+parameter}"><th:block th:text="#{main.pages.people.tabs.matches}"></th:block> <span class="badge bg-secondary" th:text="${counts.get('matches')}"></span></a>
         </li>
         <th:block th:if="${faceRecogServicesAvailable==true}">
             <li class="nav-item">
-                <a th:attr="class='nav-link' + ${activePage=='compreface' ? ' active' : ''}" th:href="${'/person/compreface/'+parameter}">Training Images <span class="badge bg-secondary" th:text="${counts.get('compreface')}"></span></a>
+                <a th:attr="class='nav-link' + ${activePage=='compreface' ? ' active' : ''}" th:href="${'/person/compreface/'+parameter}"><th:block th:text="#{main.pages.people.tabs.training}"></th:block> <span class="badge bg-secondary" th:text="${counts.get('compreface')}"></span></a>
             </li>
         </th:block>
     </th:block>
