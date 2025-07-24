@@ -32,7 +32,13 @@
                                             <a th:href="'/person/'+${person.id}" th:style="'text-decoration: none !important;' + ${currentUser.darkMode ? 'color: #FFFFFF;' : 'color: #000000;'}">
                                                 <strong th:text="${person.name}"></strong>
                                             </a><br>
-                                            <small class="text-muted" th:text="${person.tagCount + (person.tagCount == 1 ? ' item' : ' items')}"></small>
+
+                                            <th:block th:if="${#strings.equals(locale, 'en')}">
+                                                <small class="text-muted" th:text="${person.tagCount + (person.tagCount == 1 ? ' item' : ' items')}"></small>
+                                            </th:block>
+                                            <th:block th:unless="${#strings.equals(locale, 'en')}">
+                                                <small class="text-muted" th:text="${person.tagCount} + ' ' + #{main.pages.people.items}"></small>
+                                            </th:block>
                                         </span>
                                     </p>
                                 </div>
