@@ -41,7 +41,7 @@ class TimelineTemplates {
         <img class="me-1" loading="lazy" draggable="false" src="${thumbnailImage+(version === "" ? "" : "?v=" + version)}" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="${title}">
     `};
 
-    static TimelinePreLoadGalleryHeader({metadata, placeNameHeaders, listHtml, isMobile}) { return `
+    static TimelinePreLoadGalleryHeader({metadata, placeNameHeaders, listHtml, isMobile, locale}) { return `
         ${(metadata.year === null || metadata.month === null || metadata.day === null) ?
             `
         <span class="dateContainer" id="container_undated">
@@ -53,7 +53,7 @@ class TimelineTemplates {
             `
         <span class="dateContainer" id="container_${metadata.year}-${metadata.month}-${metadata.day}">
         <br id="br${metadata.year}-${metadata.month}-${metadata.day}">
-        <section class="scrollspy" id="${metadata.year}-${metadata.month}-${metadata.day}"><div class="dateHeader"><span id="select${metadata.year}-${metadata.month}-${metadata.day}" class="bi-circle pe-2 day-select" style="font-size: 0.85rem;color: lightgray;display: none"></span><strong class="dateHeading pe-1">${Util.getDateString(metadata.year, metadata.month, metadata.day)}</strong>
+        <section class="scrollspy" id="${metadata.year}-${metadata.month}-${metadata.day}"><div class="dateHeader"><span id="select${metadata.year}-${metadata.month}-${metadata.day}" class="bi-circle pe-2 day-select" style="font-size: 0.85rem;color: lightgray;display: none"></span><strong class="dateHeading pe-1">${Util.getDateString(metadata.year, metadata.month, metadata.day, locale)}</strong>
         ${(placeNameHeaders.length === 1) ? `<span class="text-muted"><a class="link-unstyled" href="/search?term=`+placeNameHeaders[0]+`" target="_blank" id="placeNameHeader`+metadata.year+'-'+metadata.month+'-'+metadata.day+`">`+placeNameHeaders[0]+`</a></span>` : (placeNameHeaders.length > 1) ? `
         <span class="text-muted"><div class="dropdown" style="display: inline-block;"><a class="dropdown-toggle link-unstyled" data-bs-toggle="dropdown" href="#">`+placeNameHeaders[0]+`</a>
         <ul class="dropdown-menu">`+listHtml+`</ul></div></span>` : ``}</div></section>

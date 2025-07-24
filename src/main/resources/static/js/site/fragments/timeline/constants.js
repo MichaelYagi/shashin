@@ -28,6 +28,7 @@
     timelineSettings.favoritesMap = null;
     timelineSettings.placeNameHeaders = null;
     timelineSettings.db = null;
+    timelineSettings.locale = "en";
     timelineSettings.dbOperationComplete = false;
     if (Util.isMobile()) {
         timelineSettings.thumbnailType = "centered";

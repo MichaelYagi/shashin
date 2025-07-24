@@ -219,6 +219,7 @@ class TimelineController: BaseController() {
             date = initialMetadataObj.getYear().toString() + "-" + initialMetadataObj.getMonth().toString() + "-" + initialMetadataObj.getDay().toString()
         }
 
+        model["initialLongDate"] = TextUtils.formatToLongDate(date, model.getAttribute("locale").toString()).toString()
         val dates = getMetadataDates(mediaType)
         model["metadataDates"] = dates["metadataDates"]!!
 
@@ -1686,7 +1687,7 @@ class TimelineController: BaseController() {
                         if (metadataObj.get().getLat() != newlat || metadataObj.get().getLng() != newlng) {
                             setAndSave = true
 
-                            processCoordinates(metadataMap, metadataObj)
+                            processCoordinates(metadataMap, metadataObj, model.getAttribute("locale").toString())
                         }
                     }
                 }
@@ -1720,10 +1721,10 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
-    fun processCoordinates(metadataMap: Map<String, Any>, metadataObj: Optional<Metadata?>) {
+    fun processCoordinates(metadataMap: Map<String, Any>, metadataObj: Optional<Metadata?>, locale: String? = null) {
         if (metadataObj.isPresent && metadataMap.containsKey("latlng")) {
             Thread {
-                val coordinateMap = TextUtils.processCoordinates(geocodeUrl!!, metadataMap["latlng"].toString())
+                val coordinateMap = TextUtils.processCoordinates(geocodeUrl!!, metadataMap["latlng"].toString(), locale)
                 if (coordinateMap["lat"] != null && coordinateMap["lng"] != null) {
                     metadataObj.get().setLat(coordinateMap["lat"])
                     metadataObj.get().setLng(coordinateMap["lng"])
@@ -1760,7 +1761,7 @@ class TimelineController: BaseController() {
             val idArray: Array<String>? = mapper.readValue(metadataMap["ids"].toString(), object : TypeReference<Array<String>>() {})
 
             if (idArray != null && coordArray.size == 2 && idArray.isNotEmpty()) {
-                setCoordinatesCR(idArray, coordArray)
+                setCoordinatesCR(idArray, coordArray, model.getAttribute("locale").toString())
 
                 resp["msg"] = "Saved!"
                 resp["status"] = ApiResponse.SUCCESS.status
@@ -1773,12 +1774,12 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
-    fun setCoordinatesCR(idArray: Array<String>?, coordArray: List<String>) {
+    fun setCoordinatesCR(idArray: Array<String>?, coordArray: List<String>, locale: String? = null) {
         Thread {
             val metadataList = mutableListOf<Metadata>()
             if (!idArray.isNullOrEmpty() && coordArray.size == 2) {
                 for (metadataId in idArray) {
-                    val metadata = setCoordinates(metadataId, coordArray[0], coordArray[1])
+                    val metadata = setCoordinates(metadataId, coordArray[0], coordArray[1], locale)
                     metadataList.add(metadata)
                 }
             }
@@ -1809,7 +1810,7 @@ class TimelineController: BaseController() {
         ) {
             val coordArray = metadataMap["latlng"].toString().split(",")
             if (coordArray.size == 2) {
-                metadata = setCoordinates(metadataMap["id"].toString(), coordArray[0], coordArray[1])
+                metadata = setCoordinates(metadataMap["id"].toString(), coordArray[0], coordArray[1], model.getAttribute("locale").toString())
                 resp["shortPlaceName"] = TextUtils.formatPlaceNameForHeader(metadata.getPlaceName())
                 metadataRepository.save(metadata)
 
@@ -1822,14 +1823,15 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
-    private fun setCoordinates(metadataId: String, lat: String, lng: String): Metadata {
+    private fun setCoordinates(metadataId: String, lat: String, lng: String, locale: String? = null): Metadata {
+
         var coordinateMap = mapOf<String, String?>()
         if (lat != "" && lng != "" && metadataId != "") {
 
             val metadataObj = metadataRepository.findById(metadataId)
 
             if (metadataObj.isPresent) {
-                coordinateMap = TextUtils.processCoordinates(geocodeUrl!!, "${lat.trim()},${lng.trim()}")
+                coordinateMap = TextUtils.processCoordinates(geocodeUrl!!, "${lat.trim()},${lng.trim()}", locale)
                 if (coordinateMap["lat"] != null && coordinateMap["lng"] != null) {
                     metadataObj.get().setLat(coordinateMap["lat"])
                     metadataObj.get().setLng(coordinateMap["lng"])

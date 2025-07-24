@@ -68,11 +68,12 @@
         };
     };
 
-    timelineSettings.init = function(mediaTypeFilter, metadataDates, metadataYearMonthCount, timelineDatesHash) {
+    timelineSettings.init = function(mediaTypeFilter, metadataDates, metadataYearMonthCount, timelineDatesHash, locale) {
         disableScroll();
         timelineSettings.timelineDates = metadataDates;
         timelineSettings.metadataYearMonthCount = metadataYearMonthCount;
         timelineSettings.timelineDatesHash = timelineDatesHash;
+        timelineSettings.locale = locale;
 
         if (timelineSettings.useDexie === true) {
             setTimeout(function () {

@@ -460,9 +460,9 @@ class TextUtils {
             return uuid
         }
 
-        fun getGeoData(geocodeUrl: String,lat: String, lng: String): String? {
+        fun getGeoData(geocodeUrl: String,lat: String, lng: String, locale: String? = null): String? {
             val geoLookupUrl: String = geocodeUrl+"reverse?format=json&lat="+lat+"&lon="+lng+"&extratags=1&namedetails=1&accept-language=en&email=myagi.developer@gmail.com"
-            return readUrl(geoLookupUrl)
+            return readUrl(geoLookupUrl, locale)
         }
 
         // Sort by province/state then by city
@@ -504,7 +504,7 @@ class TextUtils {
             return sortPlaceNames(metadataList)
         }
 
-        fun processCoordinates(geocodeUrl: String, latlngStr: String?): Map<String, String?> {
+        fun processCoordinates(geocodeUrl: String, latlngStr: String?, locale: String? = null): Map<String, String?> {
             val coordinateMap = mutableMapOf<String, String?>()
             coordinateMap["lat"] = null
             coordinateMap["lng"] = null
@@ -524,7 +524,7 @@ class TextUtils {
                     lat = latlngArr[0]
                     lng = latlngArr[1]
 
-                    val buildPlace = getPlaceNameFromJson(getGeoData(geocodeUrl,lat, lng))
+                    val buildPlace = getPlaceNameFromJson(getGeoData(geocodeUrl,lat, lng, locale))
                     if (buildPlace.isNotBlank()) {
                         place = buildPlace
 
@@ -1350,11 +1350,31 @@ class TextUtils {
             return apiMapList.sortedBy { it["order"].toString() } as MutableList<MutableMap<String, Any>>
         }
 
-        private fun readUrl(urlString: String): String? {
+        private fun readUrl(urlString: String, locale: String? = null): String? {
             var result: String? = null
 
             try {
-                result = URL(urlString).readText()
+                val connection: HttpURLConnection = URL(urlString).openConnection() as HttpURLConnection
+                connection.connectTimeout = 1000
+                connection.readTimeout = 1000
+                connection.requestMethod = "GET"
+
+                if (locale != null) {
+                    connection.setRequestProperty("Accept-Language", locale)
+                }
+
+                BufferedReader(
+                    InputStreamReader(connection.inputStream, "utf-8")
+                ).use { br ->
+                    val responseBuilder = StringBuilder()
+                    var responseLine: String?
+                    while (br.readLine().also { responseLine = it } != null) {
+                        responseBuilder.append(responseLine!!.trim { it <= ' ' })
+                    }
+
+                    result = responseBuilder.toString()
+                }
+
             } catch(e: Exception) {
                 logger.log(Level.WARNING, "Could not read URL: " + e.message)
             }
