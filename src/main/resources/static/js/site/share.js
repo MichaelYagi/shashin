@@ -1,6 +1,6 @@
 class ShareAlbum {
 
-    constructor(shareLink, activePage, albumId, albumMetadataList, lastDate) {
+    constructor(shareLink, activePage, albumId, albumMetadataList, lastDate, locale) {
         this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
@@ -10,6 +10,7 @@ class ShareAlbum {
         this.albumMetadataList = albumMetadataList;
         this.eol = false;
         this.lastDate = lastDate;
+        this.locale = locale;
         this.mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true},'.mediaLink');
     }
 
@@ -77,7 +78,7 @@ class ShareAlbum {
                             }
                             const currentDate = metadata.year + "-" + metadata.month + "-" + metadata.day;
                             const nextDate = albumMetadataList.hasOwnProperty(index+1) ? albumMetadataList[index+1].year + "-" + albumMetadataList[index+1].month + "-" + albumMetadataList[index+1].day : "";
-                            const displayCurrentDate = dateFormat(currentDate.replace(/-/g, "/"), "ddd, mmm d, yyyy");
+                            const displayCurrentDate = Util.getDateString(metadata.year, metadata.month, metadata.day, this.locale);
 
                             if (lastDate !== currentDate || $("#"+currentDate).length === 0) {
                                 dateHeadingObj = {

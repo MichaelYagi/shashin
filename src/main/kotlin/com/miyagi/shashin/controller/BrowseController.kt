@@ -589,6 +589,7 @@ class BrowseController: BaseController() {
         response["albumMap"] = mutableMapOf<String, Any>()
         response["keywordMap"] = mutableMapOf<String, Any>()
         response["placenameMap"] = mutableMapOf<String, MutableList<String>?>()
+        response["formattedDateMap"] = mutableMapOf<String, String>()
         response["page"] = page
         response["size"] = size
         response["totalPages"] = 0
@@ -748,8 +749,12 @@ class BrowseController: BaseController() {
                 val albumMap = mutableMapOf<String, String>()
                 val keywordMap = mutableMapOf<String, String>()
                 val placenameMap = mutableMapOf<String, MutableList<String>?>()
+                val formattedDateMap = HashMap<String, String>()
 
                 for (metadata in metadataList) {
+                    val date = metadata.getYear().toString() + "-" + metadata.getMonth().toString() + "-" + metadata.getDay().toString()
+                    formattedDateMap[metadata.getId().toString()] = TextUtils.formatToLongDate(date, model.getAttribute("locale").toString()).toString()
+
                     val favorites = favoriteRepository.findAllByMetadataId(metadata.getId())
                     if (favorites != null) {
                         for (favorite in favorites) {
@@ -818,6 +823,7 @@ class BrowseController: BaseController() {
                 response["labelPhotoMap"] = labelPhotoMap
                 response["albumMap"] = albumMap
                 response["keywordMap"] = keywordMap
+                response["formattedDateMap"] = formattedDateMap
 
                 val albumList = albumRepository.findAllOrderByAlbumName()
                 if (albumList != null && albumList.count() > 0) {

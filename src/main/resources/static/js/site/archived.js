@@ -1,5 +1,5 @@
 class Archived {
-    constructor(activePage, metadataList, lastDate) {
+    constructor(activePage, metadataList, lastDate, locale) {
         this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
@@ -7,6 +7,7 @@ class Archived {
         this.metadataList = metadataList;
         this.lastDate = lastDate;
         this.eol = false;
+        this.locale = locale;
         const lgConfig = {
             dynamic:true,
             plugins:[]
@@ -88,7 +89,8 @@ class Archived {
                                 }
                                 const currentDate = dateFormat(metadata.modifiedAt.replace(/-/g, "/"), "yyyy-m-d");
                                 const nextDate = metadataList.hasOwnProperty(index+1) ? dateFormat(metadataList[index+1].modifiedAt.replace(/-/g, "/"), "yyyy-m-d") : "";
-                                const displayCurrentDate = dateFormat(metadata.modifiedAt.replace(/-/g, "/"), "ddd, mmm d, yyyy");
+                                const currentDateArray = currentDate.split("-");
+                                const displayCurrentDate = Util.getDateString(currentDateArray[0], currentDateArray[1], currentDateArray[2], this.locale);
 
                                 if (lastDate !== currentDate || $("#"+currentDate).length === 0) {
                                     dateHeadingObj = {
@@ -108,7 +110,7 @@ class Archived {
                                 const uuid = uuidv4();
 
                                 if ($("#"+currentDate).length === 0 && dateHeadingObj !== null) {
-                                    const headerAndBody = '<section class="dateSection" id="' + currentDate + '"><div class="mb-3" id="dateHeader' + currentDate + '"><span class="text-muted">Archived </span><strong>' + dateHeadingObj.display + '</strong>&nbsp;' + (dateHeadingObj.hasOwnProperty("placename") ? dateHeadingObj.placename : '') + '</div><div id="dateBody' + currentDate + '" class="row" style="margin-left:-2px;"></div></section>';
+                                    const headerAndBody = '<section class="dateSection" id="' + currentDate + '"><div class="mb-3" id="dateHeader' + currentDate + '"><span class="text-muted">'+shashin.getTranslatedValue('main.pages.browse.header.archived')+' </span><strong>' + dateHeadingObj.display + '</strong>&nbsp;' + (dateHeadingObj.hasOwnProperty("placename") ? dateHeadingObj.placename : '') + '</div><div id="dateBody' + currentDate + '" class="row" style="margin-left:-2px;"></div></section>';
                                     $(headerAndBody).insertBefore($("." + appendClass).last());
                                 }
 

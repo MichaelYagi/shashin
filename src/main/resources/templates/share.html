@@ -47,7 +47,7 @@
 
                             <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and albumMetadataList[iterStat.index-1].year==metadata.year and albumMetadataList[iterStat.index-1].month==metadata.month and albumMetadataList[iterStat.index-1].day==metadata.day}">
                                 <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                                    <section class="dateSection" th:id="${metadata.year+'-'+metadata.month+'-'+metadata.day}"><p><strong th:text="${#strings.replace(#dates.format(#dates.create(#numbers.formatInteger(metadata.year,10),#numbers.formatInteger(metadata.month,10),#numbers.formatInteger(metadata.day,10)), 'EEE, MMM d, yyyy'),'.','')}"></strong></p><div th:id="'dateBody'+${metadata.year+'-'+metadata.month+'-'+metadata.day}" class="row" style="margin-left: -2px;">
+                                    <section class="dateSection" th:id="${metadata.year+'-'+metadata.month+'-'+metadata.day}"><p><strong th:text="${formattedDateMap[metadata.id]}"></strong></p><div th:id="'dateBody'+${metadata.year+'-'+metadata.month+'-'+metadata.day}" class="row" style="margin-left: -2px;">
                                 </th:block>
                             </th:block>
 
@@ -132,6 +132,7 @@
         const page = /*[[${pageParam}]]*/ -1;
         const currentPage = /*[[${currentPage}]]*/ 0;
         const totalPages = /*[[${totalPages}]]*/ 0;
+        const locale = /*[[${locale}]]*/ 'en';
         /*]]>*/
 
         if (albumListSize > 0 && page === 0) {
@@ -147,7 +148,7 @@
             http.ajax("get", "/share/" + shareLink + "/album/" + albumId + "/page/0").then(function (data) {
                 if (data.hasOwnProperty("albumMetadataList") === true) {
                     const albumMetadataList = data["albumMetadataList"];
-                    const shareAlbumInstance = new ShareAlbum(shareLink, activePage, albumId, albumMetadataList, lastDate);
+                    const shareAlbumInstance = new ShareAlbum(shareLink, activePage, albumId, albumMetadataList, lastDate, locale);
                     shareAlbumInstance.init();
                     // Util.checkErrorImage();
                 }

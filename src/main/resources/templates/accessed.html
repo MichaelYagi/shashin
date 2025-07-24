@@ -33,7 +33,7 @@
                         <th:block th:each="metadata, iterStat: ${metadataList}">
 
                             <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadata.lastAccessedAt!=null and #dates.format(#dates.create(#strings.arraySplit(metadataList[iterStat.index-1].lastAccessedAt, '-')[0],#strings.arraySplit(metadataList[iterStat.index-1].lastAccessedAt, '-')[1],#strings.arraySplit(#strings.arraySplit(metadataList[iterStat.index-1].lastAccessedAt, '-')[2],' ')[0]),'yyyy-M-d')==#dates.format(#dates.create(#strings.arraySplit(metadata.lastAccessedAt, '-')[0],#strings.arraySplit(metadata.lastAccessedAt, '-')[1],#strings.arraySplit(#strings.arraySplit(metadata.lastAccessedAt, '-')[2],' ')[0]),'yyyy-M-d')}">
-                                <section class="dateSection" th:id="${#dates.format(#dates.create(#strings.arraySplit(metadata.lastAccessedAt, '-')[0],#strings.arraySplit(metadata.lastAccessedAt, '-')[1],#strings.arraySplit(#strings.arraySplit(metadata.lastAccessedAt, '-')[2],' ')[0]),'yyyy-M-d')}"><div class="dateHeader" th:id="'dateHeader'+${#dates.format(#dates.create(#strings.arraySplit(metadata.lastAccessedAt, '-')[0],#strings.arraySplit(metadata.lastAccessedAt, '-')[1],#strings.arraySplit(#strings.arraySplit(metadata.lastAccessedAt, '-')[2],' ')[0]),'yyyy-M-d')}"><span th:id="'select'+${#dates.format(#dates.create(#strings.arraySplit(metadata.lastAccessedAt, '-')[0],#strings.arraySplit(metadata.lastAccessedAt, '-')[1],#strings.arraySplit(#strings.arraySplit(metadata.lastAccessedAt, '-')[2],' ')[0]),'yyyy-M-d')}" class="bi-circle pe-2 day-select" style="font-size: 0.85rem;color: lightgray;display: none"></span><span class="text-muted">Accessed </span><strong th:text="${#strings.replace(#dates.format(#dates.create(#strings.arraySplit(metadata.lastAccessedAt, '-')[0],#strings.arraySplit(metadata.lastAccessedAt, '-')[1],#strings.arraySplit(#strings.arraySplit(metadata.lastAccessedAt, '-')[2],' ')[0]), 'EEE, MMM d, yyyy'),'.','')}"></strong></div><div th:id="'dateBody'+${#dates.format(#dates.create(#strings.arraySplit(metadata.lastAccessedAt, '-')[0],#strings.arraySplit(metadata.lastAccessedAt, '-')[1],#strings.arraySplit(#strings.arraySplit(metadata.lastAccessedAt, '-')[2],' ')[0]),'yyyy-M-d')}" class="row" style="margin-left: -2px;">
+                                <section class="dateSection" th:id="${#dates.format(#dates.create(#strings.arraySplit(metadata.lastAccessedAt, '-')[0],#strings.arraySplit(metadata.lastAccessedAt, '-')[1],#strings.arraySplit(#strings.arraySplit(metadata.lastAccessedAt, '-')[2],' ')[0]),'yyyy-M-d')}"><div class="dateHeader" th:id="'dateHeader'+${#dates.format(#dates.create(#strings.arraySplit(metadata.lastAccessedAt, '-')[0],#strings.arraySplit(metadata.lastAccessedAt, '-')[1],#strings.arraySplit(#strings.arraySplit(metadata.lastAccessedAt, '-')[2],' ')[0]),'yyyy-M-d')}"><span th:id="'select'+${#dates.format(#dates.create(#strings.arraySplit(metadata.lastAccessedAt, '-')[0],#strings.arraySplit(metadata.lastAccessedAt, '-')[1],#strings.arraySplit(#strings.arraySplit(metadata.lastAccessedAt, '-')[2],' ')[0]),'yyyy-M-d')}" class="bi-circle pe-2 day-select" style="font-size: 0.85rem;color: lightgray;display: none"></span><span class="text-muted"><th:block th:text="#{main.pages.browse.header.accessed}"></th:block> </span><strong th:text="${formattedDateMap[metadata.id]}"></strong></div><div th:id="'dateBody'+${#dates.format(#dates.create(#strings.arraySplit(metadata.lastAccessedAt, '-')[0],#strings.arraySplit(metadata.lastAccessedAt, '-')[1],#strings.arraySplit(#strings.arraySplit(metadata.lastAccessedAt, '-')[2],' ')[0]),'yyyy-M-d')}" class="row" style="margin-left: -2px;">
                             </th:block>
 
                             <div th:id="${'photoThumbnailContainer'+metadata.id}" class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallWidth)+'px;height:'+(isMobile ? thumbnailHeight : metadata.thumbnailSmallHeight)+'px;padding-left:0;padding-right:0;'}">
@@ -132,6 +132,7 @@
         const page = /*[[${pageParam}]]*/ -1;
         const currentPage = /*[[${currentPage}]]*/ 0;
         const totalPages = /*[[${totalPages}]]*/ 0;
+        const locale = /*[[${locale}]]*/ 'en';
         /*]]>*/
 
         if (page === 0) {
@@ -147,7 +148,7 @@
             http.ajax("get", "/metadata/list/" + activePage + "/0").then(function (data) {
                 if (data.hasOwnProperty("metadataList") === true) {
                     const metadataList = data["metadataList"];
-                    const accessedInstance = new Accessed(metadataList, mediaTypeFilter, activePage, lastDate);
+                    const accessedInstance = new Accessed(metadataList, mediaTypeFilter, activePage, lastDate, locale);
                     accessedInstance.init();
                     // Util.checkErrorImage();
                 }
