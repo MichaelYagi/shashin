@@ -3,24 +3,24 @@
 <body>
 <ul class="nav nav-pills nav-fill ms-3 me-3 mt-3" th:fragment="settings(activePage,faceRecogServicesAvailable,objectRecogEnabled,facialRecogEnabled)">
   <li class="nav-item">
-    <a th:attr="class='nav-link' + ${activePage=='settings' ? ' active' : ''}" href="/settings">Settings</a>
+    <a th:attr="class='nav-link' + ${activePage=='settings' ? ' active' : ''}" href="/settings"><th:block th:text="#{main.pages.settings.tabs.settings}"></th:block></a>
   </li>
   <li class="nav-item">
-    <a th:attr="class='nav-link' + ${activePage=='scan' ? ' active' : ''}" href="/settings/scan">Media Indexing</a>
+    <a th:attr="class='nav-link' + ${activePage=='scan' ? ' active' : ''}" href="/settings/scan"><th:block th:text="#{main.pages.settings.tabs.media}"></th:block></a>
   </li>
   <th:block th:if="${objectRecogEnabled==true || facialRecogEnabled==true}">
     <li class="nav-item">
-      <a th:attr="class='nav-link' + ${activePage=='match' ? ' active' : ''}" href="/settings/match">Match Indexing</a>
+      <a th:attr="class='nav-link' + ${activePage=='match' ? ' active' : ''}" href="/settings/match"><th:block th:text="#{main.pages.settings.tabs.match}"></th:block></a>
     </li>
   </th:block>
   <li class="nav-item">
-    <a th:attr="class='nav-link' + ${activePage=='users' ? ' active' : ''}" href="/settings/users">User Management</a>
+    <a th:attr="class='nav-link' + ${activePage=='users' ? ' active' : ''}" href="/settings/users"><th:block th:text="#{main.pages.settings.tabs.user}"></th:block></a>
   </li>
   <li class="nav-item">
-    <a th:attr="class='nav-link' + ${activePage=='snapshot' ? ' active' : ''}" href="/settings/snapshot">Import/Export</a>
+    <a th:attr="class='nav-link' + ${activePage=='snapshot' ? ' active' : ''}" href="/settings/snapshot"><th:block th:text="#{main.pages.settings.tabs.importexport}"></th:block></a>
   </li>
   <li class="nav-item">
-    <a th:attr="class='nav-link' + ${activePage=='logs' ? ' active' : ''}" href="/settings/logs">Logs</a>
+    <a th:attr="class='nav-link' + ${activePage=='logs' ? ' active' : ''}" href="/settings/logs"><th:block th:text="#{main.pages.settings.tabs.logs}"></th:block></a>
   </li>
 </ul>
 </body>

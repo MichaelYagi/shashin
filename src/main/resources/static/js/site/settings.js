@@ -17,19 +17,19 @@ class Settings {
 
         let lastFieldFocused = "mediaDirTextArea";
         $("#"+lastFieldFocused).focus();
-        $("#selectFolder").text("Select Media Folder");
+        $("#selectFolder").text(shashin.getTranslatedValue('main.pages.settings.control.browse.button.selectfolder'));
 
         $("#mediaDirTextArea").on("focus", function () {
             lastFieldFocused = "mediaDirTextArea";
-            $("#selectFolder").text("Select Media Folder");
+            $("#selectFolder").text(shashin.getTranslatedValue('main.pages.settings.control.browse.button.selectfolder'));
         });
         $("#mediaExcludeDirTextArea").on("focus", function () {
             lastFieldFocused = "mediaExcludeDirTextArea";
-            $("#selectFolder").text("Select Exclude Media Folder");
+            $("#selectFolder").text(shashin.getTranslatedValue('main.pages.settings.control.browse.button.excludefolder'));
         });
         $("#uploadMediaDirectory").on("focus", function () {
             lastFieldFocused = "uploadMediaDirectory";
-            $("#selectFolder").text("Select Upload Media Folder");
+            $("#selectFolder").text(shashin.getTranslatedValue('main.pages.settings.control.browse.button.uploadfolder'));
         });
 
         $("#selectFolder").on("click", function (e) {
@@ -157,14 +157,14 @@ class Settings {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                     let message = "Error";
                     if (data.status === shashin.apiResponse.SUCCESS) {
-                        shashin.showToastMessage("Content deleted", data.msg, {
+                        shashin.showToastMessage(shashin.getTranslatedValue('main.toast.settings.title.success'), data.msg, {
                             icon: "bi-info-circle",
                             iconColor: "#777777",
                             autohide: false
                         });
                         $("#propDeleteContent").modal('hide');
                     } else {
-                        shashin.showToastMessage("Could delete content", data.msg, {
+                        shashin.showToastMessage(shashin.getTranslatedValue('main.toast.settings.title.fail'), data.msg, {
                             icon: "bi-exclamation-triangle",
                             iconColor: "#FF0000",
                             autohide: false,
@@ -175,7 +175,7 @@ class Settings {
                 }
                 $("#deleteContentModalStatus").invisible();
             } else {
-                shashin.showToastMessage("Input not valid", "Try again. You must type DELETE in all caps.", {
+                shashin.showToastMessage(shashin.getTranslatedValue('main.toast.settings.input.title.fail'), shashin.getTranslatedValue('main.toast.settings.input.message.fail'), {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FD7E14",
                     borderColor: "warning"
