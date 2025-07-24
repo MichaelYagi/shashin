@@ -18,15 +18,15 @@
                 <th:block th:if="${not #lists.isEmpty(users)}">
                     <thead>
                         <tr>
-                            <th scope="col">Profile</th>
-                            <th scope="col">User ID</th>
-                            <th scope="col">Username</th>
-                            <th scope="col">Role</th>
-                            <th scope="col">Authorized</th>
-                            <th scope="col">Created</th>
-                            <th scope="col">Modified</th>
-                            <th scope="col">Reset Password</th>
-                            <th scope="col">Delete User</th>
+                            <th scope="col"><th:block th:text="#{main.pages.users.profile}"></th:block></th>
+                            <th scope="col"><th:block th:text="#{main.pages.users.userid}"></th:block></th>
+                            <th scope="col"><th:block th:text="#{main.pages.users.username}"></th:block></th>
+                            <th scope="col"><th:block th:text="#{main.pages.users.role}"></th:block></th>
+                            <th scope="col"><th:block th:text="#{main.pages.users.authorized}"></th:block></th>
+                            <th scope="col"><th:block th:text="#{main.pages.users.created}"></th:block></th>
+                            <th scope="col"><th:block th:text="#{main.pages.users.modified}"></th:block></th>
+                            <th scope="col"><th:block th:text="#{main.pages.users.resetpass}"></th:block></th>
+                            <th scope="col"><th:block th:text="#{main.pages.users.deleteuser}"></th:block></th>
                         </tr>
                     </thead>
                     <tbody>

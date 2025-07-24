@@ -14,10 +14,10 @@
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
             <th:block th:if="${objectRecogEnabled==true || facialRecogEnabled==true}">
-                <button class="btn btn-primary" id="matchAction">Scan For Matches</button>
-                <button class="btn btn-danger" id="stopScan">Stop</button>
+                <button class="btn btn-primary" id="matchAction"><th:block th:text="#{main.pages.scan.control.button.scan}"></th:block></button>
+                <button class="btn btn-danger" id="stopScan"><th:block th:text="#{main.pages.scan.control.button.stop}"></th:block></button>
                 <br>
-                <span class="bi-info-circle" style="font-size: 1rem;color: blue;"></span> Face and object detection need to be enabled in settings to detect faces and objects. There should be at least 1 subject to start scanning for faces.
+                <span class="bi-info-circle" style="font-size: 1rem;color: blue;"></span> <th:block th:text="#{main.pages.match.info}"></th:block>
             </th:block>
             <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
         </main>

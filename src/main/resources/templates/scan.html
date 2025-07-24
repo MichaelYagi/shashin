@@ -13,12 +13,12 @@
         <div th:replace="~{fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})}"></div>
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
-            <button class="btn btn-primary" id="scanPhotos">Scan</button>
+            <button class="btn btn-primary" id="scanPhotos"><th:block th:text="#{main.pages.scan.control.button.scan}"></th:block></button>
 <!--            <button class="btn btn-danger" id="deleteThread">Delete Thread</button>-->
-            <button class="btn btn-danger" id="stopScanPhotos">Stop</button>
+            <button class="btn btn-danger" id="stopScanPhotos"><th:block th:text="#{main.pages.scan.control.button.stop}"></th:block></button>
             <br>
             <input type="checkbox" id="reindexFiles" name="reindexFiles">
-            <label for="reindexFiles">Recheck All Files (operation may take a while)</label>
+            <label for="reindexFiles"><th:block th:text="#{main.pages.scan.recheck}"></th:block></label>
             <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
         </main>
     </div>

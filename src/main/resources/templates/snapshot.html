@@ -17,24 +17,24 @@
             <div class="row mt-4">
                 <div class="col-md-auto">
                     <form method="post" action="/settings/snapshot/export">
-                        <button class="btn btn-primary" type="submit" id="export" name="snapshot" value="export">Export data</button>
+                        <button class="btn btn-primary" type="submit" id="export" name="snapshot" value="export"><th:block th:text="#{main.pages.snapshot.exportbutton}"></th:block></button>
                     </form>
                 </div>
                 <div class="col-lg-10">
                     <form method="post" enctype="multipart/form-data" action="/settings/snapshot" class="col-lg-4">
                         <div class="input-group">
                             <input type="file" accept=".zip" class="form-control" id="snapshotFile" name="snapshotFile" aria-describedby="snapshotFile" aria-label="Upload">
-                            <button class="btn btn-secondary" id="import" type="submit" name="snapshot" value="import">Import data</button>
+                            <button class="btn btn-secondary" id="import" type="submit" name="snapshot" value="import"><th:block th:text="#{main.pages.snapshot.importbutton}"></th:block></button>
                         </div>
 
                         <div class="input-group">
                             <input class="form-check-input" type="checkbox" name="importDatabase" id="importDatabase">&nbsp;
-                            <label class="form-check-label" for="importDatabase">Import database only</label>
+                            <label class="form-check-label" for="importDatabase"><th:block th:text="#{main.pages.snapshot.importcheck}"></th:block></label>
                         </div>
                     </form>
                 </div>
             </div>
-            <span class="bi-info-circle" style="font-size: 1rem;color: blue;"></span> Export or import metadata zip file and backup database. People and keywords will not be exported.
+            <span class="bi-info-circle" style="font-size: 1rem;color: blue;"></span> <th:block th:text="#{main.pages.snapshot.info}"></th:block>
             <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
         </main>
     </div>

@@ -29,7 +29,7 @@
                         <input type="text" class="form-control" id="lineLimit" value="">
                     </div>
                     <div class="col-sm-3">
-                        <button class="btn btn-secondary" type="button" id="lineLimitButton">Set Line Limit</button>
+                        <button class="btn btn-secondary" type="button" id="lineLimitButton"><th:block th:text="#{main.pages.logs.limitbutton}"></th:block></button>
                         <script type="text/javascript" th:nonce="${cspNonce}">
                             $("#lineLimitButton").on("click", function (e) {
                                 e.preventDefault();
