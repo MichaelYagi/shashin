@@ -1,6 +1,6 @@
 class Favorites {
 
-    constructor(metadataList, mediaTypeFilter, activePage, lastDate) {
+    constructor(metadataList, mediaTypeFilter, activePage, lastDate, locale) {
         this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
@@ -9,6 +9,7 @@ class Favorites {
         this.activePage = activePage;
         this.lastDate = lastDate;
         this.eol = false;
+        this.locale = locale;
         const lgConfig = {
             dynamic:true,
             plugins:[]
@@ -90,7 +91,7 @@ class Favorites {
                                 }
                                 const currentDate = metadata.year + "-" + metadata.month + "-" + metadata.day;
                                 const nextDate = metadataList.hasOwnProperty(index+1) ? metadataList[index+1].year + "-" + metadataList[index+1].month + "-" + metadataList[index+1].day : "";
-                                const displayCurrentDate = dateFormat(currentDate.replace(/-/g, "/"), "ddd, mmm d, yyyy");
+                                const displayCurrentDate = Util.getDateString(metadata.year, metadata.month, metadata.day, this.locale);
 
                                 if (lastDate !== currentDate || $("#"+currentDate).length === 0) {
                                     dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
