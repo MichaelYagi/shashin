@@ -74,7 +74,7 @@ class Dashboard {
         new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Total People Tagged', 'Total Favorites', 'Total Comments', 'Total Albums'],
+                labels: [shashin.getTranslatedValue("main.pages.dashboard.peopletagged"), shashin.getTranslatedValue("main.pages.dashboard.favorites"), shashin.getTranslatedValue("main.pages.dashboard.comments"), shashin.getTranslatedValue("main.pages.dashboard.albums")],
                 datasets: [{
                     data: [data.photosWithPeopleTaggedCount, data.favoritesCount, data.commentsCount, data.albumCount],
                     backgroundColor: [
@@ -111,7 +111,7 @@ class Dashboard {
         new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Photos', 'Videos', 'Missing Coordinate Data', 'Archived'],
+                labels: [shashin.getTranslatedValue("main.pages.dashboard.totalphotos"), shashin.getTranslatedValue("main.pages.dashboard.totalvideos"), shashin.getTranslatedValue("main.pages.dashboard.missingcoords"), shashin.getTranslatedValue("main.pages.dashboard.totalarchived")],
                 datasets: [{
                     data: [data.photoCount, data.videoCount, data.notLocatedCount, data.hiddenCount],
                     backgroundColor: [
@@ -214,27 +214,27 @@ class Dashboard {
 
         if (data.activeUserCount > 0) {
             counts.push(data.activeUserCount);
-            labels.push("Authorized Users");
+            labels.push(shashin.getTranslatedValue("main.pages.dashboard.authorusers"));
         }
         if (data.activeAdminCount > 0) {
             counts.push(data.activeAdminCount);
-            labels.push("Authorized Admins");
+            labels.push(shashin.getTranslatedValue("main.pages.dashboard.authoradmins"));
         }
         if (data.activeSuperCount > 0) {
             counts.push(data.activeSuperCount);
-            labels.push("Authorized Super Admins");
+            labels.push(shashin.getTranslatedValue("main.pages.dashboard.authorsuperadmins"));
         }
         if (data.pendingUserCount > 0) {
             counts.push(data.pendingUserCount);
-            labels.push("Unauthorized Users");
+            labels.push(shashin.getTranslatedValue("main.pages.dashboard.unauthorusers"));
         }
         if (data.pendingAdminCount > 0) {
             counts.push(data.pendingAdminCount);
-            labels.push("Unauthorized Admins");
+            labels.push(shashin.getTranslatedValue("main.pages.dashboard.unauthoradmins"));
         }
         if (data.pendingSuperCount > 0) {
             counts.push(data.pendingSuperCount);
-            labels.push("Unauthorized Super Admins");
+            labels.push(shashin.getTranslatedValue("main.pages.dashboard.unauthorsuperadmins"));
         }
 
         const userColors = [];
@@ -267,7 +267,7 @@ class Dashboard {
                     },
                     title: {
                         display: true,
-                        text: 'User Roles',
+                        text: shashin.getTranslatedValue("main.pages.dashboard.userroles"),
                         font: {
                             size: 14,
                             weight: 'bold'
@@ -287,9 +287,6 @@ class Dashboard {
                             let sum = 0;
 
                             let userType = ctx.chart.data.labels[ctx.dataIndex];
-                            if (userType.includes("Super Admins")) {
-                                userType = userType.replace("Super Admins","Super\nAdmins");
-                            }
 
                             let dataArr = ctx.chart.data.datasets[0].data;
                             dataArr.map(data => {
@@ -348,7 +345,7 @@ class Dashboard {
                     },
                     title: {
                         display: true,
-                        text: 'Requests by Browser',
+                        text: shashin.getTranslatedValue("main.pages.dashboard.browserrequest"),
                         font: {
                             size: 14,
                             weight: 'bold'
@@ -421,7 +418,7 @@ class Dashboard {
                     },
                     title: {
                         display: true,
-                        text: 'Requests by OS',
+                        text: shashin.getTranslatedValue("main.pages.dashboard.osrequest"),
                         font: {
                             size: 14,
                             weight: 'bold'
@@ -531,14 +528,14 @@ class Dashboard {
             data: {
                 datasets: [
                     {
-                        label: 'JVM CPU %',
+                        label: shashin.getTranslatedValue("main.pages.dashboard.jvmcpu"),
                         data: [],
                         fill: false,
                         borderColor: 'rgb(54, 162, 235)',
                         tension: this.tension //0.5 for curved
                     },
                     {
-                        label: 'System CPU %',
+                        label: shashin.getTranslatedValue("main.pages.dashboard.systemcpu"),
                         data: [],
                         fill: false,
                         borderColor: 'rgb(255, 206, 86)',
@@ -569,7 +566,7 @@ class Dashboard {
             data: {
                 datasets: [
                     {
-                        label: 'Memory Used %',
+                        label: shashin.getTranslatedValue("main.pages.dashboard.memoryused"),
                         data: [],
                         fill: false,
                         borderColor: 'rgb(54, 162, 235)',

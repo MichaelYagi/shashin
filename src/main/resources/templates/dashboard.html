@@ -16,7 +16,7 @@
                 <div class="col pb-4">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title">Usage</h5>
+                            <h5 class="card-title"><th:block th:text="#{main.pages.dashboard.usage}"></th:block></h5>
                         </div>
                         <div class="card-body">
                             <div class="card-text">
@@ -26,11 +26,11 @@
                                     </div>
 
                                     <div class="col-sm text-center" id="mediaStatusContainer" style="display: none">
-                                        <h1 class="display-6">Media&nbsp;<span id="mediaStatus"></span></h1>
+                                        <h1 class="display-6"><th:block th:text="#{main.pages.dashboard.media}"></th:block>&nbsp;<span id="mediaStatus"></span></h1>
                                     </div>
 
                                     <div class="col-sm text-center" id="nominatimStatusContainer" style="display: none">
-                                        <h1 class="display-6">Nominatim&nbsp;<span id="nominatimStatus"></span></h1>
+                                        <h1 class="display-6"><th:block th:text="#{main.pages.dashboard.nominatim}"></th:block>&nbsp;<span id="nominatimStatus"></span></h1>
                                     </div>
 
                                     <div class="col-sm text-center" id="compreFaceStatusContainer" style="display: none">
@@ -60,13 +60,13 @@
                 <div class="col pb-4">
                     <div class="card h-100">
                         <div class="card-header">
-                            <h5 class="card-title">Page Metrics</h5>
+                            <h5 class="card-title"><th:block th:text="#{main.pages.dashboard.pagemetrics}"></th:block></h5>
                         </div>
                         <div class="card-body">
                             <div class="card-text">
                                 <div class="row pb-5">
                                     <div class="col-sm-4">
-                                        <strong>Endpoint Total Time</strong>
+                                        <strong><th:block th:text="#{main.pages.dashboard.totaltime}"></th:block></strong>
                                     </div>
 
                                     <div class="col-sm">
@@ -75,7 +75,7 @@
                                 </div>
                                 <div class="row pb-5">
                                     <div class="col-sm-4">
-                                        <strong>Endpoint Average Time</strong>
+                                        <strong><th:block th:text="#{main.pages.dashboard.average}"></th:block></strong>
                                     </div>
 
                                     <div class="col-sm">
@@ -84,7 +84,7 @@
                                 </div>
                                 <div class="row pb-5">
                                     <div class="col-sm-4">
-                                        <strong>Endpoint Fastest Time</strong>
+                                        <strong><th:block th:text="#{main.pages.dashboard.fastest}"></th:block></strong>
                                     </div>
 
                                     <div class="col-sm">
@@ -93,7 +93,7 @@
                                 </div>
                                 <div class="row pb-5">
                                     <div class="col-sm-4">
-                                        <strong>Endpoint Slowest Time</strong>
+                                        <strong><th:block th:text="#{main.pages.dashboard.slowest}"></th:block></strong>
                                     </div>
 
                                     <div class="col-sm">
@@ -108,7 +108,7 @@
                 <div class="col pb-4">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title">CPU</h5>
+                            <h5 class="card-title"><th:block th:text="#{main.pages.dashboard.cpu}"></th:block></h5>
                         </div>
                         <div class="card-body">
                             <div class="card-text">
@@ -121,7 +121,7 @@
                 <div class="col pb-4">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title">Memory</h5>
+                            <h5 class="card-title"><th:block th:text="#{main.pages.dashboard.memory}"></th:block></h5>
                         </div>
                         <div class="card-body">
                             <div class="card-text">
@@ -149,10 +149,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <p class="text-muted">Sidecar Data Size</p>
+                            <p class="text-muted"><th:block th:text="#{main.pages.dashboard.sidecarsize}"></th:block></p>
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title">Gallery Stats</h5>
+                            <h5 class="card-title"><th:block th:text="#{main.pages.dashboard.gallerystats}"></th:block></h5>
                             <p class="card-text">
                                 <canvas id="siteStatChart" height="400"></canvas>
                             </p>
@@ -164,10 +164,10 @@
                     <div class="card">
                         <div class="card-header">
                             <h2 id="mediaCount"></h2>
-                            <p class="text-muted">Total Media Scanned</p>
+                            <p class="text-muted"><th:block th:text="#{main.pages.dashboard.totalmedia}"></th:block></p>
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title">Media Stats</h5>
+                            <h5 class="card-title"><th:block th:text="#{main.pages.dashboard.mediastats}"></th:block></h5>
                             <p class="card-text">
                                 <canvas id="mediaChart" height="400"></canvas>
                             </p>
@@ -181,10 +181,10 @@
                     <div class="card">
                         <div class="card-header">
                             <h2 id="cameraCount"></h2>
-                            <p class="text-muted">Camera Models Used In Media</p>
+                            <p class="text-muted"><th:block th:text="#{main.pages.dashboard.cameramodels}"></th:block></p>
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title">Camera Stats</h5>
+                            <h5 class="card-title"><th:block th:text="#{main.pages.dashboard.camerastats}"></th:block></h5>
                             <p class="card-text">
                                 <canvas id="cameraChart" height="600"></canvas>
                             </p>
@@ -196,10 +196,10 @@
                     <div class="card">
                         <div class="card-header">
                             <h2 id="keywordCount"></h2>
-                            <p class="text-muted">Total Keywords</p>
+                            <p class="text-muted"><th:block th:text="#{main.pages.dashboard.keywords}"></th:block></p>
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title">Keyword Stats</h5>
+                            <h5 class="card-title"><th:block th:text="#{main.pages.dashboard.keywordsstats}"></th:block></h5>
                             <p class="card-text">
                                 <canvas id="keywordChart" height="600"></canvas>
                             </p>
@@ -240,7 +240,7 @@
 
         if (shashinServerStartUnixMS > 0) {
             setInterval(function () {
-                $("#uptimeText").html("Uptime <code>" + Util.convertMSToRelativeTime(Date.now()-shashinServerStartUnixMS) + "</code>");
+                $("#uptimeText").html(shashin.getTranslatedValue("main.pages.dashboard.uptime") + " <code>" + Util.convertMSToRelativeTime(Date.now()-shashinServerStartUnixMS) + "</code>");
             }, 1000);
         }
 
@@ -284,9 +284,9 @@
                         $("#compreFaceStatus").attr("title", "CompreFace is " + (data["compreFaceAvailable"] ? "" : "not " ) + "available");
                         $("#compreFaceStatus").addClass((data["compreFaceAvailable"] ? "bi-check-circle" : "bi-x-circle"));
                         if (data["compreFaceAvailable"]) {
-                            $("#compreFaceText").text('CompreFace');
+                            $("#compreFaceText").text(shashin.getTranslatedValue("main.pages.dashboard.compreface"));
                         } else {
-                            $("#compreFaceText").html('<a href="/settings" target="_blank">CompreFace</a>');
+                            $("#compreFaceText").html('<a href="/settings" target="_blank">'+shashin.getTranslatedValue("main.pages.dashboard.compreface")+'</a>');
                         }
                     }
                     $("#endpointProcessingTimeMS").text("0 ms");
@@ -349,7 +349,7 @@
                         }
                     }
                     $("#sidecarUsedSizeText").html(data["sidecarUsedSizeText"]);
-                    $("#sidecarUsableSizeText").html("<small class='text-muted'>" + data["sidecarUsableSizeText"] + " usable space left</small>");
+                    $("#sidecarUsableSizeText").html("<small class='text-muted'>" + data["sidecarUsableSizeText"] + " " + shashin.getTranslatedValue("main.pages.dashboard.usablespace") + "</small>");
                     $("#mediaCount").text(numberWithCommas(parseInt(data["photoCount"]) + parseInt(data["videoCount"])));
                     $("#cameraCount").text(numberWithCommas(parseInt(data["cameraTotalCount"])));
                     $("#keywordCount").text(numberWithCommas(parseInt(data["keywordTotalCount"])));
