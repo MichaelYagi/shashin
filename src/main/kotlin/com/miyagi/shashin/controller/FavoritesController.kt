@@ -142,6 +142,7 @@ class FavoritesController: BaseController() {
         response["metadataList"] = mutableListOf<Metadata>()
         response["mediaTypeFilter"] = "all"
         response["keywordMap"] = mutableMapOf<String, String>()
+        response["formattedDateMap"] = mutableMapOf<String, String>()
         response["page"] = page
         response["size"] = size
         response["totalPages"] = 0
@@ -189,11 +190,14 @@ class FavoritesController: BaseController() {
 
             if (favoriteList != null && favoriteList.count() > 0) {
                 val metadataList = ArrayList<Metadata>()
+                val formattedDateMap = HashMap<String, String>()
                 model["message"] = ""
                 for (favorite in favoriteList) {
                     if (favorite != null) {
                         val metadataObj = metadataRepository.findById(favorite.getMetadataId().toString())
                         metadataList.add(metadataObj.get())
+                        val date = metadataObj.get().getYear().toString() + "-" + metadataObj.get().getMonth().toString() + "-" + metadataObj.get().getDay().toString()
+                        formattedDateMap[metadataObj.get().getId().toString()] = TextUtils.formatToLongDate(date, model.getAttribute("locale").toString()).toString()
                     }
                 }
                 if (metadataList.count() > 0) {
@@ -207,6 +211,7 @@ class FavoritesController: BaseController() {
                 }
 
                 response["keywordMap"] = keywordMap
+                response["formattedDateMap"] = formattedDateMap
                 response["message"] = ""
                 response["msg"] = "Results"
                 response["status"] = ApiResponse.SUCCESS.status
