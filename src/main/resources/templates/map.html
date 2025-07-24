@@ -136,7 +136,7 @@
 </th:block>
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     $(document).ready(async function () {
-        shashin.updateSearchInput("Map");
+        shashin.updateSearchInput(shashin.getTranslatedValue("main.sidebar.map"));
 
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';

@@ -57,7 +57,7 @@
 
 <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
     $(document).ready(function() {
-        shashin.updateSearchInput("Folders");
+        shashin.updateSearchInput(shashin.getTranslatedValue("main.pages.browse.tabs.folders"));
 
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';

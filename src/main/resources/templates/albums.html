@@ -226,7 +226,7 @@
 
 <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
     $(document).ready(function() {
-        shashin.updateSearchInput("Albums");
+        shashin.updateSearchInput(shashin.getTranslatedValue("main.modal.control.albums"));
 
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';

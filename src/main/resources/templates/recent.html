@@ -124,7 +124,7 @@
 </th:block>
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     $(document).ready(function() {
-        shashin.updateSearchInput("Recently Added");
+        shashin.updateSearchInput(shashin.getTranslatedValue("main.pages.browse.tabs.recent"));
 
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
