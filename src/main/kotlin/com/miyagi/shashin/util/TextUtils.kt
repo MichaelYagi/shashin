@@ -367,7 +367,10 @@ class TextUtils {
             try {
                 var locale = Locale(locale)
                 val sdf = SimpleDateFormat(getCommonDateFormat())
-                val newSdf = SimpleDateFormat("MMM d, yyyy", locale)
+                var newSdf = SimpleDateFormat("MMM d, yyyy", locale)
+                if (locale.toString() == "ja") { // If Japanese
+                    newSdf = SimpleDateFormat("yyyy年MMMd日", locale)
+                }
                 val temp = sdf.parse(oldDate)
                 formattedDate = newSdf.format(temp)
             } catch (e: Exception) {

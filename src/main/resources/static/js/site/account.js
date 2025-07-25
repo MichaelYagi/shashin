@@ -211,7 +211,7 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
     }
 
     // Profile edit
-    const initLink = "Enter Image URL";
+    const initLink = shashin.getTranslatedValue("main.pages.account.profile.url");
     $("#profileMode").text(initLink);
 
     let randomString = Util.getMetadataLocalStorage();
@@ -222,7 +222,7 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
         profileUrl = "#";
     }
 
-    shashin.updateSearchInput("Manage Account");
+    shashin.updateSearchInput(shashin.getTranslatedValue("main.pages.account.title"));
 
     $("#removeProfile").on("click", function () {
         $("#removeProfileConfirmationModal").modal('show');
@@ -259,9 +259,9 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
         if ($("#chooseProfilePhoto").attr("type") === "file") {
             // Change to text input
             $("#chooseProfilePhoto").attr("type","url");
-            $("#chooseProfilePhoto").attr("placeholder","Enter URL To Upload Image From Web And Press Enter Key to Upload");
+            $("#chooseProfilePhoto").attr("placeholder",shashin.getTranslatedValue("main.pages.account.profile.choose.placeholder"));
             $("#chooseProfilePhoto").focus();
-            $("#profileMode").text("Choose Image From File");
+            $("#profileMode").text(shashin.getTranslatedValue("main.pages.account.profile.choose.text"));
         } else {
             $("#chooseProfilePhoto").attr("type","file");
             $("#chooseProfilePhoto").attr("placeholder","");
