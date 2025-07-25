@@ -6,15 +6,15 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="aboutLabel"><img id="aboutIcon" th:src="${darkMode == true ? '/images/kamon_transparent_inverted.png' : '/images/kamon_transparent.png'}" width="25px" height="25px" class="mb-1">&nbsp;&nbsp;&nbsp;About</h5>
+                <h5 class="modal-title" id="aboutLabel"><img id="aboutIcon" th:src="${darkMode == true ? '/images/kamon_transparent_inverted.png' : '/images/kamon_transparent.png'}" width="25px" height="25px" class="mb-1">&nbsp;&nbsp;&nbsp;<th:block th:text="#{main.modal.about.title}"></th:block></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>A self-hosted media gallery.</p>
+                <p><th:block th:text="#{main.modal.about.body}"></th:block></p>
                 <th:block th:if="${activeProfile != 'prod'}">
-                    <span th:text="${#strings.capitalize(activeProfile)+' Build'}"></span><br>
+                    <span th:text="${#strings.capitalize(activeProfile)}+' '+#{main.modal.about.build}"></span><br>
                 </th:block>
-                Version <span th:text="${buildProperties.getVersion()}"></span><span id="gitVersionId"></span><br>
+                <th:block th:text="#{main.modal.about.version.pre}"></th:block> <span th:text="${buildProperties.getVersion()}"></span><span id="gitVersionId"></span><br>
                 <th:block th:if="${operatingSystemInfo != ''}">
                     <span th:text="${operatingSystemInfo}"></span><br>
                 </th:block>
@@ -69,7 +69,7 @@
                     let latestTag = latestReleaseInfo.tag_name;
                     let parsedVersion = (latestTag.substring(0, 1) === "v") ? "/" + latestTag.substring(1, latestTag.length) : "";
 
-                    const message = "Version <a href='https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin" + parsedVersion + "' target='_blank'>" + latestTag.substring(1) + "</a> is available.";
+                    const message = shashin.getTranslatedValue("main.modal.about.version.pre") + " <a href='https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin" + parsedVersion + "' target='_blank'>" + latestTag.substring(1) + "</a> " + shashin.getTranslatedValue("main.modal.about.version.post");
                     $("#gitVersionId").html("<br><em>" + message + "</em>");
                     const type = "releases";
 
