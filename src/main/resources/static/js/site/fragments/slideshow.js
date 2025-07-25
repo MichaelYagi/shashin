@@ -1,4 +1,4 @@
-function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, albumImageCount) {
+function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, albumImageCount, locale) {
     let slideshowIntervalId;
     let slideshowStarted = false;
     let slideshowIsPaused = false;
@@ -35,7 +35,7 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
             if (slideshowAlbumArray.length > 0) {
                 html += '<button class="dropdown-item" type="button">' +
                     '<input type="checkbox" data-album-id=0 class="slideshowAlbum" value="all" name="album[]" id="album-0"'+(slideshowAlbumArray.includes("all") ? ' checked="checked"' : '')+'> ' +
-                    '<label for="album-0">All</label>' +
+                    '<label for="album-0">'+shashin.getTranslatedValue("main.pages.slideshow.all")+'</label>' +
                 '</button>';
             }
 
@@ -319,15 +319,15 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                     const takenDateString = data.metadata.year + "-" + data.metadata.month + "-" + data.metadata.day;
                     const takenDate = new Date(takenDateString);
                     const options = {weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'};
-                    let description = takenDate.toLocaleDateString('en-us', options);
+                    let description = takenDate.toLocaleDateString(locale, options);
 
                     if (accessTimelineView === false && data.hasOwnProperty("albumIds") === true && data.albumIds.hasOwnProperty(0) === true) {
-                        description = "<a style='color:#DBE9F4;text-decoration:none;' href='/album/" + data.albumIds[0] + "' target='_blank'>" + takenDate.toLocaleDateString('en-us', options) + "</a>";
+                        description = "<a style='color:#DBE9F4;text-decoration:none;' href='/album/" + data.albumIds[0] + "' target='_blank'>" + takenDate.toLocaleDateString(locale, options) + "</a>";
                     } else if (accessTimelineView === true) {
                         if (Util.isSafari()) {
-                            description = "<a style='color:#DBE9F4;text-decoration:none;' href='/taken' target='_blank'>" + takenDate.toLocaleDateString('en-us', options) + "</a>";
+                            description = "<a style='color:#DBE9F4;text-decoration:none;' href='/taken' target='_blank'>" + takenDate.toLocaleDateString(locale, options) + "</a>";
                         } else {
-                            description = "<a style='color:#DBE9F4;text-decoration:none;' href='/timeline#" + takenDateString + "' target='_blank'>" + takenDate.toLocaleDateString('en-us', options) + "</a>";
+                            description = "<a style='color:#DBE9F4;text-decoration:none;' href='/timeline#" + takenDateString + "' target='_blank'>" + takenDate.toLocaleDateString(locale, options) + "</a>";
                         }
                     }
 
@@ -585,35 +585,35 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         let message = "";
         if (Util.isMobile() === false) {
             message = "<div class='container'>" +
-                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>d</strong></span></div><div class='col-8'>Show/close this window</div></div>" +
-                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>x</strong></span></div><div class='col-8'>Exit slideshow.</div></div>" +
-                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Space</strong></span></div><div class='col-8'>Play/pause</div></div>" +
-                "<span id='castKey' style='display: none;'><div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>c</strong></span></div><div class='col-8'>Start/stop casting</div></div></span>" +
-                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>i</strong></span></div><div class='col-8'>Slide info</div></div>" +
-                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>← →</strong></span></div><div class='col-8'>Go to next/previous slide</div></div>" +
-                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>a</strong></span></div><div class='col-8'>Album Filter</div></div>" +
-                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>- =</strong></span></div><div class='col-8'>Increase/decrease interval</div></div>" +
-                "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='4' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowIsElapsed+"</span> second interval</div></div>";
+                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>d</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.window")+"</div></div>" +
+                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>x</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.exit")+"</div></div>" +
+                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>"+shashin.getTranslatedValue("main.pages.slideshow.space")+"</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.playpause")+"</div></div>" +
+                "<span id='castKey' style='display: none;'><div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>c</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.startstop")+"</div></div></span>" +
+                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>i</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.slideinfo")+"</div></div>" +
+                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>← →</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.nextprev")+"</div></div>" +
+                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>a</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.albumfilter")+"</div></div>" +
+                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>- =</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.idinterval")+"</div></div>" +
+                "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='4' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowIsElapsed+"</span>s "+shashin.getTranslatedValue("main.pages.slideshow.info.interval")+"</div></div>";
                 if ((albumImageCount > 1 && accessTimelineView === false) || (albumImageCount > 0 && accessTimelineView === true)) {
-                    message += "<div class='row mb-1'><button class='btn btn-secondary' type='button' id='slideshowAlbumNameData' value=''>Albums Filter</button></div>";
+                    message += "<div class='row mb-1'><button class='btn btn-secondary' type='button' id='slideshowAlbumNameData' value=''>"+shashin.getTranslatedValue("main.pages.slideshow.info.albumfilter")+"</button></div>";
                 }
             message += "</div>";
 
-            title = "Settings & Keyboard Shortcuts";
+            title = shashin.getTranslatedValue("main.pages.slideshow.info.title.keyboard");
         } else {
             message = "<div class='container'>" +
-                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Swipe Up</strong></span></div><div class='col-8'>Show/close this window</div></div>" +
-                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Swipe Down</strong></span></div><div class='col-8'>Slide info</div></div>" +
-                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Single Tap</strong></span></div><div class='col-8'>Play/pause</div></div>" +
-                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Double Tap</strong></span></div><div class='col-8'>Exit slideshow</div></div>" +
-                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Swipe ← →</strong></span></div><div class='col-8'>Go to next/previous slide</div></div>" +
-                "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='4' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowIsElapsed+"</span> second interval</div></div>";
+                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Swipe Up</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.window")+"</div></div>" +
+                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Swipe Down</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.slideinfo")+"</div></div>" +
+                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Single Tap</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.playpause")+"</div></div>" +
+                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Double Tap</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.exit")+"</div></div>" +
+                "<div class='row mb-1'><div class='col-4 text-center'><span class='badge bg-secondary'><strong>Swipe ← →</strong></span></div><div class='col-8'>"+shashin.getTranslatedValue("main.pages.slideshow.info.nextprev")+"</div></div>" +
+                "<div class='row mb-1'><div class='col-4 text-center'><input type='range' class='form-range' min='1' max='4' id='slideshowIntervalSlide'></div><div class='col-8'><span id='intervalValue'>"+slideshowIsElapsed+"</span>s "+shashin.getTranslatedValue("main.pages.slideshow.info.interval")+"</div></div>";
                 if ((albumImageCount > 1 && accessTimelineView === false) || (albumImageCount > 0 && accessTimelineView === true)) {
-                    message += "<div class='row mb-1'><button class='btn btn-secondary' type='button' id='slideshowAlbumNameData' value=''>Albums Filter</button></div>";
+                    message += "<div class='row mb-1'><button class='btn btn-secondary' type='button' id='slideshowAlbumNameData' value=''>"+shashin.getTranslatedValue("main.pages.slideshow.info.albumfilter")+"</button></div>";
                 }
             message += "</div>";
 
-            title = "Settings & Touch Bindings";
+            title = shashin.getTranslatedValue("main.pages.slideshow.info.title.touch");
         }
 
         shashin.showToastMessage(title,
