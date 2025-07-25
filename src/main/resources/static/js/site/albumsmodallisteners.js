@@ -188,7 +188,7 @@
                 e.preventDefault();
                 $("#shareConfirmationModalInfo").show();
 
-                const action = "clear";
+                const action = shashin.getTranslatedValue("main.pages.albums.share.clear");
                 $("#shareConfirmationModalTitle").text(action.charAt(0).toUpperCase() + action.slice(1));
                 $("#shareConfirmationModalAction").text(action);
                 $("#shareConfirmationAction").val(action);
@@ -200,7 +200,7 @@
             e.preventDefault();
             $("#shareConfirmationModalInfo").hide();
 
-            const action = "generate";
+            const action = shashin.getTranslatedValue("main.pages.albums.share.generate");
             $("#shareConfirmationModalTitle").text(action.charAt(0).toUpperCase() + action.slice(1));
             $("#shareConfirmationModalAction").text(action);
             $("#shareConfirmationAction").val(action);
@@ -218,9 +218,9 @@
 
             const action = $("#shareConfirmationAction").val();
             if (action !== null && action.length > 0) {
-                if (action === "clear") {
+                if (action === shashin.getTranslatedValue("main.pages.albums.share.clear")) {
                     albumsModalSettings.updateShareLink(baseUrl, albumId, "clear");
-                } else if (action === "generate") {
+                } else if (action === shashin.getTranslatedValue("main.pages.albums.share.generate")) {
                     albumsModalSettings.updateShareLink(baseUrl, albumId, "generate");
                 }
             }
