@@ -5,52 +5,52 @@
     <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editPhotosModalLabel"><span id="editPhotosNamesModalLabel" class="mb-1"></span><br><br><span class="mt-2">Edit Photos</span></h5>
+                <h5 class="modal-title" id="editPhotosModalLabel"><span id="editPhotosNamesModalLabel" class="mb-1"></span><br><br><span class="mt-2"><th:block th:text="#{main.modal.batch.header}"></th:block></span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <ul class="nav nav-pills nav-fill ms-3 me-3 mt-3 mb-2">
                 <li class="nav-item" id="batchGeneralTabNav">
-                    <a class="nav-link show active" data-bs-toggle="tab" id="batchGeneralTabLink" href="#generalBatchTab">Update</a>
+                    <a class="nav-link show active" data-bs-toggle="tab" id="batchGeneralTabLink" href="#generalBatchTab"><th:block th:text="#{main.modal.tab.update}"></th:block></a>
                 </li>
                 <li class="nav-item" id="batchMapTabNav">
-                    <a class="nav-link" data-bs-toggle="tab" id="batchMapTabLink" href="#mapBatchTab">Map</a>
+                    <a class="nav-link" data-bs-toggle="tab" id="batchMapTabLink" href="#mapBatchTab"><th:block th:text="#{main.sidebar.map}"></th:block></a>
                 </li>
             </ul>
             <div class="modal-body ui-front" id="propBatchMetadataBody">
                 <div class="tab-content">
                     <div class="tab-pane container show active" id="generalBatchTab">
-                        <p class="text-muted">Empty fields will be ignored. Data will be overwritten unless checking add to existing fields.</p>
+                        <p class="text-muted"><th:block th:text="#{main.modal.batch.update.msg}"></th:block></p>
                         <form id="saveBatchData">
                             <input type="hidden" id="batchMetadataIds" name="batchMetadataIds" value="">
                             <input type="hidden" id="batchFilenames" name="batchFilenames" value="">
 
                             <div class="form-group row">
                                 <div class="col-sm">
-                                    <label for="cameraBatchData" class="col-form-label">Camera</label>
+                                    <label for="cameraBatchData" class="col-form-label"><th:block th:text="#{main.modal.camera}"></th:block></label>
                                     <input type="text" class="form-control" id="cameraBatchData" name="cameraBatchData" value="">
                                     <input type="hidden" id="camerasBatchString" th:value="${cameras}">
                                 </div>
                                 <div class="col-sm">
-                                    <label for="lensBatchData" class="col-form-label">Lens</label>
+                                    <label for="lensBatchData" class="col-form-label"><th:block th:text="#{main.modal.lens}"></th:block></label>
                                     <input type="text" class="form-control" id="lensBatchData" name="lensBatchData" value="">
                                     <input type="hidden" id="lensesBatchString" th:value="${lenses}">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <div class="col-sm">
-                                    <label for="yearTakenBatchData" class="col-form-label">Year taken</label>
+                                    <label for="yearTakenBatchData" class="col-form-label"><th:block th:text="#{main.modal.taken.year}"></th:block></label>
                                     <input type="number" class="form-control" id="yearTakenBatchData" name="yearTakenBatchData" value="" maxlength="4" min="1826">
                                 </div>
                                 <div class="col-sm">
-                                    <label for="monthTakenBatchData" class="col-form-label">Month taken</label>
+                                    <label for="monthTakenBatchData" class="col-form-label"><th:block th:text="#{main.modal.taken.month}"></th:block></label>
                                     <input type="number" class="form-control" id="monthTakenBatchData" name="monthTakenBatchData" value="" maxlength="2" min="1" max="12">
                                 </div>
                                 <div class="col-sm">
-                                    <label for="dayTakenBatchData" class="col-form-label">Day taken</label>
+                                    <label for="dayTakenBatchData" class="col-form-label"><th:block th:text="#{main.modal.taken.day}"></th:block></label>
                                     <input type="number" class="form-control" id="dayTakenBatchData" name="dayTakenBatchData" value="" maxlength="2" min="1" max="31">
                                 </div>
                                 <div class="col-sm">
-                                    <label for="offsetTakenBatchData" class="col-form-label">GMT Offset</label>
+                                    <label for="offsetTakenBatchData" class="col-form-label"><th:block th:text="#{main.modal.taken.gmt}"></th:block></label>
                                     <select class="form-select" id="offsetTakenBatchData" name="offsetTakenBatchData">
                                         <option value="">--GMT--</option>
                                         <th:block th:each="offset, iterStat: ${timeOffsets}">
@@ -61,11 +61,11 @@
                             </div>
                             <div class="form-group row">
                                 <div class="col-sm">
-                                    <label for="latlngBatchData" class="col-form-label">Latitude, Longitude</label>
+                                    <label for="latlngBatchData" class="col-form-label"><th:block th:text="#{main.modal.latlng}"></th:block></label>
                                     <input type="text" class="form-control" id="latlngBatchData" name="latlngBatchData" value="">
                                 </div>
                                 <div class="col-sm">
-                                    <label for="keywordsBatchData" class="col-form-label">Keywords (comma separated)</label>
+                                    <label for="keywordsBatchData" class="col-form-label"><th:block th:text="#{main.modal.keywords}"></th:block></label>
                                     <input type="text" class="form-control" id="keywordsBatchData" name="keywordsBatchData" value="">
                                     <input type="hidden" id="keywordsBatchString" th:value="${keywords}">
                                 </div>
@@ -74,67 +74,67 @@
                                 <div class="col-sm"></div>
                                 <div class="col-sm">
                                     <input type="checkbox" name="addtoexistingkeywords" id="addtoexistingkeywords">
-                                    <label class="form-check-label" for="addtoexistingkeywords">Add to existing keywords</label>
+                                    <label class="form-check-label" for="addtoexistingkeywords"><th:block th:text="#{main.modal.batch.update.addkeywords}"></th:block></label>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <div class="col-sm">
-                                    <label for="albumNameInput" class="col-form-label">Add to Album (comma separated)</label>
+                                    <label for="albumNameInput" class="col-form-label"><th:block th:text="#{main.modal.albums}"></th:block></label>
                                     <div class="input-group" id="batchAlbumNames">
                                         <div class="input-group" id="albumListForModal">
                                             <input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="">
-                                            <button class="btn btn-secondary" type="button" id="albumBatchNameData" style="display: none;">Albums</button>
+                                            <button class="btn btn-secondary" type="button" id="albumBatchNameData" style="display: none;"><th:block th:text="#{main.modal.control.albums}"></th:block></button>
                                         </div>
                                         <br>
                                         <div>
                                             <input type="checkbox" name="addtoexistingalbums" id="addtoexistingalbums">
-                                            <label class="form-check-label" for="addtoexistingalbums">Add to existing albums</label>
+                                            <label class="form-check-label" for="addtoexistingalbums"><th:block th:text="#{main.modal.batch.update.addalbums}"></th:block></label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-sm">
-                                    <label for="tagBatchDataInput" class="col-form-label">Tag People (comma separated)</label>
+                                    <label for="tagBatchDataInput" class="col-form-label"><th:block th:text="#{main.modal.people}"></th:block></label>
                                     <div class="input-group" id="batchLabelIds">
                                         <input type="text" class="form-control" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">
-                                        <button class="btn btn-secondary" type="button" id="peopleBatchNameData" style="display: none;">People</button>
+                                        <button class="btn btn-secondary" type="button" id="peopleBatchNameData" style="display: none;"><th:block th:text="#{main.modal.control.people}"></th:block></button>
                                     </div>
                                     <div>
                                         <input type="checkbox" name="addtoexistingpeople" id="addtoexistingpeople">
-                                        <label class="form-check-label" for="addtoexistingpeople">Add to existing people</label>
+                                        <label class="form-check-label" for="addtoexistingpeople"><th:block th:text="#{main.modal.batch.update.addpeople}"></th:block></label>
                                     </div>
                                 </div>
                             </div>
                             <button class="btn btn-secondary col-12 mt-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBatchMetadata" aria-expanded="false" aria-controls="collapseBatchMetadata">
-                                More
+                                <th:block th:text="#{main.modal.control.more}"></th:block>
                             </button>
                             <div class="collapse mt-3" id="collapseBatchMetadata">
                                 <div class="form-group row">
                                     <div class="col-sm">
                                         <input type="checkbox" name="batchhidden" id="batchhidden">
-                                        <label class="form-check-label" for="batchhidden">Archive media</label>
+                                        <label class="form-check-label" for="batchhidden"><th:block th:text="#{main.modal.archive}"></th:block></label>
                                     </div>
                                     <div class="col-sm">
                                         <input type="checkbox" name="batchisobject" id="batchisobject">
-                                        <label class="form-check-label" for="batchisobject">Unidentified people</label>
+                                        <label class="form-check-label" for="batchisobject"><th:block th:text="#{main.modal.unidentified}"></th:block></label>
                                     </div>
                                     <div class="col-sm">
                                         <input type="checkbox" name="batchrescan" id="batchrescan">
-                                        <label class="form-check-label" for="batchrescan">Rescan media</label>
+                                        <label class="form-check-label" for="batchrescan"><th:block th:text="#{main.modal.rescan}"></th:block></label>
                                     </div>
                                 </div>
                             </div>
                         </form>
                     </div>
                     <div class="tab-pane container fade" id="mapBatchTab">
-                        <span id="mapTabMessage">Set coordinates in the context menu</span>
+                        <span id="mapTabMessage"><th:block th:text="#{main.modal.batch.map.setcoord}"></th:block></span>
                         <div data-role="dialog" id="modalbatchmap" class="map" style="width: 100%;height: 400px"></div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <div id="metadataBatchModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 1.55rem;" role="status" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
-                <button type="button" class="btn btn-primary" id="saveBatchMetadata">Save</button>
-                <button id="metadataBatchModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveBatchMetadata"><th:block th:text="#{main.modal.save}"></th:block></button>
+                <button id="metadataBatchModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal"><th:block th:text="#{main.modal.cancel}"></th:block></button>
             </div>
         </div>
     </div>
@@ -144,13 +144,13 @@
     <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="rescanBatchMetadataModalLabel">Rescan Metadata</h5>
+                <h5 class="modal-title" id="rescanBatchMetadataModalLabel"><th:block th:text="#{main.modal.rescan.metadata}"></th:block></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">Are you sure you want to rescan metadata? Some data you have manually changed may be lost!</div>
+            <div class="modal-body"><th:block th:text="#{main.modal.batch.update.confirm.rescan}"></th:block></div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="confirmRescanBatchMetadata">Confirm</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="confirmRescanBatchMetadata"><th:block th:text="#{main.modal.confirm}"></th:block></button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><th:block th:text="#{main.modal.cancel}"></th:block></button>
             </div>
         </div>
     </div>
@@ -183,8 +183,7 @@
                 </th:block>
             </div>
             <div class="modal-footer">
-<!--                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="confirmBatchAlbumSelection">Select</button>-->
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelBatchAlbumSelection">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelBatchAlbumSelection"><th:block th:text="#{main.modal.close}"></th:block></button>
             </div>
         </div>
     </div>
@@ -219,8 +218,7 @@
                 </th:block>
             </div>
             <div class="modal-footer">
-<!--                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="confirmBatchPeopleSelection">Select</button>-->
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelBatchPeopleSelection">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelBatchPeopleSelection"><th:block th:text="#{main.modal.close}"></th:block></button>
             </div>
         </div>
     </div>
