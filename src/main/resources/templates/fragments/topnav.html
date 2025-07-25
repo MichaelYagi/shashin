@@ -30,13 +30,13 @@
     <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="slideshowAlbumSelectionLabel">Select Albums</h5>
+                <h5 class="modal-title" id="slideshowAlbumSelectionLabel"><th:block th:text="#{main.pages.map.modal.selectalbum}"></th:block></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="slideshowAlbumSelectionList"></div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="confirmSlideshowAlbumSelection">Save</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelSlideshowAlbumSelection">Cancel</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="confirmSlideshowAlbumSelection"><th:block th:text="#{main.modal.save}"></th:block></button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelSlideshowAlbumSelection"><th:block th:text="#{main.modal.cancel}"></th:block></button>
             </div>
         </div>
     </div>
@@ -216,13 +216,13 @@
             </a>
             <div class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownMenuButton" style="z-index: 9999">
                 <h6 class="dropdown-header" th:text="${currentUser.username}"></h6>
-                <a th:class="'dropdown-item'+${activePage=='account'?' active':''}" href="/users/account">Manage Account</a>
+                <a th:class="'dropdown-item'+${activePage=='account'?' active':''}" href="/users/account"><th:block th:text="#{main.pages.account.title}"></th:block></a>
                 <th:block th:if="${hasImageMedia}">
-                    <a href="#" class="dropdown-item" id="viewSlideshow">View Slideshow</a>
+                    <a href="#" class="dropdown-item" id="viewSlideshow"><th:block th:text="#{main.view.slideshow}"></th:block></a>
                 </th:block>
-                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#propAbout">About</a>
+                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#propAbout"><th:block th:text="#{main.modal.about.title}"></th:block></a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="/users/logout">Sign Out</a>
+                <a class="dropdown-item" href="/users/logout"><th:block th:text="#{main.view.signout}"></th:block></a>
             </div>
         </div>
     </div>
