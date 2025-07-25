@@ -36,10 +36,10 @@
                     <input id="shareLink" type="hidden" th:value="${shareLink}">
 
                     <th:block th:if="${pageParam == null}">
-                        <div><a th:href="${'/share/' + shareLink + '/album/' + album.id}" class="ms-1" style="text-decoration:none;">Go to default view</a></div>
+                        <div><a th:href="${'/share/' + shareLink + '/album/' + album.id}" class="ms-1" style="text-decoration:none;"><th:block th:text="#{main.view.default}"></th:block></a></div>
                     </th:block>
                     <th:block th:if="${pageParam != null}">
-                        <div><a th:href="${'/share/' + shareLink + '/album/' + album.id + '/0'}" class="ms-1" style="text-decoration:none;">Go to paged view</a></div>
+                        <div><a th:href="${'/share/' + shareLink + '/album/' + album.id + '/0'}" class="ms-1" style="text-decoration:none;"><th:block th:text="#{main.view.paged}"></th:block></a></div>
                     </th:block>
 
                     <div th:class="'row' + ${isMobile ? '' : ' image-group-padding'}">
