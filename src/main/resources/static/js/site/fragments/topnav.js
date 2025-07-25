@@ -1,4 +1,4 @@
-async function setVarsTopNav(darkMode, placeNames, timezone, notificationAlerts, searchHistoryLimit, queryLimit, accessTimelineView, hasMediaUploadDirectory, autoplayVideo, slideshowInterval, albumImageCount) {
+async function setVarsTopNav(darkMode, placeNames, timezone, notificationAlerts, searchHistoryLimit, queryLimit, accessTimelineView, hasMediaUploadDirectory, autoplayVideo, slideshowInterval, albumImageCount, locale) {
     shashin.darkMode = darkMode;
     shashin.showPlacename = placeNames;
     shashin.autoplayVideo = autoplayVideo;
@@ -202,7 +202,7 @@ async function setVarsTopNav(darkMode, placeNames, timezone, notificationAlerts,
         });
     }
 
-    initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, albumImageCount);
+    initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, albumImageCount, locale);
 
     if (activePage !== "timeline" && activePage !== "wake") {
         captureMessages(activePage, notificationAlerts, timezone);
