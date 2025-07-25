@@ -18,11 +18,11 @@
                         <div class="card-body">
                             <div class="row align-items-center justify-content-center mt-2 mb-2">
                                 <div id="profilePictureEditWrapper" class="mt-3 mb-3" th:style="${'width:16em;max-height:500px;display: ' + {user.profile==null or user.profile==''?'none;':'display;'}}">
-                                    <img referrerPolicy="no-referrer" crossorigin="anonymous" id="profilePictureEdit" th:src="${user.profile==null or user.profile==''?'#':user.profile + '?v=' + randomString}" style="max-height: 200px;"  onerror="" />
+                                    <img referrerPolicy="no-referrer" crossorigin="anonymous" id="profilePictureEdit" th:src="${user.profile==null or user.profile==''?'#':user.profile + '?v=' + randomString}" style="max-height: 200px;" onerror=""/>
                                 </div>
                                 <div id="profileInfo" class="ms-5 me-3 mt-2">
                                     <h5 class="card-title" th:utext="${currentUser.username}"></h5>
-                                    <h6 class="card-subtitle mb-2 text-muted" th:utext="${'&lt;small class=&quot;text-muted&quot; style=&quot;font-size: 0.8rem&quot; &gt; Joined ' + dateJoined + '&lt;/small&gt;'}"></h6>
+                                    <h6 class="card-subtitle mb-2 text-muted" th:utext="'&lt;small class=&quot;text-muted&quot; style=&quot;font-size: 0.8rem&quot; &gt; ' + #{main.pages.account.joined} + ' ' + ${dateJoined} + '&lt;/small&gt;'"></h6>
                                     <p th:utext="${roleDescription}"></p>
                                 </div>
                             </div>
@@ -34,15 +34,15 @@
             <div class="row align-items-center justify-content-center mt-4">
                 <div class="col-lg-6">
                     <div class="input-group mb-2">
-                        <h1 class="display-1" style="font-size:1.5rem;">Edit Profile Picture</h1>
+                        <h1 class="display-1" style="font-size:1.5rem;"><th:block th:text="#{main.pages.account.editprofile}"></th:block></h1>
                     </div>
 
                     <div class="input-group mb-2">
                         <input type="file" th:accept="${'.'+#strings.listJoin(acceptedImageTypes, ',.')}" class="form-control" id="chooseProfilePhoto" name="chooseProfilePhoto" aria-describedby="chooseProfilePhoto" aria-label="Upload">
-                        <button type="button" class="btn btn-danger rounded-end" id="removeProfile" th:style="${'display: '+{user.profile==null or user.profile==''?'none;':'block;'}}">Delete Profile Picture</button>
-                        <button type="button" class="btn btn-secondary rounded-end" id="saveProfile" style="display: none;">Save</button>
+                        <button type="button" class="btn btn-danger rounded-end" id="removeProfile" th:style="${'display: '+{user.profile==null or user.profile==''?'none;':'block;'}}"><th:block th:text="#{main.pages.account.button.deleteprofile}"></th:block></button>
+                        <button type="button" class="btn btn-secondary rounded-end" id="saveProfile" style="display: none;"><th:block th:text="#{main.modal.save}"></th:block></button>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <button type="button" id="cancelProfile" class="btn btn-secondary rounded" style="display: none;float:right;">Cancel</button>
+                        <button type="button" id="cancelProfile" class="btn btn-secondary rounded" style="display: none;float:right;"><th:block th:text="#{main.modal.cancel}"></th:block></button>
                     </div>
 
                     <div class="input-group mb-2">
@@ -53,31 +53,31 @@
             <div class="row align-items-center justify-content-center mt-4">
                 <div class="col-lg-6">
                     <div class="input-group mb-2">
-                        <h1 class="display-1" style="font-size:1.5rem;">Website Settings</h1>
+                        <h1 class="display-1" style="font-size:1.5rem;"><th:block th:text="#{main.pages.account.sitesettings}"></th:block></h1>
                     </div>
 
                     <div class="dropdown-item">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="darkModeSwitch" th:checked="${currentUser.darkMode}">
-                            <label class="form-check-label" for="darkModeSwitch">Dark Mode</label>
+                            <label class="form-check-label" for="darkModeSwitch"><th:block th:text="#{main.pages.account.sitesettings.darkmode}"></th:block></label>
                         </div>
                     </div>
                     <div class="dropdown-item">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="autoplayVideoSwitch" th:checked="${currentUser.autoplayVideo}">
-                            <label class="form-check-label" for="autoplayVideoSwitch">Autoplay Videos</label>
+                            <label class="form-check-label" for="autoplayVideoSwitch"><th:block th:text="#{main.pages.account.sitesettings.autoplay}"></th:block></label>
                         </div>
                     </div>
                     <div class="dropdown-item">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="showPlacenameSwitch" th:checked="${currentUser.showPlacename}">
-                            <label class="form-check-label" for="showPlacenameSwitch">Show Place Names On Maps</label>
+                            <label class="form-check-label" for="showPlacenameSwitch"><th:block th:text="#{main.pages.account.sitesettings.showplace}"></th:block></label>
                         </div>
                     </div>
                     <div class="dropdown-item">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="showNotificationAlertsSwitch" th:checked="${currentUser.notificationAlerts}">
-                            <label class="form-check-label" for="showNotificationAlertsSwitch">Show Pop-Ups From Notification Board</label>
+                            <label class="form-check-label" for="showNotificationAlertsSwitch"><th:block th:text="#{main.pages.account.sitesettings.popups}"></th:block></label>
                         </div>
                     </div>
                 </div>
@@ -86,7 +86,7 @@
             <div class="row align-items-center justify-content-center mt-4">
                 <div class="col-lg-6">
                     <div class="input-group mb-2">
-                        <h1 class="display-1" style="font-size:1.5rem;">Manage API Key</h1>
+                        <h1 class="display-1" style="font-size:1.5rem;"><th:block th:text="#{main.pages.account.apikey}"></th:block></h1>
                     </div>
 
                     <div class="input-group mb-2">
@@ -100,7 +100,7 @@
                             </button>
                         </div>
                         <div class="input-group mb-3">
-                            View API documentation&nbsp;<a href="/articles/endpoints">here</a>.
+                            <th:block th:text="#{main.pages.account.apikey.doc}"></th:block>&nbsp;<a href="/articles/endpoints"><code>/articles/endpoints</code></a>.
                         </div>
                     </div>
                 </div>
@@ -109,19 +109,19 @@
             <div class="row align-items-center justify-content-center mt-3">
                 <div class="col-lg-6">
                     <div class="input-group mb-2">
-                        <h1 class="display-1" style="font-size:1.5rem;">RSS/ATOM Feed & Slideshow Settings</h1>
+                        <h1 class="display-1" style="font-size:1.5rem;"><th:block th:text="#{main.pages.account.rssatom}"></th:block></h1>
                     </div>
 
                     <div class="input-group mb-2">
                         <div class="input-group mb-3">
-                            RSS feed&nbsp;<a id="rssFeedLink" th:href="${rssFeedLink}" th:text="${rssFeedLink}" target="_blank"></a>&nbsp;<a href='#' id="rssCopyLink" class='bi-clipboard-plus' title='Copy RSS link' style='font-size: 1rem;'></a>
+                            <th:block th:text="#{main.pages.account.rssatom.rss}"></th:block>&nbsp;<a id="rssFeedLink" th:href="${rssFeedLink}" th:text="${rssFeedLink}" target="_blank"></a>&nbsp;<a href='#' id="rssCopyLink" class='bi-clipboard-plus' title='Copy RSS link' style='font-size: 1rem;'></a>
                         </div>
                         <div class="input-group mb-3">
-                            ATOM feed&nbsp;<a id="atomFeedLink" th:href="${atomFeedLink}" th:text="${atomFeedLink}" target="_blank"></a>&nbsp;<a href='#' id="atomCopyLink" class='bi-clipboard-plus' title='Copy Atom link' style='font-size: 1rem;'></a>
+                            <th:block th:text="#{main.pages.account.rssatom.atom}"></th:block>&nbsp;<a id="atomFeedLink" th:href="${atomFeedLink}" th:text="${atomFeedLink}" target="_blank"></a>&nbsp;<a href='#' id="atomCopyLink" class='bi-clipboard-plus' title='Copy Atom link' style='font-size: 1rem;'></a>
                         </div>
                         <th:block th:if="${(albumImageCount > 1 && currentUser.authority == 'ROLE_USER') or (albumImageCount > 0 && (currentUser.authority == 'ROLE_ADMIN' || currentUser.authority == 'ROLE_SUPER'))}">
                             <div class="input-group mb-3">
-                                <button class='btn btn-secondary' type='button' id='slideshowAlbumNameDataId' value=''>Feed and Slideshow Filter</button>
+                                <button class='btn btn-secondary' type='button' id='slideshowAlbumNameDataId' value=''><th:block th:text="#{main.pages.account.rssatom.filter}"></th:block></button>
                             </div>
                         </th:block>
                     </div>
@@ -131,24 +131,24 @@
             <div class="row align-items-center justify-content-center mt-3">
                 <div class="col-lg-6">
                     <div class="input-group mb-2">
-                        <h1 class="display-1" style="font-size:1.5rem;">Change Password</h1>
+                        <h1 class="display-1" style="font-size:1.5rem;"><th:block th:text="#{main.pages.account.pass}"></th:block></h1>
                     </div>
 
                     <form action="/users/account" method="post" id="passwordForm">
                         <div class="input-group mb-3">
-                            <input type="password" id="oldpassword" name="oldpassword" class="form-control" placeholder="Old password" aria-label="" aria-describedby="basic-addon1">
+                            <input type="password" id="oldpassword" name="oldpassword" class="form-control" th:placeholder="#{main.pages.account.pass.placeholder.old}" aria-label="" aria-describedby="basic-addon1">
                             <button class="btn btn-secondary" type="button" id="unhideold"><span id="unhideoldicon" class="bi-eye"></span></button>
                         </div>
                         <div class="input-group mb-3">
-                            <input type="password" id="newpassword" name="newpassword" class="form-control" placeholder="New password" aria-label="" aria-describedby="basic-addon1">
+                            <input type="password" id="newpassword" name="newpassword" class="form-control" th:placeholder="#{main.pages.account.pass.placeholder.new}" aria-label="" aria-describedby="basic-addon1">
                             <button class="btn btn-secondary" type="button" id="unhidenew"><span id="unhidenewicon" class="bi-eye"></span></button>
                         </div>
                         <div class="input-group mb-3">
-                            <input type="password" id="newpasswordconfirm" name="newpasswordconfirm" class="form-control" placeholder="New password confirm" aria-label="" aria-describedby="basic-addon1">
+                            <input type="password" id="newpasswordconfirm" name="newpasswordconfirm" class="form-control" th:placeholder="#{main.pages.account.pass.placeholder.confirm}" aria-label="" aria-describedby="basic-addon1">
                             <button class="btn btn-secondary" type="button" id="unhideconfirm"><span id="unhideconfirmicon" class="bi-eye"></span></button>
                         </div>
 
-                        <button class="btn btn-primary btn-block" type="submit">Save Password</button>
+                        <button class="btn btn-primary btn-block" type="submit"><th:block th:text="#{main.pages.account.savepass}"></th:block></button>
                     </form>
                 </div>
             </div>
@@ -159,13 +159,13 @@
                         <hr>
                         <div class="card mt-2">
                             <button class="btn btn-danger dropdown-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDelete" aria-expanded="false" aria-controls="collapseDelete">
-                                Delete Account
+                                <th:block th:text="#{main.modal.account.delete}"></th:block>
                             </button>
                             <div class="collapse alert-danger" id="collapseDelete">
                                 <div class="alert" role="alert">
-                                    <p><span class="bi-exclamation-triangle-fill"></span> Warning!</p>
-                                    <p>This will permanently delete your account.</p>
-                                    <a href="#" class="btn btn-danger" id="deleteAccount">Delete</a>
+                                    <p><span class="bi-exclamation-triangle-fill"></span> <th:block th:text="#{main.pages.settings.control.delete.warning}"></th:block></p>
+                                    <p><th:block th:text="#{main.pages.account.delete.confirm.account}"></th:block></p>
+                                    <a href="#" class="btn btn-danger" id="deleteAccount"><th:block th:text="#{main.pages.settings.control.delete.button}"></th:block></a>
                                 </div>
                             </div>
                         </div>
@@ -211,7 +211,7 @@
                 <h5 class="modal-title" id="removeProfileConfirmationModalLabel"><th:block th:text="#{main.modal.account.delete.profile}"></th:block></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">Are you sure you want to delete your profile picture?</div>
+            <div class="modal-body"><th:block th:text="#{main.pages.account.delete.confirm.profile}"></th:block></div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="removeProfileConfirmation"><th:block th:text="#{main.modal.confirm}"></th:block></button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><th:block th:text="#{main.modal.cancel}"></th:block></button>
@@ -249,6 +249,7 @@
         const toastTitle = /*[[${toastTitle}]]*/ '';
         const toastBody = /*[[${toastBody}]]*/ '';
         const username = /*[[${currentUser.username}]]*/ '';
+        const locale = /*[[${locale}]]*/ 'en';
         /*]]>*/
 
         initializeAccount(profileUrl, userId, username, status, toastTitle, toastBody);

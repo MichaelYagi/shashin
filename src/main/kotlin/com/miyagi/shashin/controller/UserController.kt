@@ -44,6 +44,7 @@ import javax.imageio.ImageIO
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
+import org.springframework.context.MessageSource
 import org.springframework.http.ResponseCookie
 import org.springframework.transaction.annotation.Transactional
 import java.nio.file.Files
@@ -100,6 +101,9 @@ class UserController {
     var persistentLoginsRepository: PersistentLoginsRepository? = null
 
     @Autowired
+    var messageSource: MessageSource? = null
+
+    @Autowired
     private lateinit var notificationRepository: NotificationRepository
 
     @Autowired
@@ -107,7 +111,7 @@ class UserController {
 
     @GetMapping("/users/account")
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    fun getAccount(model: Model, request: HttpServletRequest): String {
+    fun getAccount(model: Model, request: HttpServletRequest, locale: Locale): String {
         model["message"] = ""
         model["user"] = User()
         model["alertClass"] = ""
@@ -122,7 +126,7 @@ class UserController {
         if (currentUserObj != null && currentUserObj.getAuthority() != "ROLE_SUPER") {
             model["canDeleteAccount"] = true
         }
-        val model = getUserInfo(model, currentUserObj, request)
+        val model = getUserInfo(model, currentUserObj, request, locale)
 
         val module = "account"
         model["msg"] = ""
@@ -135,7 +139,7 @@ class UserController {
 
     @PostMapping("/users/account")
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    fun postAccount(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
+    fun postAccount(model: Model, request: HttpServletRequest, response: HttpServletResponse, locale: Locale): String {
         model["message"] = ""
         model["user"] = User()
         model["alertClass"] = ""
@@ -150,7 +154,7 @@ class UserController {
         if (currentUserObj != null && currentUserObj.getAuthority() != "ROLE_SUPER") {
             model["canDeleteAccount"] = true
         }
-        val model = getUserInfo(model, currentUserObj, request)
+        val model = getUserInfo(model, currentUserObj, request, locale)
 
         if (request.getParameter("oldpassword") != null && request.getParameter("newpassword") != null && request.getParameter("newpasswordconfirm") != null) {
             val oldPassword = java.lang.String.valueOf(request.getParameter("oldpassword")).trim()
@@ -214,7 +218,7 @@ class UserController {
         return module
     }
 
-    private fun getUserInfo(model: Model, currentUserObj: User?, request: HttpServletRequest): Model {
+    private fun getUserInfo(model: Model, currentUserObj: User?, request: HttpServletRequest, locale: Locale): Model {
         if (currentUserObj != null) {
             model["user"] = currentUserObj
 
@@ -227,17 +231,14 @@ class UserController {
             model["atomFeedLink"] = "$baseUrl/${currentUserObj.getApikey()}/atom"
 
             if (currentUserObj.getAuthority() == "ROLE_SUPER") {
-                model["roleDescription"] = "You have <strong>Super Admin</strong> privileges. " +
-                        "You have access to application settings, uploading to albums and timeline, editing metadata, dashboard, maps, browsing and timeline views (if available)."
+                model["roleDescription"] = messageSource?.getMessage("main.pages.account.role.description.super", null, locale)
             } else if (currentUserObj.getAuthority() == "ROLE_ADMIN") {
-                model["roleDescription"] = "You have <strong>Admin</strong> privileges. " +
-                        "You have access to uploading to albums and timeline, editing metadata, dashboard, maps, browsing and timeline views (if available)."
+                model["roleDescription"] = messageSource?.getMessage("main.pages.account.role.description.admin", null, locale)
             } else {
-                model["roleDescription"] = "You have <strong>User</strong> privileges. " +
-                        "You have access to albums shared with you, uploading to albums, maps and viewing metadata."
+                model["roleDescription"] = messageSource?.getMessage("main.pages.account.role.description.user", null, locale)
             }
 
-            model["dateJoined"] = TextUtils.formatToAbbrDate(currentUserObj.getCreatedAt().toString())
+            model["dateJoined"] = TextUtils.formatToAbbrDate(currentUserObj.getCreatedAt().toString(), model.getAttribute("locale").toString())
         }
 
         return model
