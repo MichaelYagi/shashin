@@ -103,27 +103,19 @@
     <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="propPersonModalLabel">Set &ldquo;<span id="personModalTitle"></span>&rdquo; as cover?<div id="propPersonModalThumbnail"></div></h5>
+                <h5 class="modal-title" id="propPersonModalLabel"><th:block th:text="#{main.pages.albums.cover.pre}"></th:block>&ldquo;<span id="personModalTitle"></span>&rdquo;<th:block th:text="#{main.pages.albums.cover.post}"></th:block><div id="propPersonModalThumbnail"></div></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-
             </div>
-<!--            <div class="modal-body">-->
                 <form id="savePersonModalForm">
                     <input type="hidden" name="setCoverPerson" id="setCoverPerson" value="yes">
-<!--                    <input type="hidden" name="metadataId" id="metadataId" value="">-->
-<!--                    <div class="col-auto form-check">-->
-<!--                        <input type="radio" class="form-check-input" id="setCoverPerson" name="personAction">-->
-<!--                        <label class="form-check-label" for="setCoverPerson">Set as cover</label>-->
-<!--                    </div>-->
                 </form>
                 <div class="col-sm">
                     <span id="personModalMsg"></span>
                 </div>
-<!--            </div>-->
             <div class="modal-footer">
                 <div id="personModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 1.55rem;" role="status" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
-                <button type="button" class="btn btn-primary" id="savePersonModal">OK</button>
-                <button id="personModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="savePersonModal"><th:block th:text="#{main.modal.save}"></th:block></button>
+                <button id="personModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal"><th:block th:text="#{main.modal.cancel}"></th:block></button>
             </div>
         </div>
     </div>
