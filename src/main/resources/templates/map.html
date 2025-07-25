@@ -31,31 +31,31 @@
     <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Filter Map</h5>
+                <h5 class="modal-title"><th:block th:text="#{main.pages.map.modal.title}"></th:block></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="m-1" id="filterInputs" style="visibility: visible;">
                     <div class="mb-3">
-                        <label class="form-label me-2 mt-2" for="searchInput">Search</label>
-                        <input class="form-control" type="text" id="searchInput" placeholder="Search by keyword">
+                        <label class="form-label me-2 mt-2" for="searchInput"><th:block th:text="#{main.pages.map.modal.search}"></th:block></label>
+                        <input class="form-control" type="text" id="searchInput" th:placeholder="#{main.pages.map.modal.search.placeholder}">
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label me-2 mt-2" for="startDateInput">From</label>
+                        <label class="form-label me-2 mt-2" for="startDateInput"><th:block th:text="#{main.pages.map.modal.from}"></th:block></label>
                         <input class="form-control" type="date" id="startDateInput">
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label me-2 mt-2" for="endDateInput">To</label>
+                        <label class="form-label me-2 mt-2" for="endDateInput"><th:block th:text="#{main.pages.map.modal.to}"></th:block></label>
                         <input class="form-control" type="date" id="endDateInput">
                     </div>
 
                     <th:block th:if="${not #lists.isEmpty(albums)}">
                         <div class="mb-3">
-                            <label class="form-label me-2 mt-2" for="albumSelect">Filter by Album</label>
+                            <label class="form-label me-2 mt-2" for="albumSelect"><th:block th:text="#{main.pages.map.modal.filteralbum}"></th:block></label>
                             <select class="form-select" id="albumSelect">
-                                <option selected value="0">Select Album</option>
+                                <option selected value="0"><th:block th:text="#{main.pages.map.modal.selectalbum}"></th:block></option>
                                 <th:block th:each="album, iterStat: ${albums}">
                                     <option th:value="${album.id}" th:text="${album.name}"></option>
                                 </th:block>
@@ -64,13 +64,13 @@
                     </th:block>
 
                     <div class="mb-3">
-                        <label class="form-label me-2 mt-2" for="formCoordinates">Center map on latitude/longitude</label>
-                        <input class="form-control" type="text" id="formCoordinates" placeholder="latitude, longitude">
+                        <label class="form-label me-2 mt-2" for="formCoordinates"><th:block th:text="#{main.pages.map.modal.centermap}"></th:block></label>
+                        <input class="form-control" type="text" id="formCoordinates" th:placeholder="#{main.pages.map.modal.centermap.placeholder}">
                     </div>
 
                     <div class="row">
                         <div class="mb-3 col-12">
-                            <label class="form-label me-2 mt-2" for="findNearestRadius">Find Nearest Distance</label> <span id="findNearestInfo" class="bi-info-circle me-auto" style="font-size: 1rem;"></span>
+                            <label class="form-label me-2 mt-2" for="findNearestRadius"><th:block th:text="#{main.pages.map.modal.nearest}"></th:block></label> <span id="findNearestInfo" class="bi-info-circle me-auto" style="font-size: 1rem;"></span>
                             <select class="form-select" id="findNearestRadius">
                                 <option value="0.5">0.5 km</option>
                                 <option value="5" selected>5 km</option>
@@ -83,16 +83,16 @@
 
                     <div class="row">
                         <div class="mb-3 col-sm-10">
-                            <label class="form-label me-2 mt-2" for="mapSources">Map Styles</label>
+                            <label class="form-label me-2 mt-2" for="mapSources"><th:block th:text="#{main.pages.map.modal.styles}"></th:block></label>
                             <select class="form-select" id="mapSources">
-                                <option value="osm">Standard</option>
-                                <option value="maptiler">Street</option>
-                                <option value="stadiaSA">Satellite</option>
+                                <option value="osm"><th:block th:text="#{main.pages.map.modal.style.standard}"></th:block></option>
+                                <option value="maptiler"><th:block th:text="#{main.pages.map.modal.style.street}"></th:block></option>
+                                <option value="stadiaSA"><th:block th:text="#{main.pages.map.modal.style.satellite}"></th:block></option>
                             </select>
                         </div>
                         <div class="mb-3 col-sm-2">
-                            <label class="form-label me-2 mt-2" for="markerColors">Marker Colors</label>
-                            <input type="color" class="form-control form-control-color" list="colors" id="markerColors" value="#004DFF" placeholder="Select Color" height="15">
+                            <label class="form-label me-2 mt-2" for="markerColors"><th:block th:text="#{main.pages.map.modal.markcolor}"></th:block></label>
+                            <input type="color" class="form-control form-control-color" list="colors" id="markerColors" value="#004DFF" th:placeholder="#{main.pages.map.modal.markcolor.placeholder}" height="15">
                             <datalist id="colors">
                                 <option value="#004DFF"></option>
                                 <option value="#228B22"></option>
@@ -104,12 +104,12 @@
 
                     <div class="mb-3">
                         <input class="form-check-input" type="checkbox" value="" id="videoOnlyInput">
-                        <label class="form-check-label" for="videoOnlyInput">&nbsp;Videos only</label>
+                        <label class="form-check-label" for="videoOnlyInput">&nbsp;<th:block th:text="#{main.pages.map.modal.videoonly}"></th:block></label>
                     </div>
 
                     <div class="mb-3">
                         <input class="form-check-input" type="checkbox" value="" id="showMarkersInput">
-                        <label class="form-check-label" for="showMarkersInput">&nbsp;Map markers</label>
+                        <label class="form-check-label" for="showMarkersInput">&nbsp;<th:block th:text="#{main.pages.map.modal.mapmarkers}"></th:block></label>
                     </div>
 
                     <div class="mb-3">
@@ -120,9 +120,9 @@
             <div class="modal-footer">
                 <span id="qpInfo" class="bi-info-circle me-auto" style="font-size: 1rem;"></span>
                 <small id="resultsText"></small>
-                <button type="button" class="btn btn-primary" id="filterMap">Filter</button>
-                <button type="button" class="btn btn-primary" id="resetMap">Reset</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="filterMap"><th:block th:text="#{main.pages.map.modal.filter}"></th:block></button>
+                <button type="button" class="btn btn-primary" id="resetMap"><th:block th:text="#{main.pages.map.modal.reset}"></th:block></button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><th:block th:text="#{main.modal.cancel}"></th:block></button>
             </div>
         </div>
     </div>
@@ -140,30 +140,31 @@
 
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
+        const locale = /*[[${locale}]]*/ 'en';
         /*]]>*/
 
         $('#qpInfo').popover({
             trigger: 'hover',
-            title: 'Query Params Available',
+            title: shashin.getTranslatedValue("main.pages.map.modal.popover.title"),
             html: true,
-            content: '<div class="row"><div class="col-3"><strong>lat</strong></div><div class="col">Latitude</div></div>' +
-                '<div class="row"><div class="col-3"><strong>lng</strong></div><div class="col">Longitude</div></div>' +
-                '<div class="row"><div class="col-3"><strong>latlng</strong></div><div class="col">Latitude,Longitude</div></div>' +
-                '<div class="row"><div class="col-3"><strong>sd</strong></div><div class="col">Start date (yyyy-mm-dd)</div></div>' +
-                '<div class="row"><div class="col-3"><strong>ed</strong></div><div class="col">End date (yyyy-mm-dd)</div></div>' +
-                '<div class="row"><div class="col-3"><strong>vo</strong></div><div class="col">Video only</div></div>' +
-                '<div class="row"><div class="col-3"><strong>ms</strong></div><div class="col">Map style (osm, maptiler, stadiaSA)</div></div>' +
-                '<div class="row"><div class="col-3"><strong>mtf</strong></div><div class="col">Media type filer (video, gif, etc)</div></div>' +
-                '<div class="row"><div class="col-3"><strong>aid</strong></div><div class="col">Album ID</div></div>' +
-                '<div class="row"><div class="col-3"><strong>an</strong></div><div class="col">Album Name</div></div>',
+            content: '<div class="row"><div class="col-3"><strong>lat</strong></div><div class="col">'+shashin.getTranslatedValue("main.pages.map.modal.popover.lat")+'</div></div>' +
+                '<div class="row"><div class="col-3"><strong>lng</strong></div><div class="col">'+shashin.getTranslatedValue("main.pages.map.modal.popover.lng")+'</div></div>' +
+                '<div class="row"><div class="col-3"><strong>latlng</strong></div><div class="col">'+shashin.getTranslatedValue("main.pages.map.modal.popover.latlng")+'</div></div>' +
+                '<div class="row"><div class="col-3"><strong>sd</strong></div><div class="col">'+shashin.getTranslatedValue("main.pages.map.modal.popover.sd")+' (yyyy-mm-dd)</div></div>' +
+                '<div class="row"><div class="col-3"><strong>ed</strong></div><div class="col">'+shashin.getTranslatedValue("main.pages.map.modal.popover.ed")+' (yyyy-mm-dd)</div></div>' +
+                '<div class="row"><div class="col-3"><strong>vo</strong></div><div class="col">'+shashin.getTranslatedValue("main.pages.map.modal.popover.vo")+'</div></div>' +
+                '<div class="row"><div class="col-3"><strong>ms</strong></div><div class="col">'+shashin.getTranslatedValue("main.pages.map.modal.popover.ms")+' (osm, maptiler, stadiaSA)</div></div>' +
+                '<div class="row"><div class="col-3"><strong>mtf</strong></div><div class="col">'+shashin.getTranslatedValue("main.pages.map.modal.popover.mtf")+' (video, gif, etc)</div></div>' +
+                '<div class="row"><div class="col-3"><strong>aid</strong></div><div class="col">'+shashin.getTranslatedValue("main.pages.map.modal.popover.aid")+'</div></div>' +
+                '<div class="row"><div class="col-3"><strong>an</strong></div><div class="col">'+shashin.getTranslatedValue("main.pages.map.modal.popover.an")+'</div></div>',
             placement: 'bottom'
         });
 
         $('#findNearestInfo').popover({
             trigger: 'hover',
-            title: 'Finding Nearest Photos',
+            title: shashin.getTranslatedValue("main.pages.map.modal.popover.findnearest.title"),
             html: false,
-            content: 'Filter results within the selected distance. Right-click on the map to bring up the context menu, and select "Find nearest photos".',
+            content: shashin.getTranslatedValue("main.pages.map.modal.popover.findnearest"),
             placement: 'right'
         });
 
@@ -208,7 +209,7 @@
                 Util.updateProgressBar(0, {autoVisibility: false});
             }
 
-            showMap(mapdata, keywordMap);
+            showMap(mapdata, keywordMap, locale);
         });
     });
 </script>

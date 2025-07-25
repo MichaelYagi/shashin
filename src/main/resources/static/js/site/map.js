@@ -1,4 +1,4 @@
-async function showMap(mapdata, keywordMap) {
+async function showMap(mapdata, keywordMap, locale) {
     // Query parameters
     // Lat
     let qslat = Util.getParameterByName("lat");
@@ -543,7 +543,12 @@ async function showMap(mapdata, keywordMap) {
             }
         }
 
-        $("#resultsText").text(filteredCount + " result" + (filteredCount === 1 ? "" : "s"));
+        let resultsText = filteredCount + " result" + (filteredCount === 1 ? "" : "s");
+        $("#resultsText").text();
+        if (locale === "ja") {
+            resultsText = filteredCount + " " + shashin.getTranslatedValue("main.pages.map.modal.result");
+        }
+        $("#resultsText").text(resultsText);
 
         if (filteredCount === 0 && contextCoordArray.length > 0 && maxDistance > 0) {
             shashin.showToastMessage("No results", "No results for photos near " + contextCoordArray[1]+", "+contextCoordArray[0], {
