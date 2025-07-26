@@ -6,13 +6,13 @@
     <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="trashModalLabel">Delete <th:block th:text="${user.username}"></th:block></h5>
+                <h5 class="modal-title" id="trashModalLabel"><th:block th:text="#{main.pages.albums.share.delete.pre}"></th:block><th:block th:text="${user.username}"></th:block><th:block th:text="#{main.pages.albums.share.delete.post}"></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" th:text="${'Are you sure you want to delete ' + user.username + '?'}"></div>
+            <div class="modal-body" th:text="#{main.pages.user.pre} + ${user.username} + #{main.pages.user.post} + '?'"></div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" th:id="'deleteUser'+${user.id}">Confirm</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" th:id="'deleteUser'+${user.id}"><th:block th:text="#{main.modal.confirm}"></th:block></button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><th:block th:text="#{main.modal.cancel}"></th:block></button>
             </div>
             <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
                 /*<![CDATA[*/
@@ -48,21 +48,21 @@
     <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="resetPasswordModalLabel">Reset password for <th:block th:text="${user.username}"></th:block></h5>
+                <h5 class="modal-title" id="resetPasswordModalLabel"><th:block th:text="#{main.pages.user.resetpass.pre}"></th:block><th:block th:text="${user.username}"></th:block><th:block th:text="#{main.pages.user.resetpass.post}"></th:block></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form method="post" th:id="'resetPassword'+${user.id}">
                     <div class="input-group">
-                        <input type="password" th:id="'password'+${user.id}" th:name="'password'+${user.id}" class="form-control" placeholder="Reset Password">
+                        <input type="password" th:id="'password'+${user.id}" th:name="'password'+${user.id}" class="form-control" th:placeholder="#{main.pages.user.resetpass.placeholder}">
                         <button class="btn btn-secondary" type="button" th:id="'unhidepassword'+${user.id}" style="max-height: 46px;"><span th:id="'unhidepasswordicon'+${user.id}" class="bi-eye"></span></button>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <div th:id="'resetPasswordUserStatus'+${user.id}" class="spinner-grow me-auto" style="visibility: hidden;font-size: 1.55rem;" role="status" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
-                <button type="button" class="btn btn-primary" th:id="'resetPasswordUser'+${user.id}">Confirm</button>
-                <button th:id="'resetPasswordUserCancel'+${user.id}" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" th:id="'resetPasswordUser'+${user.id}"><th:block th:text="#{main.modal.confirm}"></th:block></button>
+                <button th:id="'resetPasswordUserCancel'+${user.id}" type="button" class="btn btn-secondary" data-bs-dismiss="modal"><th:block th:text="#{main.modal.cancel}"></th:block></button>
             </div>
             <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
                 /*<![CDATA[*/
@@ -141,32 +141,32 @@
     <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="roleuserModalLabel">Change <th:block th:text="${user.username}"></th:block>'s role?</h5>
+                <h5 class="modal-title" id="roleuserModalLabel"><th:block th:text="#{main.pages.user.role.pre}"></th:block><th:block th:text="${user.username}"></th:block><th:block th:text="#{main.pages.user.role.post}"></th:block>?</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="form-check">
                     <input class="form-check-input" type="radio" th:name="'roleUpdate'+${user.id}" th:id="'roleUpdateUser'+${user.id}">
                     <label class="form-check-label" th:for="'roleUpdateUser'+${user.id}">
-                        User
+                        <th:block th:text="#{main.pages.account.role.user}"></th:block>
                     </label>
                 </div>
                 <div class="form-check">
                     <input class="form-check-input" type="radio" th:name="'roleUpdate'+${user.id}" th:id="'roleUpdateAdmin'+${user.id}">
                     <label class="form-check-label" th:for="'roleUpdateAdmin'+${user.id}">
-                        Admin
+                        <th:block th:text="#{main.pages.account.role.admin}"></th:block>
                     </label>
                 </div>
                 <div class="form-check">
                     <input class="form-check-input" type="radio" th:name="'roleUpdate'+${user.id}" th:id="'roleUpdateSuper'+${user.id}">
                     <label class="form-check-label" th:for="'roleUpdateSuper'+${user.id}">
-                        Super Admin
+                        <th:block th:text="#{main.pages.account.role.super}"></th:block>
                     </label>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" th:id="'roleUser'+${user.id}">Confirm</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" th:id="'roleUser'+${user.id}"><th:block th:text="#{main.modal.confirm}"></th:block></button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><th:block th:text="#{main.modal.cancel}"></th:block></button>
             </div>
             <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
                 /*<![CDATA[*/
@@ -223,13 +223,13 @@
     <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="alloweduserModalLabel"><th:block th:text="${user.isAuthorized == true ? 'Deauthorizing' : 'Authorizing'}"></th:block> <strong><th:block th:text="${user.username}"></th:block></strong></h5>
+                <h5 class="modal-title" id="alloweduserModalLabel"><th:block th:text="${user.isAuthorized == true ? #messages.msg('main.pages.account.role.deauth.pre') : #messages.msg('main.pages.account.role.auth.pre')}"></th:block><strong><th:block th:text="${user.username}"></th:block><th:block th:text="${user.isAuthorized == true ? #messages.msg('main.pages.account.role.deauth.post') : #messages.msg('main.pages.account.role.auth.post')}"></th:block></strong></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" th:text="${'Are you sure you want to ' + (user.isAuthorized == true ? 'deauthorize ' : 'authorize ') + user.username + '?'}"></div>
+            <div class="modal-body"><th:block th:text="${user.isAuthorized == true ? #messages.msg('main.pages.account.role.confirm.deauth.pre') : #messages.msg('main.pages.account.role.confirm.auth.pre')}"></th:block><strong><th:block th:text="${user.username}"></th:block></strong><th:block th:text="${user.isAuthorized == true ? #messages.msg('main.pages.account.role.confirm.deauth.post') : #messages.msg('main.pages.account.role.confirm.auth.post')}"></th:block>?</div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" th:id="'allowUser'+${user.id}">Confirm</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" th:id="'allowUser'+${user.id}"><th:block th:text="#{main.modal.confirm}"></th:block></button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><th:block th:text="#{main.modal.cancel}"></th:block></button>
             </div>
             <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
                 /*<![CDATA[*/
