@@ -151,7 +151,7 @@
                             });
                         } else {
                             if (shashin) {
-                                shashin.showToastMessage("Could not get cast", "Could not cast. Metadata ID not valid", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
+                                shashin.showToastMessage(shashin.getTranslatedValue("main.toast.lgcast.media.title"), shashin.getTranslatedValue("main.toast.lgcast.media.message"), {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
                             }
                         }
                     }
@@ -188,7 +188,7 @@
                                 } catch(e) {
                                     // Error
                                     if (shashin) {
-                                        shashin.showToastMessage("Could not cast", "CastJS could not cast video "+baseUrl + metadata.videoUrl+": "+e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
+                                        shashin.showToastMessage(shashin.getTranslatedValue("main.toast.lgcast.media.title"), shashin.getTranslatedValue("main.toast.lgcast.video.message.pre")+baseUrl + metadata.videoUrl+""+shashin.getTranslatedValue("main.toast.lgcast.media.message.post")+": "+e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
                                     }
                                     $("#chromecasting").css({"display": "none", "font-size": "1rem"});
                                 }
@@ -206,7 +206,7 @@
                                 } catch(e) {
                                     // Error
                                     if (shashin) {
-                                        shashin.showToastMessage("Could not cast", "CastJS could not cast image "+baseUrl + "/api/v1/image/"+metadata.id+".jpg: "+e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
+                                        shashin.showToastMessage(shashin.getTranslatedValue("main.toast.lgcast.media.title"), shashin.getTranslatedValue("main.toast.lgcast.image.message.pre")+baseUrl + "/api/v1/image/"+metadata.id+".jpg"+shashin.getTranslatedValue("main.toast.lgcast.media.message.post")+": "+e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
                                     }
                                     $("#chromecasting").css({"display": "none", "font-size": "1rem"});
                                 }
