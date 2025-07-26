@@ -142,7 +142,7 @@
                         $("#editAlbum").prop('disabled', true);
                         $("#originalAlbumName").val(albumName);
                     } else {
-                        shashin.showToastMessage("Could not edit album", data.msg, {
+                        shashin.showToastMessage(shashin.getTranslatedValue("main.toast.albums.save.fail"), data.msg, {
                             icon: "bi-exclamation-triangle",
                             iconColor: "#FF0000",
                             borderColor:"danger"
@@ -151,7 +151,7 @@
                         $("#editAlbumNameStatus").attr("title", data.msg);
                     }
                 } else {
-                    shashin.showToastMessage("Could not edit album", "Something went wrong", {
+                    shashin.showToastMessage(shashin.getTranslatedValue("main.toast.albums.save.fail"), shashin.getTranslatedValue("main.toast.account.profile.fail.body"), {
                         icon: "bi-exclamation-triangle",
                         iconColor: "#FF0000",
                         borderColor:"danger"
@@ -243,7 +243,7 @@
                     }
                 });
             } else {
-                shashin.showToastMessage("Could not copy text", "Link must not be blank", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
+                shashin.showToastMessage(shashin.getTranslatedValue("main.toast.account.copylink.fail.title"), shashin.getTranslatedValue("main.toast.account.copylink.fail.body"), {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
                 $("#copyLinkIcon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
             }
         });
