@@ -26,6 +26,7 @@ import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
 import jakarta.servlet.http.HttpServletRequest
+import org.springframework.context.MessageSource
 import org.springframework.context.annotation.Bean
 import org.springframework.http.CacheControl
 import org.springframework.http.ResponseEntity
@@ -60,6 +61,9 @@ class ToolsController {
 
     @Autowired
     private var healthEndpoint: HealthEndpoint? = null
+
+    @Autowired
+    var messageSource: MessageSource? = null
 
     private var logger: Logger = Logger.getLogger(ToolsController::class.simpleName)
 
@@ -224,7 +228,7 @@ class ToolsController {
 
     @RequestMapping(value = ["/status/compreface"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun checkComprefacestatus(model: Model): String {
+    fun checkComprefacestatus(model: Model, locale: Locale): String {
         val settings = model.getAttribute("settings") as Settings?
         val currentUserObj = model.getAttribute("currentUser") as User?
 
@@ -248,9 +252,9 @@ class ToolsController {
             }
 
             if (status == false) {
-                message = "Check CompreFace server connection"
+                message = messageSource?.getMessage("main.toast.topnav.compreface", null, locale).toString()
                 if (currentUserObj.getAuthority() == "ROLE_SUPER") {
-                    message += " and <a href='/settings' target='_blank'>settings</a>"
+                    message += messageSource?.getMessage("main.toast.topnav.compreface.link.pre", null, locale).toString() + "<a href='/settings' target='_blank'>/settings</a>" + messageSource?.getMessage("main.toast.topnav.compreface.link.post", null, locale).toString()
                 }
             }
         }
