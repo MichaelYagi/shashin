@@ -644,11 +644,11 @@ class UserController {
     @RequestMapping(value = ["/users/darkmode"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    fun toggleDarkmode(model: Model, @RequestBody requestBody: JsonNode): String? {
+    fun toggleDarkmode(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String? {
         val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
 
         resp["status"] = ApiResponse.FAIL.status
-        resp["msg"] = "Darkmode not toggled"
+        resp["msg"] = messageSource?.getMessage("main.toast.topnav.darkmode.message.nottoggled", null, locale)
 
         if (userMap.containsKey("darkMode")) {
             val darkMode = userMap["darkMode"].toBoolean()
@@ -658,7 +658,7 @@ class UserController {
                 currentUserObj.setDarkMode(darkMode)
                 userRepository?.save(currentUserObj)
                 resp["status"] = ApiResponse.SUCCESS.status
-                resp["msg"] = "Darkmode toggled"
+                resp["msg"] = messageSource?.getMessage("main.toast.topnav.darkmode.message.toggled", null, locale)
             }
         }
 
@@ -692,11 +692,11 @@ class UserController {
     @RequestMapping(value = ["/users/autoplayvideo"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    fun toggleAutoplayVideo(model: Model, @RequestBody requestBody: JsonNode): String? {
+    fun toggleAutoplayVideo(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String? {
         val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
 
         resp["status"] = ApiResponse.FAIL.status
-        resp["msg"] = "Autoplay video not toggled"
+        resp["msg"] = messageSource?.getMessage("main.toast.topnav.autoplay.message.nottoggled", null, locale)
 
         if (userMap.containsKey("autoplayVideo")) {
             val autoplayVideo = userMap["autoplayVideo"].toBoolean()
@@ -706,7 +706,7 @@ class UserController {
                 currentUserObj.setAutoplayVideo(autoplayVideo)
                 userRepository?.save(currentUserObj)
                 resp["status"] = ApiResponse.SUCCESS.status
-                resp["msg"] = "Autoplay video toggled"
+                resp["msg"] = messageSource?.getMessage("main.toast.topnav.autoplay.message.toggled", null, locale)
             }
         }
 
@@ -716,11 +716,11 @@ class UserController {
     @RequestMapping(value = ["/users/showplacename"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    fun toggleShowPlacename(model: Model, @RequestBody requestBody: JsonNode): String? {
+    fun toggleShowPlacename(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String? {
         val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
 
         resp["status"] = ApiResponse.FAIL.status
-        resp["msg"] = "Placename not toggled"
+        resp["msg"] = messageSource?.getMessage("main.toast.topnav.placename.message.nottoggled", null, locale)
 
         if (userMap.containsKey("showPlacename")) {
             val showPlacename = userMap["showPlacename"].toBoolean()
@@ -730,7 +730,7 @@ class UserController {
                 currentUserObj.setShowPlacename(showPlacename)
                 userRepository?.save(currentUserObj)
                 resp["status"] = ApiResponse.SUCCESS.status
-                resp["msg"] = "Placename toggled"
+                resp["msg"] = messageSource?.getMessage("main.toast.topnav.placename.message.toggled", null, locale)
             }
         }
 
@@ -740,11 +740,11 @@ class UserController {
     @RequestMapping(value = ["/users/shownotificationalerts"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    fun toggleShowNotificationAlerts(model: Model, @RequestBody requestBody: JsonNode): String? {
+    fun toggleShowNotificationAlerts(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String? {
         val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
 
         resp["status"] = ApiResponse.FAIL.status
-        resp["msg"] = "Placename not toggled"
+        resp["msg"] = messageSource?.getMessage("main.toast.topnav.notifalert.message.nottoggled", null, locale)
 
         if (userMap.containsKey("notificationAlerts")) {
             val notificationAlerts = userMap["notificationAlerts"].toBoolean()
@@ -754,7 +754,7 @@ class UserController {
                 currentUserObj.setNotificationAlerts(notificationAlerts)
                 userRepository?.save(currentUserObj)
                 resp["status"] = ApiResponse.SUCCESS.status
-                resp["msg"] = "Notification Alerts toggled"
+                resp["msg"] = messageSource?.getMessage("main.toast.topnav.notifalert.message.toggled", null, locale)
             }
         }
 

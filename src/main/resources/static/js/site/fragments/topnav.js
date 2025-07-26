@@ -21,7 +21,7 @@ async function setVarsTopNav(darkMode, placeNames, timezone, notificationAlerts,
         const http = new Http("check compreface status");
         http.ajax("get", "/status/compreface").then(function (data) {
             if (data.hasOwnProperty("comprefaceStatus") && data.comprefaceStatus === false) {
-                shashin.showToastMessage("CompreFace server check failed", data.message, {
+                shashin.showToastMessage(shashin.getTranslatedValue("main.pages.dashboard.compreface"), data.message, {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",
                     autohide: false,
@@ -82,7 +82,7 @@ async function setVarsTopNav(darkMode, placeNames, timezone, notificationAlerts,
                 $("#darkModeSwitch").prop("checked", darkMode);
                 shashin.darkMode = darkMode;
 
-                shashin.showToastMessage("Setting failed", "Dark mode setting failed. "+data.msg, {
+                shashin.showToastMessage(shashin.getTranslatedValue("main.toast.topnav.darkmode.fail.title"), shashin.getTranslatedValue("main.toast.topnav.darkmode.fail.body") + ": " + data.msg, {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",
                     borderColor: "danger"
@@ -93,7 +93,7 @@ async function setVarsTopNav(darkMode, placeNames, timezone, notificationAlerts,
             $("#darkModeSwitch").prop("checked", darkMode);
             shashin.darkMode = darkMode;
 
-            shashin.showToastMessage("Setting failed", "Dark mode setting failed. "+data.msg, {
+            shashin.showToastMessage(shashin.getTranslatedValue("main.toast.topnav.darkmode.fail.title"), shashin.getTranslatedValue("main.toast.topnav.darkmode.fail.body") + ": " + data.msg, {
                 icon: "bi-exclamation-triangle",
                 iconColor: "#FF0000",
                 borderColor: "danger"
@@ -112,14 +112,14 @@ async function setVarsTopNav(darkMode, placeNames, timezone, notificationAlerts,
             if (data.status === "success") {
                 shashin.printMessageToConsole("Successfully set notification alerts.",{tag:"notifications"});
             } else {
-                shashin.showToastMessage("Setting failed", "Notification setting failed. "+data.msg, {
+                shashin.showToastMessage(shashin.getTranslatedValue("main.toast.topnav.darkmode.fail.title"), shashin.getTranslatedValue("main.toast.topnav.notifalert.fail.body") + ": " + data.msg, {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",
                     borderColor: "danger"
                 });
             }
         } else {
-            shashin.showToastMessage("Setting failed", "Notification setting failed. "+data.msg, {
+            shashin.showToastMessage(shashin.getTranslatedValue("main.toast.topnav.darkmode.fail.title"), shashin.getTranslatedValue("main.toast.topnav.notifalert.fail.body") + ": " + data.msg, {
                 icon: "bi-exclamation-triangle",
                 iconColor: "#FF0000",
                 borderColor: "danger"
@@ -143,7 +143,7 @@ async function setVarsTopNav(darkMode, placeNames, timezone, notificationAlerts,
                 $("#showPlacenameSwitch").prop("checked", showPlacename);
                 shashin.showPlacename = showPlacename;
 
-                shashin.showToastMessage("Setting failed", "Show place names setting failed. "+data.msg, {
+                shashin.showToastMessage(shashin.getTranslatedValue("main.toast.topnav.darkmode.fail.title"), shashin.getTranslatedValue("main.toast.topnav.placename.fail.body") + ": " + data.msg, {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",
                     borderColor: "danger"
@@ -154,7 +154,7 @@ async function setVarsTopNav(darkMode, placeNames, timezone, notificationAlerts,
             $("#showPlacenameSwitch").prop("checked", showPlacename);
             shashin.showPlacename = showPlacename;
 
-            shashin.showToastMessage("Setting failed", "Show place names setting failed. "+data.msg, {
+            shashin.showToastMessage(shashin.getTranslatedValue("main.toast.topnav.darkmode.fail.title"), shashin.getTranslatedValue("main.toast.topnav.placename.fail.body") + ": " + data.msg, {
                 icon: "bi-exclamation-triangle",
                 iconColor: "#FF0000",
                 borderColor: "danger"
@@ -177,7 +177,7 @@ async function setVarsTopNav(darkMode, placeNames, timezone, notificationAlerts,
                 $("#autoplayVideoSwitch").prop("checked", autoplayVideo);
                 shashin.autoplayVideo = autoplayVideo;
 
-                shashin.showToastMessage("Setting failed", "Autoplay videos setting failed. "+data.msg, {
+                shashin.showToastMessage(shashin.getTranslatedValue("main.toast.topnav.darkmode.fail.title"), shashin.getTranslatedValue("main.toast.topnav.autoplay.fail.body") + ": " + data.msg, {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",
                     borderColor: "danger"
@@ -188,7 +188,7 @@ async function setVarsTopNav(darkMode, placeNames, timezone, notificationAlerts,
             $("#autoplayVideoSwitch").attr("checked", autoplayVideo);
             shashin.autoplayVideo = autoplayVideo;
 
-            shashin.showToastMessage("Setting failed", "Autoplay videos setting failed.", {
+            shashin.showToastMessage(shashin.getTranslatedValue("main.toast.topnav.darkmode.fail.title"), shashin.getTranslatedValue("main.toast.topnav.autoplay.fail.body") + ": " + data.msg, {
                 icon: "bi-exclamation-triangle",
                 iconColor: "#FF0000",
                 borderColor: "danger"
