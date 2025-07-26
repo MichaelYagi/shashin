@@ -43,7 +43,7 @@
                             $('#propMetadata').modal({keyboard: false});
                         }
                     } else if (shashin) {
-                        shashin.showToastMessage("Could not get media details", "Could not get media details. Function or metadata ID not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
+                        shashin.showToastMessage(shashin.getTranslatedValue("main.toast.lgmetadata.title"), shashin.getTranslatedValue("main.toast.lgmetadata.body"), {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
                     }
                 });
         },
