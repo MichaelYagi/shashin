@@ -1,4 +1,4 @@
-function captureMessages(activePage, notificationAlerts, timezone) {
+function captureMessages(activePage, notificationAlerts, timezone, locale='en') {
     // Get updates from media scans
     let stompClient = null;
     let scanInProgress = false;
@@ -117,7 +117,7 @@ function captureMessages(activePage, notificationAlerts, timezone) {
                     $("#profileImagePlaceholder").css("opacity", 1.0);
                     Util.updateProgressBar(0);
                     if (counterMessage === 1) {
-                        Util.getNotifications(notificationAlerts, timezone);
+                        Util.getNotifications(notificationAlerts, timezone, locale);
                     }
                 } else {
                     $("#mediaScanSpinner").css("display", "block");

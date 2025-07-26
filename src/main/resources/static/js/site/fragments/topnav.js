@@ -14,7 +14,7 @@ async function setVarsTopNav(darkMode, placeNames, timezone, notificationAlerts,
     const activePage = $("#activePage").val();
 
     if (activePage !== "notifications") {
-        await Util.getNotifications(notificationAlerts, timezone);
+        await Util.getNotifications(notificationAlerts, timezone, locale);
     }
 
     setTimeout(function () {
@@ -205,7 +205,7 @@ async function setVarsTopNav(darkMode, placeNames, timezone, notificationAlerts,
     initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, albumImageCount, locale);
 
     if (activePage !== "timeline" && activePage !== "wake") {
-        captureMessages(activePage, notificationAlerts, timezone);
+        captureMessages(activePage, notificationAlerts, timezone, locale);
     }
 
     if (hasMediaUploadDirectory === true && $("#dummyframe").length > 0) {
