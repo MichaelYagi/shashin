@@ -106,7 +106,7 @@
     <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="propFolderModalLabel">Set &ldquo;<span id="folderModalTitle"></span>&rdquo; as folder cover?<div id="propFolderModalThumbnail"></div></h5>
+                <h5 class="modal-title" id="propFolderModalLabel"><th:block th:text="#{main.pages.folder.pre}"></th:block>&ldquo;<span id="folderModalTitle"></span>&rdquo;<th:block th:text="#{main.pages.folder.post}"></th:block><div id="propFolderModalThumbnail"></div></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
@@ -117,8 +117,8 @@
 
             <div class="modal-footer">
                 <div id="folderModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 1.55rem;" role="status" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
-                <button type="button" class="btn btn-primary" id="saveFolderModal">OK</button>
-                <button id="folderModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveFolderModal"><th:block th:text="#{main.modal.save}"></th:block></button>
+                <button id="folderModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal"><th:block th:text="#{main.modal.cancel}"></th:block></button>
             </div>
         </div>
     </div>
