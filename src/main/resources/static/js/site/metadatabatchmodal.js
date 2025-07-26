@@ -107,7 +107,7 @@ async function saveBatchMetadata(e) {
         $("#latlngBatchData").val() === "" && $("#keywordsBatchData").val() === "" && $("#albumNameInput").val() === "" && $("#tagBatchDataInput").val() === "" &&
         $("#batchhidden").is(':checked') === false && $("#batchisobject").is(':checked') === false && $("#batchrescan").is(':checked') === false
     ) {
-        shashin.showToastMessage("Metadata", "Did not save, nothing entered.", {
+        shashin.showToastMessage(shashin.getTranslatedValue("main.toast.metadata.title"), shashin.getTranslatedValue("main.toast.batch.metadata.body"), {
             icon: "bi-info-circle",
             iconColor: "#777777",
             tag: "metadatabatchmodal",
@@ -334,7 +334,7 @@ async function saveBatchMetadata(e) {
                     }
                 }
 
-                shashin.showToastMessage("Metadata", "Metadata Saved", {
+                shashin.showToastMessage(shashin.getTranslatedValue("main.toast.metadata.title"), shashin.getTranslatedValue("main.toast.metadata.message.success"), {
                     icon: "bi-info-circle",
                     iconColor: "#777777",
                     tag: "metadatabatchmodal",
