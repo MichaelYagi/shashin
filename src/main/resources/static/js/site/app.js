@@ -612,7 +612,7 @@
                 if (attempts === 0) {
                     // $("#albumsMessage").html("&nbsp;").animate({opacity: 0}, 5000);
                 } else {
-                    shashin.showToastMessage("Share album download", "<strong>File name</strong> " + tokenCookieValue + " <strong>File size</strong> " + Util.formatBytes(tokenCookieSize), {icon:"bi-info-circle", iconColor:"#777777"});
+                    shashin.showToastMessage(shashin.getTranslatedValue("main.pages.albums.downloading"), "<strong>"+shashin.getTranslatedValue("main.pages.albums.downloading.filename")+"</strong> " + tokenCookieValue + " <strong>"+shashin.getTranslatedValue("main.pages.albums.downloading.filesize")+"</strong> " + Util.formatBytes(tokenCookieSize), {icon:"bi-info-circle", iconColor:"#777777"});
                     Util.deleteCookie(tokenName, "/");
                     Util.deleteCookie(tokenSize, "/");
                     window.clearInterval(downloadTimer);
