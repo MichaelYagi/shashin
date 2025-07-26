@@ -86,7 +86,7 @@
                         $("#metadataId").val(funObject.args);
                         funObject.fn(funObject.args, this.core.lgId, this.core.index);
                     } else if (shashin) {
-                        shashin.showToastMessage("Could not execute function", "Could not execute function. Function or metadata ID not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
+                        shashin.showToastMessage(shashin.getTranslatedValue("main.toast.lgplugin.title"), shashin.getTranslatedValue("main.toast.lgplugin.body"), {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
                     }
                 });
         }
