@@ -68,6 +68,40 @@ describe('#Util tests', function() {
         assert.equal(decodedString,'{"a":"b"}');
     });
 
+    // it('Message subtext test', function () {
+    //     const options = {
+    //         timeZone: "UTC",
+    //         year: 'numeric',
+    //         month: '2-digit',
+    //         day: '2-digit',
+    //         hour: '2-digit',
+    //         minute: '2-digit',
+    //         second: '2-digit',
+    //         hour12: false
+    //     };
+    //     let datetime = new Date().toLocaleString("en", options).replace(/\//g, '-').replace(",", '');
+    //     const datetimeArray = datetime.split(" ");
+    //     const date = datetimeArray[0];
+    //     const time = datetimeArray[1];
+    //     const timeArray = time.split(":");
+    //     const hour = timeArray[0];
+    //     const minute = timeArray[1];
+    //     const seconds = timeArray[2];
+    //     const dateArray = date.split("-");
+    //     const year = dateArray[2];
+    //     const month = dateArray[0];
+    //     const day = dateArray[1];
+    //     datetime = year + "-" + month + "-" + day + " " + hour + ':' + minute + ':' + seconds;
+    //
+    //     console.log(datetime);
+    //     console.log(Util.getMessageSubText(datetime, "UTC", "en"));
+    //     datetime = year + "-" + month + "-" + (day-1) + " " + hour + ':' + minute + ':' + seconds;
+    //     console.log(datetime);
+    //     console.log(Util.getMessageSubText(datetime, "UTC", "en"));
+    //
+    //     assert.isTrue(true);
+    // });
+
     it('Validate metadata inputs test', function () {
         const shashin = {};
         shashin.showToastMessage = function () {};

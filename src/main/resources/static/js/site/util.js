@@ -1345,26 +1345,70 @@ class Util {
         };
     }
 
-    static getMessageSubText(createdAt, timezone) {
-        const createdAtDate = new Date(new Date(createdAt).toLocaleString("en-US", {timeZone: timezone}));
-        const nowDate = new Date(new Date().toLocaleString("en-US", {timeZone: timezone}));
+    static getMessageSubText(createdAt, timezone, locale = 'en') {
+        const translations = {
+            en: {
+                ago: " ago",
+                units: {
+                    years: [" year", " years"],
+                    months: [" month", " months"],
+                    days: [" day", " days"],
+                    hours: [" hour", " hours"],
+                    minutes: [" minute", " minutes"],
+                    seconds: [" second", " seconds"],
+                    zero: "0s"
+                }
+            },
+            ja: {
+                ago: "前",
+                units: {
+                    years: "年",
+                    months: "か月",
+                    days: "日",
+                    hours: "時間",
+                    minutes: "分",
+                    seconds: "秒",
+                    zero: "0秒"
+                }
+            },
+            fr: {
+                ago: " il y a",
+                units: {
+                    years: [" an", " ans"],
+                    months: [" mois", " mois"], // same singular/plural
+                    days: [" jour", " jours"],
+                    hours: [" heure", " heures"],
+                    minutes: [" minute", " minutes"],
+                    seconds: [" seconde", " secondes"],
+                    zero: "0s"
+                }
+            }
+        };
+
+        const t = translations[locale] || translations.en;
+        const createdAtDate = new Date(new Date(createdAt).toLocaleString("en-US", { timeZone: timezone }));
+        const nowDate = new Date(new Date().toLocaleString("en-US", { timeZone: timezone }));
         const elapsedTime = Util.msToTimeSegments(nowDate - createdAtDate);
-        let timeLapsed = "0s";
-        if (elapsedTime.years > 0) {
-            timeLapsed = elapsedTime.years + " year" + (elapsedTime.years === 1 ? "": "s");
-        } else if (elapsedTime.months > 0) {
-            timeLapsed = elapsedTime.months + " month" + (elapsedTime.months === 1 ? "": "s");
-        } else if (elapsedTime.days > 0) {
-            timeLapsed = elapsedTime.days + " day" + (elapsedTime.days === 1 ? "": "s");
-        } else if (elapsedTime.hours > 0) {
-            timeLapsed = elapsedTime.hours + " hour" + (elapsedTime.hours === 1 ? "": "s");
-        } else if (elapsedTime.minutes > 0) {
-            timeLapsed = elapsedTime.minutes + " minute" + (elapsedTime.minutes === 1 ? "": "s");
-        } else if (elapsedTime.seconds > 0) {
-            timeLapsed = elapsedTime.seconds + " second" + (elapsedTime.seconds === 1 ? "": "s");
+
+        let timeLapsed = t.units.zero;
+
+        const unitKeys = ["years", "months", "days", "hours", "minutes", "seconds"];
+        for (const key of unitKeys) {
+            const value = elapsedTime[key];
+            if (value > 0) {
+                if (Array.isArray(t.units[key])) {
+                    const unit = value === 1 ? t.units[key][0] : t.units[key][1];
+                    timeLapsed = value + unit;
+                } else {
+                    timeLapsed = value + t.units[key];
+                }
+                break; // exit after finding the largest non-zero unit
+            }
         }
-        return "<small class='text-muted'>"+timeLapsed+" ago</small>";
+
+        return `<small class='text-muted'>${timeLapsed}${t.ago}</small>`;
     }
+
 
     static getDateGalleryHeight(id) {
         if ($("#br" + id).length === 0 && $("#row" + id).length === 0 && $("#amp_" + id).length === 0 && $("#tail_" + id).length === 0 && $("#" + id).length === 0) {
@@ -1613,7 +1657,7 @@ class Util {
                                     shashin.showToastMessage(t.title, message, {
                                         icon: "bi-bell",
                                         iconColor: "#FF8C00",
-                                        headerSubtext: Util.getMessageSubText(createdAtDate, timezone),
+                                        headerSubtext: Util.getMessageSubText(createdAtDate, timezone, locale),
                                         autohide: false,
                                         tag: "notifications",
                                         borderColor: "warning"
