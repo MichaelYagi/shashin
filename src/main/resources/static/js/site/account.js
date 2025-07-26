@@ -18,7 +18,7 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
             });
         } else {
             $("#apikeycopyicon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
-            shashin.showToastMessage("Operation failed", "API key must not be blank", {
+            shashin.showToastMessage(shashin.getTranslatedValue("main.toast.account.api.fail.title"), shashin.getTranslatedValue("main.toast.account.api.fail.body"), {
                 icon: "bi-exclamation-triangle",
                 iconColor: "#FF0000",
                 borderColor: "danger"
@@ -62,13 +62,13 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
                 if (successfullyCopied) {
                     callback(true);
                 } else {
-                    shashin.showToastMessage("Could not copy text", "Link must not be blank", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger", tag: "clipboard"});
+                    shashin.showToastMessage(shashin.getTranslatedValue("main.toast.account.copylink.fail.title"), shashin.getTranslatedValue("main.toast.account.copylink.fail.body"), {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger", tag: "clipboard"});
                     callback(false);
                 }
             });
         } else {
             shashin.closeToastMessages({tag: "clipboard"});
-            shashin.showToastMessage("Could not copy text", "Link must not be blank", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger", tag: "clipboard"});
+            shashin.showToastMessage(shashin.getTranslatedValue("main.toast.account.copylink.fail.title"), shashin.getTranslatedValue("main.toast.account.copylink.fail.body"), {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger", tag: "clipboard"});
             callback(false);
         }
     }
@@ -111,26 +111,26 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
                     $("#atomFeedLink").text(data.atomFeedLink);
                     $("#atomFeedLink").attr("href", data.atomFeedLink);
 
-                    shashin.showToastMessage("API key updated", "API key has been updated.", {
+                    shashin.showToastMessage(shashin.getTranslatedValue("main.toast.account.copylink.fail.title"), shashin.getTranslatedValue("main.toast.account.copylink.fail.title"), {
                         icon: "bi-info-circle",
                         iconColor: "#777777"
                     });
                 } else {
-                    shashin.showToastMessage("Operation failed", "Could not regenerate API key", {
+                    shashin.showToastMessage(shashin.getTranslatedValue("main.toast.account.regenerateapi.fail.title"), shashin.getTranslatedValue("main.toast.account.regenerateapi.fail.msg"), {
                         icon: "bi-exclamation-triangle",
                         iconColor: "#FF0000",
                         borderColor: "danger"
                     });
                 }
             } else {
-                shashin.showToastMessage("Operation failed", "API key must not be blank", {
+                shashin.showToastMessage(shashin.getTranslatedValue("main.toast.account.regenerateapi.fail.title"), shashin.getTranslatedValue("main.toast.account.regenerateapi.blank.msg"), {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",
                     borderColor: "danger"
                 });
             }
         } else {
-            shashin.showToastMessage("Input not valid", "Try again. You must type UPDATE in all caps.", {
+            shashin.showToastMessage(shashin.getTranslatedValue("main.toast.settings.input.title.fail"), shashin.getTranslatedValue("main.toast.account.regenerateapi.invalid.msg"), {
                 icon: "bi-exclamation-triangle",
                 iconColor: "#FD7E14",
                 borderColor: "warning"
@@ -190,7 +190,7 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
         let fieldsValid = true;
 
         if ($("#oldpassword").val().trim().length === 0 || $("#newpassword").val().trim().length === 0 || $("#newpasswordconfirm").val().trim().length === 0) {
-            shashin.showToastMessage("Validation error", "Password fields cannot be empty.", {
+            shashin.showToastMessage(shashin.getTranslatedValue("main.toast.account.password.validationerror.title"), shashin.getTranslatedValue("main.toast.account.password.validationerror.empty"), {
                 icon: "bi-exclamation-triangle",
                 iconColor: "#FF0000",
                 borderColor: "danger"
@@ -199,7 +199,7 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
         }
 
         if ($("#newpassword").val().trim() !== $("#newpasswordconfirm").val().trim()) {
-            shashin.showToastMessage("Validation error", "Passwords do not match.", {
+            shashin.showToastMessage(shashin.getTranslatedValue("main.toast.account.password.validationerror.title"), shashin.getTranslatedValue("main.toast.account.password.validationerror.nomatch"), {
                 icon: "bi-exclamation-triangle",
                 iconColor: "#FF0000",
                 borderColor: "danger"
@@ -276,7 +276,7 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
             if (data.hasOwnProperty("status") && data.status === "success" && data.hasOwnProperty("msg")) {
                 window.top.location = window.top.location;
             } else {
-                shashin.showToastMessage("Could not delete profile", "Something went wrong", {
+                shashin.showToastMessage(shashin.getTranslatedValue("main.toast.account.profile.fail.title"), shashin.getTranslatedValue("main.toast.account.profile.fail.body"), {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",
                     borderColor: "danger"
@@ -300,7 +300,7 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
             if (validUrl === true) {
                 testImage($("#chooseProfilePhoto").val()).then(record.bind(null, url), record.bind(null, url));
             } else {
-                shashin.showToastMessage("URL invalid", "Could not load image. Check URL.", {
+                shashin.showToastMessage(shashin.getTranslatedValue("main.toast.account.profileurl.fail.title"), shashin.getTranslatedValue("main.toast.account.profileurl.fail.body"), {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",
                     borderColor: "danger"
@@ -313,7 +313,7 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
         if (result === "success") {
             processImage(this);
         } else {
-            shashin.showToastMessage("URL invalid", "Could not load image. Request "+result+". Check URL: "+url+".", {
+            shashin.showToastMessage(shashin.getTranslatedValue("main.toast.account.profileurl.fail.title"), shashin.getTranslatedValue("main.toast.account.profileurl.fail.body"), {
                 icon: "bi-exclamation-triangle",
                 iconColor: "#FF0000",
                 borderColor: "danger"
@@ -407,14 +407,14 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
                         if (data.hasOwnProperty("imageUrl") && data.imageUrl !== "") {
                             window.top.location = window.top.location;
                         } else {
-                            shashin.showToastMessage("Could not save profile", "Could not save profile. " + data.msg, {
+                            shashin.showToastMessage(shashin.getTranslatedValue("main.toast.account.profile.fail"), shashin.getTranslatedValue("main.toast.account.profile.fail") +". "+ + data.msg, {
                                 icon: "bi-exclamation-triangle",
                                 iconColor: "#FF0000",
                                 borderColor: "danger"
                             });
                         }
                     } else {
-                        shashin.showToastMessage("Could not save profile", "Something went wrong", {
+                        shashin.showToastMessage(shashin.getTranslatedValue("main.toast.account.profile.fail"), shashin.getTranslatedValue("main.toast.account.profile.fail"), {
                             icon: "bi-exclamation-triangle",
                             iconColor: "#FF0000",
                             borderColor: "danger"
@@ -490,7 +490,7 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
                     if (data.status === "success") {
                         window.location.replace("/users/logout");
                     } else {
-                        shashin.showToastMessage("Uh-oh!", "Something went wrong! " + data.msg, {
+                        shashin.showToastMessage(shashin.getTranslatedValue("main.toast.account.profile.fail.body"), shashin.getTranslatedValue("main.toast.account.profile.fail.body") + ": " + data.msg, {
                             icon: "bi-exclamation-triangle",
                             iconColor: "#FF0000",
                             borderColor: "danger"
@@ -498,7 +498,7 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
                     }
                 }
             } else {
-                shashin.showToastMessage("Input not valid", "Try again. You must type your username.", {
+                shashin.showToastMessage(shashin.getTranslatedValue("main.toast.settings.input.title.fail"), shashin.getTranslatedValue("main.toast.account.username.fail"), {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FD7E14",
                     borderColor: "warning"
@@ -508,7 +508,7 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
                 $("#deleteConfirm").val("");
             }
         } else {
-            shashin.showToastMessage("Uh-oh!", "Something went wrong!", {
+            shashin.showToastMessage(shashin.getTranslatedValue("main.toast.account.profile.fail.body"), shashin.getTranslatedValue("main.toast.account.profile.fail.body"), {
                 icon: "bi-exclamation-triangle",
                 iconColor: "#FF0000",
                 borderColor: "danger"

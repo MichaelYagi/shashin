@@ -197,21 +197,21 @@ class UserController {
 
                     model["msg"] = "Success"
                     model["status"] = ApiResponse.SUCCESS.status
-                    model["toastTitle"] = "Password updated"
-                    model["toastBody"] = "Password successfully updated"
+                    model["toastTitle"] = messageSource?.getMessage("main.toast.account.password.updated.success.title", null, locale)
+                    model["toastBody"] = messageSource?.getMessage("main.toast.account.password.updated.success.body", null, locale)
                 } else {
                     model["message"] = ""
                     model["msg"] = ""
                     model["status"] = ApiResponse.FAIL.status
-                    model["toastTitle"] = "Password update failed"
-                    model["toastBody"] = "Password incorrect or passwords do not match"
+                    model["toastTitle"] = messageSource?.getMessage("main.toast.account.password.updated.fail.title", null, locale)
+                    model["toastBody"] = messageSource?.getMessage("main.toast.account.password.updated.fail.body", null, locale)
                 }
             }
         }
 
         val module = "account"
         model["msg"] = ""
-        model["status"] = ApiResponse.SUCCESS.status
+        model["status"] = ApiResponse.FAIL.status
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
