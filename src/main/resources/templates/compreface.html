@@ -246,10 +246,10 @@
                 <h5 class="modal-title" id="trashModalLabel">Delete images for subject <th:block th:text="${personInfo.name}"></th:block></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" th:text="${'Are you sure you want to delete these images from CompreFace for '+personInfo.name+'?'}"></div>
+            <div class="modal-body" th:text="#{main.pages.compreface.pre}+${personInfo.name}+#{main.pages.compreface.post}"></div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="deleteUser">Confirm</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="deleteUser"><th:block th:text="#{main.modal.confirm}"></th:block></button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><th:block th:text="#{main.modal.cancel}"></th:block></button>
             </div>
             <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
                 $("#deleteUser").on("click", async function (e) {
