@@ -17,6 +17,7 @@ import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import jakarta.transaction.Transactional
+import org.springframework.context.MessageSource
 import java.util.*
 
 @Controller
@@ -28,6 +29,9 @@ class ArchiveController {
 
     @Autowired
     private val keywordRepository: KeywordRepository? = null
+
+    @Autowired
+    var messageSource: MessageSource? = null
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
@@ -86,7 +90,7 @@ class ArchiveController {
 
     @RequestMapping(value = ["/archived/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getPagedFavorites(model: Model, @PathVariable page: Int): String {
+    fun getPagedFavorites(model: Model, @PathVariable page: Int, locale: Locale): String {
         val response = mutableMapOf<String, Any?>()
         response["metadataList"] = mutableListOf<Metadata>()
         response["keywordMap"] = mutableMapOf<String, String>()
@@ -111,7 +115,7 @@ class ArchiveController {
             }
         }
 
-        response["msg"] = "Could not get results"
+        response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
         response["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(response)
     }
@@ -120,7 +124,7 @@ class ArchiveController {
     @ResponseBody
     @Transactional
     @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
-    fun postUnhideMetadata(model: Model, @RequestBody requestBody: JsonNode): String {
+    fun postUnhideMetadata(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String {
         val trashMp = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (trashMp.containsKey("metadataIdList")) {
             val metadataIdList = trashMp["metadataIdList"] as MutableList<*>
@@ -135,13 +139,13 @@ class ArchiveController {
                     }
                 }
 
-                resp["msg"] = "Restored photos"
+                resp["msg"] = messageSource?.getMessage("main.toast.app.media.restored", null, locale)
                 resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
             }
         }
 
-        resp["msg"] = "Could not restore"
+        resp["msg"] = messageSource?.getMessage("main.toast.app.media.restored.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }

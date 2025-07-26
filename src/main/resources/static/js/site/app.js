@@ -344,7 +344,7 @@
                             Util.setMetadataLocalStorage();
                             const version = Util.getMetadataLocalStorage();
                             $("#image" + metadataId).attr("src", $("#image" + metadataId).attr("src") + (version === "" ? "" : "?v=" + version));
-                            shashin.showToastMessage("Thumbnail image updated", "Thumbnails have been updated.", {
+                            shashin.showToastMessage(shashin.getTranslatedValue("main.toast.app.image.upload"), shashin.getTranslatedValue("main.toast.app.image.upload"), {
                                 icon: "bi-info-circle",
                                 iconColor: "#777777",
                                 delay: 2000,
@@ -371,7 +371,7 @@
 
                             $(".lg-current").animate({backgroundColor: "transparent"}, 2000);
                         } else {
-                            shashin.showToastMessage("Could not update thumbnail", "Could not update thumbnails", {
+                            shashin.showToastMessage(shashin.getTranslatedValue("main.toast.app.image.notupload"), shashin.getTranslatedValue("main.toast.app.image.notupload"), {
                                 icon: "bi-exclamation-triangle",
                                 iconColor: "#FF0000",
                                 borderColor:"danger"
@@ -384,7 +384,7 @@
                         $("#captureThumbnailSpinner").prop( "disabled", false);
                     });
                 } else {
-                    shashin.showToastMessage("Could not update thumbnails", "Could not update thumbnails. Failed to capture image.", {
+                    shashin.showToastMessage(shashin.getTranslatedValue("main.toast.app.image.notupload"), shashin.getTranslatedValue("main.toast.app.image.notupload"), {
                         icon: "bi-exclamation-triangle",
                         iconColor: "#FF0000",
                         borderColor:"danger"
@@ -396,7 +396,7 @@
                 }
             } else {
                 $(".lg-current").css("background-color", "transparent");
-                shashin.showToastMessage("Could not update thumbnails", "Could not update thumbnails. "+metadata.fileName+" not a video.", {
+                shashin.showToastMessage(shashin.getTranslatedValue("main.toast.app.image.notupload"), shashin.getTranslatedValue("main.toast.app.image.notvideo"), {
                     icon: "bi-exclamation-triangle",
                     iconColor: "#FF0000",
                     borderColor:"danger"
@@ -439,7 +439,7 @@
             const endpoint = "/metadata/download/batch";
 
             shashin.closeToastMessages({tag:"downloadselected"});
-            shashin.showToastMessage("Downloading media", "Downloading "+activePage+" media.", {
+            shashin.showToastMessage(shashin.getTranslatedValue("main.toast.app.media.downloading"), shashin.getTranslatedValue("main.toast.app.media.downloading"), {
                 icon:"bi-info-circle",
                 iconColor:"#777777",
                 autohide:false,
@@ -592,7 +592,7 @@
         const configuredAttempts = 120;
 
         shashin.closeToastMessages({tag:"sharedownload"});
-        shashin.showToastMessage("Downloading share album", "Downloading share album \""+albumName+"\".", {
+        shashin.showToastMessage(shashin.getTranslatedValue("main.toast.app.media.downloading"), shashin.getTranslatedValue("main.toast.app.media.downloading"), {
             icon:"bi-info-circle",
             iconColor:"#777777",
             autohide:false,
