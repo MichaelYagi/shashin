@@ -34,7 +34,7 @@ $(document).ready(function () {
                     $("#albumsModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                     $("#albumsModalCancel").prop('disabled', false);
 
-                    shashin.showToastMessage("Album", "Album Updated", {
+                    shashin.showToastMessage(shashin.getTranslatedValue("main.sidebar.album"), shashin.getTranslatedValue("main.pages.albums.updated"), {
                         icon: "bi-info-circle",
                         iconColor: "#777777",
                         tag: "albummodal",
