@@ -40,6 +40,7 @@ import java.util.logging.Logger
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
 import jakarta.transaction.Transactional
+import org.springframework.context.MessageSource
 import org.springframework.web.multipart.MultipartFile
 import kotlin.collections.count
 import kotlin.io.path.isDirectory
@@ -94,6 +95,9 @@ class AlbumsController: BaseController() {
 
     @Value("\${app.role.admin}")
     private var adminRole: String? = null
+
+    @Autowired
+    var messageSource: MessageSource? = null
 
     private var logger: Logger = Logger.getLogger(AlbumsController::class.simpleName)
 
@@ -2048,7 +2052,7 @@ class AlbumsController: BaseController() {
     @RequestMapping(value = ["/album/updatename/{albumId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
-    fun updateAlbumName(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int): String? {
+    fun updateAlbumName(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int, locale: Locale): String? {
         val albumPayload = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (albumPayload.containsKey("albumId") && albumPayload.containsKey("albumName")) {
             val postAlbumId = albumPayload["albumId"].toString().toInt()
@@ -2085,11 +2089,11 @@ class AlbumsController: BaseController() {
                         }
                     }
 
-                    resp["msg"] = "Saved"
+                    resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
                     resp["status"] = ApiResponse.SUCCESS.status
                     mapper.writeValueAsString(resp)
                 } else {
-                    resp["msg"] = "Album name \"$albumName\" already exists"
+                    resp["msg"] = messageSource?.getMessage("main.toast.albums.save.fail.pre", null, locale) + "\"$albumName\"" + messageSource?.getMessage("main.toast.albums.save.fail.post", null, locale)
                     resp["status"] = ApiResponse.WARN.status
                     mapper.writeValueAsString(resp)
                 }
@@ -2097,7 +2101,7 @@ class AlbumsController: BaseController() {
             }
         }
 
-        resp["msg"] = "Could not save"
+        resp["msg"] = messageSource?.getMessage("main.modal.saved.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }

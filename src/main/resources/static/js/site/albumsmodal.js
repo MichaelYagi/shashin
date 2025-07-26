@@ -70,7 +70,7 @@
         if (data.hasOwnProperty("relativeShareLink") && data.relativeShareLink !== "") {
             result = data.relativeShareLink;
         } else {
-            shashin.showToastMessage("Something went wrong!", "Could not generate share link", {
+            shashin.showToastMessage(shashin.getTranslatedValue("main.toast.account.profile.fail.body"), shashin.getTranslatedValue("main.toast.albums.share.fail"), {
                 icon:"bi-exclamation-triangle",
                 iconColor:"#FF0000",
                 borderColor:"danger"
