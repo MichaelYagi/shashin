@@ -110,7 +110,7 @@
                         funObject.fn(funObject.args, this.core.lgId, this.core.index);
                     } else {
                         if (shashin) {
-                            shashin.showToastMessage("Could not capture screenshot", "Could not capture screenshot. Function or metadata ID not found", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
+                            shashin.showToastMessage(shashin.getTranslatedValue("main.toast.lgvideothumb.title"), shashin.getTranslatedValue("main.toast.lgvideothumb.body"), {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
                         }
                         $("#captureThumbnail").show();
                         $("#captureThumbnailSpinner").hide();

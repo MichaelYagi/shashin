@@ -714,14 +714,14 @@ class Util {
                 }
 
                 if (data.status === shashin.apiResponse.SUCCESS) {
-                    shashin.showToastMessage("Metadata Rescanned", "Metadata successfully rescanned!", {
+                    shashin.showToastMessage(shashin.getTranslatedValue("main.toast.metadata.rescan.title"), shashin.getTranslatedValue("main.toast.metadata.rescan.body.success"), {
                         icon: "bi-info-circle",
                         iconColor: "#777777",
                         tag: "metadatamodal",
                         borderColor:"success"
                     });
                 } else {
-                    shashin.showToastMessage("Error Rescanning Metadata", "There was an error rescanning metadata!", {
+                    shashin.showToastMessage(shashin.getTranslatedValue("main.toast.metadata.rescan.title"), shashin.getTranslatedValue("main.toast.metadata.rescan.body.fail"), {
                         icon:"bi-exclamation-triangle",
                         iconColor:"#FF0000",
                         tag: "metadatamodal",
@@ -729,7 +729,7 @@ class Util {
                     });
                 }
             } else {
-                shashin.showToastMessage("Error Rescanning Metadata", "There was an error rescanning metadata!", {
+                shashin.showToastMessage(shashin.getTranslatedValue("main.toast.metadata.rescan.title"), shashin.getTranslatedValue("main.toast.metadata.rescan.body.fail"), {
                     icon:"bi-exclamation-triangle",
                     iconColor:"#FF0000",
                     tag: "metadatamodal",
@@ -949,23 +949,23 @@ class Util {
 
         let msg = "";
         if (day !== "" && !(parseInt(day) >= 1 && parseInt(day) <= 31)) {
-            msg = "Enter Valid Day. Format: 1-31";
+            msg = shashin.getTranslatedValue("main.toast.metadatainput.validate.day")+": 1-31";
         }
 
         if (month !== "" && !(parseInt(month) >= 1 && parseInt(month) <= 12)) {
-            msg = "Enter Valid Month. Format: 1-12";
+            msg = shashin.getTranslatedValue("main.toast.metadatainput.validate.month")+": 1-12";
         }
 
         if (year !== "" && !(+year >= 1826 && +year <= new Date().getFullYear())) {
-            msg = "Enter Valid Year. Format: 1826-" + (new Date().getFullYear());
+            msg = shashin.getTranslatedValue("main.toast.metadatainput.validate.year")+": 1826-" + (new Date().getFullYear());
         }
 
         if (time !== "" && !time.match(timeValidate)) {
-            msg = "Enter Valid Time. Format: HH:MM:SS";
+            msg = shashin.getTranslatedValue("main.toast.metadatainput.validate.time")+": HH:MM:SS";
         }
 
         if (offset !== "" && !offset.match(offsetValidate)) {
-            msg = "Enter Valid Offset";
+            msg = shashin.getTranslatedValue("main.toast.metadatainput.validate.offset");
         }
 
         if (latlng !== "") {
@@ -973,7 +973,7 @@ class Util {
             const latlngArr = latlng.split(",");
 
             if (latlngArr.length !== 2 || latlng.split(".").length !== 3 || !Util.isNumericString(latlngArr[0]) || !Util.isNumericString(latlngArr[1])) {
-                msg = "Enter Valid Latitude/Longitude. Format: lat,lng";
+                msg = shashin.getTranslatedValue("main.toast.metadatainput.validate.latlng")+": lat,lng";
             }
         }
 
@@ -982,14 +982,14 @@ class Util {
             const isValidWithHour = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(duration);
 
             if (isValidWithoutHour === false && isValidWithHour === false) {
-                msg = "Enter Valid Duration. Format: 0:00/00:00:00";
+                msg = shashin.getTranslatedValue("main.toast.metadatainput.validate.duration")+": 0:00/00:00:00";
             }
         }
 
         if (msg !== "") {
             if (test === false) {
                 // $("#"+msgId).html('<div class="alert alert-danger" role="alert">'+msg+'</div>');
-                shashin.showToastMessage("Input errors", msg, {icon: "bi-exclamation-triangle", iconColor: "#FF0000", borderColor:"danger"});
+                shashin.showToastMessage(shashin.getTranslatedValue("main.toast.metadatainput.title"), msg, {icon: "bi-exclamation-triangle", iconColor: "#FF0000", borderColor:"danger"});
             }
             return false;
         } else {
@@ -1546,7 +1546,7 @@ class Util {
         return jsonData;
     }
 
-    static getNotifications(notificationAlerts, timezone, pollMinutes) {
+    static getNotifications(notificationAlerts, timezone, locale, pollMinutes) {
         setTimeout(() => {
             let http = new Http("check notifications");
             http.ajax("get", "/notifications/check").then(function (data) {
@@ -1566,15 +1566,51 @@ class Util {
                                 const notificationCount = unreadNotifications.length;
                                 const firstNotification = data.unreadNotifications[0];
                                 const createdAtDate = firstNotification.createdAt;
-                                const title = notificationCount + " new notification" + (notificationCount === 1 ? "" : "s");
-                                let message = '<div class="container"><div class="row">' + ((firstNotification.imageUrl !== null && firstNotification.imageUrl !== "") ? '<div class="col-4"><img src="' + firstNotification.imageUrl + '" width="100"></div>' : '') + ((firstNotification.imageUrl !== null && firstNotification.imageUrl !== "") ? '<div class="col-8">' : '<div class="col">') + ((notificationCount > 1) ? 'Latest - ' : '') + firstNotification.message + '</div></div>';
-                                message = message + "<div class='row'><hr class='mb-1 mt-3'><div class='col'><a href='#' class='gotoNotifications' target='_blank'>Read notifications</a></div><div class='col'><a href='#' class='markNotifications'>Mark "+((notificationCount === 1) ? 'read' : 'all read')+"</a></div></div></div>";
+
+                                const translations = {
+                                    en: {
+                                        title: `${notificationCount} new notification${notificationCount > 1 ? 's' : ''}`,
+                                        latestPrefix: notificationCount > 1 ? "Latest - " : "",
+                                        readLink: "Read notifications",
+                                        markLink: notificationCount === 1 ? "Mark read" : "Mark all read"
+                                    },
+                                    ja: {
+                                        title: `${notificationCount}件の新しい通知`,
+                                        latestPrefix: notificationCount > 1 ? "最新 - " : "",
+                                        readLink: "通知を読む",
+                                        markLink: notificationCount === 1 ? "既読にする" : "すべて既読にする"
+                                    }
+                                };
+
+                                const t = translations[locale] || translations.en; // fallback to English
+
+                                const hasImage = firstNotification.imageUrl && firstNotification.imageUrl !== "";
+
+                                let message = `
+                                    <div class="container">
+                                        <div class="row">
+                                            ${hasImage ? `<div class="col-4"><img src="${firstNotification.imageUrl}" width="100"></div>` : ""}
+                                            <div class="${hasImage ? "col-8" : "col"}">
+                                                ${t.latestPrefix}${firstNotification.message}
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <hr class="mb-1 mt-3">
+                                            <div class="col">
+                                                <a href="#" class="gotoNotifications" target="_blank">${t.readLink}</a>
+                                            </div>
+                                            <div class="col">
+                                                <a href="#" class="markNotifications">${t.markLink}</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `.trim();
 
                                 // if (notificationCount === 1) {
                                 //     NotificationUtil.markNotificationRead();
                                 // } else {
                                 if (notificationCount > 1) {
-                                    shashin.showToastMessage(title, message, {
+                                    shashin.showToastMessage(t.title, message, {
                                         icon: "bi-bell",
                                         iconColor: "#FF8C00",
                                         headerSubtext: Util.getMessageSubText(createdAtDate, timezone),
