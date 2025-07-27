@@ -461,7 +461,10 @@ class UserController {
             val language = languageMap["language"]
 
             val currentUserObj = model.getAttribute("currentUser") as User?
-            if (currentUserObj != null && (language == "en" || language == "ja")) {
+            // Defined in AttributeController.kt
+            val supportedLanguages = model.getAttribute("availableLang") as Array<String>
+
+            if (currentUserObj != null && language in supportedLanguages) {
                 currentUserObj.setLanguage(language)
                 userRepository?.save(currentUserObj)
                 response["msg"] = "Updated language"

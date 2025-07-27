@@ -218,6 +218,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
     @ModelAttribute
     @Transactional
     fun addAttributes(model: Model, request: HttpServletRequest, response: HttpServletResponse, authentication: Authentication?) {
+        val availableLang = arrayOf("en", "ja", "fr")
         var locale = LocaleContextHolder.getLocale().toString()
 
 //        val totalTimingStart = Date()
@@ -547,6 +548,16 @@ class AttributeController: ResponseEntityExceptionHandler() {
 //        timingStart = Date()
 
         // Set language
+        data class LanguageOption(val code: String, val label: String)
+        val languageList = availableLang.map { langCode ->
+            LanguageOption(
+                code = langCode,
+                label = messageSource!!.getMessage("lang.$langCode", null, LocaleContextHolder.getLocale())
+            )
+        }
+
+        model["languageList"] = languageList
+        model["availableLang"] = availableLang
         model["locale"] = locale.toString()
         val localeResolver = RequestContextUtils.getLocaleResolver(request)
         localeResolver?.setLocale(request, response, StringUtils.parseLocaleString(locale.toString()))

@@ -545,7 +545,7 @@ async function showMap(mapdata, keywordMap, locale) {
 
         let resultsText = filteredCount + " result" + (filteredCount === 1 ? "" : "s");
         $("#resultsText").text();
-        if (locale === "ja") {
+        if (locale === "ja" || locale === "fr") {
             resultsText = filteredCount + " " + shashin.getTranslatedValue("main.pages.map.modal.result");
         }
         $("#resultsText").text(resultsText);
