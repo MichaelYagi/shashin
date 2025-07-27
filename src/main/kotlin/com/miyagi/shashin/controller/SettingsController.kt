@@ -67,7 +67,9 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
 import jakarta.transaction.Transactional
+import org.springframework.context.MessageSource
 import org.springframework.data.jpa.repository.Modifying
+import java.util.Locale
 import java.util.stream.Collectors
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
@@ -152,6 +154,9 @@ class SettingsController {
 
     @Value("\${spring.datasource.url}")
     private var dataSourceUrl: String? = null
+
+    @Autowired
+    var messageSource: MessageSource? = null
 
     private var bcrypt = BCryptPasswordEncoder()
 
@@ -673,7 +678,7 @@ class SettingsController {
     @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     @ResponseBody
     @Transactional
-    fun deleteContent(model: Model, @RequestBody requestBody: JsonNode): String? {
+    fun deleteContent(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String? {
         val userDeleteMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (userDeleteMap.containsKey("deleteContent")) {
             val deleteContent = userDeleteMap["deleteContent"].toString().toBoolean()
@@ -748,7 +753,7 @@ class SettingsController {
                             notificationObj.setCreatedAt(getCurrentTimestamp())
                             notificationObj.setModifiedAt(getCurrentTimestamp())
                             notificationObj.setRead(false)
-                            notificationObj.setMessage("Content has been deleted at "+sdtf.format(Date())+".")
+                            notificationObj.setMessage(messageSource?.getMessage("main.register.first", null, locale) + " - "+sdtf.format(Date())+".")
                             notificationObjList.add(notificationObj)
                         }
                         if (notificationObjList.isNotEmpty()) {
@@ -927,7 +932,8 @@ class SettingsController {
         @RequestParam submit: String,
         @RequestParam deleteThread: Boolean,
         @RequestParam stopScan: Boolean,
-        @RequestParam reindexFiles: Boolean
+        @RequestParam reindexFiles: Boolean,
+        locale: Locale
     ): String {
         resp["msg"] = "Nothing to see here"
 
@@ -943,7 +949,7 @@ class SettingsController {
         }
 
         if (submit == "Scan") {
-            resp["msg"] = scanMediaDirectories(reindexFiles)
+            resp["msg"] = scanMediaDirectories(reindexFiles,0 , 0 ,locale)
         }
 
         return mapper.writeValueAsString(resp)
@@ -1512,7 +1518,7 @@ class SettingsController {
     }
 
     @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
-    fun scanMediaDirectories(reindexFiles: Boolean, addToAlbum: Int = 0, uploadUserId: Int = 0): String {
+    fun scanMediaDirectories(reindexFiles: Boolean, addToAlbum: Int = 0, uploadUserId: Int = 0, locale: Locale = Locale.ENGLISH): String {
         recognitionCount = 0
         val superAdmins = userRepository?.findAllByAuthorityEquals(superRole!!)
 
@@ -1568,7 +1574,7 @@ class SettingsController {
                     deleteThreadScan()
 
                     // Iterate through directory in another thread
-                    scanProcess(settings, mediaDirs, mediaExcludeDirs, sidecarDir, compreFaceServerConnected, superAdmins, reindexFiles, addToAlbum, uploadUserId)
+                    scanProcess(settings, mediaDirs, mediaExcludeDirs, sidecarDir, compreFaceServerConnected, superAdmins, reindexFiles, addToAlbum, uploadUserId, locale)
 
                     return "Start Scan"
                 }
@@ -1603,7 +1609,7 @@ class SettingsController {
 //        return msg
     }
 
-    fun scanProcess(settings: Settings?, mediaDirs: MutableList<MediaDirectory?>?, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, sidecarDir: String, compreFaceServerConnected: Boolean, superAdmins: MutableIterable<User>?, reindexFiles: Boolean, addToAlbum: Int, uploadUserId: Int) {
+    fun scanProcess(settings: Settings?, mediaDirs: MutableList<MediaDirectory?>?, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, sidecarDir: String, compreFaceServerConnected: Boolean, superAdmins: MutableIterable<User>?, reindexFiles: Boolean, addToAlbum: Int, uploadUserId: Int, locale: Locale) {
         Thread {
             //Create file with thread name and write file name iterated
             val threadFile = FileUtils.createThreadFile("shashinscan")
@@ -1875,7 +1881,7 @@ class SettingsController {
                         // Set notification for scanCount and date and link to /recent
                         val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                         val msg =
-                            "Deleted <a href='#' data-bs-toggle='tooltip' title='${deletedList.joinToString("\n")}'>$deleteCount</a> images/videos at " + sdtf.format(Date()) + "."
+                            messageSource?.getMessage("main.notification.setting.delete.pre", null, locale) + "<a href='#' data-bs-toggle='tooltip' title='${deletedList.joinToString("\n")}'>$deleteCount</a>"+messageSource?.getMessage("main.notification.setting.delete.post", null, locale)+"- " + sdtf.format(Date()) + "."
                         if (superAdmins != null) {
                             val notificationObjList = mutableListOf<Notification>()
                             for (admin in superAdmins) {
