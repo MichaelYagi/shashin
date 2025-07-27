@@ -4,6 +4,7 @@ import com.miyagi.shashin.controller.SettingsController
 import org.springframework.boot.devtools.filewatch.ChangedFile
 import org.springframework.boot.devtools.filewatch.ChangedFiles
 import org.springframework.boot.devtools.filewatch.FileChangeListener
+import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.stereotype.Component
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -34,7 +35,7 @@ class ShashinFileChangeListener(val settingsController: SettingsController): Fil
 
         if (changeDetected) {
             val reindex = false
-            val msg = settingsController.scanMediaDirectories(reindex)
+            val msg = settingsController.scanMediaDirectories(reindex, 0, 0, LocaleContextHolder.getLocale())
             logger.log(Level.INFO, "ShashinFileChangeListener scanMediaDirectories msg: $msg")
         }
     }

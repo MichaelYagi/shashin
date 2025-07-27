@@ -69,7 +69,7 @@ class BrowseController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/metadata/media/upload/batch","/api/v1/metadata/media/upload/batch"], method = [RequestMethod.POST], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = ["application/json"])
     @ResponseBody
-    fun postUploadToTimeline(model: Model, session: HttpSession, @RequestParam("files[]") media: List<MultipartFile>): String {
+    fun postUploadToTimeline(model: Model, session: HttpSession, @RequestParam("files[]") media: List<MultipartFile>, locale: Locale): String {
         resp["msg"] = "Could not save"
         resp["status"] = ApiResponse.FAIL.status
 
@@ -85,7 +85,7 @@ class BrowseController: BaseController() {
             val notUploadedFiles = fileUploadedMap["notUploadedFiles"] as MutableList<String>
 
             if (!uploadedFiles.isEmpty()) {
-                settingsController.scanMediaDirectories(false, 0, currentUserObj.getId())
+                settingsController.scanMediaDirectories(false, 0, currentUserObj.getId(), locale)
             }
 
             if (!notUploadedFiles.isEmpty() && !uploadedFiles.isEmpty()) {

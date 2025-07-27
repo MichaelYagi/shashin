@@ -751,7 +751,7 @@ class AlbumsController: BaseController() {
     @RequestMapping(value = ["/album/delete", "/api/v1/all/album/delete"], method = [RequestMethod.DELETE], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
-    fun deleteAlbumPhotos(model: Model, @RequestBody requestBody: JsonNode, response: HttpServletResponse): String? {
+    fun deleteAlbumPhotos(model: Model, @RequestBody requestBody: JsonNode, response: HttpServletResponse, locale: Locale): String? {
         val albumDeleteMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
         if (albumDeleteMap.containsKey("albumId")) {
@@ -779,7 +779,7 @@ class AlbumsController: BaseController() {
                         notificationObj.setCreatedAt(getCurrentTimestamp())
                         notificationObj.setModifiedAt(getCurrentTimestamp())
                         notificationObj.setRead(false)
-                        notificationObj.setMessage("Album ${albumObj.getName()} deleted at ${sdtf.format(Date())}")
+                        notificationObj.setMessage(messageSource?.getMessage("main.sidebar.album", null, locale) + " ${albumObj.getName()}"+messageSource?.getMessage("main.notification.album.delete.post", null, locale)+"- ${sdtf.format(Date())}")
                         notificationObjList.add(notificationObj)
                     }
                     if (notificationObjList.isNotEmpty()) {
@@ -858,7 +858,7 @@ class AlbumsController: BaseController() {
     @RequestMapping(value = ["/album/media/delete/batch"], method = [RequestMethod.DELETE], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
-    fun deleteAlbumPhotos(@RequestBody requestBody: JsonNode): String? {
+    fun deleteAlbumPhotos(@RequestBody requestBody: JsonNode, locale: Locale): String? {
         val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (batchMetadataMap.containsKey("metadataIdList") && batchMetadataMap.containsKey("albumId")) {
             val idArray = batchMetadataMap["metadataIdList"] as ArrayList<String>
@@ -893,7 +893,7 @@ class AlbumsController: BaseController() {
                         notificationObj.setCreatedAt(getCurrentTimestamp())
                         notificationObj.setModifiedAt(getCurrentTimestamp())
                         notificationObj.setRead(false)
-                        notificationObj.setMessage("Album ${albumObj.getName()} deleted at ${sdtf.format(Date())}")
+                        notificationObj.setMessage(messageSource?.getMessage("main.sidebar.album", null, locale) + " ${albumObj.getName()}"+messageSource?.getMessage("main.notification.album.delete.post", null, locale)+"- ${sdtf.format(Date())}")
                         notificationObjList.add(notificationObj)
                     }
                     if (notificationObjList.isNotEmpty()) {
@@ -1023,7 +1023,7 @@ class AlbumsController: BaseController() {
     @RequestMapping(value = ["/share/album/save","/api/v1/share/album/save"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     //@Transactional
-    fun postAnonymousShareAlbum(@RequestBody requestBody: JsonNode, response: HttpServletResponse): String? {
+    fun postAnonymousShareAlbum(@RequestBody requestBody: JsonNode, response: HttpServletResponse, locale: Locale): String? {
         val albumShareInfo = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (albumShareInfo.containsKey("albumId") && albumShareInfo.containsKey("relativeShareUrl")) {
             val albumIdRequest = albumShareInfo["albumId"].toString().toInt()
@@ -1067,7 +1067,7 @@ class AlbumsController: BaseController() {
                         notificationObj.setCreatedAt(getCurrentTimestamp())
                         notificationObj.setModifiedAt(getCurrentTimestamp())
                         notificationObj.setRead(false)
-                        notificationObj.setMessage("Share URL was $action for album '$link'")
+                        notificationObj.setMessage(messageSource?.getMessage("main.notification.album.shared.action.pre", null, locale)+"$action"+messageSource?.getMessage("main.notification.album.shared.action.post", null, locale)+"'$link'")
                         notificationObjList.add(notificationObj)
                     }
 
@@ -1091,7 +1091,7 @@ class AlbumsController: BaseController() {
     }
 
     @RequestMapping(value = ["/share/{shareLink}/album/{albumId}"], method = [RequestMethod.GET])
-    fun getAnonymousShareAlbum(model: Model, res: HttpServletResponse, @PathVariable shareLink: String, @PathVariable albumId: Int): String? {
+    fun getAnonymousShareAlbum(model: Model, res: HttpServletResponse, @PathVariable shareLink: String, @PathVariable albumId: Int, locale: Locale): String? {
         val module = "share"
 
         val queryLimit = model.getAttribute("queryLimit").toString().toInt()
@@ -1124,12 +1124,12 @@ class AlbumsController: BaseController() {
                     notificationObj.setModifiedAt(getCurrentTimestamp())
                     notificationObj.setRead(false)
                     var message =
-                        "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> viewed shared album '<a href='/share/$shareLink/album/$albumId' target='_blank'>${album?.getName()}</a>' at ${
+                        "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a>"+messageSource?.getMessage("main.notification.album.shared.viewed", null, locale)+"'<a href='/share/$shareLink/album/$albumId' target='_blank'>${album?.getName()}</a>' - ${
                             sdtf.format(Date())
                         }"
                     if (album == null || album.getId() == 0) {
                         message =
-                            "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to access non existent shared album at shareLink <strong>$shareLink</strong> and albumId <strong>$albumId</strong> at ${
+                            "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a>"+messageSource?.getMessage("main.notification.album.shared.access.pre", null, locale)+"<strong>$shareLink</strong>"+messageSource?.getMessage("main.notification.album.shared.access.post", null, locale)+"<strong>$albumId</strong> - ${
                                 sdtf.format(Date())
                             }"
                     }
@@ -1423,7 +1423,7 @@ class AlbumsController: BaseController() {
     @RequestMapping(value = ["/album/share/{albumId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
 //    @Transactional
-    fun shareAlbum(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int): String? {
+    fun shareAlbum(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int, locale: Locale): String? {
         val shareAlbum = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (shareAlbum.containsKey("albumId") && shareAlbum.containsKey("userShareMap")) {
             val userMapObj = mapper.readTree(shareAlbum["userShareMap"].toString())
@@ -1463,7 +1463,7 @@ class AlbumsController: BaseController() {
                         notificationObj.setCreatedAt(getCurrentTimestamp())
                         notificationObj.setModifiedAt(getCurrentTimestamp())
                         notificationObj.setRead(false)
-                        notificationObj.setMessage("Album '<a href='/album/$shareAlbumId' target='_blank'>${albumObj?.getName()}</a>' was shared with you.")
+                        notificationObj.setMessage(messageSource?.getMessage("main.sidebar.album", null, locale) + " '<a href='/album/$shareAlbumId' target='_blank'>${albumObj?.getName()}</a>'"+messageSource?.getMessage("main.notification.album.shared.post", null, locale))
                         notificationObjList.add(notificationObj)
 
                         userList.add(userObj.get().getUsername()!!)
@@ -1493,7 +1493,7 @@ class AlbumsController: BaseController() {
                     notificationObj.setCreatedAt(getCurrentTimestamp())
                     notificationObj.setModifiedAt(getCurrentTimestamp())
                     notificationObj.setRead(false)
-                    notificationObj.setMessage("Album '<a href='/album/$shareAlbumId' target='_blank'>${albumObj?.getName()}</a>' was shared with users $userListString")
+                    notificationObj.setMessage(messageSource?.getMessage("main.sidebar.album", null, locale) + " '<a href='/album/$shareAlbumId' target='_blank'>${albumObj?.getName()}</a>'"+messageSource?.getMessage("main.notification.album.shared", null, locale)+"$userListString")
                     notificationObjList.add(notificationObj)
                 }
             }
@@ -2079,7 +2079,7 @@ class AlbumsController: BaseController() {
                                 notificationObj.setCreatedAt(getCurrentTimestamp())
                                 notificationObj.setModifiedAt(getCurrentTimestamp())
                                 notificationObj.setRead(false)
-                                notificationObj.setMessage("Album '" + oldName + "' renamed to '<a href='/album/$albumId' target='_blank'>${albumObj.getName()}</a>'")
+                                notificationObj.setMessage(messageSource?.getMessage("main.sidebar.album", null, locale) + " '" + oldName + "'"+messageSource?.getMessage("main.notification.album.renamed", null, locale)+"'<a href='/album/$albumId' target='_blank'>${albumObj.getName()}</a>'")
                                 notificationObjList.add(notificationObj)
                             }
                         }
