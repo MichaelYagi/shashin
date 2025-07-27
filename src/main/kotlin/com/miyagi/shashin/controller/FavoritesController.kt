@@ -58,14 +58,14 @@ class FavoritesController: BaseController() {
     val resp = mutableMapOf<String, Any?>()
 
     @RequestMapping(value = ["/favorites", "/favorites/{mediaType}"], method = [RequestMethod.GET])
-    fun getFavorites(model: Model,@PathVariable(required = false) mediaType: String?): String {
+    fun getFavorites(model: Model,@PathVariable(required = false) mediaType: String?, locale: Locale): String {
         val module = "favorites"
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
         model["pageParam"] = 0
 
-        val response = buildFavorites(model,0,model.getAttribute("queryLimit").toString().toInt(),mediaType)
+        val response = buildFavorites(model,0,model.getAttribute("queryLimit").toString().toInt(),mediaType, locale)
         for ((k, v) in response) {
             model[k] = v!!
         }
@@ -117,15 +117,15 @@ class FavoritesController: BaseController() {
     )
     @RequestMapping(value = ["/favorites/{page}","/favorites/mediatype/{mediaType}/page/{page}","/api/v1/favorites/{page}","/api/v1/favorites/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getPagedFavorites(model: Model, @PathVariable page: Int, @RequestParam size: Optional<Int>,@PathVariable(required = false) mediaType: String?): String {
-        return mapper.writeValueAsString(buildFavorites(model,page,size.orElse(model.getAttribute("queryLimit").toString().toInt()),mediaType))
+    fun getPagedFavorites(model: Model, @PathVariable page: Int, @RequestParam size: Optional<Int>,@PathVariable(required = false) mediaType: String?, locale: Locale): String {
+        return mapper.writeValueAsString(buildFavorites(model,page,size.orElse(model.getAttribute("queryLimit").toString().toInt()),mediaType,locale))
     }
 
     @RequestMapping(value = ["/favorites/{page}/{mediaType}"], method = [RequestMethod.GET])
-    fun getFavoritesPage(model: Model,@PathVariable(required = true) page: Int,@PathVariable(required = true) mediaType: String): String {
+    fun getFavoritesPage(model: Model,@PathVariable(required = true) page: Int,@PathVariable(required = true) mediaType: String, locale: Locale): String {
         val module = "favorites"
 
-        val response = buildFavorites(model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType)
+        val response = buildFavorites(model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType, locale)
         for ((k, v) in response) {
             model[k] = v!!
         }
@@ -139,10 +139,10 @@ class FavoritesController: BaseController() {
         return module
     }
 
-    private fun buildFavorites(model: Model, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt(), mediaTypeFilter: String?): MutableMap<String, Any?> {
+    private fun buildFavorites(model: Model, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt(), mediaTypeFilter: String?, locale: Locale): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
-        response["message"] = "Nothing to see here."
+        response["message"] = messageSource?.getMessage("main.nothing", null, locale)
         response["metadataList"] = mutableListOf<Metadata>()
         response["mediaTypeFilter"] = "all"
         response["keywordMap"] = mutableMapOf<String, String>()

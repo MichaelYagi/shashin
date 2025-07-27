@@ -328,7 +328,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         Thread.sleep(this.elementScanTimeoutMillis.toLong())
 
         val msgEl = this.driver!!.findElement(By.id("msg"))
-        Assertions.assertEquals("Nothing to see here.",msgEl.text)
+        Assertions.assertEquals("Nothing to see here",msgEl.text)
     }
 
     @Test
@@ -524,7 +524,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         Thread.sleep(this.elementScanTimeoutMillis.toLong())
 
         val msgEl = this.driver!!.findElement(By.id("msg"))
-        Assertions.assertEquals("Nothing to see here.",msgEl.text)
+        Assertions.assertEquals("Nothing to see here",msgEl.text)
     }
 
     private fun elementHasClass(element: WebElement, active: String?): Boolean {

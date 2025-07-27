@@ -871,13 +871,13 @@ class SettingsController {
 
     @Secured("ROLE_SUPER")
     @GetMapping("/settings/match")
-    fun getMatchScan(model: Model): String {
+    fun getMatchScan(model: Model, locale: Locale): String {
         val settings = model.getAttribute("settings") as Settings?
 
         val module = "match"
         model["msg"] = ""
         model["status"] = ApiResponse.FAIL.status
-        model["message"] = "Nothing to see here."
+        model["message"] = messageSource?.getMessage("main.nothing", null, locale)
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -935,7 +935,7 @@ class SettingsController {
         @RequestParam reindexFiles: Boolean,
         locale: Locale
     ): String {
-        resp["msg"] = "Nothing to see here"
+        resp["msg"] = messageSource?.getMessage("main.nothing", null, locale)
 
         alreadyScannedFilepaths.clear()
 
