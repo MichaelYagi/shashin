@@ -13,6 +13,8 @@ import jakarta.servlet.http.HttpServletResponse
 import nl.basjes.parse.useragent.UserAgentAnalyzer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.MessageSource
+import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.core.io.FileSystemResource
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
@@ -63,6 +65,9 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 
     @Autowired
     var useragentRepository: UseragentRepository? = null
+
+    @Autowired
+    var messageSource: MessageSource? = null
 
     private var persistentTokenRepository: PersistentTokenRepository? = null
 
@@ -129,7 +134,8 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                         val admins = userRepository?.findAllAdmins()
                         val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                         sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
-                        val message = "User '${user.getUsername()}' failed login at "+ sdtf.format(Date())+"."
+                        var locale = LocaleContextHolder.getLocale()
+                        val message = messageSource?.getMessage("main.notification.login.pre", null, locale)+"'${user.getUsername()}'"+messageSource?.getMessage("main.notification.login.post", null, locale)+"- "+ sdtf.format(Date())+"."
                         logger.log(Level.WARNING, message)
                         if (admins != null) {
                             val notificationObjList = mutableListOf<Notification>()
@@ -278,6 +284,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
             if (!TextUtils.isLocalIp(clientIP)) {
                 ipString = " from IP <a href='https://ipgeolocation.io/ip-location/$clientIP' target='_blank'>$clientIP</a>"
             }
+            var locale = LocaleContextHolder.getLocale()
 
             for (admin in admins) {
                 val notificationObj = Notification()
@@ -291,11 +298,11 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 
                 if (admin.getId() == currentUserObj.getId()) {
                     notificationObj.setRead(true)
-                    identity = "You "
+                    identity = messageSource?.getMessage("main.notification.login.identity", null, locale)
                 } else {
                     notificationObj.setRead(false)
                 }
-                notificationObj.setMessage("$identity logged in$ipString using device $osName$osVersion$osClass and browser $agentName$agentVersion at ${sdtf.format(Date())}.")
+                notificationObj.setMessage("$identity"+messageSource?.getMessage("main.notification.login.loggedin", null, locale)+"$ipString - "+messageSource?.getMessage("main.notification.login.device", null, locale)+": $osName$osVersion$osClass "+messageSource?.getMessage("main.notification.login.browser", null, locale)+": $agentName$agentVersion - ${sdtf.format(Date())}.")
                 notificationObjList.add(notificationObj)
             }
             if (notificationObjList.isNotEmpty()) {
