@@ -70,6 +70,9 @@
 
     timelineSettings.init = function(mediaTypeFilter, metadataDates, metadataYearMonthCount, timelineDatesHash, locale) {
         disableScroll();
+        $("#dLabel").addClass("disabled");
+        $("#dLabel").attr("aria-disabled", "true");
+        $("#dLabel").attr("tabindex", "-1");
         timelineSettings.timelineDates = metadataDates;
         timelineSettings.metadataYearMonthCount = metadataYearMonthCount;
         timelineSettings.timelineDatesHash = timelineDatesHash;
@@ -383,6 +386,9 @@
         scrollTimer = setTimeout(function() {
             timelineSettings.scrollByN(2);
             enableScroll();
+            $("#dLabel").removeClass("disabled");
+            $("#dLabel").removeAttr("aria-disabled");
+            $("#dLabel").removeAttr("tabindex");
         }, 1500);
     };
 }( window.timelineSettings = window.timelineSettings || {}, jQuery ));

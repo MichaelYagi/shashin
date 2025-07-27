@@ -48,6 +48,9 @@ import org.springframework.context.MessageSource
 import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.http.ResponseCookie
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.ui.set
+import org.springframework.util.StringUtils
+import org.springframework.web.servlet.support.RequestContextUtils
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.Instant
@@ -449,7 +452,7 @@ class UserController {
     @RequestMapping(value = ["/users/update/language"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    fun postWebUpdateLanguage(model: Model, request: HttpServletRequest, @RequestBody requestBody: JsonNode): String {
+    fun postWebUpdateLanguage(model: Model, request: HttpServletRequest, httpServletResponse: HttpServletResponse, @RequestBody requestBody: JsonNode): String {
         val languageMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
         val response = mutableMapOf<String, Any?>()
         response["msg"] = "Could not update language"
@@ -467,6 +470,8 @@ class UserController {
             if (currentUserObj != null && language in supportedLanguages) {
                 currentUserObj.setLanguage(language)
                 userRepository?.save(currentUserObj)
+                val localeResolver = RequestContextUtils.getLocaleResolver(request)
+                localeResolver?.setLocale(request, httpServletResponse, StringUtils.parseLocaleString(language.toString()))
                 response["msg"] = "Updated language"
                 response["message"] = "Updated language"
                 response["status"] = ApiResponse.SUCCESS.status
