@@ -30,6 +30,8 @@ class User {
     private var notificationAlerts: Boolean? = true
     @NotBlank
     private var slideshowInterval: Int? = 10
+    @NotBlank
+    private var language: String? = "en"
     private var profile: String? = null
     private var authority: String? = null
     private var createdAt: String? = null
@@ -67,6 +69,14 @@ class User {
 
     fun setPassword(password: String?) {
         this.password = password
+    }
+
+    fun getLanguage(): String? {
+        return this.language
+    }
+
+    fun setLanguage(language: String?) {
+        this.language = language
     }
 
     fun getSlideshowInterval(): Int? {
@@ -184,6 +194,7 @@ class User {
         map["createdAt"] = this.createdAt
         map["modifiedAt"] = this.modifiedAt
         map["slideshowInterval"] = this.slideshowInterval
+        map["language"] = this.language
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {

@@ -398,6 +398,12 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 model["username"] = currentUser.getUsername()!!
                 model["apikey"] = currentUser.getApikey()!!
 
+                if (currentUser.getLanguage() == null) {
+                    currentUser.setLanguage("en")
+                }
+
+                model["locale"] = currentUser.getLanguage()!!
+
                 if (currentUser.getDarkMode() == null) {
                     currentUser.setDarkMode(false)
                 }
@@ -490,6 +496,11 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 }
                 currentUserId = currentUser.getId()
                 model["currentUser"] = currentUser
+
+                if (currentUser.getLanguage() == null) {
+                    currentUser.setLanguage("en")
+                }
+                model["locale"] = currentUser.getLanguage()!!
             }
 
             val mediaImageCount = (if (currentUser?.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
@@ -518,6 +529,11 @@ class AttributeController: ResponseEntityExceptionHandler() {
             model["authority"] = cookieUser.getAuthority()
             model["apikey"] = cookieUser.getApikey()!!
             model["currentUser"] = cookieUser
+
+            if (currentUser.getLanguage() == null) {
+                currentUser.setLanguage("en")
+            }
+            model["locale"] = currentUser.getLanguage()!!
         }
 
 //        timingEnd = Date()
