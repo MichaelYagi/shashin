@@ -21,6 +21,7 @@ import java.time.ZoneId
 import java.util.*
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.transaction.Transactional
+import org.springframework.context.MessageSource
 import org.springframework.web.bind.annotation.*
 
 @Controller
@@ -49,6 +50,9 @@ class CommentsController {
 
     @Autowired
     private lateinit var userRepository: UserRepository
+
+    @Autowired
+    var messageSource: MessageSource? = null
 
     @Value("\${app.role.user}")
     private var userRole: String? = null
@@ -104,7 +108,7 @@ class CommentsController {
     @RequestMapping(value = ["/comment/album/save","/api/v1/comment/album/save"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
-    fun postSaveComment(model: Model, @RequestBody requestBody: JsonNode, response: HttpServletResponse): String {
+    fun postSaveComment(model: Model, @RequestBody requestBody: JsonNode, response: HttpServletResponse, locale: Locale): String {
         val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (commentMap.containsKey("albumId") && commentMap.containsKey("comment")) {
             val albumId = commentMap["albumId"].toString().toInt()
@@ -169,7 +173,7 @@ class CommentsController {
                             notificationObj.setCreatedAt(getCurrentTimestamp())
                             notificationObj.setModifiedAt(getCurrentTimestamp())
                             notificationObj.setRead(false)
-                            notificationObj.setMessage(currentUserObj.getUsername()+" commented on album <a href='/albums' target='_blank'>"+albumObj.get().getName()+"</a> \""+commentText+"\" on "+sdtf.format(Date()))
+                            notificationObj.setMessage(currentUserObj.getUsername()+messageSource?.getMessage("main.notification.comments.commented", null, locale)+"<a href='/albums' target='_blank'>"+albumObj.get().getName()+"</a> \""+commentText+"\" - "+sdtf.format(Date()))
                             notificationObjList.add(notificationObj)
                         }
                     }
@@ -237,7 +241,7 @@ class CommentsController {
     )
     @RequestMapping(value = ["/comment/albumphoto/save","/api/v1/comment/albumphoto/save"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    fun postSaveAlbumPhotoComment(model: Model, @RequestBody requestBody: JsonNode, response: HttpServletResponse): String {
+    fun postSaveAlbumPhotoComment(model: Model, @RequestBody requestBody: JsonNode, response: HttpServletResponse, locale: Locale): String {
         val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (commentMap.containsKey("albumId") && commentMap.containsKey("comment") && commentMap.containsKey("metadataId")) {
             val albumId = commentMap["albumId"].toString().toInt()
@@ -305,7 +309,7 @@ class CommentsController {
                             notificationObj.setRead(false)
                             notificationObj.setCreatedAt(getCurrentTimestamp())
                             notificationObj.setModifiedAt(getCurrentTimestamp())
-                            notificationObj.setMessage(currentUserObj.getUsername()+" commented on album '<a href='/album/"+albumObj.get().getId()+"' target='_blank'>"+albumObj.get().getName()+"</a>' for photo <a href='/image/"+metadataObj.get().getId()+"/viewer' target='_blank'>"+metadataObj.get().getFileName()+"</a> \""+commentText+"\" on "+sdtf.format(Date()))
+                            notificationObj.setMessage(currentUserObj.getUsername()+messageSource?.getMessage("main.notification.comments.commented", null, locale)+"'<a href='/album/"+albumObj.get().getId()+"' target='_blank'>"+albumObj.get().getName()+"</a>' for photo <a href='/image/"+metadataObj.get().getId()+"/viewer' target='_blank'>"+metadataObj.get().getFileName()+"</a> \""+commentText+"\" on "+sdtf.format(Date()))
                             notificationObjList.add(notificationObj)
                         }
                     }
