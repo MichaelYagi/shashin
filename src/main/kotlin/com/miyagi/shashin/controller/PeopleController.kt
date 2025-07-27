@@ -41,6 +41,7 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpSession
+import org.springframework.context.MessageSource
 
 @Suppress("UNCHECKED_CAST")
 @Controller
@@ -72,6 +73,9 @@ class PeopleController: BaseController() {
 
     @Autowired
     private var userRepository: UserRepository? = null
+
+    @Autowired
+    var messageSource: MessageSource? = null
 
     @Value("\${app.role.super}")
     private lateinit var superRole: String
@@ -149,7 +153,7 @@ class PeopleController: BaseController() {
     @RequestMapping(value = ["/matches/start"], method = [RequestMethod.POST], produces = ["application/json"])
     @Secured("ROLE_SUPER")
     @ResponseBody
-    fun startPredictions(model: Model,@RequestParam stopScan: Boolean, request: HttpServletRequest): String {
+    fun startPredictions(model: Model,@RequestParam stopScan: Boolean, request: HttpServletRequest, locale: Locale): String {
         val settings = model.getAttribute("settings") as Settings
 
         if (stopScan) {
@@ -162,7 +166,7 @@ class PeopleController: BaseController() {
 
             val superAdmins = userRepository?.findAllByAuthorityEquals(superRole)
 
-            doPrediction(settings, superAdmins)
+            doPrediction(settings, superAdmins, locale)
         }
 
         resp["msg"] = "Start Matching"
@@ -170,7 +174,7 @@ class PeopleController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
-    fun doPrediction(settings: Settings, superAdmins: MutableIterable<User>?) {
+    fun doPrediction(settings: Settings, superAdmins: MutableIterable<User>?, locale: Locale) {
         Thread {
             val threadFile = FileUtils.createThreadFile(threadExtensionName)
             val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
@@ -191,7 +195,7 @@ class PeopleController: BaseController() {
                         notificationObj.setCreatedAt(getCurrentTimestamp())
                         notificationObj.setModifiedAt(getCurrentTimestamp())
                         notificationObj.setRead(false)
-                        notificationObj.setMessage("Missing lib files for DJL face scan")
+                        notificationObj.setMessage(messageSource?.getMessage("main.notification.people.missing", null, locale))
                         notificationObjList.add(notificationObj)
                     }
                     if (notificationObjList.isNotEmpty()) {
@@ -227,7 +231,7 @@ class PeopleController: BaseController() {
                         notificationObj.setCreatedAt(getCurrentTimestamp())
                         notificationObj.setModifiedAt(getCurrentTimestamp())
                         notificationObj.setRead(false)
-                        notificationObj.setMessage("$recognitionCount faces recognized during match indexing at ${sdtf.format(Date())}.")
+                        notificationObj.setMessage("$recognitionCount"+ messageSource?.getMessage("main.notification.people.matchcount", null, locale) +"- ${sdtf.format(Date())}.")
                         notificationObjList.add(notificationObj)
                     }
                     if (notificationObjList.isNotEmpty()) {
