@@ -106,8 +106,8 @@ class AlbumsController: BaseController() {
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @GetMapping("/albums")
-    fun getAlbums(model: Model): String {
-        val response = buildAlbums(model, 0)
+    fun getAlbums(model: Model, locale: Locale): String {
+        val response = buildAlbums(model, 0, model.getAttribute("queryLimit").toString().toInt(), locale)
         for ((k, v) in response) {
             model[k] = v!!
         }
@@ -203,8 +203,8 @@ class AlbumsController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/albums/{page}","/albums/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getAlbumsApi(model: Model, @PathVariable page: Int): String {
-        return mapper.writeValueAsString(buildAlbums(model, page))
+    fun getAlbumsApi(model: Model, @PathVariable page: Int, locale: Locale): String {
+        return mapper.writeValueAsString(buildAlbums(model, page, model.getAttribute("queryLimit").toString().toInt(), locale))
     }
 
     @RouterOperation(
@@ -297,14 +297,14 @@ class AlbumsController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/albums"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getAlbumsApi(model: Model, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>): String {
-        return mapper.writeValueAsString(buildAlbums(model, page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt())))
+    fun getAlbumsApi(model: Model, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>, locale: Locale): String {
+        return mapper.writeValueAsString(buildAlbums(model, page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt()), locale))
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/slideshowalbums"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getAlbums(model: Model, @RequestParam size: Optional<Int>): String {
+    fun getAlbums(model: Model, @RequestParam size: Optional<Int>, locale: Locale): String {
         var response = mutableMapOf<String, Any?>()
         var slideshowAlbumResponse = mutableMapOf<String, Any?>()
         val currentUserObj = model.getAttribute("currentUser") as User?
@@ -334,7 +334,7 @@ class AlbumsController: BaseController() {
             slideshowAlbumResponse["albums"] = albumsArray
         }
 
-        response = buildAlbums(model, 0, userAlbumCount)
+        response = buildAlbums(model, 0, userAlbumCount, locale)
         response["slideshowAlbum"] = slideshowAlbumResponse
 
         return mapper.writeValueAsString(response)
@@ -374,11 +374,11 @@ class AlbumsController: BaseController() {
         return mapper.writeValueAsString(response)
     }
 
-    private fun buildAlbums(model: Model, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
+    private fun buildAlbums(model: Model, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt(), locale: Locale): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         val module = "albums"
-        response["message"] = "Nothing to see here."
+        response["message"] = messageSource?.getMessage("main.nothing", null, locale)
         response["albumsList"] =  mutableListOf<Album>()
         response["userAlbums"] = mutableListOf<UserAlbum>()
         response["userCount"] = 0

@@ -1956,9 +1956,9 @@ class SettingsController {
 
                     // Set notification for scanCount and date and link to /recent
                     var msg =
-                        "Scan complete for <a href='/recent' target='_blank'>$metadataArrayCount images/videos</a>"
+                        messageSource?.getMessage("main.notification.setting.scan.pre", null, locale)+"<a href='/recent' target='_blank'>$metadataArrayCount"+messageSource?.getMessage("main.notification.setting.scan.post", null, locale)+"</a>"
                     if (recognitionCount > 0) {
-                        msg += " and <a href='/people' target='_blank'>$recognitionCount faces recognized</a>"
+                        msg += messageSource?.getMessage("main.notification.setting.scan.add.pre", null, locale)+"<a href='/people' target='_blank'>$recognitionCount"+messageSource?.getMessage("main.notification.setting.scan.add.post", null, locale)+"</a>"
                     }
                     msg += " at ${sdtf.format(Date())}."
 
@@ -1978,7 +1978,7 @@ class SettingsController {
                 }
 
                 // Place name, face and object recognition, if enabled
-                objectAndFacialRecognition(settings, compreFaceServerConnected, threadFile, metadataArrayCount)
+                objectAndFacialRecognition(settings, compreFaceServerConnected, threadFile, metadataArrayCount, locale)
 
                 // Delete thread file
                 if (threadFile.delete()) {
@@ -1990,7 +1990,7 @@ class SettingsController {
         }.start()
     }
 
-    fun objectAndFacialRecognition(settings: Settings?, compreFaceServerConnected: Boolean, threadFile: File, metadataArrayCount: Int) {
+    fun objectAndFacialRecognition(settings: Settings?, compreFaceServerConnected: Boolean, threadFile: File, metadataArrayCount: Int, locale: Locale) {
         Thread {
             var webClient: WebClient? = null
             if (settings != null && compreFaceServerConnected) {
@@ -2309,7 +2309,7 @@ class SettingsController {
                                             notificationObj.setCreatedAt(getCurrentTimestamp())
                                             notificationObj.setModifiedAt(getCurrentTimestamp())
                                             notificationObj.setRead(false)
-                                            notificationObj.setMessage("Missing lib files for DJL face scan.")
+                                            notificationObj.setMessage(messageSource?.getMessage("main.notification.people.missing", null, locale))
                                             notificationObjList.add(notificationObj)
                                         }
                                         if (notificationObjList.isNotEmpty()) {
@@ -2366,7 +2366,7 @@ class SettingsController {
                     notificationObj.setCreatedAt(getCurrentTimestamp())
                     notificationObj.setModifiedAt(getCurrentTimestamp())
                     notificationObj.setRead(false)
-                    notificationObj.setMessage("$recognitionCount faces recognized during media indexing at ${sdtf.format(Date())}.")
+                    notificationObj.setMessage("$recognitionCount"+messageSource?.getMessage("main.notification.setting.scan.faces", null, locale)+"- ${sdtf.format(Date())}.")
                     notificationObjList.add(notificationObj)
                 }
                 if (notificationObjList.isNotEmpty()) {

@@ -20,6 +20,7 @@ import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import java.util.*
 import jakarta.transaction.Transactional
+import org.springframework.context.MessageSource
 
 @Controller
 @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
@@ -30,14 +31,17 @@ class NotificationsController {
     @Autowired
     private var metadataRepository: MetadataRepository? = null
 
+    @Autowired
+    var messageSource: MessageSource? = null
+
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
     @GetMapping("/notifications")
     @Transactional
-    fun getNotifications(model: Model): String {
+    fun getNotifications(model: Model, locale: Locale): String {
         val module = "notifications"
-        model["message"] = "Nothing to see here."
+        model["message"] = messageSource?.getMessage("main.nothing", null, locale)
         model["notificationList"] = mutableListOf<Notification>()
         model["notificationLimit"] = 0
 
