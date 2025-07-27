@@ -21,6 +21,8 @@ import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import nl.basjes.parse.useragent.UserAgentAnalyzer
+import org.springframework.context.MessageSource
+import org.springframework.context.i18n.LocaleContextHolder
 
 
 @Component
@@ -33,6 +35,9 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
     @Autowired
     var notificationRepository: NotificationRepository? = null
 
+    @Autowired
+    var messageSource: MessageSource? = null
+
     @Throws(IOException::class, ServletException::class)
     override fun onAuthenticationFailure(
         request: HttpServletRequest?,
@@ -40,6 +45,8 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
         exception: AuthenticationException?
     ) {
         val logger: Logger = Logger.getLogger(AuthFailureHandler::class.simpleName)
+
+        var locale = LocaleContextHolder.getLocale()
 
         val lastUserName: String = request?.getParameter("username") ?: ""
 
@@ -54,9 +61,9 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
             logger.log(Level.WARNING, "userRepository?.findByUsername error: ${e.message}")
         }
 
-        var message = "Unknown user '$lastUserName' attempted login"
+        var message = messageSource?.getMessage("main.notification.login.unknown.pre", null, locale)+"'$lastUserName'"+messageSource?.getMessage("main.notification.login.unknown.post", null, locale)
         if (lastUser != null) {
-            message = "User '$lastUserName' failed login"
+            message = messageSource?.getMessage("main.notification.login.known.pre", null, locale)+"'"+messageSource?.getMessage("main.notification.login.known.post", null, locale)
         }
 
         // Capture UA data
@@ -81,12 +88,12 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
 
         val clientIP = TextUtils.getClientIp(request)
 
-        var ipString = "from IP $clientIP "
+        var ipString = messageSource?.getMessage("main.notification.login.fromip", null, locale)+"$clientIP "
         if (!TextUtils.isLocalIp(clientIP)) {
-            ipString = "from IP <a href='https://ipgeolocation.io/ip-location/$clientIP' target='_blank'>$clientIP</a> "
+            ipString = messageSource?.getMessage("main.notification.login.fromip", null, locale)+"<a href='https://ipgeolocation.io/ip-location/$clientIP' target='_blank'>$clientIP</a> "
         }
 
-        message += " ${ipString}using device $osName$osVersion$osClass and browser $agentName$agentVersion at ${sdtf.format(Date())}"
+        message += " ${ipString} "+messageSource?.getMessage("main.notification.login.device", null, locale)+": $osName$osVersion$osClass "+messageSource?.getMessage("main.notification.login.browser", null, locale)+": $agentName$agentVersion - ${sdtf.format(Date())}"
 
         logger.log(Level.WARNING, message)
 
