@@ -57,8 +57,8 @@
                     </div>
 
                     <div class="dropdown">
-                        <label class="form-check-label" for="language"><th:block th:text="#{main.language}"></th:block></label>
-                        <select name="language" id="language">
+                        <label class="input-group" for="language"><th:block th:text="#{main.language}"></th:block></label>
+                        <select class="form-select" name="language" id="language">
                             <th:block th:if="${currentUser.language == 'en'}">
                                 <option value="en" selected><th:block th:text="#{lang.en}"></th:block></option>
                             </th:block>

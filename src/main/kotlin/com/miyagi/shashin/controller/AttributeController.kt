@@ -29,6 +29,7 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.ui.Model
 import org.springframework.ui.set
+import org.springframework.util.StringUtils
 import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -38,6 +39,7 @@ import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.NoHandlerFoundException
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import org.springframework.web.servlet.resource.NoResourceFoundException
+import org.springframework.web.servlet.support.RequestContextUtils
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.text.SimpleDateFormat
 import java.time.ZoneId
@@ -216,7 +218,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
     @ModelAttribute
     @Transactional
     fun addAttributes(model: Model, request: HttpServletRequest, response: HttpServletResponse, authentication: Authentication?) {
-        model["locale"] = LocaleContextHolder.getLocale()
+        var locale = LocaleContextHolder.getLocale().toString()
 
 //        val totalTimingStart = Date()
 //        var timingStart = Date()
@@ -402,7 +404,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
                     currentUser.setLanguage("en")
                 }
 
-                model["locale"] = currentUser.getLanguage()!!
+                locale = currentUser.getLanguage()!!
 
                 if (currentUser.getDarkMode() == null) {
                     currentUser.setDarkMode(false)
@@ -500,7 +502,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 if (currentUser.getLanguage() == null) {
                     currentUser.setLanguage("en")
                 }
-                model["locale"] = currentUser.getLanguage()!!
+                locale = currentUser.getLanguage()!!
             }
 
             val mediaImageCount = (if (currentUser?.getAuthority()!! == "ROLE_ADMIN" || currentUser.getAuthority()!! == "ROLE_SUPER") {
@@ -533,7 +535,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
             if (currentUser.getLanguage() == null) {
                 currentUser.setLanguage("en")
             }
-            model["locale"] = currentUser.getLanguage()!!
+            locale = currentUser.getLanguage()!!
         }
 
 //        timingEnd = Date()
@@ -543,6 +545,11 @@ class AttributeController: ResponseEntityExceptionHandler() {
 //        logger.log(Level.INFO, "AttributeController - current user processing time: $processingTime")
 
 //        timingStart = Date()
+
+        // Set language
+        model["locale"] = locale.toString()
+        val localeResolver = RequestContextUtils.getLocaleResolver(request)
+        localeResolver?.setLocale(request, response, StringUtils.parseLocaleString(locale.toString()))
 
         var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
         if (request.scheme == "https") {
