@@ -1038,7 +1038,7 @@ class UserController {
     @ResponseBody
     @Transactional
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    fun postDeleteUser(model: Model, @RequestBody requestBody: JsonNode): String {
+    fun postDeleteUser(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String {
         val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         val response = mutableMapOf<String, Any?>()
         response["userId"] = mutableListOf<String>()
@@ -1084,7 +1084,7 @@ class UserController {
                     notificationObj.setCreatedAt(getCurrentTimestamp())
                     notificationObj.setModifiedAt(getCurrentTimestamp())
                     notificationObj.setRead(false)
-                    notificationObj.setMessage("$username deleted their account at "+sdtf.format(Date())+".")
+                    notificationObj.setMessage("$username"+messageSource?.getMessage("main.notification.user.deleted", null, locale)+"- "+sdtf.format(Date())+".")
                     notificationObjList.add(notificationObj)
                 }
                 if (notificationObjList.isNotEmpty()) {

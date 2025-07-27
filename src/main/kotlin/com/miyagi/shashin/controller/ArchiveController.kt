@@ -37,9 +37,9 @@ class ArchiveController {
     val resp = mutableMapOf<String, String?>()
 
     @GetMapping("/archived")
-    fun getFavorites(model: Model): String {
+    fun getFavorites(model: Model, locale: Locale): String {
         val module = "archived"
-        model["message"] = "Nothing to see here."
+        model["message"] = messageSource?.getMessage("main.nothing", null, locale)
         model["foldersCount"] = metadataRepository.countByFolder()
         model["metadataList"] = mutableListOf<Metadata>()
         model["keywordMap"] = mutableMapOf<String, String>()

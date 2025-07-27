@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.util.*
 import jakarta.transaction.Transactional
+import org.springframework.context.MessageSource
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.iterator
@@ -49,6 +50,9 @@ class FavoritesController: BaseController() {
 
     @Autowired
     private val keywordRepository: KeywordRepository? = null
+
+    @Autowired
+    var messageSource: MessageSource? = null
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
@@ -258,7 +262,7 @@ class FavoritesController: BaseController() {
     @RequestMapping(value = ["/favorite/save"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     @ResponseBody
-    fun postSaveFavorite(model: Model, @RequestBody requestBody: JsonNode): String {
+    fun postSaveFavorite(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String {
         val favoritesMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (favoritesMap.containsKey("metadataId") && favoritesMap.containsKey("isFavorite")) {
             val metadataId = favoritesMap["metadataId"].toString()
@@ -302,9 +306,9 @@ class FavoritesController: BaseController() {
                         notificationObj.setModifiedAt(getCurrentTimestamp())
                         notificationObj.setRead(false)
                         notificationObj.setMessage(
-                            currentUserObj.getUsername() + " likes <a href='/api/v1/image/" + metadata.get()
+                            currentUserObj.getUsername() + messageSource?.getMessage("main.notification.favorites.likes", null, locale) + "<a href='/api/v1/image/" + metadata.get()
                                 .getId() + "' target='_blank'>" + metadata.get()
-                                .getFileName() + "</a> on " + sdtf.format(Date())
+                                .getFileName() + "</a> - " + sdtf.format(Date())
                         )
                         notificationObj.setType("favorite")
                         notificationObj.setIdentifier(favorite.getId().toString())

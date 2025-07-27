@@ -39,6 +39,7 @@ import java.util.logging.Logger
 import javax.imageio.ImageIO
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.transaction.Transactional
+import org.springframework.context.MessageSource
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import kotlin.String
 import kotlin.collections.ArrayList
@@ -92,6 +93,9 @@ class TimelineController: BaseController() {
 
     @Autowired
     private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
+
+    @Autowired
+    var messageSource: MessageSource? = null
 
     @Value("\${app.endpoint.url.geocode}")
     private var geocodeUrl: String? = null
@@ -1194,7 +1198,7 @@ class TimelineController: BaseController() {
     @ResponseBody
     @Transactional
     @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
-    fun removeMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String): String? {
+    fun removeMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String, locale: Locale): String? {
 //        println(requestBody)
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
@@ -1210,7 +1214,7 @@ class TimelineController: BaseController() {
                 if (isHidden) {
                     metadataObj.get().setHidden(true)
                     metadataObj.get().setModifiedAt(getCurrentTimestamp())
-                    removeMetadata(metadataId)
+                    removeMetadata(metadataId, locale)
                 }
 
                 // Update record
@@ -1374,7 +1378,7 @@ class TimelineController: BaseController() {
     @RequestMapping(value = ["/metadata/update/{metadataId}","/api/v1/update/metadata/{metadataId}"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
-    fun updateMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String, response: HttpServletResponse): String? {
+    fun updateMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String, response: HttpServletResponse, locale: Locale): String? {
 //        println(requestBody)
 
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -1503,7 +1507,7 @@ class TimelineController: BaseController() {
                             notificationObj.setCreatedAt(getCurrentTimestamp())
                             notificationObj.setModifiedAt(getCurrentTimestamp())
                             notificationObj.setRead(false)
-                            notificationObj.setMessage("Albums $albumListString deleted at ${sdtf.format(Date())}")
+                            notificationObj.setMessage(messageSource?.getMessage("main.sidebar.albums", null, locale) + " $albumListString"+messageSource?.getMessage("main.notification.album.delete.post", null, locale)+"- ${sdtf.format(Date())}")
                             notificationObjList.add(notificationObj)
                         }
                         if (notificationObjList.isNotEmpty()) {
@@ -1701,7 +1705,7 @@ class TimelineController: BaseController() {
                     metricsUtil.end()
                 }
 
-                notifyAlbumUpdate(albumIdAddedList,currentUserObj)
+                notifyAlbumUpdate(albumIdAddedList,currentUserObj, locale)
 
                 metricsUtil.start("Metadata Update - Getting attributes")
                 val attrResponse = getAllAttributeData(model)
@@ -1855,7 +1859,7 @@ class TimelineController: BaseController() {
         return Metadata()
     }
 
-    private fun notifyAlbumUpdate(albumIdAddedList: MutableList<Int>, currentUserObj: User?) {
+    private fun notifyAlbumUpdate(albumIdAddedList: MutableList<Int>, currentUserObj: User?, locale: Locale) {
         var adminAlbumsMessage = ""
         val filteredUserAlbumsMap = mutableMapOf<Int,MutableList<String>>()
         val admins = userRepository.findAllAdmins()
@@ -1904,7 +1908,7 @@ class TimelineController: BaseController() {
                 notificationObj.setModifiedAt(getCurrentTimestamp())
                 notificationObj.setImageUrl(coverUrl)
                 notificationObj.setRead(false)
-                notificationObj.setMessage("Photos added to album $adminAlbumsMessage at ${sdtf.format(Date())}.")
+                notificationObj.setMessage(messageSource?.getMessage("main.notification.timeline.photos", null, locale)+"$adminAlbumsMessage - ${sdtf.format(Date())}.")
                 notificationObjList.add(notificationObj)
             }
         }
@@ -1927,7 +1931,7 @@ class TimelineController: BaseController() {
             notificationObj.setModifiedAt(getCurrentTimestamp())
             notificationObj.setImageUrl(coverUrl)
             notificationObj.setRead(false)
-            notificationObj.setMessage("Photos added to album $message at ${sdtf.format(Date())}.")
+            notificationObj.setMessage(messageSource?.getMessage("main.notification.timeline.photos", null, locale)+"$message - ${sdtf.format(Date())}.")
             notificationObjList.add(notificationObj)
         }
 
@@ -1941,7 +1945,7 @@ class TimelineController: BaseController() {
     @ResponseBody
     @Transactional
     @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
-    fun removeBatchMetadata(model: Model, @RequestBody requestBody: JsonNode): String? {
+    fun removeBatchMetadata(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String? {
 //        println(requestBody)
         val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
@@ -1979,7 +1983,7 @@ class TimelineController: BaseController() {
                 if (isHidden) {
                     metadata.setModifiedAt(getCurrentTimestamp())
                     metadata.setHidden(true)
-                    removeMetadata(id)
+                    removeMetadata(id, locale)
                 }
 
                 metadataList.add(metadata)
@@ -2128,7 +2132,7 @@ class TimelineController: BaseController() {
     @RequestMapping(value = ["/metadata/update/batch","/api/v1/update/metadata/batch"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
-    fun updateBatchMetadata(model: Model, @RequestBody requestBody: JsonNode): String? {
+    fun updateBatchMetadata(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String? {
 //         println(requestBody)
         val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<BatchMetadataInput>() {})
 
@@ -2233,7 +2237,7 @@ class TimelineController: BaseController() {
 
                     if (isHidden) {
                         metadata.setHidden(true)
-                        removeMetadata(id)
+                        removeMetadata(id, locale)
                     } else {
                         // Add album photo
                         if (albumIdList.isNotEmpty()) {
@@ -2325,7 +2329,7 @@ class TimelineController: BaseController() {
                 albumPhotoRepository.saveAll(albumPhotoList)
             }
 
-            notifyAlbumUpdate(albumIdAddedList,currentUserObj)
+            notifyAlbumUpdate(albumIdAddedList,currentUserObj, locale)
 
             if (metadataList.isNotEmpty()) {
                 // Update record
@@ -2397,14 +2401,14 @@ class TimelineController: BaseController() {
     }
 
     @Transactional
-    fun removeMetadata(metadataId: String) {
+    fun removeMetadata(metadataId: String, locale: Locale) {
         recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
         albumPhotoRepository.deleteByMetadataId(metadataId)
         favoriteRepository.deleteByMetadataId(metadataId)
         albumPhotoCommentRepository.deleteByMetadataId(metadataId)
 
         // Find albums
-        cleanupOrphanedAlbums()
+        cleanupOrphanedAlbums(locale)
 
         // Find album cover
         cleanupAlbumCover(metadataId)
@@ -2447,7 +2451,7 @@ class TimelineController: BaseController() {
         }
     }
 
-    fun cleanupOrphanedAlbums() {
+    fun cleanupOrphanedAlbums(locale: Locale) {
         val allAlbums = albumRepository.findAll()
         for (album in allAlbums) {
             val albumId = album?.getId()
@@ -2471,7 +2475,7 @@ class TimelineController: BaseController() {
                             notificationObj.setCreatedAt(getCurrentTimestamp())
                             notificationObj.setModifiedAt(getCurrentTimestamp())
                             notificationObj.setRead(false)
-                            notificationObj.setMessage("Album ${album.getName()} deleted at ${sdtf.format(Date())}")
+                            notificationObj.setMessage(messageSource?.getMessage("main.sidebar.album", null, locale)+" ${album.getName()}"+messageSource?.getMessage("main.notification.album.delete.post", null, locale)+"- ${sdtf.format(Date())}")
                             notificationObjList.add(notificationObj)
                         }
                         if (notificationObjList.isNotEmpty()) {
