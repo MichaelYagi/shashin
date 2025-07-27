@@ -1,4 +1,4 @@
-function initializeAccount(profileUrl, userId, username, status, toastTitle, toastBody) {
+function initializeAccount(profileUrl, userId, username, status, toastTitle, toastBody, language) {
     // API management
     $("#copyapikey").on("click", function (e) {
         e.preventDefault();
@@ -24,6 +24,26 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
                 borderColor: "danger"
             });
         }
+    });
+
+    $("#language").on("change", async function (e) {
+        e.preventDefault();
+
+        const language = $("#language option:selected").val();
+        const http = new Http("language update");
+        const json = {language: language};
+
+        let data = await http.ajax("post", "/users/update/language", JSON.stringify(json));
+        if (data.hasOwnProperty("updatedLanguage") && data.updatedLanguage === language) {
+            window.top.location = window.top.location;
+        } else {
+            shashin.showToastMessage(shashin.getTranslatedValue("main.notupdated"), shashin.getTranslatedValue("main.notupdated"), {
+                icon: "bi-exclamation-triangle",
+                iconColor: "#FF0000",
+                borderColor: "danger"
+            });
+        }
+
     });
 
     $("#rssCopyLink").on("click", function (e) {

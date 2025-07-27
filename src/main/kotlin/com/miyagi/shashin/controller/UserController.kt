@@ -45,6 +45,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
 import org.springframework.context.MessageSource
+import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.http.ResponseCookie
 import org.springframework.transaction.annotation.Transactional
 import java.nio.file.Files
@@ -438,6 +439,39 @@ class UserController {
         }
 
         val module = "apikey"
+        response["activePage"] = module
+        response["activeSidebar"] = module
+        response["titleDescriptor"] = TextUtils.capitalized(module)
+
+        return mapper.writeValueAsString(response)
+    }
+
+    @RequestMapping(value = ["/users/update/language"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
+    fun postWebUpdateLanguage(model: Model, request: HttpServletRequest, @RequestBody requestBody: JsonNode): String {
+        val languageMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
+        val response = mutableMapOf<String, Any?>()
+        response["msg"] = "Could not update language"
+        response["message"] = "Could not update language"
+        response["status"] = ApiResponse.FAIL.status
+        response["updatedLanguage"] = ""
+
+        if (languageMap.containsKey("language")) {
+            val language = languageMap["language"]
+
+            val currentUserObj = model.getAttribute("currentUser") as User?
+            if (currentUserObj != null && (language == "en" || language == "ja")) {
+                currentUserObj.setLanguage(language)
+                userRepository?.save(currentUserObj)
+                response["msg"] = "Updated language"
+                response["message"] = "Updated language"
+                response["status"] = ApiResponse.SUCCESS.status
+                response["updatedLanguage"] = language
+            }
+        }
+
+        val module = "language"
         response["activePage"] = module
         response["activeSidebar"] = module
         response["titleDescriptor"] = TextUtils.capitalized(module)
