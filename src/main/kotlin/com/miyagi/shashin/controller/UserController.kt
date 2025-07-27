@@ -464,7 +464,7 @@ class UserController {
             val language = languageMap["language"]
 
             val currentUserObj = model.getAttribute("currentUser") as User?
-            // Defined in AttributeController.kt
+            // Defined in application.properties
             val supportedLanguages = model.getAttribute("availableLang") as Array<String>
 
             if (currentUserObj != null && language in supportedLanguages) {
