@@ -35,6 +35,9 @@
         <h2>i18n</h2>
         <p>Internationalization files can be found in the resource folder, where <strong>messages.properties</strong> contain the English (default) translations. The intention being more will be added in the future, with file format messages_xx.properties where xx is the 2 letter language code.</p>
         <p>Javascript output will also need to be translated. This will be tracked as globals sourced from the translation files in <code>src/main/resources/templates/fragments/translations.html</code>. They should map to entries in messages.properties.</p>
+        <p>Access in controllers: Make sure to autowire MessageSources<br><pre><code>@Autowired<br>var messageSource: MessageSource? = null</code></pre>In controller parameters, add <code>locale: Locale</code>, then in the code, get the translation using the translation path <code>messageSource.getMessage("path.to.translation.from.messages.properties", null, locale)</code></p>
+        <p>Access in javascript: Call <code>shashin.getTranslatedValue("path.to.translation")</code></p>
+        <p>Access in thymeleaf: Example: <code>#messages.msg('path.to.translation')</code> or <code>#{'path.to.translation'}</code></p>
 
         <h2>Front end debugging</h2>
         <p>Apart from standard IDE debuggers, convenience functions to look at console outputs can be enabled.</p>
