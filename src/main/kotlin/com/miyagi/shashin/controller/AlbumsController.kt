@@ -1095,7 +1095,7 @@ class AlbumsController: BaseController() {
         val module = "share"
 
         val queryLimit = model.getAttribute("queryLimit").toString().toInt()
-        val response = buildShareData(model, albumId, shareLink, queryLimit, 0)
+        val response = buildShareData(model, albumId, shareLink, queryLimit, 0, locale)
 
         if (response["status"] === ApiResponse.SUCCESS.status) {
             val userIp = model.getAttribute("clientIP").toString()
@@ -1220,16 +1220,16 @@ class AlbumsController: BaseController() {
     )
     @RequestMapping(value = ["/share/{shareLink}/album/{albumId}/page/{page}", "/api/v1/share/{shareLink}/album/{albumId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getPagedAnonymousShareAlbum(model: Model, @PathVariable shareLink: String, @PathVariable albumId: Int, @PathVariable page: Int): String? {
+    fun getPagedAnonymousShareAlbum(model: Model, @PathVariable shareLink: String, @PathVariable albumId: Int, @PathVariable page: Int, locale: Locale): String? {
         val queryLimit = model.getAttribute("queryLimit").toString().toInt()
-        val response = buildShareData(model, albumId,StringEscapeUtils.escapeHtml4(shareLink), queryLimit, page)
+        val response = buildShareData(model, albumId,StringEscapeUtils.escapeHtml4(shareLink), queryLimit, page, locale)
         return mapper.writeValueAsString(response)
     }
 
     @RequestMapping(value = ["/share/{shareLink}/album/{albumId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
-    fun getPaginationAnonymousShareAlbum(model: Model, @PathVariable shareLink: String, @PathVariable albumId: Int, @PathVariable page: Int): String? {
+    fun getPaginationAnonymousShareAlbum(model: Model, @PathVariable shareLink: String, @PathVariable albumId: Int, @PathVariable page: Int, locale: Locale): String? {
         val queryLimit = model.getAttribute("queryLimit").toString().toInt()
-        val response = buildShareData(model, albumId,StringEscapeUtils.escapeHtml4(shareLink), queryLimit, page)
+        val response = buildShareData(model, albumId,StringEscapeUtils.escapeHtml4(shareLink), queryLimit, page, locale)
 
         for ((k, v) in response) {
             model[k] = v!!
@@ -1294,14 +1294,14 @@ class AlbumsController: BaseController() {
     )
     @RequestMapping(value = ["/api/v1/share/{shareLink}/album/{albumId}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getPagedSizeAnonymousShareAlbum(model: Model, @PathVariable shareLink: String, @PathVariable albumId: Int, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>): String? {
-        val response = buildShareData(model, albumId, StringEscapeUtils.escapeHtml4(shareLink), size.orElse(model.getAttribute("queryLimit").toString().toInt()), page.orElse(0))
+    fun getPagedSizeAnonymousShareAlbum(model: Model, @PathVariable shareLink: String, @PathVariable albumId: Int, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>, locale: Locale): String? {
+        val response = buildShareData(model, albumId, StringEscapeUtils.escapeHtml4(shareLink), size.orElse(model.getAttribute("queryLimit").toString().toInt()), page.orElse(0), locale)
         return mapper.writeValueAsString(response)
     }
 
-    private fun buildShareData(model: Model, albumId: Int, shareLink: String, size: Int, page: Int): MutableMap<String, Any?> {
+    private fun buildShareData(model: Model, albumId: Int, shareLink: String, size: Int, page: Int, locale: Locale): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
-        response["message"] = "Nothing to see here."
+        response["message"] = messageSource?.getMessage("main.nothing", null, locale)
         val tempAlbum = Album()
         tempAlbum.setId(0)
         response["album"] = tempAlbum
@@ -1520,8 +1520,8 @@ class AlbumsController: BaseController() {
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/album/{albumId}","/album/{albumId}/{mediaType}"], method = [RequestMethod.GET])
-    fun getAlbum(model: Model, @PathVariable albumId: Int,@PathVariable(required = false) mediaType: String?): String {
-        val response = buildAlbum(model,albumId,0,model.getAttribute("queryLimit").toString().toInt(),mediaType)
+    fun getAlbum(model: Model, @PathVariable albumId: Int,@PathVariable(required = false) mediaType: String?, locale: Locale): String {
+        val response = buildAlbum(model,albumId,0,model.getAttribute("queryLimit").toString().toInt(),mediaType,locale)
         for ((k, v) in response) {
             model[k] = v!!
         }
@@ -1537,8 +1537,8 @@ class AlbumsController: BaseController() {
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/album/{albumId}/{page}/{mediaType}"], method = [RequestMethod.GET])
-    fun getAlbumsPaged(model: Model,@PathVariable(required = true) albumId: Int,@PathVariable(required = true) page: Int,@PathVariable(required = true) mediaType: String): String {
-        val response = buildAlbum(model,albumId,page,model.getAttribute("queryLimit").toString().toInt(),mediaType)
+    fun getAlbumsPaged(model: Model,@PathVariable(required = true) albumId: Int,@PathVariable(required = true) page: Int,@PathVariable(required = true) mediaType: String, locale: Locale): String {
+        val response = buildAlbum(model,albumId,page,model.getAttribute("queryLimit").toString().toInt(),mediaType,locale)
 
         for ((k, v) in response) {
             model[k] = v!!
@@ -1606,15 +1606,15 @@ class AlbumsController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/album/{albumId}/page/{page}","/api/v1/album/{albumId}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getPagedAlbum(model: Model, @PathVariable albumId: Int, @PathVariable page: Int): String {
-        return mapper.writeValueAsString(buildAlbum(model,albumId,page,model.getAttribute("queryLimit").toString().toInt(),"all"))
+    fun getPagedAlbum(model: Model, @PathVariable albumId: Int, @PathVariable page: Int, locale: Locale): String {
+        return mapper.writeValueAsString(buildAlbum(model,albumId,page,model.getAttribute("queryLimit").toString().toInt(),"all", locale))
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/album/{albumId}/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getPagedAlbumWithMediaType(model: Model, @PathVariable albumId: Int, @PathVariable page: Int,@PathVariable mediaType: String): String {
-        return mapper.writeValueAsString(buildAlbum(model,albumId,page,model.getAttribute("queryLimit").toString().toInt(),mediaType))
+    fun getPagedAlbumWithMediaType(model: Model, @PathVariable albumId: Int, @PathVariable page: Int,@PathVariable mediaType: String, locale: Locale): String {
+        return mapper.writeValueAsString(buildAlbum(model,albumId,page,model.getAttribute("queryLimit").toString().toInt(),mediaType, locale))
     }
 
     @RouterOperation(
@@ -1671,15 +1671,15 @@ class AlbumsController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/album/{albumId}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getPagedSizeAlbum(model: Model, @PathVariable albumId: Int, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>): String {
-        return mapper.writeValueAsString(buildAlbum(model, albumId, page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt()), "all"))
+    fun getPagedSizeAlbum(model: Model, @PathVariable albumId: Int, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>, locale: Locale): String {
+        return mapper.writeValueAsString(buildAlbum(model, albumId, page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt()), "all", locale))
     }
 
-    private fun buildAlbum(model: Model, albumId: Int, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt(), mediaTypeFilter: String?): MutableMap<String, Any?> {
+    private fun buildAlbum(model: Model, albumId: Int, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt(), mediaTypeFilter: String?, locale: Locale): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         val module = "album"
-        response["message"] = "Nothing to see here."
+        response["message"] = messageSource?.getMessage("main.nothing", null, locale)
         response["activePage"] = module
         response["activeSidebar"] = module
         response["titleDescriptor"] = TextUtils.capitalized(module)

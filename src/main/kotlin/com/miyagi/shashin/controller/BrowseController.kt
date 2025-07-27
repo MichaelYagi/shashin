@@ -23,6 +23,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpSession
 import org.apache.commons.text.StringEscapeUtils
 import org.hibernate.query.Page
+import org.springframework.context.MessageSource
 import org.springframework.http.MediaType
 import org.springframework.web.multipart.MultipartFile
 import java.text.SimpleDateFormat
@@ -62,6 +63,9 @@ class BrowseController: BaseController() {
 
     @Autowired
     private lateinit var settingsController: SettingsController
+
+    @Autowired
+    var messageSource: MessageSource? = null
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
@@ -108,9 +112,9 @@ class BrowseController: BaseController() {
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/recent","/recent/{mediaType}"], method = [RequestMethod.GET])
-    fun getRecentlyAdded(model: Model,@PathVariable(required = false) mediaType: String?): String {
+    fun getRecentlyAdded(model: Model,@PathVariable(required = false) mediaType: String?,locale: Locale): String {
         val module = "recent"
-        buildInitialPage(module,model,mediaType)
+        buildInitialPage(module,model,mediaType,locale)
 
         model["pageParam"] = 0
         model["activePage"] = module
@@ -121,10 +125,10 @@ class BrowseController: BaseController() {
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/recent/{page}/{mediaType}"], method = [RequestMethod.GET])
-    fun getRecentlyAddedPage(model: Model,@PathVariable(required = true) page: Int,@PathVariable(required = true) mediaType: String): String {
+    fun getRecentlyAddedPage(model: Model,@PathVariable(required = true) page: Int,@PathVariable(required = true) mediaType: String, locale: Locale): String {
         val module = "recent"
 
-        val response = buildBrowseRecord(module,model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType)
+        val response = buildBrowseRecord(module,model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType, locale)
         for ((k, v) in response) {
             model[k] = v!!
         }
@@ -223,16 +227,16 @@ class BrowseController: BaseController() {
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/recent/mediatype/{mediaType}/page/{page}","/api/v1/recent/{page}","/api/v1/recent/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getPagedRecent(model: Model, request: HttpServletRequest, @PathVariable page: Int,@PathVariable(required = false) mediaType: String?): String {
-        return mapper.writeValueAsString(buildBrowseRecord("recent",model,page, model.getAttribute("queryLimit").toString().toInt(), mediaType))
+    fun getPagedRecent(model: Model, request: HttpServletRequest, @PathVariable page: Int,@PathVariable(required = false) mediaType: String?, locale: Locale): String {
+        return mapper.writeValueAsString(buildBrowseRecord("recent",model,page, model.getAttribute("queryLimit").toString().toInt(), mediaType, locale))
     }
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/taken","/taken/{mediaType}"], method = [RequestMethod.GET])
-    fun getTaken(model: Model,@PathVariable(required = false) mediaType: String?): String {
+    fun getTaken(model: Model,@PathVariable(required = false) mediaType: String?,locale: Locale): String {
         val module = "taken"
 
-        buildInitialPage(module,model,mediaType)
+        buildInitialPage(module,model,mediaType,locale)
 
         model["pageParam"] = 0
         model["activePage"] = module
@@ -244,16 +248,16 @@ class BrowseController: BaseController() {
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/taken/{page}","/taken/mediatype/{mediaType}/page/{page}","/api/v1/taken/{page}", "/api/v1/taken/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getPagedTaken(model: Model, request: HttpServletRequest, @PathVariable page: Int, @PathVariable(required = false) mediaType: String?): String {
-        return mapper.writeValueAsString(buildBrowseRecord("taken",model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType))
+    fun getPagedTaken(model: Model, request: HttpServletRequest, @PathVariable page: Int, @PathVariable(required = false) mediaType: String?, locale: Locale): String {
+        return mapper.writeValueAsString(buildBrowseRecord("taken",model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType, locale))
     }
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/taken/{page}/{mediaType}"], method = [RequestMethod.GET])
-    fun getTakenAddedPage(model: Model,@PathVariable(required = true) page: Int,@PathVariable(required = true) mediaType: String): String {
+    fun getTakenAddedPage(model: Model,@PathVariable(required = true) page: Int,@PathVariable(required = true) mediaType: String, locale: Locale): String {
         val module = "taken"
 
-        val response = buildBrowseRecord(module,model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType)
+        val response = buildBrowseRecord(module,model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType, locale)
         for ((k, v) in response) {
             model[k] = v!!
         }
@@ -267,10 +271,10 @@ class BrowseController: BaseController() {
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/modified","/modified/{mediaType}"], method = [RequestMethod.GET])
-    fun getModified(model: Model,@PathVariable(required = false) mediaType: String?): String {
+    fun getModified(model: Model,@PathVariable(required = false) mediaType: String?,locale: Locale): String {
         val module = "modified"
 
-        buildInitialPage(module,model,mediaType)
+        buildInitialPage(module,model,mediaType,locale)
 
         model["pageParam"] = 0
         model["activePage"] = module
@@ -281,10 +285,10 @@ class BrowseController: BaseController() {
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/modified/{page}/{mediaType}"], method = [RequestMethod.GET])
-    fun getModifiedAddedPage(model: Model,@PathVariable(required = true) page: Int,@PathVariable(required = true) mediaType: String): String {
+    fun getModifiedAddedPage(model: Model,@PathVariable(required = true) page: Int,@PathVariable(required = true) mediaType: String, locale: Locale): String {
         val module = "modified"
 
-        val response = buildBrowseRecord(module,model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType)
+        val response = buildBrowseRecord(module,model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType,locale)
         for ((k, v) in response) {
             model[k] = v!!
         }
@@ -383,16 +387,16 @@ class BrowseController: BaseController() {
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/modified/{page}","/modified/mediatype/{mediaType}/page/{page}","/api/v1/modified/{page}","/api/v1/modified/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getPagedModified(model: Model, request: HttpServletRequest, @PathVariable page: Int,@PathVariable(required = false) mediaType: String?): String {
-        return mapper.writeValueAsString(buildBrowseRecord("modified",model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType))
+    fun getPagedModified(model: Model, request: HttpServletRequest, @PathVariable page: Int,@PathVariable(required = false) mediaType: String?, locale: Locale): String {
+        return mapper.writeValueAsString(buildBrowseRecord("modified",model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType, locale))
     }
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/accessed","/accessed/{mediaType}"], method = [RequestMethod.GET])
-    fun getAccessed(model: Model,@PathVariable(required = false) mediaType: String?): String {
+    fun getAccessed(model: Model,@PathVariable(required = false) mediaType: String?,locale: Locale): String {
         val module = "accessed"
 
-        buildInitialPage(module,model,mediaType)
+        buildInitialPage(module,model,mediaType,locale)
 
         model["pageParam"] = 0
         model["activePage"] = module
@@ -403,10 +407,10 @@ class BrowseController: BaseController() {
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/accessed/{page}/{mediaType}"], method = [RequestMethod.GET])
-    fun getAccessedAddedPage(model: Model,@PathVariable(required = true) page: Int,@PathVariable(required = true) mediaType: String): String {
+    fun getAccessedAddedPage(model: Model,@PathVariable(required = true) page: Int,@PathVariable(required = true) mediaType: String, locale: Locale): String {
         val module = "accessed"
 
-        val response = buildBrowseRecord(module,model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType)
+        val response = buildBrowseRecord(module,model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType, locale)
         for ((k, v) in response) {
             model[k] = v!!
         }
@@ -421,8 +425,8 @@ class BrowseController: BaseController() {
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/accessed/{page}","/accessed/mediatype/{mediaType}/page/{page}","/api/v1/accessed/{page}","/api/v1/accessed/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getPagedAccessed(model: Model, request: HttpServletRequest, @PathVariable page: Int,@PathVariable(required = false) mediaType: String?): String {
-        return mapper.writeValueAsString(buildBrowseRecord("accessed",model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType))
+    fun getPagedAccessed(model: Model, request: HttpServletRequest, @PathVariable page: Int,@PathVariable(required = false) mediaType: String?, locale: Locale): String {
+        return mapper.writeValueAsString(buildBrowseRecord("accessed",model,page,model.getAttribute("queryLimit").toString().toInt(),mediaType, locale))
     }
 
     @RouterOperation(
@@ -512,8 +516,8 @@ class BrowseController: BaseController() {
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/api/v1/modified","/api/v1/modified/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getPagedSizeModified(model: Model, request: HttpServletRequest, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>, @PathVariable(required = false) mediaType: String?): String {
-        return mapper.writeValueAsString(buildBrowseRecord("modified", model ,page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt()), mediaType))
+    fun getPagedSizeModified(model: Model, request: HttpServletRequest, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>, @PathVariable(required = false) mediaType: String?, locale: Locale): String {
+        return mapper.writeValueAsString(buildBrowseRecord("modified", model ,page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt()), mediaType, locale))
     }
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
@@ -577,9 +581,9 @@ class BrowseController: BaseController() {
         return mapper.writeValueAsString(response)
     }
 
-    private fun buildBrowseRecord(module: String, model: Model, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt(), mediaTypeFilter: String?): MutableMap<String, Any?> {
+    private fun buildBrowseRecord(module: String, model: Model, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt(), mediaTypeFilter: String?, locale: Locale): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
-        response["message"] = "Nothing to see here."
+        response["message"] = messageSource?.getMessage("main.nothing", null, locale)
         response["metadataList"] = mutableListOf<Metadata>()
         response["favorites"] = mutableMapOf<String, Any>()
         response["albumList"] = mutableListOf<Album>()
@@ -840,9 +844,9 @@ class BrowseController: BaseController() {
         return response
     }
 
-    private fun buildInitialFoldersPage(model: Model): Model {
+    private fun buildInitialFoldersPage(model: Model, locale: Locale): Model {
         val page = 0
-        val response = buildPagedFolders(model,page)
+        val response = buildPagedFolders(model,page,model.getAttribute("queryLimit").toString().toInt(), locale)
 
         for ((k, v) in response) {
             model[k] = v!!
@@ -853,8 +857,8 @@ class BrowseController: BaseController() {
         return model
     }
 
-    private fun buildInitialPage(module: String, model: Model, mediaTypeFilter: String?): Model {
-        val response = buildBrowseRecord(module,model,0,model.getAttribute("queryLimit").toString().toInt(),mediaTypeFilter)
+    private fun buildInitialPage(module: String, model: Model, mediaTypeFilter: String?, locale: Locale): Model {
+        val response = buildBrowseRecord(module,model,0,model.getAttribute("queryLimit").toString().toInt(),mediaTypeFilter, locale)
 
         for ((k, v) in response) {
             model[k] = v!!
@@ -1030,9 +1034,9 @@ class BrowseController: BaseController() {
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @GetMapping("/folders")
-    fun getFolders(model: Model): String {
+    fun getFolders(model: Model, locale: Locale): String {
         val module = "folders"
-        buildInitialFoldersPage(model)
+        buildInitialFoldersPage(model, locale)
 
         model["pageParam"] = 0
         model["foldersCount"] = metadataRepository.countByFolder()
@@ -1042,14 +1046,14 @@ class BrowseController: BaseController() {
         return module
     }
 
-    private fun buildPagedFolders(model: Model, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
+    private fun buildPagedFolders(model: Model, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt(), locale: Locale): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         response["status"] = ApiResponse.FAIL.status
 
         val module = "folders"
-        response["msg"] = "Nothing to see here."
-        response["message"] = "Nothing to see here."
+        response["msg"] = messageSource?.getMessage("main.nothing", null, locale)
+        response["message"] = messageSource?.getMessage("main.nothing", null, locale)
         response["foldersList"] = mutableListOf<Folder>()
         response["page"] = page
         response["size"] = size
@@ -1119,14 +1123,14 @@ class BrowseController: BaseController() {
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/folders/page/{page}","/api/v1/folders/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getPagedFolders(model: Model, request: HttpServletRequest, @PathVariable page: Int): String {
-        return mapper.writeValueAsString(buildPagedFolders(model,page))
+    fun getPagedFolders(model: Model, request: HttpServletRequest, @PathVariable page: Int, locale: Locale): String {
+        return mapper.writeValueAsString(buildPagedFolders(model,page,model.getAttribute("queryLimit").toString().toInt(), locale))
     }
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/folders/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
-    fun getPaginationAnonymousShareAlbum(model: Model, @PathVariable page: Int): String? {
-        val response = buildPagedFolders(model, page)
+    fun getPaginationAnonymousShareAlbum(model: Model, @PathVariable page: Int, locale: Locale): String? {
+        val response = buildPagedFolders(model, page, model.getAttribute("queryLimit").toString().toInt(), locale)
 
         for ((k, v) in response) {
             model[k] = v!!
@@ -1183,17 +1187,17 @@ class BrowseController: BaseController() {
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/api/v1/folders"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getPagedSizeFolders(model: Model, request: HttpServletRequest, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>): String {
-        return mapper.writeValueAsString(buildPagedFolders(model, page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt())))
+    fun getPagedSizeFolders(model: Model, request: HttpServletRequest, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>, locale: Locale): String {
+        return mapper.writeValueAsString(buildPagedFolders(model, page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt()), locale))
     }
 
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/folder/{folder}"], method = [RequestMethod.GET])
-    fun getFolder(model: Model, @PathVariable folder: String): String {
+    fun getFolder(model: Model, @PathVariable folder: String, locale: Locale): String {
         val module = "folder"
         val page = 0
         val decodedValue = URLDecoder.decode(folder, StandardCharsets.UTF_8.toString())
-        val response = buildFolder(model,decodedValue,page)
+        val response = buildFolder(model,decodedValue,page,model.getAttribute("queryLimit").toString().toInt(), locale)
 
         for ((k, v) in response) {
             model[k] = v!!
@@ -1296,13 +1300,13 @@ class BrowseController: BaseController() {
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/folder/page/{page}/{folder}","/api/v1/folder/{page}/{folder}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getPagedFolder(model: Model, request: HttpServletRequest, @PathVariable page: Int, @PathVariable folder: String): String {
-        return mapper.writeValueAsString(buildFolder(model,URLDecoder.decode(folder, StandardCharsets.UTF_8.toString()),page))
+    fun getPagedFolder(model: Model, request: HttpServletRequest, @PathVariable page: Int, @PathVariable folder: String,locale: Locale): String {
+        return mapper.writeValueAsString(buildFolder(model,URLDecoder.decode(folder, StandardCharsets.UTF_8.toString()),page,model.getAttribute("queryLimit").toString().toInt(),locale))
     }
 
     @RequestMapping(value = ["/folder/{folder}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
-    fun getPaginationFolder(model: Model, @PathVariable folder: String,@PathVariable page: Int): String? {
-        val response = buildFolder(model,URLDecoder.decode(folder, StandardCharsets.UTF_8.toString()),page)
+    fun getPaginationFolder(model: Model, @PathVariable folder: String,@PathVariable page: Int,locale: Locale): String? {
+        val response = buildFolder(model,URLDecoder.decode(folder, StandardCharsets.UTF_8.toString()),page,model.getAttribute("queryLimit").toString().toInt(),locale)
 
         for ((k, v) in response) {
             model[k] = v!!
@@ -1404,13 +1408,13 @@ class BrowseController: BaseController() {
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/api/v1/folder/{folder}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getPagedFolder(model: Model, request: HttpServletRequest, @PathVariable folder: String, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>): String {
-        return mapper.writeValueAsString(buildFolder(model,URLDecoder.decode(folder, StandardCharsets.UTF_8.toString()), page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt())))
+    fun getPagedFolder(model: Model, request: HttpServletRequest, @PathVariable folder: String, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>, locale: Locale): String {
+        return mapper.writeValueAsString(buildFolder(model,URLDecoder.decode(folder, StandardCharsets.UTF_8.toString()), page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt()), locale))
     }
 
-    private fun buildFolder(model: Model, folder: String, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
+    private fun buildFolder(model: Model, folder: String, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt(), locale: Locale): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
-        response["message"] = "Nothing to see here."
+        response["message"] = messageSource?.getMessage("main.nothing", null, locale)
         response["metadataList"] = mutableListOf<Metadata>()
         response["favorites"] = mutableMapOf<String, Any>()
         response["albumList"] = mutableListOf<Album>()

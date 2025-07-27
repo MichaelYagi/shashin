@@ -278,9 +278,9 @@ class PeopleController: BaseController() {
 
     @GetMapping("/person/matches/{personId}")
     @Secured("ROLE_ADMIN","ROLE_SUPER")
-    fun getPredictions(model: Model, @PathVariable personId: Int, request: HttpServletRequest): String {
+    fun getPredictions(model: Model, @PathVariable personId: Int, request: HttpServletRequest, locale: Locale): String {
         val module = "matches"
-        model["message"] = "Nothing to see here."
+        model["message"] = messageSource?.getMessage("main.nothing", null, locale)
         model["lowMatchResults"] = mutableListOf<Metadata>()
         model["recognitionLabels"] = mutableListOf<RecognitionLabel>()
         model["allAlbumList"] = mutableListOf<Album>()
@@ -463,10 +463,10 @@ class PeopleController: BaseController() {
 
     @GetMapping("/person/compreface/{personId}")
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
-    fun getCompreFaceGetImages(model: Model, @PathVariable personId: Int, request: HttpServletRequest): String {
+    fun getCompreFaceGetImages(model: Model, @PathVariable personId: Int, request: HttpServletRequest, locale: Locale): String {
         val module = "compreface"
         val page = 0
-        val response = buildCompreFace(model,personId,page)
+        val response = buildCompreFace(model,personId,page, model.getAttribute("queryLimit").toString().toInt(), locale)
         val counts = HashMap<String,Int>()
         counts["compreface"] = 0
         counts["person"] = 0
@@ -541,11 +541,11 @@ class PeopleController: BaseController() {
 
     @RequestMapping(value = ["/person/compreface/{personId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getPagedComprefaceList(model: Model, request: HttpServletRequest, @PathVariable personId: Int, @PathVariable page: Int): String {
+    fun getPagedComprefaceList(model: Model, request: HttpServletRequest, @PathVariable personId: Int, @PathVariable page: Int, locale: Locale): String {
         var response = mutableMapOf<String, Any?>()
 
         if (model.getAttribute("currentUser") != "") {
-            response = buildCompreFace(model,personId,page)
+            response = buildCompreFace(model,personId,page, model.getAttribute("queryLimit").toString().toInt(), locale)
             response["msg"] = ""
             response["status"] = ApiResponse.SUCCESS.status
 
@@ -560,10 +560,10 @@ class PeopleController: BaseController() {
         return mapper.writeValueAsString(response)
     }
 
-    private fun buildCompreFace(model: Model, personId: Int, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
+    private fun buildCompreFace(model: Model, personId: Int, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt(), locale: Locale): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
-        response["message"] = "Nothing to see here."
+        response["message"] = messageSource?.getMessage("main.nothing", null, locale)
         response["parameter"] = personId
         response["resultList"] = mutableListOf<MutableMap<String, String>>()
 
@@ -681,9 +681,9 @@ class PeopleController: BaseController() {
 
     @GetMapping("/people")
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    fun getPeople(model: Model): String {
+    fun getPeople(model: Model, locale: Locale): String {
         val module = "people"
-        model["message"] = "Nothing to see here."
+        model["message"] = messageSource?.getMessage("main.nothing", null, locale)
         model["peopleList"] = mutableListOf<MetadataPeople>()
         val counts = HashMap<Int,Int>()
         model["counts"] = counts
@@ -750,10 +750,10 @@ class PeopleController: BaseController() {
 
     @RequestMapping(value = ["/person/{personId}"], method = [RequestMethod.GET])
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    fun getPerson(model: Model, @PathVariable personId: Int,request: HttpServletRequest): String {
+    fun getPerson(model: Model, @PathVariable personId: Int,request: HttpServletRequest, locale: Locale): String {
         val module = "person"
         val page = 0
-        val response = buildPersonAlbum(model,module,personId,page)
+        val response = buildPersonAlbum(model,module,personId,page, model.getAttribute("queryLimit").toString().toInt(), locale)
         for ((k, v) in response) {
             model[k] = v!!
         }
@@ -824,14 +824,14 @@ class PeopleController: BaseController() {
 
     @RequestMapping(value = ["/person/{personId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getPagedPerson(model: Model, request: HttpServletRequest, @PathVariable personId: Int, @PathVariable page: Int): String {
-        return mapper.writeValueAsString(buildPersonAlbum(model,"person",personId,page))
+    fun getPagedPerson(model: Model, request: HttpServletRequest, @PathVariable personId: Int, @PathVariable page: Int, locale: Locale): String {
+        return mapper.writeValueAsString(buildPersonAlbum(model,"person",personId,page, model.getAttribute("queryLimit").toString().toInt(), locale))
     }
 
-    private fun buildPersonAlbum(model: Model,module: String,personId: Int,page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
+    private fun buildPersonAlbum(model: Model,module: String,personId: Int,page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt(), locale: Locale): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
-        response["message"] = "Nothing to see here."
+        response["message"] = messageSource?.getMessage("main.nothing", null, locale)
         response["metadataList"] = mutableListOf<Metadata>()
         response["labelPhotoMap"] = mutableMapOf<String, Any>()
         response["personInfo"] = RecognitionLabel()
