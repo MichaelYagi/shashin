@@ -488,7 +488,7 @@ class UserController {
     }
 
     @GetMapping("/users/register")
-    fun getRegisterUser(model: Model, request: HttpServletRequest): String {
+    fun getRegisterUser(model: Model, request: HttpServletRequest, locale: Locale): String {
         val module = "register"
 
         if ((model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) && model.getAttribute("agentName") != "Safari") {
@@ -504,10 +504,11 @@ class UserController {
 
             val userCount = userRepository?.count()
             if ((userCount != null) && (userCount.toInt() == 0)) {
-                model["message"] = "Register as a super admin"
+                model["message"] = messageSource?.getMessage("main.register.first", null, locale)
             }
             model["msg"] = ""
             model["status"] = ApiResponse.SUCCESS.status
+            model["activePageHeader"] = messageSource?.getMessage("main.register", null, locale).toString().replaceFirstChar { it.uppercaseChar() }
             model["activePage"] = module
             model["activeSidebar"] = module
             model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -516,7 +517,7 @@ class UserController {
     }
 
     @RequestMapping(value = ["/users/register"], method = [RequestMethod.POST])
-    fun registerUser(model: Model, request: HttpServletRequest): String {
+    fun registerUser(model: Model, request: HttpServletRequest, locale: Locale): String {
         if ((model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) && model.getAttribute("agentName") != "Safari") {
             return "redirect:/timeline"
         } else if ((model.getAttribute("authority").toString() == model.getAttribute("adminRole") || model.getAttribute("authority").toString() == model.getAttribute("superRole")) && model.getAttribute("agentName") == "Safari") {
@@ -531,6 +532,7 @@ class UserController {
             model["message"] = ""
 
             val module = "register"
+            model["activePageHeader"] = messageSource?.getMessage("main.register", null, locale).toString().replaceFirstChar { it.uppercaseChar() }
             model["activePage"] = module
             model["activeSidebar"] = module
             model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -540,12 +542,12 @@ class UserController {
                 val passWord = request.getParameter("password").toString()
 
                 if (userName.length < 4) {
-                    model["message"] = "Username must be at least 4 characters"
+                    model["message"] = messageSource?.getMessage("main.register.password.4", null, locale)
                     return module
                 }
 
                 if (passWord.length < 6) {
-                    model["message"] = "Password must be at least 6 characters"
+                    model["message"] = messageSource?.getMessage("main.register.password.6", null, locale)
                     return module
                 }
 
@@ -563,7 +565,7 @@ class UserController {
                     if (user != null) {
                         if (user.getUsername()?.lowercase() == newUser.getUsername()?.lowercase()) {
                             logger.log(Level.INFO, "Already registered user: $newUser")
-                            model["message"] = "Could not register user"
+                            model["message"] = messageSource?.getMessage("main.register.fail", null, locale)
                             return module
                         }
                     }
@@ -636,13 +638,13 @@ class UserController {
 
             model["msg"] = ""
             model["status"] = ApiResponse.FAIL.status
-            model["message"] = "Something went wrong"
+            model["message"] = messageSource?.getMessage("main.toast.account.profile.fail.body", null, locale)
             return module
         }
     }
 
     @GetMapping("/users/login")
-    fun getLoginUser(model: Model, session: HttpSession, @RequestParam(name="error",required=false) error: String?, @RequestParam(name="msg",required=false) message: String?): String {
+    fun getLoginUser(model: Model, session: HttpSession, @RequestParam(name="error",required=false) error: String?, @RequestParam(name="msg",required=false) message: String?, locale: Locale): String {
         val module = "login"
 
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
@@ -666,16 +668,17 @@ class UserController {
             model["user"] = User()
             model["message"] = ""
             if (error == "401") {
-                model["message"] = "Login failed"
+                model["message"] = messageSource?.getMessage("main.login.fail.loginfail", null, locale)
             } else if (message == "regsuccess") {
-                model["message"] = "Registration successful. Please login."
+                model["message"] = messageSource?.getMessage("main.login.regsuccess", null, locale)
             } else if (message == "regpending") {
-                model["message"] = "Registration pending."
+                model["message"] = messageSource?.getMessage("main.login.regpending", null, locale)
             } else if (message == "loginfail") {
-                model["message"] = "Login failed"
+                model["message"] = messageSource?.getMessage("main.login.fail.loginfail", null, locale)
             }
             model["msg"] = ""
             model["status"] = ApiResponse.FAIL.status
+            model["activePageHeader"] = messageSource?.getMessage("main.login", null, locale).toString().replaceFirstChar { it.uppercaseChar() }
             model["activePage"] = module
             model["activeSidebar"] = module
             model["titleDescriptor"] = TextUtils.capitalized(module)

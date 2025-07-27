@@ -2,14 +2,21 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head></head>
 <body th:fragment="loginregcontent(activePage, message)">
-<div class="d-flex w-100 h-100 p-3 mx-auto flex-column" style="max-width: 440px;">
+<div class="d-flex w-100 h-100 p-3 mx-auto flex-column" style="max-width: 550px;">
     <header class="mb-auto">
         <div>
             <h3 class="float-md-start mb-0"><a style="color: inherit;text-decoration: inherit;" href="/">Shashin</a></h3>
             <nav class="nav justify-content-center float-md-end">
-                <a class="nav-link" href="/">Home</a>
-                <a class="nav-link" href="/features">Features</a>
-                <a class="nav-link" href="/articles">Articles</a>
+                <a class="nav-link" href="/"><th:block th:text="#{main.home}"></th:block></a>
+                <a class="nav-link" href="/features"><th:block th:text="#{main.features}"></th:block></a>
+                <a class="nav-link" href="/articles"><th:block th:text="#{main.articles}"></th:block></a>
+                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false"><th:block th:text="#{main.language}"></th:block></a>
+
+                <ul class="dropdown-menu" id="languageSelect">
+                    <th:block th:each="lang : ${languageList}">
+                        <li><a th:class="'dropdown-item' + ${locale == lang.code ? ' active' : ''}" th:id="${lang.code}" href="#"><th:block th:text="${lang.label}"></th:block></a></li>
+                    </th:block>
+                </ul>
             </nav>
         </div>
     </header>
@@ -21,38 +28,38 @@
                     <th:block th:text="${message}"></th:block>
                 </div>
             </th:block>
-            <h2 class="form-signin-heading"><th:block th:text="'Please ' + ${#strings.capitalize(activePage)}"></th:block></h2>
+            <h2 class="form-signin-heading"><th:block th:text="${activePageHeader}"></th:block></h2>
             <div class="input-group mb-2">
-                <input type="text" id="username" name="username" class="form-control" minlength="4" placeholder="Username" required autofocus>
+                <input type="text" id="username" name="username" class="form-control" minlength="4" th:placeholder="#{main.pages.users.username}" required autofocus>
             </div>
             <div class="input-group">
-                <input type="password" id="password" name="password"  minlength="6" class="form-control" placeholder="Password" required>
+                <input type="password" id="password" name="password"  minlength="6" class="form-control" th:placeholder="#{main.password}" required>
                 <button class="btn btn-secondary" type="button" id="unhidepassword" style="max-height: 46px;"><span id="unhidepasswordicon" class="bi-eye"></span></button>
             </div>
             <th:block th:if="${activePage == 'login'}">
             <div class="input-group">
                 <input type="checkbox" id="remember-me" name="remember-me" class="form-check-inline">
-                <label class="form-check-label" for="remember-me">Remember me</label>
+                <label class="form-check-label" for="remember-me"><th:block th:text="#{main.remember}"></th:block></label>
             </div>
             </th:block>
 
             <div class="input-group mt-2">
-                <button id="submit-loginreg" class="btn btn-lg btn-primary btn-block form-control" type="submit"><th:block th:text="${#strings.capitalize(activePage)}"></th:block></button>
+                <button id="submit-loginreg" class="btn btn-lg btn-primary btn-block form-control" type="submit"><th:block th:text="${activePageHeader}"></th:block></button>
             </div>
 
             <div class="row">
                 <div class="col text-start">
                     <th:block th:if="${activePage == 'login'}">
-                        <a href="/users/register">Register</a>
+                        <a href="/users/register"><th:block th:text="#{main.register}"></th:block></a>
                     </th:block>
                     <th:block th:if="${activePage == 'register'}">
-                        <a href="/users/login">Login</a>
+                        <a href="/users/login"><th:block th:text="#{main.login}"></th:block></a>
                     </th:block>
                 </div>
-                <div class="col text-end" id="darkmodeSwitchContainer" style="display: none;">
+                <div class="col-8 text-end" id="darkmodeSwitchContainer" style="display: none;">
                     <div class="form-check form-switch float-end">
                         <input class="form-check-input" type="checkbox" id="darkmodeSwitch">
-                        <label class="form-check-label" for="darkmodeSwitch">Dark mode</label>
+                        <label class="form-check-label" for="darkmodeSwitch"><th:block th:text="#{main.pages.account.sitesettings.darkmode}"></th:block></label>
                     </div>
                 </div>
             </div>
@@ -79,6 +86,14 @@
             icon.removeClass("bi-eye-slash").addClass("bi-eye");
         }
     }
+
+    $("#languageSelect li a").on("click", async function (e) {
+        e.preventDefault();
+
+        const language = $(this).attr("id");
+        window.location.replace("/users/"+activePage+"?lang="+language);
+    });
+
 </script>
 
 </body>
