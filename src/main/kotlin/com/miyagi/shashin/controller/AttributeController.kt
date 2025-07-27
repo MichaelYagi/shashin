@@ -115,6 +115,9 @@ class AttributeController: ResponseEntityExceptionHandler() {
     @Value("\${app.rememberme.key}")
     private var rememberMeKey: String? = null
 
+    @Value("\${app.config.available.languages}")
+    private var availableLang: Array<String>? = null
+
     override fun handleHttpRequestMethodNotSupported(
         ex: HttpRequestMethodNotSupportedException,
         headers: HttpHeaders,
@@ -218,7 +221,6 @@ class AttributeController: ResponseEntityExceptionHandler() {
     @ModelAttribute
     @Transactional
     fun addAttributes(model: Model, request: HttpServletRequest, response: HttpServletResponse, authentication: Authentication?) {
-        val availableLang = arrayOf("en", "ja", "fr")
         var locale = LocaleContextHolder.getLocale().toString()
 
 //        val totalTimingStart = Date()
@@ -549,7 +551,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
 
         // Set language
         data class LanguageOption(val code: String, val label: String)
-        val languageList = availableLang.map { langCode ->
+        val languageList = availableLang?.map { langCode ->
             LanguageOption(
                 code = langCode,
                 label = messageSource!!.getMessage("lang.$langCode", null, LocaleContextHolder.getLocale())
