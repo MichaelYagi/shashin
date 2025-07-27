@@ -617,12 +617,12 @@ class UserController {
                             notificationObj.setModifiedAt(getCurrentTimestamp())
                             notificationObj.setRead(false)
                             var message =
-                                newUser.getUsername() + " registered at " + sdtf.format(Date()) + " and is pending approval."
+                                newUser.getUsername() + messageSource?.getMessage("main.notification.registration.pre", null, locale) + sdtf.format(Date()) + messageSource?.getMessage("main.notification.registration.post", null, locale)
                             if (admin.getAuthority() == superRole) {
                                 message =
-                                    "<a href='/settings/users' target='_blank'>" + newUser.getUsername() + "</a> registered at " + sdtf.format(
+                                    "<a href='/settings/users' target='_blank'>" + newUser.getUsername() + "</a>" + messageSource?.getMessage("main.notification.registration.pre", null, locale) + sdtf.format(
                                         Date()
-                                    ) + " and is pending approval."
+                                    ) + messageSource?.getMessage("main.notification.registration.post", null, locale)
                             }
                             notificationObj.setMessage(message)
                             notificationObjList.add(notificationObj)

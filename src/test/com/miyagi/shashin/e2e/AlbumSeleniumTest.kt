@@ -319,7 +319,8 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         val deleteAlbumEl = this.driver!!.findElement(By.id("trash$albumId"))
         deleteAlbumEl.click()
-        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Delete')]")))
+
+        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.id("trashModalLabel")))
 
         val deleteAlbumButton = this.driver!!.findElement(By.id("deleteAlbum"))
         deleteAlbumButton.click()
@@ -336,7 +337,8 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         //Login as testuser
         this.driver!!.get("http://localhost:$port/users/logout")
         // Logging out redirects to login page
-        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Please Login')]")))
+        //println(this.driver?.pageSource)
+        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.id("remember-me")))
         val username = this.driver!!.findElement(By.id("username"))
         val password = this.driver!!.findElement(By.id("password"))
         val rememberMe = this.driver!!.findElement(By.id("remember-me"))
@@ -365,7 +367,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         // Post comment on albums view
         postCommentElement[0].click()
-        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Comments for')]")))
+        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.id("commentModalLabel")))
         var scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
         val commentTextArea = this.driver!!.findElement(By.id("commentText"))
         commentTextArea.click()
@@ -390,7 +392,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         val postCommentEl = this.driver!!.findElement(By.id("comment$albumId"))
         postCommentEl.click()
-        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Comments for')]")))
+        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.id("commentModalLabel")))
 
         // Check comment
         val commentList = this.driver!!.findElement(By.id("commentList"))
@@ -455,7 +457,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         //Login as testadmin
         this.driver!!.get("http://localhost:$port/users/logout")
         // Logging out redirects to login page
-        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Please Login')]")))
+        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.id("remember-me")))
         val username = this.driver!!.findElement(By.id("username"))
         val password = this.driver!!.findElement(By.id("password"))
         val rememberMe = this.driver!!.findElement(By.id("remember-me"))
@@ -487,7 +489,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         // Post comment on albums view
         postCommentElement[0].click()
-        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Comments for')]")))
+        WebDriverWait(this.driver, Duration.ofSeconds(this.elementWaitSeconds)).until(ExpectedConditions.visibilityOfElementLocated(By.id("commentModalLabel")))
         var scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
         val commentTextArea = this.driver!!.findElement(By.id("commentText"))
         commentTextArea.click()

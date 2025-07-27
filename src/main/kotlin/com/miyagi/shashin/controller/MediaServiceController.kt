@@ -41,6 +41,7 @@ import jakarta.activation.URLDataSource
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import net.coobird.thumbnailator.Thumbnails
+import org.springframework.context.MessageSource
 import org.springframework.security.access.annotation.Secured
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
@@ -71,12 +72,15 @@ class MediaServiceController {
     @Value("\${app.sidecar.path}")
     private var relativeSidecarDir: String? = null
 
+    @Autowired
+    var messageSource: MessageSource? = null
+
     private var logger: Logger = Logger.getLogger(MediaServiceController::class.simpleName)
 
     private var validFileNameRegex = "[^a-zA-Z0-9.-]".toRegex()
 
     @RequestMapping(value = ["/api/v1/thumbnails/{type}/{metadataId}"], method = [RequestMethod.GET])
-    fun getThumbnail(model: Model, request: HttpServletRequest, @PathVariable type: String, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
+    fun getThumbnail(model: Model, request: HttpServletRequest, @PathVariable type: String, @PathVariable metadataId: String, locale: Locale): ResponseEntity<FileSystemResource> {
         val metadataObj = metadataRepository.findById(metadataId)
 
         if (metadataObj.isPresent && (type == "original" || type == "225" || type == "112" || type == "centered" || type == "map" || type == "gif")) {
@@ -168,7 +172,7 @@ class MediaServiceController {
             val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
             sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
             val message =
-                "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to view invalid image with metadata ID $metadataId at ${
+                "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a>" + messageSource?.getMessage("main.notification.mediaservice.viewed", null, locale) + "$metadataId - ${
                     sdtf.format(Date())
                 }"
             notifyAdmins(userIp, message)
@@ -205,11 +209,11 @@ class MediaServiceController {
     @RequestMapping(value = ["/api/v1/video/{metadataId}"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
     @ResponseBody
     @Throws(IOException::class)
-    fun getVideo(model: Model, response: HttpServletResponse, request: HttpServletRequest, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
-        return processVideo(model, metadataId, request, response)
+    fun getVideo(model: Model, response: HttpServletResponse, request: HttpServletRequest, @PathVariable metadataId: String, locale: Locale): ResponseEntity<FileSystemResource> {
+        return processVideo(model, metadataId, request, response, locale)
     }
 
-    private fun processVideo(model: Model, metadataId: String?, request: HttpServletRequest, response: HttpServletResponse): ResponseEntity<FileSystemResource> {
+    private fun processVideo(model: Model, metadataId: String?, request: HttpServletRequest, response: HttpServletResponse, locale: Locale): ResponseEntity<FileSystemResource> {
         val metadataObj = metadataRepository.findById(metadataId!!)
 
         if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("video")!!) {
@@ -342,7 +346,7 @@ class MediaServiceController {
             val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
             sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
             val message =
-                "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to play invalid video at ${
+                "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a>"+ messageSource?.getMessage("main.notification.mediaservice.accessedvideo", null, locale) +"- ${
                     sdtf.format(Date())
                 }"
             notifyAdmins(userIp, message)
@@ -354,7 +358,7 @@ class MediaServiceController {
     @RequestMapping(value = ["/api/v1/video/{metadataId}/download"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
     @ResponseBody
     @Throws(IOException::class)
-    fun getVideoDownload(model: Model, response: HttpServletResponse, request: HttpServletRequest, @PathVariable metadataId: String): ResponseEntity<FileSystemResource>? {
+    fun getVideoDownload(model: Model, response: HttpServletResponse, request: HttpServletRequest, @PathVariable metadataId: String, locale: Locale): ResponseEntity<FileSystemResource>? {
         val metadataObj = metadataRepository.findById(metadataId)
 
         if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("video")!!) {
@@ -371,7 +375,7 @@ class MediaServiceController {
             val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
             sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
             val message =
-                "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to download video with metadata ID $metadataId at ${
+                "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a>"+ messageSource?.getMessage("main.notification.mediaservice.downloadvideo", null, locale) +"$metadataId - ${
                     sdtf.format(Date())
                 }"
             notifyAdmins(userIp, message)
@@ -855,18 +859,18 @@ class MediaServiceController {
     @RequestMapping(value = ["/api/v1/image/{metadataId}","/api/v1/image/{metadataId}.jpg"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
     @Throws(IOException::class)
-    fun getImage(model: Model, response: HttpServletResponse, request: HttpServletRequest, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
-        return getImageFactory(model, request, response, metadataId)
+    fun getImage(model: Model, response: HttpServletResponse, request: HttpServletRequest, @PathVariable metadataId: String, locale: Locale): ResponseEntity<FileSystemResource> {
+        return getImageFactory(model, request, response, metadataId, false, locale)
     }
 
     @RequestMapping(value = ["/api/v1/image/{metadataId}/download"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
     @Throws(IOException::class)
-    fun getImageDownload(model: Model, response: HttpServletResponse,request: HttpServletRequest, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
-        return getImageFactory(model, request, response, metadataId, true)
+    fun getImageDownload(model: Model, response: HttpServletResponse,request: HttpServletRequest, @PathVariable metadataId: String, locale: Locale): ResponseEntity<FileSystemResource> {
+        return getImageFactory(model, request, response, metadataId, true, locale)
     }
 
-    private fun getImageFactory(model: Model,request: HttpServletRequest, response: HttpServletResponse, metadataId: String?, attachFile: Boolean = false): ResponseEntity<FileSystemResource> {
+    private fun getImageFactory(model: Model,request: HttpServletRequest, response: HttpServletResponse, metadataId: String?, attachFile: Boolean = false, locale: Locale): ResponseEntity<FileSystemResource> {
         val metadataObj = metadataRepository.findById(metadataId!!)
 
         if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("image")!!) {
@@ -937,7 +941,7 @@ class MediaServiceController {
             val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
             sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
             val message =
-                "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a> tried to view invalid image with metadata ID $metadataId at ${
+                "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a>"+ messageSource?.getMessage("main.notification.mediaservice.accessedimage", null, locale) +"$metadataId - ${
                     sdtf.format(Date())
                 }"
             notifyAdmins(userIp, message)
