@@ -57,19 +57,14 @@
                     </div>
 
                     <div class="dropdown">
-                        <label class="input-group" for="language"><th:block th:text="#{main.language}"></th:block></label>
+                        <label class="input-group" for="language">
+                            <th:block th:text="#{main.language}"></th:block>
+                        </label>
                         <select class="form-select" name="language" id="language">
-                            <th:block th:if="${currentUser.language == 'en'}">
-                                <option value="en" selected><th:block th:text="#{lang.en}"></th:block></option>
-                            </th:block>
-                            <th:block th:unless="${currentUser.language == 'en'}">
-                                <option value="en"><th:block th:text="#{lang.en}"></th:block></option>
-                            </th:block>
-                            <th:block th:if="${currentUser.language == 'ja'}">
-                                <option value="ja" selected><th:block th:text="#{lang.ja}"></th:block></option>
-                            </th:block>
-                            <th:block th:unless="${currentUser.language == 'ja'}">
-                                <option value="ja"><th:block th:text="#{lang.ja}"></th:block></option>
+                            <th:block th:each="lang : ${languageList}">
+                                <option th:value="${lang.code}"
+                                        th:selected="${currentUser.language == lang.code}"
+                                        th:text="${lang.label}"></option>
                             </th:block>
                         </select>
                     </div>
