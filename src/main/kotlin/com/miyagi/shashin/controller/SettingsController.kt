@@ -1881,7 +1881,7 @@ class SettingsController {
                         // Set notification for scanCount and date and link to /recent
                         val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                         val msg =
-                            messageSource?.getMessage("main.notification.setting.delete.pre", null, locale) + "<a href='#' data-bs-toggle='tooltip' title='${deletedList.joinToString("\n")}'>$deleteCount</a>"+messageSource?.getMessage("main.notification.setting.delete.post", null, locale)+"- " + sdtf.format(Date()) + "."
+                            messageSource?.getMessage("main.notification.setting.delete.pre", null, locale) + "<a href='#' data-bs-toggle='tooltip' title='${deletedList.joinToString("\n")}'>$deleteCount</a>"+messageSource?.getMessage("main.notification.setting.scan.post", null, locale)+"- " + sdtf.format(Date()) + "."
                         if (superAdmins != null) {
                             val notificationObjList = mutableListOf<Notification>()
                             for (admin in superAdmins) {
