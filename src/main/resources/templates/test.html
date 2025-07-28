@@ -42,160 +42,166 @@
             /*<![CDATA[*/
             const activePage = /*[[${activePage}]]*/ 'test';
             const currentPage = /*[[${currentPage}]]*/ 0;
+            const locale = /*[[${locale}]]*/ 'en';
             /*]]>*/
 
-            let db = null;
+            // console.log("===========")
+            // console.log(locale);
+            // console.log(shashin.getTranslatedValue("test", 1));
+            // console.log("=====")
 
-            setTimeout(function () {
-                const http = new Http("indexeddb test");
-                http.ajax("get", "/timeline/all/dates").then(async function (data) {
-                    if (data.hasOwnProperty("allMetadata")) {
-
-                        const metadataList = data.allMetadata;
-
-                        db = new Dexie("MetadataDatabase");
-                        db.version(1).stores({
-                            metadataList: `
-                                id,
-                                [year+month+day]
-                            `
-                        });
-
-                        db.metadataList.bulkPut(metadataList);
-
-                        let year = 0;
-                        let month = 0;
-                        let day = 0;
-                        let mediaType = "";
-                        let query = null;
-
-                        $("#dateSubmit").on("click", function (e) {
-                            e.preventDefault();
-
-                            year = parseInt($("#year").val());
-                            month = parseInt($("#month").val());
-                            day = parseInt($("#day").val());
-                            mediaType = $("#mediaType").val();
-
-                            if (mediaType === "all" || mediaType === "") {
-                                query = db.metadataList.where({year: year, month: month, day: day}).reverse().sortBy("time", function (metadataList) {
-                                    display(metadataList);
-                                });
-                            } else {
-                                query = db.metadataList.where({year: year, month: month, day: day}).and(metadata => metadata.type.includes(mediaType)).reverse().sortBy("time", function (metadataList) {
-                                    display(metadataList);
-                                });
-                            }
-
-                            function display(metadataList) {
-                                let html = "";
-
-                                if (metadataList.length > 0) {
-                                    html += "<a href='/timeline#" + metadataList[0].year + "-" + metadataList[0].month + "-" + metadataList[0].day + "' target='_blank'>Open in timeline</a><br>";
-                                }
-
-                                for (let index in metadataList) {
-                                    const metadata = metadataList[index];
-                                    html += "<img class='dataPath' data-path='"+metadata.thumbnailPathCentered+"' src='/api/v1/thumbnails/centered/"+metadata.id+"' style='width: 100px;height: 100px;margin-right: 5px;margin-bottom: 5px;'>";
-                                }
-
-                                $("#photos").html(html);
-                                $("#result").text(JSON.stringify(metadataList, undefined, 2));
-
-                                if ($(".dataPath").length > 1) {
-                                    $(".dataPath").on("click", function (e) {
-                                        e.preventDefault();
-
-                                        $("#base64_1").attr("src","");
-                                        $("#base64_2").attr("src","");
-                                        $("#sometext").html("");
-
-                                        fillInput($(this).attr("data-path"));
-                                    })
-
-                                    const fillInput = function (filePath) {
-                                        if ($("#setone").val() !== "" && $("#settwo").val() === "") {
-                                            $("#settwo").val(filePath);
-                                        } else if ($("#settwo").val() !== "" && $("#setone").val() === "") {
-                                            $("#setone").val(filePath);
-                                        } else if ($("#setone").val() !== "" && $("#settwo").val() !== "") {
-                                            $("#setone").val("");
-                                            $("#settwo").val("");
-
-                                            $("#setone").val(filePath);
-                                        } else if ($("#setone").val() === "" && $("#settwo").val() === "") {
-                                            $("#setone").val(filePath);
-                                        }
-                                    }
-                                }
-                            }
-
-
-                        });
-
-                        http.ajax("get", "/timeline/yearmonthcounts/all").then(function (data) {
-                            if (data.hasOwnProperty("metadataDates") && data.hasOwnProperty("metadataYearMonthCount")) {
-                                $("#dbtest").css("display","block");
-
-                                const timelineDatesData = data["metadataDates"];
-
-                                $("#randomDate").css("display", "block");
-
-                                if (timelineDatesData.length > 0) {
-                                    const num = getRandomInteger(1, timelineDatesData.length);
-                                    const timelineDateData = timelineDatesData[num];
-                                    $("#year").val(timelineDateData.year);
-                                    $("#month").val(timelineDateData.month);
-                                    $("#day").val(timelineDateData.day);
-
-                                    $("#dateSubmit").click();
-
-                                    $("#randomDate").on("click", function (e) {
-                                        e.preventDefault();
-
-                                        $("#base64_1").attr("src","");
-                                        $("#base64_2").attr("src","");
-                                        $("#sometext").html("");
-
-                                        const num = getRandomInteger(1, timelineDatesData.length);
-                                        const timelineDateData = timelineDatesData[num];
-                                        $("#year").val(timelineDateData.year);
-                                        $("#month").val(timelineDateData.month);
-                                        $("#day").val(timelineDateData.day);
-
-                                        $("#photos").empty();
-                                        $("#result").empty();
-
-                                        $("#dateSubmit").click();
-                                    });
-                                }
-                            }
-
-                            function getRandomInteger(min, max) {
-                                min = Math.ceil(min);
-                                max = Math.floor(max);
-                                return Math.floor(Math.random() * (max - min + 1)) + min;
-                            }
-                        });
-                    }
-                });
-            }, 0);
-
-            $("#dupeSubmit").on("click", function (e) {
-                e.preventDefault();
-
-                const http = new Http("dupe detect");
-                const json = {
-                    setone: $("#setone").val(),
-                    settwo: $("#settwo").val()
-                };
-                http.ajax("post", "/test", JSON.stringify(json)).then(function (results) {
-                    // console.log(results)
-                    $("#base64_1").attr("src",results.base64_1);
-                    $("#base64_2").attr("src",results.base64_2);
-                    $("#sometext").html(results.text);
-                });
-            });
+            // let db = null;
+            //
+            // setTimeout(function () {
+            //     const http = new Http("indexeddb test");
+            //     http.ajax("get", "/timeline/all/dates").then(async function (data) {
+            //         if (data.hasOwnProperty("allMetadata")) {
+            //
+            //             const metadataList = data.allMetadata;
+            //
+            //             db = new Dexie("MetadataDatabase");
+            //             db.version(1).stores({
+            //                 metadataList: `
+            //                     id,
+            //                     [year+month+day]
+            //                 `
+            //             });
+            //
+            //             db.metadataList.bulkPut(metadataList);
+            //
+            //             let year = 0;
+            //             let month = 0;
+            //             let day = 0;
+            //             let mediaType = "";
+            //             let query = null;
+            //
+            //             $("#dateSubmit").on("click", function (e) {
+            //                 e.preventDefault();
+            //
+            //                 year = parseInt($("#year").val());
+            //                 month = parseInt($("#month").val());
+            //                 day = parseInt($("#day").val());
+            //                 mediaType = $("#mediaType").val();
+            //
+            //                 if (mediaType === "all" || mediaType === "") {
+            //                     query = db.metadataList.where({year: year, month: month, day: day}).reverse().sortBy("time", function (metadataList) {
+            //                         display(metadataList);
+            //                     });
+            //                 } else {
+            //                     query = db.metadataList.where({year: year, month: month, day: day}).and(metadata => metadata.type.includes(mediaType)).reverse().sortBy("time", function (metadataList) {
+            //                         display(metadataList);
+            //                     });
+            //                 }
+            //
+            //                 function display(metadataList) {
+            //                     let html = "";
+            //
+            //                     if (metadataList.length > 0) {
+            //                         html += "<a href='/timeline#" + metadataList[0].year + "-" + metadataList[0].month + "-" + metadataList[0].day + "' target='_blank'>Open in timeline</a><br>";
+            //                     }
+            //
+            //                     for (let index in metadataList) {
+            //                         const metadata = metadataList[index];
+            //                         html += "<img class='dataPath' data-path='"+metadata.thumbnailPathCentered+"' src='/api/v1/thumbnails/centered/"+metadata.id+"' style='width: 100px;height: 100px;margin-right: 5px;margin-bottom: 5px;'>";
+            //                     }
+            //
+            //                     $("#photos").html(html);
+            //                     $("#result").text(JSON.stringify(metadataList, undefined, 2));
+            //
+            //                     if ($(".dataPath").length > 1) {
+            //                         $(".dataPath").on("click", function (e) {
+            //                             e.preventDefault();
+            //
+            //                             $("#base64_1").attr("src","");
+            //                             $("#base64_2").attr("src","");
+            //                             $("#sometext").html("");
+            //
+            //                             fillInput($(this).attr("data-path"));
+            //                         })
+            //
+            //                         const fillInput = function (filePath) {
+            //                             if ($("#setone").val() !== "" && $("#settwo").val() === "") {
+            //                                 $("#settwo").val(filePath);
+            //                             } else if ($("#settwo").val() !== "" && $("#setone").val() === "") {
+            //                                 $("#setone").val(filePath);
+            //                             } else if ($("#setone").val() !== "" && $("#settwo").val() !== "") {
+            //                                 $("#setone").val("");
+            //                                 $("#settwo").val("");
+            //
+            //                                 $("#setone").val(filePath);
+            //                             } else if ($("#setone").val() === "" && $("#settwo").val() === "") {
+            //                                 $("#setone").val(filePath);
+            //                             }
+            //                         }
+            //                     }
+            //                 }
+            //
+            //
+            //             });
+            //
+            //             http.ajax("get", "/timeline/yearmonthcounts/all").then(function (data) {
+            //                 if (data.hasOwnProperty("metadataDates") && data.hasOwnProperty("metadataYearMonthCount")) {
+            //                     $("#dbtest").css("display","block");
+            //
+            //                     const timelineDatesData = data["metadataDates"];
+            //
+            //                     $("#randomDate").css("display", "block");
+            //
+            //                     if (timelineDatesData.length > 0) {
+            //                         const num = getRandomInteger(1, timelineDatesData.length);
+            //                         const timelineDateData = timelineDatesData[num];
+            //                         $("#year").val(timelineDateData.year);
+            //                         $("#month").val(timelineDateData.month);
+            //                         $("#day").val(timelineDateData.day);
+            //
+            //                         $("#dateSubmit").click();
+            //
+            //                         $("#randomDate").on("click", function (e) {
+            //                             e.preventDefault();
+            //
+            //                             $("#base64_1").attr("src","");
+            //                             $("#base64_2").attr("src","");
+            //                             $("#sometext").html("");
+            //
+            //                             const num = getRandomInteger(1, timelineDatesData.length);
+            //                             const timelineDateData = timelineDatesData[num];
+            //                             $("#year").val(timelineDateData.year);
+            //                             $("#month").val(timelineDateData.month);
+            //                             $("#day").val(timelineDateData.day);
+            //
+            //                             $("#photos").empty();
+            //                             $("#result").empty();
+            //
+            //                             $("#dateSubmit").click();
+            //                         });
+            //                     }
+            //                 }
+            //
+            //                 function getRandomInteger(min, max) {
+            //                     min = Math.ceil(min);
+            //                     max = Math.floor(max);
+            //                     return Math.floor(Math.random() * (max - min + 1)) + min;
+            //                 }
+            //             });
+            //         }
+            //     });
+            // }, 0);
+            //
+            // $("#dupeSubmit").on("click", function (e) {
+            //     e.preventDefault();
+            //
+            //     const http = new Http("dupe detect");
+            //     const json = {
+            //         setone: $("#setone").val(),
+            //         settwo: $("#settwo").val()
+            //     };
+            //     http.ajax("post", "/test", JSON.stringify(json)).then(function (results) {
+            //         // console.log(results)
+            //         $("#base64_1").attr("src",results.base64_1);
+            //         $("#base64_2").attr("src",results.base64_2);
+            //         $("#sometext").html(results.text);
+            //     });
+            // });
         });
     </script>
 
