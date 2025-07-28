@@ -1956,11 +1956,11 @@ class SettingsController {
 
                     // Set notification for scanCount and date and link to /recent
                     var msg =
-                        messageSource?.getMessage("main.notification.setting.scan.pre", null, locale)+"<a href='/recent' target='_blank'>$metadataArrayCount"+messageSource?.getMessage("main.notification.setting.scan.post", null, locale)+"</a>"
+                        messageSource?.getMessage("main.notification.setting.scan.pre", null, locale)+"<a href='/recent' target='_blank'>$metadataArrayCount&nbsp;"+messageSource?.getMessage("main.notification.setting.scan.post", null, locale)+"</a>"
                     if (recognitionCount > 0) {
                         msg += messageSource?.getMessage("main.notification.setting.scan.add.pre", null, locale)+"<a href='/people' target='_blank'>$recognitionCount"+messageSource?.getMessage("main.notification.setting.scan.add.post", null, locale)+"</a>"
                     }
-                    msg += " at ${sdtf.format(Date())}."
+                    msg += " - ${sdtf.format(Date())}."
 
                     val notificationObjList = mutableListOf<Notification>()
                     for (admin in superAdmins) {
@@ -2366,7 +2366,7 @@ class SettingsController {
                     notificationObj.setCreatedAt(getCurrentTimestamp())
                     notificationObj.setModifiedAt(getCurrentTimestamp())
                     notificationObj.setRead(false)
-                    notificationObj.setMessage("$recognitionCount"+messageSource?.getMessage("main.notification.setting.scan.faces", null, locale)+"- ${sdtf.format(Date())}.")
+                    notificationObj.setMessage("$recognitionCount&nbsp;"+messageSource?.getMessage("main.notification.setting.scan.faces", null, locale)+"- ${sdtf.format(Date())}.")
                     notificationObjList.add(notificationObj)
                 }
                 if (notificationObjList.isNotEmpty()) {
