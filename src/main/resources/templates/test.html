@@ -32,7 +32,8 @@
 
             <pre id="result">Loading...</pre>
 
-            <div th:text="#{test(${mike},${noah})}"></div>
+            <div th:utext="#{test(${mike},${noah})}"></div>
+            <div id="test"></div>
 
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
             <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
@@ -50,7 +51,7 @@
             console.log("===========")
             console.log(locale);
             const test = "Mike";
-            console.log(shashin.getTranslatedValue("test",test,"Noah"));
+            $('#test').html(shashin.getTranslatedValue("test",test,"Noah"));
             console.log("=====")
 
             // let db = null;
