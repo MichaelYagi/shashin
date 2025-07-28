@@ -223,10 +223,10 @@
     <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="alloweduserModalLabel"><th:block th:text="${user.isAuthorized == true ? #messages.msg('main.pages.account.role.deauth.pre') : #messages.msg('main.pages.account.role.auth.pre')}"></th:block><strong><th:block th:text="${user.username}"></th:block><th:block th:text="${user.isAuthorized == true ? #messages.msg('main.pages.account.role.deauth.post') : #messages.msg('main.pages.account.role.auth.post')}"></th:block></strong></h5>
+                <h5 class="modal-title" id="alloweduserModalLabel"><th:block th:utext="#{main.pages.account.role.change(${user.isAuthorized == true ? #messages.msg('main.pages.account.deauthorizing') : #messages.msg('main.pages.account.authorizing')}, ${user.username})}"></th:block></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body"><th:block th:text="${user.isAuthorized == true ? #messages.msg('main.pages.account.role.confirm.deauth.pre') : #messages.msg('main.pages.account.role.confirm.auth.pre')}"></th:block><strong><th:block th:text="${user.username}"></th:block></strong><th:block th:text="${user.isAuthorized == true ? #messages.msg('main.pages.account.role.confirm.deauth.post') : #messages.msg('main.pages.account.role.confirm.auth.post')}"></th:block>?</div>
+            <div class="modal-body"><th:block th:utext="#{main.pages.account.role.confirm(${user.isAuthorized == true ? #messages.msg('main.pages.account.deauthorize') : #messages.msg('main.pages.account.authorize')}, ${user.username})}"></th:block>?</div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" th:id="'allowUser'+${user.id}"><th:block th:text="#{main.modal.confirm}"></th:block></button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><th:block th:text="#{main.modal.cancel}"></th:block></button>

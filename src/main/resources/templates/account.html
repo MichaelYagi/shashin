@@ -193,7 +193,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <th:block th:text="#{main.modal.account.delete.user.pre}"></th:block> <strong th:utext="${currentUser.username}"></strong> <th:block th:text="#{main.modal.account.delete.user.post}"></th:block><br>
+                                <th:block th:utext="#{main.modal.account.delete.user(${currentUser.username})}"></th:block><br>
                                 <input class="form-control" type="text" id="deleteConfirm" value="">
                             </div>
                             <div class="modal-footer">
