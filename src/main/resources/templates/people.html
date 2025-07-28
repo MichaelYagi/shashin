@@ -22,7 +22,7 @@
                                     <th:block th:if="${#maps.containsKey(coverUrls, person.id)}">
                                         <img loading="lazy" draggable="false" class="card-img-top" style="position: relative;" th:src="${coverUrls.get(person.id)}" th:width="${isMobile ? '148' : '209'}" th:height="${isMobile ? '148' : '209'}">
                                         <th:block th:if="${settings.facialDetection==true and #maps.containsKey(counts, person.id)}">
-                                            <span class="position-absolute badge rounded-pill bg-primary" style="position: absolute;bottom: 22%;left: 3%;" th:text="${(counts.get(person.id) > 99) ? '99+' : counts.get(person.id) + (counts.get(person.id) == 1 ? #messages.msg('main.pages.people.match') : #messages.msg('main.pages.people.matches'))}"></span>
+                                            <span class="position-absolute badge rounded-pill bg-primary" style="position: absolute;bottom: 22%;left: 3%;" th:text="${(counts.get(person.id) > 99) ? '99+' : counts.get(person.id) + '&nbsp;' + (counts.get(person.id) == 1 ? #messages.msg('main.pages.people.match') : #messages.msg('main.pages.people.matches'))}"></span>
                                         </th:block>
                                     </th:block>
                                 </a>
