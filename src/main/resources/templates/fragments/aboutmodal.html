@@ -14,7 +14,7 @@
                 <th:block th:if="${activeProfile != 'prod'}">
                     <span th:text="${#strings.capitalize(activeProfile)}+' '+#{main.modal.about.build}"></span><br>
                 </th:block>
-                <th:block th:text="#{main.modal.about.version.pre}"></th:block> <span th:text="${buildProperties.getVersion()}"></span><span id="gitVersionId"></span><br>
+                <span th:text="#{main.modal.about.version(${buildProperties.getVersion()})}"></span><span id="gitVersionId"></span><br>
                 <th:block th:if="${operatingSystemInfo != ''}">
                     <span th:text="${operatingSystemInfo}"></span><br>
                 </th:block>

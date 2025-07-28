@@ -85,6 +85,8 @@ class TestController {
     @GetMapping("/test")
     fun test(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
         model["activePage"] = "test"
+        model["mike"] = "Mike"
+        model["noah"] = "Noah"
 
         return "test"
     }
