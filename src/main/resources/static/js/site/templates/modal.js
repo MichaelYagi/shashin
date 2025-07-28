@@ -43,7 +43,7 @@ class ModalTemplates {
 
     static AlbumModalDropdownHeader({metadata}) { return `
         <div class="input-group-append dropdown" id="albumListInput">
-            <button class="btn btn-secondary dropdown-toggle" id="albumdropdown${metadata.id}" type="button" aria-haspopup="true" aria-expanded="false">${shashin.getTranslatedValue("main.modal.control.albums")}</button>
+            <button class="btn btn-secondary dropdown-toggle" id="albumdropdown${metadata.id}" type="button" aria-haspopup="true" aria-expanded="false">${shashin.getTranslatedValue("main.sidebar.albums")}</button>
             <div class="dropdown-menu" id="albumsList">
     `};
 
@@ -81,14 +81,14 @@ class ModalTemplates {
                                         <input type="text" class="form-control" aria-label="Tag People" id="tagpeople${metadata.id}" name="tagpeople" value="${taggedPeopleList}">
                                         ${(recognitionLabels.length > 0) ? `
                                         <div class="input-group-append">
-                                            <button class="btn btn-secondary dropdown-toggle" id="tagpeopledropdown${metadata.id}" type="button" aria-haspopup="true" aria-expanded="false">${shashin.getTranslatedValue("main.modal.control.people")}</button>
+                                            <button class="btn btn-secondary dropdown-toggle" id="tagpeopledropdown${metadata.id}" type="button" aria-haspopup="true" aria-expanded="false">${shashin.getTranslatedValue("main.sidebar.people")}</button>
                                             <div class="dropdown-menu ${module}Dropdown" id="recognitionLabelsList${metadata.id}">
                                         ` : ''}
     `};
 
     static PersonModalDropdownHead({metadata}) { return `
         <div class="input-group-append dropdown" id="recognitionLabelInput">
-            <button class="btn btn-secondary dropdown-toggle" id="tagpeopledropdown${metadata.id}" type="button" aria-haspopup="true" aria-expanded="false">${shashin.getTranslatedValue("main.modal.control.people")}</button>
+            <button class="btn btn-secondary dropdown-toggle" id="tagpeopledropdown${metadata.id}" type="button" aria-haspopup="true" aria-expanded="false">${shashin.getTranslatedValue("main.sidebar.people")}</button>
             <div class="dropdown-menu" id="recognitionLabelsList">
     `};
 
