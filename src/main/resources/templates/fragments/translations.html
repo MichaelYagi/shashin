@@ -524,10 +524,20 @@
         'main.notification.favorites.likes':/*[[#{main.notification.favorites.likes}]]*/ '',
         'main.notification.user.deleted':/*[[#{main.notification.user.deleted}]]*/ '',
         'main.nothing':/*[[#{main.nothing}]]*/ '',
+        'test':/*[[#{test(${0}, ${1})}]]*/ '',
     };
 
-    shashin.getTranslatedValue = function (keyPath) {
-        return shashini18n[keyPath] ?? null;
+    shashin.getTranslatedValue = function(key, ...args) {
+        if (!shashini18n[key]) {
+            return null;
+        }
+
+        let message = shashini18n[key];
+        args.forEach((val, i) => {
+            message = message.replace(i, val);
+        });
+
+        return message;
     }
     /*]]>*/
 </script>
