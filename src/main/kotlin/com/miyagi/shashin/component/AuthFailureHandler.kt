@@ -61,9 +61,9 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
             logger.log(Level.WARNING, "userRepository?.findByUsername error: ${e.message}")
         }
 
-        var message = messageSource?.getMessage("main.notification.login.unknown.pre", null, locale)+"'$lastUserName'"+messageSource?.getMessage("main.notification.login.unknown.post", null, locale)
+        var message = messageSource?.getMessage("main.notification.login.unknown", arrayOf("'$lastUserName'"), locale)
         if (lastUser != null) {
-            message = messageSource?.getMessage("main.notification.login.known.pre", null, locale)+"'"+messageSource?.getMessage("main.notification.login.known.post", null, locale)
+            message = messageSource?.getMessage("main.notification.login.known", arrayOf("'$lastUserName'"), locale)
         }
 
         // Capture UA data
