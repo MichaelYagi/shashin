@@ -2093,7 +2093,7 @@ class AlbumsController: BaseController() {
                     resp["status"] = ApiResponse.SUCCESS.status
                     mapper.writeValueAsString(resp)
                 } else {
-                    resp["msg"] = messageSource?.getMessage("main.toast.albums.save.fail.pre", null, locale) + "\"$albumName\"" + messageSource?.getMessage("main.toast.albums.save.fail.post", null, locale)
+                    resp["msg"] = messageSource?.getMessage("main.toast.albums.save.fail.name", arrayOf("\"$albumName\""), locale)
                     resp["status"] = ApiResponse.WARN.status
                     mapper.writeValueAsString(resp)
                 }
