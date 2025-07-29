@@ -779,7 +779,7 @@ class AlbumsController: BaseController() {
                         notificationObj.setCreatedAt(getCurrentTimestamp())
                         notificationObj.setModifiedAt(getCurrentTimestamp())
                         notificationObj.setRead(false)
-                        notificationObj.setMessage(messageSource?.getMessage("main.sidebar.album", null, locale) + " ${albumObj.getName()}"+messageSource?.getMessage("main.notification.album.delete.post", null, locale)+"- ${sdtf.format(Date())}")
+                        notificationObj.setMessage(messageSource?.getMessage("main.notification.album.delete", arrayOf(albumObj.getName()), locale) + "- ${sdtf.format(Date())}")
                         notificationObjList.add(notificationObj)
                     }
                     if (notificationObjList.isNotEmpty()) {
@@ -893,7 +893,7 @@ class AlbumsController: BaseController() {
                         notificationObj.setCreatedAt(getCurrentTimestamp())
                         notificationObj.setModifiedAt(getCurrentTimestamp())
                         notificationObj.setRead(false)
-                        notificationObj.setMessage(messageSource?.getMessage("main.sidebar.album", null, locale) + " ${albumObj.getName()}"+messageSource?.getMessage("main.notification.album.delete.post", null, locale)+"- ${sdtf.format(Date())}")
+                        notificationObj.setMessage(messageSource?.getMessage("main.notification.album.delete", arrayOf(albumObj.getName()), locale)+"- ${sdtf.format(Date())}")
                         notificationObjList.add(notificationObj)
                     }
                     if (notificationObjList.isNotEmpty()) {
@@ -1124,7 +1124,7 @@ class AlbumsController: BaseController() {
                     notificationObj.setModifiedAt(getCurrentTimestamp())
                     notificationObj.setRead(false)
                     var message =
-                        "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a>"+messageSource?.getMessage("main.notification.album.shared.viewed", null, locale)+"'<a href='/share/$shareLink/album/$albumId' target='_blank'>${album?.getName()}</a>' - ${
+                        messageSource?.getMessage("main.notification.album.shared.viewed", arrayOf("IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a>", "<a href='/share/$shareLink/album/$albumId' target='_blank'>${album?.getName()}</a>"), locale)+"- ${
                             sdtf.format(Date())
                         }"
                     if (album == null || album.getId() == 0) {
