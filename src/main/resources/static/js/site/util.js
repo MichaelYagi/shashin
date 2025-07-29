@@ -934,9 +934,14 @@ class Util {
         return days[index];
     }
 
-    static getShortMonths(index) {
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        return months[index];
+    static getShortMonths(index, locale="en") {
+        const date = new Date(2025, index);
+        return date.toLocaleString(locale, { month: 'short' }).replaceAll(".", "");
+    }
+
+    static getYearLocale(year, locale="en") {
+        const date = new Date(2025, 0);
+        return date.toLocaleString(locale, { year: 'numeric' }).replaceAll(".", "");
     }
 
     static validateMetadataInputs(day, month, year, time, offset, latlng, duration, test=false) {
@@ -1015,7 +1020,7 @@ class Util {
         return containerElement.get(0).scrollHeight > containerElement.get(0).clientHeight;
     }
 
-    static getDateString(year,month,day,locale = "en") {
+    static getDateString(year,month,day,locale = "en", includeWeekday=true) {
         if (year !== null && year !== "" &&
             month !== null && month !== "" &&
             day !== null && day !== ""
@@ -1023,11 +1028,14 @@ class Util {
             let date = new Date(month+"/"+day+"/"+year);
             if (date.toString() !== "Invalid Date") {
                 const options = {
-                    weekday: 'short',
                     year: 'numeric',
                     month: 'short',
                     day: 'numeric'
                 };
+
+                if (includeWeekday === true) {
+                    options.weekday = "short";
+                }
                 const localFormatter = new Intl.DateTimeFormat(locale, options);
                 return localFormatter.format(date);
             }
