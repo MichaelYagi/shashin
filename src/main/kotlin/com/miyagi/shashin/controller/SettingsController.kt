@@ -2366,7 +2366,7 @@ class SettingsController {
                     notificationObj.setCreatedAt(getCurrentTimestamp())
                     notificationObj.setModifiedAt(getCurrentTimestamp())
                     notificationObj.setRead(false)
-                    notificationObj.setMessage("$recognitionCount&nbsp;"+messageSource?.getMessage("main.notification.setting.scan.faces", null, locale)+"- ${sdtf.format(Date())}.")
+                    notificationObj.setMessage(messageSource?.getMessage("main.notification.setting.scan.faces", arrayOf(recognitionCount), locale)+"- ${sdtf.format(Date())}.")
                     notificationObjList.add(notificationObj)
                 }
                 if (notificationObjList.isNotEmpty()) {
