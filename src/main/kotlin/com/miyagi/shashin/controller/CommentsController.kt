@@ -173,7 +173,7 @@ class CommentsController {
                             notificationObj.setCreatedAt(getCurrentTimestamp())
                             notificationObj.setModifiedAt(getCurrentTimestamp())
                             notificationObj.setRead(false)
-                            notificationObj.setMessage(currentUserObj.getUsername()+messageSource?.getMessage("main.notification.comments.commented", null, locale)+"<a href='/albums' target='_blank'>"+albumObj.get().getName()+"</a> \""+commentText+"\" - "+sdtf.format(Date()))
+                            notificationObj.setMessage(messageSource?.getMessage("main.notification.comments.commented", arrayOf(currentUserObj.getUsername(),"<a href='/albums' target='_blank'>"+albumObj.get().getName()+"</a>","\""+commentText+"\""), locale))
                             notificationObjList.add(notificationObj)
                         }
                     }
@@ -309,7 +309,7 @@ class CommentsController {
                             notificationObj.setRead(false)
                             notificationObj.setCreatedAt(getCurrentTimestamp())
                             notificationObj.setModifiedAt(getCurrentTimestamp())
-                            notificationObj.setMessage(currentUserObj.getUsername()+messageSource?.getMessage("main.notification.comments.commented", null, locale)+"'<a href='/album/"+albumObj.get().getId()+"' target='_blank'>"+albumObj.get().getName()+"</a>' for photo <a href='/image/"+metadataObj.get().getId()+"/viewer' target='_blank'>"+metadataObj.get().getFileName()+"</a> \""+commentText+"\" on "+sdtf.format(Date()))
+                            notificationObj.setMessage(messageSource?.getMessage("main.notification.comments.photo.commented", arrayOf(currentUserObj.getUsername(), "'<a href='/album/"+albumObj.get().getId()+"' target='_blank'>"+albumObj.get().getName()+"</a>'", "<a href='/image/"+metadataObj.get().getId()+"/viewer' target='_blank'>"+metadataObj.get().getFileName()+"</a>", "\""+commentText+"\""), locale)+"- "+sdtf.format(Date()))
                             notificationObjList.add(notificationObj)
                         }
                     }
