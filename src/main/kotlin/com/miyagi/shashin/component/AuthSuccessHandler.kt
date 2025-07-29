@@ -284,7 +284,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
             if (!TextUtils.isLocalIp(clientIP)) {
                 ipString = " from IP <a href='https://ipgeolocation.io/ip-location/$clientIP' target='_blank'>$clientIP</a>"
             }
-            var locale = LocaleContextHolder.getLocale()
+            val locale = LocaleContextHolder.getLocale()
 
             for (admin in admins) {
                 val notificationObj = Notification()
