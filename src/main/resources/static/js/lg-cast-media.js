@@ -188,7 +188,7 @@
                                 } catch(e) {
                                     // Error
                                     if (shashin) {
-                                        shashin.showToastMessage(shashin.getTranslatedValue("main.toast.lgcast.media.title"), shashin.getTranslatedValue("main.toast.lgcast.video.message.pre")+baseUrl + metadata.videoUrl+""+shashin.getTranslatedValue("main.toast.lgcast.media.message.post")+": "+e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
+                                        shashin.showToastMessage(shashin.getTranslatedValue("main.toast.lgcast.media.title"), shashin.getTranslatedValue("main.toast.lgcast.video.message", (baseUrl + metadata.videoUrl))+baseUrl +": "+e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
                                     }
                                     $("#chromecasting").css({"display": "none", "font-size": "1rem"});
                                 }
@@ -206,7 +206,7 @@
                                 } catch(e) {
                                     // Error
                                     if (shashin) {
-                                        shashin.showToastMessage(shashin.getTranslatedValue("main.toast.lgcast.media.title"), shashin.getTranslatedValue("main.toast.lgcast.image.message.pre")+baseUrl + "/api/v1/image/"+metadata.id+".jpg"+shashin.getTranslatedValue("main.toast.lgcast.media.message.post")+": "+e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
+                                        shashin.showToastMessage(shashin.getTranslatedValue("main.toast.lgcast.media.title"), shashin.getTranslatedValue("main.toast.lgcast.image.message", (baseUrl + "/api/v1/image/"+metadata.id+".jpg"))+baseUrl +": "+e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
                                     }
                                     $("#chromecasting").css({"display": "none", "font-size": "1rem"});
                                 }
