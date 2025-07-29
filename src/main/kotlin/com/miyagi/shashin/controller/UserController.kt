@@ -1082,7 +1082,7 @@ class UserController {
                     notificationObj.setCreatedAt(getCurrentTimestamp())
                     notificationObj.setModifiedAt(getCurrentTimestamp())
                     notificationObj.setRead(false)
-                    notificationObj.setMessage("$username"+messageSource?.getMessage("main.notification.user.deleted", null, locale)+"- "+sdtf.format(Date())+".")
+                    notificationObj.setMessage(messageSource?.getMessage("main.notification.user.deleted", arrayOf(username), locale)+"- "+sdtf.format(Date()))
                     notificationObjList.add(notificationObj)
                 }
                 if (notificationObjList.isNotEmpty()) {
