@@ -779,7 +779,7 @@
                 'right': 17
             }).invisible();
 
-            handleTooltip.text(Util.getShortMonths(dateList[0].month - 1) + ' ' + dateList[0].year);
+            handleTooltip.text(Util.getShortMonths(dateList[0].month - 1, timelineSettings.locale) + ' ' + Util.getYearLocale(dateList[0].year, timelineSettings.locale));
 
             $("#dateSlider").slider({
                 orientation: "vertical",
@@ -799,22 +799,10 @@
                             timelineSettings.currentScrollDirection ===
                             timelineSettings.ScrollDirection.down
                         ) {
-                            handleTooltip.text(
-                                Util.getShortMonths(currentDateObj.month - 1) +
-                                " " +
-                                currentDateObj.day +
-                                ", " +
-                                currentDateObj.year
-                            );
+                            handleTooltip.text(Util.getDateString(currentDateObj.year,currentDateObj.month,currentDateObj.day,timelineSettings.locale,false));
                             $(".monthYearSlider").invisible();
                         } else if (prevDateObj) {
-                            handleTooltip.text(
-                                Util.getShortMonths(prevDateObj.month - 1) +
-                                " " +
-                                prevDateObj.day +
-                                ", " +
-                                prevDateObj.year
-                            );
+                            handleTooltip.text(Util.getDateString(prevDateObj.year,prevDateObj.month,prevDateObj.day,timelineSettings.locale,false));
                             $(".monthYearSlider").invisible();
                         }
                     }
@@ -836,9 +824,9 @@
                         const prevDateObj = dateList.length > 1 ? dateList[Math.round((dateList.length - 2) - ui.value)] : currentDateObj;
 
                         if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
-                            handleTooltip.text(Util.getShortMonths(currentDateObj.month - 1) + ' ' + currentDateObj.day + ', ' + currentDateObj.year);
+                            handleTooltip.text(Util.getDateString(currentDateObj.year,currentDateObj.month,currentDateObj.day,timelineSettings.locale,false));
                         } else if (prevDateObj) {
-                            handleTooltip.text(Util.getShortMonths(prevDateObj.month - 1) + ' ' + prevDateObj.day + ', ' + prevDateObj.year);
+                            handleTooltip.text(Util.getDateString(prevDateObj.year,prevDateObj.month,prevDateObj.day,timelineSettings.locale,false));
                         }
 
                         handleTooltip.visible();
@@ -914,7 +902,7 @@
                         bottom: "50%"
                     }).invisible();
 
-                    sliderTooltip.text(Util.getShortMonths(timelineDateObj.month - 1) + ' ' + timelineDateObj.year);
+                    sliderTooltip.text(Util.getShortMonths(timelineDateObj.month - 1, timelineSettings.locale) + ' ' + timelineDateObj.year);
 
                     const sliderEl = $('<span class="monthYearSlider" data-slider-id="' + timelineDateObj.year + '-' + timelineDateObj.month + '">&nbsp;</span>').css({
                         'width': '73px',
