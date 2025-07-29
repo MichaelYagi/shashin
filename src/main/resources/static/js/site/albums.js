@@ -155,7 +155,7 @@ class Albums {
                         let sharedAlbumsList = await http.ajax("get", "/sharedalbums");
 
                         if (sharedAlbumsList != null && sharedAlbumsList.sharedAlbums.length > 0) {
-                            let html = "<strong>Share with other users</strong><br>";
+                            let html = "<strong>"+shashin.getTranslatedValue("main.pages.albums.share")+"</strong><br>";
                             sharedAlbumsList.sharedAlbums.forEach(function (shareObj) {
                                 if (albumId === shareObj.albumId) {
                                     html += '<div class="col-auto form-check">';
