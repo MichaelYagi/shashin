@@ -1067,7 +1067,7 @@ class AlbumsController: BaseController() {
                         notificationObj.setCreatedAt(getCurrentTimestamp())
                         notificationObj.setModifiedAt(getCurrentTimestamp())
                         notificationObj.setRead(false)
-                        notificationObj.setMessage(messageSource?.getMessage("main.notification.album.shared.action.pre", null, locale)+"$action"+messageSource?.getMessage("main.notification.album.shared.action.post", null, locale)+"'$link'")
+                        notificationObj.setMessage(messageSource?.getMessage("main.notification.album.shared.action", arrayOf(action, "'$link'"), locale))
                         notificationObjList.add(notificationObj)
                     }
 
