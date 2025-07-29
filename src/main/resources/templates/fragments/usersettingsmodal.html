@@ -141,7 +141,7 @@
     <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="roleuserModalLabel"><th:block th:text="#{main.pages.user.role.pre}"></th:block><th:block th:text="${user.username}"></th:block><th:block th:text="#{main.pages.user.role.post}"></th:block>?</h5>
+                <h5 class="modal-title" id="roleuserModalLabel"><th:block th:text="#{main.pages.user.role(${user.username})}"></th:block></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
