@@ -346,7 +346,7 @@ class MediaServiceController {
             val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
             sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
             val message =
-                "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a>"+ messageSource?.getMessage("main.notification.mediaservice.accessedvideo", null, locale) +"- ${
+                messageSource?.getMessage("main.notification.mediaservice.accessedvideo", arrayOf("IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a>"), locale) +"- ${
                     sdtf.format(Date())
                 }"
             notifyAdmins(userIp, message)
