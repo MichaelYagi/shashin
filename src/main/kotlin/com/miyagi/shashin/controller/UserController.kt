@@ -617,12 +617,10 @@ class UserController {
                             notificationObj.setModifiedAt(getCurrentTimestamp())
                             notificationObj.setRead(false)
                             var message =
-                                newUser.getUsername() + messageSource?.getMessage("main.notification.registration.pre", null, locale) + sdtf.format(Date()) + messageSource?.getMessage("main.notification.registration.post", null, locale)
+                                messageSource?.getMessage("main.notification.registration", arrayOf(newUser.getUsername(), sdtf.format(Date())), locale)
                             if (admin.getAuthority() == superRole) {
                                 message =
-                                    "<a href='/settings/users' target='_blank'>" + newUser.getUsername() + "</a>" + messageSource?.getMessage("main.notification.registration.pre", null, locale) + sdtf.format(
-                                        Date()
-                                    ) + messageSource?.getMessage("main.notification.registration.post", null, locale)
+                                    messageSource?.getMessage("main.notification.registration", arrayOf("<a href='/settings/users' target='_blank'>" + newUser.getUsername() + "</a>", sdtf.format(Date())), locale)
                             }
                             notificationObj.setMessage(message)
                             notificationObjList.add(notificationObj)
