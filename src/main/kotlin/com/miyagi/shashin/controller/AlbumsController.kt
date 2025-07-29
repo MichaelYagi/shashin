@@ -1129,7 +1129,7 @@ class AlbumsController: BaseController() {
                         }"
                     if (album == null || album.getId() == 0) {
                         message =
-                            "IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a>"+messageSource?.getMessage("main.notification.album.shared.access.pre", null, locale)+"<strong>$shareLink</strong>"+messageSource?.getMessage("main.notification.album.shared.access.post", null, locale)+"<strong>$albumId</strong> - ${
+                            messageSource?.getMessage("main.notification.album.shared.access", arrayOf("IP <a href='https://ipgeolocation.io/ip-location/$userIp' target='_blank'>$userIp</a>", "<strong>$shareLink</strong>", "<strong>$albumId</strong>"), locale)+" - ${
                                 sdtf.format(Date())
                             }"
                     }
