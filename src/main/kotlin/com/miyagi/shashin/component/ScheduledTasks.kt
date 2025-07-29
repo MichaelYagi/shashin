@@ -133,7 +133,7 @@ class ScheduledTasks {
                     notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
                     notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
                     notificationObj.setRead(false)
-                    notificationObj.setMessage("Not connected to Compreface server. Check <a href='/settings' target='_blank'>configuration</a>.")
+                    notificationObj.setMessage(messageSource?.getMessage("main.notification.compreface.notconnected", null, LocaleContextHolder.getLocale()))
                     notificationObjList.add(notificationObj)
                 }
                 if (notificationObjList.isNotEmpty()) {
