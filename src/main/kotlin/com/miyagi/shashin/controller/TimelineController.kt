@@ -1507,7 +1507,7 @@ class TimelineController: BaseController() {
                             notificationObj.setCreatedAt(getCurrentTimestamp())
                             notificationObj.setModifiedAt(getCurrentTimestamp())
                             notificationObj.setRead(false)
-                            notificationObj.setMessage(messageSource?.getMessage("main.sidebar.albums", null, locale) + " $albumListString"+messageSource?.getMessage("main.notification.album.delete.post", null, locale)+"- ${sdtf.format(Date())}")
+                            notificationObj.setMessage(messageSource?.getMessage("main.notification.albums.delete", arrayOf(albumListString), locale) +"- ${sdtf.format(Date())}")
                             notificationObjList.add(notificationObj)
                         }
                         if (notificationObjList.isNotEmpty()) {
@@ -2475,7 +2475,7 @@ class TimelineController: BaseController() {
                             notificationObj.setCreatedAt(getCurrentTimestamp())
                             notificationObj.setModifiedAt(getCurrentTimestamp())
                             notificationObj.setRead(false)
-                            notificationObj.setMessage(messageSource?.getMessage("main.sidebar.album", null, locale)+" ${album.getName()}"+messageSource?.getMessage("main.notification.album.delete.post", null, locale)+"- ${sdtf.format(Date())}")
+                            notificationObj.setMessage(messageSource?.getMessage("main.notification.album.delete", arrayOf(album.getName()), locale)+"- ${sdtf.format(Date())}")
                             notificationObjList.add(notificationObj)
                         }
                         if (notificationObjList.isNotEmpty()) {
