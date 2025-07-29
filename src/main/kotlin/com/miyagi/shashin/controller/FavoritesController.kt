@@ -306,9 +306,9 @@ class FavoritesController: BaseController() {
                         notificationObj.setModifiedAt(getCurrentTimestamp())
                         notificationObj.setRead(false)
                         notificationObj.setMessage(
-                            currentUserObj.getUsername() + messageSource?.getMessage("main.notification.favorites.likes", null, locale) + "<a href='/api/v1/image/" + metadata.get()
+                            messageSource?.getMessage("main.notification.favorites.likes", arrayOf(currentUserObj.getUsername(), "<a href='/api/v1/image/" + metadata.get()
                                 .getId() + "' target='_blank'>" + metadata.get()
-                                .getFileName() + "</a> - " + sdtf.format(Date())
+                                .getFileName() + "</a>"), locale) + "- " + sdtf.format(Date())
                         )
                         notificationObj.setType("favorite")
                         notificationObj.setIdentifier(favorite.getId().toString())
