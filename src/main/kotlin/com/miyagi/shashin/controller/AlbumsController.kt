@@ -2079,7 +2079,7 @@ class AlbumsController: BaseController() {
                                 notificationObj.setCreatedAt(getCurrentTimestamp())
                                 notificationObj.setModifiedAt(getCurrentTimestamp())
                                 notificationObj.setRead(false)
-                                notificationObj.setMessage(messageSource?.getMessage("main.sidebar.album", null, locale) + " '" + oldName + "'"+messageSource?.getMessage("main.notification.album.renamed", null, locale)+"'<a href='/album/$albumId' target='_blank'>${albumObj.getName()}</a>'")
+                                notificationObj.setMessage(messageSource?.getMessage("main.notification.album.renamed", arrayOf("'$oldName'", "'<a href='/album/$albumId' target='_blank'>${albumObj.getName()}</a>'"), locale))
                                 notificationObjList.add(notificationObj)
                             }
                         }
