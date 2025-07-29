@@ -1463,7 +1463,7 @@ class AlbumsController: BaseController() {
                         notificationObj.setCreatedAt(getCurrentTimestamp())
                         notificationObj.setModifiedAt(getCurrentTimestamp())
                         notificationObj.setRead(false)
-                        notificationObj.setMessage(messageSource?.getMessage("main.sidebar.album", null, locale) + " '<a href='/album/$shareAlbumId' target='_blank'>${albumObj?.getName()}</a>'"+messageSource?.getMessage("main.notification.album.shared.post", null, locale))
+                        notificationObj.setMessage(messageSource?.getMessage("main.notification.album.shared.identity", arrayOf("'<a href='/album/$shareAlbumId' target='_blank'>${albumObj?.getName()}</a>'"), locale))
                         notificationObjList.add(notificationObj)
 
                         userList.add(userObj.get().getUsername()!!)
@@ -1493,7 +1493,7 @@ class AlbumsController: BaseController() {
                     notificationObj.setCreatedAt(getCurrentTimestamp())
                     notificationObj.setModifiedAt(getCurrentTimestamp())
                     notificationObj.setRead(false)
-                    notificationObj.setMessage(messageSource?.getMessage("main.sidebar.album", null, locale) + " '<a href='/album/$shareAlbumId' target='_blank'>${albumObj?.getName()}</a>'"+messageSource?.getMessage("main.notification.album.shared", null, locale)+"$userListString")
+                    notificationObj.setMessage(messageSource?.getMessage("main.notification.album.shared", arrayOf("'<a href='/album/$shareAlbumId' target='_blank'>${albumObj?.getName()}</a>'", userListString), locale))
                     notificationObjList.add(notificationObj)
                 }
             }
