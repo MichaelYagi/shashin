@@ -135,7 +135,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                         val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                         sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
                         var locale = LocaleContextHolder.getLocale()
-                        val message = messageSource?.getMessage("main.notification.login.pre", null, locale)+"'${user.getUsername()}'"+messageSource?.getMessage("main.notification.login.post", null, locale)+"- "+ sdtf.format(Date())+"."
+                        val message = messageSource?.getMessage("main.notification.login.fail", arrayOf("'${user.getUsername()}'"), locale) + " - "+ sdtf.format(Date())+"."
                         logger.log(Level.WARNING, message)
                         if (admins != null) {
                             val notificationObjList = mutableListOf<Notification>()
