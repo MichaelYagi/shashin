@@ -12,6 +12,8 @@ import com.miyagi.shashin.util.NetworkUtils
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.MessageSource
+import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.text.SimpleDateFormat
@@ -110,6 +112,9 @@ class ScheduledTasks {
     @Value("\${app.sidecar.path}")
     private val relativeSidecarDir: String? = null
 
+    @Autowired
+    var messageSource: MessageSource? = null
+
     // Check Compreface connection every 2 days at midnight
     @Scheduled(cron = "0 0 12 */2 * *", zone="GMT")
     fun updateNotificationsForFaceRecogAvailability() {
@@ -183,7 +188,7 @@ class ScheduledTasks {
                         notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
                         notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
                         notificationObj.setRead(false)
-                        notificationObj.setMessage("Missing lib files for DJL face scan")
+                        notificationObj.setMessage(messageSource?.getMessage("main.notification.people.missing", null, LocaleContextHolder.getLocale()))
                         notificationObjList.add(notificationObj)
                     }
                     if (notificationObjList.isNotEmpty()) {
@@ -214,7 +219,7 @@ class ScheduledTasks {
                     notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
                     notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
                     notificationObj.setRead(false)
-                    notificationObj.setMessage("$recognitionCount faces recognized during scheduled scanning at ${sdtf.format(Date())}.")
+                    notificationObj.setMessage(messageSource?.getMessage("main.notification.setting.scheduled.scan.faces", arrayOf(recognitionCount), LocaleContextHolder.getLocale())+"- ${sdtf.format(Date())}.")
                     notificationObjList.add(notificationObj)
                 }
                 if (notificationObjList.isNotEmpty()) {
