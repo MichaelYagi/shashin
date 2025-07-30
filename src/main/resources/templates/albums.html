@@ -94,7 +94,7 @@
         <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="propsharealbumsLabel"><th:block th:text="#{main.pages.albums.share.pre}"></th:block><span id="albumName"></span><th:block th:text="#{main.pages.albums.share.post}"></th:block><div id="propsharelinkalbums"><img loading="lazy" draggable="false" id="albumCoverThumb" src="" width="100" height="100"></div></h5>
+                    <h5 class="modal-title" id="propsharealbumsLabel"><th:block th:utext="#{main.pages.albums.share.album('&ldquo;<span id=&quot;albumName&quot;></span>&rdquo;')}"></th:block><div id="propsharelinkalbums"><img loading="lazy" draggable="false" id="albumCoverThumb" src="" width="100" height="100"></div></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -154,10 +154,10 @@
             <div class="modal-content">
                 <input id="shareConfirmationAction" type="hidden" value="">
                 <div class="modal-header">
-                    <h5 class="modal-title"><th:block th:text="#{main.pages.albums.share.action.pre}"></th:block><span id="shareConfirmationModalTitle"></span><th:block th:text="#{main.pages.albums.share.action.post}"></th:block></h5>
+                    <h5 class="modal-title"><th:block th:utext="#{main.pages.albums.share.action('<span id=&quot;shareConfirmationModalTitle&quot;></span>')}"></th:block></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body"><th:block th:text="#{main.pages.albums.share.action.confirm.pre}"></th:block><span id="shareConfirmationModalAction"></span><th:block th:text="#{main.pages.albums.share.action.confirm.post}"></th:block>. <span id="shareConfirmationModalInfo"><th:block th:text="#{main.pages.albums.share.action.confirm.info}"></th:block></span></div>
+                <div class="modal-body"><th:block th:utext="#{main.pages.albums.share.action.confirm('<span id=&quot;shareConfirmationModalAction&quot;></span>')}">. <span id="shareConfirmationModalInfo"><th:block th:text="#{main.pages.albums.share.action.confirm.info}"></th:block></span></div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="shareConfirmation"><th:block th:text="#{main.modal.confirm}"></th:block></button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><th:block th:text="#{main.modal.cancel}"></th:block></button>
