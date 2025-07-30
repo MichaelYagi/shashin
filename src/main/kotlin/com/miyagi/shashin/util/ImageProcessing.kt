@@ -22,6 +22,7 @@ import com.miyagi.shashin.repository.*
 import com.twelvemonkeys.image.ConvolveWithEdgeOp
 import net.coobird.thumbnailator.Thumbnails
 import net.coobird.thumbnailator.geometry.Positions
+import org.springframework.context.MessageSource
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -38,6 +39,7 @@ import java.awt.image.ConvolveOp
 import java.awt.image.Kernel
 import java.io.File
 import java.io.IOException
+import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -524,7 +526,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             }
         }
 
-        fun objectRecognizer(metadataObj: Metadata, criteria: Criteria<Image, DetectedObjects>, threshold: Double? = null, threadFile: File? = null, shouldStop: Boolean? = null): MutableMap<String, Double> {
+        fun objectRecognizer(metadataObj: Metadata, criteria: Criteria<Image, DetectedObjects>, threshold: Double? = null, threadFile: File? = null, shouldStop: Boolean? = null, messageSource: MessageSource? = null, locale: Locale = Locale("en")): MutableMap<String, Double> {
             val keywordMap = mutableMapOf<String, Double>()
             val unidentifiedStr = "unidentified objects"
 
@@ -561,7 +563,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
                                             if (threadFile != null) {
                                                 FileUtils.writeToThreadFileAndLogMessage(
-                                                    "Objects identified for " + metadataObj.getPath() + ": S-" + objSubject + " P-" + objProbability,
+                                                    if (messageSource == null) "Objects identified for " + metadataObj.getPath() else messageSource.getMessage("main.pages.matching.identified", arrayOf(metadataObj.getPath()), locale).toString() + ": S-" + objSubject + " P-" + objProbability,
                                                     threadFile
                                                 )
                                             }
@@ -573,7 +575,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                                         } else {
                                             if (threadFile != null) {
                                                 FileUtils.writeToThreadFileAndLogMessage(
-                                                    "Objects identified for " + metadataObj.getPath() + ": S-" + objSubject + " P-" + objProbability,
+                                                    if (messageSource == null) "Objects identified for " + metadataObj.getPath() else messageSource.getMessage("main.pages.matching.identified", arrayOf(metadataObj.getPath()), locale).toString() + ": S-" + objSubject + " P-" + objProbability,
                                                     threadFile
                                                 )
                                             }
@@ -800,7 +802,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             return recognitionResponse
         }
 
-        fun subjectRecognizer(metadataRepository: MetadataRepository?, recognitionLabelRepository: RecognitionLabelRepository?, recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?, relativeSidecarDir: String, settings: Settings, threadFile: File?, shouldStop: AtomicBoolean?): Int {
+        fun subjectRecognizer(metadataRepository: MetadataRepository?, recognitionLabelRepository: RecognitionLabelRepository?, recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?, relativeSidecarDir: String, settings: Settings, threadFile: File?, shouldStop: AtomicBoolean?, messageSource: MessageSource?, locale: Locale = Locale("en")): Int {
             // Scan records of photos that haven't been scanned in a separate thread
             val testImages = metadataRepository?.findNonMatched(settings.getMatchScanLimit()!!)
             val distinctLabelRecords = recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
@@ -908,7 +910,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
                                             if (threadFile != null) {
                                                 FileUtils.writeToThreadFileAndLogMessage(
-                                                    "Analyzing subject " + subject + " for " + metadataObj.getPath(),
+                                                    messageSource?.getMessage("main.pages.matching.analyzing", arrayOf(subject,metadataObj.getPath()), locale).toString(),
                                                     threadFile
                                                 )
                                             }
@@ -1003,7 +1005,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
                                                         if (threadFile != null) {
                                                             FileUtils.writeToThreadFileAndLogMessage(
-                                                                "Processed subject " + subject + " for " + metadataObj.getPath() + " with similarity " + similarity.toString(),
+                                                                messageSource?.getMessage("main.pages.matching.processing", arrayOf(subject,metadataObj.getPath(),similarity.toString()), locale).toString(),
                                                                 threadFile
                                                             )
                                                         }
@@ -1060,7 +1062,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                         )
                         if (threadFile != null) {
                             FileUtils.writeToThreadFileAndLogMessage(
-                        "Missing lib files for DJL face scan",
+                                messageSource?.getMessage("main.notification.people.missing", null, locale).toString(),
                                 threadFile
                             )
                         }

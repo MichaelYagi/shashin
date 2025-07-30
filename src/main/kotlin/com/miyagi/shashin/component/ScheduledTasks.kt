@@ -33,6 +33,9 @@ class CronProperties {
     @Value("\${app.config.default.scheduledTime}")
     private var scheduledTime: String? = null
 
+    @Autowired
+    var messageSource: MessageSource? = null
+
     fun expression(): String {
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
 
@@ -220,7 +223,8 @@ class ScheduledTasks {
                     relativeSidecarDir!!,
                     settings,
                     null,
-                    null
+                    null,
+                    messageSource
                 )
             }
             if (superAdmins != null && recognitionCount > 0) {

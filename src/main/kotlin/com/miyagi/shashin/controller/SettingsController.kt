@@ -2360,7 +2360,9 @@ class SettingsController {
                                 criteria,
                                 threshold.toString().toDouble(),
                                 threadFile,
-                                shouldStop.get()
+                                shouldStop.get(),
+                                messageSource,
+                                locale
                             )
 
                             ImageProcessing.processObjects(keywordMap.keys.toTypedArray().toList(), metadataObj, keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!)
