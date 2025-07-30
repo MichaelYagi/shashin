@@ -170,7 +170,7 @@
         <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel"><th:block th:text="#{main.pages.albums.share.edit.pre}"></th:block><span id="albumNameEdit"></span><th:block th:text="#{main.pages.albums.share.edit.post}"></th:block><div id="editalbumsthumb"><img loading="lazy" draggable="false" id="albumCoverEditThumb" src="" width="100" height="100"></div></h5>
+                    <h5 class="modal-title" id="editModalLabel"><th:block th:utext="#{main.pages.albums.share.edit('<span id=&quot;albumNameEdit&quot;></span>')}"></th:block><div id="editalbumsthumb"><img loading="lazy" draggable="false" id="albumCoverEditThumb" src="" width="100" height="100"></div></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -193,7 +193,7 @@
     <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="commentModalLabel"><th:block th:text="#{main.pages.albums.comment.pre}"></th:block><span id="albumNameComments"></span><th:block th:text="#{main.pages.albums.comment.post}"></th:block><div id="propalbumphotocomment"><img loading="lazy" draggable="false" id="albumCoverCommentThumb" src="" width="100" height="100"></div></h5>
+                <h5 class="modal-title" id="commentModalLabel"><th:block th:text="#{main.pages.albums.comment('<span id=&quot;albumNameComments&quot;></span>')}"><div id="propalbumphotocomment"><img loading="lazy" draggable="false" id="albumCoverCommentThumb" src="" width="100" height="100"></div></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="commentListContainer" style="display: none;">
