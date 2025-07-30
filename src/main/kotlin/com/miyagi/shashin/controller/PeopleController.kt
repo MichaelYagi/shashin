@@ -42,6 +42,7 @@ import java.util.logging.Logger
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpSession
 import org.springframework.context.MessageSource
+import java.security.Principal
 
 @Suppress("UNCHECKED_CAST")
 @Controller
@@ -98,17 +99,25 @@ class PeopleController: BaseController() {
     @MessageMapping("/matchmessage")
     @SendTo("/topic/matchmessages")
     @Throws(java.lang.Exception::class)
-    fun sendMatcnMessage(message: ScanMessage): Message? {
+    fun sendMatcnMessage(message: ScanMessage, principal: Principal): Message? {
+        val username = principal.name
+        val user = userRepository?.findByUsername(username)
+        var lang = "en"
+        if (user != null && user.getLanguage() != null && user.getLanguage() != "") {
+            lang = user.getLanguage().toString()
+        }
+        val locale = Locale(lang)
+
         var msg = "Start Matching"
 
         if (shouldStop.get()) {
-            msg = "Matching Cancelled"
+            msg = messageSource?.getMessage("main.pages.matching.cancelled", null, locale).toString()
         } else if (!FileUtils.checkThreadFileAlive(threadExtensionName)) {
-            msg = "Matching Complete"
+            msg = messageSource?.getMessage("main.pages.matching.complete", null, locale).toString()
         } else {
             val threadFileContent = FileUtils.readThreadFile(threadExtensionName)
             if (threadFileContent != null) {
-                msg = "Matching in progress: " + threadFileContent.replace("\\", "/")
+                msg = messageSource?.getMessage("main.pages.matching.scanning.mip", null, locale).toString() + ": " + threadFileContent.replace("\\", "/")
             }
         }
 
@@ -284,7 +293,7 @@ class PeopleController: BaseController() {
 
             shouldStop.set(false)
             FileUtils.deleteThreadFiles(threadExtensionName)
-            FileUtils.writeToThreadFileAndLogMessage("Matching Complete", threadFile!!)
+            FileUtils.writeToThreadFileAndLogMessage(messageSource?.getMessage("main.pages.matching.complete", null, locale).toString(), threadFile!!)
         }.start()
     }
 
