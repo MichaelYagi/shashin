@@ -1502,6 +1502,12 @@ class TimelineController: BaseController() {
                         val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                         sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
                         for (admin in admins) {
+                            var language = admin.getLanguage()
+                            if (language == null) {
+                                language = "en"
+                            }
+
+                            var locale = Locale(language)
                             val notificationObj = Notification()
                             notificationObj.setUserId(admin.getId())
                             notificationObj.setCreatedAt(getCurrentTimestamp())
@@ -1902,6 +1908,12 @@ class TimelineController: BaseController() {
             sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
 
             for (admin in admins) {
+                var language = admin.getLanguage()
+                if (language == null) {
+                    language = "en"
+                }
+
+                var locale = Locale(language)
                 val notificationObj = Notification()
                 notificationObj.setUserId(admin.getId())
                 notificationObj.setCreatedAt(getCurrentTimestamp())
@@ -1925,6 +1937,14 @@ class TimelineController: BaseController() {
                 message += "$albumLink,"
             }
             message = message.dropLast(1)
+
+            var user = userRepository.findById(userId)
+            var language = user.get().getLanguage()
+            if (language == null) {
+                language = "en"
+            }
+
+            var locale = Locale(language)
             val notificationObj = Notification()
             notificationObj.setUserId(userId)
             notificationObj.setCreatedAt(getCurrentTimestamp())
@@ -2470,6 +2490,12 @@ class TimelineController: BaseController() {
                         val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                         sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
                         for (admin in admins) {
+                            var language = admin.getLanguage()
+                            if (language == null) {
+                                language = "en"
+                            }
+
+                            var locale = Locale(language)
                             val notificationObj = Notification()
                             notificationObj.setUserId(admin.getId())
                             notificationObj.setCreatedAt(getCurrentTimestamp())

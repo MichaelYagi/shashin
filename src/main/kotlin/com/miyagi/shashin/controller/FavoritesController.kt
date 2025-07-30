@@ -300,6 +300,12 @@ class FavoritesController: BaseController() {
                 sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
                 for (admin in admins) {
                     if (admin.getId() != currentUserObj.getId()) {
+                        var language = admin.getLanguage()
+                        if (language == null) {
+                            language = "en"
+                        }
+
+                        var locale = Locale(language)
                         val notificationObj = Notification()
                         notificationObj.setImageUrl("/api/v1/thumbnails/centered/"+metadata.get().getId())
                         notificationObj.setCreatedAt(getCurrentTimestamp())

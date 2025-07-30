@@ -9,7 +9,7 @@
                 <h5 class="modal-title" id="trashModalLabel"><th:block th:text="#{main.pages.albums.share.delete.pre}"></th:block><th:block th:text="${user.username}"></th:block><th:block th:text="#{main.pages.albums.share.delete.post}"></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" th:text="#{main.pages.user(${user.username})}""></div>
+            <div class="modal-body" th:text="#{main.pages.user(${user.username})}"></div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" th:id="'deleteUser'+${user.id}"><th:block th:text="#{main.modal.confirm}"></th:block></button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><th:block th:text="#{main.modal.cancel}"></th:block></button>
