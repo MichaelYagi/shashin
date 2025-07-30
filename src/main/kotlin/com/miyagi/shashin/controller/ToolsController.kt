@@ -254,7 +254,7 @@ class ToolsController {
             if (status == false) {
                 message = messageSource?.getMessage("main.toast.topnav.compreface", null, locale).toString()
                 if (currentUserObj.getAuthority() == "ROLE_SUPER") {
-                    message += messageSource?.getMessage("main.toast.topnav.compreface.link", arrayOf("<a href='/settings' target='_blank'>/settings</a>"), locale).toString()
+                    message += "&nbsp;"+messageSource?.getMessage("main.toast.topnav.compreface.link", arrayOf("<a href='/settings' target='_blank'>/settings</a>"), locale).toString()
                 }
             }
         }
