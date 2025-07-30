@@ -88,18 +88,23 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
 
         val clientIP = TextUtils.getClientIp(request)
 
-        var ipString = messageSource?.getMessage("main.notification.login.fromip", null, locale)+"$clientIP "
-        if (!TextUtils.isLocalIp(clientIP)) {
-            ipString = messageSource?.getMessage("main.notification.login.fromip", null, locale)+"<a href='https://ipgeolocation.io/ip-location/$clientIP' target='_blank'>$clientIP</a> "
-        }
-
-        message += " ${ipString} "+messageSource?.getMessage("main.notification.login.device", null, locale)+": $osName$osVersion$osClass "+messageSource?.getMessage("main.notification.login.browser", null, locale)+": $agentName$agentVersion - ${sdtf.format(Date())}"
-
-        logger.log(Level.WARNING, message)
-
         if (admins != null) {
             val notificationObjList = mutableListOf<Notification>()
             for (admin in admins) {
+                var language = admin.getLanguage()
+                if (language == null) {
+                    language = "en"
+                }
+
+                var locale = Locale(language)
+
+                var ipString = messageSource?.getMessage("main.notification.login.fromip", null, locale)+"$clientIP "
+                if (!TextUtils.isLocalIp(clientIP)) {
+                    ipString = messageSource?.getMessage("main.notification.login.fromip", null, locale)+"<a href='https://ipgeolocation.io/ip-location/$clientIP' target='_blank'>$clientIP</a> "
+                }
+
+                message += " ${ipString} "+messageSource?.getMessage("main.notification.login.device", null, locale)+": $osName$osVersion$osClass "+messageSource?.getMessage("main.notification.login.browser", null, locale)+": $agentName$agentVersion - ${sdtf.format(Date())}"
+
                 val notificationObj = Notification()
                 notificationObj.setUserId(admin.getId())
                 notificationObj.setCreatedAt(getCurrentTimestamp())
@@ -108,6 +113,7 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
                 notificationObj.setMessage(message)
                 notificationObjList.add(notificationObj)
             }
+            logger.log(Level.WARNING, message)
             if (notificationObjList.isNotEmpty()) {
                 notificationRepository?.saveAll(notificationObjList)
             }

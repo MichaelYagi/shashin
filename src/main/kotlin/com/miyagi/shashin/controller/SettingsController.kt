@@ -748,6 +748,12 @@ class SettingsController {
                         val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                         sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
                         for (superAdmin in superAdmins) {
+                            var language = superAdmin.getLanguage()
+                            if (language == null) {
+                                language = "en"
+                            }
+
+                            var locale = Locale(language)
                             val notificationObj = Notification()
                             notificationObj.setUserId(superAdmin.getId())
                             notificationObj.setCreatedAt(getCurrentTimestamp())
@@ -1954,16 +1960,21 @@ class SettingsController {
                 if (superAdmins != null && metadataArrayCount > 0) {
                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
 
-                    // Set notification for scanCount and date and link to /recent
-                    var msg =
-                        messageSource?.getMessage("main.notification.setting.scan", arrayOf("<a href='/recent' target='_blank'>$metadataArrayCount</a>"), locale)
-                    if (recognitionCount > 0) {
-                        msg += messageSource?.getMessage("main.notification.setting.scan.add", arrayOf("<a href='/people' target='_blank'>$recognitionCount</a>"), locale)
-                    }
-                    msg += " - ${sdtf.format(Date())}."
-
                     val notificationObjList = mutableListOf<Notification>()
                     for (admin in superAdmins) {
+                        var language = admin.getLanguage()
+                        if (language == null) {
+                            language = "en"
+                        }
+
+                        var locale = Locale(language)
+                        // Set notification for scanCount and date and link to /recent
+                        var msg =
+                            messageSource?.getMessage("main.notification.setting.scan", arrayOf("<a href='/recent' target='_blank'>$metadataArrayCount</a>"), locale)
+                        if (recognitionCount > 0) {
+                            msg += messageSource?.getMessage("main.notification.setting.scan.add", arrayOf("<a href='/people' target='_blank'>$recognitionCount</a>"), locale)
+                        }
+                        msg += " - ${sdtf.format(Date())}."
                         val notificationObj = Notification()
                         notificationObj.setUserId(admin.getId())
                         notificationObj.setCreatedAt(getCurrentTimestamp())
@@ -2304,6 +2315,12 @@ class SettingsController {
                                         sdtf.timeZone =
                                             TimeZone.getTimeZone(ZoneId.systemDefault())
                                         for (admin in superAdminsUsers) {
+                                            var language = admin.getLanguage()
+                                            if (language == null) {
+                                                language = "en"
+                                            }
+
+                                            var locale = Locale(language)
                                             val notificationObj = Notification()
                                             notificationObj.setUserId(admin.getId())
                                             notificationObj.setCreatedAt(getCurrentTimestamp())
@@ -2361,6 +2378,12 @@ class SettingsController {
                 val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                 sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
                 for (admin in superAdminsUsers) {
+                    var language = admin.getLanguage()
+                    if (language == null) {
+                        language = "en"
+                    }
+
+                    var locale = Locale(language)
                     val notificationObj = Notification()
                     notificationObj.setUserId(admin.getId())
                     notificationObj.setCreatedAt(getCurrentTimestamp())

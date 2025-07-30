@@ -774,6 +774,12 @@ class AlbumsController: BaseController() {
                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                     sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
                     for (admin in admins) {
+                        var language = admin.getLanguage()
+                        if (language == null) {
+                            language = "en"
+                        }
+
+                        var locale = Locale(language)
                         val notificationObj = Notification()
                         notificationObj.setUserId(admin.getId())
                         notificationObj.setCreatedAt(getCurrentTimestamp())
@@ -888,6 +894,12 @@ class AlbumsController: BaseController() {
                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                     sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
                     for (admin in admins) {
+                        var language = admin.getLanguage()
+                        if (language == null) {
+                            language = "en"
+                        }
+
+                        var locale = Locale(language)
                         val notificationObj = Notification()
                         notificationObj.setUserId(admin.getId())
                         notificationObj.setCreatedAt(getCurrentTimestamp())
@@ -1061,6 +1073,12 @@ class AlbumsController: BaseController() {
                         }
                     }
                     for (admin in admins) {
+                        var language = admin.getLanguage()
+                        if (language == null) {
+                            language = "en"
+                        }
+
+                        var locale = Locale(language)
                         val notificationObj = Notification()
                         notificationObj.setImageUrl(coverUrl)
                         notificationObj.setUserId(admin.getId())
@@ -1117,6 +1135,12 @@ class AlbumsController: BaseController() {
                 }
 
                 for (admin in admins) {
+                    var language = admin.getLanguage()
+                    if (language == null) {
+                        language = "en"
+                    }
+
+                    var locale = Locale(language)
                     val notificationObj = Notification()
                     notificationObj.setImageUrl(coverUrl)
                     notificationObj.setUserId(admin.getId())
@@ -1457,6 +1481,12 @@ class AlbumsController: BaseController() {
                         userAlbumObj.setModifiedAt(getCurrentTimestamp())
                         userAlbumList.add(userAlbumObj)
 
+                        var language = userObj.get().getLanguage()
+                        if (language == null) {
+                            language = "en"
+                        }
+
+                        var locale = Locale(language)
                         val notificationObj = Notification()
                         notificationObj.setImageUrl(coverUrl)
                         notificationObj.setUserId(userId.toInt())
@@ -1487,6 +1517,12 @@ class AlbumsController: BaseController() {
                 }
 
                 for (admin in admins) {
+                    var language = admin.getLanguage()
+                    if (language == null) {
+                        language = "en"
+                    }
+
+                    var locale = Locale(language)
                     val notificationObj = Notification()
                     notificationObj.setImageUrl(coverUrl)
                     notificationObj.setUserId(admin.getId())
@@ -2073,6 +2109,13 @@ class AlbumsController: BaseController() {
                         val notificationObjList = mutableListOf<Notification>()
                         for (userAlbum in userAlbumObj) {
                             if (userAlbum != null) {
+                                val user = userRepository.findById(userAlbum.getUserId())
+                                var language = user?.getLanguage()
+                                if (language == null) {
+                                    language = "en"
+                                }
+
+                                var locale = Locale(language)
                                 val notificationObj = Notification()
                                 notificationObj.setImageUrl(albumObj.getCoverUrl())
                                 notificationObj.setUserId(userAlbum.getUserId())

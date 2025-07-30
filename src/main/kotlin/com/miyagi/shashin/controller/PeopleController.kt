@@ -190,6 +190,12 @@ class PeopleController: BaseController() {
                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                     sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
                     for (admin in superAdmins) {
+                        var language = admin.getLanguage()
+                        if (language == null) {
+                            language = "en"
+                        }
+
+                        var locale = Locale(language)
                         val notificationObj = Notification()
                         notificationObj.setUserId(admin.getId())
                         notificationObj.setCreatedAt(getCurrentTimestamp())
@@ -226,6 +232,12 @@ class PeopleController: BaseController() {
                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                     sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
                     for (adminSuper in adminSupers) {
+                        var language = adminSuper.getLanguage()
+                        if (language == null) {
+                            language = "en"
+                        }
+
+                        var locale = Locale(language)
                         val notificationObj = Notification()
                         notificationObj.setUserId(adminSuper.getId())
                         notificationObj.setCreatedAt(getCurrentTimestamp())

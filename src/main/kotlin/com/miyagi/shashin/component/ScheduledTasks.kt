@@ -128,12 +128,19 @@ class ScheduledTasks {
                 val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                 sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
                 for (admin in superAdmins) {
+                    var language = admin.getLanguage()
+                    if (language == null) {
+                        language = "en"
+                    }
+
+                    var locale = Locale(language)
+
                     val notificationObj = Notification()
                     notificationObj.setUserId(admin.getId())
                     notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
                     notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
                     notificationObj.setRead(false)
-                    notificationObj.setMessage(messageSource?.getMessage("main.notification.compreface.notconnected", null, LocaleContextHolder.getLocale()))
+                    notificationObj.setMessage(messageSource?.getMessage("main.notification.compreface.notconnected", null, locale))
                     notificationObjList.add(notificationObj)
                 }
                 if (notificationObjList.isNotEmpty()) {
@@ -183,12 +190,19 @@ class ScheduledTasks {
                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                     sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
                     for (admin in superAdmins) {
+                        var language = admin.getLanguage()
+                        if (language == null) {
+                            language = "en"
+                        }
+
+                        var locale = Locale(language)
+
                         val notificationObj = Notification()
                         notificationObj.setUserId(admin.getId())
                         notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
                         notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
                         notificationObj.setRead(false)
-                        notificationObj.setMessage(messageSource?.getMessage("main.notification.people.missing", null, LocaleContextHolder.getLocale()))
+                        notificationObj.setMessage(messageSource?.getMessage("main.notification.people.missing", null, locale))
                         notificationObjList.add(notificationObj)
                     }
                     if (notificationObjList.isNotEmpty()) {
@@ -214,12 +228,18 @@ class ScheduledTasks {
                 val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                 sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
                 for (admin in superAdmins) {
+                    var language = admin.getLanguage()
+                    if (language == null) {
+                        language = "en"
+                    }
+
+                    var locale = Locale(language)
                     val notificationObj = Notification()
                     notificationObj.setUserId(admin.getId())
                     notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
                     notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
                     notificationObj.setRead(false)
-                    notificationObj.setMessage(messageSource?.getMessage("main.notification.setting.scheduled.scan.faces", arrayOf(recognitionCount), LocaleContextHolder.getLocale())+"- ${sdtf.format(Date())}.")
+                    notificationObj.setMessage(messageSource?.getMessage("main.notification.setting.scheduled.scan.faces", arrayOf(recognitionCount), locale)+"- ${sdtf.format(Date())}.")
                     notificationObjList.add(notificationObj)
                 }
                 if (notificationObjList.isNotEmpty()) {

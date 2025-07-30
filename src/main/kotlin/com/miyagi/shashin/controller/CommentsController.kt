@@ -166,6 +166,12 @@ class CommentsController {
 //                        }
 
                         if (createEntry) {
+                            var language = user.getLanguage()
+                            if (language == null) {
+                                language = "en"
+                            }
+
+                            var locale = Locale(language)
                             notificationObj.setUserId(user.getId())
                             notificationObj.setImageUrl(coverUrl)
                             notificationObj.setType("comment")
@@ -302,6 +308,12 @@ class CommentsController {
 //                        }
 
                         if (createEntry) {
+                            var language = user.getLanguage()
+                            if (language == null) {
+                                language = "en"
+                            }
+
+                            var locale = Locale(language)
                             notificationObj.setUserId(user.getId())
                             notificationObj.setType("comment")
                             notificationObj.setIdentifier(savedCommentObj.getId().toString())

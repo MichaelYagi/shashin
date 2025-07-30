@@ -25,6 +25,8 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository
 import org.springframework.stereotype.Component
+import org.springframework.util.StringUtils
+import org.springframework.web.servlet.support.RequestContextUtils
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -134,12 +136,27 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                         val admins = userRepository?.findAllAdmins()
                         val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                         sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
-                        var locale = LocaleContextHolder.getLocale()
+
+                        var language = user.getLanguage()
+                        if (language == null) {
+                            language = "en"
+                        }
+
+                        var locale = Locale(language)
                         val message = messageSource?.getMessage("main.notification.login.fail", arrayOf("'${user.getUsername()}'"), locale) + " - "+ sdtf.format(Date())+"."
                         logger.log(Level.WARNING, message)
+
                         if (admins != null) {
                             val notificationObjList = mutableListOf<Notification>()
                             for (admin in admins) {
+                                var language = admin.getLanguage()
+                                if (language == null) {
+                                    language = "en"
+                                }
+
+                                var locale = Locale(language)
+                                val message = messageSource?.getMessage("main.notification.login.fail", arrayOf("'${user.getUsername()}'"), locale) + " - "+ sdtf.format(Date())+"."
+
                                 val notificationObj = Notification()
                                 notificationObj.setUserId(admin.getId())
                                 notificationObj.setCreatedAt(getCurrentTimestamp())
@@ -148,6 +165,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                                 notificationObj.setMessage(message)
                                 notificationObjList.add(notificationObj)
                             }
+
                             if (notificationObjList.isNotEmpty()) {
                                 notificationRepository?.saveAll(notificationObjList)
                             }
@@ -280,17 +298,23 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 
             val notificationObjList = mutableListOf<Notification>()
 
-            var ipString = " from IP $clientIP"
+            var ipString = "$clientIP"
             if (!TextUtils.isLocalIp(clientIP)) {
-                ipString = " from IP <a href='https://ipgeolocation.io/ip-location/$clientIP' target='_blank'>$clientIP</a>"
+                ipString = "<a href='https://ipgeolocation.io/ip-location/$clientIP' target='_blank'>$clientIP</a>"
             }
-            val locale = LocaleContextHolder.getLocale()
 
             for (admin in admins) {
                 val notificationObj = Notification()
                 notificationObj.setUserId(admin.getId())
                 notificationObj.setCreatedAt(getCurrentTimestamp())
                 notificationObj.setModifiedAt(getCurrentTimestamp())
+                var language = admin.getLanguage()
+                if (language == null) {
+                    language = "en"
+                }
+
+                var locale = Locale(language)
+
                 var identity = currentUserObj.getUsername()
                 if (admin.getAuthority() == superRole) {
                     identity = "<a href='/settings/users' target='_blank'>"+currentUserObj.getUsername()+"</a>"
@@ -302,7 +326,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                 } else {
                     notificationObj.setRead(false)
                 }
-                notificationObj.setMessage(messageSource?.getMessage("main.notification.login.loggedin", arrayOf(identity), locale)+"$ipString - "+messageSource?.getMessage("main.notification.login.device", null, locale)+": $osName$osVersion$osClass "+messageSource?.getMessage("main.notification.login.browser", null, locale)+": $agentName$agentVersion - ${sdtf.format(Date())}.")
+                notificationObj.setMessage(messageSource?.getMessage("main.notification.login.loggedin", arrayOf(identity, ipString), locale)+" - "+messageSource?.getMessage("main.notification.login.device", null, locale)+": $osName$osVersion$osClass "+messageSource?.getMessage("main.notification.login.browser", null, locale)+": $agentName$agentVersion - ${sdtf.format(Date())}.")
                 notificationObjList.add(notificationObj)
             }
             if (notificationObjList.isNotEmpty()) {
