@@ -98,12 +98,12 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
 
                 var locale = Locale(language)
 
-                var ipString = messageSource?.getMessage("main.notification.login.fromip", null, locale)+"$clientIP "
+                var ipString = clientIP
                 if (!TextUtils.isLocalIp(clientIP)) {
-                    ipString = messageSource?.getMessage("main.notification.login.fromip", null, locale)+"<a href='https://ipgeolocation.io/ip-location/$clientIP' target='_blank'>$clientIP</a> "
+                    ipString = "<a href='https://ipgeolocation.io/ip-location/$clientIP' target='_blank'>$clientIP</a>"
                 }
 
-                message += " ${ipString} "+messageSource?.getMessage("main.notification.login.device", null, locale)+": $osName$osVersion$osClass "+messageSource?.getMessage("main.notification.login.browser", null, locale)+": $agentName$agentVersion - ${sdtf.format(Date())}"
+                message += "IP: ${ipString} "+messageSource?.getMessage("main.notification.login.device", null, locale)+": $osName$osVersion$osClass "+messageSource?.getMessage("main.notification.login.browser", null, locale)+": $agentName$agentVersion - ${sdtf.format(Date())}"
 
                 val notificationObj = Notification()
                 notificationObj.setUserId(admin.getId())

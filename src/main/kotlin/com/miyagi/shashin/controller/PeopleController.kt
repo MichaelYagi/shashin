@@ -243,7 +243,7 @@ class PeopleController: BaseController() {
                         notificationObj.setCreatedAt(getCurrentTimestamp())
                         notificationObj.setModifiedAt(getCurrentTimestamp())
                         notificationObj.setRead(false)
-                        notificationObj.setMessage("$recognitionCount"+ messageSource?.getMessage("main.notification.people.matchcount", null, locale) +"- ${sdtf.format(Date())}.")
+                        notificationObj.setMessage(messageSource?.getMessage("main.notification.people.matchcount", arrayOf(recognitionCount), locale) +"- ${sdtf.format(Date())}.")
                         notificationObjList.add(notificationObj)
                     }
                     if (notificationObjList.isNotEmpty()) {
