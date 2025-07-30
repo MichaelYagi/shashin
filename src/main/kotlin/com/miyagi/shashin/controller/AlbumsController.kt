@@ -1056,8 +1056,10 @@ class AlbumsController: BaseController() {
                     albumRepository.save(albumObj.get())
 
                     var action = "generated"
+                    var translatedAction = messageSource?.getMessage("main.pages.albums.share.generated", null, locale)
                     if (relativeShareUrl == null) {
                         action = "cleared"
+                        translatedAction = messageSource?.getMessage("main.pages.albums.share.cleared", null, locale)
                     }
 
                     var link = "<a href='/album/$albumIdRequest' target='_blank'>${albumObj.get().getName()}</a>"
@@ -1085,7 +1087,7 @@ class AlbumsController: BaseController() {
                         notificationObj.setCreatedAt(getCurrentTimestamp())
                         notificationObj.setModifiedAt(getCurrentTimestamp())
                         notificationObj.setRead(false)
-                        notificationObj.setMessage(messageSource?.getMessage("main.notification.album.shared.action", arrayOf(action, "'$link'"), locale))
+                        notificationObj.setMessage(messageSource?.getMessage("main.notification.album.shared.action", arrayOf(translatedAction, "'$link'"), locale))
                         notificationObjList.add(notificationObj)
                     }
 
