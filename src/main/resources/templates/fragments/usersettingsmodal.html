@@ -6,7 +6,7 @@
     <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="trashModalLabel"><th:block th:text="#{main.pages.albums.share.delete.pre}"></th:block><th:block th:text="${user.username}"></th:block><th:block th:text="#{main.pages.albums.share.delete.post}"></h5>
+                <h5 class="modal-title" id="trashModalLabel"><th:block th:utext="#{main.pages.albums.share.delete(${user.username})}"></th:block></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" th:text="#{main.pages.user(${user.username})}"></div>

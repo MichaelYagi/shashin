@@ -106,7 +106,7 @@
     <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="propFolderModalLabel"><th:block th:text="#{main.pages.folder.pre}"></th:block>&ldquo;<span id="folderModalTitle"></span>&rdquo;<th:block th:text="#{main.pages.folder.post}"></th:block><div id="propFolderModalThumbnail"></div></h5>
+                <h5 class="modal-title" id="propFolderModalLabel"><th:block th:utext="#{main.pages.folder('&ldquo;<span id=&quot;folderModalTitle&quot;></span>&rdquo;')}"></th:block><div id="propFolderModalThumbnail"></div></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
