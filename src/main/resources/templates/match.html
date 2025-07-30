@@ -80,7 +80,7 @@
             function matchRefresh() {
                 sendMessage();
                 let msgId = "#msg";
-                if ($(msgId).text() === "Matching Complete") {
+                if ($(msgId).text() === "Matching Complete" || $(msgId).text() === shashin.getTranslatedValue("main.pages.matching.complete")) {
                     scanInProgress = false;
                     disconnect();
                 } else {
