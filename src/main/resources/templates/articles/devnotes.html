@@ -45,7 +45,9 @@
 
             &lt;th:block th:text="${user.isAuthorized == true ? #messages.msg('main.pages.account.role.deauth.pre') : #messages.msg('main.pages.account.role.auth.pre')}"&gt;&lt;/th:block&gt;<br><br>
 
-            &lt;th:block th:utext="#{main.modal.account.delete.user(${currentUser.username})}"&gt;&lt;/th:block&gt; // with parameter<br><br>
+            &lt;th:block th:utext="#{main.modal.account.delete.user(${currentUser.username})}"&gt;&lt;/th:block&gt; // with parameter<br>
+
+            &lt;th:block th:utext="#{main.pages.albums.cover('&ldquo;&lt;span id=&quot;albumModalTitle&quot;>&lt;/span&gt;&rdquo;')}"&gt;&lt;/th:block&gt; // with html as string<br><br>
 
             <strong>JS</strong><br>
             shashin.getTranslatedValue("main.toast.dashboard.title")<br>

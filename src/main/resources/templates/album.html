@@ -144,7 +144,7 @@
     <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="propAlbumModalLabel"><th:block th:text="#{main.pages.albums.cover.pre}"></th:block>&ldquo;<span id="albumModalTitle"></span>&rdquo;<th:block th:text="#{main.pages.albums.cover.post}"></th:block><div id="propAlbumModalThumbnail"></div></h5>
+                <h5 class="modal-title" id="propAlbumModalLabel"><th:block th:utext="#{main.pages.albums.cover('&ldquo;<span id=&quot;albumModalTitle&quot;></span>&rdquo;')}"></th:block><div id="propAlbumModalThumbnail"></div></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
