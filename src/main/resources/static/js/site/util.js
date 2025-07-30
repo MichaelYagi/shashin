@@ -954,23 +954,23 @@ class Util {
 
         let msg = "";
         if (day !== "" && !(parseInt(day) >= 1 && parseInt(day) <= 31)) {
-            msg = shashin.getTranslatedValue("main.toast.metadatainput.validate.day")+": 1-31";
+            msg = (test ? "Enter Valid Day. Format" : shashin.getTranslatedValue("main.toast.metadatainput.validate.day"))+": 1-31";
         }
 
         if (month !== "" && !(parseInt(month) >= 1 && parseInt(month) <= 12)) {
-            msg = shashin.getTranslatedValue("main.toast.metadatainput.validate.month")+": 1-12";
+            msg = (test ? "Enter Valid Month. Format" : shashin.getTranslatedValue("main.toast.metadatainput.validate.month"))+": 1-12";
         }
 
         if (year !== "" && !(+year >= 1826 && +year <= new Date().getFullYear())) {
-            msg = shashin.getTranslatedValue("main.toast.metadatainput.validate.year")+": 1826-" + (new Date().getFullYear());
+            msg = (test ? "Enter Valid Year. Format" : shashin.getTranslatedValue("main.toast.metadatainput.validate.year"))+": 1826-" + (new Date().getFullYear());
         }
 
         if (time !== "" && !time.match(timeValidate)) {
-            msg = shashin.getTranslatedValue("main.toast.metadatainput.validate.time")+": HH:MM:SS";
+            msg = (test ? "Enter Valid Time. Format" : shashin.getTranslatedValue("main.toast.metadatainput.validate.time"))+": HH:MM:SS";
         }
 
         if (offset !== "" && !offset.match(offsetValidate)) {
-            msg = shashin.getTranslatedValue("main.toast.metadatainput.validate.offset");
+            msg = (test ? "Enter Valid Offset" : shashin.getTranslatedValue("main.toast.metadatainput.validate.offset"));
         }
 
         if (latlng !== "") {
@@ -978,7 +978,7 @@ class Util {
             const latlngArr = latlng.split(",");
 
             if (latlngArr.length !== 2 || latlng.split(".").length !== 3 || !Util.isNumericString(latlngArr[0]) || !Util.isNumericString(latlngArr[1])) {
-                msg = shashin.getTranslatedValue("main.toast.metadatainput.validate.latlng")+": lat,lng";
+                msg = (test ? "Enter Valid Latitude/Longitude. Format" : shashin.getTranslatedValue("main.toast.metadatainput.validate.latlng"))+": lat,lng";
             }
         }
 
@@ -987,13 +987,12 @@ class Util {
             const isValidWithHour = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(duration);
 
             if (isValidWithoutHour === false && isValidWithHour === false) {
-                msg = shashin.getTranslatedValue("main.toast.metadatainput.validate.duration")+": 0:00/00:00:00";
+                msg = (test ? "Enter Valid Duration. Format" : shashin.getTranslatedValue("main.toast.metadatainput.validate.duration"))+": 0:00/00:00:00";
             }
         }
 
         if (msg !== "") {
             if (test === false) {
-                // $("#"+msgId).html('<div class="alert alert-danger" role="alert">'+msg+'</div>');
                 shashin.showToastMessage(shashin.getTranslatedValue("main.toast.metadatainput.title"), msg, {icon: "bi-exclamation-triangle", iconColor: "#FF0000", borderColor:"danger"});
             }
             return false;
