@@ -102,21 +102,21 @@ describe('#Util tests', function() {
     //     assert.isTrue(true);
     // });
 
-    // it('Validate metadata inputs test', function () {
-    //     const shashin = {};
-    //     shashin.showToastMessage = function () {};
-    //
-    //     assert.isTrue(Util.validateMetadataInputs("1", "1", "2021", "00:00:00", "-07:00", "123.1234,-123.1234", "0:00", true));
-    //     assert.isFalse(Util.validateMetadataInputs("1", "1", "2021", "00:00:0", "-07:00", "123.1234,-123.1234", "0:00", true));
-    //     // assert.equal($("#someelement").html(),"<div class=\"alert alert-danger\" role=\"alert\">Enter Valid Time</div>")
-    //     assert.isFalse(Util.validateMetadataInputs("1", "13", "2021", "00:00:00", "-07:00", "123.1234,-123.1234", "0:00", true));
-    //     // assert.equal($("#someelement").html(),"<div class=\"alert alert-danger\" role=\"alert\">Enter Valid Month</div>")
-    //     assert.isFalse(Util.validateMetadataInputs("1", "12", "2021", "00:00:00", "-99:00", "123.1234,-123.1234", "0:00", true));
-    //     // assert.equal($("#someelement").html(),"<div class=\"alert alert-danger\" role=\"alert\">Enter Valid Offset</div>")
-    //     assert.isFalse(Util.validateMetadataInputs("1", "1", "2021", "00:00:00", "-07:00", "1231234,-abc.1234", "0:00", true));
-    //     assert.isFalse(Util.validateMetadataInputs("1", "1", "2021", "00:00:00", "-07:00", "123.1234,-123.1234", "asdf", true));
-    //     // assert.equal($("#someelement").html(),"<div class=\"alert alert-danger\" role=\"alert\">Enter Valid Latitude/Longitude</div>")
-    // });
+    it('Validate metadata inputs test', function () {
+        const shashin = {};
+        shashin.showToastMessage = function () {};
+
+        assert.isTrue(Util.validateMetadataInputs("1", "1", "2021", "00:00:00", "-07:00", "123.1234,-123.1234", "0:00", true));
+        assert.isFalse(Util.validateMetadataInputs("1", "1", "2021", "00:00:0", "-07:00", "123.1234,-123.1234", "0:00", true));
+        // assert.equal($("#someelement").html(),"<div class=\"alert alert-danger\" role=\"alert\">Enter Valid Time</div>")
+        assert.isFalse(Util.validateMetadataInputs("1", "13", "2021", "00:00:00", "-07:00", "123.1234,-123.1234", "0:00", true));
+        // assert.equal($("#someelement").html(),"<div class=\"alert alert-danger\" role=\"alert\">Enter Valid Month</div>")
+        assert.isFalse(Util.validateMetadataInputs("1", "12", "2021", "00:00:00", "-99:00", "123.1234,-123.1234", "0:00", true));
+        // assert.equal($("#someelement").html(),"<div class=\"alert alert-danger\" role=\"alert\">Enter Valid Offset</div>")
+        assert.isFalse(Util.validateMetadataInputs("1", "1", "2021", "00:00:00", "-07:00", "1231234,-abc.1234", "0:00", true));
+        assert.isFalse(Util.validateMetadataInputs("1", "1", "2021", "00:00:00", "-07:00", "123.1234,-123.1234", "asdf", true));
+        // assert.equal($("#someelement").html(),"<div class=\"alert alert-danger\" role=\"alert\">Enter Valid Latitude/Longitude</div>")
+    });
 
     it('Gallery removal test', function () {
         $("body").append($("<div/>", {
