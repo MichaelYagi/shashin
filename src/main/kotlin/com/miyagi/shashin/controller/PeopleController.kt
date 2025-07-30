@@ -230,7 +230,9 @@ class PeopleController: BaseController() {
                         relativeSidecarDir!!,
                         settings,
                         threadFile,
-                        shouldStop
+                        shouldStop,
+                        messageSource,
+                        locale
                     )
                 }
 
@@ -281,7 +283,9 @@ class PeopleController: BaseController() {
                                     criteria,
                                     threshold.toString().toDouble(),
                                     threadFile,
-                                    shouldStop.get()
+                                    shouldStop.get(),
+                                    messageSource,
+                                    locale
                                 )
 
                                 ImageProcessing.processObjects(keywordMap.keys.toTypedArray().toList(), metadataWithoutKeywordsObj, keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!)
