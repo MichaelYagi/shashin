@@ -826,7 +826,7 @@ class AlbumsController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/album/media/upload/batch/{albumId}","/api/v1/album/media/upload/batch/{albumId}"], method = [RequestMethod.POST], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = ["application/json"])
     @ResponseBody
-    fun postUploadToAlbum(model: Model, session: HttpSession, @PathVariable albumId: Int, @RequestParam("files[]") media: List<MultipartFile>): String {
+    fun postUploadToAlbum(model: Model, session: HttpSession, @PathVariable albumId: Int, @RequestParam("files[]") media: List<MultipartFile>, locale: Locale): String {
         resp["msg"] = "Could not save"
         resp["status"] = ApiResponse.FAIL.status
 
@@ -842,7 +842,7 @@ class AlbumsController: BaseController() {
             val notUploadedFiles = fileUploadedMap["notUploadedFiles"] as MutableList<String>
 
             if (!uploadedFiles.isEmpty()) {
-                settingsController.scanMediaDirectories(false, albumId, currentUserObj.getId())
+                settingsController.scanMediaDirectories(false, albumId, currentUserObj.getId(), locale)
             }
 
             if (!notUploadedFiles.isEmpty() && !uploadedFiles.isEmpty()) {

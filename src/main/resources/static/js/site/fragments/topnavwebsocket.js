@@ -55,7 +55,7 @@ function captureMessages(activePage, notificationAlerts, timezone, locale='en') 
 
             showMessageSP(data.hasOwnProperty("msg") ? data.msg : "");
             if (scanInProgress === false) {
-                if ($("#msg").text() === "Start Scan") {
+                if ($("#msg").text() === "Start Scan" || $("#msg").text() === shashin.getTranslatedValue("main.pages.scan.started")) {
                     connectSP();
                 } else {
                     scanRefresh();
@@ -73,7 +73,9 @@ function captureMessages(activePage, notificationAlerts, timezone, locale='en') 
             msgVal = $("#msg").text();
         }
 
-        if (msgVal === "Scan Stopped" || msgVal === "No directories configured" || msgVal === "Scan Complete") {
+        if (msgVal === "Scan Stopped" || msgVal === "No directories configured" || msgVal === "Scan Complete" ||
+            msgVal === shashin.getTranslatedValue("main.pages.scan.stopped") || msgVal === shashin.getTranslatedValue("main.pages.scan.ndc") || msgVal === shashin.getTranslatedValue("main.pages.scan.completed")
+        ) {
             scanInProgress = false;
         } else {
             scanInProgress = true;
@@ -110,7 +112,9 @@ function captureMessages(activePage, notificationAlerts, timezone, locale='en') 
                 }
 
                 shashin.printMessageToConsole("message: " + message);
-                if (respMessage === "Scan Stopped" || respMessage === "No directories configured" || respMessage === "Scan Complete") {
+                if (respMessage === "Scan Stopped" || respMessage === "No directories configured" || respMessage === "Scan Complete" ||
+                    respMessage === shashin.getTranslatedValue("main.pages.scan.stopped") || respMessage === shashin.getTranslatedValue("main.pages.scan.ndc") || respMessage === shashin.getTranslatedValue("main.pages.scan.completed")
+                ) {
                     $("#mediaScanSpinner").css("display", "none");
                     $("#progressBarWrapper").invisible();
                     $("#profileImage").css("opacity", 1.0);
