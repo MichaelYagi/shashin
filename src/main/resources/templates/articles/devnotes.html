@@ -36,8 +36,39 @@
         <p>Internationalization files can be found in the resource folder, where <strong>messages.properties</strong> contain the English (default) translations. The intention being more will be added in the future, with file format messages_xx.properties where xx is the 2 letter language code.</p>
         <p>Javascript output will also need to be translated. This will be tracked as globals sourced from the translation files in <code>src/main/resources/templates/fragments/translations.html</code>. They should map to entries in messages.properties.</p>
         <p>Access in controllers: Make sure to autowire MessageSources<br><pre><code>@Autowired<br>var messageSource: MessageSource? = null</code></pre>In controller parameters, add <code>locale: Locale</code>, or call <code>var locale = LocaleContextHolder.getLocale().toString()</code> in code, then get the translation using the translation path <code>messageSource.getMessage("path.to.translation.from.messages.properties", null, locale)</code></p>
-        <p>Access in javascript: Call <code>shashin.getTranslatedValue("path.to.translation")</code></p>
-        <p>Access in thymeleaf: Example: <code>#messages.msg('path.to.translation')</code> or <code>#{'path.to.translation'}</code></p>
+        <p>Access in javascript: Call <code>shashin.getTranslatedValue("path.to.translation","Some variable passed to the path")</code></p>
+        <p>Access in thymeleaf: Example: <code>#messages.msg('path.to.translation')</code> or <code>#{path.to.translation}</code></p>
+        <p>More examples:</p>
+        <code>
+            <strong>ThymeLeaf</strong><br>
+            &lt;th:block th:text="#{main.language}"&gt;&lt;/th:block&gt;<br><br>
+
+            &lt;th:block th:text="${user.isAuthorized == true ? #messages.msg('main.pages.account.role.deauth.pre') : #messages.msg('main.pages.account.role.auth.pre')}"&gt;&lt;/th:block&gt;<br><br>
+
+            &lt;th:block th:utext="#{main.modal.account.delete.user(${currentUser.username})}"&gt;&lt;/th:block&gt; // with parameter<br><br>
+
+            <strong>JS</strong><br>
+            shashin.getTranslatedValue("main.toast.dashboard.title")<br>
+            shashin.getTranslatedValue("main.modal.account.delete.user", "Username") // with parameter<br><br>
+
+            <strong>KT</strong><br>
+            **Set up in controller**<br>
+            @Autowired<br>
+            var messageSource: MessageSource? = null<br><br>
+
+            , locale: Locale // in controller param<br>
+            ...<br>
+            messageSource?.getMessage("main.pages.account.role.description.super", arrayOf(someparameter), locale) // with parameter<br>
+            messageSource?.getMessage("main.pages.account.role.description.super", null, locale) //without parameter<br><br>
+
+            **Set locale using a signed in user - require request and response**<br>
+            val localeResolver = RequestContextUtils.getLocaleResolver(request)<br>
+            localeResolver?.setLocale(request, response, StringUtils.parseLocaleString(locale.toString()))<br><br>
+
+            **Set locale using a users language**<br>
+            var language = user.getLanguage()<br>
+            var locale = Locale(language)<br>
+        </code><br>
 
         <h2>Front end debugging</h2>
         <p>Apart from standard IDE debuggers, convenience functions to look at console outputs can be enabled.</p>
