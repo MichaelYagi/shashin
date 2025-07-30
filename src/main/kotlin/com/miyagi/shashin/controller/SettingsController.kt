@@ -16,6 +16,7 @@ import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.model.MediaDirectory
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.service.CustomUserPrincipal
 import com.miyagi.shashin.service.RestartService
 import com.miyagi.shashin.util.*
 import com.miyagi.shashin.util.ImageProcessing.Companion.buildObjectRecognitionCriteria
@@ -69,6 +70,7 @@ import jakarta.servlet.http.HttpSession
 import jakarta.transaction.Transactional
 import org.springframework.context.MessageSource
 import org.springframework.data.jpa.repository.Modifying
+import java.security.Principal
 import java.util.Locale
 import java.util.stream.Collectors
 import kotlin.io.path.isDirectory
@@ -180,7 +182,15 @@ class SettingsController {
     @MessageMapping("/scanmessage")
     @SendTo("/topic/messages")
     @Throws(java.lang.Exception::class)
-    fun sendScanMessage(message: ScanMessage): Message? {
+    fun sendScanMessage(message: ScanMessage, principal: Principal): Message? {
+        val username = principal.name
+        val user = userRepository?.findByUsername(username)
+        var lang = "en"
+        if (user != null && user.getLanguage() != null && user.getLanguage() != "") {
+            lang = user.getLanguage().toString()
+        }
+        val locale = Locale(lang)
+
         val messageMap = mutableMapOf<String,Any>()
 
         messageMap["message"] = ""
@@ -188,30 +198,30 @@ class SettingsController {
         messageMap["totalMediaCount"] = totalMediaCount
 
         //println("message:${message.getMessage()}")
-        var msg = "Start Scan"
+        var msg = messageSource?.getMessage("main.pages.scan.started", null, locale)
 
         val mediaDirs = mediaDirRepository?.findByExclude(false)
         if (mediaDirs != null && mediaDirs.count() > 0) {
             if (!FileUtils.checkThreadFileAlive("shashinscan")) {
-                msg = "Scan Complete"
+                msg = messageSource?.getMessage("main.pages.scan.complete", null, locale)
                 if (shouldStop.get()) {
-                    msg = "Scan Stopped"
+                    msg = messageSource?.getMessage("main.pages.scan.stopped", null, locale)
                 }
             } else {
                 val threadFileContent = FileUtils.readThreadFile("shashinscan")
                 if (threadFileContent != null) {
-                    msg = "Scan in progress: "
+                    msg = messageSource?.getMessage("main.pages.scan.sip", null, locale)+" - "
                     if (shouldStop.get()) {
-                        msg = "Scan cancellation in progress: "
+                        msg = messageSource?.getMessage("main.pages.scan.cip", null, locale)+" - "
                     }
                     msg += threadFileContent.replace("\\", "/")
                 }
             }
         } else {
-            msg = "No directories configured"
+            msg = messageSource?.getMessage("main.pages.scan.ndc", null, locale)
         }
 
-        messageMap["message"] = msg
+        messageMap["message"] = msg.toString()
 
         val response: String = mapper.writeValueAsString(messageMap)
 
@@ -891,7 +901,7 @@ class SettingsController {
         model["facialRecogEnabled"] = settings.getFacialDetection()!!
 
         if (settings.getFacialDetection()!! || settings.getObjectDetection()!!) {
-            model["message"] = "Click scan to start finding people and identifying objects"
+            model["message"] = messageSource?.getMessage("main.pages.scan.scan.identify", null, locale)
         }
 
         val faceRecogServicesAvailable = NetworkUtils.checkCompreFaceConnection(
@@ -905,7 +915,7 @@ class SettingsController {
 
     @Secured("ROLE_SUPER")
     @GetMapping("/settings/scan")
-    fun getScan(model: Model): String {
+    fun getScan(model: Model, locale: Locale): String {
         val settings = model.getAttribute("settings") as Settings?
 
         model["objectRecogEnabled"] = settings?.getObjectDetection()!!
@@ -920,7 +930,7 @@ class SettingsController {
         val module = "scan"
         model["msg"] = ""
         model["status"] = ApiResponse.SUCCESS.status
-        model["message"] = "Click scan to scan photo directories"
+        model["message"] = messageSource?.getMessage("main.pages.scan.scan.click", null, locale)
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -1540,13 +1550,19 @@ class SettingsController {
 
 //        var msg: String
 
-        if ((shouldStop.get() && (!FileUtils.checkThreadFileAlive("shashinscan") || (threadFileContent != null && threadFileContent == "Scan Stopped") || (threadFileContent != null && threadFileContent == "Scan Complete"))) || (!shouldStop.get() && !FileUtils.checkThreadFileAlive("shashinscan"))) {
+        if ((shouldStop.get() && (!FileUtils.checkThreadFileAlive("shashinscan") ||
+                (threadFileContent != null && threadFileContent == "Scan Stopped") ||
+                (threadFileContent != null && threadFileContent == "Scan Complete") ||
+                (threadFileContent != null && threadFileContent == messageSource?.getMessage("main.pages.scan.stopped", null, locale).toString()) ||
+                (threadFileContent != null && threadFileContent == messageSource?.getMessage("main.pages.scan.complete", null, locale).toString())
+            )) || (!shouldStop.get() && !FileUtils.checkThreadFileAlive("shashinscan"))
+        ) {
             shouldStop.set(false)
             if (threadFileContent != null) {
                 deleteThreadScan()
             }
         } else {
-            return "Scan cancellation in progress, please wait"
+            return messageSource?.getMessage("main.pages.scan.cip", null, locale).toString()
         }
 
         var mediaDirs = mediaDirRepository?.findByExclude(false)
@@ -1582,17 +1598,17 @@ class SettingsController {
                     // Iterate through directory in another thread
                     scanProcess(settings, mediaDirs, mediaExcludeDirs, sidecarDir, compreFaceServerConnected, superAdmins, reindexFiles, addToAlbum, uploadUserId, locale)
 
-                    return "Start Scan"
+                    return messageSource?.getMessage("main.pages.scan.started", null, locale).toString()
                 }
 
                 threadFileContent = FileUtils.readThreadFile("shashinscan")
-                var lmsg = "Scan in progress"
+                var lmsg = messageSource?.getMessage("main.pages.scan.sip", null, locale).toString()
                 if (shouldStop.get()) {
-                    lmsg = "Scan cancellation in progress"
+                    lmsg = messageSource?.getMessage("main.pages.scan.cip", null, locale).toString()
                 }
 
                 return if (threadFileContent != null) {
-                    lmsg + ": " + threadFileContent.replace("\\", "/")
+                    lmsg + " - " + threadFileContent.replace("\\", "/")
                 } else {
                     lmsg
                 }
@@ -1601,18 +1617,15 @@ class SettingsController {
                     Level.INFO,
                     "Directory not found"
                 )
-                return "Directory not found"
+                return messageSource?.getMessage("main.pages.scan.dnf", null, locale).toString()
             }
         } else {
             logger.log(
                 Level.INFO,
                 "No directories configured"
             )
-            return "No directories configured"
+            return messageSource?.getMessage("main.pages.scan.ndc", null, locale).toString()
         }
-//        msg = "Start Scan"
-//
-//        return msg
     }
 
     fun scanProcess(settings: Settings?, mediaDirs: MutableList<MediaDirectory?>?, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, sidecarDir: String, compreFaceServerConnected: Boolean, superAdmins: MutableIterable<User>?, reindexFiles: Boolean, addToAlbum: Int, uploadUserId: Int, locale: Locale) {
@@ -1629,7 +1642,7 @@ class SettingsController {
 
                     for (metadata in metadataList) {
                         if (shouldStop.get()) {
-                            FileUtils.writeToThreadFileAndLogMessage("Scan Stopped", threadFile)
+                            FileUtils.writeToThreadFileAndLogMessage(messageSource?.getMessage("main.pages.scan.stopped", null, locale).toString(), threadFile)
                             break
                         }
                         if (metadata != null) {
@@ -1936,7 +1949,8 @@ class SettingsController {
                                     recognitionLabelPhotoLabels,
                                     compreFaceServerConnected,
                                     addToAlbum,
-                                    uploadUserId
+                                    uploadUserId,
+                                    locale
                                 )
                             }
                         }
@@ -2426,7 +2440,7 @@ class SettingsController {
         logger.log(Level.INFO, "shashinscan thread file deleted")
     }
 
-    private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, settings: Settings?, criteria: Criteria<Image, DetectedObjects>?, webClient: WebClient?, recognitionLabelPhotoLabels: MutableIterable<RecognitionLabelId>?, compreFaceServerConnected: Boolean, addToAlbum: Int = 0, uploadUserId: Int = 0) {
+    private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, settings: Settings?, criteria: Criteria<Image, DetectedObjects>?, webClient: WebClient?, recognitionLabelPhotoLabels: MutableIterable<RecognitionLabelId>?, compreFaceServerConnected: Boolean, addToAlbum: Int = 0, uploadUserId: Int = 0, locale: Locale) {
         val f = File(dirPath)
         val files = f.listFiles()
 
@@ -2434,10 +2448,10 @@ class SettingsController {
             for (i in files.indices) {
 
                 val file: File = files[i]
-                var threadText = "Scanning " + file.path
+                var threadText = messageSource?.getMessage("main.pages.scan.scanning", null, locale).toString() + " " + file.path
 
                 if (shouldStop.get()) {
-                    threadText = "Scan Stopped"
+                    threadText = messageSource?.getMessage("main.pages.scan.stopped", null, locale).toString()
                     FileUtils.writeToThreadFileAndLogMessage(threadText, threadFile)
                     break
                 }
@@ -2542,7 +2556,7 @@ class SettingsController {
                 }
 
                 if (file.isDirectory) {
-                    getFile(file.absolutePath, threadFile, sidecarDir, rootDir, mediaExcludeDirs, settings, criteria, webClient, recognitionLabelPhotoLabels, compreFaceServerConnected, addToAlbum, uploadUserId)
+                    getFile(file.absolutePath, threadFile, sidecarDir, rootDir, mediaExcludeDirs, settings, criteria, webClient, recognitionLabelPhotoLabels, compreFaceServerConnected, addToAlbum, uploadUserId, locale)
                 }
             }
         }
