@@ -285,7 +285,7 @@
         };
 
         const saveCoordinates = function (obj) {
-            shashin.showToastMessage(shashin.getTranslatedValue('main.toast.minimap.title'), shashin.getTranslatedValue('main.toast.minimap.message.success'), {
+            shashin.showToastMessage(shashin.getTranslatedValue('main.details.location'), shashin.getTranslatedValue('main.toast.minimap.message.success'), {
                 icon: "bi-info-circle",
                 iconColor: "#777777",
                 tag: "latlng",
@@ -304,7 +304,7 @@
                     shashin.closeToastMessages({
                         tag: "latlng"
                     });
-                    shashin.showToastMessage(shashin.getTranslatedValue('main.toast.minimap.title'), shashin.getTranslatedValue('main.toast.minimap.message.fail'), {
+                    shashin.showToastMessage(shashin.getTranslatedValue('main.details.location'), shashin.getTranslatedValue('main.toast.minimap.message.fail'), {
                         icon: "bi-exclamation-triangle",
                         iconColor: "#FF0000",
                         tag: "latlng",
@@ -316,7 +316,7 @@
                     });
                     if (response.hasOwnProperty("status")) {
                         if (response.status !== shashin.apiResponse.SUCCESS) {
-                            shashin.showToastMessage(shashin.getTranslatedValue('main.toast.minimap.title'), shashin.getTranslatedValue('main.toast.minimap.message.fail'), {
+                            shashin.showToastMessage(shashin.getTranslatedValue('main.details.location'), shashin.getTranslatedValue('main.toast.minimap.message.fail'), {
                                 icon: "bi-exclamation-triangle",
                                 iconColor: "#FF0000",
                                 tag: "latlng",
@@ -325,7 +325,7 @@
                         } else {
                             Util.setMetadataLocalStorage();
 
-                            shashin.showToastMessage(shashin.getTranslatedValue('main.toast.minimap.title'), shashin.getTranslatedValue('main.toast.minimap.message.success'), {
+                            shashin.showToastMessage(shashin.getTranslatedValue('main.details.location'), shashin.getTranslatedValue('main.toast.minimap.message.success'), {
                                 icon: "bi-info-circle",
                                 iconColor: "#777777",
                                 tag: "latlng",
@@ -394,7 +394,7 @@
                             $("#metadataModalEdit" + metadata.id + " span").removeClass("bi-info-square").addClass("bi-info-circle");
                         }
                     } else {
-                        shashin.showToastMessage(shashin.getTranslatedValue('main.toast.minimap.title'), shashin.getTranslatedValue('main.toast.minimap.message.fail'), {
+                        shashin.showToastMessage(shashin.getTranslatedValue('main.details.location'), shashin.getTranslatedValue('main.toast.minimap.message.fail'), {
                             icon: "bi-exclamation-triangle",
                             iconColor: "#FF0000",
                             tag: "latlng",
@@ -445,7 +445,7 @@
                 shashin.map.addLayer(shashin.layer);
                 $("#latlngBatchData").val(coordArray[1]+","+coordArray[0]);
 
-                shashin.showToastMessage(shashin.getTranslatedValue('main.toast.minimap.title'), shashin.getTranslatedValue('main.context.minimap.location.message'), {
+                shashin.showToastMessage(shashin.getTranslatedValue('main.details.location'), shashin.getTranslatedValue('main.context.minimap.location.message'), {
                     icon: "bi-info-circle",
                     iconColor: "#777777",
                     tag: "latlng",
