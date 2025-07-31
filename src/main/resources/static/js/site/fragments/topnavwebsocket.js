@@ -74,7 +74,7 @@ function captureMessages(activePage, notificationAlerts, timezone, locale='en') 
         }
 
         if (msgVal === "Scan Stopped" || msgVal === "No directories configured" || msgVal === "Scan Complete" ||
-            msgVal === shashin.getTranslatedValue("main.pages.scan.stopped") || msgVal === shashin.getTranslatedValue("main.pages.scan.ndc") || msgVal === shashin.getTranslatedValue("main.pages.scan.completed")
+            msgVal === shashin.getTranslatedValue("main.pages.scan.stopped") || msgVal === shashin.getTranslatedValue("main.pages.scan.ndc") || msgVal === shashin.getTranslatedValue("main.pages.scan.complete")
         ) {
             scanInProgress = false;
         } else {
@@ -111,9 +111,9 @@ function captureMessages(activePage, notificationAlerts, timezone, locale='en') 
                     Util.updateProgressBar(completedPercent);
                 }
 
-                shashin.printMessageToConsole("message: " + message);
+                shashin.printMessageToConsole("message: " + message,{tag:"scanmedia"});
                 if (respMessage === "Scan Stopped" || respMessage === "No directories configured" || respMessage === "Scan Complete" ||
-                    respMessage === shashin.getTranslatedValue("main.pages.scan.stopped") || respMessage === shashin.getTranslatedValue("main.pages.scan.ndc") || respMessage === shashin.getTranslatedValue("main.pages.scan.completed")
+                    respMessage === shashin.getTranslatedValue("main.pages.scan.stopped") || respMessage === shashin.getTranslatedValue("main.pages.scan.ndc") || respMessage === shashin.getTranslatedValue("main.pages.scan.complete")
                 ) {
                     $("#mediaScanSpinner").css("display", "none");
                     $("#progressBarWrapper").invisible();

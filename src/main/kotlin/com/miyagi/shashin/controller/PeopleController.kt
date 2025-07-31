@@ -108,7 +108,7 @@ class PeopleController: BaseController() {
         }
         val locale = Locale(lang)
 
-        var msg = "Start Matching"
+        var msg = messageSource?.getMessage("main.pages.matching.start", null, locale).toString()
 
         if (shouldStop.get()) {
             msg = messageSource?.getMessage("main.pages.matching.cancelled", null, locale).toString()
@@ -178,7 +178,7 @@ class PeopleController: BaseController() {
             doPrediction(settings, superAdmins, locale)
         }
 
-        resp["msg"] = "Start Matching"
+        resp["msg"] = messageSource?.getMessage("main.pages.matching.start", null, locale).toString()
         resp["status"] = ApiResponse.SUCCESS.status
         return mapper.writeValueAsString(resp)
     }
