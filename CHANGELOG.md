@@ -11,7 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
-- Japanese language
+- i18n setup with English fully templated
 ### Changed
 ### Deprecated
 ### Removed
