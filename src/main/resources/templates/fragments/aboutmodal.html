@@ -69,7 +69,7 @@
                     let latestTag = latestReleaseInfo.tag_name;
                     let parsedVersion = (latestTag.substring(0, 1) === "v") ? "/" + latestTag.substring(1, latestTag.length) : "";
 
-                    const message = shashin.getTranslatedValue("main.modal.about.version.pre") + " <a href='https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin" + parsedVersion + "' target='_blank'>" + latestTag.substring(1) + "</a> " + shashin.getTranslatedValue("main.modal.about.version.post");
+                    const message = shashin.getTranslatedValue("main.modal.about.version","<a href='https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin" + parsedVersion + "' target='_blank'>" + latestTag.substring(1) + "</a>");
                     $("#gitVersionId").html("<br><em>" + message + "</em>");
                     const type = "releases";
 
