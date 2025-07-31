@@ -11,14 +11,18 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
-- i18n setup with English fully templated
 ### Changed
 ### Deprecated
 ### Removed
 ### Fixed
-- Taken at view shift select and date select
-
 ### Security
+
+## [2.11.3] - 2025-07-31
+### Added
+- i18n setup with English fully templated
+
+### Fixed
+- Taken at view shift select and date select
 
 ## [2.11.2] - 2025-07-14
 ### Added
