@@ -52,10 +52,17 @@
             <div>
                 <h3 class="text-center float-md-start mb-0"><a class="link-unstyled" href="/">Shashin</a></h3>
                 <nav class="nav justify-content-center float-md-end">
-                    <a class="nav-link" href="/">Home</a>
-                    <a class="nav-link" href="/articles">Articles</a>
-                    <a class="nav-link" href="/users/login"><th:block th:if="${loggedIn == true}">Go To Shashin</th:block><th:block th:unless="${loggedIn == true}">Login</th:block></a>
-                    <th:block th:if="${loggedIn == true}"><a class="nav-link" href="/users/logout">Logout</a></th:block>
+                    <a class="nav-link" href="/"><th:block th:text="#{main.home}"></th:block></a>
+                    <a class="nav-link" href="/articles"><th:block th:text="#{main.articles}"></th:block></a>
+                    <a class="nav-link" href="/users/login"><th:block th:if="${loggedIn == true}"><th:block th:text="#{main.gotoapp}"></th:block></th:block><th:block th:unless="${loggedIn == true}"><th:block th:text="#{main.login}"></th:block></th:block></a>
+                    <th:block th:if="${loggedIn == true}"><a class="nav-link" href="/users/logout"><th:block th:text="#{main.logout}"></th:block></a></th:block>
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false"><th:block th:text="#{main.language}"></th:block></a>
+
+                    <ul class="dropdown-menu" id="languageSelect">
+                        <th:block th:each="lang : ${languageList}">
+                            <li><a th:class="'dropdown-item' + ${locale == lang.code ? ' active' : ''}" th:id="${lang.code}" href="#"><th:block th:text="${lang.label}"></th:block></a></li>
+                        </th:block>
+                    </ul>
                 </nav>
             </div>
         </header>
@@ -67,48 +74,52 @@
                 <div class="feature-icon bg-primary bg-gradient">
                     <span class="bi-card-image" style="font-size: 2rem;"></span>
                 </div>
-                <h2>Gallery</h2>
-                <p>View your media on a timeline or albums, and tag any of your favourites.</p>
+                <h2><th:block th:text="#{main.page.features.gallery}"></th:block></h2>
+                <p><th:block th:text="#{main.page.features.gallery.description}"></th:block></p>
             </div>
             <div class="feature col">
                 <div class="feature-icon bg-primary bg-gradient">
                     <span class="bi-pin-map" style="font-size: 2rem;"></span>
                 </div>
-                <h2>Location</h2>
-                <p>View where you took your photos on a map.</p>
+                <h2><th:block th:text="#{main.page.features.location}"></th:block></h2>
+                <p><th:block th:text="#{main.page.features.location.description}"></th:block></p>
             </div>
             <div class="feature col">
                 <div class="feature-icon bg-primary bg-gradient">
                     <span class="bi-share" style="font-size: 2rem;"></span>
                 </div>
-                <h2>Share</h2>
-                <p>Share your albums with friends and family.</p>
+                <h2><th:block th:text="#{main.page.features.share}"></th:block></h2>
+                <p><th:block th:text="#{main.page.features.share.description}"></th:block></p>
             </div>
             <div class="feature col">
                 <div class="feature-icon bg-primary bg-gradient">
                     <span class="bi-gear-wide-connected" style="font-size: 2rem;"></span>
                 </div>
-                <h2>API</h2>
-                <p>Develop apps with a comprehensive API.</p>
+                <h2><th:block th:text="#{main.page.features.api}"></th:block></h2>
+                <p><th:block th:text="#{main.page.features.api.description}"></th:block></p>
             </div>
         </div>
 
         <div class="p-5 mb-2 bg-light rounded-3">
             <div class="container-fluid py-3">
-                <h1 class="pb-3">Get Started</h1>
-                <p class="col-md-8 fs-4"><span class="bi-upc-scan align-middle" style="font-size: 2rem;"></span>&nbsp;<span class="align-middle">Point to your media directories and scan</span></p>
-                <p class="col-md-8 fs-4"><span class="bi-calendar4 align-middle" style="font-size: 2rem;"></span>&nbsp;<span class="align-middle">View it on a timeline</span></p>
-                <p class="col-md-8 fs-4"><span class="bi-images align-middle" style="font-size: 2rem;"></span>&nbsp;<span class="align-middle">Create albums, comment and share</span></p>
-                <p class="col-md-8 fs-4"><span class="bi-pencil align-middle" style="font-size: 2rem;"></span>&nbsp;<span class="align-middle">Edit locations, keywords and tag people</span></p>
+                <h1 class="pb-3"><th:block th:text="#{main.page.features.start}"></th:block></h1>
+                <p class="col-md-8 fs-4"><span class="bi-upc-scan align-middle" style="font-size: 2rem;"></span>&nbsp;<span class="align-middle"><th:block th:text="#{main.page.features.start.step1}"></th:block></span></p>
+                <p class="col-md-8 fs-4"><span class="bi-calendar4 align-middle" style="font-size: 2rem;"></span>&nbsp;<span class="align-middle"><th:block th:text="#{main.page.features.start.step2}"></th:block></span></p>
+                <p class="col-md-8 fs-4"><span class="bi-images align-middle" style="font-size: 2rem;"></span>&nbsp;<span class="align-middle"><th:block th:text="#{main.page.features.start.step3}"></th:block></span></p>
+                <p class="col-md-8 fs-4"><span class="bi-pencil align-middle" style="font-size: 2rem;"></span>&nbsp;<span class="align-middle"><th:block th:text="#{main.page.features.start.step4}"></th:block></span></p>
             </div>
         </div>
 
-        <small class="text-muted">* Supported image types: <span th:text="${supportedImageTypes}"></span>. Supported video types: <span th:text="${supportedVideoTypes}"></span>. Limited supported raw types: <span th:text="${supportedRawTypes}"></span>.</small>
+        <small class="text-muted">
+            <th:block th:text="#{main.page.features.supported.images(${supportedImageTypes})}"></th:block><br>
+            <th:block th:text="#{main.page.features.supported.video(${supportedVideoTypes})}"></th:block><br>
+            <th:block th:text="#{main.page.features.supported.raw(${supportedRawTypes})}"></th:block>
+        </small>
 
         <footer class="pt-3 mt-4 text-muted border-top">
             <div class="form-check form-switch" id="darkmodeSwitchContainer" style="display: none;">
                 <input class="form-check-input" type="checkbox" id="darkmodeSwitch">
-                <label class="form-check-label" for="darkmodeSwitch">Dark mode</label>
+                <label class="form-check-label" for="darkmodeSwitch"><th:block th:text="#{main.pages.account.sitesettings.darkmode}"></th:block></label>
             </div>
             &copy; <span id="copyrightYear"></span> Shashin
         </footer>
@@ -120,6 +131,13 @@
     $("#copyrightYear").text(Util.getYearCreated() + "-"+new Date().getFullYear());
 
     Util.activateDarkModeListener();
+
+    $("#languageSelect li a").on("click", async function (e) {
+        e.preventDefault();
+
+        const language = $(this).attr("id");
+        window.location.replace("/features?lang="+language);
+    });
 </script>
 
 </body>
