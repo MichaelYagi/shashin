@@ -1054,7 +1054,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                             threadFile!!,
                             stop
                         )
-                        recognitionCount = faceRecognizer.startPredict()
+                        recognitionCount = faceRecognizer.startPredict(messageSource,locale)
                     } else {
                         logger.log(
                             Level.WARNING,
