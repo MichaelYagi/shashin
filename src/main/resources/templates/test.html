@@ -32,10 +32,13 @@
 
             <pre id="result">Loading...</pre>
 
+
             <div th:utext="'test1:'+#{test(${mike},${noah})}"></div>
             <div th:utext="'test2:'+#{test(${mike})}"></div>
             <div id="test"></div>
             <div id="test1"></div>
+
+            <div th:utext="'testjsdynamic:'+#{test(${mike},'&lt;span id=&quot;asdf&quot;&gt;&lt;/span&gt;')}"></div>
 
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
             <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
@@ -56,6 +59,8 @@
             $('#test').html("test3:"+shashin.getTranslatedValue("test",test,"Noah"));
             $('#test1').html("test4:"+shashin.getTranslatedValue("test",test));
             console.log("=====")
+
+            $("#asdf").html("<strong>SOME TEXT</strong>");
 
             // let db = null;
             //
