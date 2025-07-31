@@ -56,18 +56,18 @@
                         <h1 class="display-1" style="font-size:1.5rem;"><th:block th:text="#{main.pages.account.sitesettings}"></th:block></h1>
                     </div>
 
-                    <div class="dropdown">
-                        <label class="input-group" for="language">
-                            <th:block th:text="#{main.language}"></th:block>
-                        </label>
-                        <select class="form-select" name="language" id="language">
-                            <th:block th:each="lang : ${languageList}">
-                                <option th:value="${lang.code}"
-                                        th:selected="${currentUser.language == lang.code}"
-                                        th:text="${lang.label}"></option>
-                            </th:block>
-                        </select>
-                    </div>
+<!--                    <div class="dropdown">-->
+<!--                        <label class="input-group" for="language">-->
+<!--                            <th:block th:text="#{main.language}"></th:block>-->
+<!--                        </label>-->
+<!--                        <select class="form-select" name="language" id="language">-->
+<!--                            <th:block th:each="lang : ${languageList}">-->
+<!--                                <option th:value="${lang.code}"-->
+<!--                                        th:selected="${currentUser.language == lang.code}"-->
+<!--                                        th:text="${lang.label}"></option>-->
+<!--                            </th:block>-->
+<!--                        </select>-->
+<!--                    </div>-->
 
                     <div class="row mt-3 ms-0">
                         <div class="form-check form-switch">
