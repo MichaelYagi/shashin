@@ -36,9 +36,7 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/articles"><th:block th:text="#{main.articles}"></th:block></a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/users/login"><th:block th:if="${loggedIn == true}"><th:block th:text="#{main.gotoapp}"></th:block></th:block><th:block th:unless="${loggedIn == true}"><th:block th:text="#{main.login}"></th:block></th:block></a>
-                        </li>
+                        <th:block th:if="${loggedIn == false}">
                         <li class="nav-item">
                             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false"><th:block th:text="#{main.language}"></th:block></a>
 
@@ -47,6 +45,10 @@
                                     <li><a th:class="'dropdown-item' + ${locale == lang.code ? ' active' : ''}" th:id="${lang.code}" href="#"><th:block th:text="${lang.label}"></th:block></a></li>
                                 </th:block>
                             </ul>
+                        </li>
+                        </th:block>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/users/login"><th:block th:if="${loggedIn == true}"><th:block th:text="#{main.gotoapp}"></th:block></th:block><th:block th:unless="${loggedIn == true}"><th:block th:text="#{main.login}"></th:block></th:block></a>
                         </li>
                         <li class="nav-item">
                             <th:block th:if="${loggedIn == true}"><a class="nav-link" href="/users/logout"><th:block th:text="#{main.logout}"></th:block></a></th:block>
