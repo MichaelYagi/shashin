@@ -2304,7 +2304,7 @@ class SettingsController {
 
                                     val faceRecognizer = DjlFaceRecognizer(
                                         testImage,
-                                        trainingData!!,
+                                        trainingData,
                                         recognitionLabelPhotoRepository,
                                         recognitionLabelRepository,
                                         settings,
@@ -2312,7 +2312,7 @@ class SettingsController {
                                         threadFile,
                                         shouldStop
                                     )
-                                    recognitionCount += faceRecognizer.startPredict()
+                                    recognitionCount += faceRecognizer.startPredict(messageSource,locale)
                                 } else {
                                     logger.log(
                                         Level.WARNING,

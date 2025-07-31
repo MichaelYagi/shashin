@@ -24,12 +24,14 @@ import com.miyagi.shashin.util.MetricsUtil
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import net.coobird.thumbnailator.Thumbnails
+import org.springframework.context.MessageSource
 import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.FileSystemResource
 import java.awt.image.BufferedImage
 import java.io.File
 import java.io.IOException
 import java.nio.file.Paths
+import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -87,7 +89,7 @@ class DjlFaceRecognizer {
         return image.getSubimage(x1.toInt(), y1.toInt(), (x2-x1).toInt(), (y2-y1).toInt())
     }
 
-    fun startPredict(): Int {
+    fun startPredict(messageSource: MessageSource? = null, locale: Locale = Locale("en")): Int {
         var recognitionCount = 0
 
         val metricsUtil = MetricsUtil()
@@ -136,10 +138,15 @@ class DjlFaceRecognizer {
                     )
                     break
                 }
-                val numOfTrainingObject = detectedTrainingImages?.numberOfObjects
-                val trainingImageJsonNode = mapper.readTree(detectedTrainingImages?.toJson())
+                val numOfTrainingObject = detectedTrainingImages.numberOfObjects
+                val trainingImageJsonNode = mapper.readTree(detectedTrainingImages.toJson())
 
-                FileUtils.writeToThreadFileAndLogMessage("$numOfTrainingObject faces detected in ${trainingImageObj.getPath()} training image",this.threadFile)
+                FileUtils.writeToThreadFileAndLogMessage(
+                    if (messageSource == null)
+                        "$numOfTrainingObject faces detected in ${trainingImageObj.getPath()} training image" else
+                        messageSource.getMessage("main.pages.scan.training.detected", arrayOf(numOfTrainingObject,trainingImageObj.getPath()), locale).toString(),
+                    this.threadFile
+                )
                 logger.log(
                     Level.INFO,
                     "$numOfTrainingObject faces detected in ${trainingImageObj.getPath()} training image"
@@ -179,7 +186,12 @@ class DjlFaceRecognizer {
                     val numOfTestObject = detectedTestImages?.numberOfObjects
                     val testImageJsonNode = mapper.readTree(detectedTestImages?.toJson())
 
-                    FileUtils.writeToThreadFileAndLogMessage("$numOfTestObject faces detected in ${testImageObj.getPath()} test image",this.threadFile)
+                    FileUtils.writeToThreadFileAndLogMessage(
+                        if (messageSource == null)
+                            "$numOfTestObject faces detected in ${testImageObj.getPath()} test image" else
+                            messageSource.getMessage("main.pages.scan.testing.detected", arrayOf(numOfTestObject,testImageObj.getPath()), locale).toString(),
+                        this.threadFile
+                    )
                     logger.log(
                         Level.INFO,
                         "$numOfTestObject faces detected in ${testImageObj.getPath()} test image"
@@ -206,7 +218,7 @@ class DjlFaceRecognizer {
                     }
 
                     val similarityArrays: MutableList<MutableList<Any>> = getSimilarities(
-                        numOfTrainingObject!!,
+                        numOfTrainingObject,
                         numOfTestObject!!,
                         scaledTrainingImage,
                         scaledTestImage,
@@ -216,7 +228,9 @@ class DjlFaceRecognizer {
                         testImageObj.getId(),
                         trainingImageObj,
                         testImageObj,
-                        shouldStop)
+                        shouldStop,
+                        messageSource,
+                        locale)
 
                     for (similarityArray in similarityArrays) {
                         val similarity = similarityArray[0] as Double
@@ -277,7 +291,9 @@ class DjlFaceRecognizer {
                         testImageId: String = "test",
                         trainingImageObj: TrainingData? = null,
                         testImageObj: Metadata? = null,
-                        shouldStop: AtomicBoolean? = null): MutableList<MutableList<Any>>
+                        shouldStop: AtomicBoolean? = null,
+                        messageSource: MessageSource? = null,
+                        locale: Locale = Locale("en")): MutableList<MutableList<Any>>
     {
         val similarityArray = mutableListOf<MutableList<Any>>()
 
@@ -291,7 +307,12 @@ class DjlFaceRecognizer {
             val trainingSubImage = ImageFactory.getInstance().fromImage(trainingSubImageBi)
 
             if (trainingImageObj != null) {
-                FileUtils.writeToThreadFileAndLogMessage("Predicting faces detected in ${trainingImageObj.getPath()} training image",this.threadFile)
+                FileUtils.writeToThreadFileAndLogMessage(
+                    if (messageSource == null)
+                        "Predicting faces detected in ${trainingImageObj.getPath()} training image" else
+                        messageSource.getMessage("main.pages.scan.training.predicting", arrayOf(trainingImageObj.getPath()), locale).toString(),
+                    this.threadFile
+                )
                 logger.log(
                     Level.INFO,
                     "Predicting faces detected in ${trainingImageObj.getPath()} training image"
@@ -316,7 +337,9 @@ class DjlFaceRecognizer {
 
                     if (testImageObj != null) {
                         FileUtils.writeToThreadFileAndLogMessage(
-                            "Predicting faces detected in ${testImageObj.getPath()} test image",
+                            if (messageSource == null)
+                                "Predicting faces detected in ${testImageObj.getPath()} test image" else
+                                messageSource.getMessage("main.pages.scan.testing.predicting", arrayOf(testImageObj.getPath()), locale).toString(),
                             this.threadFile
                         )
                     }
@@ -333,10 +356,15 @@ class DjlFaceRecognizer {
                             calculateSimilar(trainingFeature, testFeature).toString()
 
                         var message =
-                            "Similarity $similarity for ${i + 1}/$numOfTrainingObject test image face ${j + 1}/$numOfTestObject"
+                            if (messageSource == null)
+                                "Similarity $similarity for ${i + 1}/$numOfTrainingObject test image face ${j + 1}/$numOfTestObject" else
+                                messageSource.getMessage("main.pages.scan.training.similarity", arrayOf(similarity,i + 1,numOfTrainingObject,j + 1,numOfTestObject), locale).toString()
+
                         if (trainingImageObj != null && testImageObj != null) {
                             message =
-                                "Similarity $similarity for person ${trainingImageObj.getRecognitionLabelId()} ${trainingImageObj.getRecognitionLabelName()} between training image ${trainingImageObj.getPath()} face ${i + 1}/$numOfTrainingObject and test image ${testImageObj.getPath()} face ${j + 1}/$numOfTestObject"
+                                if (messageSource == null)
+                                    "Similarity $similarity for person ${trainingImageObj.getRecognitionLabelId()} ${trainingImageObj.getRecognitionLabelName()} between training image ${trainingImageObj.getPath()} face ${i + 1}/$numOfTrainingObject and test image ${testImageObj.getPath()} face ${j + 1}/$numOfTestObject" else
+                                    messageSource.getMessage("main.pages.scan.training.similarity.label", arrayOf(similarity,trainingImageObj.getRecognitionLabelId(),trainingImageObj.getRecognitionLabelName(),trainingImageObj.getPath(),i + 1,numOfTrainingObject,testImageObj.getPath(),j + 1,numOfTestObject), locale).toString()
                             FileUtils.writeToThreadFileAndLogMessage(message, this.threadFile)
                         }
                         logger.log(
