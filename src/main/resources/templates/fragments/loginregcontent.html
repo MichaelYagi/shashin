@@ -2,21 +2,31 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head></head>
 <body th:fragment="loginregcontent(activePage, message)">
-<div class="d-flex w-100 h-100 p-3 mx-auto flex-column" style="max-width: 550px;">
+<div class="d-flex w-100 h-100 p-3 mx-auto flex-column">
     <header class="mb-auto">
         <div>
-            <h3 class="float-md-start mb-0"><a style="color: inherit;text-decoration: inherit;" href="/">Shashin</a></h3>
-            <nav class="nav justify-content-center float-md-end">
-                <a class="nav-link" href="/"><th:block th:text="#{main.home}"></th:block></a>
-                <a class="nav-link" href="/features"><th:block th:text="#{main.features}"></th:block></a>
-                <a class="nav-link" href="/articles"><th:block th:text="#{main.articles}"></th:block></a>
-                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false"><th:block th:text="#{main.language}"></th:block></a>
+            <nav class="nav justify-content-center">
+                <li class="nav-item px-5">
+                    <h3><a style="color: inherit;text-decoration: inherit;" href="/">Shashin</a></h3>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/"><th:block th:text="#{main.home}"></th:block></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/features"><th:block th:text="#{main.features}"></th:block></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/articles"><th:block th:text="#{main.articles}"></th:block></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false"><th:block th:text="#{main.language}"></th:block></a>
 
-                <ul class="dropdown-menu" id="languageSelect">
-                    <th:block th:each="lang : ${languageList}">
-                        <li><a th:class="'dropdown-item' + ${locale == lang.code ? ' active' : ''}" th:id="${lang.code}" href="#"><th:block th:text="${lang.label}"></th:block></a></li>
-                    </th:block>
-                </ul>
+                    <ul class="dropdown-menu" id="languageSelect">
+                        <th:block th:each="lang : ${languageList}">
+                            <li><a th:class="'dropdown-item' + ${locale == lang.code ? ' active' : ''}" th:id="${lang.code}" href="#"><th:block th:text="${lang.label}"></th:block></a></li>
+                        </th:block>
+                    </ul>
+                </li>
             </nav>
         </div>
     </header>
@@ -66,10 +76,13 @@
         </form>
     </main>
 
-    <span class="mt-auto" th:insert="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></span>
+    <footer class="mt-auto">
+        &copy; <span id="copyrightYear"></span> Shashin
+    </footer>
 </div>
 
 <script type="text/javascript" th:nonce="${cspNonce}">
+    $("#copyrightYear").text("2021-"+new Date().getFullYear());
     Util.activateDarkModeListener();
 
     $("#unhidepassword").on("click", function (e) {
