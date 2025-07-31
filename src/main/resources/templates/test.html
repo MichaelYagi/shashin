@@ -32,8 +32,10 @@
 
             <pre id="result">Loading...</pre>
 
-            <div th:utext="#{test(${mike},${noah})}"></div>
+            <div th:utext="'test1:'+#{test(${mike},${noah})}"></div>
+            <div th:utext="'test2:'+#{test(${mike})}"></div>
             <div id="test"></div>
+            <div id="test1"></div>
 
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
             <div th:replace="~{fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile},${activePage})}"></div>
@@ -51,7 +53,8 @@
             console.log("===========")
             console.log(locale);
             const test = "Mike";
-            $('#test').html(shashin.getTranslatedValue("test",test,"Noah"));
+            $('#test').html("test3:"+shashin.getTranslatedValue("test",test,"Noah"));
+            $('#test1').html("test4:"+shashin.getTranslatedValue("test",test));
             console.log("=====")
 
             // let db = null;
