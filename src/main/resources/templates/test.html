@@ -32,7 +32,7 @@
 
             <pre id="result">Loading...</pre>
 
-
+            <div id="language"></div>
             <div th:utext="'test1:'+#{test(${mike},${noah})}"></div>
             <div th:utext="'test2:'+#{test(${mike})}"></div>
             <div id="test"></div>
@@ -53,12 +53,11 @@
             const locale = /*[[${locale}]]*/ 'en';
             /*]]>*/
 
-            console.log("===========")
-            console.log(locale);
+            $("#language").html(locale);
             const test = "Mike";
             $('#test').html("test3:"+shashin.getTranslatedValue("test",test,"Noah"));
             $('#test1').html("test4:"+shashin.getTranslatedValue("test",test));
-            console.log("=====")
+
 
             $("#asdf").html("<strong>SOME TEXT</strong>");
 
