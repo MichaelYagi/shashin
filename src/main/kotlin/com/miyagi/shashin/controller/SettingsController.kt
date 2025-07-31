@@ -1648,7 +1648,7 @@ class SettingsController {
                         if (metadata != null) {
                             if (!metadata.getPath().isNullOrBlank()) {
                                 FileUtils.writeToThreadFileAndLogMessage(
-                                    "checking for changes for file - " + metadata.getPath(),
+                                    FileUtils.writeToThreadFileAndLogMessage(messageSource?.getMessage("main.pages.scan.change", null, locale).toString(), threadFile).toString() + " - " + metadata.getPath(),
                                     threadFile
                                 )
 
@@ -2319,7 +2319,7 @@ class SettingsController {
                                         "Missing lib files for DJL face scan"
                                     )
                                     FileUtils.writeToThreadFileAndLogMessage(
-                                        "Missing lib files for DJL face scan",
+                                        messageSource?.getMessage("main.notification.people.missing", null, locale).toString(),
                                         threadFile
                                     )
 
@@ -2368,13 +2368,13 @@ class SettingsController {
                             ImageProcessing.processObjects(keywordMap.keys.toTypedArray().toList(), metadataObj, keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!)
                         }
 
-                        threadText = metadataObj.getPath() + " indexed"
+                        threadText = messageSource?.getMessage("main.pages.scan.pathindexed", arrayOf(metadataObj.getPath()), locale).toString()
                     } catch (e: Exception) {
                         logger.log(
                             Level.SEVERE,
                             "Error saving metadata: " + metadataObj.getPath() + ": " + e.localizedMessage
                         )
-                        threadText = "Error saving metadata: " + metadataObj.getPath() + "."
+                        threadText = messageSource?.getMessage("main.pages.scan.error.saving", null, locale).toString() + ": " + metadataObj.getPath() + "."
                     }
                     FileUtils.writeToThreadFileAndLogMessage(threadText, threadFile)
                 }
@@ -2532,25 +2532,25 @@ class SettingsController {
                                             Level.WARNING,
                                             "Could not process thumbnails for "+file.path+"."
                                         )
-                                        threadText = "Could not process thumbnails for "+file.path+"."
+                                        threadText = messageSource?.getMessage("main.pages.scan.error.tn", arrayOf(file.path), locale).toString()
                                     }
                                 } else {
-                                    threadText = file.path + " ENTRY EXISTS"
+                                    threadText = messageSource?.getMessage("main.pages.scan.error.exists", arrayOf(file.path), locale).toString()
                                     logger.log(Level.INFO, "Entry exists: " + file.name)
                                 }
                             }
                         } else {
-                            threadText = file.path + " NOT SUPPORTED"
+                            threadText = messageSource?.getMessage("main.pages.scan.error.notsupported", arrayOf(file.path), locale).toString()
                             logger.log(Level.WARNING, "File not supported: " + threadFile.name)
                         }
 
                         FileUtils.writeToThreadFileAndLogMessage(threadText, threadFile)
                     } else {
                         if (!FileUtils.allowableMediaFiles().contains(mediaExtension)) {
-                            threadText = file.path + " media extension invalid"
+                            threadText = messageSource?.getMessage("main.pages.scan.error.extension", arrayOf(file.path), locale).toString()
                             logger.log(Level.INFO, "Extension invalid: " + file.name)
                         } else {
-                            threadText = file.path + " already scanned"
+                            threadText = messageSource?.getMessage("main.pages.scan.error.alreadyscanned", arrayOf(file.path), locale).toString()
                             logger.log(Level.INFO, "Entry exists: " + file.name)
                         }
                         FileUtils.writeToThreadFileAndLogMessage(threadText, threadFile)
