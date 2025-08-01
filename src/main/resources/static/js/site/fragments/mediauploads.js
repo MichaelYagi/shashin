@@ -92,24 +92,15 @@ function initializeUploads(activePage) {
     $("header,#container,ul:not(#offcanvasList),ul#browserGroup,#topLeftToastContainer,#topCenterToastContainer,#topRightToastContainer,#midLeftToastContainer,#midCenterToastContainer,#midRightToastContainer,#bottomLeftToastContainer,#bottomCenterToastContainer,#bottomRightToastContainer").on("drop", function (e) {
         e.preventDefault();
 
+        // Spinner
+        $("#mediaScanSpinner").css("display", "block");
+        $("#profileImage").css("opacity", 0.5);
+        $("#profileImagePlaceholder").css("opacity", 0.5);
+
         const isModalShown = ($('.modal').hasClass('in') || $('.modal').hasClass('show'));
         const isOffcanvasShown = ($('.offcanvas').hasClass('in') || $('.offcanvas').hasClass('show'));
 
         if (isOffcanvasShown === false && isModalShown === false) {
-            let backgroundColor = "white";
-            if (shashin.darkMode === true) {
-                backgroundColor = "#222222";
-            }
-            $("header,#container,ul#browserGroup").css({"background-color": backgroundColor, "opacity": "1"});
-
-            let offcanvasBackgroundColor = "white";
-            if (shashin.darkMode === true) {
-                offcanvasBackgroundColor = "#2F2F2F";
-            }
-            $("ul#offcanvasList").css({"background-color": offcanvasBackgroundColor, "opacity": "1"});
-
-            shashin.closeToastMessages({tag: "uploadMedia"});
-
             const dt = e.originalEvent.dataTransfer;
             if (dt.types && (dt.types.indexOf ? dt.types.indexOf('Files') !== -1 : dt.types.includes('Files'))) {
                 if (activePage === "album") {
@@ -118,6 +109,8 @@ function initializeUploads(activePage) {
                     uploadData(dt, "uploadForm");
                 }
             }
+        } else {
+            revertUI();
         }
     });
 
@@ -142,6 +135,8 @@ function initializeUploads(activePage) {
                 response => response.json()
             ).then(
                 success => {
+                    revertUI();
+
                     const status = success.hasOwnProperty("status") === true ? success.status : "fail";
                     if (status === "success") {
                         shashin.showToastMessage(shashin.getTranslatedValue("main.toast.media.upload.uploaded"), success.msg + ":<br>" + filelist + "<br><a href='javascript:window.location.href=window.location.href'>" + shashin.getTranslatedValue("main.toast.media.upload.refresh") + "</a>", {
@@ -165,6 +160,8 @@ function initializeUploads(activePage) {
                 }
             ).catch(
                 error => {
+                    revertUI();
+
                     shashin.showToastMessage(shashin.getTranslatedValue("main.message.pta"), error, {
                         icon: "bi-exclamation-triangle",
                         placement: shashin.toast.placement.top.center,
@@ -175,6 +172,29 @@ function initializeUploads(activePage) {
                     });
                 }
             );
+        } else {
+            revertUI();
         }
+    }
+
+    function revertUI() {
+        let backgroundColor = "white";
+        if (shashin.darkMode === true) {
+            backgroundColor = "#222222";
+        }
+        $("header,#container,ul#browserGroup").css({"background-color": backgroundColor, "opacity": "1"});
+
+        let offcanvasBackgroundColor = "white";
+        if (shashin.darkMode === true) {
+            offcanvasBackgroundColor = "#2F2F2F";
+        }
+        $("ul#offcanvasList").css({"background-color": offcanvasBackgroundColor, "opacity": "1"});
+
+        shashin.closeToastMessages({tag: "uploadMedia"});
+
+        $("#mediaScanSpinner").css("display", "none");
+        $("#progressBarWrapper").invisible();
+        $("#profileImage").css("opacity", 1.0);
+        $("#profileImagePlaceholder").css("opacity", 1.0);
     }
 }
