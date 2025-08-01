@@ -610,7 +610,7 @@ class SettingsController {
         }
 
         if (statusMessage.isBlank() && model.getAttribute("status") == ApiResponse.SUCCESS.status) {
-            statusMessage = messageSource?.getMessage("main.modal.saved", null, locale).toString()
+            statusMessage = messageSource?.getMessage("main.message.settingsaved", null, locale).toString()
         }
 
         if (resetServer) {
