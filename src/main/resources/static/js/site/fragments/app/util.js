@@ -168,7 +168,7 @@
 
     shashin.onFail = function(xhr, textStatus, ajaxParams, description, failFunction) {
         $("#spinner").hide();
-        shashin.showToastMessage("AJAX error", "AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".", {tag:"ajaxError",icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
+        shashin.showToastMessage(shashin.getTranslatedValue("main.toast.error.ajax"), "AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".", {tag:"ajaxError",icon:"bi-exclamation-triangle", iconColor:"#FF0000", borderColor:"danger"});
         shashin.printMessageToConsole("AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".", {
             consoleType: shashin.consoleTypes.error,
             tag:"http"
