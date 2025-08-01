@@ -188,7 +188,7 @@ class CommentsController {
 
                 val comments = commentRepository.findCommentsByAlbumId(albumId)
                 resp["commentCount"] = comments.count()
-                resp["msg"] = "Comment saved!"
+                resp["msg"] = messageSource?.getMessage("main.comments.saved", null, locale)
                 resp["status"] = ApiResponse.SUCCESS.status
                 resp["commentId"] = savedCommentObj.getId().toString()
                 resp["userProfile"] = if (currentUserObj.getProfile()==null) "" else currentUserObj.getProfile().toString()
@@ -200,7 +200,7 @@ class CommentsController {
         }
 
         resp["commentCount"] = 0
-        resp["msg"] = "Could not save to comment"
+        resp["msg"] = messageSource?.getMessage("main.comments.notsaved", null, locale)
         resp["status"] = ApiResponse.FAIL.status
         resp["commentId"] = 0
         resp["userProfile"] = ""

@@ -343,9 +343,9 @@ class AlbumsController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/slideshowalbums"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
-    fun postAlbums(model: Model,@RequestBody requestBody: JsonNode): String {
+    fun postAlbums(model: Model,@RequestBody requestBody: JsonNode, locale: Locale): String {
         val response = mutableMapOf<String, Any?>()
-        response["msg"] = "Fail!"
+        response["msg"] = messageSource?.getMessage("main.fail", null, locale)
         response["status"] = ApiResponse.FAIL.status
 
         val currentUserObj = model.getAttribute("currentUser") as User?
@@ -367,7 +367,7 @@ class AlbumsController: BaseController() {
             }
             slideshowAlbumRepository.save(slideshowAlbum)
 
-            response["msg"] = "Success!"
+            response["msg"] = messageSource?.getMessage("main.success", null, locale)
             response["status"] = ApiResponse.SUCCESS.status
         }
 
@@ -550,7 +550,7 @@ class AlbumsController: BaseController() {
 
         response["totalImageCount"] = totalImageCount
         response["showControls"] = showControls
-        response["msg"] = "Success!"
+        response["msg"] = messageSource?.getMessage("main.success", null, locale)
         response["status"] = ApiResponse.SUCCESS.status
         response["activePage"] = module
         response["activeSidebar"] = module
@@ -614,13 +614,13 @@ class AlbumsController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/sharedalbums","/sharedalbums"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getSharedAlbumsApi(model: Model): String {
-        return mapper.writeValueAsString(buildSharedAlbumsList(model))
+    fun getSharedAlbumsApi(model: Model, locale: Locale): String {
+        return mapper.writeValueAsString(buildSharedAlbumsList(model, locale))
     }
-    private fun buildSharedAlbumsList(model: Model): MutableMap<String, Any?> {
+    private fun buildSharedAlbumsList(model: Model, locale: Locale = Locale("en")): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
         response["status"] = ""
-        response["msg"] = "No results"
+        response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
 
         val sharedAlbumsList = ArrayList<HashMap<String, Any>>()
         val currentUserObj = model.getAttribute("currentUser") as User?
@@ -632,8 +632,8 @@ class AlbumsController: BaseController() {
                 response["userCount"] = userCount
 
                 val sharedAlbums = userRepository.findUserBySharedAlbum(currentUserObj.getId())
-                response["status"] = "Success"
-                response["msg"] = "Results"
+                response["status"] = ApiResponse.SUCCESS.status
+                response["msg"] = messageSource?.getMessage("main.results", null, locale)
 
                 for (sharedAlbum in sharedAlbums) {
                     val sharedAlbumsMap = HashMap<String, Any>()
@@ -695,13 +695,13 @@ class AlbumsController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/albumcomments/{albumId}","/albumcomments/{albumId}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getAlbumCommentsApi(@PathVariable albumId: Int): String {
-        return mapper.writeValueAsString(buildAlbumComments(albumId))
+    fun getAlbumCommentsApi(@PathVariable albumId: Int, locale: Locale): String {
+        return mapper.writeValueAsString(buildAlbumComments(albumId, locale))
     }
-    private fun buildAlbumComments(albumId: Int): MutableMap<String, Any?> {
+    private fun buildAlbumComments(albumId: Int, locale: Locale = Locale("en")): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
         response["status"] = ApiResponse.FAIL.status
-        response["msg"] = "No results"
+        response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
         val albumCommentsList = ArrayList<HashMap<String, Any>>()
 
         // Get comments for this album
@@ -809,7 +809,7 @@ class AlbumsController: BaseController() {
                         albumPhotoCommentRepository.deleteByAlbumId(albumIdRequest)
                     }
 
-                    resp["msg"] = "Success!"
+                    resp["msg"] = messageSource?.getMessage("main.success", null, locale)
                     resp["status"] = ApiResponse.SUCCESS.status
                     return mapper.writeValueAsString(resp)
                 }
@@ -818,7 +818,7 @@ class AlbumsController: BaseController() {
             }
         }
 
-        resp["msg"] = "Could not save"
+        resp["msg"] = messageSource?.getMessage("main.modal.saved.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
@@ -827,7 +827,7 @@ class AlbumsController: BaseController() {
     @RequestMapping(value = ["/album/media/upload/batch/{albumId}","/api/v1/album/media/upload/batch/{albumId}"], method = [RequestMethod.POST], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = ["application/json"])
     @ResponseBody
     fun postUploadToAlbum(model: Model, session: HttpSession, @PathVariable albumId: Int, @RequestParam("files[]") media: List<MultipartFile>, locale: Locale): String {
-        resp["msg"] = "Could not save"
+        resp["msg"] = messageSource?.getMessage("main.modal.saved.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
 
         val hasMediaUploadDirectory = model.getAttribute("hasMediaUploadDirectory") as Boolean?
@@ -846,13 +846,13 @@ class AlbumsController: BaseController() {
             }
 
             if (!notUploadedFiles.isEmpty() && !uploadedFiles.isEmpty()) {
-                resp["msg"] = "Some items not saved to album - ${notUploadedFiles.joinToString(", ")}. Check file formats."
+                resp["msg"] = messageSource?.getMessage("main.pages.albums.fail.save", arrayOf(notUploadedFiles.joinToString(", ")), locale)
             } else if (!notUploadedFiles.isEmpty() && uploadedFiles.isEmpty()) {
-                resp["msg"] = "Items not saved to album. Check file formats."
+                resp["msg"] = messageSource?.getMessage("main.pages.albums.fail.save.format", null, locale)
             } else if (!uploadedFiles.isEmpty()) {
-                resp["msg"] = "Saved to album. Processing files."
+                resp["msg"] = messageSource?.getMessage("main.pages.albums.success.save.format", null, locale)
             } else {
-                resp["msg"] = "Saved to album. Processing files."
+                resp["msg"] = messageSource?.getMessage("main.pages.albums.success.save.format", null, locale)
             }
             resp["status"] = ApiResponse.SUCCESS.status
         }
@@ -920,12 +920,12 @@ class AlbumsController: BaseController() {
                 return mapper.writeValueAsString(resp)
             }
 
-            resp["msg"] = "Saved!"
+            resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
             resp["status"] = ApiResponse.SUCCESS.status
             return mapper.writeValueAsString(resp)
         }
 
-        resp["msg"] = "Could not save"
+        resp["msg"] = messageSource?.getMessage("main.modal.saved.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
@@ -934,7 +934,7 @@ class AlbumsController: BaseController() {
     @RequestMapping(value = ["/album/update"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
-    fun updateAlbum(@RequestBody requestBody: JsonNode): String? {
+    fun updateAlbum(@RequestBody requestBody: JsonNode, locale: Locale): String? {
         val albumOptionsMapper = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (albumOptionsMapper.containsKey("setCoverAlbum") &&
             albumOptionsMapper.containsKey("metadataId") &&
@@ -958,12 +958,12 @@ class AlbumsController: BaseController() {
                 )
             }
 
-            resp["msg"] = "Saved!"
+            resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
             resp["status"] = ApiResponse.SUCCESS.status
             return mapper.writeValueAsString(resp)
         }
 
-        resp["msg"] = "Could not save"
+        resp["msg"] = messageSource?.getMessage("main.modal.saved.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
@@ -971,9 +971,9 @@ class AlbumsController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/share/album/{albumId}/create","/api/v1/share/album/{albumId}/create"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    fun createShareLink(@PathVariable albumId: Int): String? {
+    fun createShareLink(@PathVariable albumId: Int, locale: Locale): String? {
         resp["relativeShareLink"] = ""
-        resp["msg"] = "Could not generate link"
+        resp["msg"] = messageSource?.getMessage("main.toast.account.regenerateapi.fail.title", null, locale)
         resp["status"] = ApiResponse.FAIL.status
 
         val photoObj = albumRepository.findById(albumId)
@@ -990,7 +990,7 @@ class AlbumsController: BaseController() {
                 .map { charPool[random.nextInt(charPool.size)] }
                 .joinToString("")
 
-            resp["msg"] = "generated link"
+            resp["msg"] = messageSource?.getMessage("main.success", null, locale)
             resp["status"] = ApiResponse.SUCCESS.status
         }
 
@@ -1047,10 +1047,10 @@ class AlbumsController: BaseController() {
                 val notificationObjList = mutableListOf<Notification>()
                 val albumObj = albumRepository.findById(albumIdRequest)
                 if (albumObj.isPresent && albumObj.get().getId() == albumIdRequest) {
-                    resp["msg"] = "Share link generated"
+                    resp["msg"] = messageSource?.getMessage("main.pages.albums.share.msg.generated", null, locale)
                     if (relativeShareUrl != null && relativeShareUrl.isEmpty()) {
                         relativeShareUrl = null
-                        resp["msg"] = "Share link cleared"
+                        resp["msg"] = messageSource?.getMessage("main.pages.albums.share.msg.cleared", null, locale)
                     }
                     albumObj.get().setShareUrl(relativeShareUrl)
                     albumRepository.save(albumObj.get())
@@ -1105,7 +1105,7 @@ class AlbumsController: BaseController() {
         }
 
         resp["relativeShareLink"] = ""
-        resp["msg"] = "Could not generate link"
+        resp["msg"] = messageSource?.getMessage("main.toast.albums.share.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
@@ -1190,7 +1190,7 @@ class AlbumsController: BaseController() {
             for ((k, v) in response) {
                 model[k] = v!!
             }
-            model["message"] = "Resource not found."
+            model["message"] = messageSource?.getMessage("main.noresults", null, locale)
         }
 
         return module
@@ -1338,7 +1338,7 @@ class AlbumsController: BaseController() {
         response["shareLink"] = ""
         response["page"] = page
         response["size"] = size
-        response["msg"] = "No results"
+        response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
         response["status"] = ApiResponse.FAIL.status
         val currentUserObj = model.getAttribute("currentUser") as User?
         response["darkMode"] = false
@@ -1372,7 +1372,7 @@ class AlbumsController: BaseController() {
                     response["albumMetadataList"] = albumMetadataList
                     response["albumMetadataSize"] = albumMetadataList.size
                     response["shareLink"] = shareLink
-                    response["msg"] = "Results"
+                    response["msg"] = messageSource?.getMessage("main.results", null, locale)
                     response["status"] = ApiResponse.SUCCESS.status
                 }
             }
@@ -1384,9 +1384,9 @@ class AlbumsController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/album/mediatype/{mediaTypeFilter}/date/{date}/{albumId}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getAlbumMetadataListFromDate(@PathVariable mediaTypeFilter: String, @PathVariable date: String, @PathVariable albumId: Int): String? {
+    fun getAlbumMetadataListFromDate(@PathVariable mediaTypeFilter: String, @PathVariable date: String, @PathVariable albumId: Int, locale: Locale): String? {
         val response = mutableMapOf<String, Any?>()
-        response["msg"] = "No Results"
+        response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
         response["status"] = ApiResponse.FAIL.status
         response["metadataList"] = mutableListOf<Metadata>()
         val dateArray = date.split("-")
@@ -1417,9 +1417,9 @@ class AlbumsController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/album/metadata/list/{albumId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getAlbumMetadataList(model: Model, @PathVariable albumId: Int,@PathVariable page: Int): String? {
+    fun getAlbumMetadataList(model: Model, @PathVariable albumId: Int,@PathVariable page: Int, locale: Locale): String? {
         val response = mutableMapOf<String, Any?>()
-        response["msg"] = "No Results"
+        response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
         response["status"] = ApiResponse.FAIL.status
         response["albumMetadataList"] = ArrayList<Metadata>()
         val size: Int = model.getAttribute("queryLimit") as Int
@@ -1437,7 +1437,7 @@ class AlbumsController: BaseController() {
 
             if (albumMetadataList.isNotEmpty()) {
                 response["albumMetadataList"] = albumMetadataList
-                response["msg"] = "Results"
+                response["msg"] = messageSource?.getMessage("main.results", null, locale)
                 response["status"] = ApiResponse.SUCCESS.status
             }
         }
@@ -1546,12 +1546,12 @@ class AlbumsController: BaseController() {
                 userAlbumRepository.deleteAll(deleteUserAlbumList)
             }
 
-            resp["msg"] = "Shared!"
+            resp["msg"] = messageSource?.getMessage("main.pages.albums.share.msg.shared", null, locale)
             resp["status"] = ApiResponse.SUCCESS.status
             return mapper.writeValueAsString(resp)
         }
 
-        resp["msg"] = "Could not save"
+        resp["msg"] = messageSource?.getMessage("main.modal.saved.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
@@ -1731,7 +1731,7 @@ class AlbumsController: BaseController() {
         response["formattedDateMap"] = mutableMapOf<String, String>()
         response["userMap"] = mutableMapOf<String, Any>()
         response["favorites"] = mutableMapOf<String, String>()
-        response["msg"] = "No results"
+        response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
         response["status"] = "noop"
         response["keywordMap"] = mutableMapOf<String, String>()
         response["status"] = "noop"
@@ -1879,7 +1879,7 @@ class AlbumsController: BaseController() {
                         userMap["showControls"] = showControls
                         response["userMap"] = userMap
                         response["albumMetadataList"] = albumMetadataList
-                        response["msg"] = "Results retrieved"
+                        response["msg"] = messageSource?.getMessage("main.results", null, locale)
                         response["status"] = ApiResponse.SUCCESS.status
                         response["message"] = ""
                     }

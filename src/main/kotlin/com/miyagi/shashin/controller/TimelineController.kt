@@ -119,18 +119,18 @@ class TimelineController: BaseController() {
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/timeline", "/timeline/{mediaType}"], method = [RequestMethod.GET])
-    fun getTimelineMediaTypeByDate(model: Model,@PathVariable(required = false) mediaType: String?): String {
-        return buildTimelineModel(model,mediaType)
+    fun getTimelineMediaTypeByDate(model: Model,@PathVariable(required = false) mediaType: String?,locale: Locale): String {
+        return buildTimelineModel(model,mediaType,locale)
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/metadata/range/{direction}/{anchorId}/{selectId}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) direction: String?,@PathVariable(required = true) anchorId: String?, @PathVariable(required = true) selectId: String?): String {
+    fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) direction: String?,@PathVariable(required = true) anchorId: String?, @PathVariable(required = true) selectId: String?, locale: Locale): String {
         val retMetadataIdArray = mutableListOf<MutableList<String>>()
         val response = mutableMapOf<String, Any?>()
 
-        response["msg"] = "Could not get results"
+        response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
         response["status"] = ApiResponse.FAIL.status
         response["metadataIdArray"] = mutableListOf<MutableList<String>>()
 
@@ -189,7 +189,7 @@ class TimelineController: BaseController() {
                     }
                 }
 
-                response["msg"] = "Success"
+                response["msg"] = messageSource?.getMessage("main.success", null, locale)
                 response["status"] = ApiResponse.SUCCESS.status
                 response["metadataIdArray"] = retMetadataIdArray
             }
@@ -198,7 +198,7 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(response)
     }
 
-    private fun buildTimelineModel(model: Model,mediaTypeFilter: String?): String {
+    private fun buildTimelineModel(model: Model,mediaTypeFilter: String?, locale: Locale): String {
         val module = "timeline"
 
 //        val validMediaTypes = arrayOf("all","video")
@@ -224,10 +224,10 @@ class TimelineController: BaseController() {
         }
 
         model["initialLongDate"] = TextUtils.formatToLongDate(date, model.getAttribute("locale").toString()).toString()
-        val dates = getMetadataDates(mediaType)
+        val dates = getMetadataDates(mediaType, locale)
         model["metadataDates"] = dates["metadataDates"]!!
 
-        val timelineData = buildTimelineDataByDate(model,mediaType,date,false)
+        val timelineData = buildTimelineDataByDate(model,mediaType,date,false,locale)
 
         for ((k, v) in timelineData) {
             model[k] = v!!
@@ -306,9 +306,9 @@ class TimelineController: BaseController() {
     )
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/timeline/mediatype/{mediaType}"], method = [RequestMethod.GET])
-    fun getTimelineMediaType(model: Model,@PathVariable mediaType: String): String {
+    fun getTimelineMediaType(model: Model,@PathVariable mediaType: String, locale: Locale): String {
         val module = "timeline"
-        val response = buildTimelineData(model,mediaType,0)
+        val response = buildTimelineData(model,mediaType,0,model.getAttribute("queryLimit").toString().toInt(),locale)
         for ((k, v) in response) {
             model[k] = v!!
         }
@@ -322,17 +322,17 @@ class TimelineController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/timeline/mediatype/{mediaType}/{page}","/api/v1/timeline/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getPagedTimeline(model: Model, @PathVariable page: Int,@PathVariable mediaType: String): String {
-        return mapper.writeValueAsString(buildTimelineData(model,mediaType,page))
+    fun getPagedTimeline(model: Model, @PathVariable page: Int,@PathVariable mediaType: String,locale: Locale): String {
+        return mapper.writeValueAsString(buildTimelineData(model,mediaType,page,model.getAttribute("queryLimit").toString().toInt(),locale))
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/timeline/yearmonthcounts/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getMetadataYearMonthCounts(model: Model, @PathVariable mediaType: String): String {
+    fun getMetadataYearMonthCounts(model: Model, @PathVariable mediaType: String, locale: Locale): String {
         val response = mutableMapOf<String, Any?>()
 
-        response["msg"] = "Results"
+        response["msg"] = messageSource?.getMessage("main.results", null, locale)
         response["status"] = ApiResponse.SUCCESS.status
 
         val metadataDateHash = mutableMapOf<String, Int>()
@@ -422,29 +422,29 @@ class TimelineController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/api/v1/timeline","/api/v1/timeline/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getTimelineJson(model: Model, @PathVariable(required = false) page: Int?): String {
+    fun getTimelineJson(model: Model, @PathVariable(required = false) page: Int?, locale: Locale): String {
         var pageValue = 0
         if (page != null) {
             pageValue = page
         }
-        return mapper.writeValueAsString(buildTimelineData(model,"all",pageValue))
+        return mapper.writeValueAsString(buildTimelineData(model,"all",pageValue, model.getAttribute("queryLimit").toString().toInt(), locale))
     }
 
-    private fun buildTimelineData(model: Model, mediaTypeFilter: String, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
+    private fun buildTimelineData(model: Model, mediaTypeFilter: String, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt(), locale: Locale = Locale("en")): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         var mediaType = "photo"
         if (mediaTypeFilter == "video") {
             mediaType = mediaTypeFilter
         }
-        response["message"] = "There are no "+mediaType+"s."
+        response["message"] = messageSource?.getMessage("main.noresults", null, locale)
         response["metadataList"] = mutableListOf<Metadata>()
         response["favorites"] = mutableMapOf<String, Any>()
         response["mediaTypeFilter"] = mediaTypeFilter
         response["page"] = page
         response["size"] = size
 
-        response["msg"] = "Could not get results"
+        response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
         response["status"] = ApiResponse.FAIL.status
 
         val favoritesMap = HashMap<String, HashMap<String, Any>>()
@@ -501,7 +501,7 @@ class TimelineController: BaseController() {
 
             response["metadataList"] = metadataList
             response["favorites"] = favoritesMap
-            response["msg"] = "Results"
+            response["msg"] = messageSource?.getMessage("main.results", null, locale)
             response["status"] = ApiResponse.SUCCESS.status
         }
 
@@ -512,8 +512,8 @@ class TimelineController: BaseController() {
     @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataAndAttributesByDate"], key = "{#date, #mediaType}")
-    fun getTimelineByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): ResponseEntity<String> {
-        val json = mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,false))
+    fun getTimelineByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String,locale: Locale): ResponseEntity<String> {
+        val json = mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,false,locale))
         return ResponseEntity
             .ok()
             .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
@@ -570,16 +570,16 @@ class TimelineController: BaseController() {
     @RequestMapping(value = ["/api/v1/timeline/mediatype/{mediaType}/date/{date}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataAndAttributesByDate"], key = "{#date, #mediaType}")
-    fun getTimelineByDateApi(model: Model, @PathVariable date: String,@PathVariable mediaType: String): String {
-        return mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,false))
+    fun getTimelineByDateApi(model: Model, @PathVariable date: String,@PathVariable mediaType: String,locale: Locale): String {
+        return mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,false,locale))
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}/metadata"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataOnlyByDate"], key = "{#date, #mediaType}")
-    fun getTimelineMetadataByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): ResponseEntity<String> {
-        val jsonMap = buildTimelineDataByDate(model,mediaType,date,true)
+    fun getTimelineMetadataByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String,locale: Locale): ResponseEntity<String> {
+        val jsonMap = buildTimelineDataByDate(model,mediaType,date,true,locale)
         val json = mapper.writeValueAsString(jsonMap)
         return ResponseEntity
             .ok()
@@ -647,8 +647,8 @@ class TimelineController: BaseController() {
     @RequestMapping(value = ["/api/v1/timeline/mediatype/{mediaType}/date/{date}/metadata"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataOnlyByDate"], key = "{#date, #mediaType}")
-    fun getTimelineMetadataByDateApi(model: Model, @PathVariable date: String,@PathVariable mediaType: String): String {
-        val jsonMap = buildTimelineDataByDate(model,mediaType,date,true)
+    fun getTimelineMetadataByDateApi(model: Model, @PathVariable date: String,@PathVariable mediaType: String,locale: Locale): String {
+        val jsonMap = buildTimelineDataByDate(model,mediaType,date,true,locale)
         return mapper.writeValueAsString(jsonMap)
     }
 
@@ -734,15 +734,15 @@ class TimelineController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/timeline/dates/{mediaType}","/api/v1/timeline/dates/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getTimelineDates(model: Model, @PathVariable mediaType: String): String {
-        return mapper.writeValueAsString(getMetadataDates(mediaType))
+    fun getTimelineDates(model: Model, @PathVariable mediaType: String, locale: Locale): String {
+        return mapper.writeValueAsString(getMetadataDates(mediaType, locale))
     }
 
-    private fun getMetadataDates(mediaType: String): MutableMap<String, Any?> {
+    private fun getMetadataDates(mediaType: String, locale: Locale): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         response["metadataDates"] = mutableListOf<MetadataDate>()
-        response["msg"] = "Could not get results"
+        response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
         response["status"] = ApiResponse.FAIL.status
 
         val metadataDates = if (mediaType == "all") {
@@ -755,7 +755,7 @@ class TimelineController: BaseController() {
             metadataRepository.findAllYearMonthDayByMediaType(mediaType)
         }
         if (metadataDates != null) {
-            response["msg"] = "Success"
+            response["msg"] = messageSource?.getMessage("main.success", null, locale)
             response["status"] = ApiResponse.SUCCESS.status
             response["metadataDates"] = metadataDates
         }
@@ -763,20 +763,20 @@ class TimelineController: BaseController() {
         return response
     }
 
-    private fun buildTimelineDataByDate(model: Model,mediaTypeFilter: String,date: String?,metadataOnly: Boolean): MutableMap<String, Any?> {
+    private fun buildTimelineDataByDate(model: Model,mediaTypeFilter: String,date: String?,metadataOnly: Boolean,locale: Locale): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         var mediaType = "photo"
         if (mediaTypeFilter == "video") {
             mediaType = mediaTypeFilter
         }
-        response["message"] = "There are no "+mediaType+"s."
+        response["message"] = messageSource?.getMessage("main.noresults", null, locale)
         response["metadataList"] = mutableListOf<Metadata>()
         response["favorites"] = mutableMapOf<String, Any>()
         response["mediaTypeFilter"] = mediaTypeFilter
         response["placeNameHeaders"] = mutableListOf<String>()
 
-        response["msg"] = "Could not get results"
+        response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
         response["status"] = ApiResponse.FAIL.status
 
         if (!date.isNullOrBlank()) {
@@ -866,7 +866,7 @@ class TimelineController: BaseController() {
                 }
 
                 response["placeNameHeaders"] = sortPlaceNames(metadataList)
-                response["msg"] = "Results"
+                response["msg"] = messageSource?.getMessage("main.results", null, locale)
                 response["status"] = ApiResponse.SUCCESS.status
             }
         }
@@ -877,12 +877,12 @@ class TimelineController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/timeline/all/dates","/api/v1/timeline/all/dates"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getAllTimeline(model: Model): String {
+    fun getAllTimeline(model: Model,locale: Locale): String {
         val response = mutableMapOf<String, Any?>()
         val favoritesMap = HashMap<String, HashMap<String, Any>>()
         val currentUserObj = model.getAttribute("currentUser") as User?
         response["allMetadata"] = mutableListOf<Metadata>()
-        response["msg"] = "Not logged in"
+        response["msg"] = messageSource?.getMessage("main.not.loggedin", null, locale)
         response["status"] = ApiResponse.FAIL.status
         response["favorites"] = favoritesMap
         response["placeNameHeaders"] = mutableListOf<String>()
@@ -955,7 +955,7 @@ class TimelineController: BaseController() {
     @RequestMapping(value = ["/rescan/metadata", "/api/v1/rescan/metadata"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
-    fun rescanMetadata(@RequestBody requestBody: JsonNode): String? {
+    fun rescanMetadata(@RequestBody requestBody: JsonNode, locale: Locale): String? {
 //        println(requestBody)
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         val retMap = mutableMapOf<String,Metadata>()
@@ -1164,12 +1164,12 @@ class TimelineController: BaseController() {
                 createVideoGif(metadataIdArray, metadataRepository, true)
 
                 return if (errorDetected) {
-                    resp["msg"] = "Some data not saved"
+                    resp["msg"] = messageSource?.getMessage("main.modal.saved.fail", null, locale)
                     resp["status"] = ApiResponse.WARN.status
                     resp["metadataMap"] = retMap
                     mapper.writeValueAsString(resp)
                 } else {
-                    resp["msg"] = "Saved!"
+                    resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
                     resp["status"] = ApiResponse.SUCCESS.status
                     resp["metadataMap"] = retMap
                     mapper.writeValueAsString(resp)
@@ -1178,7 +1178,7 @@ class TimelineController: BaseController() {
         }
 
         resp["metadataMap"] = retMap
-        resp["msg"] = "Could not save"
+        resp["msg"] = messageSource?.getMessage("main.modal.saved.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
@@ -1220,12 +1220,12 @@ class TimelineController: BaseController() {
                 // Update record
                 metadataRepository.save(metadataObj.get())
 
-                resp["msg"] = "Saved!"
+                resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
                 resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
             }
         }
-        resp["msg"] = "Could not save"
+        resp["msg"] = messageSource?.getMessage("main.modal.saved.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
@@ -1233,13 +1233,13 @@ class TimelineController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/metadata/attributes"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    fun getMetadataAttributeData(model: Model): String? {
+    fun getMetadataAttributeData(model: Model,locale: Locale): String? {
         val attrResponse = getAllAttributeData(model)
         for ((k, v) in attrResponse) {
             resp[k] = v
         }
 
-        resp["msg"] = "Success"
+        resp["msg"] = messageSource?.getMessage("main.success", null, locale)
         resp["status"] = ApiResponse.SUCCESS.status
         return mapper.writeValueAsString(resp)
     }
@@ -1402,7 +1402,7 @@ class TimelineController: BaseController() {
             metadataMap.containsKey("duration") &&
             metadataMap["id"].toString() == metadataId
         ) {
-            resp["msg"] = "Saved!"
+            resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
             resp["status"] = ApiResponse.SUCCESS.status
             resp["keywordsIdentified"] = ""
 
@@ -1726,7 +1726,7 @@ class TimelineController: BaseController() {
             }
         }
         logger.log(Level.WARNING, "Updating metadata failed. Could not save.")
-        resp["msg"] = "Could not save"
+        resp["msg"] = messageSource?.getMessage("main.modal.saved.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
@@ -1758,8 +1758,8 @@ class TimelineController: BaseController() {
     @RequestMapping(value = ["/metadata/update/batch/coordinates","/api/v1/update/metadata/batch/coordinates"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
     @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     @ResponseBody
-    fun updateBatchLocationMetadata(model: Model, @RequestBody requestBody: JsonNode, response: HttpServletResponse): String? {
-        resp["msg"] = "Failed!"
+    fun updateBatchLocationMetadata(model: Model, @RequestBody requestBody: JsonNode, response: HttpServletResponse, locale: Locale): String? {
+        resp["msg"] = messageSource?.getMessage("main.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
 
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -1773,11 +1773,11 @@ class TimelineController: BaseController() {
             if (idArray != null && coordArray.size == 2 && idArray.isNotEmpty()) {
                 setCoordinatesCR(idArray, coordArray, model.getAttribute("locale").toString())
 
-                resp["msg"] = "Saved!"
+                resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
                 resp["status"] = ApiResponse.SUCCESS.status
             }
 
-            resp["msg"] = "Saved!"
+            resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
             resp["status"] = ApiResponse.SUCCESS.status
         }
 
@@ -1803,11 +1803,11 @@ class TimelineController: BaseController() {
     @RequestMapping(value = ["/metadata/update/coordinates/{metadataId}","/api/v1/update/metadata/coordinates/{metadataId}"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
     @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     @ResponseBody
-    fun updateLocationMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String, response: HttpServletResponse): String? {
+    fun updateLocationMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String, response: HttpServletResponse, locale: Locale): String? {
 //        println(requestBody)
         var metadata = Metadata()
 
-        resp["msg"] = "Failed!"
+        resp["msg"] = messageSource?.getMessage("main.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
         resp["metadata"] = metadata
         resp["shortPlaceName"] = ""
@@ -1825,7 +1825,7 @@ class TimelineController: BaseController() {
                 metadataRepository.save(metadata)
 
                 resp["metadata"] = metadata
-                resp["msg"] = "Saved!"
+                resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
                 resp["status"] = ApiResponse.SUCCESS.status
             }
         }
@@ -2013,13 +2013,13 @@ class TimelineController: BaseController() {
                 // Update record
                 metadataRepository.saveAll(metadataList)
 
-                resp["msg"] = "Saved!"
+                resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
                 resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
             }
         }
         logger.log(Level.WARNING, "Removing batch metadata failed. Could not save.")
-        resp["msg"] = "Could not save"
+        resp["msg"] = messageSource?.getMessage("main.modal.saved.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
@@ -2362,7 +2362,7 @@ class TimelineController: BaseController() {
 
                 metricsUtil.end()
 
-                resp["msg"] = "Saved!"
+                resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
                 resp["status"] = ApiResponse.SUCCESS.status
 
                 return mapper.writeValueAsString(resp)
@@ -2371,7 +2371,7 @@ class TimelineController: BaseController() {
             metricsUtil.end()
         }
         logger.log(Level.WARNING, "Updating batch metadata failed. Could not save.")
-        resp["msg"] = "Could not save"
+        resp["msg"] = messageSource?.getMessage("main.modal.saved.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
@@ -2561,7 +2561,7 @@ class TimelineController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/timeline/sync/{metadataId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    fun postSyncData(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String): String? {
+    fun postSyncData(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String, locale: Locale): String? {
         val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         resp["year"] = ""
         resp["month"] = ""
@@ -2592,14 +2592,14 @@ class TimelineController: BaseController() {
                 resp["day"] = day.toString()
                 resp["time"] = time
 
-                resp["msg"] = "Saved"
+                resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
                 resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
             }
         }
 
 
-        resp["msg"] = "Could not save"
+        resp["msg"] = messageSource?.getMessage("main.modal.saved.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
@@ -2945,7 +2945,7 @@ class TimelineController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @RequestMapping(value = ["/api/v1/exif/metadata/{id}","/exif/metadata/{id}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getExifData(model: Model, @PathVariable(required = true) id: String, response: HttpServletResponse): String {
+    fun getExifData(model: Model, @PathVariable(required = true) id: String, response: HttpServletResponse, locale: Locale): String {
         val responseMap = mutableMapOf<String, Any?>()
 
         val metadataRecord = metadataRepository.findById(id)
@@ -2954,7 +2954,7 @@ class TimelineController: BaseController() {
 
             val jsonNode = FileUtils.convertExifToJsonNode(metadata.getFolder()!!, metadata.getFileName()!!, relativeSidecarDir!!)
 
-            responseMap["msg"] = "Could not get EXIF file"
+            responseMap["msg"] = messageSource?.getMessage("main.fail", null, locale)
             responseMap["status"] = ApiResponse.FAIL.status
 
             if (jsonNode != null) {
@@ -3025,7 +3025,7 @@ class TimelineController: BaseController() {
     @RequestMapping(value = ["/metadata/update/videothumbs"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
-    fun updateVideoThumbs(model: Model, @RequestBody requestBody: JsonNode): String? {
+    fun updateVideoThumbs(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String? {
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
         if (metadataMap.containsKey("metadataId") &&
@@ -3052,14 +3052,14 @@ class TimelineController: BaseController() {
                 }
 
                 resp["posterUrl"] = metadata.getThumbnailUrlOriginal()
-                resp["msg"] = "Saved!"
+                resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
                 resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
             }
         }
 
         resp["posterUrl"] = ""
-        resp["msg"] = "Could not save"
+        resp["msg"] = messageSource?.getMessage("main.modal.saved.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }

@@ -265,7 +265,7 @@ class SettingsController {
 
     @Secured("ROLE_SUPER")
     @RequestMapping(value = ["/settings"], method = [RequestMethod.GET])
-    fun getSettings(model: Model, @ModelAttribute("settings") settings: Settings, request: HttpServletRequest): String {
+    fun getSettings(model: Model, @ModelAttribute("settings") settings: Settings, request: HttpServletRequest, locale: Locale): String {
         val mediaDirectories = mediaDirRepository?.findByExclude(false)
         val mediaExcludeDirectories = mediaDirRepository?.findByExclude(true)
 
@@ -308,7 +308,8 @@ class SettingsController {
             }
 
             if (dirDneString.isNotBlank()) {
-                dirDneString = "Could not find directory:  "+dirDneString.dropLast(1)
+                dirDneString =
+                    messageSource?.getMessage("main.pages.settings.ddne", arrayOf(dirDneString.dropLast(1)), locale).toString()
                 model["status"] = "warning"
             }
 
@@ -367,6 +368,7 @@ class SettingsController {
     fun postSettings(
         model: Model, redirectAttributes: RedirectAttributes,
         request: HttpServletRequest,
+        locale: Locale,
         @RequestHeader headers: HttpHeaders,
         @RequestParam("mediaDirList") mediaDirList: String,
         @RequestParam("mediaExcludeDirList") mediaExcludeDirList: String,
@@ -490,7 +492,7 @@ class SettingsController {
         }
 
         if (dirDneString.isNotBlank()) {
-            statusMessage = "Could not find Media directory: "+dirDneString.dropLast(1)
+            statusMessage = messageSource?.getMessage("main.pages.settings.ddne", arrayOf(dirDneString.dropLast(1)), locale).toString()
             model["status"] = "warning"
         }
 
@@ -507,7 +509,7 @@ class SettingsController {
         }
 
         if (uploadDirDneString.isNotBlank()) {
-            statusMessage = "Could not find Upload directory: $uploadDirDneString"
+            statusMessage = messageSource?.getMessage("main.pages.settings.ddne", arrayOf(uploadDirDneString), locale).toString()
             model["status"] = "warning"
         }
 
@@ -608,7 +610,7 @@ class SettingsController {
         }
 
         if (statusMessage.isBlank() && model.getAttribute("status") == ApiResponse.SUCCESS.status) {
-            statusMessage = "Settings saved"
+            statusMessage = messageSource?.getMessage("main.modal.saved", null, locale).toString()
         }
 
         if (resetServer) {
@@ -778,32 +780,32 @@ class SettingsController {
                     }
 
                     if (successDeletion) {
-                        resp["msg"] = "Success!"
+                        resp["msg"] = messageSource?.getMessage("main.success", null, locale)
                     } else {
-                        resp["msg"] = "Records deleted but could not delete sidecar files."
+                        resp["msg"] = messageSource?.getMessage("main.pages.settings.records.delete", null, locale)
                     }
                     resp["status"] = ApiResponse.SUCCESS.status
                     return mapper.writeValueAsString(resp)
                 }
 
-                resp["msg"] = "Success!"
+                resp["msg"] = messageSource?.getMessage("main.success", null, locale)
                 resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
             }
 
-            resp["msg"] = "Something went wrong."
+            resp["msg"] = messageSource?.getMessage("main.fail", null, locale)
             resp["status"] = ApiResponse.FAIL.status
             return mapper.writeValueAsString(resp)
         }
 
-        resp["msg"] = "Something went wrong."
+        resp["msg"] = messageSource?.getMessage("main.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
 
     @Secured("ROLE_SUPER")
     @GetMapping("/settings/logs")
-    fun getLogs(model: Model, request: HttpServletRequest): String {
+    fun getLogs(model: Model, request: HttpServletRequest, locale: Locale): String {
         var lineLimit = 1000
         if (request.getParameter("lines") != null && isNumber(request.getParameter("lines"))) {
             lineLimit = request.getParameter("lines").toString().toInt()
@@ -823,7 +825,7 @@ class SettingsController {
         val module = "logs"
         model["msg"] = ""
         model["status"] = ApiResponse.SUCCESS.status
-        model["message"] = "No log file present"
+        model["message"] = messageSource?.getMessage("main.noresults", null, locale)
         model["logList"] = mutableListOf<String>()
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -1216,7 +1218,7 @@ class SettingsController {
     @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     @PostMapping("/settings/snapshot")
     @Transactional
-    fun postImportSnapshot(model: Model, @RequestParam snapshot: String, @RequestParam importDatabase: Optional<String>, @RequestParam snapshotFile: MultipartFile): String {
+    fun postImportSnapshot(model: Model, @RequestParam snapshot: String, @RequestParam importDatabase: Optional<String>, @RequestParam snapshotFile: MultipartFile, locale: Locale): String {
         val module = "snapshot"
 
 //        model["message"] = "Invalid file"
@@ -1461,18 +1463,18 @@ class SettingsController {
                 }
 
                 if (counter > 0) {
-                    model["toastMessage"] = "Completed import."
+                    model["toastMessage"] = messageSource?.getMessage("main.pages.settings.import.success", null, locale)
                     model["status"] = ApiResponse.SUCCESS.status
                 } else {
-                    model["toastMessage"] = "Not a valid file."
+                    model["toastMessage"] = messageSource?.getMessage("main.pages.settings.import.fail", null, locale)
                     model["status"] = ApiResponse.FAIL.status
                 }
             } else {
-                model["toastMessage"] = "Not a valid file."
+                model["toastMessage"] = messageSource?.getMessage("main.pages.settings.import.fail", null, locale)
                 model["status"] = ApiResponse.FAIL.status
             }
         } else {
-            model["toastMessage"] = "Something went wrong."
+            model["toastMessage"] = messageSource?.getMessage("main.toast.account.profile.fail.body", null, locale)
             model["status"] = ApiResponse.FAIL.status
         }
 
@@ -1648,7 +1650,7 @@ class SettingsController {
                         if (metadata != null) {
                             if (!metadata.getPath().isNullOrBlank()) {
                                 FileUtils.writeToThreadFileAndLogMessage(
-                                    FileUtils.writeToThreadFileAndLogMessage(messageSource?.getMessage("main.pages.scan.change", null, locale).toString(), threadFile).toString() + " - " + metadata.getPath(),
+                                    messageSource?.getMessage("main.pages.scan.change", null, locale).toString() + " - " + metadata.getPath(),
                                     threadFile
                                 )
 

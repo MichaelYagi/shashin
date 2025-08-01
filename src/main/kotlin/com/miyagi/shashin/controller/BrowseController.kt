@@ -74,7 +74,7 @@ class BrowseController: BaseController() {
     @RequestMapping(value = ["/metadata/media/upload/batch","/api/v1/metadata/media/upload/batch"], method = [RequestMethod.POST], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = ["application/json"])
     @ResponseBody
     fun postUploadToTimeline(model: Model, session: HttpSession, @RequestParam("files[]") media: List<MultipartFile>, locale: Locale): String {
-        resp["msg"] = "Could not save"
+        resp["msg"] = messageSource?.getMessage("main.modal.saved.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
 
         val hasMediaUploadDirectory = model.getAttribute("hasMediaUploadDirectory") as Boolean?
@@ -93,16 +93,16 @@ class BrowseController: BaseController() {
             }
 
             if (!notUploadedFiles.isEmpty() && !uploadedFiles.isEmpty()) {
-                resp["msg"] = "Files uploaded: <br>${uploadedFiles.joinToString("<br>")}.<br><br>Some items not uploaded. Check file formats: <br>${notUploadedFiles.joinToString("<br>")}"
+                resp["msg"] = messageSource?.getMessage("main.pages.browse.success.save.format", arrayOf(uploadedFiles.joinToString("<br>"),notUploadedFiles.joinToString("<br>")), locale)
                 resp["status"] = ApiResponse.FAIL.status
             } else if (!notUploadedFiles.isEmpty() && uploadedFiles.isEmpty()) {
-                resp["msg"] = "Items not uploaded. Check file formats: <br>${notUploadedFiles.joinToString("<br>")}"
+                resp["msg"] = messageSource?.getMessage("main.pages.browse.fail.save.format", arrayOf(notUploadedFiles.joinToString("<br>")), locale)
                 resp["status"] = ApiResponse.FAIL.status
             } else if (!uploadedFiles.isEmpty()) {
-                resp["msg"] = "Files uploaded. Processing files"
+                resp["msg"] = messageSource?.getMessage("main.pages.browse.success.save", null, locale)
                 resp["status"] = ApiResponse.SUCCESS.status
             } else {
-                resp["msg"] = "Files uploaded. Processing files"
+                resp["msg"] = messageSource?.getMessage("main.pages.browse.success.save", null, locale)
                 resp["status"] = ApiResponse.SUCCESS.status
             }
         }
@@ -523,11 +523,11 @@ class BrowseController: BaseController() {
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/metadata/list/{module}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getMetadataList(model: Model,@PathVariable module: String,@PathVariable page: Int, @RequestParam folder: Optional<String>): String {
+    fun getMetadataList(model: Model,@PathVariable module: String,@PathVariable page: Int, @RequestParam folder: Optional<String>, locale: Locale): String {
         val response = mutableMapOf<String, Any?>()
         var metadataList: MutableIterable<Metadata>? = null
         response["metadataList"] = mutableListOf<Metadata>()
-        response["msg"] = "Results"
+        response["msg"] = messageSource?.getMessage("main.results", null, locale)
         response["status"] = ApiResponse.SUCCESS.status
         val size: Int = model.getAttribute("queryLimit") as Int
         val pageValue = page*size
@@ -563,9 +563,9 @@ class BrowseController: BaseController() {
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/browse/album/list"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getBrowseAlbumList(model: Model): String? {
+    fun getBrowseAlbumList(model: Model, locale: Locale): String? {
         val response = mutableMapOf<String, Any?>()
-        response["msg"] = "No Results"
+        response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
         response["status"] = ApiResponse.FAIL.status
         response["albumList"] = mutableListOf<Album>()
 
@@ -573,7 +573,7 @@ class BrowseController: BaseController() {
             val albumList = albumRepository.findAllOrderByAlbumName()
             if (albumList != null && albumList.count() > 0) {
                 response["albumList"] = albumList
-                response["msg"] = "Results"
+                response["msg"] = messageSource?.getMessage("main.results", null, locale)
                 response["status"] = ApiResponse.SUCCESS.status
             }
         } catch(_: Exception) {}
@@ -598,7 +598,7 @@ class BrowseController: BaseController() {
         response["size"] = size
         response["totalPages"] = 0
 
-        response["msg"] = "Could not get results"
+        response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
         response["status"] = ApiResponse.FAIL.status
 
         var mediaType = mediaTypeFilter
@@ -837,7 +837,7 @@ class BrowseController: BaseController() {
                 response["favorites"] = favoritesMap
             }
 
-            response["msg"] = "Results"
+            response["msg"] = messageSource?.getMessage("main.results", null, locale)
             response["status"] = ApiResponse.SUCCESS.status
         }
 
@@ -874,9 +874,9 @@ class BrowseController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/browse/mediatype/{mediaTypeFilter}/date/{date}/{view}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getBrowseMetadataListFromDate(@PathVariable mediaTypeFilter: String, @PathVariable date: String, @PathVariable view: String): String? {
+    fun getBrowseMetadataListFromDate(@PathVariable mediaTypeFilter: String, @PathVariable date: String, @PathVariable view: String, locale: Locale): String? {
         val response = mutableMapOf<String, Any?>()
-        response["msg"] = "No Results"
+        response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
         response["status"] = ApiResponse.FAIL.status
         response["metadataList"] = mutableListOf<Metadata>()
         val dateArray = date.split("-")
@@ -978,11 +978,11 @@ class BrowseController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/browse/range/{metadataId}/{view}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) metadataId: String?, @PathVariable(required = true) view: String?): String {
+    fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) metadataId: String?, @PathVariable(required = true) view: String?, locale: Locale): String {
         val retMetadataIdArray = mutableListOf<MutableList<String>>()
         val response = mutableMapOf<String, Any?>()
 
-        response["msg"] = "Could not get results"
+        response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
         response["status"] = ApiResponse.FAIL.status
         response["metadataIdArray"] = mutableListOf<MutableList<String>>()
 
@@ -1023,7 +1023,7 @@ class BrowseController: BaseController() {
                     retMetadataIdArray.add(mutableListOf(metadata.getId(),metadata.getFileName()!!, "/api/v1/thumbnails/centered/"+metadata.getId()))
                 }
 
-                response["msg"] = "Success"
+                response["msg"] = messageSource?.getMessage("main.success", null, locale)
                 response["status"] = ApiResponse.SUCCESS.status
                 response["metadataIdArray"] = retMetadataIdArray
             }
@@ -1428,7 +1428,7 @@ class BrowseController: BaseController() {
         response["size"] = size
         response["totalPages"] = 0
 
-        response["msg"] = "Could not get results"
+        response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
         response["status"] = ApiResponse.FAIL.status
 
         if (model.getAttribute("currentUser") != "") {
@@ -1528,7 +1528,7 @@ class BrowseController: BaseController() {
                 response["favorites"] = favoritesMap
             }
 
-            response["msg"] = "Results"
+            response["msg"] = messageSource?.getMessage("main.results", null, locale)
             response["status"] = ApiResponse.SUCCESS.status
         }
 
@@ -1538,7 +1538,7 @@ class BrowseController: BaseController() {
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/folder/update"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
-    fun postFolderUpdate(model: Model, @RequestBody requestBody: JsonNode): String {
+    fun postFolderUpdate(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String {
 
         val response = mutableMapOf<String, Any?>()
 
@@ -1561,7 +1561,7 @@ class BrowseController: BaseController() {
                 response["msg"] = ""
                 response["status"] = ApiResponse.SUCCESS.status
             } else {
-                response["msg"] = "Single entry not found."
+                response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
             }
         }
 
