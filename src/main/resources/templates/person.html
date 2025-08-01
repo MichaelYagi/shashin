@@ -103,7 +103,7 @@
     <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="propPersonModalLabel"><th:block th:text="#{main.pages.albums.cover.pre}"></th:block>&ldquo;<span id="personModalTitle"></span>&rdquo;<th:block th:text="#{main.pages.albums.cover.post}"></th:block><div id="propPersonModalThumbnail"></div></h5>
+                <h5 class="modal-title" id="propPersonModalLabel"><th:block th:utext="#{main.pages.albums.cover(${'&ldquo;<span id=&quot;personModalTitle&quot;></span>&rdquo;'})}"></th:block><div id="propPersonModalThumbnail"></div></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
                 <form id="savePersonModalForm">
