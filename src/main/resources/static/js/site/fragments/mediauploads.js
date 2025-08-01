@@ -92,10 +92,7 @@ function initializeUploads(activePage) {
     $("header,#container,ul:not(#offcanvasList),ul#browserGroup,#topLeftToastContainer,#topCenterToastContainer,#topRightToastContainer,#midLeftToastContainer,#midCenterToastContainer,#midRightToastContainer,#bottomLeftToastContainer,#bottomCenterToastContainer,#bottomRightToastContainer").on("drop", function (e) {
         e.preventDefault();
 
-        // Spinner
-        $("#mediaScanSpinner").css("display", "block");
-        $("#profileImage").css("opacity", 0.5);
-        $("#profileImagePlaceholder").css("opacity", 0.5);
+        Util.showSpinner(true);
 
         const isModalShown = ($('.modal').hasClass('in') || $('.modal').hasClass('show'));
         const isOffcanvasShown = ($('.offcanvas').hasClass('in') || $('.offcanvas').hasClass('show'));
@@ -192,9 +189,6 @@ function initializeUploads(activePage) {
 
         shashin.closeToastMessages({tag: "uploadMedia"});
 
-        $("#mediaScanSpinner").css("display", "none");
-        $("#progressBarWrapper").invisible();
-        $("#profileImage").css("opacity", 1.0);
-        $("#profileImagePlaceholder").css("opacity", 1.0);
+        Util.showSpinner(false);
     }
 }

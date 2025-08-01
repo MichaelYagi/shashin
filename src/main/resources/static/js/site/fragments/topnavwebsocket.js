@@ -115,18 +115,13 @@ function captureMessages(activePage, notificationAlerts, timezone, locale='en') 
                 if (respMessage === "Scan Stopped" || respMessage === "No directories configured" || respMessage === "Scan Complete" ||
                     respMessage === shashin.getTranslatedValue("main.pages.scan.stopped") || respMessage === shashin.getTranslatedValue("main.pages.scan.ndc") || respMessage === shashin.getTranslatedValue("main.pages.scan.complete")
                 ) {
-                    $("#mediaScanSpinner").css("display", "none");
-                    $("#progressBarWrapper").invisible();
-                    $("#profileImage").css("opacity", 1.0);
-                    $("#profileImagePlaceholder").css("opacity", 1.0);
+                    Util.showSpinner(false);
                     Util.updateProgressBar(0);
                     if (counterMessage === 1) {
                         Util.getNotifications(notificationAlerts, timezone, locale);
                     }
                 } else {
-                    $("#mediaScanSpinner").css("display", "block");
-                    $("#profileImage").css("opacity", 0.5);
-                    $("#profileImagePlaceholder").css("opacity", 0.5);
+                    Util.showSpinner(true);
                     counterMessage = 0;
                 }
                 showMessageSP(respMessage);
