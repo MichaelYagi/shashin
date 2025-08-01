@@ -294,7 +294,7 @@
         if (shashin.downloadInstance !== null) {
             shashin.downloadInstance.abort();
             shashin.downloadInstance = null;
-            shashin.showToastMessage("Download cancelled", "Download cancelled.", {
+            shashin.showToastMessage(shashin.getTranslatedValue("main.toast.cancel.download"), shashin.getTranslatedValue("main.toast.cancel.download"), {
                 icon: "bi-info-circle",
                 iconColor: "#777777"
             });

@@ -61,7 +61,7 @@ function initializeUploads(activePage) {
             }
             $("header,#container").css({"background-color": backgroundColor, "opacity": ".5"});
 
-            shashin.showToastMessage("Drop Media", "Drag and drop media anywhere to upload.", {
+            shashin.showToastMessage(shashin.getTranslatedValue("main.toast.media.upload.title"), shashin.getTranslatedValue("main.toast.media.upload.body"), {
                 placement: shashin.toast.placement.top.center,
                 tag: "uploadMedia",
                 autohide: false
@@ -144,7 +144,7 @@ function initializeUploads(activePage) {
                 success => {
                     const status = success.hasOwnProperty("status") === true ? success.status : "fail";
                     if (status === "success") {
-                        shashin.showToastMessage("Media uploaded", success.msg + ":<br>" + filelist + "<a href='javascript:window.location.href=window.location.href'><br>Refresh</a> page to view.", {
+                        shashin.showToastMessage(shashin.getTranslatedValue("main.toast.media.upload.uploaded"), success.msg + ":<br>" + filelist + "<a href='javascript:window.location.href=window.location.href'><br>Refresh</a> page to view.", {
                             icon: "bi-info-circle",
                             placement: shashin.toast.placement.top.center,
                             tag: "successUpload",
@@ -153,7 +153,7 @@ function initializeUploads(activePage) {
                             borderColor: "success"
                         });
                     } else {
-                        shashin.showToastMessage("Errors detected", success.msg, {
+                        shashin.showToastMessage(shashin.getTranslatedValue("main.toast.media.upload.errors"), success.msg, {
                             icon: "bi-exclamation-triangle",
                             placement: shashin.toast.placement.top.center,
                             tag: "failUpload",
@@ -165,7 +165,7 @@ function initializeUploads(activePage) {
                 }
             ).catch(
                 error => {
-                    shashin.showToastMessage("Something went wrong", error, {
+                    shashin.showToastMessage(shashin.getTranslatedValue("main.message.pta"), error, {
                         icon: "bi-exclamation-triangle",
                         placement: shashin.toast.placement.top.center,
                         tag: "failUpload",

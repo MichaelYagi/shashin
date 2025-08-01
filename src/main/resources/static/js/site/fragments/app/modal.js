@@ -1,10 +1,10 @@
 (function( shashin, $, undefined ) {
     shashin.modalStatusFailMessage = function() {
-        return "Something went wrong. Please try again.";
+        return shashin.getTranslatedValue("main.message.pta");
     };
 
     shashin.openEditMetadataModal = function (metadataId) {
-        shashin.showToastMessage("Opening Media Info", "Opening Info", {
+        shashin.showToastMessage(shashin.getTranslatedValue("main.toast.media.info.title"), shashin.getTranslatedValue("main.toast.media.info.body"), {
             placement:shashin.toast.placement.middle.center,
             icon:"bi-info-circle",
             iconColor:"#777777",

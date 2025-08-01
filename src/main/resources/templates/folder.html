@@ -182,7 +182,7 @@
                     $("#folderModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                     $("#folderModalCancel").prop('disabled', false);
 
-                    shashin.showToastMessage("Folder", "Folder Updated", {
+                    shashin.showToastMessage(shashin.getTranslatedValue("main.toast.folder.title"), shashin.getTranslatedValue("main.toast.folder.body"), {
                         icon: "bi-info-circle",
                         iconColor: "#777777",
                         tag: "foldermodal",

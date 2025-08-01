@@ -88,8 +88,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                 http.ajax("post", "/slideshowalbums", JSON.stringify(json)).then(function (data) {
                     if (data.status !== "success") {
                         shashin.printMessageToConsole("Error getting random image after configuring albums chosen", {tag: "slideshow"});
-                        shashin.showToastMessage("Error",
-                            "Something went wrong getting random album image.",
+                        shashin.showToastMessage(shashin.getTranslatedValue("main.toast.media.upload.errors"),
+                            shashin.getTranslatedValue("main.toast.media.random.image.errors"),
                             {
                                 icon: "bi-exclamation-triangle",
                                 iconColor:"#FF0000",
@@ -868,8 +868,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                     changeSideshowInterval();
 
                     shashin.closeToastMessages({tag: "slide", placement: shashin.toast.placement.top.center});
-                    shashin.showToastMessage("Decreased interval",
-                        "Decreased interval to "+slideshowIsElapsed+" seconds.",
+                    shashin.showToastMessage(shashin.getTranslatedValue("main.toast.slideshow.decrease.title"),
+                        shashin.getTranslatedValue("main.toast.slideshow.decrease.body",slideshowIsElapsed),
                         {
                             icon: "bi-info-circle",
                             autohide: true,
@@ -879,8 +879,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                     );
                 } else {
                     shashin.closeToastMessages({tag: "slide", placement: shashin.toast.placement.top.center});
-                    shashin.showToastMessage("Decreased interval",
-                        "Interval at minimum "+slideshowIsElapsed+" seconds.",
+                    shashin.showToastMessage(shashin.getTranslatedValue("main.toast.slideshow.decrease.title"),
+                        shashin.getTranslatedValue("main.toast.slideshow.decrease.body2",slideshowIsElapsed),
                         {
                             icon: "bi-info-circle",
                             autohide: true,
@@ -901,8 +901,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                     changeSideshowInterval();
 
                     shashin.closeToastMessages({tag: "slide", placement: shashin.toast.placement.top.center});
-                    shashin.showToastMessage("Increased interval",
-                        "Increased interval to "+slideshowIsElapsed+" seconds.",
+                    shashin.showToastMessage(shashin.getTranslatedValue("main.toast.slideshow.increase"),
+                        shashin.getTranslatedValue("main.toast.slideshow.increase.body",slideshowIsElapsed),
                         {
                             icon: "bi-info-circle",
                             autohide: true,
@@ -912,8 +912,8 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
                     );
                 } else {
                     shashin.closeToastMessages({tag: "slide", placement: shashin.toast.placement.top.center});
-                    shashin.showToastMessage("Decreased interval",
-                        "Interval at maximum "+slideshowIsElapsed+" seconds.",
+                    shashin.showToastMessage(shashin.getTranslatedValue("main.toast.slideshow.decrease.title"),
+                        shashin.getTranslatedValue("main.toast.slideshow.increase.body2",slideshowIsElapsed),
                         {
                             icon: "bi-info-circle",
                             autohide: true,
