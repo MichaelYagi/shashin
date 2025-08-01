@@ -209,6 +209,15 @@ function initializeAccount(profileUrl, userId, username, status, toastTitle, toa
     function validateFields() {
         let fieldsValid = true;
 
+        if ($("#newpassword").val().trim().length < 6) {
+            shashin.showToastMessage(shashin.getTranslatedValue("main.toast.account.password.validationerror.title"), shashin.getTranslatedValue("main.user.reset.min"), {
+                icon: "bi-exclamation-triangle",
+                iconColor: "#FF0000",
+                borderColor: "danger"
+            });
+            fieldsValid = false;
+        }
+
         if ($("#oldpassword").val().trim().length === 0 || $("#newpassword").val().trim().length === 0 || $("#newpasswordconfirm").val().trim().length === 0) {
             shashin.showToastMessage(shashin.getTranslatedValue("main.toast.account.password.validationerror.title"), shashin.getTranslatedValue("main.toast.account.password.validationerror.empty"), {
                 icon: "bi-exclamation-triangle",
