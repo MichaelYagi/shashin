@@ -14,7 +14,7 @@
                 <th:block th:if="${activeProfile != 'prod'}">
                     <span th:text="${#strings.capitalize(activeProfile)}+' '+#{main.modal.about.build}"></span><br>
                 </th:block>
-                <span th:text="#{main.modal.about.version(${buildProperties.getVersion()})}"></span><span id="gitVersionId"></span><br>
+                <span th:text="#{main.modal.about.version.current(${buildProperties.getVersion()})}"></span><span id="gitVersionId"></span><br>
                 <th:block th:if="${operatingSystemInfo != ''}">
                     <span th:text="${operatingSystemInfo}"></span><br>
                 </th:block>
@@ -69,7 +69,7 @@
                     let latestTag = latestReleaseInfo.tag_name;
                     let parsedVersion = (latestTag.substring(0, 1) === "v") ? "/" + latestTag.substring(1, latestTag.length) : "";
 
-                    const message = shashin.getTranslatedValue("main.modal.about.version","<a href='https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin" + parsedVersion + "' target='_blank'>" + latestTag.substring(1) + "</a>");
+                    const message = shashin.getTranslatedValue("main.modal.about.version.available","<a href='https://api.repoflow.io/browse/universal/cd373a98-3f60-419f-9c40-d10a1180ccda/shashin/shashin" + parsedVersion + "' target='_blank'>" + latestTag.substring(1) + "</a>");
                     $("#gitVersionId").html("<br><em>" + message + "</em>");
                     const type = "releases";
 
