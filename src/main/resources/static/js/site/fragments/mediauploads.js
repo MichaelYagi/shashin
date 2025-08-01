@@ -144,7 +144,7 @@ function initializeUploads(activePage) {
                 success => {
                     const status = success.hasOwnProperty("status") === true ? success.status : "fail";
                     if (status === "success") {
-                        shashin.showToastMessage(shashin.getTranslatedValue("main.toast.media.upload.uploaded"), success.msg + ":<br>" + filelist + "<a href='javascript:window.location.href=window.location.href'><br>Refresh</a> page to view.", {
+                        shashin.showToastMessage(shashin.getTranslatedValue("main.toast.media.upload.uploaded"), success.msg + ":<br>" + filelist + "<br>" + shashin.getTranslatedValue("main.toast.media.upload.refresh"), {
                             icon: "bi-info-circle",
                             placement: shashin.toast.placement.top.center,
                             tag: "successUpload",
