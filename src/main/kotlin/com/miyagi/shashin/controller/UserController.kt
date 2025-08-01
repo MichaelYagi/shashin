@@ -144,6 +144,8 @@ class UserController {
     @PostMapping("/users/account")
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
     fun postAccount(model: Model, request: HttpServletRequest, response: HttpServletResponse, locale: Locale): String {
+        val module = "account"
+        model["titleDescriptor"] = TextUtils.capitalized(module)
         model["message"] = ""
         model["user"] = User()
         model["alertClass"] = ""
@@ -153,6 +155,8 @@ class UserController {
         model["toastTitle"] = ""
         model["toastBody"] = ""
         model["canDeleteAccount"] = false
+        model["activePage"] = module
+        model["activeSidebar"] = module
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null && currentUserObj.getAuthority() != "ROLE_SUPER") {
@@ -166,7 +170,7 @@ class UserController {
             val newPasswordConfirm = java.lang.String.valueOf(request.getParameter("newpasswordconfirm")).trim()
 
             if (currentUserObj != null) {
-                if (newPassword.isNotEmpty() && newPassword == newPasswordConfirm && bcrypt.matches(oldPassword, currentUserObj.getPassword())) {
+                if (newPassword.isNotEmpty() && newPassword.length > 5 && newPassword == newPasswordConfirm && bcrypt.matches(oldPassword, currentUserObj.getPassword())) {
                     val updatedPassword = bcrypt.encode(newPassword)
                     currentUserObj.setModifiedAt(getCurrentTimestamp())
                     currentUserObj.setPassword(updatedPassword)
@@ -203,22 +207,20 @@ class UserController {
                     model["status"] = ApiResponse.SUCCESS.status
                     model["toastTitle"] = messageSource?.getMessage("main.toast.account.password.updated.success.title", null, locale)
                     model["toastBody"] = messageSource?.getMessage("main.toast.account.password.updated.success.body", null, locale)
+                    return module
                 } else {
                     model["message"] = ""
                     model["msg"] = ""
                     model["status"] = ApiResponse.FAIL.status
                     model["toastTitle"] = messageSource?.getMessage("main.toast.account.password.updated.fail.title", null, locale)
                     model["toastBody"] = messageSource?.getMessage("main.toast.account.password.updated.fail.body", null, locale)
+                    return module
                 }
             }
         }
 
-        val module = "account"
         model["msg"] = ""
         model["status"] = ApiResponse.FAIL.status
-        model["activePage"] = module
-        model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
         return module
     }
 
@@ -837,7 +839,7 @@ class UserController {
             if (userObjOpt != null) {
                 val userObj = userObjOpt.get()
                 userObj.setModifiedAt(getCurrentTimestamp())
-                if (userMap.containsKey("password") && userMap["password"].toString().isNotBlank()) {
+                if (userMap.containsKey("password") && userMap["password"].toString().isNotBlank() && userMap["password"].toString().length > 5) {
                     userObj.setPassword(bcrypt.encode(userMap["password"].toString()))
                 } else {
                     val generatedPassword = getRandomString(8)
