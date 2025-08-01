@@ -1,4 +1,16 @@
 class Util {
+    static showSpinner(show = false) {
+        if (show === true) {
+            $("#mediaScanSpinner").css("display", "block");
+            $("#profileImage").css("opacity", 0.5);
+            $("#profileImagePlaceholder").css("opacity", 0.5);
+        } else {
+            $("#mediaScanSpinner").css("display", "none");
+            $("#progressBarWrapper").invisible();
+            $("#profileImage").css("opacity", 1.0);
+            $("#profileImagePlaceholder").css("opacity", 1.0);
+        }
+    }
 
     static konamiCodeListener(callback) {
         let konamiCodePosition = 0;
