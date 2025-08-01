@@ -253,7 +253,7 @@ class UserController {
     @RequestMapping(value = ["/users/profile"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    fun postUpdateProfile(model: Model, @RequestBody requestBody: JsonNode): String {
+    fun postUpdateProfile(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String {
         val base64Map = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
         val response = mutableMapOf<String, Any?>()
         response["randomString"] = TextUtils.generateUUID(getCurrentTimestamp(),null,null,null,null,null,"random string generated from UserController")
@@ -292,8 +292,8 @@ class UserController {
                     currentUserObj.setProfile(profileUrl)
                     userRepository?.save(currentUserObj)
 
-                    response["msg"] = "Updated profile picture"
-                    response["message"] = "Updated profile picture"
+                    response["msg"] = messageSource?.getMessage("main.pages.account.profile", null, locale)
+                    response["message"] = messageSource?.getMessage("main.pages.account.profile", null, locale)
                     response["status"] = ApiResponse.SUCCESS.status
                     response["imageUrl"] = profileUrl
 
@@ -302,8 +302,8 @@ class UserController {
             }
         }
 
-        response["msg"] = "Could not update profile picture"
-        response["message"] = "Could not update profile picture"
+        response["msg"] = messageSource?.getMessage("main.pages.account.noprofile", null, locale)
+        response["message"] = messageSource?.getMessage("main.pages.account.noprofile", null, locale)
         response["status"] = ApiResponse.FAIL.status
         response["imageUrl"] = ""
 
@@ -313,7 +313,7 @@ class UserController {
     @RequestMapping(value = ["/users/delete/profile"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    fun postDeleteProfile(model: Model, @RequestBody requestBody: JsonNode): String {
+    fun postDeleteProfile(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String {
         val requestMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
         val response = mutableMapOf<String, Any?>()
         response["randomString"] = TextUtils.generateUUID(getCurrentTimestamp(),null,null,null,null,null,"random string generated from UserController")
@@ -338,8 +338,8 @@ class UserController {
                         currentUserObj.setProfile(null)
                         userRepository?.save(currentUserObj)
 
-                        response["msg"] = "Profile picture deleted"
-                        response["message"] = "Profile picture deleted"
+                        response["msg"] = messageSource?.getMessage("main.pages.account.profile.deleted", null, locale)
+                        response["message"] = messageSource?.getMessage("main.pages.account.profile.deleted", null, locale)
                         response["status"] = ApiResponse.SUCCESS.status
                         return mapper.writeValueAsString(response)
                     }
@@ -347,8 +347,8 @@ class UserController {
             }
         }
 
-        response["msg"] = "Could not delete profile picture"
-        response["message"] = "Could not delete profile picture"
+        response["msg"] = messageSource?.getMessage("main.pages.account.profile.notdeleted", null, locale)
+        response["message"] = messageSource?.getMessage("main.pages.account.profile.notdeleted", null, locale)
         response["status"] = ApiResponse.FAIL.status
 
         return mapper.writeValueAsString(response)
@@ -390,11 +390,11 @@ class UserController {
     @RequestMapping(value = ["/users/update/apikey"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    fun postWebUpdateApikey(model: Model, request: HttpServletRequest, @RequestBody requestBody: JsonNode): String {
+    fun postWebUpdateApikey(model: Model, request: HttpServletRequest, @RequestBody requestBody: JsonNode, locale: Locale): String {
         val apikeyMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
         val response = mutableMapOf<String, Any?>()
-        response["msg"] = "Could not update API key"
-        response["message"] = "Could not update API key"
+        response["msg"] = messageSource?.getMessage("main.notdelete", null, locale)
+        response["message"] = messageSource?.getMessage("main.notdelete", null, locale)
         response["status"] = ApiResponse.FAIL.status
         response["updatedApikey"] = ""
         response["rssFeedLink"] = ""
@@ -454,11 +454,11 @@ class UserController {
     @RequestMapping(value = ["/users/update/language"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
-    fun postWebUpdateLanguage(model: Model, request: HttpServletRequest, httpServletResponse: HttpServletResponse, @RequestBody requestBody: JsonNode): String {
+    fun postWebUpdateLanguage(model: Model, request: HttpServletRequest, httpServletResponse: HttpServletResponse, @RequestBody requestBody: JsonNode, locale: Locale): String {
         val languageMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
         val response = mutableMapOf<String, Any?>()
-        response["msg"] = "Could not update language"
-        response["message"] = "Could not update language"
+        response["msg"] = messageSource?.getMessage("main.notupdated", null, locale)
+        response["message"] = messageSource?.getMessage("main.notupdated", null, locale)
         response["status"] = ApiResponse.FAIL.status
         response["updatedLanguage"] = ""
 
@@ -474,8 +474,8 @@ class UserController {
                 userRepository?.save(currentUserObj)
                 val localeResolver = RequestContextUtils.getLocaleResolver(request)
                 localeResolver?.setLocale(request, httpServletResponse, StringUtils.parseLocaleString(language.toString()))
-                response["msg"] = "Updated language"
-                response["message"] = "Updated language"
+                response["msg"] = messageSource?.getMessage("main.updated", null, locale)
+                response["message"] = messageSource?.getMessage("main.updated", null, locale)
                 response["status"] = ApiResponse.SUCCESS.status
                 response["updatedLanguage"] = language
             }

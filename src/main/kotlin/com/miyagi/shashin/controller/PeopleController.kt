@@ -424,7 +424,7 @@ class PeopleController: BaseController() {
     @RequestMapping(value = ["/person/compreface/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @Secured("ROLE_ADMIN", "ROLE_SUPER")
     @ResponseBody
-    fun deleteCompreFaceGetImages(model: Model, @RequestBody requestBody: JsonNode, request: HttpServletRequest): String {
+    fun deleteCompreFaceGetImages(model: Model, @RequestBody requestBody: JsonNode, request: HttpServletRequest, locale: Locale): String {
         val imageMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
         resp["responseData"] = mutableMapOf<String, Any?>()
@@ -469,7 +469,7 @@ class PeopleController: BaseController() {
                         }
                     }
                 } catch (e: Exception) {
-                    resp["msg"] = "Error could not delete faces from CompreFace"
+                    resp["msg"] = messageSource?.getMessage("main.compreface.error.msg", null, locale)
 
                     logger.log(
                         Level.WARNING,
@@ -579,7 +579,7 @@ class PeopleController: BaseController() {
 
         response["message"] = ""
         response["resultList"] = mutableListOf<MutableMap<String, String>>()
-        response["msg"] = "Could not get results"
+        response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
         response["status"] = ApiResponse.FAIL.status
 
         return mapper.writeValueAsString(response)
@@ -647,7 +647,7 @@ class PeopleController: BaseController() {
             }
         }
 
-        response["msg"] = "Results"
+        response["msg"] = messageSource?.getMessage("main.results", null, locale)
         response["status"] = ApiResponse.SUCCESS.status
 
         return response
@@ -802,11 +802,11 @@ class PeopleController: BaseController() {
 
     @RequestMapping(value = ["/person/metadata/{personId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getPagedPersonMetadataList(model: Model, request: HttpServletRequest, @PathVariable personId: Int, @PathVariable page: Int): String {
+    fun getPagedPersonMetadataList(model: Model, request: HttpServletRequest, @PathVariable personId: Int, @PathVariable page: Int, locale: Locale): String {
         val response = mutableMapOf<String, Any?>()
         response["message"] = ""
         response["metadataList"] = mutableListOf<Metadata>()
-        response["msg"] = "Could not get results"
+        response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
         response["status"] = ApiResponse.FAIL.status
 
         if (model.getAttribute("currentUser") != "") {
@@ -873,7 +873,7 @@ class PeopleController: BaseController() {
         response["canEdit"] = model.getAttribute("authority") == adminRole || model.getAttribute("authority") == superRole
         response["faceRecogServicesAvailable"] = false
 
-        response["msg"] = "Could not get results"
+        response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
         response["status"] = ApiResponse.FAIL.status
 
         if (model.getAttribute("currentUser") != "") {
@@ -1026,7 +1026,7 @@ class PeopleController: BaseController() {
 
             response["counts"] = counts
 
-            response["msg"] = "Results"
+            response["msg"] = messageSource?.getMessage("main.results", null, locale)
             response["status"] = ApiResponse.SUCCESS.status
         }
 
@@ -1036,7 +1036,7 @@ class PeopleController: BaseController() {
     @RequestMapping(value = ["/person/update"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @Secured("ROLE_SUPER", "ROLE_ADMIN")
     @ResponseBody
-    fun postPersonUpdate(model: Model, @RequestBody requestBody: JsonNode): String {
+    fun postPersonUpdate(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String {
         val personMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
         if (personMap.containsKey("metadataId") &&
@@ -1137,7 +1137,7 @@ class PeopleController: BaseController() {
                     resp["recognitionLabels"] = recognitionLabels
                 }
 
-                resp["msg"] = "Saved"
+                resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
                 resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
             } else if (isObject) {
@@ -1170,7 +1170,7 @@ class PeopleController: BaseController() {
                     resp["recognitionLabels"] = recognitionLabels
                 }
 
-                resp["msg"] = "Saved"
+                resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
                 resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
             } else if (personMap["tagpeople"].toString().isBlank()) {
@@ -1183,7 +1183,7 @@ class PeopleController: BaseController() {
                     resp["recognitionLabels"] = recognitionLabels
                 }
 
-                resp["msg"] = "Saved"
+                resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
                 resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
             }
@@ -1207,7 +1207,7 @@ class PeopleController: BaseController() {
                         personObj.get().setModifiedAt(getCurrentTimestamp())
                         recognitionLabelRepository?.save(personObj.get())
 
-                        resp["msg"] = "Saved"
+                        resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
                         resp["status"] = ApiResponse.SUCCESS.status
                         return mapper.writeValueAsString(resp)
                     }
@@ -1215,7 +1215,7 @@ class PeopleController: BaseController() {
             }
         }
 
-        resp["msg"] = "Could not save"
+        resp["msg"] = messageSource?.getMessage("main.modal.saved.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }

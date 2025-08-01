@@ -70,9 +70,9 @@ class ArchiveController {
     @Secured("ROLE_SUPER","ROLE_ADMIN")
     @RequestMapping(value = ["/archived/metadata/list/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getTrashMetadataList(model: Model,@PathVariable page: Int): String? {
+    fun getTrashMetadataList(model: Model,@PathVariable page: Int, locale: Locale): String? {
         val response = mutableMapOf<String, Any?>()
-        response["msg"] = "No Results"
+        response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
         response["status"] = ApiResponse.FAIL.status
         response["metadataList"] = ArrayList<Metadata>()
 

@@ -105,7 +105,7 @@ class ToolsController {
     @CrossOrigin(origins = ["*"], originPatterns = [], allowedHeaders = ["*"], methods = [RequestMethod.GET], maxAge = 3600)
     @RequestMapping(value = ["/api/v1/latest/release"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getLatestTag(): ResponseEntity<String> {
+    fun getLatestTag(locale: Locale): ResponseEntity<String> {
         var response = mutableMapOf<String, Any?>()
         response["releaseVersion"] = null
         response["releaseVersionName"] = null
@@ -124,7 +124,7 @@ class ToolsController {
                 response["status"] = ApiResponse.SUCCESS.status
             }
         } else {
-            response["msg"] = "Could not complete request"
+            response["msg"] = messageSource?.getMessage("main.fail", null, locale)
         }
 
         val json = mapper.writeValueAsString(response)
@@ -162,7 +162,7 @@ class ToolsController {
     @CrossOrigin(origins = ["*"], originPatterns = [], allowedHeaders = ["*"], methods = [RequestMethod.GET], maxAge = 3600)
     @RequestMapping(value = ["/api/v1/tags"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getTags(): ResponseEntity<String> {
+    fun getTags(locale: Locale): ResponseEntity<String> {
         var response = mutableMapOf<String, Any?>()
         response["tags"] = mutableListOf<Map<String, Any>>()
         response["status"] = ApiResponse.FAIL.status
@@ -184,7 +184,7 @@ class ToolsController {
                 response["status"] = ApiResponse.SUCCESS.status
             }
         } else {
-            response["msg"] = "Could not complete request"
+            response["msg"] = messageSource?.getMessage("main.fail", null, locale)
         }
 
         val json = mapper.writeValueAsString(response)
@@ -197,7 +197,7 @@ class ToolsController {
 
     @RequestMapping(value = ["/bcrypt/{strtobcrypt}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getBcryptVal(@PathVariable(required = true) strtobcrypt: String): String {
+    fun getBcryptVal(@PathVariable(required = true) strtobcrypt: String, locale: Locale): String {
 
         val response = mutableMapOf<String, Any?>()
 
@@ -210,7 +210,7 @@ class ToolsController {
             encodedStr = bcrypt.encode(strtobcrypt)
         }
 
-        response["msg"] = "Success"
+        response["msg"] = messageSource?.getMessage("main.success", null, locale)
         response["status"] = ApiResponse.SUCCESS.status
         response["bcryptValue"] = encodedStr
 

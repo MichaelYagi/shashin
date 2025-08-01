@@ -217,7 +217,7 @@ class FavoritesController: BaseController() {
                 response["keywordMap"] = keywordMap
                 response["formattedDateMap"] = formattedDateMap
                 response["message"] = ""
-                response["msg"] = "Results"
+                response["msg"] = messageSource?.getMessage("main.results", null, locale)
                 response["status"] = ApiResponse.SUCCESS.status
                 return response
             }
@@ -230,9 +230,9 @@ class FavoritesController: BaseController() {
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/favorites/metadata/list/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getFavoritesMetadataList(model: Model,@PathVariable page: Int): String? {
+    fun getFavoritesMetadataList(model: Model,@PathVariable page: Int, locale: Locale): String? {
         val response = mutableMapOf<String, Any?>()
-        response["msg"] = "No Results"
+        response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
         response["status"] = ApiResponse.FAIL.status
         response["metadataList"] = ArrayList<Metadata>()
         val size: Int = model.getAttribute("queryLimit") as Int
@@ -328,13 +328,13 @@ class FavoritesController: BaseController() {
                 metadataRepository.save(metadata.get())
 
                 resp["count"] = favoriteRepository.countAllByMetadataId(metadataId)
-                resp["msg"] = "Saved!"
+                resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
                 resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
             }
         }
 
-        resp["msg"] = "Could not save to favorites"
+        resp["msg"] = messageSource?.getMessage("main.modal.saved.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
@@ -343,7 +343,7 @@ class FavoritesController: BaseController() {
     @ResponseBody
     @Transactional
     @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
-    fun postDeleteFavorite(model: Model, @RequestBody requestBody: JsonNode): String {
+    fun postDeleteFavorite(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String {
         val favoritesMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (favoritesMap.containsKey("metadataId") && favoritesMap.containsKey("isFavorite")) {
             val metadataId = favoritesMap["metadataId"].toString()
@@ -371,7 +371,7 @@ class FavoritesController: BaseController() {
                 }
 
                 resp["count"] = favoriteRepository.countAllByMetadataId(metadataId)
-                resp["msg"] = "Saved!"
+                resp["msg"] = messageSource?.getMessage("main.modal.saved", null, locale)
                 resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
             }
@@ -379,7 +379,7 @@ class FavoritesController: BaseController() {
 
         }
 
-        resp["msg"] = "Could not save to favorites"
+        resp["msg"] = messageSource?.getMessage("main.modal.saved.fail", null, locale)
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
@@ -388,7 +388,7 @@ class FavoritesController: BaseController() {
     @ResponseBody
     @Transactional
     @CacheEvict(value = ["allMetadata", "allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
-    fun postDeleteFavorites(model: Model, @RequestBody requestBody: JsonNode): String {
+    fun postDeleteFavorites(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String {
         val favoritesMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (favoritesMap.containsKey("metadataIdList")) {
             val metadataIdList = favoritesMap["metadataIdList"] as MutableList<String>
@@ -399,7 +399,7 @@ class FavoritesController: BaseController() {
                     favoriteRepository.deleteByMetadataIdAndUserId(StringEscapeUtils.escapeHtml4(metadataId), currentUserObj.getId())
                 }
 
-                resp["msg"] = "Removed from favorites"
+                resp["msg"] = messageSource?.getMessage("main.removed", null, locale)
                 resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
             }
@@ -407,7 +407,7 @@ class FavoritesController: BaseController() {
 
         }
 
-        resp["msg"] = "Could not remove from favorites"
+        resp["msg"] = messageSource?.getMessage("main.notremoved", null, locale)
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }

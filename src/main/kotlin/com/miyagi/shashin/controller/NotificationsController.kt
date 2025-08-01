@@ -78,7 +78,7 @@ class NotificationsController {
 
     @RequestMapping(value = ["/notifications/create"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
-    fun createNotification(model: Model, @RequestBody requestBody: JsonNode): String {
+    fun createNotification(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String {
         val currentUserObj = model.getAttribute("currentUser") as User?
         val paramMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
@@ -269,10 +269,10 @@ class NotificationsController {
 
     @GetMapping("/notifications/check", produces = ["application/json"])
     @ResponseBody
-    fun checkHasNotifications(model: Model): String {
+    fun checkHasNotifications(model: Model, locale: Locale): String {
         val response = mutableMapOf<String, Any?>()
 
-        response["msg"] = "No results"
+        response["msg"] = messageSource?.getMessage("main.pages.account.role.description.super", null, locale)
         response["status"] = ApiResponse.FAIL.status
         response["hasNotifications"] = false
         response["unreadNotifications"] = mutableListOf<Notification>()
@@ -282,7 +282,7 @@ class NotificationsController {
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
             val settings = model.getAttribute("settings") as Settings
-            response["msg"] = "Results"
+            response["msg"] = messageSource?.getMessage("main.results", null, locale)
             response["status"] = ApiResponse.SUCCESS.status
 
             val unreadNotifications = notificationRepository.findAllByUserIdAndReadIsFalse(currentUserObj.getId())

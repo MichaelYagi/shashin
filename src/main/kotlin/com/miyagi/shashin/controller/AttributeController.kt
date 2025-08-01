@@ -581,7 +581,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
         model["activePage"] = ""
         model["activeSidebar"] = ""
         model["titleDescriptor"] = ""
-        model["msg"] = "Response status not set. Defaulting to status fail."
+        model["msg"] = messageSource?.getMessage("main.attribute.msg", null, Locale(locale))
         model["status"] = ApiResponse.FAIL.status
 
 
