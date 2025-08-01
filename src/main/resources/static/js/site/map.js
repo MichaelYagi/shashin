@@ -550,7 +550,7 @@ async function showMap(mapdata, keywordMap, locale) {
         $("#resultsText").text(resultsText);
 
         if (filteredCount === 0 && contextCoordArray.length > 0 && maxDistance > 0) {
-            shashin.showToastMessage(shashin.getTranslatedValue("main.noresults"), shashin.getTranslatedValue("main.toast.map.invalid.latlng.pre") + contextCoordArray[1]+", "+contextCoordArray[0] + shashin.getTranslatedValue("main.toast.map.invalid.latlng.post"), {
+            shashin.showToastMessage(shashin.getTranslatedValue("main.noresults"), shashin.getTranslatedValue("main.toast.map.invalid.latlng.body", contextCoordArray[1]+", "+contextCoordArray[0]), {
                 icon: "bi-info-circle",
                 iconColor: "#777777",
                 tag: "mainmap"
