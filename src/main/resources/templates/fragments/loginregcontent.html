@@ -43,7 +43,7 @@
                 <input type="text" id="username" name="username" class="form-control" minlength="4" th:placeholder="#{main.pages.users.username}" required autofocus>
             </div>
             <div class="input-group">
-                <input type="password" id="password" name="password"  minlength="6" class="form-control" th:placeholder="#{main.password}" required>
+                <input type="password" id="password" name="password" minlength="6" class="form-control" th:placeholder="#{main.password}" required>
                 <button class="btn btn-secondary" type="button" id="unhidepassword" style="max-height: 46px;"><span id="unhidepasswordicon" class="bi-eye"></span></button>
             </div>
             <th:block th:if="${activePage == 'login'}">
