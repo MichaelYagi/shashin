@@ -6,6 +6,8 @@
 
 <div th:replace="~{fragments/topnav :: topnav(${currentUser},${activePage},'')}"></div>
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
+    Util.showSpinner(true);
+
     $(document).ready(function () {
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
