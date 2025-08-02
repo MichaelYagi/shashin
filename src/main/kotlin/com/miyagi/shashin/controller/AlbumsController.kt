@@ -1179,6 +1179,7 @@ class AlbumsController: BaseController() {
             model["msg"] = response["msg"]!!
             model["status"] = response["status"]!!
             model["darkMode"] = response["darkMode"]!!
+            model["loggedIn"] = response["loggedIn"]!!
             model["activePage"] = module
             model["activeSidebar"] = module
             if (album?.getName() != null) {
@@ -1186,6 +1187,8 @@ class AlbumsController: BaseController() {
             } else {
                 model["titleDescriptor"] = TextUtils.capitalized(module)
             }
+            println("testzzz")
+            println(response["loggedIn"]!!)
         } else {
             for ((k, v) in response) {
                 model[k] = v!!
@@ -1342,8 +1345,10 @@ class AlbumsController: BaseController() {
         response["status"] = ApiResponse.FAIL.status
         val currentUserObj = model.getAttribute("currentUser") as User?
         response["darkMode"] = false
-        if (currentUserObj != null) {
+        response["loggedIn"] = false
+        if (currentUserObj != null && currentUserObj.getIsAuthorized() == true) {
             response["darkMode"] = currentUserObj.getDarkMode()!!
+            response["loggedIn"] = true
         }
 
         val photoObj = albumRepository.findById(albumId)

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <th:block th:insert="~{fragments/asciiart :: asciiart()}"></th:block>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html th:lang="${locale}" xmlns:th="http://www.thymeleaf.org">
 <head th:insert="~{fragments/head :: head(${activePage},${titleDescriptor})}"></head>
 <body class="thumb d-flex flex-column vh-100">
 
@@ -13,6 +13,14 @@
             <div class="flex-grow-1 d-flex align-items-center"></div>
             <span style="font-size: 1rem;display: none;background: none;border: none;" th:class="${(darkMode != null && darkMode == true) ? 'darkmodeIcons' : 'lightmodeIcons'}" id="albumNumberSelected"></span>&nbsp;&nbsp;&nbsp;
             <button th:class="'bi-x-circle '+${(darkMode != null && darkMode == true) ? 'darkmodeIcons' : 'lightmodeIcons'}" style="font-size: 1.5rem;display: none;background: none;border: none;" title="Cancel multi select" id="clearMultiSelect"></button>&nbsp;
+            <th:block th:if="${loggedIn == false}">
+                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false"><th:block th:text="#{main.language}"></th:block></a>
+                <ul class="dropdown-menu" id="languageSelect">
+                    <th:block th:each="lang : ${languageList}">
+                        <li><a th:class="'dropdown-item' + ${locale == lang.code ? ' active' : ''}" th:id="${lang.code}" href="#"><th:block th:text="${lang.label}"></th:block></a></li>
+                    </th:block>
+                </ul>
+            </th:block>
             <form id="downloadWrapper" method="post" th:action="${'/download/share/' + shareLink + '/album/' + albumId}" style="display: inline-block;white-space: nowrap;">
                 <button th:id="${'download' + albumId}" th:class="'bi-download '+${(darkMode != null && darkMode == true) ? 'darkmodeIcons' : 'lightmodeIcons'}" style="font-size: 1.5rem;background: none;border: none;" type="submit" name="download" th:value="${albumId}" title="Download all photos"></button>
             </form>
@@ -134,6 +142,13 @@
         const totalPages = /*[[${totalPages}]]*/ 0;
         const locale = /*[[${locale}]]*/ 'en';
         /*]]>*/
+
+        $("#languageSelect li a").on("click", async function (e) {
+            e.preventDefault();
+
+            const language = $(this).attr("id");
+            window.location.replace("/share/"+shareLink+"/album/"+albumId+"?lang="+language);
+        });
 
         if (albumListSize > 0 && page === 0) {
             const section = $("section");

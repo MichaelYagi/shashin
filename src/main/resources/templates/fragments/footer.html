@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html th:lang="${locale}" xmlns:th="http://www.thymeleaf.org">
 <body>
 <footer th:fragment="footer(copyrightYear,operatingSystemInfo,buildProperties,activeProfile,activePage)">
     <th:block th:if="${activePage == 'timeline'}">
