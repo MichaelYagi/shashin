@@ -63,7 +63,7 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
 
         var message = messageSource?.getMessage("main.notification.login.unknown", arrayOf("'$lastUserName'"), locale)
         if (lastUser != null) {
-            message = messageSource?.getMessage("main.notification.login.known", arrayOf("'$lastUserName'"), locale)
+            message = messageSource?.getMessage("main.notification.login.fail", arrayOf("'$lastUserName'"), locale)
         }
 
         // Capture UA data
@@ -103,7 +103,7 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
                     ipString = "<a href='https://ipgeolocation.io/ip-location/$clientIP' target='_blank'>$clientIP</a>"
                 }
 
-                message += "IP: ${ipString} "+messageSource?.getMessage("main.notification.login.device", null, locale)+": $osName$osVersion$osClass "+messageSource?.getMessage("main.notification.login.browser", null, locale)+": $agentName$agentVersion - ${sdtf.format(Date())}"
+                message += " IP: ${ipString} "+messageSource?.getMessage("main.notification.login.device", null, locale)+": $osName$osVersion$osClass "+messageSource?.getMessage("main.notification.login.browser", null, locale)+": $agentName$agentVersion - ${sdtf.format(Date())}"
 
                 val notificationObj = Notification()
                 notificationObj.setUserId(admin.getId())
