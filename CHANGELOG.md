@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Removed
 ### Fixed
 - Password verification fixes
+- i18n bugfixes
 ### Security
 
 ## [2.11.3] - 2025-07-31
