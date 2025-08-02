@@ -1032,7 +1032,6 @@ class Util {
     }
 
     static getDateString(year, month, day, locale = "en", includeWeekday = true) {
-        month = month-1;
         // Validate input
         if (!year || !month || !day) return "";
 
