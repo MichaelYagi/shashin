@@ -61,11 +61,6 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
             logger.log(Level.WARNING, "userRepository?.findByUsername error: ${e.message}")
         }
 
-        var message = messageSource?.getMessage("main.notification.login.unknown", arrayOf("'$lastUserName'"), locale)
-        if (lastUser != null) {
-            message = messageSource?.getMessage("main.notification.login.fail", arrayOf("'$lastUserName'"), locale)
-        }
-
         // Capture UA data
         val userAgent = request?.getHeader("User-Agent")
         val uaa = UserAgentAnalyzer
@@ -90,7 +85,8 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
 
         if (admins != null) {
             val notificationObjList = mutableListOf<Notification>()
-            for (admin in admins) {
+            var log: String? = null
+            for ((index, admin) in admins.withIndex()) {
                 var language = admin.getLanguage()
                 if (language == null) {
                     language = "en"
@@ -98,12 +94,21 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
 
                 var locale = Locale(language)
 
+                var message = messageSource?.getMessage("main.notification.login.unknown", arrayOf("'$lastUserName'"), locale)
+                if (lastUser != null) {
+                    message = messageSource?.getMessage("main.notification.login.fail", arrayOf("'$lastUserName'"), locale)
+                }
+
                 var ipString = clientIP
                 if (!TextUtils.isLocalIp(clientIP)) {
                     ipString = "<a href='https://ipgeolocation.io/ip-location/$clientIP' target='_blank'>$clientIP</a>"
                 }
 
-                message += " IP: ${ipString} "+messageSource?.getMessage("main.notification.login.device", null, locale)+": $osName$osVersion$osClass "+messageSource?.getMessage("main.notification.login.browser", null, locale)+": $agentName$agentVersion - ${sdtf.format(Date())}"
+                message += "&nbsp;- IP: ${ipString}, "+messageSource?.getMessage("main.notification.login.device", null, locale)+": $osName$osVersion$osClass, "+messageSource?.getMessage("main.notification.login.browser", null, locale)+": $agentName$agentVersion - ${sdtf.format(Date())}"
+
+                if (index == 0) {
+                    log = message
+                }
 
                 val notificationObj = Notification()
                 notificationObj.setUserId(admin.getId())
@@ -113,7 +118,11 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
                 notificationObj.setMessage(message)
                 notificationObjList.add(notificationObj)
             }
-            logger.log(Level.WARNING, message)
+
+            if (log != null) {
+                logger.log(Level.WARNING, log)
+            }
+
             if (notificationObjList.isNotEmpty()) {
                 notificationRepository?.saveAll(notificationObjList)
             }
