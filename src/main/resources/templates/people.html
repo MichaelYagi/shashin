@@ -33,12 +33,7 @@
                                                 <strong th:text="${person.name}"></strong>
                                             </a><br>
 
-                                            <th:block th:if="${#strings.equals(locale, 'en')}">
-                                                <small class="text-muted" th:text="${person.tagCount + (person.tagCount == 1 ? ' item' : ' items')}"></small>
-                                            </th:block>
-                                            <th:block th:unless="${#strings.equals(locale, 'en')}">
-                                                <small class="text-muted" th:text="${person.tagCount} + ' ' + #{main.pages.people.items}"></small>
-                                            </th:block>
+                                            <small class="text-muted" th:text="#{main.pages.people.items(${person.tagCount})}"></small>
                                         </span>
                                     </p>
                                 </div>
