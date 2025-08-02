@@ -23,11 +23,7 @@ function initializeUploads(activePage) {
 
         modalShown(function (isShown) {
             if (isShown === false) {
-                let backgroundColor = "white";
-                if (shashin.darkMode === true) {
-                    backgroundColor = "#222222";
-                }
-                $("header,#container,ul.nav").css({"background-color": backgroundColor, "opacity": ".5"});
+                blanketUI();
             }
         });
 
@@ -41,11 +37,7 @@ function initializeUploads(activePage) {
 
         modalShown(function (isShown) {
             if (isShown === false) {
-                let backgroundColor = "white";
-                if (shashin.darkMode === true) {
-                    backgroundColor = "#222222";
-                }
-                $("header,#container,ul.nav").css({"background-color": backgroundColor, "opacity": ".5"});
+                blanketUI();
             }
         });
 
@@ -63,11 +55,7 @@ function initializeUploads(activePage) {
 
         modalShown(function (isShown) {
             if (isShown === false) {
-                let backgroundColor = "white";
-                if (shashin.darkMode === true) {
-                    backgroundColor = "#222222";
-                }
-                $("header,#container,ul.nav").css({"background-color": backgroundColor, "opacity": ".5"});
+                blanketUI();
             }
         });
     });
@@ -76,11 +64,7 @@ function initializeUploads(activePage) {
 
         modalShown(function (isShown) {
             if (isShown === false) {
-                let backgroundColor = "white";
-                if (shashin.darkMode === true) {
-                    backgroundColor = "#222222";
-                }
-                $("header,#container").css({"background-color": backgroundColor, "opacity": ".5"});
+                blanketUI();
 
                 shashin.showToastMessage(shashin.getTranslatedValue("main.toast.media.upload.title"), shashin.getTranslatedValue("main.toast.media.upload.body"), {
                     placement: shashin.toast.placement.top.center,
@@ -212,6 +196,14 @@ function initializeUploads(activePage) {
         shashin.closeToastMessages({tag: "uploadMedia"});
 
         Util.showSpinner(false);
+    }
+
+    function blanketUI() {
+        let backgroundColor = "white";
+        if (shashin.darkMode === true) {
+            backgroundColor = "#222222";
+        }
+        $("header,#container,ul.nav").css({"background-color": backgroundColor, "opacity": ".5"});
     }
 
     function modalShown(callback) {
