@@ -1630,22 +1630,12 @@ class Util {
                                 const firstNotification = data.unreadNotifications[0];
                                 const createdAtDate = firstNotification.createdAt;
 
-                                const translations = {
-                                    en: {
-                                        title: `${notificationCount} new notification${notificationCount > 1 ? 's' : ''}`,
-                                        latestPrefix: notificationCount > 1 ? "Latest - " : "",
-                                        readLink: "Read notifications",
-                                        markLink: notificationCount === 1 ? "Mark read" : "Mark all read"
-                                    },
-                                    ja: {
-                                        title: `${notificationCount}件の新しい通知`,
-                                        latestPrefix: notificationCount > 1 ? "最新 - " : "",
-                                        readLink: "通知を読む",
-                                        markLink: notificationCount === 1 ? "既読にする" : "すべて既読にする"
-                                    }
+                                const t = {
+                                    title: shashin.getTranslatedValue("main.toast.notifications.title", notificationCount),
+                                    latestPrefix: notificationCount > 1 ? shashin.getTranslatedValue("main.toast.notifications.latest") + " - " : "",
+                                    readLink: shashin.getTranslatedValue("main.toast.notifications.read"),
+                                    markLink: (notificationCount === 1 ? shashin.getTranslatedValue("main.toast.notifications.mark") : shashin.getTranslatedValue("main.toast.notifications.markall"))
                                 };
-
-                                const t = translations[locale] || translations.en; // fallback to English
 
                                 const hasImage = firstNotification.imageUrl && firstNotification.imageUrl !== "";
 
