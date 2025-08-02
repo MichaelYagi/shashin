@@ -5,6 +5,7 @@ import com.miyagi.shashin.util.TextUtils.Companion.sortPlaceNames
 import org.json.JSONObject
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.openqa.selenium.JavascriptExecutor
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
@@ -174,6 +175,19 @@ class TextUtilsTest {
 
         longDate = TextUtils.formatToLongDate("25/9/25")
         Assertions.assertEquals(null, longDate)
+
+        // Should match with util.test.js: 'Date formatter test'
+        longDate = TextUtils.formatToLongDate("2021-10-17", "pt")
+        Assertions.assertEquals("dom, out 17, 2021", longDate)
+
+        longDate = TextUtils.formatToLongDate("2021-10-17", "fr")
+        Assertions.assertEquals("dim, oct 17, 2021", longDate)
+
+        longDate = TextUtils.formatToLongDate("2021-10-17", "ja")
+        Assertions.assertEquals("2021年10月17日(日)", longDate)
+
+        longDate = TextUtils.formatToLongDate("2021-10-17", "es")
+        Assertions.assertEquals("dom, oct 17, 2021", longDate)
     }
 
     @Test
