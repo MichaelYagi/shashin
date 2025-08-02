@@ -70,6 +70,7 @@
 
     timelineSettings.init = function(mediaTypeFilter, metadataDates, metadataYearMonthCount, timelineDatesHash, locale) {
         disableScroll();
+        Util.showSpinner(true);
         $("#dLabel").addClass("disabled");
         $("#dLabel").attr("aria-disabled", "true");
         $("#dLabel").attr("tabindex", "-1");
@@ -386,6 +387,7 @@
         scrollTimer = setTimeout(function() {
             timelineSettings.scrollByN(2);
             enableScroll();
+            Util.showSpinner(false);
             $("#dLabel").removeClass("disabled");
             $("#dLabel").removeAttr("aria-disabled");
             $("#dLabel").removeAttr("tabindex");
