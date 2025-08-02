@@ -49,7 +49,7 @@
                                         <span th:id="'userShare'+${album.id}" title="Shared with others users" th:style="${sharedAlbumsMap.containsKey(album.id) and (authority == 'ROLE_ADMIN' || authority == 'ROLE_SUPER') ? 'display: inline-block' : 'display: none'}"><th:block th:unless="${isMobile}">&nbsp;</th:block>&nbsp;<span class="bi-person-up text-muted"></span></span>
                                         <th:block th:unless="${isMobile}">&nbsp;</th:block>&nbsp;<a href="#" th:id="'trash'+${album.id}" title="Delete album"><span class="bi-trash"></span></a>
                                     </th:block>
-                                    <p class="card-text"><small class="text-muted" th:text="#{main.pages.albums.photo(${album.albumPhotoCount})} + (isMobile ? '' : '&nbsp;&nbsp;') + '&nbsp;&nbsp;' + ${album.albumVideoCount} + ' ' + #{main.pages.albums.video}"></small></p>
+                                    <p class="card-text"><small class="text-muted" th:text="#{main.pages.albums.photo(${album.albumPhotoCount})} + (isMobile ? '' : '&nbsp;&nbsp;') + '&nbsp;&nbsp;' + #{main.pages.albums.video(${album.albumVideoCount})}"></small></p>
                                 </span>
                             </div>
                         </div>
@@ -188,7 +188,7 @@
     <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="commentModalLabel"><th:block th:text="#{main.pages.albums.comment('<span id=&quot;albumNameComments&quot;></span>')}"><div id="propalbumphotocomment"><img loading="lazy" draggable="false" id="albumCoverCommentThumb" src="" width="100" height="100"></div></h5>
+                <h5 class="modal-title" id="commentModalLabel"><th:block th:utext="#{main.pages.albums.comment('<span id=&quot;albumNameComments&quot;></span>')}"><div id="propalbumphotocomment"><img loading="lazy" draggable="false" id="albumCoverCommentThumb" src="" width="100" height="100"></div></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="commentListContainer" style="display: none;">

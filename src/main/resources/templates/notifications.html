@@ -12,7 +12,7 @@
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="~{fragments/hiddenfields :: hiddenfields(${message})}"></div>
 
-            <p class="mt-3" th:utext="#{main.notification.latest.available(${notificationLimit})} + ${authority == 'ROLE_SUPER' ? #messages.msg('main.notification.limit.setting') : ''}"></p>
+            <p class="mt-3" th:utext="#{main.notification.latest.available(${notificationLimit})} + '&nbsp;' + ${authority == 'ROLE_SUPER' ? #messages.msg('main.notification.limit.setting') : ''}"></p>
 
             <th:block th:if="${not #lists.isEmpty(notificationList)}">
                 <ul class="list-group list-group-hover mt-3" id="notificationList">
