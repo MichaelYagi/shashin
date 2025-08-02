@@ -47,6 +47,14 @@ describe('#Util tests', function() {
         assert.equal(Util.getDateString(2021,14,32),"");
         assert.equal(Util.getDateString(2021,14,9),"");
         assert.equal(Util.getDateString("asdf","asdf","asdf"),"");
+        // Should match with TextUtilsTest.kt: formatToLongDateTest() tests
+        assert.equal(Util.getDateString(2021,10,17, "pt"),"dom, out 17, 2021");
+        assert.equal(Util.getDateString(2021,10,17, "pt", false),"out 17, 2021");
+        assert.equal(Util.getDateString(2021,10,17, "fr", true),"dim, oct 17, 2021");
+        assert.equal(Util.getDateString(2021,10,17, "fr", false),"oct 17, 2021");
+        assert.equal(Util.getDateString(2021,10,17, "ja", false),"2021年10月17日");
+        assert.equal(Util.getDateString(2021,10,17, "ja", true),"2021年10月17日(日)");
+        assert.equal(Util.getDateString(2021,10,17, "es", true),"dom, oct 17, 2021");
     });
 
     it('Numeric string test', function() {

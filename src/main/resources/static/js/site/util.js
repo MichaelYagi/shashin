@@ -1031,27 +1031,33 @@ class Util {
         return containerElement.get(0).scrollHeight > containerElement.get(0).clientHeight;
     }
 
-    static getDateString(year,month,day,locale = "en", includeWeekday=true) {
-        if (year !== null && year !== "" &&
-            month !== null && month !== "" &&
-            day !== null && day !== ""
-        ) {
-            let date = new Date(month+"/"+day+"/"+year);
-            if (date.toString() !== "Invalid Date") {
-                const options = {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
-                };
+    static getDateString(year, month, day, locale = "en", includeWeekday = true) {
+        month = month-1;
+        // Validate input
+        if (!year || !month || !day) return "";
 
-                if (includeWeekday === true) {
-                    options.weekday = "short";
-                }
-                const localFormatter = new Intl.DateTimeFormat(locale, options);
-                return localFormatter.format(date);
-            }
+        const date = new Date(`${month}/${day}/${year}`);
+        if (isNaN(date)) return "";
+
+        // Japanese locale: use built-in formatting
+        if (locale === "ja") {
+            const options = {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                ...(includeWeekday && { weekday: 'short' })
+            };
+            return new Intl.DateTimeFormat(locale, options).format(date);
         }
-        return "";
+
+        // Other locales: custom format like "EEE, MMM d, yyyy"
+        const formatter = (option) => new Intl.DateTimeFormat(locale, option).format(date);
+        const weekday = formatter({ weekday: 'short' }).replace(/[.,]$/, '');
+        const monthStr = formatter({ month: 'short' }).replace(/[.,]$/, '');
+        const dayStr = formatter({ day: 'numeric' });
+        const yearStr = formatter({ year: 'numeric' });
+
+        return includeWeekday ? `${weekday}, ${monthStr} ${dayStr}, ${yearStr}` : `${monthStr} ${dayStr}, ${yearStr}`;
     }
 
     static getKeyByValue(object, value) {
