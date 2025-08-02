@@ -1370,67 +1370,22 @@ class Util {
     }
 
     static getMessageSubText(createdAt, timezone, locale = 'en') {
-        const translations = {
-            en: {
-                ago: " ago",
-                units: {
-                    years: [" year", " years"],
-                    months: [" month", " months"],
-                    days: [" day", " days"],
-                    hours: [" hour", " hours"],
-                    minutes: [" minute", " minutes"],
-                    seconds: [" second", " seconds"],
-                    zero: "0s"
-                }
-            },
-            ja: {
-                ago: "前",
-                units: {
-                    years: "年",
-                    months: "か月",
-                    days: "日",
-                    hours: "時間",
-                    minutes: "分",
-                    seconds: "秒",
-                    zero: "0秒"
-                }
-            },
-            fr: {
-                ago: " il y a",
-                units: {
-                    years: [" an", " ans"],
-                    months: [" mois", " mois"], // same singular/plural
-                    days: [" jour", " jours"],
-                    hours: [" heure", " heures"],
-                    minutes: [" minute", " minutes"],
-                    seconds: [" seconde", " secondes"],
-                    zero: "0s"
-                }
-            }
-        };
-
-        const t = translations[locale] || translations.en;
         const createdAtDate = new Date(new Date(createdAt).toLocaleString("en-US", { timeZone: timezone }));
         const nowDate = new Date(new Date().toLocaleString("en-US", { timeZone: timezone }));
         const elapsedTime = Util.msToTimeSegments(nowDate - createdAtDate);
 
-        let timeLapsed = t.units.zero;
+        const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
 
         const unitKeys = ["years", "months", "days", "hours", "minutes", "seconds"];
         for (const key of unitKeys) {
             const value = elapsedTime[key];
             if (value > 0) {
-                if (Array.isArray(t.units[key])) {
-                    const unit = value === 1 ? t.units[key][0] : t.units[key][1];
-                    timeLapsed = value + unit;
-                } else {
-                    timeLapsed = value + t.units[key];
-                }
-                break; // exit after finding the largest non-zero unit
+                return `<small class='text-muted'>${rtf.format(-value, key)}</small>`;
             }
         }
 
-        return `<small class='text-muted'>${timeLapsed}${t.ago}</small>`;
+        // Fallback for zero time
+        return `<small class='text-muted'>${rtf.format(0, "seconds")}</small>`;
     }
 
 
