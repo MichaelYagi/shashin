@@ -20,12 +20,36 @@ function initializeUploads(activePage) {
 
     $("#uploadMediaAlbum").on("change", function (e) {
         e.preventDefault();
+
+        modalShown(function (isShown) {
+            if (isShown === false) {
+                let backgroundColor = "white";
+                if (shashin.darkMode === true) {
+                    backgroundColor = "#222222";
+                }
+                $("header,#container,ul.nav").css({"background-color": backgroundColor, "opacity": ".5"});
+            }
+        });
+
+        Util.showSpinner(true);
         const fi = document.getElementById("uploadMediaAlbum");
         uploadData(fi, "uploadToAlbumForm");
     });
 
     $("#uploadMedia").on("change", function (e) {
         e.preventDefault();
+
+        modalShown(function (isShown) {
+            if (isShown === false) {
+                let backgroundColor = "white";
+                if (shashin.darkMode === true) {
+                    backgroundColor = "#222222";
+                }
+                $("header,#container,ul.nav").css({"background-color": backgroundColor, "opacity": ".5"});
+            }
+        });
+
+        Util.showSpinner(true);
         const fi = document.getElementById("uploadMedia");
         uploadData(fi, "uploadForm");
     });
@@ -37,37 +61,36 @@ function initializeUploads(activePage) {
     $("header,#container,ul.nav,#topLeftToastContainer,#topCenterToastContainer,#topRightToastContainer,#midLeftToastContainer,#midCenterToastContainer,#midRightToastContainer,#bottomLeftToastContainer,#bottomCenterToastContainer,#bottomRightToastContainer").on('dragover', function (e) {
         preventDefaults(e);
 
-        const isModalShown = ($('.modal').hasClass('in') || $('.modal').hasClass('show'));
-        const isOffcanvasShown = ($('.offcanvas').hasClass('in') || $('.offcanvas').hasClass('show'));
-
-        if (isOffcanvasShown === false && isModalShown === false) {
-            let backgroundColor = "white";
-            if (shashin.darkMode === true) {
-                backgroundColor = "#222222";
+        modalShown(function (isShown) {
+            if (isShown === false) {
+                let backgroundColor = "white";
+                if (shashin.darkMode === true) {
+                    backgroundColor = "#222222";
+                }
+                $("header,#container,ul.nav").css({"background-color": backgroundColor, "opacity": ".5"});
             }
-            $("header,#container,ul.nav").css({"background-color": backgroundColor, "opacity": ".5"});
-        }
+        });
     });
     $("header,#container,ul.nav").on('dragenter', function (e) {
         preventDefaults(e);
 
-        const isModalShown = ($('.modal').hasClass('in') || $('.modal').hasClass('show'));
-        const isOffcanvasShown = ($('.offcanvas').hasClass('in') || $('.offcanvas').hasClass('show'));
+        modalShown(function (isShown) {
+            if (isShown === false) {
+                let backgroundColor = "white";
+                if (shashin.darkMode === true) {
+                    backgroundColor = "#222222";
+                }
+                $("header,#container").css({"background-color": backgroundColor, "opacity": ".5"});
 
-        if (isOffcanvasShown === false && isModalShown === false) {
-            let backgroundColor = "white";
-            if (shashin.darkMode === true) {
-                backgroundColor = "#222222";
+                shashin.showToastMessage(shashin.getTranslatedValue("main.toast.media.upload.title"), shashin.getTranslatedValue("main.toast.media.upload.body"), {
+                    placement: shashin.toast.placement.top.center,
+                    tag: "uploadMedia",
+                    autohide: false
+                });
             }
-            $("header,#container").css({"background-color": backgroundColor, "opacity": ".5"});
-
-            shashin.showToastMessage(shashin.getTranslatedValue("main.toast.media.upload.title"), shashin.getTranslatedValue("main.toast.media.upload.body"), {
-                placement: shashin.toast.placement.top.center,
-                tag: "uploadMedia",
-                autohide: false
-            });
-        }
+        });
     });
+
     $("header,#container,ul.nav").on('dragleave', function (e) {
         preventDefaults(e);
 
@@ -94,21 +117,20 @@ function initializeUploads(activePage) {
 
         Util.showSpinner(true);
 
-        const isModalShown = ($('.modal').hasClass('in') || $('.modal').hasClass('show'));
-        const isOffcanvasShown = ($('.offcanvas').hasClass('in') || $('.offcanvas').hasClass('show'));
-
-        if (isOffcanvasShown === false && isModalShown === false) {
-            const dt = e.originalEvent.dataTransfer;
-            if (dt.types && (dt.types.indexOf ? dt.types.indexOf('Files') !== -1 : dt.types.includes('Files'))) {
-                if (activePage === "album") {
-                    uploadData(dt, "uploadToAlbumForm");
-                } else {
-                    uploadData(dt, "uploadForm");
+        modalShown(function (isShown) {
+            if (isShown === false) {
+                const dt = e.originalEvent.dataTransfer;
+                if (dt.types && (dt.types.indexOf ? dt.types.indexOf('Files') !== -1 : dt.types.includes('Files'))) {
+                    if (activePage === "album") {
+                        uploadData(dt, "uploadToAlbumForm");
+                    } else {
+                        uploadData(dt, "uploadForm");
+                    }
                 }
+            } else {
+                revertUI();
             }
-        } else {
-            revertUI();
-        }
+        });
     });
 
     function uploadData(fi, uploadForm) {
@@ -190,5 +212,16 @@ function initializeUploads(activePage) {
         shashin.closeToastMessages({tag: "uploadMedia"});
 
         Util.showSpinner(false);
+    }
+
+    function modalShown(callback) {
+        const isModalShown = ($('.modal').hasClass('in') || $('.modal').hasClass('show'));
+        const isOffcanvasShown = ($('.offcanvas').hasClass('in') || $('.offcanvas').hasClass('show'));
+
+        if (isOffcanvasShown === false && isModalShown === false) {
+            callback(false);
+        } else {
+            callback(true);
+        }
     }
 }
