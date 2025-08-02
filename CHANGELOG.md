@@ -15,6 +15,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Deprecated
 ### Removed
 ### Fixed
+- Made date format between JS and Kotlin consistent
 ### Security
 
 ## [2.11.4] - 2025-08-01
