@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html th:lang="${locale}" xmlns:th="http://www.thymeleaf.org">
 <body>
 <ul class="nav nav-pills nav-fill ms-3 me-3 mt-3" th:fragment="person(activePage,parameter,counts,faceRecogServicesAvailable,authority,facialDetection)">
     <th:block th:if="${facialDetection && counts.get('person') > 0 and (authority == 'ROLE_ADMIN' or authority == 'ROLE_SUPER')}">
