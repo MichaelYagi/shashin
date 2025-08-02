@@ -543,10 +543,7 @@ async function showMap(mapdata, keywordMap, locale) {
             }
         }
 
-        let resultsText = filteredCount + " result" + (filteredCount === 1 ? "" : "s");
-        if (locale !== "en") {
-            resultsText = shashin.getTranslatedValue("main.pages.map.modal.result", filteredCount);
-        }
+        let resultsText = shashin.getTranslatedValue("main.pages.map.modal.result", filteredCount);
         $("#resultsText").text(resultsText);
 
         if (filteredCount === 0 && contextCoordArray.length > 0 && maxDistance > 0) {
