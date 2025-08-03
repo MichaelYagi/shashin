@@ -79,7 +79,23 @@ describe('#Util tests', function() {
 
         // 4 minutes ago
         let date = getAdjustedDate(now, { hours: offsetHours, minutes: 4 });
+        assert.equal(Util.getMessageSubText(date, "UTC", "en"), "<small class='text-muted'>4 minutes ago</small>");
+
+        // 4 minutes ago
+        date = getAdjustedDate(now, { hours: offsetHours, minutes: 4 });
         assert.equal(Util.getMessageSubText(date, "UTC", "ja"), "<small class='text-muted'>4 分前</small>");
+
+        // 4 minutes ago
+        date = getAdjustedDate(now, { hours: offsetHours, minutes: 4 });
+        assert.equal(Util.getMessageSubText(date, "UTC", "de"), "<small class='text-muted'>vor 4 Minuten</small>");
+
+        // 4 minutes ago
+        date = getAdjustedDate(now, { hours: offsetHours, minutes: 4 });
+        assert.equal(Util.getMessageSubText(date, "UTC", "fr"), "<small class='text-muted'>il y a 4 minutes</small>");
+
+        // 4 minutes ago
+        date = getAdjustedDate(now, { hours: offsetHours, minutes: 4 });
+        assert.equal(Util.getMessageSubText(date, "UTC", "es"), "<small class='text-muted'>hace 4 minutos</small>");
 
         // 5 hours ago
         date = getAdjustedDate(now, { hours: offsetHours + 5 });
