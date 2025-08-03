@@ -1616,7 +1616,7 @@ class Util {
                             setTimeout(() => {
                                 const unreadNotifications = data.unreadNotifications;
                                 const notificationCount = unreadNotifications.length;
-                                const firstNotification = data.unreadNotifications[0];
+                                const firstNotification = data.unreadNotifications[data.unreadNotifications.length-1];
                                 const createdAtDate = firstNotification.createdAt;
 
                                 const t = {
