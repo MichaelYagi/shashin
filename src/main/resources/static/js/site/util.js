@@ -1370,22 +1370,52 @@ class Util {
     }
 
     static getMessageSubText(createdAt, timezone, locale = 'en') {
-        const createdAtDate = new Date(new Date(createdAt).toLocaleString("en-US", { timeZone: timezone }));
-        const nowDate = new Date(new Date().toLocaleString("en-US", { timeZone: timezone }));
-        const elapsedTime = Util.msToTimeSegments(nowDate - createdAtDate);
+        // Fallback-safe time zone conversion
+        const convertToTimeZone = (date, timeZone) => {
+            try {
+                return new Date(new Date(date).toLocaleString("en-US", { timeZone }));
+            } catch (e) {
+                // Fallback: assume input date is already in correct time zone
+                return new Date(date);
+            }
+        };
 
-        const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+        const createdAtDate = convertToTimeZone(createdAt, timezone);
+        const nowDate = convertToTimeZone(Date.now(), timezone);
+        const elapsedMs = nowDate - createdAtDate;
+
+        const elapsedTime = Util.msToTimeSegments(elapsedMs);
+
+        // Fallback-safe relative time formatter
+        const formatRelativeTime = (value, unit) => {
+            try {
+                const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+                return rtf.format(-value, unit);
+            } catch (e) {
+                // Basic fallback formatting
+                const fallbackUnits = {
+                    years: "year",
+                    months: "month",
+                    days: "day",
+                    hours: "hour",
+                    minutes: "minute",
+                    seconds: "second"
+                };
+                const unitLabel = fallbackUnits[unit] || unit;
+                return value === 0 ? "now" : `${value} ${unitLabel}${value > 1 ? "s" : ""} ago`;
+            }
+        };
 
         const unitKeys = ["years", "months", "days", "hours", "minutes", "seconds"];
         for (const key of unitKeys) {
             const value = elapsedTime[key];
             if (value > 0) {
-                return `<small class='text-muted'>${rtf.format(-value, key)}</small>`;
+                return `<small class='text-muted'>${formatRelativeTime(value, key)}</small>`;
             }
         }
 
         // Fallback for zero time
-        return `<small class='text-muted'>${rtf.format(0, "seconds")}</small>`;
+        return `<small class='text-muted'>${formatRelativeTime(0, "seconds")}</small>`;
     }
 
 
