@@ -75,50 +75,52 @@ describe('#Util tests', function() {
         };
 
         const now = getDate(); // single reference point
-        const offsetHours = 0;
 
         // 4 minutes ago
-        let date = getAdjustedDate(now, { hours: offsetHours, minutes: 4 });
+        let date = getAdjustedDate(now, { minutes: 4 });
         assert.equal(Util.getMessageSubText(date, "UTC", "en"), "<small class='text-muted'>4 minutes ago</small>");
 
         // 4 minutes ago
-        date = getAdjustedDate(now, { hours: offsetHours, minutes: 4 });
+        date = getAdjustedDate(now, { minutes: 4 });
         assert.equal(Util.getMessageSubText(date, "UTC", "ja"), "<small class='text-muted'>4 分前</small>");
 
         // 4 minutes ago
-        date = getAdjustedDate(now, { hours: offsetHours, minutes: 4 });
+        date = getAdjustedDate(now, { minutes: 4 });
         assert.equal(Util.getMessageSubText(date, "UTC", "de"), "<small class='text-muted'>vor 4 Minuten</small>");
 
         // 4 minutes ago
-        date = getAdjustedDate(now, { hours: offsetHours, minutes: 4 });
+        date = getAdjustedDate(now, { minutes: 4 });
         assert.equal(Util.getMessageSubText(date, "UTC", "fr"), "<small class='text-muted'>il y a 4 minutes</small>");
 
         // 4 minutes ago
-        date = getAdjustedDate(now, { hours: offsetHours, minutes: 4 });
+        date = getAdjustedDate(now, { minutes: 4 });
         assert.equal(Util.getMessageSubText(date, "UTC", "es"), "<small class='text-muted'>hace 4 minutos</small>");
 
+        date = getAdjustedDate(now, { hours: 1, minutes: 30 });
+        assert.equal(Util.getMessageSubText(date, "UTC", "en"), "<small class='text-muted'>1 hour ago</small>");
+
         // 5 hours ago
-        date = getAdjustedDate(now, { hours: offsetHours + 5 });
+        date = getAdjustedDate(now, { hours: 5 });
         assert.equal(Util.getMessageSubText(date, "UTC", "en"), "<small class='text-muted'>5 hours ago</small>");
 
         // 8 days ago
-        date = getAdjustedDate(now, { hours: offsetHours, days: 8 });
+        date = getAdjustedDate(now, { days: 8 });
         assert.equal(Util.getMessageSubText(date, "UTC", "en"), "<small class='text-muted'>8 days ago</small>");
 
         // 1 month and 2 days ago
-        date = getAdjustedDate(now, { hours: offsetHours, months: 1, days: 2 });
+        date = getAdjustedDate(now, { months: 1, days: 2 });
         assert.equal(Util.getMessageSubText(date, "UTC", "en"), "<small class='text-muted'>last month</small>");
 
         // 1 month and 2 days ago
-        date = getAdjustedDate(now, { hours: offsetHours, months: 1, days: 2 });
+        date = getAdjustedDate(now, { months: 1, days: 2 });
         assert.equal(Util.getMessageSubText(date, "UTC", "pt"), "<small class='text-muted'>mês passado</small>");
 
         // 1 year and 11 months ago
-        date = getAdjustedDate(now, { hours: offsetHours, months: 11, years: 1 });
+        date = getAdjustedDate(now, { months: 11, years: 1 });
         assert.equal(Util.getMessageSubText(date, "UTC", "en"), "<small class='text-muted'>last year</small>");
 
         // 3 years
-        date = getAdjustedDate(now, { hours: offsetHours, months: 12, years: 2 });
+        date = getAdjustedDate(now, { months: 12, years: 2 });
         assert.equal(Util.getMessageSubText(date, "UTC", "en"), "<small class='text-muted'>3 years ago</small>");
 
         date = getAdjustedDate(now, { hours: 0 });
