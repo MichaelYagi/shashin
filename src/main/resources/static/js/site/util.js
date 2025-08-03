@@ -1418,7 +1418,6 @@ class Util {
         return `<small class='text-muted'>${formatRelativeTime(0, "seconds")}</small>`;
     }
 
-
     static getDateGalleryHeight(id) {
         if ($("#br" + id).length === 0 && $("#row" + id).length === 0 && $("#amp_" + id).length === 0 && $("#tail_" + id).length === 0 && $("#" + id).length === 0) {
             return 0;

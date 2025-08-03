@@ -112,7 +112,6 @@ describe('#Util tests', function() {
         assert.equal(Util.getMessageSubText(date, "UTC", "en"), "<small class='text-muted'>now</small>");
     });
 
-
     it('Numeric string test', function() {
         assert.equal(Util.isNumericString(),false);
         assert.equal(Util.isNumericString("a"),false);
