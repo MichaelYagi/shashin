@@ -279,6 +279,10 @@ class TextUtils {
             return "yyyyMMddHHmmss"
         }
 
+        fun getCommonShortDateFormat(): String {
+            return "yyyy-MM-dd"
+        }
+
         fun getCommonDateFormat(): String {
             return "yyyy-MM-dd HH:mm:ss"
         }
@@ -366,7 +370,7 @@ class TextUtils {
             var formattedDate = ""
             try {
                 var locale = Locale(locale)
-                val sdf = SimpleDateFormat(getCommonDateFormat())
+                val sdf = SimpleDateFormat(getCommonShortDateFormat())
                 var newSdf = SimpleDateFormat("MMM d, yyyy", locale)
                 if (locale.toString() == "ja") { // If Japanese
                     newSdf = SimpleDateFormat("yyyy年MMMd日", locale)
@@ -376,7 +380,7 @@ class TextUtils {
             } catch (e: Exception) {
                 logger.log(Level.WARNING, "Could not format date $oldDate. ${e.message}")
             }
-            return formattedDate
+            return formattedDate.replace(".", "")
         }
 
         fun formatToLongDateWithTime(oldDate: String, locale: String = "en"): String {

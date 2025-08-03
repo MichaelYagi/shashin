@@ -160,6 +160,38 @@ class UITests: BaseSeleniumTests() {
         jsFormattedDate = js.executeScript("return Util.getDateString(2021,12,1, \"pt\")")
         longDate = TextUtils.formatToLongDate("2021-12-01", "pt")
         Assertions.assertEquals(jsFormattedDate, longDate)
+
+        jsFormattedDate = js.executeScript("return Util.getDateString(2021,12,1, \"pt\",false)")
+        longDate = TextUtils.formatToLongDate("2021-12-01", "pt")
+        Assertions.assertNotEquals(jsFormattedDate, longDate)
+
+        jsFormattedDate = js.executeScript("return Util.getDateString(2021,12,1, \"pt\",false)")
+        var shortDate = TextUtils.formatToAbbrDate("2021-12-01", "pt")
+        Assertions.assertEquals(jsFormattedDate, shortDate)
+
+        jsFormattedDate = js.executeScript("return Util.getDateString(2021,10,17, \"fr\",false)")
+        shortDate = TextUtils.formatToAbbrDate("2021-10-17", "fr")
+        Assertions.assertEquals(jsFormattedDate, shortDate)
+
+        jsFormattedDate = js.executeScript("return Util.getDateString(2021,10,17, \"ja\",false)")
+        shortDate = TextUtils.formatToAbbrDate("2021-10-17", "ja")
+        Assertions.assertEquals(jsFormattedDate, shortDate)
+
+        jsFormattedDate = js.executeScript("return Util.getDateString(2021,10,17, \"es\",false)")
+        shortDate = TextUtils.formatToAbbrDate("2021-10-17", "es")
+        Assertions.assertEquals(jsFormattedDate, shortDate)
+
+        jsFormattedDate = js.executeScript("return Util.getDateString(2021,10,17, \"de\",false)")
+        shortDate = TextUtils.formatToAbbrDate("2021-10-17", "de")
+        Assertions.assertEquals(jsFormattedDate, shortDate)
+
+        jsFormattedDate = js.executeScript("return Util.getDateString(2021,12,1, \"ja\",false)")
+        shortDate = TextUtils.formatToAbbrDate("2021-12-01", "ja")
+        Assertions.assertEquals(jsFormattedDate, shortDate)
+
+        jsFormattedDate = js.executeScript("return Util.getDateString(2021,12,1, \"pt\",false)")
+        shortDate = TextUtils.formatToAbbrDate("2021-12-01", "pt")
+        Assertions.assertEquals(jsFormattedDate, shortDate)
     }
 
     @Test
