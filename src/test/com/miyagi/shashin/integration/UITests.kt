@@ -2,6 +2,7 @@ package com.miyagi.shashin.e2e
 
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.UserRepository
+import com.miyagi.shashin.util.TextUtils
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -123,6 +124,42 @@ class UITests: BaseSeleniumTests() {
                 "return shashin.hasToast(shashin.toast.placement.top.left,{findHidden:true});")
 
         Assertions.assertFalse(hasToast as Boolean)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun equalDateTranslations() {
+        Assertions.assertEquals("http://localhost:$port/timeline", this.driver!!.currentUrl)
+
+        this.driver!!.get("http://localhost:$port/test")
+        val js: JavascriptExecutor = this.driver as JavascriptExecutor
+        var jsFormattedDate = js.executeScript("return Util.getDateString(2021,10,17, \"pt\")")
+        var longDate = TextUtils.formatToLongDate("2021-10-17", "pt")
+        Assertions.assertEquals(jsFormattedDate, longDate)
+
+        jsFormattedDate = js.executeScript("return Util.getDateString(2021,10,17, \"fr\")")
+        longDate = TextUtils.formatToLongDate("2021-10-17", "fr")
+        Assertions.assertEquals(jsFormattedDate, longDate)
+
+        jsFormattedDate = js.executeScript("return Util.getDateString(2021,10,17, \"ja\")")
+        longDate = TextUtils.formatToLongDate("2021-10-17", "ja")
+        Assertions.assertEquals(jsFormattedDate, longDate)
+
+        jsFormattedDate = js.executeScript("return Util.getDateString(2021,10,17, \"es\")")
+        longDate = TextUtils.formatToLongDate("2021-10-17", "es")
+        Assertions.assertEquals(jsFormattedDate, longDate)
+
+        jsFormattedDate = js.executeScript("return Util.getDateString(2021,10,17, \"de\")")
+        longDate = TextUtils.formatToLongDate("2021-10-17", "de")
+        Assertions.assertEquals(jsFormattedDate, longDate)
+
+        jsFormattedDate = js.executeScript("return Util.getDateString(2021,12,1, \"ja\")")
+        longDate = TextUtils.formatToLongDate("2021-12-01", "ja")
+        Assertions.assertEquals(jsFormattedDate, longDate)
+
+        jsFormattedDate = js.executeScript("return Util.getDateString(2021,12,1, \"pt\")")
+        longDate = TextUtils.formatToLongDate("2021-12-01", "pt")
+        Assertions.assertEquals(jsFormattedDate, longDate)
     }
 
     @Test
