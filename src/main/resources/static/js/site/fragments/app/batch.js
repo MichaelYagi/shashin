@@ -170,9 +170,8 @@
         const isSelected = $("#tlicon" + metadataId).attr("class") === "bi-circle";
         const isVideo = $("#photoThumbnailContainer" + metadataId).hasClass("is-video");
 
-        shashin.updateSelectionUI(metadataId, isSelected, opaque);
+        shashin.updateSelectionUI(metadataId, isSelected, opaque, clicked);
         shashin.updateSelectionState(metadataId, isSelected, isVideo, view);
-
         if (clicked) {
             shashin.lastSelectedMetadataId = metadataId;
             shashin.lastSelectedMetadataSelected = isSelected;
@@ -190,15 +189,21 @@
         shashin.setDateSection(metadataId, view);
     };
 
-    shashin.updateSelectionUI = function(metadataId, isSelected, opaque) {
-        $("#tntl" + metadataId).show();
+    shashin.updateSelectionUI = function(metadataId, isSelected, opaque, clicked = true) {
+        if (isSelected === false && clicked === false) {
+            $("#tntl" + metadataId).hide();
+        } else {
+            $("#tntl" + metadataId).show();
+            $("#tncentered" + metadataId).toggle(!isSelected);
+            $("#tnbr" + metadataId).toggle(!isSelected);
+            $("#tnbl" + metadataId).toggle(!isSelected);
+        }
+
         $("#tlicon" + metadataId)
             .toggleClass('bi-circle-fill', isSelected)
             .toggleClass('bi-circle', !isSelected);
         $("#image" + metadataId).css("opacity", opaque);
-        $("#tncentered" + metadataId).toggle(!isSelected);
-        $("#tnbr" + metadataId).toggle(!isSelected);
-        $("#tnbl" + metadataId).toggle(!isSelected);
+
     };
 
     shashin.updateSelectionState = function(metadataId, isSelected, isVideo, view) {
