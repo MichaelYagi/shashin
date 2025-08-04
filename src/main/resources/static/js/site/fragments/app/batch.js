@@ -189,7 +189,7 @@
         shashin.setDateSection(metadataId, view);
     };
 
-    shashin.updateSelectionUI = function(metadataId, isSelected, opaque, clicked = true) {
+    shashin.updateSelectionUI = function(metadataId, isSelected, opaque, clicked) {
         if (isSelected === false && clicked === false) {
             $("#tntl" + metadataId).hide();
         } else {

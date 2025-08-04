@@ -75,7 +75,7 @@
                 shashin.lastSelectedMetadataId = id;
                 shashin.lastSelectedMetadataSelected = selected;
 
-                shashin.updateSelectionUI(id, selected, opaque);
+                shashin.updateSelectionUI(id, selected, opaque, true);
                 shashin.updateSelectionState(id, selected, isVideo, view);
                 shashin.updateBorderUI(id);
                 updateThumbnailCommon();
