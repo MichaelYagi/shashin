@@ -14,18 +14,21 @@
         };
 
         const updateImageSelection = (id, view, isSelected, opacityLevel, metadataArray) => {
-            const imageUrl = $("#image" + id).attr("src").replace("/gif/" + id, "/" + (Util.isMobile() ? "100" : "225") + "/" + id);
-            $("#image" + id).attr("src", imageUrl);
+            if ($("#image" + id).length > 0) {
+                const imageUrl = $("#image" + id).attr("src").replace("/gif/" + id, "/" + (Util.isMobile() ? "100" : "225") + "/" + id);
 
-            const iconClass = $("#tlicon" + id).attr("class");
-            const shouldSelect = (isSelected && iconClass === "bi-circle") || (!isSelected && iconClass === "bi-circle-fill");
+                $("#image" + id).attr("src", imageUrl);
 
-            if (shouldSelect) {
-                shashin.selectClick(id, view, opaque, transparent, metadataArray, false);
-                $("#image" + id).css("opacity", opacityLevel);
+                const iconClass = $("#tlicon" + id).attr("class");
+                const shouldSelect = (isSelected && iconClass === "bi-circle") || (!isSelected && iconClass === "bi-circle-fill");
 
-                if (!isSelected && id !== metadataId && shashin.lastSelectedMetadataId !== id) {
-                    $("#tntl" + id).css("display", "none");
+                if (shouldSelect) {
+                    shashin.selectClick(id, view, opaque, transparent, metadataArray, false);
+                    $("#image" + id).css("opacity", opacityLevel);
+
+                    if (!isSelected && id !== metadataId && shashin.lastSelectedMetadataId !== id) {
+                        $("#tntl" + id).css("display", "none");
+                    }
                 }
             }
         };
@@ -103,10 +106,19 @@
 
                 resetBorders();
                 applyBorderToLastSelected();
-            } else if (["timeline", "accessed", "modified", "recent", "taken"].includes(view) || !addBorder) {
+            } else if (["timeline", "accessed", "modified", "recent", "taken", "album"].includes(view) || !addBorder) {
                 const http = new Http("get ranged metadata");
                 const version = Util.getMetadataLocalStorage();
-                let url = view === "timeline" ? `/metadata/range/${direction}/${shashin.lastSelectedMetadataId}/${metadataId}` : `/browse/range/${metadataId}/${view}`;
+
+                let url = "";
+                if (view === "timeline") {
+                    url = `/metadata/range/${direction}/${shashin.lastSelectedMetadataId}/${metadataId}`;
+                } else if (view === "album") {
+                    const albumId = $("#albumId").val();
+                    url = `/album/${albumId}/range/${metadataId}`;
+                } else {
+                    url = `/browse/range/${metadataId}/${view}`;
+                }
 
                 if (version) url += `?v=${version}`;
 
@@ -252,7 +264,7 @@
     };
 
     shashin.updateSelectionCount = function(metadataIdArray) {
-        const count = metadataIdArray.length || $('.bi-circle-fill').length;
+        const count = metadataIdArray.length || $('.thumbnail-tl .bi-circle-fill').length;
         const label = count + " Selected";
         $("#timelineNumberSelected, #matchesNumberSelected, #favoritesNumberSelected, #trashNumberSelected, #albumNumberSelected").text(label);
     };
@@ -265,7 +277,7 @@
         const shareLink = $("#shareLink").val();
         const downloadEl = $("#download" + albumId);
 
-        if ($('.bi-circle-fill').length > 0) {
+        if ($('.thumbnail-tl .bi-circle-fill').length > 0) {
             $("#clearMultiSelect").show();
             $("#albumNumberSelected").show();
             downloadEl.attr({
