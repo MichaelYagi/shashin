@@ -112,12 +112,12 @@
 
                 let url = "";
                 if (view === "timeline") {
-                    url = `/metadata/range/${direction}/${shashin.lastSelectedMetadataId}/${metadataId}`;
+                    url = `/metadata/range/${direction}/${shashin.lastSelectedMetadataId}/${metadataId}/${shashin.mediaTypeFilter}`;
                 } else if (view === "album") {
                     const albumId = $("#albumId").val();
-                    url = `/album/${albumId}/range/${metadataId}`;
+                    url = `/album/${albumId}/range/${metadataId}/${shashin.mediaTypeFilter}`;
                 } else {
-                    url = `/browse/range/${metadataId}/${view}`;
+                    url = `/browse/range/${metadataId}/${view}/${shashin.mediaTypeFilter}`;
                 }
 
                 if (version) url += `?v=${version}`;

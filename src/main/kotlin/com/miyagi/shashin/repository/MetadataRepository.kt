@@ -24,17 +24,32 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN albumphoto ap ON m.id = ap.metadata_id LEFT JOIN useralbum ua ON ap.album_id = ua.album_id LEFT JOIN album a ON a.id = ua.album_id WHERE m.hidden = 0 AND ua.user_id = :userId ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
    fun findByAlbumMetadataByUserId(@Param("userId") userId: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE hidden = 0 AND CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) DESC\n", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) DESC", nativeQuery = true)
    fun findMetadataIdBetweenTakenAt(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
+
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) DESC", nativeQuery = true)
+   fun findMetadataIdBetweenTakenAtWithType(@Param("startDate") startDate: String, @Param("endDate") endDate: String, @Param("type") type: String): MutableList<Metadata>?
+
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) DESC", nativeQuery = true)
+   fun findMetadataIdBetweenTakenAtWithMediaType(@Param("startDate") startDate: String, @Param("endDate") endDate: String, @Param("type") type: String): MutableList<Metadata>?
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND CAST(strftime('%s', last_accessed_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY last_accessed_at DESC", nativeQuery = true)
    fun findMetadataIdBetweenAccessedAt(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND CAST(strftime('%s', last_accessed_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY last_accessed_at DESC", nativeQuery = true)
+   fun findMetadataIdBetweenAccessedAtWithType(@Param("startDate") startDate: String, @Param("endDate") endDate: String, @Param("type") type: String): MutableList<Metadata>?
+
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND CAST(strftime('%s', modified_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY modified_at DESC", nativeQuery = true)
    fun findMetadataIdBetweenModifiedAt(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND CAST(strftime('%s', modified_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY modified_at DESC", nativeQuery = true)
+   fun findMetadataIdBetweenModifiedAtWithType(@Param("startDate") startDate: String, @Param("endDate") endDate: String, @Param("type") type: String): MutableList<Metadata>?
+
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND CAST(strftime('%s', added_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY added_at DESC", nativeQuery = true)
    fun findMetadataIdBetweenAddedAt(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
+
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND CAST(strftime('%s', added_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY added_at DESC", nativeQuery = true)
+   fun findMetadataIdBetweenAddedAtWithType(@Param("startDate") startDate: String, @Param("endDate") endDate: String, @Param("type") type: String): MutableList<Metadata>?
 
    @Cacheable(value = ["allAlbumMetadataWithCoordinates"], key = "{#userId}")
    @Query("SELECT DISTINCT m.id, m.type, m.lat, m.lng, m.year, m.month, m.day, m.thumbnail_url_small as thumbnailUrlSmall, m.thumbnail_url_original as thumbnailUrlOriginal, m.video_url as videoUrl, m.original_image_width as originalImageWidth, m.original_image_height as originalImageHeight, m.map_marker_url as mapMarkerUrl, m.place_name as placeName FROM metadata m LEFT JOIN albumphoto ap ON m.id = ap.metadata_id LEFT JOIN useralbum ua ON ap.album_id = ua.album_id LEFT JOIN album a ON a.id = ua.album_id WHERE m.hidden = 0 AND ua.user_id = :userId AND m.lat IS NOT NULL AND m.lat != \"\" AND m.lng IS NOT NULL AND m.lng != \"\" LIMIT :offset, :limit", nativeQuery = true)

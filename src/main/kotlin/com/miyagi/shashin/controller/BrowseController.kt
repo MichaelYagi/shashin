@@ -976,9 +976,9 @@ class BrowseController: BaseController() {
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/browse/range/{metadataId}/{view}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/browse/range/{metadataId}/{view}/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) metadataId: String?, @PathVariable(required = true) view: String?, locale: Locale): String {
+    fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) metadataId: String?, @PathVariable(required = true) view: String?, @PathVariable(required = true) mediaType: String?, locale: Locale): String {
         val retMetadataIdArray = mutableListOf<MutableList<String>>()
         val response = mutableMapOf<String, Any?>()
 
@@ -989,16 +989,14 @@ class BrowseController: BaseController() {
         if (metadataId !== null && metadataId !== "") {
             val metadata = metadataRepository.findByMetadataId(metadataId)
 
-            var metadataDate = ""
-
-            if (view == "accessed") {
-                metadataDate = metadata?.getLastAccessedAt().toString()
+            val metadataDate = if (view == "accessed") {
+                metadata?.getLastAccessedAt().toString()
             } else if (view == "modified") {
-                metadataDate = metadata?.getModifiedAt().toString()
+                metadata?.getModifiedAt().toString()
             } else if (view == "recent") {
-                metadataDate = metadata?.getAddedAt().toString()
+                metadata?.getAddedAt().toString()
             } else {
-                metadataDate = metadata?.getTakenAt().toString()
+                metadata?.getTakenAt().toString()
             }
 
             val ymdArray = metadataDate.split(" ")
@@ -1007,15 +1005,30 @@ class BrowseController: BaseController() {
             var startDate = "$ymd 00:00:00"
             var endDate = "$ymd 23:59:59"
 
-            var metadatas: MutableList<Metadata>? = null
-            if (view == "accessed") {
-                metadatas = metadataRepository.findMetadataIdBetweenAccessedAt(startDate, endDate)
+            val metadatas = if (view == "accessed") {
+                if (mediaType == "all") {
+                    metadataRepository.findMetadataIdBetweenAccessedAt(startDate, endDate)
+                } else {
+                    metadataRepository.findMetadataIdBetweenAccessedAtWithType(startDate, endDate, mediaType.toString())
+                }
             } else if (view == "modified") {
-                metadatas = metadataRepository.findMetadataIdBetweenModifiedAt(startDate, endDate)
+                if (mediaType == "all") {
+                    metadataRepository.findMetadataIdBetweenModifiedAt(startDate, endDate)
+                } else {
+                    metadataRepository.findMetadataIdBetweenModifiedAtWithType(startDate, endDate, mediaType.toString())
+                }
             } else if (view == "recent") {
-                metadatas = metadataRepository.findMetadataIdBetweenAddedAt(startDate, endDate)
+                if (mediaType == "all") {
+                    metadataRepository.findMetadataIdBetweenAddedAt(startDate, endDate)
+                } else {
+                    metadataRepository.findMetadataIdBetweenAddedAtWithType(startDate, endDate, mediaType.toString())
+                }
             } else {
-                metadatas = metadataRepository.findMetadataIdBetweenTakenAt(startDate, endDate)
+                if (mediaType == "all") {
+                    metadataRepository.findMetadataIdBetweenTakenAt(startDate, endDate)
+                } else {
+                    metadataRepository.findMetadataIdBetweenTakenAtWithType(startDate, endDate, mediaType.toString())
+                }
             }
 
             if (metadatas != null && metadatas.isNotEmpty()) {

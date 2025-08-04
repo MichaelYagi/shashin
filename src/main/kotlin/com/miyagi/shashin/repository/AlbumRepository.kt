@@ -15,6 +15,8 @@ interface AlbumRepository : CrudRepository<Album?, Int?> {
     @Query("SELECT DISTINCT m.* FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.year = :year AND m.month = :month AND m.day = :day AND m.hidden = 0 ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
     fun findAlbumMetadataByDate(@Param("albumId") albumId: Int, @Param("year") year: Int, @Param("month") month: Int, @Param("day") day: Int): MutableIterable<Metadata>?
 
+    @Query("SELECT DISTINCT m.* FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.year = :year AND m.month = :month AND m.day = :day AND m.hidden = 0 AND m.type LIKE %:type% ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
+    fun findAlbumMetadataByDateAndMediaType(@Param("albumId") albumId: Int, @Param("year") year: Int, @Param("month") month: Int, @Param("day") day: Int, @Param("type") type: String): MutableIterable<Metadata>?
 
     @Query("SELECT COUNT(*) FROM album", nativeQuery = true)
     fun countAllAlbums(): Int

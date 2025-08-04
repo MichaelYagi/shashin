@@ -651,9 +651,9 @@ class AlbumsController: BaseController() {
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/album/{albumId}/range/{metadataId}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/album/{albumId}/range/{metadataId}/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) metadataId: String?,@PathVariable(required = true) albumId: Int?, locale: Locale): String {
+    fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) metadataId: String?,@PathVariable(required = true) albumId: Int?, @PathVariable(required = true) mediaType: String?, locale: Locale): String {
         val retMetadataIdArray = mutableListOf<MutableList<String>>()
         val response = mutableMapOf<String, Any?>()
 
@@ -671,7 +671,12 @@ class AlbumsController: BaseController() {
 
             val ymdArray = ymd.split("-")
 
-            var metadatas = albumRepository.findAlbumMetadataByDate(albumId!!,ymdArray[0].toInt(),ymdArray[1].toInt(),ymdArray[2].toInt())
+            // If timeline view
+            var metadatas: MutableIterable<Metadata>? = if (mediaType == "all") {
+                albumRepository.findAlbumMetadataByDate(albumId!!,ymdArray[0].toInt(),ymdArray[1].toInt(),ymdArray[2].toInt())
+            } else {
+                albumRepository.findAlbumMetadataByDateAndMediaType(albumId!!,ymdArray[0].toInt(),ymdArray[1].toInt(),ymdArray[2].toInt(),mediaType.toString())
+            }
 
             if (metadatas != null) {
                 for (metadata in metadatas) {
