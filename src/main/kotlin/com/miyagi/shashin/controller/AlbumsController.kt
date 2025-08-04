@@ -1442,13 +1442,19 @@ class AlbumsController: BaseController() {
 
             response["msg"] = ""
             response["status"] = ApiResponse.SUCCESS.status
-            response["metadataList"] = if (mediaTypeFilter == "comments") {
-                albumPhotoRepository.findAllMetadataByAlbumIdAndCommentsOnly(albumId, year, month, day) as MutableList<Metadata>
-            } else if (mediaTypeFilter == "nolatlng") {
-                albumPhotoRepository.findAllMetadataByAlbumIdAndNoCoord(albumId, year, month, day) as MutableList<Metadata>
-            } else if (mediaTypeFilter == "description") {
-                albumPhotoRepository.findAllMetadataByAlbumIdAndDescription(albumId, year, month, day) as MutableList<Metadata>
-            } else if (mediaTypeFilter == "all" || mediaTypeFilter == "") {
+//            response["metadataList"] = if (mediaTypeFilter == "comments") {
+//                albumPhotoRepository.findAllMetadataByAlbumIdAndCommentsOnly(albumId, year, month, day) as MutableList<Metadata>
+//            } else if (mediaTypeFilter == "nolatlng") {
+//                albumPhotoRepository.findAllMetadataByAlbumIdAndNoCoord(albumId, year, month, day) as MutableList<Metadata>
+//            } else if (mediaTypeFilter == "description") {
+//                albumPhotoRepository.findAllMetadataByAlbumIdAndDescription(albumId, year, month, day) as MutableList<Metadata>
+//            } else if (mediaTypeFilter == "all" || mediaTypeFilter == "") {
+//                albumRepository.findAlbumMetadataByDate(albumId, year, month, day) as MutableList<Metadata>
+//            } else {
+//                albumRepository.findAlbumMetadataByDateAndFilter(albumId, mediaTypeFilter, year, month, day) as MutableList<Metadata>
+//            }
+
+            response["metadataList"] = if (mediaTypeFilter == "all" || mediaTypeFilter == "") {
                 albumRepository.findAlbumMetadataByDate(albumId, year, month, day) as MutableList<Metadata>
             } else {
                 albumRepository.findAlbumMetadataByDateAndFilter(albumId, mediaTypeFilter, year, month, day) as MutableList<Metadata>
@@ -1808,30 +1814,30 @@ class AlbumsController: BaseController() {
                         page * size,
                         size
                     )
-                } else if (mediaType == "comments") {
-                    response["totalPages"] = ceil((albumPhotoRepository.countByAlbumIdAndCommentsOnly(albumId)!!.toDouble()) / size.toDouble()).toInt()
-
-                    albumPhotoRepository.findAllByAlbumIdAndCommentsOnlyAndOffsetAndLimit(
-                        albumId,
-                        page * size,
-                        size
-                    )
-                } else if (mediaType == "nolatlng") {
-                    response["totalPages"] = ceil((albumPhotoRepository.countAlbumIdAndNoCoord(albumId)!!.toDouble()) / size.toDouble()).toInt()
-
-                    albumPhotoRepository.findAllByAlbumIdAndNoCoordAndOffsetAndLimit(
-                        albumId,
-                        page * size,
-                        size
-                    )
-                } else if (mediaType == "description") {
-                    response["totalPages"] = ceil((albumPhotoRepository.countAlbumIdAndDescription(albumId)!!.toDouble()) / size.toDouble()).toInt()
-
-                    albumPhotoRepository.findAllByAlbumIdAndDescriptionAndOffsetAndLimit(
-                        albumId,
-                        page * size,
-                        size
-                    )
+//                } else if (mediaType == "comments") {
+//                    response["totalPages"] = ceil((albumPhotoRepository.countByAlbumIdAndCommentsOnly(albumId)!!.toDouble()) / size.toDouble()).toInt()
+//
+//                    albumPhotoRepository.findAllByAlbumIdAndCommentsOnlyAndOffsetAndLimit(
+//                        albumId,
+//                        page * size,
+//                        size
+//                    )
+//                } else if (mediaType == "nolatlng") {
+//                    response["totalPages"] = ceil((albumPhotoRepository.countAlbumIdAndNoCoord(albumId)!!.toDouble()) / size.toDouble()).toInt()
+//
+//                    albumPhotoRepository.findAllByAlbumIdAndNoCoordAndOffsetAndLimit(
+//                        albumId,
+//                        page * size,
+//                        size
+//                    )
+//                } else if (mediaType == "description") {
+//                    response["totalPages"] = ceil((albumPhotoRepository.countAlbumIdAndDescription(albumId)!!.toDouble()) / size.toDouble()).toInt()
+//
+//                    albumPhotoRepository.findAllByAlbumIdAndDescriptionAndOffsetAndLimit(
+//                        albumId,
+//                        page * size,
+//                        size
+//                    )
                 } else {
                     response["totalPages"] = ceil((albumPhotoRepository.countAlbumIdAndMediaType(albumId,mediaType)!!.toDouble()) / size.toDouble()).toInt()
 
