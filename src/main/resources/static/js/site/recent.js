@@ -138,7 +138,9 @@ class Recent {
                             $("<span class='"+appendClass+"' style='width:0;height:0;padding:0'></span>").insertAfter($("#"+currentDate));
                         }
 
-                        shashin.dayHeadingListener(currentDate, activePage, mediaTypeFilter);
+                        if (mediaTypeFilter !== "nolatlng" && mediaTypeFilter !== "description") {
+                            shashin.dayHeadingListener(currentDate, activePage, mediaTypeFilter);
+                        }
                     }
                 }
 

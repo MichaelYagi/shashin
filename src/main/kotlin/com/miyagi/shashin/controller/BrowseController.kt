@@ -645,64 +645,64 @@ class BrowseController: BaseController() {
                         ).toMutableList()
                     }
                 }
-//            } else if (mediaType == "nolatlng") {
-//                response["totalPages"] = ceil((metadataRepository.countByNoCoordAndOffsetAndLimit().toDouble()) / size.toDouble()).toInt()
-//
-//                when (module) {
-//                    "recent" -> {
-//                        metadataList = metadataRepository.findRecentByNoCoordAndOffsetAndLimit(
-//                            pageValue,
-//                            size
-//                        ).toMutableList()
-//                    }
-//                    "modified" -> {
-//                        metadataList = metadataRepository.findModifiedByNoCoordAndOffsetAndLimit(
-//                            pageValue,
-//                            size
-//                        ).toMutableList()
-//                    }
-//                    "taken" -> {
-//                        metadataList = metadataRepository.findTakenByNoCoordAndOffsetAndLimit(
-//                            pageValue,
-//                            size
-//                        ).toMutableList()
-//                    }
-//                    "accessed" -> {
-//                        metadataList = metadataRepository.findLastAccessedByNoCoordAndOffsetAndLimit(
-//                            pageValue,
-//                            size
-//                        ).toMutableList()
-//                    }
-//                }
-//            } else if (mediaType == "description") {
-//                response["totalPages"] = ceil((metadataRepository.countByDescriptionAndOffsetAndLimit().toDouble()) / size.toDouble()).toInt()
-//
-//                when (module) {
-//                    "recent" -> {
-//                        metadataList = metadataRepository.findRecentByDescriptionAndOffsetAndLimit(
-//                            pageValue,
-//                            size
-//                        ).toMutableList()
-//                    }
-//                    "modified" -> {
-//                        metadataList = metadataRepository.findModifiedByDescriptionAndOffsetAndLimit(
-//                            pageValue,
-//                            size
-//                        ).toMutableList()
-//                    }
-//                    "taken" -> {
-//                        metadataList = metadataRepository.findTakenByDescriptionAndOffsetAndLimit(
-//                            pageValue,
-//                            size
-//                        ).toMutableList()
-//                    }
-//                    "accessed" -> {
-//                        metadataList = metadataRepository.findLastAccessedByDescriptionAndOffsetAndLimit(
-//                            pageValue,
-//                            size
-//                        ).toMutableList()
-//                    }
-//                }
+            } else if (mediaType == "nolatlng") {
+                response["totalPages"] = ceil((metadataRepository.countByNoCoordAndOffsetAndLimit().toDouble()) / size.toDouble()).toInt()
+
+                when (module) {
+                    "recent" -> {
+                        metadataList = metadataRepository.findRecentByNoCoordAndOffsetAndLimit(
+                            pageValue,
+                            size
+                        ).toMutableList()
+                    }
+                    "modified" -> {
+                        metadataList = metadataRepository.findModifiedByNoCoordAndOffsetAndLimit(
+                            pageValue,
+                            size
+                        ).toMutableList()
+                    }
+                    "taken" -> {
+                        metadataList = metadataRepository.findTakenByNoCoordAndOffsetAndLimit(
+                            pageValue,
+                            size
+                        ).toMutableList()
+                    }
+                    "accessed" -> {
+                        metadataList = metadataRepository.findLastAccessedByNoCoordAndOffsetAndLimit(
+                            pageValue,
+                            size
+                        ).toMutableList()
+                    }
+                }
+            } else if (mediaType == "description") {
+                response["totalPages"] = ceil((metadataRepository.countByDescriptionAndOffsetAndLimit().toDouble()) / size.toDouble()).toInt()
+
+                when (module) {
+                    "recent" -> {
+                        metadataList = metadataRepository.findRecentByDescriptionAndOffsetAndLimit(
+                            pageValue,
+                            size
+                        ).toMutableList()
+                    }
+                    "modified" -> {
+                        metadataList = metadataRepository.findModifiedByDescriptionAndOffsetAndLimit(
+                            pageValue,
+                            size
+                        ).toMutableList()
+                    }
+                    "taken" -> {
+                        metadataList = metadataRepository.findTakenByDescriptionAndOffsetAndLimit(
+                            pageValue,
+                            size
+                        ).toMutableList()
+                    }
+                    "accessed" -> {
+                        metadataList = metadataRepository.findLastAccessedByDescriptionAndOffsetAndLimit(
+                            pageValue,
+                            size
+                        ).toMutableList()
+                    }
+                }
             } else {
                 response["totalPages"] = ceil((metadataRepository.countByMediaTypeAndOffsetAndLimit(mediaType).toDouble()) / size.toDouble()).toInt()
 
@@ -913,42 +913,42 @@ class BrowseController: BaseController() {
                         ).toMutableList()
                     }
                 }
-//            } else if (mediaTypeFilter == "nolatlng") {
-//                when (view) {
-//                    "accessed" -> {
-//                        metadataList = metadataRepository.findLastAccessedByNoCoordAndDate(
-//                            startDate, endDate
-//                        ).toMutableList()
-//                    }
-//                    "modified" -> {
-//                        metadataList = metadataRepository.findModifiedByNoCoordAndDate(
-//                            startDate, endDate
-//                        ).toMutableList()
-//                    }
-//                    "recent" -> {
-//                        metadataList = metadataRepository.findRecentByNoCoordAndDate(
-//                            startDate, endDate
-//                        ).toMutableList()
-//                    }
-//                }
-//            } else if (mediaTypeFilter == "description") {
-//                when (view) {
-//                    "accessed" -> {
-//                        metadataList = metadataRepository.findLastAccessedByDescriptionAndDate(
-//                            startDate, endDate
-//                        ).toMutableList()
-//                    }
-//                    "modified" -> {
-//                        metadataList = metadataRepository.findModifiedByDescriptionAndDate(
-//                            startDate, endDate
-//                        ).toMutableList()
-//                    }
-//                    "recent" -> {
-//                        metadataList = metadataRepository.findRecentByDescriptionAndDate(
-//                            startDate, endDate
-//                        ).toMutableList()
-//                    }
-//                }
+            } else if (mediaTypeFilter == "nolatlng") {
+                when (view) {
+                    "accessed" -> {
+                        metadataList = metadataRepository.findLastAccessedByNoCoordAndDate(
+                            startDate, endDate
+                        ).toMutableList()
+                    }
+                    "modified" -> {
+                        metadataList = metadataRepository.findModifiedByNoCoordAndDate(
+                            startDate, endDate
+                        ).toMutableList()
+                    }
+                    "recent" -> {
+                        metadataList = metadataRepository.findRecentByNoCoordAndDate(
+                            startDate, endDate
+                        ).toMutableList()
+                    }
+                }
+            } else if (mediaTypeFilter == "description") {
+                when (view) {
+                    "accessed" -> {
+                        metadataList = metadataRepository.findLastAccessedByDescriptionAndDate(
+                            startDate, endDate
+                        ).toMutableList()
+                    }
+                    "modified" -> {
+                        metadataList = metadataRepository.findModifiedByDescriptionAndDate(
+                            startDate, endDate
+                        ).toMutableList()
+                    }
+                    "recent" -> {
+                        metadataList = metadataRepository.findRecentByDescriptionAndDate(
+                            startDate, endDate
+                        ).toMutableList()
+                    }
+                }
             } else {
                 when (view) {
                     "accessed" -> {

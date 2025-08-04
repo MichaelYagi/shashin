@@ -89,7 +89,7 @@
 
                             <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                                 /*<![CDATA[*/
-                                if ([[${pageParam}]] === 0) {
+                                if ([[${pageParam}]] === 0 && [[${mediaTypeFilter}]] !== "nolatlng" && [[${mediaTypeFilter}]] !== "description") {
                                     shashin.dayHeadingListener([[${metadata.year+'-'+metadata.month+'-'+metadata.day}]],[[${activePage}]], [[${mediaTypeFilter}]]);
                                 }
                                 shashin.updateFavorites("#favorite","#brfavoriteicon","#briconcount",/*[[${metadata.id}]]*/"");
