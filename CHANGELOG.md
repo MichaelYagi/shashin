@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Removed
 ### Fixed
 - Consistency in date formats between JS and Kotlin
+- Multi-select UI bugs and album multi select
 ### Security
 
 ## [2.11.4] - 2025-08-01
