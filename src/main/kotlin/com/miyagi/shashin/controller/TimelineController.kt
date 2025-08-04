@@ -215,10 +215,10 @@ class TimelineController: BaseController() {
 
         val initialMetadataObj = if (mediaType == "all") {
             metadataRepository.findDistinctFirstByHiddenIsFalseOrderByYearDescMonthDescDayDescTimeDesc()
-//        } else if (mediaType == "nolatlng") {
-//            metadataRepository.findDistinctFirstByHiddenIsFalseByNoCoordOrderByYearDescMonthDescDayDesc()
-//        } else if (mediaType == "description") {
-//            metadataRepository.findDistinctFirstByHiddenIsFalseByDescriptionOrderByYearDescMonthDescDayDesc()
+        } else if (mediaType == "nolatlng") {
+            metadataRepository.findDistinctFirstByHiddenIsFalseByNoCoordOrderByYearDescMonthDescDayDesc()
+        } else if (mediaType == "description") {
+            metadataRepository.findDistinctFirstByHiddenIsFalseByDescriptionOrderByYearDescMonthDescDayDesc()
         } else {
             metadataRepository.findDistinctFirstByHiddenIsFalseByMediaTypeOrderByYearDescMonthDescDayDesc(mediaType!!)
         }
@@ -345,10 +345,10 @@ class TimelineController: BaseController() {
         response["metadataDates"] = mutableListOf<MetadataDate>()
         val metadataDates = if (mediaType == "all") {
             metadataRepository.findAllYearMonthDay()
-//        } else if (mediaType == "nolatlng") {
-//            metadataRepository.findAllYearMonthDayByNoCoord()
-//        } else if (mediaType == "description") {
-//            metadataRepository.findAllYearMonthDayByDescription()
+        } else if (mediaType == "nolatlng") {
+            metadataRepository.findAllYearMonthDayByNoCoord()
+        } else if (mediaType == "description") {
+            metadataRepository.findAllYearMonthDayByDescription()
         } else {
             metadataRepository.findAllYearMonthDayByMediaType(mediaType)
         }
@@ -464,16 +464,16 @@ class TimelineController: BaseController() {
                         pageValue,
                         size
                     ).toMutableList()
-//                } else if (mediaTypeFilter == "nolatlng") {
-//                    metadataRepository.findAllMissingCoordOffsetAndLimit(
-//                        pageValue,
-//                        size
-//                    ).toMutableList()
-//                } else if (mediaTypeFilter == "description") {
-//                    metadataRepository.findAllDescriptionOffsetAndLimit(
-//                        pageValue,
-//                        size
-//                    ).toMutableList()
+                } else if (mediaTypeFilter == "nolatlng") {
+                    metadataRepository.findAllMissingCoordOffsetAndLimit(
+                        pageValue,
+                        size
+                    ).toMutableList()
+                } else if (mediaTypeFilter == "description") {
+                    metadataRepository.findAllDescriptionOffsetAndLimit(
+                        pageValue,
+                        size
+                    ).toMutableList()
                 } else {
                     metadataRepository.findAllByTypeOffsetAndLimit(
                         mediaTypeFilter,
@@ -751,10 +751,10 @@ class TimelineController: BaseController() {
 
         val metadataDates = if (mediaType == "all") {
             metadataRepository.findAllYearMonthDay()
-//        } else if (mediaType == "nolatlng") {
-//            metadataRepository.findAllYearMonthDayByNoCoord()
-//        } else if (mediaType == "description") {
-//            metadataRepository.findAllYearMonthDayByDescription()
+        } else if (mediaType == "nolatlng") {
+            metadataRepository.findAllYearMonthDayByNoCoord()
+        } else if (mediaType == "description") {
+            metadataRepository.findAllYearMonthDayByDescription()
         } else {
             metadataRepository.findAllYearMonthDayByMediaType(mediaType)
         }
@@ -830,14 +830,14 @@ class TimelineController: BaseController() {
                         metadataRepository.findAllByYearAndMonthAndDayAndHiddenEqualsOrderByYearDescMonthDescDayDescTimeDesc(
                             year, month, day, false
                         ).toMutableList()
-//                    } else if (mediaTypeFilter == "nolatlng") {
-//                        metadataRepository.findAllByNoCoordAndYearAndMonthAndDay(
-//                            year, month, day
-//                        ).toMutableList()
-//                    } else if (mediaTypeFilter == "description") {
-//                        metadataRepository.findAllByDescriptionAndYearAndMonthAndDay(
-//                            year, month, day
-//                        ).toMutableList()
+                    } else if (mediaTypeFilter == "nolatlng") {
+                        metadataRepository.findAllByNoCoordAndYearAndMonthAndDay(
+                            year, month, day
+                        ).toMutableList()
+                    } else if (mediaTypeFilter == "description") {
+                        metadataRepository.findAllByDescriptionAndYearAndMonthAndDay(
+                            year, month, day
+                        ).toMutableList()
                     } else {
                         metadataRepository.findAllByTypeAndYearAndMonthAndDay(
                             mediaTypeFilter,
