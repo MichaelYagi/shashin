@@ -650,6 +650,43 @@ class AlbumsController: BaseController() {
         return response
     }
 
+    @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
+    @RequestMapping(value = ["/album/{albumId}/range/{metadataId}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) metadataId: String?,@PathVariable(required = true) albumId: Int?, locale: Locale): String {
+        val retMetadataIdArray = mutableListOf<MutableList<String>>()
+        val response = mutableMapOf<String, Any?>()
+
+        response["msg"] = messageSource?.getMessage("main.noresults", null, locale)
+        response["status"] = ApiResponse.FAIL.status
+        response["metadataIdArray"] = mutableListOf<MutableList<String>>()
+
+        if (metadataId !== null && metadataId !== "") {
+            val metadata = metadataRepository.findByMetadataId(metadataId)
+
+            var metadataDate = metadata?.getTakenAt().toString()
+
+            val ymdtArray = metadataDate.split(" ")
+            val ymd = ymdtArray[0]
+
+            val ymdArray = ymd.split("-")
+
+            var metadatas = albumRepository.findAlbumMetadataByDate(albumId!!,ymdArray[0].toInt(),ymdArray[1].toInt(),ymdArray[2].toInt())
+
+            if (metadatas != null) {
+                for (metadata in metadatas) {
+                    retMetadataIdArray.add(mutableListOf(metadata.getId(),metadata.getFileName()!!, "/api/v1/thumbnails/centered/"+metadata.getId()))
+                }
+
+                response["msg"] = messageSource?.getMessage("main.success", null, locale)
+                response["status"] = ApiResponse.SUCCESS.status
+                response["metadataIdArray"] = retMetadataIdArray
+            }
+        }
+
+        return mapper.writeValueAsString(response)
+    }
+
     @RouterOperation(
         operation =
         Operation(
@@ -872,7 +909,6 @@ class AlbumsController: BaseController() {
             val albumObj = albumRepository.findAlbumById(albumId)
 
             for (metadataId in idArray) {
-                println("idArray:"+metadataId)
                 MetadataProcessing.deleteAlbumPhoto(metadataRepository, albumRepository, albumPhotoRepository, metadataId, albumId)
             }
 
@@ -1187,8 +1223,6 @@ class AlbumsController: BaseController() {
             } else {
                 model["titleDescriptor"] = TextUtils.capitalized(module)
             }
-            println("testzzz")
-            println(response["loggedIn"]!!)
         } else {
             for ((k, v) in response) {
                 model[k] = v!!
@@ -2028,7 +2062,6 @@ class AlbumsController: BaseController() {
                         for (metadataId in metadataIdArray) {
                             val metadata = metadataRepository.findById(metadataId)
                             //if (!metadata.get().getType()?.contains("video", ignoreCase = true)!!) {
-                                println(metadata.get().getType())
                                 metricsUtil.start("Share album download: " + metadata.get().getPath()!!)
                                 val tempFile = File(metadata.get().getPath()!!)
                                 if (tempFile.exists()) {
