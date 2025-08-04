@@ -166,7 +166,7 @@ class TimelineController: BaseController() {
             }
 
             // If timeline view
-            var metadatas: MutableList<Metadata>? = if (mediaType == "all") {
+            var metadatas: MutableList<Metadata>? = if (mediaType == "all" || mediaType == "nolatlng" || mediaType == "description") {
                 metadataRepository.findMetadataIdBetweenTakenAt(startDate, endDate)
             } else {
                 metadataRepository.findMetadataIdBetweenTakenAtWithMediaType(startDate, endDate, mediaType.toString())
