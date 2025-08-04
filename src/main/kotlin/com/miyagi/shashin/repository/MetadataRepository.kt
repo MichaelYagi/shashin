@@ -175,7 +175,7 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    fun findRecentByMediaTypeAndOffsetAndLimit(@Param("offset") offset: Int, @Param("type") type: String?, @Param("limit") limit: Int): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND CAST(strftime('%s', added_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY added_at DESC", nativeQuery = true)
-   fun findRecentByMediaTypeAndOffsetAndLimit(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
+   fun findRecentByMediaTypeAndOffsetAndLimit(@Param("type") type: String?, @Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
    @Query("SELECT COUNT(*) FROM metadata WHERE hidden = 0 AND type LIKE %:type%", nativeQuery = true)
    fun countByMediaTypeAndOffsetAndLimit(@Param("type") type: String?): Int
