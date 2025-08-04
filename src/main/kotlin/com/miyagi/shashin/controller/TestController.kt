@@ -24,6 +24,7 @@ import com.miyagi.shashin.util.ImageProcessing
 import com.miyagi.shashin.util.ImageProcessing.Companion.buildObjectRecognitionCriteria
 import com.miyagi.shashin.util.MetadataProcessing
 import com.miyagi.shashin.util.TextUtils
+import com.miyagi.shashin.util.TextUtils.Companion.getCommonDateFormat
 import com.miyagi.shashin.util.VideoProcessing
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -49,6 +50,9 @@ import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import javax.imageio.ImageIO
 import kotlin.String
 
@@ -87,6 +91,9 @@ class TestController {
         model["activePage"] = "test"
         model["mike"] = "Mike"
         model["noah"] = "Noah"
+
+        model["currentTimestamp"] = TextUtils.getCurrentTimestamp()
+        model["defaultTZ"] = ZoneId.systemDefault()
 
         return "test"
     }
