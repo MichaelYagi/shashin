@@ -247,7 +247,7 @@
         if (hasSelection) {
             if (["album", "favorites", "archived"].includes(view)) {
                 showTools("#albumAppTools", view === "album" ? "#albumTools" : null);
-            } else if (["timeline", "recent", "modified", "taken", "folder", "search"].includes(view)) {
+            } else if (["timeline", "recent", "accessed", "modified", "taken", "folder", "search"].includes(view)) {
                 showTools("#timelineAppTools", ["timeline", "folder"].includes(view) ? "#timelineTools" : null);
             } else if (["matches", "person", "compreface"].includes(view)) {
                 showTools("#matchesAppTools", "#timelineTools");
