@@ -22,6 +22,9 @@
 
             <h3 class="mt-3">Dexie Test</h3>
 
+            <p>current timestamp: <th:block th:text="${currentTimestamp}"></th:block></p>
+            <p>default tz: <th:block th:text="${defaultTZ}"></th:block></p>
+
             <span id="dbtest" style="display: none;">
                 <input type="text" id="year" placeholder="year"><input type="text" id="month" placeholder="month"><input type="text" id="day" placeholder="day"><br>
                 <input type="text" id="mediaType" placeholder="media type"><button id="dateSubmit">Execute query</button><br>
