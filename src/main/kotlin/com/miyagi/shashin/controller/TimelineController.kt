@@ -124,9 +124,9 @@ class TimelineController: BaseController() {
     }
 
     @Secured("ROLE_SUPER", "ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/metadata/range/{direction}/{anchorId}/{selectId}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/metadata/range/{direction}/{anchorId}/{selectId}/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) direction: String?,@PathVariable(required = true) anchorId: String?, @PathVariable(required = true) selectId: String?, locale: Locale): String {
+    fun getMetadataIdsBetweenRange(model: Model,@PathVariable(required = true) direction: String?,@PathVariable(required = true) anchorId: String?, @PathVariable(required = true) selectId: String?, @PathVariable(required = true) mediaType: String?, locale: Locale): String {
         val retMetadataIdArray = mutableListOf<MutableList<String>>()
         val response = mutableMapOf<String, Any?>()
 
@@ -166,7 +166,11 @@ class TimelineController: BaseController() {
             }
 
             // If timeline view
-            val metadatas = metadataRepository.findMetadataIdBetweenTakenAt(startDate, endDate)
+            var metadatas: MutableList<Metadata>? = if (mediaType == "all") {
+                metadataRepository.findMetadataIdBetweenTakenAt(startDate, endDate)
+            } else {
+                metadataRepository.findMetadataIdBetweenTakenAtWithMediaType(startDate, endDate, mediaType.toString())
+            }
 
             if (metadatas != null && metadatas.isNotEmpty()) {
                 var startCaptured = false
