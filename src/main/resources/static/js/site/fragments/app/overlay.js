@@ -65,7 +65,7 @@
             e.preventDefault();
 
             if (Util.isMobile() && e.detail === 1) {
-                shashin.touchTimer = setTimeout(imageClickEvent, 200);
+                shashin.touchTimer = setTimeout(imageClickEvent, 300);
             } else {
                 imageClickEvent();
             }
@@ -82,8 +82,30 @@
             }
         });
 
+        /* Based on this http://jsfiddle.net/brettwp/J4djY/*/
+        function detectDoubleTap(doubleTapMs) {
+            let timeout, lastTap = 0;
+            return function detectDoubleTap(event) {
+                const currentTime = new Date().getTime();
+                const tapLength = currentTime - lastTap;
+                if (0 < tapLength && tapLength < doubleTapMs) {
+                    event.preventDefault();
+                    const doubleTap = new CustomEvent("doubletap", {
+                        bubbles: true,
+                        detail: event
+                    });
+                    event.target.dispatchEvent(doubleTap);
+                } else {
+                    timeout = setTimeout(() => clearTimeout(timeout), doubleTapMs)
+                }
+                lastTap = currentTime;
+            };
+        }
+
         $("#photoThumbnailContainer" + id).hover(
             function () {
+                $(document).on("pointerup", detectDoubleTap(200));
+
                 $(document).on("keydown", function (e) {
                     const isShift = e.key === "Shift" || e.keyCode === 16;
                     const isMacS = Util.getOS() === "MacOS" && (e.key.toLowerCase() === "s" || e.keyCode === 83);
@@ -96,7 +118,13 @@
 
                 if (Util.isMobile()) {
                     $(document).on("dblclick", function () {
-                        shashin.printMessageToConsole("double tap detected", { tag: "multiselect" });
+                        shashin.printMessageToConsole("double click detected", { tag: "multiselect" });
+                        metadataIdArray = shashin.batchSelect(id, view);
+                        clearTimeout(shashin.touchTimer);
+                    });
+
+                    $(document).on('doubletap', function() {
+                        shashin.printMessageToConsole("double tap detected, lastSelectedMetadataId: " + shashin.lastSelectedMetadataId, { tag: "multiselect" });
                         metadataIdArray = shashin.batchSelect(id, view);
                         clearTimeout(shashin.touchTimer);
                     });
@@ -110,6 +138,7 @@
             function () {
                 $(document).off("keydown");
                 $(document).off("dblclick");
+                $(document).off("doubletap");
 
                 if (isVideo && !Util.isMobile()) {
                     swapImageType(false);
