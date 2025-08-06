@@ -15,11 +15,14 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Deprecated
 ### Removed
 ### Fixed
+### Security
+
+## [2.11.5] - 2025-08-05
+### Fixed
 - Consistency in date formats between JS and Kotlin
 - Multi-select UI bugs and album multi select
 - Filter type count
 - Double tap on mobile
-### Security
 
 ## [2.11.4] - 2025-08-01
 ### Fixed
