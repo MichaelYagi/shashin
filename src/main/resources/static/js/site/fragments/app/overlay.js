@@ -119,12 +119,14 @@
                 if (Util.isMobile()) {
                     $(document).on("dblclick", function () {
                         shashin.printMessageToConsole("double click detected", { tag: "multiselect" });
+                        $("#image" + id).off("click");
                         metadataIdArray = shashin.batchSelect(id, view);
                         clearTimeout(shashin.touchTimer);
                     });
 
                     $(document).on('doubletap', function() {
                         shashin.printMessageToConsole("double tap detected, lastSelectedMetadataId: " + shashin.lastSelectedMetadataId, { tag: "multiselect" });
+                        $("#image" + id).off("click");
                         metadataIdArray = shashin.batchSelect(id, view);
                         clearTimeout(shashin.touchTimer);
                     });
