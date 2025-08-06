@@ -328,7 +328,7 @@
                 if (view === "album") {
                     const albumId = $("#albumId").val();
                     url = "/album/mediatype/" + shashin.mediaTypeFilter + "/date/" + date + "/" + albumId;
-                } else if (view === "accessed" || view === "modified" || view === "recent") {
+                } else if (view === "accessed" || view === "modified" || view === "recent" || view === "taken") {
                     url = "/browse/mediatype/" + shashin.mediaTypeFilter + "/date/" + date + "/" + view;
                 }
 
@@ -427,7 +427,7 @@
                     if (activePage === "album") {
                         const albumId = $("#albumId").val();
                         url = "/album/mediatype/" + mediaTypeFilter + "/date/" + date + "/" + albumId;
-                    } else if (activePage === "accessed" || activePage === "modified" || activePage === "recent") {
+                    } else if (activePage === "accessed" || activePage === "modified" || activePage === "recent" || activePage === "taken") {
                         url = "/browse/mediatype/" + mediaTypeFilter + "/date/" + date + "/" + activePage;
                     }
 

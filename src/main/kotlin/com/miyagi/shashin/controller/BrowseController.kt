@@ -912,6 +912,11 @@ class BrowseController: BaseController() {
                             startDate, endDate
                         ).toMutableList()
                     }
+                    "taken" -> {
+                        metadataList = metadataRepository.findTakenByDate(
+                            startDate, endDate
+                        ).toMutableList()
+                    }
                 }
             } else if (mediaTypeFilter == "nolatlng") {
                 when (view) {
@@ -927,6 +932,11 @@ class BrowseController: BaseController() {
                     }
                     "recent" -> {
                         metadataList = metadataRepository.findRecentByNoCoordAndDate(
+                            startDate, endDate
+                        ).toMutableList()
+                    }
+                    "taken" -> {
+                        metadataList = metadataRepository.findTakenByNoCoordAndDate(
                             startDate, endDate
                         ).toMutableList()
                     }
@@ -948,6 +958,11 @@ class BrowseController: BaseController() {
                             startDate, endDate
                         ).toMutableList()
                     }
+                    "taken" -> {
+                        metadataList = metadataRepository.findTakenByDescriptionAndDate(
+                            startDate, endDate
+                        ).toMutableList()
+                    }
                 }
             } else {
                 when (view) {
@@ -962,7 +977,12 @@ class BrowseController: BaseController() {
                         ).toMutableList()
                     }
                     "recent" -> {
-                        metadataList = metadataRepository.findRecentByMediaTypeAndOffsetAndLimit(
+                        metadataList = metadataRepository.findRecentByMediaTypeAndDate(
+                            mediaTypeFilter, startDate, endDate
+                        ).toMutableList()
+                    }
+                    "taken" -> {
+                        metadataList = metadataRepository.findTakenByMediaTypeAndDate(
                             mediaTypeFilter, startDate, endDate
                         ).toMutableList()
                     }
@@ -1008,20 +1028,42 @@ class BrowseController: BaseController() {
             val metadatas = if (view == "accessed") {
                 if (mediaType == "all") {
                     metadataRepository.findMetadataIdBetweenAccessedAt(startDate, endDate)
+                } else if (mediaType == "nolatlng") {
+                    metadataRepository.findMetadataIdBetweenAccessAtNoCoord(startDate, endDate)
+                } else if (mediaType == "description") {
+                    metadataRepository.findMetadataIdBetweenAccessAtByDescription(startDate, endDate)
                 } else {
                     metadataRepository.findMetadataIdBetweenAccessedAtWithType(startDate, endDate, mediaType.toString())
                 }
             } else if (view == "modified") {
                 if (mediaType == "all") {
                     metadataRepository.findMetadataIdBetweenModifiedAt(startDate, endDate)
+                } else if (mediaType == "nolatlng") {
+                    metadataRepository.findMetadataIdBetweenModifiedAtNoCoord(startDate, endDate)
+                } else if (mediaType == "description") {
+                    metadataRepository.findMetadataIdBetweenModifiedAtByDescription(startDate, endDate)
                 } else {
                     metadataRepository.findMetadataIdBetweenModifiedAtWithType(startDate, endDate, mediaType.toString())
                 }
             } else if (view == "recent") {
                 if (mediaType == "all") {
                     metadataRepository.findMetadataIdBetweenAddedAt(startDate, endDate)
+                } else if (mediaType == "nolatlng") {
+                    metadataRepository.findMetadataIdBetweenAddedAtNoCoord(startDate, endDate)
+                } else if (mediaType == "description") {
+                    metadataRepository.findMetadataIdBetweenAddedAtByDescription(startDate, endDate)
                 } else {
                     metadataRepository.findMetadataIdBetweenAddedAtWithType(startDate, endDate, mediaType.toString())
+                }
+            } else if (view == "taken") {
+                if (mediaType == "all") {
+                    metadataRepository.findMetadataIdBetweenTakenAt(startDate, endDate)
+                } else if (mediaType == "nolatlng") {
+                    metadataRepository.findMetadataIdBetweenTakenAtNoCoord(startDate, endDate)
+                } else if (mediaType == "description") {
+                    metadataRepository.findMetadataIdBetweenTakenAtByDescription(startDate, endDate)
+                } else {
+                    metadataRepository.findMetadataIdBetweenTakenAtWithType(startDate, endDate, mediaType.toString())
                 }
             } else {
                 if (mediaType == "all") {

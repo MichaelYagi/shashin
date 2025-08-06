@@ -671,9 +671,14 @@ class AlbumsController: BaseController() {
 
             val ymdArray = ymd.split("-")
 
-            // If timeline view
             var metadatas: MutableIterable<Metadata>? = if (mediaType == "all") {
                 albumRepository.findAlbumMetadataByDate(albumId!!,ymdArray[0].toInt(),ymdArray[1].toInt(),ymdArray[2].toInt())
+            } else if (mediaType == "nolatlng") {
+                albumRepository.findAlbumMetadataByDateNoCoord(albumId!!,ymdArray[0].toInt(),ymdArray[1].toInt(),ymdArray[2].toInt())
+            } else if (mediaType == "description") {
+                albumRepository.findAlbumMetadataByDateByDescription(albumId!!,ymdArray[0].toInt(),ymdArray[1].toInt(),ymdArray[2].toInt())
+            } else if (mediaType == "comments") {
+                albumRepository.findAlbumMetadataByDateByComments(albumId!!,ymdArray[0].toInt(),ymdArray[1].toInt(),ymdArray[2].toInt())
             } else {
                 albumRepository.findAlbumMetadataByDateAndMediaType(albumId!!,ymdArray[0].toInt(),ymdArray[1].toInt(),ymdArray[2].toInt(),mediaType.toString())
             }
@@ -1449,12 +1454,6 @@ class AlbumsController: BaseController() {
             } else if (mediaTypeFilter == "description") {
                 albumPhotoRepository.findAllMetadataByAlbumIdAndDescription(albumId, year, month, day) as MutableList<Metadata>
             } else if (mediaTypeFilter == "all" || mediaTypeFilter == "") {
-                albumRepository.findAlbumMetadataByDate(albumId, year, month, day) as MutableList<Metadata>
-            } else {
-                albumRepository.findAlbumMetadataByDateAndFilter(albumId, mediaTypeFilter, year, month, day) as MutableList<Metadata>
-            }
-
-            response["metadataList"] = if (mediaTypeFilter == "all" || mediaTypeFilter == "") {
                 albumRepository.findAlbumMetadataByDate(albumId, year, month, day) as MutableList<Metadata>
             } else {
                 albumRepository.findAlbumMetadataByDateAndFilter(albumId, mediaTypeFilter, year, month, day) as MutableList<Metadata>

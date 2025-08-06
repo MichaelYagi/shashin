@@ -27,6 +27,30 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) DESC", nativeQuery = true)
    fun findMetadataIdBetweenTakenAt(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
 
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) DESC", nativeQuery = true)
+   fun findMetadataIdBetweenTakenAtNoCoord(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
+
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" AND CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) DESC", nativeQuery = true)
+   fun findMetadataIdBetweenTakenAtByDescription(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
+
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND CAST(strftime('%s', last_accessed_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY last_accessed_at DESC", nativeQuery = true)
+   fun findMetadataIdBetweenAccessAtNoCoord(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
+
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" AND CAST(strftime('%s', last_accessed_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY last_accessed_at DESC", nativeQuery = true)
+   fun findMetadataIdBetweenAccessAtByDescription(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
+
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND CAST(strftime('%s', modified_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY modified_at DESC", nativeQuery = true)
+   fun findMetadataIdBetweenModifiedAtNoCoord(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
+
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" AND CAST(strftime('%s', modified_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY modified_at DESC", nativeQuery = true)
+   fun findMetadataIdBetweenModifiedAtByDescription(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
+
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND CAST(strftime('%s', added_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY added_at DESC", nativeQuery = true)
+   fun findMetadataIdBetweenAddedAtNoCoord(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
+
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" AND CAST(strftime('%s', added_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY added_at DESC", nativeQuery = true)
+   fun findMetadataIdBetweenAddedAtByDescription(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableList<Metadata>?
+
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY CAST(strftime('%s', (year || '-' || (case when month < 10 then '0' || month else month end) || '-' || (case when day < 10 then '0' || day else day end) || ' ' || time)) as integer) DESC", nativeQuery = true)
    fun findMetadataIdBetweenTakenAtWithType(@Param("startDate") startDate: String, @Param("endDate") endDate: String, @Param("type") type: String): MutableList<Metadata>?
 
@@ -153,6 +177,9 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findTakenByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND CAST(strftime('%s', taken_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY taken_at DESC", nativeQuery = true)
+   fun findTakenByDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
+
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% ORDER BY modified_at DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findModifiedByMediaTypeAndOffsetAndLimit(@Param("offset") offset: Int, @Param("type") type: String?, @Param("limit") limit: Int): MutableIterable<Metadata>
 
@@ -175,7 +202,10 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    fun findRecentByMediaTypeAndOffsetAndLimit(@Param("offset") offset: Int, @Param("type") type: String?, @Param("limit") limit: Int): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND CAST(strftime('%s', added_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY added_at DESC", nativeQuery = true)
-   fun findRecentByMediaTypeAndOffsetAndLimit(@Param("type") type: String?, @Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
+   fun findRecentByMediaTypeAndDate(@Param("type") type: String?, @Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
+
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND type LIKE %:type% AND CAST(strftime('%s', taken_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY taken_at DESC", nativeQuery = true)
+   fun findTakenByMediaTypeAndDate(@Param("type") type: String?, @Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
    @Query("SELECT COUNT(*) FROM metadata WHERE hidden = 0 AND type LIKE %:type%", nativeQuery = true)
    fun countByMediaTypeAndOffsetAndLimit(@Param("type") type: String?): Int
@@ -186,11 +216,17 @@ interface MetadataRepository : ListCrudRepository<Metadata?, String?>, PagingAnd
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND CAST(strftime('%s', added_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY added_at DESC", nativeQuery = true)
    fun findRecentByNoCoordAndDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\")) AND CAST(strftime('%s', taken_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY taken_at DESC", nativeQuery = true)
+   fun findTakenByNoCoordAndDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
+
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" ORDER BY added_at DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findRecentByDescriptionAndOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" AND CAST(strftime('%s', added_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY added_at DESC", nativeQuery = true)
    fun findRecentByDescriptionAndDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
+
+   @Query("SELECT * FROM metadata WHERE hidden = 0 AND description IS NOT NULL AND description != \"\" AND CAST(strftime('%s', taken_at) as INTEGER) BETWEEN CAST(strftime('%s', :startDate) as INTEGER) AND CAST(strftime('%s', :endDate) as INTEGER) ORDER BY taken_at DESC", nativeQuery = true)
+   fun findTakenByDescriptionAndDate(@Param("startDate") startDate: String, @Param("endDate") endDate: String): MutableIterable<Metadata>
 
    @Query("SELECT COUNT(*) FROM metadata WHERE hidden = 0 AND ((lat IS NULL OR lat == \"\") OR (lng IS NULL OR lng == \"\"))", nativeQuery = true)
    fun countByNoCoordAndOffsetAndLimit(): Int

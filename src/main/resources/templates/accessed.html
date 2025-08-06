@@ -67,7 +67,7 @@
 
                             <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                                 /*<![CDATA[*/
-                                if ([[${pageParam}]] === 0 && [[${mediaTypeFilter}]] !== "nolatlng" && [[${mediaTypeFilter}]] !== "description") {
+                                if ([[${pageParam}]] === 0) {
                                     shashin.dayHeadingListener([[${#dates.format(#dates.create(#strings.arraySplit(metadata.lastAccessedAt, '-')[0],#strings.arraySplit(metadata.lastAccessedAt, '-')[1],#strings.arraySplit(#strings.arraySplit(metadata.lastAccessedAt, '-')[2],' ')[0]),'yyyy-M-d')}]],[[${activePage}]], [[${mediaTypeFilter}]]);
                                 }
                                 shashin.updateFavorites("#favorite","#brfavoriteicon","#briconcount",/*[[${metadata.id}]]*/"");

@@ -136,9 +136,7 @@ class Accessed {
                             $("<span class='"+appendClass+"' style='width:0;height:0;padding:0'></span>").insertAfter($("#"+currentDate));
                         }
 
-                        if (mediaTypeFilter !== "nolatlng" && mediaTypeFilter !== "description") {
-                            shashin.dayHeadingListener(currentDate, activePage, mediaTypeFilter);
-                        }
+                        shashin.dayHeadingListener(currentDate, activePage, mediaTypeFilter);
                     }
                 }
 

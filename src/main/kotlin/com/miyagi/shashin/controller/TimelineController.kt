@@ -166,8 +166,12 @@ class TimelineController: BaseController() {
             }
 
             // If timeline view
-            var metadatas: MutableList<Metadata>? = if (mediaType == "all" || mediaType == "nolatlng" || mediaType == "description") {
+            var metadatas: MutableList<Metadata>? = if (mediaType == "all") {
                 metadataRepository.findMetadataIdBetweenTakenAt(startDate, endDate)
+            } else if (mediaType == "nolatlng") {
+                metadataRepository.findMetadataIdBetweenTakenAtNoCoord(startDate, endDate)
+            } else if (mediaType == "description") {
+                metadataRepository.findMetadataIdBetweenTakenAtByDescription(startDate, endDate)
             } else {
                 metadataRepository.findMetadataIdBetweenTakenAtWithMediaType(startDate, endDate, mediaType.toString())
             }
