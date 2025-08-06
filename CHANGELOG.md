@@ -11,6 +11,8 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
+- Date selection to missing coordinate, description, and comment filters
+
 ### Changed
 ### Deprecated
 ### Removed
