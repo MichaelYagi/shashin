@@ -217,9 +217,7 @@
                                 }
                             }
 
-                            if (mediaTypeFilter !== "nolatlng" && mediaTypeFilter !== "description" && mediaTypeFilter !== "comments") {
-                                shashin.dayHeadingListener(currentDate, activePage, mediaTypeFilter);
-                            }
+                            shashin.dayHeadingListener(currentDate, activePage, mediaTypeFilter);
                         }
 
                         $("#spinner").css("display","none");

@@ -18,6 +18,15 @@ interface AlbumRepository : CrudRepository<Album?, Int?> {
     @Query("SELECT DISTINCT m.* FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.year = :year AND m.month = :month AND m.day = :day AND m.hidden = 0 AND m.type LIKE %:type% ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
     fun findAlbumMetadataByDateAndMediaType(@Param("albumId") albumId: Int, @Param("year") year: Int, @Param("month") month: Int, @Param("day") day: Int, @Param("type") type: String): MutableIterable<Metadata>?
 
+    @Query("SELECT DISTINCT m.* FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.year = :year AND m.month = :month AND m.day = :day AND m.hidden = 0 AND ((m.lat IS NULL OR m.lat == \"\") OR (m.lng IS NULL OR m.lng == \"\")) ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
+    fun findAlbumMetadataByDateNoCoord(@Param("albumId") albumId: Int, @Param("year") year: Int, @Param("month") month: Int, @Param("day") day: Int): MutableIterable<Metadata>?
+
+    @Query("SELECT DISTINCT m.* FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND m.year = :year AND m.month = :month AND m.day = :day AND m.hidden = 0 AND m.description IS NOT NULL AND m.description != \"\" ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
+    fun findAlbumMetadataByDateByDescription(@Param("albumId") albumId: Int, @Param("year") year: Int, @Param("month") month: Int, @Param("day") day: Int): MutableIterable<Metadata>?
+
+    @Query("SELECT DISTINCT m.* FROM albumphoto ap, metadata m, albumphotocomment apc WHERE ap.album_id = :albumId AND ap.metadata_id = m.id AND ap.album_id = apc.album_id AND apc.metadata_id = ap.metadata_id AND m.year = :year AND m.month = :month AND m.day = :day AND m.hidden = 0", nativeQuery = true)
+    fun findAlbumMetadataByDateByComments(@Param("albumId") albumId: Int, @Param("year") year: Int, @Param("month") month: Int, @Param("day") day: Int): MutableIterable<Metadata>?
+
     @Query("SELECT COUNT(*) FROM album", nativeQuery = true)
     fun countAllAlbums(): Int
     @Query("SELECT a.id as albumId, COUNT(ap.metadata_id) as photoCount FROM album a LEFT JOIN albumphoto ap ON a.id = ap.album_id GROUP BY a.id", nativeQuery = true)

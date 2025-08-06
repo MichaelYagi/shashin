@@ -151,9 +151,7 @@
                     let id = $(this).attr("id");
 
                     if (id.indexOf("tail_") === -1 && index < 2 && timelineSettings.prevAnchor !== id) {
-                        if (mediaTypeFilter !== "nolatlng" && mediaTypeFilter !== "description") {
-                            shashin.dayHeadingListener(id, "timeline", mediaTypeFilter);
-                        }
+                        shashin.dayHeadingListener(id, "timeline", mediaTypeFilter);
 
                         // Scrolling behavior different on Chrome iOS
                         if (Util.isFirefox() === true || Util.isMobile() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
@@ -635,9 +633,8 @@
                 for (let index = startingIndexTop; index < timelineArr.length; index++) {
                     const timelineDate = timelineArr[index];
                     prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
-                    if (mediaTypeFilter !== "nolatlng" && mediaTypeFilter !== "description") {
-                        shashin.dayHeadingListener(prevDate, "timeline", mediaTypeFilter);
-                    }
+                    shashin.dayHeadingListener(prevDate, "timeline", mediaTypeFilter);
+
                     if (Util.getDateObject(currentDate) < Util.getDateObject(prevDate)) {
                         if ($("#" + currentDate).length === 0 && ((Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) ||
                             ((Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
@@ -684,9 +681,9 @@
                 for (let index = startingIndexBottom; index < timelineArr.length; index++) {
                     const timelineDate = timelineArr[index];
                     let prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
-                    if (mediaTypeFilter !== "nolatlng" && mediaTypeFilter !== "description") {
-                        shashin.dayHeadingListener(prevDate, "timeline", mediaTypeFilter);
-                    }
+
+                    shashin.dayHeadingListener(prevDate, "timeline", mediaTypeFilter);
+
                     if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate) && timelineSettings.closeToFooter() === true) {
                         if (timelineSettings.currentScrollDirection ===
                             timelineSettings.ScrollDirection.down && $("#" + currentDate).length === 0 && ((Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) || ((Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {

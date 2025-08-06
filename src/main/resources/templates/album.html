@@ -93,7 +93,7 @@
 
                                 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                                     /*<![CDATA[*/
-                                    if ([[${pageParam}]] === 0 && [[${mediaTypeFilter}]] !== "nolatlng" && [[${mediaTypeFilter}]] !== "description" && [[${mediaTypeFilter}]] !== "comments") {
+                                    if ([[${pageParam}]] === 0) {
                                         shashin.dayHeadingListener([[${metadata.year + '-' + metadata.month + '-' + metadata.day}]], [[${activePage}]], [[${mediaTypeFilter}]]);
                                     }
                                     shashin.setPhotoOverlays({id:[[${metadata.id}]],lat:[[${metadata.lat}]],lng:[[${metadata.lng}]],year:[[${metadata.year}]],month:[[${metadata.month}]],day:[[${metadata.day}]],fileName:[[${metadata.fileName}]],thumbnailUrlSmall:[[${metadata.thumbnailUrlSmall}]],type:[[${metadata.type}]]}, /*[[${activePage}]]*/'album');
