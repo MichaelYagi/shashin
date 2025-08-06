@@ -43,7 +43,13 @@
 
         resetBorders();
 
+        shashin.printMessageToConsole("lastSelectedMetadataId: " + shashin.lastSelectedMetadataId, { tag: "multiselect" });
+        shashin.printMessageToConsole("metadataId: " + metadataId, { tag: "multiselect" });
+
         if (shashin.lastSelectedMetadataId && shashin.lastSelectedMetadataId !== metadataId) {
+            shashin.printMessageToConsole("Select view: " + view, { tag: "multiselect" });
+            shashin.printMessageToConsole("addBorder: " + addBorder, { tag: "multiselect" });
+
             const selectionHash = getElementLocation($("#photoThumbnailContainer" + shashin.lastSelectedMetadataId)[0]);
             const pointerHash = getElementLocation($("#photoThumbnailContainer" + metadataId)[0]);
 
@@ -107,6 +113,8 @@
                 resetBorders();
                 applyBorderToLastSelected();
             } else if (["timeline", "accessed", "modified", "recent", "taken", "album"].includes(view) || !addBorder) {
+                shashin.printMessageToConsole("Select ranged metadata: " + view, { tag: "multiselect" });
+
                 const http = new Http("get ranged metadata");
                 const version = Util.getMetadataLocalStorage();
 
