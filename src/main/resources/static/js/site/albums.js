@@ -306,7 +306,7 @@ class Albums {
 
             // $("#albumsMessage").html("<span class='spinner-grow spinner-grow-sm'></span> <strong>Exporting album \""+albumName+"\". Downloading photos only.</strong>").animate({opacity: 100}, 0);
             shashin.closeToastMessages({tag:"albumdownload"});
-            shashin.showToastMessage(shashin.getTranslatedValue("main.pages.albums.downloading.title"), shashin.getTranslatedValue("main.pages.albums.downloading.body",albumName) + ". "+shashin.getTranslatedValue("main.pages.albums.downloading.msg")+".", {icon:"bi-info-circle", iconColor:"#777777", autohide:true, tag:"albumdownload"});
+            shashin.showToastMessage(shashin.getTranslatedValue("main.pages.albums.downloading.title"), shashin.getTranslatedValue("main.pages.albums.downloading.body",albumName) + ".", {icon:"bi-info-circle", iconColor:"#777777", autohide:true, tag:"albumdownload"});
             setTimeout(function () { $("#download"+albumId).removeAttr("href"); }, 0);
                 Util.setCookie(tokenName, "", "/");
                 Util.setCookie(tokenSize, "", "/");
