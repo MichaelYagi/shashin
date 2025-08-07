@@ -548,7 +548,9 @@ class SettingsController {
         }
         if (settings != null && !scheduledTime.isNullOrEmpty() && scheduledTime != settings.getScheduledTime()) {
             settings.setScheduledTime(scheduledTime)
-            resetServer = true
+            if (scheduledMatching == "on") {
+                resetServer = true
+            }
         }
         if (scanAutomatically == "on") {
             settings?.setScanAutomatically(true)
