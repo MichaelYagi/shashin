@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.context.MessageSource
 import java.io.File
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -52,20 +53,25 @@ class AtomFeedView : AbstractAtomFeedView() {
     @Autowired
     var userAlbumRepository: UserAlbumRepository? = null
 
+    @Autowired
+    var messageSource: MessageSource? = null
+
     override fun buildFeedMetadata(model: MutableMap<String, Any>, feed: Feed, request: HttpServletRequest) {
         val content = Content()
-        content.value = "$appName images"
+        content.value = "$appName images - Invalid key"
 
-        feed.title = "$appName ATOM Feed"
-        feed.feedType = "atom_1.0"
-
+        var locale = Locale("en")
         if (model.containsKey("apiKey")) {
             val apiKey = model["apiKey"] as String?
             val currentUser = userRepository?.findByApikey(apiKey)
             if (currentUser != null) {
-                content.value = "${currentUser.getUsername()} $appName images"
+                locale = Locale(currentUser.getLanguage())
+                content.value = messageSource?.getMessage("main.pages.feed.images.text", arrayOf(currentUser.getUsername(), appName), locale)
             }
         }
+
+        feed.title = messageSource?.getMessage("main.pages.feed.atom.title", arrayOf(appName), locale)
+        feed.feedType = "atom_1.0"
 
         feed.subtitle = content
 
@@ -155,7 +161,7 @@ class AtomFeedView : AbstractAtomFeedView() {
                         metadata.getMonth() != null && metadata.getMonth() != 0 &&
                         metadata.getDay() != null && metadata.getDay() != 0)
                     {
-                        taken = TextUtils.formatToLongDate("${metadata.getYear()}-${metadata.getMonth()}-${metadata.getDay()}")
+                        taken = TextUtils.formatToLongDate("${metadata.getYear()}-${metadata.getMonth()}-${metadata.getDay()}", currentUser.getLanguage().toString())
                     }
                     if (metadata.getPlaceName() != null && metadata.getPlaceName() != "") {
                         val placeArray = metadata.getPlaceName()!!.split(";")
