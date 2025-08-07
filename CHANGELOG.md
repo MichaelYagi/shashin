@@ -17,6 +17,8 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 ### Deprecated
 ### Removed
 ### Fixed
+- ATOM feed date format
+
 ### Security
 
 ## [2.11.5] - 2025-08-05
