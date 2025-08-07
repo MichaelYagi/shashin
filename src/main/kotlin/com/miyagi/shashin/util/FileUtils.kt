@@ -560,7 +560,6 @@ class FileUtils {
          */
         @Throws(IOException::class)
         private fun zipSubFolder(out: ZipOutputStream, folder: File, basePathLength: Int) {
-            out.setLevel(Deflater.NO_COMPRESSION)
             val metricsUtil = MetricsUtil()
             val buffer = 2048
             val fileList = folder.listFiles()
@@ -572,6 +571,25 @@ class FileUtils {
                         zipSubFolder(out, file, basePathLength)
                     } else {
                         if (!file.path.endsWith(".exif.yaml")) {
+                            val fileSizeInBytes = file.length()
+
+                            // Optionally, convert to other units
+                            val fileSizeInKB = fileSizeInBytes / 1024
+//                            val fileSizeInMB = fileSizeInKB / 1024
+
+                            logger.log(
+                                Level.INFO,
+                                "${file.path} $fileSizeInKB KB"
+                            )
+
+                            val contentType = Files.probeContentType(file.toPath())
+                            if (contentType != null && contentType.contains("video")) {
+                                out.setLevel(Deflater.NO_COMPRESSION) //Deflater.BEST_SPEED
+                            } else if (fileSizeInKB > 8000) {
+                                out.setLevel(Deflater.NO_COMPRESSION) //Deflater.BEST_SPEED
+                            } else {
+                                out.setLevel(Deflater.DEFAULT_COMPRESSION)
+                            }
                             val data = ByteArray(buffer)
                             val unmodifiedFilePath = file.path
                             val relativePath = unmodifiedFilePath.substring(basePathLength + 1)
