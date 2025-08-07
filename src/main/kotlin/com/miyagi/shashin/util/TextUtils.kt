@@ -474,7 +474,7 @@ class TextUtils {
         }
 
         fun getGeoData(geocodeUrl: String,lat: String, lng: String, locale: String? = null): String? {
-            val geoLookupUrl: String = geocodeUrl+"reverse?format=json&lat="+lat+"&lon="+lng+"&extratags=1&namedetails=1&accept-language=en&email=myagi.developer@gmail.com"
+            val geoLookupUrl: String = geocodeUrl+"reverse?format=json&lat="+lat+"&lon="+lng+"&extratags=1&namedetails=1&accept-language="+locale+"&email=myagi.developer@gmail.com"
             return readUrl(geoLookupUrl, locale)
         }
 
