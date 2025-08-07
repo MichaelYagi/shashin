@@ -19,6 +19,7 @@ import java.nio.file.Files
 import java.util.*
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.context.MessageSource
 import java.io.File
 import kotlin.collections.MutableList
 import kotlin.io.path.Path
@@ -48,23 +49,29 @@ class RssFeedView : AbstractRssFeedView() {
     @Autowired
     var userAlbumRepository: UserAlbumRepository? = null
 
+    @Autowired
+    var messageSource: MessageSource? = null
+
     override fun buildFeedMetadata(model: MutableMap<String, Any>, feed: Channel, request: HttpServletRequest) {
+        feed.description = "$appName images - Invalid key"
+
+        var locale = Locale("en")
+        if (model.containsKey("apiKey")) {
+            val apiKey = model["apiKey"] as String?
+            val currentUser = userRepository?.findByApikey(apiKey)
+            if (currentUser != null) {
+                locale = Locale(currentUser.getLanguage())
+                feed.description = messageSource?.getMessage("main.pages.feed.images.text", arrayOf(currentUser.getUsername(), appName), locale)
+            }
+        }
+
         var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
         if (request.scheme == "https") {
             baseUrlBuilder = baseUrlBuilder.scheme("https")
         }
 
-        feed.title = "$appName RSS Feed"
-        feed.description = "$appName images - Invalid key"
+        feed.title = messageSource?.getMessage("main.pages.feed.rss.title", arrayOf(appName), locale)
         feed.feedType = "rss_2.0"
-
-        if (model.containsKey("apiKey")) {
-            val apiKey = model["apiKey"] as String?
-            val currentUser = userRepository?.findByApikey(apiKey)
-            if (currentUser != null) {
-                feed.description = "${currentUser.getUsername()} $appName images"
-            }
-        }
 
         var apiKey = ""
         if (model.containsKey("apiKey")) {
@@ -142,7 +149,7 @@ class RssFeedView : AbstractRssFeedView() {
                         metadata.getMonth() != null && metadata.getMonth() != 0 &&
                         metadata.getDay() != null && metadata.getDay() != 0)
                     {
-                        taken = TextUtils.formatToLongDate("${metadata.getYear()}-${metadata.getMonth()}-${metadata.getDay()}")
+                        taken = TextUtils.formatToLongDate("${metadata.getYear()}-${metadata.getMonth()}-${metadata.getDay()}", currentUser.getLanguage().toString())
                     }
                     if (metadata.getPlaceName() != null && metadata.getPlaceName() != "") {
                         val placeArray = metadata.getPlaceName()!!.split(";")
