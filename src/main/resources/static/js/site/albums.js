@@ -266,7 +266,7 @@ class Albums {
                             } else {
                                 html += '<span class="bi-person-circle me-1" style="font-size:1.0rem;"></span>';
                             }
-                            html += '<strong>' + comments.username + '</strong> <span>on ' + comments.createdAt + '</span></small>';
+                            html += '<strong>' + comments.username + '</strong> <span>- ' + comments.createdAt + '</span></small>';
 
                             if (parseInt(comments.userId, 10) === parseInt(currentUserId, 10)) {
                                 html += '<small><span style="float: right">';

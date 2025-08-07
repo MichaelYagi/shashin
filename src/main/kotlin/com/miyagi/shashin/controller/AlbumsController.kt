@@ -499,7 +499,9 @@ class AlbumsController: BaseController() {
                                         .toString()
                                 albumCommentMap["username"] = albumComment.getUsername().toString()
                                 albumCommentMap["createdAt"] =
-                                    TextUtils.formatToLongDateWithTime(albumComment.getCreatedAt().toString())
+                                    TextUtils.formatToLongDateWithTime(albumComment.getCreatedAt().toString(),
+                                        locale.toString()
+                                    )
                                 albumCommentsList.add(albumCommentMap)
                             }
                             if (albumCommentsList.isNotEmpty()) {
@@ -761,7 +763,7 @@ class AlbumsController: BaseController() {
             albumCommentMap["userId"] = albumComment.getUserId().toString().toInt()
             albumCommentMap["userProfile"] = if (albumComment.getUserProfile()==null) "" else albumComment.getUserProfile().toString()
             albumCommentMap["username"] = albumComment.getUsername().toString()
-            albumCommentMap["createdAt"] = TextUtils.formatToLongDateWithTime(albumComment.getCreatedAt().toString())
+            albumCommentMap["createdAt"] = TextUtils.formatToLongDateWithTime(albumComment.getCreatedAt().toString(), locale.toString())
             albumCommentsList.add(albumCommentMap)
         }
 
@@ -1887,7 +1889,7 @@ class AlbumsController: BaseController() {
                                 albumPhotoCommentMap["userId"] = albumPhotoComment.getUserId().toString().toInt()
                                 albumPhotoCommentMap["userProfile"] = if (albumPhotoComment.getUserProfile()==null) "" else albumPhotoComment.getUserProfile().toString()
                                 albumPhotoCommentMap["username"] = albumPhotoComment.getUsername().toString()
-                                albumPhotoCommentMap["createdAt"] = TextUtils.formatToLongDateWithTime(albumPhotoComment.getCreatedAt().toString())
+                                albumPhotoCommentMap["createdAt"] = TextUtils.formatToLongDateWithTime(albumPhotoComment.getCreatedAt().toString(), locale.toString())
                                 albumPhotoCommentsList.add(albumPhotoCommentMap)
                             }
                             if (albumPhotoCommentsList.isNotEmpty()) {
