@@ -14,7 +14,7 @@ class ModalTemplates {
                     <div class="modal-body" id="commentListContainer${metadata.id}" style="display: none;">
                         <input type="hidden" id="currentCommentId${metadata.id}" name="currentCommentId${metadata.id}">
                         <ul class="list-group" id="commentList${metadata.id}">
-    `};
+    `}
 
     static AlbumComment({commentId, commentText, userId, commentUserId, username, userProfile, createdAt, canEdit}) { return `
         <li class="list-group-item${(commentUserId === userId) ? ` list-group-item-secondary` : ''}" id="comment${commentId}">
@@ -24,7 +24,7 @@ class ModalTemplates {
             </span>
             <span id="textareacontainer${commentId}"></span>
         </li>
-    `};
+    `}
 
     static AlbumCommentsModalFooter({metadata}) { return `
                         </ul>
@@ -39,25 +39,25 @@ class ModalTemplates {
                 </div>
             </div>
         </div>
-    `};
+    `}
 
     static AlbumModalDropdownHeader({metadata}) { return `
         <div class="input-group-append dropdown" id="albumListInput">
             <button class="btn btn-secondary dropdown-toggle" id="albumdropdown${metadata.id}" type="button" aria-haspopup="true" aria-expanded="false">${shashin.getTranslatedValue("main.sidebar.albums")}</button>
             <div class="dropdown-menu" id="albumsList">
-    `};
+    `}
 
     static AlbumModalDropDown({metadata, album, checkedString}) { return `
                 <button class="dropdown-item" type="button">
                     <input type="checkbox" class="album" value="${Util.escapeHtml(album.name)}" name="album${metadata.id}[]" id="album-${metadata.id}-${album.id}"${checkedString}>
                     <label for="album-${metadata.id}-${album.id}">${Util.escapeHtml(album.name)}</label>
                 </button>
-    `};
+    `}
 
     static AlbumModalDropdownFooter() { return `
             </div>
         </div>
-    `};
+    `}
 
     static PersonModalHead({module, metadata, recognitionLabels, taggedPeopleList}) { return `
         <div class="modal fade" id="prop${module}${metadata.id}" tabindex="-1" role="dialog" aria-labelledby="label${metadata.id}">
@@ -84,13 +84,13 @@ class ModalTemplates {
                                             <button class="btn btn-secondary dropdown-toggle" id="tagpeopledropdown${metadata.id}" type="button" aria-haspopup="true" aria-expanded="false">${shashin.getTranslatedValue("main.sidebar.people")}</button>
                                             <div class="dropdown-menu ${module}Dropdown" id="recognitionLabelsList${metadata.id}">
                                         ` : ''}
-    `};
+    `}
 
     static PersonModalDropdownHead({metadata}) { return `
         <div class="input-group-append dropdown" id="recognitionLabelInput">
             <button class="btn btn-secondary dropdown-toggle" id="tagpeopledropdown${metadata.id}" type="button" aria-haspopup="true" aria-expanded="false">${shashin.getTranslatedValue("main.sidebar.people")}</button>
             <div class="dropdown-menu" id="recognitionLabelsList">
-    `};
+    `}
 
     static PersonModalDropDown({metadata, recognitionLabel, checkedString}) { return `
                                                 ${(recognitionLabel.name === null || recognitionLabel.name === "null") ? ``: `
@@ -98,12 +98,12 @@ class ModalTemplates {
                                                     <input type="checkbox" class="recognitionLabel" value="${Util.escapeHtml(recognitionLabel.name)}" name="recognitionLabel${metadata.id}[]" id="label-${metadata.id.length > 0 ? `${metadata.id}-` : ''}${recognitionLabel.id}"${(checkedString.length > 0) ? `${checkedString}` : ''}>
                                                     <label for="label-${metadata.id.length > 0 ? `${metadata.id}-` : ''}${recognitionLabel.id}">${Util.escapeHtml(recognitionLabel.name)}</label>
                                                 </button>`}
-    `};
+    `}
 
     static PersonModalDropdownFooter() { return `
             </div>
         </div>
-    `};
+    `}
 
     static PersonModalFooter({module, metadata, recognitionLabels}) { return `
                                         ${(recognitionLabels.length > 0) ? `
@@ -132,5 +132,5 @@ class ModalTemplates {
                 </div>
             </div>
         </div>
-    `};
+    `}
 }

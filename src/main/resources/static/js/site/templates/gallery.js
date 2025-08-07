@@ -79,7 +79,7 @@ class GalleryTemplates {
             // Util.checkErrorImage();
             });
         </script>        
-    `};
+    `}
 
     static getTopRightOverlay({id, overlays, data}) { return `
         <div class="thumbnail-tr" id="tntr${id}">
@@ -114,7 +114,7 @@ class GalleryTemplates {
         }
     
         </div>
-    `};
+    `}
 
     static getTopLeftOverlay({id, overlays, data}) { return `
         <div class="thumbnail-tl" id="tntl${id}">
@@ -122,7 +122,7 @@ class GalleryTemplates {
                 <span id="tlicon${id}" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>
             </a>
         </div>
-    `};
+    `}
 
     static getBottomRightOverlay({id, overlays, data}) { return `
         <div class="thumbnail-br" id="tnbr${id}">
@@ -145,7 +145,7 @@ class GalleryTemplates {
             </a>
             ` : ''}
         </div>
-    `};
+    `}
 
     static getBottomLeftOverlay({metadata, overlays, data}) { return `
         <div class="thumbnail-bl" id="tnbl${metadata.id}">
@@ -190,7 +190,7 @@ class GalleryTemplates {
             </a>
             ` : ''}
         </div>
-    `};
+    `}
 
     static getCenteredOverlay({id, overlays, data, uuid, isMobile}) { return `
         <div class="thumbnail-centered" id="tncentered${id}">
@@ -227,7 +227,7 @@ class GalleryTemplates {
             </script>
     
         </div>
-    `};
+    `}
 
     static getFoldersCard({folder, thumbnailUrlCentered, count, appendClass, darkMode, isMobile}) { return `
         <div class="card" style="width:${isMobile ? '175' : '235'}px;padding-top:${isMobile ? '14' : '10'}px;margin-right:-1px;margin-top:-1px;">
@@ -245,5 +245,5 @@ class GalleryTemplates {
         </div>
         
         <span class="${appendClass}" style="width:0;height:0;padding:0"></span>
-    `};
+    `}
 }
