@@ -192,7 +192,7 @@ class CommentsController {
                 resp["status"] = ApiResponse.SUCCESS.status
                 resp["commentId"] = savedCommentObj.getId().toString()
                 resp["userProfile"] = if (currentUserObj.getProfile()==null) "" else currentUserObj.getProfile().toString()
-                resp["createdAt"] = TextUtils.formatToLongDateWithTime(savedCommentObj.getCreatedAt().toString())
+                resp["createdAt"] = TextUtils.formatToLongDateWithTime(savedCommentObj.getCreatedAt().toString(), locale.toString())
                 return mapper.writeValueAsString(resp)
             } else {
                 return returnForbiddenError(response)
@@ -332,7 +332,7 @@ class CommentsController {
                 resp["status"] = ApiResponse.SUCCESS.status
                 resp["commentId"] = savedCommentObj.getId().toString()
                 resp["userProfile"] = if (currentUserObj.getProfile()==null) "" else currentUserObj.getProfile().toString()
-                resp["createdAt"] = TextUtils.formatToLongDateWithTime(savedCommentObj.getCreatedAt().toString())
+                resp["createdAt"] = TextUtils.formatToLongDateWithTime(savedCommentObj.getCreatedAt().toString(), locale.toString())
                 resp["canEdit"] = (model.getAttribute("authority") == adminRole || model.getAttribute("authority") == superRole)
 
                 return mapper.writeValueAsString(resp)
