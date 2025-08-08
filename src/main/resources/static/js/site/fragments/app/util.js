@@ -17,7 +17,7 @@
             }
             lastTap = currentTime;
         };
-    }
+    };
 
     // Call in console
     // eg: shashin.enableDebug({tags: all, consoleTypes:[shashin.consoleTypes.log,shashin.consoleTypes.error],showTrace:true,writeLog:true})
