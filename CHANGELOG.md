@@ -11,15 +11,19 @@ This project adheres to [Semantic Versioning](http://semver.org/), and follows [
 
 ## [Unreleased]
 ### Added
-- Date selection to missing coordinate, description, and comment filters
-
 ### Changed
 ### Deprecated
 ### Removed
 ### Fixed
-- ATOM feed date format
-
 ### Security
+
+## [2.11.6] - 2025-08-07
+### Added
+- Date selection to missing coordinate, description, and comment filters
+- Translations for tooltips
+
+### Fixed
+- ATOM feed date format
 
 ## [2.11.5] - 2025-08-05
 ### Fixed
