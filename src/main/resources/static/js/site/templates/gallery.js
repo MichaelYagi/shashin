@@ -178,7 +178,7 @@ class GalleryTemplates {
         `
             <br>
             <a href="#" id="infoModalEdit${metadata.id}" tag="${metadata.id}">
-                <span class="${(metadata.lat !== null && metadata.lng !== null) ? `bi-info-circle` : `bi-info-square`}" style="font-size: 1rem;color: lightgray;" title="Set as album cover"></span>
+                <span class="${(metadata.lat !== null && metadata.lng !== null) ? `bi-info-circle` : `bi-info-square`}" style="font-size: 1rem;color: lightgray;" title="${shashin.getTranslatedValue("main.gallery.album.cover")}"></span>
             </a>
             ` : ''}
             
