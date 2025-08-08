@@ -6,7 +6,7 @@
     <th:block th:if="${onclickFunctionCall != null or targetPrefix != null}">
         <th:block th:if="${onclickFunctionCall != null}">
             <a href="#" th:id="${onclickIdPrefix+metadata.id}" th:class="${editClass}">
-                <span class="bi-journal-album" style="font-size: 1rem;color: lightgray;" title="Set as album cover"></span>
+                <span class="bi-journal-album" style="font-size: 1rem;color: lightgray;" th:title="#{main.gallery.album.cover}"></span>
             </a>
             <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                 /*<![CDATA[*/
