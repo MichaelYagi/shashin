@@ -1946,26 +1946,18 @@ class Util {
             $(".manualTakenAtDetails").text(takenDetails);
 
             if (Util.isSafari() === false) {
-                timeLinkHtml = "&nbsp;&nbsp;&nbsp;<a class='bi-calendar4' style='font-size: 1rem;' href='/timeline#" + metadata.year + '-' + metadata.month + '-' + metadata.day + "' title='"+(activePage === "archived" ? "Search for date in " : "View in ")+"timeline' target='_blank'></a>";
+                timeLinkHtml = "&nbsp;&nbsp;&nbsp;<a class='bi-calendar4' style='font-size: 1rem;' href='/timeline#" + metadata.year + '-' + metadata.month + '-' + metadata.day + "' title='"+(activePage === "archived" ? shashin.getTranslatedValue("main.pages.utils.tooltip.searchdate") : shashin.getTranslatedValue("main.pages.utils.tooltip.viewdate"))+"' target='_blank'></a>";
             }
         }
-        // if (metadata.takenAt !== null) {
-        //     $(".manualTakenAtLabel").show();
-        //     $(".manualTakenAtDetails").text(metadata.takenAt);
-        //
-        //     if (Util.isSafari() === false && metadata.year !== undefined && metadata.month !== undefined && metadata.day !== undefined &&
-        //         metadata.year !== null && metadata.month !== null && metadata.day !== null)
-        //     {
-        //         timeLinkHtml = "&nbsp;&nbsp;&nbsp;<a class='bi-calendar4' style='font-size: 1rem;' href='/timeline#" + metadata.year + '-' + metadata.month + '-' + metadata.day + "' title='"+(activePage === "archived" ? "Search for date in " : "View in ")+"timeline' target='_blank'></a>";
-        //     }
-        // }
+
         if (metadata.timeZone != null) {
             $(".timeZoneLabel").show();
             $(".timeZoneDetails").text(metadata.timeZone);
         }
+
         if (metadata.id != null) {
             $(".metadataIdLabel").show();
-            $(".metadataIdDetails").html(metadata.id + "&nbsp;<a href='#' class='copyLink bi-clipboard-plus sharecopy copyMetadataId' data-clipboard-text='" + metadata.id + "' title='Copy metadata ID' style='font-size: 1rem;'></a>");
+            $(".metadataIdDetails").html(metadata.id + "&nbsp;<a href='#' class='copyLink bi-clipboard-plus sharecopy copyMetadataId' data-clipboard-text='" + metadata.id + "' title='"+shashin.getTranslatedValue("main.pages.utils.tooltip.copymid")+"' style='font-size: 1rem;'></a>");
 
             $(".copyMetadataId").on("click", function () {
 
@@ -1996,14 +1988,12 @@ class Util {
                 page = "/player";
             }
 
-            let shareDetailsHtml = "<a class='bi-download' href='" + relativeShareLink + "/download' title='Download photo' style='font-size: 1rem;'></a>&nbsp;&nbsp;&nbsp;" +
-                "<a class='" + ((metadata.videoUrl != null) ? "bi-camera-video" : "bi-file-image") + "' style='font-size: 1rem;' href='" + relativeShareLink.replace('/api/v1', '') + page + "' title='View " + ((metadata.videoUrl != null) ? "video" : "image") + "' target='_blank'></a>";
+            let shareDetailsHtml = "<a class='bi-download' href='" + relativeShareLink + "/download' title='"+shashin.getTranslatedValue("main.pages.tooltip.topnav.msg.downloadmedia")+"' style='font-size: 1rem;'></a>&nbsp;&nbsp;&nbsp;" +
+                "<a class='" + ((metadata.videoUrl != null) ? "bi-camera-video" : "bi-file-image") + "' style='font-size: 1rem;' href='" + relativeShareLink.replace('/api/v1', '') + page + "' title='" + ((metadata.videoUrl != null) ? shashin.getTranslatedValue("main.pages.utils.tooltip.viewvideo") : shashin.getTranslatedValue("main.pages.utils.tooltip.viewimage")) + "' target='_blank'></a>";
 
             if (metadata.videoUrl === null && Util.isLocalNetwork() === false) {
-                shareDetailsHtml += "&nbsp;&nbsp;&nbsp;<a class='bi-camera' style='font-size: 1rem;' href='https://lens.google.com/uploadbyurl?url=" + baseUrl + relativeShareLink + "' title='Search Google Lens' target='_blank'></a>";
+                shareDetailsHtml += "&nbsp;&nbsp;&nbsp;<a class='bi-camera' style='font-size: 1rem;' href='https://lens.google.com/uploadbyurl?url=" + baseUrl + relativeShareLink + "' title='"+shashin.getTranslatedValue("main.pages.utils.tooltip.googlelens")+"' target='_blank'></a>";
             }
-
-            // shareDetailsHtml += "&nbsp;&nbsp;&nbsp;<a class='bi-pencil editDetails' tag='"+metadata.id+"' style='font-size: 1rem;' href='#' title='Edit Metadata'></a>";
 
             if ($(".shareUrlDetailsA").length > 0) {
                 shareDetailsHtml += timeLinkHtml;

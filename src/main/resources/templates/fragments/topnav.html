@@ -47,7 +47,7 @@
         <div class="flex-shrink-0">
             <input type="hidden" id="activePage" th:value="${activePage}">
             <input type="hidden" id="scanPhotoMsg">
-            <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-toggle="offcanvas" data-bs-placement="bottom" href="#offcanvasMenu" aria-controls="offcanvasMenu" title="Show Menu">
+            <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-toggle="offcanvas" data-bs-placement="bottom" href="#offcanvasMenu" aria-controls="offcanvasMenu" th:title="#{main.pages.tooltip.topnav.msg.menu}">
                 <span id="sidebarMenuDrawer" th:class="'bi-list placeholder position-relative'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;">
                 </span>
             </a>
@@ -65,19 +65,19 @@
                 <span id="timelineTools">
                     <th:block th:if="${activePage == 'timeline'}">
                         &nbsp;
-                        <a class="align-items-center mb-lg-0 link-dark text-decoration-none" id="timelineTocToggle" data-bs-toggle="offcanvas" data-bs-placement="bottom" href="#offcanvasToc" aria-controls="offcanvasToc" title="Show timeline" style="display: none">
+                        <a class="align-items-center mb-lg-0 link-dark text-decoration-none" id="timelineTocToggle" data-bs-toggle="offcanvas" data-bs-placement="bottom" href="#offcanvasToc" aria-controls="offcanvasToc" th:title="#{main.pages.tooltip.topnav.msg.timeline}" style="display: none">
                             <span th:class="'bi-calendar3 placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem"></span>
                         </a>
                     </th:block>
                     <th:block th:if="${activePage == 'folder'}">
                         &nbsp;
-                        <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" href="/folders" aria-controls="back" title="Go back to folders">
+                        <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" href="/folders" aria-controls="back" th:title="#{main.pages.tooltip.topnav.msg.backfolders}">
                             <span th:class="'bi-arrow-left placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span>
                         </a>
                     </th:block>
                     <th:block th:if="${activePage == 'person' || activePage == 'matches' || activePage == 'compreface'}">
                         &nbsp;
-                        <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" href="/people" aria-controls="back" title="Go back">
+                        <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" href="/people" aria-controls="back" th:title="#{main.pages.tooltip.topnav.msg.back}">
                             <span th:class="'bi-arrow-left placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span>
                         </a>
                     </th:block>
@@ -86,13 +86,13 @@
             <th:block th:if="${activePage == 'album'}">
                 <span id="albumTools">
                     &nbsp;
-                    <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" href="/albums" aria-controls="back" title="Go back to albums">
+                    <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" href="/albums" aria-controls="back" th:title="#{main.pages.tooltip.topnav.msg.backalbums}">
                         <span th:class="'bi-arrow-left placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span>
                     </a>
                     <th:block th:if="${activePage == 'album'}">
                         <th:block th:if="${hasMediaUploadDirectory == true}">
                             &nbsp;
-                            <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" id="uploadToAlbum" aria-controls="back" title="Upload to albums">
+                            <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" id="uploadToAlbum" aria-controls="back" th:title="#{main.pages.tooltip.topnav.msg.uploadalbums}">
                                 <span th:class="'bi-upload placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" id="uploadAlbumIcon" style="font-size: 1.6rem;"></span>
                             </a>
                             <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
@@ -106,21 +106,21 @@
             <th:block th:if="${activePage == 'map'}">
                 <span id="mapTools">
                     &nbsp;
-                    <a class="btn btn-link link-dark text-decoration-none" style="line-height:0;display: inline-block; background: none;outline: none;text-decoration: none;margin: -12px 0 -3px 0;padding:0;" data-bs-placement="bottom" id="mapFilterButton" role="button" href="#" aria-controls="back" title="Filter Map">
+                    <a class="btn btn-link link-dark text-decoration-none" style="line-height:0;display: inline-block; background: none;outline: none;text-decoration: none;margin: -12px 0 -3px 0;padding:0;" data-bs-placement="bottom" id="mapFilterButton" role="button" href="#" aria-controls="back" th:title="#{main.pages.map.modal.title}">
                         <span th:class="'bi-globe-americas placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span>
                     </a>
                 </span>
             </th:block>
             <th:block th:if="${activePage == 'logs'}">
                 &nbsp;&nbsp;
-                <a class="align-items-center mb-lg-0 link-dark text-decoration-none" href="/settings/logs/download" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download logs">
+                <a class="align-items-center mb-lg-0 link-dark text-decoration-none" href="/settings/logs/download" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.pages.tooltip.topnav.msg.download}">
                     <span th:class="'bi-download placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span>
                 </a>
             </th:block>
             <th:block th:if="${activePage == 'recent' || activePage == 'modified' || activePage == 'taken' || activePage == 'accessed'}">
                 <th:block th:if="${hasMediaUploadDirectory == true}">
                     &nbsp;
-                    <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" id="uploadToMedia" aria-controls="back" title="Upload To Media Folder">
+                    <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-placement="bottom" id="uploadToMedia" aria-controls="back" th:title="#{main.pages.tooltip.topnav.msg.uploadmedia}">
                         <span th:class="'bi-upload placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" id="uploadMediaIcon" style="font-size: 1.6rem;"></span>
                     </a>
                     <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
@@ -133,62 +133,62 @@
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <div class="flex-grow-1 d-flex align-items-center">
             <form id="appSearch" class="w-100" action="/search" method="post">
-                <input id="appSearchInput" name="appSearchInput" class="form-control rounded-pill border border-secondary-subtle" type="search" placeholder="Search" aria-label="Search" th:value="${term}">
+                <input id="appSearchInput" name="appSearchInput" class="form-control rounded-pill border border-secondary-subtle" type="search" th:placeholder="#{main.pages.map.modal.search}" aria-label="Search" th:value="${term}">
                 <input type="submit" id="appSearchSubmit" style="position: absolute; left: -9999px"/>
             </form>
             <th:block th:if="${activePage != 'favorites' and activePage != 'album'}">
                 <div id="timelineAppTools">
                     <th:block th:if="${authority == 'ROLE_ADMIN' || authority == 'ROLE_SUPER'}">
-                    <a href="#" id="appToolsBatchEdit" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit Metadata"><span th:class="'bi-pencil placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
+                    <a href="#" id="appToolsBatchEdit" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.modal.batch.header}"><span th:class="'bi-pencil placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
                     </th:block>
-                    <a href="#" id="appToolsBatchDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download"><span th:class="'bi-download placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
-                    <a href="#" id="appToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-x-circle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>
+                    <a href="#" id="appToolsBatchDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.pages.tooltip.topnav.msg.downloadmedia}"><span th:class="'bi-download placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
+                    <a href="#" id="appToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.pages.tooltip.topnav.msg.clearselect}"><span th:class="'bi-x-circle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>
                     &nbsp;&nbsp;<span id="timelineNumberSelected"></span>
                 </div>
             </th:block>
             <th:block th:if="${activePage == 'matches' or activePage == 'person'}">
                 <div id="matchesAppTools">
                     <th:block th:if="${authority == 'ROLE_ADMIN' || authority == 'ROLE_SUPER'}">
-                    <a href="#" id="matchToolsBatchEdit" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit Metadata"><span th:class="'bi-pencil placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
+                    <a href="#" id="matchToolsBatchEdit" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.modal.batch.header}"><span th:class="'bi-pencil placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
                     </th:block>
-                    <a href="#" id="matchToolsBatchDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download"><span th:class="'bi-download placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
-                    <a href="#" id="matchToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-x-circle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>
+                    <a href="#" id="matchToolsBatchDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.pages.tooltip.topnav.msg.downloadmedia}"><span th:class="'bi-download placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
+                    <a href="#" id="matchToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.pages.tooltip.topnav.msg.clearselect}"><span th:class="'bi-x-circle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>
                     &nbsp;&nbsp;<span id="matchesNumberSelected"></span>
                 </div>
             </th:block>
             <th:block th:if="${activePage == 'favorites'}">
                 <div id="albumAppTools">
                     <th:block th:if="${authority == 'ROLE_ADMIN' || authority == 'ROLE_SUPER'}">
-                    <a href="#" id="appToolsBatchEdit" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit Metadata"><span th:class="'bi-pencil placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
+                    <a href="#" id="appToolsBatchEdit" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.modal.batch.header}"><span th:class="'bi-pencil placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
                     </th:block>
-                    <a href="#" id="albumAppToolsRemoveFavorites" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove From Favorites"><span th:class="'bi-heartbreak placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
-                    <a href="#" id="albumAppToolsBatchDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download"><span th:class="'bi-download placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
-                    <a href="#" id="albumAppToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-x-circle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>
+                    <a href="#" id="albumAppToolsRemoveFavorites" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.pages.tooltip.topnav.msg.removefave}"><span th:class="'bi-heartbreak placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
+                    <a href="#" id="albumAppToolsBatchDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.pages.tooltip.topnav.msg.downloadmedia}"><span th:class="'bi-download placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
+                    <a href="#" id="albumAppToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.pages.tooltip.topnav.msg.clearselect}"><span th:class="'bi-x-circle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>
                     &nbsp;&nbsp;<span id="favoritesNumberSelected"></span>
                 </div>
             </th:block>
             <th:block th:if="${activePage == 'archived'}">
                 <div id="albumAppTools">
-                    <a href="#" id="albumAppToolsRestore" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Restore"><span id="albumAppToolsRestoreIcon" th:class="'bi-arrow-repeat placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
-                    <a href="#" id="albumAppToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-x-circle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>
+                    <a href="#" id="albumAppToolsRestore" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.toast.app.media.restored}"><span id="albumAppToolsRestoreIcon" th:class="'bi-arrow-repeat placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
+                    <a href="#" id="albumAppToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.pages.tooltip.topnav.msg.clearselect}"><span th:class="'bi-x-circle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>
                     &nbsp;&nbsp;<span id="trashNumberSelected"></span>
                 </div>
             </th:block>
             <th:block th:if="${activePage != 'favorites' and activePage != 'archived'}">
                 <div id="albumAppTools">
                     <th:block th:if="${authority == 'ROLE_ADMIN' || authority == 'ROLE_SUPER'}">
-                        <a href="#" id="appToolsBatchEdit" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit Metadata"><span th:class="'bi-pencil placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
-                        <a href="#" id="albumAppToolsRemoveAlbum" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove From Album"><span th:class="'bi-bookmark-x placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
+                        <a href="#" id="appToolsBatchEdit" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.modal.batch.header}"><span th:class="'bi-pencil placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
+                        <a href="#" id="albumAppToolsRemoveAlbum" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.pages.tooltip.topnav.msg.removealbum}"><span th:class="'bi-bookmark-x placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
                     </th:block>
-                    <a href="#" id="albumAppToolsBatchDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download"><span th:class="'bi-download placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
-                    <a href="#" id="albumAppToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-x-circle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>
+                    <a href="#" id="albumAppToolsBatchDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.pages.tooltip.topnav.msg.downloadmedia}"><span th:class="'bi-download placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
+                    <a href="#" id="albumAppToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.pages.tooltip.topnav.msg.clearselect}"><span th:class="'bi-x-circle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>
                     &nbsp;&nbsp;<span id="albumNumberSelected"></span>
                 </div>
             </th:block>
             <th:block th:if="${activePage == 'compreface'}">
                 <div id="comprefaceAppTools">
-                    <a href="#" id="comprefaceBatchDelete" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove From CompreFace"><span th:class="'bi-trash placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
-                    <a href="#" id="comprefaceDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-x-circle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>
+                    <a href="#" id="comprefaceBatchDelete" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.pages.tooltip.topnav.msg.removecf}"><span th:class="'bi-trash placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>&nbsp;&nbsp;
+                    <a href="#" id="comprefaceDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" th:title="#{main.pages.tooltip.topnav.msg.clearselect}"><span th:class="'bi-x-circle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.6rem;"></span></a>
                     &nbsp;&nbsp;<span id="comprefaceNumberSelected"></span>
                 </div>
             </th:block>

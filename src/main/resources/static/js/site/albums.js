@@ -69,24 +69,24 @@ class Albums {
                         html += '</a>';
                         html += '<div class="card-body" style="display: flex;flex-direction: column;">';
                         html += '<p class="card-text"><a href="/album/' + album.id + '" style="text-decoration: none !important;color: '+(darkMode ? '#FFFFFF;' : '#000000;')+';"><strong id="albumName' + album.id + '">' + album.name + '</strong></a></p>';
-                        html += '<span style="margin-top: auto;"><a href="#" id="comment' + album.id + '" style="text-decoration: none;" title="Comments">';
+                        html += '<span style="margin-top: auto;"><a href="#" id="comment' + album.id + '" style="text-decoration: none;" title="'+shashin.getTranslatedValue("main.pages.tooltip.albums.msg.comments")+'">';
                         html += '<span id="commentcount' + album.id + '">' + (album.id in data.albumsCommentsMap ? data.albumsCommentsMap[album.id].length : "0") + '</span>&nbsp;';
                         html += '<span class="bi-chat-square position-relative">';
                         html += '</span></a>';
 
                         if (album.albumPhotoCount > 0) {
                             html += '&nbsp;<form method="post" action="/album/download/' + album.id + '" style="display: inline-block;white-space: nowrap;">';
-                            html += '<button class="bi-download' + (darkMode ? ' link-button-darkmode' : ' link-button-lightmode') + '" type="submit" id="download' + album.id + '" name="download" value="' + album.id + '" title="Download album photos"></button>';
+                            html += '<button class="bi-download' + (darkMode ? ' link-button-darkmode' : ' link-button-lightmode') + '" type="submit" id="download' + album.id + '" name="download" value="' + album.id + '" title="'+shashin.getTranslatedValue("main.pages.tooltip.albums.msg.downloadalbum")+'"></button>';
                             html += '</form>&nbsp;';
                         } else {
                             html += '&nbsp;&nbsp;&nbsp;';
                         }
 
                         if (true === showControls) {
-                            html += '<a href="#" id="edit' + album.id + '"><span class="bi-pencil" title="Edit album"></span></a>';
-                            html += (Util.isMobile() ? '&nbsp;' : '&nbsp;&nbsp;&nbsp;') + '<a href="#" id="share' + album.id + '"><span class="' + (album.shareUrl != null && album.shareUrl !== '' ? 'bi-share-fill' : 'bi-share') + '" title="' + (album.shareUrl != null && album.shareUrl !== '' ? 'Shared' : 'Share') + ' with other people"></span></a>';
-                            html += '<span id="userShare' + album.id + '" title="Shared with other users" style="' + (sharedAlbumMap.hasOwnProperty(album.id) && showControls === true ? "display: inline-block" : "display: none") + '">&nbsp;&nbsp;&nbsp;<span class="bi-person-up text-muted"></span></span>';
-                            html += (Util.isMobile() ? '&nbsp;' : '&nbsp;&nbsp;&nbsp;') + '<a href="#" id="trash' + album.id + '" title="Delete album"><span class="bi-trash"></span></a>';
+                            html += '<a href="#" id="edit' + album.id + '"><span class="bi-pencil" title="'+shashin.getTranslatedValue("main.pages.tooltip.albums.msg.edit")+'"></span></a>';
+                            html += (Util.isMobile() ? '&nbsp;' : '&nbsp;&nbsp;&nbsp;') + '<a href="#" id="share' + album.id + '"><span class="' + (album.shareUrl != null && album.shareUrl !== '' ? 'bi-share-fill' : 'bi-share') + '" title="' + (album.shareUrl != null && album.shareUrl !== '' ? shashin.getTranslatedValue("main.pages.tooltip.albums.msg.sharedpeople") : shashin.getTranslatedValue("main.pages.tooltip.albums.msg.sharepeople")) + '"></span></a>';
+                            html += '<span id="userShare' + album.id + '" title="'+shashin.getTranslatedValue("main.pages.tooltip.albums.msg.shared")+'" style="' + (sharedAlbumMap.hasOwnProperty(album.id) && showControls === true ? "display: inline-block" : "display: none") + '">&nbsp;&nbsp;&nbsp;<span class="bi-person-up text-muted"></span></span>';
+                            html += (Util.isMobile() ? '&nbsp;' : '&nbsp;&nbsp;&nbsp;') + '<a href="#" id="trash' + album.id + '" title="'+shashin.getTranslatedValue("main.pages.tooltip.albums.msg.delete")+'"><span class="bi-trash"></span></a>';
                         }
 
                         html += '<p class="card-text"><small class="text-muted">' + album.albumPhotoCount + (album.albumPhotoCount === 1 ? ' photo' : ' photos') + (Util.isMobile() ? '&nbsp;&nbsp;' : '&nbsp;&nbsp;&nbsp;&nbsp;') + album.albumVideoCount + (album.albumVideoCount === 1 ? ' video' : ' videos') + '</small></p></span>';

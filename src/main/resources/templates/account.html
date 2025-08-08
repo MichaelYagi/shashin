@@ -104,11 +104,11 @@
 
                     <div class="input-group mb-2">
                         <div class="input-group mb-3">
-                            <button id="copyapikey" data-clipboard-target="#apikey" class="btn btn-secondary" type="button" title="Copy API key">
+                            <button id="copyapikey" data-clipboard-target="#apikey" class="btn btn-secondary" type="button" th:title="#{main.pages.account.tooltip.copyapi}">
                                 <span id="apikeycopyicon" class="bi-clipboard-plus" style="font-size: 1rem;"></span>
                             </button>
                             <input id="apikey" type="text" class="form-control" aria-label="API key" th:data-clipboard-text="${user.apikey}" th:value="${user.apikey}" readonly>
-                            <button id="updateapikey" class="btn btn-danger" type="button" title="Update API key">
+                            <button id="updateapikey" class="btn btn-danger" type="button" th:title="#{main.modal.account.update.key}">
                                 <span class="bi-arrow-clockwise" style="font-size: 1rem;"></span>
                             </button>
                         </div>
@@ -127,10 +127,10 @@
 
                     <div class="input-group mb-2">
                         <div class="input-group mb-3">
-                            <th:block th:text="#{main.pages.account.rssatom.rss}"></th:block>&nbsp;<a id="rssFeedLink" th:href="${rssFeedLink}" th:text="${rssFeedLink}" target="_blank"></a>&nbsp;<a href='#' id="rssCopyLink" class='bi-clipboard-plus' title='Copy RSS link' style='font-size: 1rem;'></a>
+                            <th:block th:text="#{main.pages.account.rssatom.rss}"></th:block>&nbsp;<a id="rssFeedLink" th:href="${rssFeedLink}" th:text="${rssFeedLink}" target="_blank"></a>&nbsp;<a href='#' id="rssCopyLink" class='bi-clipboard-plus' th:title='#{main.pages.account.tooltip.copyrss}' style='font-size: 1rem;'></a>
                         </div>
                         <div class="input-group mb-3">
-                            <th:block th:text="#{main.pages.account.rssatom.atom}"></th:block>&nbsp;<a id="atomFeedLink" th:href="${atomFeedLink}" th:text="${atomFeedLink}" target="_blank"></a>&nbsp;<a href='#' id="atomCopyLink" class='bi-clipboard-plus' title='Copy Atom link' style='font-size: 1rem;'></a>
+                            <th:block th:text="#{main.pages.account.rssatom.atom}"></th:block>&nbsp;<a id="atomFeedLink" th:href="${atomFeedLink}" th:text="${atomFeedLink}" target="_blank"></a>&nbsp;<a href='#' id="atomCopyLink" class='bi-clipboard-plus' th:title='#{main.pages.account.tooltip.copyatom}' style='font-size: 1rem;'></a>
                         </div>
                         <th:block th:if="${(albumImageCount > 1 && currentUser.authority == 'ROLE_USER') or (albumImageCount > 0 && (currentUser.authority == 'ROLE_ADMIN' || currentUser.authority == 'ROLE_SUPER'))}">
                             <div class="input-group mb-3">

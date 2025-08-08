@@ -153,7 +153,7 @@ class GalleryTemplates {
         `
             <br>
             <a href="#" id="${data.onClickIdPrefix}${metadata.id}">
-                <span class="bi-journal-album" style="font-size: 1rem;color: lightgray;" title="Set as album cover"></span>
+                <span class="bi-journal-album" style="font-size: 1rem;color: lightgray;" title="${shashin.getTranslatedValue("main.gallery.album.cover")}"></span>
             </a>
     
             <script type="text/javascript"${(shashin.nonce.length > 0 ? ' nonce="' + shashin.nonce + '"' : '')}>
