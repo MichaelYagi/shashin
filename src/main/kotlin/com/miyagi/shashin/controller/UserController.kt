@@ -740,6 +740,30 @@ class UserController {
         return mapper.writeValueAsString(resp)
     }
 
+    @RequestMapping(value = ["/users/slideshowprogress"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")
+    fun toggleSlideshowProgress(model: Model, @RequestBody requestBody: JsonNode, locale: Locale): String? {
+        val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
+
+        resp["status"] = ApiResponse.FAIL.status
+        resp["msg"] = messageSource?.getMessage("main.fail", null, locale)
+
+        if (userMap.containsKey("slideshowProgress")) {
+            val slideshowProgress = userMap["slideshowProgress"].toBoolean()
+
+            val currentUserObj = model.getAttribute("currentUser") as User?
+            if (currentUserObj != null) {
+                currentUserObj.setSlideshowProgress(slideshowProgress)
+                userRepository?.save(currentUserObj)
+                resp["status"] = ApiResponse.SUCCESS.status
+                resp["msg"] = messageSource?.getMessage("main.updated", null, locale)
+            }
+        }
+
+        return mapper.writeValueAsString(resp)
+    }
+
     @RequestMapping(value = ["/users/autoplayvideo"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_SUPER","ROLE_ADMIN","ROLE_USER")

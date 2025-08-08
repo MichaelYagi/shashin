@@ -13,6 +13,7 @@
     shashin.ajaxRetries = 3;
     shashin.darkMode = false;
     shashin.showNotifications = true;
+    shashin.slideshowProgress = false;
     shashin.showPlacename = false;
     shashin.autoplayVideo = false;
     shashin.lgSubHtmlTimeout = null;

@@ -157,6 +157,7 @@ CREATE TABLE `user` (
                         `darkMode` BOOLEAN NOT NULL DEFAULT FALSE,
                         `autoplayVideo` BOOLEAN NOT NULL DEFAULT FALSE,
                         `slideshowInterval` INTEGER NOT NULL DEFAULT 10,
+                        `slideshowProgress` BOOLEAN NOT NULL DEFAULT FALSE,
                         `apikey` VARCHAR(36) NOT NULL DEFAULT '00000000-00000000-00000000-00000000',
                         `language` VARCHAR(10) NOT NULL DEFAULT 'en',
                         `createdAt` DATETIME DEFAULT NULL,
