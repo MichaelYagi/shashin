@@ -778,6 +778,15 @@ function initializeSlideshow(accessTimelineView, queryLimit, slideshowInterval, 
         }
     });
 
+    $("body").on("pointerup", shashin.detectDoubleTap(200));
+    $("body").on('doubletap', function(e) {
+        e.preventDefault();
+
+        if (Util.isMobile() === true && $("#slideshowContainer").css("display") === "block") {
+            exitSlideshow();
+        }
+    });
+
     // Check for entering/leaving fullscreen
     $(window).on("resize", function () {
         const maxHeight = window.screen.height,
