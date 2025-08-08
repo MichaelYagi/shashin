@@ -585,7 +585,7 @@ class FileUtils {
                             val contentType = Files.probeContentType(file.toPath())
                             if (contentType != null && contentType.contains("video")) {
                                 out.setLevel(Deflater.NO_COMPRESSION) //Deflater.BEST_SPEED
-                            } else if (fileSizeInKB > 8000) {
+                            } else if (fileSizeInKB > 10000) { //10mb
                                 out.setLevel(Deflater.NO_COMPRESSION) //Deflater.BEST_SPEED
                             } else {
                                 out.setLevel(Deflater.DEFAULT_COMPRESSION)
