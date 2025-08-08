@@ -59,13 +59,11 @@ class ShashinApplication {
 				text.isEditable = false
 				text.margin = Insets(10, 10, 10, 10)
 
-				var source = URLDataSource(this.javaClass.getResource("/static/images/favicon-32x32.png"))
-				val iconimg = ImageIcon(source.url)
-				frame.iconImage = iconimg.image
-				source = URLDataSource(this.javaClass.getResource("/static/images/favicon-256x256.png"))
-				var taskbarimg = ImageIcon(source.url)
-				val taskbar = Taskbar.getTaskbar()
 				try {
+					val iconimg = ImageIcon(this.javaClass.getResource("/static/images/favicon-32x32.png"))
+					frame.iconImage = iconimg.image
+					var taskbarimg = ImageIcon(this.javaClass.getResource("/static/images/favicon-256x256.png"))
+					val taskbar = Taskbar.getTaskbar()
 					// set icon for mac os (and other systems which do support this method)
 					taskbar.iconImage = taskbarimg.image
 				} catch (e: UnsupportedOperationException) {
