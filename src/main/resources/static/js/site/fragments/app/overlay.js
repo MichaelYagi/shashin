@@ -82,29 +82,9 @@
             }
         });
 
-        /* Based on this http://jsfiddle.net/brettwp/J4djY/*/
-        function detectDoubleTap(doubleTapMs) {
-            let timeout, lastTap = 0;
-            return function detectDoubleTap(event) {
-                const currentTime = new Date().getTime();
-                const tapLength = currentTime - lastTap;
-                if (0 < tapLength && tapLength < doubleTapMs) {
-                    event.preventDefault();
-                    const doubleTap = new CustomEvent("doubletap", {
-                        bubbles: true,
-                        detail: event
-                    });
-                    event.target.dispatchEvent(doubleTap);
-                } else {
-                    timeout = setTimeout(() => clearTimeout(timeout), doubleTapMs)
-                }
-                lastTap = currentTime;
-            };
-        }
-
         $("#photoThumbnailContainer" + id).hover(
             function () {
-                $(document).on("pointerup", detectDoubleTap(200));
+                $(document).on("pointerup", shashin.detectDoubleTap(200));
 
                 $(document).on("keydown", function (e) {
                     const isShift = e.key === "Shift" || e.keyCode === 16;

@@ -1,4 +1,24 @@
 (function( shashin, $, undefined ) {
+    /* Based on this http://jsfiddle.net/brettwp/J4djY/*/
+    shashin.detectDoubleTap = function(doubleTapMs) {
+        let timeout, lastTap = 0;
+        return function detectDoubleTap(event) {
+            const currentTime = new Date().getTime();
+            const tapLength = currentTime - lastTap;
+            if (0 < tapLength && tapLength < doubleTapMs) {
+                event.preventDefault();
+                const doubleTap = new CustomEvent("doubletap", {
+                    bubbles: true,
+                    detail: event
+                });
+                event.target.dispatchEvent(doubleTap);
+            } else {
+                timeout = setTimeout(() => clearTimeout(timeout), doubleTapMs);
+            }
+            lastTap = currentTime;
+        };
+    }
+
     // Call in console
     // eg: shashin.enableDebug({tags: all, consoleTypes:[shashin.consoleTypes.log,shashin.consoleTypes.error],showTrace:true,writeLog:true})
     shashin.enableDebug = function (options) {
