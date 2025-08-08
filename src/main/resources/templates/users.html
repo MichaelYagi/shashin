@@ -74,13 +74,13 @@
                                 <td>
                                     <a href="#" th:id="${'permissiontoggle' + user.id}">
                                         <th:block th:if="${user.authority == 'ROLE_SUPER'}">
-                                            <span class="bi-person-badge-fill" style="font-size: 1rem;" data-bs-toggle="tooltip" data-bs-placement="right" th:title="#{main.pages.users.tooltip.role.super}. #{main.pages.users.tooltip.role.change}"></span>
+                                            <span class="bi-person-badge-fill" style="font-size: 1rem;" data-bs-toggle="tooltip" data-bs-placement="right" th:title="#{main.pages.users.tooltip.role.super} + '. ' + #{main.pages.users.tooltip.role.change}"></span>
                                         </th:block>
                                         <th:block th:if="${user.authority == 'ROLE_ADMIN'}">
-                                            <span class="bi-person-badge" style="font-size: 1rem;" data-bs-toggle="tooltip" data-bs-placement="right" th:title="#{main.pages.users.tooltip.role.admin}. #{main.pages.users.tooltip.role.change}"></span>
+                                            <span class="bi-person-badge" style="font-size: 1rem;" data-bs-toggle="tooltip" data-bs-placement="right" th:title="#{main.pages.users.tooltip.role.admin} + '. ' + #{main.pages.users.tooltip.role.change}"></span>
                                         </th:block>
                                         <th:block th:if="${user.authority == 'ROLE_USER'}">
-                                            <span class="bi-person" style="font-size: 1rem" data-bs-toggle="tooltip" data-bs-placement="right" th:title="#{main.pages.users.tooltip.role.user}. #{main.pages.users.tooltip.role.change}"></span>
+                                            <span class="bi-person" style="font-size: 1rem" data-bs-toggle="tooltip" data-bs-placement="right" th:title="#{main.pages.users.tooltip.role.user} + '. ' + #{main.pages.users.tooltip.role.change}"></span>
                                         </th:block>
                                     </a>
                                 </td>
